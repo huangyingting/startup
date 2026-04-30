@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ReportCard from '../../../components/ReportCard.astro';
+import { sortNewest } from '../../../lib/reports';
+
+const reports = sortNewest(await getCollection('reports'));
+const byMonth = new Map<string, typeof reports>();
+for (const report of reports) {
+  const month = report.data.runDate.slice(0, 7);
+  byMonth.set(month, [...(byMonth.get(month) ?? []), report]);
+}
+---
+<BaseLayout title="全部报告 — 创业研究" description="浏览全部创业公司尽调报告。" lang="zh">
+  <section class="sr-container sr-hero"><h1>全部报告。</h1><p class="sr-deck">按月份浏览生成的创业研究报告，让报告库在增长后依然快速、清晰、可扫描。</p></section>
+  {[...byMonth.entries()].map(([month, entries], index) => (
+    <section class="sr-container sr-section">
+      <h2>{index === 0 ? '月份' : month}</h2>
+      <div class="sr-meta sr-kicker"><span>{month}</span><span>·</span><span>{entries.length} 份报告</span></div>
+      <div class="sr-grid">{entries.map((entry) => <ReportCard entry={entry} lang="zh" />)}</div>
+    </section>
+  ))}
+</BaseLayout>

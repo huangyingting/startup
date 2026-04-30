@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReportCard from '../../components/ReportCard.astro';
+import { sortNewest } from '../../lib/reports';
+
+const reports = sortNewest(await getCollection('reports'));
+const byMonth = new Map<string, typeof reports>();
+for (const report of reports) {
+  const month = report.data.runDate.slice(0, 7);
+  byMonth.set(month, [...(byMonth.get(month) ?? []), report]);
+}
+---
+<BaseLayout title="All dossiers — Startup Research" description="Browse all startup diligence dossiers.">
+  <section class="sr-container sr-hero">
+    <h1>All dossiers.</h1>
+    <p class="sr-deck">Browse generated startup research reports by month so the archive stays fast and scannable as the dossier library grows.</p>
+  </section>
+  {[...byMonth.entries()].map(([month, entries], index) => (
+    <section class="sr-container sr-section">
+      <h2>{index === 0 ? 'Months' : month}</h2>
+      <div class="sr-meta sr-kicker"><span>{month}</span><span>·</span><span>{entries.length} dossiers</span></div>
+      <div class="sr-grid">{entries.map((entry) => <ReportCard entry={entry} />)}</div>
+    </section>
+  ))}
+</BaseLayout>

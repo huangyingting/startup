@@ -1,0 +1,77 @@
+schemaVersion: startup-diligence-v2
+artifact: business-financials
+slug: openai
+runDate: 2026-04-30
+company:
+  name: OpenAI
+businessModel:
+  model: "横跨消费者订阅、按席位计费的商业与企业工作区、按用量计费 API 以及合规公共部门部署的混合 AI 平台模式。"
+  revenueStreams:
+    - "消费者 ChatGPT 订阅"
+    - "ChatGPT Business 与 Enterprise 席位收入"
+    - "按用量计费的 API 与工具收入"
+    - "医疗、教育与政府领域的行业专属企业部署"
+    - "政府采购与机构部署"
+  marginProfileHypothesis: "OpenAI 最终可能在应用层支持具有吸引力、类似软件的利润率，但当前利润质量并不确定，并且很可能受到前沿模型训练与推理成本、与 Microsoft 相关的经济安排，以及面向受监管买方的高合规支持负担影响。"
+  operatingLeverageHypothesis: "如果企业席位、智能体和更高价值的经常性工作负载在收入结构中的占比持续上升，该模式应能获得经营杠杆；但算力、安全、治理和报告义务，可能使其固定成本强度相比典型 SaaS 明显更高。"
+  claimRefs: [C001, C004, C006, C013, C014, C017, C021, C022, C037, C039]
+knownFinancials:
+  revenue: "OpenAI 声称截至 2026 年 3 月月收入约为 $2 billion，但本次标准深度审查未对该数据进行独立佐证。"
+  arr: "保留证据中没有单独公开 ARR 披露。若 $2 billion 的月收入在 12 个月内持续，其隐含年化运行率约为 $24 billion，但这只是低置信度的年化推算，而不是已披露的 ARR。"
+  grossMargin: "未公开披露。利润质量存在不确定性，而且由于按用量推理成本、云依赖和收入分成义务仍然清晰可见，其水平可能低于成熟 SaaS 常态。"
+  burnRate: "未公开披露。在前沿模型和基础设施持续扩张的同时仍需要异常规模资本，这说明即使收入口径很大，绝对金额意义上的 burn 仍可能很高。"
+  cashRunway: "未公开披露。2026 年 3 月融资显著改善了流动性，但 runway 仍取决于公开未拆分的算力、基础设施和产品扩张支出。"
+  valuation: "OpenAI 在 2026 年 3 月融资公告中声称其投后估值为 $852 billion，但本轮审查未对该数据进行独立佐证。"
+  claimRefs: [C006, C011, C021, C022, C039]
+funding:
+  totalRaised: "OpenAI 声称截至 2026 年 3 月已获得 $122 billion 的承诺资本。"
+  latestRound: "2026 年 3 月融资公告，对应 $852 billion 投后估值。"
+  leadInvestors: []
+  investorQualitySignal: unknown
+  claimRefs: [C011]
+unitEconomics:
+  arpaOrAcv: "未公开披露。ChatGPT Business 的起始价格为每位用户每月 SGD 25，Enterprise 为定制定价，API 则按用量变现，因此不同细分市场的账户层经济性可能差异很大。"
+  grossRetention: "未公开披露。企业部署深度和工作流集成暗示其具备留存潜力，但没有公开的 cohort 或 logo churn 数据可支撑具体数值。"
+  netRetention: "未公开披露。由消费者熟悉度向企业席位、智能体和 API 使用的交叉销售，可能支撑正向净留存，但 OpenAI 未公开量化。"
+  cacPayback: "未公开披露。由于自助式消费者与开发者漏斗与销售协同的企业动销及采购导向的政府渠道并存，混合 payback 可能高度分化。"
+  contributionMargin: "未公开披露。不同业务面的贡献经济性可能差异显著，其中 token 密集型 API 使用和新近合规的政府部署，利润率可能低于成熟的按席位企业订阅。"
+  confidence: low
+  claimRefs: [C001, C005, C006, C007, C010, C017, C019, C024, C030, C031, C039]
+scenarioModel:
+  note: "这些三年区间仅用于说明而非可作为正式预测，因为关键收入、结构和资本数据点大多来自管理层主张，而公开单位经济性披露也较薄弱。"
+  scenarios:
+    - name: downside
+      revenueRangeYear3: "$20B-$35B annual revenue"
+      marginDirection: deteriorating
+      capitalNeed: "资本需求极高；如果定价压力和算力强度维持高位，可能仍需额外外部资本或合作伙伴支持。"
+      keyAssumptions:
+        - "当前隐含收入运行率难以维持，因为竞争和捆绑式替代方案对定价形成压力。"
+        - "企业业务占比增长慢于管理层预期，而 API 与消费者需求仍然高度依赖算力。"
+        - "政府与受监管行业扩张继续受制于采购、合规和人工复核要求。"
+      confidence: low
+      claimRefs: [C011, C012, C017, C022, C036, C038, C039]
+    - name: base
+      revenueRangeYear3: "$35B-$60B annual revenue"
+      marginDirection: improving
+      capitalNeed: "资本需求依然较高，并且很可能持续存在，即使更多基础设施负担由经营性现金流覆盖。"
+      keyAssumptions:
+        - "在消费者和 API 使用保持广泛的同时，企业收入在结构中的占比持续上升。"
+        - "智能体、Codex 和连接公司数据的工作流，在现有客户中加深变现。"
+        - "Microsoft 与 AWS 的分发扩大了触达，但并未完全消除由合作伙伴塑造的经济安排。"
+      confidence: low
+      claimRefs: [C001, C011, C012, C022, C023, C024, C039]
+    - name: upside
+      revenueRangeYear3: "$60B-$90B+ annual revenue"
+      marginDirection: improving
+      capitalNeed: "资本需求仍高，但如果 OpenAI 能把消费者普及度和企业标准化转化为更耐久、更高价值的工作流收入，则会越来越多地由自身现金流支持。"
+      keyAssumptions:
+        - "消费者覆盖继续拉动工作场景采用，并支持广泛的企业标准化。"
+        - "企业业务达到或超过与消费者业务持平的规模，且政府采购超越早期灯塔交易。"
+        - "直销、Microsoft 和 AWS 渠道均对分发作出贡献，且未出现严重价格侵蚀。"
+      confidence: low
+      claimRefs: [C010, C012, C017, C019, C023, C024, C039]
+financialVerdict:
+  assessment: uncertain
+  rationale: "OpenAI 显然已经在订阅、企业席位、API 和公共部门部署上建立了真实的变现界面，且管理层报告的规模极为可观。但已披露证据仍不足以提供投资者级别的经济透明度，尤其是在经审计收入质量、利润率、burn、留存和客户集中度方面；与此同时，资本强度和由合作伙伴塑造的经济安排依然居于核心位置。"
+  confidence: low
+  claimRefs: [C004, C011, C012, C021, C022, C039]

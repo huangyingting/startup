@@ -1,0 +1,7 @@
+---
+interface Props { risks: string[]; }
+const { risks } = Astro.props;
+---
+<div class="sr-grid">
+  {risks.map((risk, index) => <div class="sr-card"><span class="sr-pill">Risk {index + 1}</span><p>{risk}</p></div>)}
+</div>

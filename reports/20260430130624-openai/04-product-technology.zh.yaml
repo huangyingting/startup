@@ -1,0 +1,103 @@
+schemaVersion: startup-diligence-v2
+artifact: product-technology
+slug: openai
+runDate: 2026-04-30
+company:
+  name: OpenAI
+productOverview:
+  oneLine: "OpenAI 运营着一个前沿模型平台，覆盖 ChatGPT、API、Codex、企业智能体以及受监管行业产品。"
+  currentProducts:
+    - ChatGPT 消费者套餐
+    - ChatGPT Business
+    - ChatGPT Enterprise
+    - ChatGPT Edu
+    - ChatGPT Gov
+    - OpenAI API
+    - Codex
+    - ChatGPT 中的工作区智能体
+    - OpenAI for Healthcare
+    - OpenAI for Government
+  primaryUseCases:
+    - 通用知识工作辅助
+    - 开发者工具与软件自动化
+    - 连接公司数据的企业智能体与工作流执行
+    - 面向受监管行业的研究、服务、翻译与行政工作流
+  maturity: scaling
+  claimRefs: [C001, C005, C006, C008, C009, C010, C014, C015, C016, C017, C024]
+workflowFit:
+  jobsToBeDone:
+    - job: "在通用知识工作流中起草、研究、总结并回答问题"
+      user: "知识工作者与个人订阅用户"
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C001, C010]
+    - job: "将模型嵌入软件，并自动化编码、测试与计算机使用工作流"
+      user: "开发者与 AI 产品团队"
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C001, C006, C024]
+    - job: "部署连接公司数据的共享智能体，用于销售、财务、IT、支持与报告"
+      user: "企业运营者、职能负责人和管理员"
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C007, C024, C030]
+    - job: "在金融、医疗、教育和政府场景中运行合规 AI 工作流"
+      user: "受监管行业运营者、分析师和公共部门员工"
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C013, C014, C015, C016, C017, C033]
+technologyStack:
+  coreTechnology: "一个通过 ChatGPT 工作区、按用量计费 API、Codex 和打包智能体提供的前沿模型平台。"
+  proprietaryElements:
+    - "由 OpenAI 控制的模型访问，被封装进 ChatGPT、API、Codex 和公共部门产品中"
+    - "在管理控制下连接公司数据的企业工作区与共享智能体"
+    - "面向医疗、教育和政府部署的合规导向产品封装"
+  thirdPartyDependencies:
+    - "Microsoft 仍是 OpenAI 的主要云合作伙伴，并将持续获得至 2030 年受上限约束的收入分成支付"
+    - "AWS 与 Bedrock managed agents 正在成为新增分发渠道"
+  dataDependencies:
+    - "企业价值依赖于在保持默认不训练和保留控制的前提下连接公司数据"
+    - "受监管行业的使用依赖于对敏感金融、医疗、教育和政府数据的受治理处理"
+    - "高风险部署依赖评测、有引证证据与专家复核，而不仅仅是原始模型输出"
+  integrationSurface:
+    - "嵌入第三方产品和内部系统的按用量计费 API 集成"
+    - "企业身份与管理控制，包括 SAML SSO、MFA、加密、保留控制、数据驻留和 SCIM"
+    - "连接公司数据的共享智能体与工作区智能体"
+    - "绑定 Azure 或 Azure Government 环境并通过正式采购路径推进的政府部署"
+  claimRefs: [C001, C006, C007, C013, C015, C016, C017, C021, C022, C023, C024]
+technicalDefensibility:
+  strengths:
+    - "同时覆盖消费者分发、企业工作区、开发者 API 和公共部门部署"
+    - "安全、隐私和合规封装明显深于仅面向消费者的聊天机器人产品"
+    - "OpenAI 正从提示-回复模式进一步推进到共享智能体、Codex 和多步骤工作流执行"
+    - "多云分发正在提升其相较单一云关系的渠道覆盖"
+  limitations:
+    - "许多面向买方的工作流仍可由客户、合作伙伴或其他供应商在模型层之上构建或封装"
+    - "高风险用例仍需人工复核、评测与受政策约束的部署"
+    - "关于经审计经济性和跨产品界面的切换韧性，公开证据仍然有限"
+    - "即使开始走向更广泛分发，对云合作伙伴的依赖仍然显著"
+  copyabilityRisk: medium
+  confidence: medium
+  claimRefs: [C001, C007, C013, C021, C022, C023, C024, C025, C036, C039]
+productRisks:
+  - risk: "云与渠道依赖仍可能左右经济性与交付"
+    severity: high
+    rationale: "尽管 AWS 已成为具有意义的新增上市路径，Microsoft 仍是 OpenAI 的主要云合作伙伴，并伴随持续的收入分成义务。"
+    claimRefs: [C021, C022, C023]
+  - risk: "高风险输出仍需人工复核和使用政策门控"
+    severity: high
+    rationale: "医疗、金融与公共部门证据都强调控制、评测、有引证证据或专家监督，而使用政策也限制无监督的持牌建议和敏感决策。"
+    claimRefs: [C015, C017, C031, C034, C036]
+  - risk: "合规与采购工作会拖慢受监管行业扩张"
+    severity: high
+    rationale: "FedRAMP 可用性、GSA 渠道、政府云部署模式、隐私承诺与透明度义务都是产品的一部分，而非可选附加项。"
+    claimRefs: [C013, C017, C019, C037, C038]
+  - risk: "企业 ROI 既依赖采用赋能，也依赖模型质量"
+    severity: medium
+    rationale: "OpenAI 的企业方案强调部署支持与共享智能体，而大型落地案例也表明，治理和培训是实现广泛使用的前提。"
+    claimRefs: [C007, C030, C032]
+productVerdict:
+  assessment: strong
+  rationale: "OpenAI 已经在 ChatGPT、API、Codex、智能体和受监管行业产品上交付了真实平台，证据也显示其正在消费者、企业与公共部门规模上被使用。主要保留意见是，合规、人工复核要求以及合作伙伴依赖仍然是产品成功的核心前提，因此这里的强项更多体现为已交付的广度与工作流相关性，而非已被充分验证的护城河。"
+  confidence: medium
+  claimRefs: [C001, C007, C008, C009, C010, C013, C014, C017, C024, C039]

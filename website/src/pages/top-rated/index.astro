@@ -1,0 +1,18 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReportCard from '../../components/ReportCard.astro';
+import { sortTopRated } from '../../lib/reports';
+
+const reports = sortTopRated(await getCollection('reports'));
+---
+<BaseLayout title="Top-rated dossiers — Startup Research" description="Startup dossiers ranked by overall score.">
+  <section class="sr-container sr-hero">
+    <h1>Top-rated dossiers.</h1>
+    <p class="sr-deck">Ranked by overall score, with newest reports used as the tie-breaker.</p>
+  </section>
+  <section class="sr-container sr-section">
+    <h2>Highest scores</h2>
+    <div class="sr-grid">{reports.map((entry) => <ReportCard entry={entry} />)}</div>
+  </section>
+</BaseLayout>

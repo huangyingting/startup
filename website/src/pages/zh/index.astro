@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReportCard from '../../components/ReportCard.astro';
+import { t } from '../../lib/i18n';
+import { sortNewest, sortTopRated } from '../../lib/reports';
+
+const reports = await getCollection('reports');
+const latest = sortNewest(reports).slice(0, 12);
+const top = sortTopRated(reports)[0];
+---
+<BaseLayout title={t('title', 'zh')} description={t('deck', 'zh')} lang="zh">
+  <section class="sr-container sr-hero">
+    <h1>创业公司研究，<br />像风投备忘录一样阅读。</h1>
+    <p class="sr-deck">每份报告都会围绕公司身份、证据来源、市场、产品、商业模式、风险与投资判断展开，并由专业智能体端到端生成。</p>
+  </section>
+
+  {top && <section class="sr-container sr-section"><h2>精选报告</h2><ReportCard entry={top} lang="zh" /></section>}
+
+  <section class="sr-container sr-section">
+    <h2>更多报告</h2>
+    {latest.length ? <div class="sr-grid">{latest.map((entry) => <ReportCard entry={entry} lang="zh" />)}</div> : <p>{t('noReports', 'zh')}</p>}
+  </section>
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+import { formatMoneyK } from '../lib/reports';
+interface Series { revenueK: number; ebitdaK: number; cashNeedK: number; }
+interface Props { y1: Series; y2: Series; y3: Series; }
+const { y1, y2, y3 } = Astro.props;
+const rows = [['Y1', y1], ['Y2', y2], ['Y3', y3]] as const;
+const maxRevenue = Math.max(1, ...rows.map(([, row]) => row.revenueK));
+---
+<div class="sr-card">
+  <h3>Financial scenario</h3>
+  <div class="bars">
+    {rows.map(([year, row]) => (
+      <div class="bar-row">
+        <span>{year}</span>
+        <div class="bar"><i style={`width:${Math.max(4, (row.revenueK / maxRevenue) * 100)}%`}></i></div>
+        <strong>{formatMoneyK(row.revenueK)}</strong>
+        <span class="sr-muted">EBITDA {formatMoneyK(row.ebitdaK)}</span>
+      </div>
+    ))}
+  </div>
+</div>
+<style>
+  .bars { display: grid; gap: 14px; }
+  .bar-row { display: grid; grid-template-columns: 40px 1fr 86px 130px; gap: 12px; align-items: center; }
+  .bar { height: 14px; border-radius: 999px; background: #eadccc; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: inherit; }
+</style>

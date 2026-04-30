@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="搜索 — 创业公司研究" lang="zh">
+  <section class="sr-container sr-hero"><h1>搜索报告。</h1><p class="sr-deck">按公司、判断、赛道、日期、来源数量、评分信号或尽调缺口搜索。所有搜索都在浏览器本地运行。</p></section>
+  <section class="sr-container sr-section" data-search-root data-index-url={`${import.meta.env.BASE_URL}zh/search-index.json`}>
+    <input class="sr-input" type="search" placeholder="搜索创业公司报告..." data-search-input />
+    <p class="sr-muted" data-search-status>输入关键词开始搜索。</p>
+    <div class="sr-grid" data-search-results></div>
+  </section>
+  <script>
+    const root = document.querySelector('[data-search-root]');
+    const input = root?.querySelector('[data-search-input]');
+    const status = root?.querySelector('[data-search-status]');
+    const results = root?.querySelector('[data-search-results]');
+    const state = { docs: [] };
+    const norm = (v) => String(v ?? '').toLowerCase().trim();
+    const render = () => {
+      if (!root || !input || !status || !results) return;
+      const query = norm(input.value);
+      if (!query) { status.textContent = '输入关键词开始搜索。'; results.replaceChildren(); return; }
+      const terms = query.split(/\s+/).filter(Boolean);
+      const matches = state.docs.filter((doc) => terms.every((term) => doc.searchText.includes(term))).slice(0, 30);
+      status.textContent = `${matches.length} 个结果`;
+      results.replaceChildren(...matches.map((doc) => {
+        const link = document.createElement('a');
+        link.className = 'sr-card';
+        link.href = doc.href;
+        link.innerHTML = `<div class="sr-meta sr-kicker"><span>${doc.title}</span><span>·</span><span>${doc.sector}</span></div><h3>${doc.headline}</h3><p><span class="sr-score">${Number(doc.rating).toFixed(1)}</span> Overall rating · ${doc.date}</p>`;
+        return link;
+      }));
+    };
+    fetch(root?.dataset.indexUrl || '').then((r) => r.json()).then((docs) => { state.docs = Array.isArray(docs) ? docs : []; render(); }).catch(() => { if (status) status.textContent = '搜索索引不可用。'; });
+    input?.addEventListener('input', render);
+  </script>
+</BaseLayout>

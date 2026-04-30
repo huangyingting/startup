@@ -1,0 +1,103 @@
+schemaVersion: startup-diligence-v2
+artifact: product-technology
+slug: openai
+runDate: 2026-04-30
+company:
+  name: OpenAI
+productOverview:
+  oneLine: OpenAI operates a frontier-model platform across ChatGPT, APIs, Codex, enterprise agents, and regulated-sector offerings.
+  currentProducts:
+    - ChatGPT consumer plans
+    - ChatGPT Business
+    - ChatGPT Enterprise
+    - ChatGPT Edu
+    - ChatGPT Gov
+    - OpenAI API
+    - Codex
+    - Workspace agents in ChatGPT
+    - OpenAI for Healthcare
+    - OpenAI for Government
+  primaryUseCases:
+    - General-purpose knowledge-work assistance
+    - Developer tooling and software automation
+    - Company-data-grounded enterprise agents and workflow execution
+    - Regulated-sector research, service, translation, and administrative workflows
+  maturity: scaling
+  claimRefs: [C001, C005, C006, C008, C009, C010, C014, C015, C016, C017, C024]
+workflowFit:
+  jobsToBeDone:
+    - job: Draft, research, summarize, and answer questions across general knowledge-work workflows
+      user: Knowledge workers and individual subscribers
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C001, C010]
+    - job: Embed models into software and automate coding, testing, and computer-use workflows
+      user: Developers and AI product teams
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C001, C006, C024]
+    - job: Deploy shared agents connected to company data for sales, finance, IT, support, and reporting
+      user: Enterprise operators, function leaders, and administrators
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C007, C024, C030]
+    - job: Run compliant AI workflows in finance, healthcare, education, and government settings
+      user: Regulated-sector operators, analysts, and public-sector staff
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C013, C014, C015, C016, C017, C033]
+technologyStack:
+  coreTechnology: A frontier-model platform delivered through ChatGPT workspaces, usage-based APIs, Codex, and packaged agents.
+  proprietaryElements:
+    - OpenAI-controlled model access packaged across ChatGPT, API, Codex, and public-sector offerings
+    - Enterprise workspaces and shared agents that connect to company data under admin controls
+    - Compliance-oriented packaging for healthcare, education, and government deployments
+  thirdPartyDependencies:
+    - Microsoft remains OpenAI's primary cloud partner and still receives capped revenue-share payments through 2030
+    - AWS and Bedrock managed agents are emerging as additional distribution channels
+  dataDependencies:
+    - Enterprise value depends on connecting company data while preserving no-training defaults and retention controls
+    - Regulated-sector use depends on governed handling of sensitive financial, health, education, and government data
+    - High-stakes deployments rely on evals, cited evidence, and expert review rather than raw model output alone
+  integrationSurface:
+    - Usage-based API integrations inside third-party products and internal systems
+    - Enterprise identity and admin controls including SAML SSO, MFA, encryption, retention controls, data residency, and SCIM
+    - Shared agents and workspace agents connected to company data
+    - Government deployments tied to Azure or Azure Government environments and formal procurement paths
+  claimRefs: [C001, C006, C007, C013, C015, C016, C017, C021, C022, C023, C024]
+technicalDefensibility:
+  strengths:
+    - Breadth across consumer distribution, enterprise workspaces, developer APIs, and public-sector deployments
+    - Security, privacy, and compliance packaging is materially deeper than a consumer-only chatbot product
+    - OpenAI is pushing beyond prompt-response into shared agents, Codex, and multi-step workflow execution
+    - Multi-cloud distribution is improving channel reach beyond a single cloud relationship
+  limitations:
+    - Many buyer-facing workflows can still be built or wrapped above the model layer by customers, partners, or other vendors
+    - High-stakes use cases still require human review, evals, and policy-constrained deployment
+    - Public evidence is thin on audited economics and switching durability across product surfaces
+    - Cloud-partner dependence remains material even after the move toward broader distribution
+  copyabilityRisk: medium
+  confidence: medium
+  claimRefs: [C001, C007, C013, C021, C022, C023, C024, C025, C036, C039]
+productRisks:
+  - risk: Cloud and channel dependence can still shape economics and delivery
+    severity: high
+    rationale: Microsoft remains OpenAI's primary cloud partner with ongoing revenue-share obligations, even as AWS becomes a meaningful additional route to market.
+    claimRefs: [C021, C022, C023]
+  - risk: High-stakes outputs still require human review and usage-policy gating
+    severity: high
+    rationale: Healthcare, finance, and public-sector evidence all emphasize controls, evals, cited evidence, or expert oversight, while usage policies restrict unsupervised licensed advice and sensitive decisions.
+    claimRefs: [C015, C017, C031, C034, C036]
+  - risk: Compliance and procurement work can slow regulated-sector expansion
+    severity: high
+    rationale: FedRAMP availability, GSA channels, government-cloud deployment patterns, privacy commitments, and transparency obligations are part of the product, not optional extras.
+    claimRefs: [C013, C017, C019, C037, C038]
+  - risk: Enterprise ROI depends on adoption enablement as much as model quality
+    severity: medium
+    rationale: OpenAI's enterprise offer emphasizes deployment support and shared agents, and large rollouts highlight governance and training as prerequisites for broad usage.
+    claimRefs: [C007, C030, C032]
+productVerdict:
+  assessment: strong
+  rationale: OpenAI already ships a real platform across ChatGPT, APIs, Codex, agents, and regulated-sector packages, and the evidence shows it is being used at consumer, business, and public-sector scale. The main caveat is that compliance, human-review requirements, and partner dependence remain central to product success, so the strength here reflects shipped breadth and workflow relevance more than a fully proven moat.
+  confidence: medium
+  claimRefs: [C001, C007, C008, C009, C010, C013, C014, C017, C024, C039]

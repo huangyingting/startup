@@ -1,0 +1,105 @@
+schemaVersion: startup-diligence-v2
+artifact: risk-governance
+slug: openai
+runDate: 2026-04-30
+company:
+  name: OpenAI
+riskRegister:
+  - id: R001
+    category: financial
+    risk: "由于未披露经审计的分部经济性，公开层面的投资判断仍依赖管理层自报的收入、估值和结构口径。"
+    severity: high
+    likelihood: high
+    timeHorizon: near
+    mitigation: "在对估值进行承保前，要求获得按产品界面划分、经审计或经董事会批准的收入、毛利率、burn、客户集中度和 cohort 留存数据。"
+    claimRefs: [C011, C012, C039]
+  - id: R002
+    category: funding
+    risk: "即便在声称的大规模收入水平下，OpenAI 仍可能保持异常高的资本强度，因为算力、基础设施、安全和合规成本并未被透明拆分。"
+    severity: high
+    likelihood: medium
+    timeHorizon: medium
+    mitigation: "审查未来算力承诺、资本开支或云义务，并在需求和定价下行情景下评估基准流动性。"
+    claimRefs: [C011, C022, C037, C039]
+  - id: R003
+    category: platform
+    risk: "Microsoft 仍是主要云与经济对手方，因此即便多云布局有所进展，合作伙伴集中度仍会影响可用性、定价和利润率结果。"
+    severity: high
+    likelihood: high
+    timeHorizon: medium
+    mitigation: "测试未来 24 个月内，有多少交易量、利润率和战略控制权能够现实地转移到直销和 AWS 渠道。"
+    claimRefs: [C021, C022, C023]
+  - id: R004
+    category: regulatory
+    risk: "政府及其他受监管行业的增长，受采购、FedRAMP、隐私以及持续透明度义务的门槛限制，而不只是模型性能。"
+    severity: high
+    likelihood: high
+    timeHorizon: near
+    mitigation: "只有在验证采购转化、合规人员配置和续约机制之后，才对受监管行业增长进行承保。"
+    claimRefs: [C017, C019, C037, C038]
+  - id: R005
+    category: product
+    risk: "高风险用例仍需人工复核、评测、有引证证据和受政策约束的部署，这会限制高价值细分市场中的自动化价值。"
+    severity: high
+    likelihood: high
+    timeHorizon: near
+    mitigation: "将尽调重点放在允许 human-in-the-loop 且经济上可持续的工作流，而不是假设可完全自主部署。"
+    claimRefs: [C015, C031, C034, C036]
+  - id: R006
+    category: competition
+    risk: "捆绑式超大云厂商 copilots、云层分发和内部自建方案，可能压制定价并限制 OpenAI 对企业关系的直接所有权。"
+    severity: high
+    likelihood: medium
+    timeHorizon: medium
+    mitigation: "验证在买方可选择捆绑替代方案或内部自建时，OpenAI 的胜率、替代模式和定价能力。"
+    claimRefs: [C022, C023, C024]
+  - id: R007
+    category: governance
+    risk: "Foundation 控制与多实体结构带来治理和投资者一致性复杂性，而这些在公开材料中并未被充分展示。"
+    severity: high
+    likelihood: medium
+    timeHorizon: medium
+    mitigation: "在形成高确信判断前，获取实体结构图、治理文件、投资者权利条款以及董事会保留事项清单。"
+    claimRefs: [C002, C003, C039]
+  - id: R008
+    category: gtm
+    risk: "商业动能的质量可能低于头条数字所暗示的水平，因为本轮审查中的最大用户、企业和 ROI 数据点大多来自公司自报或整理。"
+    severity: high
+    likelihood: medium
+    timeHorizon: near
+    mitigation: "开展独立客户访谈、索取 cohort 级付费使用数据，并将管理层口径与开票或签约收入进行核对。"
+    claimRefs: [C008, C009, C010, C032, C039]
+governance:
+  controlStructure: "2025 年资本重组后，OpenAI Foundation 控制 OpenAI Group PBC，而 OpenAI Ireland Limited 与 OpenAI OpCo, LLC 则似乎充当区域运营或隐私实体。"
+  keyPersonRisk: unknown
+  investorAlignment: "Foundation 控制意味着投资者一致性取决于使命控制与营利性经济安排如何交互，而本轮审查中的公开证据不足以清晰映射这些权利。"
+  transparencyConcerns:
+    - "按业务界面划分的经审计收入、毛利率、burn 和客户集中度未公开披露。"
+    - "本轮审查中最大的融资、估值和收入数据点来自管理层自报，而非独立佐证。"
+  claimRefs: [C002, C003, C011, C039]
+legalRegulatory:
+  knownIssues:
+    - "Microsoft/OpenAI 关系曾受到英国 CMA 的正式审查，随后 CMA 认定其不构成英国并购规则下的相关并购情形。"
+    - "随着平台规模扩大，OpenAI 报告称其持续承担政府请求、儿童安全和 DSA 透明度义务。"
+    - "OpenAI 的使用政策限制持牌建议、敏感决策，以及未经额外审查和批准的国家安全或情报用途。"
+  regulatoryExposure: high
+  compliancePosture: "OpenAI 看起来具备实质性的企业控制、面向商业数据的默认不训练设置，以及面向联邦买家的 FedRAMP 路径；但合规工作是商业化的一部分，而不是一个已被彻底解决的后台职能。"
+  claimRefs: [C013, C017, C020, C036, C037]
+redFlags:
+  - flag: "公开层面的投资判断仍高度依赖管理层自报的收入、结构、融资和估值数字。"
+    severity: high
+    evidenceQuality: low
+    claimRefs: [C011, C012, C039]
+  - flag: "即便获得更广泛分发权，Microsoft 直到 2030 年仍是主要云与经济对手方。"
+    severity: high
+    evidenceQuality: medium
+    claimRefs: [C021, C022, C023]
+  - flag: "在若干高价值细分市场中，高风险部署仍依赖人工复核、评测和政策门控。"
+    severity: medium
+    evidenceQuality: high
+    claimRefs: [C031, C034, C036]
+riskVerdict:
+  overallRisk: high
+  rationale: "OpenAI 拥有真实的产品广度和需求，但该投资逻辑仍具有高风险，因为公开经济性披露不足、治理结构异常、合作伙伴集中度依然显著，而受监管增长又伴随沉重的合规和人工复核约束。"
+  confidence: medium
+  claimRefs: [C002, C011, C013, C022, C036, C037, C039]

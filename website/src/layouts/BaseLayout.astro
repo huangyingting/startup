@@ -1,0 +1,242 @@
+---
+import '../styles/tokens.css';
+import type { Lang } from '../lib/i18n';
+import { t } from '../lib/i18n';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang?: Lang;
+}
+const { title, description = t('deck', 'en'), lang = 'en' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const homeHref = lang === 'zh' ? `${base}zh/` : base;
+const archiveHref = lang === 'zh' ? `${base}zh/archive/` : `${base}archive/`;
+const sectorsHref = lang === 'zh' ? `${base}zh/sectors/` : `${base}sectors/`;
+const topRatedHref = lang === 'zh' ? `${base}zh/top-rated/` : `${base}top-rated/`;
+const searchHref = lang === 'zh' ? `${base}zh/search/` : `${base}search/`;
+const rssHref = lang === 'zh' ? `${base}zh/rss.xml` : `${base}rss.xml`;
+const altHref = lang === 'zh' ? base : `${base}zh/`;
+const altLabel = lang === 'zh' ? 'EN' : '中文';
+const brandLabel = t('title', lang);
+---
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${brandLabel} RSS`} href={rssHref} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&display=swap"
+    />
+  </head>
+  <body>
+    <header class="bz-utility">
+      <div class="bz-container bz-utility__row">
+        <a href={homeHref} class="bz-utility__brand" aria-label={brandLabel}>
+          <span class="bz-utility__mark" aria-hidden="true">S</span>
+          <span>{brandLabel}</span>
+        </a>
+        <nav class="bz-utility__nav" aria-label="Sections">
+          <a href={homeHref}>{t('latest', lang)}</a>
+          <a href={archiveHref}>{t('archive', lang)}</a>
+          <a href={sectorsHref}>{t('sectors', lang)}</a>
+          <a href={topRatedHref}>{t('topRated', lang)}</a>
+          <a href={searchHref}>{t('search', lang)}</a>
+        </nav>
+        <div class="bz-utility__right">
+          <a class="bz-utility__link bz-mono" href={rssHref} aria-label="RSS">RSS</a>
+          <a class="bz-lang-toggle bz-mono" href={altHref}>{altLabel}</a>
+        </div>
+      </div>
+    </header>
+    <main><slot /></main>
+    <footer class="bz-footer">
+      <div class="bz-container bz-footer__row">
+        <div class="bz-footer__left">
+          <span class="bz-footer__brand">{brandLabel}</span>
+          <span class="bz-footer__dot" aria-hidden="true"></span>
+          <span class="bz-footer__tag">{t('deck', lang)}</span>
+        </div>
+        <span class="bz-footer__copyright bz-mono">Agent-generated venture research. Validate sources before making investment decisions.</span>
+      </div>
+    </footer>
+
+    <style>
+      .bz-utility {
+        background:
+          linear-gradient(90deg, rgba(153, 15, 61, 0.06), transparent 34%),
+          var(--paper);
+        color: var(--ink-page);
+        border-bottom: var(--rule-hairline);
+      }
+      .bz-utility__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 60px;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+        padding-block: var(--space-2);
+      }
+      .bz-utility__brand {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: var(--fs-lg);
+        line-height: 1;
+        letter-spacing: var(--tracking-display-tight);
+        color: var(--ink-page);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      @media (min-width: 1080px) {
+        .bz-utility__brand { font-size: var(--fs-xl); }
+      }
+      .bz-utility__brand:hover { color: var(--claret); }
+      .bz-utility__mark {
+        display: inline-grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        background: var(--claret);
+        color: var(--paper);
+        font-family: var(--font-display);
+        font-size: var(--fs-md);
+        font-weight: 700;
+        line-height: 1;
+      }
+      .bz-utility__nav {
+        order: 3;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: var(--space-1);
+        flex: 1 0 100%;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .bz-utility__nav::-webkit-scrollbar { display: none; }
+      .bz-utility__nav a {
+        display: inline-flex;
+        align-items: center;
+        color: var(--ink-page);
+        text-decoration: none;
+        font-family: var(--font-sans);
+        font-variant-caps: all-small-caps;
+        font-weight: 700;
+        font-size: var(--fs-sm);
+        letter-spacing: var(--tracking-display-snug);
+        line-height: 1;
+        padding: var(--space-2) var(--space-2);
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+      }
+      .bz-utility__nav a:hover {
+        color: var(--claret);
+        border-bottom-color: var(--claret);
+      }
+      @media (min-width: 820px) {
+        .bz-utility__row { flex-wrap: nowrap; padding-block: 0; }
+        .bz-utility__nav { order: 0; justify-content: flex-end; flex: 1 1 auto; }
+      }
+      @media (min-width: 1080px) {
+        .bz-utility__nav { gap: var(--space-2); }
+        .bz-utility__nav a { padding-inline: var(--space-3); }
+      }
+      .bz-utility__right {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+      .bz-utility__link {
+        text-decoration: none;
+        color: var(--claret);
+        border: var(--rule-hairline);
+        background: rgba(153, 15, 61, 0.07);
+        padding: var(--space-2) var(--space-3);
+        line-height: 1;
+      }
+      .bz-utility__link:hover { color: var(--ink-page); }
+      .bz-lang-toggle {
+        text-decoration: none;
+        color: var(--ink-page);
+        border: var(--rule-hairline);
+        background: var(--paper);
+        padding: var(--space-2) var(--space-3);
+        line-height: 1;
+      }
+      .bz-lang-toggle:hover { color: var(--claret); }
+
+      .bz-footer {
+        background: var(--ink-black);
+        color: var(--paper);
+        margin-top: var(--space-9);
+        padding: var(--space-5) 0;
+      }
+      .bz-footer__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+        font-family: var(--font-sans);
+        font-size: var(--fs-sm);
+      }
+      .bz-footer__left {
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        min-width: 0;
+      }
+      .bz-footer__brand {
+        font-family: var(--font-display);
+        font-size: var(--fs-lg);
+        font-weight: 700;
+        letter-spacing: var(--tracking-display-tight);
+        color: var(--paper);
+        line-height: 1;
+      }
+      .bz-footer__dot {
+        width: 4px;
+        height: 4px;
+        background: var(--paper-wheat);
+        opacity: 0.55;
+        transform: translateY(1px);
+      }
+      .bz-footer__tag {
+        color: var(--paper-wheat);
+        opacity: 0.78;
+        font-size: var(--fs-sm);
+        line-height: 1.35;
+      }
+      .bz-footer__copyright {
+        color: var(--paper);
+        opacity: 0.56;
+        font-size: var(--fs-sm);
+        letter-spacing: 0;
+        line-height: 1.45;
+        text-align: right;
+      }
+      @media (max-width: 560px) {
+        .bz-footer__row {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: var(--space-3);
+        }
+        .bz-footer__left { align-items: baseline; }
+        .bz-footer__dot { display: none; }
+        .bz-footer__copyright { text-align: left; }
+      }
+    </style>
+  </body>
+</html>

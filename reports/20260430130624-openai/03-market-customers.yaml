@@ -1,0 +1,167 @@
+schemaVersion: startup-diligence-v2
+artifact: market-customers
+slug: openai
+runDate: 2026-04-30
+company:
+  name: OpenAI
+marketDefinition:
+  category: "Frontier AI platform spanning consumer subscriptions, enterprise productivity and agent workflows, developer APIs, and compliant public-sector deployments"
+  boundaries: "Includes ChatGPT consumer plans, ChatGPT Business and Enterprise, ChatGPT Edu and government variants, Codex and agentic workflow products, and OpenAI API usage embedded in third-party products and internal enterprise systems. Excludes commodity cloud infrastructure, generic systems-integration revenue without OpenAI IP, and open-source model hosting outside OpenAI-controlled products or APIs."
+  excludedMarkets:
+    - "Commodity GPU rental and general-purpose cloud IaaS"
+    - "Pure consulting or implementation services without OpenAI products or APIs"
+    - "Open-source model hosting and inference not controlled by OpenAI"
+  claimRefs: [C001, C004, C014, C017]
+marketSizing:
+  tam:
+    value: null
+    methodology: "Not quantified in this standard-depth pass because OpenAI spans consumer subscriptions, enterprise software, developer infrastructure, and government procurement, and public disclosures are insufficient for a defensible bottom-up TAM."
+    confidence: low
+    claimRefs: [C001, C004, C014, C039]
+  sam:
+    value: null
+    methodology: "Practical near-term serviceable demand is the subset of knowledge-work, software-development, regulated-industry, and public-sector workflows that can adopt secure ChatGPT, Codex, or API deployments under current compliance and budget constraints."
+    confidence: medium
+    claimRefs: [C014, C017, C023, C038]
+  som:
+    value: null
+    methodology: "Current capture is better described by usage signals than by disclosed revenue: OpenAI reports more than 800 million weekly users, more than 1 million business customers, more than 5 million business users, and meaningful early public-sector usage, but public revenue segmentation remains inadequate for a reliable SOM estimate."
+    confidence: medium
+    claimRefs: [C008, C009, C010, C033]
+demandDrivers:
+  - driver: "Massive consumer adoption is pulling AI habits into work, increasing enterprise willingness to standardize on tools employees already know."
+    strength: high
+    timeHorizon: near
+    claimRefs: [C010, C012]
+  - driver: "Organizations increasingly want agents that can execute multi-step workflows across data, software, communications, and approvals rather than just answer prompts."
+    strength: high
+    timeHorizon: near
+    claimRefs: [C024, C027, C030, C032]
+  - driver: "Regulated sectors are seeking secure, compliant AI platforms with retention controls, auditability, and sector-specific packaging."
+    strength: high
+    timeHorizon: medium
+    claimRefs: [C013, C014, C015, C016, C017]
+  - driver: "Developers and enterprises want frontier models with tiered pricing and more deployment choice across major cloud ecosystems."
+    strength: high
+    timeHorizon: near
+    claimRefs: [C006, C022, C023]
+  - driver: "Public-sector modernization pressures are creating demand for secure AI in translation, permitting, research, administration, and cyber-defense workflows."
+    strength: medium
+    timeHorizon: medium
+    claimRefs: [C018, C019, C033, C034, C035]
+customerSegments:
+  - segment: "Consumers and prosumers"
+    buyer: "Individual user"
+    users: ["knowledge workers", "students", "creators", "independent developers"]
+    painPoints:
+      - "General-purpose assistance across writing, research, planning, and coding"
+      - "Access to stronger reasoning, memory, and multimodal tools"
+      - "Desire for self-serve, low-friction AI usage"
+    budgetOwner: "Individual discretionary budget"
+    urgency: medium
+    willingnessToPayEvidence: "ChatGPT pricing shows free, Go, Plus, and Pro tiers for self-serve users."
+    claimRefs: [C001, C004, C005, C010]
+  - segment: "Developers and AI-native startups"
+    buyer: "VP Engineering, CTO, or product leader"
+    users: ["software engineers", "ML engineers", "end users of embedded AI products"]
+    painPoints:
+      - "Access to frontier multimodal models and agent tooling"
+      - "Latency and cost control at production scale"
+      - "Secure deployment options and procurement flexibility"
+    budgetOwner: "Engineering or product organization"
+    urgency: high
+    willingnessToPayEvidence: "OpenAI API pricing is usage-based, and OpenAI now supports Azure- and AWS-linked enterprise distribution paths."
+    claimRefs: [C001, C006, C023, C024]
+  - segment: "SMBs and mid-market knowledge-work teams"
+    buyer: "Founder, COO, IT lead, or department head"
+    users: ["operations staff", "customer support teams", "sales teams", "analysts"]
+    painPoints:
+      - "Need for a secure shared workspace rather than unmanaged employee AI usage"
+      - "Workflow automation without heavy internal engineering"
+      - "Admin controls, apps, and collaboration features for teams"
+    budgetOwner: "Operations, IT, or general and administrative budget"
+    urgency: medium
+    willingnessToPayEvidence: "ChatGPT Business is listed at SGD 25 per user per month billed annually, and business plan pages emphasize self-serve team deployment."
+    claimRefs: [C004, C005, C007, C024]
+  - segment: "Large enterprises"
+    buyer: "CIO, CDO, head of AI, or function leader"
+    users: ["engineering", "finance", "legal", "sales", "marketing", "operations"]
+    painPoints:
+      - "Connecting trusted company data into AI workflows"
+      - "Scaling adoption with governance, training, and support"
+      - "Measuring ROI while protecting sensitive data"
+    budgetOwner: "Central IT or digital budget, often with functional co-sponsors"
+    urgency: high
+    willingnessToPayEvidence: "Enterprise is custom priced, OpenAI reports more than 5 million business users, and customer stories show broad functional deployment."
+    claimRefs: [C007, C008, C024, C032]
+  - segment: "Financial-services institutions"
+    buyer: "CIO, head of AI, chief data officer, or compliance-aligned business leader"
+    users: ["advisors", "analysts", "customer-service agents", "developers"]
+    painPoints:
+      - "Accuracy and auditability in regulated workflows"
+      - "Protection of proprietary or customer financial data"
+      - "Automation of research, service, documentation, and modeling tasks"
+    budgetOwner: "Technology, operations, or line-of-business transformation budget"
+    urgency: high
+    willingnessToPayEvidence: "Finance-specific positioning, Morgan Stanley’s adoption claims, and Gradient Labs’ customer-side messaging all emphasize compliance and measurable workflow value."
+    claimRefs: [C014, C028, C029, C031]
+  - segment: "Healthcare organizations"
+    buyer: "CIO, CMIO, clinical operations leader, or innovation office"
+    users: ["clinicians", "administrators", "researchers"]
+    painPoints:
+      - "Administrative burden and documentation overload"
+      - "Need for cited evidence and trusted clinical support"
+      - "HIPAA-sensitive deployment with governance and BAAs"
+    budgetOwner: "Clinical operations, IT, or innovation budget"
+    urgency: high
+    willingnessToPayEvidence: "OpenAI launched a dedicated healthcare product and markets API access under BAAs for eligible healthcare use cases."
+    claimRefs: [C014, C015]
+  - segment: "Educational institutions"
+    buyer: "CIO, provost, or campus IT administrator"
+    users: ["students", "faculty", "researchers", "campus administrators"]
+    painPoints:
+      - "Campus-wide access with privacy and security safeguards"
+      - "Research, analysis, and teaching support"
+      - "Administrative control over workspace usage and data handling"
+    budgetOwner: "Central IT or academic technology budget"
+    urgency: medium
+    willingnessToPayEvidence: "ChatGPT Edu is marketed as a campus-wide managed offering with admin controls, privacy commitments, and ongoing support."
+    claimRefs: [C014, C016]
+  - segment: "Government and public-sector agencies"
+    buyer: "Agency CIO, procurement officer, CDAO, or mission-program lead"
+    users: ["analysts", "case workers", "translators", "researchers", "administrative staff"]
+    painPoints:
+      - "Need for compliant deployment environments and approved procurement paths"
+      - "Translation, permitting, research, analysis, and mission-support automation"
+      - "Public accountability, security, and human-review requirements"
+    budgetOwner: "Agency IT, procurement, or mission-program budget"
+    urgency: medium
+    willingnessToPayEvidence: "OpenAI markets ChatGPT Gov and FedRAMP products, while GSA independently announced a $1 governmentwide ChatGPT Enterprise offer."
+    claimRefs: [C014, C017, C019, C033, C038]
+adoptionBarriers:
+  - barrier: "Security, privacy, and compliance approvals can slow or block deployment in regulated sectors and government."
+    severity: high
+    claimRefs: [C013, C017, C038]
+  - barrier: "High-stakes workflows require human review, evals, and safeguards because reliability and hallucination risks remain material."
+    severity: high
+    claimRefs: [C015, C031, C034, C036]
+  - barrier: "Competition and partnership scrutiny around Microsoft/OpenAI shows ecosystem power and control issues remain live regulatory concerns."
+    severity: medium
+    claimRefs: [C020, C021, C022]
+  - barrier: "Change management, training, and organizational readiness are often the bottlenecks once basic model capability is available."
+    severity: medium
+    claimRefs: [C007, C030, C032]
+  - barrier: "Economic visibility is limited because enterprise and government pricing can be opaque and OpenAI does not disclose audited segment economics."
+    severity: high
+    claimRefs: [C005, C006, C039]
+  - barrier: "Usage-policy restrictions constrain certain sensitive applications and can narrow addressable use cases in national security and other high-stakes domains."
+    severity: high
+    claimRefs: [C036]
+  - barrier: "Scaling brings ongoing reporting, moderation, and government-request obligations that increase operating complexity and public-trust exposure."
+    severity: medium
+    claimRefs: [C037]
+marketVerdict:
+  attractiveness: high
+  rationale: "OpenAI is attacking a very large and unusually broad market spanning consumers, developers, enterprises, regulated verticals, and government. Demand signals are strong, product breadth is widening toward agents and workflow execution, and procurement paths are maturing in finance, healthcare, education, and the public sector. The main caveats are that many scale metrics are self-reported, regulatory and partner-concentration scrutiny remains meaningful, and public data is still too thin to underwrite durable economics with high confidence."
+  confidence: medium
+  claimRefs: [C001, C008, C009, C010, C013, C020, C024, C038, C039]

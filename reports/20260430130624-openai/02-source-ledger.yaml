@@ -1,0 +1,888 @@
+schemaVersion: startup-diligence-v2
+artifact: source-ledger
+slug: openai
+runDate: 2026-04-30
+company:
+  name: OpenAI
+coverage:
+  depth: standard
+  sourceTarget: 30
+  sourcesFound: 43
+  sourcesFetched: 43
+  sourcesRetained: 40
+  duplicatesRemoved: 3
+  coverageGaps:
+    - "No audited public segment revenue split across ChatGPT consumer, enterprise, API, and government surfaces."
+    - "Limited public disclosure on gross margins, compute economics, and customer concentration."
+    - "Non-U.S. public-sector procurement scale is much less visible than U.S. announcements."
+    - "Many adoption and ROI metrics are self-reported by OpenAI or curated customer stories rather than independent audits."
+deduplication:
+  method: "Canonicalized redirect targets and retained chatgpt.com commercial plan pages instead of redirecting openai.com landing URLs."
+  duplicateClusters:
+    - canonicalTopic: "ChatGPT pricing redirect chain"
+      retainedSource: S009
+      removedUrls:
+        - https://openai.com/chatgpt/pricing/
+    - canonicalTopic: "ChatGPT Enterprise redirect chain"
+      retainedSource: S010
+      removedUrls:
+        - https://openai.com/chatgpt/enterprise/
+    - canonicalTopic: "ChatGPT Education redirect chain"
+      retainedSource: S011
+      removedUrls:
+        - https://openai.com/chatgpt/education/
+sources:
+  - id: S001
+    publisher: OpenAI
+    title: OpenAI
+    author: null
+    date: null
+    url: https://openai.com/
+    sourceType: official
+    topicBuckets: [identity, market, product]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Maps OpenAI’s consumer, developer, enterprise, and research surfaces from the corporate homepage."
+  - id: S002
+    publisher: OpenAI
+    title: Our structure
+    author: null
+    date: null
+    url: https://openai.com/our-structure/
+    sourceType: official
+    topicBuckets: [identity, governance, funding]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Defines the post-2025 Foundation/PBC control structure, board composition, and equity split."
+  - id: S003
+    publisher: OpenAI
+    title: Privacy policy
+    author: null
+    date: 2026-04-28
+    url: https://openai.com/policies/privacy-policy/
+    sourceType: legal
+    topicBuckets: [legal, risk, governance]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Names the regional controller entities and summarizes service data handling and user rights."
+  - id: S004
+    publisher: OpenAI
+    title: Business data privacy, security, and compliance
+    author: null
+    date: 2025-05-14
+    url: https://openai.com/business-data/
+    sourceType: official
+    topicBuckets: [technology, risk, legal]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Details no-training defaults, data residency, retention controls, and enterprise compliance programs."
+  - id: S005
+    publisher: OpenAI
+    title: Security & privacy
+    author: null
+    date: null
+    url: https://openai.com/security-and-privacy/
+    sourceType: official
+    topicBuckets: [technology, risk, legal]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Lists certifications, enterprise controls, and customer-data protections relevant to regulated buyers."
+  - id: S006
+    publisher: OpenAI
+    title: Trust & transparency
+    author: null
+    date: null
+    url: https://openai.com/trust-and-transparency/
+    sourceType: legal
+    topicBuckets: [risk, legal, governance]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Publishes government-request, child-safety, and DSA transparency data relevant to compliance burden."
+  - id: S007
+    publisher: OpenAI
+    title: Usage policies
+    author: null
+    date: 2025-10-29
+    url: https://openai.com/policies/usage-policies/
+    sourceType: legal
+    topicBuckets: [risk, legal, governance]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Sets product-use restrictions that shape adoption in licensed, sensitive, and national-security contexts."
+  - id: S008
+    publisher: OpenAI
+    title: API Pricing
+    author: null
+    date: null
+    url: https://openai.com/api/pricing/
+    sourceType: technical-docs
+    topicBuckets: [pricing, technology, product]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Shows usage-based API pricing, tool pricing, and enterprise processing options for developer customers."
+  - id: S009
+    publisher: OpenAI
+    title: Pricing
+    author: null
+    date: null
+    url: https://chatgpt.com/pricing
+    sourceType: official
+    topicBuckets: [pricing, product, market]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Shows consumer, business, and enterprise ChatGPT plan structure and seat pricing."
+  - id: S010
+    publisher: OpenAI
+    title: Frontier AI built for enterprise
+    author: null
+    date: null
+    url: https://chatgpt.com/business/enterprise
+    sourceType: official
+    topicBuckets: [market, customer, pricing, risk]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Positions ChatGPT Enterprise around company-data access, agents, security, and AI-adoption support."
+  - id: S011
+    publisher: OpenAI
+    title: Bring AI to campus at scale
+    author: null
+    date: null
+    url: https://chatgpt.com/business/education
+    sourceType: official
+    topicBuckets: [market, customer, risk]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Positions ChatGPT Edu around campus-wide deployment, privacy, analytics, and admin controls."
+  - id: S012
+    publisher: OpenAI
+    title: Reimagine financial services with AI you can trust
+    author: null
+    date: null
+    url: https://openai.com/solutions/industries/financial-services/
+    sourceType: official
+    topicBuckets: [market, customer, product, risk]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Frames financial-services demand around secure deployment, connectors, research, modeling, and compliance."
+  - id: S013
+    publisher: OpenAI
+    title: AI that meets the needs of government
+    author: null
+    date: null
+    url: https://openai.com/solutions/industries/government/
+    sourceType: official
+    topicBuckets: [market, customer, product, risk]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Frames government demand around secure deployment, FedRAMP, procurement, and mission-support use cases."
+  - id: S014
+    publisher: OpenAI
+    title: OpenAI LP
+    author: null
+    date: 2019-03-11
+    url: https://openai.com/index/openai-lp/
+    sourceType: official
+    topicBuckets: [identity, governance, funding]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Provides historical context on OpenAI’s capped-profit structure and nonprofit control."
+  - id: S015
+    publisher: OpenAI
+    title: OpenAI raises $122 billion to accelerate the next phase of AI
+    author: OpenAI
+    date: 2026-03-31
+    url: https://openai.com/index/accelerating-the-next-phase-ai/
+    sourceType: official
+    topicBuckets: [funding, financials, market, competition]
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Contains OpenAI’s current self-reported funding, valuation, revenue, user, and segment-mix claims."
+  - id: S016
+    publisher: OpenAI
+    title: The next phase of the Microsoft OpenAI partnership
+    author: OpenAI
+    date: 2026-04-27
+    url: https://openai.com/index/next-phase-of-microsoft-partnership/
+    sourceType: official
+    topicBuckets: [competition, governance, funding, technology]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Summarizes the amended Microsoft agreement and changes to cloud and revenue-share terms."
+  - id: S017
+    publisher: OpenAI
+    title: OpenAI models, Codex, and Managed Agents come to AWS
+    author: OpenAI
+    date: 2026-04-28
+    url: https://openai.com/index/openai-on-aws/
+    sourceType: official
+    topicBuckets: [competition, technology, market, product]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Announces OpenAI model and Codex distribution through AWS and Bedrock managed agents."
+  - id: S018
+    publisher: OpenAI
+    title: Introducing OpenAI for Healthcare
+    author: OpenAI
+    date: 2026-01-08
+    url: https://openai.com/index/openai-for-healthcare/
+    sourceType: official
+    topicBuckets: [market, customer, product, risk]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Defines the healthcare product package, controls, and named early health-system users."
+  - id: S019
+    publisher: OpenAI
+    title: Introducing workspace agents in ChatGPT
+    author: OpenAI
+    date: 2026-04-22
+    url: https://openai.com/index/introducing-workspace-agents-in-chatgpt/
+    sourceType: official
+    topicBuckets: [product, technology, market, customer]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Shows how OpenAI is packaging shared agents for enterprise workflows and governance."
+  - id: S020
+    publisher: OpenAI
+    title: Codex for (almost) everything
+    author: OpenAI
+    date: 2026-04-16
+    url: https://openai.com/index/codex-for-almost-everything/
+    sourceType: official
+    topicBuckets: [product, technology, market]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Shows Codex’s expansion into broader developer workflows, automation, and computer use."
+  - id: S021
+    publisher: OpenAI
+    title: The state of enterprise AI
+    author: OpenAI
+    date: 2025-12-08
+    url: https://openai.com/index/the-state-of-enterprise-ai-2025-report/
+    sourceType: official
+    topicBuckets: [market, traction, gtm, customer]
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Provides OpenAI’s self-reported enterprise adoption and worker-value survey findings."
+  - id: S022
+    publisher: OpenAI
+    title: "One in a million: celebrating the customers shaping AI’s future"
+    author: OpenAI
+    date: 2025-12-22
+    url: https://openai.com/index/one-in-a-million-customers/
+    sourceType: official
+    topicBuckets: [market, traction, customer, gtm]
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "States OpenAI’s claim that more than 1 million businesses now use its products."
+  - id: S023
+    publisher: OpenAI
+    title: Booking.com and OpenAI personalize travel at scale
+    author: null
+    date: 2025-03-20
+    url: https://openai.com/index/booking-com/
+    sourceType: customer-proof
+    topicBuckets: [customer, market, product]
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Illustrates a consumer-facing travel marketplace deploying OpenAI across discovery and service workflows."
+  - id: S024
+    publisher: OpenAI
+    title: Zendesk uses OpenAI to build adaptive service agents focused on resolutions
+    author: null
+    date: 2025-03-27
+    url: https://openai.com/index/zendesk/
+    sourceType: customer-proof
+    topicBuckets: [customer, market, product]
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Illustrates service-automation use cases and Zendesk’s claimed path toward higher automation."
+  - id: S025
+    publisher: OpenAI
+    title: Choco automates food distribution with AI agents
+    author: null
+    date: 2026-04-27
+    url: https://openai.com/index/choco/
+    sourceType: customer-proof
+    topicBuckets: [customer, market, product]
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Illustrates API-driven operations automation in food distribution with disclosed operational metrics."
+  - id: S026
+    publisher: OpenAI
+    title: Gradient Labs gives every bank customer an AI account manager
+    author: null
+    date: 2026-04-01
+    url: https://openai.com/index/gradient-labs/
+    sourceType: customer-proof
+    topicBuckets: [customer, market, product, risk]
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Illustrates regulated banking-support automation built on OpenAI models and claimed performance metrics."
+  - id: S027
+    publisher: OpenAI
+    title: CyberAgent moves faster with ChatGPT Enterprise and Codex
+    author: null
+    date: 2026-04-09
+    url: https://openai.com/index/cyberagent/
+    sourceType: customer-proof
+    topicBuckets: [customer, market, product, gtm]
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Shows broad internal seat adoption and enablement practices at a large internet company."
+  - id: S028
+    publisher: OpenAI
+    title: Morgan Stanley uses AI evals to shape the future of financial services
+    author: null
+    date: 2024-12-04
+    url: https://openai.com/index/morgan-stanley/
+    sourceType: customer-proof
+    topicBuckets: [customer, market, risk]
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Shows finance-sector adoption, eval-driven rollout, and the importance of zero-data-retention assurances."
+  - id: S029
+    publisher: OpenAI
+    title: Introducing ChatGPT Gov
+    author: OpenAI
+    date: 2025-01-28
+    url: https://openai.com/global-affairs/introducing-chatgpt-gov/
+    sourceType: official
+    topicBuckets: [customer, market, governance, risk]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Describes ChatGPT Gov deployment model and early U.S. agency usage statistics."
+  - id: S030
+    publisher: OpenAI
+    title: Introducing OpenAI for Government
+    author: OpenAI
+    date: 2025-06-16
+    url: https://openai.com/global-affairs/introducing-openai-for-government/
+    sourceType: official
+    topicBuckets: [customer, market, governance, risk]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Expands the government umbrella, including the claimed DoD pilot and other public-sector relationships."
+  - id: S031
+    publisher: OpenAI
+    title: OpenAI available at FedRAMP Moderate
+    author: OpenAI
+    date: 2026-04-27
+    url: https://openai.com/index/openai-available-at-fedramp-moderate/
+    sourceType: official
+    topicBuckets: [customer, market, risk, legal]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Shows FedRAMP Moderate availability and the procurement path for federal agencies."
+  - id: S032
+    publisher: OpenAI
+    title: Pacific Northwest National Laboratory and OpenAI partner to accelerate federal permitting
+    author: null
+    date: 2026-02-26
+    url: https://openai.com/index/pacific-northwest-national-laboratory/
+    sourceType: official
+    topicBuckets: [customer, market, risk]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Provides benchmark-based evidence and explicit limitations for AI-assisted federal permitting work."
+  - id: S033
+    publisher: OpenAI
+    title: Minnesota’s Enterprise Translation Office uses ChatGPT to bridge language gaps
+    author: null
+    date: 2024-09-26
+    url: https://openai.com/index/state-of-minnesota/
+    sourceType: official
+    topicBuckets: [customer, market, risk]
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    oneLineRelevance: "Provides a state-government translation case with disclosed turnaround, volume, and savings claims."
+  - id: S034
+    publisher: Microsoft
+    title: Microsoft and OpenAI extend partnership
+    author: Microsoft Corporate Blogs
+    date: 2023-01-23
+    url: https://blogs.microsoft.com/blog/2023/01/23/microsoftandopenaiextendpartnership/
+    sourceType: partner-proof
+    topicBuckets: [competition, technology, market]
+    reputationTier: high
+    independence: partner
+    fetchVerified: true
+    oneLineRelevance: "Provides Microsoft’s historical description of the partnership and Azure exclusivity."
+  - id: S035
+    publisher: Competition and Markets Authority
+    title: Microsoft / OpenAI partnership merger inquiry
+    author: null
+    date: 2025-04-15
+    url: https://www.gov.uk/cma-cases/microsoft-slash-openai-partnership-merger-inquiry
+    sourceType: regulatory
+    topicBuckets: [competition, legal, risk]
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    oneLineRelevance: "Provides the CMA’s formal case record and outcome on the Microsoft/OpenAI partnership."
+  - id: S036
+    publisher: Competition and Markets Authority
+    title: CMA seeks views on Microsoft’s partnership with OpenAI
+    author: null
+    date: 2023-12-08
+    url: https://www.gov.uk/government/news/cma-seeks-views-on-microsofts-partnership-with-openai
+    sourceType: regulatory
+    topicBuckets: [competition, legal, risk]
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    oneLineRelevance: "Provides the CMA’s rationale for opening scrutiny over competition and control concerns."
+  - id: S037
+    publisher: U.S. General Services Administration
+    title: GSA Announces New Partnership with OpenAI, Delivering Deep Discount to ChatGPT Gov-Wide Through MAS
+    author: null
+    date: 2025-08-06
+    url: https://www.gsa.gov/about-us/newsroom/news-releases/gsa-announces-new-partnership-with-openai-delivering-deep-discount-to-chatgpt-08062025
+    sourceType: regulatory
+    topicBuckets: [customer, market, legal]
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    oneLineRelevance: "Provides independent procurement evidence for the OneGov $1 ChatGPT Enterprise offer."
+  - id: S038
+    publisher: Amazon Web Services
+    title: Amazon Bedrock Managed Agents, powered by OpenAI
+    author: null
+    date: null
+    url: https://aws.amazon.com/bedrock/managed-agents-openai/
+    sourceType: partner-proof
+    topicBuckets: [market, technology, customer]
+    reputationTier: high
+    independence: partner
+    fetchVerified: true
+    oneLineRelevance: "Provides AWS’s partner-side description of OpenAI-powered managed agents running inside AWS environments."
+  - id: S039
+    publisher: Gradient Labs
+    title: The only AI support agent built for financial services
+    author: null
+    date: null
+    url: https://gradient-labs.ai/
+    sourceType: customer-proof
+    topicBuckets: [customer, market, risk]
+    reputationTier: medium
+    independence: customer
+    fetchVerified: true
+    oneLineRelevance: "Provides customer-side corroboration of Gradient Labs’ finance-specific AI support positioning and compliance emphasis."
+  - id: S040
+    publisher: Choco
+    title: Introducing Choco VoiceAgent, built by Choco in collaboration with OpenAI
+    author: Salama
+    date: 2025-12-04
+    url: https://choco.com/uk/stories/suppliers/introducing-the-choco-voice-agent-built-by-choco-in-collaboration-with-openai
+    sourceType: customer-proof
+    topicBuckets: [customer, market, technology]
+    reputationTier: medium
+    independence: customer
+    fetchVerified: true
+    oneLineRelevance: "Provides customer-side corroboration of Choco’s production voice-ordering deployment using OpenAI’s Realtime API."
+claims:
+  - id: C001
+    statement: "OpenAI markets a single platform across consumer ChatGPT, enterprise ChatGPT, usage-based APIs, and public-sector deployments rather than only a standalone chatbot product."
+    claimType: observed
+    topic: market
+    sourceRefs: [S001, S008, S010, S013, S029]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C002
+    statement: "OpenAI’s current structure pairs nonprofit OpenAI Foundation control with for-profit OpenAI Group PBC after the 2025 recapitalization."
+    claimType: observed
+    topic: governance
+    sourceRefs: [S002]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: null
+  - id: C003
+    statement: "OpenAI’s privacy policy identifies OpenAI Ireland Limited as controller for users in the EEA and Switzerland and OpenAI OpCo, LLC for users elsewhere."
+    claimType: observed
+    topic: legal
+    sourceRefs: [S003]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: null
+  - id: C004
+    statement: "OpenAI monetizes through consumer subscriptions, business and enterprise seat-based products, and usage-based API pricing."
+    claimType: observed
+    topic: business-model
+    sourceRefs: [S008, S009, S010]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C005
+    statement: "ChatGPT plan pages show consumer tiers from Free through Pro, a Business tier listed at SGD 25 per user per month billed annually, and Enterprise sold with custom pricing."
+    claimType: observed
+    topic: business-model
+    sourceRefs: [S009]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: null
+  - id: C006
+    statement: "OpenAI’s API is priced on a usage basis across models and tools, with GPT-5.5 listed at $5 input and $30 output per 1M tokens and Batch API discounts of 50%."
+    claimType: observed
+    topic: business-model
+    sourceRefs: [S008]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: null
+  - id: C007
+    statement: "OpenAI’s enterprise proposition centers on connected company data, shared agents, security controls, and organization-wide deployment support."
+    claimType: observed
+    topic: gtm
+    sourceRefs: [S004, S010, S019]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C008
+    statement: "OpenAI says ChatGPT Enterprise now serves more than 5 million business users across industries."
+    claimType: company-claimed
+    topic: traction
+    sourceRefs: [S010]
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: "Retained as a scale indicator, but it is self-reported by OpenAI."
+  - id: C009
+    statement: "OpenAI says more than 1 million businesses around the world use its products."
+    claimType: company-claimed
+    topic: traction
+    sourceRefs: [S022]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: "Self-reported by OpenAI in a customer-celebration post."
+  - id: C010
+    statement: "OpenAI says ChatGPT now serves more than 800 million weekly users and that consumer adoption is accelerating workplace adoption."
+    claimType: company-claimed
+    topic: market
+    sourceRefs: [S021]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: "Drawn from OpenAI’s enterprise AI report rather than an independent audience-measurement source."
+  - id: C011
+    statement: "OpenAI’s March 2026 funding announcement claims $122 billion of committed capital at an $852 billion post-money valuation and $2 billion of revenue per month."
+    claimType: company-claimed
+    topic: funding
+    sourceRefs: [S015]
+    confidence: low
+    freshness: current
+    corroboration: single-source
+    notes: "Important late-stage diligence datapoints, but not independently corroborated in this standard-depth pass."
+  - id: C012
+    statement: "OpenAI claims enterprise now represents more than 40% of revenue and is on track to reach parity with consumer by the end of 2026."
+    claimType: company-claimed
+    topic: business-model
+    sourceRefs: [S015]
+    confidence: low
+    freshness: current
+    corroboration: single-source
+    notes: "Useful directional mix claim, but self-reported."
+  - id: C013
+    statement: "OpenAI’s business offerings default to no training on customer data and provide controls such as SAML SSO, MFA, encryption, retention controls, and data residency."
+    claimType: observed
+    topic: risk
+    sourceRefs: [S004, S005, S010]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C014
+    statement: "OpenAI is explicitly targeting regulated sectors with dedicated finance, healthcare, education, and government offerings."
+    claimType: observed
+    topic: market
+    sourceRefs: [S011, S012, S013, S018]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C015
+    statement: "OpenAI for Healthcare emphasizes cited medical evidence, HIPAA-supporting controls, BAAs, and early deployments with major health systems."
+    claimType: company-claimed
+    topic: customer
+    sourceRefs: [S018]
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: "Product features are directly observed; named deployments remain company-curated proof."
+  - id: C016
+    statement: "ChatGPT Edu emphasizes campus-wide deployment, privacy controls, SCIM, analytics, and no training on user conversations."
+    claimType: observed
+    topic: customer
+    sourceRefs: [S011]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: null
+  - id: C017
+    statement: "OpenAI’s government go-to-market includes ChatGPT Gov, FedRAMP Moderate, agency deployment on Azure or Azure Government, and procurement through GSA or direct engagement."
+    claimType: observed
+    topic: customer
+    sourceRefs: [S013, S029, S030, S031, S037]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C018
+    statement: "OpenAI for Government says its first Department of Defense pilot has a $200 million ceiling and focuses on administrative, healthcare, acquisition-data, and cyber-defense use cases."
+    claimType: company-claimed
+    topic: customer
+    sourceRefs: [S030]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: "Use cases are framed by OpenAI and subject to OpenAI’s stated usage-policy constraints."
+  - id: C019
+    statement: "GSA independently announced a OneGov deal making ChatGPT Enterprise available to participating U.S. federal agencies at $1 for one year through the Multiple Award Schedule."
+    claimType: third-party-reported
+    topic: gtm
+    sourceRefs: [S037]
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes: null
+  - id: C020
+    statement: "The UK CMA investigated whether the Microsoft/OpenAI relationship created a relevant merger situation before deciding in March 2025 that it did not qualify for investigation under UK merger provisions."
+    claimType: third-party-reported
+    topic: risk
+    sourceRefs: [S035, S036]
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes: null
+  - id: C021
+    statement: "Microsoft’s 2023 corporate blog described Azure as OpenAI’s exclusive cloud provider, underscoring the depth of OpenAI’s dependence on Microsoft at that point."
+    claimType: third-party-reported
+    topic: competition
+    sourceRefs: [S034]
+    confidence: high
+    freshness: historical
+    corroboration: single-source
+    notes: null
+  - id: C022
+    statement: "OpenAI’s April 2026 partnership update says Microsoft remains OpenAI’s primary cloud partner but OpenAI can now serve products across any cloud, while OpenAI revenue-share payments to Microsoft continue through 2030 subject to a cap."
+    claimType: company-claimed
+    topic: competition
+    sourceRefs: [S016]
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: "This is the company’s summary of amended terms rather than the full contract text."
+  - id: C023
+    statement: "OpenAI and AWS expanded distribution in 2026 through Bedrock and managed agents, indicating that multi-cloud distribution is becoming a meaningful part of OpenAI’s enterprise reach."
+    claimType: inferred
+    topic: competition
+    sourceRefs: [S017, S038]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C024
+    statement: "OpenAI is targeting agentic workflows as a major growth vector across sales, IT, finance, coding, reporting, and vendor-risk workflows."
+    claimType: observed
+    topic: product
+    sourceRefs: [S019, S020, S024, S027, S028]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C025
+    statement: "Customer proof spans travel, customer support, food distribution, banking support, media and internet companies, and wealth management, indicating a cross-vertical enterprise footprint."
+    claimType: inferred
+    topic: customer
+    sourceRefs: [S023, S024, S025, S026, S027, S028]
+    confidence: medium
+    freshness: recent
+    corroboration: multi-source
+    notes: "The footprint is real, but many outcome metrics are curated by OpenAI rather than independently audited."
+  - id: C026
+    statement: "Booking.com integrated OpenAI models into travel discovery, Smart Filters, property Q&A, and review summaries, demonstrating consumer-facing travel use cases beyond simple chat assistance."
+    claimType: company-claimed
+    topic: customer
+    sourceRefs: [S023]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: null
+  - id: C027
+    statement: "Zendesk says OpenAI-powered agentic service workflows can reduce setup time from days to minutes and push automation toward 80%."
+    claimType: company-claimed
+    topic: customer
+    sourceRefs: [S024]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: null
+  - id: C028
+    statement: "Choco says OpenAI APIs process more than 8.8 million orders annually and reduce manual order entry by up to 50%, while Choco’s own VoiceAgent post corroborates production use of OpenAI’s Realtime API."
+    claimType: third-party-reported
+    topic: customer
+    sourceRefs: [S025, S040]
+    confidence: medium
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C029
+    statement: "Gradient Labs positions OpenAI models at the core of regulated banking-support automation, and its own website corroborates compliance-focused deployments and high-CSAT claims in financial services."
+    claimType: third-party-reported
+    topic: customer
+    sourceRefs: [S026, S039]
+    confidence: medium
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C030
+    statement: "CyberAgent reports 93% monthly active use of ChatGPT Enterprise across nearly all departments, illustrating the importance of governance and training in scaling seat adoption."
+    claimType: company-claimed
+    topic: gtm
+    sourceRefs: [S027]
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: null
+  - id: C031
+    statement: "Morgan Stanley reports over 98% adoption among advisor teams and cites zero data retention as central to trust in financial-services deployments."
+    claimType: company-claimed
+    topic: customer
+    sourceRefs: [S028]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: null
+  - id: C032
+    statement: "OpenAI’s 2025 enterprise AI report claims weekly ChatGPT Enterprise messages rose roughly 8x year-over-year and 75% of surveyed workers saw speed or quality gains, but the dataset is OpenAI-generated rather than independent."
+    claimType: company-claimed
+    topic: market
+    sourceRefs: [S021]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: "Useful directional market evidence, but not independent survey research."
+  - id: C033
+    statement: "ChatGPT Gov states that more than 90,000 users across more than 3,500 U.S. federal, state, and local agencies had sent over 18 million messages since 2024."
+    claimType: company-claimed
+    topic: market
+    sourceRefs: [S029]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: null
+  - id: C034
+    statement: "PNNL and OpenAI say AI agents could reduce some NEPA drafting work by roughly 15%, but the benchmark explicitly notes source-quality sensitivity, scope limits, and the need for expert review."
+    claimType: company-claimed
+    topic: customer
+    sourceRefs: [S032]
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: "The limitations are a key part of the evidence and should travel with the claim."
+  - id: C035
+    statement: "Minnesota’s Enterprise Translation Office says ChatGPT cut turnaround from weeks to under 48 hours, supported over 3,000 translation requests and 2,000,000 words, and saved over $100,000 per month."
+    claimType: company-claimed
+    topic: customer
+    sourceRefs: [S033]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: "The workflow also included human review and custom GPT refinement."
+  - id: C036
+    statement: "OpenAI’s usage policies restrict high-stakes uses, including licensed advice without professionals, sensitive decisions without human review, and national-security or intelligence uses without OpenAI review and approval."
+    claimType: observed
+    topic: risk
+    sourceRefs: [S007]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: null
+  - id: C037
+    statement: "Trust and transparency disclosures show that OpenAI faces ongoing government-request, child-safety, and DSA reporting obligations that add compliance overhead as the platform scales."
+    claimType: observed
+    topic: risk
+    sourceRefs: [S006]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: null
+  - id: C038
+    statement: "Government demand is gated by procurement and compliance pathways such as FedRAMP, GSA schedules, and government-cloud environments, not just by model performance."
+    claimType: inferred
+    topic: market
+    sourceRefs: [S013, S029, S031, S037, S038]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: null
+  - id: C039
+    statement: "OpenAI does not publicly disclose audited revenue by surface, customer retention, gross margin, or customer concentration across consumer, enterprise, API, and government."
+    claimType: open-question
+    topic: financials
+    sourceRefs: [S015, S021]
+    confidence: low
+    freshness: current
+    corroboration: none
+    notes: "This gap matters because current scale signals rely heavily on management assertions."
+  - id: C040
+    statement: "Independent public evidence on non-U.S. government revenue and procurement scale remains limited relative to the disclosed U.S. public-sector announcements."
+    claimType: open-question
+    topic: market
+    sourceRefs: [S013, S029, S030, S031]
+    confidence: low
+    freshness: current
+    corroboration: none
+    notes: "Public-sector evidence is far richer for the U.S. than for other geographies in this pass."
+openEvidenceGaps:
+  - gap: "Audited segment revenue, retention, gross margin, and customer concentration across consumer, enterprise, API, and government remain undisclosed."
+    impact: high
+    suggestedSource: "Audited financial statements, lender materials, or independently reported investor diligence documents"
+  - gap: "Independent validation of OpenAI’s largest adoption and ROI claims is limited relative to the volume of company-authored customer stories."
+    impact: high
+    suggestedSource: "Independent surveys, public-company filings by major customers, or third-party usage-measurement data"
+  - gap: "Non-U.S. government procurement scale and ongoing public-sector revenue contribution are not well disclosed."
+    impact: medium
+    suggestedSource: "Government procurement databases, agency budget documents, or public contract notices outside the U.S."
+  - gap: "Compute economics, cloud-commitment exposure, and capital-intensity by product line are not visible enough for a robust unit-economics view."
+    impact: high
+    suggestedSource: "Debt documents, cloud-partner disclosures, or detailed management commentary with product-line granularity"

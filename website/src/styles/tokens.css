@@ -1,0 +1,396 @@
+/* FT.com-inspired design tokens (mirrored from the BizIdea website).
+ *
+ * Signature moves:
+ *  - Salmon "newsprint" paper (#fff1e5) — FT's Pantone 1485 page color.
+ *  - Warm near-black ink (#33302e) for text.
+ *  - Claret accent (#990f3d) for the only brand color on the page.
+ *  - Warm hairline rules (#ccc1b7) instead of cool gray.
+ *  - Mona Sans + Noto Sans SC typography stack.
+ */
+
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('https://github.blog/wp-content/themes/github-2021/dist/fonts/mona-sans.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Palette — FT */
+  --paper: #fff1e5;
+  --paper-wheat: #f2dfce;
+  --ink-page: #33302e;
+  --ink-black: #262a33;
+  --caption-gray: #66605c;
+  --disabled-gray: #807973;
+  --hairline: #ccc1b7;
+  --claret: #990f3d;
+  --link-blue: var(--claret);
+  --teal: #0d7680;
+
+  /* Legacy aliases so existing sr-* classes inherit the new palette. */
+  --bg: var(--paper);
+  --ink: var(--ink-page);
+  --muted: var(--caption-gray);
+  --line: var(--hairline);
+  --line-strong: var(--ink-page);
+  --accent: var(--claret);
+  --accent-soft: #f1d7d2;
+  --cream: #fff7ef;
+  --shadow: none;
+
+  /* Type stack */
+  --font-display: 'Mona Sans', 'Noto Sans SC', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-serif:   'Mona Sans', 'Noto Sans SC', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-sans:    'Mona Sans', 'Noto Sans SC', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Courier New', monospace;
+
+  --lh-display-hero: 1.02;
+  --lh-display-block: 1.12;
+  --tracking-display-tight: -0.022em;
+  --tracking-display-snug: -0.015em;
+  --tracking-body: -0.005em;
+  --tracking-eyebrow: 0.06em;
+
+  --fs-2xs:  0.625rem;
+  --fs-xs:   0.6875rem;
+  --fs-sm:   0.8125rem;
+  --fs-base: 1rem;
+  --fs-md:   1.125rem;
+  --fs-lg:   1.375rem;
+  --fs-xl:   1.75rem;
+  --fs-2xl:  clamp(1.625rem, 2.4vw + 0.85rem, 2.125rem);
+  --fs-3xl:  clamp(2rem, 3vw + 0.9rem, 2.75rem);
+
+  --radius-square: 0;
+  --radius-pill: 1920px;
+  --radius-circle: 50%;
+  --rule-hairline: 1px solid var(--hairline);
+  --rule-thin: 1px solid var(--ink-page);
+  --rule-hard: 2px solid var(--ink-page);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 48px;
+  --space-9: 64px;
+
+  --max-width: 1280px;
+  --gutter: 32px;
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink-page);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.55;
+  letter-spacing: var(--tracking-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink-page);
+  font-size: var(--fs-base);
+}
+
+/* Tabular numerals for data-heavy contexts. */
+.bz-tnum,
+table,
+dd,
+.sr-score,
+.sr-stat strong {
+  font-feature-settings: 'tnum' on, 'lnum' on;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--ink-page);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 120ms ease;
+}
+a:hover,
+a:focus-visible {
+  color: var(--claret);
+}
+
+hr {
+  border: 0;
+  border-top: var(--rule-hairline);
+  margin: var(--space-6) 0;
+}
+
+p { margin: 0 0 var(--space-3); line-height: 1.55; }
+
+ul, ol { margin: 0 0 var(--space-3); padding-left: 1.25em; }
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  color: var(--ink-page);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display-tight);
+  line-height: var(--lh-display-block);
+}
+h2, h3 { letter-spacing: var(--tracking-display-snug); }
+
+/* Eyebrow / kicker — small caps, claret. */
+.bz-mono {
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11';
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--claret);
+}
+
+/* ─── Existing sr-* page styles, restyled to match the FT palette ─────── */
+
+.sr-container,
+.bz-container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding: 0 var(--gutter);
+}
+
+@media (max-width: 767px) {
+  :root { --gutter: 16px; }
+}
+
+main { min-height: 70vh; display: block; }
+
+/* IMPORTANT: never use `padding` shorthand on classes that combine with
+   `.sr-container` — it would wipe out the inline gutter. Use padding-block. */
+.sr-hero {
+  border-bottom: var(--rule-hairline);
+  padding-block: var(--space-6) var(--space-7);
+  margin-bottom: var(--space-6);
+}
+.sr-hero .sr-eyebrow,
+.sr-hero .sr-kicker { margin-bottom: var(--space-3); }
+.sr-hero .sr-meta { margin-top: var(--space-4); margin-bottom: 0; }
+
+.sr-eyebrow {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-variant-caps: all-small-caps;
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--claret);
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+}
+
+.sr-hero h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-3xl);
+  letter-spacing: var(--tracking-display-tight);
+  line-height: var(--lh-display-hero);
+  font-weight: 700;
+  margin: 0 0 var(--space-4);
+  max-width: 28ch;
+}
+
+.sr-deck {
+  font-family: var(--font-sans);
+  color: var(--ink-page);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  max-width: 65ch;
+  margin: 0;
+}
+
+.sr-section {
+  border-top: var(--rule-hairline);
+  padding-block: var(--space-6) 0;
+  margin-block: 0 var(--space-7);
+}
+.sr-section--plain { border-top: 0; padding-top: 0; }
+.sr-section h2 {
+  font-family: var(--font-sans);
+  font-variant-caps: all-small-caps;
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--claret);
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+  margin: 0 0 var(--space-4);
+}
+.sr-section h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  line-height: var(--lh-display-block);
+  letter-spacing: var(--tracking-display-snug);
+  font-weight: 700;
+  margin: 0 0 var(--space-3);
+}
+
+.sr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  column-gap: var(--space-6);
+  row-gap: 0;
+}
+
+.sr-card {
+  display: block;
+  background: transparent;
+  border-top: var(--rule-hairline);
+  padding-block: var(--space-5) var(--space-6);
+  text-decoration: none;
+  color: var(--ink-page);
+}
+.sr-card:hover h3,
+.sr-card:hover h4 { color: var(--claret); }
+.sr-card.is-featured { border-top: 0; padding-top: 0; }
+.sr-card > p { color: var(--ink-page); margin-top: var(--space-2); }
+.sr-card .sr-kicker { display: inline-block; margin-bottom: var(--space-2); }
+
+.sr-card h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  line-height: var(--lh-display-block);
+  letter-spacing: var(--tracking-display-snug);
+  font-weight: 700;
+  margin: 0 0 var(--space-3);
+  transition: color 120ms ease;
+}
+.sr-card h3 + p,
+.sr-card .sr-meta + h3 { margin-top: 0; }
+
+.sr-meta {
+  font-family: var(--font-sans);
+  color: var(--caption-gray);
+  font-size: var(--fs-sm);
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+  line-height: 1.4;
+  margin-bottom: var(--space-2);
+}
+
+.sr-kicker {
+  font-family: var(--font-sans);
+  font-variant-caps: all-small-caps;
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--claret);
+}
+
+.sr-pill {
+  display: inline-flex;
+  align-items: center;
+  border: var(--rule-hairline);
+  padding: 2px var(--space-3);
+  color: var(--ink-page);
+  background: transparent;
+  font-family: var(--font-sans);
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
+  letter-spacing: var(--tracking-eyebrow);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+  line-height: 1.6;
+}
+.sr-pill:hover { color: var(--claret); border-color: var(--claret); }
+
+.sr-score { color: var(--claret); font-weight: 700; }
+
+.sr-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+  border-top: 1px solid var(--ink-page);
+  border-bottom: 1px solid var(--ink-page);
+  font-family: var(--font-sans);
+}
+.sr-table th, .sr-table td {
+  text-align: left;
+  padding: var(--space-3) var(--space-3);
+  border-bottom: var(--rule-hairline);
+  vertical-align: top;
+  font-size: var(--fs-sm);
+}
+.sr-table th {
+  color: var(--claret);
+  font-variant-caps: all-small-caps;
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  font-size: var(--fs-sm);
+}
+
+.sr-input {
+  width: 100%;
+  border: var(--rule-thin);
+  background: var(--paper);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  color: var(--ink-page);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display-snug);
+}
+.sr-input:focus { outline: none; border-color: var(--claret); }
+.sr-input::placeholder { color: var(--caption-gray); }
+
+.sr-muted { color: var(--caption-gray); }
+
+.sr-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+  gap: var(--space-7);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .sr-split { grid-template-columns: 1fr; gap: var(--space-5); }
+}
+
+.sr-stat {
+  border-top: var(--rule-hairline);
+  padding: var(--space-4) 0;
+  font-family: var(--font-sans);
+  color: var(--caption-gray);
+  font-size: var(--fs-sm);
+}
+.sr-stat strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  letter-spacing: var(--tracking-display-tight);
+  line-height: 1;
+  color: var(--claret);
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}

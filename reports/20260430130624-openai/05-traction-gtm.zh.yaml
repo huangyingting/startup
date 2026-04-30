@@ -1,0 +1,100 @@
+schemaVersion: startup-diligence-v2
+artifact: traction-gtm
+slug: openai
+runDate: 2026-04-30
+company:
+  name: OpenAI
+tractionSummary:
+  overallSignal: strong
+  rationale: "OpenAI 在消费者 ChatGPT、商业与企业工作区、按用量计费 API 和政府部署上展现出真实的商业广度。具名客户、合作伙伴和采购证明强化了这一信号，但用户、企业和收入等最大规模指标仍主要来自公司自报，而非独立审计。"
+  confidence: medium
+  claimRefs: [C001, C008, C009, C010, C011, C017, C019, C023, C025]
+tractionSignals:
+  - signalType: users
+    signal: "OpenAI 表示，ChatGPT 目前拥有超过 800 million 周活跃用户。"
+    strength: high
+    freshness: recent
+    independentValidation: false
+    claimRefs: [C010]
+  - signalType: customers
+    signal: "OpenAI 表示，全球已有超过 1 million 家企业在使用其产品。"
+    strength: high
+    freshness: recent
+    independentValidation: false
+    claimRefs: [C009]
+  - signalType: users
+    signal: "OpenAI 表示，ChatGPT Enterprise 已服务于跨行业超过 5 million 名企业用户。"
+    strength: high
+    freshness: current
+    independentValidation: false
+    claimRefs: [C008]
+  - signalType: revenue
+    signal: "OpenAI 声称其月收入约为 $2 billion，并表示企业业务已占收入的 more than 40%。"
+    strength: high
+    freshness: current
+    independentValidation: false
+    claimRefs: [C011, C012]
+  - signalType: customers
+    signal: "来自 Choco 与 Gradient Labs 的客户侧和多来源证据，佐证了食品分销与受监管金融服务工作流中的生产部署。"
+    strength: medium
+    freshness: current
+    independentValidation: true
+    claimRefs: [C028, C029]
+  - signalType: regulatory-approval
+    signal: "FedRAMP Moderate 可用性、ChatGPT Gov 以及覆盖 GSA 的采购方案，使其联邦销售路径从探索性试点转向真实可执行。"
+    strength: high
+    freshness: current
+    independentValidation: true
+    claimRefs: [C017, C019]
+  - signalType: partnerships
+    signal: "AWS Bedrock managed agents 与修订后的 Microsoft 关系，使 OpenAI 的企业分发不再只依赖单一直接渠道。"
+    strength: medium
+    freshness: current
+    independentValidation: true
+    claimRefs: [C022, C023]
+gtmMotion:
+  primaryMotion: hybrid
+  buyer: "个人订阅用户、工程与产品负责人、CIO 与 CDO、业务职能负责人，以及与采购流程对齐的公共部门买方。"
+  user: "消费者、知识工作者、开发者、企业运营人员和公共部门员工。"
+  channels:
+    - "自助式 ChatGPT 套餐"
+    - "面向 ChatGPT、智能体和行业解决方案的直接企业销售"
+    - "开发者自助与销售协同的 API 采用"
+    - "通过 Microsoft 和 AWS 实现的云合作伙伴分发"
+    - "通过 GSA、FedRAMP 和直接合作推进的政府采购"
+  salesCycleHypothesis: medium
+  claimRefs: [C001, C004, C007, C014, C017, C019, C023]
+pricingAndPackaging:
+  observedPricing: "消费者 ChatGPT 套餐覆盖 Free 至 Pro，ChatGPT Business 标价为每位用户每月 SGD 25（按年计费），Enterprise 为定制定价，API 则按模型与工具使用量计费。"
+  pricingModel: hybrid
+  packagingNotes: "OpenAI 按买方类型与工作流对平台进行差异化封装，包括消费者订阅、商业与企业席位、按用量计费 API、ChatGPT Edu、医疗产品包、政府版本、Codex，以及共享或托管智能体。"
+  claimRefs: [C004, C005, C006, C014, C017, C024]
+retentionExpansionSignals:
+  evidence:
+    - "OpenAI 声称企业业务已贡献 more than 40% 的收入，并正朝与消费者业务持平推进，这说明其收入结构正在从单一消费者界面向外扩展。"
+    - "企业产品封装围绕连接公司数据、共享智能体、安全控制和部署支持，这些能力在上线后有望加深工作流嵌入。"
+    - "CyberAgent 报告称几乎所有部门的月活使用率达到 93%，Morgan Stanley 则报告在核心工作流中顾问团队采用率超过 98%。"
+    - "通过 FedRAMP、ChatGPT Gov 和 GSA 打通的政府采购路径，能够支持从试点走向更广泛的机构使用扩张。"
+  concerns:
+    - "OpenAI 未公开披露按业务界面划分的毛留存、净留存、流失率或 cohort 扩张数据。"
+    - "许多最醒目的采用和 ROI 指标来自公司自报或整理后的客户案例，而非独立审计。"
+    - "大型落地看起来仍需要治理、培训、评测和人工复核流程，这可能拉长部署与续约周期。"
+    - "即使终端用户采用强劲，云与渠道依赖仍可能影响经济性。"
+  confidence: medium
+  claimRefs: [C007, C012, C017, C019, C021, C022, C030, C031, C032, C038, C039]
+gtmRisks:
+  - risk: "关于企业使用、客户和收入的大多数核心规模指标都来自公司自报，而对付费留存质量的公开证据仍有限。"
+    severity: high
+    claimRefs: [C008, C009, C010, C011, C039]
+  - risk: "企业和政府增长依赖安全审查、采购与合规门槛，而不是单纯依靠产品拉力。"
+    severity: high
+    claimRefs: [C013, C017, C019, C038]
+  - risk: "客户价值兑现通常需要治理、赋能、评测和人工复核，这会拖慢扩张与续约。"
+    severity: medium
+    claimRefs: [C007, C030, C032, C036]
+  - risk: "尽管 AWS 扩大了触达范围，Microsoft 仍是 OpenAI 的主要云与经济合作伙伴，因此合作方依赖会影响定价和利润率结果。"
+    severity: high
+    claimRefs: [C021, C022, C023]
+  - risk: "即便存在技术需求，使用政策限制仍缩小了部分高风险和国家安全用例。"
+    severity: medium
+    claimRefs: [C036]

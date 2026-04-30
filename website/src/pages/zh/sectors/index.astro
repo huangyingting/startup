@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { sortNewest, tagSlug } from '../../../lib/reports';
+
+const reports = sortNewest(await getCollection('reports'));
+const sectors = [...reports.reduce((map, entry) => {
+  const sector = entry.data.company.sector ?? 'Other';
+  const list = map.get(sector) ?? [];
+  list.push(entry);
+  map.set(sector, list);
+  return map;
+}, new Map<string, typeof reports>()).entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+---
+<BaseLayout title="赛道索引 — 创业研究" description="按市场类别筛选报告库。" lang="zh">
+  <section class="sr-container sr-hero">
+    <h1>赛道索引。</h1>
+    <p class="sr-deck">按市场类别筛选报告库，从企业 AI 到气候、医疗、消费和金融科技机会。</p>
+  </section>
+  <section class="sr-container sr-section">
+    <h2>赛道</h2>
+    <div class="sr-grid">
+      {sectors.map(([sector, entries]) => {
+        const avg = entries.reduce((sum, entry) => sum + entry.data.overallScore, 0) / entries.length;
+        return (
+          <a class="sr-card" href={`#${tagSlug(sector)}`} id={tagSlug(sector)}>
+            <div class="sr-kicker">{sector}</div>
+            <h3>{entries.length} 份报告</h3>
+            <p>平均评分 {avg.toFixed(1)} · 最近月份 {entries[0].data.runDate.slice(0, 7)}</p>
+            <span class="sr-pill">打开赛道 →</span>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+</BaseLayout>
