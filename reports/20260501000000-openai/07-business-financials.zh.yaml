@@ -1,0 +1,123 @@
+schemaVersion: startup-diligence-v3
+artifact: business-financials
+slug: openai
+runDate: 2026-05-01
+company:
+  name: OpenAI
+businessModel:
+  model: '一个多界面 AI 平台，通过消费者订阅、企业席位、按量计费 API，以及直销或伙伴主导的行业部署实现商业化'
+  revenueStreams:
+    - 消费者订阅
+    - 企业与商业席位订阅
+    - 按量计费的 API 收入
+    - 通过直销或伙伴渠道销售的行业与政府部署
+  marginProfileHypothesis: '综合毛利率可能低于顶级 SaaS 水平，因为高价值软件收入会被推理算力强度、伙伴云经济、 安全运营以及潜在数据中心或基础设施成本所稀释。'
+  operatingLeverageHypothesis: '数字化分发与自助式界面可以高效扩张，但 OpenAI 的重招聘、基础设施扩张以及安全/治理负担意味着，其中短期经营杠杆可能落后于收入增长。'
+  claimRefs: [C007, C009, C011, C013, C038, C044, C046]
+historicalFinancials:
+  - fiscalYear: 2026
+    revenueUsdM: 24000
+    grossMarginPct: null
+    operatingMarginPct: null
+    fcfMarginPct: null
+    employeesEoy: null
+    sourceType: estimate
+    estimateBasis: '将公司自报的 2026 年 3 月约 20 亿美元月收入按 $2 billion × 12 = $24 billion 年化，得到约 24000 的运行率。这并非经审计的财年收入。'
+    claimRefs: [C038]
+knownFinancials:
+  revenue: 'OpenAI 声称其在 2026 年 3 月的月收入约为 20 亿美元，对应约 240 亿美元的年化运行率。'
+  arr: null
+  grossMargin: '当前来源集合未公开披露。'
+  burnRate: '当前来源集合未公开披露。'
+  cashRunway: '当前来源集合未公开披露。'
+  valuation: 'OpenAI 声称其 2026 年 3 月融资后的 post-money 估值为 8520 亿美元。'
+  claimRefs: [C038, C039]
+funding:
+  totalRaisedUsdM: null
+  totalRaised: '至少有 1220 亿美元的承诺资本在 2026 年 3 月轮次中被披露，但当前来源集合无法支持对历史累计融资总额进行干净汇总。'
+  latestRoundDate: 2026-03-31
+  latestRoundAmountUsdM: 122000
+  latestRound: '公司披露已承诺资本的私人融资'
+  postMoneyValuationUsdM: 852000
+  leadInvestors: []
+  investorQualitySignal: unknown
+  claimRefs: [C038]
+unitEconomicsQuant:
+  arpaOrAcvUsd: null
+  grossRetentionPct: null
+  netRetentionPct: null
+  cacUsd: null
+  cacPaybackMonths: null
+  contributionMarginPct: null
+  ltvUsd: null
+  ltvToCac: null
+  estimateBasis: '公开证据未披露消费者、企业、API 或政府界面的 ACV/ARPA、cohort 留存、CAC、贡献利润率或 LTV。'
+  confidence: low
+  claimRefs: [C007, C008, C009, C039]
+unitEconomicsNarrative:
+  arpaOrAcv: '商业化横跨消费者订阅、企业席位销售与按量计费 API，但并未公开披露加权 ARPA 或 ACV。'
+  grossRetention: '未公开披露。'
+  netRetention: '未公开披露。'
+  cacPayback: '未公开披露。'
+  contributionMargin: '算力强度与伙伴云依赖意味着利润率承压，但公开证据不足以量化贡献利润率。'
+  confidence: low
+  claimRefs: [C007, C009, C039, C044]
+capitalEfficiency:
+  burnMultiple: null
+  magicNumber: null
+  ruleOf40: null
+  capitalConsumedToArrRatio: null
+  estimateBasis: '由于当前来源集合未公开披露经审计的收入增长、自由现金流、销售效率与烧钱水平，因此无法计算 burn multiple、magic number 与 Rule of 40。CapitalConsumedToArrRatio 也保持为 null，因为披露的 1220 亿美元对应的是最新一轮融资，而这里的公开来源未给出清晰的累计资本基数。'
+  confidence: low
+  claimRefs: [C038, C039, C044]
+capTableSummary:
+  optionPoolSizePct: null
+  founderOwnershipPct: null
+  largestInvestorPct: 27
+  knownPreferences: null
+  notes: '当前结构页面显示，OpenAI Foundation 持有 OpenAI Group 的 26%，Microsoft 持有约 27%，现任或前任员工及投资者持有剩余 47%。当前来源集合中的公开证据并未单独披露创始人持股、期权池规模或优先条款。'
+  claimRefs: [C004, C005]
+scenarioModel:
+  note: '这些情景是低置信度的方向性估计，以公司自报的 2026 年 3 月收入运行率为锚，并根据执行、竞争、监管与资本强度结果进行调整，而非基于经审计的财务历史。'
+  scenarios:
+    - name: downside
+      revenueRangeYear3: $32 billion to $39 billion
+      revenueYear3UsdMLow: 32000
+      revenueYear3UsdMHigh: 39000
+      marginDirection: deteriorating
+      capitalNeed: '如果增长放缓而基础设施承诺仍居高不下，则可能需要额外外部资本、结构化算力融资，或更严格的支出控制。'
+      keyAssumptions:
+        - '起点是以公司自报的 2026 年 3 月 20 亿美元月收入推导出的低置信度 240 亿美元年化收入运行率。'
+        - '假设未来三年年化收入增长约为 10% 到 18%，因为竞争、监管与商业化质量都不如头条式采用数字那样有利。'
+        - '假设算力、安全与部署成本相对于收入增长仍保持高位。'
+      confidence: low
+      claimRefs: [C038, C039, C044, C046, C048]
+    - name: base
+      revenueRangeYear3: $41 billion to $54 billion
+      revenueYear3UsdMLow: 41000
+      revenueYear3UsdMHigh: 54000
+      marginDirection: improving
+      capitalNeed: '2026 年 3 月融资可能足以支撑基准情景，但持续的基础设施与伙伴云承诺仍会使资本需求保持实质性。'
+      keyAssumptions:
+        - '起点仍是同样低置信度的 240 亿美元年化收入运行率。'
+        - '假设企业、开发者与公共部门采用继续扩张，从而带来约 20% 到 31% 的年化收入增长。'
+        - '假设向企业和更高价值工作流的结构性倾斜，使商业化改善速度快于运营成本上升。'
+      confidence: low
+      claimRefs: [C018, C022, C030, C038, C048, C050]
+    - name: upside
+      revenueRangeYear3: $59 billion to $79 billion
+      revenueYear3UsdMLow: 59000
+      revenueYear3UsdMHigh: 79000
+      marginDirection: improving
+      capitalNeed: '即便在上行情景下，OpenAI 仍可能持续消耗极大规模的算力与部署支出，只是更强的收入可部分为扩张自我供血。'
+      keyAssumptions:
+        - '起点仍是同样低置信度的 240 亿美元年化收入运行率。'
+        - '假设如果 OpenAI 能在消费者、企业、开发者与政府渠道上维持类目领先，则可实现约 35% 到 49% 的年化增长。'
+        - '假设工作流深度与企业收入占比的改善，足以抵消部分算力强度与伙伴经济压力。'
+      confidence: low
+      claimRefs: [C018, C022, C031, C038, C041, C048, C050]
+financialVerdict:
+  assessment: uncertain
+  rationale: 'OpenAI 看起来已经在订阅、企业席位与 API 使用上实现了真实且异常大的商业化规模，但公开财务透明度仍不足以支持高置信度承销。收入规模声明很有吸引力，但毛利率、烧钱、留存、资本效率与分部结构仍不透明，而前沿模型开发在结构上看仍高度资本密集。'
+  confidence: medium
+  claimRefs: [C007, C038, C039, C044, C046, C048]

@@ -1,0 +1,148 @@
+schemaVersion: startup-diligence-v3
+artifact: product-technology
+slug: openai
+runDate: 2026-05-01
+company:
+  name: OpenAI
+productOverview:
+  oneLine: 'OpenAI 销售的是一个多界面的前沿 AI 平台，覆盖 ChatGPT 工作区、开发者 API、Codex、受管智能体，以及面向企业、教育和政府买方的行业部署。'
+  currentProducts:
+    - ChatGPT
+    - ChatGPT Business
+    - ChatGPT Enterprise
+    - ChatGPT Edu
+    - ChatGPT Gov
+    - OpenAI API platform
+    - Codex
+    - Managed Agents
+    - Realtime API
+  primaryUseCases:
+    - 面向消费者与知识工作者的通用 AI 辅助
+    - 企业知识访问与工作流自动化
+    - 软件开发与编程支持
+    - 嵌入式多模态与语音工作流
+    - 面向教育、金融和政府场景的合规部署
+  maturity: scaling
+  claimRefs: [C012, C014, C022, C029, C030]
+workflowFit:
+  jobsToBeDone:
+    - job: '围绕通用知识工作任务进行起草、总结、研究与问答'
+      user: '个人专业人士、学生与团队'
+      frequency: daily
+      painSeverity: medium
+      claimRefs: [C012]
+    - job: '在受管工作区内，围绕已连接的公司工具查询内部知识并执行任务'
+      user: '企业知识工作者与职能团队'
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C013, C030]
+    - job: '通过 API 与编码工具构建 AI 功能、自动化编码并编排智能体工作流'
+      user: '开发者与 AI 产品团队'
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C012, C030, C031]
+    - job: '在文本、语音与交易系统之间自动化重复性的支持与运营工作流'
+      user: '运营、支持与一线团队'
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C023, C028, C029, C030]
+    - job: '在政府及受监管环境中部署安全的内部 AI 辅助能力'
+      user: '政府与受监管行业团队'
+      frequency: daily
+      painSeverity: high
+      claimRefs: [C014, C017, C019]
+technologyStack:
+  coreTechnology: '公开材料表明，这是一套分层平台：前沿模型通过 ChatGPT SaaS 界面、按量计费 API、编码工具、实时接口与受管智能体产品交付。'
+  proprietaryElements:
+    - '覆盖 ChatGPT 工作区、API、Codex、受管智能体以及政府专用版本的一体化产品界面'
+    - '企业连接器、共享工作区、管理控制与智能体工作流功能'
+    - '用于嵌入式运营场景的实时与多模态工作流支持'
+  thirdPartyDependencies:
+    - '在当前商业条款下，Microsoft Azure 仍是主要云合作伙伴，也是 OpenAI 产品的首发目的地'
+    - 'AWS Bedrock 及相关 AWS 分发如今可在 AWS 环境内提供 OpenAI 模型、Codex 与受管智能体'
+  dataDependencies:
+    - 'ChatGPT 与 API 工作流中的客户输入与输出数据'
+    - '通过企业连接器与工作区应用访问的公司内部数据与工具'
+    - '客户系统中用于支持与运营自动化的运营与交易数据'
+  integrationSurface:
+    - 'ChatGPT 共享工作区与管理员管理的企业产品'
+    - '面向模型访问、编码、智能体与实时场景的 API'
+    - 'SAML 与 SCIM 等企业身份与生命周期控制'
+    - '面向公司工具的内部数据连接器与应用'
+    - '通过 Azure、Azure Government、AWS 与 AWS GovCloud 的伙伴云部署路径'
+    - '与客户运营系统的嵌入式集成，例如与 ERP 连接的语音订货流程'
+  architectureNotes: '公开架构更像一个分层平台，而非单一模型端点：直接面向用户的 ChatGPT 产品位于开发者 API 与编码/智能体界面之上，而企业价值则取决于能否在管理员、留存与合规控制下连接客户数据与工具。其分发正在变得更加多云，但由于 Microsoft 仍是主要云伙伴，即便 AWS 交付能力扩展，伙伴云依赖依旧具有实质性。'
+  claimRefs: [C010, C012, C013, C015, C017, C029, C031, C033, C050]
+securityCompliance:
+  certifications:
+    - SOC 2 Type 2
+    - ISO 27001 family certifications
+    - ISO 42001
+  auditsOnRecord:
+    - Independent SOC 2 Type 2 examination for API and ChatGPT business product services
+  dataResidencyOptions:
+    - Data residency for eligible business products
+    - Government deployment paths in Azure Government and AWS GovCloud
+  knownIncidents: []
+  postureNotes: 'OpenAI 表示，默认情况下不会将企业与 API 客户数据用于训练，并通过加密、留存控制、管理功能以及企业身份支持来保护这些数据。公开材料还提到 DPA 或 BAA 支持、审计可见性、对敏感部署的明确使用政策限制，以及董事会层面的安全与安保监督；与此同时，透明度披露也显示，审核与法律流程义务在其规模下已具有实质性。'
+  claimRefs: [C010, C017, C020, C021, C036, C042]
+ipPortfolio:
+  patentsGrantedCount: null
+  patentsPendingCount: null
+  trademarks: []
+  openSourceLicensingNotes: null
+  claimRefs: []
+productRoadmap:
+  publiclyDisclosedItems:
+    - item: 'OpenAI 模型、Codex 与受管智能体正在 AWS 环境中分发'
+      timeframe: shipped
+      sourceType: announcement
+      claimRefs: [C031]
+    - item: 'OpenAI 现在可以在任何云提供商上交付产品，同时 Azure 仍是主要云合作伙伴和首发目的地'
+      timeframe: shipped
+      sourceType: announcement
+      claimRefs: [C033]
+    - item: '政府产品打包仍在围绕 ChatGPT Gov、FedRAMP 20x Moderate 定位以及 AWS GovCloud 部署路径持续强化'
+      timeframe: near
+      sourceType: announcement
+      claimRefs: [C017]
+    - item: '在数据中心设计、安全、调查、前线部署工程、政府、商业化与财务等领域，招聘仍然十分密集'
+      timeframe: near
+      sourceType: careers
+      claimRefs: [C011]
+  notes: null
+technicalDefensibility:
+  strengths:
+    - '横跨消费者、企业、政府、API、编码与智能体界面的广度，为 OpenAI 带来多个产品切入点与反馈回路'
+    - '通过连接器、管理控制、留存策略与合规材料强化企业能力，降低了受监管采购环境中的采用摩擦'
+    - '客户证据表明，OpenAI 可支撑编码、支持、金融与运营中的高价值工作流，而不只是轻量提示式使用'
+    - '通过直销产品、与 Azure 相关的渠道、AWS 以及政府采购进行多渠道分发，扩大了覆盖范围'
+  limitations:
+    - '平台广度比深度锁定更清晰；部分差异化来自打包、渠道覆盖与变更管理，而非单一孤立产品界面'
+    - '高风险工作流仍受使用政策限制、评测要求与人工复核需求约束'
+    - '尽管 AWS 访问能力在扩展，但由于 Microsoft 仍是主要云伙伴，伙伴云依赖依旧实质存在'
+  copyabilityRisk: medium
+  confidence: medium
+  claimRefs: [C010, C012, C013, C019, C021, C023, C025, C030, C031, C033, C042, C050]
+productRisks:
+  - risk: '即便 OpenAI 已通过 AWS 及更广泛的多云交付扩展渠道，云与平台依赖仍具实质性，因为 Microsoft 仍是主要云合作伙伴。'
+    severity: high
+    rationale: 'OpenAI 比以往拥有更多渠道灵活性，但分发与部署仍部分嵌入大型云伙伴体系，这些伙伴会影响经济性、功能可得性与客户触达。'
+    claimRefs: [C031, C032, C033, C050]
+  - risk: '高风险与受监管工作流仍受政策与监督要求约束。'
+    severity: high
+    rationale: 'OpenAI 的使用政策对持牌建议与敏感决策工作流施加限制或条件，而金融领域客户证据也表明，评测纪律与人工复核仍属必要。'
+    claimRefs: [C021, C024, C026]
+  - risk: '随着规模扩大，运营复杂性也在上升。'
+    severity: medium
+    rationale: '审核负担、法律流程请求、安全治理以及领导层流动都表明，随着采用扩张，产品组织必须处理的不仅是模型质量本身。'
+    claimRefs: [C020, C036, C045, C046]
+  - risk: '企业落地成功依赖集成、治理与变更管理，而不仅仅是原始模型能力。'
+    severity: medium
+    rationale: 'OpenAI 的价值主张依赖连接器、管理控制、培训与采用支持，这些因素可能拖慢价值实现并为替代方案留出空间。'
+    claimRefs: [C013, C025, C030]
+productVerdict:
+  assessment: strong
+  rationale: 'OpenAI 已拥有一个具备规模的多界面产品平台，企业加固能力、工作流广度以及超越实验阶段的生产级使用证据都较为可信。关键保留在于，广度不应被误认为不可攻破的护城河：伙伴云依赖、高风险领域中的政策限制，以及落地复杂性，都会影响产品耐久性。'
+  confidence: medium
+  claimRefs: [C010, C012, C013, C021, C023, C031, C033, C042, C050]

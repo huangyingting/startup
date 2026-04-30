@@ -1,0 +1,123 @@
+schemaVersion: startup-diligence-v3
+artifact: business-financials
+slug: openai
+runDate: 2026-05-01
+company:
+  name: OpenAI
+businessModel:
+  model: Multi-surface AI platform monetizing consumer subscriptions, business and enterprise seats, usage-based APIs, and direct or partner-led sector deployments
+  revenueStreams:
+    - consumer subscriptions
+    - business and enterprise seat subscriptions
+    - usage-based API revenue
+    - sector and government deployments sold through direct or partner channels
+  marginProfileHypothesis: Blended gross margin is likely below elite SaaS levels because high-value software revenue is offset by inference-compute intensity, partner-cloud economics, safety operations, and potential datacenter or infrastructure costs.
+  operatingLeverageHypothesis: Digital distribution and self-serve surfaces can scale efficiently, but OpenAI's heavy hiring, infrastructure expansion, and safety or governance load imply that near-term operating leverage may lag topline growth.
+  claimRefs: [C007, C009, C011, C013, C038, C044, C046]
+historicalFinancials:
+  - fiscalYear: 2026
+    revenueUsdM: 24000
+    grossMarginPct: null
+    operatingMarginPct: null
+    fcfMarginPct: null
+    employeesEoy: null
+    sourceType: estimate
+    estimateBasis: "Annualized the company-reported March 2026 monthly revenue claim of about $2 billion using $2 billion × 12 = $24 billion run-rate. This is not audited fiscal-year revenue."
+    claimRefs: [C038]
+knownFinancials:
+  revenue: OpenAI claimed about $2 billion in monthly revenue in March 2026, implying roughly $24 billion annualized run-rate.
+  arr: null
+  grossMargin: Not publicly disclosed in the current source set.
+  burnRate: Not publicly disclosed in the current source set.
+  cashRunway: Not publicly disclosed in the current source set.
+  valuation: OpenAI claimed an $852 billion post-money valuation for the March 2026 financing.
+  claimRefs: [C038, C039]
+funding:
+  totalRaisedUsdM: null
+  totalRaised: At least $122 billion of committed capital was disclosed for the March 2026 round, but the current source set does not support a clean cumulative total including prior financings.
+  latestRoundDate: 2026-03-31
+  latestRoundAmountUsdM: 122000
+  latestRound: Private financing with committed capital disclosed by the company
+  postMoneyValuationUsdM: 852000
+  leadInvestors: []
+  investorQualitySignal: unknown
+  claimRefs: [C038]
+unitEconomicsQuant:
+  arpaOrAcvUsd: null
+  grossRetentionPct: null
+  netRetentionPct: null
+  cacUsd: null
+  cacPaybackMonths: null
+  contributionMarginPct: null
+  ltvUsd: null
+  ltvToCac: null
+  estimateBasis: Public evidence does not disclose ACV or ARPA, cohort retention, CAC, contribution margin, or LTV across consumer, enterprise, API, or government surfaces.
+  confidence: low
+  claimRefs: [C007, C008, C009, C039]
+unitEconomicsNarrative:
+  arpaOrAcv: Monetization spans consumer subscriptions, enterprise seat sales, and usage-based API billing, but no weighted ARPA or ACV is publicly disclosed.
+  grossRetention: Not publicly disclosed.
+  netRetention: Not publicly disclosed.
+  cacPayback: Not publicly disclosed.
+  contributionMargin: Compute intensity and partner-cloud dependence imply margin pressure, but public evidence is insufficient to quantify contribution margin.
+  confidence: low
+  claimRefs: [C007, C009, C039, C044]
+capitalEfficiency:
+  burnMultiple: null
+  magicNumber: null
+  ruleOf40: null
+  capitalConsumedToArrRatio: null
+  estimateBasis: Burn multiple, magic number, and Rule of 40 cannot be computed from the current source set because audited revenue growth, free cash flow, sales efficiency, and burn are not publicly disclosed. CapitalConsumedToArrRatio is also left null because the disclosed $122 billion refers to the latest round and public sources here do not provide a clean cumulative capital base.
+  confidence: low
+  claimRefs: [C038, C039, C044]
+capTableSummary:
+  optionPoolSizePct: null
+  founderOwnershipPct: null
+  largestInvestorPct: 27
+  knownPreferences: null
+  notes: The current structure page says the OpenAI Foundation owns 26% of OpenAI Group, Microsoft holds roughly 27%, and current or former employees and investors hold the remaining 47%. Public evidence in this source set does not isolate founder ownership, option-pool size, or preferred terms.
+  claimRefs: [C004, C005]
+scenarioModel:
+  note: Scenarios are low-confidence directional estimates anchored to the company-reported March 2026 revenue run-rate and adjusted for execution, competitive, regulatory, and capital-intensity outcomes rather than audited financial history.
+  scenarios:
+    - name: downside
+      revenueRangeYear3: $32 billion to $39 billion
+      revenueYear3UsdMLow: 32000
+      revenueYear3UsdMHigh: 39000
+      marginDirection: deteriorating
+      capitalNeed: Potential need for additional external capital, structured compute financing, or tighter spending controls if growth slows while infrastructure commitments remain elevated.
+      keyAssumptions:
+        - Starts from a low-confidence $24 billion annualized revenue run-rate derived from the company-reported March 2026 $2 billion monthly revenue figure.
+        - Assumes roughly 10% to 18% annualized topline growth over three years because competition, regulation, and monetization quality are less favorable than headline adoption suggests.
+        - Assumes compute, safety, and deployment costs remain heavy relative to revenue growth.
+      confidence: low
+      claimRefs: [C038, C039, C044, C046, C048]
+    - name: base
+      revenueRangeYear3: $41 billion to $54 billion
+      revenueYear3UsdMLow: 41000
+      revenueYear3UsdMHigh: 54000
+      marginDirection: improving
+      capitalNeed: The March 2026 financing could support the base case, but ongoing infrastructure and partner-cloud commitments would still keep capital needs material.
+      keyAssumptions:
+        - Starts from the same low-confidence $24 billion annualized revenue run-rate anchor.
+        - Assumes roughly 20% to 31% annualized topline growth as enterprise, developer, and public-sector adoption keep expanding.
+        - Assumes some mix shift toward enterprise and higher-value workflows improves monetization faster than operating costs.
+      confidence: low
+      claimRefs: [C018, C022, C030, C038, C048, C050]
+    - name: upside
+      revenueRangeYear3: $59 billion to $79 billion
+      revenueYear3UsdMLow: 59000
+      revenueYear3UsdMHigh: 79000
+      marginDirection: improving
+      capitalNeed: Even in the upside case, OpenAI would likely continue absorbing very large compute and deployment spend, though stronger revenue could partially self-fund expansion.
+      keyAssumptions:
+        - Starts from the same low-confidence $24 billion annualized revenue run-rate anchor.
+        - Assumes roughly 35% to 49% annualized growth if OpenAI sustains category leadership across consumer, enterprise, developer, and government channels.
+        - Assumes workflow depth and enterprise mix improve enough to offset some compute intensity and partner economics.
+      confidence: low
+      claimRefs: [C018, C022, C031, C038, C041, C048, C050]
+financialVerdict:
+  assessment: uncertain
+  rationale: OpenAI appears to have real and unusually large monetization across subscriptions, enterprise seats, and API usage, but public financial transparency is still too limited for high-confidence underwriting. Revenue scale claims are compelling, yet gross margin, burn, retention, capital efficiency, and segment mix remain opaque while frontier-model development appears structurally capital intensive.
+  confidence: medium
+  claimRefs: [C007, C038, C039, C044, C046, C048]

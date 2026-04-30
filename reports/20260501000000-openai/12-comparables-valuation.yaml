@@ -1,0 +1,66 @@
+schemaVersion: startup-diligence-v3
+artifact: comparables-valuation
+slug: openai
+runDate: 2026-05-01
+company:
+  name: OpenAI
+publicComparables: []
+privateOrTransactionComparables: []
+valuationFramework:
+  preferredApproach: revenue-multiple
+  rationale: The current source set does not provide directly comparable public or private valuation benchmarks with usable multiples, so the least-bad framework is to anchor on OpenAI's own company-reported March 2026 financing and the explicit monthly revenue claim disclosed in the same post. Using a low-confidence annualized revenue run-rate of $24 billion derived from $2 billion per month, the disclosed $852 billion post-money valuation implies about 35.5 times revenue. A reasonable sensitivity band around that observed anchor is 25 times to 50 times run-rate revenue, which yields roughly $600 billion to $1.2 trillion and captures both execution upside and the material opacity around margins, retention, and capital efficiency.
+  impliedValueLowUsdM: 600000
+  impliedValueMidUsdM: 852000
+  impliedValueHighUsdM: 1200000
+  keyAssumptions:
+    - Uses a low-confidence $24 billion annualized revenue run-rate derived from the company-reported March 2026 figure of about $2 billion monthly revenue.
+    - Treats the self-reported March 2026 financing at $852 billion post money as the clearest current market-clearing anchor in this source set.
+    - Applies a wide 25 times to 50 times revenue sensitivity band because public evidence here does not disclose audited segment mix, gross margin, retention, burn, or customer concentration.
+  sensitivityNotes: A small change in confidence about revenue durability, enterprise mix, or capital intensity can move fair value materially because the observed round already implies a very demanding multiple on a self-reported revenue base.
+  confidence: low
+  claimRefs: [C038, C039, C044, C048]
+dealConsiderations:
+  recommendedCheckUsdM: 85
+  ownershipTargetPct: 0.01
+  proRataRightsImportance: high
+  preferredStructureNotes: If participating, favor a small access position with strong information rights, pro rata rights, and clarity on governance and economic alignment. Traditional governance influence is likely limited because the Foundation controls the board and Microsoft already holds a large stake.
+  alignmentRisks:
+    - Mission-first governance gives the OpenAI Foundation unusually strong control rights relative to ordinary commercial investors.
+    - Microsoft already holds roughly 27% of OpenAI Group, which can shape strategic alignment and economics.
+    - Public disclosure on margins, burn, and customer concentration is thin for the current valuation level.
+    - Key-person dependence and leadership continuity remain material considerations.
+  claimRefs: [C002, C003, C004, C005, C039, C045, C046]
+expectedReturns:
+  exitScenarios:
+    - name: downside
+      exitValueUsdM: 600000
+      exitYear: 2030
+      exitType: writedown
+      grossMoM: 0.704
+      grossIrrPct: -8.4
+      assumptions: Assumes the current round proves too aggressive relative to durable margins and growth, leading to multiple compression even if OpenAI remains strategically important.
+      confidence: low
+      claimRefs: [C038, C039, C044, C046]
+    - name: base
+      exitValueUsdM: 1200000
+      exitYear: 2030
+      exitType: ipo
+      grossMoM: 1.408
+      grossIrrPct: 8.9
+      assumptions: Assumes OpenAI sustains leadership and grows meaningfully from the current run-rate, but valuation expansion is limited because margins and governance remain contentious for public investors.
+      confidence: low
+      claimRefs: [C022, C031, C038, C039, C048]
+    - name: upside
+      exitValueUsdM: 2000000
+      exitYear: 2030
+      exitType: ipo
+      grossMoM: 2.347
+      grossIrrPct: 23.8
+      assumptions: Assumes OpenAI compounds leadership across consumer, enterprise, developer, and government channels while proving better monetization quality than public evidence currently shows.
+      confidence: low
+      claimRefs: [C018, C022, C031, C038, C041, C048, C050]
+valuationVerdict:
+  stance: stretched
+  rationale: Even granting strong traction, the disclosed March 2026 financing implies about 35.5 times annualized run-rate revenue on self-reported figures, while public visibility into margins, retention, burn, and concentration remains limited. That can still be defensible for uniquely strategic frontier-AI exposure, but it leaves little room for conventional venture-style returns unless OpenAI materially outgrows already extraordinary expectations.
+  confidence: medium
+  claimRefs: [C038, C039, C044, C048]

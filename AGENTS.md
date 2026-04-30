@@ -16,7 +16,7 @@
 ## Report workflow
 - Use the `Startup Research` agent for a full named-company report.
 - The pipeline is: `Startup Identity Investigator → Startup Evidence Researcher → Startup Product Strategist → Startup Business Analyst → Startup Memo Writer → ZH Research Translator`.
-- The current research schema is `startup-diligence-v2`, a claims-based professional diligence schema.
+- The current research schema is `startup-diligence-v3`, a claims-based professional diligence schema with quantitative KPI, comparables/valuation, team/people, and milestones extensions. Prior `startup-diligence-v2` reports remain valid (v3 is a strict superset; new fields are optional).
 - Downstream stages must not run until upstream YAML exists, parses, and all `claimRefs` / `sourceRefs` are valid.
 - Failed or duplicate partial report folders should not remain directly under `reports/`.
 
@@ -25,9 +25,9 @@
 - After changing schemas, loader logic, or report files, validate with `npm run validate` from the repo root when dependencies are installed.
 
 ## YAML schema conventions
-- All generated artifacts are YAML files: `00-research-plan.yaml`, `01-company-identity.yaml`, `02-source-ledger.yaml`, `03-market-customers.yaml`, `04-product-technology.yaml`, `05-traction-gtm.yaml`, `06-competition-positioning.yaml`, `07-business-financials.yaml`, `08-risk-governance.yaml`, `09-investment-memo.yaml`, `10-summary-card.yaml`, plus optional matching `*.zh.yaml` translations.
-- `02-source-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`.
-- Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc.
+- All generated artifacts are YAML files: `00-research-plan.yaml`, `01-company-identity.yaml`, `02-source-ledger.yaml`, `03-market-customers.yaml`, `04-product-technology.yaml`, `05-traction-gtm.yaml`, `06-competition-positioning.yaml`, `07-business-financials.yaml`, `08-risk-governance.yaml`, `09-investment-memo.yaml`, `10-summary-card.yaml`, plus optional v3 artifacts `11-team-people.yaml`, `12-comparables-valuation.yaml`, `13-milestones-catalysts.yaml`, plus optional matching `*.zh.yaml` translations.
+- `02-source-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. v3 sources may include `accessDate` and a verbatim `keyQuote` (≤ 240 chars).
+- Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Risk IDs use `R001`. Milestone IDs use `M001`. Comparable IDs use `K001`.
 - Use descriptive camelCase field names.
-- Include units in numeric field names where useful, such as `revenueK`, `fundingRaisedM`, `marginPct`, or `runwayMonths`.
+- Include units in numeric field names where useful, such as `revenueUsdM`, `arrUsdM`, `grossMarginPct`, `nrrPct`, `burnMultiple`, `cacPaybackMonths`, `runwayMonths`. Numeric KPI fields must be numbers, not strings.
 - Use 2-space indentation. Quote strings containing `: `.

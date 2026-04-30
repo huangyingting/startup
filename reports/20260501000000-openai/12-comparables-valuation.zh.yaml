@@ -1,0 +1,66 @@
+schemaVersion: startup-diligence-v3
+artifact: comparables-valuation
+slug: openai
+runDate: 2026-05-01
+company:
+  name: OpenAI
+publicComparables: []
+privateOrTransactionComparables: []
+valuationFramework:
+  preferredApproach: revenue-multiple
+  rationale: '当前来源集合并未提供可直接用于比较的公开或私募估值基准及可用倍数，因此最不差的框架，是锚定 OpenAI 自身在 2026 年 3 月公司自报的融资，以及同一篇文章中披露的明确月收入声明。以每月 20 亿美元推导出的低置信度 240 亿美元年化收入运行率计算，披露的 8520 亿美元 post-money 估值对应约 35.5 倍收入。围绕这一观测锚点给出 25 倍到 50 倍运行率收入的合理敏感性区间，可得到约 6000 亿到 1.2 万亿美元的估值区间，同时反映执行上行空间以及毛利率、留存与资本效率方面的重大不透明性。'
+  impliedValueLowUsdM: 600000
+  impliedValueMidUsdM: 852000
+  impliedValueHighUsdM: 1200000
+  keyAssumptions:
+    - '采用由公司自报的 2026 年 3 月约 20 亿美元月收入推导出的低置信度 240 亿美元年化收入运行率。'
+    - '将 2026 年 3 月公司自报、post-money 估值为 8520 亿美元的融资，视为当前来源集合中最清晰的市场出清锚点。'
+    - '由于公开证据未披露经审计的分部结构、毛利率、留存、烧钱或客户集中度，因此采用 25 倍到 50 倍收入的宽敏感性区间。'
+  sensitivityNotes: '一旦对收入耐久性、企业收入占比或资本强度的信心发生小幅变化，公允价值就可能大幅波动，因为当前轮次本身已经是在公司自报收入基础上给出的极高倍数。'
+  confidence: low
+  claimRefs: [C038, C039, C044, C048]
+dealConsiderations:
+  recommendedCheckUsdM: 85
+  ownershipTargetPct: 0.01
+  proRataRightsImportance: high
+  preferredStructureNotes: '如果参与，宜采用小额准入仓位，并争取强信息权、pro rata 权，以及对治理与经济一致性的明确说明。由于 Foundation 控制董事会，且 Microsoft 已持有较大股份，传统治理影响力大概率有限。'
+  alignmentRisks:
+    - '使命优先治理赋予 OpenAI Foundation 相较于普通商业投资者异常强的控制权。'
+    - 'Microsoft 已持有 OpenAI Group 约 27% 的股份，可能影响战略一致性与经济分配。'
+    - '在当前估值水平下，公开层面对利润率、烧钱与客户集中度的披露仍然薄弱。'
+    - '关键人物依赖与领导层连续性仍是实质性考量。'
+  claimRefs: [C002, C003, C004, C005, C039, C045, C046]
+expectedReturns:
+  exitScenarios:
+    - name: downside
+      exitValueUsdM: 600000
+      exitYear: 2030
+      exitType: writedown
+      grossMoM: 0.704
+      grossIrrPct: -8.4
+      assumptions: '假设当前轮次相对于可持续利润率与增长而言过于激进，导致即便 OpenAI 仍具战略重要性，也会发生倍数压缩。'
+      confidence: low
+      claimRefs: [C038, C039, C044, C046]
+    - name: base
+      exitValueUsdM: 1200000
+      exitYear: 2030
+      exitType: ipo
+      grossMoM: 1.408
+      grossIrrPct: 8.9
+      assumptions: '假设 OpenAI 维持领先地位，并在当前运行率基础上继续显著增长，但由于利润率与治理问题对公开市场投资者仍具争议，估值扩张有限。'
+      confidence: low
+      claimRefs: [C022, C031, C038, C039, C048]
+    - name: upside
+      exitValueUsdM: 2000000
+      exitYear: 2030
+      exitType: ipo
+      grossMoM: 2.347
+      grossIrrPct: 23.8
+      assumptions: '假设 OpenAI 能在消费者、企业、开发者与政府渠道上持续复利式巩固领先地位，并证明其商业化质量优于当前公开证据所显示的水平。'
+      confidence: low
+      claimRefs: [C018, C022, C031, C038, C041, C048, C050]
+valuationVerdict:
+  stance: stretched
+  rationale: '即便承认增长很强，2026 年 3 月披露的融资仍意味着在公司自报收入基础上的约 35.5 倍年化运行率收入倍数，而公开层面对利润率、留存、烧钱与集中度的可见性仍十分有限。对于追求独特前沿 AI 敞口的投资者而言，这个价格或许仍可辩护，但除非 OpenAI 能实质性超越已经极高的预期，否则几乎不给传统风投式回报留下空间。'
+  confidence: medium
+  claimRefs: [C038, C039, C044, C048]

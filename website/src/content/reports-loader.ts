@@ -86,6 +86,18 @@ function readLocalizedYaml(folder: string, basename: string, lang: Lang): unknow
   return fixColonPaste(parsed);
 }
 
+function readOptionalLocalizedYaml(folder: string, basename: string, lang: Lang): unknown | null {
+  const localized = join(folder, `${basename}.${lang}.yaml`);
+  const fallback = join(folder, `${basename}.yaml`);
+  const path = lang === 'zh' && existsSync(localized) ? localized : fallback;
+  if (!existsSync(path)) return null;
+  try {
+    return fixColonPaste(yaml.load(readFileSync(path, 'utf8')));
+  } catch {
+    return null;
+  }
+}
+
 export function hasZhTranslation(runId: string): boolean {
   return existsSync(join(REPORTS_DIR, runId, '10-summary-card.zh.yaml'));
 }
@@ -117,5 +129,8 @@ export function loadStageFiles(runId: string, lang: Lang = 'en') {
     riskGovernance: readLocalizedYaml(folder, '08-risk-governance', lang),
     investmentMemo: readLocalizedYaml(folder, '09-investment-memo', lang),
     summaryCard: readLocalizedYaml(folder, '10-summary-card', lang),
+    teamPeople: readOptionalLocalizedYaml(folder, '11-team-people', lang),
+    comparablesValuation: readOptionalLocalizedYaml(folder, '12-comparables-valuation', lang),
+    milestonesCatalysts: readOptionalLocalizedYaml(folder, '13-milestones-catalysts', lang),
   };
 }

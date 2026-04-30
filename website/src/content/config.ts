@@ -12,7 +12,7 @@ const reports = defineCollection({
     runId: z.string(),
     runTimestamp: z.string(),
     folderSlug: z.string(),
-    schemaVersion: z.literal('startup-diligence-v2'),
+    schemaVersion: z.enum(['startup-diligence-v2', 'startup-diligence-v3']),
     artifact: z.literal('summary-card'),
     slug: z.string(),
     runDate: dateString,
@@ -34,6 +34,22 @@ const reports = defineCollection({
     topStrengths: z.array(z.string()),
     unresolvedGaps: z.array(z.string()),
     artifactFiles: z.record(z.string()),
+    // v3 optional numeric snapshot for the card.
+    keyMetrics: z
+      .object({
+        asOf: z.string().nullable().optional(),
+        arrUsdM: z.number().nullable().optional(),
+        revenueGrowthYoYPct: z.number().nullable().optional(),
+        grossMarginPct: z.number().nullable().optional(),
+        nrrPct: z.number().nullable().optional(),
+        ruleOf40: z.number().nullable().optional(),
+        burnMultiple: z.number().nullable().optional(),
+        totalRaisedUsdM: z.number().nullable().optional(),
+        postMoneyValuationUsdM: z.number().nullable().optional(),
+        headcount: z.number().nullable().optional(),
+      })
+      .partial()
+      .optional(),
   }),
 });
 
