@@ -1,4 +1,6 @@
 ---
+import { displayLabel } from '../lib/display';
+
 interface Dimension { score: number; rationale: string; claimRefs?: string[]; }
 interface Props { dimensions: Record<string, Dimension>; overall: number; }
 const { dimensions, overall } = Astro.props;
@@ -8,7 +10,7 @@ const { dimensions, overall } = Astro.props;
   <div class="rating-list">
     {Object.entries(dimensions).map(([name, value]) => (
       <div class="rating-row">
-        <div><strong>{name.replace(/([A-Z])/g, ' $1')}</strong><p>{value.rationale}</p></div>
+        <div><strong>{displayLabel(name)}</strong><p>{value.rationale}</p></div>
         <meter min="0" max="5" value={value.score}>{value.score}</meter>
       </div>
     ))}

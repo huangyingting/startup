@@ -135,6 +135,7 @@ founders:
     role: string|null
     current: true|false|null
     background: string|null
+    photoUrl: string|null          # optional verified/licensed headshot; null if uncertain
     priorCompanies: [string]
     notableExits: [string]
     domainFit: high|medium|low|unknown
@@ -146,12 +147,14 @@ keyHires:
     function: engineering|product|sales|marketing|finance|legal|operations|research|other
     joinedDate: YYYY-MM-DD|null
     fromCompany: string|null
+    photoUrl: string|null          # optional verified/licensed headshot; null if uncertain
     significance: high|medium|low
     sourceRefs: [S001]
 advisorsAndBoard:
   - name: string
     role: advisor|board|observer|other
     affiliation: string|null
+    photoUrl: string|null          # optional verified/licensed headshot; null if uncertain
     sourceRefs: [S001]
 hiringSignals:
   openRoleCount: 0|null

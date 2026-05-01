@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import type { Lang } from '../lib/i18n';
+import { displayLabel } from '../lib/display';
 
 interface Props { entry: CollectionEntry<'reports'>; lang?: Lang; }
 const { entry, lang = 'en' } = Astro.props;
@@ -32,7 +33,7 @@ const metricRows = [
     <span>{sector}</span>
   </div>
   <h3>{entry.data.headline}</h3>
-  <p>{entry.data.recommendation} · {entry.data.confidence} confidence · {entry.data.sourceStats.sourcesRetained} sources</p>
+  <p>{displayLabel(entry.data.recommendation)} · {displayLabel(entry.data.confidence)} confidence · {entry.data.sourceStats.sourcesRetained} sources</p>
   {metricRows.length > 0 && (
     <dl class="card-metrics">
       {metricRows.map(([name, value]) => <><dt>{name}</dt><dd>{value}</dd></>)}

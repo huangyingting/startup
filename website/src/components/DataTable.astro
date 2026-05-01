@@ -1,4 +1,6 @@
 ---
+import { displayLabel } from '../lib/display';
+
 interface Column {
   heading: string;
   key?: string;
@@ -13,8 +15,7 @@ interface Props {
 const { title, rows = [], columns, emptyLabel = 'Not disclosed' } = Astro.props;
 function formatCell(value: unknown) {
   if (value === null || value === undefined || value === '') return emptyLabel;
-  if (typeof value === 'boolean') return value ? 'true' : 'false';
-  return value;
+  return displayLabel(value);
 }
 ---
 {rows.length > 0 && (

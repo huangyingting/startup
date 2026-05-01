@@ -113,3 +113,12 @@ At minimum:
 - High-confidence conclusions do not rely only on company-authored, stale, low-quality, or duplicate sources.
 - Artifacts 11/12/13 are optional; if present they must parse and obey the same `claimRefs` rules.
 - Numeric KPI fields, when set, must be numbers (not strings) so downstream tools can render charts.
+
+## People media convention
+
+Founder, executive, board, advisor, and key-hire records may include optional
+`photoUrl` / `headshotUrl` fields only when the image is from an official,
+licensed, or otherwise clearly reusable source and the image URL is fetched and
+verifiable. Do not scrape or hotlink uncertain social-media images. If no
+verified photo is available, leave the field null; the website renders an
+initials-based placeholder and still shows role, status, and background.
