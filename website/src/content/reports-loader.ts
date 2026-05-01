@@ -6,6 +6,7 @@ import type { Loader } from 'astro/loaders';
 import type { Lang } from '../lib/i18n';
 
 const REPORTS_DIR = resolve(process.cwd(), '..', 'reports');
+const V2_SCHEMA = 'startup-diligence-report-v2';
 
 function listRuns(): string[] {
   if (!existsSync(REPORTS_DIR)) return [];
@@ -24,6 +25,12 @@ function listRuns(): string[] {
 
 function shortHash(input: string): string {
   return createHash('sha1').update(input).digest('hex').slice(0, 6);
+}
+
+function parseRunId(runId: string): { runTimestamp: string; folderSlug: string } {
+  const m = runId.match(/^(\d{14})-(.+)$/);
+  if (m) return { runTimestamp: m[1]!, folderSlug: `${m[2]!}-${shortHash(runId)}` };
+  return { runTimestamp: '00000000000000', folderSlug: `${runId}-${shortHash(runId)}` };
 }
 
 function fixColonPaste(value: unknown): unknown {
@@ -45,92 +52,140 @@ function fixColonPaste(value: unknown): unknown {
   return value;
 }
 
-function parseRunId(runId: string): { runTimestamp: string; folderSlug: string } {
-  const m = runId.match(/^(\d{14})-(.+)$/);
-  if (m) return { runTimestamp: m[1]!, folderSlug: `${m[2]!}-${shortHash(runId)}` };
-  return { runTimestamp: '00000000000000', folderSlug: `${runId}-${shortHash(runId)}` };
+function readYaml(path: string): Record<string, any> | null {
+  if (!existsSync(path)) return null;
+  try {
+    return fixColonPaste(yaml.load(readFileSync(path, 'utf8'))) as Record<string, any>;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeRecommendation(value: unknown): string {
+  return typeof value === 'string' ? value : 'research-more';
+}
+
+function normalizeReportCard(raw: Record<string, any>, runId: string): Record<string, any> {
+  const { runTimestamp, folderSlug } = parseRunId(runId);
+  const company = raw.company ?? {};
+  const keyMetrics = raw.keyMetrics ?? {};
+  return {
+    schemaVersion: V2_SCHEMA,
+    artifact: 'report-card',
+    slug: raw.slug ?? runId,
+    runDate: raw.runDate ?? raw.date ?? '1970-01-01',
+    company: {
+      name: company.name ?? raw.companyName ?? 'Unknown company',
+      website: company.website ?? null,
+      sector: company.sector ?? null,
+      stage: company.stage ?? null,
+      foundedYear: company.foundedYear ?? null,
+      headquarters: company.headquarters ?? null,
+      shortDescription: company.shortDescription ?? null,
+    },
+    title: raw.title ?? `${company.name ?? raw.companyName ?? 'Startup'} — Due Diligence Report`,
+    subtitle: raw.subtitle ?? null,
+    headline: raw.headline ?? raw.memo?.oneLine ?? `${company.name ?? 'Startup'} diligence report`,
+    recommendation: normalizeRecommendation(raw.recommendation),
+    confidence: raw.confidence ?? 'low',
+    riskRating: raw.riskRating ?? raw.overallRisk ?? 'unknown',
+    valuationStance: raw.valuationStance ?? 'unknown',
+    overallScore: typeof raw.overallScore === 'number' ? raw.overallScore : 0,
+    sourceStats: {
+      sourcesRetained: raw.sourceStats?.sourcesRetained ?? raw.sourceCount ?? 0,
+      claimsReviewed: raw.sourceStats?.claimsReviewed ?? raw.claimCount ?? 0,
+    },
+    figureCount: raw.figureCount ?? 0,
+    tableCount: raw.tableCount ?? 0,
+    keyMetrics: {
+      valuationUsdM: keyMetrics.valuationUsdM ?? null,
+      revenueRunRateUsdM: keyMetrics.revenueRunRateUsdM ?? null,
+      arrUsdM: keyMetrics.arrUsdM ?? null,
+      revenueGrowthYoYPct: keyMetrics.revenueGrowthYoYPct ?? null,
+      grossMarginPct: keyMetrics.grossMarginPct ?? null,
+      nrrPct: keyMetrics.nrrPct ?? null,
+      totalRaisedUsdM: keyMetrics.totalRaisedUsdM ?? null,
+      customerCount: keyMetrics.customerCount ?? null,
+      headcount: keyMetrics.headcount ?? null,
+    },
+    topStrengths: Array.isArray(raw.topStrengths) ? raw.topStrengths : [],
+    topRisks: Array.isArray(raw.topRisks) ? raw.topRisks : [],
+    unresolvedGaps: Array.isArray(raw.unresolvedGaps) ? raw.unresolvedGaps : [],
+    reportFiles: raw.reportFiles ?? {
+      reportDocument: '10-report-document.yaml',
+      reportCard: '11-report-card.yaml',
+    },
+    runId,
+    runTimestamp,
+    folderSlug,
+  };
+}
+
+function reportCardPath(folder: string, lang: Lang = 'en'): string | null {
+  const localizedV2 = join(folder, `11-report-card.${lang}.yaml`);
+  const v2 = join(folder, '11-report-card.yaml');
+  if (lang === 'zh' && existsSync(localizedV2)) return localizedV2;
+  if (existsSync(v2)) return v2;
+  return null;
+}
+
+function readLocalizedYaml(folder: string, basename: string, lang: Lang): unknown | null {
+  const localized = join(folder, `${basename}.${lang}.yaml`);
+  const fallback = join(folder, `${basename}.yaml`);
+  const path = lang === 'zh' && existsSync(localized) ? localized : fallback;
+  return readYaml(path);
 }
 
 export function reportsLoader(): Loader {
   return {
-    name: 'startup-reports-loader',
+    name: 'startup-reports-v2-loader',
     load: async ({ store, parseData, logger }) => {
       store.clear();
       const runs = listRuns();
       logger.info(`[reports-loader] Loading ${runs.length} report run(s) from ${REPORTS_DIR}`);
       for (const runId of runs) {
-        const summaryPath = join(REPORTS_DIR, runId, '10-summary-card.yaml');
-        if (!existsSync(summaryPath)) {
-          logger.warn(`[reports-loader] skipped ${runId}: missing 10-summary-card.yaml`);
+        const folder = join(REPORTS_DIR, runId);
+        const path = reportCardPath(folder, 'en');
+        if (!path) continue;
+        const raw = readYaml(path);
+        if (!raw) {
+          logger.error(`[reports-loader] ${runId}: failed to parse ${path}`);
           continue;
         }
-        try {
-          const raw = readFileSync(summaryPath, 'utf8');
-          const repaired = fixColonPaste(yaml.load(raw)) as Record<string, unknown>;
-          const { runTimestamp, folderSlug } = parseRunId(runId);
-          const data = await parseData({ id: runId, data: { ...repaired, runId, runTimestamp, folderSlug } });
-          store.set({ id: runId, data });
-        } catch (err) {
-          logger.error(`[reports-loader] ${runId}: ${err instanceof Error ? err.message : String(err)}`);
-        }
+        const data = await parseData({ id: runId, data: normalizeReportCard(raw, runId) });
+        store.set({ id: runId, data });
       }
     },
   };
 }
 
-function readLocalizedYaml(folder: string, basename: string, lang: Lang): unknown {
-  const localized = join(folder, `${basename}.${lang}.yaml`);
-  const fallback = join(folder, `${basename}.yaml`);
-  const path = lang === 'zh' && existsSync(localized) ? localized : fallback;
-  const parsed = yaml.load(readFileSync(path, 'utf8'));
-  return fixColonPaste(parsed);
-}
-
-function readOptionalLocalizedYaml(folder: string, basename: string, lang: Lang): unknown | null {
-  const localized = join(folder, `${basename}.${lang}.yaml`);
-  const fallback = join(folder, `${basename}.yaml`);
-  const path = lang === 'zh' && existsSync(localized) ? localized : fallback;
-  if (!existsSync(path)) return null;
-  try {
-    return fixColonPaste(yaml.load(readFileSync(path, 'utf8')));
-  } catch {
-    return null;
-  }
-}
-
 export function hasZhTranslation(runId: string): boolean {
-  return existsSync(join(REPORTS_DIR, runId, '10-summary-card.zh.yaml'));
+  const folder = join(REPORTS_DIR, runId);
+  return existsSync(join(folder, '11-report-card.zh.yaml'));
 }
 
 export function loadLocalizedIndex(runId: string, lang: Lang = 'en'): Record<string, unknown> | null {
   const folder = join(REPORTS_DIR, runId);
-  const localized = join(folder, `10-summary-card.${lang}.yaml`);
-  const fallback = join(folder, '10-summary-card.yaml');
-  const path = lang === 'zh' && existsSync(localized) ? localized : fallback;
-  if (!existsSync(path)) return null;
-  try {
-    return fixColonPaste(yaml.load(readFileSync(path, 'utf8'))) as Record<string, unknown>;
-  } catch {
-    return null;
-  }
+  const path = reportCardPath(folder, lang);
+  if (!path) return null;
+  const raw = readYaml(path);
+  return raw ? normalizeReportCard(raw, runId) : null;
 }
 
 export function loadStageFiles(runId: string, lang: Lang = 'en') {
   const folder = join(REPORTS_DIR, runId);
   return {
-    researchPlan: readLocalizedYaml(folder, '00-research-plan', lang),
-    identity: readLocalizedYaml(folder, '01-company-identity', lang),
-    sourceLedger: readLocalizedYaml(folder, '02-source-ledger', lang),
-    marketCustomers: readLocalizedYaml(folder, '03-market-customers', lang),
-    productTechnology: readLocalizedYaml(folder, '04-product-technology', lang),
-    tractionGtm: readLocalizedYaml(folder, '05-traction-gtm', lang),
-    competitionPositioning: readLocalizedYaml(folder, '06-competition-positioning', lang),
-    businessFinancials: readLocalizedYaml(folder, '07-business-financials', lang),
-    riskGovernance: readLocalizedYaml(folder, '08-risk-governance', lang),
-    investmentMemo: readLocalizedYaml(folder, '09-investment-memo', lang),
-    summaryCard: readLocalizedYaml(folder, '10-summary-card', lang),
-    teamPeople: readOptionalLocalizedYaml(folder, '11-team-people', lang),
-    comparablesValuation: readOptionalLocalizedYaml(folder, '12-comparables-valuation', lang),
-    milestonesCatalysts: readOptionalLocalizedYaml(folder, '13-milestones-catalysts', lang),
+    reportBrief: readLocalizedYaml(folder, '00-report-brief', lang),
+    evidenceLedger: readLocalizedYaml(folder, '01-evidence-ledger', lang),
+    companySnapshot: readLocalizedYaml(folder, '02-company-snapshot', lang),
+    marketMacro: readLocalizedYaml(folder, '03-market-macro', lang),
+    competitiveBenchmarking: readLocalizedYaml(folder, '04-competitive-benchmarking', lang),
+    financialUnitEconomics: readLocalizedYaml(folder, '05-financial-unit-economics', lang),
+    productTechnology: readLocalizedYaml(folder, '06-product-technology', lang),
+    customerRetention: readLocalizedYaml(folder, '07-customer-retention', lang),
+    riskRegulatory: readLocalizedYaml(folder, '08-risk-regulatory', lang),
+    investmentValuation: readLocalizedYaml(folder, '09-investment-valuation', lang),
+    reportDocument: readLocalizedYaml(folder, '10-report-document', lang),
+    reportCard: loadLocalizedIndex(runId, lang),
   };
 }

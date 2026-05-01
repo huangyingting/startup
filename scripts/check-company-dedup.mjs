@@ -6,7 +6,7 @@ import { normalizeCompanyName, normalizeDomain } from './text-utils.mjs';
 
 const [companyYamlPath, indexPath = 'reports/_index.yaml'] = process.argv.slice(2);
 if (!companyYamlPath) {
-  console.error('Usage: node scripts/check-company-dedup.mjs <company.yaml> [reports/_index.yaml]');
+  console.error('Usage: node scripts/check-company-dedup.mjs <02-company-snapshot.yaml|11-report-card.yaml> [reports/_index.yaml]');
   process.exit(1);
 }
 
@@ -17,7 +17,7 @@ if (!existsSync(companyYamlPath)) {
 
 const companyDoc = yaml.load(readFileSync(companyYamlPath, 'utf8')) ?? {};
 const candidateName = normalizeCompanyName(companyDoc.company?.name);
-const candidateDomain = normalizeDomain(companyDoc.officialWebsite);
+const candidateDomain = normalizeDomain(companyDoc.company?.website ?? companyDoc.startupIntroduction?.website);
 const currentRunId = basename(dirname(companyYamlPath));
 
 if (!existsSync(indexPath)) {

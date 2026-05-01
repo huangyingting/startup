@@ -1,10 +1,8 @@
 # Manual startup research run.
 #
-# This workflow mirrors the Copilot CLI pattern used by ../bizidea. The
-# `Startup Research` agent owns orchestration across identity, evidence,
-# product, business, memo, and Chinese localization stages. CI installs deps,
-# invokes the orchestrator, normalizes YAML, rebuilds reports/_index.yaml,
-# validates the site, and commits completed reports.
+# The `Startup Research` agent owns orchestration across the v2 specialist
+# agents. CI installs deps, invokes the orchestrator, rebuilds reports/_index.yaml,
+# validates the site, and commits completed YAML report artifacts.
 #
 # Required secrets / setup:
 # - COPILOT_PAT — PAT for a Copilot-licensed account; passed to the Copilot CLI.
@@ -133,14 +131,10 @@ jobs:
           Depth: $DEPTH
           Include Simplified Chinese localization: $INCLUDE_ZH
 
-          Use only schemaVersion startup-diligence-v1. Orchestrate all stages yourself using the configured specialist agents: identity -> evidence -> product -> business -> memo -> ZH translator when requested. Generate the complete professional diligence artifact set under reports/, including 00-10 and extended 11-team-people.yaml, 12-comparables-valuation.yaml, and 13-milestones-catalysts.yaml whenever evidence supports them. Keep all factual claims linked through 02-source-ledger.yaml claimRefs/sourceRefs. Preserve unsupported metrics as null with explanation. Delete duplicate or failed partial report folders before final validation. Do not invoke Startup Research recursively. Do not run git add or git commit.
+          Use schemaVersion startup-diligence-report-v2 only. Invoke the configured specialist agents in this order: Startup Report Evidence Analyst -> Startup Market and Competition Analyst -> Startup Financial and Product Analyst -> Startup Risk and Valuation Analyst -> Startup Report Writer -> Startup Report Translator ZH when requested. Write the complete YAML artifact set directly under reports/<run>/, from 00-report-brief.yaml through 11-report-card.yaml. Do not generate non-YAML report artifacts. Keep every factual claim linked through 01-evidence-ledger.yaml claimRefs/sourceRefs. Use null, with explanation, for unsupported metrics. Delete duplicate or failed partial report folders before final validation. Do not invoke Startup Research recursively. Do not run git add or git commit.
           EOF
           )
           copilot --yolo --no-ask-user --agent "Startup Research" -p "$PROMPT"
-
-      - name: Normalize generated YAML
-        working-directory: website
-        run: npm run repair:yaml
 
       - name: Rebuild reports/_index.yaml
         run: node scripts/build-reports-index.mjs --strict

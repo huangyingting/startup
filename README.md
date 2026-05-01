@@ -1,6 +1,6 @@
 # Startup
 
-Startup is an agent-driven research website for detailed reports on named startup companies. It uses the same core pattern as Bizidea: specialist agents produce structured YAML artifacts, validation scripts verify them, and an Astro static site renders the reports.
+Startup is an agent-driven research website for detailed reports on named startup companies. Specialist agents produce structured YAML artifacts, validation scripts verify them, and an Astro static site renders the reports.
 
 ## What it does
 
@@ -13,8 +13,13 @@ Startup is an agent-driven research website for detailed reports on named startu
 ## Report artifact flow
 
 ```text
-Company Profiler → Startup Market Researcher → Company Analyst → Startup Financial Modeler → Startup Reporter → ZH Translator
-company.yaml     → research.yaml             → analysis.yaml  → financial-model.yaml        → index.yaml       → *.zh.yaml
+Startup Research orchestrator
+  ├─ Startup Report Evidence Analyst         → 00-report-brief.yaml, 01-evidence-ledger.yaml, 02-company-snapshot.yaml
+  ├─ Startup Market and Competition Analyst  → 03-market-macro.yaml, 04-competitive-benchmarking.yaml
+  ├─ Startup Financial and Product Analyst   → 05-financial-unit-economics.yaml, 06-product-technology.yaml, 07-customer-retention.yaml
+  ├─ Startup Risk and Valuation Analyst      → 08-risk-regulatory.yaml, 09-investment-valuation.yaml
+  ├─ Startup Report Writer                   → 10-report-document.yaml, 11-report-card.yaml
+  └─ Startup Report Translator ZH            → 10-report-document.zh.yaml, 11-report-card.zh.yaml
 ```
 
 ## Local development

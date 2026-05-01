@@ -11,14 +11,14 @@ const top = sortTopRated(reports)[0];
 ---
 <BaseLayout title={t('title')} description={t('deck')}>
   <section class="sr-container sr-hero">
-    <h1>Startup research,<br />read like a venture memo.</h1>
-    <p class="sr-deck">Each dossier walks a company through identity verification, evidence collection, market research, product analysis, business diligence, risk review, and a structured memo — all generated end-to-end by specialist agents.</p>
+    <h1>Startup diligence,<br />formatted like an IC report.</h1>
+    <p class="sr-deck">Each report turns evidence-backed startup research into a venture diligence document with a startup introduction, cover metrics, investment recommendation, market sizing, competitive benchmarking, financial models, risk heatmaps, valuation, appendices, and Mermaid charts.</p>
   </section>
 
-  {top && <section class="sr-container sr-section"><h2>Featured dossier</h2><ReportCard entry={top} /></section>}
+  {top && <section class="sr-container sr-section"><h2>Featured report</h2><ReportCard entry={top} /></section>}
 
   <section class="sr-container sr-section">
-    <h2>More dossiers</h2>
+    <h2>More reports</h2>
     {latest.length ? <div class="sr-grid">{latest.map((entry) => <ReportCard entry={entry} />)}</div> : <p>{t('noReports')}</p>}
   </section>
 </BaseLayout>

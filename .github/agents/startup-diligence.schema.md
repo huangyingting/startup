@@ -1,124 +1,305 @@
-# Startup Diligence v1 Schema
+# Startup Diligence Report v2 Schema
 
-This schema defines a professional, claims-based startup diligence artifact set.
-It includes team analysis, quantitative KPIs, comparables and valuation framing,
-milestones to monitor, and a richer memo.
-
-All report artifacts must use `schemaVersion: startup-diligence-v1`. Older
-schema versions are not supported by the current agents or website.
-
-## Research first principles
-
-A professional startup researcher must collect and separate:
-
-1. **Identity** — company, legal entity, website, product, aliases, stage, geography, leadership.
-2. **Evidence** — fetched sources, source quality, independence, freshness, verbatim key quotes, duplicate handling.
-3. **Claims** — what is known, claimed, estimated, inferred, contradicted, or unknown — each tied to fetched sources.
-4. **Market and customers** — category boundaries, "why now" inflection drivers, demand drivers, top-down + bottom-up TAM/SAM/SOM, buyers, users, urgency, budget owner, adoption barriers.
-5. **Product and technology** — product maturity, workflows, technical stack, data/platform dependencies, security and compliance posture, IP, roadmap, defensibility, product risks.
-6. **Traction and GTM** — customers, usage, revenue, partnerships, hiring, developer signals, pricing, channels, retention/expansion evidence, **quantified KPI snapshot**, named **customer case studies with ROI**.
-7. **Competition and positioning** — direct competitors, substitutes, market map, moat sources, durability, competitive threats.
-8. **Business and financials** — revenue streams, **historical financials**, **quantified unit economics** (CAC, LTV, payback, NRR, GRR, gross margin, magic number, burn multiple, Rule of 40), capital efficiency, funding, capital needs, **cap-table summary**, scenario ranges.
-9. **Risk and governance** — market, product, legal, regulatory, governance, platform, security, privacy, financing, financing-terms, execution, reputation, macro risks.
-10. **Team and people** — founders deep-dive, key hires, advisors, board, hiring velocity, key-person risk, organizational gaps.
-11. **Comparables and valuation** — public comparables, transaction comparables, valuation framework, valuation bridge, ownership sensitivity, recommended check-size and ownership, deal-term considerations, expected returns, and exit-path analysis.
-12. **Milestones and catalysts** — leading indicators, milestones to monitor over the next 6/12/24 months, kill criteria, mind-changers.
-13. **Decision memo** — recommendation, confidence, scorecard, thesis, **pre-mortem**, expected returns scenarios, **investment decision framework**, **mind-changers**, data-room requests, expert calls, and management questions.
-14. **Summary card** — concise website/card-ready view including a numeric KPI snapshot.
+The current generation schema is `startup-diligence-report-v2`. It is designed to produce a comprehensive VC due diligence report while preserving claim-level evidence traceability.
 
 ## Artifact list
 
 ```text
-00-research-plan.yaml
-01-company-identity.yaml
-02-source-ledger.yaml
-03-market-customers.yaml
-04-product-technology.yaml
-05-traction-gtm.yaml
-06-competition-positioning.yaml
-07-business-financials.yaml
-08-risk-governance.yaml
-09-investment-memo.yaml
-10-summary-card.yaml
-11-team-people.yaml             # optional extended artifact
-12-comparables-valuation.yaml   # optional extended artifact
-13-milestones-catalysts.yaml    # optional extended artifact
+00-report-brief.yaml
+01-evidence-ledger.yaml
+02-company-snapshot.yaml
+03-market-macro.yaml
+04-competitive-benchmarking.yaml
+05-financial-unit-economics.yaml
+06-product-technology.yaml
+07-customer-retention.yaml
+08-risk-regulatory.yaml
+09-investment-valuation.yaml
+10-report-document.yaml
+11-report-card.yaml
 ```
 
-Optional Simplified Chinese files use the same basename with `.zh.yaml`.
+Optional Chinese files:
 
-## Evidence model
+```text
+10-report-document.zh.yaml
+11-report-card.zh.yaml
+```
 
-- Source IDs: `S001`, `S002`, ...
-- Claim IDs: `C001`, `C002`, ...
-- Later artifacts cite claims via `claimRefs`.
-- Claims cite fetched sources via `sourceRefs`.
-- All source records must include `fetchVerified: true`.
-- Sources may include `accessDate: YYYY-MM-DD` and `keyQuote: string` (verbatim snippet ≤ 240 chars from the fetched page that backs the most important related claims).
+## Shared conventions
 
-## Claim types
+- `schemaVersion: startup-diligence-report-v2`
+- Every artifact starts with `schemaVersion`, `artifact`, `slug`, `runDate`, and `company`.
+- `runDate: YYYY-MM-DD`
+- `slug`: stable company slug.
+- `company.name`: consistent in all YAML files.
+- `claimRefs`: array of claim IDs from `01-evidence-ledger.yaml`.
+- Numeric KPI fields are numbers or `null`, never strings.
+- Ranges belong in `displayValue`, `notes`, or `estimateBasis`.
 
-- `observed` — directly visible on the fetched source.
-- `company-claimed` — asserted by the company in its own materials.
-- `third-party-reported` — reported by an independent source.
-- `estimated` — quantitative estimate; show the formula and inputs.
-- `inferred` — analyst inference from other claims.
-- `open-question` — important gap, no fetched evidence.
+## Core enums
 
-## Confidence levels
+- Recommendation: `strong-buy`, `buy`, `track`, `research-more`, `avoid`.
+- Confidence: `high`, `medium`, `low`.
+- Risk rating: `low`, `moderate`, `significant`, `critical`, `unknown`.
+- Valuation stance: `attractive`, `fair`, `stretched`, `expensive`, `unknown`.
+- Evidence quality: `high`, `medium`, `low`, `unknown`.
+- Claim type: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`.
 
-`high`, `medium`, `low`. Calibrate using source independence, credibility,
-recency, corroboration, and presence of disconfirming evidence. `high` requires
-multiple independent fetched sources.
+## `01-evidence-ledger.yaml`
 
-## Recommendation levels
+```yaml
+schemaVersion: startup-diligence-report-v2
+artifact: evidence-ledger
+slug: string
+runDate: YYYY-MM-DD
+company:
+  name: string
+coverage:
+  depth: standard|deep
+  sourceTarget: 30
+  sourcesFetched: 0
+  sourcesRetained: 0
+  claimsCreated: 0
+  coverageGaps: [string]
+sources:
+  - id: S001
+    publisher: string
+    title: string
+    author: string|null
+    date: YYYY-MM-DD|null
+    accessDate: YYYY-MM-DD
+    url: string
+    sourceType: official|filing|regulatory|tier-one-news|trade-press|analyst-market-data|technical-docs|customer-proof|partner-proof|developer-signal|review|legal|other
+    reputationTier: high|medium|low
+    independence: company|partner|customer|competitor|independent|unknown
+    fetchVerified: true
+    keyQuote: string|null
+    topics: [identity|team|market|customer|product|technology|traction|gtm|competition|financials|funding|risk|valuation|other]
+claims:
+  - id: C001
+    statement: string
+    claimType: observed|company-claimed|third-party-reported|estimated|inferred|open-question|conflicting
+    topic: identity|team|market|customer|product|technology|traction|gtm|competition|financials|funding|risk|valuation|other
+    sourceRefs: [S001]
+    confidence: high|medium|low
+    freshness: current|recent|historical|unknown
+    corroboration: single-source|multi-source|conflicting|none
+    notes: string|null
+bibliography:
+  - sourceRef: S001
+    citation: string
+evidenceGaps:
+  - gap: string
+    impact: high|medium|low
+    diligencePath: string|null
+```
 
-- `high-conviction`
-- `track`
-- `research-more`
-- `avoid`
+## Section artifact pattern
 
-## Quantitative KPI conventions
+Artifacts `02` through `09` use this common pattern:
 
-Report numeric values under the structured `kpiSnapshot` in
-`05-traction-gtm.yaml` and the structured `unitEconomicsQuant` /
-`historicalFinancials` blocks in `07-business-financials.yaml`. Standard names:
+```yaml
+schemaVersion: startup-diligence-report-v2
+artifact: market-macro
+slug: string
+runDate: YYYY-MM-DD
+company:
+  name: string
+chapter:
+  number: 2
+  title: Market Sizing & Macro Analysis
+  summary: string
+callouts:
+  - type: investment-recommendation|key-insight|opportunity|risk-alert|final-recommendation
+    title: string
+    body: string
+    claimRefs: [C001]
+tables:
+  - id: T201
+    title: string
+    columns: [string]
+    rows:
+      - [string]
+    notes: string|null
+    claimRefs: [C001]
+figures:
+  - id: F201
+    title: string
+    mermaidType: flowchart|quadrantChart|xychart|timeline|journey|pie|other
+    mermaid: |
+      flowchart TB
+        A --> B
+    approximationNotes: string|null
+    claimRefs: [C001]
+sections:
+  - number: "2.1"
+    title: string
+    body: string
+    claimRefs: [C001]
+```
 
-- `arrUsdM` — annualized recurring revenue, USD millions.
-- `revenueUsdM` — last full-year revenue, USD millions.
-- `revenueGrowthYoYPct` — year-over-year revenue growth, percent.
-- `grossMarginPct` — GAAP-style gross margin, percent.
-- `nrrPct` — net revenue retention, percent.
-- `grrPct` — gross revenue retention, percent.
-- `magicNumber` — net new ARR / S&M spend, ratio.
-- `burnMultiple` — net burn / net new ARR, ratio.
-- `ruleOf40` — growth % + FCF margin %, integer.
-- `cacPaybackMonths` — months to recover blended CAC.
-- `ltvToCac` — LTV / CAC ratio.
-- `runwayMonths` — months of cash at current burn.
-- `headcount` — total FTE.
-- `headcountGrowth90dPct` — 90-day headcount change, percent.
+## `02-company-snapshot.yaml`
 
-Always report `null` rather than guess. When a value is an estimate, set a
-sibling `estimateBasis: string` describing the formula and inputs.
+`02-company-snapshot.yaml` follows the section artifact pattern and must also include a startup introduction used at the beginning of the final report:
+
+```yaml
+startupIntroduction:
+  summary: string
+  foundedDate: YYYY-MM-DD|null
+  foundedYear: 0|null
+  founders:
+    - name: string
+      role: string|null
+      background: string|null
+      claimRefs: [C001]
+  foundingLocation: string|null
+  headquarters: string|null
+  website: string|null
+  productSummary: string
+  customerFocus: string|null
+  businessModel: string|null
+  stage: string|null
+  fundingStatus: string|null
+  claimRefs: [C001]
+```
+
+## `10-report-document.yaml`
+
+```yaml
+schemaVersion: startup-diligence-report-v2
+artifact: report-document
+slug: string
+runDate: YYYY-MM-DD
+company:
+  name: string
+  website: string|null
+  subtitle: string|null
+reportMeta:
+  title: string
+  classification: string|null
+  preparedBy: string|null
+  contact: string|null
+  generatedUsing: string|null
+  recommendation: strong-buy|buy|track|research-more|avoid
+  confidence: high|medium|low
+  riskRating: low|moderate|significant|critical|unknown
+  valuationStance: attractive|fair|stretched|expensive|unknown
+coverMetrics:
+  - label: string
+    value: string
+    numericValue: 0|null
+    unit: string|null
+    claimRefs: [C001]
+startupIntroduction:
+  summary: string
+  foundedDate: YYYY-MM-DD|null
+  foundedYear: 0|null
+  founders:
+    - name: string
+      role: string|null
+      background: string|null
+      claimRefs: [C001]
+  foundingLocation: string|null
+  headquarters: string|null
+  website: string|null
+  productSummary: string
+  customerFocus: string|null
+  businessModel: string|null
+  stage: string|null
+  fundingStatus: string|null
+  claimRefs: [C001]
+chapters:
+  - number: 1
+    title: Executive Summary
+    sections:
+      - number: "1.1"
+        title: Investment Highlights
+        blocks:
+          - type: paragraph|callout|table|figure|list|equation
+            title: string|null
+            body: string|null
+            calloutType: investment-recommendation|key-insight|opportunity|risk-alert|final-recommendation|null
+            tableRef: T101|null
+            figureRef: F101|null
+            items: [string]
+            equation: string|null
+            claimRefs: [C001]
+figures:
+  - id: F101
+    title: string
+    mermaidType: flowchart|quadrantChart|xychart|timeline|journey|pie|other
+    mermaid: string
+    claimRefs: [C001]
+tables:
+  - id: T101
+    title: string
+    columns: [string]
+    rows:
+      - [string]
+    notes: string|null
+    claimRefs: [C001]
+appendices:
+  - id: A
+    title: string
+    blocks: []
+bibliography:
+  - sourceRef: S001
+    citation: string
+disclaimer: string
+```
+
+## `11-report-card.yaml`
+
+```yaml
+schemaVersion: startup-diligence-report-v2
+artifact: report-card
+slug: string
+runDate: YYYY-MM-DD
+company:
+  name: string
+  website: string|null
+  sector: string|null
+  stage: string|null
+  foundedYear: 0|null
+  headquarters: string|null
+  shortDescription: string|null
+title: string
+subtitle: string|null
+headline: string
+recommendation: strong-buy|buy|track|research-more|avoid
+confidence: high|medium|low
+riskRating: low|moderate|significant|critical|unknown
+valuationStance: attractive|fair|stretched|expensive|unknown
+overallScore: 1.0
+sourceStats:
+  sourcesRetained: 0
+  claimsReviewed: 0
+figureCount: 0
+tableCount: 0
+keyMetrics:
+  valuationUsdM: 0|null
+  revenueRunRateUsdM: 0|null
+  arrUsdM: 0|null
+  revenueGrowthYoYPct: 0|null
+  grossMarginPct: 0|null
+  nrrPct: 0|null
+  totalRaisedUsdM: 0|null
+  customerCount: 0|null
+  headcount: 0|null
+topStrengths: [string]
+topRisks: [string]
+unresolvedGaps: [string]
+reportFiles:
+  reportDocument: 10-report-document.yaml
+  reportCard: 11-report-card.yaml
+```
 
 ## Validation expectations
 
-At minimum:
-
-- YAML parses.
-- `slug`, `runDate`, and `company.name` are consistent across files.
-- Every `claimRefs` value exists in `02-source-ledger.yaml`.
-- Every claim `sourceRefs` value exists in `sources` and has `fetchVerified: true`.
-- High-confidence conclusions do not rely only on company-authored, stale, low-quality, or duplicate sources.
-- Artifacts 11/12/13 are optional; if present they must parse and obey the same `claimRefs` rules.
-- Numeric KPI fields, when set, must be numbers (not strings) so downstream tools can render charts.
-
-## People media convention
-
-Founder, executive, board, advisor, and key-hire records may include optional
-`photoUrl` / `headshotUrl` fields only when the image is from an official,
-licensed, or otherwise clearly reusable source and the image URL is fetched and
-verifiable. Do not scrape or hotlink uncertain social-media images. If no
-verified photo is available, leave the field null; the website renders an
-initials-based placeholder and still shows role, status, and background.
+- All YAML parses.
+- All required v2 artifacts exist for complete runs.
+- All `claimRefs` point to `01-evidence-ledger.yaml` claims.
+- All claim `sourceRefs` point to fetched sources.
+- All figure/table references in `10-report-document.yaml` exist.
+- Mermaid diagrams are stored in `10-report-document.yaml` and rendered by the website.

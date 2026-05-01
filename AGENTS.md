@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Working approach
-- Keep reports evidence-first: every external factual claim should trace through `claimRefs` to fetched sources in `02-source-ledger.yaml`.
+- Keep reports evidence-first: every external factual claim should trace through `claimRefs` to fetched sources in `01-evidence-ledger.yaml`.
 - Make surgical changes: preserve schemas and avoid unrelated redesigns.
 - Validate YAML after every report-generation run.
 - Prefer simple static artifacts over databases until the project clearly needs mutable app state.
@@ -15,8 +15,9 @@
 
 ## Report workflow
 - Use the `Startup Research` agent for a full named-company report.
-- The pipeline is: `Startup Identity Investigator → Startup Evidence Researcher → Startup Product Strategist → Startup Business Analyst → Startup Memo Writer → ZH Research Translator`.
-- The only supported research schema is `startup-diligence-v1`, a claims-based professional diligence schema with quantitative KPI, comparables/valuation, team/people, and milestones extensions. Do not create or preserve compatibility branches for older schema versions.
+- The pipeline is: `Startup Report Evidence Analyst → Startup Market and Competition Analyst → Startup Financial and Product Analyst → Startup Risk and Valuation Analyst → Startup Report Writer → Startup Report Translator ZH`.
+- The current generation schema is `startup-diligence-report-v2`, a report schema with evidence ledger, startup introduction, chapter documents, table/figure specs, Mermaid diagrams, and report-card metadata rendered by the website.
+- Only `Startup Report Evidence Analyst` should use web research tools. Downstream agents must work from `01-evidence-ledger.yaml` and cite `claimRefs`.
 - Downstream stages must not run until upstream YAML exists, parses, and all `claimRefs` / `sourceRefs` are valid.
 - Failed or duplicate partial report folders should not remain directly under `reports/`.
 
@@ -25,9 +26,10 @@
 - After changing schemas, loader logic, or report files, validate with `npm run validate` from the repo root when dependencies are installed.
 
 ## YAML schema conventions
-- All generated artifacts are YAML files: `00-research-plan.yaml`, `01-company-identity.yaml`, `02-source-ledger.yaml`, `03-market-customers.yaml`, `04-product-technology.yaml`, `05-traction-gtm.yaml`, `06-competition-positioning.yaml`, `07-business-financials.yaml`, `08-risk-governance.yaml`, `09-investment-memo.yaml`, `10-summary-card.yaml`, plus optional extended artifacts `11-team-people.yaml`, `12-comparables-valuation.yaml`, `13-milestones-catalysts.yaml`, plus optional matching `*.zh.yaml` translations.
-- `02-source-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. Sources may include `accessDate` and a verbatim `keyQuote` (≤ 240 chars).
-- Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Risk IDs use `R001`. Milestone IDs use `M001`. Comparable IDs use `K001`.
+- New generated artifacts are: `00-report-brief.yaml`, `01-evidence-ledger.yaml`, `02-company-snapshot.yaml`, `03-market-macro.yaml`, `04-competitive-benchmarking.yaml`, `05-financial-unit-economics.yaml`, `06-product-technology.yaml`, `07-customer-retention.yaml`, `08-risk-regulatory.yaml`, `09-investment-valuation.yaml`, `10-report-document.yaml`, and `11-report-card.yaml`.
+- `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. Sources may include `accessDate` and a verbatim `keyQuote` (≤ 240 chars).
+- Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Figure IDs use `F001`, `F002`, etc. Table IDs use `T001`, `T002`, etc.
 - Use descriptive camelCase field names.
-- Include units in numeric field names where useful, such as `revenueUsdM`, `arrUsdM`, `grossMarginPct`, `nrrPct`, `burnMultiple`, `cacPaybackMonths`, `runwayMonths`. Numeric KPI fields must be numbers, not strings.
+- Include units in numeric field names where useful, such as `revenueRunRateUsdM`, `arrUsdM`, `grossMarginPct`, `nrrPct`, `burnMultiple`, `cacPaybackMonths`, `valuationUsdM`. Numeric KPI fields must be numbers, not strings.
 - Use 2-space indentation. Quote strings containing `: `.
+- Mermaid diagrams/charts should be stored in YAML literal blocks and rendered by the website from `10-report-document.yaml`.

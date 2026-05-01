@@ -6,90 +6,34 @@ import yaml from 'js-yaml';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPORTS_DIR = resolve(__dirname, '../../reports');
-const REQUIRED = [
-  '00-research-plan.yaml',
-  '01-company-identity.yaml',
-  '02-source-ledger.yaml',
-  '03-market-customers.yaml',
-  '04-product-technology.yaml',
-  '05-traction-gtm.yaml',
-  '06-competition-positioning.yaml',
-  '07-business-financials.yaml',
-  '08-risk-governance.yaml',
-  '09-investment-memo.yaml',
-  '10-summary-card.yaml',
+const V2_SCHEMA = 'startup-diligence-report-v2';
+const V2_REQUIRED = [
+  '00-report-brief.yaml',
+  '01-evidence-ledger.yaml',
+  '02-company-snapshot.yaml',
+  '03-market-macro.yaml',
+  '04-competitive-benchmarking.yaml',
+  '05-financial-unit-economics.yaml',
+  '06-product-technology.yaml',
+  '07-customer-retention.yaml',
+  '08-risk-regulatory.yaml',
+  '09-investment-valuation.yaml',
+  '10-report-document.yaml',
+  '11-report-card.yaml',
 ];
-// Optional extended artifacts. They must parse + obey claimRefs rules when present.
-const OPTIONAL_EXTENDED = [
-  '11-team-people.yaml',
-  '12-comparables-valuation.yaml',
-  '13-milestones-catalysts.yaml',
-];
-const OPTIONAL_LOCALIZED = [...REQUIRED, ...OPTIONAL_EXTENDED].map((file) => file.replace('.yaml', '.zh.yaml'));
-const ALLOWED_YAML = new Set([...REQUIRED, ...OPTIONAL_EXTENDED, ...OPTIONAL_LOCALIZED]);
-const SCHEMA_VERSION = 'startup-diligence-v1';
-const LEGACY_COMPARABLE_FIELDS = ['name', 'eventType', 'rationale', 'revenueMultipleNtm', 'headlineValuationUsdM'];
 
-function requiredFields(file, doc) {
-  const checks = {
-    '00-research-plan.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'researchScope'],
-    '01-company-identity.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'identity', 'profile', 'identitySources'],
-    '02-source-ledger.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'sources', 'claims'],
-    '03-market-customers.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'marketDefinition', 'marketVerdict'],
-    '04-product-technology.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'productOverview', 'productVerdict'],
-    '05-traction-gtm.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'tractionSummary', 'gtmMotion'],
-    '06-competition-positioning.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'competitiveSet', 'positioningVerdict'],
-    '07-business-financials.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'businessModel', 'financialVerdict'],
-    '08-risk-governance.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'riskRegister', 'riskVerdict'],
-    '09-investment-memo.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'memo', 'scorecard'],
-    '10-summary-card.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'headline', 'recommendation', 'sourceStats'],
-    '11-team-people.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'teamSnapshot', 'founders'],
-    '12-comparables-valuation.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'publicComparables', 'privateOrTransactionComparables', 'valuationFramework'],
-    '13-milestones-catalysts.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'horizons'],
-  }[file] ?? [];
-  return checks.filter((field) => !(doc && typeof doc === 'object' && field in doc));
+function readYaml(path) {
+  return yaml.load(readFileSync(path, 'utf8')) ?? {};
 }
-
-function validateComparables(file, doc) {
-  if (!file.startsWith('12-comparables-valuation')) return [];
-  if (!doc || typeof doc !== 'object') return [];
-
-  const failures = [];
-  const groups = [
-    ['publicComparables', doc.publicComparables, ['compId', 'company', 'category', 'relevance']],
-    ['privateOrTransactionComparables', doc.privateOrTransactionComparables, ['compId', 'company', 'transaction', 'relevance']],
-  ];
-
-  const seen = new Set();
-  for (const [groupName, rows, required] of groups) {
-    if (rows === undefined || rows === null) {
-      failures.push(`${file}: ${groupName} is required and must be an array`);
-      continue;
+function walkClaimRefs(value, refs = []) {
+  if (Array.isArray(value)) value.forEach((item) => walkClaimRefs(item, refs));
+  else if (value && typeof value === 'object') {
+    for (const [key, child] of Object.entries(value)) {
+      if (key === 'claimRefs' && Array.isArray(child)) refs.push(...child);
+      else walkClaimRefs(child, refs);
     }
-    if (!Array.isArray(rows)) {
-      failures.push(`${file}: ${groupName} must be an array`);
-      continue;
-    }
-    rows.forEach((row, index) => {
-      const path = `${file}: ${groupName}[${index}]`;
-      if (!row || typeof row !== 'object') {
-        failures.push(`${path} must be an object`);
-        return;
-      }
-      for (const field of required) {
-        if (!(field in row) || row[field] === null || row[field] === '') failures.push(`${path} missing ${field}`);
-      }
-      if (typeof row.compId !== 'string') failures.push(`${path} compId must be a string like K001`);
-      else if (!/^K\d{3}$/.test(row.compId)) failures.push(`${path} compId must look like K001`);
-      else if (seen.has(row.compId)) failures.push(`${path} duplicate compId ${row.compId}`);
-      else seen.add(row.compId);
-      for (const field of LEGACY_COMPARABLE_FIELDS) {
-        if (field in row) failures.push(`${path} uses legacy field ${field}`);
-      }
-    });
   }
-
-  return failures;
+  return refs;
 }
 
 try {
@@ -100,95 +44,91 @@ try {
 
   const runs = readdirSync(REPORTS_DIR).filter((name) => {
     const p = join(REPORTS_DIR, name);
-    try {
-      return statSync(p).isDirectory() && !name.startsWith('.') && !name.startsWith('_');
-    } catch {
-      return false;
-    }
+    try { return statSync(p).isDirectory() && !name.startsWith('.') && !name.startsWith('_'); }
+    catch { return false; }
   });
 
   const failures = [];
-  const unexpected = [];
-  const parseFailures = [];
-  const fieldFailures = [];
-  const consistencyFailures = [];
+  const warnings = [];
+  let checked = 0;
 
   for (const run of runs) {
     const dir = join(REPORTS_DIR, run);
-    const files = readdirSync(dir).filter((file) => statSync(join(dir, file)).isFile());
+    const hasV2Card = existsSync(join(dir, '11-report-card.yaml'));
+    if (!hasV2Card) continue;
+    checked += 1;
+
+    for (const file of V2_REQUIRED) {
+      if (!existsSync(join(dir, file))) failures.push(`${run}/${file}: missing required v2 artifact`);
+    }
+    if (failures.some((f) => f.startsWith(`${run}/`))) continue;
+
     const parsed = new Map();
-
-    for (const file of REQUIRED) {
-      if (!existsSync(join(dir, file))) failures.push(`${run}/${file}`);
-    }
-
-    for (const file of files) {
-      if (!file.endsWith('.yaml')) continue;
-      if (!ALLOWED_YAML.has(file)) unexpected.push(`${run}/${file}`);
+    for (const file of V2_REQUIRED.filter((f) => f.endsWith('.yaml'))) {
       try {
-        const doc = yaml.load(readFileSync(join(dir, file), 'utf8'));
+        const doc = readYaml(join(dir, file));
         parsed.set(file, doc);
-        if (doc && typeof doc === 'object' && doc.schemaVersion && doc.schemaVersion !== SCHEMA_VERSION) {
-          consistencyFailures.push(`${run}/${file}: expected schemaVersion ${SCHEMA_VERSION}, got ${doc.schemaVersion}`);
-        }
-        if (REQUIRED.includes(file) || OPTIONAL_EXTENDED.includes(file)) {
-          const missing = requiredFields(file, doc);
-          for (const field of missing) fieldFailures.push(`${run}/${file}: missing ${field}`);
-        }
-        for (const failure of validateComparables(file, doc)) consistencyFailures.push(`${run}/${failure}`);
+        if (doc.schemaVersion !== V2_SCHEMA) failures.push(`${run}/${file}: expected schemaVersion ${V2_SCHEMA}, got ${doc.schemaVersion}`);
+        if (!doc.artifact) failures.push(`${run}/${file}: missing document head field artifact`);
+        if (!doc.slug) failures.push(`${run}/${file}: missing document head field slug`);
+        if (!doc.runDate) failures.push(`${run}/${file}: missing document head field runDate`);
+        if (!doc.company || typeof doc.company !== 'object' || !doc.company.name) failures.push(`${run}/${file}: missing document head field company.name`);
       } catch (err) {
-        parseFailures.push(`${run}/${file}: ${err.message.split('\n')[0]}`);
+        failures.push(`${run}/${file}: YAML parse failed: ${err.message.split('\n')[0]}`);
       }
     }
 
-    const summary = parsed.get('10-summary-card.yaml');
-    const identity = parsed.get('01-company-identity.yaml');
-    const ledger = parsed.get('02-source-ledger.yaml');
-    if (summary && identity && summary.slug && identity.slug && summary.slug !== identity.slug) {
-      consistencyFailures.push(`${run}: 10-summary-card.yaml slug (${summary.slug}) does not match 01-company-identity.yaml slug (${identity.slug})`);
+    const ledger = parsed.get('01-evidence-ledger.yaml');
+    const reportDoc = parsed.get('10-report-document.yaml');
+    const card = parsed.get('11-report-card.yaml');
+
+    const claimIds = new Set((ledger?.claims ?? []).map((claim) => claim.id));
+    const sourceIds = new Set((ledger?.sources ?? []).map((source) => source.id));
+    for (const source of ledger?.sources ?? []) {
+      if (source.fetchVerified !== true) failures.push(`${run}: source ${source.id} is not fetchVerified`);
     }
-    if (ledger?.sources && ledger?.claims) {
-      const sourceIds = new Set(ledger.sources.map((source) => source.id));
-      const claimIds = new Set(ledger.claims.map((claim) => claim.id));
-      for (const source of ledger.sources) {
-        if (source.fetchVerified !== true) consistencyFailures.push(`${run}: source ${source.id} is not fetchVerified`);
+    for (const claim of ledger?.claims ?? []) {
+      for (const ref of claim.sourceRefs ?? []) {
+        if (!sourceIds.has(ref)) failures.push(`${run}: claim ${claim.id} references missing source ${ref}`);
       }
-      for (const claim of ledger.claims) {
-        for (const ref of claim.sourceRefs ?? []) {
-          if (!sourceIds.has(ref)) consistencyFailures.push(`${run}: claim ${claim.id} references missing source ${ref}`);
-        }
+    }
+    for (const [file, doc] of parsed) {
+      if (file === '01-evidence-ledger.yaml') continue;
+      for (const ref of walkClaimRefs(doc)) {
+        if (!claimIds.has(ref)) failures.push(`${run}/${file}: missing claimRef ${ref}`);
       }
-      for (const [file, doc] of parsed) {
-        if (file === '02-source-ledger.yaml') continue;
-        if (!REQUIRED.includes(file) && !OPTIONAL_EXTENDED.includes(file)) continue;
-        const refs = [];
-        const walk = (value) => {
-          if (Array.isArray(value)) return value.forEach(walk);
-          if (value && typeof value === 'object') {
-            for (const [key, child] of Object.entries(value)) {
-              if (key === 'claimRefs' && Array.isArray(child)) refs.push(...child);
-              else walk(child);
-            }
-          }
-        };
-        walk(doc);
-        for (const ref of refs) {
-          if (!claimIds.has(ref)) consistencyFailures.push(`${run}/${file}: claimRefs references missing claim ${ref}`);
-        }
+    }
+
+    const figureIds = new Set((reportDoc?.figures ?? []).map((figure) => figure.id));
+    const tableIds = new Set((reportDoc?.tables ?? []).map((table) => table.id));
+    const refs = [];
+    const walkBlocks = (value) => {
+      if (Array.isArray(value)) return value.forEach(walkBlocks);
+      if (value && typeof value === 'object') {
+        if (value.figureRef) refs.push(['figure', value.figureRef]);
+        if (value.tableRef) refs.push(['table', value.tableRef]);
+        Object.values(value).forEach(walkBlocks);
       }
+    };
+    walkBlocks(reportDoc?.chapters ?? []);
+    for (const [type, ref] of refs) {
+      if (type === 'figure' && !figureIds.has(ref)) failures.push(`${run}/10-report-document.yaml: missing figure ${ref}`);
+      if (type === 'table' && !tableIds.has(ref)) failures.push(`${run}/10-report-document.yaml: missing table ${ref}`);
+    }
+    for (const figure of reportDoc?.figures ?? []) {
+      if (!figure.mermaid) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} missing mermaid body`);
+    }
+    if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
+      failures.push(`${run}/11-report-card.yaml: claimsReviewed exceeds ledger claims`);
     }
   }
 
-  if (failures.length || unexpected.length || parseFailures.length || fieldFailures.length || consistencyFailures.length) {
-    if (failures.length) console.error('[check:reports] missing required files:\n' + failures.map((f) => `  - reports/${f}`).join('\n'));
-    if (unexpected.length) console.error('[check:reports] unexpected YAML files:\n' + unexpected.map((f) => `  - reports/${f}`).join('\n'));
-    if (parseFailures.length) console.error('[check:reports] YAML parse failures:\n' + parseFailures.map((f) => `  - ${f}`).join('\n'));
-    if (fieldFailures.length) console.error('[check:reports] missing fields:\n' + fieldFailures.map((f) => `  - ${f}`).join('\n'));
-    if (consistencyFailures.length) console.error('[check:reports] consistency failures:\n' + consistencyFailures.map((f) => `  - ${f}`).join('\n'));
+  if (warnings.length) console.warn('[check:reports] warnings:\n' + warnings.map((w) => `  - ${w}`).join('\n'));
+  if (failures.length) {
+    console.error('[check:reports] failures:\n' + failures.map((f) => `  - ${f}`).join('\n'));
     process.exit(1);
   }
-
-  console.log(`[check:reports] ✓ ${runs.length} report(s) verified.`);
+  console.log(`[check:reports] ✓ ${checked} v2 report(s) verified.`);
 } catch (err) {
   console.error(`[check:reports] fatal error: ${err.message}`);
   process.exit(1);

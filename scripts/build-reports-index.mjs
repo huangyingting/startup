@@ -18,30 +18,35 @@ function listRuns() {
   return readdirSync(reportsDir)
     .filter((name) => !name.startsWith('.') && !name.startsWith('_'))
     .filter((name) => {
-      try {
-        return statSync(join(reportsDir, name)).isDirectory();
-      } catch {
-        return false;
-      }
+      try { return statSync(join(reportsDir, name)).isDirectory(); }
+      catch { return false; }
     })
     .sort()
     .reverse();
 }
 
+function cardPath(runId) {
+  const dir = join(reportsDir, runId);
+  const v2 = join(dir, '11-report-card.yaml');
+  if (existsSync(v2)) return v2;
+  return null;
+}
+
 const reports = [];
 const failures = [];
 for (const runId of listRuns()) {
-  const summaryPath = join(reportsDir, runId, '10-summary-card.yaml');
-  if (!existsSync(summaryPath)) {
-    failures.push(`${runId}/10-summary-card.yaml missing`);
+  const path = cardPath(runId);
+  if (!path) {
     continue;
   }
   try {
-    const data = yaml.load(readFileSync(summaryPath, 'utf8')) ?? {};
+    const data = yaml.load(readFileSync(path, 'utf8')) ?? {};
     const company = data.company ?? {};
+    const metrics = data.keyMetrics ?? {};
     reports.push({
       runId,
       slug: data.slug ?? runId,
+      schemaVersion: data.schemaVersion ?? 'startup-diligence-report-v2',
       date: data.runDate ?? null,
       companyName: company.name ?? null,
       companyNameNormalized: normalizeCompanyName(company.name),
@@ -49,12 +54,19 @@ for (const runId of listRuns()) {
       domain: normalizeDomain(company.website),
       sector: company.sector ?? null,
       stage: company.stage ?? null,
+      recommendation: data.recommendation ?? null,
+      riskRating: data.riskRating ?? null,
+      valuationStance: data.valuationStance ?? null,
       rating: data.overallScore ?? null,
       sourceCount: data.sourceStats?.sourcesRetained ?? null,
-      path: `reports/${runId}/10-summary-card.yaml`,
+      figureCount: data.figureCount ?? null,
+      tableCount: data.tableCount ?? null,
+      valuationUsdM: metrics.valuationUsdM ?? null,
+      revenueRunRateUsdM: metrics.revenueRunRateUsdM ?? null,
+      path: `reports/${runId}/11-report-card.yaml`,
     });
   } catch (err) {
-    failures.push(`${runId}/10-summary-card.yaml parse failed: ${err.message}`);
+    failures.push(`${runId}: card parse failed: ${err.message}`);
   }
 }
 
