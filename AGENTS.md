@@ -38,6 +38,8 @@
 - Optional Simplified Chinese localized artifacts are `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 - Every artifact must include `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
 - `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. Sources should include `accessDate`, `fetchVerified: true`, and concise `keyQuote` values when available.
+- Evidence gathering must be broad, fresh, and deduplicated: combine official/company sources, startup or business news, independent third-party databases/analyst sources, customer/partner proof, regulatory/legal/filing sources, and technical/product documentation; prefer recent sources for current claims; and avoid counting repeated reporting of the same event as independent evidence.
+- Evidence search should iterate queries across company, product, founder, investor, customer, competitor, market, funding, valuation, pricing, regulatory, review, hiring, and negative/disconfirming angles instead of repeatedly searching the same site or query family.
 - Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Figure IDs use `F001`, `F002`, etc. Table IDs use `T001`, `T002`, etc.
 - Use descriptive camelCase field names.
 - Include units in numeric field names where useful, such as `revenueRunRateUsdM`, `arrUsdM`, `grossMarginPct`, `nrrPct`, `burnMultiple`, `cacPaybackMonths`, and `valuationUsdM`.

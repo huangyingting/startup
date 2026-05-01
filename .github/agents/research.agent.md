@@ -76,11 +76,16 @@ Schema reference: <absolute path to .github/agents/startup-diligence.schema.md>
 YAML syntax reference: <absolute path to .github/agents/yaml-syntax.md>
 Style target: comprehensive VC due diligence report; tables and structured native figures required.
 Evidence rule: every external factual assertion must cite claimRefs / inline [Cxxx].
+Evidence search rule: require diverse, recent, non-duplicative evidence. The Evidence Analyst must vary queries across source categories, avoid overusing one site/domain, filter stale sources for current facts, and dedupe repeated reports of the same underlying event.
 ```
 
 ## Evidence and quality rules
 
 - `01-evidence-ledger.yaml` is the evidence backbone.
+- Evidence collection must be broad, fresh, and non-duplicative: combine official/company sources, startup or business news, independent third-party databases/analyst sources, customer/partner proof, regulatory/legal/filing sources, and technical/product documentation where available.
+- The Evidence Analyst should iterate search queries across multiple angles rather than repeatedly fetching one domain or one event cluster. Change query terms when results repeat the same story.
+- For current operating, funding, product, valuation, customer, or regulatory claims, prioritize sources from the last 24 months. Use older evidence mainly for historical facts and mark such claims `freshness: historical`.
+- Deduplicate repeated reporting of the same announcement, funding round, launch, partnership, lawsuit, or quote. Keep the original/primary source and only independent corroboration that adds new facts or perspective.
 - Every artifact must start with the document head: `schemaVersion`, `artifact`, `slug`, `runDate`, and `company`.
 - Source IDs: `S001`, `S002`, ...; claim IDs: `C001`, `C002`, ...; figure IDs: `F001`, ...; table IDs: `T001`, ...
 - Every external factual assertion in later YAML must cite `claimRefs`.

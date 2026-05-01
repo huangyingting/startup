@@ -1,0 +1,83 @@
+schemaVersion: startup-diligence-report-v2
+artifact: report-brief
+slug: abridge
+runDate: '2026-05-02'
+company:
+  name: Abridge
+reportScope:
+  companyUrl: https://www.abridge.com
+  depth: deep
+  objective: Build the evidence backbone and Chapter 1 startup snapshot for Abridge, with emphasis on company identity, product-platform evolution, funding history, deployment breadth across major health systems, and the reliability of company-claimed traction metrics.
+researchQuestions:
+- 'How should Abridge be framed in the opening of a VC diligence report: founding story, headquarters, founders, mission, business model, and current stage?'
+- What is verified versus company-claimed in Abridge’s scale narrative, especially around health-system count, conversation volume, languages, and specialties?
+- How has Abridge expanded from ambient notes into a broader platform spanning nursing, revenue cycle, and clinical decision support?
+- Which funding rounds, investors, and valuation markers are directly disclosed versus only referenced through summarized third-party coverage?
+- Which customer proofs are strong enough to support an investment case, and which are still self-reported marketing metrics?
+- What identity, financial, and evidence gaps should remain open for later chapters on competition, unit economics, and valuation?
+desiredChapters:
+- chapterNumber: 1
+  title: Startup Introduction & Company Snapshot
+  purpose: Verify company identity, summarize the platform, and distinguish verified facts from company-claimed scale signals.
+- chapterNumber: 2
+  title: Market Sizing & Macro Analysis
+  purpose: Size ambient-clinical-AI, documentation automation, and adjacent revenue-cycle/CDS opportunity spaces.
+- chapterNumber: 3
+  title: Competitive Benchmarking
+  purpose: Compare Abridge against Nuance DAX, Suki, Augmedix, Nabla, and other ambient-AI or healthcare workflow peers.
+- chapterNumber: 4
+  title: Financial & Unit Economics
+  purpose: Bridge disclosed funding, deployment scale, ROI studies, and missing pricing/unit-economics disclosures into underwriting questions.
+- chapterNumber: 5
+  title: Product & Technology
+  purpose: Analyze the Abridge platform stack, Contextual Reasoning Engine, integration model, and trust architecture.
+- chapterNumber: 6
+  title: Customer & Retention
+  purpose: Assess enterprise adoption, retention, workflow expansion, and ROI signals across major health systems.
+- chapterNumber: 7
+  title: Risk & Regulatory
+  purpose: Assess HIPAA/compliance posture, AI safety claims, evidence quality, and regulatory/legal exposure.
+- chapterNumber: 8
+  title: Investment & Valuation
+  purpose: Translate the evidence base into recommendation logic and valuation stance.
+expectedTables:
+- id: T101
+  title: Cover metrics and status anchors
+  artifact: 02-company-snapshot.yaml
+- id: T102
+  title: Leadership and operating leadership
+  artifact: 02-company-snapshot.yaml
+- id: T103
+  title: Verification status of core company facts
+  artifact: 02-company-snapshot.yaml
+- id: T104
+  title: Financing and investor timeline
+  artifact: 02-company-snapshot.yaml
+expectedFigures:
+- id: F101
+  title: Abridge milestone timeline
+  type: timeline
+  artifact: 02-company-snapshot.yaml
+- id: F102
+  title: Abridge platform architecture stack
+  type: architecture-stack
+  artifact: 02-company-snapshot.yaml
+- id: F103
+  title: Disclosed financing sizes (USD millions)
+  type: bars
+  artifact: 02-company-snapshot.yaml
+sourceStrategy:
+  minimumRetainedSources: 100
+  discoveryTracks:
+  - official identity, leadership, and hiring footprint
+  - funding rounds, investors, and third-party valuation references
+  - product, integrations, and technical trust signals
+  - customer deployments, case studies, and ROI evidence
+  - awards, analyst validation, and partner ecosystem proof
+  - legal, privacy, and compliance disclosures
+  - disconfirming evidence around inconsistent scale metrics and unresolved financial disclosures
+  evidenceRules:
+  - Use only fetched URLs in the evidence ledger.
+  - Keep source IDs and claim IDs stable for downstream artifacts.
+  - Separate observed facts from company-claimed case-study metrics and third-party-reported valuation markers.
+  - Preserve conflicting health-system count and headquarters signals explicitly rather than smoothing them over.

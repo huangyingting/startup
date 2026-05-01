@@ -1,0 +1,353 @@
+schemaVersion: startup-diligence-report-v2
+artifact: financial-unit-economics
+slug: kalshi
+runDate: '2026-05-01'
+company:
+  name: Kalshi
+chapter:
+  number: 4
+  title: Financial & Unit Economics
+  summary: |
+    Kalshi has a clearly evidenced exchange-style revenue model built on transaction fees and some maker fees, but the public record retained for this report does not disclose revenue, take rate, gross margin, CAC, LTV, payback, churn-adjusted lifetime value, or valuation. The clean underwriting takeaway is that Kalshi's monetization logic is visible while its actual unit economics remain weakly disclosed. [C006][C018][C019][C030][C032][C034][C035][C040]
+callouts:
+  - type: key-insight
+    title: Revenue model is clear even though revenue magnitude is not
+    body: |
+      Kalshi says it monetizes through transaction fees on expected earnings, with maker fees on some markets, which provides a claim-backed revenue engine even though no retained claim discloses total revenue or blended take rate. [C006][C040]
+    claimRefs:
+      - C006
+      - C040
+  - type: key-insight
+    title: Liquidity acquisition likely depresses near-term net take rate
+    body: |
+      Market-maker fee reductions plus explicit volume and liquidity incentive programs indicate that Kalshi is paying to deepen order-book quality, which likely compresses realized net monetization versus headline fee schedules. The magnitude is not disclosed. [C018][C019]
+    claimRefs:
+      - C018
+      - C019
+  - type: opportunity
+    title: Media distribution could become a lower-CAC top-of-funnel
+    body: |
+      AP, FOX, and Rotten Tomatoes integrations suggest Kalshi may acquire attention through forecast distribution rather than only through direct paid acquisition, but no retained claim proves conversion from viewers into funded traders. [C030][C032][C034][C038]
+    claimRefs:
+      - C030
+      - C032
+      - C034
+      - C038
+  - type: risk-alert
+    title: Core financial diligence is still blocked by disclosure gaps
+    body: |
+      The retained record does not disclose revenue, active funded traders, contribution margin, CAC, LTV, cohort retention, or current valuation, so a full unit-economics model is not yet defensible. [C033][C035][C040]
+    claimRefs:
+      - C033
+      - C035
+      - C040
+tables:
+  - id: T401
+    title: Revenue model overview and stream map
+    columns:
+      - Revenue stream
+      - Evidence-backed description
+      - Monetization status
+      - Underwriting implication
+    rows:
+      - - Core exchange fees
+        - "Kalshi says it charges transaction fees on expected earnings from trading activity. [C006]"
+        - Reported by company; total revenue undisclosed
+        - Primary monetization appears directly tied to trading engagement and market depth.
+      - - Select maker fees
+        - "Kalshi says some markets also carry maker fees. [C006]"
+        - Reported by company; incidence and mix undisclosed
+        - Fee design can vary by market structure and liquidity conditions.
+      - - Data / distribution monetization
+        - "AP, FOX, and Rotten Tomatoes partnerships show forecast distribution, but retained claims do not confirm direct partner revenue. [C030][C032][C034][C038]"
+        - null
+        - Potential strategic upside exists, but revenue contribution cannot be underwritten from current evidence.
+      - - Incentive offsets to gross fee capture
+        - "Market-maker fee reductions and member incentive programs create contra-revenue or customer-acquisition offsets to gross fees. [C018][C019]"
+        - Reported by company; dollar impact undisclosed
+        - Net take rate may be materially below posted fee mechanics.
+    notes: |
+      The retained ledger supports how Kalshi charges, not how much Kalshi earns.
+    claimRefs:
+      - C006
+      - C018
+      - C019
+      - C030
+      - C032
+      - C034
+      - C038
+  - id: T402
+    title: "Unit economics scorecard: reported metrics versus current nulls"
+    columns:
+      - Metric
+      - Reported value
+      - Estimated value
+      - Estimate basis
+      - Diligence implication
+    rows:
+      - - Revenue
+        - null
+        - null
+        - "No claim-backed revenue disclosure in retained ledger. [C040]"
+        - Request monthly gross revenue, net revenue, and fee revenue by customer segment.
+      - - Blended take rate
+        - null
+        - null
+        - "Gross trading fees are disclosed qualitatively, but no reported numerator or denominator supports a derived take rate. [C006][C040]"
+        - Request fee revenue divided by matched notional, contract count, and expected earnings base.
+      - - CAC
+        - null
+        - null
+        - "Media distribution, referral, and incentive surfaces are visible, but no acquisition spend or conversion data is disclosed. [C019][C030][C032][C034][C038]"
+        - Request paid, organic, partner, and referral acquisition cost by cohort.
+      - - LTV
+        - null
+        - null
+        - "No revenue-per-trader, gross margin, or retention cohort data is disclosed. [C040]"
+        - Request cohort revenue curves and gross profit by funded trader vintage.
+      - - LTV / CAC
+        - null
+        - null
+        - "Cannot be derived without CAC and LTV inputs. [C040]"
+        - Recompute after cohort package is provided.
+      - - CAC payback
+        - null
+        - null
+        - "Cannot be derived without contribution margin and acquisition cost inputs. [C040]"
+        - Request monthly cohort contribution margin curves.
+      - - Gross margin
+        - null
+        - null
+        - "Compliance, exchange operations, incentives, and legal overhead are evidenced qualitatively, but no margin data is disclosed. [C001][C018][C019][C027][C028][C029]"
+        - Request direct cost structure split between trading ops, clearing, support, compliance, and infra.
+    notes: |
+      All key unit-economics metrics remain null by design. The artifact avoids unsupported reverse engineering from traffic or isolated market volume claims.
+    claimRefs:
+      - C001
+      - C006
+      - C018
+      - C019
+      - C027
+      - C028
+      - C029
+      - C030
+      - C032
+      - C034
+      - C038
+      - C040
+  - id: T403
+    title: Observable financial and demand signals from the retained ledger
+    columns:
+      - Signal
+      - Value
+      - Signal type
+      - Interpretation caveat
+    rows:
+      - - 2021 primary financing
+        - "$30M Series A. [C021]"
+        - Observed
+        - Last fetched primary financing disclosure; not evidence of current capitalization.
+      - - 2024 presidential-election site visits
+        - "More than 500 million site visits. [C031]"
+        - Company-claimed
+        - Traffic is not revenue and should not be converted into monetization without internal funnel data.
+      - - Monthly audience mix
+        - "About 70% forecast-checking, about 30% trading. [C033]"
+        - Company-claimed
+        - Suggests broad top-of-funnel usage, but not funded-trader conversion or monetization.
+      - - Oscar Best Picture market volume
+        - "$14.5M trading volume by 2026-03-10. [C035]"
+        - Company-claimed
+        - Event-specific volume is not enough to annualize platform revenue.
+      - - All Oscar-related markets volume
+        - "$48.4M trading volume by 2026-03-10. [C035]"
+        - Company-claimed
+        - Category spikes may overstate normalized demand.
+    notes: |
+      These are traction and financing anchors, not a substitute for audited financial reporting.
+    claimRefs:
+      - C021
+      - C031
+      - C033
+      - C035
+  - id: T404
+    title: Projection scenario readiness and null scenario framing
+    columns:
+      - Scenario
+      - Revenue assumption
+      - Cost assumption
+      - Output
+      - Estimate basis
+    rows:
+      - - Low case
+        - null
+        - null
+        - null
+        - "No claim-backed baseline revenue, margin, or funded-trader cohort data exists to support a defensible low-case model. [C040]"
+      - - Base case
+        - null
+        - null
+        - null
+        - "The retained record shows fee mechanics and demand signals, but not the starting financial base required for a base-case forecast. [C006][C031][C033][C035][C040]"
+      - - High case
+        - null
+        - null
+        - null
+        - "Partnership and audience upside is visible qualitatively, but partner conversion and monetization are undisclosed. [C030][C032][C034][C038][C040]"
+    notes: |
+      Projection scenarios are intentionally null. Investors should request monthly revenue, take rate, incentive burden, and funded-trader cohorts before underwriting forward cases.
+    claimRefs:
+      - C006
+      - C030
+      - C031
+      - C032
+      - C033
+      - C034
+      - C035
+      - C038
+      - C040
+figures:
+  - id: F401
+    title: "Kalshi revenue mix: evidence-backed stream structure"
+    type: stack
+    layout: wide
+    summary: |
+      The retained record supports a revenue architecture led by trading fees, secondarily shaped by maker fees, and strategically extended by distribution partnerships whose direct monetization remains unproven. [C006][C018][C019][C030][C032][C034][C038]
+    data:
+      items:
+        - label: Core trading fee revenue
+          detail: "Primary monetization comes from transaction fees on expected earnings. [C006]"
+          tone: positive
+        - label: Market-specific maker fees
+          detail: "Some markets also charge maker fees, creating a second documented fee stream. [C006]"
+          tone: neutral
+        - label: Incentive offsets
+          detail: "Market-maker discounts and volume / liquidity programs likely reduce net realized take rate. [C018][C019]"
+          tone: warning
+        - label: Emerging distribution monetization
+          detail: "AP, FOX, and Rotten Tomatoes show forecast distribution reach, but no claim-backed revenue stream is disclosed from those partnerships. [C030][C032][C034][C038]"
+          tone: opportunity
+      nodes: []
+      edges: []
+      points: []
+      columns: []
+      rows: []
+      series: []
+      layers: []
+    approximationNotes: |
+      No mix percentages are shown because the retained ledger does not disclose revenue contribution by stream.
+    claimRefs:
+      - C006
+      - C018
+      - C019
+      - C030
+      - C032
+      - C034
+      - C038
+  - id: F402
+    title: Public-data-constrained unit economics waterfall
+    type: unit-economics-waterfall
+    layout: wide
+    summary: |
+      Kalshi's visible economics start with gross fee capture from trading activity, then step down through maker concessions, incentive payouts, and regulated-exchange operating burden before reaching an undisclosed net contribution figure. [C001][C006][C018][C019][C027][C028][C029]
+    data:
+      items:
+        - label: Gross transaction fees
+          detail: "Kalshi charges transaction fees tied to trading outcomes. [C006]"
+          tone: positive
+        - label: Plus maker fees in some markets
+          detail: "Certain markets add maker fees. [C006]"
+          tone: positive
+        - label: Less market-maker concessions
+          detail: "Designated market makers may receive reduced fees for meeting quoting and volume obligations. [C018]"
+          tone: warning
+        - label: Less volume and liquidity incentives
+          detail: "Cashback-like volume rewards and liquidity payments likely reduce effective net monetization. [C019]"
+          tone: warning
+        - label: Less regulated-exchange operating burden
+          detail: "CFTC oversight and ongoing political-contract litigation imply meaningful compliance and legal cost, but no amounts are disclosed. [C001][C027][C028][C029]"
+          tone: warning
+        - label: Net contribution per active trader
+          detail: "Undisclosed in retained evidence; cannot compute CAC payback or LTV / CAC. [C040]"
+          tone: neutral
+      nodes: []
+      edges: []
+      points: []
+      columns: []
+      rows: []
+      series: []
+      layers: []
+    approximationNotes: |
+      This bridge is intentionally qualitative because the retained ledger does not disclose revenue, direct cost, or customer-acquisition numerics.
+    claimRefs:
+      - C001
+      - C006
+      - C018
+      - C019
+      - C027
+      - C028
+      - C029
+      - C040
+  - id: F403
+    title: Reported demand, audience, and event-intensity signals
+    type: metric-bars
+    layout: standard
+    summary: |
+      Company-claimed traffic and category-volume signals show meaningful demand intensity, but they are insufficient for revenue modeling without internal conversion and take-rate data. [C031][C033][C035]
+    data:
+      items: []
+      nodes: []
+      edges: []
+      points: []
+      columns: []
+      rows: []
+      series:
+        - label: Reported signals
+          data:
+            - label: Election-period site visits (M)
+              value: 500
+            - label: Forecast-only audience share (%)
+              value: 70
+            - label: Trading audience share (%)
+              value: 30
+            - label: Oscar markets volume ($M)
+              value: 48.4
+            - label: Best Picture market volume ($M)
+              value: 14.5
+      layers: []
+    approximationNotes: |
+      The 500 figure is rendered as the lower bound of the reported phrase "more than 500 million site visits." All values are directly reported or company-claimed and should not be converted into revenue estimates without internal monetization data.
+    claimRefs:
+      - C031
+      - C033
+      - C035
+sections:
+  - number: '4.1'
+    title: Revenue model overview
+    body: |
+      Kalshi's monetization model is conceptually simple and claim-backed: the exchange earns transaction fees on expected earnings and, in some markets, maker fees. That makes Kalshi economically closer to an exchange or venue operator than to a principal bookmaker, especially because the company states that members trade against one another rather than against the exchange itself. The challenge for investors is not understanding the mechanism; it is sizing the mechanism. No retained claim discloses revenue, net take rate, fee revenue by segment, or contribution by market category. [C006][C040]
+    claimRefs:
+      - C006
+      - C040
+  - number: '4.2'
+    title: Unit economics and margin trajectory
+    body: |
+      Public-data unit economics are materially incomplete. What is visible is directionally important: Kalshi appears to spend against liquidity through market-maker concessions and explicit volume and liquidity incentive programs, while also carrying the overhead of operating a regulated exchange in an environment where political-contract legality is actively contested. That combination suggests gross fee capture is only the top of the waterfall, not the endpoint. Without disclosed data on direct trading costs, compliance costs, incentive payouts, customer support, or legal spend, gross margin and contribution margin should remain null rather than guessed. [C001][C018][C019][C027][C028][C029][C040]
+    claimRefs:
+      - C001
+      - C018
+      - C019
+      - C027
+      - C028
+      - C029
+      - C040
+  - number: '4.3'
+    title: CAC, LTV, payback, and defensible projection scenarios
+    body: |
+      CAC, LTV, LTV / CAC, and payback are all null in the current diligence package because the retained evidence lacks acquisition spend, funded-trader conversion, repeat-trading frequency, gross profit per trader, and cohort retention curves. The same logic blocks scenario modeling: there is no claim-backed baseline revenue figure from which to build low, base, or high cases. The highest-value diligence asks are monthly active funded traders, monthly gross and net revenue, segment-level fee revenue, blended take rate, cohort retention by funded month, incentive payout burden, and partner-to-trader conversion from media distribution surfaces. [C030][C032][C034][C038][C040]
+    claimRefs:
+      - C030
+      - C032
+      - C034
+      - C038
+      - C040

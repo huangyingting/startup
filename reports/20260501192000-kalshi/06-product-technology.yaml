@@ -1,0 +1,365 @@
+schemaVersion: startup-diligence-report-v2
+artifact: product-technology
+slug: kalshi
+runDate: '2026-05-01'
+company:
+  name: Kalshi
+chapter:
+  number: 5
+  title: Product & Technology
+  summary: |
+    Kalshi's product stack is unusually broad for a prediction-market company: a regulated event-contract exchange, binary market objects with explicit rules and settlement sources, retail and demo surfaces, developer APIs, tiered rate limits, qualifying FIX access, and forecast-data distribution into third-party media. What the retained ledger does not disclose is any claim-backed AI layer, internal architecture detail, or roadmap timing. [C001][C003][C004][C008][C009][C010][C011][C012][C013][C014][C015][C016][C030][C032][C034][C039]
+callouts:
+  - type: key-insight
+    title: Product clarity is a real asset
+    body: |
+      Kalshi reduces the core trading experience to binary yes / no contracts with explicit rules, verification sources, and payout timing, which is unusually legible relative to many derivatives products. [C004][C007][C008][C009][C013]
+    claimRefs:
+      - C004
+      - C007
+      - C008
+      - C009
+      - C013
+  - type: key-insight
+    title: Kalshi is building infrastructure, not just an app
+    body: |
+      Demo trading, APIs, tiered access, entity accounts, and qualifying FIX connectivity indicate a multi-surface platform architecture that can serve retail, professional, and developer workflows. [C010][C011][C015][C016][C039]
+    claimRefs:
+      - C010
+      - C011
+      - C015
+      - C016
+      - C039
+  - type: opportunity
+    title: Distribution integrations expand the product surface beyond owned channels
+    body: |
+      AP, FOX, and Rotten Tomatoes integrations show Kalshi's market probabilities functioning as embedded data products as well as tradable instruments. [C030][C032][C034][C038]
+    claimRefs:
+      - C030
+      - C032
+      - C034
+      - C038
+  - type: risk-alert
+    title: Technology diligence is partially blocked by missing architecture disclosures
+    body: |
+      The claim-backed ledger does not disclose internal infrastructure topology, clearing workflows, data-retention controls, model usage, or a dated roadmap, so those areas should be treated as diligence gaps rather than inferred strengths. [C001][C020][C040]
+    claimRefs:
+      - C001
+      - C020
+      - C040
+tables:
+  - id: T501
+    title: Product platform overview and core modules
+    columns:
+      - Module
+      - Evidence-backed functionality
+      - Primary users
+      - Notes
+    rows:
+      - - Exchange venue
+        - "Kalshi operates a regulated exchange for event contracts on real-world outcomes. [C001][C003]"
+        - Retail traders, entities, developers
+        - Regulatory status is central to product trust and listing scope.
+      - - Binary market objects
+        - "Each market is a yes / no contract with pricing, volume, open-interest, rules, and settlement data. [C004][C012][C013]"
+        - Traders and API users
+        - Product simplicity is a usability advantage.
+      - - Rules and settlement layer
+        - "Markets expose rules, verification sources, and timing for open, close, and payout. [C008][C009]"
+        - Traders, compliance, partners
+        - Transparent resolution is critical for trust.
+      - - Demo environment
+        - "Kalshi maintains a separate demo environment with mock funding rails. [C010]"
+        - New users and experimentation cohorts
+        - Useful for onboarding without immediate capital commitment.
+      - - Developer / professional access
+        - "Kalshi offers APIs, tiered access, and qualifying FIX connectivity for advanced workflows. [C011][C014][C015][C016]"
+        - Developers, businesses, funds
+        - Suggests an infrastructure ambition beyond consumer UX.
+      - - Distribution surface
+        - "Forecast data is distributed through AP, FOX, and Rotten Tomatoes partnerships. [C030][C032][C034][C038]"
+        - Media audiences and partners
+        - Important for awareness, but direct monetization is unproven.
+    notes: |
+      This table intentionally separates evidenced product surfaces from unverified internal implementation detail.
+    claimRefs:
+      - C001
+      - C003
+      - C004
+      - C008
+      - C009
+      - C010
+      - C011
+      - C012
+      - C013
+      - C014
+      - C015
+      - C016
+      - C030
+      - C032
+      - C034
+      - C038
+  - id: T502
+    title: Trading mechanics, market structure, and compliance posture
+    columns:
+      - Layer
+      - What is evidenced
+      - Strategic implication
+      - Diligence gap
+    rows:
+      - - Contract design
+        - "Contracts are binary yes / no instruments priced like implied probabilities and paying $1 on correct resolution. [C004][C007]"
+        - Simple payoff structure can aid retail comprehension and media embedding.
+        - Need internal data on how simplicity affects conversion and repeat trading.
+      - - Market structure
+        - "Events contain one or more markets, and markets carry structured data for price, volume, open interest, rules, and settlement. [C012][C013]"
+        - Supports both UI presentation and API-standardized downstream use.
+        - Need deeper diligence on listing process, surveillance, and market-ops tooling.
+      - - Exchange operations
+        - "Exchange-wide status is exposed through API states including whether trading is active and when maintenance may resume. [C014]"
+        - Signals operational transparency and machine-readable reliability.
+        - Need uptime history, incident log, and SLO reporting.
+      - - Compliance boundary
+        - "Kalshi's CFTC-regulated posture is a product enabler, but political-event contracts remain contested through disapproval and rulemaking. [C001][C027][C028][C029]"
+        - Listing scope is partly a regulatory product decision.
+        - Need current product-approval workflow and regulator interaction cadence.
+      - - Clearing and data-storage implications
+        - "The retained claim set confirms regulated operation and responsible-trading controls, but does not provide claim-backed detail on clearing workflow or storage architecture. [C001][C020]"
+        - Investors should assume these are material operational dependencies.
+        - Request clearing design, fund segregation, encryption, retention, access-control, and disaster-recovery materials.
+    notes: |
+      Clearinghouse specifics and storage architecture are intentionally not inferred because those details were not codified as claim-backed evidence in the retained ledger.
+    claimRefs:
+      - C001
+      - C004
+      - C007
+      - C012
+      - C013
+      - C014
+      - C020
+      - C027
+      - C028
+      - C029
+  - id: T503
+    title: Product roadmap, AI / automation, and integration diligence status
+    columns:
+      - Topic
+      - Reported status
+      - Estimate basis
+      - Diligence ask
+    rows:
+      - - Roadmap
+        - null
+        - "No retained claim discloses a dated roadmap or committed module sequence. [C040]"
+        - Request 12- to 24-month roadmap with market expansion, institutional tooling, and partner API priorities.
+      - - AI / automation layer
+        - null
+        - "No claim-backed evidence discloses AI-assisted trading, moderation, surveillance, or support automation. [C040]"
+        - Request where ML is used in market operations, surveillance, fraud, personalization, and customer support.
+      - - Internal architecture
+        - null
+        - "APIs and exchange-status endpoints are visible, but internal service topology is not. [C011][C014][C040]"
+        - Request architecture diagram, key dependencies, and scalability bottlenecks.
+      - - Integration monetization
+        - null
+        - "AP, FOX, and Rotten Tomatoes integrations are evidenced, but commercial terms are not. [C030][C032][C034][C038]"
+        - Request partner economics, SLAs, and conversion attribution.
+    notes: |
+      Nulls here are deliberate. The retained evidence is strong on surface area and weak on internal technology specifics.
+    claimRefs:
+      - C011
+      - C014
+      - C030
+      - C032
+      - C034
+      - C038
+      - C040
+figures:
+  - id: F501
+    title: Kalshi platform architecture stack
+    type: architecture-stack
+    layout: wide
+    summary: |
+      Kalshi's claim-backed stack runs from owned retail and demo surfaces through binary market objects and developer endpoints into a trust layer defined by regulation, rules, and responsible-trading controls, with partner distribution extending the output surface. [C001][C003][C004][C008][C009][C010][C011][C012][C013][C014][C015][C016][C020][C030][C032][C034][C038][C039]
+    data:
+      layers:
+        - label: User surfaces
+          detail: "Retail trading, demo onboarding, and entity-account access create multiple entry points into the platform. [C010][C016][C039]"
+          tone: positive
+          modules:
+            - Retail trading surface
+            - Demo environment
+            - Entity accounts
+            - International eligibility workflows
+        - label: Market and contract layer
+          detail: "Events contain one or more yes / no markets with structured fields for price, volume, open interest, rules, and settlement. [C004][C012][C013]"
+          tone: neutral
+          modules:
+            - Events
+            - Binary markets
+            - Rules summaries
+            - Settlement metadata
+        - label: Execution and developer layer
+          detail: "Kalshi exposes APIs for market data and execution, exchange-status telemetry, tiered access controls, and qualifying FIX connectivity. [C011][C014][C015][C016]"
+          tone: positive
+          modules:
+            - REST API
+            - Exchange status API
+            - Tiered rate limits
+            - FIX access
+        - label: Distribution and partner layer
+          detail: "Forecast data is increasingly embedded into partner media experiences. [C030][C032][C034][C038]"
+          tone: opportunity
+          modules:
+            - AP election data integration
+            - FOX forecast distribution
+            - Rotten Tomatoes awards integration
+        - label: Trust and policy layer
+          detail: "CFTC designation, market rules, and responsible-trading controls define the trust boundary, while political-contract disputes shape what can be listed. [C001][C008][C020][C027][C028][C029]"
+          tone: warning
+          modules:
+            - CFTC-regulated venue
+            - Rules and verification
+            - Responsible-trading controls
+            - Policy-sensitive listing scope
+      items: []
+      nodes: []
+      edges: []
+      points: []
+      columns: []
+      rows: []
+      series: []
+    approximationNotes: |
+      Internal services, databases, and clearing workflows are omitted because the retained ledger does not provide claim-backed implementation detail.
+    claimRefs:
+      - C001
+      - C003
+      - C004
+      - C008
+      - C009
+      - C010
+      - C011
+      - C012
+      - C013
+      - C014
+      - C015
+      - C016
+      - C020
+      - C027
+      - C028
+      - C029
+      - C030
+      - C032
+      - C034
+      - C038
+      - C039
+  - id: F502
+    title: Integration and product-surface expansion map
+    type: customer-surface-map
+    layout: wide
+    summary: |
+      Kalshi's product is no longer confined to the owned trading venue; it now spans traders, institutions, developers, and forecast audiences reached through third-party integrations. [C010][C011][C015][C016][C030][C032][C034][C038][C039]
+    data:
+      nodes:
+        - label: Retail traders
+          detail: "Core users on the owned trading surface. [C003][C004]"
+          tone: positive
+        - label: Demo users
+          detail: "Separate mock-funding environment lowers onboarding friction. [C010]"
+          tone: opportunity
+        - label: Entity and institutional users
+          detail: "Businesses and funds can access entity accounts and qualifying FIX / advanced tooling. [C016]"
+          tone: positive
+        - label: Developers
+          detail: "APIs and tiered access support market-data and execution use cases. [C011][C015]"
+          tone: positive
+        - label: Forecast audiences
+          detail: "Media integrations expose Kalshi probabilities to non-trading users. [C032][C034][C038]"
+          tone: opportunity
+      edges:
+        - from: Retail traders
+          to: Demo users
+          label: onboarding path
+        - from: Retail traders
+          to: Developers
+          label: power-user expansion
+        - from: Entity and institutional users
+          to: Developers
+          label: workflow automation
+        - from: Developers
+          to: Forecast audiences
+          label: downstream data use
+        - from: Forecast audiences
+          to: Retail traders
+          label: potential conversion path
+      items: []
+      points: []
+      columns: []
+      rows: []
+      series: []
+      layers: []
+    approximationNotes: |
+      The nodes and edges represent evidenced surfaces and plausible product pathways; they do not prove conversion rates between surfaces.
+    claimRefs:
+      - C003
+      - C004
+      - C010
+      - C011
+      - C015
+      - C016
+      - C032
+      - C034
+      - C038
+      - C039
+sections:
+  - number: '5.1'
+    title: Product platform overview
+    body: |
+      Kalshi's product is best understood as an event-contract exchange with multiple access layers rather than a single consumer app. At the center are binary yes / no markets organized under events, each carrying structured pricing, volume, open-interest, rule, and settlement metadata. Around that core, Kalshi has built demo, retail, institutional, and developer surfaces that support both human and programmatic participation. [C003][C004][C010][C011][C012][C013][C015][C016][C039]
+    claimRefs:
+      - C003
+      - C004
+      - C010
+      - C011
+      - C012
+      - C013
+      - C015
+      - C016
+      - C039
+  - number: '5.2'
+    title: Trading mechanics, market structure, and trust design
+    body: |
+      Kalshi's strongest product attribute is explicitness. Contract prices map to implied probabilities, each market exposes rules and verification sources, and payout timing is visible to traders. That matters because event contracts can otherwise feel opaque or gambling-like; Kalshi's product design instead emphasizes legibility and resolution discipline. The trust layer is strengthened by CFTC-regulated status and responsible-trading controls, but it is also bounded by ongoing disputes over which political or gaming-adjacent contracts are permissible. [C001][C004][C007][C008][C009][C020][C027][C028][C029]
+    claimRefs:
+      - C001
+      - C004
+      - C007
+      - C008
+      - C009
+      - C020
+      - C027
+      - C028
+      - C029
+  - number: '5.3'
+    title: APIs, FIX, and external integrations
+    body: |
+      The technical surface is meaningful. Kalshi documents APIs for market data and order execution, exposes exchange-status telemetry, and operates tiered access controls from basic usage toward advanced access, with FIX connectivity available for qualifying members. That is consistent with a platform strategy that wants to serve not only consumers but also businesses, funds, and developers. On the outbound side, AP, FOX, and Rotten Tomatoes demonstrate that Kalshi's probabilities can be embedded in third-party experiences, extending the platform beyond owned traffic. [C011][C014][C015][C016][C030][C032][C034][C038]
+    claimRefs:
+      - C011
+      - C014
+      - C015
+      - C016
+      - C030
+      - C032
+      - C034
+      - C038
+  - number: '5.4'
+    title: Architecture, automation, and roadmap diligence gaps
+    body: |
+      Several high-value technical questions remain unresolved in the claim-backed record. There is no retained claim disclosing internal service topology, storage design, data-governance controls, surveillance automation, AI usage, or a committed roadmap. There is also no claim-backed detail on clearing workflows beyond the existence of a regulated exchange posture. These gaps do not mean the systems are weak; they mean investors should request architecture diagrams, security controls, incident history, model inventory, and roadmap materials before underwriting technology durability. [C001][C011][C014][C020][C040]
+    claimRefs:
+      - C001
+      - C011
+      - C014
+      - C020
+      - C040

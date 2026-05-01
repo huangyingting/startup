@@ -1,0 +1,75 @@
+schemaVersion: startup-diligence-report-v2
+artifact: report-brief
+slug: kalshi
+runDate: '2026-05-01'
+company:
+  name: Kalshi
+reportScope:
+  companyUrl: https://kalshi.com
+  depth: deep
+  objective: Build the evidence backbone and Chapter 1 snapshot for Kalshi, with emphasis on identity verification, regulatory status, product mechanics, distribution partnerships, funding evidence, and unresolved valuation and legal questions.
+researchQuestions:
+- 'How should Kalshi be framed at the opening of a VC diligence report: founding context, founders, headquarters, business model, customer surface, and verified regulatory status?'
+- Which company facts are independently verified versus company-claimed, especially around CFTC regulation, market mechanics, site usage, and product breadth?
+- What does the fetched record show about Kalshi's product stack across retail trading, institutions, demo, API/FIX, and data-distribution partnerships?
+- How material are the CFTC and election-contract disputes to the company's current operating and investment narrative?
+- What public evidence exists on financing, current scale, headcount, and valuation—and where does the record remain incomplete or contradictory?
+- Which sources are strongest enough to anchor later market, product, risk, and valuation chapters without additional web access?
+desiredChapters:
+- chapterNumber: 1
+  title: Startup Introduction & Company Snapshot
+  purpose: Verify identity, summarize the company, and establish the opening investment narrative.
+- chapterNumber: 2
+  title: Market Sizing & Macro Analysis
+  purpose: Assess prediction markets, event contracts, and adjacent retail/institutional trading demand.
+- chapterNumber: 3
+  title: Competitive Benchmarking
+  purpose: Compare Kalshi with Polymarket, Robinhood prediction markets, sportsbooks, and market-data substitutes.
+- chapterNumber: 4
+  title: Financial & Unit Economics
+  purpose: Bridge public funding, fee mechanics, and observable volume signals to underwriting questions.
+- chapterNumber: 5
+  title: Product & Technology
+  purpose: Analyze exchange mechanics, rules infrastructure, APIs, market-making, and developer surfaces.
+- chapterNumber: 6
+  title: Customer & Retention
+  purpose: Evaluate user surfaces, trader incentives, institutional adoption, and forecast-audience behavior.
+- chapterNumber: 7
+  title: Risk & Regulatory
+  purpose: Assess CFTC oversight, election-contract litigation, geographic restrictions, and responsible-trading controls.
+- chapterNumber: 8
+  title: Investment & Valuation
+  purpose: Translate evidence into recommendation logic while explicitly handling valuation uncertainty.
+expectedTables:
+- id: T001
+  title: Cover metrics and status anchors
+  artifact: 02-company-snapshot.yaml
+- id: T002
+  title: Leadership and identity verification snapshot
+  artifact: 02-company-snapshot.yaml
+- id: T003
+  title: Regulatory and financing timeline
+  artifact: 02-company-snapshot.yaml
+expectedFigures:
+- id: F001
+  title: Kalshi milestone timeline
+  type: timeline
+  artifact: 02-company-snapshot.yaml
+- id: F002
+  title: Kalshi platform architecture stack
+  type: architecture-stack
+  artifact: 02-company-snapshot.yaml
+sourceStrategy:
+  minimumRetainedSources: 100
+  discoveryTracks:
+  - official help-center identity, rules, fees, and customer mechanics
+  - developer documentation and API surfaces
+  - official news, partnerships, and distribution announcements
+  - CFTC regulatory record and event-contract rulemaking
+  - funding and company-database disclosures
+  - independent market commentary and disconfirming evidence
+  evidenceRules:
+  - Use only fetched URLs in the evidence ledger.
+  - Separate observed facts from company-claimed traction and scale metrics.
+  - Preserve conflicts on founding year, headquarters history, and valuation instead of smoothing them over.
+  - Treat blocked or unavailable primary financing evidence as an evidence gap rather than backfilling from rumor.
