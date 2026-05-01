@@ -20,6 +20,7 @@ const rssHref = lang === 'zh' ? `${base}zh/rss.xml` : `${base}rss.xml`;
 const altHref = alternateHref ?? (lang === 'zh' ? base : `${base}zh/`);
 const altLabel = lang === 'zh' ? 'EN' : '中文';
 const brandLabel = t('title', lang);
+const footerDisclaimer = lang === 'zh' ? '由 Agent 生成的创投研究。做出投资决策前请自行验证来源。' : 'Agent-generated venture research. Validate sources before making investment decisions.';
 ---
 <!doctype html>
 <html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
@@ -65,7 +66,7 @@ const brandLabel = t('title', lang);
           <span class="bz-footer__dot" aria-hidden="true"></span>
           <span class="bz-footer__tag">{t('deck', lang)}</span>
         </div>
-        <span class="bz-footer__copyright bz-mono">Agent-generated venture research. Validate sources before making investment decisions.</span>
+        <span class="bz-footer__copyright bz-mono">{footerDisclaimer}</span>
       </div>
     </footer>
 

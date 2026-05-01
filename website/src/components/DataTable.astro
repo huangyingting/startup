@@ -1,5 +1,6 @@
 ---
 import { displayLabel } from '../lib/display';
+import type { Lang } from '../lib/i18n';
 
 interface Column {
   heading: string;
@@ -11,11 +12,17 @@ interface Props {
   rows?: any[];
   columns: Column[];
   emptyLabel?: string;
+  lang?: Lang;
 }
-const { title, rows = [], columns, emptyLabel = 'Not disclosed' } = Astro.props;
+const { title, rows = [], columns, emptyLabel = 'Not disclosed', lang = 'en' } = Astro.props;
+const zhDisplayMap: Record<string, string> = {
+  'Yes': '是', 'No': '否', 'Medium': '中等', 'High': '高', 'Low': '低', 'Critical': '关键',
+  'Strong': '强', 'Moderate': '中等', 'Weak': '弱', 'Public': '公开', 'Independent': '独立', 'Company': '公司', 'Third Party': '第三方'
+};
 function formatCell(value: unknown) {
   if (value === null || value === undefined || value === '') return emptyLabel;
-  return displayLabel(value);
+  const rendered = displayLabel(value);
+  return lang === 'zh' ? (zhDisplayMap[rendered] ?? rendered) : rendered;
 }
 ---
 {rows.length > 0 && (

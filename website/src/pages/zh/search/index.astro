@@ -26,7 +26,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
         const link = document.createElement('a');
         link.className = 'sr-card';
         link.href = doc.href;
-        link.innerHTML = `<div class="sr-meta sr-kicker"><span>${doc.title}</span><span>·</span><span>${doc.sector}</span></div><h3>${doc.headline}</h3><p><span class="sr-score">${Number(doc.rating).toFixed(1)}</span> Overall rating · ${doc.date}</p>`;
+        link.innerHTML = `<div class="sr-meta sr-kicker"><span>${doc.title}</span><span>·</span><span>${doc.sector}</span></div><h3>${doc.headline}</h3><p><span class="sr-score">${Number(doc.rating).toFixed(1)}</span> 整体评分 · ${doc.date}</p>`;
         return link;
       }));
     };

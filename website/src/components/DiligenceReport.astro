@@ -38,6 +38,14 @@ const labels = lang === 'zh'
       financialsValuation: '财务与估值', businessModel: '商业模式', unitEconomics: '单位经济', capitalEfficiency: '资本效率', valuationFramework: '估值框架', comps: '可比公司/交易', returns: '回报情景',
       risksMilestones: '风险、Pre-mortem 与里程碑', topRisks: '核心风险', riskMap: '风险优先级', preMortem: '失败预演', mindChangers: '改变判断的证据', milestones: '里程碑', killCriteria: '否决条件',
       competition: '竞争格局', evidenceQuality: '证据质量', sourceCoverage: '来源覆盖', openGaps: '未解问题', notDisclosed: '未披露', unknown: '未知', current: '在任', former: '已离任', noPhoto: '暂无可靠照片',
+      arr: 'ARR', growth: '增长', grossMargin: '毛利率', ruleOf40: 'Rule of 40', burnMultiple: 'Burn multiple', valuation: '估值', headcount: '员工数',
+      market: '市场', product: '产品', traction: '牵引力', economics: '经济性', baseCase: '基础情景', bullCase: '乐观情景', bearCase: '悲观情景', signal: '信号', marketVerdict: '市场判断',
+      scope: '范围', value: '数值', approach: '方法', methodology: '方法论', customer: '客户', industry: '行业', outcome: '结果', verified: '已验证', type: '类型', strength: '强度', independent: '独立验证',
+      segment: '分层', buyer: '买方', budgetOwner: '预算负责人', urgency: '紧迫度', wtpEvidence: '付费意愿证据', item: '事项', timeframe: '时间范围', source: '来源',
+      name: '名称', role: '角色', domainFit: '领域匹配', background: '背景', function: '职能', from: '来自', significance: '重要性', teamVerdict: '团队判断', keyPersonRisk: '关键人风险',
+      financialVerdict: '财务判断', funding: '融资', totalRaised: '累计融资', latestRound: '最新轮次', postMoney: '投后估值', payback: '回收期', low: '低位', mid: '中位', high: '高位',
+      tickerEvent: '代码/事件', rationale: '依据', revenueMultiple: '收入倍数', scenario: '情景', exitValue: '退出价值', year: '年份', assumptions: '假设',
+      category: '类别', severity: '严重性', likelihood: '可能性', mitigation: '缓释措施', criterion: '条件', detection: '识别方式', moat: '护城河', positioning: '定位', directCompetitors: '直接竞争者', substitutes: '替代方案', strengths: '优势', weaknesses: '劣势', whyItMatters: '重要性', coverageGaps: '覆盖缺口', sourceLedger: '来源台账', publisher: '发布方', title: '标题', independence: '独立性', quote: '引文'
     }
   : {
       officialWebsite: 'Official website', recommendation: 'Recommendation', confidence: 'Confidence', sources: 'sources', claims: 'claims', rating: 'Rating',
@@ -50,16 +58,34 @@ const labels = lang === 'zh'
       financialsValuation: 'Financials and valuation', businessModel: 'Business model', unitEconomics: 'Unit economics', capitalEfficiency: 'Capital efficiency', valuationFramework: 'Valuation framework', comps: 'Comparables', returns: 'Expected returns',
       risksMilestones: 'Risks, pre-mortem and milestones', topRisks: 'Top risks', riskMap: 'Risk priority map', preMortem: 'Pre-mortem', mindChangers: 'Mind-changers', milestones: 'Milestones', killCriteria: 'Kill criteria',
       competition: 'Competitive landscape', evidenceQuality: 'Evidence quality', sourceCoverage: 'Source coverage', openGaps: 'Open gaps', notDisclosed: 'Not disclosed', unknown: 'Unknown', current: 'Current', former: 'Former', noPhoto: 'No verified photo',
+      arr: 'ARR', growth: 'Growth', grossMargin: 'Gross margin', ruleOf40: 'Rule of 40', burnMultiple: 'Burn multiple', valuation: 'Valuation', headcount: 'Headcount',
+      market: 'Market', product: 'Product', traction: 'Traction', economics: 'Economics', baseCase: 'Base case', bullCase: 'Bull case', bearCase: 'Bear case', signal: 'Signal', marketVerdict: 'Market verdict',
+      scope: 'Scope', value: 'Value', approach: 'Approach', methodology: 'Methodology', customer: 'Customer', industry: 'Industry', outcome: 'Outcome', verified: 'Verified', type: 'Type', strength: 'Strength', independent: 'Independent',
+      segment: 'Segment', buyer: 'Buyer', budgetOwner: 'Budget owner', urgency: 'Urgency', wtpEvidence: 'WTP evidence', item: 'Item', timeframe: 'Timeframe', source: 'Source',
+      name: 'Name', role: 'Role', domainFit: 'Domain fit', background: 'Background', function: 'Function', from: 'From', significance: 'Significance', teamVerdict: 'Team verdict', keyPersonRisk: 'Key-person risk',
+      financialVerdict: 'Financial verdict', funding: 'Funding', totalRaised: 'Total raised', latestRound: 'Latest round', postMoney: 'Post-money', payback: 'Payback', low: 'Low', mid: 'Mid', high: 'High',
+      tickerEvent: 'Ticker/Event', rationale: 'Rationale', revenueMultiple: 'Revenue multiple', scenario: 'Scenario', exitValue: 'Exit value', year: 'Year', assumptions: 'Assumptions',
+      category: 'Category', severity: 'Severity', likelihood: 'Likelihood', mitigation: 'Mitigation', criterion: 'Criterion', detection: 'Detection', moat: 'Moat', positioning: 'Positioning', directCompetitors: 'Direct competitors', substitutes: 'Substitutes', strengths: 'Strengths', weaknesses: 'Weaknesses', whyItMatters: 'Why it matters', coverageGaps: 'Coverage gaps', sourceLedger: 'Source ledger', publisher: 'Publisher', title: 'Title', independence: 'Independence', quote: 'Quote'
     };
+
+const zhDisplayMap: Record<string, string> = {
+  'Research More': '继续研究', 'Medium': '中等', 'High': '高', 'Low': '低', 'Critical': '关键', 'Stretched': '偏高',
+  'Positive': '正面', 'Negative': '负面', 'Neutral': '中性', 'Mixed': '混合', 'Strong': '强', 'Moderate': '中等', 'Weak': '弱',
+  'Yes': '是', 'No': '否', 'Public': '公开', 'Independent': '独立', 'Company': '公司', 'Third Party': '第三方', 'Customer': '客户'
+};
+function labelValue(value: unknown) {
+  const rendered = displayLabel(value);
+  return lang === 'zh' ? (zhDisplayMap[rendered] ?? rendered) : rendered;
+}
 
 function titleCase(value: unknown) {
   if (!value) return labels.unknown;
-  return displayLabel(value);
+  return labelValue(value);
 }
 function metric(value: unknown, suffix = '') {
   if (value === null || value === undefined || value === '') return labels.notDisclosed;
   if (typeof value === 'number') return `${value.toLocaleString()}${suffix}`;
-  return displayLabel(value);
+  return labelValue(value);
 }
 function moneyM(value: unknown) {
   if (value === null || value === undefined || value === '') return labels.notDisclosed;
@@ -79,14 +105,14 @@ function barWidth(value: unknown, max = 5) {
 
 const keyMetrics = data.keyMetrics ?? traction.kpiSnapshot ?? {};
 const metricCards = [
-  ['ARR', moneyM(keyMetrics.arrUsdM)],
-  ['Growth', pct(keyMetrics.revenueGrowthYoYPct)],
-  ['Gross margin', pct(keyMetrics.grossMarginPct)],
+  [labels.arr, moneyM(keyMetrics.arrUsdM)],
+  [labels.growth, pct(keyMetrics.revenueGrowthYoYPct)],
+  [labels.grossMargin, pct(keyMetrics.grossMarginPct)],
   ['NRR', pct(keyMetrics.nrrPct)],
-  ['Rule of 40', metric(keyMetrics.ruleOf40)],
-  ['Burn multiple', metric(keyMetrics.burnMultiple)],
-  ['Valuation', moneyM(keyMetrics.postMoneyValuationUsdM ?? business.funding?.postMoneyValuationUsdM)],
-  ['Headcount', metric(keyMetrics.headcount ?? team.teamSnapshot?.headcount)],
+  [labels.ruleOf40, metric(keyMetrics.ruleOf40)],
+  [labels.burnMultiple, metric(keyMetrics.burnMultiple)],
+  [labels.valuation, moneyM(keyMetrics.postMoneyValuationUsdM ?? business.funding?.postMoneyValuationUsdM)],
+  [labels.headcount, metric(keyMetrics.headcount ?? team.teamSnapshot?.headcount)],
 ];
 const horizons = [
   ['6M', arr(milestones.horizons?.next6Months)],
@@ -103,16 +129,16 @@ const scoreBars = Object.entries(memo.scorecard ?? {}).map(([key, value]: [strin
   score: typeof value?.score === 'number' ? value.score : null,
 }));
 const decisionQuestions = [
-  { label: 'Market', question: market.marketVerdict?.rationale },
-  { label: 'Product', question: product.productVerdict?.rationale },
-  { label: 'Traction', question: traction.tractionSummary?.rationale },
-  { label: 'Economics', question: business.financialVerdict?.rationale },
+  { label: labels.market, question: market.marketVerdict?.rationale },
+  { label: labels.product, question: product.productVerdict?.rationale },
+  { label: labels.traction, question: traction.tractionSummary?.rationale },
+  { label: labels.economics, question: business.financialVerdict?.rationale },
 ].filter((item) => item.question);
 const focusItems = [
-  { label: labels.recommendation, value: displayLabel(data.recommendation), note: memo?.memo?.oneLine ?? data.headline },
-  { label: 'Valuation', value: displayLabel(valuation.valuationVerdict?.stance ?? labels.unknown), note: valuation.valuationFramework?.rationale },
-  { label: 'Risk', value: displayLabel(risk.riskVerdict?.overallRisk ?? labels.unknown), note: risk.riskVerdict?.rationale },
-  { label: labels.evidenceQuality, value: displayLabel(data.confidence), note: arr(ledger.openEvidenceGaps)[0]?.gap ?? arr(data.unresolvedGaps)[0] },
+  { label: labels.recommendation, value: labelValue(data.recommendation), note: memo?.memo?.oneLine ?? data.headline },
+  { label: labels.valuation, value: labelValue(valuation.valuationVerdict?.stance ?? labels.unknown), note: valuation.valuationFramework?.rationale },
+  { label: labels.risk, value: labelValue(risk.riskVerdict?.overallRisk ?? labels.unknown), note: risk.riskVerdict?.rationale },
+  { label: labels.evidenceQuality, value: labelValue(data.confidence), note: arr(ledger.openEvidenceGaps)[0]?.gap ?? arr(data.unresolvedGaps)[0] },
 ];
 const leadershipPeople = [...arr(team.founders), ...arr(team.keyHires)].slice(0, 8);
 const riskRank: Record<string, number> = { low: 1, medium: 2, high: 3, critical: 4 };
@@ -135,11 +161,11 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
     <aside class="hero-summary-card" aria-label={labels.atAGlance}>
       <div class="sr-kicker">{labels.atAGlance}</div>
       <dl>
-        <div><dt>{labels.recommendation}</dt><dd>{displayLabel(data.recommendation)}</dd></div>
+        <div><dt>{labels.recommendation}</dt><dd>{labelValue(data.recommendation)}</dd></div>
         <div><dt>{labels.rating}</dt><dd>{data.overallScore.toFixed(1)}</dd></div>
-        <div><dt>{labels.valuationStance}</dt><dd>{displayLabel(valuation.valuationVerdict?.stance ?? labels.unknown)}</dd></div>
-        <div><dt>{labels.risk}</dt><dd>{displayLabel(risk.riskVerdict?.overallRisk ?? labels.unknown)}</dd></div>
-        <div><dt>{labels.confidence}</dt><dd>{displayLabel(data.confidence)}</dd></div>
+        <div><dt>{labels.valuationStance}</dt><dd>{labelValue(valuation.valuationVerdict?.stance ?? labels.unknown)}</dd></div>
+        <div><dt>{labels.risk}</dt><dd>{labelValue(risk.riskVerdict?.overallRisk ?? labels.unknown)}</dd></div>
+        <div><dt>{labels.confidence}</dt><dd>{labelValue(data.confidence)}</dd></div>
       </dl>
     </aside>
   </div>
@@ -196,9 +222,9 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
     <div class="memo-grid">
       <article class="report-panel">
         <div class="sr-kicker">{labels.thesis}</div>
-        <h3>Base case</h3><p>{memo?.thesis?.baseCase}</p>
-        <h3>Bull case</h3><p>{memo?.thesis?.bullCase}</p>
-        <h3>Bear case</h3><p>{memo?.thesis?.bearCase}</p>
+        <h3>{labels.baseCase}</h3><p>{memo?.thesis?.baseCase}</p>
+        <h3>{labels.bullCase}</h3><p>{memo?.thesis?.bullCase}</p>
+        <h3>{labels.bearCase}</h3><p>{memo?.thesis?.bearCase}</p>
       </article>
       <article class="report-panel">
         <div class="sr-kicker">{labels.metrics}</div>
@@ -208,7 +234,7 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
   </div>
 </section>
 
-<section class="sr-container sr-section"><h2 data-section="03">{labels.scorecard}</h2><RatingBlock dimensions={memo?.scorecard ?? {}} overall={data.overallScore} /></section>
+<section class="sr-container sr-section"><h2 data-section="03">{labels.scorecard}</h2><RatingBlock dimensions={memo?.scorecard ?? {}} overall={data.overallScore} lang={lang} /></section>
 
 <section class="sr-container sr-section two-col">
   <article class="report-panel"><h2>{labels.positives}</h2>{arr(memo.decisionDrivers?.positives).map((item) => <p><strong>{titleCase(item.importance)}:</strong> {item.point} <ClaimRefs refs={claimRefs(item)} /></p>)}</article>
@@ -218,40 +244,40 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
 <section class="sr-container sr-section">
   <h2 id="section-2" data-section="04">{labels.tractionGtm}</h2>
   <div class="sr-grid">
-    <article class="sr-card"><div class="sr-kicker">Signal</div><h3>{displayLabel(traction.tractionSummary?.overallSignal ?? labels.unknown)}</h3><p>{traction.tractionSummary?.rationale}</p></article>
+    <article class="sr-card"><div class="sr-kicker">{labels.signal}</div><h3>{labelValue(traction.tractionSummary?.overallSignal ?? labels.unknown)}</h3><p>{traction.tractionSummary?.rationale}</p></article>
     <article class="sr-card"><div class="sr-kicker">{labels.pricing}</div><p>{traction.pricingAndPackaging?.observedPricing}</p><p class="sr-muted">{traction.pricingAndPackaging?.packagingNotes}</p></article>
     <article class="sr-card"><div class="sr-kicker">{labels.retention}</div>{arr(traction.retentionExpansionSignals?.evidence).slice(0, 4).map((item) => <p>{item}</p>)}</article>
   </div>
-  <DataTable title={labels.tractionSignals} rows={arr(traction.tractionSignals)} columns={[{ heading: 'Type', key: 'signalType' }, { heading: 'Signal', key: 'signal' }, { heading: 'Strength', key: 'strength' }, { heading: 'Independent', key: 'independentValidation' }]} emptyLabel={labels.notDisclosed} />
-  <DataTable title={labels.customerCases} rows={arr(traction.customerCaseStudies)} columns={[{ heading: 'Customer', key: 'customer' }, { heading: 'Industry', key: 'industry' }, { heading: 'Scope', key: 'deploymentScope' }, { heading: 'Outcome', key: 'quantifiedOutcome' }, { heading: 'Verified', key: 'independentlyVerified' }]} emptyLabel={labels.notDisclosed} />
+  <DataTable title={labels.tractionSignals} rows={arr(traction.tractionSignals)} columns={[{ heading: labels.type, key: 'signalType' }, { heading: labels.signal, key: 'signal' }, { heading: labels.strength, key: 'strength' }, { heading: labels.independent, key: 'independentValidation' }]} emptyLabel={labels.notDisclosed} lang={lang} />
+  <DataTable title={labels.customerCases} rows={arr(traction.customerCaseStudies)} columns={[{ heading: labels.customer, key: 'customer' }, { heading: labels.industry, key: 'industry' }, { heading: labels.scope, key: 'deploymentScope' }, { heading: labels.outcome, key: 'quantifiedOutcome' }, { heading: labels.verified, key: 'independentlyVerified' }]} emptyLabel={labels.notDisclosed} lang={lang} />
 </section>
 
 <section class="sr-container sr-section">
   <h2 id="section-3" data-section="05">{labels.marketProduct}</h2>
   <div class="two-col">
     <article class="report-panel"><div class="sr-kicker">{labels.whyNow}</div><p>{market.whyNow?.timingRationale}</p>{arr(market.whyNow?.inflectionDrivers).map((driver) => <p><strong>{titleCase(driver.driverType)}:</strong> {driver.driver}</p>)}</article>
-    <article class="report-panel"><div class="sr-kicker">Market verdict</div><h3>{displayLabel(market.marketVerdict?.attractiveness ?? labels.unknown)}</h3><p>{market.marketVerdict?.rationale}</p></article>
+    <article class="report-panel"><div class="sr-kicker">{labels.marketVerdict}</div><h3>{labelValue(market.marketVerdict?.attractiveness ?? labels.unknown)}</h3><p>{market.marketVerdict?.rationale}</p></article>
   </div>
   <div class="report-table-frame">
     <table class="sr-table report-table">
       <caption>{labels.marketSizing}</caption>
-      <thead><tr><th>Scope</th><th>Value</th><th>USD M</th><th>Approach</th><th>Methodology</th><th>Confidence</th></tr></thead>
-      <tbody>{['tam', 'sam', 'som'].map((key) => { const row = market.marketSizing?.[key] ?? {}; return <tr><td>{key.toUpperCase()}</td><td>{row.value ?? labels.notDisclosed}</td><td>{metric(row.valueUsdM)}</td><td>{displayLabel(row.approach ?? labels.unknown)}</td><td>{row.methodology}</td><td>{displayLabel(row.confidence)}</td></tr>; })}</tbody>
+      <thead><tr><th>{labels.scope}</th><th>{labels.value}</th><th>USD M</th><th>{labels.approach}</th><th>{labels.methodology}</th><th>{labels.confidence}</th></tr></thead>
+      <tbody>{['tam', 'sam', 'som'].map((key) => { const row = market.marketSizing?.[key] ?? {}; return <tr><td>{key.toUpperCase()}</td><td>{row.value ?? labels.notDisclosed}</td><td>{metric(row.valueUsdM)}</td><td>{labelValue(row.approach ?? labels.unknown)}</td><td>{row.methodology}</td><td>{labelValue(row.confidence)}</td></tr>; })}</tbody>
     </table>
   </div>
-  <DataTable title={labels.customerSegments} rows={arr(market.customerSegments)} columns={[{ heading: 'Segment', key: 'segment' }, { heading: 'Buyer', key: 'buyer' }, { heading: 'Budget owner', key: 'budgetOwner' }, { heading: 'Urgency', key: 'urgency' }, { heading: 'WTP evidence', key: 'willingnessToPayEvidence' }]} emptyLabel={labels.notDisclosed} />
+  <DataTable title={labels.customerSegments} rows={arr(market.customerSegments)} columns={[{ heading: labels.segment, key: 'segment' }, { heading: labels.buyer, key: 'buyer' }, { heading: labels.budgetOwner, key: 'budgetOwner' }, { heading: labels.urgency, key: 'urgency' }, { heading: labels.wtpEvidence, key: 'willingnessToPayEvidence' }]} emptyLabel={labels.notDisclosed} lang={lang} />
   <div class="two-col">
-    <article class="report-panel"><div class="sr-kicker">{labels.productTechnology}</div><h3>{displayLabel(product.productVerdict?.assessment ?? labels.unknown)}</h3><p>{product.productVerdict?.rationale}</p><p class="sr-muted">{product.technologyStack?.architectureNotes}</p></article>
+    <article class="report-panel"><div class="sr-kicker">{labels.productTechnology}</div><h3>{labelValue(product.productVerdict?.assessment ?? labels.unknown)}</h3><p>{product.productVerdict?.rationale}</p><p class="sr-muted">{product.technologyStack?.architectureNotes}</p></article>
     <article class="report-panel"><div class="sr-kicker">{labels.security}</div>{arr(product.securityCompliance?.certifications).map((item) => <span class="sr-pill inline-pill">{item}</span>)}<p>{product.securityCompliance?.postureNotes}</p></article>
   </div>
-  <DataTable title={labels.roadmap} rows={arr(product.productRoadmap?.publiclyDisclosedItems)} columns={[{ heading: 'Item', key: 'item' }, { heading: 'Timeframe', key: 'timeframe' }, { heading: 'Source', key: 'sourceType' }]} emptyLabel={labels.notDisclosed} />
+  <DataTable title={labels.roadmap} rows={arr(product.productRoadmap?.publiclyDisclosedItems)} columns={[{ heading: labels.item, key: 'item' }, { heading: labels.timeframe, key: 'timeframe' }, { heading: labels.source, key: 'sourceType' }]} emptyLabel={labels.notDisclosed} lang={lang} />
 </section>
 
 <section class="sr-container sr-section">
   <h2 id="section-4" data-section="06">{labels.teamGovernance}</h2>
   <div class="sr-grid">
-    <article class="sr-card"><div class="sr-kicker">{labels.teamSnapshot}</div><dl class="metric-grid"><dt>Headcount</dt><dd>{metric(team.teamSnapshot?.headcount)}</dd><dt>90d growth</dt><dd>{pct(team.teamSnapshot?.headcountGrowth90dPct)}</dd><dt>Key-person risk</dt><dd>{team.keyPersonRisk?.level ?? risk.governance?.keyPersonRisk ?? labels.unknown}</dd></dl><p>{team.teamSnapshot?.notes}</p></article>
-    <article class="sr-card"><div class="sr-kicker">Team verdict</div><h3>{displayLabel(team.teamVerdict?.assessment ?? labels.unknown)}</h3><p>{team.teamVerdict?.rationale}</p></article>
+    <article class="sr-card"><div class="sr-kicker">{labels.teamSnapshot}</div><dl class="metric-grid"><dt>{labels.headcount}</dt><dd>{metric(team.teamSnapshot?.headcount)}</dd><dt>90d {labels.growth}</dt><dd>{pct(team.teamSnapshot?.headcountGrowth90dPct)}</dd><dt>{labels.keyPersonRisk}</dt><dd>{labelValue(team.keyPersonRisk?.level ?? risk.governance?.keyPersonRisk ?? labels.unknown)}</dd></dl><p>{team.teamSnapshot?.notes}</p></article>
+    <article class="sr-card"><div class="sr-kicker">{labels.teamVerdict}</div><h3>{labelValue(team.teamVerdict?.assessment ?? labels.unknown)}</h3><p>{team.teamVerdict?.rationale}</p></article>
     <article class="sr-card"><div class="sr-kicker">{labels.governance}</div><p>{risk.governance?.controlStructure}</p><p class="sr-muted">{risk.governance?.investorAlignment}</p></article>
   </div>
   <div class="people-grid" aria-label={labels.leadershipCards}>
@@ -267,24 +293,24 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
       </article>
     ))}
   </div>
-  <DataTable title={labels.founders} rows={arr(team.founders)} columns={[{ heading: 'Name', key: 'name' }, { heading: 'Role', key: 'role' }, { heading: 'Current', key: 'current' }, { heading: 'Domain fit', key: 'domainFit' }, { heading: 'Background', key: 'background' }]} emptyLabel={labels.notDisclosed} />
-  <DataTable title={labels.keyHires} rows={arr(team.keyHires)} columns={[{ heading: 'Name', key: 'name' }, { heading: 'Role', key: 'role' }, { heading: 'Function', key: 'function' }, { heading: 'From', key: 'fromCompany' }, { heading: 'Significance', key: 'significance' }]} emptyLabel={labels.notDisclosed} />
+  <DataTable title={labels.founders} rows={arr(team.founders)} columns={[{ heading: labels.name, key: 'name' }, { heading: labels.role, key: 'role' }, { heading: labels.current, key: 'current' }, { heading: labels.domainFit, key: 'domainFit' }, { heading: labels.background, key: 'background' }]} emptyLabel={labels.notDisclosed} lang={lang} />
+  <DataTable title={labels.keyHires} rows={arr(team.keyHires)} columns={[{ heading: labels.name, key: 'name' }, { heading: labels.role, key: 'role' }, { heading: labels.function, key: 'function' }, { heading: labels.from, key: 'fromCompany' }, { heading: labels.significance, key: 'significance' }]} emptyLabel={labels.notDisclosed} lang={lang} />
 </section>
 
 <section class="sr-container sr-section">
   <h2 id="section-5" data-section="07">{labels.financialsValuation}</h2>
   <div class="two-col">
     <article class="report-panel"><div class="sr-kicker">{labels.businessModel}</div><p>{business.businessModel?.model}</p><p>{business.businessModel?.marginProfileHypothesis}</p></article>
-    <article class="report-panel"><div class="sr-kicker">Financial verdict</div><h3>{displayLabel(business.financialVerdict?.assessment ?? labels.unknown)}</h3><p>{business.financialVerdict?.rationale}</p></article>
+    <article class="report-panel"><div class="sr-kicker">{labels.financialVerdict}</div><h3>{labelValue(business.financialVerdict?.assessment ?? labels.unknown)}</h3><p>{business.financialVerdict?.rationale}</p></article>
   </div>
   <div class="sr-grid">
-    <article class="sr-card"><div class="sr-kicker">Funding</div><dl class="metric-grid"><dt>Total raised</dt><dd>{moneyM(business.funding?.totalRaisedUsdM)}</dd><dt>Latest round</dt><dd>{moneyM(business.funding?.latestRoundAmountUsdM)}</dd><dt>Post-money</dt><dd>{moneyM(business.funding?.postMoneyValuationUsdM)}</dd></dl></article>
-    <article class="sr-card"><div class="sr-kicker">{labels.unitEconomics}</div><dl class="metric-grid"><dt>ACV/ARPA</dt><dd>{moneyM(business.unitEconomicsQuant?.arpaOrAcvUsd)}</dd><dt>NRR</dt><dd>{pct(business.unitEconomicsQuant?.netRetentionPct)}</dd><dt>Payback</dt><dd>{metric(business.unitEconomicsQuant?.cacPaybackMonths, ' mo')}</dd></dl><p>{business.unitEconomicsQuant?.estimateBasis}</p></article>
-    <article class="sr-card"><div class="sr-kicker">{labels.capitalEfficiency}</div><dl class="metric-grid"><dt>Burn multiple</dt><dd>{metric(business.capitalEfficiency?.burnMultiple)}</dd><dt>Magic number</dt><dd>{metric(business.capitalEfficiency?.magicNumber)}</dd><dt>Rule of 40</dt><dd>{metric(business.capitalEfficiency?.ruleOf40)}</dd></dl><p>{business.capitalEfficiency?.estimateBasis}</p></article>
+    <article class="sr-card"><div class="sr-kicker">{labels.funding}</div><dl class="metric-grid"><dt>{labels.totalRaised}</dt><dd>{moneyM(business.funding?.totalRaisedUsdM)}</dd><dt>{labels.latestRound}</dt><dd>{moneyM(business.funding?.latestRoundAmountUsdM)}</dd><dt>{labels.postMoney}</dt><dd>{moneyM(business.funding?.postMoneyValuationUsdM)}</dd></dl></article>
+    <article class="sr-card"><div class="sr-kicker">{labels.unitEconomics}</div><dl class="metric-grid"><dt>ACV/ARPA</dt><dd>{moneyM(business.unitEconomicsQuant?.arpaOrAcvUsd)}</dd><dt>NRR</dt><dd>{pct(business.unitEconomicsQuant?.netRetentionPct)}</dd><dt>{labels.payback}</dt><dd>{metric(business.unitEconomicsQuant?.cacPaybackMonths, lang === 'zh' ? ' 个月' : ' mo')}</dd></dl><p>{business.unitEconomicsQuant?.estimateBasis}</p></article>
+    <article class="sr-card"><div class="sr-kicker">{labels.capitalEfficiency}</div><dl class="metric-grid"><dt>{labels.burnMultiple}</dt><dd>{metric(business.capitalEfficiency?.burnMultiple)}</dd><dt>Magic number</dt><dd>{metric(business.capitalEfficiency?.magicNumber)}</dd><dt>{labels.ruleOf40}</dt><dd>{metric(business.capitalEfficiency?.ruleOf40)}</dd></dl><p>{business.capitalEfficiency?.estimateBasis}</p></article>
   </div>
-  <article class="report-panel"><div class="sr-kicker">{labels.valuationFramework}</div><h3>{displayLabel(valuation.valuationVerdict?.stance ?? labels.unknown)}</h3><p>{valuation.valuationFramework?.rationale}</p><dl class="metric-grid wide"><dt>Low</dt><dd>{moneyM(valuation.valuationFramework?.impliedValueLowUsdM)}</dd><dt>Mid</dt><dd>{moneyM(valuation.valuationFramework?.impliedValueMidUsdM)}</dd><dt>High</dt><dd>{moneyM(valuation.valuationFramework?.impliedValueHighUsdM)}</dd><dt>Confidence</dt><dd>{displayLabel(valuation.valuationFramework?.confidence ?? labels.unknown)}</dd></dl></article>
-  <DataTable title={labels.comps} rows={[...arr(valuation.publicComparables), ...arr(valuation.privateOrTransactionComparables)]} columns={[{ heading: 'Name', key: 'name' }, { heading: 'Ticker/Event', render: (row: any) => row.ticker ?? row.eventType }, { heading: 'Rationale', key: 'rationale' }, { heading: 'Revenue multiple', render: (row: any) => metric(row.revenueMultipleNtm ?? row.impliedRevenueMultiple) }, { heading: 'Valuation', render: (row: any) => moneyM(row.headlineValuationUsdM) }]} emptyLabel={labels.notDisclosed} />
-  <DataTable title={labels.returns} rows={arr(valuation.expectedReturns?.exitScenarios)} columns={[{ heading: 'Scenario', key: 'name' }, { heading: 'Exit value', render: (row: any) => moneyM(row.exitValueUsdM) }, { heading: 'Year', key: 'exitYear' }, { heading: 'Type', key: 'exitType' }, { heading: 'MoM', render: (row: any) => metric(row.grossMoM) }, { heading: 'IRR', render: (row: any) => pct(row.grossIrrPct) }, { heading: 'Assumptions', key: 'assumptions' }]} emptyLabel={labels.notDisclosed} />
+  <article class="report-panel"><div class="sr-kicker">{labels.valuationFramework}</div><h3>{labelValue(valuation.valuationVerdict?.stance ?? labels.unknown)}</h3><p>{valuation.valuationFramework?.rationale}</p><dl class="metric-grid wide"><dt>{labels.low}</dt><dd>{moneyM(valuation.valuationFramework?.impliedValueLowUsdM)}</dd><dt>{labels.mid}</dt><dd>{moneyM(valuation.valuationFramework?.impliedValueMidUsdM)}</dd><dt>{labels.high}</dt><dd>{moneyM(valuation.valuationFramework?.impliedValueHighUsdM)}</dd><dt>{labels.confidence}</dt><dd>{labelValue(valuation.valuationFramework?.confidence ?? labels.unknown)}</dd></dl></article>
+  <DataTable title={labels.comps} rows={[...arr(valuation.publicComparables), ...arr(valuation.privateOrTransactionComparables)]} columns={[{ heading: labels.name, key: 'name' }, { heading: labels.tickerEvent, render: (row: any) => row.ticker ?? row.eventType }, { heading: labels.rationale, key: 'rationale' }, { heading: labels.revenueMultiple, render: (row: any) => metric(row.revenueMultipleNtm ?? row.impliedRevenueMultiple) }, { heading: labels.valuation, render: (row: any) => moneyM(row.headlineValuationUsdM) }]} emptyLabel={labels.notDisclosed} lang={lang} />
+  <DataTable title={labels.returns} rows={arr(valuation.expectedReturns?.exitScenarios)} columns={[{ heading: labels.scenario, key: 'name' }, { heading: labels.exitValue, render: (row: any) => moneyM(row.exitValueUsdM) }, { heading: labels.year, key: 'exitYear' }, { heading: labels.type, key: 'exitType' }, { heading: 'MoM', render: (row: any) => metric(row.grossMoM) }, { heading: 'IRR', render: (row: any) => pct(row.grossIrrPct) }, { heading: labels.assumptions, key: 'assumptions' }]} emptyLabel={labels.notDisclosed} lang={lang} />
 </section>
 
 <section class="sr-container sr-section">
@@ -298,30 +324,30 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
       </article>
     ))}
   </div>
-  <DataTable title={labels.topRisks} rows={arr(risk.riskRegister)} columns={[{ heading: 'ID', key: 'id' }, { heading: 'Category', key: 'category' }, { heading: 'Risk', key: 'risk' }, { heading: 'Severity', key: 'severity' }, { heading: 'Likelihood', key: 'likelihood' }, { heading: 'Mitigation', key: 'mitigation' }]} emptyLabel={labels.notDisclosed} />
+  <DataTable title={labels.topRisks} rows={arr(risk.riskRegister)} columns={[{ heading: 'ID', key: 'id' }, { heading: labels.category, key: 'category' }, { heading: labels.risk, key: 'risk' }, { heading: labels.severity, key: 'severity' }, { heading: labels.likelihood, key: 'likelihood' }, { heading: labels.mitigation, key: 'mitigation' }]} emptyLabel={labels.notDisclosed} lang={lang} />
   <div class="two-col">
     <article class="report-panel"><div class="sr-kicker">{labels.preMortem}</div>{arr(memo.preMortem?.topFailureModes).map((item) => <p><strong>{titleCase(item.probability)}:</strong> {item.failureMode}<br /><span class="sr-muted">{arr(item.earlySignals).join(' · ')}</span></p>)}</article>
     <article class="report-panel"><div class="sr-kicker">{labels.mindChangers}</div>{arr(memo.mindChangers).map((item) => <p><strong>{titleCase(item.direction)} / {titleCase(item.impact)}:</strong> {item.evidence}</p>)}</article>
   </div>
   <div class="milestone-grid">{horizons.map(([label, rows]) => <article class="report-panel"><div class="sr-kicker">{label}</div>{arr(rows).map((m) => <p><strong>{m.id}:</strong> {m.milestone}<br /><span class="sr-muted">↑ {m.bullishIfAchieved} · ↓ {m.bearishIfMissed}</span></p>)}</article>)}</div>
-  <DataTable title={labels.killCriteria} rows={arr(milestones.killCriteria)} columns={[{ heading: 'Criterion', key: 'criterion' }, { heading: 'Severity', key: 'severity' }, { heading: 'Detection', key: 'detectionMethod' }]} emptyLabel={labels.notDisclosed} />
+  <DataTable title={labels.killCriteria} rows={arr(milestones.killCriteria)} columns={[{ heading: labels.criterion, key: 'criterion' }, { heading: labels.severity, key: 'severity' }, { heading: labels.detection, key: 'detectionMethod' }]} emptyLabel={labels.notDisclosed} lang={lang} />
 </section>
 
 <section class="sr-container sr-section">
   <h2 id="section-7" data-section="09">{labels.competition}</h2>
-  <div class="two-col"><article class="report-panel"><div class="sr-kicker">Moat</div><h3>{displayLabel(competition.moatAssessment?.durability ?? labels.unknown)}</h3><p>{competition.moatAssessment?.currentMoat}</p><p>{competition.moatAssessment?.potentialMoat}</p></article><article class="report-panel"><div class="sr-kicker">Positioning</div><h3>{displayLabel(competition.positioningVerdict?.assessment ?? labels.unknown)}</h3><p>{competition.positioningVerdict?.rationale}</p></article></div>
-  <DataTable title="Direct competitors" rows={arr(competition.competitiveSet?.directCompetitors)} columns={[{ heading: 'Name', key: 'name' }, { heading: 'Category', key: 'category' }, { heading: 'Positioning', key: 'positioning' }, { heading: 'Strengths', render: (row: any) => arr(row.relativeStrengths).join(' · ') }, { heading: 'Weaknesses', render: (row: any) => arr(row.relativeWeaknesses).join(' · ') }]} emptyLabel={labels.notDisclosed} />
-  <DataTable title="Substitutes" rows={arr(competition.competitiveSet?.substitutes)} columns={[{ heading: 'Name', key: 'name' }, { heading: 'Type', key: 'substituteType' }, { heading: 'Why it matters', key: 'whyItMatters' }]} emptyLabel={labels.notDisclosed} />
+  <div class="two-col"><article class="report-panel"><div class="sr-kicker">{labels.moat}</div><h3>{labelValue(competition.moatAssessment?.durability ?? labels.unknown)}</h3><p>{competition.moatAssessment?.currentMoat}</p><p>{competition.moatAssessment?.potentialMoat}</p></article><article class="report-panel"><div class="sr-kicker">{labels.positioning}</div><h3>{labelValue(competition.positioningVerdict?.assessment ?? labels.unknown)}</h3><p>{competition.positioningVerdict?.rationale}</p></article></div>
+  <DataTable title={labels.directCompetitors} rows={arr(competition.competitiveSet?.directCompetitors)} columns={[{ heading: labels.name, key: 'name' }, { heading: labels.category, key: 'category' }, { heading: labels.positioning, key: 'positioning' }, { heading: labels.strengths, render: (row: any) => arr(row.relativeStrengths).join(' · ') }, { heading: labels.weaknesses, render: (row: any) => arr(row.relativeWeaknesses).join(' · ') }]} emptyLabel={labels.notDisclosed} lang={lang} />
+  <DataTable title={labels.substitutes} rows={arr(competition.competitiveSet?.substitutes)} columns={[{ heading: labels.name, key: 'name' }, { heading: labels.type, key: 'substituteType' }, { heading: labels.whyItMatters, key: 'whyItMatters' }]} emptyLabel={labels.notDisclosed} lang={lang} />
 </section>
 
 <section class="sr-container sr-section">
   <h2 id="section-8" data-section="10">{labels.evidenceQuality}</h2>
   <div class="sr-grid">
     <article class="sr-card"><div class="sr-kicker">{labels.sourceCoverage}</div><dl class="metric-grid">{Object.entries(sourceMix).map(([key, count]) => <><dt>{titleCase(key)}</dt><dd>{count}</dd></>)}</dl></article>
-    <article class="sr-card"><div class="sr-kicker">Coverage gaps</div>{arr(ledger.coverage?.coverageGaps).map((gap) => <p>{gap}</p>)}</article>
+    <article class="sr-card"><div class="sr-kicker">{labels.coverageGaps}</div>{arr(ledger.coverage?.coverageGaps).map((gap) => <p>{gap}</p>)}</article>
     <article class="sr-card"><div class="sr-kicker">{labels.openGaps}</div>{arr(ledger.openEvidenceGaps).map((gap) => <p><strong>{titleCase(gap.impact)}:</strong> {gap.gap}</p>)}</article>
   </div>
-  <DataTable title="Source ledger" rows={arr(ledger.sources).slice(0, 20)} columns={[{ heading: 'ID', key: 'id' }, { heading: 'Publisher', key: 'publisher' }, { heading: 'Title', key: 'title' }, { heading: 'Independence', key: 'independence' }, { heading: 'Quote', key: 'keyQuote' }]} emptyLabel={labels.notDisclosed} />
+  <DataTable title={labels.sourceLedger} rows={arr(ledger.sources).slice(0, 20)} columns={[{ heading: 'ID', key: 'id' }, { heading: labels.publisher, key: 'publisher' }, { heading: labels.title, key: 'title' }, { heading: labels.independence, key: 'independence' }, { heading: labels.quote, key: 'keyQuote' }]} emptyLabel={labels.notDisclosed} lang={lang} />
 </section>
 
 <style>

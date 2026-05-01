@@ -1,17 +1,19 @@
 ---
 import { displayLabel } from '../lib/display';
+import type { Lang } from '../lib/i18n';
 
 interface Dimension { score: number; rationale: string; claimRefs?: string[]; }
-interface Props { dimensions: Record<string, Dimension>; overall: number; }
-const { dimensions, overall } = Astro.props;
+interface Props { dimensions: Record<string, Dimension>; overall: number; lang?: Lang; }
+const { dimensions, overall, lang = 'en' } = Astro.props;
+const labels = lang === 'zh' ? { overall: '整体评分', scoreLabel: '评分' } : { overall: 'Overall', scoreLabel: 'score' };
 ---
 <section class="sr-card">
-  <div class="sr-meta sr-kicker"><span>Overall</span><span class="sr-score">{overall.toFixed(1)}</span></div>
+  <div class="sr-meta sr-kicker"><span>{labels.overall}</span><span class="sr-score">{overall.toFixed(1)}</span></div>
   <div class="rating-list">
     {Object.entries(dimensions).map(([name, value]) => (
       <div class="rating-row">
         <div><strong>{displayLabel(name)}</strong><p>{value.rationale}</p></div>
-        <div class="rating-bar" aria-label={`${displayLabel(name)} score ${value.score} out of 5`}>
+        <div class="rating-bar" aria-label={`${displayLabel(name)} ${labels.scoreLabel} ${value.score} / 5`}>
           <span class="rating-track"><i style={`width:${Math.max(4, Math.min(100, (value.score / 5) * 100))}%`}></i></span>
           <b>{value.score}</b>
         </div>
