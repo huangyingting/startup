@@ -13,6 +13,10 @@ Read `00-report-brief.yaml` through `09-investment-valuation.yaml`. Write exactl
 
 Write these files directly to `reportFolder`. `/tmp` tool-output files are diagnostic logs only, not artifacts or handoff inputs. Each output must start with `schemaVersion`, `artifact`, `slug`, `runDate`, and `company`; do not write continuation fragments.
 
+## Schema reference
+
+Before writing, read `.github/agents/startup-diligence.schema.md` and `.github/agents/yaml-syntax.md` from the repo, or the absolute paths supplied by `Startup Research`. Follow artifact-specific schemas, shared conventions, enum values, document-head rules, `claimRefs`/`sourceRefs` rules, figure/table reference rules, and YAML formatting rules exactly.
+
 ## Core responsibility
 
 Turn analytical artifacts into a professional VC due diligence report represented entirely as YAML. The website renders `10-report-document.yaml` into the final due diligence report experience.

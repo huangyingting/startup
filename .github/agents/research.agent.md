@@ -18,6 +18,8 @@ Resolve before running specialists:
 - `includeZh`: default `false` unless requested.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
+- `schemaPath`: absolute path to `.github/agents/startup-diligence.schema.md`.
+- `yamlSyntaxPath`: absolute path to `.github/agents/yaml-syntax.md`.
 
 ## v2 artifact contract
 
@@ -60,6 +62,8 @@ Focus: <focus>
 Depth: <standard|deep>
 Report folder: <absolute path>
 Schema: startup-diligence-report-v2
+Schema reference: <absolute path to .github/agents/startup-diligence.schema.md>
+YAML syntax reference: <absolute path to .github/agents/yaml-syntax.md>
 Style target: comprehensive VC due diligence report; tables and Mermaid diagrams required.
 Evidence rule: every external factual assertion must cite claimRefs / inline [Cxxx].
 ```

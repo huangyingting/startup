@@ -16,6 +16,10 @@ Write these files directly to `reportFolder`. `/tmp` tool-output files are diagn
 Do not search the web. Use only claim-backed evidence.
 Each file must start with `schemaVersion`, `artifact`, `slug`, `runDate`, and `company`; do not return or save continuation fragments.
 
+## Schema reference
+
+Before writing, read `.github/agents/startup-diligence.schema.md` and `.github/agents/yaml-syntax.md` from the repo, or the absolute paths supplied by `Startup Research`. Follow artifact-specific schemas, shared conventions, enum values, document-head rules, `claimRefs`/`sourceRefs` rules, and YAML formatting rules exactly.
+
 ## Output style
 
 Structure this section as an investor-grade VC diligence chapter:
