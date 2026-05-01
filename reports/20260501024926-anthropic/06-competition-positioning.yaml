@@ -1,0 +1,160 @@
+schemaVersion: startup-diligence-v1
+artifact: competition-positioning
+slug: anthropic
+runDate: '2026-05-01'
+company:
+  name: Anthropic
+competitiveSet:
+  directCompetitors:
+    - name: Amazon Bedrock
+      category: Cloud foundation-model platform and procurement channel
+      positioning: Lets enterprises buy and deploy Claude and competing models inside existing AWS estates.
+      relativeStrengths:
+        - Deep AWS procurement, infrastructure, and public-sector alignment
+        - Strong control of enterprise deployment context when buyers prefer cloud-native procurement
+      relativeWeaknesses:
+        - Anthropic retains a direct Claude product surface and direct API relationship outside AWS
+        - Anthropic's own safety and governance narrative is more central to its brand than Bedrock's marketplace positioning
+      claimRefs:
+        - C007
+        - C016
+        - C019
+        - C021
+        - C031
+    - name: Google Cloud Vertex AI
+      category: Cloud foundation-model platform and enterprise AI control plane
+      positioning: Offers Claude access within Google Cloud environments for enterprise solutions.
+      relativeStrengths:
+        - Embedded in enterprise cloud buying and deployment workflows
+        - Can act as a preferred control plane for buyers that prioritize cloud integration and governance
+      relativeWeaknesses:
+        - Anthropic also reaches customers directly through Claude and its own API platform
+        - Anthropic's developer ecosystem and Claude-branded workflow surfaces exist outside Vertex AI
+      claimRefs:
+        - C007
+        - C020
+        - C021
+        - C043
+        - C044
+    - name: Microsoft Foundry
+      category: Enterprise AI platform and distribution channel
+      positioning: Provides Claude model access inside Microsoft's enterprise AI environment.
+      relativeStrengths:
+        - Fits buyers already standardized on Microsoft enterprise tooling and governance layers
+        - Can become the operational control point for deployment, privacy, and security reviews
+      relativeWeaknesses:
+        - Anthropic still owns the underlying Claude brand, direct product surface, and direct developer tooling
+        - Foundry channel presence does not by itself replace Anthropic's broader direct go-to-market across consumers, teams, and API users
+      claimRefs:
+        - C007
+        - C021
+        - C034
+        - C043
+        - C044
+  substitutes:
+    - name: Internal copilots and bespoke agents built on hosted models
+      substituteType: internal-build
+      whyItMatters: Buyers can use Anthropic or rival model access through APIs and cloud channels while keeping the end workflow, data model, and user experience in-house instead of adopting Claude as the primary interface.
+      claimRefs:
+        - C021
+        - C043
+        - C044
+        - C046
+    - name: Manual research, support, and coding workflows
+      substituteType: manual-process
+      whyItMatters: Anthropic often sells against existing human processes, so doing nothing remains a real baseline alternative where trust, ROI, or change management are unresolved.
+      claimRefs:
+        - C022
+        - C023
+        - C024
+        - C044
+    - name: Systems integrator-led AI transformation projects
+      substituteType: services
+      whyItMatters: Service partners can own solution design and implementation, which can make the underlying model vendor more interchangeable and compress Anthropic's direct relationship.
+      claimRefs:
+        - C030
+        - C044
+        - C046
+    - name: Hyperscaler-native AI platform features
+      substituteType: platform-feature
+      whyItMatters: Bedrock, Vertex AI, and Foundry can become the default procurement and governance layer even when Anthropic is one available model option.
+      claimRefs:
+        - C021
+        - C031
+        - C034
+        - C044
+marketMap:
+  axes: Direct workflow ownership versus embedded cloud-channel distribution; explicit safety and governance positioning versus generic model-access breadth.
+  companyPosition: Anthropic sits in the middle of the map with both direct end-user surfaces and a broad cloud-channel presence, while leaning harder than a generic API vendor on safety, governance, and regulated-buyer trust.
+  whiteSpace: Deeper workflow-specific ownership with independently validated ROI in regulated verticals appears more open than raw model distribution.
+  claimRefs:
+    - C007
+    - C016
+    - C021
+    - C023
+    - C034
+    - C044
+moatAssessment:
+  currentMoat: Anthropic's current moat is mostly distribution and trust positioning rather than a clearly durable standalone model advantage.
+  potentialMoat: Anthropic could strengthen into workflow lock-in if Claude Code, enterprise surfaces, vertical solutions, SDKs, and cloud channels become the standard operating layer around customer work.
+  moatSources:
+    - brand
+    - workflow-lock-in
+    - distribution
+    - regulatory
+    - technical
+  durability: low
+  confidence: medium
+  claimRefs:
+    - C014
+    - C016
+    - C021
+    - C023
+    - C034
+    - C043
+    - C044
+    - C046
+competitiveThreats:
+  - threat: Hyperscaler partners also function as control points that can capture procurement, governance, and customer relationship ownership.
+    severity: high
+    timing: near
+    claimRefs:
+      - C019
+      - C020
+      - C021
+      - C044
+  - threat: Buyers can switch based on cost, deployment convenience, and integration fit rather than remaining loyal to a single direct model vendor.
+    severity: high
+    timing: near
+    claimRefs:
+      - C010
+      - C021
+      - C044
+      - C046
+  - threat: Copyright and other IP litigation can weaken trust with enterprise and public-sector buyers.
+    severity: high
+    timing: medium
+    claimRefs:
+      - C039
+      - C040
+      - C041
+  - threat: Services-heavy deployment patterns can let implementation partners, not Anthropic, become the sticky layer in customer accounts.
+    severity: medium
+    timing: medium
+    claimRefs:
+      - C030
+      - C044
+      - C046
+positioningVerdict:
+  assessment: somewhat-differentiated
+  rationale: Anthropic is differentiated by its mix of direct Claude surfaces, developer ecosystem, hyperscaler reach, and unusually explicit safety and governance posture, but the category still looks crowded and the strongest commercial control points are not fully Anthropic-owned.
+  confidence: medium
+  claimRefs:
+    - C007
+    - C014
+    - C016
+    - C021
+    - C034
+    - C043
+    - C044
+    - C046

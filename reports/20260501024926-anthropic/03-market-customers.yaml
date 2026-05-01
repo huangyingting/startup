@@ -1,0 +1,336 @@
+schemaVersion: startup-diligence-v1
+artifact: market-customers
+slug: anthropic
+runDate: '2026-05-01'
+company:
+  name: Anthropic
+marketDefinition:
+  category: Frontier foundation-model platform with consumer assistant, enterprise
+    workspace, and developer API distribution
+  boundaries: Included market is enterprise and developer spend on large-language-model
+    applications, seats, and API usage across coding, knowledge work, support, research,
+    and regulated workflows. It also includes cloud-channel distribution through hyperscalers.
+    Excludes raw AI infrastructure chips, generic cloud compute not monetized through
+    Claude, and broad IT services revenue unrelated to Claude usage.
+  excludedMarkets:
+  - Semiconductor sales and raw accelerator hardware
+  - Generic cloud IaaS revenue not tied to Claude distribution
+  - Pure consulting or outsourcing revenue that does not embed Claude usage
+  - Non-AI SaaS categories with no foundation-model component
+  claimRefs:
+  - C007
+  - C008
+  - C021
+  - C022
+  - C023
+whyNow:
+  inflectionDrivers:
+  - driver: Model capability has advanced from chat into agentic coding, hybrid reasoning,
+      and computer-use workflows that can automate higher-value work.
+    driverType: technology
+    strength: high
+    claimRefs:
+    - C013
+    - C014
+    - C015
+  - driver: Deployment economics are improving through model tiering, prompt caching,
+      and batch discounts, making broader rollout easier to justify.
+    driverType: economic
+    strength: high
+    claimRefs:
+    - C009
+    - C010
+    - C011
+    - C012
+  - driver: Distribution via AWS, Google Cloud, and Microsoft Foundry reduces infrastructure
+      friction and meets buyers where they already buy AI.
+    driverType: distribution
+    strength: high
+    claimRefs:
+    - C019
+    - C020
+    - C021
+  - driver: Compliance and procurement channels are opening for tougher buyer segments,
+      including public sector and regulated enterprises.
+    driverType: regulatory
+    strength: medium
+    claimRefs:
+    - C031
+    - C034
+  - driver: Independent data shows enterprise AI adoption and spending are rising
+      quickly, expanding the budget pool available to Claude.
+    driverType: behavioral
+    strength: high
+    claimRefs:
+    - C035
+    - C037
+    - C038
+  timingRationale: Anthropic is arriving as foundation models become good enough for
+    workflow automation, cheap enough to pilot at scale, and easy enough to procure
+    through hyperscalers and enterprise controls.
+  claimRefs:
+  - C014
+  - C021
+  - C031
+  - C035
+  - C037
+marketSizing:
+  tam:
+    value: $631B by 2028
+    valueUsdM: 631000
+    methodology: IDC broad global AI market forecast; used here as an outer-bound
+      top-down market envelope rather than Anthropic’s exact addressable slice.
+    approach: top-down
+    confidence: medium
+    claimRefs:
+    - C037
+  sam:
+    value: $89.6B in 2024 across software and information services, banking, and retail
+      AI spend
+    valueUsdM: 89600
+    methodology: IDC cited combined 2024 AI spending of the three largest industries;
+      used as a rough proxy for near-term enterprise budgets relevant to Anthropic,
+      though still overinclusive.
+    approach: top-down
+    confidence: low
+    claimRefs:
+    - C037
+  som:
+    value: null
+    valueUsdM: null
+    methodology: null
+    approach: unknown
+    confidence: low
+    claimRefs:
+    - C018
+    - C030
+  reconciliation: IDC TAM materially overstates Anthropic’s true addressable market
+    because it includes wider AI categories; the SAM proxy narrows to large enterprise
+    budgets but still includes spend Anthropic cannot capture. Public data is insufficient
+    for a defensible bottom-up SOM.
+demandDrivers:
+- driver: Software engineering teams want coding, code-review, and agent automation
+    that can ship faster with fewer manual cycles.
+  strength: high
+  timeHorizon: near
+  claimRefs:
+  - C014
+  - C022
+  - C024
+- driver: Support organizations want higher automation and lower handle times without
+    sacrificing answer quality or empathy.
+  strength: high
+  timeHorizon: near
+  claimRefs:
+  - C023
+  - C029
+- driver: Knowledge-work and regulated teams want AI for analysis, due diligence,
+    research, and document-heavy workflows.
+  strength: high
+  timeHorizon: near
+  claimRefs:
+  - C023
+  - C030
+  - C031
+- driver: Healthcare and life-sciences users are testing AI to reduce admin burden
+    and accelerate discovery work.
+  strength: medium
+  timeHorizon: medium
+  claimRefs:
+  - C023
+  - C027
+  - C028
+- driver: Broad enterprise AI adoption and executive attention are increasing, expanding
+    the number of budgets willing to fund pilots and rollouts.
+  strength: high
+  timeHorizon: near
+  claimRefs:
+  - C035
+  - C036
+  - C037
+  - C038
+customerSegments:
+- segment: Developers and engineering organizations
+  buyer: CTO or VP Engineering
+  users:
+  - software engineers
+  - developer-platform teams
+  - security engineers
+  painPoints:
+  - slow coding and review cycles
+  - fragmented developer tooling
+  - manual debugging and build-failure triage
+  budgetOwner: Engineering tooling / platform engineering budget
+  urgency: high
+  willingnessToPayEvidence: Seat pricing is explicit for Claude Team, API pricing
+    is usage-based, and customer stories show developer-tooling deployments at CircleCI
+    and CodeRabbit.
+  claimRefs:
+  - C009
+  - C010
+  - C022
+  - C024
+- segment: Enterprise knowledge-work and productivity teams
+  buyer: CIO, CDO, or functional digital leader
+  users:
+  - product managers
+  - operations teams
+  - analysts
+  - design and collaboration teams
+  painPoints:
+  - slow synthesis and reporting
+  - workflow bottlenecks
+  - too much manual project coordination
+  budgetOwner: Enterprise software / productivity transformation budget
+  urgency: high
+  willingnessToPayEvidence: Claude offers seat-based Team and Enterprise plans, while
+    Anthropic cites broad internal deployments at Canva, Deloitte, and Cognizant.
+  claimRefs:
+  - C008
+  - C009
+  - C025
+  - C030
+- segment: Customer support and service operations
+  buyer: VP Support or COO
+  users:
+  - support agents
+  - service-ops analysts
+  - QA and automation teams
+  painPoints:
+  - high handle times
+  - unpredictable volume spikes
+  - inconsistent answer quality
+  budgetOwner: Customer support operations budget
+  urgency: high
+  willingnessToPayEvidence: Anthropic has dedicated customer-support positioning and
+    cites Coinbase as a scaled support-efficiency customer story.
+  claimRefs:
+  - C023
+  - C029
+- segment: Financial-services research and diligence teams
+  buyer: Head of Research, CTO, or Chief Data Officer
+  users:
+  - analysts
+  - bankers
+  - investment teams
+  - risk and compliance users
+  painPoints:
+  - labor-intensive diligence
+  - slow modeling and research workflows
+  - need for source-verifiable outputs
+  budgetOwner: Data / analytics / front-office technology budget
+  urgency: medium
+  willingnessToPayEvidence: Anthropic packaged a dedicated financial-services solution
+    rather than only a generic chatbot offer, signaling expected paid demand from
+    this vertical.
+  claimRefs:
+  - C023
+- segment: Government and public-sector agencies
+  buyer: Agency CIO, acquisition office, or mission-program lead
+  users:
+  - analysts
+  - policy staff
+  - mission support teams
+  painPoints:
+  - slow procurement
+  - security/compliance constraints
+  - need for compliant AI in sensitive environments
+  budgetOwner: IT modernization / mission systems budget
+  urgency: medium
+  willingnessToPayEvidence: Anthropic cites FedRAMP High and IL5 positioning plus
+    GSA Schedule availability, which are concrete procurement-enablement steps rather
+    than demand-generation only.
+  claimRefs:
+  - C031
+  - C034
+- segment: Healthcare and life-sciences organizations
+  buyer: Chief Medical Information Officer, R&D IT leader, or digital-health lead
+  users:
+  - clinicians
+  - scientists
+  - clinical operations teams
+  - informatics staff
+  painPoints:
+  - physician admin burden
+  - slow scientific workflows
+  - manual research and documentation tasks
+  budgetOwner: Clinical operations or R&D informatics budget
+  urgency: medium
+  willingnessToPayEvidence: Anthropic highlights Banner Health and Benchling outcomes
+    and launched a dedicated life-sciences solution, suggesting real buyer willingness
+    in this segment.
+  claimRefs:
+  - C023
+  - C027
+  - C028
+- segment: Startups and academic users as seeded future enterprise customers
+  buyer: Founder, engineering lead, or campus IT / academic innovation lead
+  users:
+  - startup builders
+  - students
+  - educators
+  painPoints:
+  - limited experimentation budget
+  - need for quick access to frontier models
+  - low-friction onboarding
+  budgetOwner: Startup product budget or campus technology budget
+  urgency: medium
+  willingnessToPayEvidence: Anthropic operates dedicated startup and campus programs,
+    which likely trade near-term economics for accelerated product adoption and future
+    expansion.
+  claimRefs:
+  - C032
+  - C033
+adoptionBarriers:
+- barrier: Copyright and training-data litigation create ongoing legal and reputational
+    risk for enterprise buyers.
+  severity: high
+  claimRefs:
+  - C039
+  - C040
+  - C041
+- barrier: Security, privacy, procurement, and governance requirements remain gating
+    factors for regulated buyers.
+  severity: high
+  claimRefs:
+  - C031
+  - C034
+  - C044
+- barrier: Token economics still require optimization and cost controls for scaled
+    deployment.
+  severity: medium
+  claimRefs:
+  - C010
+  - C011
+  - C012
+- barrier: Enterprise adoption often needs integration, workflow redesign, and partner-led
+    implementation support.
+  severity: medium
+  claimRefs:
+  - C044
+  - C046
+- barrier: The market is large but broad; public data does not cleanly isolate Anthropic’s
+    precise addressable slice or sustainable share.
+  severity: medium
+  claimRefs:
+  - C037
+  - C038
+marketVerdict:
+  attractiveness: high
+  rationale: Anthropic is operating in a very large, fast-growing market with expanding
+    enterprise adoption, strong hyperscaler distribution, and evidence of paid demand
+    across coding, support, productivity, government, and regulated verticals. The
+    main offsets are intense competition, uncertain market boundaries, and material
+    legal/compliance risk.
+  confidence: medium
+  claimRefs:
+  - C019
+  - C021
+  - C023
+  - C030
+  - C031
+  - C035
+  - C037
+  - C039
+  - C044
+  - C046

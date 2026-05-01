@@ -1,0 +1,2033 @@
+schemaVersion: startup-diligence-v1
+artifact: source-ledger
+slug: anthropic
+runDate: '2026-05-01'
+company:
+  name: Anthropic
+coverage:
+  depth: deep
+  sourceTarget: 75
+  sourcesFound: 94
+  sourcesFetched: 94
+  sourcesRetained: 86
+  duplicatesRemoved: 8
+  coverageGaps:
+    - 已审计的收入、燃烧、毛利率和云支出承诺基本上未在公共主要来源中披露。
+    - 公共原始来源仍然不披露当前总人数或功能组合,超出开放-作用信号.
+    - Anthropic不公开提供清洁的付费用户、企业-客户统计、保留或NRR披露。
+    - “LTBT”最终实现多数董事会控制的途径在概念上仍然得到描述,但在目前公共治理材料中并不完全透明。
+deduplication:
+  method: 冠名化重定向,首选最终URL,并去除同页或近同地登陆页面的重复入站点.
+  duplicateClusters:
+    - canonicalTopic: Claude定价概况
+      retainedSource: S038
+      removedUrls:
+        - https://www.anthropic.com/pricing
+    - canonicalTopic: Claude Platform 着陆页
+      retainedSource: S041
+      removedUrls:
+        - https://www.anthropic.com/api
+        - https://console.anthropic.com/
+    - canonicalTopic: AWS Bedrock Anthropic模型页
+      retainedSource: S070
+      removedUrls:
+        - https://aws.amazon.com/bedrock/claude/
+    - canonicalTopic: Claude文件计算机使用输入路径
+      retainedSource: S021
+      removedUrls:
+        - https://docs.anthropic.com/en/docs/agents-and-tools/computer-use
+sources:
+  - id: S001
+    publisher: Anthropic
+    title: 内容
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/
+    sourceType: official
+    topicBuckets:
+      - identity
+      - market
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Anthropic is an AI safety and research company that's working to build reliable, interpretable, and steerable AI systems.
+    oneLineRelevance: 建立公司官方网站和基线公司说明.
+  - id: S002
+    publisher: Anthropic
+    title: 企业
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/company
+    sourceType: official
+    topicBuckets:
+      - identity
+      - team
+      - governance
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Anthropic is a Public Benefit Corporation, whose purpose is the responsible development and maintenance of advanced AI for the long-term benefit of humanity.
+    oneLineRelevance: 界定公司的任务、治理和目前的董事会/信托名册。
+  - id: S003
+    publisher: Anthropic
+    title: 隐私政策
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/legal/privacy
+    sourceType: legal
+    topicBuckets:
+      - identity
+      - legal
+      - risk
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: If you live in the European Economic Area (EEA), UK or Switzerland, the data controller responsible for your personal data is Anthropic Ireland, Limited.
+    oneLineRelevance: 显示实体在 Anthropic, PBC和 Anthropic Ireland, Limited之间分割。
+  - id: S004
+    publisher: Anthropic
+    title: 商业服务条件
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/legal/commercial-terms
+    sourceType: legal
+    topicBuckets:
+      - identity
+      - legal
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Anthropic means Anthropic Ireland, Limited if Customer resides in the EEA, Switzerland or UK, and Anthropic, PBC if Customer resides anywhere else.
+    oneLineRelevance: 确认为商业客户分割承包实体。
+  - id: S005
+    publisher: Anthropic
+    title: 消费者服务条款
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/legal/consumer-terms
+    sourceType: legal
+    topicBuckets:
+      - legal
+      - product
+      - pricing
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: These Terms of Service govern your use of Claude.ai, Claude Pro, and other products and services that we may offer for individuals.
+    oneLineRelevance: 确认消费品范围和消费者合同表面。
+  - id: S006
+    publisher: Anthropic
+    title: 职业
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/careers
+    sourceType: official
+    topicBuckets:
+      - team
+      - gtm
+      - other
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Anthropic builds Claude—AI designed to be helpful, honest, and harmless.
+    oneLineRelevance: 显示主动雇佣和Anthropic如何呈现其操作文化.
+  - id: S007
+    publisher: Anthropic
+    title: Claude宪法
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/constitution
+    sourceType: official
+    topicBuckets:
+      - product
+      - technology
+      - risk
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude’s constitution is a detailed description of Anthropic’s intentions for Claude’s values and behavior.
+    oneLineRelevance: 宪法培训方法的主要来源。
+  - id: S008
+    publisher: Anthropic
+    title: 工程学
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/engineering
+    sourceType: official
+    topicBuckets:
+      - team
+      - technology
+      - risk
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: 'Engineering at Anthropic: Inside the team building reliable AI systems'
+    oneLineRelevance: 信号工程重点,事故处理,产品成熟.
+  - id: S009
+    publisher: Anthropic
+    title: 长期利益信托
+    author:
+    date: '2023-09-19'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/the-long-term-benefit-trust
+    sourceType: official
+    topicBuckets:
+      - governance
+      - risk
+      - identity
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: The Trust is an independent body of five financially disinterested members with an authority to select and remove a portion of our Board.
+    oneLineRelevance: LTBT结构和任务锁定的核心治理来源。
+  - id: S010
+    publisher: Anthropic
+    title: Anthropic 负责任的扩展政策
+    author:
+    date: '2023-09-19'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/anthropics-responsible-scaling-policy
+    sourceType: official
+    topicBuckets:
+      - risk
+      - technology
+      - governance
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Today, we’re publishing our Responsible Scaling Policy (RSP) – a series of technical and organizational protocols.
+    oneLineRelevance: Anthropic最初前沿风险治理框架的主要来源。
+  - id: S011
+    publisher: Anthropic
+    title: 宣布我们更新的“负责任扩大政策”
+    author:
+    date: '2024-10-15'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/announcing-our-updated-responsible-scaling-policy
+    sourceType: official
+    topicBuckets:
+      - risk
+      - technology
+      - governance
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: This update introduces a more flexible and nuanced approach to assessing and managing AI risks.
+    oneLineRelevance: 显示Anthropic随着能力的发展而使用其前沿风险框架。
+  - id: S012
+    publisher: Anthropic
+    title: Anthropic筹集4.5亿美元,用于Series C扩大可靠规模的资金AI 产品
+    author:
+    date: '2023-05-23'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/anthropic-series-c
+    sourceType: official
+    topicBuckets:
+      - funding
+      - product
+      - identity
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: We are pleased to announce that we have raised $450 million in Series C funding.
+    oneLineRelevance: 2023年融资和早期产品/创始人框架的官方证据。
+  - id: S013
+    publisher: Anthropic
+    title: Anthropic按61.5B美元后估值计提Series E
+    author:
+    date: '2025-03-03'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/anthropic-raises-series-e-at-usd61-5b-post-money-valuation
+    sourceType: official
+    topicBuckets:
+      - funding
+      - valuation
+      - technology
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Anthropic has raised $3.5 billion at a $61.5 billion post-money valuation.
+    oneLineRelevance: 2025年融资规模和估值的官方证据.
+  - id: S014
+    publisher: Anthropic
+    title: Mike Krieger加入Anthropic为首席产品官
+    author:
+    date: '2024-05-15'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/mike-krieger-joins-anthropic
+    sourceType: official
+    topicBuckets:
+      - team
+      - product
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Mike will oversee Anthropic's product engineering, product management, and product design efforts.
+    oneLineRelevance: 确认CPO的雇用和企业/产品扩展意图。
+  - id: S015
+    publisher: Anthropic
+    title: Krishna Rao加入Anthropic为首席财务官
+    author:
+    date: '2024-05-21'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/krishna-rao-joins-anthropic
+    sourceType: official
+    topicBuckets:
+      - team
+      - financials
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Krishna will play a crucial role in shaping Anthropic’s financial strategy and operations.
+    oneLineRelevance: 确认金融-基础扩展为商业化规模。
+  - id: S016
+    publisher: Anthropic
+    title: Rahul Patil加入Anthropic为首席技术官
+    author:
+    date: '2025-10-07'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/rahul-patil-joins-anthropic
+    sourceType: official
+    topicBuckets:
+      - team
+      - technology
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Rahul will oversee our engineering organization across product, compute, infrastructure, inference, data science, and security.
+    oneLineRelevance: 确认全球企业规模工程领导力扩张.
+  - id: S017
+    publisher: Anthropic
+    title: 扩大获取安全性AI和Amazon
+    author:
+    date: '2023-09-25'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/anthropic-amazon
+    sourceType: official
+    topicBuckets:
+      - funding
+      - gtm
+      - technology
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Amazon will invest up to $4 billion in Anthropic.
+    oneLineRelevance: 关于Amazon战略投资和AWS关系的主要来源。
+  - id: S018
+    publisher: Anthropic
+    title: '[Anthropic Google Cloud伙伴'
+    author:
+    date: '2023-02-03'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/anthropic-partners-with-google-cloud
+    sourceType: official
+    topicBuckets:
+      - gtm
+      - technology
+      - funding
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Anthropic, an AI safety and research company, has selected Google Cloud as its cloud provider.
+    oneLineRelevance: Google Cloud计算合伙关系的主要来源。
+  - id: S019
+    publisher: Anthropic
+    title: 采用Claude3.5 Sonnet
+    author:
+    date: '2024-06-21'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/claude-3-5-sonnet
+    sourceType: official
+    topicBuckets:
+      - product
+      - technology
+      - pricing
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude 3.5 Sonnet is now available for free on Claude.ai and the Claude iOS app.
+    oneLineRelevance: 重大模范家庭升级与发售启动源.
+  - id: S020
+    publisher: Anthropic
+    title: 采用计算机使用,新的Claude3.5 Sonnet,和Claude3.5 Haiku
+    author:
+    date: '2024-10-22'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/3-5-models-and-computer-use
+    sourceType: official
+    topicBuckets:
+      - product
+      - technology
+      - pricing
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Today, we’re announcing an upgraded Claude 3.5 Sonnet, and a new model, Claude 3.5 Haiku.
+    oneLineRelevance: 计算机使用能力和Haiku定价/更新的发射源。
+  - id: S021
+    publisher: Anthropic
+    title: 开发计算机使用模型
+    author:
+    date: '2024-10-22'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/developing-computer-use
+    sourceType: official
+    topicBuckets:
+      - product
+      - technology
+      - risk
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude can now use computers.
+    oneLineRelevance: 关于计算机使用能力及其相互作用模型的主要来源。
+  - id: S022
+    publisher: Anthropic
+    title: Claude3.7 Sonnet和 Claude Code
+    author:
+    date: '2025-02-24'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/claude-3-7-sonnet
+    sourceType: official
+    topicBuckets:
+      - product
+      - technology
+      - pricing
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude 3.7 Sonnet, our most intelligent model to date and the first hybrid reasoning model on the market.
+    oneLineRelevance: 混合推理和Claude Code定位发射源.
+  - id: S023
+    publisher: Anthropic
+    title: A. 介绍Claude 4
+    author:
+    date: '2025-05-22'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/claude-4
+    sourceType: official
+    topicBuckets:
+      - product
+      - technology
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: 'Today, we’re introducing the next generation of Claude models: Claude Opus 4 and Claude Sonnet 4.'
+    oneLineRelevance: 显示持续 前沿模型 释放cadence和编码强调.
+  - id: S024
+    publisher: Anthropic
+    title: 微调 Claude3 Haikuin Amazon Bedrock
+    author:
+    date: '2024-10-22'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/fine-tune-claude-3-haiku
+    sourceType: official
+    topicBuckets:
+      - product
+      - technology
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Fine-tune Claude 3 Haiku in Amazon Bedrock
+    oneLineRelevance: 证明Anthropic正在通过AWS分配实现定制。
+  - id: S025
+    publisher: Anthropic
+    title: 'Anthropic经济指数:从Claude3.7 Sonnet的见解'
+    author:
+    date: '2025-03-27'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/anthropic-economic-index-insights-from-claude-sonnet-3-7
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - other
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: we’re releasing our second research report from the Index, covering usage data on Claude.ai following the launch of Claude 3.7 Sonnet.
+    oneLineRelevance: Shows Anthropic正在出版来自Claude活动的劳动力市场和使用分析。
+  - id: S026
+    publisher: Anthropic
+    title: 'Anthropic教育报告:大学生如何使用Claude'
+    author:
+    date: '2025-04-08'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/anthropic-education-report-how-university-students-use-claude
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: 'AI systems are no longer just specialized research tools: they’re everyday academic companions.'
+    oneLineRelevance: 教育收养和学生行为的证据。
+  - id: S027
+    publisher: Anthropic
+    title: 'Anthropic教育报告:教育工作者如何使用Claude'
+    author:
+    date: '2025-08-27'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/anthropic-education-report-how-educators-use-claude
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Research on 74,000 educator conversations shows how faculty use Claude.
+    oneLineRelevance: 教育家收养和教育使用案例的证据.
+  - id: S028
+    publisher: Anthropic
+    title: 为政府扩大进入Claude
+    author:
+    date: '2024-06-26'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/expanding-access-to-claude-for-government
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: our AI models Claude 3 Haiku and Claude 3 Sonnet are now available.
+    oneLineRelevance: 早期政府市场的证据市场进入和Bedrock渠道的使用.
+  - id: S029
+    publisher: Anthropic
+    title: 联邦政府各部门和机构现在可以通过GSA时间表购买Claude
+    author:
+    date: '2025-08-05'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/federal-government-departments-and-agencies-can-now-purchase-claude-through-the-gsa-schedule
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude is now available for purchase through the General Services Administration (GSA) schedule.
+    oneLineRelevance: 为U.S.政府客户采购渠道到期的证据。
+  - id: S030
+    publisher: Anthropic
+    title: 金融服务Claude
+    author:
+    date: '2025-07-15'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/claude-for-financial-services
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Today, we’re introducing a comprehensive solution for financial analysis.
+    oneLineRelevance: 融资买方纵向解决方案包装的证据。
+  - id: S031
+    publisher: Anthropic
+    title: Claude生命科学
+    author:
+    date: '2025-10-20'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/claude-for-life-sciences
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Discover how Claude accelerates life sciences research with new scientific connectors, skills, and improved performance.
+    oneLineRelevance: 为生命科学购买者提供纵向溶液包装的证据。
+  - id: S032
+    publisher: Anthropic
+    title: Accenture、AWS、Anthropic 协作
+    author:
+    date: '2024-03-20'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/accenture-aws-anthropic
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Anthropic, AWS, and Accenture team up to build trusted solutions for enterprises.
+    oneLineRelevance: 通过SI和云伙伴显示企业部署支持.
+  - id: S033
+    publisher: Anthropic
+    title: Deloitte将通过其全球网络向470 000人提供Claude
+    author:
+    date: '2025-10-06'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/deloitte-anthropic-partnership
+    sourceType: official
+    topicBuckets:
+      - traction
+      - customer
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Deloitte will make Claude available to 470,000 people across its global network.
+    oneLineRelevance: 大座部署证据和SI联盟信号.
+  - id: S034
+    publisher: Anthropic
+    title: Cognizant将向35万名雇员提供Claude,加速企业AI的采用和内部改造
+    author:
+    date: '2025-11-04'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/cognizant-partnership
+    sourceType: official
+    topicBuckets:
+      - traction
+      - customer
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Cognizant will deploy Claude to up to 350,000 employees globally.
+    oneLineRelevance: 大座部署证据和SI联盟信号.
+  - id: S035
+    publisher: Anthropic
+    title: Anthropic实现对责任的ISO 42001认证AI
+    author:
+    date: '2025-01-13'
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/news/anthropic-achieves-iso-42001-certification-for-responsible-ai
+    sourceType: official
+    topicBuckets:
+      - risk
+      - governance
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Anthropic has achieved accredited certification under the new ISO/IEC 42001:2023 standard.
+    oneLineRelevance: 企业买方的正式AI-治理认证的证据。
+  - id: S036
+    publisher: Anthropic
+    title: 协调披露Claude发现的脆弱性
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://www.anthropic.com/coordinated-vulnerability-disclosure
+    sourceType: legal
+    topicBuckets:
+      - risk
+      - legal
+      - technology
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Coordinated vulnerability disclosure for Claude-discovered vulnerabilities
+    oneLineRelevance: Shows Anthropic运行着围绕Claude发现的被披露的安全过程.
+  - id: S037
+    publisher: Claude by Anthropic
+    title: AI解决问题者
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/product/overview
+    sourceType: official
+    topicBuckets:
+      - product
+      - market
+      - customer
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: The AI for Problem Solvers
+    oneLineRelevance: Claude消费者/企业定位的主要来源。
+  - id: S038
+    publisher: Claude by Anthropic
+    title: 计划和定价
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/pricing
+    sourceType: official
+    topicBuckets:
+      - pricing
+      - product
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Choose the Claude plan that fits how you solve problems. Free, Pro, Max, Team, and Enterprise tiers, plus API pricing for developers.
+    oneLineRelevance: 跨自服和企业层级的Claude包装的主要来源。
+  - id: S039
+    publisher: Claude by Anthropic
+    title: 团队计划
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/pricing/team
+    sourceType: official
+    topicBuckets:
+      - pricing
+      - customer
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Per seat / month if billed annually. $25 if billed monthly.
+    oneLineRelevance: 以座位为主的团队定价和企业式控制的直接证据.
+  - id: S040
+    publisher: Claude by Anthropic
+    title: 企业计划
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/pricing/enterprise
+    sourceType: official
+    topicBuckets:
+      - pricing
+      - risk
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Role-based access with fine-grained permissioning
+    oneLineRelevance: 企业控制和治理特征的直接证据.
+  - id: S041
+    publisher: Claude by Anthropic
+    title: Claude Platform
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/platform/api
+    sourceType: official
+    topicBuckets:
+      - product
+      - technology
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Use our API to create new user experiences, products, and ways to work.
+    oneLineRelevance: Anthropic的API-平面定位的主要来源。
+  - id: S042
+    publisher: Claude by Anthropic
+    title: 今天用 Claude 创建 。 领头明天的市场
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/programs/startups
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Create with Claude today. Lead your market tomorrow.
+    oneLineRelevance: 启动程序和早期客户收购动议的证据.
+  - id: S043
+    publisher: Claude by Anthropic
+    title: Claude Campus Program
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/programs/campus
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - gtm
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude Campus Program
+    oneLineRelevance: 以教育为重点的获取和分配方案的证据。
+  - id: S044
+    publisher: Claude by Anthropic
+    title: Amazon Bedrock
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/partners/amazon-bedrock
+    sourceType: official
+    topicBuckets:
+      - gtm
+      - technology
+      - market
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Access Claude’s advanced language models through Amazon Bedrock for enterprise-scale deployment.
+    oneLineRelevance: 通过AWS显示正式伙伴渠道定位.
+  - id: S045
+    publisher: Claude by Anthropic
+    title: Google Cloud Vertex AI
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/partners/google-cloud-vertex-ai
+    sourceType: official
+    topicBuckets:
+      - gtm
+      - technology
+      - market
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Deploy Claude’s advanced language models on Google Cloud Vertex AI for enterprise solutions.
+    oneLineRelevance: 通过Google Cloud显示正式伙伴渠道定位.
+  - id: S046
+    publisher: Claude by Anthropic
+    title: 服务伙伴
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/partners/services
+    sourceType: official
+    topicBuckets:
+      - gtm
+      - customer
+      - market
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Access AI strategy expertise, system integration, and implementation support for successful deployment.
+    oneLineRelevance: 有证据表明Anthropic利用服务伙伴推出企业。
+  - id: S047
+    publisher: Claude by Anthropic
+    title: AsanaClaude客户故事
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/customers/asana
+    sourceType: customer-proof
+    topicBuckets:
+      - customer
+      - market
+      - product
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    keyQuote: Discover how Asana integrates Claude to power AI-driven workflows, smart goals, and automated insights across their Work Graph platform.
+    oneLineRelevance: 工作流/生产力部署的客户证明。
+  - id: S048
+    publisher: Claude by Anthropic
+    title: CanvaClaude客户故事
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/customers/canva
+    sourceType: customer-proof
+    topicBuckets:
+      - customer
+      - traction
+      - product
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    keyQuote: Discover how Canva empowered 5,000+ employees with Claude for Work, leading to enhanced design prototyping, code generation, and collaboration.
+    oneLineRelevance: 广泛的内部部署和收养的客户证明。
+  - id: S049
+    publisher: Claude by Anthropic
+    title: BlockClaude客户故事
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/customers/block
+    sourceType: customer-proof
+    topicBuckets:
+      - customer
+      - market
+      - product
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    keyQuote: Discover how Block empowers 4,000 employees to create SQL queries without technical knowledge using Claude by Anthropic in Databricks.
+    oneLineRelevance: 分析的客户证明和自我服务的数据使用案例。
+  - id: S050
+    publisher: Claude by Anthropic
+    title: 客户故事 CoinbaseClaude
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/customers/coinbase
+    sourceType: customer-proof
+    topicBuckets:
+      - customer
+      - market
+      - product
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    keyQuote: Leading cryptocurrency exchange Coinbase leverages Claude's AI capabilities to enhance customer service efficiency.
+    oneLineRelevance: 在受管制类别中大规模支持自动化的客户证明。
+  - id: S051
+    publisher: Claude by Anthropic
+    title: 客户故事 Banner HealthClaude
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/customers/banner-health
+    sourceType: customer-proof
+    topicBuckets:
+      - customer
+      - market
+      - product
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    keyQuote: Banner Health uses Claude to combat physician burnout across 33 hospitals.
+    oneLineRelevance: 医疗业务的客户证明和可衡量的工作流影响。
+  - id: S052
+    publisher: Claude by Anthropic
+    title: 客户故事 BenchlingClaude
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/customers/benchling
+    sourceType: customer-proof
+    topicBuckets:
+      - customer
+      - market
+      - product
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    keyQuote: Benchling leverages Claude in Amazon Bedrock to transform biotech research and development.
+    oneLineRelevance: 客户证明生命科学/R&D部署。
+  - id: S053
+    publisher: Claude by Anthropic
+    title: 客户故事 CircleCIClaude
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/customers/circleci
+    sourceType: customer-proof
+    topicBuckets:
+      - customer
+      - product
+      - technology
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    keyQuote: See how CircleCI used the Claude Agent SDK to build Chunk, an AI agent that autonomously fixes build failures.
+    oneLineRelevance: 开发者工具和代理人的客户证明工作流。
+  - id: S054
+    publisher: Claude by Anthropic
+    title: 客户故事 CodeRabbitClaude
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/customers/coderabbit
+    sourceType: customer-proof
+    topicBuckets:
+      - customer
+      - product
+      - technology
+    reputationTier: medium
+    independence: company
+    fetchVerified: true
+    keyQuote: CodeRabbit integrates Claude AI to revolutionize code review, reducing issues by 60% and processing millions of pull requests monthly.
+    oneLineRelevance: 编码/代码审查使用案例的客户证明。
+  - id: S055
+    publisher: Claude API Docs
+    title: 介绍至 Claude
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://docs.anthropic.com/en/docs/overview
+    sourceType: technical-docs
+    topicBuckets:
+      - product
+      - technology
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude is a highly performant, trustworthy, and intelligent AI platform built by Anthropic.
+    oneLineRelevance: 平台能力的顶级技术文献.
+  - id: S056
+    publisher: Claude API Docs
+    title: 模型概览
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://docs.anthropic.com/en/docs/about-claude/models/all-models
+    sourceType: technical-docs
+    topicBuckets:
+      - product
+      - technology
+      - pricing
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude is a family of state-of-the-art large language models developed by Anthropic.
+    oneLineRelevance: 示范家庭的技术来源、模型和使用案例。
+  - id: S057
+    publisher: Claude API Docs
+    title: 定价
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://docs.anthropic.com/en/docs/about-claude/pricing
+    sourceType: technical-docs
+    topicBuckets:
+      - pricing
+      - technology
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude Sonnet 4.6 $3 / MTok ... $15 / MTok
+    oneLineRelevance: 初级API定价来源,包括信使、缓存和批发经济性。
+  - id: S058
+    publisher: Claude API Docs
+    title: 快速缓存
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
+    sourceType: technical-docs
+    topicBuckets:
+      - pricing
+      - technology
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Most orgs see input costs drop 50–90%.
+    oneLineRelevance: API成本优化工具的证据。
+  - id: S059
+    publisher: Claude API Docs
+    title: 批处理
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://docs.anthropic.com/en/docs/build-with-claude/batch-processing
+    sourceType: technical-docs
+    topicBuckets:
+      - pricing
+      - technology
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: The Batch API allows asynchronous processing of large volumes of requests with a 50% discount on both input and output tokens.
+    oneLineRelevance: 费用较低的证据是同步工作量支助。
+  - id: S060
+    publisher: Claude Code Docs
+    title: Claude Code概览
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://docs.anthropic.com/en/docs/claude-code/overview
+    sourceType: technical-docs
+    topicBuckets:
+      - product
+      - technology
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude Code is an agentic coding tool that reads your codebase, edits files, runs commands, and integrates with your development tools.
+    oneLineRelevance: Claude Code产品定义的技术来源。
+  - id: S061
+    publisher: GitHub
+    title: GitHub-- -- 人类学/人类学-sdk-python
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://github.com/anthropics/anthropic-sdk-python
+    sourceType: developer-signal
+    topicBuckets:
+      - technology
+      - product
+      - other
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Contribute to anthropics/anthropic-sdk-python development by creating an account on GitHub.
+    oneLineRelevance: 信号活性官员 开发者在 Python中的工具.
+  - id: S062
+    publisher: GitHub
+    title: 'GitHub-人类学/人类学-sdk-typescript:访问Anthropic的安全-第一语言模型APIsin TypeScript'
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://github.com/anthropics/anthropic-sdk-typescript
+    sourceType: developer-signal
+    topicBuckets:
+      - technology
+      - product
+      - other
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Access to Anthropic's safety-first language model APIs in TypeScript
+    oneLineRelevance: 信号活性官员开发者工具在TypeScript/JavaScript.
+  - id: S063
+    publisher: GitHub
+    title: Model Context Protocol
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://github.com/modelcontextprotocol
+    sourceType: developer-signal
+    topicBuckets:
+      - technology
+      - other
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Model Context Protocol provides a standardized way to connect AI models to the context they need.
+    oneLineRelevance: Anthropic-相关生态系统标准化的开发者-信号源.
+  - id: S064
+    publisher: PyPI
+    title: 人类
+    author:
+    date: '2026-04-23'
+    accessDate: '2026-05-01'
+    url: https://pypi.org/project/anthropic/
+    sourceType: developer-signal
+    topicBuckets:
+      - technology
+      - product
+      - other
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: The official Python library for the anthropic API
+    oneLineRelevance: 已验证的包登记证据,用于维护SDK分发。
+  - id: S065
+    publisher: Anthropic Greenhouse board
+    title: Anthropic工作板 API
+    author:
+    date: '2026-05-01'
+    accessDate: '2026-05-01'
+    url: https://boards-api.greenhouse.io/v1/boards/anthropic/jobs
+    sourceType: official
+    topicBuckets:
+      - team
+      - gtm
+      - other
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote:
+    oneLineRelevance: 直接的机器可读证据,说明开放作用体积和地域分布.
+  - id: S066
+    publisher: Claude by Anthropic
+    title: 客户支助
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/solutions/customer-support
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Build AI support agents with a more human touch and transform your customer experience.
+    oneLineRelevance: 支持购买者的官方市场定位来源.
+  - id: S067
+    publisher: Claude by Anthropic
+    title: 政府
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/solutions/government
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - risk
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Get secure, compliant AI for government agencies with authorizations up to FedRAMP High and IL5.
+    oneLineRelevance: 公共部门买方的官方市场定位来源。
+  - id: S068
+    publisher: Claude by Anthropic
+    title: 学历
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/solutions/education
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - product
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Explore trusted, responsible AI tools for students and educators, from personalized learning to research assistance.
+    oneLineRelevance: 教育购买者的官方市场定位来源.
+  - id: S069
+    publisher: Claude by Anthropic
+    title: Claude
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://claude.com/solutions/security
+    sourceType: official
+    topicBuckets:
+      - market
+      - customer
+      - risk
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: Claude reasons over code, infrastructure, and operations to find vulnerabilities scanners miss and help your team fix them faster.
+    oneLineRelevance: 安全小组的官方市场定位来源.
+  - id: S070
+    publisher: AWS
+    title: Claude by Anthropic-- -- Amazon Bedrock-- AWS中的型号]
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://aws.amazon.com/bedrock/anthropic/
+    sourceType: partner-proof
+    topicBuckets:
+      - gtm
+      - technology
+      - market
+    reputationTier: high
+    independence: partner
+    fetchVerified: true
+    keyQuote: Build generative AI solutions with Anthropic’s state-of-the-art model, Claude
+    oneLineRelevance: 独立合伙人证明Anthropic型号可用AWS.
+  - id: S071
+    publisher: Google Cloud
+    title: Anthropic的 Claude型号 Vertex AI
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/claude
+    sourceType: partner-proof
+    topicBuckets:
+      - gtm
+      - technology
+      - market
+    reputationTier: high
+    independence: partner
+    fetchVerified: true
+    keyQuote: Anthropic's Claude models
+    oneLineRelevance: 独立合伙人证明Anthropic型号可用Vertex AI.
+  - id: S072
+    publisher: Microsoft Learn
+    title: 部署和使用 [Microsoft Foundry型号
+    author:
+    date: '2025-10-24'
+    accessDate: '2026-05-01'
+    url: https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-claude
+    sourceType: partner-proof
+    topicBuckets:
+      - gtm
+      - technology
+      - market
+    reputationTier: high
+    independence: partner
+    fetchVerified: true
+    keyQuote: Deploy Anthropic's Claude models in Microsoft Foundry to integrate advanced conversational AI into your apps.
+    oneLineRelevance: 独立合伙人证明Anthropic型号可用Microsoft Foundry.
+  - id: S073
+    publisher: Microsoft Learn
+    title: Microsoft Foundry(审查)中用于AnthropicClaude模型的数据、隐私和安全
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/claude-models/data-privacy
+    sourceType: partner-proof
+    topicBuckets:
+      - risk
+      - technology
+      - gtm
+    reputationTier: high
+    independence: partner
+    fetchVerified: true
+    keyQuote: This document details issues for data, privacy, and security for Anthropic Claude models in Microsoft Foundry in Public Preview.
+    oneLineRelevance: 独立合伙人证明在渠道发行中企业隐私/安全处理关系重大.
+  - id: S074
+    publisher: Amazon
+    title: Amazon完成4B Anthropic投资,以推进基因AI
+    author:
+    date: '2024-03-27'
+    accessDate: '2026-05-01'
+    url: https://www.aboutamazon.com/news/company-news/amazon-anthropic-ai-investment
+    sourceType: partner-proof
+    topicBuckets:
+      - funding
+      - gtm
+      - technology
+    reputationTier: high
+    independence: partner
+    fetchVerified: true
+    keyQuote: Anthropic is using Amazon Web Services (AWS) as its primary cloud provider for mission critical workloads.
+    oneLineRelevance: 独立合伙人确认Amazon投资完成和提供云的作用.
+  - id: S075
+    publisher: UK Competition and Markets Authority
+    title: Alphabet Inc.(GoogleLLC)/Anthropic合并调查
+    author:
+    date: '2024-12-24'
+    accessDate: '2026-05-01'
+    url: https://www.gov.uk/cma-cases/alphabet-inc-google-llc-slash-anthropic-merger-inquiry
+    sourceType: regulatory
+    topicBuckets:
+      - legal
+      - risk
+      - governance
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    keyQuote: The CMA has decided that Alphabet’s partnership with Anthropic does not qualify for investigation under the merger provisions of the Enterprise Act 2002.
+    oneLineRelevance: 对关键战略伙伴关系进行独立监管审查。
+  - id: S076
+    publisher: IDC
+    title: IDC的世界AI和基因AI支出-工业展望
+    author:
+    date: '2024-08-21'
+    accessDate: '2026-05-01'
+    url: https://www.idc.com/resource-center/blog/idcs-worldwide-ai-and-generative-ai-spending-industry-outlook/
+    sourceType: analyst-market-data
+    topicBuckets:
+      - market
+      - financials
+      - other
+    reputationTier: medium
+    independence: independent
+    fetchVerified: true
+    keyQuote: Presently, the global Artificial Intelligence market stands at nearly $235 billion, with projections indicating a rise to over $631 billion by 2028.
+    oneLineRelevance: 独立的自上而下市场规模,用于广泛的AI支出。
+  - id: S077
+    publisher: IDC
+    title: IDC关于 AI和 Generative AI的全球展望 支出 - 使用大小写透视
+    author:
+    date: '2024-08-19'
+    accessDate: '2026-05-01'
+    url: https://www.idc.com/resource-center/blog/idcs-global-outlook-on-ai-and-generative-ai-spending/
+    sourceType: analyst-market-data
+    topicBuckets:
+      - market
+      - gtm
+      - other
+    reputationTier: medium
+    independence: independent
+    fetchVerified: true
+    keyQuote: This comprehensive analysis has identified over 250 functional use cases.
+    oneLineRelevance: 独立的证据表明,AI需求跨越许多职能和预算。
+  - id: S078
+    publisher: U.S. Census Bureau
+    title: 人口普查局发布商业趋势和带有人工智能补编的展望调查数据
+    author:
+    date: '2024-03-28'
+    accessDate: '2026-05-01'
+    url: https://www.census.gov/newsroom/press-releases/2024/business-trends-outlook-survey-artificial-intelligence-supplement.html
+    sourceType: regulatory
+    topicBuckets:
+      - market
+      - customer
+      - other
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    keyQuote: The supplemental questions are designed to provide insight into how widespread AI use is by businesses.
+    oneLineRelevance: 独立的政府商业来源AI收养计量.
+  - id: S079
+    publisher: U.S. Census Bureau
+    title: 有多少人U.S.企业使用人工智能?
+    author:
+    date: '2023-11-28'
+    accessDate: '2026-05-01'
+    url: https://www.census.gov/library/stories/2023/11/businesses-use-ai.html
+    sourceType: regulatory
+    topicBuckets:
+      - market
+      - customer
+      - other
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    keyQuote: Only 3.8% of businesses reported using AI to produce goods and services.
+    oneLineRelevance: 独立的采用基准和部门一级的传播证据。
+  - id: S080
+    publisher: Stanford HAI
+    title: 2025年AI 索引报告
+    author:
+    date:
+    accessDate: '2026-05-01'
+    url: https://hai.stanford.edu/ai-index/2025-ai-index-report
+    sourceType: analyst-market-data
+    topicBuckets:
+      - market
+      - other
+      - risk
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    keyQuote: 78% of organizations reported using AI in 2024, up from 55% the year before.
+    oneLineRelevance: 快速企业AI采用和投资势头的独立证据。
+  - id: S081
+    publisher: PwC
+    title: AI工作晴雨表
+    author:
+    date: '2025-06-03'
+    accessDate: '2026-05-01'
+    url: https://www.pwc.com/gx/en/services/ai/ai-jobs-barometer.html
+    sourceType: analyst-market-data
+    topicBuckets:
+      - market
+      - other
+      - risk
+    reputationTier: medium
+    independence: independent
+    fetchVerified: true
+    keyQuote: PwC analysed close to a billion job ads from six continents to uncover AI's global impact on jobs, skills, wages, and productivity.
+    oneLineRelevance: 支持AI紧迫性和预算关注的独立劳动力市场证据。
+  - id: S082
+    publisher: AP News
+    title: Anthropic支付作者15亿美元解决侵犯版权诉讼
+    author:
+    date: '2025-09-05'
+    accessDate: '2026-05-01'
+    url: https://apnews.com/article/anthropic-copyright-authors-settlement-training-f294266bc79a16ec90d2ddccdf435164
+    sourceType: tier-one-news
+    topicBuckets:
+      - legal
+      - risk
+      - financials
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    keyQuote: Anthropic has agreed to pay $1.5 billion to settle a class-action lawsuit by book authors.
+    oneLineRelevance: 材料著作权责任曝光的独立证据.
+  - id: S083
+    publisher: NPR
+    title: 联邦法官在AI公司Anthropic中的裁决 支持作者提出的具有里程碑意义的侵犯版权诉讼
+    author:
+    date: '2025-06-25'
+    accessDate: '2026-05-01'
+    url: https://www.npr.org/2025/06/25/nx-s1-5445242/federal-rules-in-ai-companys-favor-in-landmark-copyright-infringement-lawsuit-authors-bartz-graeber-wallace-johnson-anthropic
+    sourceType: tier-one-news
+    topicBuckets:
+      - legal
+      - risk
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    keyQuote: The ruling opens a potential pathway for AI companies to train large language models on copyrighted works without authors' consent — but only if copies of the works were obtained legally.
+    oneLineRelevance: 独立报道公平使用裁决及其限制。
+  - id: S084
+    publisher: CNBC
+    title: 法官规则Anthropic用书训练AI是公平的
+    author:
+    date: '2025-06-24'
+    accessDate: '2026-05-01'
+    url: https://www.cnbc.com/2025/06/24/ai-training-books-anthropic.html
+    sourceType: tier-one-news
+    topicBuckets:
+      - legal
+      - risk
+    reputationTier: high
+    independence: independent
+    fetchVerified: true
+    keyQuote: Judge rules Anthropic's training of AI with books is fair use
+    oneLineRelevance: 从财经新闻角度独立报道同一法律裁决.
+  - id: S085
+    publisher: TechCrunch
+    title: 音乐出版商起诉Anthropic 为"放荡盗版"20000个作品的3B美元
+    author:
+    date: '2026-01-29'
+    accessDate: '2026-05-01'
+    url: https://techcrunch.com/2026/01/29/music-publishers-sue-anthropic-for-3b-over-flagrant-piracy-of-20000-works/
+    sourceType: trade-press
+    topicBuckets:
+      - legal
+      - risk
+    reputationTier: medium
+    independence: independent
+    fetchVerified: true
+    keyQuote: Originally, these music publishers had filed a lawsuit against Anthropic over its use of about 500 copyrighted works.
+    oneLineRelevance: 独立覆盖单独出版单位著作权要求.
+  - id: S086
+    publisher: Billboard
+    title: 'AnthropicUMG 的公平使用争论 AI 诉讼案:"歌词培训是变革"'
+    author:
+    date: '2026-04-21'
+    accessDate: '2026-05-01'
+    url: https://www.billboard.com/pro/anthropic-claude-ai-music-lawsuit-argues-fair-use-finding/
+    sourceType: trade-press
+    topicBuckets:
+      - legal
+      - risk
+    reputationTier: medium
+    independence: independent
+    fetchVerified: true
+    keyQuote: Anthropic says its training of Claude on music publishers’ lyrics is fair use in a new court filing.
+    oneLineRelevance: 独立贸易-压源 关于现场音乐-权利诉讼辩论.
+claims:
+  - id: C001
+    statement: Anthropic自称为AI 安全与研究公司座建筑可靠、可解释且可引导的 AI 系统。
+    claimType: company-claimed
+    topic: identity
+    sourceRefs:
+      - S001
+      - S002
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C002
+    statement: Anthropic使用Anthropic, PBC作为其主要非欧洲实体,并Anthropic Ireland, Limited用于EEA、UK和瑞士订约/数据控制器目的。
+    claimType: observed
+    topic: legal
+    sourceRefs:
+      - S003
+      - S004
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C003
+    statement: Anthropic自称是公益公司,侧重于人类的长期利益。
+    claimType: company-claimed
+    topic: governance
+    sourceRefs:
+      - S002
+      - S009
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C004
+    statement: Anthropic的长期利益信托是作为其治理模型的一部分,旨在逐渐获得越来越多的董事会选择/清除权力。
+    claimType: company-claimed
+    topic: governance
+    sourceRefs:
+      - S009
+      - S011
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C005
+    statement: Anthropic公开列出Dario Amodei、Daniela Amodei、Yasmin Razavi、Jay Kreps、Reed Hastings、Chris Liddell和Vas Narasimhan为现任董事,其中Neil Buddy Shah、Richard Fontaine和Mariano-Florentino Cuéllar为所列LTBT受托管理人。
+    claimType: observed
+    topic: governance
+    sourceRefs:
+      - S002
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: 公司授权的当前名册;整套名册的外部证实不完整。
+  - id: C006
+    statement: Anthropic处于积极的全球建设阶段,在2026-05-01年,439个公开角色在主要U.S.、欧洲和亚洲中心站之间可见。
+    claimType: observed
+    topic: team
+    sourceRefs:
+      - S006
+      - S065
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C007
+    statement: Anthropic的公共产品表面从claude.com和一个单独的开发者/API平台上从Claude Platform跨出。
+    claimType: observed
+    topic: product
+    sourceRefs:
+      - S037
+      - S041
+      - S055
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C008
+    statement: Anthropic的商业模型是多面的,跨越消费者的订阅、基于座位的团队/企业计划以及基于使用的收入API。
+    claimType: inferred
+    topic: business-model
+    sourceRefs:
+      - S038
+      - S039
+      - S040
+      - S057
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: 公共来源明确显示产品包装和定价,但不显示收入组合。
+  - id: C009
+    statement: Claude Team每年开票时按每个座位每月20美元计价,每月开票时按25美元计价。
+    claimType: observed
+    topic: business-model
+    sourceRefs:
+      - S039
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes:
+  - id: C010
+    statement: Anthropic的API定价跨出低成本Haiku层级,并大幅提高Sonnet和Opus层级;批量API提供50%的象征性折扣。
+    claimType: observed
+    topic: business-model
+    sourceRefs:
+      - S057
+      - S059
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C011
+    statement: Anthropic提供即时缓存和分批处理等平台成本/性能特征来改进部署经济性.
+    claimType: observed
+    topic: product
+    sourceRefs:
+      - S058
+      - S059
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C012
+    statement: Anthropic索赔即时缓存可减少许多组织大约50-90%的投入费用。
+    claimType: company-claimed
+    topic: business-model
+    sourceRefs:
+      - S058
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes:
+  - id: C013
+    statement: Claude作为前沿模型的家族进行销售,提供多式联运投入、多语种能力和工具使用支持。
+    claimType: observed
+    topic: technology
+    sourceRefs:
+      - S055
+      - S056
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C014
+    statement: '[Anthropic正在通过Claude Code进一步推进代理工作流和计算机使用能力。'
+    claimType: observed
+    topic: product
+    sourceRefs:
+      - S021
+      - S022
+      - S060
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C015
+    statement: Anthropic说 Claude可以通过移动光标来导航计算机界面,点击相关位置,并通过虚拟键盘打入.
+    claimType: company-claimed
+    topic: technology
+    sourceRefs:
+      - S020
+      - S021
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C016
+    statement: Anthropic通过负责任的扩增政策和部署保障措施,将模型发射与正式的安全/治理框架结合起来。
+    claimType: observed
+    topic: risk
+    sourceRefs:
+      - S010
+      - S011
+      - S035
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C017
+    statement: Anthropic在2023年筹集了4.5亿美元Series C融资.
+    claimType: observed
+    topic: funding
+    sourceRefs:
+      - S012
+    confidence: high
+    freshness: historical
+    corroboration: single-source
+    notes:
+  - id: C018
+    statement: Anthropic2025年以615亿美元货币估值的方式筹集了35亿美元。
+    claimType: observed
+    topic: valuation
+    sourceRefs:
+      - S013
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes:
+  - id: C019
+    statement: Amazon承诺向Anthropic和AWS提供最多40亿美元,成为Anthropic承担任务关键工作量的主要云供应方。
+    claimType: observed
+    topic: funding
+    sourceRefs:
+      - S017
+      - S074
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C020
+    statement: Anthropic还依赖Google Cloud作为主要的计算/分配伙伴。
+    claimType: observed
+    topic: technology
+    sourceRefs:
+      - S018
+      - S045
+      - S071
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C021
+    statement: Anthropic通过主要超大规模云厂商渠道分发Claude,包括Amazon Bedrock、GoogleVertex AI和Microsoft Foundry。
+    claimType: observed
+    topic: gtm
+    sourceRefs:
+      - S070
+      - S071
+      - S072
+      - S073
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C022
+    statement: Anthropic明确针对开发者和工程组,配有API、编码和Claude Code工作流。
+    claimType: observed
+    topic: market
+    sourceRefs:
+      - S041
+      - S056
+      - S060
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C023
+    statement: Anthropic还针对客户支持、政府、教育、金融服务、生命科学以及安全买家,有专门的定位或包装解决办法。
+    claimType: observed
+    topic: market
+    sourceRefs:
+      - S030
+      - S031
+      - S066
+      - S067
+      - S068
+      - S069
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C024
+    statement: Anthropic的客户证明跨越工作流软件、设计、金融技术、密码支持、保健、生物技术、DevOps和AI代码审查。
+    claimType: observed
+    topic: customer
+    sourceRefs:
+      - S047
+      - S048
+      - S049
+      - S050
+      - S051
+      - S052
+      - S053
+      - S054
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C025
+    statement: Canva说,它为5000名以上雇员提供了Claude for Work,并报告每天65%的生产率使用率AI。
+    claimType: company-claimed
+    topic: customer
+    sourceRefs:
+      - S048
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: 客户故事由Anthropic主持.
+  - id: C026
+    statement: Asana说,Claude 强势特征提高了目标清晰度和生产率,同时减少了执行决策时间。
+    claimType: company-claimed
+    topic: customer
+    sourceRefs:
+      - S047
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: 客户故事由Anthropic主持.
+  - id: C027
+    statement: Banner Health说Claude 部署缩短了肿瘤图准备时间,并在30天内生产出一个+64 NPS.
+    claimType: company-claimed
+    topic: customer
+    sourceRefs:
+      - S051
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: 客户故事由Anthropic主持.
+  - id: C028
+    statement: Benchling在Amazon Bedrock中说,Claude工作流可节省科学家的工作周。
+    claimType: company-claimed
+    topic: customer
+    sourceRefs:
+      - S052
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: 客户故事由Anthropic主持.
+  - id: C029
+    statement: Coinbase说Claude帮助改进支持自动化并缩短处理时间,同时通过起伏不定的需求期为数百万用户服务.
+    claimType: company-claimed
+    topic: customer
+    sourceRefs:
+      - S050
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: 客户故事由Anthropic主持.
+  - id: C030
+    statement: 从Deloitte和Cognizant发出的非常大座位的部署通知表明,Anthropic可以通过联盟渠道赢得整个企业的推出。
+    claimType: company-claimed
+    topic: traction
+    sourceRefs:
+      - S033
+      - S034
+    confidence: medium
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C031
+    statement: Anthropic的公共部门动议现在包括Bedrock可用性、FedRAMP High/IL5定位和GSA Schedule采购。
+    claimType: observed
+    topic: gtm
+    sourceRefs:
+      - S028
+      - S029
+      - S067
+      - S070
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C032
+    statement: 教育是Anthropic的一个活动部分,由校园方案分配和观察学生/教育工作者使用情况研究提供支持。
+    claimType: observed
+    topic: market
+    sourceRefs:
+      - S026
+      - S027
+      - S043
+      - S068
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C033
+    statement: Anthropic 使用特殊程序来吸引起步企业和校园,表示在企业完全转型之前愿意种下未来用途.
+    claimType: observed
+    topic: gtm
+    sourceRefs:
+      - S042
+      - S043
+    confidence: medium
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C034
+    statement: 安全、隐私和治理是Anthropic商业运动的核心购买标准,证明这一点的是ISO 42001认证、企业控制和披露的脆弱性处理程序。
+    claimType: observed
+    topic: risk
+    sourceRefs:
+      - S035
+      - S036
+      - S039
+      - S040
+      - S073
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C035
+    statement: '独立研究表明,企业AI的采用正在迅速加速:Stanford HAI报告说,2024年使用的组织有78%AI,而前一年为55%。'
+    claimType: third-party-reported
+    topic: market
+    sourceRefs:
+      - S080
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes:
+  - id: C036
+    statement: U.S.企业采用AI的做法在2023年年末仍然很早,企业中只有3.8%的总体使用AI,但在信息部门则只有13.8%。
+    claimType: third-party-reported
+    topic: market
+    sourceRefs:
+      - S078
+      - S079
+    confidence: high
+    freshness: historical
+    corroboration: multi-source
+    notes:
+  - id: C037
+    statement: IDC估计2024年全球范围较广的市场为近2,350亿美元,并预计到2028年将超过6,310亿美元.
+    claimType: third-party-reported
+    topic: market
+    sourceRefs:
+      - S076
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: 这比Anthropic的真正可解决的市场范围更广。
+  - id: C038
+    statement: IDC 确定了超过250个功能AI在13个功能领域使用案例,这意味着各部门和行业都有广泛的预算。
+    claimType: third-party-reported
+    topic: market
+    sourceRefs:
+      - S077
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes:
+  - id: C039
+    statement: Anthropic面临知识产权/法律方面的重大曝光,包括据报15亿美元的作者和解结果和其他活跃的版权案件。
+    claimType: third-party-reported
+    topic: legal
+    sourceRefs:
+      - S082
+      - S085
+      - S086
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C040
+    statement: 2025年的书籍裁决给予合法获得的书籍Anthropic部分公平使用权,但围绕非法获得的拷贝和其他版权投入保留了合法曝光。
+    claimType: third-party-reported
+    topic: legal
+    sourceRefs:
+      - S083
+      - S084
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C041
+    statement: 音乐出版商在歌词和培训数据上分别对Anthropic提起高额诉讼,Anthropic主张公平使用辩护.
+    claimType: third-party-reported
+    topic: legal
+    sourceRefs:
+      - S085
+      - S086
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+  - id: C042
+    statement: UKCMA审查了Alphabet与Anthropic的伙伴关系,并得出结论,它没有资格进行合并调查。
+    claimType: observed
+    topic: legal
+    sourceRefs:
+      - S075
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes:
+  - id: C043
+    statement: Anthropic通过官方SDKs、包装分布和Model Context Protocol个]生态系统具有强大的公众开发者生态系统足迹。
+    claimType: observed
+    topic: technology
+    sourceRefs:
+      - S061
+      - S062
+      - S063
+      - S064
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C044
+    statement: Anthropic 商业上的成功仍然取决于买家对可靠性、安全性、采购和集成的复杂性感到自在,而不仅仅是原始模型的质量。
+    claimType: inferred
+    topic: risk
+    sourceRefs:
+      - S032
+      - S034
+      - S046
+      - S067
+      - S073
+    confidence: medium
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C045
+    statement: 关键人物的风险仍然有意义,因为创始人仍然在Anthropic的使命、治理说明和外部信任中起锚作用,即使行政法官扩大。
+    claimType: inferred
+    topic: team
+    sourceRefs:
+      - S002
+      - S014
+      - S015
+      - S016
+    confidence: medium
+    freshness: current
+    corroboration: multi-source
+    notes:
+  - id: C046
+    statement: Anthropic 建立了服务伙伴生态系统和主要SI联盟,表明企业的部署往往需要一体化和变革管理支持。
+    claimType: observed
+    topic: gtm
+    sourceRefs:
+      - S032
+      - S033
+      - S034
+      - S046
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes:
+openEvidenceGaps:
+  - gap: 目前的年度化收入,GAAP收入,毛利率,和现金燃烧情况仍未通过主要公开披露加以核实。
+    impact: high
+    suggestedSource: 审计的财务、融资文件、出贷材料或管理层的KPI披露
+  - gap: 公开证据不能明确显示雇用委员会以外的雇员总数、职能组合或管理期限。
+    impact: medium
+    suggestedSource: 公司提供的人员统计披露或核实的工作人员数据库
+  - gap: Anthropic不公开披露客户数、已付款用户数、churn或净收入留存。
+    impact: high
+    suggestedSource: 董事会材料、融资甲板或管理KPI包
+  - gap: 从目前的公共材料来看,LTBT达到多数董事会控制的确切时间和机制仍然不透明。
+    impact: medium
+    suggestedSource: 公司治理文件或章程一级的法律文书

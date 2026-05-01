@@ -1,0 +1,109 @@
+schemaVersion: startup-diligence-v1
+artifact: risk-governance
+slug: anthropic
+runDate: 2026-05-01
+company:
+  name: Anthropic
+riskRegister:
+  - id: R001
+    category: platform
+    risk: Anthropic取决于基础设施和主要企业分配的超大规模云厂商s,这可能会削弱客户控制权和讨价还价的能力。
+    severity: critical
+    likelihood: high
+    timeHorizon: near
+    mitigation: 保障更直接的企业关系,保护渠道性能信息权,跟踪渠道组合和续作所有权.
+    claimRefs: [C019, C020, C021, C044]
+  - id: R002
+    category: legal
+    risk: 版权和培训数据诉讼可能造成损害、业务限制或买方犹豫不决。
+    severity: critical
+    likelihood: high
+    timeHorizon: medium
+    mitigation: 保持法律储备,加强出处控制,并向客户展示明确的赔偿和风险分配条件。
+    claimRefs: [C039, C040, C041]
+  - id: R003
+    category: competition
+    risk: 模型准入可能变得更加可互换,使分销、价格和一体化便利比Claude本身更为重要。
+    severity: high
+    likelihood: high
+    timeHorizon: medium
+    mitigation: 深度 工作流 在编码和规范垂直上的所有权,并改进区别ROI的证据.
+    claimRefs: [C021, C043, C044, C046]
+  - id: R004
+    category: financial
+    risk: 即使使用增加,计算密集的交付和对云的依赖也能压缩边际。
+    severity: high
+    likelihood: medium
+    timeHorizon: medium
+    mitigation: 扩展快速缓存、批量使用、模型分级和定价纪律,同时按渠道监测毛利率趋势。
+    claimRefs: [C010, C011, C012, C019, C020]
+  - id: R005
+    category: execution
+    risk: 企业的部署可能仍然是集成和服务的重力,减缓了软件的推出并降低了软件的可扩展性。
+    severity: high
+    likelihood: medium
+    timeHorizon: near
+    mitigation: 标准化实施,生产可重复工作流,将合作伙伴增值与核心产品依赖分开。
+    claimRefs: [C030, C044, C046]
+  - id: R006
+    category: governance
+    risk: 长期利益信托和以创始人为中心的使命结构是有区别的,但非标准,可能减少传统的投资者控制。
+    severity: medium
+    likelihood: medium
+    timeHorizon: long
+    mitigation: 明确预留事项,董事会选择力学,承销前投资者信息权.
+    claimRefs: [C003, C004, C005, C045]
+  - id: R007
+    category: customer
+    risk: 商业上的采用仍然取决于买方是否清除可靠性、安全性、采购和一体化障碍,而不是仅仅喜欢模型质量。
+    severity: high
+    likelihood: medium
+    timeHorizon: near
+    mitigation: 继续完善企业控制,规范购入方包装,并出具工作流特定ROI的证明.
+    claimRefs: [C031, C034, C044]
+  - id: R008
+    category: governance
+    risk: 创始人的集中仍然有意义,因为Dario Amodei和Daniela Amodei仍然支撑着使命、治理说明和外部信任。
+    severity: medium
+    likelihood: medium
+    timeHorizon: medium
+    mitigation: 继续扩大行政法官队伍,使继承、授权和运作所有权更加清晰。
+    claimRefs: [C005, C006, C045]
+governance:
+  controlStructure: 公益公司,带有一个董事会和长期利益信托,旨在随着时间的推移获得越来越多的董事会选取和罢免权。
+  keyPersonRisk: 高级
+  investorAlignment: 任务锁定可以支持长期的安全取向,但也会降低常规投资者的控制,并可能使纯粹的财务优化复杂化.
+  transparencyConcerns:
+    - 董事会授权并不是唯一的控制层,因为长期利益信托的设计是为了随着时间推移而获得越来越多的董事会选取和移除权.
+    - 外部信任和任务说明仍然与Dario Amodei和Daniela Amodei密切相关。
+  claimRefs: [C003, C004, C005, C045]
+legalRegulatory:
+  knownIssues:
+    - 报告的作者解决和其他活跃的版权纠纷仍然是实质性的。
+    - 2025年裁决的书籍保留了围绕非法获得的拷贝和其他版权投入的风险,尽管部分公平使用胜出。
+    - 音乐出版社正在就歌词和培训数据进行单独的诉讼。
+  regulatoryExposure: 高级
+  compliancePosture: ISO 42001,企业控制、脆弱性处理、FedRAMP High和IL5定位以及GSA Schedule准入都显示出有意义的合规投资,但它们并没有消除诉讼或买方-信任风险。
+  claimRefs: [C031, C034, C039, C040, C041]
+redFlags:
+  - flag: 超规模伙伴也是基础设施、采购和分发的守门员。
+    severity: critical
+    evidenceQuality: 高级
+    claimRefs: [C019, C020, C021]
+  - flag: 尽管部分公平使用胜诉,但实质性版权诉讼仍未得到解决。
+    severity: critical
+    evidenceQuality: 高级
+    claimRefs: [C039, C040, C041]
+  - flag: 商业持久性似乎取决于信任、采购和执行,而不仅仅是模型质量。
+    severity: high
+    evidenceQuality: 介质
+    claimRefs: [C031, C034, C044, C046]
+  - flag: 治理是受使命约束的,仍然与创始人息息相关。
+    severity: medium
+    evidenceQuality: 介质
+    claimRefs: [C004, C005, C045]
+riskVerdict:
+  overallRisk: high
+  rationale: Anthropic具有真正的规模信号和强大的战略后盾,但不利面仍然被未解决的IP诉讼所塑造,沉重的超大规模云厂商依赖,以及企业收养会损害边际或客户控制权.
+  confidence: medium
+  claimRefs: [C018, C019, C021, C031, C034, C039, C044, C046]

@@ -1,0 +1,109 @@
+schemaVersion: startup-diligence-v1
+artifact: risk-governance
+slug: anthropic
+runDate: 2026-05-01
+company:
+  name: Anthropic
+riskRegister:
+  - id: R001
+    category: platform
+    risk: Anthropic depends on hyperscalers for both infrastructure and major enterprise distribution, which can weaken customer ownership and bargaining power.
+    severity: critical
+    likelihood: high
+    timeHorizon: near
+    mitigation: Secure more direct enterprise relationships, protect information rights on channel performance, and track channel mix and renewal ownership.
+    claimRefs: [C019, C020, C021, C044]
+  - id: R002
+    category: legal
+    risk: Copyright and training-data litigation could create damages, operating restrictions, or buyer hesitation.
+    severity: critical
+    likelihood: high
+    timeHorizon: medium
+    mitigation: Maintain legal reserves, tighten provenance controls, and show customers clear indemnity and risk-allocation terms.
+    claimRefs: [C039, C040, C041]
+  - id: R003
+    category: competition
+    risk: Model access may become more interchangeable, making distribution, price, and integration convenience more important than Claude alone.
+    severity: high
+    likelihood: high
+    timeHorizon: medium
+    mitigation: Deepen workflow ownership in coding and regulated verticals and improve evidence of differentiated ROI.
+    claimRefs: [C021, C043, C044, C046]
+  - id: R004
+    category: financial
+    risk: Compute-intensive delivery and cloud dependence can compress margins even if usage grows.
+    severity: high
+    likelihood: medium
+    timeHorizon: medium
+    mitigation: Expand prompt caching, batch usage, model tiering, and pricing discipline while monitoring gross-margin trends by channel.
+    claimRefs: [C010, C011, C012, C019, C020]
+  - id: R005
+    category: execution
+    risk: Enterprise deployments may remain integration- and services-heavy, slowing rollout and reducing software-like scalability.
+    severity: high
+    likelihood: medium
+    timeHorizon: near
+    mitigation: Standardize implementations, productize repeatable workflows, and separate partner value-add from core product dependency.
+    claimRefs: [C030, C044, C046]
+  - id: R006
+    category: governance
+    risk: The Long-Term Benefit Trust and founder-centered mission structure are differentiated but nonstandard and may reduce conventional investor control.
+    severity: medium
+    likelihood: medium
+    timeHorizon: long
+    mitigation: Clarify reserved matters, board-selection mechanics, and investor information rights before underwriting.
+    claimRefs: [C003, C004, C005, C045]
+  - id: R007
+    category: customer
+    risk: Commercial adoption still depends on buyers clearing reliability, security, procurement, and integration hurdles rather than only liking model quality.
+    severity: high
+    likelihood: medium
+    timeHorizon: near
+    mitigation: Keep improving enterprise controls, regulated-buyer packaging, and proof of workflow-specific ROI.
+    claimRefs: [C031, C034, C044]
+  - id: R008
+    category: governance
+    risk: Founder concentration remains meaningful because Dario Amodei and Daniela Amodei still anchor mission, governance narrative, and external trust.
+    severity: medium
+    likelihood: medium
+    timeHorizon: medium
+    mitigation: Continue broadening executive bench and make succession, delegation, and operating ownership more legible.
+    claimRefs: [C005, C006, C045]
+governance:
+  controlStructure: Public Benefit Corporation with a board of directors and a Long-Term Benefit Trust that is designed to gain increasing board-selection and removal power over time.
+  keyPersonRisk: high
+  investorAlignment: Mission lock can support long-term safety orientation, but it also reduces conventional investor control and may complicate purely financial optimization.
+  transparencyConcerns:
+    - Board authority is not the only control layer because the Long-Term Benefit Trust is designed to gain increasing board-selection and removal power over time.
+    - External trust and mission narrative remain closely associated with Dario Amodei and Daniela Amodei.
+  claimRefs: [C003, C004, C005, C045]
+legalRegulatory:
+  knownIssues:
+    - Reported author-settlement and other active copyright disputes remain material.
+    - The 2025 books ruling preserved risk around unlawfully obtained copies and other copyrighted inputs despite a partial fair-use win.
+    - Music publishers are pursuing separate litigation over lyrics and training data.
+  regulatoryExposure: high
+  compliancePosture: ISO 42001, enterprise controls, vulnerability handling, FedRAMP High and IL5 positioning, and GSA Schedule access show meaningful compliance investment, but they do not eliminate litigation or buyer-trust risk.
+  claimRefs: [C031, C034, C039, C040, C041]
+redFlags:
+  - flag: Hyperscaler partners are also gatekeepers for infrastructure, procurement, and distribution.
+    severity: critical
+    evidenceQuality: high
+    claimRefs: [C019, C020, C021]
+  - flag: Material copyright litigation remains unresolved despite a partial fair-use win.
+    severity: critical
+    evidenceQuality: high
+    claimRefs: [C039, C040, C041]
+  - flag: Commercial durability appears to depend on trust, procurement, and implementation execution, not just model quality.
+    severity: high
+    evidenceQuality: medium
+    claimRefs: [C031, C034, C044, C046]
+  - flag: Governance is mission-locked and still meaningfully founder-associated.
+    severity: medium
+    evidenceQuality: medium
+    claimRefs: [C004, C005, C045]
+riskVerdict:
+  overallRisk: high
+  rationale: Anthropic has real scale signals and strong strategic backing, but the downside is still shaped by unresolved IP litigation, heavy hyperscaler dependence, and enterprise adoption frictions that could impair margins or customer ownership.
+  confidence: medium
+  claimRefs: [C018, C019, C021, C031, C034, C039, C044, C046]

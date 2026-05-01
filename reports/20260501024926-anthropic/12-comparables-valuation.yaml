@@ -1,0 +1,207 @@
+schemaVersion: startup-diligence-v1
+artifact: comparables-valuation
+slug: anthropic
+runDate: 2026-05-01
+company:
+  name: Anthropic
+publicComparables:
+  - compId: K001
+    company: Amazon
+    ticker: null
+    category: Hyperscaler distribution and infrastructure proxy
+    relevance: Amazon is relevant because AWS is Anthropic's primary cloud provider and Amazon Bedrock is a major Claude distribution path, but it is an imperfect proxy because Amazon is a diversified public conglomerate rather than a pure-play frontier-model company.
+    revenueUsdM: null
+    revenuePeriod: null
+    valuationUsdM: null
+    revenueMultiple: null
+    marginSignal: null
+    notes: Parent-company financials and Bedrock-specific economics are not provided in the reviewed claim set, so no defensible multiple can be derived here.
+    claimRefs: [C019, C021]
+  - compId: K002
+    company: Alphabet
+    ticker: null
+    category: Hyperscaler distribution and compute proxy
+    relevance: Alphabet is relevant because Anthropic relies on Google Cloud for compute and Vertex AI distribution, but it is only a proxy because public-parent metrics do not isolate the economics of Claude access or Vertex AI workloads.
+    revenueUsdM: null
+    revenuePeriod: null
+    valuationUsdM: null
+    revenueMultiple: null
+    marginSignal: null
+    notes: Useful for strategic context, not for direct multiple transfer.
+    claimRefs: [C020, C021, C042]
+  - compId: K003
+    company: Microsoft
+    ticker: null
+    category: Enterprise AI platform and governance proxy
+    relevance: Microsoft is relevant because Microsoft Foundry distributes Claude into enterprise environments where security and governance matter, but it remains a poor direct valuation comp because the parent company is vastly broader than Anthropic's business.
+    revenueUsdM: null
+    revenuePeriod: null
+    valuationUsdM: null
+    revenueMultiple: null
+    marginSignal: null
+    notes: Included as a channel and enterprise-control-plane proxy rather than a direct model-vendor comparable.
+    claimRefs: [C021, C034]
+privateOrTransactionComparables:
+  - compId: K004
+    company: Anthropic
+    transaction: Series E financing
+    date: 2025-03-03
+    postMoneyValuationUsdM: 61500
+    roundSizeUsdM: 3500
+    revenueRunRateUsdM: null
+    impliedRevenueMultiple: null
+    relevance: This is the cleanest claim-backed market anchor in the dossier, though it is Anthropic's own priced round rather than an external comparable.
+    notes: Public sources reviewed here do not disclose the revenue run-rate underlying this pricing.
+    claimRefs: [C018]
+  - compId: K005
+    company: Anthropic
+    transaction: Amazon strategic investment commitment
+    date: null
+    postMoneyValuationUsdM: null
+    roundSizeUsdM: 4000
+    revenueRunRateUsdM: null
+    impliedRevenueMultiple: null
+    relevance: Strategic-capital signal showing willingness of a hyperscaler partner to commit unusually large capital to Anthropic, but not a clean stand-alone pricing comp.
+    notes: Claim set states Amazon committed up to $4B and that AWS became Anthropic's primary cloud provider; it does not provide a single clean post-money valuation for this commitment.
+    claimRefs: [C019]
+  - compId: K006
+    company: Anthropic
+    transaction: Series C financing
+    date: 2023-05-23
+    postMoneyValuationUsdM: null
+    roundSizeUsdM: 450
+    revenueRunRateUsdM: null
+    impliedRevenueMultiple: null
+    relevance: Earlier internal financing anchor that helps show valuation step-up over time, but public materials in the claim set do not provide the post-money valuation or revenue base for direct multiple analysis.
+    notes: Historical round-size data only.
+    claimRefs: [C017]
+valuationFramework:
+  preferredApproach: venture-method
+  rationale: Because the reviewed claim set does not disclose Anthropic's ARR or revenue run-rate, a conventional ARR or revenue multiple framework would be false precision. The most defensible approach is to anchor on the latest priced round and then apply wide sensitivity for private-market illiquidity, channel dependence, compute intensity, and legal risk, while acknowledging strategic scarcity value in frontier AI.
+  impliedValueLowUsdM: 45000
+  impliedValueMidUsdM: 61500
+  impliedValueHighUsdM: 75000
+  keyAssumptions:
+    - The 2025 Series E is the best available market-clearing price in the evidence set.
+    - Lack of revenue, margin, and retention disclosure warrants a wide confidence band around that round.
+    - Strategic scarcity and partner demand can support premium pricing even when near-term economics are opaque.
+    - Legal exposure, channel concentration, and infrastructure intensity justify a material downside discount to the last round in a more conservative underwriting frame.
+  sensitivityNotes: Low case applies roughly a 25% to 30% discount to the $61.5B Series E anchor for information opacity, litigation, liquidity, and channel-risk concentration. High case applies roughly a 20% to 25% premium for strategic scarcity and continued frontier-model leadership. These are broad scenario estimates, not claim-backed revenue multiples.
+  confidence: low
+  claimRefs: [C018, C019, C021, C039, C044, C046]
+valuationBridge:
+  currentValuationUsdM: 61500
+  annualizedRevenueRunRateUsdM: null
+  impliedRevenueMultiple: null
+  publicCompsMedianMultiple: null
+  privateCompsMedianMultiple: null
+  growthPremiumPct: null
+  marginDiscountPct: null
+  governanceDiscountPct: null
+  liquidityDiscountPct: null
+  fairValueRangeUsdM:
+    low: 45000
+    mid: 61500
+    high: 75000
+  bridgeSteps:
+    - step: Latest priced round anchor
+      value: $61.5B post-money
+      interpretation: Anthropic's Series E is the only clean claim-backed valuation point in the dossier and therefore serves as the bridge midpoint.
+      claimRefs: [C018]
+    - step: Conservative downside adjustment
+      value: Approximately -25% to -30%
+      interpretation: A conservative investor could haircut the last round for absent revenue disclosure, heavy compute dependence, legal risk, and private-market illiquidity, producing a rough low-end range near $45B.
+      claimRefs: [C019, C021, C039, C044]
+    - step: Strategic scarcity upside
+      value: Approximately +20% to +25%
+      interpretation: Continued strategic demand from hyperscalers and enterprise buyers could justify a premium to the last round, producing a rough high-end range near $75B despite opaque near-term financials.
+      claimRefs: [C019, C021, C030]
+  conclusion: Without disclosed revenue or cash-flow anchors, Anthropic's valuation is best interpreted as a scarcity-priced frontier-AI asset rather than a conventionally underwritten software multiple story.
+  claimRefs: [C018, C019, C021, C039, C044]
+dealConsiderations:
+  recommendedCheckUsdM: null
+  ownershipTargetPct: null
+  proRataRightsImportance: high
+  preferredStructureNotes: Access is likely more important than price optimization at this stage, but any new investment should prioritize strong pro rata rights and clear information rights because ownership percentages are difficult to build at a $61.5B entry valuation.
+  alignmentRisks:
+    - Very high entry valuation compresses ownership and return potential unless exit scale is extraordinary.
+    - Strategic partner influence and hyperscaler channel dependence may create mixed incentives around customer ownership and economics.
+    - Legal exposure and limited financial disclosure increase diligence risk for price-sensitive investors.
+  claimRefs: [C018, C019, C021, C039]
+ownershipSensitivity:
+  - entryValuationUsdM: 61500
+    checkSizeUsdM: 100
+    impliedOwnershipPct: 0.1626
+    requiredExitUsdMFor3x: 184500
+    interpretation: A $100M check buys only about 0.16% ownership at the Series E price, implying a roughly $184.5B exit for a 3.0x gross return before dilution.
+  - entryValuationUsdM: 61500
+    checkSizeUsdM: 300
+    impliedOwnershipPct: 0.4878
+    requiredExitUsdMFor3x: 184500
+    interpretation: Even a $300M check still lands below 0.5% ownership at the Series E price; meaningful ownership requires exceptionally large capital commitments.
+expectedReturns:
+  exitScenarios:
+    - name: downside
+      exitValueUsdM: 40000
+      exitYear: 2030
+      exitType: secondary
+      grossMoM: 0.6504
+      grossIrrPct: -8.2435
+      assumptions: Assumes entry at the $61.5B Series E price and a lower-value 2030 secondary outcome driven by litigation, channel-pressure, or weak public-market receptivity.
+      confidence: low
+      claimRefs: [C018, C039, C044]
+    - name: base
+      exitValueUsdM: 100000
+      exitYear: 2030
+      exitType: ipo
+      grossMoM: 1.626
+      grossIrrPct: 10.211
+      assumptions: Assumes Anthropic remains independent, scales materially, and reaches a $100B public or late-private value by 2030 without severe dilution adjustment.
+      confidence: low
+      claimRefs: [C018, C021, C030]
+    - name: upside
+      exitValueUsdM: 200000
+      exitYear: 2030
+      exitType: ipo
+      grossMoM: 3.252
+      grossIrrPct: 26.5992
+      assumptions: Assumes Anthropic compounds strategic scarcity, sustains frontier relevance, and reaches mega-cap scale by 2030.
+      confidence: low
+      claimRefs: [C018, C019, C021]
+valuationVerdict:
+  stance: stretched
+  rationale: The latest priced round may be rational for scarcity-seeking investors, but from a fundamentals-underwriting perspective the valuation looks stretched because public revenue, margin, and retention disclosure are absent while compute, channel, and legal risks remain material.
+  confidence: medium
+  claimRefs: [C018, C019, C021, C039, C044]
+exitPathAnalysis:
+  likelyExitPaths:
+    - path: ipo
+      likelihood: medium
+      earliestYear: 2030
+      blockers:
+        - Public revenue, margin, and cash-flow disclosure are still absent in the reviewed claim set.
+        - Compute intensity and partner dependence may pressure public-market software-style valuation expectations.
+        - Ongoing legal exposure could complicate IPO timing or narrative.
+      claimRefs: [C018, C019, C039, C044]
+    - path: secondary-liquidity
+      likelihood: high
+      earliestYear: 2030
+      blockers:
+        - Requires continued private-market appetite for very large late-stage AI positions.
+        - Information asymmetry may widen discounts relative to the last primary round.
+      claimRefs: [C018, C019]
+    - path: strategic-acquisition
+      likelihood: low
+      earliestYear: null
+      blockers:
+        - Current valuation scale is already extremely large for most acquirers.
+        - Existing hyperscaler relationships could create competitive and regulatory complexity.
+        - Anthropic's governance structure may reduce straightforward strategic-sale optionality.
+      claimRefs: [C004, C018, C019, C042]
+  publicMarketReadiness:
+    revenueScale: unknown
+    growthNarrative: strong
+    governance: medium
+    profitability: weak
+    disclosureQuality: weak
+  verdict: Anthropic appears more likely to reach liquidity first through selective secondaries or a later IPO than through a strategic sale, but public-market readiness remains constrained by limited financial disclosure and unclear profitability.

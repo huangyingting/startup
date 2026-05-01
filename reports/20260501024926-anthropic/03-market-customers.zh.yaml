@@ -1,0 +1,291 @@
+schemaVersion: startup-diligence-v1
+artifact: market-customers
+slug: anthropic
+runDate: '2026-05-01'
+company:
+  name: Anthropic
+marketDefinition:
+  category: 与消费者助理、企业工作空间和开发者API分销有关的前沿基础模型平台
+  boundaries: 其中包括企业和开发者花在大语言模型应用、座椅和API使用上,跨越编码、知识工作、支持、研究和规范工作流。 它还包括通过超大规模云厂商s的云道分布. 不包括原始[[(6)]基础设施芯片、通用云计算不通过[(4)]货币化,以及与[(4)]用途无关的广泛信息技术服务收入。
+  excludedMarkets:
+    - 半导体销售和原始加速器硬件
+    - 一般云IaaS收入与Claude分配无关
+    - 不嵌入Claude用途的纯咨询或外包收入
+    - 无[基础模型组件的非AISaaS类别
+  claimRefs:
+    - C007
+    - C008
+    - C021
+    - C022
+    - C023
+whyNow:
+  inflectionDrivers:
+    - driver: 模型能力从聊天发展到代理编码,混合推理,以及计算机使用工作流,可以使更高价值的工作自动化.
+      driverType: technology
+      strength: high
+      claimRefs:
+        - C013
+        - C014
+        - C015
+    - driver: 部署经济性正在通过模型分级、快速缓存和批量折扣来改进,使推广范围更广更便于说明理由。
+      driverType: economic
+      strength: high
+      claimRefs:
+        - C009
+        - C010
+        - C011
+        - C012
+    - driver: 通过AWS、Google Cloud和Microsoft Foundry进行分销可减少基础设施摩擦并满足买方已经购买AI。
+      driverType: distribution
+      strength: high
+      claimRefs:
+        - C019
+        - C020
+        - C021
+    - driver: 合规和采购渠道正在为更严格的买方部分打开,包括公共部门和受监管企业。
+      driverType: regulatory
+      strength: medium
+      claimRefs:
+        - C031
+        - C034
+    - driver: 独立数据显示企业AI收养和支出迅速增加,将预算库扩大到Claude。
+      driverType: behavioral
+      strength: high
+      claimRefs:
+        - C035
+        - C037
+        - C038
+  timingRationale: '[Anthropic正在抵达,因为基础模型已足够自动化工作流,足够低廉,足以进行规模试验,并足够容易通过超大规模云厂商s和企业控制进行采购。'
+  claimRefs:
+    - C014
+    - C021
+    - C031
+    - C035
+    - C037
+marketSizing:
+  tam:
+    value: 2028年前为631B美元
+    valueUsdM: 631000
+    methodology: IDC 广阔的全球AI市场预测;这里用作外向自上而下的一个市场封套,而不是Anthropic确切的可地址片.
+    approach: top-down
+    confidence: medium
+    claimRefs:
+      - C037
+  sam:
+    value: 2024年软件和信息服务、银行业和零售业的89.6B美元
+    valueUsdM: 89600
+    methodology: IDC引用了2024年AI三个最大行业的总开支;用作与Anthropic有关的近期企业预算的粗略代用,尽管仍然过于包容。
+    approach: top-down
+    confidence: low
+    claimRefs:
+      - C037
+  som:
+    value:
+    valueUsdM:
+    methodology:
+    approach: unknown
+    confidence: low
+    claimRefs:
+      - C018
+      - C030
+  reconciliation: IDC TAM实质上夸大了Anthropic真正的可地址的市场,因为它包括更广泛的AI类别; SAM代理仅限于大型企业预算,但仍包括开支Anthropic无法捕捉。 公共数据不足以证明是自下而上。
+demandDrivers:
+  - driver: 软件工程团队需要编码,代码审查,以及能够以更少的人工周期更快的代理自动化.
+    strength: high
+    timeHorizon: near
+    claimRefs:
+      - C014
+      - C022
+      - C024
+  - driver: 支助组织希望在不牺牲答案质量或同情心的情况下提高自动化程度并缩短处理时间。
+    strength: high
+    timeHorizon: near
+    claimRefs:
+      - C023
+      - C029
+  - driver: 知识-工作和受监管的团队要求AI进行分析、尽职调查、研究和文件重 工作流。
+    strength: high
+    timeHorizon: near
+    claimRefs:
+      - C023
+      - C030
+      - C031
+  - driver: 保健和生命科学用户正在测试AI以减少管理负担并加快发现工作。
+    strength: medium
+    timeHorizon: medium
+    claimRefs:
+      - C023
+      - C027
+      - C028
+  - driver: 广泛企业AI的采用和行政部门的注意日益增加,增加了愿意资助试点和推出的预算。
+    strength: high
+    timeHorizon: near
+    claimRefs:
+      - C035
+      - C036
+      - C037
+      - C038
+customerSegments:
+  - segment: 开发者和工程组织
+    buyer: CTO或 VP 工程
+    users:
+      - 软件工程师
+      - 开发者-平台球队
+      - 安保工程师
+    painPoints:
+      - 编码和审查周期缓慢
+      - 零碎 开发者工具
+      - 手动调试和构建失败分解
+    budgetOwner: 工程工具/平台工程预算
+    urgency: high
+    willingnessToPayEvidence: Claude Team、API定价以使用为基础,且客户故事显示开发者-工具部署在CircleCI和CodeRabbit。
+    claimRefs:
+      - C009
+      - C010
+      - C022
+      - C024
+  - segment: 企业知识-工作和生产力团队
+    buyer: CIO,CDO,或功能性数字领袖
+    users:
+      - 产品经理
+      - 行动组
+      - 分析员
+      - 设计和合作小组
+    painPoints:
+      - 缓慢综合和报告
+      - 工作流瓶颈
+      - 太多人工项目协调
+    budgetOwner: 企业软件/生产力转型预算
+    urgency: high
+    willingnessToPayEvidence: Claude提供基于座位的团队和企业计划,而Anthropic在Canva、Deloitte和Cognizant引用了广泛的内部部署。
+    claimRefs:
+      - C008
+      - C009
+      - C025
+      - C030
+  - segment: 客户支助和服务业务
+    buyer: VP 支持或COO
+    users:
+      - 支助人员
+      - 服务业务分析员
+      - 质量保证和自动化小组
+    painPoints:
+      - 高手柄时间
+      - 不可预测的音量峰值
+      - 答案质量不一致
+    budgetOwner: 客户支助业务预算
+    urgency: high
+    willingnessToPayEvidence: Anthropic具有专门的客户支持定位,并引用Coinbase作为规模化的支持效率客户故事.
+    claimRefs:
+      - C023
+      - C029
+  - segment: 财务研究和勤勉小组
+    buyer: 研究主任,CTO,或首席数据干事
+    users:
+      - 分析员
+      - 银行家
+      - 投资小组
+      - 风险和合规用户
+    painPoints:
+      - 劳动密集型勤奋
+      - 模拟和研究缓慢工作流
+      - 来源可核实产出的需要
+    budgetOwner: 数据/分析/前沿办公室技术预算
+    urgency: medium
+    willingnessToPayEvidence: Anthropic 包装了一个专门的金融服务解决方案,而不仅仅是一个通用的聊天器报价,表示这种垂直的预期支付需求。
+    claimRefs:
+      - C023
+  - segment: 政府和公共部门机构
+    buyer: 机构CIO、采购办公室或特派团方案领导
+    users:
+      - 分析员
+      - 政策工作人员
+      - 特派团支助小组
+    painPoints:
+      - 采购缓慢
+      - 安保/合规方面的限制
+      - 需要在敏感环境中遵守AI
+    budgetOwner: 信息技术现代化/特派团系统预算
+    urgency: medium
+    willingnessToPayEvidence: Anthropic引出FedRAMP High和IL5定位加上GSA Schedule可用性,这些是具体的采购促进步骤,而不仅仅是需求产生。
+    claimRefs:
+      - C031
+      - C034
+  - segment: 保健和生命科学组织
+    buyer: 首席医疗信息干事,R&D 信息技术领导者,或数字保健领导者
+    users:
+      - 临床医生
+      - 科学家
+      - 临床手术队
+      - 信息学工作人员
+    painPoints:
+      - 医生负担
+      - 缓慢的科学 工作流
+      - 人工研究和文献工作
+    budgetOwner: 临床手术或R&D信息学预算
+    urgency: medium
+    willingnessToPayEvidence: Anthropic突出Banner Health和Benchling结果,并推出一种专门的生命科学解决方案,表明在这一环节中真正的买方意愿。
+    claimRefs:
+      - C023
+      - C027
+      - C028
+  - segment: 创业和学术用户作为未来企业的种子客户
+    buyer: 创始人、工程领导或校园信息技术/学术创新领导
+    users:
+      - 启动建立器
+      - 学生
+      - 教育工作者
+    painPoints:
+      - 有限试验预算
+      - 需要快速进入 前沿模型
+      - 低防爆剂入舱
+    budgetOwner: 启动产品预算或校园技术预算
+    urgency: medium
+    willingnessToPayEvidence: Anthropic 开办专门的起步和校园方案,这些方案可能交易近期经济,以加速产品采用和未来扩展。
+    claimRefs:
+      - C032
+      - C033
+adoptionBarriers:
+  - barrier: 版权和培训数据诉讼给企业购买者带来持续的法律和声誉风险。
+    severity: high
+    claimRefs:
+      - C039
+      - C040
+      - C041
+  - barrier: 安全、隐私、采购和治理要求仍然是受监管买方的取向因素。
+    severity: high
+    claimRefs:
+      - C031
+      - C034
+      - C044
+  - barrier: 对规模部署而言,需要优化经济性和成本控制。
+    severity: medium
+    claimRefs:
+      - C010
+      - C011
+      - C012
+  - barrier: 企业的采用往往需要整合、工作流重新设计和伙伴牵头的执行支助。
+    severity: medium
+    claimRefs:
+      - C044
+      - C046
+  - barrier: 市场规模很大,但范围很广;公共数据并不完全孤立Anthropic准确的可解决份额或可持续份额。
+    severity: medium
+    claimRefs:
+      - C037
+      - C038
+marketVerdict:
+  attractiveness: high
+  rationale: Anthropic正在一个非常大、快速增长的市场中运作,企业的采用范围不断扩大,分布强劲超大规模云厂商,并且有证据表明在编码、支助、生产力、政府和规范的纵向方面都有付费需求。 主要抵消因素是激烈的竞争、不确定的市场界限以及重大的法律/合规风险。
+  confidence: medium
+  claimRefs:
+    - C019
+    - C021
+    - C023
+    - C030
+    - C031
+    - C035
+    - C037
+    - C039
+    - C044
+    - C046
