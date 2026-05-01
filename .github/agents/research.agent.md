@@ -15,7 +15,7 @@ Resolve before running specialists:
 - `companyName`: required only for `single-company` mode.
 - `companyUrl`: optional identity anchor, never proof.
 - `depth`: `standard` or `deep`; default `deep`.
-- `includeZh`: default `false` unless requested.
+- `includeZh`: default `true` unless explicitly disabled.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/agents/startup-diligence.schema.md`.

@@ -11,7 +11,7 @@ const { figure, claims = [], sources = [] } = Astro.props;
 const type = figure?.type ?? 'flow';
 const layout = figure?.layout ?? 'standard';
 const data = figure?.data ?? {};
-const chartTypes = new Set(['flow', 'decision-map', 'evidence-map', 'bars', 'metric-bars', 'pie', 'waterfall', 'quadrant', 'competitive-matrix', 'matrix', 'risk-heatmap', 'sensitivity', 'xy']);
+const chartTypes = new Set(['flow', 'decision-map', 'evidence-map', 'bars', 'metric-bars', 'waterfall', 'quadrant', 'competitive-matrix', 'matrix', 'risk-heatmap', 'sensitivity', 'xy']);
 const usesCanvasChart = chartTypes.has(type);
 const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
 const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
@@ -56,7 +56,7 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
 
   {(type === 'flow' || type === 'decision-map' || type === 'evidence-map') && <div id={chartId} class="echart-figure chart-relationship" data-chart-type={type}></div>}
 
-  {(type === 'bars' || type === 'metric-bars' || type === 'pie' || type === 'waterfall') && <div id={chartId} class="echart-figure chart-bars" data-chart-type={type}></div>}
+  {(type === 'bars' || type === 'metric-bars' || type === 'waterfall') && <div id={chartId} class="echart-figure chart-bars" data-chart-type={type}></div>}
 
   {(type === 'quadrant' || type === 'competitive-matrix') && (
     <div id={chartId} class="echart-figure chart-quadrant" data-chart-type={type}></div>
@@ -521,7 +521,7 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
   const optionFor = (payload) => {
     if (['flow', 'decision-map', 'evidence-map'].includes(payload.type)) return graphOption(payload);
     if (payload.type === 'waterfall') return waterfallOption(payload);
-    if (['bars', 'metric-bars', 'pie'].includes(payload.type)) return barOption(payload);
+    if (['bars', 'metric-bars'].includes(payload.type)) return barOption(payload);
     if (['quadrant', 'competitive-matrix'].includes(payload.type)) return quadrantOption(payload);
     if (['matrix', 'risk-heatmap'].includes(payload.type)) return heatmapOption(payload);
     if (payload.type === 'xy') return xyOption(payload);

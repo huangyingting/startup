@@ -64,6 +64,7 @@ const FIGURE_CONTRACTS = new Map([
   ['xy', [['points', 'series']]],
 ]);
 const LEGACY_FIGURE_FIELDS = ['mer' + 'maid', 'mer' + 'maidType'];
+const NON_CANONICAL_FIGURE_DATA_FIELDS = new Set(['children', 'steps', 'cards', 'buckets', 'groups', 'components', 'name']);
 const REMOVED_REPORT_META_FIELDS = ['class' + 'ification'];
 
 function asDateString(value) {
@@ -102,6 +103,60 @@ function hasAnyArray(data, keys) {
 }
 function hasText(value) {
   return typeof value === 'string' && value.trim().length > 0;
+}
+function isNumber(value) {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+function checkFigure(failures, path, figure) {
+  if (LEGACY_FIGURE_FIELDS.some((field) => field in figure)) failures.push(`${path}: figure ${figure.id} uses removed legacy figure fields`);
+  if (!FIGURE_TYPES.has(figure.type)) failures.push(`${path}: figure ${figure.id} has invalid type ${figure.type}`);
+  if (!FIGURE_LAYOUTS.has(figure.layout)) failures.push(`${path}: figure ${figure.id} has invalid layout ${figure.layout}`);
+  if (!figure.data || typeof figure.data !== 'object' || Array.isArray(figure.data)) {
+    failures.push(`${path}: figure ${figure.id} missing structured data object`);
+    return;
+  }
+  for (const field of Object.keys(figure.data)) {
+    if (NON_CANONICAL_FIGURE_DATA_FIELDS.has(field)) failures.push(`${path}: figure ${figure.id} uses non-canonical data.${field}`);
+  }
+  const contract = FIGURE_CONTRACTS.get(figure.type) ?? [];
+  for (const alternatives of contract) {
+    if (!hasAnyArray(figure.data, alternatives)) failures.push(`${path}: figure ${figure.id} type ${figure.type} requires data.${alternatives.join(' or data.')}`);
+  }
+  for (const [index, item] of (figure.data.items ?? []).entries()) {
+    if (!hasText(item?.label)) failures.push(`${path}: figure ${figure.id} item ${index + 1} requires label`);
+  }
+  for (const [index, node] of (figure.data.nodes ?? []).entries()) {
+    if (!hasText(node?.label)) failures.push(`${path}: figure ${figure.id} node ${index + 1} requires label`);
+  }
+  for (const [index, point] of (figure.data.points ?? []).entries()) {
+    if (!hasText(point?.label)) failures.push(`${path}: figure ${figure.id} point ${index + 1} requires label`);
+  }
+  for (const [index, layer] of (figure.data.layers ?? []).entries()) {
+    if (!hasText(layer?.label)) failures.push(`${path}: figure ${figure.id} layer ${index + 1} requires label`);
+    if (figure.type === 'architecture-stack' && !hasText(layer?.detail) && !hasAnyArray(layer, ['modules', 'outputs'])) failures.push(`${path}: figure ${figure.id} architecture layer ${index + 1} has no detail, modules, or outputs`);
+  }
+  for (const [index, row] of (figure.data.rows ?? []).entries()) {
+    if (!hasText(row?.label)) failures.push(`${path}: figure ${figure.id} row ${index + 1} requires label`);
+    if (Array.isArray(row?.values) && row.values.length === 0) failures.push(`${path}: figure ${figure.id} row ${index + 1} has empty values`);
+  }
+  if (['bars', 'metric-bars', 'waterfall'].includes(figure.type)) {
+    for (const [index, item] of (figure.data.items ?? []).entries()) {
+      if (!isNumber(item?.value)) failures.push(`${path}: figure ${figure.id} item ${index + 1} requires numeric value`);
+    }
+  }
+  if (['quadrant', 'competitive-matrix', 'xy'].includes(figure.type)) {
+    for (const [index, point] of (figure.data.points ?? []).entries()) {
+      if (!isNumber(point?.x) || !isNumber(point?.y)) failures.push(`${path}: figure ${figure.id} point ${index + 1} requires numeric x and y`);
+    }
+  }
+  if (figure.type === 'sensitivity') {
+    for (const [seriesIndex, series] of (figure.data.series ?? []).entries()) {
+      for (const [pointIndex, point] of (series.points ?? []).entries()) {
+        if (!hasText(point?.label)) failures.push(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires label`);
+        if (!isNumber(point?.value)) failures.push(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires numeric value`);
+      }
+    }
+  }
 }
 
 try {
@@ -196,23 +251,8 @@ try {
       if (type === 'figure' && !figureIds.has(ref)) failures.push(`${run}/10-report-document.yaml: missing figure ${ref}`);
       if (type === 'table' && !tableIds.has(ref)) failures.push(`${run}/10-report-document.yaml: missing table ${ref}`);
     }
-    for (const figure of reportDoc?.figures ?? []) {
-      if (LEGACY_FIGURE_FIELDS.some((field) => field in figure)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} uses removed legacy figure fields`);
-      if (!FIGURE_TYPES.has(figure.type)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} has invalid type ${figure.type}`);
-      if (!FIGURE_LAYOUTS.has(figure.layout)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} has invalid layout ${figure.layout}`);
-      if (!figure.data || typeof figure.data !== 'object' || Array.isArray(figure.data)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} missing structured data object`);
-      else {
-        const contract = FIGURE_CONTRACTS.get(figure.type) ?? [];
-        for (const alternatives of contract) {
-          if (!hasAnyArray(figure.data, alternatives)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} type ${figure.type} requires data.${alternatives.join(' or data.')}`);
-        }
-        if (figure.type === 'architecture-stack') {
-          for (const [index, layer] of (figure.data.layers ?? []).entries()) {
-            if (!hasText(layer?.label) && !hasText(layer?.name)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} architecture layer ${index + 1} requires label or name`);
-            if (!hasText(layer?.detail) && !hasText(layer?.description) && !hasAnyArray(layer, ['modules', 'items', 'components'])) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} architecture layer ${index + 1} has no detail or modules/items/components`);
-          }
-        }
-      }
+    for (const [file, doc] of parsed) {
+      for (const figure of doc?.figures ?? []) checkFigure(failures, `${run}/${file}`, figure);
     }
     pushIfInvalidEnum(failures, `${run}/11-report-card.yaml`, 'recommendation', card?.recommendation, RECOMMENDATIONS);
     pushIfInvalidEnum(failures, `${run}/11-report-card.yaml`, 'confidence', card?.confidence, CONFIDENCE);
