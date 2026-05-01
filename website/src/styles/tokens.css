@@ -71,6 +71,8 @@
   --rule-hairline: 1px solid var(--hairline);
   --rule-thin: 1px solid var(--ink-page);
   --rule-hard: 2px solid var(--ink-page);
+  --report-rule: 1px solid color-mix(in srgb, var(--hairline) 82%, transparent);
+  --report-rule-accent: var(--claret);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -146,7 +148,7 @@ a:focus-visible {
 
 hr {
   border: 0;
-  border-top: var(--rule-hairline);
+  border-top: var(--report-rule);
   margin: var(--space-6) 0;
 }
 
@@ -195,9 +197,9 @@ main { min-height: 70vh; display: block; }
 /* IMPORTANT: never use `padding` shorthand on classes that combine with
    `.sr-container` — it would wipe out the inline gutter. Use padding-block. */
 .sr-hero {
-  border-bottom: var(--rule-hairline);
-  padding-block: var(--space-6) var(--space-7);
-  margin-bottom: var(--space-6);
+  border-bottom: 0;
+  padding-block: var(--space-6) var(--space-3);
+  margin-bottom: var(--space-2);
 }
 .sr-hero .sr-eyebrow,
 .sr-hero .sr-kicker { margin-bottom: var(--space-3); }
@@ -234,9 +236,10 @@ main { min-height: 70vh; display: block; }
 }
 
 .sr-section {
-  border-top: var(--rule-hairline);
-  padding-block: var(--space-6) 0;
-  margin-block: 0 var(--space-7);
+  border-top: 0;
+  border-bottom: 0;
+  padding-block: var(--space-2) 0;
+  margin-block: 0 var(--space-3);
 }
 .sr-section--plain { border-top: 0; padding-top: 0; }
 .sr-section h2 {
@@ -268,7 +271,7 @@ main { min-height: 70vh; display: block; }
 .sr-card {
   display: block;
   background: transparent;
-  border-top: var(--rule-hairline);
+  border-top: var(--report-rule);
   padding-block: var(--space-5) var(--space-6);
   text-decoration: none;
   color: var(--ink-page);
@@ -314,7 +317,7 @@ main { min-height: 70vh; display: block; }
 .sr-pill {
   display: inline-flex;
   align-items: center;
-  border: var(--rule-hairline);
+  border: var(--report-rule);
   padding: 2px var(--space-3);
   color: var(--ink-page);
   background: transparent;
@@ -334,14 +337,14 @@ main { min-height: 70vh; display: block; }
   width: 100%;
   border-collapse: collapse;
   background: transparent;
-  border-top: 1px solid var(--ink-page);
-  border-bottom: 1px solid var(--ink-page);
+  border-top: var(--report-rule);
+  border-bottom: var(--report-rule);
   font-family: var(--font-sans);
 }
 .sr-table th, .sr-table td {
   text-align: left;
   padding: var(--space-3) var(--space-3);
-  border-bottom: var(--rule-hairline);
+  border-bottom: var(--report-rule);
   vertical-align: top;
   font-size: var(--fs-sm);
 }
@@ -355,7 +358,7 @@ main { min-height: 70vh; display: block; }
 
 .sr-input {
   width: 100%;
-  border: var(--rule-thin);
+  border: var(--report-rule);
   background: var(--paper);
   padding: var(--space-3) var(--space-4);
   font-family: var(--font-display);
@@ -380,7 +383,7 @@ main { min-height: 70vh; display: block; }
 }
 
 .sr-stat {
-  border-top: var(--rule-hairline);
+  border-top: var(--report-rule);
   padding: var(--space-4) 0;
   font-family: var(--font-sans);
   color: var(--caption-gray);

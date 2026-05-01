@@ -325,27 +325,9 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
 </section>
 
 <style>
-  .report-hero,
-  .report-nav,
-  .sr-section {
-    --report-rule: 1px solid color-mix(in srgb, var(--hairline) 82%, transparent);
-    --report-rule-accent: var(--claret);
-  }
-  .report-hero,
-  .sr-section {
-    border-top: 0;
-  }
-  .sr-section {
-    padding-block: var(--space-2) 0;
-    margin-block: 0 var(--space-3);
-  }
-  .report-hero {
-    margin-bottom: var(--space-2);
-    padding-block-end: var(--space-3);
-  }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: var(--space-7); align-items: start; }
   .report-hero h1 { max-width: 34ch; }
-  .hero-summary-card { border: var(--rule-hairline); background: var(--surface-paper); padding: var(--space-4); margin-top: var(--space-2); }
+  .hero-summary-card { border: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); margin-top: var(--space-2); }
   .hero-summary-card dl { display: grid; gap: var(--space-3); margin: var(--space-3) 0 0; }
   .hero-summary-card div { display: grid; grid-template-columns: minmax(110px, 1fr) auto; gap: var(--space-3); align-items: baseline; padding-bottom: var(--space-2); border-bottom: var(--report-rule); }
   .hero-summary-card div:last-child { border-bottom: 0; padding-bottom: 0; }
@@ -396,7 +378,7 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
   .report-nav a:hover,
   .report-nav a:focus-visible { color: var(--claret); border-bottom-color: var(--claret); outline: none; }
   .focus-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-4); }
-  .focus-card { border: var(--rule-hairline); padding: var(--space-4); background: var(--surface-paper); }
+  .focus-card { border: var(--report-rule); padding: var(--space-4); background: var(--surface-paper); }
   .focus-card h3 { margin: var(--space-2) 0; font-size: var(--fs-xl); }
   .focus-card p { font-size: var(--fs-sm); color: var(--caption-gray); }
   .narrative-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: var(--space-6); margin-top: var(--space-6); align-items: start; }
@@ -422,13 +404,13 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
   .metric-grid dd { margin: 0; font-weight: 700; color: var(--ink-page); }
   .inline-pill { margin: 0 var(--space-2) var(--space-2) 0; }
   .people-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-5); }
-  .person-card { display: grid; grid-template-columns: 56px 1fr; gap: var(--space-3); border: var(--rule-hairline); padding: var(--space-3); background: var(--surface-paper); }
+  .person-card { display: grid; grid-template-columns: 56px 1fr; gap: var(--space-3); border: var(--report-rule); padding: var(--space-3); background: var(--surface-paper); }
   .person-card img, .person-avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
   .person-avatar { display: grid; place-items: center; background: linear-gradient(135deg, var(--claret), var(--accent)); color: white; font-family: var(--font-sans); font-weight: 800; letter-spacing: .04em; }
   .person-name { font-family: var(--font-serif); font-size: var(--fs-base); font-weight: 700; color: var(--ink-page); }
   .person-role { margin: 0 0 var(--space-1); color: var(--caption-gray); font-size: var(--fs-sm); }
   .person-card p { font-size: var(--fs-sm); line-height: 1.45; margin-bottom: var(--space-2); }
-  .person-status { display: inline-flex; margin-bottom: var(--space-1); border: var(--rule-hairline); border-radius: 999px; padding: 1px 6px; font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--claret); }
+  .person-status { display: inline-flex; margin-bottom: var(--space-1); border: var(--report-rule); border-radius: 999px; padding: 1px 6px; font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--claret); }
   .person-status.former { color: var(--caption-gray); }
   .risk-map { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); margin-bottom: var(--space-5); }
   .risk-chip { border-left: 5px solid var(--gold); padding: var(--space-4); background: var(--surface-paper); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hairline) 65%, transparent); }
