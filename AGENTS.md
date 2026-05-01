@@ -38,6 +38,7 @@
 - Optional Simplified Chinese localized artifacts are `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 - Every artifact must include `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
 - `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. Sources should include `accessDate`, `fetchVerified: true`, and concise `keyQuote` values when available.
+- Evidence source targets refer to retained `sources[]` entries, not claim count. Deep reports should retain at least 100 fetched, report-relevant sources; standard reports should retain at least 40. Do not treat 100 `Cxxx` claims from a small source set as satisfying the source target.
 - Evidence gathering must be broad, fresh, and deduplicated: combine official/company sources, startup or business news, independent third-party databases/analyst sources, customer/partner proof, regulatory/legal/filing sources, and technical/product documentation; prefer recent sources for current claims; and avoid counting repeated reporting of the same event as independent evidence.
 - Evidence search should iterate queries across company, product, founder, investor, customer, competitor, market, funding, valuation, pricing, regulatory, review, hiring, and negative/disconfirming angles instead of repeatedly searching the same site or query family.
 - Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Figure IDs use `F001`, `F002`, etc. Table IDs use `T001`, `T002`, etc.
@@ -53,7 +54,7 @@
 - Figures/charts should be stored as structured YAML specs (`id`, `title`, `type`, `layout`, `summary`, `data`) and rendered by native website components from `10-report-document.yaml`.
 - Valid figure types are `timeline`, `flow`, `decision-map`, `evidence-map`, `quadrant`, `competitive-matrix`, `metric-bars`, `bars`, `waterfall`, `risk-heatmap`, `matrix`, `architecture-stack`, `market-sizing-lens`, `unit-economics-waterfall`, `customer-surface-map`, `recommendation-logic`, `risk-transmission-map`, `stack`, `sensitivity`, `xy`, and `other`.
 - Follow the exact field contracts in `.github/agents/startup-diligence.schema.md`; rendering is based on `figure.type` and canonical `data` fields, not title heuristics.
-- Avoid non-canonical primary renderer fields such as `steps`, `cards`, `children`, `components`, or `name` when the schema requires `events`, `items`, `layers`, `modules`, or `label`.
+- Avoid non-canonical primary renderer fields such as `steps`, `cards`, `children`, `components`, or `name` when the schema requires `items`, `nodes`, `edges`, `points`, `rows`, `columns`, `series`, `layers`, `modules`, or `label`.
 - `architecture-stack` figures must provide `data.layers[]` with renderable `label`, `detail`, and/or `modules`; empty layers create blank product-stack figures and are invalid.
 - Table specs should use explicit columns and rows with stable table IDs. Source tables in the website do not need a Citation column.
 

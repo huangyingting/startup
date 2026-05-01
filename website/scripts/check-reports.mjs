@@ -159,6 +159,45 @@ function checkFigure(failures, path, figure) {
   }
 }
 
+function checkEvidenceCoverage(failures, warnings, run, ledger) {
+  const coverage = ledger?.coverage ?? {};
+  const sources = ledger?.sources ?? [];
+  const claims = ledger?.claims ?? [];
+  const sourceTarget = Number(coverage.sourceTarget);
+  const sourcesFetched = Number(coverage.sourcesFetched);
+  const sourcesRetained = Number(coverage.sourcesRetained);
+  const claimsCreated = Number(coverage.claimsCreated);
+
+  if (Number.isFinite(sourceTarget) && sourceTarget > 0 && sources.length < sourceTarget) {
+    failures.push(`${run}/01-evidence-ledger.yaml: sources.length ${sources.length} is below coverage.sourceTarget ${sourceTarget}`);
+  }
+  if (Number.isFinite(sourcesRetained) && sourcesRetained !== sources.length) {
+    failures.push(`${run}/01-evidence-ledger.yaml: coverage.sourcesRetained ${sourcesRetained} must equal sources.length ${sources.length}`);
+  }
+  if (Number.isFinite(sourcesFetched) && sourcesFetched < sources.length) {
+    failures.push(`${run}/01-evidence-ledger.yaml: coverage.sourcesFetched ${sourcesFetched} cannot be less than sources.length ${sources.length}`);
+  }
+  if (Number.isFinite(claimsCreated) && claimsCreated !== claims.length) {
+    failures.push(`${run}/01-evidence-ledger.yaml: coverage.claimsCreated ${claimsCreated} must equal claims.length ${claims.length}`);
+  }
+  if (coverage.depth === 'deep' && Number.isFinite(sourceTarget) && sourceTarget < 100) {
+    warnings.push(`${run}/01-evidence-ledger.yaml: legacy deep sourceTarget ${sourceTarget} is below the current 100-source standard; regenerate when practical`);
+  } else if (coverage.depth === 'deep' && sources.length < 100) {
+    failures.push(`${run}/01-evidence-ledger.yaml: deep evidence requires at least 100 retained sources, got ${sources.length}`);
+  }
+  if (coverage.depth === 'standard' && Number.isFinite(sourceTarget) && sourceTarget < 40) {
+    warnings.push(`${run}/01-evidence-ledger.yaml: legacy standard sourceTarget ${sourceTarget} is below the current 40-source standard; regenerate when practical`);
+  } else if (coverage.depth === 'standard' && sources.length < 40) {
+    failures.push(`${run}/01-evidence-ledger.yaml: standard evidence requires at least 40 retained sources, got ${sources.length}`);
+  }
+
+  const citedSourceIds = new Set(claims.flatMap((claim) => claim.sourceRefs ?? []));
+  const uncitedCount = sources.filter((source) => !citedSourceIds.has(source.id)).length;
+  if (sources.length > 0 && uncitedCount / sources.length > 0.5) {
+    warnings.push(`${run}/01-evidence-ledger.yaml: ${uncitedCount}/${sources.length} retained sources are not cited by claims; consider pruning irrelevant sources or creating missing claims`);
+  }
+}
+
 try {
   if (!existsSync(REPORTS_DIR)) {
     console.warn(`[check:reports] ${REPORTS_DIR} not found; nothing to check.`);
@@ -216,6 +255,7 @@ try {
 
     const claimIds = new Set((ledger?.claims ?? []).map((claim) => claim.id));
     const sourceIds = new Set((ledger?.sources ?? []).map((source) => source.id));
+    checkEvidenceCoverage(failures, warnings, run, ledger);
     checkUniqueId(failures, run, 'source', ledger?.sources, /^S\d{3}$/);
     checkUniqueId(failures, run, 'claim', ledger?.claims, /^C\d{3}$/);
     for (const source of ledger?.sources ?? []) {

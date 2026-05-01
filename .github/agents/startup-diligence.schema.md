@@ -78,6 +78,8 @@ Optional Chinese files:
 Evidence ledger quality requirements:
 
 - Source breadth: retained sources should span multiple independent source buckets whenever available, including official/company material, startup or business news, independent third-party databases/analyst sources, customer or partner proof, regulatory/legal/filing sources, and technical/product documentation.
+- Source target semantics: `coverage.sourceTarget` is the minimum count of retained, fetched, report-relevant `sources[]` entries. It is not a claim target. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`.
+- Depth minimums: `standard` requires at least 40 retained sources; `deep` requires at least 100 retained sources. A report with 100 claims but materially fewer retained sources fails the evidence standard.
 - Source recency: claims about current company status, funding, valuation, customers, revenue scale, headcount, product packaging, pricing, and regulatory posture should prefer sources from the last 24 months. Older sources are acceptable for durable historical facts and should normally support claims marked `freshness: historical`.
 - Source deduplication: repeated coverage of the same underlying event does not equal independent evidence. Cluster sources by event/topic/date and retain only sources that add original facts, primary quotes, independent confirmation, or materially different interpretation.
 - Query iteration: the evidence process should vary search queries by company name, product names, founders, investors, competitors, customers, market category, geography, funding/valuation terms, product/security terms, regulatory/legal terms, reviews, hiring, and negative/disconfirming angles.
@@ -92,7 +94,7 @@ company:
   name: string
 coverage:
   depth: standard|deep
-  sourceTarget: 30
+  sourceTarget: 100
   sourcesFetched: 0
   sourcesRetained: 0
   claimsCreated: 0

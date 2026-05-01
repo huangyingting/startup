@@ -16,8 +16,11 @@ Verify the company, gather fetched evidence, and create the claim ledger used by
 
 ## Source target
 
-- Standard: at least 40 fetched sources.
-- Deep: at least 100 fetched sources.
+- Standard: at least 40 retained, fetched, report-relevant source entries in `sources[]`.
+- Deep: at least 100 retained, fetched, report-relevant source entries in `sources[]`.
+- `sourcesFetched`, `sourcesRetained`, and `sources.length` must not be replaced by claim count. Creating 100 `Cxxx` claims from 20 sources is a failed deep evidence run, not a successful one.
+- `coverage.sourceTarget` is the minimum retained source count, not the desired claim count. Set `coverage.sourcesRetained` equal to the actual number of retained `sources[]` entries; set `coverage.claimsCreated` equal to `claims.length`.
+- Every retained source should either support at least one claim, explain a material evidence gap, or be removed. Do not pad `sources[]` with irrelevant pages just to hit the target.
 - Prefer official pages, filings, credible news, company databases, pricing/product docs, customer proof, regulatory sources, app/review sources, and disconfirming evidence.
 - Do not cite search-result pages or unfetched URLs.
 - Enforce source diversity. Do not allow one publisher, domain, or press-release syndication chain to dominate the ledger. For major claims, seek coverage across at least three buckets when available: official/company material, startup or business news, independent third-party databases/analyst sources, customer or partner proof, regulatory/legal/filing sources, and technical/product documentation.
@@ -44,7 +47,8 @@ Before writing `01-evidence-ledger.yaml`, perform these gates:
 2. **Event duplicate check**: cluster candidates by event/topic/date, such as one funding announcement or product launch. Retain only sources that add independent facts, primary quotes, original data, or materially different interpretation.
 3. **Freshness check**: for each claim with `freshness: current` or `recent`, prefer the newest reliable source and avoid relying on old articles when newer official, regulatory, customer, or credible news evidence exists.
 4. **Independence check**: do not treat company-authored posts, investor portfolio blurbs, partner announcements, or copied wire stories as independent corroboration. Label `independence` accurately.
-5. **Coverage gap check**: if official, startup-news, independent-third-party, customer/partner, regulatory/legal, or technical/product buckets are missing, either run another query wave for that bucket or record a specific `coverageGaps` / `evidenceGaps` item.
+5. **Source-target check**: if `sources.length < coverage.sourceTarget`, continue searching with new query angles. If the target truly cannot be met, do not silently pass; write the shortage into `coverageGaps`, lower confidence, and return a handoff that clearly says the evidence run is incomplete.
+6. **Coverage gap check**: if official, startup-news, independent-third-party, customer/partner, regulatory/legal, or technical/product buckets are missing, either run another query wave for that bucket or record a specific `coverageGaps` / `evidenceGaps` item.
 
 ## Output focus
 

@@ -53,6 +53,6 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `reports/` — generated report folders and `_index.yaml` catalog.
 - `.github/agents/research.agent.md` — main orchestrator.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
-- `scripts/check-company-dedup.mjs` — warns/skips duplicate company reports.
+- `scripts/check-company-dedup.mjs` — fails with duplicate-risk details for matching company names or domains.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — report artifact validator.

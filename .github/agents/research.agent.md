@@ -1,18 +1,19 @@
 ---
-description: "Use when: generating startup due diligence report YAML for a named company or an automatic batch of recent unicorn startups. Keywords: startup diligence, VC report, investment report, YAML artifacts, structured figures, recent unicorns."
+description: "Use when: generating startup due diligence report YAML for one named company. Keywords: startup diligence, VC report, investment report, YAML artifacts, structured figures."
 name: "Startup Research"
 model: "GPT-5.4 (copilot)"
 tools: [agent, read, edit, execute, todo]
 ---
 
-Orchestrate complete `startup-diligence-report-v2` runs for either one named existing company or an automatic batch of recent private unicorn startups when no company is specified. Each final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
+Orchestrate one complete `startup-diligence-report-v2` run for a named existing company. The final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
+
+For automatic recent-unicorn batches, the default top-level agent selects candidates and invokes this agent once per selected company. Do not use this agent as a recursive batch orchestrator.
 
 ## Invocation contract
 
 Resolve before running specialists:
 
-- `mode`: `single-company` when a company name or URL is supplied; `recent-unicorns` when neither is supplied.
-- `companyName`: required only for `single-company` mode.
+- `companyName`: required.
 - `companyUrl`: optional identity anchor, never proof.
 - `depth`: `standard` or `deep`; default `deep`.
 - `includeZh`: default `true` unless explicitly disabled.
@@ -20,17 +21,6 @@ Resolve before running specialists:
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/agents/startup-diligence.schema.md`.
 - `yamlSyntaxPath`: absolute path to `.github/agents/yaml-syntax.md`.
-
-## Automatic recent-unicorn mode
-
-Use this mode only when no company name and no company URL are provided.
-
-1. Identify at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a $1B valuation, or became newly prominent in the last 12-24 months.
-2. Avoid companies already present in `reports/_index.yaml` unless a materially new report is justified.
-3. Use web-backed evidence for candidate selection. If web research is needed, delegate candidate discovery to `Startup Report Evidence Analyst` and require company name, official URL when available, source URLs, recency rationale, and duplicate-check notes.
-4. For each selected company, run the full specialist sequence below independently and write one complete artifact set under its own `reports/<run>/` folder.
-5. Do not stop after candidate discovery. Complete at least 5 full report folders unless blocked by duplicate conflicts or source-quality failures; if blocked, select replacement candidates.
-6. Delete failed or duplicate partial report folders before final validation.
 
 ## v2 artifact contract
 
@@ -64,7 +54,7 @@ Optional localization writes `10-report-document.zh.yaml` and `11-report-card.zh
 5. `Startup Report Writer` writes `10`, `11`.
 6. `Startup Report Translator ZH` optionally localizes the final report.
 
-Use the agent tool to invoke each specialist by its exact `name` in the sequence above. In automatic recent-unicorn mode, repeat the full sequence once per selected company. Pass absolute input/output paths and this handoff context:
+Use the agent tool to invoke each specialist by its exact `name` in the sequence above. Pass absolute input/output paths and this handoff context:
 
 ```text
 Company: <companyName>
@@ -83,6 +73,7 @@ Evidence search rule: require diverse, recent, non-duplicative evidence. The Evi
 
 - `01-evidence-ledger.yaml` is the evidence backbone.
 - Evidence collection must be broad, fresh, and non-duplicative: combine official/company sources, startup or business news, independent third-party databases/analyst sources, customer/partner proof, regulatory/legal/filing sources, and technical/product documentation where available.
+- Evidence source targets are retained-source targets, not claim-count targets. For `deep`, the Evidence Analyst must retain at least 100 fetched, report-relevant `sources[]` entries; for `standard`, at least 40. A ledger with 100 claims but far fewer retained sources fails the evidence gate.
 - The Evidence Analyst should iterate search queries across multiple angles rather than repeatedly fetching one domain or one event cluster. Change query terms when results repeat the same story.
 - For current operating, funding, product, valuation, customer, or regulatory claims, prioritize sources from the last 24 months. Use older evidence mainly for historical facts and mark such claims `freshness: historical`.
 - Deduplicate repeated reporting of the same announcement, funding round, launch, partnership, lawsuit, or quote. Keep the original/primary source and only independent corroboration that adds new facts or perspective.
@@ -103,6 +94,8 @@ After every specialist:
 - Confirm the expected files exist in `reportFolder`; ignore `/tmp/*copilot-tool-output*` files except for debugging failed runs.
 - Check `schemaVersion: startup-diligence-report-v2`.
 - Check `slug`, `runDate`, and `company.name` consistency.
+- After `Startup Report Evidence Analyst`, check that `coverage.sourceTarget`, `coverage.sourcesFetched`, `coverage.sourcesRetained`, `sources.length`, and `claims.length` are internally consistent. Reject deep ledgers with fewer than 100 retained sources and standard ledgers with fewer than 40 retained sources unless the run is explicitly marked incomplete and rerun/repaired before downstream specialists begin.
+- After `02-company-snapshot.yaml`, run `node scripts/check-company-dedup.mjs <reportFolder>/02-company-snapshot.yaml`; stop on duplicate-risk unless the user explicitly requested a refresh.
 - Validate all `claimRefs` against `01-evidence-ledger.yaml`.
 - Validate all `sourceRefs` against fetched sources.
 - Validate every figure against its schema Figure rendering contract. Reject empty arrays, non-canonical field shapes, string-valued numeric chart values, or figures whose visible cards/layers/nodes lack `label` plus `detail`/renderable content.
