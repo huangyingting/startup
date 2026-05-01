@@ -1,0 +1,377 @@
+schemaVersion: startup-diligence-report-v2
+artifact: product-technology
+slug: anthropic
+runDate: '2026-05-01'
+company:
+  name: Anthropic
+chapter:
+  number: 5
+  title: Product & Technology
+  summary: |
+    Anthropic has evolved Claude from a single assistant into a multi-surface product platform spanning apps, coding workflows, direct APIs, cross-cloud deployment, vertical solutions, and governance rails. The retained evidence supports a strong product-platform thesis and meaningful technical distribution leverage, but the stack remains strategically dependent on partner clouds, especially AWS, and the public record does not expose full model-roadmap or infrastructure-operating detail. [C007][C009][C012][C013][C014][C015][C028][C029][C036][C041][C043][C046]
+callouts:
+  - type: key-insight
+    title: Claude is now a platform, not just a chat application
+    body: |
+      Anthropic’s product surface includes Claude.ai across web and mobile, Claude Code, a broad direct API, and partner-cloud deployment through Bedrock, Vertex AI, and Foundry. [C007][C009][C013][C031][C041]
+    claimRefs:
+      - C007
+      - C009
+      - C013
+      - C031
+      - C041
+  - type: key-insight
+    title: Cross-cloud portability is an important architectural advantage
+    body: |
+      Anthropic distributes through AWS, Google Cloud, and Microsoft channels, and partner-platform docs support a near-identical Messages API pattern across direct and partner environments. [C009][C015][C016][C043]
+    claimRefs:
+      - C009
+      - C015
+      - C016
+      - C043
+  - type: opportunity
+    title: Workflow-specific products are expanding the platform
+    body: |
+      Claude Code and packaged solutions such as Claude for Financial Services show product expansion from general chat into higher-value workflow automation. [C013][C036][C044]
+    claimRefs:
+      - C013
+      - C036
+      - C044
+  - type: risk-alert
+    title: Product strength is partly partner-mediated
+    body: |
+      AWS is Anthropic’s primary cloud and training partner, while Google Cloud and Microsoft channels expand reach; this strengthens distribution but creates infrastructure and channel dependence. [C014][C015][C045][C046]
+    claimRefs:
+      - C014
+      - C015
+      - C045
+      - C046
+tables:
+  - id: T501
+    title: Product platform overview and core modules
+    columns:
+      - Module or layer
+      - What is evidenced
+      - Why it matters
+      - Claim basis
+    rows:
+      - - Claude.ai applications
+        - Claude is distributed across web, desktop, iOS, and Android. [C031]
+        - Gives Anthropic a direct end-user surface for self-serve acquisition and usage data.
+        - Observed.
+      - - Commercial plan layer
+        - Free, Pro, Max, Team, and Enterprise plans are publicly documented. [C008][C011]
+        - Supports both self-serve and enterprise packaging from a common product family.
+        - Observed.
+      - - Claude Code
+        - Dedicated coding workflow product across terminal, VS Code, JetBrains, desktop, and web; Claude 4 marked general availability. [C013]
+        - Creates a high-frequency developer surface with potential expansion into enterprise software budgets.
+        - Observed.
+      - - Model family
+        - Current docs present Opus 4.7, Sonnet 4.6, and Haiku 4.5, with 1M-token context on Opus and Sonnet and 200k on Haiku. [C012]
+        - Shows tiered model architecture for premium, balanced, and lighter workloads.
+        - Observed.
+      - - Direct API platform
+        - Anthropic documents Messages, Message Batches, Token Counting, Models, Files, Skills, Agents, Sessions, and Environments APIs. [C041]
+        - Supports developer and agent-platform use cases beyond simple prompting.
+        - Observed.
+      - - Cross-cloud distribution
+        - Claude is available through Amazon Bedrock, Google Vertex AI, and Microsoft Foundry. [C009]
+        - Broadens procurement pathways and deployment flexibility.
+        - Observed.
+      - - Vertical solutions
+        - Anthropic is packaging solutions such as financial analysis with Box, Daloopa, Databricks, and FactSet. [C036]
+        - Extends the platform into workflow-specific enterprise value capture.
+        - Observed.
+      - - Governance and trust rails
+        - Anthropic discloses ISO 42001, a Trust Center, a Transparency Hub, and a Responsible Scaling Policy. [C028][C029]
+        - Important for enterprise trust, regulated adoption, and differentiation.
+        - Observed.
+    notes: The retained evidence supports broad module coverage, but not internal architecture diagrams, model-training cost curves, or release-cadence planning detail.
+    claimRefs:
+      - C008
+      - C009
+      - C011
+      - C012
+      - C013
+      - C028
+      - C029
+      - C031
+      - C036
+      - C041
+  - id: T502
+    title: AI automation, architecture, and integration surfaces
+    columns:
+      - Area
+      - Evidence-backed detail
+      - Investor readout
+      - Claim basis
+    rows:
+      - - Model access pattern
+        - Anthropic preserves a near-identical Messages API model across direct, Bedrock, and Vertex surfaces. [C043]
+        - Reduces migration friction for developers and platform teams.
+        - Inferred from partner docs.
+      - - Agent and automation primitives
+        - API surface includes Agents, Sessions, Environments, Skills, Files, and Token Counting. [C041]
+        - Supports more automated and stateful workflows than a single-message API alone.
+        - Observed.
+      - - Coding workflow automation
+        - Claude Code runs across terminal, IDE, desktop, and web. [C013]
+        - Increases usage frequency and deepens developer workflow entrenchment.
+        - Observed.
+      - - Partner-cloud deployment
+        - AWS is the primary cloud and training partner; Google Cloud is also a provider; AWS and Google published channel-availability posts. [C014][C015][C045]
+        - Confirms both technical and commercial cloud integration depth.
+        - Observed.
+      - - Vertical data-provider integration
+        - Financial-services solution references Box, Daloopa, Databricks, and FactSet. [C036]
+        - Suggests Anthropic is building higher-value solution bundles, not only foundation-model access.
+        - Observed.
+      - - Trust and compliance integration
+        - Commercial terms, DPA, ISO 42001, Trust Center, and Transparency Hub establish a visible enterprise-control layer. [C010][C028][C030]
+        - Strengthens enterprise readiness and procurement viability.
+        - Observed.
+    notes: Public sources show exposed interfaces and deployment options; they do not provide low-level architecture, latency, reliability, or cost-per-inference benchmarks.
+    claimRefs:
+      - C010
+      - C013
+      - C014
+      - C015
+      - C028
+      - C030
+      - C036
+      - C041
+      - C043
+      - C045
+  - id: T503
+    title: Product roadmap, dependencies, and open technology diligence questions
+    columns:
+      - Topic
+      - Reported state
+      - Forward signal
+      - Key diligence ask
+    rows:
+      - - Model roadmap
+        - Current public lineup is Opus 4.7, Sonnet 4.6, and Haiku 4.5. [C012]
+        - Release cadence implies continued tiered model refresh, but no public dated roadmap is retained.
+        - Request next-12-month model roadmap, eval framework, and deployment criteria.
+      - - Claude Code
+        - Claude 4 marked general availability and multi-surface distribution. [C013]
+        - Product appears to be an active monetization wedge. [C044]
+        - Request usage, retention, enterprise attach, and cannibalization analysis.
+      - - Vertical solutions
+        - Financial-services packaging is public. [C036]
+        - Could expand into more workflow-specific modules, but no broader roadmap is public.
+        - Request vertical P&L, partner economics, and repeatability data.
+      - - Cloud and infrastructure
+        - AWS is primary; Google Cloud is also a provider; AWS commitment exceeds $100B over ten years. [C014][C015][C046]
+        - Capacity access appears strong, but dependency risk rises with scale.
+        - Request multi-cloud contingency plan, effective unit-cost curve, and vendor concentration limits.
+      - - Governance and safety systems
+        - Responsible Scaling Policy and compliance assets are public. [C028][C029]
+        - Likely to remain central to enterprise productization and regulator engagement.
+        - Request operational triggers, escalation logs, and impact on release velocity.
+    notes: Where forward-looking roadmap detail is absent, the table preserves explicit diligence asks rather than inferred product plans.
+    claimRefs:
+      - C012
+      - C013
+      - C014
+      - C015
+      - C028
+      - C029
+      - C036
+      - C044
+      - C046
+figures:
+  - id: F501
+    title: Claude platform architecture stack
+    type: architecture-stack
+    layout: wide
+    summary: |
+      Anthropic’s product architecture spans user applications, workflow products, model APIs, partner-cloud deployment, and governance rails. [C007][C009][C012][C013][C028][C029][C031][C041][C043]
+    data:
+      layers:
+        - label: User and workflow surfaces
+          detail: Direct surfaces include Claude.ai, desktop, iOS, Android, and Claude Code across terminal, IDE, desktop, and web. [C013][C031]
+          tone: positive
+          modules:
+            - Claude.ai
+            - Desktop
+            - iOS
+            - Android
+            - Claude Code
+        - label: Commercial and workflow packaging
+          detail: Free, Pro, Max, Team, Enterprise, and workflow-specific solution packaging such as financial services. [C008][C011][C036]
+          tone: positive
+          modules:
+            - Free / Pro / Max
+            - Team / Enterprise
+            - Vertical solutions
+        - label: Model family
+          detail: Current model lineup is Opus 4.7, Sonnet 4.6, and Haiku 4.5 with tiered context limits. [C012]
+          tone: positive
+          modules:
+            - Opus 4.7
+            - Sonnet 4.6
+            - Haiku 4.5
+        - label: API and automation layer
+          detail: Anthropic exposes Messages, Batches, Token Counting, Models, Files, Skills, Agents, Sessions, and Environments APIs. [C041]
+          tone: positive
+          modules:
+            - Messages
+            - Message Batches
+            - Token Counting
+            - Files
+            - Skills
+            - Agents
+            - Sessions
+            - Environments
+        - label: Deployment and integration layer
+          detail: Direct API plus Amazon Bedrock, Google Vertex AI, and Microsoft Foundry, with partner evidence of interface portability. [C009][C015][C043]
+          tone: positive
+          modules:
+            - Anthropic API
+            - Amazon Bedrock
+            - Google Vertex AI
+            - Microsoft Foundry
+        - label: Governance and trust rails
+          detail: Responsible Scaling Policy, Trust Center, Transparency Hub, ISO 42001, commercial terms, and DPA. [C028][C029][C030]
+          tone: neutral
+          modules:
+            - RSP
+            - Trust Center
+            - Transparency Hub
+            - ISO 42001
+            - DPA / terms
+    approximationNotes: The figure represents externally visible architecture layers, not an internal systems diagram.
+    claimRefs:
+      - C007
+      - C008
+      - C009
+      - C011
+      - C012
+      - C013
+      - C015
+      - C028
+      - C029
+      - C030
+      - C031
+      - C036
+      - C041
+      - C043
+  - id: F502
+    title: Product and technology roadmap signals
+    type: timeline
+    layout: wide
+    summary: |
+      The retained record shows a progression from assistant launches to a broader platform with coding, cross-cloud distribution, and vertical packaging. [C013][C015][C032][C036][C037]
+    data:
+      items:
+        - date: '2023'
+          label: Claude commercialization broadens
+          detail: Anthropic launched Claude 2, Claude Pro, and larger context-window positioning. [C032]
+          tone: neutral
+        - date: '2024'
+          label: Cross-cloud availability deepens
+          detail: AWS and Google Cloud published availability posts for Claude 3.5 Sonnet on their platforms. [C045]
+          tone: positive
+        - date: '2025'
+          label: Claude 4 and Claude Code general availability
+          detail: Claude 4 marked Claude Code general availability and expanded the developer workflow product line. [C013]
+          tone: positive
+        - date: '2025'
+          label: Vertical packaging emerges
+          detail: Anthropic publicly packaged Claude for Financial Services with partner data providers. [C036]
+          tone: positive
+        - date: '2026'
+          label: International and partner-led expansion
+          detail: Anthropic disclosed international expansion and SI-led industry collaborations, indicating continued platform rollout. [C033][C037]
+          tone: positive
+    approximationNotes: The timeline shows externally evidenced product and platform signals only; it is not a full internal release roadmap.
+    claimRefs:
+      - C013
+      - C032
+      - C033
+      - C036
+      - C037
+      - C045
+  - id: F503
+    title: Deployment and integration surface map
+    type: stack
+    layout: wide
+    summary: |
+      Anthropic’s technology reach depends on a combination of direct distribution, cloud channels, and workflow-specific partner integrations. [C009][C014][C015][C036][C037][C043]
+    data:
+      items:
+        - label: Direct Anthropic surfaces
+          detail: Claude.ai applications and the direct Anthropic API provide first-party product and developer access. [C031][C041]
+          tone: positive
+        - label: Hyperscaler channels
+          detail: Bedrock, Vertex AI, and Foundry extend enterprise procurement and deployment reach. [C009][C015]
+          tone: positive
+        - label: Integration portability
+          detail: Near-identical Messages API patterns across direct and partner environments reduce switching friction. [C043]
+          tone: positive
+        - label: Workflow-specific partner data
+          detail: Financial-services packaging integrates Box, Daloopa, Databricks, and FactSet. [C036]
+          tone: opportunity
+        - label: Services ecosystem
+          detail: BCG, Accenture, Infosys, and NEC extend implementation and vertical deployment capacity. [C037]
+          tone: positive
+        - label: Infrastructure dependency
+          detail: AWS remains the primary training and mission-critical infrastructure partner. [C014][C046]
+          tone: risk
+    approximationNotes: Ordered cards emphasize outward-facing deployment surfaces rather than internal systems components.
+    claimRefs:
+      - C009
+      - C014
+      - C015
+      - C031
+      - C036
+      - C037
+      - C041
+      - C043
+      - C046
+sections:
+  - number: '5.1'
+    title: Product platform overview
+    body: |
+      The central product conclusion is that Anthropic is now operating a platform, not a single assistant. Claude spans direct applications, commercial plan tiers, Claude Code, a broad developer API, and partner-cloud deployment. That breadth matters because it creates multiple entry points for users, developers, and enterprises while keeping the model family and governance posture relatively unified across surfaces. [C007][C008][C009][C013][C031][C041]
+    claimRefs:
+      - C007
+      - C008
+      - C009
+      - C013
+      - C031
+      - C041
+  - number: '5.2'
+    title: AI automation, model stack, and architecture
+    body: |
+      The public technical stack supports more than chat completion. Anthropic documents a tiered model family, broad API primitives, and partner-environment portability that appears designed for agentic and stateful workflows. Claude Code further extends the platform into high-frequency developer automation, while the trust-and-governance layer is unusually visible for a frontier-AI vendor. [C012][C013][C028][C029][C041][C043]
+    claimRefs:
+      - C012
+      - C013
+      - C028
+      - C029
+      - C041
+      - C043
+  - number: '5.3'
+    title: Roadmap and product expansion vectors
+    body: |
+      The retained roadmap signal points to continued expansion along three vectors: model-family refresh, workflow-specific surfaces such as Claude Code, and vertical packaging such as financial services. Cross-cloud deployment and SI partnerships suggest Anthropic is also optimizing for enterprise adoption paths rather than only for first-party app usage. The main limitation is that no detailed forward product roadmap, release criteria, or monetization-by-module plan is public. [C013][C015][C033][C036][C037][C045]
+    claimRefs:
+      - C013
+      - C015
+      - C033
+      - C036
+      - C037
+      - C045
+  - number: '5.4'
+    title: Technology dependencies and diligence asks
+    body: |
+      Anthropic’s product strength is accompanied by clear dependency risk. AWS is the primary cloud and training partner, and the company has committed to more than $100 billion over ten years for AWS technologies. That may secure scarce capacity, but it also raises questions about vendor leverage, cost flexibility, and multi-cloud resilience. A serious technology diligence package should request architecture reviews, reliability metrics, model-eval systems, release-governance logs, and a contingency plan for cloud concentration. [C014][C028][C029][C046]
+    claimRefs:
+      - C014
+      - C028
+      - C029
+      - C046

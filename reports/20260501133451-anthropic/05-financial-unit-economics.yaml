@@ -1,0 +1,424 @@
+schemaVersion: startup-diligence-report-v2
+artifact: financial-unit-economics
+slug: anthropic
+runDate: '2026-05-01'
+company:
+  name: Anthropic
+chapter:
+  number: 4
+  title: Financial & Unit Economics
+  summary: |
+    Anthropic shows exceptional top-line scale signals and access to capital, but public financial disclosure remains far behind its valuation and claimed run-rate trajectory. The best-evidenced anchors are list pricing, API spend tiers, mega-round financing, company-claimed revenue run-rate, and customer-spend concentration signals; CAC, LTV, churn, gross margin, contribution margin, and payback remain undisclosed in the retained public record. [C011][C017][C018][C019][C022][C023][C042][C044][C046]
+callouts:
+  - type: key-insight
+    title: Revenue model breadth is real even though revenue mix is not disclosed
+    body: |
+      Anthropic clearly monetizes Claude through consumer subscriptions, Team and Enterprise seats, direct API usage, partner-cloud distribution, and Claude Code, but public sources do not disclose product-level revenue mix. [C008][C009][C011][C013][C042][C044]
+    claimRefs:
+      - C008
+      - C009
+      - C011
+      - C013
+      - C042
+      - C044
+  - type: key-insight
+    title: Reported scale is extraordinary but mostly company-claimed
+    body: |
+      Anthropic’s strongest financial scale claims are a $14 billion run-rate in February 2026, $30 billion+ by April 2026, 500+ customers spending over $1 million annually, and Claude Code above $2.5 billion in run-rate revenue. These are important underwriting anchors, but they are still company-claimed rather than audited public financials. [C022][C023][C044]
+    claimRefs:
+      - C022
+      - C023
+      - C044
+  - type: risk-alert
+    title: Unit economics are largely opaque
+    body: |
+      The retained public record does not disclose CAC, LTV, LTV/CAC, payback, gross margin, contribution margin, or retention metrics, which materially constrains underwriting of sales efficiency and durability. [C022][C023]
+    claimRefs:
+      - C022
+      - C023
+  - type: risk-alert
+    title: Compute-scale commitments complicate margin interpretation
+    body: |
+      Anthropic’s more than $100 billion ten-year AWS commitment and up to 5 GW capacity expansion show strategic infrastructure depth, but public materials do not reconcile those commitments to realized COGS, capex-like obligations, or gross-margin trajectory. [C014][C046]
+    claimRefs:
+      - C014
+      - C046
+tables:
+  - id: T401
+    title: Revenue model overview and monetization surfaces
+    columns:
+      - Revenue stream
+      - Packaging or pricing anchor
+      - Evidence-backed scale or usage anchor
+      - Disclosure quality
+      - Claim basis
+    rows:
+      - - Consumer subscriptions
+        - Pro is $17 per month billed annually or $20 monthly; Max starts at $100 per month. [C011]
+        - Claude is sold across web, desktop, iOS, and Android to Free, Pro, Max, Team, and Enterprise users. [C008][C031]
+        - Pricing disclosed; revenue contribution not disclosed.
+        - Observed pricing and packaging.
+      - - Team and Enterprise seats
+        - Team is $20 per seat billed annually or $25 monthly; Enterprise is custom-priced. [C011]
+        - Anthropic reports broad enterprise packaging but no public seat count or ARR split. [C008][C031]
+        - Partial.
+        - Observed pricing; no public seat-volume disclosure.
+      - - Direct API usage
+        - Standard API spend tiers go up to $200000 per month before custom sales escalation. [C042]
+        - API surface spans Messages, Batches, Token Counting, Models, Files, Skills, Agents, Sessions, and Environments. [C041]
+        - Packaging disclosed; revenue mix not disclosed.
+        - Observed.
+      - - Partner-cloud distribution
+        - Sold through Amazon Bedrock, Google Vertex AI, and Microsoft Foundry. [C009]
+        - Anthropic claimed 100000+ Bedrock customers by April 2026. [C023][C024]
+        - Distribution breadth disclosed; net revenue share and take-rate not disclosed.
+        - Mixed observed and company-claimed.
+      - - Claude Code and workflow products
+        - Claude Code is a dedicated coding product; public standalone pricing is not retained in the ledger. [C013][C032]
+        - Anthropic claimed Claude Code exceeded $2.5 billion in run-rate revenue. [C044]
+        - Product and scale claim disclosed; standalone revenue-quality evidence limited.
+        - Mixed observed and company-claimed.
+    notes: Public evidence supports revenue-stream existence and some list pricing, but not product-level revenue mix, ASP by segment, or net revenue by channel.
+    claimRefs:
+      - C008
+      - C009
+      - C011
+      - C013
+      - C023
+      - C024
+      - C031
+      - C032
+      - C041
+      - C042
+      - C044
+  - id: T402
+    title: Reported financial and scale anchors
+    columns:
+      - Metric
+      - Value
+      - Claim type
+      - Underwriting implication
+      - Estimate basis
+    rows:
+      - - Series G financing
+        - $30B at $380B post-money
+        - Observed
+        - Confirms access to extraordinary capital at an extreme valuation. [C019]
+        - Not derived; directly disclosed.
+      - - Series E financing
+        - $3.5B at $61.5B post-money
+        - Observed
+        - Shows valuation step-up before the 2026 mega-round. [C018]
+        - Not derived; directly disclosed.
+      - - Revenue run-rate in February 2026
+        - $14B
+        - Company-claimed
+        - Suggests Anthropic had already reached hyperscale software revenue territory if accurate. [C022]
+        - Not derived; directly claimed by the company.
+      - - Revenue run-rate in April 2026
+        - $30B+
+        - Company-claimed
+        - Implies extreme near-term acceleration, but no audited bridge is public. [C023]
+        - Lower-bound display follows the company’s "surpassed $30 billion" wording.
+      - - Large-customer concentration signal
+        - 500+ customers spending over $1M annually
+        - Company-claimed
+        - Indicates meaningful enterprise monetization depth. [C022]
+        - Not derived; directly claimed by the company.
+      - - Fortune 10 penetration
+        - 8 customers
+        - Company-claimed
+        - Suggests strong enterprise-account reach among very large buyers. [C022]
+        - Not derived; directly claimed by the company.
+      - - Bedrock customer breadth
+        - 100000+ customers
+        - Company-claimed
+        - Supports channel-scale distribution, though customer count is not equivalent to revenue. [C023][C024]
+        - Not derived; directly claimed by the company.
+      - - Claude Code run-rate
+        - $2.5B+
+        - Company-claimed
+        - Suggests coding workflows could be a material revenue wedge. [C044]
+        - Lower-bound display follows the company’s "exceeded $2.5 billion" wording.
+      - - AWS compute commitment
+        - $100B+ over 10 years; up to 5 GW
+        - Observed
+        - Material for capacity and possibly for future margin structure, but not a realized-cost disclosure. [C046]
+        - Not derived; directly disclosed commitment.
+    notes: Company-claimed traction figures should be separated from observed financing disclosures in valuation and margin underwriting.
+    claimRefs:
+      - C018
+      - C019
+      - C022
+      - C023
+      - C024
+      - C044
+      - C046
+  - id: T403
+    title: Financial projection scenario framework
+    columns:
+      - Scenario
+      - 2026 revenue projection
+      - 2027 revenue projection
+      - Gross margin projection
+      - Defensibility status
+      - Diligence gap
+    rows:
+      - - Base
+        - null
+        - null
+        - null
+        - Not defensible from retained public evidence alone.
+        - Need audited historicals, monthly revenue bridge, deferred revenue, cloud gross-to-net terms, and customer retention by segment.
+      - - Bull
+        - null
+        - null
+        - null
+        - Not defensible from retained public evidence alone.
+        - Need product-mix trend, Claude Code cohort expansion, Bedrock net economics, and capacity-utilization assumptions.
+      - - Bear
+        - null
+        - null
+        - null
+        - Not defensible from retained public evidence alone.
+        - Need churn, price-realization, compute-cost sensitivity, and customer concentration disclosures.
+    notes: Public evidence provides run-rate claims, not a sufficiently audited historical series for forward scenario modeling.
+    claimRefs:
+      - C022
+      - C023
+      - C044
+      - C046
+  - id: T404
+    title: Unit economics disclosure scorecard
+    columns:
+      - Metric
+      - Public value
+      - Metric status
+      - Estimate basis
+      - Diligence interpretation
+      - Exact diligence ask
+    rows:
+      - - CAC
+        - null
+        - Not publicly disclosed
+        - null
+        - Sales efficiency cannot be underwritten from retained public evidence.
+        - Request fully loaded CAC by channel, sales segment, and geography.
+      - - LTV
+        - null
+        - Not publicly disclosed
+        - null
+        - Customer value durability cannot be quantified.
+        - Request gross-margin-adjusted LTV by cohort and segment.
+      - - LTV/CAC
+        - null
+        - Not publicly disclosed
+        - null
+        - Rule-of-thumb efficiency comparison is blocked.
+        - Request LTV/CAC by self-serve, enterprise direct, and cloud-channel customers.
+      - - CAC payback months
+        - null
+        - Not publicly disclosed
+        - null
+        - Time-to-recovery of acquisition spend is unknown.
+        - Request payback by segment and by upsell motion.
+      - - Gross margin
+        - null
+        - Not publicly disclosed
+        - null
+        - Margin trajectory cannot be verified despite revenue scale claims. [C022][C023]
+        - Request gross margin by revenue stream plus compute COGS allocation methodology.
+      - - Contribution margin
+        - null
+        - Not publicly disclosed
+        - null
+        - Operating leverage at the product level is unknown.
+        - Request contribution margin by Claude.ai, API, Claude Code, and partner-cloud channels.
+      - - Net revenue retention
+        - null
+        - Not publicly disclosed
+        - null
+        - Expansion durability cannot be quantified.
+        - Request NRR and gross retention by cohort and top-100 accounts.
+      - - Customer concentration
+        - null
+        - Not publicly disclosed
+        - null
+        - Exposure to large-account concentration remains unresolved despite 500+ $1M+ customers. [C022]
+        - Request top-10 customer revenue share and strategic-investor revenue overlap.
+      - - Realized compute cost per revenue dollar
+        - null
+        - Not publicly disclosed
+        - null
+        - AWS commitment magnitude is known, but realized economics are not. [C046]
+        - Request committed-versus-consumed compute schedule and effective unit-cost curve.
+    notes: Nulls reflect missing public disclosures, not analyst omission.
+    claimRefs:
+      - C022
+      - C023
+      - C046
+figures:
+  - id: F401
+    title: Revenue mix by monetization surface (evidence-backed, not percentage-disclosed)
+    type: stack
+    layout: wide
+    summary: |
+      Anthropic’s monetization stack is clearly multi-surface, but the public record does not disclose revenue mix percentages or gross margin by stream. [C008][C009][C011][C013][C042][C044]
+    data:
+      items:
+        - label: Consumer subscriptions
+          detail: Free-to-paid consumer conversion surface with Pro and Max list pricing publicly visible. [C008][C011]
+          tone: positive
+        - label: Team and Enterprise seats
+          detail: Seat-based work offerings exist, with Team list pricing disclosed and Enterprise custom-priced. [C008][C011][C031]
+          tone: positive
+        - label: Direct API
+          detail: Usage-based developer and enterprise API monetization with published spend tiers up to $200000 per month before custom escalation. [C041][C042]
+          tone: positive
+        - label: Partner-cloud channels
+          detail: Revenue also routes through Amazon Bedrock, Google Vertex AI, and Microsoft Foundry, but channel economics are not publicly disclosed. [C009][C023][C024]
+          tone: neutral
+        - label: Claude Code and workflow products
+          detail: Claude Code is already claimed to be a material revenue contributor, yet product-level mix remains undisclosed. [C013][C044]
+          tone: high
+    approximationNotes: No stream-level revenue percentages were retained in the public evidence set, so the figure is qualitative by design.
+    claimRefs:
+      - C008
+      - C009
+      - C011
+      - C013
+      - C023
+      - C024
+      - C031
+      - C041
+      - C042
+      - C044
+  - id: F402
+    title: Public-data-constrained unit economics bridge
+    type: unit-economics-waterfall
+    layout: wide
+    summary: |
+      Public evidence reaches pricing, run-rate, and customer-scale anchors, then stops before the bridges needed to calculate CAC, margin, LTV, or payback. [C011][C022][C023][C042][C044][C046]
+    data:
+      items:
+        - label: Disclosed list-price anchors
+          detail: Claude Pro, Max, and Team pricing are public, and API spend tiers are documented. [C011][C042]
+          tone: positive
+        - label: Disclosed top-line anchors
+          detail: Anthropic claims $14B run-rate in February 2026 and $30B+ by April 2026. [C022][C023]
+          tone: high
+        - label: Disclosed monetization wedge
+          detail: Claude Code is claimed above $2.5B run-rate, implying meaningful workflow monetization. [C044]
+          tone: positive
+        - label: Missing gross-to-net revenue bridge
+          detail: Public sources do not show net revenue split across Claude.ai, API, Claude Code, or partner clouds.
+          tone: risk
+        - label: Missing cost of revenue bridge
+          detail: AWS commitments are known, but realized compute cost, hosting cost, and support burden are not public. [C046]
+          tone: risk
+        - label: Missing customer-acquisition bridge
+          detail: No public CAC, sales capacity, payback, or marketing-efficiency data is retained.
+          tone: risk
+        - label: Missing retention bridge
+          detail: No public gross retention, NRR, cohort behavior, or churn disclosure is retained.
+          tone: risk
+        - label: Underwriting output blocked
+          detail: LTV, LTV/CAC, contribution margin, and payback remain uncomputable from retained evidence alone.
+          tone: critical
+    approximationNotes: Ordered cards show where the public-data trail ends; no numeric bridges are invented.
+    claimRefs:
+      - C011
+      - C022
+      - C023
+      - C042
+      - C044
+      - C046
+  - id: F403
+    title: Selected public financial anchors (USD millions unless noted)
+    type: bars
+    layout: wide
+    summary: |
+      The strongest numeric financial anchors are mega-round financing, company-claimed run-rate revenue, and claimed Claude Code scale. [C018][C019][C022][C023][C044]
+    data:
+      items:
+        - label: Series E financing
+          value: 3500
+          displayValue: $3.5B
+          tone: positive
+        - label: Series G financing
+          value: 30000
+          displayValue: $30.0B
+          tone: high
+        - label: Revenue run-rate in Feb 2026
+          value: 14000
+          displayValue: $14.0B
+          tone: high
+        - label: Revenue run-rate floor in Apr 2026
+          value: 30000
+          displayValue: $30.0B+
+          tone: high
+        - label: Claude Code run-rate floor
+          value: 2500
+          displayValue: $2.5B+
+          tone: positive
+    approximationNotes: Revenue and Claude Code values are company-claimed run-rate lower bounds where the source uses exceeded or surpassed language.
+    claimRefs:
+      - C018
+      - C019
+      - C022
+      - C023
+      - C044
+sections:
+  - number: '4.1'
+    title: Revenue model overview
+    body: |
+      Anthropic’s revenue model is diversified across consumer subscriptions, seat-based work offerings, direct API consumption, partner-cloud distribution, and coding workflows rather than a single chatbot subscription. The strongest public evidence is list pricing for Pro, Max, and Team plans; published API spend tiers; cross-cloud distribution; and the company’s own claim that Claude Code already exceeds $2.5 billion in run-rate revenue. What remains missing is the actual revenue mix across those streams, net-of-partner revenue share, and average contract value by segment. [C008][C009][C011][C013][C031][C042][C044]
+    claimRefs:
+      - C008
+      - C009
+      - C011
+      - C013
+      - C031
+      - C042
+      - C044
+  - number: '4.2'
+    title: Reported metrics versus estimates
+    body: |
+      Reported observations and company claims need to be kept separate. Observed disclosures include Series E at $3.5 billion and Series G at $30 billion, as well as public plan pricing and AWS infrastructure commitments. Company-claimed operating metrics include $14 billion run-rate revenue in February 2026, $30 billion+ in April 2026, 500+ customers spending over $1 million annually, eight Fortune 10 customers, and Claude Code above $2.5 billion in run-rate revenue. No derived revenue estimates are necessary to conclude that Anthropic is operating at unusual scale; however, no audited public bridge reconciles these claims to recognized revenue, deferred revenue, or margin. [C011][C018][C019][C022][C023][C044][C046]
+    claimRefs:
+      - C011
+      - C018
+      - C019
+      - C022
+      - C023
+      - C044
+      - C046
+  - number: '4.3'
+    title: Unit economics assessment
+    body: |
+      Publicly retained evidence is insufficient to compute CAC, LTV, LTV/CAC, gross margin, contribution margin, or CAC payback. The public record reaches pricing, run-rate, enterprise-customer-count, and channel-breadth anchors, but it does not disclose sales efficiency, realized compute cost, support cost, retention curves, or cohort expansion. For diligence purposes, these metrics should be treated as null pending company data-room materials rather than estimated from top-line claims alone. [C011][C022][C023][C042][C046]
+    claimRefs:
+      - C011
+      - C022
+      - C023
+      - C042
+      - C046
+  - number: '4.4'
+    title: Margin trajectory and infrastructure economics
+    body: |
+      The evidence cuts both ways on margins. On one hand, Anthropic’s claimed revenue scale and multi-surface monetization suggest potential operating leverage. On the other hand, the company’s primary-cloud dependence on AWS and its disclosed $100 billion+ ten-year compute commitment indicate that infrastructure cost remains strategically central. Without gross margin disclosure, compute-utilization data, or channel take-rate details, the actual margin trajectory is unverified and should be treated as an open diligence question. [C009][C014][C022][C023][C046]
+    claimRefs:
+      - C009
+      - C014
+      - C022
+      - C023
+      - C046
+  - number: '4.5'
+    title: Scenario modeling and diligence asks
+    body: |
+      Forward financial scenarios are not defensible from retained public evidence alone. The minimum diligence package should include audited or board-approved historicals, revenue by stream and channel, gross margin by product line, sales-efficiency metrics, net retention by cohort, customer concentration, and a committed-versus-consumed compute schedule. Until then, the prudent financial stance is that Anthropic may be scaling exceptionally fast, but its unit economics and margin durability remain weakly evidenced relative to valuation. [C019][C022][C023][C046]
+    claimRefs:
+      - C019
+      - C022
+      - C023
+      - C046
