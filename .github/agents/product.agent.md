@@ -37,7 +37,7 @@ Ask yourself:
 ## `04-product-technology.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: product-technology
 slug: string
 runDate: YYYY-MM-DD
@@ -62,22 +62,22 @@ technologyStack:
   thirdPartyDependencies: [string]
   dataDependencies: [string]
   integrationSurface: [string]
-  architectureNotes: string|null    # v3
+  architectureNotes: string|null
   claimRefs: [C001]
-securityCompliance:                 # v3
+securityCompliance:
   certifications: [string]          # e.g. SOC 2 Type II, ISO 27001, HIPAA, FedRAMP Moderate
   auditsOnRecord: [string]
   dataResidencyOptions: [string]
   knownIncidents: [string]
   postureNotes: string|null
   claimRefs: [C001]
-ipPortfolio:                        # v3
+ipPortfolio:
   patentsGrantedCount: 0|null
   patentsPendingCount: 0|null
   trademarks: [string]
   openSourceLicensingNotes: string|null
   claimRefs: [C001]
-productRoadmap:                     # v3
+productRoadmap:
   publiclyDisclosedItems:
     - item: string
       timeframe: shipped|near|medium|long|unknown
@@ -105,7 +105,7 @@ productVerdict:
 ## `06-competition-positioning.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: competition-positioning
 slug: string
 runDate: YYYY-MM-DD

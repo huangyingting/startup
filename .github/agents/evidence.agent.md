@@ -37,7 +37,7 @@ Favor a balanced source portfolio:
 ## `02-source-ledger.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: source-ledger
 slug: string
 runDate: YYYY-MM-DD
@@ -63,14 +63,14 @@ sources:
     title: string
     author: string|null
     date: YYYY-MM-DD|null
-    accessDate: YYYY-MM-DD|null    # v3
+    accessDate: YYYY-MM-DD|null
     url: string
     sourceType: official|filing|regulatory|tier-one-news|trade-press|analyst-market-data|technical-docs|customer-proof|partner-proof|developer-signal|community-review|legal|other
     topicBuckets: [identity|team|market|customer|product|technology|traction|gtm|competition|pricing|funding|financials|governance|legal|risk|valuation|other]
     reputationTier: high|medium|low
     independence: company|partner|customer|competitor|independent|unknown
     fetchVerified: true
-    keyQuote: string|null          # v3, verbatim ≤ 240 chars
+    keyQuote: string|null          # verbatim ≤ 240 chars
     oneLineRelevance: string
 claims:
   - id: C001
@@ -91,7 +91,7 @@ openEvidenceGaps:
 ## `03-market-customers.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: market-customers
 slug: string
 runDate: YYYY-MM-DD
@@ -102,7 +102,7 @@ marketDefinition:
   boundaries: string
   excludedMarkets: [string]
   claimRefs: [C001]
-whyNow:                              # v3
+whyNow:
   inflectionDrivers:
     - driver: string
       driverType: technology|regulatory|behavioral|economic|distribution|other
@@ -113,7 +113,7 @@ whyNow:                              # v3
 marketSizing:
   tam:
     value: string|null
-    valueUsdM: 0|null                # v3 numeric companion (USD millions)
+    valueUsdM: 0|null                # numeric companion (USD millions)
     methodology: string|null
     approach: top-down|bottom-up|hybrid|unknown
     confidence: high|medium|low
@@ -132,7 +132,7 @@ marketSizing:
     approach: top-down|bottom-up|hybrid|unknown
     confidence: high|medium|low
     claimRefs: [C001]
-  reconciliation: string|null        # v3, how top-down and bottom-up reconcile
+  reconciliation: string|null        # how top-down and bottom-up reconcile
 demandDrivers:
   - driver: string
     strength: high|medium|low

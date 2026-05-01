@@ -19,15 +19,15 @@ const REQUIRED = [
   '09-investment-memo.yaml',
   '10-summary-card.yaml',
 ];
-// v3 introduces optional artifacts. They must parse + obey claimRefs rules when present.
-const OPTIONAL_V3 = [
+// Optional extended artifacts. They must parse + obey claimRefs rules when present.
+const OPTIONAL_EXTENDED = [
   '11-team-people.yaml',
   '12-comparables-valuation.yaml',
   '13-milestones-catalysts.yaml',
 ];
-const OPTIONAL_LOCALIZED = [...REQUIRED, ...OPTIONAL_V3].map((file) => file.replace('.yaml', '.zh.yaml'));
-const ALLOWED_YAML = new Set([...REQUIRED, ...OPTIONAL_V3, ...OPTIONAL_LOCALIZED]);
-const VALID_SCHEMA_VERSIONS = new Set(['startup-diligence-v2', 'startup-diligence-v3']);
+const OPTIONAL_LOCALIZED = [...REQUIRED, ...OPTIONAL_EXTENDED].map((file) => file.replace('.yaml', '.zh.yaml'));
+const ALLOWED_YAML = new Set([...REQUIRED, ...OPTIONAL_EXTENDED, ...OPTIONAL_LOCALIZED]);
+const SCHEMA_VERSION = 'startup-diligence-v1';
 
 function requiredFields(file, doc) {
   const checks = {
@@ -85,12 +85,12 @@ try {
       try {
         const doc = yaml.load(readFileSync(join(dir, file), 'utf8'));
         parsed.set(file, doc);
-        if (REQUIRED.includes(file) || OPTIONAL_V3.includes(file)) {
+        if (doc && typeof doc === 'object' && doc.schemaVersion && doc.schemaVersion !== SCHEMA_VERSION) {
+          consistencyFailures.push(`${run}/${file}: expected schemaVersion ${SCHEMA_VERSION}, got ${doc.schemaVersion}`);
+        }
+        if (REQUIRED.includes(file) || OPTIONAL_EXTENDED.includes(file)) {
           const missing = requiredFields(file, doc);
           for (const field of missing) fieldFailures.push(`${run}/${file}: missing ${field}`);
-          if (doc && typeof doc === 'object' && doc.schemaVersion && !VALID_SCHEMA_VERSIONS.has(doc.schemaVersion)) {
-            consistencyFailures.push(`${run}/${file}: unknown schemaVersion ${doc.schemaVersion}`);
-          }
         }
       } catch (err) {
         parseFailures.push(`${run}/${file}: ${err.message.split('\n')[0]}`);
@@ -116,7 +116,7 @@ try {
       }
       for (const [file, doc] of parsed) {
         if (file === '02-source-ledger.yaml') continue;
-        if (!REQUIRED.includes(file) && !OPTIONAL_V3.includes(file)) continue;
+        if (!REQUIRED.includes(file) && !OPTIONAL_EXTENDED.includes(file)) continue;
         const refs = [];
         const walk = (value) => {
           if (Array.isArray(value)) return value.forEach(walk);

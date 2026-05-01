@@ -39,7 +39,7 @@ Ask yourself:
 ## `00-research-plan.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: research-plan
 slug: string
 runDate: YYYY-MM-DD
@@ -70,7 +70,7 @@ handoffNotes: string|null
 ## `01-company-identity.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: company-identity
 slug: string
 runDate: YYYY-MM-DD
@@ -113,10 +113,10 @@ openIdentityQuestions:
     priority: high|medium|low
 ```
 
-## `11-team-people.yaml` schema (v3)
+## `11-team-people.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: team-people
 slug: string
 runDate: YYYY-MM-DD

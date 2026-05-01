@@ -1,0 +1,54 @@
+---
+interface Column {
+  heading: string;
+  key?: string;
+  render?: (row: any) => unknown;
+}
+interface Props {
+  title: string;
+  rows?: any[];
+  columns: Column[];
+  emptyLabel?: string;
+}
+const { title, rows = [], columns, emptyLabel = 'Not disclosed' } = Astro.props;
+function formatCell(value: unknown) {
+  if (value === null || value === undefined || value === '') return emptyLabel;
+  if (typeof value === 'boolean') return value ? 'true' : 'false';
+  return value;
+}
+---
+{rows.length > 0 && (
+  <div class="table-wrap">
+    <table class="sr-table report-table">
+      <caption>{title}</caption>
+      <thead>
+        <tr>{columns.map((column) => <th>{column.heading}</th>)}</tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr>
+            {columns.map((column) => <td>{formatCell(column.render ? column.render(row) : column.key ? row?.[column.key] : undefined)}</td>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+<style>
+  .table-wrap {
+    overflow-x: auto;
+    margin-top: var(--space-5);
+  }
+  .report-table caption {
+    text-align: left;
+    font-family: var(--font-sans);
+    font-variant-caps: all-small-caps;
+    font-weight: 700;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--claret);
+    margin-bottom: var(--space-2);
+  }
+  .report-table td {
+    max-width: 420px;
+  }
+</style>

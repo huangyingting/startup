@@ -1,8 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import RatingBlock from '../../components/RatingBlock.astro';
-import RiskHeatmap from '../../components/RiskHeatmap.astro';
+import DiligenceReport from '../../components/DiligenceReport.astro';
 import { loadStageFiles } from '../../content/reports-loader';
 
 export async function getStaticPaths() {
@@ -12,68 +11,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props as { entry: CollectionEntry<'reports'> };
 const stages = loadStageFiles(entry.id, 'en') as any;
-const market = stages.marketCustomers;
-const product = stages.productTechnology;
-const traction = stages.tractionGtm;
-const competition = stages.competitionPositioning;
-const business = stages.businessFinancials;
-const risk = stages.riskGovernance;
-const memo = stages.investmentMemo;
 ---
 <BaseLayout title={`${entry.data.company.name} — Startup Research`} description={entry.data.headline}>
-  <section class="sr-container sr-hero">
-    <div class="sr-eyebrow">{entry.data.company.name} · {entry.data.company.sector ?? 'Sector unknown'}</div>
-    <h1>{entry.data.headline}</h1>
-    <div class="sr-meta">
-      {entry.data.company.website && <a class="sr-pill" href={entry.data.company.website}>Official website</a>}
-      <span class="sr-pill">{entry.data.recommendation}</span>
-      <span class="sr-pill">{entry.data.confidence} confidence</span>
-      <span class="sr-pill">{entry.data.sourceStats.sourcesRetained} sources</span>
-    </div>
-  </section>
-
-  <section class="sr-container sr-section sr-split">
-    <div>
-      <h2>Investment memo</h2>
-      <h3>{memo?.memo?.oneLine ?? entry.data.headline}</h3>
-      <p>{memo?.thesis?.baseCase}</p>
-    </div>
-    <aside>
-      <div class="sr-stat"><span class="sr-kicker">Recommendation</span><strong>{entry.data.recommendation}</strong></div>
-      <div class="sr-stat"><span class="sr-kicker">Rating</span><strong>{entry.data.overallScore.toFixed(1)}</strong></div>
-      <div class="sr-stat"><span class="sr-kicker">Evidence</span><strong>{entry.data.sourceStats.sourcesRetained}</strong><span class="sr-muted">sources · {entry.data.sourceStats.claimsReviewed} claims</span></div>
-    </aside>
-  </section>
-
-  <section class="sr-container sr-section"><RatingBlock dimensions={memo?.scorecard ?? {}} overall={entry.data.overallScore} /></section>
-
-  <section class="sr-container sr-section sr-grid">
-    <div class="sr-card"><div class="sr-kicker">Market</div><h3>{market?.marketVerdict?.attractiveness ?? 'unknown'}</h3><p>{market?.marketVerdict?.rationale}</p></div>
-    <div class="sr-card"><div class="sr-kicker">Product</div><h3>{product?.productVerdict?.assessment ?? 'unknown'}</h3><p>{product?.productVerdict?.rationale}</p></div>
-    <div class="sr-card"><div class="sr-kicker">Traction</div><h3>{traction?.tractionSummary?.overallSignal ?? 'unknown'}</h3><p>{traction?.tractionSummary?.rationale}</p></div>
-  </section>
-
-  <section class="sr-container sr-section">
-    <h2>Business quality</h2>
-    <div class="sr-grid">
-      <div class="sr-card"><div class="sr-kicker">Model</div><p>{business?.businessModel?.model}</p></div>
-      <div class="sr-card"><div class="sr-kicker">Financial verdict</div><h3>{business?.financialVerdict?.assessment}</h3><p>{business?.financialVerdict?.rationale}</p></div>
-    </div>
-  </section>
-
-  <section class="sr-container sr-section"><h2>Top risks</h2><RiskHeatmap risks={entry.data.topRisks} /></section>
-
-  <section class="sr-container sr-section">
-    <h2>Competitors</h2>
-    <table class="sr-table">
-      <thead><tr><th>Name</th><th>Category</th><th>Positioning</th><th>Relative strengths</th></tr></thead>
-      <tbody>{(competition?.competitiveSet?.directCompetitors ?? []).map((c: any) => <tr><td>{c.name}</td><td>{c.category}</td><td>{c.positioning}</td><td>{(c.relativeStrengths ?? []).join(' · ')}</td></tr>)}</tbody>
-    </table>
-  </section>
-
-  <section class="sr-container sr-section sr-grid">
-    <div class="sr-card"><h2>Strengths</h2>{entry.data.topStrengths.map((item) => <p>{item}</p>)}</div>
-    <div class="sr-card"><h2>Open gaps</h2>{entry.data.unresolvedGaps.map((item) => <p>{item}</p>)}</div>
-    <div class="sr-card"><h2>Risk verdict</h2><p>{risk?.riskVerdict?.rationale}</p></div>
-  </section>
+  <DiligenceReport entry={entry} data={entry.data} stages={stages} lang="en" />
 </BaseLayout>

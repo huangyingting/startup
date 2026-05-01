@@ -1,11 +1,11 @@
-# Startup Diligence v3 Schema
+# Startup Diligence v1 Schema
 
 This schema defines a professional, claims-based startup diligence artifact set.
-It extends v2 with deeper team analysis, quantitative KPIs, comparables and
-valuation framing, milestones to monitor, and a richer memo.
+It includes team analysis, quantitative KPIs, comparables and valuation framing,
+milestones to monitor, and a richer memo.
 
-`schemaVersion: startup-diligence-v3` for new runs. Prior `startup-diligence-v2`
-reports remain valid; v3 is a strict superset where every new field is optional.
+All report artifacts must use `schemaVersion: startup-diligence-v1`. Older
+schema versions are not supported by the current agents or website.
 
 ## Research first principles
 
@@ -20,9 +20,9 @@ A professional startup researcher must collect and separate:
 7. **Competition and positioning** — direct competitors, substitutes, market map, moat sources, durability, competitive threats.
 8. **Business and financials** — revenue streams, **historical financials**, **quantified unit economics** (CAC, LTV, payback, NRR, GRR, gross margin, magic number, burn multiple, Rule of 40), capital efficiency, funding, capital needs, **cap-table summary**, scenario ranges.
 9. **Risk and governance** — market, product, legal, regulatory, governance, platform, security, privacy, financing, execution, reputation, macro risks.
-10. **Team and people** *(new in v3)* — founders deep-dive, key hires, advisors, board, hiring velocity, key-person risk, organizational gaps.
-11. **Comparables and valuation** *(new in v3)* — public comparables, transaction comparables, valuation framework, recommended check-size and ownership, deal-term considerations.
-12. **Milestones and catalysts** *(new in v3)* — leading indicators, milestones to monitor over the next 6/12/24 months, kill criteria, mind-changers.
+10. **Team and people** — founders deep-dive, key hires, advisors, board, hiring velocity, key-person risk, organizational gaps.
+11. **Comparables and valuation** — public comparables, transaction comparables, valuation framework, recommended check-size and ownership, deal-term considerations.
+12. **Milestones and catalysts** — leading indicators, milestones to monitor over the next 6/12/24 months, kill criteria, mind-changers.
 13. **Decision memo** — recommendation, confidence, scorecard, thesis, **pre-mortem**, expected returns scenarios, **mind-changers**, next diligence.
 14. **Summary card** — concise website/card-ready view including a numeric KPI snapshot.
 
@@ -40,9 +40,9 @@ A professional startup researcher must collect and separate:
 08-risk-governance.yaml
 09-investment-memo.yaml
 10-summary-card.yaml
-11-team-people.yaml             # new in v3, optional
-12-comparables-valuation.yaml   # new in v3, optional
-13-milestones-catalysts.yaml    # new in v3, optional
+11-team-people.yaml             # optional extended artifact
+12-comparables-valuation.yaml   # optional extended artifact
+13-milestones-catalysts.yaml    # optional extended artifact
 ```
 
 Optional Simplified Chinese files use the same basename with `.zh.yaml`.
@@ -54,7 +54,7 @@ Optional Simplified Chinese files use the same basename with `.zh.yaml`.
 - Later artifacts cite claims via `claimRefs`.
 - Claims cite fetched sources via `sourceRefs`.
 - All source records must include `fetchVerified: true`.
-- v3 sources may include `accessDate: YYYY-MM-DD` and `keyQuote: string` (verbatim snippet ≤ 240 chars from the fetched page that backs the most important related claims).
+- Sources may include `accessDate: YYYY-MM-DD` and `keyQuote: string` (verbatim snippet ≤ 240 chars from the fetched page that backs the most important related claims).
 
 ## Claim types
 
@@ -111,11 +111,5 @@ At minimum:
 - Every `claimRefs` value exists in `02-source-ledger.yaml`.
 - Every claim `sourceRefs` value exists in `sources` and has `fetchVerified: true`.
 - High-confidence conclusions do not rely only on company-authored, stale, low-quality, or duplicate sources.
-- v3 artifacts 11/12/13 are optional; if present they must parse and obey the same `claimRefs` rules.
+- Artifacts 11/12/13 are optional; if present they must parse and obey the same `claimRefs` rules.
 - Numeric KPI fields, when set, must be numbers (not strings) so downstream tools can render charts.
-
-## Backward compatibility
-
-`startup-diligence-v2` reports remain valid and renderable. v3 validators must
-accept both `schemaVersion: startup-diligence-v2` and
-`schemaVersion: startup-diligence-v3`. New runs should target v3.

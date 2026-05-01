@@ -12,7 +12,7 @@ const reports = defineCollection({
     runId: z.string(),
     runTimestamp: z.string(),
     folderSlug: z.string(),
-    schemaVersion: z.enum(['startup-diligence-v2', 'startup-diligence-v3']),
+    schemaVersion: z.literal('startup-diligence-v1'),
     artifact: z.literal('summary-card'),
     slug: z.string(),
     runDate: dateString,
@@ -34,7 +34,7 @@ const reports = defineCollection({
     topStrengths: z.array(z.string()),
     unresolvedGaps: z.array(z.string()),
     artifactFiles: z.record(z.string()),
-    // v3 optional numeric snapshot for the card.
+    // Optional numeric snapshot for the card.
     keyMetrics: z
       .object({
         asOf: z.string().nullable().optional(),

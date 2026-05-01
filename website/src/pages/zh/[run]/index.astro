@@ -1,8 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import RatingBlock from '../../../components/RatingBlock.astro';
-import RiskHeatmap from '../../../components/RiskHeatmap.astro';
+import DiligenceReport from '../../../components/DiligenceReport.astro';
 import { loadLocalizedIndex, loadStageFiles } from '../../../content/reports-loader';
 
 export async function getStaticPaths() {
@@ -14,41 +13,7 @@ const { entry } = Astro.props as { entry: CollectionEntry<'reports'> };
 const localized = loadLocalizedIndex(entry.id, 'zh') as any;
 const data = localized ? { ...entry.data, ...localized } : entry.data;
 const stages = loadStageFiles(entry.id, 'zh') as any;
-const market = stages.marketCustomers;
-const product = stages.productTechnology;
-const traction = stages.tractionGtm;
-const competition = stages.competitionPositioning;
-const business = stages.businessFinancials;
-const risk = stages.riskGovernance;
-const memo = stages.investmentMemo;
 ---
 <BaseLayout title={`${data.company.name} — 创业研究`} description={data.headline} lang="zh">
-  <section class="sr-container sr-hero">
-    <div class="sr-eyebrow">{data.company.name} · {data.company.sector ?? '赛道未知'}</div>
-    <h1>{data.headline}</h1>
-    <div class="sr-meta"><span class="sr-pill">{data.recommendation}</span><span class="sr-pill">{data.confidence} confidence</span><span class="sr-pill">{data.sourceStats.sourcesRetained} 来源</span></div>
-  </section>
-
-  <section class="sr-container sr-section sr-split">
-    <div><h2>投资备忘录</h2><h3>{memo?.memo?.oneLine ?? data.headline}</h3><p>{memo?.thesis?.baseCase}</p></div>
-    <aside>
-      <div class="sr-stat"><span class="sr-kicker">建议</span><strong>{data.recommendation}</strong></div>
-      <div class="sr-stat"><span class="sr-kicker">评分</span><strong>{data.overallScore.toFixed(1)}</strong></div>
-      <div class="sr-stat"><span class="sr-kicker">证据</span><strong>{data.sourceStats.sourcesRetained}</strong><span class="sr-muted">来源 · {data.sourceStats.claimsReviewed} 条声明</span></div>
-    </aside>
-  </section>
-
-  <section class="sr-container sr-section"><RatingBlock dimensions={memo?.scorecard ?? {}} overall={data.overallScore} /></section>
-  <section class="sr-container sr-section sr-grid">
-    <div class="sr-card"><div class="sr-kicker">市场</div><h3>{market?.marketVerdict?.attractiveness ?? 'unknown'}</h3><p>{market?.marketVerdict?.rationale}</p></div>
-    <div class="sr-card"><div class="sr-kicker">产品</div><h3>{product?.productVerdict?.assessment ?? 'unknown'}</h3><p>{product?.productVerdict?.rationale}</p></div>
-    <div class="sr-card"><div class="sr-kicker">牵引力</div><h3>{traction?.tractionSummary?.overallSignal ?? 'unknown'}</h3><p>{traction?.tractionSummary?.rationale}</p></div>
-  </section>
-  <section class="sr-container sr-section"><h2>商业质量</h2><div class="sr-grid"><div class="sr-card"><div class="sr-kicker">模式</div><p>{business?.businessModel?.model}</p></div><div class="sr-card"><div class="sr-kicker">财务判断</div><h3>{business?.financialVerdict?.assessment}</h3><p>{business?.financialVerdict?.rationale}</p></div></div></section>
-  <section class="sr-container sr-section"><h2>主要风险</h2><RiskHeatmap risks={data.topRisks} /></section>
-  <section class="sr-container sr-section">
-    <h2>竞争对手</h2>
-    <table class="sr-table"><thead><tr><th>名称</th><th>类别</th><th>定位</th><th>相对优势</th></tr></thead><tbody>{(competition?.competitiveSet?.directCompetitors ?? []).map((c: any) => <tr><td>{c.name}</td><td>{c.category}</td><td>{c.positioning}</td><td>{(c.relativeStrengths ?? []).join(' · ')}</td></tr>)}</tbody></table>
-  </section>
-  <section class="sr-container sr-section sr-grid"><div class="sr-card"><h2>优势</h2>{data.topStrengths.map((item: string) => <p>{item}</p>)}</div><div class="sr-card"><h2>未解问题</h2>{data.unresolvedGaps.map((item: string) => <p>{item}</p>)}</div><div class="sr-card"><h2>风险判断</h2><p>{risk?.riskVerdict?.rationale}</p></div></section>
+  <DiligenceReport entry={entry} data={data} stages={stages} lang="zh" />
 </BaseLayout>

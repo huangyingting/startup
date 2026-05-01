@@ -43,7 +43,7 @@ Ask yourself:
 ## `05-traction-gtm.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: traction-gtm
 slug: string
 runDate: YYYY-MM-DD
@@ -61,7 +61,7 @@ tractionSignals:
     freshness: current|recent|historical|unknown
     independentValidation: true|false
     claimRefs: [C001]
-kpiSnapshot:                          # v3 structured numerics
+kpiSnapshot:                          # structured numerics
   asOf: YYYY-MM-DD|null
   arrUsdM: 0|null
   revenueUsdM: 0|null
@@ -81,7 +81,7 @@ kpiSnapshot:                          # v3 structured numerics
   estimateBasis: string|null          # how each derived metric was computed
   confidence: high|medium|low
   claimRefs: [C001]
-customerCaseStudies:                  # v3
+customerCaseStudies:
   - customer: string
     industry: string|null
     deploymentScope: string|null
@@ -95,7 +95,7 @@ gtmMotion:
   user: string|null
   channels: [string]
   salesCycleHypothesis: short|medium|long|unknown
-  pipelineHealth: string|null         # v3
+  pipelineHealth: string|null
   claimRefs: [C001]
 pricingAndPackaging:
   observedPricing: string|null
@@ -116,7 +116,7 @@ gtmRisks:
 ## `07-business-financials.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: business-financials
 slug: string
 runDate: YYYY-MM-DD
@@ -128,7 +128,7 @@ businessModel:
   marginProfileHypothesis: string|null
   operatingLeverageHypothesis: string|null
   claimRefs: [C001]
-historicalFinancials:                 # v3, last 3 fiscal years where visible
+historicalFinancials:                 # last 3 fiscal years where visible
   - fiscalYear: 2024
     revenueUsdM: 0|null
     grossMarginPct: 0|null
@@ -147,7 +147,7 @@ knownFinancials:
   valuation: string|null
   claimRefs: [C001]
 funding:
-  totalRaisedUsdM: 0|null              # v3 numeric
+  totalRaisedUsdM: 0|null              # numeric
   totalRaised: string|null
   latestRoundDate: YYYY-MM-DD|null
   latestRoundAmountUsdM: 0|null
@@ -156,7 +156,7 @@ funding:
   leadInvestors: [string]
   investorQualitySignal: high|medium|low|unknown
   claimRefs: [C001]
-unitEconomicsQuant:                    # v3 structured numerics
+unitEconomicsQuant:                    # structured numerics
   arpaOrAcvUsd: 0|null
   grossRetentionPct: 0|null
   netRetentionPct: 0|null
@@ -176,7 +176,7 @@ unitEconomicsNarrative:
   contributionMargin: string|null
   confidence: high|medium|low
   claimRefs: [C001]
-capitalEfficiency:                     # v3
+capitalEfficiency:
   burnMultiple: 0|null
   magicNumber: 0|null
   ruleOf40: 0|null
@@ -184,7 +184,7 @@ capitalEfficiency:                     # v3
   estimateBasis: string|null
   confidence: high|medium|low
   claimRefs: [C001]
-capTableSummary:                       # v3 (best-effort from public evidence)
+capTableSummary:                       # best-effort from public evidence
   optionPoolSizePct: 0|null
   founderOwnershipPct: 0|null
   largestInvestorPct: 0|null
@@ -196,7 +196,7 @@ scenarioModel:
   scenarios:
     - name: downside|base|upside
       revenueRangeYear3: string|null
-      revenueYear3UsdMLow: 0|null      # v3 numeric companion
+      revenueYear3UsdMLow: 0|null      # numeric companion
       revenueYear3UsdMHigh: 0|null
       marginDirection: improving|stable|deteriorating|unknown
       capitalNeed: string|null
@@ -210,10 +210,10 @@ financialVerdict:
   claimRefs: [C001]
 ```
 
-## `12-comparables-valuation.yaml` schema (v3)
+## `12-comparables-valuation.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: comparables-valuation
 slug: string
 runDate: YYYY-MM-DD

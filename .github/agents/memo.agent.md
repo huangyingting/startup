@@ -39,7 +39,7 @@ Ask yourself:
 ## `08-risk-governance.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: risk-governance
 slug: string
 runDate: YYYY-MM-DD
@@ -80,7 +80,7 @@ riskVerdict:
 ## `09-investment-memo.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: investment-memo
 slug: string
 runDate: YYYY-MM-DD
@@ -107,7 +107,7 @@ thesis:
   bearCase: string
   keyAssumptions: [string]
   claimRefs: [C001]
-preMortem:                            # v3
+preMortem:
   topFailureModes:
     - failureMode: string
       probability: high|medium|low
@@ -115,11 +115,11 @@ preMortem:                            # v3
       earlySignals: [string]
       claimRefs: [C001]
   rationale: string|null
-mindChangers:                         # v3
+mindChangers:
   - evidence: string
     direction: upgrade|downgrade
     impact: high|medium|low
-expectedReturns:                      # v3 (mirrors comparables-valuation; optional convenience copy)
+expectedReturns:                      # mirrors comparables-valuation; optional convenience copy
   baseCaseGrossMoM: 0|null
   baseCaseGrossIrrPct: 0|null
   upsideGrossMoM: 0|null
@@ -143,10 +143,10 @@ nextDiligence:
   expertCalls: [string]
 ```
 
-## `13-milestones-catalysts.yaml` schema (v3)
+## `13-milestones-catalysts.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: milestones-catalysts
 slug: string
 runDate: YYYY-MM-DD
@@ -192,7 +192,7 @@ catalystCalendar:
 ## `10-summary-card.yaml` schema
 
 ```yaml
-schemaVersion: startup-diligence-v3
+schemaVersion: startup-diligence-v1
 artifact: summary-card
 slug: string
 runDate: YYYY-MM-DD
@@ -208,7 +208,7 @@ overallScore: 1.0
 sourceStats:
   sourcesRetained: 0
   claimsReviewed: 0
-keyMetrics:                           # v3 numeric snapshot for the card
+keyMetrics:                           # numeric snapshot for the card
   asOf: YYYY-MM-DD|null
   arrUsdM: 0|null
   revenueGrowthYoYPct: 0|null
@@ -233,9 +233,9 @@ artifactFiles:
   businessFinancials: 07-business-financials.yaml
   riskGovernance: 08-risk-governance.yaml
   investmentMemo: 09-investment-memo.yaml
-  teamPeople: 11-team-people.yaml          # v3
-  comparablesValuation: 12-comparables-valuation.yaml  # v3
-  milestonesCatalysts: 13-milestones-catalysts.yaml    # v3
+  teamPeople: 11-team-people.yaml
+  comparablesValuation: 12-comparables-valuation.yaml
+  milestonesCatalysts: 13-milestones-catalysts.yaml
 ```
 
 ## Score calibration

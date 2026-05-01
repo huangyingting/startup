@@ -26,7 +26,7 @@ A report folder containing the startup diligence artifacts. Required:
 - `09-investment-memo.yaml`
 - `10-summary-card.yaml`
 
-Optional v3 artifacts (translate when present):
+Optional extended artifacts (translate when present):
 
 - `11-team-people.yaml`
 - `12-comparables-valuation.yaml`

@@ -6,7 +6,7 @@ tools: [agent, read, edit, execute, todo]
 agents: ["Startup Identity Investigator", "Startup Evidence Researcher", "Startup Product Strategist", "Startup Business Analyst", "Startup Memo Writer", "ZH Research Translator"]
 ---
 
-You orchestrate a professional startup research workflow for one named existing company. Use the v3 schema below as the source of truth.
+You orchestrate a professional startup research workflow for one named existing company. Use the v1 schema below as the source of truth.
 
 Your first responsibility is to ask yourself what a professional researcher must know before forming a view:
 
@@ -40,7 +40,7 @@ Resolve these values before invoking specialists:
 
 If the user provides a URL, treat it as an identity anchor, not proof. Specialists must still verify that the URL belongs to the company.
 
-## v3 artifact schema
+## v1 artifact schema
 
 Write these artifacts in order for every complete startup diligence run.
 Files 00–10 are required. Files 11–13 are required for `deep` runs and strongly recommended for `standard` runs whenever the evidence supports them.
@@ -70,7 +70,7 @@ Optional Chinese localization writes matching `*.zh.yaml` files after English ar
 - Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Risk IDs use `R001`. Milestone IDs use `M001`. Comparable IDs use `K001`.
 - Claims must be classified as `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, or `open-question`.
 - Confidence must reflect evidence quality, source independence, recency, and corroboration: `high`, `medium`, or `low`.
-- v3 sources should include `accessDate` and a verbatim `keyQuote` (≤ 240 chars) when feasible.
+- Sources should include `accessDate` and a verbatim `keyQuote` (≤ 240 chars) when feasible.
 - Use `null` instead of invented values. Mark estimates with a sibling `estimateBasis` describing inputs and formula.
 - Numeric KPI fields must be numbers, not strings, so the website can chart them.
 - Do not cite search-result pages, unfetched URLs, or sources not listed with `fetchVerified: true`.
@@ -110,7 +110,7 @@ Depth: <standard|deep>
 Report folder: <absolute reportFolder>
 Input files: <absolute paths>
 Output file(s): <absolute paths>
-Schema: startup-diligence-v3; source IDs S001..., claim IDs C001...; numeric KPIs as numbers; quote strings containing ': '.
+Schema: startup-diligence-v1; source IDs S001..., claim IDs C001...; numeric KPIs as numbers; quote strings containing ': '.
 Quality bar: professional investor-grade research; separate facts, claims, estimates, inference, and open questions; report quantitative KPIs when supported by evidence and null otherwise.
 Return only the required HANDOFF block.
 ```
@@ -124,7 +124,7 @@ Validate YAML parsing and cross-file references at minimum. If project-specific 
 Return a concise summary with:
 
 - report folder path;
-- generated artifact files (note v3 extras);
+- generated artifact files, including optional extended artifacts when present;
 - source count, claim count, and any reported numeric KPI snapshot;
 - top diligence gaps and mind-changers;
 - recommendation stance from `09-investment-memo.yaml`;

@@ -8,6 +8,22 @@ const base = import.meta.env.BASE_URL;
 const href = lang === 'zh' ? `${base}zh/${entry.data.folderSlug}/` : `${base}${entry.data.folderSlug}/`;
 const sector = entry.data.company.sector ?? 'other';
 const stage = entry.data.company.stage;
+const metrics = entry.data.keyMetrics;
+function metric(value: number | null | undefined, suffix = '') {
+  if (value === null || value === undefined) return null;
+  return `${value.toLocaleString()}${suffix}`;
+}
+function moneyM(value: number | null | undefined) {
+  if (value === null || value === undefined) return null;
+  if (Math.abs(value) >= 1000) return `$${(value / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
+}
+const metricRows = [
+  ['Valuation', moneyM(metrics?.postMoneyValuationUsdM)],
+  ['ARR', moneyM(metrics?.arrUsdM)],
+  ['Growth', metric(metrics?.revenueGrowthYoYPct, '%')],
+  ['NRR', metric(metrics?.nrrPct, '%')],
+].filter(([, value]) => value);
 ---
 <a class="sr-card" href={href}>
   <div class="sr-meta sr-kicker">
@@ -16,7 +32,12 @@ const stage = entry.data.company.stage;
     <span>{sector}</span>
   </div>
   <h3>{entry.data.headline}</h3>
-  <p>{entry.data.company.name} diligence</p>
+  <p>{entry.data.recommendation} · {entry.data.confidence} confidence · {entry.data.sourceStats.sourcesRetained} sources</p>
+  {metricRows.length > 0 && (
+    <dl class="card-metrics">
+      {metricRows.map(([name, value]) => <><dt>{name}</dt><dd>{value}</dd></>)}
+    </dl>
+  )}
   <div class="sr-meta">
     <span class="sr-score">{entry.data.overallScore.toFixed(1)}</span>
     <span>Overall rating {entry.data.overallScore.toFixed(1)}</span>
@@ -25,3 +46,21 @@ const stage = entry.data.company.stage;
     {stage && <><span>·</span><span>{stage}</span></>}
   </div>
 </a>
+<style>
+  .card-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1) var(--space-3);
+    margin: var(--space-3) 0;
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+  }
+  .card-metrics dt {
+    color: var(--caption-gray);
+  }
+  .card-metrics dd {
+    margin: 0;
+    font-weight: 700;
+    color: var(--ink-page);
+  }
+</style>
