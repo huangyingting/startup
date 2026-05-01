@@ -1,0 +1,286 @@
+schemaVersion: startup-diligence-report-v2
+artifact: financial-unit-economics
+slug: openai
+runDate: '2026-05-01'
+company:
+  name: OpenAI
+chapter:
+  number: 4
+  title: Financial & Unit Economics
+  summary: |-
+    OpenAI's monetization breadth is well evidenced, but revenue quality remains only moderately underwritable from public materials because the retained ledger contains pricing, paid-user, and reported top-line anchors rather than audited financial statements or cost disclosures [C017][C019][C020][C023][C024][C043]. The strongest reported revenue anchor is a June 2024 report that OpenAI was on track for about $3.4B of 2024 revenue, including about $200M tied to Microsoft's Azure resale share [C017]. Beyond that, investor-grade unit-economics metrics such as CAC, gross margin, LTV, churn, NRR, payback, and burn are not publicly disclosed in the retained evidence, so this chapter keeps those values null and converts them into explicit diligence asks rather than invented estimates [C017][C043].
+callouts:
+- type: key-insight
+  title: Revenue is diversified across multiple monetization surfaces
+  body: OpenAI monetizes through ChatGPT subscriptions and in-app purchases, usage-priced APIs, enterprise offerings, and Azure-linked revenue distribution, which reduces dependence on any single SKU even though exact mix is undisclosed [C017][C020][C023][C024][C043].
+  claimRefs:
+  - C017
+  - C020
+  - C023
+  - C024
+  - C043
+- type: key-insight
+  title: The cleanest public top-line anchor is reported, not audited
+  body: The retained ledger supports a reported 2024 revenue pace of about $3.4B, but not audited standalone financial statements or a segment breakout, so underwriting confidence should stay below public-SaaS standards [C017][C043][C046].
+  claimRefs:
+  - C017
+  - C043
+  - C046
+- type: opportunity
+  title: Enterprise seat pricing plus 1M paid corporate users imply meaningful monetization depth
+  body: Team pricing of $25 to $30 per seat per month and a reported 1M paid corporate users indicate that enterprise monetization is already substantial, even though the exact plan mix and discounting are unknown [C019][C020].
+  claimRefs:
+  - C019
+  - C020
+- type: risk-alert
+  title: Core unit-economics metrics remain undisclosed
+  body: The retained evidence does not disclose CAC, gross margin, contribution margin, LTV, NRR, churn, or payback, preventing a clean efficiency read and making management-provided cohort data mandatory for full underwriting [C017][C043].
+  claimRefs:
+  - C017
+  - C043
+tables:
+- id: T401
+  title: Revenue model overview
+  columns:
+  - Revenue stream
+  - Evidence-backed monetization detail
+  - Pricing / revenue anchor
+  - Disclosure quality
+  rows:
+  - - Consumer subscriptions and in-app purchases
+    - Official app listings show ChatGPT as free with in-app purchases, and the evidence ledger separately supports ChatGPT subscriptions as a monetization path [C008][C043].
+    - Price level not fully enumerated in retained claims.
+    - Moderate
+  - - Enterprise seats and enterprise contracts
+    - Team, Enterprise, and Edu are part of the paid corporate motion, and OpenAI added assisted fine-tuning and custom model options for enterprise buyers [C019][C020][C021][C043].
+    - "Team list price: $25 per seat-month annual / $30 monthly [C020]"
+    - Strong on list price; weak on realized ARR mix
+  - - Usage-based API revenue
+    - Developer revenue is usage-priced through the API platform centered on the Responses API and model/tool pricing pages [C007][C022][C023][C024].
+    - "GPT-5.5 standard: $5 per 1M input tokens / $30 per 1M output tokens; GPT-5.5 pro: $30 / $180 [C023][C024]"
+    - Strong on list price; weak on actual usage mix
+  - - Azure-linked distribution revenue
+    - Third-party reporting says part of OpenAI revenue comes from Microsoft's Azure resale share [C017][C043].
+    - "Reported about $200M of 2024 revenue pace from Azure resale share [C017]"
+    - Moderate
+  - - Coding, app-distribution, and commerce adjacencies
+    - Codex, ChatGPT apps distribution, and commerce surfaces are visible in current docs, but no separate revenue contribution is disclosed [C026][C027][C050].
+    - Revenue contribution not disclosed.
+    - Weak
+  notes: Revenue streams are evidence-backed, but only limited list pricing and one disclosed Azure-related component are publicly quantifiable in the retained ledger.
+  claimRefs:
+  - C007
+  - C008
+  - C017
+  - C019
+  - C020
+  - C021
+  - C022
+  - C023
+  - C024
+  - C026
+  - C027
+  - C043
+  - C050
+- id: T402
+  title: Reported metrics versus derived estimates
+  columns:
+  - Metric
+  - Classification
+  - Value
+  - estimateBasis
+  - Interpretation
+  rows:
+  - - Reported 2024 revenue pace
+    - Reported
+    - "$3.4B"
+    - Third-party-reported by The Verge citing The Information; not an audited company filing [C017].
+    - Best available public top-line anchor.
+  - - Reported Azure resale component
+    - Reported
+    - "$200M"
+    - Included within the reported $3.4B 2024 revenue pace [C017].
+    - Shows at least some revenue is intermediated through Microsoft.
+  - - Derived Azure share of reported revenue pace
+    - Estimated
+    - 5.9%
+    - "Calculation: $200M / $3.4B = 5.88%, rounded to 5.9%; derived directly from C017."
+    - Useful only as disclosed-component mix, not full revenue segmentation.
+  - - Derived annualized Team seat revenue per user
+    - Estimated
+    - "$300 to $360 per seat-year"
+    - "Calculation: $25 x 12 = $300 and $30 x 12 = $360 using Team list prices in C020."
+    - List-price ARPU frame only; excludes discounts and non-Team plans.
+  - - Illustrative annualized revenue floor if all 1M paid corporate users were on minimum Team annual pricing
+    - Estimated low confidence
+    - "$300M"
+    - "Calculation: 1,000,000 users x $25 x 12 months = $300M using C019 and C020; low confidence because paid corporate users span Team, Enterprise, and Edu and may include discounts."
+    - Should be treated as a floor-style thought exercise, not actual ARR.
+  - - Illustrative annualized revenue under monthly Team list pricing for the same simplifying assumption
+    - Estimated low confidence
+    - "$360M"
+    - "Calculation: 1,000,000 users x $30 x 12 months = $360M using C019 and C020; same caveat on plan mix and discounts."
+    - Establishes an upper bound within the Team-only simplification, not actual revenue.
+  notes: Every derived number is arithmetic on reported price or user inputs from the retained ledger and is explicitly labeled as an estimate rather than a disclosed operating metric.
+  claimRefs:
+  - C017
+  - C019
+  - C020
+- id: T403
+  title: Unit-economics scorecard and diligence gaps
+  columns:
+  - Metric
+  - Reported value
+  - Status
+  - estimateBasis
+  - Required diligence ask
+  rows:
+  - - Gross margin
+    - null
+    - Not publicly disclosed in retained evidence
+    - null
+    - Request gross margin by segment and by major product family plus compute-allocation methodology.
+  - - Contribution margin
+    - null
+    - Not publicly disclosed in retained evidence
+    - null
+    - Request contribution margin after inference, support, and partner-revenue-share costs.
+  - - CAC
+    - null
+    - Not publicly disclosed in retained evidence
+    - null
+    - Request CAC by self-serve consumer, enterprise sales-led, and developer acquisition motions.
+  - - LTV
+    - null
+    - Not publicly disclosed in retained evidence
+    - null
+    - Request LTV methodology by segment with retention curves and gross-margin assumptions.
+  - - LTV / CAC
+    - null
+    - Not publicly disclosed in retained evidence
+    - null
+    - Request management calculation and sensitivity table by segment.
+  - - CAC payback months
+    - null
+    - Not publicly disclosed in retained evidence
+    - null
+    - Request sales efficiency deck with payback by segment and cohort.
+  - - Logo churn
+    - null
+    - Not publicly disclosed in retained evidence
+    - null
+    - Request logo churn and renewal rates for Team, Enterprise, Edu, and API customers.
+  - - Net revenue retention
+    - null
+    - Not publicly disclosed in retained evidence
+    - null
+    - Request NRR and GRR by cohort, geography, and customer size.
+  - - Burn multiple
+    - null
+    - Not publicly disclosed in retained evidence
+    - null
+    - Request monthly burn, capex, committed compute spend, and incremental ARR build.
+  notes: Null values are intentional. The retained evidence is insufficient to defend public-market-style unit-economics estimates.
+  claimRefs:
+  - C017
+  - C043
+- id: T404
+  title: Financial projection scenario framing
+  columns:
+  - Scenario
+  - revenueProjectionUsdM
+  - grossMarginPct
+  - estimateBasis
+  - Why null / blocker
+  rows:
+  - - Bear
+    - null
+    - null
+    - null
+    - Public evidence does not provide enough disclosed cohort, pricing-mix, or cost data to defend a scenario model.
+  - - Base
+    - null
+    - null
+    - null
+    - Public evidence does not provide enough disclosed cohort, pricing-mix, or cost data to defend a scenario model.
+  - - Bull
+    - null
+    - null
+    - null
+    - Public evidence does not provide enough disclosed cohort, pricing-mix, or cost data to defend a scenario model.
+  notes: Scenario outputs are intentionally null because the evidence ledger supports directionally strong traction but not a defensible operating model.
+  claimRefs:
+  - C017
+  - C019
+  - C043
+figures:
+- id: F401
+  title: Disclosed component of reported 2024 revenue pace
+  mermaidType: pie
+  mermaid: |-
+    pie showData
+      title Reported 2024 revenue pace: disclosed Azure resale share vs undisclosed remainder
+      "Azure resale share (reported)" : 5.9
+      "All other revenue streams (mix undisclosed)" : 94.1
+  approximationNotes: This is not a full revenue-mix chart. It only visualizes the one disclosed subcomponent inside the reported $3.4B revenue pace using the arithmetic in T402 [C017].
+  claimRefs:
+  - C017
+- id: F402
+  title: Unit-economics waterfall under public-data constraints
+  mermaidType: flowchart
+  mermaid: |-
+    flowchart LR
+      A["List price anchor<br/>Team annual billing implies $300 per seat-year; monthly billing implies $360 [C020]"] --> B["Net realized revenue per seat<br/>Unknown: plan mix across Team / Enterprise / Edu and discounts not disclosed [C019][C020]"]
+      B --> C["Gross profit per seat<br/>Unknown: compute, inference, support, and partner-share costs not disclosed"]
+      C --> D["CAC recovery<br/>Unknown: acquisition cost by self-serve vs enterprise not disclosed"]
+      D --> E["LTV / CAC and payback<br/>Unknown pending retention and gross-margin data"]
+  approximationNotes: The figure is intentionally structural rather than numeric beyond the list-price anchor because retained public evidence does not disclose realized discounts, cost stack, CAC, or retention.
+  claimRefs:
+  - C019
+  - C020
+sections:
+- number: '4.1'
+  title: Revenue model overview
+  body: |-
+    The retained evidence supports a multi-stream revenue model rather than a single subscription business [C017][C020][C023][C024][C043]. OpenAI monetizes through ChatGPT subscriptions and in-app purchases, enterprise seats and custom-model work, usage-priced API consumption, and Azure-linked resale economics through Microsoft [C008][C017][C020][C021][C023][C024][C043]. Product-surface expansion into Codex, ChatGPT apps distribution, and commerce suggests additional monetization optionality, but the ledger does not disclose revenue contribution from those newer surfaces [C026][C027][C050]. For diligence purposes, the monetization breadth is a strength; the missing segment mix is the main analytical constraint [C017][C043].
+  claimRefs:
+  - C008
+  - C017
+  - C020
+  - C021
+  - C023
+  - C024
+  - C026
+  - C027
+  - C043
+  - C050
+- number: '4.2'
+  title: Reported financial anchors and what can be derived
+  body: |-
+    The best public financial anchor in the retained ledger is the June 2024 report that OpenAI was on track for about $3.4B of 2024 revenue, including about $200M from Microsoft's Azure resale share [C017]. That enables a narrow but useful disclosed-component calculation: Azure resale would represent about 5.9% of that reported revenue pace if both numbers are measured on the same basis [C017]. Separately, Team pricing creates a clean list-price unit anchor of $300 to $360 per seat-year depending on billing cadence [C020]. Combining that list price with the reported 1M paid corporate users yields a low-confidence illustrative range of $300M to $360M of annualized revenue only under the simplifying assumption that every paid corporate user sits on Team list pricing, which the evidence does not support because the user base spans Team, Enterprise, and Edu with unknown discounting [C019][C020]. This is therefore a directional floor exercise, not an estimate of actual ARR.
+  claimRefs:
+  - C017
+  - C019
+  - C020
+- number: '4.3'
+  title: Unit economics, margin trajectory, and what remains unknowable
+  body: |-
+    Public pricing proves that OpenAI has strong monetization surfaces, but pricing alone does not resolve unit economics [C020][C023][C024]. The retained ledger does not disclose gross margin, contribution margin, CAC, LTV, payback, burn multiple, churn, or NRR, so none of those should be filled with proxy numbers in an investor memo [C017][C043]. Margin trajectory is also hard to underwrite from public evidence alone: OpenAI likely benefits from software-style scale on seat expansion and developer adoption, yet that potential is counterbalanced by heavy compute dependence on Azure and undisclosed inference costs [C011][C013][C017]. The right diligence posture is therefore to distinguish reported pricing power from unverified profitability.
+  claimRefs:
+  - C011
+  - C013
+  - C017
+  - C020
+  - C023
+  - C024
+  - C043
+- number: '4.4'
+  title: Scenario modeling discipline and diligence asks
+  body: |-
+    This chapter intentionally leaves bear, base, and bull projection outputs as null because the retained evidence does not contain the minimum inputs required for a defensible operating model: segment revenue mix, customer concentration, discounting, renewal rates, compute cost curves, capex or committed capacity, and historical margins. The exact diligence asks are straightforward: obtain audited or board-level financials; monthly revenue by product and segment; gross-margin waterfalls by SKU; enterprise pipeline and renewal data; CAC by channel; and committed compute-spend schedules with Microsoft and any other infrastructure counterparties. Until those materials are available, financial quality should be rated as moderate rather than strong.
+  claimRefs:
+  - C011
+  - C017
+  - C019
+  - C043
+  - C046

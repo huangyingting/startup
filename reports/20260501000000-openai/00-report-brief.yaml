@@ -1,0 +1,225 @@
+schemaVersion: startup-diligence-report-v2
+artifact: report-brief
+slug: openai
+runDate: '2026-05-01'
+company:
+  name: OpenAI
+report:
+  scope: |-
+    Full VC due diligence report on OpenAI covering identity, market, competition, product, technology, customer traction, financials, risk, and valuation framing.
+  focus: full VC due diligence report
+  depth: deep
+  primaryAudience: Investment committee and deal team
+  verifiedCompany:
+    officialWebsite: https://openai.com
+    claimRefs:
+    - C001
+researchQuestions:
+- question: How durable is OpenAI's distribution advantage across ChatGPT, enterprise, API, mobile, and developer surfaces?
+  priority: high
+  claimRefs:
+  - C006
+  - C019
+  - C028
+  - C050
+- question: How strong is the Microsoft partnership as a moat versus a dependency risk?
+  priority: high
+  claimRefs:
+  - C011
+  - C012
+  - C013
+  - C037
+  - C038
+- question: What can be inferred about OpenAI's monetization quality from public pricing, enterprise uptake, and reported revenue?
+  priority: high
+  claimRefs:
+  - C017
+  - C019
+  - C020
+  - C023
+  - C024
+  - C043
+- question: What governance, legal, and regulatory risks could impair valuation or exit optionality?
+  priority: high
+  claimRefs:
+  - C036
+  - C037
+  - C038
+  - C039
+  - C040
+  - C041
+  - C045
+- question: Which facts are verified versus company-claimed versus still open?
+  priority: high
+  claimRefs:
+  - C009
+  - C010
+  - C045
+  - C046
+- question: What follow-up diligence is mandatory because public evidence is insufficient?
+  priority: high
+  claimRefs:
+  - C045
+  - C046
+desiredChapters:
+- number: 1
+  title: Startup Introduction & Company Snapshot
+  objective: Verify identity, operating surface, leadership, timeline, and cover metrics.
+  claimRefs:
+  - C001
+  - C002
+  - C004
+  - C006
+  - C042
+- number: 2
+  title: Market Sizing & Macro Analysis
+  objective: Frame foundation-model, enterprise AI, and consumer AI demand plus regulation and compute constraints.
+  claimRefs:
+  - C022
+  - C036
+  - C037
+  - C049
+- number: 3
+  title: Competitive Benchmarking
+  objective: Compare OpenAI against Anthropic, Google, xAI, Meta, Microsoft, and model-platform peers across product, pricing, distribution, and compute.
+  claimRefs:
+  - C011
+  - C022
+  - C028
+  - C048
+- number: 4
+  title: Financial & Unit Economics
+  objective: Estimate revenue quality, pricing power, capital intensity, and valuation support using public evidence and explicit gaps.
+  claimRefs:
+  - C014
+  - C017
+  - C023
+  - C024
+  - C043
+  - C046
+- number: 5
+  title: Product & Technology
+  objective: Assess model roadmap, tools, SDKs, open-source footprint, and enterprise readiness.
+  claimRefs:
+  - C022
+  - C025
+  - C026
+  - C028
+  - C029
+  - C031
+  - C032
+  - C034
+- number: 6
+  title: Customer & Retention
+  objective: Evaluate adoption, enterprise motion, mobile traction, and ecosystem/community evidence.
+  claimRefs:
+  - C009
+  - C010
+  - C018
+  - C019
+  - C047
+  - C052
+- number: 7
+  title: Risk & Regulatory
+  objective: Map governance, litigation, competition, and safety/regulatory exposure.
+  claimRefs:
+  - C036
+  - C037
+  - C038
+  - C039
+  - C040
+  - C041
+  - C045
+- number: 8
+  title: Investment & Valuation
+  objective: Translate evidence into recommendation ranges, scenario triggers, and diligence asks.
+  claimRefs:
+  - C014
+  - C016
+  - C044
+  - C045
+  - C046
+expectedTables:
+- id: T001
+  title: OpenAI cover metrics and verification status
+  purpose: Show headline company facts with verified vs company-claimed labels.
+  claimRefs:
+  - C002
+  - C004
+  - C009
+  - C014
+  - C019
+  - C046
+- id: T002
+  title: Leadership and governance snapshot
+  purpose: Summarize key executives, board/governance context, and role relevance.
+  claimRefs:
+  - C041
+  - C042
+  - C045
+- id: T003
+  title: Funding and valuation timeline
+  purpose: Track closed rounds, reported discussions, and remaining ambiguity.
+  claimRefs:
+  - C012
+  - C014
+  - C015
+  - C016
+  - C044
+  - C046
+- id: T004
+  title: Public pricing and monetization surfaces
+  purpose: Compare ChatGPT, API, and tool pricing signals available publicly.
+  claimRefs:
+  - C020
+  - C023
+  - C024
+  - C043
+expectedFigures:
+- id: F001
+  title: OpenAI milestone timeline
+  purpose: Show founding, ChatGPT inflection, Microsoft partnership, and financing milestones.
+  claimRefs:
+  - C002
+  - C012
+  - C014
+  - C019
+  - C049
+- id: F002
+  title: OpenAI product/distribution stack
+  purpose: Map consumer, enterprise, developer, and partner channels.
+  claimRefs:
+  - C006
+  - C007
+  - C026
+  - C027
+  - C043
+  - C050
+- id: F003
+  title: 'Risk map: governance, legal, and regulatory overhang'
+  purpose: Visualize the main downside vectors requiring later diligence.
+  claimRefs:
+  - C036
+  - C037
+  - C038
+  - C039
+  - C040
+  - C041
+  - C045
+sourceStrategy:
+  minimumRetainedSources: 75
+  priorities:
+  - Official developer/product docs
+  - Partner filings and partner official posts
+  - Regulatory and legal sources
+  - Tier-one and trade press for funding/traction
+  - App/review/developer-signal sources
+  - Disconfirming governance/legal/regulatory evidence
+  notes: |-
+    Prefer fetched official or quasi-official material whenever possible. Use third-party reporting for funding, traction, and legal context when official company pages are unavailable or blocked. Preserve uncertainty explicitly rather than smoothing over conflicts.
+  disconfirmingTracks:
+  - Competition scrutiny in EU/FTC
+  - Copyright litigation from The New York Times and Authors Guild
+  - Governance instability from the 2023 leadership crisis
+  - Opacity around current ownership/control and standalone financials
+  claimLedgerDependency: All downstream artifacts must cite claimRefs from 01-evidence-ledger.yaml.

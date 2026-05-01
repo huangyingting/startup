@@ -1,0 +1,338 @@
+schemaVersion: startup-diligence-report-v2
+artifact: product-technology
+slug: openai
+runDate: '2026-05-01'
+company:
+  name: OpenAI
+chapter:
+  number: 5
+  title: Product & Technology
+  summary: |-
+    OpenAI presents as a full-stack AI platform rather than a single-model vendor: the retained evidence supports a product surface spanning ChatGPT, the Responses API, Codex, image generation, realtime voice, Sora video tooling, ChatGPT apps distribution, commerce surfaces, and provider-agnostic agent tooling [C006][C007][C022][C025][C026][C027][C031][C050]. The technology stack is reinforced by official Python and Node SDKs plus widely adopted open-source assets such as Whisper, tiktoken, and Evals [C028][C029][C030][C032][C033][C034]. The main technical strength is breadth across application, tooling, and ecosystem layers; the main technical risk is infrastructure concentration around Azure and limited public visibility into roadmap sequencing, reliability metrics, and cost-performance tradeoffs [C011][C013][C022].
+callouts:
+- type: key-insight
+  title: OpenAI competes as a platform, not only as a model lab
+  body: Current docs show a layered product stack spanning end-user interfaces, APIs, agent tooling, coding, app distribution, and commerce, broadening both user reach and developer lock-in vectors [C006][C022][C026][C027][C031][C050].
+  claimRefs:
+  - C006
+  - C022
+  - C026
+  - C027
+  - C031
+  - C050
+- type: key-insight
+  title: Developer tooling is a meaningful technical moat
+  body: OpenAI supports developers through the Responses API, official SDKs, the Agents SDK, and open-source assets with broad GitHub adoption, indicating ecosystem depth beyond proprietary model endpoints [C007][C028][C029][C030][C031][C034].
+  claimRefs:
+  - C007
+  - C028
+  - C029
+  - C030
+  - C031
+  - C034
+- type: opportunity
+  title: Built-in tools and agent abstractions move OpenAI up the workflow stack
+  body: Web search, file search, image generation, hosted shell, computer use, MCP, and provider-agnostic multi-agent support indicate a push from raw inference toward higher-level task automation [C022][C031].
+  claimRefs:
+  - C022
+  - C031
+- type: risk-alert
+  title: Platform breadth is strong, but architecture and roadmap transparency are incomplete
+  body: Azure is the exclusive cloud provider, Sora 2 APIs already carry a dated deprecation notice, and public materials do not disclose reliability, model-routing economics, or long-range roadmap commitments at investor-grade depth [C011][C022][C025].
+  claimRefs:
+  - C011
+  - C022
+  - C025
+tables:
+- id: T501
+  title: Product platform overview
+  columns:
+  - Platform layer
+  - Evidence-backed module
+  - Primary user
+  - Strategic role
+  rows:
+  - - End-user assistant
+    - ChatGPT across web and official mobile apps with broad search, voice, image, upload, learning, and work use cases [C008][C047].
+    - Consumer and prosumer
+    - Demand capture, conversion, and broad distribution
+  - - Developer platform
+    - Responses API with official SDKs and model/tool access [C007][C022].
+    - Developers and software companies
+    - Core programmable monetization layer
+  - - Tool orchestration
+    - Web search, file search, image generation, hosted shell, computer use, and MCP exposed through the API platform [C022].
+    - Developers and enterprise builders
+    - Moves value from raw model calls toward end-to-end automation
+  - - Coding workflow
+    - Codex positioned as OpenAI's coding agent and included in multiple paid ChatGPT plans [C026].
+    - Developers, teams, and enterprises
+    - Deepens retention in software engineering workflows
+  - - Multimodal media
+    - Image generation, realtime voice, and Sora 2 / Sora 2 Pro video APIs [C006][C025].
+    - Consumers, creators, and enterprise builders
+    - Expands addressable workflow coverage beyond text
+  - - Distribution ecosystem
+    - ChatGPT apps store plus plugin distribution through Codex [C027].
+    - Third-party builders and end users
+    - Creates platform distribution and ecosystem loops
+  - - Commerce layer
+    - Current docs show commerce surfaces alongside apps and broader ChatGPT expansion [C050].
+    - Builders, partners, and OpenAI
+    - Potential monetization and partner ecosystem expansion
+  notes: Modules are listed only where the retained evidence explicitly supports them.
+  claimRefs:
+  - C006
+  - C007
+  - C008
+  - C022
+  - C025
+  - C026
+  - C027
+  - C047
+  - C050
+- id: T502
+  title: Technology stack and developer assets
+  columns:
+  - Asset
+  - Evidence-backed description
+  - Why it matters
+  - Disclosure quality
+  rows:
+  - - openai-python
+    - Official Python client for the OpenAI REST API [C029].
+    - Standardizes developer onboarding and production integration.
+    - Strong
+  - - openai-node
+    - Official JavaScript and TypeScript library for the OpenAI API [C030].
+    - Supports web and backend application adoption.
+    - Strong
+  - - Agents SDK
+    - Provider-agnostic multi-agent framework with tools, guardrails, tracing, and realtime support [C031].
+    - Extends OpenAI from inference provider to orchestration layer.
+    - Strong
+  - - Whisper
+    - Open-source multilingual speech recognition and translation model [C032].
+    - Strengthens multimodal credibility and developer goodwill.
+    - Strong
+  - - tiktoken
+    - Fast BPE tokenizer for OpenAI models [C033].
+    - Important low-level infrastructure for efficient token handling.
+    - Strong
+  - - Evals
+    - Framework and registry for evaluating LLMs and LLM systems [C034].
+    - Important for quality assurance, benchmarking, and enterprise trust.
+    - Strong
+  - - GitHub footprint
+    - OpenAI maintains high-adoption repositories including openai-cookbook, Whisper, Evals, openai-python, tiktoken, and openai-node [C028].
+    - Signals developer mindshare and external contribution density.
+    - Strong directionally; exact star counts dynamic
+  - - Gym legacy
+    - Gym was field-standard but is no longer being updated under OpenAI stewardship [C035].
+    - Shows historic influence, but also product-lifecycle turnover.
+    - Strong
+  notes: This table distinguishes current strategic assets from legacy influence.
+  claimRefs:
+  - C028
+  - C029
+  - C030
+  - C031
+  - C032
+  - C033
+  - C034
+  - C035
+- id: T503
+  title: Product architecture and integration map
+  columns:
+  - Layer
+  - Evidence-backed components
+  - Integration implication
+  - estimateBasis
+  rows:
+  - - Client layer
+    - ChatGPT web/mobile, Codex, and ChatGPT apps distribution [C008][C026][C027].
+    - OpenAI controls both direct user interfaces and builder distribution endpoints.
+    - null
+  - - Application interface layer
+    - Responses API plus official SDKs [C007][C022][C029][C030].
+    - Developers can integrate through supported first-party libraries.
+    - null
+  - - Tool layer
+    - Web search, file search, image generation, hosted shell, computer use, and MCP [C022].
+    - OpenAI is abstracting multi-step workflows instead of only selling token access.
+    - null
+  - - Agent and evaluation layer
+    - Agents SDK, Evals, and tracing/guardrails capabilities [C031][C034].
+    - Encourages deeper workflow integration and testing discipline.
+    - null
+  - - Model layer
+    - GPT-5.5 flagship family plus Sora 2 APIs and Whisper-related multimodal capability [C022][C025][C032].
+    - Supports modality expansion and tiered use cases.
+    - null
+  - - Infrastructure layer
+    - Azure powers all OpenAI workloads and Azure OpenAI is GA [C011][C013].
+    - Architecture scale is strengthened, but cloud dependence is concentrated.
+    - null
+  notes: No numeric performance benchmarking is inferred because the retained evidence does not provide latency, uptime, or cost-per-query disclosures.
+  claimRefs:
+  - C007
+  - C008
+  - C011
+  - C013
+  - C022
+  - C025
+  - C026
+  - C027
+  - C029
+  - C030
+  - C031
+  - C032
+  - C034
+- id: T504
+  title: Roadmap signals and product-change evidence
+  columns:
+  - Signal
+  - Evidence
+  - Investor read
+  - estimateBasis
+  rows:
+  - - Flagship model positioning
+    - Current developer docs position GPT-5.5 as the flagship model family [C022].
+    - OpenAI continues to refresh the top-end model line.
+    - null
+  - - Workflow-tool expansion
+    - Tools such as hosted shell, computer use, and MCP are exposed through the Responses API [C022].
+    - Roadmap appears focused on more autonomous and integrated workflows.
+    - null
+  - - Enterprise customization
+    - Assisted fine-tuning and custom model options expanded in April 2024 [C021].
+    - Enterprise roadmap includes higher-touch deployment patterns.
+    - null
+  - - Video API lifecycle management
+    - Sora 2 / Sora 2 Pro APIs are documented with a deprecation date of 2026-09-24 [C025].
+    - Product breadth is real, but roadmap churn is also real and should be monitored.
+    - null
+  - - Open-source development velocity
+    - OpenAI reported 457 PRs merged in Agents SDK repositories between 2025-12-01 and 2026-02-28, up from 316 in the prior three months [C051].
+    - Directionally positive signal on tooling velocity, though company-reported.
+    - null
+  - - Ecosystem-building programs
+    - Community pages show meetups, student credits, and OSS-oriented Codex programs [C052].
+    - Suggests active go-to-market support around the platform, not just passive docs.
+    - null
+  notes: Roadmap signals are restricted to what current docs and retained reporting explicitly show; no speculative future launches are inserted.
+  claimRefs:
+  - C021
+  - C022
+  - C025
+  - C051
+  - C052
+figures:
+- id: F501
+  title: OpenAI platform architecture
+  mermaidType: flowchart
+  mermaid: |-
+    flowchart TB
+      U["Users and builders<br/>Consumers, enterprises, developers"] --> C["Client surfaces<br/>ChatGPT web/mobile + Codex + ChatGPT apps [C008][C026][C027]"]
+      C --> A["Application layer<br/>Responses API + official SDKs [C007][C022][C029][C030]"]
+      A --> T["Tool layer<br/>Web search + file search + image generation + hosted shell + computer use + MCP [C022]"]
+      T --> G["Agent / eval layer<br/>Agents SDK + tracing / guardrails + Evals [C031][C034]"]
+      G --> M["Model layer<br/>GPT-5.5 flagship family + Sora 2 APIs + multimodal capability [C022][C025][C032]"]
+      M --> I["Infrastructure layer<br/>Azure powers all OpenAI workloads [C011][C013]"]
+  approximationNotes: The diagram shows evidence-backed functional layers rather than a literal internal system topology.
+  claimRefs:
+  - C007
+  - C008
+  - C011
+  - C013
+  - C022
+  - C025
+  - C026
+  - C027
+  - C029
+  - C030
+  - C031
+  - C032
+  - C034
+- id: F502
+  title: Product and technology roadmap signals
+  mermaidType: timeline
+  mermaid: |-
+    timeline
+      title Evidence-backed product and technology progression
+      2024-04 : Enterprise customization expands with fine-tuning and custom model options [C021]
+      2025-2026 : Responses API surfaces tools including hosted shell, computer use, and MCP [C022]
+      2025-2026 : GPT-5.5 positioned as flagship model family [C022]
+      2025-2026 : Agents SDK shows high merged-PR velocity in company-reported update [C051]
+      2026 : Docs show ChatGPT apps, commerce, and Codex ecosystem expansion [C026][C027][C050][C052]
+      2026-09-24 : Sora 2 and Sora 2 Pro API docs list deprecation date [C025]
+  approximationNotes: Dates follow the precision available in retained evidence; undated current-doc signals are intentionally grouped rather than assigned speculative launch dates.
+  claimRefs:
+  - C021
+  - C022
+  - C025
+  - C026
+  - C027
+  - C050
+  - C051
+  - C052
+sections:
+- number: '5.1'
+  title: Product platform overview
+  body: |-
+    The retained evidence supports viewing OpenAI as a broad AI product platform with multiple entry points [C006][C007][C022][C026][C027][C050]. End users interact through ChatGPT web and mobile; developers build through the Responses API and official SDKs; software teams can adopt Codex for coding workflows; and third parties can distribute through ChatGPT apps and adjacent commerce surfaces [C007][C008][C022][C026][C027][C050]. This breadth matters because it lets OpenAI compete simultaneously for direct usage, developer standardization, workflow ownership, and ecosystem distribution.
+  claimRefs:
+  - C006
+  - C007
+  - C008
+  - C022
+  - C026
+  - C027
+  - C050
+- number: '5.2'
+  title: Modules, automation, and workflow depth
+  body: |-
+    The core product modules visible in the ledger are increasingly workflow-oriented rather than model-only [C022][C026][C031]. OpenAI's API platform exposes web search, file search, image generation, hosted shell, computer use, and MCP through the Responses API, which suggests an effort to package multi-step automation primitives rather than leaving orchestration entirely to customers [C022]. Codex extends that approach into software development workflows, while assisted fine-tuning and custom models extend it into higher-touch enterprise deployments [C021][C026]. The provider-agnostic Agents SDK further indicates that OpenAI wants a share of the orchestration layer even in environments where customers may not be fully provider-locked [C031].
+  claimRefs:
+  - C021
+  - C022
+  - C026
+  - C031
+- number: '5.3'
+  title: Architecture, infrastructure, and integrations
+  body: |-
+    Architecturally, the evidence points to a stack that begins with end-user clients and third-party apps, flows through first-party APIs and SDKs, adds tool and agent abstractions, and ultimately runs on Azure-backed infrastructure [C007][C011][C013][C022][C027][C029][C030][C031]. The strategic upside is obvious: Azure scale and the Azure OpenAI commercial channel give OpenAI a powerful infrastructure and enterprise-distribution backbone [C011][C013]. The corresponding risk is equally important: public evidence confirms exclusive cloud concentration, while the ledger does not disclose fallback architecture, multi-cloud optionality, or cost-performance benchmarks [C011][C013]. Integrations are stronger at the workflow and protocol layers than at a disclosed third-party enterprise-app list, with MCP, apps distribution, and official SDKs serving as the main explicit integration evidence [C022][C027][C029][C030].
+  claimRefs:
+  - C007
+  - C011
+  - C013
+  - C022
+  - C027
+  - C029
+  - C030
+  - C031
+- number: '5.4'
+  title: Roadmap signals and development velocity
+  body: |-
+    The retained evidence gives several concrete roadmap signals without justifying speculative forecasting [C021][C022][C025][C051][C052]. GPT-5.5 is positioned as the flagship family today, the Responses API now exposes a richer set of tools, and the company has expanded both enterprise customization and product-distribution surfaces [C021][C022][C027][C050]. Open-source development velocity also appears high, with OpenAI reporting a step-up in merged PRs for the Agents SDK repositories [C051]. At the same time, Sora 2 API documentation already carries a specific deprecation date, which is a useful reminder that platform breadth and rapid product iteration can also create lifecycle-management complexity for customers [C025].
+  claimRefs:
+  - C021
+  - C022
+  - C025
+  - C027
+  - C050
+  - C051
+  - C052
+- number: '5.5'
+  title: Product diligence gaps
+  body: |-
+    The main technical diligence asks are not about whether OpenAI has a broad platform; the ledger already shows that it does [C006][C022][C026][C027][C031][C050]. The important open questions are operational: model-routing logic across tiers, reliability and uptime by product, enterprise security certifications, eval pass rates for critical workloads, migration policy across rapidly changing APIs, and the degree of portability away from Azure if economics or regulation change. None of those items are sufficiently disclosed in retained public materials, so a technical diligence session should request architecture reviews, SLA histories, safety/quality scorecards, and roadmap-deprecation governance.
+  claimRefs:
+  - C006
+  - C011
+  - C022
+  - C025
+  - C026
+  - C027
+  - C031
+  - C050
