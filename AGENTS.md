@@ -37,10 +37,9 @@
 - Required artifacts are `00-report-brief.yaml`, `01-evidence-ledger.yaml`, `02-company-snapshot.yaml`, `03-market-macro.yaml`, `04-competitive-benchmarking.yaml`, `05-financial-unit-economics.yaml`, `06-product-technology.yaml`, `07-customer-retention.yaml`, `08-risk-regulatory.yaml`, `09-investment-valuation.yaml`, `10-report-document.yaml`, and `11-report-card.yaml`.
 - Optional Simplified Chinese localized artifacts are `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 - Every artifact must include `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
-- `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. Sources should include `accessDate`, `fetchVerified: true`, and concise `keyQuote` values when available.
-- Evidence source targets refer to retained `sources[]` entries, not claim count. Deep reports should retain at least 100 fetched, report-relevant sources; standard reports should retain at least 40. Do not treat 100 `Cxxx` claims from a small source set as satisfying the source target.
-- Evidence gathering must be broad, fresh, and deduplicated: combine official/company sources, startup or business news, independent third-party databases/analyst sources, customer/partner proof, regulatory/legal/filing sources, and technical/product documentation; prefer recent sources for current claims; and avoid counting repeated reporting of the same event as independent evidence.
-- Evidence search should iterate queries across company, product, founder, investor, customer, competitor, market, funding, valuation, pricing, regulatory, review, hiring, and negative/disconfirming angles instead of repeatedly searching the same site or query family.
+- `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. Sources should include `accessDate`, `fetchVerified: true`, and concise `keyQuote` when available.
+- Evidence source targets count retained `sources[]` entries (deep ≥100, standard ≥40). Many claims from a small source set do not satisfy the target.
+- Evidence must be broad (multiple source buckets), fresh (last 24 months for current facts), and deduplicated by underlying event. Vary search angles instead of repeating one domain or query family. Detailed rules live in `.github/agents/evidence.agent.md`.
 - Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Figure IDs use `F001`, `F002`, etc. Table IDs use `T001`, `T002`, etc.
 - Use descriptive camelCase field names.
 - Include units in numeric field names where useful, such as `revenueRunRateUsdM`, `arrUsdM`, `grossMarginPct`, `nrrPct`, `burnMultiple`, `cacPaybackMonths`, and `valuationUsdM`.

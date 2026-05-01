@@ -71,20 +71,12 @@ Evidence search rule: require diverse, recent, non-duplicative evidence. The Evi
 
 ## Evidence and quality rules
 
-- `01-evidence-ledger.yaml` is the evidence backbone.
-- Evidence collection must be broad, fresh, and non-duplicative: combine official/company sources, startup or business news, independent third-party databases/analyst sources, customer/partner proof, regulatory/legal/filing sources, and technical/product documentation where available.
-- Evidence source targets are retained-source targets, not claim-count targets. For `deep`, the Evidence Analyst must retain at least 100 fetched, report-relevant `sources[]` entries; for `standard`, at least 40. A ledger with 100 claims but far fewer retained sources fails the evidence gate.
-- The Evidence Analyst should iterate search queries across multiple angles rather than repeatedly fetching one domain or one event cluster. Change query terms when results repeat the same story.
-- For current operating, funding, product, valuation, customer, or regulatory claims, prioritize sources from the last 24 months. Use older evidence mainly for historical facts and mark such claims `freshness: historical`.
-- Deduplicate repeated reporting of the same announcement, funding round, launch, partnership, lawsuit, or quote. Keep the original/primary source and only independent corroboration that adds new facts or perspective.
-- Every artifact must start with the document head: `schemaVersion`, `artifact`, `slug`, `runDate`, and `company`.
-- Source IDs: `S001`, `S002`, ...; claim IDs: `C001`, `C002`, ...; figure IDs: `F001`, ...; table IDs: `T001`, ...
-- Every external factual assertion in later YAML must cite `claimRefs`.
-- Every claim with `sourceRefs` must reference fetched sources with `fetchVerified: true`.
-- Use `null` rather than invented values.
-- Numeric KPI fields must be numbers, not strings. Put ranges or caveats in adjacent narrative fields.
-- Figure specs must be structured YAML objects using `type`, `layout`, and typed `data` arrays; do not use legacy diagram-language source.
-- Every figure must follow the Figure rendering contracts in `.github/agents/startup-diligence.schema.md`: use only canonical renderer fields such as `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, and `layers`; do not invent primary fields such as `cards`, `steps`, `children`, `groups`, `name`, or `components`.
+- `01-evidence-ledger.yaml` is the evidence backbone; the Evidence Analyst owns source/claim quality (see `evidence.agent.md`).
+- Evidence source targets count retained `sources[]` entries: deep ≥100, standard ≥40. A ledger with many claims but few retained sources fails the gate.
+- Every artifact starts with the document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`). IDs use `S001`/`C001`/`F001`/`T001`.
+- Every external assertion in later YAML cites `claimRefs`. Every claim with `sourceRefs` references fetched sources with `fetchVerified: true`.
+- Numeric KPI fields are numbers or `null` (with explanation). Never invent values.
+- Figures use structured `data` per the Figure rendering contracts in `.github/agents/startup-diligence.schema.md`. No diagram-language strings; no non-canonical primary fields (`cards`, `steps`, `children`, `groups`, `components`, `name`).
 
 ## Validation gates
 
