@@ -11,16 +11,23 @@ const { dimensions, overall } = Astro.props;
     {Object.entries(dimensions).map(([name, value]) => (
       <div class="rating-row">
         <div><strong>{displayLabel(name)}</strong><p>{value.rationale}</p></div>
-        <meter min="0" max="5" value={value.score}>{value.score}</meter>
+        <div class="rating-bar" aria-label={`${displayLabel(name)} score ${value.score} out of 5`}>
+          <span class="rating-track"><i style={`width:${Math.max(4, Math.min(100, (value.score / 5) * 100))}%`}></i></span>
+          <b>{value.score}</b>
+        </div>
       </div>
     ))}
   </div>
 </section>
 <style>
+  .sr-card { border-top: var(--report-rule, var(--rule-hairline)); }
   .rating-list { display: grid; gap: 14px; margin-top: 18px; }
-  .rating-row { display: grid; grid-template-columns: 1fr 120px; gap: 16px; align-items: center; }
+  .rating-row { display: grid; grid-template-columns: 1fr minmax(180px, 260px); gap: 16px; align-items: center; }
   .rating-row p { margin: 4px 0 0; color: var(--muted); font-size: .92rem; }
   .rating-row strong { text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
-  meter { width: 100%; height: 12px; accent-color: var(--accent); }
+  .rating-bar { display: grid; grid-template-columns: 1fr 32px; gap: var(--space-3); align-items: center; }
+  .rating-track { height: 10px; border-radius: 999px; background: color-mix(in srgb, var(--hairline) 70%, transparent); overflow: hidden; }
+  .rating-track i { display: block; height: 100%; border-radius: inherit; background: var(--claret); }
+  .rating-bar b { justify-self: end; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--ink-page); }
   @media (max-width: 720px) { .rating-row { grid-template-columns: 1fr; } }
 </style>

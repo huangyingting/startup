@@ -149,7 +149,7 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
   {navItems.map((item, index) => <a href={`#section-${index + 1}`}>{item}</a>)}
 </nav>
 
-<section class="sr-container sr-section report-overview">
+<section class="sr-container sr-section">
   <h2 id="section-1" data-section="01">{labels.quickRead}</h2>
   <div class="focus-grid">
     {focusItems.map((item) => (
@@ -200,7 +200,7 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
         <h3>Bull case</h3><p>{memo?.thesis?.bullCase}</p>
         <h3>Bear case</h3><p>{memo?.thesis?.bearCase}</p>
       </article>
-      <article class="report-panel compact">
+      <article class="report-panel">
         <div class="sr-kicker">{labels.metrics}</div>
         <dl class="metric-grid">{metricCards.map(([name, value]) => <><dt>{name}</dt><dd>{value}</dd></>)}</dl>
       </article>
@@ -232,11 +232,13 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
     <article class="report-panel"><div class="sr-kicker">{labels.whyNow}</div><p>{market.whyNow?.timingRationale}</p>{arr(market.whyNow?.inflectionDrivers).map((driver) => <p><strong>{titleCase(driver.driverType)}:</strong> {driver.driver}</p>)}</article>
     <article class="report-panel"><div class="sr-kicker">Market verdict</div><h3>{displayLabel(market.marketVerdict?.attractiveness ?? labels.unknown)}</h3><p>{market.marketVerdict?.rationale}</p></article>
   </div>
-  <table class="sr-table report-table">
-    <caption>{labels.marketSizing}</caption>
-    <thead><tr><th>Scope</th><th>Value</th><th>USD M</th><th>Approach</th><th>Methodology</th><th>Confidence</th></tr></thead>
-    <tbody>{['tam', 'sam', 'som'].map((key) => { const row = market.marketSizing?.[key] ?? {}; return <tr><td>{key.toUpperCase()}</td><td>{row.value ?? labels.notDisclosed}</td><td>{metric(row.valueUsdM)}</td><td>{displayLabel(row.approach ?? labels.unknown)}</td><td>{row.methodology}</td><td>{displayLabel(row.confidence)}</td></tr>; })}</tbody>
-  </table>
+  <div class="report-table-frame">
+    <table class="sr-table report-table">
+      <caption>{labels.marketSizing}</caption>
+      <thead><tr><th>Scope</th><th>Value</th><th>USD M</th><th>Approach</th><th>Methodology</th><th>Confidence</th></tr></thead>
+      <tbody>{['tam', 'sam', 'som'].map((key) => { const row = market.marketSizing?.[key] ?? {}; return <tr><td>{key.toUpperCase()}</td><td>{row.value ?? labels.notDisclosed}</td><td>{metric(row.valueUsdM)}</td><td>{displayLabel(row.approach ?? labels.unknown)}</td><td>{row.methodology}</td><td>{displayLabel(row.confidence)}</td></tr>; })}</tbody>
+    </table>
+  </div>
   <DataTable title={labels.customerSegments} rows={arr(market.customerSegments)} columns={[{ heading: 'Segment', key: 'segment' }, { heading: 'Buyer', key: 'buyer' }, { heading: 'Budget owner', key: 'budgetOwner' }, { heading: 'Urgency', key: 'urgency' }, { heading: 'WTP evidence', key: 'willingnessToPayEvidence' }]} emptyLabel={labels.notDisclosed} />
   <div class="two-col">
     <article class="report-panel"><div class="sr-kicker">{labels.productTechnology}</div><h3>{displayLabel(product.productVerdict?.assessment ?? labels.unknown)}</h3><p>{product.productVerdict?.rationale}</p><p class="sr-muted">{product.technologyStack?.architectureNotes}</p></article>
@@ -324,9 +326,14 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
 
 <style>
   .report-hero,
+  .report-nav,
+  .sr-section {
+    --report-rule: 1px solid color-mix(in srgb, var(--hairline) 82%, transparent);
+    --report-rule-accent: var(--claret);
+  }
+  .report-hero,
   .sr-section {
     border-top: 0;
-    border-bottom: 0;
   }
   .sr-section {
     padding-block: var(--space-2) 0;
@@ -340,7 +347,7 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
   .report-hero h1 { max-width: 34ch; }
   .hero-summary-card { border: var(--rule-hairline); background: var(--surface-paper); padding: var(--space-4); margin-top: var(--space-2); }
   .hero-summary-card dl { display: grid; gap: var(--space-3); margin: var(--space-3) 0 0; }
-  .hero-summary-card div { display: grid; grid-template-columns: minmax(110px, 1fr) auto; gap: var(--space-3); align-items: baseline; padding-bottom: var(--space-2); border-bottom: var(--rule-hairline); }
+  .hero-summary-card div { display: grid; grid-template-columns: minmax(110px, 1fr) auto; gap: var(--space-3); align-items: baseline; padding-bottom: var(--space-2); border-bottom: var(--report-rule); }
   .hero-summary-card div:last-child { border-bottom: 0; padding-bottom: 0; }
   .hero-summary-card dt { font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); text-transform: uppercase; }
   .hero-summary-card dd { margin: 0; font-family: var(--font-display); font-size: var(--fs-md); font-weight: 800; line-height: 1.05; color: var(--ink-page); text-align: right; }
@@ -377,22 +384,17 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
     content: '';
     grid-column: 2;
     width: 72px;
-    height: 6px;
+    height: 5px;
     margin-top: var(--space-1);
-    background: var(--claret);
+    background: var(--report-rule-accent);
   }
   .two-col > .report-panel > h2 {
     font-size: var(--fs-xl);
   }
-  .two-col > .report-panel > h2::before,
-  .two-col > .report-panel > h2::after {
-    content: none;
-  }
-  .report-nav { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block: 0 var(--space-4); border-bottom: var(--rule-hairline); padding-block: var(--space-3) var(--space-2); background: color-mix(in srgb, var(--paper) 95%, white); backdrop-filter: blur(10px); }
+  .report-nav { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block: 0 var(--space-4); border-bottom: var(--report-rule); padding-block: var(--space-3) var(--space-2); background: color-mix(in srgb, var(--paper) 95%, white); backdrop-filter: blur(10px); }
   .report-nav a { display: inline-flex; align-items: center; padding: 0 0 5px; border-bottom: 2px solid transparent; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 800; line-height: 1.15; letter-spacing: .012em; text-transform: uppercase; text-decoration: none; color: var(--caption-gray); transition: border-color 140ms ease, color 140ms ease; }
   .report-nav a:hover,
   .report-nav a:focus-visible { color: var(--claret); border-bottom-color: var(--claret); outline: none; }
-  .report-overview { border-bottom: 0; }
   .focus-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-4); }
   .focus-card { border: var(--rule-hairline); padding: var(--space-4); background: var(--surface-paper); }
   .focus-card h3 { margin: var(--space-2) 0; font-size: var(--fs-xl); }
@@ -401,12 +403,11 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
   .score-bars, .evidence-visual { display: grid; gap: var(--space-3); }
   .score-row, .source-row { display: grid; grid-template-columns: minmax(120px, 1fr) 1.3fr 44px; gap: var(--space-3); align-items: center; font-family: var(--font-sans); font-size: var(--fs-sm); }
   .score-track, .source-track { height: 10px; border-radius: 999px; background: color-mix(in srgb, var(--hairline) 70%, transparent); overflow: hidden; }
-  .score-track i, .source-track i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--claret), var(--gold)); }
-  .source-track i { background: linear-gradient(90deg, var(--accent), var(--claret)); }
+  .score-track i, .source-track i { display: block; height: 100%; border-radius: inherit; background: var(--claret); }
   .memo-grid, .two-col, .milestone-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
   .milestone-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .report-panel { border-top: var(--rule-hard); padding-block: var(--space-4) var(--space-5); }
-  .report-panel.compact { border-color: var(--hairline); }
+  .report-panel { border-top: var(--report-rule); padding-block: var(--space-4) var(--space-5); }
+  .sr-card { border-top: var(--report-rule); }
   .report-panel h3,
   .sr-card h3,
   .focus-card h3,
@@ -434,8 +435,15 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
   .risk-chip.severity-3, .risk-chip.severity-4 { border-left-color: var(--claret); }
   .risk-chip h3 { margin: var(--space-2) 0; }
   .risk-chip p { font-size: var(--fs-sm); }
-  .report-table caption { text-align: left; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); margin-bottom: var(--space-2); }
-  .report-table td { max-width: 420px; }
+  .report-table-frame { overflow-x: auto; margin-top: var(--space-5); border: var(--report-rule); border-radius: 12px; background: color-mix(in srgb, var(--surface-paper) 92%, white); box-shadow: 0 1px 0 color-mix(in srgb, var(--hairline) 45%, transparent); }
+  .report-table { min-width: 720px; border: 0; border-collapse: separate; border-spacing: 0; background: transparent; }
+  .report-table caption { text-align: left; caption-side: top; padding: var(--space-3) var(--space-4); border-bottom: var(--report-rule); background: color-mix(in srgb, var(--claret) 6%, transparent); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  .report-table th, .report-table td { border-bottom: var(--report-rule); padding: var(--space-3) var(--space-4); vertical-align: top; }
+  .report-table th { background: color-mix(in srgb, var(--paper) 80%, white); color: color-mix(in srgb, var(--claret) 88%, var(--ink-page)); white-space: nowrap; }
+  .report-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--paper) 72%, white); }
+  .report-table tbody tr:hover { background: color-mix(in srgb, var(--claret) 5%, transparent); }
+  .report-table tbody tr:last-child td { border-bottom: 0; }
+  .report-table td { max-width: 420px; color: var(--ink-page); line-height: 1.48; }
   @media (max-width: 900px) {
     .hero-grid, .focus-grid, .narrative-grid, .memo-grid, .two-col, .milestone-grid, .people-grid, .risk-map { grid-template-columns: 1fr; }
     .metric-grid.wide { grid-template-columns: minmax(120px, 1fr) minmax(110px, auto); }

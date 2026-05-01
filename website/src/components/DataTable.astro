@@ -39,17 +39,53 @@ function formatCell(value: unknown) {
   .table-wrap {
     overflow-x: auto;
     margin-top: var(--space-5);
+    border: 1px solid color-mix(in srgb, var(--hairline) 82%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--surface-paper) 92%, white);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--hairline) 45%, transparent);
+  }
+  .report-table {
+    min-width: 720px;
+    border: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: transparent;
   }
   .report-table caption {
     text-align: left;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid color-mix(in srgb, var(--hairline) 82%, transparent);
+    background: color-mix(in srgb, var(--claret) 6%, transparent);
     font-family: var(--font-sans);
     font-variant-caps: all-small-caps;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: var(--tracking-eyebrow);
     color: var(--claret);
-    margin-bottom: var(--space-2);
+    caption-side: top;
+  }
+  .report-table th,
+  .report-table td {
+    border-bottom: 1px solid color-mix(in srgb, var(--hairline) 76%, transparent);
+    padding: var(--space-3) var(--space-4);
+    vertical-align: top;
+  }
+  .report-table th {
+    background: color-mix(in srgb, var(--paper) 80%, white);
+    color: color-mix(in srgb, var(--claret) 88%, var(--ink-page));
+    white-space: nowrap;
+  }
+  .report-table tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--paper) 72%, white);
+  }
+  .report-table tbody tr:hover {
+    background: color-mix(in srgb, var(--claret) 5%, transparent);
+  }
+  .report-table tbody tr:last-child td {
+    border-bottom: 0;
   }
   .report-table td {
     max-width: 420px;
+    color: var(--ink-page);
+    line-height: 1.48;
   }
 </style>
