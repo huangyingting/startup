@@ -15,9 +15,10 @@
 - `.github/workflows/research-startup.yml` is the manual report-generation workflow.
 - `reports/` contains generated startup research artifacts. Each report lives in `<YYYYMMDDHHmmss>-<company-slug>/`.
 - `reports/_index.yaml` is the aggregated report catalog, rebuilt by `scripts/build-reports-index.mjs`.
-- `scripts/` holds repo-level Node scripts for report folder creation, duplicate checks, and catalog generation.
+- `scripts/` holds repo-level Node scripts for report folder creation, duplicate checks, catalog generation, and content-quality / translation-parity validation.
 - `website/` contains the Astro site that validates and renders reports.
-- `website/scripts/check-reports.mjs` is the main report YAML validator.
+- `scripts/check-reports-content.mjs` validates evidence coverage, source diversity, and EN↔ZH parity.
+- `website/scripts/check-reports.mjs` validates the rendering contract (schema heads, figure types, enums, refs) before `astro build`.
 
 ## Report workflow
 

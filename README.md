@@ -54,5 +54,6 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `.github/agents/research.agent.md` — main orchestrator.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
 - `scripts/check-company-dedup.mjs` — fails with duplicate-risk details for matching company names or domains.
+- `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and EN↔ZH parity checks.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
-- `website/scripts/check-reports.mjs` — report artifact validator.
+- `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure types, enums, refs).

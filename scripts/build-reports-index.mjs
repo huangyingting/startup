@@ -46,7 +46,7 @@ for (const runId of listRuns()) {
     reports.push({
       runId,
       slug: data.slug ?? runId,
-      schemaVersion: data.schemaVersion ?? 'startup-diligence-report-v2',
+      schemaVersion: data.schemaVersion,
       date: data.runDate ?? null,
       companyName: company.name ?? null,
       companyNameNormalized: normalizeCompanyName(company.name),

@@ -24,6 +24,13 @@ Use only the `reportMeta` keys listed in the schema; do not add extra cover-labe
 
 Create the concise index card used by the website: title, headline, recommendation, confidence, risk rating, valuation stance, score, source stats, key metrics, top strengths, top risks, and report files.
 
+Required field placement (per schema):
+
+- `overallScore` is a number on a 0–10 scale (e.g. `7.3`, `5.6`); never use 0–100.
+- `figureCount` and `tableCount` are top-level fields and must equal the count in `10-report-document.yaml`. Do not nest them under `sourceStats`.
+- `sourceStats` contains only `sourcesRetained` and `claimsReviewed`.
+- When any `keyMetrics.*` is `null`, list a matching entry in `unresolvedGaps` explaining why the metric is undisclosed and what disclosure would resolve it.
+
 ## Style rules
 
 - Use callout blockquotes for `Investment Recommendation`, `Key Insight`, `Opportunity`, `Risk Alert`, and `Final Investment Recommendation`.

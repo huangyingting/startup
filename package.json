@@ -5,8 +5,9 @@
   "scripts": {
     "build:reports-index": "node scripts/build-reports-index.mjs",
     "check:reports-index": "node scripts/build-reports-index.mjs --strict --check",
+    "check:reports-content": "node scripts/check-reports-content.mjs",
     "check:reports": "npm --prefix website run check:reports",
-    "validate": "npm run check:reports-index && npm run check:reports && npm --prefix website run build"
+    "validate": "npm run check:reports-index && npm run check:reports-content && npm run check:reports && npm --prefix website run build"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
