@@ -192,13 +192,28 @@ tables:
 figures:
 - id: F201
   title: Evidence-backed TAM / SAM / SOM framing for OpenAI
-  mermaidType: flowchart
-  mermaid: |-
-    flowchart TB
-      TAM["TAM<br/>Consumer AI assistants + enterprise AI software + developer API/agent infrastructure + multimodal/coding adjacencies<br/>Dollar size not quantified in retained evidence [C006][C019][C022][C043][C049][C050]"]
-      SAM["SAM<br/>Commercially reachable segments visible in current OpenAI product/pricing surface<br/>ChatGPT plans + enterprise offerings + API/tooling<br/>No public segment dollar value in retained evidence [C020][C022][C023][C024][C026][C027][C043]"]
-      SOM["SOM<br/>Evidence-backed served footprint, not inferred market share<br/>1.0M paid corporate users by Sep 2024 + company-claimed hundreds of millions of users overall [C010][C019]"]
-      TAM --> SAM --> SOM
+  type: flow
+  layout: standard
+  summary: Evidence-led TAM / SAM / SOM framing without unsupported dollar numerics.
+  data:
+    nodes:
+    - id: TAM
+      label: TAM
+      detail: Consumer AI assistants, enterprise AI software, developer API/agent infrastructure, and multimodal/coding adjacencies [C006][C019][C022][C043][C049][C050]
+      tone: opportunity
+    - id: SAM
+      label: SAM
+      detail: Commercially reachable ChatGPT plans, enterprise offerings, and API/tooling [C020][C022][C023][C024][C026][C027][C043]
+      tone: neutral
+    - id: SOM
+      label: SOM
+      detail: Evidence-backed served footprint, including 1.0M paid corporate users plus company-claimed hundreds of millions of users [C010][C019]
+      tone: positive
+    edges:
+    - from: TAM
+      to: SAM
+    - from: SAM
+      to: SOM
   approximationNotes: Market-layer boundaries are evidence-led conceptual frames; no retained claim supports precise dollar TAM, SAM, or SOM numerics.
   claimRefs:
   - C006

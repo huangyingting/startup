@@ -261,22 +261,31 @@ tables:
 figures:
   - id: F701
     title: OpenAI risk heatmap by likelihood and severity
-    mermaidType: quadrantChart
-    mermaid: |-
-      quadrantChart
-        title OpenAI risk heatmap: likelihood vs severity
-        x-axis Low likelihood --> High likelihood
-        y-axis Low severity --> High severity
-        quadrant-1 Critical watch
-        quadrant-2 Severe but lower-probability
-        quadrant-3 Lower priority
-        quadrant-4 Monitor closely
-        Microsoft dependency: [0.84, 0.88]
-        IP litigation: [0.79, 0.90]
-        Antitrust remedies: [0.68, 0.86]
-        Governance opacity: [0.60, 0.84]
-        Product or migration churn: [0.62, 0.58]
-        Security disclosure gap: [0.55, 0.64]
+    type: risk-heatmap
+    layout: wide
+    summary: OpenAI risk heatmap by likelihood and severity.
+    data:
+      columns:
+        - Lower severity
+        - Moderate severity
+        - High severity
+      rows:
+        - label: High likelihood
+          values:
+            - label: Product or migration churn
+              tone: medium
+            - label: Security disclosure gap
+              tone: medium
+            - label: Microsoft dependency; IP litigation
+              tone: high
+        - label: Medium likelihood
+          values:
+            - label: Monitor
+              tone: low
+            - label: Governance opacity
+              tone: high
+            - label: Antitrust remedies
+              tone: high
     approximationNotes: Coordinates are internal diligence judgments derived from the retained evidence; they are not company-published risk scores.
     claimRefs:
       - C011
@@ -292,18 +301,46 @@ figures:
       - C045
   - id: F702
     title: Risk transmission map
-    mermaidType: flowchart
-    mermaid: |-
-      flowchart TB
-        A["Microsoft and Azure concentration [C011][C013][C017]"] --> B["Infrastructure and channel dependency"]
-        A --> C["EU and FTC scrutiny of partnership structure [C036][C037][C038]"]
-        D["Copyright lawsuits [C039][C040]"] --> E["Potential damages, licensing costs, or product restrictions"]
-        F["Governance crisis and unresolved control terms [C041][C045]"] --> G["Underwriting opacity and weaker IPO readiness"]
-        B --> H["Margin pressure and strategic flexibility risk"]
-        C --> H
-        E --> H
-        G --> I["Lower valuation confidence and tighter kill criteria"]
-        H --> I
+    type: flow
+    layout: wide
+    summary: Directional map showing how key risk sources transmit into valuation confidence and kill criteria.
+    data:
+      nodes:
+        - id: A
+          label: Microsoft and Azure concentration
+          detail: Infrastructure and partner exposure [C011][C013][C017]
+          tone: risk
+        - id: C
+          label: EU and FTC scrutiny
+          detail: Partnership structure review [C036][C037][C038]
+          tone: risk
+        - id: D
+          label: Copyright lawsuits
+          detail: Potential damages, licensing costs, or product restrictions [C039][C040]
+          tone: risk
+        - id: F
+          label: Governance opacity
+          detail: Governance crisis and unresolved control terms [C041][C045]
+          tone: risk
+        - id: H
+          label: Margin and strategic flexibility risk
+          detail: Combined pressure on downside underwriting
+          tone: critical
+        - id: I
+          label: Lower valuation confidence
+          detail: Tighter kill criteria for investment entry
+          tone: critical
+      edges:
+        - from: A
+          to: H
+        - from: C
+          to: H
+        - from: D
+          to: H
+        - from: F
+          to: I
+        - from: H
+          to: I
     approximationNotes: This figure shows directional risk transmission rather than quantified scenario probabilities.
     claimRefs:
       - C011

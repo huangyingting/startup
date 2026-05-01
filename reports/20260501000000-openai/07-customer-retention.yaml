@@ -199,15 +199,21 @@ tables:
 figures:
 - id: F601
   title: Customer growth and adoption timeline
-  mermaidType: timeline
-  mermaid: |-
-    timeline
-      title Evidence-backed customer traction progression
-      2022-11 : ChatGPT release catalyzes broad generative-AI adoption [C049]
-      2024-01 : ChatGPT Team launch adds formal team monetization [C020]
-      2024-09 : 1M paid corporate users reported across Team, Enterprise, and Edu [C019]
-      2026-05-01 : ChatGPT iOS app shows 4.8/5 across 6.9M ratings [C009]
-      2026 : Official app copy claims hundreds of millions of users [C010]
+  type: timeline
+  layout: standard
+  summary: Evidence-backed customer traction progression.
+  data:
+    items:
+    - label: 2022-11
+      detail: ChatGPT release catalyzes broad generative-AI adoption [C049]
+    - label: 2024-01
+      detail: ChatGPT Team launch adds formal team monetization [C020]
+    - label: 2024-09
+      detail: 1M paid corporate users reported across Team, Enterprise, and Edu [C019]
+    - label: 2026-05-01
+      detail: ChatGPT iOS app shows 4.8/5 across 6.9M ratings [C009]
+    - label: '2026'
+      detail: Official app copy claims hundreds of millions of users [C010]
   approximationNotes: The timeline mixes release, monetization, and adoption milestones because the retained evidence does not provide a clean periodic customer series.
   claimRefs:
   - C009
@@ -217,13 +223,40 @@ figures:
   - C049
 - id: F602
   title: OpenAI customer-surface expansion
-  mermaidType: flowchart
-  mermaid: |-
-    flowchart TB
-      A["Mass-market entry<br/>ChatGPT web/mobile usage and app-store distribution [C008][C009][C010]"] --> B["Paid team / enterprise motion<br/>Team pricing and 1M paid corporate users [C019][C020]"]
-      A --> C["Developer adoption<br/>Responses API + official SDKs + GitHub footprint [C007][C022][C028][C029][C030][C031]"]
-      B --> D["Higher-value enterprise deployments<br/>Customization and fine-tuning [C021]"]
-      C --> E["Ecosystem reinforcement<br/>Codex programs, meetups, student credits [C052]"]
+  type: flow
+  layout: standard
+  summary: Directional customer-surface expansion across consumer, enterprise, developer, and ecosystem motions.
+  data:
+    nodes:
+    - id: A
+      label: Mass-market entry
+      detail: ChatGPT web/mobile usage and app-store distribution [C008][C009][C010]
+      tone: positive
+    - id: B
+      label: Paid team / enterprise motion
+      detail: Team pricing and 1M paid corporate users [C019][C020]
+      tone: positive
+    - id: C
+      label: Developer adoption
+      detail: Responses API, official SDKs, and GitHub footprint [C007][C022][C028][C029][C030][C031]
+      tone: positive
+    - id: D
+      label: Higher-value enterprise deployments
+      detail: Customization and fine-tuning [C021]
+      tone: opportunity
+    - id: E
+      label: Ecosystem reinforcement
+      detail: Codex programs, meetups, and student credits [C052]
+      tone: opportunity
+    edges:
+    - from: A
+      to: B
+    - from: A
+      to: C
+    - from: B
+      to: D
+    - from: C
+      to: E
   approximationNotes: This is a directional customer-surface map, not a quantified funnel conversion chart.
   claimRefs:
   - C007

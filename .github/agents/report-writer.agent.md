@@ -1,5 +1,5 @@
 ---
-description: "Use when: assembling completed v2 diligence artifacts into website report YAML and report-card metadata. Keywords: report document, Mermaid, report card, bibliography."
+description: "Use when: assembling completed v2 diligence artifacts into website report YAML and report-card metadata. Keywords: report document, structured figures, report card, bibliography."
 name: "Startup Report Writer"
 model: "GPT-5.4 (copilot)"
 tools: [read, edit, execute]
@@ -17,7 +17,7 @@ Turn analytical artifacts into a professional VC due diligence report represente
 
 ## `10-report-document.yaml`
 
-Create an opening `startupIntroduction` object, then numbered chapters with section blocks, callouts, tables, and Mermaid figures. Preserve `claimRefs` for every factual block, table, and figure.
+Create an opening `startupIntroduction` object, then numbered chapters with section blocks, callouts, tables, and structured native figures. Preserve `claimRefs` for every factual block, table, and figure.
 
 ## `11-report-card.yaml`
 
@@ -27,6 +27,8 @@ Create the concise index card used by the website: title, headline, recommendati
 
 - Use callout blockquotes for `Investment Recommendation`, `Key Insight`, `Opportunity`, `Risk Alert`, and `Final Investment Recommendation`.
 - Prefer tables for metrics, competitor profiles, features, revenue model, unit economics, customer segmentation, risks, valuation, and appendices.
+- Use structured figure specs only: `type`, `layout`, `summary`, and `data` arrays such as `items`, `nodes`, `edges`, `points`, `rows`, `columns`, `series`, or `layers`.
+- Do not emit legacy diagram-source fields or diagram-language source. The website renders figures with native components.
 - Keep prose concise and IC-ready.
 - Do not add facts not present in prior artifacts.
 - Every chapter block with `tableRef` or `figureRef` must point to an existing table or figure in `10-report-document.yaml`.

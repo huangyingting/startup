@@ -18,7 +18,7 @@ Do not search the web. Use only claim-backed evidence.
 Structure this section as an investor-grade VC diligence chapter:
 
 - Risk overview, regulatory/legal risk, credit/operational/security risk, competitive risk, and mitigation summary.
-- Mermaid quadrant heatmap for risk assessment.
+- Structured risk-heatmap or matrix figure for risk assessment.
 - Investment thesis summary, bull/base/bear cases, IPO/readiness scorecard, public/private comparables, valuation framework, final recommendation.
 - Include stop-loss triggers / kill criteria.
 

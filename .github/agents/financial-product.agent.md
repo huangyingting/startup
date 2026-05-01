@@ -23,7 +23,7 @@ Structure this section as an investor-grade VC diligence chapter:
 - Financial projection scenarios only when defensible; otherwise use `null` and diligence gaps.
 - Product platform overview, modules, AI/automation, roadmap, architecture, and integrations.
 - Customer base, segmentation, customer case studies, retention, churn, and satisfaction.
-- Mermaid diagrams for revenue mix, unit-economics waterfall, platform architecture, and customer growth where evidence supports them.
+- Structured native figures for revenue mix, unit-economics waterfall, platform architecture, and customer growth where evidence supports them.
 
 ## Analysis rules
 

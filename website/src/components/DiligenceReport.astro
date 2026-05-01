@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { Lang } from '../lib/i18n';
 import ClaimRefs from './ClaimRefs.astro';
+import FigureRenderer from './FigureRenderer.astro';
 import { displayLabel } from '../lib/display';
 
 interface Props {
@@ -22,11 +23,11 @@ const tables = new Map((doc?.tables ?? []).map((table: any) => [table.id, table]
 const labels = lang === 'zh'
   ? {
       recommendation: '建议', confidence: '置信度', riskRating: '风险评级', valuationStance: '估值判断', score: '评分', sources: '来源', claims: '声明', figures: '图表', tables: '表格',
-      coverMetrics: '封面指标', startupIntro: '创业公司基本介绍', founded: '创立时间', founders: '创始人', foundingLocation: '创立地点', headquarters: '总部', product: '产品', customers: '客户', businessModel: '商业模式', stage: '阶段', fundingStatus: '融资状态', strengths: '核心亮点', risks: '核心风险', gaps: '未解问题', contents: '目录', figuresList: '图表清单', tablesList: '表格清单', bibliography: '参考文献', disclaimer: '免责声明', evidence: '证据索引'
+      coverMetrics: '封面指标', startupIntro: '创业公司基本介绍', founded: '创立时间', founders: '创始人', foundingLocation: '创立地点', headquarters: '总部', product: '产品', customers: '客户', businessModel: '商业模式', stage: '阶段', fundingStatus: '融资状态', strengths: '核心亮点', risks: '核心风险', gaps: '未解问题', contents: '目录', bibliography: '参考文献', disclaimer: '免责声明', evidence: '证据索引'
     }
   : {
       recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating', valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims', figures: 'figures', tables: 'tables',
-      coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction', founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location', headquarters: 'Headquarters', product: 'Product', customers: 'Customers', businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status', strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps', contents: 'Contents', figuresList: 'List of figures', tablesList: 'List of tables', bibliography: 'Bibliography', disclaimer: 'Disclaimer', evidence: 'Evidence index'
+      coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction', founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location', headquarters: 'Headquarters', product: 'Product', customers: 'Customers', businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status', strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps', contents: 'Contents', bibliography: 'Bibliography', disclaimer: 'Disclaimer', evidence: 'Evidence index'
     };
 
 function arr<T = any>(value: T[] | undefined | null): T[] { return Array.isArray(value) ? value : []; }
@@ -45,6 +46,20 @@ function moneyM(value: unknown) {
 function cleanHeadline(value: unknown) {
   return String(value ?? '').replace(/(?:\s*\[C\d{3}\])+\.?$/g, '.').trim();
 }
+function splitClaimRefsText(value: unknown) {
+  const text = String(value ?? '');
+  const parts: Array<{ text?: string; ref?: string }> = [];
+  const pattern = /\[(C\d{3})\]/g;
+  let lastIndex = 0;
+  for (const match of text.matchAll(pattern)) {
+    if (match.index > lastIndex) parts.push({ text: text.slice(lastIndex, match.index) });
+    parts.push({ ref: match[1] });
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) parts.push({ text: text.slice(lastIndex) });
+  return parts.length ? parts : [{ text }];
+}
+function hasInlineClaimRefs(value: unknown) { return /\[C\d{3}\]/.test(String(value ?? '')); }
 function blockRefs(block: any) { return arr<string>(block?.claimRefs).slice(0, 6); }
 function blockClass(type: string | null | undefined) { return `report-callout callout-${String(type ?? 'key-insight').replace(/[^a-z0-9-]/gi, '-')}`; }
 
@@ -53,6 +68,17 @@ const startupIntroduction = doc?.startupIntroduction ?? stages.companySnapshot?.
 const chapters = arr(doc?.chapters);
 const reportFigures = arr(doc?.figures);
 const reportTables = arr(doc?.tables);
+const figureCount = reportFigures.length || data.figureCount || 0;
+const tableCount = reportTables.length || data.tableCount || 0;
+const sourceById = new Map(sources.map((source: any) => [source.id, source]));
+const bibliographyBySourceRef = new Map(arr(doc?.bibliography).map((item: any) => [item.sourceRef, item.citation]));
+const hasBibliographyCitations = bibliographyBySourceRef.size > 0;
+const claimLinkMap = Object.fromEntries(claims.map((claim: any) => {
+  return [claim.id, {
+    href: `#claim-${claim.id}`,
+    title: claim.statement ?? claim.id,
+  }];
+}));
 const keyMetrics = data.keyMetrics ?? {};
 const fallbackMetrics = [
   ['Valuation', moneyM(keyMetrics.valuationUsdM)],
@@ -76,8 +102,8 @@ const fallbackMetrics = [
         <span>{data.runDate}</span>
         <span>{data.sourceStats.sourcesRetained} {labels.sources}</span>
         <span>{data.sourceStats.claimsReviewed} {labels.claims}</span>
-        <span>{data.figureCount} {labels.figures}</span>
-        <span>{data.tableCount} {labels.tables}</span>
+        <span>{figureCount} {labels.figures}</span>
+        <span>{tableCount} {labels.tables}</span>
       </div>
     </div>
     <aside class="decision-card">
@@ -95,7 +121,7 @@ const fallbackMetrics = [
     <h2>{labels.coverMetrics}</h2>
     <div class="metric-grid">
       {coverMetrics.length ? coverMetrics.map((item: any) => (
-        <article><span>{item.label}</span><strong>{item.value}</strong><ClaimRefs refs={blockRefs(item)} /></article>
+        <article><span>{item.label}</span><strong>{item.value}</strong><ClaimRefs refs={blockRefs(item)} claims={claims} sources={sources} /></article>
       )) : fallbackMetrics.map(([label, value]) => <article><span>{label}</span><strong>{value}</strong></article>)}
     </div>
   </section>
@@ -103,7 +129,7 @@ const fallbackMetrics = [
   {startupIntroduction && (
     <section class="report-section startup-intro">
       <h2>{labels.startupIntro}</h2>
-      <p>{startupIntroduction.summary}</p>
+      <p>{splitClaimRefsText(startupIntroduction.summary).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>
       <dl class="intro-grid">
         {(startupIntroduction.foundedDate || startupIntroduction.foundedYear) && <div><dt>{labels.founded}</dt><dd>{startupIntroduction.foundedDate ?? startupIntroduction.foundedYear}</dd></div>}
         {arr(startupIntroduction.founders).length > 0 && <div><dt>{labels.founders}</dt><dd>{arr(startupIntroduction.founders).map((founder: any) => founder.name).join(', ')}</dd></div>}
@@ -115,7 +141,7 @@ const fallbackMetrics = [
         {startupIntroduction.stage && <div><dt>{labels.stage}</dt><dd>{startupIntroduction.stage}</dd></div>}
         {startupIntroduction.fundingStatus && <div><dt>{labels.fundingStatus}</dt><dd>{startupIntroduction.fundingStatus}</dd></div>}
       </dl>
-      <ClaimRefs refs={arr(startupIntroduction.claimRefs).slice(0, 8)} />
+      <ClaimRefs refs={arr(startupIntroduction.claimRefs).slice(0, 8)} claims={claims} sources={sources} />
     </section>
   )}
 
@@ -124,20 +150,6 @@ const fallbackMetrics = [
       <h2>{labels.contents}</h2>
       <ol>{chapters.map((chapter: any) => <li><a href={`#chapter-${chapter.number}`}>{chapter.number}. {chapter.title}</a></li>)}</ol>
     </nav>
-  )}
-
-  {reportFigures.length > 0 && (
-    <section class="report-section compact-list">
-      <h2>{labels.figuresList}</h2>
-      <ol>{reportFigures.map((figure: any) => <li>{figure.id}: {figure.title}</li>)}</ol>
-    </section>
-  )}
-
-  {reportTables.length > 0 && (
-    <section class="report-section compact-list">
-      <h2>{labels.tablesList}</h2>
-      <ol>{reportTables.map((table: any) => <li>{table.id}: {table.title}</li>)}</ol>
-    </section>
   )}
 
   {chapters.map((chapter: any) => (
@@ -149,14 +161,15 @@ const fallbackMetrics = [
           {arr(section.blocks).map((block: any) => {
             const table = block.tableRef ? tables.get(block.tableRef) as any : null;
             const figure = block.figureRef ? figures.get(block.figureRef) as any : null;
+            const blockHasInlineRefs = hasInlineClaimRefs(block?.body) || arr(block?.items).some((item) => hasInlineClaimRefs(item));
             return (
               <>
-                {block.type === 'paragraph' && <p>{block.body} <ClaimRefs refs={blockRefs(block)} /></p>}
-                {block.type === 'list' && <ul>{arr(block.items).map((item) => <li>{item}</li>)}</ul>}
+                {block.type === 'paragraph' && <p>{splitClaimRefsText(block.body).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)} <ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></p>}
+                {block.type === 'list' && <><ul>{arr(block.items).map((item) => <li>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</li>)}</ul><ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></>}
                 {block.type === 'equation' && <div class="equation">{block.equation}</div>}
-                {block.type === 'callout' && <aside class={blockClass(block.calloutType)}><h4>{block.title}</h4><p>{block.body}</p><ClaimRefs refs={blockRefs(block)} /></aside>}
-                {block.type === 'table' && table && <div class="table-frame"><table><caption>{table.title}</caption><thead><tr>{arr(table.columns).map((column) => <th>{column}</th>)}</tr></thead><tbody>{arr(table.rows).map((row: any[]) => <tr>{arr(row).map((cell) => <td>{cell}</td>)}</tr>)}</tbody></table>{table.notes && <p class="table-note">{table.notes}</p>}<ClaimRefs refs={blockRefs(table)} /></div>}
-                {block.type === 'figure' && figure && <figure class="mermaid-figure"><figcaption>{figure.id}: {figure.title}</figcaption><pre class="mermaid">{figure.mermaid}</pre>{figure.approximationNotes && <p>{figure.approximationNotes}</p>}<ClaimRefs refs={blockRefs(figure)} /></figure>}
+                {block.type === 'callout' && <aside class={blockClass(block.calloutType)}><h4>{block.title}</h4><p>{splitClaimRefsText(block.body).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p><ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></aside>}
+                {block.type === 'table' && table && <div class="table-frame"><table><caption>{table.title}</caption><thead><tr>{arr(table.columns).map((column) => <th>{column}</th>)}</tr></thead><tbody>{arr(table.rows).map((row: any[]) => <tr>{arr(row).map((cell) => <td>{splitClaimRefsText(cell).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</td>)}</tr>)}</tbody></table>{table.notes && <p class="table-note">{splitClaimRefsText(table.notes).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>}<ClaimRefs refs={blockRefs(table)} claims={claims} sources={sources} /></div>}
+                {block.type === 'figure' && figure && <FigureRenderer figure={figure} claims={claims} sources={sources} />}
               </>
             );
           })}
@@ -167,99 +180,124 @@ const fallbackMetrics = [
 
   {(data.topStrengths.length > 0 || data.topRisks.length > 0 || data.unresolvedGaps.length > 0) && (
     <section class="report-section three-col">
-      <article><h2>{labels.strengths}</h2>{arr(data.topStrengths).map((item) => <p>{item}</p>)}</article>
-      <article><h2>{labels.risks}</h2>{arr(data.topRisks).map((item) => <p>{item}</p>)}</article>
-      <article><h2>{labels.gaps}</h2>{arr(data.unresolvedGaps).map((item) => <p>{item}</p>)}</article>
+      <article><h2>{labels.strengths}</h2>{arr(data.topStrengths).map((item) => <p>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>)}</article>
+      <article><h2>{labels.risks}</h2>{arr(data.topRisks).map((item) => <p>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>)}</article>
+      <article><h2>{labels.gaps}</h2>{arr(data.unresolvedGaps).map((item) => <p>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>)}</article>
     </section>
   )}
 
   {arr(doc?.appendices).map((appendix: any) => (
     <section class="report-section appendix">
       <h2>Appendix {appendix.id}: {appendix.title}</h2>
-      {arr(appendix.blocks).map((block: any) => <p>{block.body ?? arr(block.items).join(' ')}</p>)}
+      {arr(appendix.blocks).map((block: any) => <p>{splitClaimRefsText(block.body ?? arr(block.items).join(' ')).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>)}
     </section>
   ))}
-
-  {arr(doc?.bibliography).length > 0 && (
-    <section class="report-section bibliography">
-      <h2>{labels.bibliography}</h2>
-      {arr(doc.bibliography).map((item: any) => <p><strong>{item.sourceRef}</strong> — {item.citation}</p>)}
-    </section>
-  )}
 
   {doc?.disclaimer && <section class="report-section disclaimer"><h2>{labels.disclaimer}</h2><p>{doc.disclaimer}</p></section>}
 
   {(claims.length > 0 || sources.length > 0) && (
     <section class="report-section evidence-index">
       <h2>{labels.evidence}</h2>
-      {claims.length > 0 && <div class="table-frame"><table><caption>Claims</caption><thead><tr><th>ID</th><th>Statement</th><th>Confidence</th><th>Sources</th></tr></thead><tbody>{claims.map((claim: any) => <tr id={`claim-${claim.id}`}><td>{claim.id}</td><td>{claim.statement}</td><td>{labelValue(claim.confidence)}</td><td>{arr(claim.sourceRefs).join(', ')}</td></tr>)}</tbody></table></div>}
-      {sources.length > 0 && <div class="table-frame"><table><caption>Sources</caption><thead><tr><th>ID</th><th>Publisher</th><th>Title</th><th>Quote</th></tr></thead><tbody>{sources.map((source: any) => <tr id={`source-${source.id}`}><td>{source.id}</td><td>{source.publisher}</td><td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td><td>{source.keyQuote}</td></tr>)}</tbody></table></div>}
+      {claims.length > 0 && <div class="table-frame"><table><caption>Claims</caption><thead><tr><th>ID</th><th>Statement</th><th>Confidence</th><th>Sources</th></tr></thead><tbody>{claims.map((claim: any) => <tr id={`claim-${claim.id}`}><td><a class="evidence-id" href={`#claim-${claim.id}`}>{claim.id}</a></td><td>{claim.statement}</td><td>{labelValue(claim.confidence)}</td><td>{arr(claim.sourceRefs).map((sourceRef, index) => <><a href={`#source-${sourceRef}`}>{sourceRef}</a>{index < arr(claim.sourceRefs).length - 1 ? ', ' : ''}</>)}</td></tr>)}</tbody></table></div>}
+      {sources.length > 0 && <div class="table-frame"><table><caption>Sources</caption><thead><tr><th>ID</th><th>Publisher</th><th>Title</th>{hasBibliographyCitations && <th>Citation</th>}<th>Quote</th></tr></thead><tbody>{sources.map((source: any) => <tr id={`source-${source.id}`}><td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td><td>{source.publisher}</td><td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td>{hasBibliographyCitations && <td>{bibliographyBySourceRef.get(source.id) ?? '—'}</td>}<td>{source.keyQuote}</td></tr>)}</tbody></table></div>}
     </section>
   )}
 </section>
 
+<script type="application/json" id="claim-link-map" set:html={JSON.stringify(claimLinkMap)}></script>
 <script type="module" is:inline>
-  const blocks = document.querySelectorAll('pre.mermaid');
-  if (blocks.length) {
-    import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
-      .then(({ default: mermaid }) => {
-        mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose' });
-        mermaid.run({ nodes: blocks });
-      })
-      .catch(() => {});
+  const claimLinkMapElement = document.getElementById('claim-link-map');
+  const claimLinkMap = claimLinkMapElement ? JSON.parse(claimLinkMapElement.textContent || '{}') : {};
+  const makeClaimRef = (ref) => {
+    const link = claimLinkMap[ref] || { href: `#claim-${ref}`, title: ref };
+    const span = document.createElement('span');
+    span.className = 'claim-ref';
+    span.append('[');
+    const anchor = document.createElement('a');
+    anchor.href = link.href;
+    anchor.textContent = ref;
+    anchor.title = link.title || ref;
+    span.append(anchor, ']');
+    return span;
+  };
+  const walker = document.createTreeWalker(document.querySelector('.report-shell'), NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const parent = node.parentElement;
+      if (!parent || parent.closest('script, style, pre, a, .claim-ref')) return NodeFilter.FILTER_REJECT;
+      return /\[C\d{3}\]/.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    },
+  });
+  const rawClaimTextNodes = [];
+  while (walker.nextNode()) rawClaimTextNodes.push(walker.currentNode);
+  for (const node of rawClaimTextNodes) {
+    const fragment = document.createDocumentFragment();
+    const text = node.nodeValue || '';
+    let lastIndex = 0;
+    for (const match of text.matchAll(/\[(C\d{3})\]/g)) {
+      if (match.index > lastIndex) fragment.append(text.slice(lastIndex, match.index));
+      fragment.append(makeClaimRef(match[1]));
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < text.length) fragment.append(text.slice(lastIndex));
+    node.parentNode?.replaceChild(fragment, node);
   }
+
 </script>
 
 <style>
   .report-shell { padding-block: var(--space-6) 0; overflow-x: clip; }
-  .report-cover { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); gap: var(--space-7); align-items: start; padding-block: 0 var(--space-6); border-bottom: var(--report-rule); }
+  .report-cover { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); gap: var(--space-7); align-items: start; padding-block: 0 var(--space-6); }
   .report-eyebrow { display: inline-block; margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
   .report-cover h1 { margin: 0 0 var(--space-4); max-width: 28ch; font-family: var(--font-display); font-size: var(--fs-3xl); font-weight: 700; letter-spacing: var(--tracking-display-tight); line-height: var(--lh-display-hero); }
-  .report-subtitle, .report-headline { max-width: 65ch; color: var(--ink-page); font-family: var(--font-sans); line-height: 1.55; }
+  .report-subtitle, .report-headline { width: 100%; color: var(--ink-page); font-family: var(--font-sans); line-height: 1.55; }
   .report-subtitle { font-size: var(--fs-md); color: var(--caption-gray); }
-  .report-meta-line { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); font-family: var(--font-sans); font-size: var(--fs-sm); }
+  .report-meta-line { display: flex; flex-wrap: wrap; column-gap: var(--space-4); row-gap: var(--space-2); margin-top: var(--space-4); font-family: var(--font-sans); font-size: var(--fs-sm); }
   .report-meta-line span { color: var(--caption-gray); }
-  .report-meta-line span + span::before { content: '·'; margin-right: var(--space-2); color: var(--hairline); }
-  .decision-card { align-self: start; border-top: var(--report-rule); border-bottom: var(--report-rule); background: transparent; padding-block: var(--space-4); }
+  .decision-card { align-self: start; border-top: 2px solid var(--claret); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
   .decision-card dl { margin: 0; display: grid; gap: var(--space-3); }
-  .decision-card div { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); border-bottom: var(--report-rule); padding-bottom: var(--space-2); }
-  .decision-card div:last-child { border-bottom: 0; padding-bottom: 0; }
+  .decision-card div { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); }
   .decision-card dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
   .decision-card dd { margin: 0; font-family: var(--font-display); font-weight: 700; color: var(--ink-page); text-align: right; }
-  .report-section, .report-chapter { padding-block: var(--space-6); border-bottom: var(--report-rule); }
+  .report-section, .report-chapter { padding-block: var(--space-6); }
+  .report-chapter { border-top: var(--report-rule); }
   .report-section h2, .report-chapter > h2 { margin: 0 0 var(--space-4); }
   .report-section h2 { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); font-size: var(--fs-sm); line-height: 1.2; }
   .report-chapter > h2 { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: 700; letter-spacing: var(--tracking-display-snug); line-height: var(--lh-display-block); }
   .report-chapter > h2 span { color: var(--claret); }
   .chapter-section { margin-top: var(--space-6); }
   .chapter-section h3 { margin-bottom: var(--space-3); font-size: var(--fs-xl); font-weight: 700; letter-spacing: var(--tracking-display-snug); }
-  .chapter-section p, .chapter-section li, .report-section p { max-width: 82ch; line-height: 1.68; }
+  .chapter-section p, .chapter-section li, .report-section p { width: 100%; max-width: none; line-height: 1.68; }
   .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
-  .metric-grid article { border-top: var(--report-rule); background: transparent; padding-block: var(--space-4); }
+  .metric-grid article { background: color-mix(in srgb, var(--surface-paper) 52%, transparent); padding: var(--space-4); }
   .metric-grid span { display: block; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
   .metric-grid strong { display: block; margin-top: var(--space-1); font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 700; letter-spacing: var(--tracking-display-snug); }
   .intro-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-4); }
-  .intro-grid div { border-top: var(--report-rule); background: transparent; padding-block: var(--space-3); }
+  .intro-grid div { background: color-mix(in srgb, var(--surface-paper) 42%, transparent); padding: var(--space-3); }
   .intro-grid dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
   .intro-grid dd { margin: var(--space-1) 0 0; }
-  .toc ol, .compact-list ol { columns: 2; }
+  .toc ol { columns: 2; }
   .toc a { color: var(--ink-page); text-decoration-color: var(--claret); }
   .report-callout { margin: var(--space-5) 0; border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 5%, transparent); padding: var(--space-4); }
   .report-callout h4 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--fs-xl); }
   .callout-opportunity { border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
   .callout-risk-alert { border-left-color: #b42318; background: color-mix(in srgb, #b42318 7%, transparent); }
-  .table-frame { width: 100%; max-width: 100%; overflow-x: auto; margin: var(--space-5) 0; border-top: var(--report-rule); border-bottom: var(--report-rule); background: transparent; }
-  table { width: 100%; min-width: min(720px, 100%); border-collapse: collapse; }
-  caption { caption-side: top; text-align: left; padding: var(--space-3) 0; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  th, td { border-top: var(--report-rule); padding: var(--space-3); text-align: left; vertical-align: top; }
+  .table-frame { width: 100%; max-width: 100%; overflow-x: auto; margin: var(--space-5) 0; background: transparent; }
+  table { width: 100%; min-width: 720px; border-collapse: collapse; background: transparent; border-top: var(--report-rule); border-bottom: var(--report-rule); font-family: var(--font-sans); }
+  caption { caption-side: top; text-align: left; padding: 0 0 var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  th, td { border-bottom: var(--report-rule); padding: var(--space-3); text-align: left; vertical-align: top; font-size: var(--fs-sm); }
   th { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  .table-note { margin: 0; padding: 0 var(--space-3) var(--space-3); color: var(--caption-gray); }
-  .mermaid-figure { margin: var(--space-6) 0; border-top: var(--report-rule); border-bottom: var(--report-rule); padding-block: var(--space-4); background: transparent; }
-  .mermaid-figure figcaption { margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  .mermaid { overflow-x: auto; background: color-mix(in srgb, white 42%, transparent); padding: var(--space-4); }
-  .equation { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, white 34%, transparent); border-top: var(--report-rule); border-bottom: var(--report-rule); padding: var(--space-4) 0; }
+  tbody tr:last-child td { border-bottom: 0; }
+  .table-note { margin: var(--space-3) 0 0; color: var(--caption-gray); font-size: var(--fs-sm); line-height: 1.5; }
+  .equation { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
   .three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
   .three-col article { border-top: var(--report-rule); padding-top: var(--space-3); }
-  .bibliography p, .disclaimer p { font-size: var(--fs-sm); color: var(--caption-gray); }
-  @media (max-width: 900px) { .report-cover, .metric-grid, .intro-grid, .three-col { grid-template-columns: 1fr; } .toc ol, .compact-list ol { columns: 1; } }
+  .disclaimer p { font-size: var(--fs-sm); color: var(--caption-gray); }
+  .evidence-index tr:target { background: color-mix(in srgb, var(--claret) 9%, transparent); scroll-margin-top: var(--space-6); }
+  .evidence-id { font-family: var(--font-mono); color: var(--claret); text-decoration: none; }
+  .evidence-id:hover, .evidence-id:focus-visible { text-decoration: underline; }
+  .report-shell :global(.claim-ref) { color: var(--caption-gray); font-family: var(--font-mono); font-size: var(--fs-xs); display: inline; margin-left: 0.25em; vertical-align: baseline; overflow-wrap: anywhere; }
+  .report-shell :global(.claim-ref a) { color: var(--claret); text-decoration: none; }
+  .report-shell :global(.claim-ref a:hover), .report-shell :global(.claim-ref a:focus-visible) { text-decoration: underline; }
+  .table-frame > :global(.claim-ref) { display: block; margin: var(--space-2) 0 0; }
+  @media (max-width: 900px) { .report-cover, .metric-grid, .intro-grid, .three-col { grid-template-columns: 1fr; } .toc ol { columns: 1; } }
 </style>

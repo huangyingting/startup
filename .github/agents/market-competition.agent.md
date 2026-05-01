@@ -18,10 +18,10 @@ Do not search the web. Use only the evidence ledger. Every fact must cite `claim
 Structure this section as an investor-grade VC diligence chapter:
 
 - Market definitions and sizing table.
-- TAM/SAM/SOM analysis with Mermaid figure spec.
+- TAM/SAM/SOM analysis with a structured native figure spec.
 - Market growth drivers and segment analysis.
 - Competitive overview, primary competitors, incumbent competitors, feature matrix, and moat assessment.
-- Mermaid quadrant chart for competitive positioning where evidence supports it.
+- Structured quadrant or competitive-matrix figure for competitive positioning where evidence supports it.
 
 ## Analysis rules
 

@@ -216,24 +216,58 @@ tables:
 figures:
 - id: F401
   title: Disclosed component of reported 2024 revenue pace
-  mermaidType: pie
-  mermaid: |-
-    pie showData
-      title Reported 2024 revenue pace: disclosed Azure resale share vs undisclosed remainder
-      "Azure resale share (reported)" : 5.9
-      "All other revenue streams (mix undisclosed)" : 94.1
+  type: metric-bars
+  layout: compact
+  summary: Reported 2024 revenue pace split between disclosed Azure resale share and undisclosed remainder.
+  data:
+    items:
+    - label: Azure resale share (reported)
+      value: 5.9
+      displayValue: 5.9%
+      tone: neutral
+    - label: All other revenue streams (mix undisclosed)
+      value: 94.1
+      displayValue: 94.1%
+      tone: positive
   approximationNotes: This is not a full revenue-mix chart. It only visualizes the one disclosed subcomponent inside the reported $3.4B revenue pace using the arithmetic in T402 [C017].
   claimRefs:
   - C017
 - id: F402
   title: Unit-economics waterfall under public-data constraints
-  mermaidType: flowchart
-  mermaid: |-
-    flowchart LR
-      A["List price anchor<br/>Team annual billing implies $300 per seat-year; monthly billing implies $360 [C020]"] --> B["Net realized revenue per seat<br/>Unknown: plan mix across Team / Enterprise / Edu and discounts not disclosed [C019][C020]"]
-      B --> C["Gross profit per seat<br/>Unknown: compute, inference, support, and partner-share costs not disclosed"]
-      C --> D["CAC recovery<br/>Unknown: acquisition cost by self-serve vs enterprise not disclosed"]
-      D --> E["LTV / CAC and payback<br/>Unknown pending retention and gross-margin data"]
+  type: flow
+  layout: standard
+  summary: Structural unit-economics waterfall showing where public data stops.
+  data:
+    nodes:
+    - id: A
+      label: List price anchor
+      detail: Team annual billing implies $300 per seat-year; monthly billing implies $360 [C020]
+      tone: positive
+    - id: B
+      label: Net realized revenue per seat
+      detail: Unknown plan mix across Team, Enterprise, Edu, and discounts [C019][C020]
+      tone: risk
+    - id: C
+      label: Gross profit per seat
+      detail: Compute, inference, support, and partner-share costs are not disclosed
+      tone: risk
+    - id: D
+      label: CAC recovery
+      detail: Acquisition cost by self-serve versus enterprise is not disclosed
+      tone: risk
+    - id: E
+      label: LTV / CAC and payback
+      detail: Unknown pending retention and gross-margin data
+      tone: risk
+    edges:
+    - from: A
+      to: B
+    - from: B
+      to: C
+    - from: C
+      to: D
+    - from: D
+      to: E
   approximationNotes: The figure is intentionally structural rather than numeric beyond the list-price anchor because retained public evidence does not disclose realized discounts, cost stack, CAC, or retention.
   claimRefs:
   - C019

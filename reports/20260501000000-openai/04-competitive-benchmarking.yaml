@@ -212,18 +212,21 @@ tables:
 figures:
 - id: F301
   title: Competitive positioning on evidence-backed axes
-  mermaidType: quadrantChart
-  mermaid: |-
-    quadrantChart
-      title Evidence-backed positioning: distribution breadth vs infrastructure/control leverage
-      x-axis Low distribution breadth --> High distribution breadth
-      y-axis Low infrastructure/control leverage --> High infrastructure/control leverage
-      quadrant-1 Strategic platforms
-      quadrant-2 Distribution leaders
-      quadrant-3 Narrow challengers
-      quadrant-4 Infrastructure-heavy incumbents
-      OpenAI: [0.88, 0.78]
-      Microsoft: [0.80, 0.92]
+  type: quadrant
+  layout: standard
+  summary: Evidence-backed positioning by distribution breadth and infrastructure/control leverage.
+  data:
+    xAxis: Distribution breadth
+    yAxis: Infrastructure/control leverage
+    points:
+    - label: OpenAI
+      x: 88
+      y: 78
+      tone: positive
+    - label: Microsoft
+      x: 80
+      y: 92
+      tone: neutral
   approximationNotes: Positions are relative investment judgments based only on retained evidence. OpenAI and Microsoft are the only named entities plotted because the ledger does not support equivalent factual ranking for additional companies.
   claimRefs:
   - C011
@@ -237,14 +240,29 @@ figures:
   - C050
 - id: F302
   title: OpenAI competitive moat stack
-  mermaidType: flowchart
-  mermaid: |-
-    flowchart TB
-      A["Brand and category creation<br/>ChatGPT catalyzed generative-AI adoption [C049]"] --> B["Consumer reach<br/>Official mobile apps + company-claimed hundreds of millions of users [C008][C009][C010]"]
-      B --> C["Enterprise conversion<br/>Team pricing + customization + 1M paid corporate users [C019][C020][C021]"]
-      C --> D["Developer platform<br/>SDKs, tools, pricing, GitHub/PyPI footprint [C007][C022][C023][C024][C028][C029][C030][C031]"]
-      D --> E["Workflow expansion<br/>Codex + apps + commerce + multimodal surfaces [C022][C025][C026][C027][C050]"]
-      E --> F["Constraint layer<br/>Azure dependency + antitrust scrutiny + litigation [C011][C036][C037][C038][C039][C040]"]
+  type: stack
+  layout: standard
+  summary: Moat formation sequence with constraints surfaced explicitly.
+  data:
+    layers:
+    - label: Brand and category creation
+      detail: ChatGPT catalyzed generative-AI adoption [C049]
+      tone: positive
+    - label: Consumer reach
+      detail: Official mobile apps plus company-claimed hundreds of millions of users [C008][C009][C010]
+      tone: positive
+    - label: Enterprise conversion
+      detail: Team pricing, customization, and 1M paid corporate users [C019][C020][C021]
+      tone: positive
+    - label: Developer platform
+      detail: SDKs, tools, pricing, and GitHub/PyPI footprint [C007][C022][C023][C024][C028][C029][C030][C031]
+      tone: positive
+    - label: Workflow expansion
+      detail: Codex, apps, commerce, and multimodal surfaces [C022][C025][C026][C027][C050]
+      tone: opportunity
+    - label: Constraint layer
+      detail: Azure dependency, antitrust scrutiny, and litigation [C011][C036][C037][C038][C039][C040]
+      tone: risk
   approximationNotes: The chart emphasizes moat formation and constraint sequence, not causal certainty or quantified contribution.
   claimRefs:
   - C007

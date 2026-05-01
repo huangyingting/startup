@@ -1,11 +1,11 @@
 ---
-description: "Use when: generating a startup due diligence report for a named company. Keywords: startup diligence, VC report, investment report, YAML artifacts, Mermaid charts."
+description: "Use when: generating a startup due diligence report for a named company. Keywords: startup diligence, VC report, investment report, YAML artifacts, structured figures."
 name: "Startup Research"
 model: "GPT-5.4 (copilot)"
 tools: [agent, read, edit, execute, todo]
 ---
 
-Orchestrate one complete `startup-diligence-report-v2` run for a named existing company. The final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and Mermaid-based diagrams/charts.
+Orchestrate one complete `startup-diligence-report-v2` run for a named existing company. The final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
 
 ## Invocation contract
 
@@ -64,7 +64,7 @@ Report folder: <absolute path>
 Schema: startup-diligence-report-v2
 Schema reference: <absolute path to .github/agents/startup-diligence.schema.md>
 YAML syntax reference: <absolute path to .github/agents/yaml-syntax.md>
-Style target: comprehensive VC due diligence report; tables and Mermaid diagrams required.
+Style target: comprehensive VC due diligence report; tables and structured native figures required.
 Evidence rule: every external factual assertion must cite claimRefs / inline [Cxxx].
 ```
 
@@ -77,7 +77,7 @@ Evidence rule: every external factual assertion must cite claimRefs / inline [Cx
 - Every claim with `sourceRefs` must reference fetched sources with `fetchVerified: true`.
 - Use `null` rather than invented values.
 - Numeric KPI fields must be numbers, not strings. Put ranges or caveats in adjacent narrative fields.
-- Mermaid code must be valid Mermaid and must be labeled approximate when the original chart type cannot be represented exactly.
+- Figure specs must be structured YAML objects using `type`, `layout`, and typed `data` arrays; do not use legacy diagram-language source.
 
 ## Validation gates
 
@@ -98,4 +98,4 @@ After `Startup Report Writer`:
 
 ## Final response
 
-Summarize: report folder, generated YAML files, source count, claim count, recommendation, confidence, risk rating, valuation stance, Mermaid figure count, table count, validation status, and main diligence gaps.
+Summarize: report folder, generated YAML files, source count, claim count, recommendation, confidence, risk rating, valuation stance, structured figure count, table count, validation status, and main diligence gaps.

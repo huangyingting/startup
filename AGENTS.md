@@ -16,7 +16,7 @@
 ## Report workflow
 - Use the `Startup Research` agent for a full named-company report.
 - The pipeline is: `Startup Report Evidence Analyst → Startup Market and Competition Analyst → Startup Financial and Product Analyst → Startup Risk and Valuation Analyst → Startup Report Writer → Startup Report Translator ZH`.
-- The current generation schema is `startup-diligence-report-v2`, a report schema with evidence ledger, startup introduction, chapter documents, table/figure specs, Mermaid diagrams, and report-card metadata rendered by the website.
+- The current generation schema is `startup-diligence-report-v2`, a report schema with evidence ledger, startup introduction, chapter documents, table specs, structured native figure specs, and report-card metadata rendered by the website.
 - Only `Startup Report Evidence Analyst` should use web research tools. Downstream agents must work from `01-evidence-ledger.yaml` and cite `claimRefs`.
 - Downstream stages must not run until upstream YAML exists, parses, and all `claimRefs` / `sourceRefs` are valid.
 - Failed or duplicate partial report folders should not remain directly under `reports/`.
@@ -32,4 +32,4 @@
 - Use descriptive camelCase field names.
 - Include units in numeric field names where useful, such as `revenueRunRateUsdM`, `arrUsdM`, `grossMarginPct`, `nrrPct`, `burnMultiple`, `cacPaybackMonths`, `valuationUsdM`. Numeric KPI fields must be numbers, not strings.
 - Use 2-space indentation. Quote strings containing `: `.
-- Mermaid diagrams/charts should be stored in YAML literal blocks and rendered by the website from `10-report-document.yaml`.
+- Figures/charts should be stored as structured YAML specs (`type`, `layout`, `summary`, `data`) and rendered by native website components from `10-report-document.yaml`.

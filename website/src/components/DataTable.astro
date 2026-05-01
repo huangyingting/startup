@@ -14,8 +14,10 @@ interface Props {
   columns: Column[];
   emptyLabel?: string;
   lang?: Lang;
+  claims?: any[];
+  sources?: any[];
 }
-const { title, rows = [], columns, emptyLabel = 'Not disclosed', lang = 'en' } = Astro.props;
+const { title, rows = [], columns, emptyLabel = 'Not disclosed', lang = 'en', claims = [], sources = [] } = Astro.props;
 const evidenceHeading = lang === 'zh' ? '证据' : 'Evidence';
 const hasClaimRefs = rows.some((row) => Array.isArray(row?.claimRefs) && row.claimRefs.length > 0);
 const zhDisplayMap: Record<string, string> = {
@@ -39,7 +41,7 @@ function formatCell(value: unknown) {
         {rows.map((row) => (
           <tr>
             {columns.map((column) => <td>{formatCell(column.render ? column.render(row) : column.key ? row?.[column.key] : undefined)}</td>)}
-            {hasClaimRefs && <td class="refs-cell"><ClaimRefs refs={row?.claimRefs ?? []} /></td>}
+            {hasClaimRefs && <td class="refs-cell"><ClaimRefs refs={row?.claimRefs ?? []} claims={claims} sources={sources} /></td>}
           </tr>
         ))}
       </tbody>
@@ -50,26 +52,19 @@ function formatCell(value: unknown) {
   .table-wrap {
     overflow-x: auto;
     margin-top: var(--space-5);
-    border: var(--report-rule);
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--surface-paper) 92%, white);
-    box-shadow: 0 1px 0 color-mix(in srgb, var(--hairline) 45%, transparent);
+    background: transparent;
   }
   .report-table {
     min-width: 720px;
-    border: 0;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
     background: transparent;
   }
   .report-table caption {
     text-align: left;
-    padding: var(--space-3) var(--space-4);
-    border-bottom: var(--report-rule);
-    background: color-mix(in srgb, var(--claret) 6%, transparent);
+    padding: 0 0 var(--space-3);
     font-family: var(--font-sans);
     font-variant-caps: all-small-caps;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: var(--tracking-eyebrow);
     color: var(--claret);
     caption-side: top;
@@ -77,16 +72,13 @@ function formatCell(value: unknown) {
   .report-table th,
   .report-table td {
     border-bottom: var(--report-rule);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3);
     vertical-align: top;
+    font-size: var(--fs-sm);
   }
   .report-table th {
-    background: color-mix(in srgb, var(--paper) 80%, white);
-    color: color-mix(in srgb, var(--claret) 88%, var(--ink-page));
+    color: var(--claret);
     white-space: nowrap;
-  }
-  .report-table tbody tr:nth-child(even) {
-    background: color-mix(in srgb, var(--paper) 72%, white);
   }
   .report-table tbody tr:hover {
     background: color-mix(in srgb, var(--claret) 5%, transparent);

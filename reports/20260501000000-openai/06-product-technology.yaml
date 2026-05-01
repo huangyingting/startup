@@ -230,15 +230,32 @@ tables:
 figures:
 - id: F501
   title: OpenAI platform architecture
-  mermaidType: flowchart
-  mermaid: |-
-    flowchart TB
-      U["Users and builders<br/>Consumers, enterprises, developers"] --> C["Client surfaces<br/>ChatGPT web/mobile + Codex + ChatGPT apps [C008][C026][C027]"]
-      C --> A["Application layer<br/>Responses API + official SDKs [C007][C022][C029][C030]"]
-      A --> T["Tool layer<br/>Web search + file search + image generation + hosted shell + computer use + MCP [C022]"]
-      T --> G["Agent / eval layer<br/>Agents SDK + tracing / guardrails + Evals [C031][C034]"]
-      G --> M["Model layer<br/>GPT-5.5 flagship family + Sora 2 APIs + multimodal capability [C022][C025][C032]"]
-      M --> I["Infrastructure layer<br/>Azure powers all OpenAI workloads [C011][C013]"]
+  type: architecture-stack
+  layout: wide
+  summary: Evidence-backed functional layers of OpenAI's product and platform surface.
+  data:
+    layers:
+    - label: Users and builders
+      detail: Consumers, enterprises, and developers
+      tone: neutral
+    - label: Client surfaces
+      detail: ChatGPT web/mobile, Codex, and ChatGPT apps [C008][C026][C027]
+      tone: positive
+    - label: Application layer
+      detail: Responses API and official SDKs [C007][C022][C029][C030]
+      tone: positive
+    - label: Tool layer
+      detail: Web search, file search, image generation, hosted shell, computer use, and MCP [C022]
+      tone: positive
+    - label: Agent / eval layer
+      detail: Agents SDK, tracing, guardrails, and Evals [C031][C034]
+      tone: opportunity
+    - label: Model layer
+      detail: GPT-5.5 flagship family, Sora 2 APIs, and multimodal capability [C022][C025][C032]
+      tone: positive
+    - label: Infrastructure layer
+      detail: Azure powers all OpenAI workloads [C011][C013]
+      tone: risk
   approximationNotes: The diagram shows evidence-backed functional layers rather than a literal internal system topology.
   claimRefs:
   - C007
@@ -256,16 +273,23 @@ figures:
   - C034
 - id: F502
   title: Product and technology roadmap signals
-  mermaidType: timeline
-  mermaid: |-
-    timeline
-      title Evidence-backed product and technology progression
-      2024-04 : Enterprise customization expands with fine-tuning and custom model options [C021]
-      2025-2026 : Responses API surfaces tools including hosted shell, computer use, and MCP [C022]
-      2025-2026 : GPT-5.5 positioned as flagship model family [C022]
-      2025-2026 : Agents SDK shows high merged-PR velocity in company-reported update [C051]
-      2026 : Docs show ChatGPT apps, commerce, and Codex ecosystem expansion [C026][C027][C050][C052]
-      2026-09-24 : Sora 2 and Sora 2 Pro API docs list deprecation date [C025]
+  type: timeline
+  layout: standard
+  summary: Evidence-backed product and technology progression.
+  data:
+    items:
+    - label: 2024-04
+      detail: Enterprise customization expands with fine-tuning and custom model options [C021]
+    - label: 2025-2026
+      detail: Responses API surfaces tools including hosted shell, computer use, and MCP [C022]
+    - label: 2025-2026
+      detail: GPT-5.5 positioned as flagship model family [C022]
+    - label: 2025-2026
+      detail: Agents SDK shows high merged-PR velocity in company-reported update [C051]
+    - label: '2026'
+      detail: Docs show ChatGPT apps, commerce, and Codex ecosystem expansion [C026][C027][C050][C052]
+    - label: 2026-09-24
+      detail: Sora 2 and Sora 2 Pro API docs list deprecation date [C025]
   approximationNotes: Dates follow the precision available in retained evidence; undated current-doc signals are intentionally grouped rather than assigned speculative launch dates.
   claimRefs:
   - C021

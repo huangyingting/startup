@@ -293,13 +293,40 @@ tables:
 figures:
   - id: F801
     title: Investment recommendation logic
-    mermaidType: flowchart
-    mermaid: |-
-      flowchart TB
-        A["Strong platform evidence<br/>Distribution, enterprise traction, and product breadth [C019][C022][C026][C050]"] --> B["Valuation anchor available<br/>$157B closed round; $3.4B reported revenue pace [C014][C017][C046]"]
-        B --> C["Quality of disclosure still incomplete<br/>Governance/control open question + no audited standalone financials [C041][C045]"]
-        C --> D["Risk overhang remains significant<br/>EU, FTC, and copyright matters unresolved [C036][C037][C038][C039][C040]"]
-        D --> E["Recommendation: track<br/>Engage only with stronger disclosure, protection, or better entry point"]
+    type: decision-map
+    layout: standard
+    summary: Evidence-led recommendation chain from platform strength to underwriting constraints.
+    data:
+      nodes:
+        - id: A
+          label: Strong platform evidence
+          detail: Distribution, enterprise traction, and product breadth [C019][C022][C026][C050]
+          tone: positive
+        - id: B
+          label: Valuation anchor available
+          detail: $157B closed round and $3.4B reported revenue pace [C014][C017][C046]
+          tone: neutral
+        - id: C
+          label: Disclosure incomplete
+          detail: Governance/control open question plus no audited standalone financials [C041][C045]
+          tone: risk
+        - id: D
+          label: Risk overhang significant
+          detail: EU, FTC, and copyright matters unresolved [C036][C037][C038][C039][C040]
+          tone: risk
+        - id: E
+          label: "Recommendation: track"
+          detail: Engage only with stronger disclosure, protection, or better entry point
+          tone: neutral
+      edges:
+        - from: A
+          to: B
+        - from: B
+          to: C
+        - from: C
+          to: D
+        - from: D
+          to: E
     approximationNotes: The diagram shows the evidence-led recommendation chain rather than a quantitative investment model.
     claimRefs:
       - C014
@@ -318,13 +345,25 @@ figures:
       - C050
   - id: F802
     title: Implied value-to-revenue sensitivity at selected valuation marks
-    mermaidType: xychart
-    mermaid: |-
-      xychart-beta
-        title "Implied value / revenue multiple using reported $3.4B revenue pace"
-        x-axis ["$120B scenario", "$157B closed", "$200B scenario", "$340B discussion"]
-        y-axis "Value / Revenue (x)" 0 --> 110
-        bar [35.3, 46.2, 58.8, 100.0]
+    type: sensitivity
+    layout: standard
+    summary: Implied value / revenue multiple using reported $3.4B revenue pace.
+    data:
+      series:
+        - label: Value / revenue multiple
+          points:
+            - label: $120B scenario
+              value: 35.3
+              displayValue: 35.3x
+            - label: $157B closed
+              value: 46.2
+              displayValue: 46.2x
+            - label: $200B scenario
+              value: 58.8
+              displayValue: 58.8x
+            - label: $340B discussion
+              value: 100.0
+              displayValue: 100.0x
     approximationNotes: The $157B and $340B inputs come from retained evidence [C014][C016][C046]. The $120B and $200B points are sensitivity assumptions only, included to show how quickly multiples move around the same revenue anchor [C017].
     claimRefs:
       - C014

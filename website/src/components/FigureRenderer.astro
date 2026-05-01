@@ -1,0 +1,231 @@
+---
+import ClaimRefs from './ClaimRefs.astro';
+
+interface Props {
+  figure: any;
+  claims?: any[];
+  sources?: any[];
+}
+
+const { figure, claims = [], sources = [] } = Astro.props;
+const type = figure?.type ?? 'flow';
+const layout = figure?.layout ?? 'standard';
+const data = figure?.data ?? {};
+const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
+const pct = (value: unknown) => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(100, n));
+};
+const relativePct = (value: unknown, max: number) => {
+  const n = Number(value);
+  if (!Number.isFinite(n) || max <= 0) return 0;
+  return Math.max(4, Math.min(100, (n / max) * 100));
+};
+const pointPct = (value: unknown) => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 50;
+  return Math.max(4, Math.min(96, n));
+};
+const toneClass = (tone: unknown) => `tone-${String(tone ?? 'neutral').replace(/[^a-z0-9-]/gi, '-')}`;
+const blockRefs = (block: any) => arr<string>(block?.claimRefs).slice(0, 6);
+const flowNodes = arr(data.nodes);
+const flowEdges = arr(data.edges);
+const timelineItems = arr(data.items);
+const barItems = arr(data.items);
+const barMax = Math.max(100, ...barItems.map((item: any) => Number(item.value) || 0));
+const quadrantPoints = arr(data.points);
+const matrixRows = arr(data.rows);
+const matrixColumns = arr(data.columns);
+const stackLayers = arr(data.layers ?? data.items);
+---
+
+<figure class:list={['native-figure', `figure-${type}`, `layout-${layout}`]}>
+  <figcaption>{figure.id}: {figure.title}</figcaption>
+
+  {figure.summary && <p class="figure-summary">{figure.summary}</p>}
+
+  {type === 'timeline' && (
+    <ol class="timeline-viz">
+      {timelineItems.map((item: any) => (
+        <li>
+          <span class="timeline-marker">{item.date ?? item.label}</span>
+          <strong>{item.label}</strong>
+          {item.detail && <p>{item.detail}</p>}
+        </li>
+      ))}
+    </ol>
+  )}
+
+  {(type === 'flow' || type === 'decision-map' || type === 'evidence-map') && (
+    <div class="flow-viz">
+      <div class="flow-grid">
+        {flowNodes.map((node: any, index: number) => (
+          <article class:list={['flow-node', toneClass(node.tone)]}>
+            <span>{node.kicker ?? node.id}</span>
+            <i>{String(index + 1).padStart(2, '0')}</i>
+            <strong>{node.label}</strong>
+            {node.detail && <p>{node.detail}</p>}
+          </article>
+        ))}
+      </div>
+      {flowEdges.length > 0 && (
+        <ol class="edge-list" aria-label="Relationships">
+          {flowEdges.map((edge: any) => (
+            <li><span>{edge.from}</span><b>→</b><span>{edge.to}</span>{edge.label && <em>{edge.label}</em>}</li>
+          ))}
+        </ol>
+      )}
+    </div>
+  )}
+
+  {(type === 'bars' || type === 'metric-bars' || type === 'pie' || type === 'waterfall') && (
+    <div class="bars-viz">
+      {barItems.map((item: any) => (
+        <div class:list={['bar-row', toneClass(item.tone)]}>
+          <div class="bar-label"><strong>{item.label}</strong>{item.detail && <span>{item.detail}</span>}</div>
+          <div class="bar-track"><span style={`width: ${relativePct(item.value, barMax)}%`}></span></div>
+          <b>{item.displayValue ?? item.value}</b>
+        </div>
+      ))}
+    </div>
+  )}
+
+  {(type === 'quadrant' || type === 'competitive-matrix') && (
+    <div class="quadrant-viz">
+      <div class="axis axis-y">{data.yAxis ?? 'Higher'}</div>
+      <div class="axis axis-x">{data.xAxis ?? 'Higher'}</div>
+      <span class="quad-label quad-top-left">Low x / High y</span>
+      <span class="quad-label quad-top-right">High x / High y</span>
+      <span class="quad-label quad-bottom-left">Low x / Low y</span>
+      <span class="quad-label quad-bottom-right">High x / Low y</span>
+      {quadrantPoints.map((point: any) => (
+        <span class:list={['quad-point', toneClass(point.tone)]} style={`left: ${pointPct(point.x)}%; bottom: ${pointPct(point.y)}%`}><b></b>{point.label}</span>
+      ))}
+    </div>
+  )}
+
+  {(type === 'matrix' || type === 'risk-heatmap') && (
+    <div class="matrix-viz" style={`--matrix-cols: ${Math.max(matrixColumns.length, 1)}`}>
+      {matrixColumns.length > 0 && <span class="matrix-corner"></span>}
+      {matrixColumns.map((column: any) => <strong class="matrix-head">{column}</strong>)}
+      {matrixRows.map((row: any) => (
+        <>
+          <strong class="matrix-row-head">{row.label}</strong>
+          {arr(row.values).map((cell: any) => <span class:list={['matrix-cell', toneClass(cell.tone)]}>{cell.label ?? cell}</span>)}
+        </>
+      ))}
+    </div>
+  )}
+
+  {(type === 'stack' || type === 'architecture-stack') && (
+    <div class="stack-viz">
+      {stackLayers.map((layer: any) => (
+        <article class:list={['stack-layer', toneClass(layer.tone)]}>
+          <span></span>
+          <strong>{layer.label}</strong>
+          {layer.detail && <p>{layer.detail}</p>}
+        </article>
+      ))}
+    </div>
+  )}
+
+  {(type === 'sensitivity' || type === 'xy') && (
+    <div class="sensitivity-viz">
+      {arr(data.series).map((series: any) => (
+        <section>
+          <strong>{series.label}</strong>
+          <div class="scale"><span>Low</span><span>Mid</span><span>High</span></div>
+          <div class="bars-viz compact">
+            {arr(series.points).map((point: any) => {
+              const points = arr(series.points);
+              const max = Math.max(...points.map((candidate: any) => Number(candidate.value) || 0), 1);
+              return (
+              <div class="bar-row tone-neutral">
+                <div class="bar-label"><strong>{point.label}</strong></div>
+                <div class="bar-track"><span style={`width: ${relativePct(point.value, max)}%`}></span></div>
+                <b>{point.displayValue ?? point.value}</b>
+              </div>
+            )})}
+          </div>
+        </section>
+      ))}
+    </div>
+  )}
+
+  {figure.approximationNotes && <p class="figure-note">{figure.approximationNotes}</p>}
+  <ClaimRefs refs={blockRefs(figure)} claims={claims} sources={sources} />
+</figure>
+
+<style>
+  .native-figure { --figure-width: 760px; width: min(100%, var(--figure-width)); margin: var(--space-6) auto; padding: var(--space-4); background: linear-gradient(180deg, color-mix(in srgb, var(--surface-paper) 72%, transparent), color-mix(in srgb, var(--surface-paper) 48%, transparent)); border-top: 2px solid var(--claret); box-shadow: 0 18px 40px rgba(0,0,0,0.045); }
+  .layout-compact { --figure-width: 560px; }
+  .layout-standard { --figure-width: 760px; }
+  .layout-wide { --figure-width: 980px; }
+  figcaption { margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-2xs); font-weight: 700; letter-spacing: 0.04em; line-height: 1.35; color: var(--claret); }
+  .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--fs-sm); line-height: 1.5; }
+  .figure-note { margin-top: var(--space-3); }
+  .timeline-viz { position: relative; display: grid; gap: var(--space-3); margin: 0; padding: 0 0 0 var(--space-5); list-style: none; }
+  .timeline-viz::before { content: ''; position: absolute; left: 0.43rem; top: 0.35rem; bottom: 0.35rem; width: 2px; background: linear-gradient(var(--claret), color-mix(in srgb, var(--claret) 18%, transparent)); }
+  .timeline-viz li { position: relative; display: grid; grid-template-columns: minmax(92px, 0.25fr) minmax(0, 1fr); gap: var(--space-3); border-top: var(--report-rule); padding-top: var(--space-3); }
+  .timeline-viz li::before { content: ''; position: absolute; left: calc(-1 * var(--space-5) + 0.09rem); top: var(--space-3); width: 0.78rem; height: 0.78rem; border: 2px solid var(--claret); border-radius: 999px; background: var(--surface-page); box-shadow: 0 0 0 4px color-mix(in srgb, var(--claret) 8%, transparent); }
+  .timeline-marker, .flow-node span { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--claret); }
+  .timeline-viz strong, .flow-node strong, .stack-layer strong { font-family: var(--font-display); font-size: var(--fs-md); line-height: 1.2; }
+  .timeline-viz p, .flow-node p, .stack-layer p { grid-column: 2; margin: 0; color: var(--caption-gray); font-size: var(--fs-sm); line-height: 1.45; }
+  .flow-viz { display: grid; gap: var(--space-3); }
+  .flow-grid { counter-reset: flow-step; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--space-4); align-items: stretch; }
+  .flow-node, .stack-layer { position: relative; border-top: 2px solid var(--claret); background: color-mix(in srgb, var(--surface-paper) 62%, transparent); padding: var(--space-3); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--claret) 8%, transparent); }
+  .flow-node::after { content: '→'; position: absolute; right: calc(-1 * var(--space-3)); top: 50%; transform: translateY(-50%); color: var(--claret); font-family: var(--font-display); font-size: var(--fs-xl); line-height: 1; }
+  .flow-node:last-child::after { content: none; }
+  .flow-node i { position: absolute; right: var(--space-2); top: var(--space-2); font-style: normal; font-family: var(--font-mono); font-size: var(--fs-2xs); color: color-mix(in srgb, var(--caption-gray) 78%, transparent); }
+  .edge-list { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-3) 0 0; padding: 0; list-style: none; font-family: var(--font-sans); font-size: var(--fs-xs); color: var(--caption-gray); }
+  .edge-list::before { content: 'relationships'; align-self: center; font-variant-caps: all-small-caps; letter-spacing: 0.05em; color: var(--claret); }
+  .edge-list li { display: flex; align-items: center; gap: 0.45rem; border: var(--report-rule); background: color-mix(in srgb, var(--surface-paper) 42%, transparent); padding: var(--space-1) var(--space-2); }
+  .edge-list b { color: var(--claret); }
+  .edge-list em { font-style: normal; color: var(--ink-page); }
+  .bars-viz { display: grid; gap: var(--space-3); }
+  .bars-viz.compact { margin-top: var(--space-2); }
+  .bar-row { display: grid; grid-template-columns: minmax(130px, 0.8fr) minmax(160px, 1.5fr) auto; gap: var(--space-3); align-items: center; }
+  .bar-label { display: grid; gap: 0.1rem; font-family: var(--font-sans); font-size: var(--fs-sm); }
+  .bar-label span { color: var(--caption-gray); font-size: var(--fs-xs); }
+  .bar-track { height: 0.72rem; background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--claret) 7%, transparent), color-mix(in srgb, var(--claret) 7%, transparent) 1px, transparent 1px, transparent 20%); border: 1px solid color-mix(in srgb, var(--claret) 14%, transparent); overflow: hidden; }
+  .bar-track span { display: block; height: 100%; background: linear-gradient(90deg, color-mix(in srgb, var(--claret) 84%, #000), var(--claret)); }
+  .bar-row b { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-page); }
+  .quadrant-viz { position: relative; min-height: 380px; border: var(--report-rule); background: linear-gradient(90deg, transparent 49.8%, var(--border-muted) 50%, transparent 50.2%), linear-gradient(0deg, transparent 49.8%, var(--border-muted) 50%, transparent 50.2%), radial-gradient(circle at 75% 75%, color-mix(in srgb, #0f766e 9%, transparent), transparent 42%), radial-gradient(circle at 75% 25%, color-mix(in srgb, var(--gold) 11%, transparent), transparent 42%); }
+  .axis { position: absolute; font-family: var(--font-sans); font-size: var(--fs-xs); color: var(--caption-gray); }
+  .axis-y { left: var(--space-2); top: var(--space-2); writing-mode: vertical-rl; }
+  .axis-x { right: var(--space-2); bottom: var(--space-2); }
+  .quad-label { position: absolute; font-family: var(--font-sans); font-size: var(--fs-2xs); color: color-mix(in srgb, var(--caption-gray) 72%, transparent); text-transform: uppercase; letter-spacing: 0.05em; }
+  .quad-top-left { left: var(--space-2); top: var(--space-2); }
+  .quad-top-right { right: var(--space-2); top: var(--space-2); }
+  .quad-bottom-left { left: var(--space-2); bottom: var(--space-2); }
+  .quad-bottom-right { right: var(--space-2); bottom: var(--space-2); }
+  .quad-point { position: absolute; transform: translate(-50%, 50%); display: inline-flex; align-items: center; gap: 0.35rem; max-width: 16ch; border-top: 2px solid var(--claret); background: var(--surface-page); padding: var(--space-2); font-family: var(--font-sans); font-size: var(--fs-xs); line-height: 1.2; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+  .quad-point b { display: inline-block; width: 0.58rem; height: 0.58rem; border-radius: 999px; background: var(--claret); flex: 0 0 auto; }
+  .matrix-viz { display: grid; grid-template-columns: minmax(120px, 0.8fr) repeat(var(--matrix-cols), minmax(130px, 1fr)); gap: 2px; overflow-x: auto; background: var(--border-muted); border: var(--report-rule); }
+  .matrix-viz > * { min-height: 4.7rem; background: var(--surface-page); padding: var(--space-3); font-family: var(--font-sans); font-size: var(--fs-xs); }
+  .matrix-head, .matrix-row-head { color: var(--claret); font-variant-caps: all-small-caps; letter-spacing: 0.04em; }
+  .matrix-cell { display: flex; align-items: end; line-height: 1.25; }
+  .stack-viz { display: grid; gap: var(--space-2); }
+  .figure-architecture-stack .stack-viz { grid-template-columns: minmax(0, 1fr); }
+  .stack-layer { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); align-items: start; }
+  .stack-layer span { width: 0.72rem; height: 100%; min-height: 2rem; background: var(--claret); opacity: 0.8; }
+  .stack-layer p { grid-column: 2; }
+  .sensitivity-viz { display: grid; gap: var(--space-4); }
+  .sensitivity-viz > section { border-top: var(--report-rule); padding-top: var(--space-3); }
+  .sensitivity-viz > section > strong { font-family: var(--font-display); font-size: var(--fs-md); }
+  .scale { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: var(--space-2); color: var(--caption-gray); font-family: var(--font-mono); font-size: var(--fs-2xs); text-transform: uppercase; }
+  .scale span:nth-child(2) { text-align: center; }
+  .scale span:nth-child(3) { text-align: right; }
+  .tone-positive { border-top-color: #0f766e; }
+  .tone-risk, .tone-critical, .tone-high { border-top-color: #b42318; }
+  .tone-opportunity { border-top-color: var(--gold); }
+  .tone-neutral, .tone-medium { border-top-color: var(--claret); }
+  .tone-positive .bar-track span, .tone-positive.stack-layer span, .tone-positive.quad-point b { background: #0f766e; }
+  .tone-risk .bar-track span, .tone-critical .bar-track span, .tone-high .bar-track span, .tone-risk.stack-layer span, .tone-critical.stack-layer span, .tone-high.stack-layer span, .tone-risk.quad-point b, .tone-critical.quad-point b, .tone-high.quad-point b { background: #b42318; }
+  .tone-opportunity .bar-track span, .tone-opportunity.stack-layer span, .tone-opportunity.quad-point b { background: var(--gold); }
+  .matrix-cell.tone-high, .matrix-cell.tone-critical { background: color-mix(in srgb, #b42318 12%, var(--surface-page)); }
+  .matrix-cell.tone-medium { background: color-mix(in srgb, var(--gold) 16%, var(--surface-page)); }
+  .matrix-cell.tone-low, .matrix-cell.tone-positive { background: color-mix(in srgb, #0f766e 10%, var(--surface-page)); }
+  @media (max-width: 700px) { .bar-row, .timeline-viz li { grid-template-columns: 1fr; } .timeline-viz p { grid-column: auto; } .flow-node::after { content: none; } }
+</style>

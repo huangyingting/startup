@@ -39,6 +39,9 @@ const RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 
 const CONFIDENCE = new Set(['high', 'medium', 'low']);
 const RISK_RATINGS = new Set(['low', 'moderate', 'significant', 'critical', 'unknown']);
 const VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
+const FIGURE_TYPES = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'quadrant', 'competitive-matrix', 'metric-bars', 'bars', 'waterfall', 'risk-heatmap', 'matrix', 'architecture-stack', 'stack', 'sensitivity', 'xy', 'other']);
+const FIGURE_LAYOUTS = new Set(['compact', 'standard', 'wide']);
+const LEGACY_FIGURE_FIELDS = ['mer' + 'maid', 'mer' + 'maidType'];
 
 function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
@@ -165,7 +168,10 @@ try {
       if (type === 'table' && !tableIds.has(ref)) failures.push(`${run}/10-report-document.yaml: missing table ${ref}`);
     }
     for (const figure of reportDoc?.figures ?? []) {
-      if (!figure.mermaid) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} missing mermaid body`);
+      if (LEGACY_FIGURE_FIELDS.some((field) => field in figure)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} uses removed legacy figure fields`);
+      if (!FIGURE_TYPES.has(figure.type)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} has invalid type ${figure.type}`);
+      if (!FIGURE_LAYOUTS.has(figure.layout)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} has invalid layout ${figure.layout}`);
+      if (!figure.data || typeof figure.data !== 'object' || Array.isArray(figure.data)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} missing structured data object`);
     }
     pushIfInvalidEnum(failures, `${run}/11-report-card.yaml`, 'recommendation', card?.recommendation, RECOMMENDATIONS);
     pushIfInvalidEnum(failures, `${run}/11-report-card.yaml`, 'confidence', card?.confidence, CONFIDENCE);

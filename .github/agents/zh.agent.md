@@ -14,7 +14,7 @@ Read `schemaPath`, `yamlSyntaxPath`, `10-report-document.yaml`, and `11-report-c
 Rules:
 
 - Translate prose only.
-- Preserve schema keys, IDs, URLs, dates, numbers, booleans, nulls, enum values, Mermaid syntax, source IDs, claim IDs, figure IDs, and table IDs.
+- Preserve schema keys, IDs, URLs, dates, numbers, booleans, nulls, enum values, structured figure data, source IDs, claim IDs, figure IDs, and table IDs.
 - Keep company/product/person/investor names in common English form unless a standard Chinese name is unambiguous.
 - Do not add facts or improve the investment case.
 - Keep YAML parseable and complete from the document head; do not write continuation fragments.

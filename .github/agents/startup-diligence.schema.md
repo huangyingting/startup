@@ -153,10 +153,18 @@ tables:
 figures:
   - id: F201
     title: string
-    mermaidType: flowchart|quadrantChart|xychart|timeline|journey|pie|other
-    mermaid: |
-      flowchart TB
-        A --> B
+    type: timeline|flow|decision-map|evidence-map|quadrant|competitive-matrix|metric-bars|bars|waterfall|risk-heatmap|matrix|architecture-stack|stack|sensitivity|xy|other
+    layout: compact|standard|wide
+    summary: string|null
+    data:
+      items: []
+      nodes: []
+      edges: []
+      points: []
+      columns: []
+      rows: []
+      series: []
+      layers: []
     approximationNotes: string|null
     claimRefs: [C001]
 sections:
@@ -255,8 +263,19 @@ chapters:
 figures:
   - id: F101
     title: string
-    mermaidType: flowchart|quadrantChart|xychart|timeline|journey|pie|other
-    mermaid: string
+    type: timeline|flow|decision-map|evidence-map|quadrant|competitive-matrix|metric-bars|bars|waterfall|risk-heatmap|matrix|architecture-stack|stack|sensitivity|xy|other
+    layout: compact|standard|wide
+    summary: string|null
+    data:
+      items: []
+      nodes: []
+      edges: []
+      points: []
+      columns: []
+      rows: []
+      series: []
+      layers: []
+    approximationNotes: string|null
     claimRefs: [C001]
 tables:
   - id: T101
@@ -333,4 +352,5 @@ reportFiles:
 - Source, claim, figure, and table IDs use the required formats and are unique within their ledgers.
 - All figure/table references in `10-report-document.yaml` exist.
 - `11-report-card.yaml.reportFiles` points to `10-report-document.yaml` and `11-report-card.yaml`.
-- Mermaid diagrams are stored in `10-report-document.yaml` and rendered by the website.
+- Figures are stored as structured YAML specs in `10-report-document.yaml` and rendered by native website components.
+- Do not use legacy diagram-source fields or diagram-language strings in artifacts. Use `type`, `layout`, and typed `data` arrays instead.
