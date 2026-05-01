@@ -1,6 +1,7 @@
 ---
 import { displayLabel } from '../lib/display';
 import type { Lang } from '../lib/i18n';
+import ClaimRefs from './ClaimRefs.astro';
 
 interface Column {
   heading: string;
@@ -15,6 +16,8 @@ interface Props {
   lang?: Lang;
 }
 const { title, rows = [], columns, emptyLabel = 'Not disclosed', lang = 'en' } = Astro.props;
+const evidenceHeading = lang === 'zh' ? '证据' : 'Evidence';
+const hasClaimRefs = rows.some((row) => Array.isArray(row?.claimRefs) && row.claimRefs.length > 0);
 const zhDisplayMap: Record<string, string> = {
   'Yes': '是', 'No': '否', 'Medium': '中等', 'High': '高', 'Low': '低', 'Critical': '关键',
   'Strong': '强', 'Moderate': '中等', 'Weak': '弱', 'Public': '公开', 'Independent': '独立', 'Company': '公司', 'Third Party': '第三方'
@@ -30,12 +33,13 @@ function formatCell(value: unknown) {
     <table class="sr-table report-table">
       <caption>{title}</caption>
       <thead>
-        <tr>{columns.map((column) => <th>{column.heading}</th>)}</tr>
+        <tr>{columns.map((column) => <th>{column.heading}</th>)}{hasClaimRefs && <th>{evidenceHeading}</th>}</tr>
       </thead>
       <tbody>
         {rows.map((row) => (
           <tr>
             {columns.map((column) => <td>{formatCell(column.render ? column.render(row) : column.key ? row?.[column.key] : undefined)}</td>)}
+            {hasClaimRefs && <td class="refs-cell"><ClaimRefs refs={row?.claimRefs ?? []} /></td>}
           </tr>
         ))}
       </tbody>
@@ -94,5 +98,8 @@ function formatCell(value: unknown) {
     max-width: 420px;
     color: var(--ink-page);
     line-height: 1.48;
+  }
+  .refs-cell {
+    min-width: 120px;
   }
 </style>

@@ -45,7 +45,7 @@ const labels = lang === 'zh'
       name: '名称', role: '角色', domainFit: '领域匹配', background: '背景', function: '职能', from: '来自', significance: '重要性', teamVerdict: '团队判断', keyPersonRisk: '关键人风险',
       financialVerdict: '财务判断', funding: '融资', totalRaised: '累计融资', latestRound: '最新轮次', postMoney: '投后估值', payback: '回收期', low: '低位', mid: '中位', high: '高位',
       tickerEvent: '代码/事件', rationale: '依据', revenueMultiple: '收入倍数', scenario: '情景', exitValue: '退出价值', year: '年份', assumptions: '假设',
-      category: '类别', severity: '严重性', likelihood: '可能性', mitigation: '缓释措施', criterion: '条件', detection: '识别方式', moat: '护城河', positioning: '定位', directCompetitors: '直接竞争者', substitutes: '替代方案', strengths: '优势', weaknesses: '劣势', whyItMatters: '重要性', coverageGaps: '覆盖缺口', sourceLedger: '来源台账', publisher: '发布方', title: '标题', independence: '独立性', quote: '引文'
+      category: '类别', severity: '严重性', likelihood: '可能性', mitigation: '缓释措施', criterion: '条件', detection: '识别方式', moat: '护城河', positioning: '定位', directCompetitors: '直接竞争者', substitutes: '替代方案', strengths: '优势', weaknesses: '劣势', whyItMatters: '重要性', coverageGaps: '覆盖缺口', claimIndex: '声明索引', sourceLedger: '来源台账', publisher: '发布方', title: '标题', statement: '声明', topic: '主题', claimType: '类型', linkedSources: '关联来源', independence: '独立性', quote: '引文'
     }
   : {
       officialWebsite: 'Official website', recommendation: 'Recommendation', confidence: 'Confidence', sources: 'sources', claims: 'claims', rating: 'Rating',
@@ -65,7 +65,7 @@ const labels = lang === 'zh'
       name: 'Name', role: 'Role', domainFit: 'Domain fit', background: 'Background', function: 'Function', from: 'From', significance: 'Significance', teamVerdict: 'Team verdict', keyPersonRisk: 'Key-person risk',
       financialVerdict: 'Financial verdict', funding: 'Funding', totalRaised: 'Total raised', latestRound: 'Latest round', postMoney: 'Post-money', payback: 'Payback', low: 'Low', mid: 'Mid', high: 'High',
       tickerEvent: 'Ticker/Event', rationale: 'Rationale', revenueMultiple: 'Revenue multiple', scenario: 'Scenario', exitValue: 'Exit value', year: 'Year', assumptions: 'Assumptions',
-      category: 'Category', severity: 'Severity', likelihood: 'Likelihood', mitigation: 'Mitigation', criterion: 'Criterion', detection: 'Detection', moat: 'Moat', positioning: 'Positioning', directCompetitors: 'Direct competitors', substitutes: 'Substitutes', strengths: 'Strengths', weaknesses: 'Weaknesses', whyItMatters: 'Why it matters', coverageGaps: 'Coverage gaps', sourceLedger: 'Source ledger', publisher: 'Publisher', title: 'Title', independence: 'Independence', quote: 'Quote'
+      category: 'Category', severity: 'Severity', likelihood: 'Likelihood', mitigation: 'Mitigation', criterion: 'Criterion', detection: 'Detection', moat: 'Moat', positioning: 'Positioning', directCompetitors: 'Direct competitors', substitutes: 'Substitutes', strengths: 'Strengths', weaknesses: 'Weaknesses', whyItMatters: 'Why it matters', coverageGaps: 'Coverage gaps', claimIndex: 'Claim index', sourceLedger: 'Source ledger', publisher: 'Publisher', title: 'Title', statement: 'Statement', topic: 'Topic', claimType: 'Type', linkedSources: 'Linked sources', independence: 'Independence', quote: 'Quote'
     };
 
 const zhDisplayMap: Record<string, string> = {
@@ -96,6 +96,7 @@ function moneyM(value: unknown) {
 function pct(value: unknown) { return metric(value, '%'); }
 function arr<T = any>(value: T[] | undefined | null): T[] { return Array.isArray(value) ? value : []; }
 function claimRefs(value: any) { return arr<string>(value?.claimRefs).slice(0, 4); }
+function sourceRefs(value: any) { return arr<string>(value?.sourceRefs); }
 function initials(name: unknown) {
   return String(name ?? '?').split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || '?';
 }
@@ -124,6 +125,8 @@ const sourceMix = arr(ledger.sources).reduce((acc: Record<string, number>, sourc
   acc[key] = (acc[key] ?? 0) + 1;
   return acc;
 }, {});
+const claims = arr(ledger.claims);
+const sources = arr(ledger.sources);
 const scoreBars = Object.entries(memo.scorecard ?? {}).map(([key, value]: [string, any]) => ({
   label: titleCase(key),
   score: typeof value?.score === 'number' ? value.score : null,
@@ -347,7 +350,45 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
     <article class="sr-card"><div class="sr-kicker">{labels.coverageGaps}</div>{arr(ledger.coverage?.coverageGaps).map((gap) => <p>{gap}</p>)}</article>
     <article class="sr-card"><div class="sr-kicker">{labels.openGaps}</div>{arr(ledger.openEvidenceGaps).map((gap) => <p><strong>{titleCase(gap.impact)}:</strong> {gap.gap}</p>)}</article>
   </div>
-  <DataTable title={labels.sourceLedger} rows={arr(ledger.sources).slice(0, 20)} columns={[{ heading: 'ID', key: 'id' }, { heading: labels.publisher, key: 'publisher' }, { heading: labels.title, key: 'title' }, { heading: labels.independence, key: 'independence' }, { heading: labels.quote, key: 'keyQuote' }]} emptyLabel={labels.notDisclosed} lang={lang} />
+  {claims.length > 0 && (
+    <div class="report-table-frame evidence-index">
+      <table class="sr-table report-table">
+        <caption>{labels.claimIndex}</caption>
+        <thead><tr><th>ID</th><th>{labels.statement}</th><th>{labels.topic}</th><th>{labels.claimType}</th><th>{labels.confidence}</th><th>{labels.linkedSources}</th></tr></thead>
+        <tbody>
+          {claims.map((claim) => (
+            <tr id={`claim-${claim.id}`}>
+              <td><a class="ref-anchor" href={`#claim-${claim.id}`}>{claim.id}</a></td>
+              <td>{claim.statement}</td>
+              <td>{labelValue(claim.topic)}</td>
+              <td>{labelValue(claim.claimType)}</td>
+              <td>{labelValue(claim.confidence)}</td>
+              <td class="ref-list">{sourceRefs(claim).map((ref, index) => <><a class="source-ref" href={`#source-${ref}`}>{ref}</a>{index < sourceRefs(claim).length - 1 ? ' ' : ''}</>)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+  {sources.length > 0 && (
+    <div class="report-table-frame evidence-index">
+      <table class="sr-table report-table">
+        <caption>{labels.sourceLedger}</caption>
+        <thead><tr><th>ID</th><th>{labels.publisher}</th><th>{labels.title}</th><th>{labels.independence}</th><th>{labels.quote}</th></tr></thead>
+        <tbody>
+          {sources.map((source) => (
+            <tr id={`source-${source.id}`}>
+              <td><a class="ref-anchor" href={`#source-${source.id}`}>{source.id}</a></td>
+              <td>{source.publisher}</td>
+              <td>{source.url ? <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a> : source.title}</td>
+              <td>{labelValue(source.independence)}</td>
+              <td>{source.keyQuote}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
 </section>
 
 <style>
@@ -452,6 +493,20 @@ const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, la
   .report-table tbody tr:hover { background: color-mix(in srgb, var(--claret) 5%, transparent); }
   .report-table tbody tr:last-child td { border-bottom: 0; }
   .report-table td { max-width: 420px; color: var(--ink-page); line-height: 1.48; }
+  .evidence-index .report-table td { max-width: 560px; }
+  .evidence-index tr:target { background: color-mix(in srgb, var(--claret) 8%, var(--surface-paper)); box-shadow: inset 4px 0 0 var(--claret); }
+  .ref-anchor,
+  .source-ref {
+    font-family: var(--font-mono);
+    font-weight: 800;
+    color: var(--claret);
+    text-decoration: none;
+  }
+  .ref-anchor:hover,
+  .ref-anchor:focus-visible,
+  .source-ref:hover,
+  .source-ref:focus-visible { text-decoration: underline; }
+  .ref-list { min-width: 160px; }
   @media (max-width: 900px) {
     .hero-grid, .focus-grid, .narrative-grid, .memo-grid, .two-col, .milestone-grid, .people-grid, .risk-map { grid-template-columns: 1fr; }
     .metric-grid.wide { grid-template-columns: minmax(120px, 1fr) minmax(110px, auto); }

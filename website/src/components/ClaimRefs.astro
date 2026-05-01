@@ -2,12 +2,30 @@
 interface Props { refs?: string[]; }
 const { refs = [] } = Astro.props;
 ---
-{refs.length > 0 && <span class="claim-ref">[{refs.join(', ')}]</span>}
+{refs.length > 0 && (
+  <span class="claim-ref" aria-label="Claim references">
+    [
+    {refs.map((ref, index) => (
+      <>
+        <a href={`#claim-${ref}`}>{ref}</a>{index < refs.length - 1 ? ', ' : ''}
+      </>
+    ))}
+    ]
+  </span>
+)}
 <style>
   .claim-ref {
     color: var(--caption-gray);
     font-family: var(--font-mono);
     font-size: var(--fs-xs);
     white-space: nowrap;
+  }
+  .claim-ref a {
+    color: var(--claret);
+    text-decoration: none;
+  }
+  .claim-ref a:hover,
+  .claim-ref a:focus-visible {
+    text-decoration: underline;
   }
 </style>
