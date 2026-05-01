@@ -1,0 +1,169 @@
+# Manual startup research run.
+#
+# This workflow mirrors the Copilot CLI pattern used by ../bizidea. The
+# `Startup Research` agent owns orchestration across identity, evidence,
+# product, business, memo, and Chinese localization stages. CI installs deps,
+# invokes the orchestrator, normalizes YAML, rebuilds reports/_index.yaml,
+# validates the site, and commits completed reports.
+#
+# Required secrets / setup:
+# - COPILOT_PAT — PAT for a Copilot-licensed account; passed to the Copilot CLI.
+# - STARTUP_PAT — PAT with repo write access for checkout/push and downstream deploy triggers.
+
+name: Research startup company
+
+on:
+  workflow_dispatch:
+    inputs:
+      companyName:
+        description: "Company name to research"
+        required: true
+        type: string
+      companyUrl:
+        description: "Optional official website or profile URL"
+        required: false
+        default: ""
+        type: string
+      focus:
+        description: "Optional diligence focus"
+        required: false
+        default: "full company diligence"
+        type: string
+      depth:
+        description: "Research depth"
+        required: false
+        default: "standard"
+        type: choice
+        options:
+          - standard
+          - deep
+      includeZh:
+        description: "Generate Simplified Chinese localized YAML"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: startup-research-${{ github.event.inputs.companyName }}
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.STARTUP_PAT }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            website/package-lock.json
+
+      - name: Install root deps
+        run: npm ci || npm install --no-audit --no-fund
+
+      - name: Install website deps
+        working-directory: website
+        run: npm ci || npm install --no-audit --no-fund
+
+      - name: Install GitHub Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Resolve run inputs
+        id: inputs
+        env:
+          RAW_COMPANY: ${{ github.event.inputs.companyName }}
+          RAW_URL: ${{ github.event.inputs.companyUrl }}
+          RAW_FOCUS: ${{ github.event.inputs.focus }}
+          RAW_DEPTH: ${{ github.event.inputs.depth }}
+          RAW_INCLUDE_ZH: ${{ github.event.inputs.includeZh }}
+        run: |
+          set -euo pipefail
+          COMPANY="${RAW_COMPANY//$'\n'/ }"
+          URL="${RAW_URL//$'\n'/ }"
+          FOCUS="${RAW_FOCUS//$'\n'/ }"
+          DEPTH="${RAW_DEPTH:-standard}"
+          INCLUDE_ZH="${RAW_INCLUDE_ZH:-true}"
+          if [ -z "$COMPANY" ]; then
+            echo "companyName is required" >&2
+            exit 1
+          fi
+          {
+            echo "company<<EOF"
+            echo "$COMPANY"
+            echo "EOF"
+            echo "url<<EOF"
+            echo "$URL"
+            echo "EOF"
+            echo "focus<<EOF"
+            echo "$FOCUS"
+            echo "EOF"
+            echo "depth=$DEPTH"
+            echo "includeZh=$INCLUDE_ZH"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run Startup Research orchestrator
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
+          COMPANY: ${{ steps.inputs.outputs.company }}
+          COMPANY_URL: ${{ steps.inputs.outputs.url }}
+          FOCUS: ${{ steps.inputs.outputs.focus }}
+          DEPTH: ${{ steps.inputs.outputs.depth }}
+          INCLUDE_ZH: ${{ steps.inputs.outputs.includeZh }}
+        run: |
+          set -euo pipefail
+          PROMPT=$(cat <<EOF
+          Run the full Startup Research pipeline for this company.
+
+          Company: $COMPANY
+          Company URL: ${COMPANY_URL:-null}
+          Focus: $FOCUS
+          Depth: $DEPTH
+          Include Simplified Chinese localization: $INCLUDE_ZH
+
+          Use only schemaVersion startup-diligence-v1. Orchestrate all stages yourself using the configured specialist agents: identity -> evidence -> product -> business -> memo -> ZH translator when requested. Generate the complete professional diligence artifact set under reports/, including 00-10 and extended 11-team-people.yaml, 12-comparables-valuation.yaml, and 13-milestones-catalysts.yaml whenever evidence supports them. Keep all factual claims linked through 02-source-ledger.yaml claimRefs/sourceRefs. Preserve unsupported metrics as null with explanation. Delete duplicate or failed partial report folders before final validation. Do not invoke Startup Research recursively. Do not run git add or git commit.
+          EOF
+          )
+          copilot --yolo --no-ask-user --agent "Startup Research" -p "$PROMPT"
+
+      - name: Normalize generated YAML
+        working-directory: website
+        run: npm run repair:yaml
+
+      - name: Rebuild reports/_index.yaml
+        run: node scripts/build-reports-index.mjs --strict
+
+      - name: Validate generated report and website
+        run: npm run validate
+
+      - name: Commit and push new report
+        env:
+          COMPANY: ${{ steps.inputs.outputs.company }}
+        run: |
+          set -euo pipefail
+          git config user.name "startup-research-bot"
+          git config user.email "startup-research-bot@users.noreply.github.com"
+          git fetch origin "${{ github.ref_name }}"
+          git rebase --autostash "origin/${{ github.ref_name }}"
+          node scripts/build-reports-index.mjs --strict
+          git add reports/
+          if git diff --cached --quiet; then
+            echo "No new or updated startup reports."
+            exit 0
+          fi
+          SAFE_COMPANY="$(printf '%s' "$COMPANY" | tr -c '[:alnum:]' '-' | tr '[:upper:]' '[:lower:]' | sed 's/-\+/-/g; s/^-//; s/-$//' | cut -c1-60)"
+          STAMP="$(date -u +%F)"
+          git commit -m "chore(reports): research ${SAFE_COMPANY:-startup} $STAMP"
+          git push origin HEAD:${{ github.ref_name }}
