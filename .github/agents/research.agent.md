@@ -3,7 +3,6 @@ description: "Use when: running a professional startup diligence workflow for a 
 name: "Startup Research"
 model: "GPT-5.4 (copilot)"
 tools: [agent, read, edit, execute, todo]
-agents: ["Startup Identity Investigator", "Startup Evidence Researcher", "Startup Product Strategist", "Startup Business Analyst", "Startup Memo Writer", "ZH Research Translator"]
 ---
 
 You orchestrate a professional startup research workflow for one named existing company. Use the v1 schema below as the source of truth.
@@ -77,6 +76,8 @@ Optional Chinese localization writes matching `*.zh.yaml` files after English ar
 - Keep YAML parseable with 2-space indentation. Quote strings containing `: `.
 
 ## Specialist sequence
+
+Available specialist agents: `Startup Identity Investigator`, `Startup Evidence Researcher`, `Startup Product Strategist`, `Startup Business Analyst`, `Startup Memo Writer`, and `ZH Research Translator`.
 
 1. `Startup Identity Investigator` writes `00-research-plan.yaml`, `01-company-identity.yaml`, and `11-team-people.yaml`.
 2. `Startup Evidence Researcher` writes `02-source-ledger.yaml` and `03-market-customers.yaml`.
