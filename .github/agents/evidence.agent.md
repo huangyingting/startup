@@ -16,8 +16,8 @@ Verify the company, gather fetched evidence, and create the claim ledger used by
 
 ## Source target
 
-- Standard: at least 30 fetched sources.
-- Deep: at least 75 fetched sources.
+- Standard: at least 40 fetched sources.
+- Deep: at least 100 fetched sources.
 - Prefer official pages, filings, credible news, company databases, pricing/product docs, customer proof, regulatory sources, app/review sources, and disconfirming evidence.
 - Do not cite search-result pages or unfetched URLs.
 
