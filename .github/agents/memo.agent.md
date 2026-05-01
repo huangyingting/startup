@@ -23,6 +23,7 @@ Ask yourself:
 - What would make this company fail despite a good story (pre-mortem)?
 - Which risks are existential versus manageable?
 - What does the researcher recommend doing next, and why?
+- What investment decision framework, underwriting bets, deal-breakers, data-room requests, and management questions should drive the next IC conversation?
 - What information would change the recommendation (mind-changers)?
 - Which milestones, leading indicators, and kill criteria should the investor monitor over the next 6/12/24 months?
 
@@ -47,7 +48,7 @@ company:
   name: string
 riskRegister:
   - id: R001
-    category: market|customer|product|technology|competition|gtm|financial|funding|legal|regulatory|governance|security|privacy|platform|execution|reputation|macro|other
+    category: market|customer|product|technology|competition|gtm|financial|funding|financing-terms|legal|regulatory|governance|security|privacy|platform|execution|reputation|macro|other
     risk: string
     severity: critical|high|medium|low
     likelihood: high|medium|low|unknown
@@ -125,6 +126,21 @@ expectedReturns:                      # mirrors comparables-valuation; optional 
   upsideGrossMoM: 0|null
   downsideGrossMoM: 0|null
   notes: string|null
+investmentDecision:
+  recommendation: high-conviction|track|research-more|avoid
+  convictionLevel: high|medium|low
+  decisionRationale: string
+  keyUnderwritingBets:
+    - bet: string
+      whyItMatters: string
+      status: proven|partially-proven|unproven|disconfirmed
+      claimRefs: [C001]
+  mustBelieve: [string]
+  dealBreakers: [string]
+flagSummary:
+  greenFlags: [string]
+  yellowFlags: [string]
+  redFlags: [string]
 decisionDrivers:
   positives:
     - point: string
@@ -141,6 +157,10 @@ nextDiligence:
       priority: high|medium|low
   dataRoomRequests: [string]
   expertCalls: [string]
+managementQuestions:
+  - question: string
+    whyItMatters: string
+    relatedClaims: [C001]
 ```
 
 ## `13-milestones-catalysts.yaml` schema

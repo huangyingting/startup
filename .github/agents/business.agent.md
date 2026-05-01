@@ -27,7 +27,7 @@ Ask yourself:
 - Which named customer case studies have credible ROI metrics?
 - What public companies and recent transactions are the right comparables?
 - What is a defensible valuation framework (multiples on ARR / revenue / GMV, or DCF-style if mature)?
-- What recommended check size, ownership target, and structure considerations follow?
+- What recommended check size, ownership target, structure considerations, ownership sensitivity, exit paths, and expected-return ranges follow?
 
 ## Rules
 
@@ -36,7 +36,9 @@ Ask yourself:
 - Use ranges or `null` where precision is not supported. Numeric fields must be numbers (not strings) — put strings/ranges in adjacent `*Notes` fields.
 - Mark every numeric estimate with `estimateBasis: string` describing inputs and formula.
 - Funding, valuation, ARR, retention, CAC, margins, and runway must be sourced or explicitly estimated.
-- Comparables must be real, named companies/transactions tied to claims, not invented archetypes.
+- Comparables must be real, named companies/transactions tied to claims, not invented archetypes. If only imperfect proxies exist, explicitly explain why they are proxies rather than direct comps.
+- Add a valuation bridge whenever a valuation or revenue run-rate anchor exists; include bridge steps, sensitivity range, and claim-backed interpretation.
+- Add ownership sensitivity and exit-path analysis when enough valuation and check-size assumptions exist; keep unsupported values `null`.
 - Preserve `slug`, `runDate`, company name, and claim IDs.
 - Keep YAML parseable with 2-space indentation. Quote strings containing `: `.
 
@@ -220,26 +222,27 @@ runDate: YYYY-MM-DD
 company:
   name: string
 publicComparables:
-  - id: K001
-    name: string
+  - company: string
     ticker: string|null
-    rationale: string
-    revenueMultipleNtm: 0|null
-    growthRatePct: 0|null
-    grossMarginPct: 0|null
-    ruleOf40: 0|null
-    asOf: YYYY-MM-DD|null
-    sourceRefs: [S001]
+    category: string|null
+    relevance: string
+    revenueUsdM: 0|null
+    revenuePeriod: string|null
+    valuationUsdM: 0|null
+    revenueMultiple: 0|null
+    marginSignal: string|null
+    notes: string|null
     claimRefs: [C001]
 privateOrTransactionComparables:
-  - id: K001
-    name: string
-    eventType: financing|acquisition|ipo|secondary|other
-    eventDate: YYYY-MM-DD|null
-    headlineValuationUsdM: 0|null
+  - company: string
+    transaction: string
+    date: YYYY-MM-DD|null
+    postMoneyValuationUsdM: 0|null
+    roundSizeUsdM: 0|null
+    revenueRunRateUsdM: 0|null
     impliedRevenueMultiple: 0|null
-    rationale: string
-    sourceRefs: [S001]
+    relevance: string
+    notes: string|null
     claimRefs: [C001]
 valuationFramework:
   preferredApproach: revenue-multiple|arr-multiple|gmv-multiple|dcf|venture-method|comparable-transactions|other
@@ -251,20 +254,47 @@ valuationFramework:
   sensitivityNotes: string|null
   confidence: high|medium|low
   claimRefs: [C001]
+valuationBridge:
+  currentValuationUsdM: 0|null
+  annualizedRevenueRunRateUsdM: 0|null
+  impliedRevenueMultiple: 0|null
+  publicCompsMedianMultiple: 0|null
+  privateCompsMedianMultiple: 0|null
+  growthPremiumPct: 0|null
+  marginDiscountPct: 0|null
+  governanceDiscountPct: 0|null
+  liquidityDiscountPct: 0|null
+  fairValueRangeUsdM:
+    low: 0|null
+    mid: 0|null
+    high: 0|null
+  bridgeSteps:
+    - step: string
+      value: string|null
+      interpretation: string
+      claimRefs: [C001]
+  conclusion: string|null
+  claimRefs: [C001]
 dealConsiderations:
   recommendedCheckUsdM: 0|null
   ownershipTargetPct: 0|null
   proRataRightsImportance: high|medium|low|unknown
-  preferredStructureNotes: string|null     # e.g. preferred terms, board seat
+  preferredStructureNotes: string|null
   alignmentRisks: [string]
   claimRefs: [C001]
+ownershipSensitivity:
+  - entryValuationUsdM: 0|null
+    checkSizeUsdM: 0|null
+    impliedOwnershipPct: 0|null
+    requiredExitUsdMFor3x: 0|null
+    interpretation: string|null
 expectedReturns:
   exitScenarios:
     - name: downside|base|upside
       exitValueUsdM: 0|null
       exitYear: 2030|null
       exitType: ipo|strategic|secondary|writedown|other
-      grossMoM: 0|null            # money-on-money multiple
+      grossMoM: 0|null
       grossIrrPct: 0|null
       assumptions: string|null
       confidence: high|medium|low
@@ -274,6 +304,20 @@ valuationVerdict:
   rationale: string
   confidence: high|medium|low
   claimRefs: [C001]
+exitPathAnalysis:
+  likelyExitPaths:
+    - path: ipo|strategic-acquisition|secondary-liquidity|shutdown|other
+      likelihood: high|medium|low|unknown
+      earliestYear: 2030|null
+      blockers: [string]
+      claimRefs: [C001]
+  publicMarketReadiness:
+    revenueScale: strong|medium|weak|unknown
+    growthNarrative: strong|medium|weak|unknown
+    governance: strong|medium|weak|unknown
+    profitability: strong|medium|weak|unknown
+    disclosureQuality: strong|medium|weak|unknown
+  verdict: string|null
 ```
 
 ## Handoff

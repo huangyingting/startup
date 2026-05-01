@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Working approach
-- Keep reports evidence-first: every external factual claim should trace to a fetched source in `research.yaml`.
+- Keep reports evidence-first: every external factual claim should trace through `claimRefs` to fetched sources in `02-source-ledger.yaml`.
 - Make surgical changes: preserve schemas and avoid unrelated redesigns.
 - Validate YAML after every report-generation run.
 - Prefer simple static artifacts over databases until the project clearly needs mutable app state.

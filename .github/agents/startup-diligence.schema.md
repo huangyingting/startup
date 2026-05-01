@@ -19,11 +19,11 @@ A professional startup researcher must collect and separate:
 6. **Traction and GTM** — customers, usage, revenue, partnerships, hiring, developer signals, pricing, channels, retention/expansion evidence, **quantified KPI snapshot**, named **customer case studies with ROI**.
 7. **Competition and positioning** — direct competitors, substitutes, market map, moat sources, durability, competitive threats.
 8. **Business and financials** — revenue streams, **historical financials**, **quantified unit economics** (CAC, LTV, payback, NRR, GRR, gross margin, magic number, burn multiple, Rule of 40), capital efficiency, funding, capital needs, **cap-table summary**, scenario ranges.
-9. **Risk and governance** — market, product, legal, regulatory, governance, platform, security, privacy, financing, execution, reputation, macro risks.
+9. **Risk and governance** — market, product, legal, regulatory, governance, platform, security, privacy, financing, financing-terms, execution, reputation, macro risks.
 10. **Team and people** — founders deep-dive, key hires, advisors, board, hiring velocity, key-person risk, organizational gaps.
-11. **Comparables and valuation** — public comparables, transaction comparables, valuation framework, recommended check-size and ownership, deal-term considerations.
+11. **Comparables and valuation** — public comparables, transaction comparables, valuation framework, valuation bridge, ownership sensitivity, recommended check-size and ownership, deal-term considerations, expected returns, and exit-path analysis.
 12. **Milestones and catalysts** — leading indicators, milestones to monitor over the next 6/12/24 months, kill criteria, mind-changers.
-13. **Decision memo** — recommendation, confidence, scorecard, thesis, **pre-mortem**, expected returns scenarios, **mind-changers**, next diligence.
+13. **Decision memo** — recommendation, confidence, scorecard, thesis, **pre-mortem**, expected returns scenarios, **investment decision framework**, **mind-changers**, data-room requests, expert calls, and management questions.
 14. **Summary card** — concise website/card-ready view including a numeric KPI snapshot.
 
 ## Artifact list
