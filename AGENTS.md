@@ -30,7 +30,7 @@
 - Only `Startup Report Evidence Analyst` should use web research tools. Downstream agents must work from `01-evidence-ledger.yaml` and cite `claimRefs`.
 - Downstream stages must not run until upstream YAML exists, parses, and all `claimRefs` / `sourceRefs` are valid.
 - Agents must write complete YAML artifacts directly under `reports/<run>/`; do not use temporary files as canonical report output.
-- A complete report folder contains `00-report-brief.yaml` through `11-report-card.yaml`. The website index includes complete reports only.
+- A complete report folder contains `00-report-brief.yaml` through `11-report-card.yaml` plus the required `10-report-document.zh.yaml` and `11-report-card.zh.yaml`. The website index includes complete reports only.
 
 ## YAML schema conventions
 

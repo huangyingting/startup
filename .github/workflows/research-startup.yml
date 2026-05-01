@@ -146,8 +146,12 @@ jobs:
           shopt -s nullglob
           partials=()
           for dir in reports/*/; do
-            if [ ! -f "${dir}11-report-card.yaml" ] && compgen -G "${dir}*.yaml" > /dev/null; then
-              partials+=("${dir%/}")
+            if compgen -G "${dir}*.yaml" > /dev/null; then
+              for required in 11-report-card.yaml 10-report-document.zh.yaml 11-report-card.zh.yaml; do
+                if [ ! -f "${dir}${required}" ]; then
+                  partials+=("${dir%/} (missing ${required})")
+                fi
+              done
             fi
           done
           if [ "${#partials[@]}" -gt 0 ]; then

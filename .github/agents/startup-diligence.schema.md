@@ -19,7 +19,7 @@ The current generation schema is `startup-diligence-report-v2`. It is designed t
 11-report-card.yaml
 ```
 
-Optional Chinese files:
+Required Simplified Chinese files (must ship with every report):
 
 ```text
 10-report-document.zh.yaml

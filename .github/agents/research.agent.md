@@ -23,7 +23,7 @@ Resolve before running specialists:
 
 ## v2 artifact contract
 
-Generate these files in order:
+Generate these files in order. The Simplified Chinese files are required and produced last by the translator.
 
 ```text
 00-report-brief.yaml
@@ -38,11 +38,11 @@ Generate these files in order:
 09-investment-valuation.yaml
 10-report-document.yaml
 11-report-card.yaml
+10-report-document.zh.yaml
+11-report-card.zh.yaml
 ```
 
 All artifacts must be written directly under `reportFolder`. `/tmp` tool-output files are diagnostic logs only: never treat them as report artifacts, handoff inputs, or sources of truth. If a specialist produces only a snippet or temporary transcript, rerun or repair the output by writing complete files to `reportFolder`.
-
-Simplified Chinese localization is required: every run must also produce `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 
 ## Specialist sequence
 
@@ -92,11 +92,8 @@ After every specialist:
 - Validate every figure against its schema Figure rendering contract. Reject empty arrays, non-canonical field shapes, string-valued numeric chart values, or figures whose visible cards/layers/nodes lack `label` plus `detail`/renderable content.
 - Reject any artifact that is missing its document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`) or begins with continuation prose / a mid-list fragment.
 
-After `Startup Report Writer`:
-
-- Validate `10-report-document.yaml` figure/table references.
-- Run `npm run validate` when dependencies are available.
+After `Startup Report Writer`, validate `10-report-document.yaml` figure/table references, then run `Startup Report Translator ZH`. After the translator writes both required `.zh.yaml` files, run `npm run validate` when dependencies are available.
 
 ## Final response
 
-Summarize: report folder, generated YAML files, source count, claim count, recommendation, confidence, risk rating, valuation stance, structured figure count, table count, validation status, and main diligence gaps.
+Summarize: report folder, generated YAML files (English plus required Simplified Chinese), source count, claim count, recommendation, confidence, risk rating, valuation stance, structured figure count, table count, validation status, and main diligence gaps.

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Rendering-contract checks for report YAML, run before astro build.
-// Content-quality and translation-parity checks live in scripts/check-reports.mjs.
+// Content-quality and translation-parity checks live in scripts/check-reports-content.mjs.
 import { readdirSync, statSync, existsSync, readFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';

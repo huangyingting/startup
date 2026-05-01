@@ -7,7 +7,7 @@ Startup is an agent-driven research website for detailed reports on named startu
 - Researches a user-provided startup company or official URL.
 - Produces evidence-backed report artifacts under `reports/`.
 - Renders reports as a fast static Astro website.
-- Supports English and Simplified Chinese YAML reports.
+- Generates required English and Simplified Chinese YAML reports.
 - Includes search, filters, scorecards, market sizing, financial scenarios, and risk visuals.
 
 ## Report artifact flow
