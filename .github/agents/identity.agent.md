@@ -2,7 +2,7 @@
 description: "Use when: resolving startup identity, mapping team and people, and creating the research plan. Keywords: identity verification, official website, legal entity, founders, key hires, research plan."
 name: "Startup Identity Investigator"
 model: "GPT-5.4 (copilot)"
-tools: [web, read, edit, execute]
+tools: [web_search, web_fetch, read, edit, execute]
 user-invocable: false
 ---
 

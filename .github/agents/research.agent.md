@@ -79,6 +79,8 @@ Optional Chinese localization writes matching `*.zh.yaml` files after English ar
 
 Available specialist agents: `Startup Identity Investigator`, `Startup Evidence Researcher`, `Startup Product Strategist`, `Startup Business Analyst`, `Startup Memo Writer`, and `ZH Research Translator`.
 
+This orchestrator has `read`, `edit`, `execute`, `todo`, and `agent` tools. Do not claim that the orchestrator lacks file-system access. Use `edit` to create or update report artifacts and `execute` to run repository scripts. If a specialist cannot write files in its runtime, ask it for the complete YAML content or findings, then write the required artifact files from this orchestrator. Do not switch to generic-purpose agents merely because a specialist or subagent has constrained tools.
+
 1. `Startup Identity Investigator` writes `00-research-plan.yaml`, `01-company-identity.yaml`, and `11-team-people.yaml`.
 2. `Startup Evidence Researcher` writes `02-source-ledger.yaml` and `03-market-customers.yaml`.
 3. `Startup Product Strategist` writes `04-product-technology.yaml` and `06-competition-positioning.yaml`.

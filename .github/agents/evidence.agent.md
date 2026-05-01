@@ -2,7 +2,7 @@
 description: "Use when: building the verified source ledger and researching market/customer demand for a startup. Keywords: source ledger, TAM, customer research, claims, evidence, why-now."
 name: "Startup Evidence Researcher"
 model: "GPT-5.4 (copilot)"
-tools: [web, read, edit, execute]
+tools: [web_search, web_fetch, read, edit, execute]
 user-invocable: false
 ---
 
