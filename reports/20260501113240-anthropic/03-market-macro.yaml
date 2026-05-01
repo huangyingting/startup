@@ -1,0 +1,389 @@
+schemaVersion: startup-diligence-report-v2
+artifact: market-macro
+slug: anthropic
+runDate: 2026-05-01
+company:
+  name: Anthropic
+
+chapter:
+  number: 2
+  title: Market Sizing & Macro Analysis
+  summary: |
+    Anthropic operates at the intersection of three converging markets: AI foundation model
+    APIs, enterprise AI software, and the emerging agentic application layer. Evidence from
+    the ledger provides strong qualitative signals — record capital inflows, hyperscaler
+    compute commitments exceeding $30B, and a 5.5x Claude Code revenue growth rate — but
+    no audited market-size figures are available in the evidence set. This chapter presents
+    an evidence-constrained TAM/SAM/SOM analysis with explicit gaps, alongside supported
+    growth driver and segment analysis. Macro tailwinds are strong and well-attested by
+    Anthropic's own funding trajectory and hyperscaler partnership terms.
+
+callouts:
+  - type: key-insight
+    title: "Hyperscaler Compute Bets Signal $100B+ Market Conviction"
+    body: |
+      Amazon's ~$8B strategic investment in Anthropic (with AWS as primary cloud provider)
+      [C008], Google's $3B+ stake plus access to up to 1 million TPUs targeting 1GW of AI
+      compute [C009, C031], and Microsoft/Nvidia's announced $15B investment paired with a
+      $30B Azure compute commitment [C032] collectively represent over $50B in infrastructure
+      and capital bets by the three largest cloud providers. This level of hyperscaler
+      conviction implies multi-hundred-billion-dollar total addressable market expectations
+      for AI model services — though the precise figure is not independently evidenced in
+      this ledger.
+    claimRefs: [C008, C009, C031, C032]
+
+  - type: opportunity
+    title: "Agentic AI Layer Creates New Demand Strata Above Classic API"
+    body: |
+      Claude Code's 5.5x revenue growth by July 2025 [C018] and the enterprise GA of Claude
+      Cowork (February 2026) [C019] demonstrate that agentic AI products are unlocking
+      willingness-to-pay above raw token pricing. The Model Context Protocol (MCP), open-
+      sourced November 2024 [C020], is positioned as an industry infrastructure standard
+      for agentic integrations, analogous to USB-C for AI-to-data connectivity. These
+      product signals imply the addressable market expands significantly beyond static API
+      query volume to include autonomous task completion and workflow orchestration services.
+    claimRefs: [C018, C019, C020]
+
+  - type: risk-alert
+    title: "Market Sizing Evidence Gap — No Third-Party Analyst Data in Ledger"
+    body: |
+      The evidence ledger contains no third-party analyst market size figures (e.g., IDC,
+      Gartner, McKinsey AI spending reports). All market size estimates below are derived
+      from Anthropic's own funding trajectory, hyperscaler partnership values, and pricing
+      data. Investors should treat TAM/SAM/SOM figures as evidence-constrained proxies,
+      not independently validated analyst estimates. Sourcing market sizing data from
+      Gartner, IDC, or Goldman Sachs AI spending forecasts is a recommended diligence path.
+    claimRefs: [C005, C006, C007]
+
+tables:
+  - id: T301
+    title: Anthropic Market Segment Definitions
+    columns:
+      - Segment
+      - Definition
+      - Anthropic Product Fit
+      - Key Evidence
+    rows:
+      - ["AI Foundation Model APIs",
+         "Pay-per-token API access to large language models for developers and enterprise builders",
+         "Claude API (Opus 4.7, Sonnet 4.6, Haiku 4.5) — direct and via Bedrock/Vertex/Foundry",
+         "C015, C042"]
+      - ["Consumer AI SaaS",
+         "Subscription AI assistants for individuals — freemium to prosumer tiers",
+         "Claude.ai (Free/Pro $17/mo / Max $100–200/mo)",
+         "C016"]
+      - ["Enterprise AI Platform",
+         "Team and enterprise agreements with SSO, SCIM, HIPAA, audit logs, custom data governance",
+         "Claude Team ($20/seat/mo) and Enterprise (custom); Bedrock zero-operator-access deployment",
+         "C016, C030"]
+      - ["Agentic AI / AI-Native Automation",
+         "Autonomous software agents completing multi-step tasks with tool use; coding agents; GUI agents",
+         "Claude Code (coding agent, GA May 2025); Claude Cowork (GUI agent, enterprise GA Feb 2026)",
+         "C017, C019"]
+      - ["AI Infrastructure Standards / Ecosystem",
+         "Open protocols and connectivity standards enabling AI integration with enterprise data systems",
+         "Model Context Protocol (MCP), open-sourced Nov 2024; adopted by Block, Apollo, Replit, Zed",
+         "C020"]
+      - ["Government / Classified AI",
+         "AI services for U.S. intelligence and defense agencies under FedRAMP/classified security requirements",
+         "Claude via Palantir / AWS Maven Smart System (subject to ongoing DoD litigation)",
+         "C034, C035"]
+    notes: |
+      Segment definitions are derived from Anthropic's product portfolio and pricing evidence.
+      No third-party market segment taxonomy with attached dollar values exists in the evidence ledger.
+    claimRefs: [C015, C016, C017, C019, C020, C030, C034, C042]
+
+  - id: T302
+    title: "TAM / SAM / SOM — Evidence-Constrained Sizing Summary"
+    columns:
+      - Layer
+      - Label
+      - Scope Description
+      - Evidence-Based Proxy / Signal
+      - Numeric Estimate (USD)
+      - Evidence Basis
+      - Confidence
+    rows:
+      - ["TAM",
+         "Global Enterprise AI Software & Foundation Model Market",
+         "All enterprise spending on AI software, foundation model APIs, and AI-native SaaS globally",
+         "Hyperscaler capex commitments: Amazon ~$8B investment + Bedrock distribution; Google ~$3B+ + 1M TPUs / 1GW compute; Microsoft/Nvidia announced $15B + $30B Azure",
+         "null — no analyst sizing in ledger",
+         "Estimated from hyperscaler investment/commitment scale implying $200B–$1T+ long-run TAM; not independently sourced",
+         "low"]
+      - ["SAM",
+         "API-Accessible LLM Services for Enterprise Developers and SaaS Builders",
+         "Subset of TAM addressable by Claude API and managed model marketplace (Bedrock / Vertex AI / Foundry)",
+         "Claude available in 30+ AWS Bedrock regions; Vertex AI global; Microsoft Foundry; pricing $1–$25/MTok; Snowflake $200M multi-year partnership",
+         "null — no direct SAM revenue figure in ledger",
+         "Constrained by evidence; token pricing and partnership value ($200M Snowflake deal) are partial proxies",
+         "low"]
+      - ["SOM",
+         "Anthropic's Demonstrated Revenue Footprint",
+         "Anthropic's actual API + SaaS + enterprise contract revenue as evidenced",
+         "Claude Code revenue 5.5x growth by July 2025; $380B post-money valuation implies significant revenue expectations; no ARR or run-rate figure disclosed",
+         "null — not publicly disclosed",
+         "5.5x Claude Code revenue growth is a directional growth signal only; absolute revenue base not evidenced",
+         "low"]
+    notes: |
+      All dollar estimates are null because no analyst market size data, Anthropic ARR figures,
+      or third-party revenue reports exist in the evidence ledger. Investors must source independent
+      market sizing (IDC, Gartner, Goldman Sachs) and request Anthropic's data room to calculate
+      meaningful SOM penetration rates.
+    claimRefs: [C005, C008, C009, C018, C031, C032, C033, C042]
+
+figures:
+  - id: F301
+    title: "AI Foundation Model Market — TAM / SAM / SOM Sizing Lens (Evidence-Constrained)"
+    type: market-sizing-lens
+    layout: standard
+    summary: |
+      Evidence-constrained market sizing lens for Anthropic's three addressable layers. Dollar
+      values are omitted where no independent analyst data exists in the evidence ledger; instead,
+      each layer is annotated with the strongest available evidence proxy. Investors should
+      treat this as a structural framework, not a quantified sizing model.
+    data:
+      items:
+        - label: TAM
+          detail: |
+            Global Enterprise AI Software & Foundation Model Market.
+            Evidence proxy: Amazon ~$8B + Google $3B+ + Microsoft/Nvidia announced $15B investments;
+            $30B Azure compute commitment; Google 1M TPUs / 1GW compute target.
+            Dollar size: NOT EVIDENCED IN LEDGER — independent analyst data required.
+          tone: neutral
+        - label: SAM
+          detail: |
+            API-Accessible LLM Services for Enterprise Developers & SaaS Builders.
+            Evidence proxy: Claude available via 30+ Bedrock regions, Vertex AI, Foundry, direct API;
+            Snowflake $200M multi-year deal signals enterprise contract scale.
+            Pricing: $1–$25/MTok (Haiku 4.5 through Opus 4.7).
+            Dollar size: NOT EVIDENCED IN LEDGER — no industry API revenue share data fetched.
+          tone: neutral
+        - label: SOM
+          detail: |
+            Anthropic's Current Revenue Footprint.
+            Evidence proxy: Claude Code revenue 5.5x by July 2025 (company-claimed, single source);
+            $380B post-money valuation implies multi-billion ARR expectations from investors.
+            Absolute ARR / revenue run rate: NOT DISCLOSED — private company, no audited financials.
+          tone: neutral
+    approximationNotes: |
+      No numeric market size values are assigned at any layer. All layers use qualitative evidence
+      proxies drawn from Anthropic's funding and partnership disclosures. This is a deliberate
+      evidence-constraint — inventing market size numbers without source support would violate
+      the evidence-first methodology of this report.
+    claimRefs: [C005, C008, C009, C018, C031, C032, C033, C042]
+
+  - id: F302
+    title: "AI Macro Spend Tailwinds — Evidence-Based Signals"
+    type: bars
+    layout: wide
+    summary: |
+      Key evidence-grounded macro signals supporting Anthropic's market growth thesis.
+      Values represent announced investment or deal commitments, not market size forecasts.
+      These are directional signals, not independent market sizing inputs.
+    data:
+      items:
+        - label: "Amazon total investment in Anthropic"
+          value: 8000
+          displayValue: "~$8B (cumulative: Sep 2023, Mar 2024, Nov 2024)"
+          tone: positive
+        - label: "Microsoft/Nvidia announced investment"
+          value: 15000
+          displayValue: "Up to $15B announced Nov 2025 (unconfirmed execution)"
+          tone: neutral
+        - label: "Azure compute commitment by Anthropic"
+          value: 30000
+          displayValue: "$30B Azure compute purchase commitment"
+          tone: positive
+        - label: "Google total investment in Anthropic"
+          value: 3000
+          displayValue: "~$3B+ (Oct 2023 + Mar 2025)"
+          tone: positive
+        - label: "Series G round (Feb 2026)"
+          value: 30000
+          displayValue: "$30B at $380B post-money"
+          tone: positive
+        - label: "Snowflake enterprise partnership"
+          value: 200
+          displayValue: "$200M multi-year enterprise deal"
+          tone: positive
+    approximationNotes: |
+      All values are deal sizes or investment commitments, not revenue or market size.
+      Microsoft/Nvidia $15B is announced but execution not confirmed in evidence. Google TPU
+      commitment (1M TPUs, 1GW compute) is not included as a dollar value because a cost
+      basis was not cited in the evidence ledger.
+    claimRefs: [C005, C008, C009, C031, C032, C033]
+
+sections:
+  - number: "2.1"
+    title: Market Definition and Scope
+    body: |
+      Anthropic competes in and helps define three interdependent market layers that together
+      constitute the addressable opportunity for frontier AI model companies:
+
+      **Layer 1 — AI Foundation Model APIs.** The primary commercial product is token-priced
+      API access to large language models. Claude is offered across three model tiers —
+      Opus 4.7 ($5/$25 per MTok input/output), Sonnet 4.6 ($3/$15), and Haiku 4.5 ($1/$5)
+      — covering the full price/performance spectrum from low-cost throughput workloads to
+      premium agentic reasoning [C015]. Distribution is multi-channel: direct Anthropic API,
+      Amazon Bedrock (30+ global regions), Google Cloud Vertex AI, and Microsoft Foundry
+      [C042]. Each channel addresses a different enterprise procurement pattern.
+
+      **Layer 2 — Enterprise AI Software and Consumer SaaS.** Claude.ai provides a direct
+      consumer and business subscription surface ranging from free tier through Max ($200/month)
+      and Team ($20/seat/month annual) to Enterprise custom contracts [C016]. Enterprise plans
+      include HIPAA readiness, SCIM provisioning, audit logs, and IP allowlisting — features
+      targeting regulated industries including healthcare, financial services, and legal [C016].
+      The Palantir partnership (since November 2024) extends distribution into classified
+      U.S. government environments, though this channel is currently under litigation risk
+      [C034, C035].
+
+      **Layer 3 — Agentic AI and Automation Platform.** The most differentiated and rapidly
+      growing layer. Claude Code (GA May 2025) is a fully agentic coding assistant integrated
+      with VS Code, JetBrains, and GitHub Actions, reporting a 5.5x revenue increase by July
+      2025 [C017, C018]. Claude Cowork (enterprise GA February 2026) extends autonomous
+      task execution to non-technical business users via GUI automation connectors including
+      Google Drive, Gmail, DocuSign, and FactSet [C019]. The Model Context Protocol (MCP),
+      open-sourced November 2024, is Anthropic's bid to set the universal integration
+      standard for this layer — already adopted by Block, Apollo, Replit, Zed, and
+      Sourcegraph [C020].
+
+      Anthropic characterizes the macro stakes explicitly: the company's founding thesis holds
+      that "the impact of AI might be comparable to that of the industrial and scientific
+      revolutions" [C017]. This self-framing, while not a market size estimate, reflects the
+      conviction that the total economic opportunity justifies multi-billion-dollar annual
+      compute investment as a prerequisite for commercially relevant safety research.
+    claimRefs: [C015, C016, C017, C018, C019, C020, C030, C034, C035, C042]
+
+  - number: "2.2"
+    title: "Market Sizing — TAM, SAM, and SOM"
+    body: |
+      **Evidence Constraint.** The evidence ledger contains no third-party analyst market
+      sizing figures for the AI foundation model or enterprise AI software markets. No IDC,
+      Gartner, Goldman Sachs, or equivalent research reports were fetched as part of this
+      diligence run. All numeric estimates below are therefore marked as null or explicitly
+      labeled as evidence-constrained proxies. The recommended diligence path is to source
+      independent market sizing in a follow-on step.
+
+      **Total Addressable Market (TAM).** The global AI foundation model and enterprise AI
+      software market encompasses all enterprise and consumer spending on AI model APIs,
+      AI SaaS subscriptions, AI infrastructure software, and AI-enabled application layers.
+      Hyperscaler behavior is the strongest indirect TAM signal available: Amazon's cumulative
+      ~$8B investment in Anthropic combined with the $30B Azure commitment (Microsoft/Nvidia)
+      and Google's $3B+ stake and 1M TPU commitment collectively represent over $50B in
+      disclosed capital allocation by the three largest global cloud providers [C008, C009,
+      C031, C032]. At typical venture return expectations, this implies a TAM belief in the
+      hundreds of billions of dollars. However, no direct analyst estimate is cited in the
+      ledger and any dollar figure would be invented.
+
+      **Serviceable Addressable Market (SAM).** The SAM is the fraction of the AI market
+      accessible via API-based foundation model services and managed model marketplaces. The
+      Snowflake $200M multi-year enterprise partnership [C033] provides one anchoring data
+      point at the enterprise deal scale. Claude's distribution across 30+ Bedrock regions
+      and two other global cloud marketplaces [C042] gives a broad geographic aperture.
+      Token-level pricing ($1–$25/MTok) and enterprise subscription pricing (Team at
+      $20/seat/month, Enterprise custom) define the monetization surface. No aggregate SAM
+      figure is calculable from the available evidence.
+
+      **Serviceable Obtainable Market (SOM).** Anthropic has not disclosed revenue, ARR, or
+      gross margin publicly. The single quantified traction signal in the ledger is Claude
+      Code's 5.5x revenue growth by July 2025 [C018], which is a company-claimed growth
+      rate from an undisclosed base. The $380B post-money Series G valuation [C005] implies
+      investor expectation of multi-billion-dollar annual revenues, as frontier AI companies
+      of this scale are typically valued at 10–50x forward revenue — but this calculation
+      is an inferred estimate from a valuation data point, not a disclosed revenue figure.
+
+      Refer to Table T302 for the structured sizing summary and F301 for the market-sizing-lens
+      figure. The financial chapter (05) addresses revenue modeling in more detail.
+    claimRefs: [C005, C008, C009, C018, C031, C032, C033, C042]
+
+  - number: "2.3"
+    title: Market Growth Drivers
+    body: |
+      The following macro drivers are substantiated by evidence in the ledger and support
+      the thesis that the AI foundation model market will continue to grow materially:
+
+      **Driver 1 — Hyperscaler Compute Scaling.** The Google Cloud partnership (October 2025)
+      provides access to up to 1 million TPUs targeting over 1 gigawatt of AI compute by 2026
+      [C031]. This level of compute provisioning — matched by Amazon as primary cloud provider
+      [C030] and the $30B Azure commitment [C032] — reflects a secular trend of hyperscalers
+      embedding AI model providers as core infrastructure, rather than building competing
+      proprietary models exclusively. Compute availability directly enables Anthropic to train
+      more capable models faster, reinforcing both competitive position and market growth.
+
+      **Driver 2 — Enterprise AI Adoption Acceleration.** The rapid expansion of Claude's
+      enterprise distribution — from a single API in 2023 to Bedrock (30+ regions), Vertex AI,
+      Foundry, and Snowflake's data platform by 2026 [C033, C042] — mirrors enterprise software
+      purchasing patterns for cloud-native applications. The Bedrock integration's "zero operator
+      access" architecture [C030] directly addresses enterprise data sovereignty requirements,
+      removing a major adoption barrier in regulated industries.
+
+      **Driver 3 — Agentic AI Product Expansion.** The shift from AI as a query interface to
+      AI as an autonomous execution agent is the highest-growth segment in the ledger evidence.
+      Claude Code's 5.5x revenue growth rate [C018] and the launch of Claude Cowork [C019]
+      represent the leading edge of this wave. Enterprise customers (Cursor, GitHub, Rakuten,
+      Notion) are already deploying Claude as an active coding and workflow agent rather than
+      a search-and-summarize assistant [C041].
+
+      **Driver 4 — MCP Ecosystem Network Effects.** The open-sourcing of the Model Context
+      Protocol in November 2024 [C020] creates a growth flywheel: each new MCP integration
+      (Block, Apollo, Replit, Zed, Sourcegraph) increases the value of the Claude platform,
+      attracts new developers, and raises switching costs for enterprises already invested in
+      MCP-based integrations.
+
+      **Driver 5 — Safety Credibility as Enterprise GTM Differentiator.** Anthropic's PBC
+      status, LTBT governance [C024], Responsible Scaling Policy [C023], and Constitutional AI
+      methodology [C021] are increasingly cited by enterprise buyers as procurement criteria
+      for AI model selection. The DoD dispute — in which Anthropic refused to remove safeguards
+      against mass surveillance and autonomous weapons use — is paradoxically a market signal
+      of governance integrity that distinguishes Anthropic from less constrained competitors [C035].
+
+      **Headwind — Market Concentration Risk.** The same hyperscaler partners (Amazon, Google,
+      Microsoft) who distribute Claude are also investing in, building, and competing with
+      frontier AI models. As these platforms mature, they may prefer to route enterprise
+      workloads to proprietary models (AWS Titan, Google Gemini, Microsoft Phi) over third-
+      party API integrations. This structural tension is not yet quantified but represents a
+      long-run market share headwind for pure-play model providers including Anthropic.
+    claimRefs: [C017, C018, C019, C020, C021, C023, C024, C030, C031, C032, C033, C035, C042]
+
+  - number: "2.4"
+    title: Segment Analysis
+    body: |
+      **Developer / API Segment.** The core revenue engine. Developers access Claude through
+      the direct Anthropic API, Amazon Bedrock, or Google Vertex AI to build AI-powered
+      applications. The pricing ladder ($1/$5 Haiku through $5/$25 Opus) allows developers
+      to optimize cost vs. capability per task [C015]. Batch API pricing (50% discount) and
+      prompt caching further incentivize high-volume workloads. Key developer platform
+      integrations include Cursor (70% task clearance on CursorBench with Opus 4.7) [C041],
+      Replit, GitHub Copilot (using Claude as model), and Sourcegraph. The MCP ecosystem
+      expands the developer integration surface beyond the core API [C020].
+
+      **Enterprise / Regulated Industries Segment.** The Team and Enterprise subscription
+      tiers [C016] address enterprise requirements for data governance, compliance, and
+      workforce AI access. The Bedrock zero-operator-access architecture [C030] specifically
+      serves financial services, healthcare, and legal firms with data sovereignty requirements.
+      Known enterprise customers include Notion, StubHub, Intercom, Block, and Harvey (legal AI)
+      [from company snapshot section 1.4]. The Snowflake partnership ($200M, December 2025)
+      [C033] positions Claude within the data warehouse ecosystem, a strategic enterprise
+      distribution channel.
+
+      **Consumer / Prosumer Segment.** Claude.ai (Free/Pro/Max tiers) competes with ChatGPT
+      and Google Gemini for individual knowledge worker mindshare. The February 2026 Super
+      Bowl advertising campaign [from F201 timeline] signals significant consumer marketing
+      investment. The Max 20x tier at $200/month targets power users with intensive usage
+      requirements [C016].
+
+      **Agentic / Automation Segment.** The fastest-growing evidenced segment. Claude Code
+      (5.5x revenue growth by July 2025) [C018] and Claude Cowork (enterprise GA February
+      2026) [C019] define a new category of autonomous agent deployment distinct from
+      traditional API integration. This segment commands higher per-task economics (managed
+      agents: $0.08/session-hour; web search: $10/1K requests — from company snapshot T203)
+      above baseline token pricing.
+
+      **Government / Defense Segment (Contested).** The Palantir/AWS partnership for
+      classified U.S. defense and intelligence deployments [C034] represented a high-value
+      but high-risk government channel. The active DoD supply chain risk litigation [C035]
+      temporarily restricts this channel. The temporary injunction in Anthropic's favor
+      (March 26, 2026) [C036] and public support from Amazon, Google, Apple, and Microsoft
+      suggest this restriction may be resolved, but the outcome is uncertain.
+    claimRefs: [C015, C016, C018, C019, C020, C030, C033, C034, C035, C036, C041, C042]

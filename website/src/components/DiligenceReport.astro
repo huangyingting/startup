@@ -64,7 +64,15 @@ function blockRefs(block: any) { return arr<string>(block?.claimRefs).slice(0, 6
 function blockClass(type: string | null | undefined) { return `report-callout callout-${String(type ?? 'key-insight').replace(/[^a-z0-9-]/gi, '-')}`; }
 
 const coverMetrics = arr(doc?.coverMetrics);
-const startupIntroduction = doc?.startupIntroduction ?? stages.companySnapshot?.startupIntroduction ?? null;
+const documentStartupIntroduction = doc?.startupIntroduction ?? null;
+const snapshotStartupIntroduction = stages.companySnapshot?.startupIntroduction ?? null;
+const startupIntroduction = documentStartupIntroduction || snapshotStartupIntroduction
+  ? {
+      ...(snapshotStartupIntroduction ?? {}),
+      ...(documentStartupIntroduction ?? {}),
+      summary: documentStartupIntroduction?.summary ?? documentStartupIntroduction?.body ?? snapshotStartupIntroduction?.summary ?? snapshotStartupIntroduction?.body ?? null,
+    }
+  : null;
 const chapters = arr(doc?.chapters);
 const reportFigures = arr(doc?.figures);
 const reportTables = arr(doc?.tables);
@@ -130,7 +138,8 @@ const fallbackMetrics = [
   {startupIntroduction && (
     <section class="report-section startup-intro">
       <h2>{labels.startupIntro}</h2>
-      <p>{splitClaimRefsText(startupIntroduction.summary).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>
+      {startupIntroduction.heading && <p class="intro-heading"><strong>{startupIntroduction.heading}</strong></p>}
+      {startupIntroduction.summary && <p>{splitClaimRefsText(startupIntroduction.summary).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>}
       <dl class="intro-grid">
         {(startupIntroduction.foundedDate || startupIntroduction.foundedYear) && <div><dt>{labels.founded}</dt><dd>{startupIntroduction.foundedDate ?? startupIntroduction.foundedYear}</dd></div>}
         {arr(startupIntroduction.founders).length > 0 && <div><dt>{labels.founders}</dt><dd>{arr(startupIntroduction.founders).map((founder: any) => founder.name).join(', ')}</dd></div>}

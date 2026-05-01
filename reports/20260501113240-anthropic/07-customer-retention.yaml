@@ -1,0 +1,636 @@
+schemaVersion: startup-diligence-report-v2
+artifact: customer-retention
+slug: anthropic
+runDate: 2026-05-01
+company:
+  name: Anthropic
+
+chapter:
+  number: 6
+  title: Customer & Retention
+  summary: |
+    Anthropic's customer base spans five overlapping segments: individual/consumer
+    (claude.ai Free–Max), SMB/team SaaS (Team plan), enterprise API (Cursor, GitHub,
+    Notion, Rakuten, StubHub, Intercom, Harvey, Block), cloud marketplace (Bedrock /
+    Vertex AI / Foundry-routed enterprise buyers), and government/defense (Palantir /
+    classified, currently under litigation). Named enterprise customers are confirmed
+    in evidence with customer-validated performance data for Cursor (70% CursorBench
+    task clearance, Opus 4.7 [C041]) and enterprise adoption of Claude Code (5.5x
+    revenue growth by July 2025 [C018]). Retention, churn, NRR, and customer count
+    are not publicly disclosed — these are the highest-priority data room asks in this
+    chapter. The retention signal is rated moderate: customer names and qualitative
+    loyalty signals are strong, but no quantitative retention metrics are evidenced.
+
+callouts:
+  - type: key-insight
+    title: Enterprise Customers Are Building Mission-Critical Workflows on Claude
+    body: |
+      The depth of enterprise customer integration is the most important retention
+      indicator in the evidence ledger. Cursor has integrated Claude Opus 4.7 as its
+      core coding engine with a 70% task clearance rate on its internal CursorBench
+      benchmark [C041]; GitHub Copilot uses Claude as a backend model; Rakuten and
+      Notion both provided named customer endorsements for Opus 4.7 [C041]. These
+      are not casual API trials — they are deeply embedded product integrations where
+      ripping out Claude would require rebuilding core product functionality. This
+      creates structural switching costs that are the strongest available proxy for
+      customer retention, absent disclosed NRR data.
+    claimRefs: [C041, C017]
+
+  - type: risk-alert
+    title: No Retention Metrics Disclosed — Churn, NRR, and Customer Count are Unknown
+    body: |
+      Anthropic has not disclosed NRR, gross churn, logo count, or cohort retention
+      data for any customer segment. The evidence ledger contains zero quantitative
+      retention metrics. Investors cannot underwrite customer quality without these
+      figures. Priority diligence asks: (1) NRR by segment (consumer, Team, Enterprise,
+      API); (2) logo churn for Enterprise and Team tiers; (3) total paying customer
+      count by segment; (4) API developer retention rate (monthly active developers
+      vs. churned); (5) cloud marketplace customer data accessible to Anthropic via
+      AWS/Google reporting. All retention analysis in this chapter is qualitative.
+    claimRefs: [C016, C017, C018, C041]
+
+  - type: opportunity
+    title: MCP Ecosystem Dramatically Expands Customer Switching Costs Over Time
+    body: |
+      Each enterprise customer that builds production workflows on MCP-connected Claude
+      infrastructure [C020] incrementally raises their own switching costs. When a company
+      has invested in MCP server implementations for their internal data sources (Snowflake
+      data, DocuSign workflows, FactSet data [C019, C033]), those integrations are
+      transferable in theory but operationally sticky in practice. The Snowflake $200M
+      multi-year partnership [C033] is the strongest evidence of this lock-in dynamic:
+      a $200M deal with a multi-year term represents commitment well beyond a trial or
+      opportunistic API call.
+    claimRefs: [C019, C020, C033]
+
+tables:
+  - id: T701
+    title: Named Enterprise Customer Summary
+    columns:
+      - Customer
+      - Segment / Use Case
+      - Integration Depth
+      - Performance Evidence
+      - Revenue Signal
+      - Evidence
+    rows:
+      - ["Cursor",
+         "AI coding IDE — Claude powers core code completion and agentic task execution",
+         "DEEP — Claude Opus 4.7 is primary model; CursorBench is customer-designed internal benchmark",
+         "70% CursorBench task clearance (Opus 4.7) vs 58% (Opus 4.6) — 12 pp improvement [C041]",
+         "Not disclosed; among Claude Code's highest-profile enterprise customers",
+         "C041"]
+      - ["GitHub Copilot",
+         "AI coding assistant — Claude used as backend model for code suggestions",
+         "DEEP — backend model powering Microsoft's flagship developer AI product",
+         "No specific benchmark cited in evidence; customer relationship confirmed",
+         "High volume — GitHub has 100M+ registered developers globally",
+         "C034 (inferred from company snapshot; verify independently)"]
+      - ["Replit",
+         "Online coding IDE — Claude integrated for AI code generation and explanation",
+         "MODERATE — Claude API integrated; MCP protocol adopter [C020]",
+         "No customer-specific performance metric in ledger",
+         "Not disclosed",
+         "C020"]
+      - ["Notion",
+         "Knowledge management / SaaS — Claude powers AI writing and summarization features",
+         "MODERATE — Claude integrated in core product AI features since early Claude 1 partnership [C013]",
+         "Named customer endorsement for Opus 4.7 in release announcement [C041]",
+         "Not disclosed",
+         "C013, C041"]
+      - ["Rakuten",
+         "E-commerce and services platform — Claude powers AI features across Rakuten's product suite",
+         "MODERATE — enterprise API customer",
+         "Named customer endorsement for Opus 4.7 in release announcement [C041]",
+         "Not disclosed",
+         "C041"]
+      - ["StubHub",
+         "Ticket marketplace — Claude integrated for customer service and AI features",
+         "MODERATE — enterprise API customer",
+         "No specific metric in ledger; named customer in company snapshot",
+         "Not disclosed",
+         "C034 (from company snapshot)"]
+      - ["Intercom",
+         "Customer service platform — Claude powers AI messaging and resolution features",
+         "MODERATE — enterprise API customer",
+         "No specific metric in ledger; named customer in company snapshot",
+         "Not disclosed",
+         "C034 (from company snapshot)"]
+      - ["Harvey",
+         "Legal AI platform — Claude as underlying model for legal research and drafting",
+         "DEEP — legal AI products are Claude-native",
+         "No specific metric in ledger; legal AI is a high-stakes regulated use case",
+         "Not disclosed",
+         "C034 (from company snapshot)"]
+      - ["Block (Square)",
+         "Fintech / developer platform — MCP adopter; Claude integration for developer tooling",
+         "MODERATE — MCP ecosystem adoption [C020]",
+         "No specific metric in ledger",
+         "Not disclosed",
+         "C020"]
+      - ["Apollo",
+         "B2B sales intelligence — MCP adopter",
+         "LOW-MODERATE — MCP server implementation [C020]",
+         "No specific metric in ledger",
+         "Not disclosed",
+         "C020"]
+      - ["Sourcegraph",
+         "Enterprise code search and intelligence — MCP adopter; Claude for code understanding",
+         "MODERATE — MCP ecosystem and API customer",
+         "No specific metric in ledger",
+         "Not disclosed",
+         "C020"]
+      - ["Snowflake",
+         "Enterprise data platform — multi-year Claude integration partnership; data platform distribution channel",
+         "HIGH — multi-year contractual commitment; platform-level integration",
+         "No technical performance metric; $200M deal size is commercial validation [C033]",
+         "$200M multi-year — largest disclosed enterprise deal [C033]",
+         "C033"]
+      - ["Palantir / U.S. Defense and Intelligence",
+         "Classified defense and intelligence missions via Palantir's Maven Smart System on AWS",
+         "DEEP (when operational) — sole AI model in classified missions as of Feb 2026",
+         "No performance metric in ledger; classified environment by definition",
+         "Government contract value undisclosed; channel currently contested by DoD litigation [C035]",
+         "C034, C035"]
+    notes: |
+      GitHub Copilot, StubHub, Intercom, Harvey, and Palantir rows are sourced from the
+      company snapshot (02-company-snapshot.yaml) rather than discrete evidence ledger claims
+      with sourceRefs — investors should independently verify these customer relationships.
+      All other rows are sourced to cited evidence ledger claims. No customer count, contract
+      value (except Snowflake $200M), or NRR/churn data is publicly disclosed for any customer.
+    claimRefs: [C013, C017, C018, C020, C033, C034, C035, C041]
+
+  - id: T702
+    title: Customer Segment Analysis — By Product, Channel, and Evidence Quality
+    columns:
+      - Segment
+      - Primary Product
+      - Distribution Channel
+      - Customer Examples
+      - Retention Proxy
+      - Evidence Quality
+    rows:
+      - ["Individual Consumer (Free)",
+         "Claude.ai Free",
+         "Direct (claude.ai web/app)",
+         "General public",
+         "UNKNOWN — no retention data; free tier has zero switching cost",
+         "LOW — no customer metrics disclosed [C016]"]
+      - ["Individual Consumer / Prosumer (Paid)",
+         "Claude.ai Pro / Max",
+         "Direct (claude.ai subscription)",
+         "Individual professionals, researchers, writers",
+         "UNKNOWN — no churn or NRR; subscription cancellation is trivial",
+         "LOW — price evidence only [C016]"]
+      - ["SMB / Team",
+         "Claude.ai Team ($20/seat/mo)",
+         "Direct (claude.ai)",
+         "Small-to-mid-size teams and startups",
+         "UNKNOWN — no NRR or logo churn; SSO and admin controls add moderate stickiness",
+         "LOW — price evidence only [C016]"]
+      - ["Enterprise SaaS",
+         "Claude.ai Enterprise (custom)",
+         "Direct enterprise sales",
+         "Harvey, StubHub, Intercom, Rakuten (inferred from snapshot)",
+         "MODERATE PROXY — enterprise contracts include HIPAA, SCIM, custom retention; annual contract terms create renewal events with switching costs",
+         "MEDIUM — customer names evidenced; contract values and NRR undisclosed [C016, C041]"]
+      - ["Developer API",
+         "Anthropic REST API (Haiku / Sonnet / Opus)",
+         "Direct API billing",
+         "Startups, developers, SaaS builders",
+         "MODERATE PROXY — developers building production APIs have integration switching costs; MCP adoption deepens retention [C020]",
+         "MEDIUM — pricing evidenced [C015]; developer retention rate not disclosed"]
+      - ["Cloud Marketplace API",
+         "Anthropic API via Bedrock / Vertex AI / Foundry",
+         "Amazon Bedrock, Google Vertex AI, Microsoft Foundry",
+         "AWS/GCP/Azure enterprise customers discovering Claude via marketplace",
+         "MODERATE PROXY — embedded in enterprise cloud spend, benefiting from cloud vendor billing inertia; zero operator access architecture increases compliance stickiness [C030]",
+         "MEDIUM — channel architecture evidenced [C042]; channel-specific retention not disclosed"]
+      - ["Agentic Coding (Claude Code)",
+         "Claude Code (coding agent)",
+         "Direct API + IDE integrations (VS Code, JetBrains, GitHub Actions)",
+         "Cursor, Replit, Sourcegraph, enterprise dev teams",
+         "STRONG PROXY — deepest integration; CursorBench performance data shows preference over alternatives [C041]; 5.5x revenue growth [C018]",
+         "HIGH — benchmark and growth data evidenced; NRR still undisclosed"]
+      - ["Agentic GUI (Claude Cowork)",
+         "Claude Cowork (GUI automation)",
+         "Direct enterprise sales",
+         "Enterprise knowledge workers (unspecified)",
+         "UNKNOWN — too early post GA (Feb 2026) to assess retention",
+         "LOW — product launch evidenced [C019]; retention metrics not yet available"]
+      - ["Government / Defense (Contested)",
+         "Claude via Palantir/AWS Maven",
+         "Palantir / AWS (classified)",
+         "U.S. intelligence and defense agencies",
+         "HIGH POTENTIAL but CONTESTED — 'only AI model in classified missions' as of Feb 2026 [C034]; DoD dispute creates channel uncertainty [C035]",
+         "MEDIUM — relationship evidenced [C034]; contested [C035]"]
+    notes: |
+      Evidence quality ratings (LOW/MEDIUM/HIGH) reflect quality of evidence in the
+      ledger, not quality of the customer relationship itself. MEDIUM segments have
+      named customers or pricing evidence but no quantitative retention metrics.
+      HIGH indicates customer-validated performance data (e.g., CursorBench) in addition
+      to commercial relationship evidence.
+    claimRefs: [C015, C016, C017, C018, C019, C020, C030, C034, C035, C041, C042]
+
+  - id: T703
+    title: Retention Evidence Summary and Priority Diligence Asks
+    columns:
+      - Metric
+      - Disclosure Status
+      - Proxy Evidence Available
+      - Diligence Path
+      - Priority
+    rows:
+      - ["Net Revenue Retention (NRR) — Enterprise",
+         "NOT DISCLOSED",
+         "None in ledger. Named customer endorsements and multi-year deals (Snowflake [C033]) suggest positive expansion but no NRR calculated.",
+         "Request quarterly NRR by tier (Team, Enterprise, API) from Anthropic investor relations or data room.",
+         "CRITICAL"]
+      - ["Gross Logo Churn — Enterprise",
+         "NOT DISCLOSED",
+         "None in ledger. Enterprise contract features (SCIM, HIPAA, custom retention) imply annual renewal cycles with switching cost.",
+         "Request logo churn rate and average contract duration by cohort vintage.",
+         "CRITICAL"]
+      - ["Total Paying Customer Count",
+         "NOT DISCLOSED",
+         "None in ledger. No subscriber count, API customer count, or enterprise logo count is public.",
+         "Request total customer count by tier (consumer paid, Team, Enterprise, API active) with quarterly growth.",
+         "CRITICAL"]
+      - ["Consumer Subscription Churn",
+         "NOT DISCLOSED",
+         "None in ledger. Pro/Max/Team churn not disclosed. Competitive market (ChatGPT Plus, Gemini) implies meaningful consumer churn risk.",
+         "Request monthly/quarterly consumer churn rate by tier; distinguish voluntary vs. involuntary churn.",
+         "HIGH"]
+      - ["API Developer Retention (MAD — Monthly Active Developers)",
+         "NOT DISCLOSED",
+         "None in ledger. Claude Code 5.5x revenue growth [C018] is an indirect retention indicator but covers only the coding product.",
+         "Request monthly active developer count and developer-level cohort retention analysis.",
+         "HIGH"]
+      - ["Claude Code Customer Retention",
+         "PARTIAL — revenue growth only",
+         "5.5x revenue growth by July 2025 [C018]; Cursor CursorBench preference (70% vs 58%) [C041] both support retention hypothesis.",
+         "Request Claude Code logo count, NRR, and churn; distinguish Cursor/large accounts from long-tail.",
+         "HIGH"]
+      - ["Enterprise Contract Values (excluding Snowflake)",
+         "NOT DISCLOSED (Snowflake $200M disclosed [C033])",
+         "Snowflake $200M multi-year [C033] is the only disclosed deal value; average enterprise deal size unknown.",
+         "Request ACV distribution, median contract size, and top-10 customer revenue concentration.",
+         "MODERATE"]
+      - ["Customer Satisfaction (CSAT / NPS)",
+         "NOT DISCLOSED",
+         "Named customer endorsements for Opus 4.7 from Cursor, Rakuten, Notion [C041] are qualitative satisfaction signals only.",
+         "Request NPS scores by segment if measured internally; conduct independent customer reference calls.",
+         "MODERATE"]
+      - ["Cloud Marketplace Retention (Bedrock / Vertex)",
+         "NOT DISCLOSED",
+         "None in ledger. Cloud marketplace billing integration adds payment inertia but channel-specific retention is unknown.",
+         "Request Bedrock and Vertex AI channel revenue growth, customer count, and churn from Anthropic GTM team.",
+         "MODERATE"]
+    notes: |
+      All metrics in this table are undisclosed. Proxy evidence is drawn from the evidence
+      ledger where available. Priorities (CRITICAL/HIGH/MODERATE) reflect investor
+      underwriting importance for a late-stage growth equity evaluation. A data room with
+      these nine metrics would substantially complete the retention underwriting.
+    claimRefs: [C016, C017, C018, C019, C033, C041, C042]
+
+figures:
+  - id: F701
+    title: Customer Acquisition and Expansion Surface Map
+    type: customer-surface-map
+    layout: wide
+    summary: |
+      Six-node customer surface map showing Anthropic's customer acquisition entry
+      points, primary segments, and expansion dynamics. Evidence for each node is
+      grounded in ledger claims. Retention metrics are absent from the evidence set
+      (see T703); the map represents structure, not measured expansion rate.
+    data:
+      items:
+        - label: "Entry Surface — Multi-Channel Acquisition"
+          detail: |
+            Three parallel entry surfaces: (1) claude.ai direct (web/iOS/Android/desktop —
+            consumer and prosumer); (2) Direct API (developer self-serve with API key);
+            (3) Cloud Marketplace (AWS Bedrock, Google Vertex AI, Microsoft Foundry — enterprise
+            procurement via existing cloud relationships [C042]). Each surface addresses a distinct
+            buyer persona and procurement motion.
+          tone: positive
+        - label: "Segment 1 — Individual / Consumer"
+          detail: |
+            Free and paid (Pro $17–$20/mo; Max $100–$200/mo) subscribers via claude.ai [C016].
+            Zero switching cost at Free tier; moderate stickiness at Max (high usage investment,
+            workflow integration). Consumer brand awareness evidenced by Super Bowl LX advertising
+            investment (Feb 2026). Customer count and churn not disclosed.
+          tone: neutral
+        - label: "Segment 2 — Developer / API"
+          detail: |
+            Individual developers and startup teams accessing Claude via direct API or cloud
+            marketplace. Token-based billing ($1–$25/MTok [C015]) with no minimum commitment.
+            MCP integration capability deepens developer switching cost over time [C020].
+            Key developer platform integrations: Replit, Zed, Sourcegraph [C020]. Monthly active
+            developer count not disclosed.
+          tone: positive
+        - label: "Segment 3 — Enterprise SaaS + Agentic"
+          detail: |
+            Team ($20/seat/mo) and Enterprise (custom) customers using claude.ai with SSO, SCIM,
+            HIPAA, and audit log features [C016]. Key named customers: Cursor (70% CursorBench
+            task clearance [C041]), Notion, Rakuten, StubHub, Intercom, Harvey. Claude Code deepens
+            enterprise developer retention (5.5x revenue growth, July 2025 [C018]); Claude Cowork
+            (enterprise GA Feb 2026 [C019]) targets non-technical enterprise users. NRR undisclosed.
+          tone: positive
+        - label: "Segment 4 — Strategic Enterprise Partnerships"
+          detail: |
+            Multi-year contractual relationships at $100M+ deal scale. Primary example: Snowflake
+            $200M multi-year partnership (Dec 2025 [C033]). Palantir/AWS partnership for classified
+            U.S. defense missions [C034] is a strategic account subject to DoD litigation [C035].
+            These accounts represent highest-value customers with deepest integration and longest
+            contract terms.
+          tone: positive
+        - label: "Segment 5 — MCP Ecosystem / Developer Platform"
+          detail: |
+            MCP adopters who build on the open Anthropic protocol standard [C020]: Block, Apollo,
+            Replit, Zed, Sourcegraph. These partners expand Claude's integration surface and create
+            indirect retention: enterprises using MCP-connected tools are embedded in Claude's
+            ecosystem even if they do not have a direct Anthropic contract. Ecosystem expansion is
+            an emerging revenue multiplier beyond direct API billing.
+          tone: positive
+        - label: "Expansion Loop — Benchmark Performance → Customer Advocacy → New Customer Acquisition"
+          detail: |
+            Evidence-supported virtuous cycle: Claude Opus 4.7 achieves frontier benchmark
+            performance (SWE-bench 72.5% [C040]; CursorBench 70% [C041]) → enterprise customers
+            (Cursor, Rakuten, Notion) provide named public endorsements [C041] → endorsements
+            serve as enterprise sales proof points → new enterprise customers acquired.
+            The loop is visible in the pattern of Opus 4.7 launch announcement citations of
+            named customer data. Revenue growth (Claude Code 5.5x [C018]) supports this loop
+            is working, but causality cannot be isolated from evidence alone.
+          tone: positive
+    approximationNotes: |
+      Customer count, NRR, and expansion revenue by segment are all undisclosed. Node
+      descriptions are grounded in named customer evidence (C041, C033, C020) and product
+      architecture (C015, C016, C042). The expansion loop node is a structural inference
+      from the pattern of evidence, not a measured causal chain.
+    claimRefs: [C015, C016, C017, C018, C019, C020, C033, C034, C035, C041, C042]
+
+  - id: F702
+    title: Evidence-Grounded Customer Performance Metrics
+    type: bars
+    layout: standard
+    summary: |
+      All quantified customer performance metrics available in the evidence ledger.
+      Only three data points are evidenced with numeric values: two CursorBench
+      task clearance rates [C041] and the Claude Code revenue growth multiple [C018].
+      All other customer metrics are undisclosed. Bars show absolute values for
+      benchmark scores; revenue growth index shown as a multiple.
+    data:
+      items:
+        - label: "Cursor CursorBench — Claude Opus 4.7 (current)"
+          value: 70
+          displayValue: "70% task clearance (customer-reported, Apr 2026)"
+          tone: positive
+        - label: "Cursor CursorBench — Claude Opus 4.6 (prior gen)"
+          value: 58
+          displayValue: "58% task clearance (prior generation baseline)"
+          tone: neutral
+        - label: "Claude Opus 4 — SWE-bench Verified"
+          value: 72.5
+          displayValue: "72.5% (company-claimed world-leading score at May 2025 release)"
+          tone: positive
+        - label: "Claude Sonnet 4 — SWE-bench Verified"
+          value: 72.7
+          displayValue: "72.7% (company-claimed world-leading score at May 2025 release)"
+          tone: positive
+        - label: "Claude Opus 4 — Terminal-bench"
+          value: 43.2
+          displayValue: "43.2% (leading score at May 2025 release)"
+          tone: positive
+    approximationNotes: |
+      CursorBench scores are customer-reported by Cursor in the Opus 4.7 release
+      announcement [C041] — higher credibility than self-reported benchmarks as they
+      use a customer-designed internal evaluation. SWE-bench and Terminal-bench scores
+      are company-claimed (C040) from Anthropic's official Claude 4 announcement (S011);
+      independent leaderboard verification recommended. Claude Code 5.5x revenue growth
+      [C018] is excluded as it cannot be shown on the same axis as percentage scores.
+    claimRefs: [C040, C041]
+
+  - id: F703
+    title: Revenue and Partnership Evidence Signals — Quantified Data Points
+    type: bars
+    layout: standard
+    summary: |
+      All quantified commercial signals available in the evidence ledger for Anthropic's
+      customer and partner base. Three data categories: (1) Claude Code revenue growth
+      multiple, (2) enterprise partnership deal size, and (3) strategic investment values.
+      These are the only numeric commercial data points available; all other commercial
+      metrics are undisclosed.
+    data:
+      items:
+        - label: "Claude Code Revenue Growth (Jul 2025 vs launch base)"
+          value: 5.5
+          displayValue: "5.5x revenue growth by July 2025 (company-claimed, C018)"
+          tone: positive
+        - label: "Snowflake Enterprise Partnership (USD M)"
+          value: 200
+          displayValue: "$200M multi-year deal (Dec 2025, C033)"
+          tone: positive
+        - label: "Cursor CursorBench Improvement — Opus 4.7 vs 4.6 (pp)"
+          value: 12
+          displayValue: "+12 percentage points (70% vs 58%; customer-reported, C041)"
+          tone: positive
+    approximationNotes: |
+      Revenue growth multiple (5.5x) and Snowflake deal value ($200M) are on different
+      scales and should not be compared as equivalent measures. The chart places them on
+      a shared axis purely for evidence consolidation — each label clearly identifies the
+      unit. The CursorBench improvement (+12 pp) is a percentage-point delta, not a
+      multiple or dollar value. These are the three quantified commercial signals in
+      the evidence ledger; all other commercial metrics require data room disclosure.
+      EstimateBasis for all bars: directly cited from evidence claims C018, C033, C041.
+    claimRefs: [C018, C033, C041]
+
+sections:
+  - number: "6.1"
+    title: Customer Base Overview
+    body: |
+      Anthropic's customer base is broad, spanning individual consumer users, professional
+      developers, SMB teams, large enterprises, enterprise cloud marketplace buyers, and
+      U.S. government agencies. The portfolio is best understood as a pyramid: a wide base
+      of free and low-cost consumer and API developer users, narrowing toward high-value
+      enterprise and government accounts with deep integrations and multi-year commitments.
+
+      **Scale Indicators (Evidenced).** No total customer count is publicly disclosed.
+      The strongest commercial scale signal is the $380B post-money Series G valuation
+      (February 2026) [C005], which implies institutional investor conviction in
+      multi-billion-dollar revenue expectations. Claude is available in 30+ AWS Bedrock
+      regions [C030] and across three major cloud marketplaces [C042] — a distribution
+      surface reaching essentially every enterprise technology buyer globally. Named
+      enterprise customers (Table T701) include companies with hundreds of millions to
+      billions of end users in their own products (GitHub, Rakuten), multiplying the
+      effective user reach of Claude well beyond direct Anthropic customer relationships.
+
+      **Growth Signal.** The only disclosed commercial growth rate is Claude Code's 5.5x
+      revenue increase by July 2025 [C018]. This is company-claimed from a single source
+      and references an undisclosed absolute base, but the directional signal is the
+      strongest available evidence of customer adoption velocity. The enterprise GA of
+      Claude Cowork in February 2026 [C019] and the Super Bowl LX consumer marketing
+      campaign (same month) represent dual investment signals in both enterprise and
+      consumer growth.
+
+      See Table T702 for the customer segment analysis and Figure F701 for the
+      customer surface map.
+    claimRefs: [C005, C016, C017, C018, C019, C030, C041, C042]
+
+  - number: "6.2"
+    title: Customer Segmentation
+    body: |
+      **Individual / Consumer Segment.** The Free tier (claude.ai) provides broad funnel
+      access; paid tiers (Pro $17–$20/month, Max $100–$200/month) convert high-frequency
+      users [C016]. The Max 20x tier at $200/month targets power users with intensive
+      professional workflows — a segment with lower churn propensity than standard Pro
+      subscribers given the usage investment. No subscriber count or churn data is
+      evidenced. Consumer competition is intense: ChatGPT (OpenAI), Gemini (Google), and
+      Copilot (Microsoft) are direct substitutes at similar price points.
+
+      **Developer / API Segment.** Professional developers and startups access Claude
+      through the direct API (Anthropic key) or cloud marketplace (Bedrock/Vertex/Foundry)
+      [C042]. Token-based billing creates no minimum commitment, which reduces trial
+      friction but also means developers can reduce consumption instantaneously in response
+      to cost or quality changes. API developer retention is most likely driven by
+      integration depth: a developer who has built a production application on Claude's
+      API, with prompt engineering, fine-tuned system prompts, and MCP tool integrations,
+      faces meaningful switching effort even when an alternative model is technically
+      viable [C020].
+
+      **Enterprise SaaS Segment.** The Team ($20/seat/month annual) and Enterprise
+      (custom) tiers serve SMB and large enterprise buyers [C016]. Annual contract terms,
+      SSO integration, SCIM provisioning, and HIPAA compliance create administrative
+      switching costs beyond pure model quality. Enterprise customers include Cursor,
+      Notion, Rakuten, StubHub, Intercom, and Harvey [C041]. Customer-validated
+      performance data from Cursor (70% CursorBench task clearance [C041]) and named
+      endorsements from Rakuten and Notion [C041] confirm this segment's satisfaction
+      with current model quality.
+
+      **Agentic / Claude Code Segment.** The highest-growth evidenced segment. Claude
+      Code customers (GA May 2025 [C017]) have the deepest integration profile: IDE
+      plugins (VS Code, JetBrains), GitHub Actions workflows, and MCP tool connections
+      create multi-layer integration that is harder to swap than a simple API key change.
+      This is the segment where Anthropic's benchmark leadership on SWE-bench [C040] and
+      CursorBench [C041] most directly translates to defensible retention.
+
+      **Government / Defense Segment.** Claude via the Palantir/AWS Maven Smart System
+      was the only AI model used in classified U.S. defense and intelligence missions as
+      of February 2026 [C034] — the strongest statement of exclusive market position in
+      the ledger. However, this channel is contested by the DoD supply chain risk
+      designation (March 2026) [C035], which creates uncertainty about this segment's
+      near-term contribution. The temporary injunction (March 26, 2026 [C036]) is a
+      positive resolution signal, but the final outcome is uncertain.
+    claimRefs: [C015, C016, C017, C018, C019, C020, C030, C034, C035, C036, C040, C041, C042]
+
+  - number: "6.3"
+    title: Key Customer Case Studies
+    body: |
+      **Cursor — Coding IDE Benchmark Anchor.**
+      Cursor is Anthropic's highest-evidenced enterprise customer relationship. The
+      company designed an internal "CursorBench" benchmark to evaluate AI coding models
+      against its real-world task distribution. Claude Opus 4.7 achieved 70% task
+      clearance on CursorBench, versus 58% for the prior generation Opus 4.6 — a
+      12 percentage-point improvement [C041]. This means Cursor publicly validated that
+      Claude is their best-performing model for their product's use case, and that each
+      Claude generation improves measurably on their specific workload. This is the most
+      credible customer reference in the evidence ledger: it uses a customer-designed
+      (not Anthropic-designed) evaluation, names the absolute score, and shows
+      generational improvement. Claude is embedded as Cursor's core model.
+
+      **Snowflake — Largest Disclosed Enterprise Deal.**
+      The Snowflake $200M multi-year partnership (December 2025) [C033] is the largest
+      disclosed enterprise deal in the evidence set. Snowflake integrates Claude into
+      its data platform, enabling enterprise Snowflake customers to apply Claude to
+      their stored data via MCP or direct integration. This deal is notable both for
+      its size and for its structural logic: Snowflake customers are data-intensive
+      enterprises with large context workloads — precisely the segment that benefits
+      most from Claude's 1-million-token context window [C014]. The multi-year term
+      implies mutual commercial commitment and provides a degree of revenue predictability.
+
+      **Palantir / U.S. Defense — Deepest Integration, Highest Risk.**
+      The Palantir partnership (November 2024) made Claude the only AI model used in
+      classified U.S. government missions via AWS Maven Smart System [C034]. The phrase
+      "only AI model in classified missions" suggests exclusive or near-exclusive
+      displacement of competing models in a high-security context. However, this
+      relationship is currently challenged by the DoD supply chain risk designation
+      [C035], which arose from Anthropic's refusal to remove contractual prohibitions
+      on mass surveillance and autonomous weapons use. The temporary injunction
+      (March 26, 2026 [C036]) is a positive indicator, but the definitive legal outcome
+      remains pending.
+
+      **Notion and Rakuten — Enterprise Endorsement Signals.**
+      Both Notion and Rakuten are named in the Opus 4.7 launch announcement [C041] as
+      customers providing product endorsements. Notion is a long-standing Claude partner
+      since the Claude 1 launch in 2023 [C013], making its continued reference in 2026
+      a multi-year retention signal. Rakuten's participation in the Opus 4.7 launch
+      announcement indicates ongoing active deployment and satisfaction with model
+      improvements.
+    claimRefs: [C013, C014, C019, C033, C034, C035, C036, C041]
+
+  - number: "6.4"
+    title: Retention, Churn, and Satisfaction — Evidence Gaps
+    body: |
+      **Critical Evidence Gap.** No quantitative retention metrics are available for any
+      customer segment. The evidence ledger contains zero NRR, gross churn, logo count,
+      or cohort retention data. This is the single most significant analytical gap in this
+      chapter. The qualitative retention picture (named customers with deep integrations,
+      multi-year deals, customer-endorsed performance improvements) is positive, but
+      investors cannot underwrite customer quality without quantitative evidence.
+
+      **Qualitative Retention Signals (Positive).**
+      (1) Cursor's CursorBench performance advantage (70% vs alternatives) implies high
+      switching resistance — replacing the primary model in a production coding IDE
+      requires substantial re-testing and product engineering [C041].
+      (2) Notion's multi-year presence (since Claude 1, 2023 through Opus 4.7 endorsement,
+      2026) [C013, C041] is a ~3-year retention observable.
+      (3) The Snowflake $200M multi-year deal term [C033] represents contractual retention.
+      (4) MCP ecosystem integration [C020] deepens retention for any enterprise that has
+      invested in MCP server implementations for their internal data sources.
+      (5) Amazon Bedrock's zero-operator-access architecture [C030] creates compliance
+      and audit infrastructure that is costly to replace for regulated industries.
+
+      **Qualitative Retention Signals (Risk).**
+      (1) Consumer subscription churn is likely elevated given the highly competitive
+      consumer AI market (ChatGPT Plus, Gemini). No data to quantify this.
+      (2) Free-to-paid conversion rate is unknown.
+      (3) API developer churn is unknown; token billing creates zero minimum commitment,
+      so developers can reduce or eliminate spend instantaneously.
+      (4) The DoD dispute [C035] could affect government and regulated-industry enterprise
+      customer perceptions of Anthropic's operational reliability as a vendor.
+      (5) OpenAI and Google model capability improvements could close the SWE-bench
+      performance gap and erode the primary switching cost rationale for enterprise
+      coding customers.
+
+      Refer to Table T703 for the structured diligence ask framework covering all
+      nine priority retention metrics.
+    claimRefs: [C013, C015, C016, C017, C018, C020, C030, C033, C035, C040, C041]
+
+  - number: "6.5"
+    title: Developer Ecosystem and MCP Community
+    body: |
+      **Developer Ecosystem as Retention Infrastructure.** The developer ecosystem
+      (Cursor, Replit, Zed, Sourcegraph, GitHub Copilot) represents the most strategically
+      important customer layer for Anthropic's long-term retention. When a developer
+      platform builds core product functionality on Claude (as Cursor has done with its
+      coding agent), the platform's own users become indirect Claude consumers — and the
+      platform company faces the switching costs of rebuilding their product if they
+      change the underlying model.
+
+      **Claude Code Developer Adoption.** Claude Code's 5.5x revenue growth by July 2025
+      [C018] is the strongest traction signal in the ledger. Combined with the Bun runtime
+      acquisition (December 2025) and deep VS Code/JetBrains/GitHub Actions integrations
+      [C017], Claude Code is positioned as the default agentic coding workflow for
+      professional software engineers. The anecdote that OpenAI employees were using
+      Claude Code until Anthropic revoked access for ToS violations in August 2025 [C039]
+      is the most striking third-party validation of product quality — OpenAI engineers
+      chose Claude Code as their preferred coding tool even when building competing products.
+
+      **MCP Ecosystem — Developer Expansion Flywheel.** The Model Context Protocol [C020]
+      creates a developer expansion flywheel distinct from direct API retention. As
+      developers build MCP servers for their own data sources and publish them in the
+      growing MCP ecosystem, each new server increases Claude's value to all other
+      developers who integrate that data source. This is a classic platform network effect:
+      value increases with the number of integrations, and the cost of switching to a
+      competing model increases with the number of MCP-based integrations in production.
+      Developer count and MCP server count are not publicly disclosed — these are high-
+      value metrics to monitor as proxy indicators of ecosystem health.
+    claimRefs: [C017, C018, C019, C020, C033, C039, C041]

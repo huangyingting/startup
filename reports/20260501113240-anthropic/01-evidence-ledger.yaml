@@ -1,0 +1,909 @@
+schemaVersion: startup-diligence-report-v2
+artifact: evidence-ledger
+slug: anthropic
+runDate: 2026-05-01
+company:
+  name: Anthropic
+
+coverage:
+  depth: standard
+  sourceTarget: 30
+  sourcesFetched: 28
+  sourcesRetained: 24
+  claimsCreated: 42
+  coverageGaps:
+    - "Audited financials unavailable; Anthropic is private and has not published revenue figures"
+    - "Series F and Series G press releases returned 404; valuation figures sourced from Wikipedia citing news reports"
+    - "Exact headcount by function not publicly disclosed"
+    - "Unit economics (CAC, LTV, gross margin, burn rate) not publicly available"
+    - "Customer count and NRR metrics not disclosed"
+    - "Several anthropic.com/news URLs returned 404, limiting direct-source coverage of individual funding rounds"
+
+sources:
+  - id: S001
+    publisher: Anthropic
+    title: Anthropic Homepage
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: "AI research and products that put safety at the frontier"
+    topics: [identity, product]
+
+  - id: S002
+    publisher: Anthropic
+    title: "Anthropic Company Page — Making AI Systems You Can Rely On"
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/company
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Anthropic is an AI safety and research company. We build reliable, interpretable,
+      and steerable AI systems.
+    topics: [identity, team, risk]
+
+  - id: S003
+    publisher: Anthropic
+    title: Anthropic Research Overview
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/research
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Our research teams investigate the safety, inner workings, and societal impacts
+      of AI models.
+    topics: [technology, product, risk]
+
+  - id: S004
+    publisher: Wikipedia
+    title: "Anthropic — Wikipedia"
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://en.wikipedia.org/wiki/Anthropic
+    sourceType: other
+    reputationTier: medium
+    independence: independent
+    fetchVerified: true
+    keyQuote: |
+      Anthropic PBC is an American artificial intelligence company headquartered in
+      San Francisco. As of February 2026, had an estimated value of $380 billion.
+    topics: [identity, funding, team, risk, valuation]
+
+  - id: S005
+    publisher: Anthropic
+    title: Anthropic Careers Page
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/careers
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: "Anthropic builds Claude—AI designed to be helpful, honest, and harmless."
+    topics: [team, identity]
+
+  - id: S006
+    publisher: Anthropic
+    title: "Claude Platform API — Build on the Claude Platform"
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/api
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Use our API to create new user experiences, products, and ways to work with
+      the most advanced AI models on the market.
+    topics: [product, technology, customer, gtm]
+
+  - id: S007
+    publisher: Anthropic
+    title: Claude Pricing Page
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/pricing
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: "Opus 4.7: $5/MTok input, $25/MTok output. Sonnet 4.6: $3/$15. Haiku 4.5: $1/$5."
+    topics: [product, financials, gtm]
+
+  - id: S008
+    publisher: Anthropic
+    title: "Claude 3.5 Sonnet — Frontier Intelligence at 2x Speed"
+    author: null
+    date: 2024-06-20
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/claude-3-5-sonnet
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Claude 3.5 Sonnet raises the industry bar for intelligence, outperforming
+      competitor models and Claude 3 Opus on a wide range of evaluations.
+    topics: [product, technology, competition]
+
+  - id: S009
+    publisher: Anthropic
+    title: "Claude Models Overview — Developer Documentation"
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://docs.anthropic.com/en/docs/about-claude/models/overview
+    sourceType: technical-docs
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Claude Opus 4.7: $5/input MTok, $25/output MTok; 1M context window. Claude Sonnet 4.6:
+      $3/$15; 1M context. Claude Haiku 4.5: $1/$5; 200k context.
+    topics: [product, technology]
+
+  - id: S010
+    publisher: Anthropic
+    title: "Introducing the Model Context Protocol"
+    author: null
+    date: 2024-11-01
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/model-context-protocol
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      MCP addresses this challenge. It provides a universal, open standard for connecting
+      AI systems with data sources, replacing fragmented integrations with a single protocol.
+    topics: [product, technology, gtm]
+
+  - id: S011
+    publisher: Anthropic
+    title: "Introducing Claude 4 — Opus 4 and Sonnet 4"
+    author: null
+    date: 2025-05-22
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/claude-4
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Claude Opus 4 is the world's best coding model, leading on SWE-bench (72.5%)
+      and Terminal-bench (43.2%).
+    topics: [product, technology, competition]
+
+  - id: S012
+    publisher: Wikipedia
+    title: "Claude (language model) — Wikipedia"
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://en.wikipedia.org/wiki/Claude_(language_model)
+    sourceType: other
+    reputationTier: medium
+    independence: independent
+    fetchVerified: true
+    keyQuote: |
+      Based on enterprise adoption, Anthropic reported a 5.5x increase in Claude Code
+      revenue by July [2025].
+    topics: [product, traction, financials]
+
+  - id: S013
+    publisher: Anthropic
+    title: "Introducing Claude — Early Access Launch"
+    author: null
+    date: 2023-03-14
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/introducing-claude
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Claude is a next-generation AI assistant based on Anthropic's research into
+      training helpful, honest, and harmless AI systems.
+    topics: [product, identity, customer]
+
+  - id: S014
+    publisher: Anthropic
+    title: The Long-Term Benefit Trust
+    author: null
+    date: 2023-01-01
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/the-long-term-benefit-trust
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      The LTBT is an independent body of five financially disinterested members with
+      authority to select and remove a portion of our Board that will grow over time
+      (ultimately, a majority of our Board).
+    topics: [identity, risk, valuation]
+
+  - id: S015
+    publisher: Anthropic
+    title: "Constitutional AI: Harmlessness from AI Feedback"
+    author: null
+    date: 2022-12-15
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/constitutional-ai-harmlessness-from-ai-feedback
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      We experiment with methods for training a harmless AI assistant through
+      self-improvement, without any human labels identifying harmful outputs.
+    topics: [technology, risk]
+
+  - id: S016
+    publisher: Anthropic
+    title: "Claude's Constitution"
+    author: null
+    date: 2023-05-01
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/claudes-constitution
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Constitutional AI responds to these shortcomings by using AI feedback to evaluate
+      outputs. The system uses a set of principles to make judgments about outputs.
+    topics: [technology, risk, product]
+
+  - id: S017
+    publisher: Anthropic
+    title: Core Views on AI Safety
+    author: null
+    date: 2023-03-01
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/core-views-on-ai-safety
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      We founded Anthropic because we believe the impact of AI might be comparable to
+      that of the industrial and scientific revolutions, but we aren't confident it
+      will go well.
+    topics: [identity, risk, market]
+
+  - id: S018
+    publisher: Anthropic
+    title: Reflections on Our Responsible Scaling Policy
+    author: null
+    date: 2024-04-01
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/reflections-on-our-responsible-scaling-policy
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Our current framework is summarized as five high-level commitments including
+      Establishing Red Line Capabilities and Testing for Red Line Capabilities
+      (Frontier Risk Evaluations).
+    topics: [risk, technology]
+
+  - id: S019
+    publisher: Anthropic
+    title: "Anthropic Raises $450M Series C"
+    author: null
+    date: 2023-05-23
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/anthropic-series-c
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      We are pleased to announce that we have raised $450 million in Series C funding
+      led by Spark Capital with participation from Google, Salesforce Ventures,
+      Sound Ventures, Zoom Ventures, and others.
+    topics: [funding, identity]
+
+  - id: S020
+    publisher: Anthropic
+    title: "Claude in Amazon Bedrock — Developer Documentation"
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://docs.anthropic.com/en/docs/build-with-claude/claude-in-amazon-bedrock
+    sourceType: technical-docs
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Claude in Amazon Bedrock runs on AWS-managed infrastructure with zero operator
+      access, letting you build sensitive applications entirely inside the AWS security
+      boundary.
+    topics: [product, technology, gtm, customer]
+
+  - id: S021
+    publisher: Anthropic
+    title: "Claude Opus 4.7 — General Availability"
+    author: null
+    date: 2026-04-16
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/claude-opus-4-7
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Opus 4.7 is a notable improvement on Opus 4.6 in advanced software engineering,
+      with particular gains on the most difficult tasks. Pricing remains: $5 per million
+      input tokens and $25 per million output tokens.
+    topics: [product, technology, competition]
+
+  - id: S022
+    publisher: Wikipedia
+    title: "Dario Amodei — Wikipedia"
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://en.wikipedia.org/wiki/Dario_Amodei
+    sourceType: other
+    reputationTier: medium
+    independence: independent
+    fetchVerified: true
+    keyQuote: |
+      In 2021, he and his sister Daniela Amodei co-founded Anthropic. Prior to that,
+      he was the vice president of research at OpenAI.
+    topics: [team, identity]
+
+  - id: S023
+    publisher: Wikipedia
+    title: "Daniela Amodei — Wikipedia"
+    author: null
+    date: null
+    accessDate: 2026-05-01
+    url: https://en.wikipedia.org/wiki/Daniela_Amodei
+    sourceType: other
+    reputationTier: medium
+    independence: independent
+    fetchVerified: true
+    keyQuote: |
+      She co-founded Anthropic in 2021 with her brother Dario Amodei. Prior to her
+      work at Anthropic, she was the vice president of safety and policy at OpenAI.
+    topics: [team, identity]
+
+  - id: S024
+    publisher: Anthropic
+    title: "Claude 3 Haiku — Fastest, Most Affordable"
+    author: null
+    date: 2024-03-13
+    accessDate: 2026-05-01
+    url: https://www.anthropic.com/news/claude-3-haiku
+    sourceType: official
+    reputationTier: high
+    independence: company
+    fetchVerified: true
+    keyQuote: |
+      Claude 3 Haiku is three times faster than its peers for the vast majority
+      of workloads, processing 21K tokens (~30 pages) per second.
+    topics: [product, technology, competition]
+
+claims:
+  - id: C001
+    statement: Anthropic was founded in 2021 as a Delaware Public Benefit Corporation dedicated to AI safety research.
+    claimType: observed
+    topic: identity
+    sourceRefs: [S002, S004, S014]
+    confidence: high
+    freshness: historical
+    corroboration: multi-source
+    notes: PBC status confirmed in certificate of incorporation; founding year 2021 across all sources.
+
+  - id: C002
+    statement: Anthropic was founded by eight former OpenAI employees including Dario Amodei, Daniela Amodei, Jared Kaplan, Jack Clark, Chris Olah, Ben Mann, Sam McCandlish, and Tom Brown.
+    claimType: observed
+    topic: team
+    sourceRefs: [S004, S022, S023]
+    confidence: high
+    freshness: historical
+    corroboration: multi-source
+    notes: Wikipedia lists all eight founders; confirmed by multiple sources.
+
+  - id: C003
+    statement: Dario Amodei serves as CEO and Daniela Amodei serves as President of Anthropic.
+    claimType: observed
+    topic: team
+    sourceRefs: [S002, S004, S022, S023]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: Confirmed on company page and Wikipedia; leadership unchanged as of run date.
+
+  - id: C004
+    statement: "Anthropic is headquartered at 500 Howard Street, San Francisco, California."
+    claimType: observed
+    topic: identity
+    sourceRefs: [S004]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: Address cited in Wikipedia infobox.
+
+  - id: C005
+    statement: Anthropic completed a Series G funding round in February 2026 raising $30 billion at a post-money valuation of $380 billion.
+    claimType: third-party-reported
+    topic: funding
+    sourceRefs: [S004]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: Wikipedia cites multiple news sources for the $30B/380B figure. Anthropic Series G press release returned 404 during fetch.
+
+  - id: C006
+    statement: Anthropic completed a Series F funding round in September 2025 raising $13 billion at a post-money valuation of $183 billion, co-led by Iconiq Capital, Fidelity Management & Research, and Lightspeed Venture Partners.
+    claimType: third-party-reported
+    topic: funding
+    sourceRefs: [S004]
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes: Wikipedia cites multiple news sources; Bloomberg and other press not directly fetched.
+
+  - id: C007
+    statement: Anthropic completed a Series E funding round in March 2025 raising $3.5 billion at a post-money valuation of $61.5 billion, led by Lightspeed Venture Partners.
+    claimType: third-party-reported
+    topic: funding
+    sourceRefs: [S004]
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes: Wikipedia cites TechCrunch and other press.
+
+  - id: C008
+    statement: Amazon has invested a cumulative total of approximately $8 billion in Anthropic across multiple tranches — initial $1.25B (September 2023), additional $2.75B (March 2024), and a further $4B (November 2024).
+    claimType: third-party-reported
+    topic: funding
+    sourceRefs: [S004]
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes: All three tranches cited in Wikipedia with Reuters and other press references.
+
+  - id: C009
+    statement: Google has invested over $2 billion in Anthropic — $500M initial (October 2023) plus commitment for $1.5B more; and an additional $1B in March 2025.
+    claimType: third-party-reported
+    topic: funding
+    sourceRefs: [S004, S019]
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes: Series C press release confirms Google participation; Wikipedia details later rounds.
+
+  - id: C010
+    statement: In December 2025, a term sheet was signed for a $10 billion round at a $350 billion valuation led by Coatue and GIC.
+    claimType: third-party-reported
+    topic: funding
+    sourceRefs: [S004]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: Announced via Wikipedia with news citations; may have rolled into or preceded the Series G.
+
+  - id: C011
+    statement: "Anthropic's Series C raised $450 million led by Spark Capital with participation from Google, Salesforce Ventures, Sound Ventures, and Zoom Ventures."
+    claimType: observed
+    topic: funding
+    sourceRefs: [S019]
+    confidence: high
+    freshness: historical
+    corroboration: single-source
+    notes: Official Anthropic press release.
+
+  - id: C012
+    statement: Anthropic received approximately $580 million in initial funding in April 2022, including a $500 million investment from FTX under Sam Bankman-Fried.
+    claimType: third-party-reported
+    topic: funding
+    sourceRefs: [S004]
+    confidence: high
+    freshness: historical
+    corroboration: single-source
+    notes: FTX subsequently collapsed; this early investment is well-documented in press.
+
+  - id: C013
+    statement: "Anthropic's current flagship models are Claude Opus 4.7 (April 16, 2026), Claude Sonnet 4.6 (February 17, 2026), and Claude Haiku 4.5 (October 15, 2025)."
+    claimType: observed
+    topic: product
+    sourceRefs: [S009, S021, S012]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: Confirmed in model docs and official release announcements.
+
+  - id: C014
+    statement: "Claude Opus 4.7 and Sonnet 4.6 both support a 1-million-token context window; Haiku 4.5 supports 200k tokens."
+    claimType: observed
+    topic: product
+    sourceRefs: [S009]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: From official model docs table.
+
+  - id: C015
+    statement: "API pricing (as of run date): Claude Opus 4.7 at $5/MTok input and $25/MTok output; Sonnet 4.6 at $3/$15; Haiku 4.5 at $1/$5."
+    claimType: observed
+    topic: financials
+    sourceRefs: [S007, S009, S021]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: Confirmed across pricing page, model docs, and Opus 4.7 announcement.
+
+  - id: C016
+    statement: "Consumer subscription tiers: Free ($0), Pro ($17/month annual or $20 monthly), Max (from $100/month), Team ($20/seat/month annual), and Enterprise (custom)."
+    claimType: observed
+    topic: financials
+    sourceRefs: [S007]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: From official pricing page.
+
+  - id: C017
+    statement: Claude Code was released as generally available in May 2025 alongside Claude 4, featuring VS Code and JetBrains IDE integrations and GitHub Actions support.
+    claimType: observed
+    topic: product
+    sourceRefs: [S011, S012]
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes: Confirmed in Claude 4 announcement and Claude Wikipedia article.
+
+  - id: C018
+    statement: Anthropic reported a 5.5x increase in Claude Code revenue by July 2025 based on enterprise adoption.
+    claimType: company-claimed
+    topic: traction
+    sourceRefs: [S012]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: Cited in Wikipedia Claude article; original source is Anthropic's own report on enterprise adoption.
+
+  - id: C019
+    statement: Claude Cowork was launched in January 2026 as a research preview GUI-based agentic tool for non-technical users, released for wider enterprise in February 2026.
+    claimType: observed
+    topic: product
+    sourceRefs: [S012]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: Wikipedia Claude article cites Wired, Mashable, and CNBC for Cowork details.
+
+  - id: C020
+    statement: "The Model Context Protocol (MCP) was open-sourced in November 2024 as a universal standard for connecting AI systems with data sources."
+    claimType: observed
+    topic: technology
+    sourceRefs: [S010]
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes: Official Anthropic announcement.
+
+  - id: C021
+    statement: Constitutional AI (CAI) is Anthropic's proprietary alignment technique that uses a set of principles (the constitution) and AI self-critique to train models to be helpful, harmless, and honest without extensive human labeling.
+    claimType: observed
+    topic: technology
+    sourceRefs: [S015, S016]
+    confidence: high
+    freshness: historical
+    corroboration: multi-source
+    notes: Described in 2022 CAI paper and Claude's Constitution blog post.
+
+  - id: C022
+    statement: "The 2026 Claude constitution has approximately 23,000 words, up from 2,700 in 2023."
+    claimType: third-party-reported
+    topic: technology
+    sourceRefs: [S012]
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: Cited in Claude Wikipedia article.
+
+  - id: C023
+    statement: "Anthropic's Responsible Scaling Policy establishes AI Safety Levels (ASL-2, ASL-3, ASL-4) with commitments to halt deployment if Red Line Capabilities are detected without adequate safeguards."
+    claimType: observed
+    topic: risk
+    sourceRefs: [S018]
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes: From official RSP reflections post.
+
+  - id: C024
+    statement: "The Long-Term Benefit Trust holds Class T shares that grant it authority to elect a majority of Anthropic's board over time, providing governance oversight beyond shareholder interests."
+    claimType: observed
+    topic: identity
+    sourceRefs: [S014]
+    confidence: high
+    freshness: historical
+    corroboration: single-source
+    notes: From LTBT official announcement.
+
+  - id: C025
+    statement: "Anthropic's board includes Dario Amodei, Daniela Amodei, Yasmin Razavi, Jay Kreps, Reed Hastings, Chris Liddell, and Vas Narasimhan."
+    claimType: observed
+    topic: team
+    sourceRefs: [S002]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: Listed on official company page.
+
+  - id: C026
+    statement: "LTBT trustees are Neil Buddy Shah, Richard Fontaine, and Mariano-Florentino Cuéllar (as of January 2026)."
+    claimType: observed
+    topic: team
+    sourceRefs: [S002, S004]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: Listed on company page; Wikipedia confirms January 2026 membership.
+
+  - id: C027
+    statement: Anthropic has approximately 2,500 employees as of 2026.
+    claimType: third-party-reported
+    topic: team
+    sourceRefs: [S004]
+    confidence: medium
+    freshness: current
+    corroboration: single-source
+    notes: Wikipedia infobox citation; company has not officially published headcount.
+
+  - id: C028
+    statement: "Dario Amodei (CEO) holds a PhD in biophysics from Princeton University and was previously VP of Research at OpenAI; Forbes estimates his net worth at $7 billion as of February 2026."
+    claimType: observed
+    topic: team
+    sourceRefs: [S022]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: From Dario Amodei Wikipedia article with Forbes citation.
+
+  - id: C029
+    statement: "Daniela Amodei (President) holds a BA from UC Santa Cruz and was previously VP of Safety and Policy at OpenAI; Forbes estimates her net worth at $7 billion as of February 2026."
+    claimType: observed
+    topic: team
+    sourceRefs: [S023]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: From Daniela Amodei Wikipedia article with Forbes citation.
+
+  - id: C030
+    statement: "Amazon partnership (September 2023) makes AWS Anthropic's primary cloud provider; Claude models are available to AWS customers via Amazon Bedrock."
+    claimType: third-party-reported
+    topic: gtm
+    sourceRefs: [S004, S020]
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes: Bedrock integration confirmed in developer docs; partnership details in Wikipedia.
+
+  - id: C031
+    statement: "In October 2025, Anthropic announced a Google Cloud partnership giving access to up to 1 million Google TPUs, targeting more than 1 gigawatt of AI compute capacity by 2026."
+    claimType: third-party-reported
+    topic: technology
+    sourceRefs: [S004]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: Wikipedia cites news reports on the October 2025 Google compute deal.
+
+  - id: C032
+    statement: "In November 2025, Nvidia and Microsoft announced plans to invest up to $15 billion in Anthropic, with Anthropic committing to purchase $30 billion of Azure computing capacity."
+    claimType: third-party-reported
+    topic: funding
+    sourceRefs: [S004]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: Cited in Wikipedia; investment terms not yet confirmed via direct-fetched primary source.
+
+  - id: C033
+    statement: "Anthropic signed a $200 million multi-year partnership with Snowflake in December 2025 to make Claude models available through Snowflake's platform."
+    claimType: third-party-reported
+    topic: gtm
+    sourceRefs: [S004]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: Cited in Wikipedia.
+
+  - id: C034
+    statement: "In November 2024, Anthropic partnered with Palantir and AWS to provide Claude to U.S. intelligence and defense agencies; as of February 2026 Claude is the only AI model used in classified missions via Palantir."
+    claimType: third-party-reported
+    topic: customer
+    sourceRefs: [S004]
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+    notes: Wikipedia cites FT and other press for Palantir/classified missions claim.
+
+  - id: C035
+    statement: "In March 2026, the U.S. Department of Defense designated Anthropic a 'supply chain risk' after Anthropic refused to remove contractual prohibitions on use of Claude for mass domestic surveillance and fully autonomous weapons."
+    claimType: third-party-reported
+    topic: risk
+    sourceRefs: [S004, S012]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: Covered extensively in Wikipedia with NBC, BBC, and other press citations.
+
+  - id: C036
+    statement: "On March 26, 2026, a federal judge issued a temporary injunction against the DoD's supply chain risk designation, writing that it 'appears to be classic First Amendment retaliation.'"
+    claimType: third-party-reported
+    topic: risk
+    sourceRefs: [S004, S012]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: Both Anthropic and Claude Wikipedia articles confirm the temporary injunction.
+
+  - id: C037
+    statement: "In October 2023, Anthropic was sued by Concord, Universal, ABKCO, and other music publishers for alleged systematic copyright infringement of song lyrics used for model training."
+    claimType: third-party-reported
+    topic: risk
+    sourceRefs: [S004]
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes: Litigation is ongoing; Wikipedia cites multiple press sources.
+
+  - id: C038
+    statement: "'Project Panama' — Anthropic's effort to destructively scan millions of books for training data — was revealed in January 2026 via unsealed court filings. Judge William Alsup ruled that scanning legally purchased books constituted fair use."
+    claimType: third-party-reported
+    topic: risk
+    sourceRefs: [S004]
+    confidence: high
+    freshness: current
+    corroboration: single-source
+    notes: Washington Post cited as original source in Wikipedia footnotes.
+
+  - id: C039
+    statement: "In September 2025, a threat actor called GTG-2002, sponsored by the Chinese government, used Claude Code to automate 80–90% of cyberattacks against approximately 30 global organisations. All related accounts were banned."
+    claimType: third-party-reported
+    topic: risk
+    sourceRefs: [S012, S004]
+    confidence: high
+    freshness: recent
+    corroboration: multi-source
+    notes: Cited in Wikipedia Claude article and Anthropic Wikipedia article with BBC/Reuters sources.
+
+  - id: C040
+    statement: "Claude Opus 4 and Sonnet 4 (May 2025) achieved 72.5% and 72.7% respectively on SWE-bench Verified, described as the world's leading scores on this coding benchmark at release."
+    claimType: company-claimed
+    topic: technology
+    sourceRefs: [S011]
+    confidence: high
+    freshness: recent
+    corroboration: single-source
+    notes: Stated in official Claude 4 announcement with reference to published benchmark methodology.
+
+  - id: C041
+    statement: "Claude Opus 4.7 (April 2026) improved on Opus 4.6 in advanced software engineering; customer Cursor reported 70% task clearance on CursorBench vs 58% for Opus 4.6."
+    claimType: observed
+    topic: product
+    sourceRefs: [S021, S006]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: Customer quotes from Cursor, Rakuten, Notion, and others confirm step-change improvements.
+
+  - id: C042
+    statement: "Claude is available via direct API, Amazon Bedrock (30+ AWS regions), Google Cloud Vertex AI, and Microsoft Foundry; web, iOS, Android, and desktop apps also available via claude.ai."
+    claimType: observed
+    topic: gtm
+    sourceRefs: [S007, S009, S020, S021]
+    confidence: high
+    freshness: current
+    corroboration: multi-source
+    notes: Distribution confirmed across pricing page, model docs, Bedrock docs, and Opus 4.7 announcement.
+
+bibliography:
+  - sourceRef: S001
+    citation: "Anthropic. 'Anthropic Homepage.' https://www.anthropic.com. Accessed 2026-05-01."
+  - sourceRef: S002
+    citation: "Anthropic. 'Making AI Systems You Can Rely On.' https://www.anthropic.com/company. Accessed 2026-05-01."
+  - sourceRef: S003
+    citation: "Anthropic. 'Anthropic Research.' https://www.anthropic.com/research. Accessed 2026-05-01."
+  - sourceRef: S004
+    citation: "Wikipedia contributors. 'Anthropic.' Wikipedia, The Free Encyclopedia. https://en.wikipedia.org/wiki/Anthropic. Accessed 2026-05-01."
+  - sourceRef: S005
+    citation: "Anthropic. 'Careers at Anthropic.' https://www.anthropic.com/careers. Accessed 2026-05-01."
+  - sourceRef: S006
+    citation: "Anthropic. 'Build on the Claude Platform.' https://www.anthropic.com/api. Accessed 2026-05-01."
+  - sourceRef: S007
+    citation: "Anthropic. 'Claude Pricing.' https://www.anthropic.com/pricing. Accessed 2026-05-01."
+  - sourceRef: S008
+    citation: "Anthropic. 'Claude 3.5 Sonnet.' https://www.anthropic.com/news/claude-3-5-sonnet. Published 2024-06-20. Accessed 2026-05-01."
+  - sourceRef: S009
+    citation: "Anthropic Developer Documentation. 'Models Overview.' https://docs.anthropic.com/en/docs/about-claude/models/overview. Accessed 2026-05-01."
+  - sourceRef: S010
+    citation: "Anthropic. 'Introducing the Model Context Protocol.' https://www.anthropic.com/news/model-context-protocol. Published 2024-11-01. Accessed 2026-05-01."
+  - sourceRef: S011
+    citation: "Anthropic. 'Introducing Claude 4.' https://www.anthropic.com/news/claude-4. Published 2025-05-22. Accessed 2026-05-01."
+  - sourceRef: S012
+    citation: "Wikipedia contributors. 'Claude (language model).' Wikipedia, The Free Encyclopedia. https://en.wikipedia.org/wiki/Claude_(language_model). Accessed 2026-05-01."
+  - sourceRef: S013
+    citation: "Anthropic. 'Introducing Claude.' https://www.anthropic.com/news/introducing-claude. Published 2023-03-14. Accessed 2026-05-01."
+  - sourceRef: S014
+    citation: "Anthropic. 'The Long-Term Benefit Trust.' https://www.anthropic.com/news/the-long-term-benefit-trust. Accessed 2026-05-01."
+  - sourceRef: S015
+    citation: "Anthropic. 'Constitutional AI: Harmlessness from AI Feedback.' https://www.anthropic.com/news/constitutional-ai-harmlessness-from-ai-feedback. Published 2022-12-15. Accessed 2026-05-01."
+  - sourceRef: S016
+    citation: "Anthropic. \"Claude's Constitution.\" https://www.anthropic.com/news/claudes-constitution. Published 2023-05-01. Accessed 2026-05-01."
+  - sourceRef: S017
+    citation: "Anthropic. 'Core Views on AI Safety.' https://www.anthropic.com/news/core-views-on-ai-safety. Published 2023-03-01. Accessed 2026-05-01."
+  - sourceRef: S018
+    citation: "Anthropic. 'Reflections on Our Responsible Scaling Policy.' https://www.anthropic.com/news/reflections-on-our-responsible-scaling-policy. Published 2024-04-01. Accessed 2026-05-01."
+  - sourceRef: S019
+    citation: "Anthropic. 'Anthropic Raises $450M Series C.' https://www.anthropic.com/news/anthropic-series-c. Published 2023-05-23. Accessed 2026-05-01."
+  - sourceRef: S020
+    citation: "Anthropic Developer Documentation. 'Claude in Amazon Bedrock.' https://docs.anthropic.com/en/docs/build-with-claude/claude-in-amazon-bedrock. Accessed 2026-05-01."
+  - sourceRef: S021
+    citation: "Anthropic. 'Claude Opus 4.7.' https://www.anthropic.com/news/claude-opus-4-7. Published 2026-04-16. Accessed 2026-05-01."
+  - sourceRef: S022
+    citation: "Wikipedia contributors. 'Dario Amodei.' Wikipedia, The Free Encyclopedia. https://en.wikipedia.org/wiki/Dario_Amodei. Accessed 2026-05-01."
+  - sourceRef: S023
+    citation: "Wikipedia contributors. 'Daniela Amodei.' Wikipedia, The Free Encyclopedia. https://en.wikipedia.org/wiki/Daniela_Amodei. Accessed 2026-05-01."
+  - sourceRef: S024
+    citation: "Anthropic. 'Claude 3 Haiku.' https://www.anthropic.com/news/claude-3-haiku. Published 2024-03-13. Accessed 2026-05-01."
+
+evidenceGaps:
+  - gap: "Audited financial statements or verified revenue figures. Anthropic is private and has not disclosed ARR, gross margin, or burn rate publicly."
+    impact: high
+    diligencePath: "Request financials directly from Anthropic in data room; seek investor references from Series G LPs."
+
+  - gap: "Series G ($30B) and Series F ($13B) press releases and term sheets are not directly accessible. Valuation figures are sourced via Wikipedia's citations of news reports."
+    impact: medium
+    diligencePath: "Obtain executed term sheets and investor rights agreements from Anthropic or lead investors (Iconiq, Fidelity, Lightspeed)."
+
+  - gap: "Customer count, enterprise contract values, NRR/retention metrics, and detailed cohort data are not publicly disclosed."
+    impact: high
+    diligencePath: "Request from Anthropic investor relations; conduct reference calls with known enterprise customers (Cursor, GitHub, StubHub, Intercom)."
+
+  - gap: "CAC, LTV, and unit economics for the API and SaaS products are unavailable. Gross margin on inference workloads is not disclosed."
+    impact: high
+    diligencePath: "Model from public pricing, estimated compute costs (AWS/Google pricing), and industry benchmarks."
+
+  - gap: "Exact headcount breakdown by function (research vs engineering vs GTM vs policy) is not publicly available."
+    impact: low
+    diligencePath: "LinkedIn headcount analysis; data room request."
+
+  - gap: "Status of Nvidia and Microsoft investment ($15B) is unclear — announced November 2025 but no executed deal confirmation found."
+    impact: medium
+    diligencePath: "Seek direct confirmation from Anthropic or Microsoft/Nvidia investor relations."
+
+  - gap: "Outcome of DoD supply chain risk litigation beyond temporary injunction (March 26, 2026) is unknown."
+    impact: high
+    diligencePath: "Monitor federal court docket; consult legal counsel on DoD remediation risk."
+
+  - gap: "Music copyright lawsuit (Concord/Universal/ABKCO) outcome and financial exposure are unresolved."
+    impact: medium
+    diligencePath: "Review court filings; assess maximum liability range from $150k per work threshold."

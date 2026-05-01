@@ -28,7 +28,9 @@ Structure this section as an investor-grade VC diligence chapter:
 - Valuation must show method, assumptions, comparables, and sensitivity.
 - If valuation inputs are missing, default to `research-more` or `track` rather than false precision.
 - Risk severity and likelihood must be separated.
+- All figures must follow the Figure rendering contracts in `startup-diligence.schema.md`. Use canonical renderer fields only: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, or `layers`; do not invent primary fields such as `cards`, `steps`, `children`, or `groups`.
 - Use `recommendation-logic` for final investment recommendation logic instead of generic `decision-map` when the figure is a sequence of evidence, constraints, valuation stance, and final recommendation.
+- For `risk-heatmap` / `matrix`, use `data.columns[]` and `data.rows[]` with row `label` and `values[]` cells containing `label` and severity `tone`. For `risk-transmission-map`, use `data.nodes[]` with stable `id`, `label`, `detail`, `tone` and `data.edges[]` with `from`, `to`, optional `label`. For `recommendation-logic`, use ordered `data.nodes[]` cards with `label`, `detail`, and `tone`.
 
 ## Handoff
 

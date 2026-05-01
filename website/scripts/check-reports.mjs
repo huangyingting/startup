@@ -100,6 +100,9 @@ function walkClaimRefs(value, refs = []) {
 function hasAnyArray(data, keys) {
   return keys.some((key) => Array.isArray(data?.[key]) && data[key].length > 0);
 }
+function hasText(value) {
+  return typeof value === 'string' && value.trim().length > 0;
+}
 
 try {
   if (!existsSync(REPORTS_DIR)) {
@@ -203,6 +206,12 @@ try {
         for (const alternatives of contract) {
           if (!hasAnyArray(figure.data, alternatives)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} type ${figure.type} requires data.${alternatives.join(' or data.')}`);
         }
+        if (figure.type === 'architecture-stack') {
+          for (const [index, layer] of (figure.data.layers ?? []).entries()) {
+            if (!hasText(layer?.label) && !hasText(layer?.name)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} architecture layer ${index + 1} requires label or name`);
+            if (!hasText(layer?.detail) && !hasText(layer?.description) && !hasAnyArray(layer, ['modules', 'items', 'components'])) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} architecture layer ${index + 1} has no detail or modules/items/components`);
+          }
+        }
       }
     }
     pushIfInvalidEnum(failures, `${run}/11-report-card.yaml`, 'recommendation', card?.recommendation, RECOMMENDATIONS);
@@ -213,6 +222,8 @@ try {
     pushIfInvalidEnum(failures, `${run}/10-report-document.yaml`, 'confidence', reportDoc?.reportMeta?.confidence, CONFIDENCE);
     pushIfInvalidEnum(failures, `${run}/10-report-document.yaml`, 'riskRating', reportDoc?.reportMeta?.riskRating, RISK_RATINGS);
     pushIfInvalidEnum(failures, `${run}/10-report-document.yaml`, 'valuationStance', reportDoc?.reportMeta?.valuationStance, VALUATION_STANCES);
+    if (!reportDoc?.startupIntroduction || typeof reportDoc.startupIntroduction !== 'object') failures.push(`${run}/10-report-document.yaml: missing startupIntroduction object`);
+    else if (typeof reportDoc.startupIntroduction.summary !== 'string' || !reportDoc.startupIntroduction.summary.trim()) failures.push(`${run}/10-report-document.yaml: startupIntroduction.summary is required`);
     for (const field of REMOVED_REPORT_META_FIELDS) {
       if (Object.hasOwn(reportDoc?.reportMeta ?? {}, field)) failures.push(`${run}/10-report-document.yaml: reportMeta contains removed field ${field}`);
     }

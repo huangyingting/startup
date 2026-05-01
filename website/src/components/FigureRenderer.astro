@@ -30,7 +30,9 @@ const transmissionTargetIds = new Set(transmissionEdges.map((edge: any) => edge.
 const transmissionSources = transmissionNodes.filter((node: any) => !transmissionTargetIds.has(node.id));
 const transmissionBridges = transmissionNodes.filter((node: any) => transmissionSourceIds.has(node.id) && transmissionTargetIds.has(node.id));
 const transmissionOutcomes = transmissionNodes.filter((node: any) => transmissionTargetIds.has(node.id) && !transmissionSourceIds.has(node.id));
-const moduleItems = (layer: any) => arr(layer?.modules ?? layer?.items);
+const layerLabel = (layer: any) => layer?.label ?? layer?.name ?? layer?.id ?? 'Layer';
+const layerDetail = (layer: any) => layer?.detail ?? layer?.description ?? null;
+const moduleItems = (layer: any) => arr(layer?.modules ?? layer?.items ?? layer?.components);
 const outputItems = (layer: any) => arr<string>(layer?.outputs);
 const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title, data } : null;
 ---
@@ -67,8 +69,8 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
       {stackLayers.map((layer: any) => (
         <article class:list={['stack-layer', toneClass(layer.tone)]}>
           <span></span>
-          <strong>{layer.label}</strong>
-          {layer.detail && <p>{layer.detail}</p>}
+          <strong>{layerLabel(layer)}</strong>
+          {layerDetail(layer) && <p>{layerDetail(layer)}</p>}
         </article>
       ))}
     </div>
@@ -153,8 +155,8 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
         <article class:list={['arch-layer', toneClass(layer.tone)]}>
           <div class="arch-layer-head">
             <span>{String(index + 1).padStart(2, '0')}</span>
-            <strong>{layer.label}</strong>
-            {layer.detail && <p>{layer.detail}</p>}
+            <strong>{layerLabel(layer)}</strong>
+            {layerDetail(layer) && <p>{layerDetail(layer)}</p>}
           </div>
           <div class="arch-layer-body">
             {moduleItems(layer).length > 0 ? (
@@ -166,8 +168,8 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
                   </section>
                 ))}
               </div>
-            ) : layer.detail ? (
-              <p class="arch-detail">{layer.detail}</p>
+            ) : layerDetail(layer) ? (
+              <p class="arch-detail">{layerDetail(layer)}</p>
             ) : null}
             {outputItems(layer).length > 0 && (
               <ul class="arch-outputs" aria-label="Layer outputs">

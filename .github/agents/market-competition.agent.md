@@ -29,7 +29,9 @@ Structure this section as an investor-grade VC diligence chapter:
 - Estimates require `estimateBasis`.
 - Competitors must be named real companies or clearly labeled substitutes.
 - Do not invent market share, penetration, or growth rates without evidence.
+- All figures must follow the Figure rendering contracts in `startup-diligence.schema.md`. Use canonical renderer fields only: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, or `layers`; do not invent primary fields such as `cards`, `steps`, `children`, or `groups`.
 - Do not use generic `flow` for TAM/SAM/SOM. Use `market-sizing-lens` with ordered TAM, SAM, and SOM nodes/items, and keep unsupported dollar values out of the figure.
+- For `quadrant` / `competitive-matrix`, use `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`, and axis labels. For `bars` / `metric-bars`, use `data.items[]` with `label`, numeric `value`, optional `displayValue`, and optional `tone`.
 
 ## Handoff
 

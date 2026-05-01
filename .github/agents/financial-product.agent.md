@@ -31,7 +31,10 @@ Structure this section as an investor-grade VC diligence chapter:
 - Use `estimateBasis` for every derived numeric value.
 - Do not infer revenue from users/traffic without labeling the inference low confidence.
 - If retention, CAC, LTV, or margins are not disclosed, say so and define exact diligence asks.
+- All figures must follow the Figure rendering contracts in `startup-diligence.schema.md`. Use canonical renderer fields only: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, or `layers`; do not invent primary fields such as `cards`, `steps`, `children`, or `groups`.
 - Use `unit-economics-waterfall` for public-data-constrained unit-economics bridges, `architecture-stack` for platform architecture, and `customer-surface-map` for consumer / enterprise / developer / ecosystem customer-surface expansion. Avoid generic `flow` for these semantic use cases.
+- For every `architecture-stack` figure, use `data.layers[]` entries with canonical `label`, `detail`, optional `tone`, and optional `modules[]`. Do not use `name` / `components` as the primary field shape, because the website renderer and schema contract expect `label` / `modules`.
+- For `unit-economics-waterfall` and `customer-surface-map`, use ordered `data.items[]` or `data.nodes[]` cards with `label`, `detail`, and optional `tone`. Preserve unknown metrics as explanatory cards instead of empty arrays.
 
 ## Handoff
 

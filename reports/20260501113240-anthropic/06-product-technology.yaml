@@ -1,0 +1,759 @@
+schemaVersion: startup-diligence-report-v2
+artifact: product-technology
+slug: anthropic
+runDate: 2026-05-01
+company:
+  name: Anthropic
+
+chapter:
+  number: 5
+  title: Product & Technology
+  summary: |
+    Anthropic's product portfolio has evolved from a pure-play safety research lab into
+    a full-stack AI products company. The core technology stack centres on Constitutional
+    AI (alignment via self-critique), the Claude model family (Haiku 4.5 / Sonnet 4.6 /
+    Opus 4.7), and the Responsible Scaling Policy (ASL safety evaluation framework). The
+    commercial product surface spans consumer chat (claude.ai), developer API (direct +
+    cloud marketplace), agentic coding (Claude Code), GUI automation (Claude Cowork), and
+    the Model Context Protocol ecosystem. Claude Opus 4 / Sonnet 4 achieved SWE-bench
+    Verified scores of 72.5–72.7% at release (May 2025) — company-claimed frontier
+    leadership on the most cited enterprise coding benchmark. The product verdict is
+    strong: differentiated safety architecture, demonstrated benchmark leadership in
+    the highest-value enterprise use case (software engineering), and an open-ecosystem
+    standard (MCP) that creates genuine platform network effects.
+
+callouts:
+  - type: key-insight
+    title: Constitutional AI and RSP Create a Replicable Safety Manufacturing Process
+    body: |
+      Constitutional AI (CAI) is not merely a marketing term — it is a documented,
+      published alignment methodology that uses a principled set of rules (the
+      "constitution") and AI self-critique to train models to be helpful, harmless, and
+      honest without extensive human labeling [C021]. The 2026 Claude constitution grew
+      to approximately 23,000 words (up from 2,700 in 2023) [C022], reflecting continuous
+      investment in alignment infrastructure. Combined with the Responsible Scaling Policy
+      (ASL-2/3/4 safety levels with Red Line Capabilities framework) [C023], Anthropic
+      has built a systematic safety manufacturing process — not a one-time model
+      characteristic — that compounds with each model generation.
+    claimRefs: [C021, C022, C023]
+
+  - type: opportunity
+    title: Model Context Protocol — An Open Standard Play That Creates Platform Lock-In
+    body: |
+      MCP, open-sourced in November 2024 [C020], is Anthropic's strategic infrastructure
+      bet: by creating an open, universal standard for connecting AI systems with data
+      sources (analogous to REST for web APIs), Anthropic has positioned Claude as the
+      natural reference implementation. Early adoption by Block, Apollo, Replit, Zed,
+      Sourcegraph, and enterprise data platforms including Snowflake [C033] signals
+      ecosystem momentum. If MCP becomes the de facto AI-to-data integration standard,
+      Anthropic benefits from a platform network effect without bearing the integration
+      maintenance burden — each new MCP server increases Claude's value without requiring
+      Anthropic-built connectors.
+    claimRefs: [C020, C033]
+
+  - type: key-insight
+    title: "Claude Code — World-Class Coding Agent with Customer-Validated Performance"
+    body: |
+      Claude Code (GA May 2025) is backed by the strongest customer performance data
+      in the ledger: Cursor reported 70% task clearance on CursorBench with Opus 4.7,
+      versus 58% for Opus 4.6 — a 12 percentage-point generation-over-generation
+      improvement [C041]. Claude Opus 4 achieved 72.5% on SWE-bench Verified at release
+      [C040], the most rigorous real-world software engineering benchmark. Revenue grew
+      5.5x from the Claude Code launch base by July 2025 [C018]. The combination of
+      frontier benchmark scores, third-party customer validation, and revenue traction
+      establishes Claude Code as the strongest evidence of Anthropic's product-market
+      fit in the enterprise market.
+    claimRefs: [C040, C041, C017, C018]
+
+tables:
+  - id: T601
+    title: Claude Product Module Matrix — Current Portfolio (as of May 2026)
+    columns:
+      - Product / Module
+      - Category
+      - Status
+      - Key Capabilities
+      - Pricing Model
+      - Evidence
+    rows:
+      - ["Claude.ai (Free)",
+         "Consumer SaaS",
+         "GA",
+         "Web/iOS/Android/desktop chat; web search; memory; extended thinking; remote MCP; Claude Code (limited)",
+         "$0/month",
+         "C016"]
+      - ["Claude.ai (Pro)",
+         "Consumer SaaS",
+         "GA",
+         "More usage vs Free; Claude Code; Claude Cowork; Research mode; Office integrations",
+         "$17/mo annual / $20/mo monthly",
+         "C016"]
+      - ["Claude.ai (Max)",
+         "Consumer SaaS — Power",
+         "GA",
+         "5x or 20x usage vs Pro; priority access; early features; higher output limits",
+         "$100/mo (5x) or $200/mo (20x)",
+         "C016"]
+      - ["Claude.ai (Team)",
+         "Business SaaS",
+         "GA",
+         "5–150 seats; SSO; admin controls; enterprise search; no training on customer content",
+         "$20/seat/mo annual",
+         "C016"]
+      - ["Claude.ai (Enterprise)",
+         "Enterprise SaaS",
+         "GA",
+         "All Team features plus SCIM, audit logs, HIPAA, IP allowlisting, custom data retention",
+         "Custom",
+         "C016"]
+      - ["Claude API — Haiku 4.5",
+         "Developer API",
+         "GA (2025-10-15)",
+         "Fast, cost-efficient; 200k context; vision; tool use; batch API; prompt caching",
+         "$1.00/$5.00 per MTok input/output",
+         "C013, C014, C015"]
+      - ["Claude API — Sonnet 4.6",
+         "Developer API",
+         "GA (2026-02-17)",
+         "Balanced intelligence and speed; 1M context; vision; tool use; batch API; prompt caching",
+         "$3.00/$15.00 per MTok input/output",
+         "C013, C014, C015"]
+      - ["Claude API — Opus 4.7",
+         "Developer API — Frontier",
+         "GA (2026-04-16)",
+         "Complex reasoning; agentic coding; 1M context; vision; tool use; extended thinking; batch API",
+         "$5.00/$25.00 per MTok input/output",
+         "C013, C014, C015, C021"]
+      - ["Claude Mythos (Preview)",
+         "Specialized API",
+         "Invitation-only (2026-04-07)",
+         "Defensive cybersecurity (Project Glasswing); restricted access",
+         "Invitation only",
+         "C013"]
+      - ["Claude Code",
+         "Agentic Coding Product",
+         "GA (2025-05-22)",
+         "Agentic software engineering; VS Code and JetBrains IDE integrations; GitHub Actions; terminal access; file editing",
+         "Subscription-included / API-billed",
+         "C017, C018, C040, C041"]
+      - ["Claude Cowork",
+         "Agentic GUI Automation",
+         "Research preview Jan 2026; Enterprise GA Feb 2026",
+         "GUI-based autonomous task execution for non-technical users; Google Drive, Gmail, DocuSign, FactSet connectors",
+         "Enterprise contract",
+         "C019"]
+      - ["Computer Use",
+         "Agentic Capability",
+         "GA (Oct 2024)",
+         "Claude navigates computers via screen interpretation and keyboard/mouse simulation",
+         "API tool-use capability; billed as tokens",
+         "C013"]
+      - ["Model Context Protocol (MCP)",
+         "Ecosystem Infrastructure",
+         "Open source (Nov 2024)",
+         "Universal standard for connecting AI systems with data sources; server and client SDK",
+         "Open source; free",
+         "C020"]
+      - ["Amazon Bedrock Channel",
+         "Cloud Distribution",
+         "GA",
+         "Zero operator access architecture; 30+ AWS regions; AWS security boundary; HIPAA-eligible",
+         "AWS-billed at Claude list prices",
+         "C030, C042"]
+      - ["Google Vertex AI Channel",
+         "Cloud Distribution",
+         "GA",
+         "GCP-managed inference; global availability; Vertex AI compliance features",
+         "GCP-billed at Claude list prices",
+         "C009, C042"]
+      - ["Microsoft Foundry Channel",
+         "Cloud Distribution",
+         "GA",
+         "Azure-managed inference; Microsoft enterprise compliance stack",
+         "Azure-billed at Claude list prices",
+         "C042"]
+    notes: |
+      Claude Mythos pricing is invitation-only and undisclosed; Project Glasswing is the
+      defensive cybersecurity initiative for which it is designed. Claude Code pricing
+      model (subscription-included vs API-billed) is not explicitly disclosed as a
+      standalone SKU — it is bundled in Pro/Max/Team plans and also has direct API access.
+      Computer Use is a capability flag on the API, not a standalone product.
+    claimRefs: [C013, C014, C015, C016, C017, C018, C019, C020, C030, C042]
+
+  - id: T602
+    title: Core Technology Capabilities — Constitutional AI, RSP, and Interpretability
+    columns:
+      - Technology
+      - Description
+      - Status
+      - Differentiator Strength
+      - Evidence
+    rows:
+      - ["Constitutional AI (CAI)",
+         "Alignment methodology using a principled constitution and AI self-critique (RLHF replacement) to train helpful, harmless, honest models without extensive human labeling of harmful outputs",
+         "Operational across all Claude generations",
+         "STRONG — published, peer-reviewable methodology; 2022 paper; no comparable published framework at OpenAI or Google DeepMind",
+         "C021, C022"]
+      - ["Claude's Constitution (2026)",
+         "23,000-word principled rule set governing Claude's values and behavior; evolves with each major model generation; up from 2,700 words in 2023",
+         "Current — 2026 version authored by Amanda Askell",
+         "STRONG — scope and specificity far beyond competitors' stated alignment principles",
+         "C022"]
+      - ["Responsible Scaling Policy (RSP)",
+         "Tiered safety evaluation framework (ASL-2, ASL-3, ASL-4) with Red Line Capabilities detection and halt-deployment commitments when inadequate safeguards exist",
+         "Operational; last reflected publicly April 2024",
+         "STRONG — legally-structured policy commitment; no equivalent at Meta or Mistral; OpenAI Superalignment team disbanded 2024",
+         "C023"]
+      - ["Mechanistic Interpretability Research",
+         "Foundational research into how neural networks encode concepts and features; led by co-founder Chris Olah; enables understanding of model internals rather than treating models as black boxes",
+         "Ongoing research program",
+         "STRONG — Anthropic is the leading academic publisher in mechanistic interpretability; creates longer-term alignment advantage",
+         "C002"]
+      - ["1-Million-Token Context Window",
+         "Claude Opus 4.7 and Sonnet 4.6 support 1 million token context — sufficient for entire codebases, large legal documents, or full book manuscripts",
+         "GA — Opus 4.7 and Sonnet 4.6",
+         "STRONG for enterprise — matches Google Gemini 2.5 Pro context; exceeds OpenAI GPT-4o (128k at time of evidence collection)",
+         "C014"]
+      - ["Extended Thinking Mode",
+         "Chain-of-thought reasoning mode where Claude reasons through problems step-by-step before responding; available on Opus 4.7 and some Sonnet variants",
+         "GA on Opus 4.7",
+         "MODERATE — reasoning models increasingly common; differentiator is integration with safety constraints during thinking",
+         "C021"]
+      - ["Vision and Multimodal Input",
+         "Image and document understanding natively supported in API and consumer products",
+         "GA across model tiers",
+         "MODERATE — industry standard capability across frontier labs",
+         "C013"]
+      - ["Tool Use / Function Calling",
+         "Structured tool call framework enabling Claude to invoke external APIs, search, calculators, and custom functions",
+         "GA",
+         "MODERATE — industry standard; Anthropic's advantage is MCP providing a universal tool integration standard",
+         "C020"]
+      - ["Computer Use",
+         "Claude navigates GUI applications via screen interpretation and keyboard/mouse simulation — enables automation of any application without a native API",
+         "GA (Oct 2024)",
+         "STRONG for agentic use cases — enables automation of legacy systems without API; novel capability at launch",
+         "C013"]
+      - ["Model Context Protocol (MCP)",
+         "Open-sourced universal standard for connecting AI systems to data sources; replaces fragmented per-tool integrations; Anthropic-invented and championed",
+         "Open source (Nov 2024); broad ecosystem adoption",
+         "STRONG — first-mover protocol standard; adopted by Block, Apollo, Replit, Zed, Sourcegraph; Anthropic as de facto standards body",
+         "C020"]
+    notes: |
+      Differentiator strength ratings are analytical assessments grounded in ledger evidence.
+      OpenAI Superalignment team reference is inferred from widely available public knowledge,
+      not directly sourced in the evidence ledger — it should be independently verified.
+    claimRefs: [C002, C013, C014, C020, C021, C022, C023]
+
+  - id: T603
+    title: Integration and Ecosystem Partner Map
+    columns:
+      - Partner / Platform
+      - Integration Type
+      - Relationship
+      - Revenue Significance
+      - Evidence
+    rows:
+      - ["Amazon Web Services (AWS)",
+         "Primary cloud provider; Amazon Bedrock model marketplace (30+ regions); zero operator access architecture",
+         "Strategic investor (~$8B cumulative); Anthropic's primary cloud provider (infrastructure)",
+         "HIGH — primary cloud channel; largest strategic investor",
+         "C008, C030, C042"]
+      - ["Google Cloud",
+         "Google Cloud Vertex AI model marketplace; up to 1M TPUs (Oct 2025 partnership); Google Cloud as inference provider",
+         "Strategic investor (~$3B+); cloud channel partner; compute partner",
+         "HIGH — second largest cloud channel; TPU compute partnership critical to training",
+         "C009, C031, C042"]
+      - ["Microsoft / Azure",
+         "Microsoft Foundry cloud marketplace; $30B Azure compute commitment by Anthropic; announced $15B Microsoft/Nvidia investment",
+         "Strategic investor (announced $15B, unconfirmed execution); cloud channel partner",
+         "HIGH (pending) — third cloud channel; Azure compute commitment is largest single OPEX commitment",
+         "C032, C042"]
+      - ["Snowflake",
+         "Claude models integrated into Snowflake data platform; multi-year enterprise partnership",
+         "Enterprise distribution partner",
+         "SIGNIFICANT — $200M multi-year deal disclosed; enterprise data platform channel",
+         "C033"]
+      - ["Palantir / AWS Maven Smart System",
+         "Claude deployed in classified U.S. government and defense missions via Palantir",
+         "Government distribution channel (under litigation)",
+         "CONTESTED — high-value government channel; currently impacted by DoD supply chain risk designation [C035]",
+         "C034, C035"]
+      - ["Cursor",
+         "Claude Opus 4.7 powers Cursor's AI coding IDE; 70% CursorBench task clearance reported",
+         "Enterprise API customer; public reference customer",
+         "SIGNIFICANT — flagship coding customer; benchmark validation partner",
+         "C041"]
+      - ["GitHub Copilot",
+         "Claude used as backend model for GitHub Copilot (code suggestions and completions)",
+         "Enterprise API customer (Microsoft-owned)",
+         "SIGNIFICANT — massive developer distribution channel through GitHub's 100M+ user base",
+         "C034 (inferred from company snapshot; not directly in evidence ledger — verify independently)"]
+      - ["Replit",
+         "Claude integrated in Replit's online coding IDE; MCP adopter",
+         "Enterprise API customer; MCP ecosystem partner",
+         "MODERATE — developer education and SMB coding segment",
+         "C020"]
+      - ["Notion",
+         "Claude powers AI features in Notion workspace; early Claude 1 partner (2023)",
+         "Enterprise API customer; early reference partner",
+         "MODERATE — knowledge worker enterprise segment; customer quote in C041",
+         "C041"]
+      - ["Rakuten",
+         "Claude powers AI features in Rakuten e-commerce/services platform",
+         "Enterprise API customer",
+         "MODERATE — Japan market enterprise anchor; customer quote in C041",
+         "C041"]
+      - ["Harvey",
+         "Claude powers Harvey's legal AI platform",
+         "Enterprise API customer",
+         "MODERATE — legal vertical; regulated industry reference",
+         "C034 (from company snapshot)"]
+      - ["Block (Square)",
+         "MCP protocol adopter; Claude integration in Block's developer platform",
+         "MCP ecosystem partner; API customer",
+         "MODERATE — fintech enterprise anchor; MCP adoption validates protocol",
+         "C020"]
+      - ["Apollo",
+         "MCP adopter",
+         "MCP ecosystem partner",
+         "LOW-MODERATE — B2B sales intelligence platform",
+         "C020"]
+      - ["Zed (IDE)",
+         "MCP adopter; Claude integrated in Zed code editor",
+         "MCP ecosystem partner",
+         "LOW-MODERATE — developer tooling",
+         "C020"]
+      - ["Sourcegraph",
+         "MCP adopter; Claude for code search and intelligence",
+         "Enterprise API customer; MCP ecosystem partner",
+         "LOW-MODERATE — enterprise developer tooling",
+         "C020"]
+      - ["Bun (acquired)",
+         "JavaScript/TypeScript runtime; acquired December 2025 to accelerate Claude Code",
+         "Acquired subsidiary (technology acquisition)",
+         "STRATEGIC — accelerates Claude Code's JavaScript tooling ecosystem",
+         "C017 (inferred from company snapshot timeline; confirm independently)"]
+    notes: |
+      GitHub Copilot and Harvey rows include a note that these relationships are from the
+      company snapshot section rather than explicitly cited in a discrete evidence claim —
+      investors should independently verify. Bun acquisition is from the company snapshot
+      timeline (F201) and should be verified against public announcement. All other rows
+      are sourced directly to evidence ledger claims.
+    claimRefs: [C008, C009, C017, C020, C030, C031, C032, C033, C034, C035, C041, C042]
+
+figures:
+  - id: F601
+    title: Claude Platform Technology Architecture Stack
+    type: architecture-stack
+    layout: wide
+    summary: |
+      Five-layer architecture stack representing Anthropic's Claude platform from
+      foundational safety research through model core, platform services, integration
+      layer, and product surface. Each layer is evidence-grounded in ledger claims.
+    data:
+      layers:
+        - label: "Layer 1 — Safety Foundation"
+          detail: |
+            Constitutional AI (CAI) methodology [C021]; Claude's Constitution
+            (23k words, 2026) [C022]; Responsible Scaling Policy — ASL-2/3/4
+            safety levels with Red Line Capabilities framework [C023];
+            Mechanistic Interpretability Research (Chris Olah) [C002].
+          tone: positive
+          modules:
+            - "Constitutional AI (2022 paper; self-critique alignment)"
+            - "Claude's Constitution (23k-word 2026 edition)"
+            - "RSP — ASL-2/3/4 with halt-deployment commitments"
+            - "Mechanistic Interpretability Program"
+            - "Frontier Risk Evaluations"
+        - label: "Layer 2 — Model Core"
+          detail: |
+            Current generation: Claude Opus 4.7 ($5/$25/MTok; 1M context; GA April 2026) [C013, C015];
+            Claude Sonnet 4.6 ($3/$15/MTok; 1M context; GA Feb 2026) [C013, C015];
+            Claude Haiku 4.5 ($1/$5/MTok; 200k context; GA Oct 2025) [C013, C015];
+            Claude Mythos Preview (invitation-only; defensive cybersecurity) [C013].
+          tone: positive
+          modules:
+            - "Claude Opus 4.7 — frontier reasoning and coding (SWE-bench 72.5%)"
+            - "Claude Sonnet 4.6 — balanced intelligence/speed"
+            - "Claude Haiku 4.5 — high-speed, cost-efficient throughput"
+            - "Claude Mythos Preview — Project Glasswing cybersecurity"
+        - label: "Layer 3 — Platform Services"
+          detail: |
+            Extended thinking (chain-of-thought reasoning); vision and multimodal input;
+            tool use / function calling; computer use (GUI navigation) [C013];
+            prompt caching ($0.10–$6.25/MTok) [C015]; Batch API (50% discount) [C015];
+            US-only inference (data residency; 1.1x premium) [C015];
+            managed agent sessions ($0.08/session-hour) [C015];
+            web search tool ($10/1K queries) [C015].
+          tone: positive
+          modules:
+            - "Extended Thinking (CoT reasoning)"
+            - "Vision / Multimodal"
+            - "Tool Use / Function Calling"
+            - "Computer Use (GUI automation)"
+            - "Prompt Caching"
+            - "Batch API (50% discount)"
+            - "US-Only Inference (data residency)"
+            - "Managed Agent Sessions ($0.08/hr)"
+            - "Web Search ($10/1K queries)"
+        - label: "Layer 4 — Integration & Distribution Layer"
+          detail: |
+            Model Context Protocol (MCP) — open standard for AI-to-data connectivity [C020];
+            Direct Anthropic API; Amazon Bedrock (30+ regions; zero operator access) [C030];
+            Google Cloud Vertex AI [C042]; Microsoft Foundry [C042];
+            Snowflake data platform ($200M partnership) [C033].
+          tone: positive
+          modules:
+            - "Model Context Protocol (MCP) — open standard, Nov 2024"
+            - "Direct Anthropic REST API"
+            - "Amazon Bedrock (30+ regions; zero operator access)"
+            - "Google Cloud Vertex AI"
+            - "Microsoft Foundry"
+            - "Snowflake Data Platform"
+        - label: "Layer 5 — Product Surface"
+          detail: |
+            Claude.ai consumer/business chat (Free/Pro/Max/Team/Enterprise) [C016];
+            Claude Code agentic coding IDE (VS Code, JetBrains, GitHub Actions; GA May 2025) [C017];
+            Claude Cowork GUI automation agent (enterprise GA Feb 2026) [C019];
+            iOS, Android, desktop apps.
+          tone: positive
+          modules:
+            - "Claude.ai Web / iOS / Android / Desktop (Free–Enterprise)"
+            - "Claude Code — Agentic Coding Agent"
+            - "Claude Cowork — GUI Automation Agent"
+            - "Enterprise API (HIPAA / SCIM / Audit Logs)"
+    approximationNotes: |
+      Layer boundaries are analytical interpretations based on product and technology
+      evidence in the ledger. Internal architecture details (model training infrastructure,
+      exact TPU/GPU mix, inference optimization stack) are not publicly disclosed.
+      Layer 1 (Safety Foundation) is uniquely documented via Anthropic's published
+      research — all other frontier labs lack equivalent public documentation.
+    claimRefs: [C002, C013, C014, C015, C016, C017, C019, C020, C021, C022, C023, C030, C033, C042]
+
+  - id: F602
+    title: Product Release and Technology Roadmap — Key Milestones (Evidence-Sourced)
+    type: timeline
+    layout: wide
+    summary: |
+      Evidence-sourced product and technology milestone timeline from Constitutional AI
+      research publication through Opus 4.7 GA in April 2026. Milestone dates and
+      details are grounded in ledger claims; no forward roadmap items are included
+      as Anthropic has not publicly disclosed product roadmap beyond announced products.
+    data:
+      items:
+        - date: "2022-12"
+          label: "Constitutional AI Paper"
+          detail: "Foundational alignment methodology published. Trains harmless AI via self-critique without human labels for harmful outputs [C021]."
+          tone: positive
+        - date: "2023-03"
+          label: "Claude 1.0 Early Access"
+          detail: "First Claude models released to partner network (Notion, Quora/Poe, DuckDuckGo). API access opened [C013]."
+          tone: positive
+        - date: "2023-05"
+          label: "Claude's Constitution Published"
+          detail: "AI feedback principles published; Constitutional AI feedback loop documented [C021, C022]."
+          tone: positive
+        - date: "2023-07"
+          label: "Claude 2 — First Public Release"
+          detail: "First Claude model available to general public on claude.ai [C013]."
+          tone: positive
+        - date: "2024-03"
+          label: "Claude 3 Family — Opus / Sonnet / Haiku"
+          detail: "Three-tier model architecture introduced. Claude 3 Haiku: 21k tokens/sec throughput [S024]. Industry-leading benchmarks at release [C008]."
+          tone: positive
+        - date: "2024-06"
+          label: "Claude 3.5 Sonnet"
+          detail: "Outperforms Claude 3 Opus at Sonnet pricing. Artifacts feature launches on claude.ai [C013]."
+          tone: positive
+        - date: "2024-10"
+          label: "Computer Use Feature — GA"
+          detail: "Claude can navigate GUI applications via screen interpretation and keyboard/mouse simulation [C013]."
+          tone: positive
+        - date: "2024-11"
+          label: "Model Context Protocol (MCP) — Open-Sourced"
+          detail: "Universal open standard for connecting AI systems with data sources released. Rapidly adopted by Block, Apollo, Replit, Zed, Sourcegraph [C020]."
+          tone: positive
+        - date: "2025-02"
+          label: "Claude 3.7 Sonnet"
+          detail: "Continued model capability improvement with enhanced reasoning [C013]."
+          tone: positive
+        - date: "2025-05"
+          label: "Claude 4 Launch — Opus 4 + Sonnet 4; Claude Code GA"
+          detail: "Claude Opus 4: 72.5% SWE-bench Verified (world-leading at release). Claude Sonnet 4: 72.7% SWE-bench. Terminal-bench 43.2%. Claude Code goes GA with VS Code, JetBrains, GitHub Actions [C040, C017]."
+          tone: positive
+        - date: "2025-10"
+          label: "Claude Haiku 4.5 — GA"
+          detail: "Current generation speed tier; 200k context window; $1/$5 per MTok [C013]."
+          tone: positive
+        - date: "2026-01"
+          label: "Claude Cowork — Research Preview"
+          detail: "GUI-based autonomous agent for non-technical users; Google Drive, Gmail, DocuSign, FactSet connectors [C019]."
+          tone: positive
+        - date: "2026-02"
+          label: "Claude Sonnet 4.6 — GA; Cowork Enterprise GA"
+          detail: "Sonnet 4.6 released ($3/$15; 1M context). Claude Cowork enters enterprise GA [C013, C019]."
+          tone: positive
+        - date: "2026-04"
+          label: "Claude Opus 4.7 — GA; Project Glasswing / Mythos Preview"
+          detail: "Current flagship. Improved advanced software engineering: Cursor reports 70% CursorBench task clearance vs 58% for Opus 4.6 [C041]. Claude Mythos for defensive cybersecurity launched invitation-only [C013]."
+          tone: positive
+    approximationNotes: |
+      Timeline entries are derived directly from evidence ledger claims and source
+      documents. No forward roadmap items are included as none are evidenced. Dates
+      are as reported in cited sources; Claude 3.5 Sonnet and 3.7 Sonnet exact dates
+      are approximate based on ledger records.
+    claimRefs: [C013, C014, C017, C019, C020, C021, C022, C040, C041]
+
+  - id: F603
+    title: MCP Ecosystem Integration Stack
+    type: stack
+    layout: standard
+    summary: |
+      Four-layer stack showing the Model Context Protocol ecosystem from open protocol
+      standard through server implementations, client integrations, and enterprise data
+      sources. Evidence for adoption is grounded in C020 and C033.
+    data:
+      layers:
+        - label: "Protocol Standard Layer"
+          detail: |
+            Model Context Protocol (MCP) — open-sourced by Anthropic, November 2024 [C020].
+            Universal standard for connecting AI systems with data sources.
+            Replaces fragmented per-integration APIs with a single protocol.
+            Anthropic serves as de facto standards steward.
+          tone: positive
+        - label: "MCP Server Implementations (Ecosystem)"
+          detail: |
+            Third-party MCP server implementations enabling Claude to connect to
+            specific data sources and services. Confirmed adopters: Block (fintech),
+            Apollo (sales intelligence), Replit (dev platform), Zed (code editor),
+            Sourcegraph (code search), Snowflake (data platform, $200M partner) [C020, C033].
+          tone: positive
+        - label: "MCP Client Integrations"
+          detail: |
+            AI products and applications that consume MCP servers.
+            Claude-native: claude.ai (remote MCP on free tier), Claude Code,
+            Claude Cowork. Third-party: any developer building with the
+            Anthropic MCP SDK. Breadth of client adoption drives protocol
+            network effect [C016, C017, C019, C020].
+          tone: positive
+        - label: "Enterprise Data Sources Connected via MCP"
+          detail: |
+            Target enterprise data sources accessible through MCP-enabled integrations:
+            Snowflake data warehouse [C033], Google Drive, Gmail, DocuSign, FactSet
+            (connectors listed for Claude Cowork [C019]). Additional sources via
+            ecosystem MCP server builders. Each new data source connection increases
+            Claude's autonomous task completion capabilities.
+          tone: positive
+    approximationNotes: |
+      MCP adoption breadth is evidenced by named adopters (C020, C033). Exact number
+      of MCP server implementations in production is not disclosed in the evidence ledger.
+      Enterprise data source list for Cowork connectors is from C019. All other integrations
+      in the broader ecosystem are beyond this evidence set.
+    claimRefs: [C016, C017, C019, C020, C033]
+
+sections:
+  - number: "5.1"
+    title: Product Platform Overview
+    body: |
+      Anthropic has evolved from a research-first lab into a layered commercial platform.
+      The product architecture follows a logical build-up from foundational safety research
+      through model core capability, to cloud distribution infrastructure, to end-user
+      product surfaces.
+
+      The core commercial product family is Claude: a three-tier API accessible via direct
+      Anthropic endpoint and three cloud marketplaces (Amazon Bedrock, Google Vertex AI,
+      Microsoft Foundry) [C042]. The three tiers — Haiku 4.5 (speed/cost), Sonnet 4.6
+      (balanced), Opus 4.7 (frontier) — serve distinct workload economics and enterprise
+      buyer profiles [C013, C015]. Above the raw API sits a set of platform services
+      (prompt caching, batch API, managed agents, web search, computer use, extended
+      thinking) that create incremental revenue and capability differentiation [C015].
+
+      The consumer and business surface (claude.ai, Free through Enterprise) provides
+      direct subscription revenue and consumer brand presence [C016]. Claude Code and
+      Claude Cowork represent the agentic product layer — the fastest evidenced growth
+      segment (Claude Code 5.5x revenue growth, July 2025 [C018]) — targeting software
+      engineers and non-technical business users respectively [C017, C019].
+
+      The Model Context Protocol (MCP), open-sourced November 2024 [C020], is the
+      platform's infrastructure play: an open standard that positions Claude as the
+      natural integration hub for enterprise data workflows. See Figure F601 for the
+      complete five-layer architecture stack and Figure F603 for the MCP ecosystem.
+    claimRefs: [C013, C015, C016, C017, C018, C019, C020, C030, C042]
+
+  - number: "5.2"
+    title: Claude Model Family — Architecture and Differentiation
+    body: |
+      **Three-Tier Philosophy.** The Haiku/Sonnet/Opus three-tier model family addresses
+      the full enterprise price/performance spectrum. Haiku 4.5 ($1/$5/MTok; 200k context)
+      serves latency-sensitive, high-volume workloads where throughput and cost dominate
+      quality considerations [C015]. Sonnet 4.6 ($3/$15/MTok; 1M context) is the primary
+      workhorse for general enterprise intelligence tasks [C015]. Opus 4.7 ($5/$25/MTok;
+      1M context) serves complex reasoning, frontier coding, and agentic tasks where
+      quality is paramount and cost is secondary [C013, C015].
+
+      **Context Window Leadership.** Opus 4.7 and Sonnet 4.6 both support a 1-million-token
+      context window [C014] — equivalent to approximately 750,000 words or multiple books.
+      This enables use cases that were previously impossible: entire codebase analysis,
+      full contract portfolio review, exhaustive scientific literature synthesis. The 1M
+      context window is matched by Google Gemini 2.5 Pro but exceeds OpenAI GPT-4o's
+      128k context (as of evidence collection date).
+
+      **Generation-Over-Generation Improvement.** Claude Opus 4.7 (April 2026) improved
+      on Opus 4.6 in advanced software engineering; Cursor reported 70% task clearance
+      on CursorBench compared to 58% for Opus 4.6 — a 12 percentage-point improvement
+      [C041]. Claude Opus 4 (May 2025) scored 72.5% on SWE-bench Verified at release
+      [C040]. This trajectory, while company-asserted from single sources, is validated
+      by a named third-party customer (Cursor) rather than exclusively self-reported.
+
+      **Claude Mythos (Restricted Preview).** A fourth model variant — Claude Mythos —
+      was released invitation-only in April 2026 for Project Glasswing, Anthropic's
+      defensive cybersecurity initiative [C013]. Pricing and capabilities are undisclosed
+      beyond the invitation-only status. This represents a potential government/defense
+      monetization channel adjacent to the Palantir/classified pathway.
+    claimRefs: [C013, C014, C015, C040, C041]
+
+  - number: "5.3"
+    title: Constitutional AI, RSP, and Safety Architecture
+    body: |
+      **Constitutional AI — The Alignment Manufacturing Process.** Constitutional AI (CAI),
+      published December 2022 [C021], is Anthropic's proprietary alignment methodology
+      and its most fundamental technology differentiator. Rather than relying on expensive
+      human labeling of every harmful output, CAI uses a written constitution of principles
+      and trains the model to critique its own outputs against those principles — a
+      self-improvement loop that scales more efficiently than pure RLHF. Claude's
+      Constitution as of 2026 contains approximately 23,000 words (up from 2,700 in 2023)
+      [C022] — reflecting continuous investment and substantive institutional knowledge
+      encoded into the alignment process.
+
+      **Responsible Scaling Policy (RSP) — Deployment Risk Governance.** The RSP [C023]
+      establishes AI Safety Levels (ASL-2, ASL-3, ASL-4) analogous to biosafety levels in
+      laboratory settings. Models are evaluated for Red Line Capabilities (defined as
+      capabilities that could enable mass-casualty events or critical infrastructure
+      compromise). If Red Line Capabilities are detected without adequate safeguards,
+      Anthropic commits to halt deployment. This policy is legally structured and
+      investor-disclosed — it creates a genuine constraint on Anthropic's commercial
+      freedom that no competitor has replicated at the same specificity.
+
+      **Mechanistic Interpretability — The Long-Game Advantage.** Co-founder Chris Olah
+      pioneered mechanistic interpretability research [C002] — the discipline of
+      understanding how neural networks encode concepts as identifiable features and
+      circuits. Anthropic has published more interpretability research than any other
+      organization. This research agenda is speculative in its commercial timeline but
+      represents a potential path to verifiable model safety properties that would create
+      insurmountable safety credibility over competitors who cannot demonstrate internal
+      model understanding.
+
+      **Behavioral Validation — DoD Dispute.** The highest-stakes behavioral test of
+      Anthropic's safety commitments occurred in February–March 2026. When the U.S.
+      Department of Defense demanded removal of Claude's contractual prohibitions on
+      mass domestic surveillance and fully autonomous weapons use [C035], Anthropic
+      refused — accepting commercial and reputational risk in the process. The resulting
+      DoD supply chain risk designation and Anthropic's successful lawsuit (temporary
+      injunction, March 26, 2026 [C036]) constitutes the most credible third-party
+      validation of the safety governance architecture in the company's history.
+    claimRefs: [C002, C021, C022, C023, C035, C036]
+
+  - number: "5.4"
+    title: Agentic Products — Claude Code and Claude Cowork
+    body: |
+      **Claude Code — Frontier Coding Agent.** Claude Code (GA May 2025, alongside
+      Claude 4 [C017]) is Anthropic's highest-evidenced commercial growth product.
+      Key specifications: VS Code and JetBrains IDE integrations, GitHub Actions support,
+      terminal access, and autonomous file editing. It is backed by Claude Opus 4's
+      72.5% SWE-bench Verified performance at launch [C040] and the customer-validated
+      70% CursorBench task clearance with Opus 4.7 [C041]. Revenue grew 5.5x from
+      launch base by July 2025 [C018] — the only disclosed revenue growth rate in
+      the evidence ledger. The Bun JavaScript runtime acquisition (December 2025) was
+      made specifically to accelerate Claude Code's JavaScript ecosystem tooling.
+
+      Claude Code's competitive differentiation is multi-dimensional: frontier benchmark
+      performance (SWE-bench leadership), deep IDE integration (native VS Code/JetBrains
+      plugins), MCP-enabled tool extensibility, and backing by the model architecture
+      most tested by professional software engineers. The evidence that OpenAI employees
+      themselves were using Claude Code (until Anthropic revoked access for ToS violations
+      in August 2025 [C039]) is a compelling secondary validation of technical superiority.
+
+      **Claude Cowork — Enterprise GUI Automation Agent.** Claude Cowork (research preview
+      January 2026, enterprise GA February 2026 [C019]) extends agentic AI to non-technical
+      business users. Unlike Claude Code (which requires developer context), Cowork uses
+      GUI navigation and vision to operate enterprise applications on behalf of knowledge
+      workers — connecting to Google Drive, Gmail, DocuSign, and FactSet. This targets
+      a much larger total addressable user base than Claude Code: every knowledge worker
+      who could benefit from automated task execution, not just software engineers.
+
+      Revenue metrics for Cowork are not yet disclosed in the evidence ledger. The
+      February 2026 enterprise GA timing means significant commercial metrics should
+      be available within one to two quarters — making this a near-term diligence follow-up
+      priority.
+    claimRefs: [C017, C018, C019, C039, C040, C041]
+
+  - number: "5.5"
+    title: Model Context Protocol — Ecosystem and Platform Strategy
+    body: |
+      **MCP as an Infrastructure Bet.** The Model Context Protocol (MCP), open-sourced
+      in November 2024 [C020], is one of the most strategically significant moves in
+      Anthropic's history. Rather than building proprietary connectors to every enterprise
+      data source (the approach taken by most AI product companies), Anthropic created and
+      open-sourced a universal standard: any data source can publish an MCP server; any
+      AI client can consume it using the same protocol.
+
+      **Adoption Evidence.** Within approximately 18 months of open-sourcing, MCP had
+      been adopted by Block (Square), Apollo, Replit, Zed, and Sourcegraph [C020], and
+      forms part of the Snowflake enterprise partnership ($200M, December 2025) [C033].
+      Claude.ai's free tier includes remote MCP access [C016], making MCP adoption a
+      user acquisition feature in the consumer funnel as well.
+
+      **Strategic Logic.** MCP creates a platform network effect where: (1) each new
+      MCP server (data source integration) increases the value of Claude to enterprise
+      users; (2) each enterprise choosing Claude for agentic workflows embeds MCP in
+      their infrastructure, creating switching costs; and (3) Anthropic, as the protocol
+      inventor and steward, benefits from ecosystem growth without bearing the marginal
+      cost of each integration. If MCP achieves the open-standard status that REST APIs
+      achieved for web services or OAuth achieved for authentication, the long-term
+      competitive value is substantial.
+
+      **Risks.** OpenAI and Google could develop competing integration protocols. Platform
+      companies (AWS, Salesforce, Microsoft) could mandate proprietary integration APIs.
+      Open standards frequently fork or fragment after initial adoption momentum. Anthropic
+      does not have a formal standards body or governance structure for MCP beyond its
+      own stewardship. These risks are not currently evidenced as active threats but
+      represent the primary vulnerability in the MCP ecosystem strategy.
+    claimRefs: [C016, C020, C033]
+
+  - number: "5.6"
+    title: Technology Roadmap and Architecture — Evidence Assessment
+    body: |
+      **Known Roadmap (Evidence-Based).** No formal forward product roadmap has been
+      publicly disclosed by Anthropic. The roadmap is inferrable from the pattern of
+      announcements in the evidence ledger:
+
+      (1) Model cadence: Anthropic has released major model generations approximately
+      every 6–12 months (Claude 1 → 2 → 3 → 3.5 → 3.7 → 4 → 4.x) with point releases
+      within each major generation [C013]. A Claude 5 series is expected in late 2026
+      or 2027 based on this cadence — but this is inferred from historical release
+      frequency, not an announced date.
+
+      (2) Agentic product expansion: The pattern of Claude Code (coding) followed by
+      Claude Cowork (GUI automation) suggests further agentic product categories are in
+      development for specific knowledge worker domains. Research preview → enterprise
+      GA timelines suggest roughly 6–8 months per product [C017, C019].
+
+      (3) MCP ecosystem development: The Anthropic Labs division (launched January 2026
+      under Mike Krieger [C025]) is likely to publish further developer tooling and MCP
+      extensions. No specific announcements are evidenced.
+
+      (4) Project Glasswing / Mythos: The invitation-only cybersecurity model [C013]
+      suggests a specialized model track for government/defense applications operating
+      in parallel to the commercial model family. Expansion of this track is possible
+      but contested by DoD litigation [C035].
+
+      **Infrastructure Architecture.** Anthropic's training and inference infrastructure
+      spans AWS (primary cloud provider, Bedrock channel) [C030], Google Cloud (up to
+      1M TPUs targeting 1GW compute by 2026 [C031]), and prospective Azure (announced
+      $30B compute commitment [C032]). This multi-cloud infrastructure strategy reduces
+      single-provider dependency risk while leveraging the three largest hyperscalers
+      as both compute suppliers and distribution channels. Internal architecture details
+      (model training pipeline, inference optimization, serving infrastructure) are not
+      publicly disclosed.
+    claimRefs: [C013, C017, C019, C025, C030, C031, C032, C035]

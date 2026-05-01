@@ -34,6 +34,8 @@ Verify the company, gather fetched evidence, and create the claim ledger used by
 - `00-report-brief.yaml`: report scope, research questions, desired chapters, expected tables/figures, and source strategy.
 - `01-evidence-ledger.yaml`: source ledger, claims, bibliography, and evidence gaps.
 - `02-company-snapshot.yaml`: identity, startup introduction, cover metrics, investment highlights, timeline, leadership, investor base, and open identity questions.
+- All figures must follow the Figure rendering contracts in `startup-diligence.schema.md`. Use canonical renderer fields only: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, or `layers`. Do not invent primary fields such as `cards`, `steps`, `children`, `groups`, `name`, or `components`.
+- If `02-company-snapshot.yaml` includes a product/platform stack figure, use `type: architecture-stack` with `data.layers[]` entries containing canonical `label`, `detail`, optional `tone`, and optional `modules[]`. Do not use `name` / `components` as the primary field shape.
 
 Use the schema reference for all fields and enums. `01-evidence-ledger.yaml` must include complete `sources`, `claims`, `bibliography`, and `evidenceGaps`.
 

@@ -1,25 +1,36 @@
 ---
-description: "Use when: generating a startup due diligence report for a named company. Keywords: startup diligence, VC report, investment report, YAML artifacts, structured figures."
+description: "Use when: generating startup due diligence report YAML for a named company or an automatic batch of recent unicorn startups. Keywords: startup diligence, VC report, investment report, YAML artifacts, structured figures, recent unicorns."
 name: "Startup Research"
 model: "GPT-5.4 (copilot)"
 tools: [agent, read, edit, execute, todo]
 ---
 
-Orchestrate one complete `startup-diligence-report-v2` run for a named existing company. The final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
+Orchestrate complete `startup-diligence-report-v2` runs for either one named existing company or an automatic batch of recent private unicorn startups when no company is specified. Each final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
 
 ## Invocation contract
 
 Resolve before running specialists:
 
-- `companyName`: required.
+- `mode`: `single-company` when a company name or URL is supplied; `recent-unicorns` when neither is supplied.
+- `companyName`: required only for `single-company` mode.
 - `companyUrl`: optional identity anchor, never proof.
-- `focus`: optional emphasis; default `full VC due diligence report`.
-- `depth`: `standard` or `deep`; default `standard`.
+- `depth`: `standard` or `deep`; default `deep`.
 - `includeZh`: default `false` unless requested.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/agents/startup-diligence.schema.md`.
 - `yamlSyntaxPath`: absolute path to `.github/agents/yaml-syntax.md`.
+
+## Automatic recent-unicorn mode
+
+Use this mode only when no company name and no company URL are provided.
+
+1. Identify at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a $1B valuation, or became newly prominent in the last 12-24 months.
+2. Avoid companies already present in `reports/_index.yaml` unless a materially new report is justified.
+3. Use web-backed evidence for candidate selection. If web research is needed, delegate candidate discovery to `Startup Report Evidence Analyst` and require company name, official URL when available, source URLs, recency rationale, and duplicate-check notes.
+4. For each selected company, run the full specialist sequence below independently and write one complete artifact set under its own `reports/<run>/` folder.
+5. Do not stop after candidate discovery. Complete at least 5 full report folders unless blocked by duplicate conflicts or source-quality failures; if blocked, select replacement candidates.
+6. Delete failed or duplicate partial report folders before final validation.
 
 ## v2 artifact contract
 
@@ -53,12 +64,11 @@ Optional localization writes `10-report-document.zh.yaml` and `11-report-card.zh
 5. `Startup Report Writer` writes `10`, `11`.
 6. `Startup Report Translator ZH` optionally localizes the final report.
 
-Use the agent tool to invoke each specialist by its exact `name` in the sequence above. Pass absolute input/output paths and this handoff context:
+Use the agent tool to invoke each specialist by its exact `name` in the sequence above. In automatic recent-unicorn mode, repeat the full sequence once per selected company. Pass absolute input/output paths and this handoff context:
 
 ```text
 Company: <companyName>
 Company URL: <companyUrl|null>
-Focus: <focus>
 Depth: <standard|deep>
 Report folder: <absolute path>
 Schema: startup-diligence-report-v2
@@ -78,6 +88,7 @@ Evidence rule: every external factual assertion must cite claimRefs / inline [Cx
 - Use `null` rather than invented values.
 - Numeric KPI fields must be numbers, not strings. Put ranges or caveats in adjacent narrative fields.
 - Figure specs must be structured YAML objects using `type`, `layout`, and typed `data` arrays; do not use legacy diagram-language source.
+- Every figure must follow the Figure rendering contracts in `.github/agents/startup-diligence.schema.md`: use only canonical renderer fields such as `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, and `layers`; do not invent primary fields such as `cards`, `steps`, `children`, `groups`, `name`, or `components`.
 
 ## Validation gates
 
@@ -89,6 +100,7 @@ After every specialist:
 - Check `slug`, `runDate`, and `company.name` consistency.
 - Validate all `claimRefs` against `01-evidence-ledger.yaml`.
 - Validate all `sourceRefs` against fetched sources.
+- Validate every figure against its schema Figure rendering contract. Reject empty arrays, non-canonical field shapes, string-valued numeric chart values, or figures whose visible cards/layers/nodes lack `label` plus `detail`/renderable content.
 - Reject any artifact that is missing its document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`) or begins with continuation prose / a mid-list fragment.
 
 After `Startup Report Writer`:

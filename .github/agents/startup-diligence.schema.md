@@ -284,6 +284,16 @@ figures:
 
 The website renders figures automatically from `type` plus structured `data`. Agents must select the most semantic `type`; do not rely on `title` text for renderer selection.
 
+Global rules for every figure:
+
+- Always include `id`, `title`, `type`, `layout`, `summary`, `data`, `approximationNotes`, and `claimRefs`.
+- `data` must be a structured object, not Markdown, Mermaid, SVG, prose, or a JSON string.
+- Use only renderer-known canonical fields listed below. Do not invent primary fields such as `children`, `steps`, `cards`, `buckets`, `groups`, `components`, `name`, or `description` unless the contract explicitly allows them as secondary compatibility fields.
+- Every visible item/node/layer/point/row must include a human-readable `label` unless a more specific required label field is listed.
+- Numeric chart coordinates and bar values must be numbers, not strings. Put formatted display text in `displayValue`.
+- For any missing metric, keep the visual node/card and explain the gap in `detail`; do not delete the whole figure or leave empty arrays.
+- Allowed tones: `positive`, `neutral`, `opportunity`, `risk`, `low`, `medium`, `high`, `critical`. Use `risk/high/critical` for downside cells and `positive/low` for favorable cells.
+
 - `timeline`: `data.items[]` with `date|label`, `label`, `detail`, optional `tone`.
 - `flow`: `data.nodes[]` and `data.edges[]`; use for generic causal/product/customer flows.
 - `decision-map`: `data.nodes[]` and optional `data.edges[]`; use for decision trees or evaluation logic when `recommendation-logic` is not specific enough.
@@ -292,7 +302,7 @@ The website renders figures automatically from `type` plus structured `data`. Ag
 - `metric-bars` / `bars`: `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`.
 - `waterfall`: `data.items[]` in sequence with signed numeric `value`, optional `displayValue`, optional `tone`.
 - `risk-heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; each value may include `label` and `tone: low|medium|high|critical|risk`.
-- `architecture-stack`: `data.layers[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`.
+- `architecture-stack`: `data.layers[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`. Use canonical `label/modules` fields; do not emit `name/components` as the primary shape.
 - `market-sizing-lens`: `data.nodes[]` or `data.items[]` ordered from broad market to served footprint; use for TAM/SAM/SOM or evidence-constrained market sizing where unsupported dollar values should not be invented. Typical labels are `TAM`, `SAM`, and `SOM`; each node has `label`, `detail`, and optional `tone`.
 - `unit-economics-waterfall`: `data.nodes[]` or `data.items[]` ordered from known public anchor through missing unit-economics bridges to underwriting output; use when the report must show where public pricing/adoption evidence stops before gross margin, CAC, LTV/CAC, or payback can be calculated. First node should be the disclosed/list-price anchor; later nodes should identify unknown bridges or blockers.
 - `customer-surface-map`: `data.nodes[]` or `data.items[]` ordered from customer acquisition surface through major customer segments and expansion loops; use for consumer / enterprise / developer / ecosystem surface maps. First node should be the broad entry surface; later nodes should be segment or expansion cards.
@@ -302,6 +312,86 @@ The website renders figures automatically from `type` plus structured `data`. Ag
 - `sensitivity`: `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`.
 - `xy`: `data.points[]` or `data.series[0].points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include axis labels when useful.
 - `other`: fallback only; avoid unless no semantic renderer fits.
+
+Canonical field examples by renderer family:
+
+```yaml
+# timeline
+data:
+  items:
+    - date: "2026-Q1"
+      label: Event label
+      detail: Evidence-backed description
+      tone: positive
+
+# flow / decision-map / evidence-map / risk-transmission-map
+data:
+  nodes:
+    - id: n1
+      label: Node label
+      detail: Node detail
+      tone: neutral
+  edges:
+    - from: n1
+      to: n2
+      label: Optional edge label
+
+# bars / metric-bars / waterfall
+data:
+  items:
+    - label: Metric label
+      value: 123.4
+      displayValue: "$123.4M"
+      tone: positive
+
+# quadrant / competitive-matrix / xy
+data:
+  xAxis: X-axis label
+  yAxis: Y-axis label
+  points:
+    - label: Company or item
+      x: 75
+      y: 60
+      tone: neutral
+
+# risk-heatmap / matrix
+data:
+  columns: [Likelihood, Impact]
+  rows:
+    - label: Risk theme
+      values:
+        - label: Medium likelihood
+          tone: medium
+        - label: High impact
+          tone: high
+
+# architecture-stack
+data:
+  layers:
+    - label: Layer label
+      detail: Layer detail
+      tone: neutral
+      modules:
+        - Module label
+      outputs:
+        - Output label
+
+# market-sizing-lens / unit-economics-waterfall / customer-surface-map / recommendation-logic / stack
+data:
+  items:
+    - label: Card label
+      detail: Card detail
+      tone: neutral
+
+# sensitivity
+data:
+  series:
+    - label: Scenario set
+      points:
+        - label: Scenario label
+          value: 123
+          displayValue: "123x"
+```
 
 The remainder of `10-report-document.yaml` continues as:
 

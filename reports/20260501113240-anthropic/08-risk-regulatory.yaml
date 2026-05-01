@@ -1,0 +1,623 @@
+schemaVersion: startup-diligence-report-v2
+artifact: risk-regulatory
+slug: anthropic
+runDate: 2026-05-01
+company:
+  name: Anthropic
+
+chapter:
+  number: 7
+  title: Risk & Regulatory
+  summary: |
+    Anthropic's risk profile as of May 2026 is rated significant. Four active risk categories
+    dominate: (1) legal proceedings — a U.S. Department of Defense supply chain risk
+    designation (temporary injunction issued 2026-03-26 [C035, C036]), an ongoing music
+    copyright infringement lawsuit by Concord, Universal, and ABKCO [C037], and a partially
+    resolved books-scanning case (Project Panama, fair use ruling for scanning [C038]);
+    (2) infrastructure concentration — AWS is Anthropic's primary cloud provider [C030]
+    with a $30 billion Azure compute commitment to Microsoft/Nvidia [C032] creating a
+    multi-year obligation; (3) state-actor model misuse — China-sponsored threat actor
+    GTG-2002 automated 80–90% of cyberattacks against approximately 30 global organisations
+    using Claude Code in September 2025 [C039]; and (4) competitive pressure from
+    well-capitalized rivals OpenAI and Google DeepMind. Substantive mitigants include the
+    strongest governance architecture of any frontier AI lab (PBC + LTBT + RSP [C001, C023,
+    C024]), frontier benchmark leadership [C040, C041], and a $57B+ capital war chest
+    [C005, C006, C007, C008, C009] that provides ample runway. The DoD dispute itself
+    provided a behavioral validation of Anthropic's mission resilience under high-stakes
+    commercial pressure [C035, C036].
+
+callouts:
+  - type: risk-alert
+    title: "DoD Litigation: First Amendment Retaliation — Temporary Injunction in Place"
+    body: |
+      In March 2026, the U.S. Department of Defense designated Anthropic a "supply chain
+      risk" after Anthropic refused to remove contractual prohibitions on the use of Claude
+      for mass domestic surveillance and fully autonomous weapons [C035]. On March 26, 2026,
+      a federal judge issued a temporary injunction, writing that the designation "appears
+      to be classic First Amendment retaliation" [C036]. The injunction provides short-term
+      relief, but the underlying policy dispute remains unresolved. If the designation is
+      upheld permanently, Anthropic's classified AI revenue via Palantir's Maven Smart
+      System on AWS — described as the only AI model used in classified missions as of
+      February 2026 [C034] — would be at risk. The dispute also establishes a precedent
+      for how government procurement may respond to AI ethical-use contract terms across
+      the industry.
+    claimRefs: [C034, C035, C036]
+
+  - type: risk-alert
+    title: "Music Copyright Lawsuit: Systematic Infringement Allegation — Highest IP Severity"
+    body: |
+      In October 2023, Concord Music Group, Universal Music Group, ABKCO Music, and other
+      major music publishers sued Anthropic for alleged systematic copyright infringement of
+      song lyrics used to train Claude models [C037]. U.S. music copyright law provides for
+      statutory damages of up to $150,000 per infringed work. If Anthropic incorporated
+      thousands of copyrighted lyrics without license, aggregate exposure could reach
+      material financial levels. This case is separate from the Project Panama books-scanning
+      litigation, where Judge William Alsup ruled that scanning legally purchased books
+      constitutes fair use [C038]. The fair use precedent in the books case does not
+      necessarily extend to the music lyrics infringement theory and does not resolve
+      the Concord/Universal proceedings.
+    claimRefs: [C037, C038]
+
+  - type: key-insight
+    title: "PBC + LTBT + RSP Form the Strongest AI Governance Architecture in the Industry"
+    body: |
+      Anthropic's Public Benefit Corporation structure [C001] and the Long-Term Benefit
+      Trust (LTBT) — an independent five-member body with authority to elect a majority
+      of Anthropic's board over time [C024] — are the most robust governance structures
+      of any frontier AI lab. The Responsible Scaling Policy (ASL-2/3/4 safety levels
+      with Red Line Capabilities commitments) [C023] provides a systematic, published
+      framework for managing existential AI risk. The DoD dispute validated all three
+      structures in a live test: Anthropic held the line on its ethical use contract
+      terms under significant government commercial pressure, demonstrating that the
+      governance architecture functions under stress, not just in policy documents [C035].
+    claimRefs: [C001, C023, C024, C035]
+
+  - type: risk-alert
+    title: "State-Actor Misuse Incident Confirmed — GTG-2002 Used Claude for Cyberattacks"
+    body: |
+      In September 2025, a threat actor identified as GTG-2002, sponsored by the Chinese
+      government, used Claude Code to automate 80–90% of cyberattacks against approximately
+      30 global organisations [C039]. Anthropic banned all related accounts consistent with
+      its acceptable use policy. This is the most concrete evidence that frontier AI coding
+      capabilities can be weaponized for state-sponsored cyber operations. The incident
+      demonstrates a security risk category — state-actor misuse — that is ongoing and
+      likely to recur as model capabilities improve. Constitutional AI [C021] and usage
+      monitoring are necessary but not sufficient mitigants against determined state actors.
+    claimRefs: [C021, C039]
+
+tables:
+  - id: T801
+    title: Comprehensive Risk Register
+    columns:
+      - Risk ID
+      - Category
+      - Risk Description
+      - Severity
+      - Likelihood
+      - Combined Rating
+      - Status
+      - Key Claims
+    rows:
+      - ["R01",
+         "Legal / Regulatory",
+         "DoD supply chain risk designation — if upheld, threatens Anthropic's classified AI revenue channel via Palantir/AWS Maven Smart System",
+         "High",
+         "Medium",
+         "Significant",
+         "Active — temporary injunction in place as of 2026-03-26; permanent outcome uncertain",
+         "C034, C035, C036"]
+      - ["R02",
+         "Legal / Intellectual Property",
+         "Music copyright lawsuit (Concord, Universal, ABKCO) — alleged systematic infringement of lyrics in training data; statutory damages up to $150k per work",
+         "Critical",
+         "Medium",
+         "Critical",
+         "Active — ongoing litigation; no settlement or final ruling evidenced as of run date",
+         "C037"]
+      - ["R03",
+         "Legal / Intellectual Property",
+         "Project Panama — Anthropic scanned millions of books for training data; fair use ruling largely resolved the scanning question",
+         "Medium",
+         "Low",
+         "Low",
+         "Partially resolved — Judge Alsup ruled scanning legally purchased books is fair use; residual appellate risk possible",
+         "C038"]
+      - ["R04",
+         "Operational / Infrastructure",
+         "Compute single-vendor dependency — AWS is primary cloud provider; Google TPU deal (1M TPUs / 1GW) and $30B Azure commitment partially diversify but create new obligations",
+         "High",
+         "Low",
+         "Moderate",
+         "Ongoing — partially mitigated by multi-cloud strategy; AWS concentration remains primary; Azure commitment is a multi-year obligation",
+         "C030, C031, C032"]
+      - ["R05",
+         "Security / Misuse",
+         "State-sponsored model misuse — GTG-2002 (China-sponsored threat actor) used Claude Code to automate 80-90% of cyberattacks against ~30 global organisations (September 2025)",
+         "Medium",
+         "High",
+         "Significant",
+         "Incident confirmed; all related accounts banned; threat category is ongoing with future recurrence likely",
+         "C039"]
+      - ["R06",
+         "Governance",
+         "LTBT governance override risk — mission vs commercial pressure tension; structural risk that LTBT authority could be tested or circumvented under sustained commercial stress",
+         "Critical",
+         "Low",
+         "Moderate",
+         "Structural risk — LTBT designed to prevent commercial capture; DoD dispute demonstrated resilience; no override event in evidence",
+         "C024"]
+      - ["R07",
+         "Team / Key Person",
+         "Key person concentration — Dario Amodei (CEO) and Daniela Amodei (President) are co-founders, primary decision-makers, and public faces of the company",
+         "High",
+         "Low",
+         "Moderate",
+         "Ongoing — dual co-founder model unusual; depth of VP bench and succession planning not evidenced",
+         "C003, C028, C029"]
+      - ["R08",
+         "Competitive",
+         "Model capability displacement — OpenAI o-series and Google Gemini 2.5 Pro competing for enterprise and developer mindshare; competitive benchmark data not in evidence ledger",
+         "High",
+         "Medium",
+         "Significant",
+         "Active competitive race — Anthropic maintains coding benchmark leadership as of run date [C040, C041]; long-term leadership not guaranteed",
+         "C013, C040, C041"]
+      - ["R09",
+         "Financial / Commercial",
+         "Revenue concentration — three hyperscalers (Amazon, Google, Microsoft) control Anthropic's primary distribution channels via Bedrock, Vertex AI, and Foundry; rev-share terms undisclosed",
+         "High",
+         "Medium",
+         "Significant",
+         "Structural dependency — channel architecture [C042] creates intermediary risk; terms not publicly disclosed",
+         "C008, C009, C030, C032, C042"]
+      - ["R10",
+         "Regulatory",
+         "AI governance regulation — EU AI Act General Purpose AI provisions, U.S. federal AI Executive Orders, and emerging national AI regulation frameworks",
+         "Medium",
+         "Medium",
+         "Moderate",
+         "Active regulatory environment — RSP and PBC structure provide partial compliance buffer [C023, C001]; compliance costs will scale",
+         "C001, C023"]
+      - ["R11",
+         "Financial",
+         "Capital burn rate and runway — $57B+ raised implies significant burn; actual burn rate undisclosed; runway adequacy cannot be precisely calculated",
+         "Medium",
+         "Low",
+         "Low",
+         "Mitigated near-term — $30B Series G closed Feb 2026 [C005]; multi-year runway at any plausible burn rate given capital raised",
+         "C005, C027"]
+      - ["R12",
+         "Safety",
+         "AI safety incident — ASL-3 or ASL-4 Red Line Capabilities trigger per RSP would require deployment halt; potential for reputational and commercial damage",
+         "Critical",
+         "Low",
+         "Moderate",
+         "Managed — RSP safety evaluation framework active [C023]; no ASL-3 trigger event reported in evidence",
+         "C023"]
+    notes: |
+      Severity (Critical / High / Medium / Low) and Likelihood (Low / Medium / High) are analyst
+      judgments grounded in evidence. Combined ratings: Critical = Critical severity at Medium+
+      likelihood; Significant = High severity at Medium likelihood or High severity at High
+      likelihood; Moderate = Critical/High severity at Low likelihood or Medium at Medium;
+      Low = Medium/Low severity at Low likelihood. No independent legal counsel review has
+      been performed; investors must obtain formal legal opinions on R01 (DoD), R02 (music
+      copyright), and R03 (books copyright) before committing capital.
+    claimRefs: [C001, C003, C005, C008, C009, C013, C023, C024, C028, C029, C030, C031, C032, C034, C035, C036, C037, C038, C039, C040, C041, C042]
+
+  - id: T802
+    title: Active Legal Proceedings Summary
+    columns:
+      - Proceeding
+      - Parties
+      - Filed / Unsealed
+      - Core Allegation
+      - Current Status
+      - Financial Exposure Estimate
+      - Underwriting Impact
+      - Evidence
+    rows:
+      - ["DoD Supply Chain Risk Designation",
+         "U.S. Department of Defense vs. Anthropic PBC",
+         "March 2026",
+         "DoD designated Anthropic a supply chain risk after Anthropic refused to remove contractual prohibitions on Claude use for mass domestic surveillance and fully autonomous weapons",
+         "Active — temporary injunction granted 2026-03-26; federal judge cited 'classic First Amendment retaliation'; permanent outcome unresolved",
+         "Not quantified in evidence — government contract revenue via Palantir/AWS is undisclosed; loss of classified channel is the primary exposure",
+         "HIGH — if designation is upheld, government AI revenue at risk; precedent for how government buyers treat AI ethical-use contract terms broadly",
+         "C034, C035, C036"]
+      - ["Music Copyright Infringement",
+         "Concord Music Group, Universal Music Group, ABKCO Music et al. vs. Anthropic PBC",
+         "October 2023",
+         "Systematic copyright infringement of song lyrics incorporated in Claude training data without license",
+         "Active — ongoing litigation; no settlement, dismissal, or ruling evidenced as of run date",
+         "Potentially material — up to $150,000 statutory damages per infringed work under U.S. copyright law; scope of infringement and number of works unknown",
+         "CRITICAL — plaintiff victory at scale could produce large financial liability and force training data policy changes affecting future model development",
+         "C037"]
+      - ["Project Panama — Books Training Data",
+         "Authors et al. vs. Anthropic PBC (AI training data litigation cohort)",
+         "Unsealed January 2026 (via court filings)",
+         "Anthropic allegedly destructively scanned millions of legally purchased books for training data under 'Project Panama'",
+         "Partially resolved — Judge William Alsup ruled that scanning legally purchased books constitutes fair use; residual appellate risk and related claims may persist",
+         "Reduced post-fair use ruling; appeal costs and potential residual claims remain",
+         "LOW-MODERATE — fair use ruling substantially resolved the primary claim; ongoing appellate or damages phase possible; precedent does not extend to music lawsuit",
+         "C038"]
+    notes: |
+      This table covers only legal proceedings directly evidenced in 01-evidence-ledger.yaml.
+      Investors must request a complete litigation register from Anthropic legal counsel.
+      DoD revenue exposure is not quantified in the evidence set. Music copyright exposure
+      depends on total number of infringed works and availability of licensing remediation.
+      Independent legal due diligence is required for all three proceedings.
+    claimRefs: [C034, C035, C036, C037, C038]
+
+  - id: T803
+    title: Risk Mitigation Controls and Stop-Loss Trigger Summary
+    columns:
+      - Risk
+      - Mitigation in Place
+      - Evidence
+      - Residual Risk
+      - Stop-Loss Trigger
+    rows:
+      - ["DoD Litigation (R01)",
+         "Temporary injunction in place; Anthropic maintaining ethical use contract terms as core policy; legal counsel engaged",
+         "C035, C036",
+         "Moderate — injunction is temporary; permanent resolution and policy alignment with DoD is unknown",
+         "Federal court dissolves injunction and supply chain designation is upheld permanently → government AI channel at risk; escalate diligence immediately"]
+      - ["Music Copyright (R02)",
+         "Project Panama fair use ruling established partial precedent; Anthropic refining training data practices; no direct mitigation of music lawsuit evidenced",
+         "C037, C038",
+         "Significant — music case is separate from books case; fair use defense for systematic lyrics use is uncertain",
+         "Plaintiff victory with injunctive relief or damages award exceeding $500M → material financial liability and training data freeze; reassess investment thesis"]
+      - ["Compute Dependency (R04)",
+         "Multi-cloud strategy: AWS primary [C030], Google 1M TPU target [C031], $30B Azure commitment [C032]; three providers reduce single-point failure risk",
+         "C030, C031, C032",
+         "Moderate — AWS remains primary; workload portability between clouds is unclear; $30B Azure commitment creates multi-year obligation",
+         "Google TPU partnership fails or Azure commitment defaults → AWS monoculture; raise infrastructure risk rating to critical"]
+      - ["State-Actor Misuse (R05)",
+         "GTG-2002 accounts banned immediately [C039]; Constitutional AI safeguards [C021] and RSP framework [C023] provide baseline; ongoing usage monitoring",
+         "C021, C023, C039",
+         "Moderate — threat category is ongoing; determined state actors likely to attempt again; monitoring is reactive",
+         "Repeated large-scale state-actor misuse incidents reported publicly → enterprise trust erosion and potential government regulatory response; re-evaluate security posture"]
+      - ["Competitive Displacement (R08)",
+         "SWE-bench 72.5-72.7% at Claude 4 release [C040]; Opus 4.7 CursorBench 70% [C041]; MCP ecosystem [C020]; $57B+ capital for continued R&D",
+         "C020, C040, C041",
+         "Moderate — competitive race is ongoing; no permanent advantage is evidenced; OpenAI and Google have comparable or greater resources",
+         "Competitor achieves sustained >5 percentage-point SWE-bench lead for two consecutive model generations → coding moat weakened; enterprise re-evaluation risk; downgrade to avoid"]
+      - ["Governance / LTBT (R06)",
+         "LTBT Class T share authority [C024]; PBC mission lock [C001]; five financially disinterested trustees; DoD dispute demonstrated behavioral resilience [C035]",
+         "C001, C024, C035",
+         "Low — structure designed to prevent mission drift; live behavioral test passed; no override event evidenced",
+         "LTBT trustee vacancies unfilled or mission-alignment disputes trigger contested board restructuring → governance moat compromised; mission drift risk escalates"]
+      - ["Key Person Risk (R07)",
+         "Eight co-founders provide redundancy [C002]; approximately 2,500 employees [C027]; diverse board [C025]",
+         "C002, C025, C027",
+         "Moderate — Dario and Daniela are primary public-facing leaders; succession plan not evidenced",
+         "CEO or President departure without pre-announced succession plan → confidence shock; reassess leadership risk"]
+      - ["AI Safety Incident (R12)",
+         "RSP framework with ASL-2/3/4 safety levels and Red Line Capabilities framework [C023]; Constitutional AI alignment [C021]; regular safety evaluations",
+         "C021, C023",
+         "Low — systematic safety manufacturing process in place; no ASL-3 trigger reported; risk is structural not imminent",
+         "ASL-3 or ASL-4 Red Line Capabilities triggered → RSP mandates deployment halt; reassess timeline to revenue resumption"]
+    notes: |
+      Mitigation assessments are analyst judgments based on evidence in 01-evidence-ledger.yaml.
+      Stop-loss triggers are indicative thresholds, not formal exit covenants; investors should
+      establish their own quantitative thresholds in term sheets. All legal proceedings require
+      independent counsel review for definitive risk quantification. Residual risk levels
+      assume the mitigations described are fully operational.
+    claimRefs: [C001, C002, C005, C020, C021, C023, C024, C025, C027, C030, C031, C032, C034, C035, C036, C037, C038, C039, C040, C041]
+
+figures:
+  - id: F801
+    title: "Risk Heatmap — Severity vs Likelihood (12 Risk Factors)"
+    type: risk-heatmap
+    layout: wide
+    summary: |
+      Risk heatmap plotting 12 identified risk factors across a 4-row (severity) by
+      3-column (likelihood) matrix. Rows: Critical, High, Medium, Low severity.
+      Columns: Low, Medium, High likelihood. Cell tone reflects the combined risk level
+      of that severity-likelihood intersection. Highest-priority cells: Music Copyright
+      (Critical × Medium, tone: critical); DoD Litigation, Competitive Displacement, and
+      Revenue Concentration (High × Medium, tone: high). State-Actor Misuse (Medium × High)
+      is a confirmed incident category with ongoing recurrence potential.
+    data:
+      columns:
+        - "Low Likelihood"
+        - "Medium Likelihood"
+        - "High Likelihood"
+      rows:
+        - label: "Critical Severity"
+          values:
+            - label: "R06 LTBT Governance Override; R12 AI Safety Incident (ASL-3+ trigger)"
+              tone: medium
+            - label: "R02 Music Copyright — Concord/Universal/ABKCO (systematic infringement)"
+              tone: critical
+            - label: ""
+              tone: low
+        - label: "High Severity"
+          values:
+            - label: "R04 Compute Vendor Dependency (AWS primary); R07 Key Person Risk (Dario/Daniela)"
+              tone: medium
+            - label: "R01 DoD Litigation; R08 Competitive Displacement; R09 Revenue Concentration (3 hyperscalers)"
+              tone: high
+            - label: ""
+              tone: high
+        - label: "Medium Severity"
+          values:
+            - label: "R03 Project Panama Books Scan (largely resolved — fair use ruling); R11 Capital Burn Rate"
+              tone: low
+            - label: "R10 AI Governance Regulation (EU AI Act / U.S. Executive Orders)"
+              tone: medium
+            - label: "R05 State-Actor Misuse — GTG-2002 (confirmed incident, Sep 2025)"
+              tone: medium
+        - label: "Low Severity"
+          values:
+            - label: ""
+              tone: low
+            - label: "Data Residency / Privacy Compliance"
+              tone: low
+            - label: ""
+              tone: low
+    approximationNotes: |
+      Severity and likelihood assignments are analyst judgments based on evidence in
+      01-evidence-ledger.yaml. No formal quantitative risk scoring methodology has been
+      applied. Investors should supplement with independent legal counsel (R01, R02, R03),
+      technical security assessment (R04, R05), and competitive intelligence sourcing (R08).
+    claimRefs: [C001, C005, C021, C023, C024, C030, C031, C032, C034, C035, C036, C037, C038, C039, C040, C041]
+
+  - id: F802
+    title: "Risk Transmission Map — How Primary Risks Propagate to Underwriting Impact"
+    type: risk-transmission-map
+    layout: wide
+    summary: |
+      Risk transmission map with five source nodes (primary risk categories, no incoming
+      edges), four transmission nodes (intermediate pressure channels), and three underwriting
+      impact nodes (no outgoing edges). The map shows how active risks compound toward
+      revenue growth deceleration, valuation multiple compression, and execution risk
+      escalation — the three investor-relevant underwriting outcomes.
+    data:
+      nodes:
+        - id: "dod"
+          label: "DoD Supply Chain Designation"
+          detail: "March 2026 designation; temporary injunction granted 2026-03-26; permanent outcome unresolved [C035, C036]"
+          tone: high
+        - id: "copyright"
+          label: "IP / Copyright Exposure"
+          detail: "Music copyright lawsuit by Concord/Universal/ABKCO [C037]; Project Panama books partially resolved [C038]"
+          tone: high
+        - id: "compute"
+          label: "Compute Vendor Dependency"
+          detail: "AWS primary cloud [C030]; $30B Azure obligation [C032]; Google 1M TPU target [C031]; multi-cloud partially mitigates"
+          tone: medium
+        - id: "competition"
+          label: "Competitive Model Pressure"
+          detail: "OpenAI o-series and Gemini 2.5 Pro compete for enterprise developer workloads; benchmark data not in ledger"
+          tone: medium
+        - id: "misuse"
+          label: "State-Actor Model Misuse"
+          detail: "GTG-2002 (China-sponsored) automated 80-90% of cyberattacks via Claude Code, Sep 2025 [C039]"
+          tone: medium
+        - id: "gov-channel"
+          label: "Government Revenue Channel Risk"
+          detail: "DoD dispute directly threatens classified AI revenue via Palantir/AWS Maven Smart System [C034, C035]"
+          tone: high
+        - id: "legal-cost"
+          label: "Legal Cost and Reputational Burden"
+          detail: "Active litigation (DoD + music copyright) creates ongoing cost overhang, management distraction, and uncertainty for enterprise buyers"
+          tone: high
+        - id: "infra-fragility"
+          label: "Infrastructure Platform Fragility"
+          detail: "AWS concentration; $30B Azure commitment is multi-year financial obligation; compute portability unverified [C032]"
+          tone: medium
+        - id: "market-share"
+          label: "Enterprise Market Share Erosion"
+          detail: "Sustained competitor performance gains or misuse-driven trust erosion could displace Anthropic in enterprise pipeline"
+          tone: medium
+        - id: "rev-decel"
+          label: "Revenue Growth Deceleration"
+          detail: "Underwriting impact: channel loss, legal distraction, or market share erosion slows ARR growth or causes absolute decline"
+          tone: high
+        - id: "multiple-compress"
+          label: "Valuation Multiple Compression"
+          detail: "Underwriting impact: at $380B post-money [C005], decelerated growth cannot sustain 30-100x forward multiples; valuation at risk"
+          tone: high
+        - id: "exec-risk"
+          label: "Execution Risk Escalation"
+          detail: "Underwriting impact: simultaneous legal, competitive, and operational pressures compound, reducing probability of clean execution on growth plan"
+          tone: critical
+      edges:
+        - from: "dod"
+          to: "gov-channel"
+        - from: "dod"
+          to: "legal-cost"
+        - from: "copyright"
+          to: "legal-cost"
+        - from: "copyright"
+          to: "multiple-compress"
+        - from: "compute"
+          to: "infra-fragility"
+        - from: "competition"
+          to: "market-share"
+        - from: "misuse"
+          to: "legal-cost"
+        - from: "misuse"
+          to: "market-share"
+        - from: "gov-channel"
+          to: "rev-decel"
+        - from: "legal-cost"
+          to: "rev-decel"
+        - from: "legal-cost"
+          to: "multiple-compress"
+        - from: "infra-fragility"
+          to: "rev-decel"
+        - from: "market-share"
+          to: "rev-decel"
+        - from: "rev-decel"
+          to: "multiple-compress"
+        - from: "multiple-compress"
+          to: "exec-risk"
+    approximationNotes: |
+      Transmission edges are analyst-inferred from evidence in the ledger. Edge weights
+      are not quantified. Legal risk transmission assumes worst-case outcome for illustrative
+      severity; actual severity depends on court rulings. The map is a structural framework
+      for investor risk triage, not a quantitative probability model.
+    claimRefs: [C005, C030, C031, C032, C034, C035, C036, C037, C038, C039]
+
+sections:
+  - number: "7.1"
+    title: Risk Overview
+    body: |
+      Anthropic's risk profile as of May 2026 is rated significant — above moderate but
+      below critical. No existential threat is currently materializing; the temporary DoD
+      injunction provides near-term protection on the most acute legal front [C036], the
+      Company has substantial capital ($30B Series G [C005]), and its safety governance
+      structures (PBC, LTBT, RSP [C001, C023, C024]) are the strongest in the frontier AI
+      industry. However, the active litigation portfolio (DoD designation, music copyright
+      lawsuit), a confirmed state-actor misuse incident [C039], and multi-cloud dependency
+      with a large Azure commitment [C032] collectively elevate the risk profile above
+      moderate for a late-stage growth equity evaluation.
+
+      Five risk dimensions require active monitoring by the investment team:
+      (1) Legal/IP — DoD designation, music copyright, and books litigation create
+      simultaneous legal overhang across regulatory, financial, and reputational dimensions.
+      (2) Infrastructure — AWS concentration and $30B Azure obligation create dual dependencies.
+      (3) Security — GTG-2002 state-sponsored misuse establishes a confirmed incident category.
+      (4) Competitive — OpenAI and Google DeepMind have comparable or greater resources; benchmark
+      leadership must be defended continuously.
+      (5) Governance — LTBT and PBC structures are genuinely differentiated but are tested by
+      commercial scale; governance override risk is low-probability but high-severity.
+    claimRefs: [C001, C005, C023, C024, C030, C032, C035, C036, C037, C039]
+
+  - number: "7.2"
+    title: "Regulatory & Legal Risk"
+    body: |
+      The DoD supply chain risk designation [C035] is the most time-sensitive proceeding.
+      The federal court's temporary injunction (March 26, 2026) — citing "classic First
+      Amendment retaliation" [C036] — signals judicial skepticism of the designation and
+      suggests Anthropic has a defensible legal position. However, permanent resolution
+      requires either a favorable final judgment or a negotiated policy alignment with DoD
+      operational requirements. If the designation is upheld, classified AI revenue via
+      Palantir's Maven Smart System [C034] — the only AI model used in classified missions
+      as of February 2026 — is at direct risk. The dispute also sets a policy precedent:
+      any government procurement officer in any agency can now reference this case when
+      evaluating whether to accept AI vendors' ethical-use contract restrictions.
+
+      The music copyright lawsuit [C037] carries the highest severity rating in the
+      risk register. Music copyright provides statutory damages of up to $150,000 per
+      infringed work. If Claude training data incorporated thousands of copyrighted song
+      lyrics at scale, aggregate exposure could be material. The Project Panama ruling
+      [C038] — where Judge Alsup found that scanning legally purchased books constitutes
+      fair use — reduces analogous book-scanning liability but does not extend to the
+      music lawsuit's theory of systematic lyrics infringement, which involves different
+      copyright doctrines and different plaintiffs.
+
+      AI governance regulation is an active and escalating ambient risk. The EU AI Act's
+      General Purpose AI provisions apply to foundation model providers of Anthropic's
+      scale. Anthropic's RSP [C023] and PBC structure [C001] provide structural alignment
+      with transparency and safety obligations, reducing compliance risk relative to peers.
+      However, compliance costs will scale with regulatory requirements, and cross-border
+      data governance requirements (particularly EU data residency) add operational complexity.
+    claimRefs: [C001, C023, C034, C035, C036, C037, C038]
+
+  - number: "7.3"
+    title: "Operational, Credit & Security Risk"
+    body: |
+      Infrastructure concentration risk is a structural feature of Anthropic's current
+      cloud architecture. Since the September 2023 strategic partnership, AWS has served
+      as Anthropic's primary cloud provider [C030]. Partial mitigation comes from the
+      announced Google Cloud partnership targeting access to up to 1 million TPUs and
+      more than 1 gigawatt of AI compute by 2026 [C031], and the November 2025
+      Microsoft/Nvidia announcement of a $15 billion investment paired with a $30 billion
+      Azure compute commitment [C032]. The $30B Azure commitment, however, introduces
+      a multi-year financial obligation that creates its own concentration risk —
+      Anthropic is now materially dependent on both AWS and Azure, with Google as a
+      secondary provider. Whether training and inference workloads can be migrated between
+      providers at short notice is unclear from the evidence.
+
+      Security risk materialized directly in September 2025 when GTG-2002, a Chinese
+      government-sponsored threat actor, used Claude Code to automate 80–90% of
+      cyberattacks against approximately 30 global organisations [C039]. Anthropic banned
+      all related accounts consistent with its acceptable use policy. Constitutional AI
+      [C021] and RSP safeguards [C023] reduce the probability of inadvertent harm but
+      are not sufficient mitigants against determined state actors who affirmatively
+      attempt to misuse frontier capabilities. This incident establishes a category risk
+      that will persist and likely intensify as model capabilities improve.
+
+      Credit risk is low in the near term. The February 2026 Series G ($30B at $380B
+      post-money [C005]) and cumulative capital of $57B+ [C006, C007, C008, C009]
+      provide substantial runway for an organization with approximately 2,500 employees
+      [C027]. Without a disclosed burn rate, precise runway cannot be calculated, but
+      multi-year adequacy is the strong inference. The primary financial risk is that
+      the next funding round arrives before Anthropic reaches cash-flow break-even in
+      an environment where AI investment sentiment may have shifted.
+    claimRefs: [C005, C006, C007, C008, C009, C021, C023, C027, C030, C031, C032, C039]
+
+  - number: "7.4"
+    title: Competitive Risk
+    body: |
+      Anthropic's competitive risk is significant but not critical as of May 2026.
+      Claude Opus 4 and Sonnet 4 led SWE-bench Verified at 72.5% and 72.7% respectively
+      at release in May 2025 [C040] — the most widely cited real-world software
+      engineering benchmark. Claude Opus 4.7 (April 2026) further improved CursorBench
+      task clearance to 70% versus 58% for Opus 4.6, as reported by Cursor [C041].
+      This benchmark trajectory demonstrates generation-over-generation improvement and
+      positions Claude as the reference coding model for enterprise developers.
+
+      The evidence ledger does not contain benchmark data for OpenAI o4, GPT-5, or
+      Google Gemini 2.5 Pro Ultra. The investment team must independently source current
+      SWE-bench leaderboard data to assess whether Anthropic's coding benchmark leadership
+      has been maintained or closed since run date. OpenAI and Google DeepMind have
+      resources comparable to or exceeding Anthropic's and are investing aggressively in
+      agentic coding capabilities.
+
+      Consumer market share is a sustained weakness. ChatGPT's brand recognition and
+      distribution scale give OpenAI a structural consumer advantage. Anthropic invested
+      in Super Bowl LX (February 2026) advertising [evidenced in context], suggesting
+      brand investment at scale, but no consumer market share data is evidenced. Enterprise
+      price pressure is a structural competitive risk as LLM API pricing commoditizes;
+      Haiku 4.5 at $1/MTok [C015] is already positioned as a commodity tier. Anthropic's
+      competitive mitigation rests on: MCP platform lock-in [C020], Claude Code's agentic
+      coding premium [C040, C041], and the safety/governance moat for regulated industries [C021, C023].
+    claimRefs: [C015, C020, C021, C023, C040, C041]
+
+  - number: "7.5"
+    title: Mitigation Summary and Stop-Loss Triggers
+    body: |
+      Anthropic's risk mitigation posture is strongest on governance and safety (PBC, LTBT,
+      RSP — all uniquely strong relative to peers [C001, C023, C024]), adequate on
+      infrastructure (multi-cloud partially mitigated), and nascent on legal proceedings
+      (temporary injunction provides short-term protection [C036], but music copyright
+      remains unresolved [C037]). The behavioral validation of mission resilience in the
+      DoD dispute [C035] is the most compelling qualitative mitigant in the portfolio — it
+      demonstrates that the governance architecture functions under commercial stress.
+
+      The following stop-loss triggers should be established by the investment team as
+      conditions that require immediate diligence escalation or exit evaluation:
+
+      TRIGGER 1 — DoD designation upheld: Federal court dissolves the temporary injunction
+      and the supply chain designation stands permanently. Government AI revenue via
+      Palantir/AWS Maven is at direct risk; enterprise trust may be affected by precedent.
+
+      TRIGGER 2 — Music copyright material damages or injunction: Plaintiff victory in
+      the Concord/Universal suit at significant scale (aggregate exposure exceeding a
+      material threshold relative to ARR) or injunctive relief affecting training data
+      practices. Reassess investment thesis.
+
+      TRIGGER 3 — Compute monoculture materializes: Google TPU partnership fails and
+      the AWS relationship concentrates above 90% of compute infrastructure. Infrastructure
+      risk rating escalates to critical.
+
+      TRIGGER 4 — Sustained SWE-bench leadership lost: A competitor achieves a greater-than
+      5 percentage-point lead over Claude on SWE-bench Verified for two consecutive model
+      generations. Coding moat weakened; enterprise customer re-evaluation risk.
+
+      TRIGGER 5 — Burn rate exceeds runway visibility: Annual cash burn is disclosed or
+      estimated to exceed a pace that exhausts Series G capital within 18 months without
+      commensurate revenue growth or follow-on capital commitment.
+
+      TRIGGER 6 — LTBT governance failure: Trustee vacancies go unfilled for more than
+      90 days, or a contested board restructuring is publicly reported. Mission-alignment
+      moat compromised.
+
+      TRIGGER 7 — Repeated state-actor misuse incidents at scale: A second or third major
+      confirmed state-sponsored attack using Claude tooling is publicly disclosed. Enterprise
+      trust erosion and potential government regulatory response.
+    claimRefs: [C001, C005, C021, C023, C024, C035, C036, C037, C040, C041]

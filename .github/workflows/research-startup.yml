@@ -14,23 +14,19 @@ on:
   workflow_dispatch:
     inputs:
       companyName:
-        description: "Company name to research"
-        required: true
-        type: string
-      companyUrl:
-        description: "Optional official website or profile URL"
+        description: "Company name to research; leave blank to auto-select recent unicorns"
         required: false
         default: ""
         type: string
-      focus:
-        description: "Optional diligence focus"
+      companyUrl:
+        description: "Optional official website or profile URL; leave blank for auto-select mode"
         required: false
-        default: "full company diligence"
+        default: ""
         type: string
       depth:
         description: "Research depth"
         required: false
-        default: "standard"
+        default: "deep"
         type: choice
         options:
           - standard
@@ -48,7 +44,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: startup-research-${{ github.event.inputs.companyName }}
+  group: startup-research-${{ github.event.inputs.companyName || 'recent-unicorns' }}
   cancel-in-progress: false
 
 jobs:
@@ -84,29 +80,28 @@ jobs:
         env:
           RAW_COMPANY: ${{ github.event.inputs.companyName }}
           RAW_URL: ${{ github.event.inputs.companyUrl }}
-          RAW_FOCUS: ${{ github.event.inputs.focus }}
           RAW_DEPTH: ${{ github.event.inputs.depth }}
           RAW_INCLUDE_ZH: ${{ github.event.inputs.includeZh }}
         run: |
           set -euo pipefail
-          COMPANY="${RAW_COMPANY//$'\n'/ }"
-          URL="${RAW_URL//$'\n'/ }"
-          FOCUS="${RAW_FOCUS//$'\n'/ }"
-          DEPTH="${RAW_DEPTH:-standard}"
+          COMPANY="$(printf '%s' "${RAW_COMPANY//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+          URL="$(printf '%s' "${RAW_URL//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+          DEPTH="${RAW_DEPTH:-deep}"
           INCLUDE_ZH="${RAW_INCLUDE_ZH:-true}"
-          if [ -z "$COMPANY" ]; then
-            echo "companyName is required" >&2
-            exit 1
+          MODE="single-company"
+          if [ -z "$COMPANY" ] && [ -z "$URL" ]; then
+            MODE="recent-unicorns"
+            COMPANY="recent-unicorns"
+          elif [ -z "$COMPANY" ]; then
+            COMPANY="$URL"
           fi
           {
+            echo "mode=$MODE"
             echo "company<<EOF"
             echo "$COMPANY"
             echo "EOF"
             echo "url<<EOF"
             echo "$URL"
-            echo "EOF"
-            echo "focus<<EOF"
-            echo "$FOCUS"
             echo "EOF"
             echo "depth=$DEPTH"
             echo "includeZh=$INCLUDE_ZH"
@@ -115,32 +110,65 @@ jobs:
       - name: Run Startup Research orchestrator
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
+          MODE: ${{ steps.inputs.outputs.mode }}
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
-          FOCUS: ${{ steps.inputs.outputs.focus }}
           DEPTH: ${{ steps.inputs.outputs.depth }}
           INCLUDE_ZH: ${{ steps.inputs.outputs.includeZh }}
         run: |
           set -euo pipefail
-          PROMPT=$(cat <<EOF
+          if [ "$MODE" = "recent-unicorns" ]; then
+            PROMPT=$(cat <<EOF
+          Run automatic recent-unicorn discovery and batch startup research orchestration.
+
+          No specific company name or company URL was provided by the user. You are the default top-level orchestrator. First, identify at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a $1B valuation, or became newly prominent in the last 12-24 months. Avoid duplicate companies already present in reports/_index.yaml unless a materially new report is justified.
+
+          For each selected company, launch the Startup Research agent concurrently, one agent run per selected company. Do not run the specialist agents directly from this top-level default agent; each Startup Research agent must own its full specialist sequence.
+
+          Minimum company count: 5
+          Depth: $DEPTH
+          Include Simplified Chinese localization: $INCLUDE_ZH
+
+          For every selected company, pass the Startup Research agent this required context: company name, official URL when available, depth, includeZh, schemaVersion startup-diligence-report-v2, schema reference .github/agents/startup-diligence.schema.md, and YAML syntax reference .github/agents/yaml-syntax.md. Each company must produce one complete YAML artifact set directly under its own reports/<run>/ folder, from 00-report-brief.yaml through 11-report-card.yaml. Do not generate non-YAML report artifacts. Keep every factual claim linked through 01-evidence-ledger.yaml claimRefs/sourceRefs. Use null, with explanation, for unsupported metrics. Delete duplicate or failed partial report folders before final validation. Startup Research subagents must not invoke Startup Research recursively. Do not run git add or git commit.
+          EOF
+          )
+            copilot --yolo --no-ask-user -p "$PROMPT"
+          else
+            PROMPT=$(cat <<EOF
           Run the full Startup Research pipeline for this company.
 
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-null}
-          Focus: $FOCUS
           Depth: $DEPTH
           Include Simplified Chinese localization: $INCLUDE_ZH
 
           Use schemaVersion startup-diligence-report-v2 only. Invoke the configured specialist agents in this order: Startup Report Evidence Analyst -> Startup Market and Competition Analyst -> Startup Financial and Product Analyst -> Startup Risk and Valuation Analyst -> Startup Report Writer -> Startup Report Translator ZH when requested. Pass each specialist the schema reference .github/agents/startup-diligence.schema.md and YAML syntax reference .github/agents/yaml-syntax.md. Write the complete YAML artifact set directly under reports/<run>/, from 00-report-brief.yaml through 11-report-card.yaml. Do not generate non-YAML report artifacts. Keep every factual claim linked through 01-evidence-ledger.yaml claimRefs/sourceRefs. Use null, with explanation, for unsupported metrics. Delete duplicate or failed partial report folders before final validation. Do not invoke Startup Research recursively. Do not run git add or git commit.
           EOF
           )
-          copilot --yolo --no-ask-user --agent "Startup Research" -p "$PROMPT"
+            copilot --yolo --no-ask-user --agent "Startup Research" -p "$PROMPT"
+          fi
 
       - name: Rebuild reports/_index.yaml
         run: node scripts/build-reports-index.mjs --strict
 
       - name: Validate generated report and website
         run: npm run validate
+
+      - name: Reject partial report folders
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          partials=()
+          for dir in reports/*/; do
+            if [ ! -f "${dir}11-report-card.yaml" ] && compgen -G "${dir}*.yaml" > /dev/null; then
+              partials+=("${dir%/}")
+            fi
+          done
+          if [ "${#partials[@]}" -gt 0 ]; then
+            printf 'Partial report folder(s) found; refusing to commit:\n' >&2
+            printf ' - %s\n' "${partials[@]}" >&2
+            exit 1
+          fi
 
       - name: Commit and push new report
         env:
