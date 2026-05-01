@@ -83,7 +83,11 @@ function checkZhParity(failures, run, dir) {
   for (const [enFile, zhFile] of [['10-report-document.yaml', '10-report-document.zh.yaml'], ['11-report-card.yaml', '11-report-card.zh.yaml']]) {
     const zhPath = join(dir, zhFile);
     const enPath = join(dir, enFile);
-    if (!existsSync(zhPath) || !existsSync(enPath)) continue;
+    if (!existsSync(enPath)) continue;
+    if (!existsSync(zhPath)) {
+      failures.push(`${run}/${zhFile}: required Simplified Chinese localization is missing`);
+      continue;
+    }
     let enDoc, zhDoc;
     try { enDoc = readYaml(enPath); } catch (err) { failures.push(`${run}/${enFile}: YAML parse failed: ${err.message.split('\n')[0]}`); continue; }
     try { zhDoc = readYaml(zhPath); } catch (err) { failures.push(`${run}/${zhFile}: YAML parse failed: ${err.message.split('\n')[0]}`); continue; }

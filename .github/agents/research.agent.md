@@ -16,7 +16,6 @@ Resolve before running specialists:
 - `companyName`: required.
 - `companyUrl`: optional identity anchor, never proof.
 - `depth`: `standard` or `deep`; default `deep`.
-- `includeZh`: default `true` unless explicitly disabled.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/agents/startup-diligence.schema.md`.
@@ -43,7 +42,7 @@ Generate these files in order:
 
 All artifacts must be written directly under `reportFolder`. `/tmp` tool-output files are diagnostic logs only: never treat them as report artifacts, handoff inputs, or sources of truth. If a specialist produces only a snippet or temporary transcript, rerun or repair the output by writing complete files to `reportFolder`.
 
-Optional localization writes `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
+Simplified Chinese localization is required: every run must also produce `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 
 ## Specialist sequence
 
@@ -52,7 +51,7 @@ Optional localization writes `10-report-document.zh.yaml` and `11-report-card.zh
 3. `Startup Financial and Product Analyst` writes `05`, `06`, `07`.
 4. `Startup Risk and Valuation Analyst` writes `08`, `09`.
 5. `Startup Report Writer` writes `10`, `11`.
-6. `Startup Report Translator ZH` optionally localizes the final report.
+6. `Startup Report Translator ZH` writes `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 
 Use the agent tool to invoke each specialist by its exact `name` in the sequence above. Pass absolute input/output paths and this handoff context:
 

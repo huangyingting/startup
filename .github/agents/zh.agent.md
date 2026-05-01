@@ -6,7 +6,7 @@ tools: [read, edit, execute]
 user-invocable: false
 ---
 
-Read `schemaPath`, `yamlSyntaxPath`, `10-report-document.yaml`, and `11-report-card.yaml`. Translate prose into professional Simplified Chinese. Write exactly when requested:
+Read `schemaPath`, `yamlSyntaxPath`, `10-report-document.yaml`, and `11-report-card.yaml`. Translate prose into professional Simplified Chinese. Write:
 
 - `<reportFolder>/10-report-document.zh.yaml`
 - `<reportFolder>/11-report-card.zh.yaml`

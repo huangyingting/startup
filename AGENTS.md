@@ -36,7 +36,7 @@
 
 - Canonical schema version: `startup-diligence-report-v2`.
 - Required artifacts are `00-report-brief.yaml`, `01-evidence-ledger.yaml`, `02-company-snapshot.yaml`, `03-market-macro.yaml`, `04-competitive-benchmarking.yaml`, `05-financial-unit-economics.yaml`, `06-product-technology.yaml`, `07-customer-retention.yaml`, `08-risk-regulatory.yaml`, `09-investment-valuation.yaml`, `10-report-document.yaml`, and `11-report-card.yaml`.
-- Optional Simplified Chinese localized artifacts are `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
+- Required Simplified Chinese localized artifacts are `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 - Every artifact must include `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
 - `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. Sources should include `accessDate`, `fetchVerified: true`, and concise `keyQuote` when available.
 - Evidence source targets count retained `sources[]` entries (deep ≥100, standard ≥40). Many claims from a small source set do not satisfy the target.
@@ -66,7 +66,7 @@
 - The report UI should remain flat, modern, and visually consistent across prose, cover metrics, tables, diagrams, maps, and charts.
 - Chart-like figures use ECharts with canvas rendering; semantic diagrams use native DOM/CSS components.
 - Claim references are hidden by default and revealed through a toggle.
-- i18n supports English and Simplified Chinese (`Lang = 'en' | 'zh'`) using `.zh.yaml` localized artifacts.
+- i18n requires English and Simplified Chinese (`Lang = 'en' | 'zh'`); both `.yaml` and `.zh.yaml` artifacts ship for every report.
 - After changing schemas, loader logic, rendering components, workflow logic, or report files, validate with `npm run validate` from the repo root.
 
 ## CI workflow notes
