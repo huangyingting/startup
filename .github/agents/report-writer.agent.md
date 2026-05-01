@@ -18,6 +18,7 @@ Turn analytical artifacts into a professional VC due diligence report represente
 ## `10-report-document.yaml`
 
 Create an opening `startupIntroduction` object, then numbered chapters with section blocks, callouts, tables, and structured native figures. Preserve `claimRefs` for every factual block, table, and figure.
+Use only the `reportMeta` keys listed in the schema; do not add extra cover-label metadata.
 
 ## `11-report-card.yaml`
 
@@ -28,6 +29,7 @@ Create the concise index card used by the website: title, headline, recommendati
 - Use callout blockquotes for `Investment Recommendation`, `Key Insight`, `Opportunity`, `Risk Alert`, and `Final Investment Recommendation`.
 - Prefer tables for metrics, competitor profiles, features, revenue model, unit economics, customer segmentation, risks, valuation, and appendices.
 - Use structured figure specs only: `type`, `layout`, `summary`, and `data` arrays such as `items`, `nodes`, `edges`, `points`, `rows`, `columns`, `series`, or `layers`.
+- Preserve or upgrade specialist semantic figure types such as `market-sizing-lens`, `unit-economics-waterfall`, `customer-surface-map`, `architecture-stack`, `risk-transmission-map`, and `recommendation-logic`; do not downgrade them to generic `flow` / `decision-map` in the final report.
 - Do not emit legacy diagram-source fields or diagram-language source. The website renders figures with native components.
 - Keep prose concise and IC-ready.
 - Do not add facts not present in prior artifacts.

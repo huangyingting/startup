@@ -23,11 +23,11 @@ const tables = new Map((doc?.tables ?? []).map((table: any) => [table.id, table]
 const labels = lang === 'zh'
   ? {
       recommendation: '建议', confidence: '置信度', riskRating: '风险评级', valuationStance: '估值判断', score: '评分', sources: '来源', claims: '声明', figures: '图表', tables: '表格',
-      coverMetrics: '封面指标', startupIntro: '创业公司基本介绍', founded: '创立时间', founders: '创始人', foundingLocation: '创立地点', headquarters: '总部', product: '产品', customers: '客户', businessModel: '商业模式', stage: '阶段', fundingStatus: '融资状态', strengths: '核心亮点', risks: '核心风险', gaps: '未解问题', contents: '目录', bibliography: '参考文献', disclaimer: '免责声明', evidence: '证据索引'
+      coverMetrics: '封面指标', startupIntro: '创业公司基本介绍', founded: '创立时间', founders: '创始人', foundingLocation: '创立地点', headquarters: '总部', product: '产品', customers: '客户', businessModel: '商业模式', stage: '阶段', fundingStatus: '融资状态', strengths: '核心亮点', risks: '核心风险', gaps: '未解问题', contents: '目录', bibliography: '参考文献', disclaimer: '免责声明', evidence: '证据索引', showRefs: '显示引用', hideRefs: '隐藏引用'
     }
   : {
       recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating', valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims', figures: 'figures', tables: 'tables',
-      coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction', founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location', headquarters: 'Headquarters', product: 'Product', customers: 'Customers', businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status', strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps', contents: 'Contents', bibliography: 'Bibliography', disclaimer: 'Disclaimer', evidence: 'Evidence index'
+      coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction', founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location', headquarters: 'Headquarters', product: 'Product', customers: 'Customers', businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status', strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps', contents: 'Contents', bibliography: 'Bibliography', disclaimer: 'Disclaimer', evidence: 'Evidence index', showRefs: 'Show refs', hideRefs: 'Hide refs'
     };
 
 function arr<T = any>(value: T[] | undefined | null): T[] { return Array.isArray(value) ? value : []; }
@@ -70,9 +70,6 @@ const reportFigures = arr(doc?.figures);
 const reportTables = arr(doc?.tables);
 const figureCount = reportFigures.length || data.figureCount || 0;
 const tableCount = reportTables.length || data.tableCount || 0;
-const sourceById = new Map(sources.map((source: any) => [source.id, source]));
-const bibliographyBySourceRef = new Map(arr(doc?.bibliography).map((item: any) => [item.sourceRef, item.citation]));
-const hasBibliographyCitations = bibliographyBySourceRef.size > 0;
 const claimLinkMap = Object.fromEntries(claims.map((claim: any) => {
   return [claim.id, {
     href: `#claim-${claim.id}`,
@@ -94,7 +91,6 @@ const fallbackMetrics = [
 <section class="report-shell sr-container">
   <header class="report-cover">
     <div>
-      <p class="report-eyebrow">{doc?.reportMeta?.classification ?? 'VC Due Diligence Report'}</p>
       <h1>{doc?.reportMeta?.title ?? data.title}</h1>
       {(doc?.company?.subtitle ?? data.subtitle) && <p class="report-subtitle">{doc?.company?.subtitle ?? data.subtitle}</p>}
       <p class="report-headline">{cleanHeadline(data.headline)}</p>
@@ -104,6 +100,7 @@ const fallbackMetrics = [
         <span>{data.sourceStats.claimsReviewed} {labels.claims}</span>
         <span>{figureCount} {labels.figures}</span>
         <span>{tableCount} {labels.tables}</span>
+        <button type="button" class="evidence-toggle" aria-pressed="false" data-show-label={labels.showRefs} data-hide-label={labels.hideRefs}>{labels.showRefs}</button>
       </div>
     </div>
     <aside class="decision-card">
@@ -120,9 +117,13 @@ const fallbackMetrics = [
   <section class="report-section cover-metrics">
     <h2>{labels.coverMetrics}</h2>
     <div class="metric-grid">
-      {coverMetrics.length ? coverMetrics.map((item: any) => (
-        <article><span>{item.label}</span><strong>{item.value}</strong><ClaimRefs refs={blockRefs(item)} claims={claims} sources={sources} /></article>
-      )) : fallbackMetrics.map(([label, value]) => <article><span>{label}</span><strong>{value}</strong></article>)}
+      {coverMetrics.length ? coverMetrics.map((item: any, index: number) => (
+        <article>
+          <div class="metric-topline"><span class="metric-label">{item.label}</span><em>{String(index + 1).padStart(2, '0')}</em></div>
+          <strong>{item.value}</strong>
+          <ClaimRefs refs={blockRefs(item)} claims={claims} sources={sources} />
+        </article>
+      )) : fallbackMetrics.map(([label, value], index) => <article><div class="metric-topline"><span class="metric-label">{label}</span><em>{String(index + 1).padStart(2, '0')}</em></div><strong>{value}</strong></article>)}
     </div>
   </section>
 
@@ -199,7 +200,7 @@ const fallbackMetrics = [
     <section class="report-section evidence-index">
       <h2>{labels.evidence}</h2>
       {claims.length > 0 && <div class="table-frame"><table><caption>Claims</caption><thead><tr><th>ID</th><th>Statement</th><th>Confidence</th><th>Sources</th></tr></thead><tbody>{claims.map((claim: any) => <tr id={`claim-${claim.id}`}><td><a class="evidence-id" href={`#claim-${claim.id}`}>{claim.id}</a></td><td>{claim.statement}</td><td>{labelValue(claim.confidence)}</td><td>{arr(claim.sourceRefs).map((sourceRef, index) => <><a href={`#source-${sourceRef}`}>{sourceRef}</a>{index < arr(claim.sourceRefs).length - 1 ? ', ' : ''}</>)}</td></tr>)}</tbody></table></div>}
-      {sources.length > 0 && <div class="table-frame"><table><caption>Sources</caption><thead><tr><th>ID</th><th>Publisher</th><th>Title</th>{hasBibliographyCitations && <th>Citation</th>}<th>Quote</th></tr></thead><tbody>{sources.map((source: any) => <tr id={`source-${source.id}`}><td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td><td>{source.publisher}</td><td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td>{hasBibliographyCitations && <td>{bibliographyBySourceRef.get(source.id) ?? '—'}</td>}<td>{source.keyQuote}</td></tr>)}</tbody></table></div>}
+      {sources.length > 0 && <div class="table-frame"><table><caption>Sources</caption><thead><tr><th>ID</th><th>Publisher</th><th>Title</th><th>Quote</th></tr></thead><tbody>{sources.map((source: any) => <tr id={`source-${source.id}`}><td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td><td>{source.publisher}</td><td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td><td>{source.keyQuote}</td></tr>)}</tbody></table></div>}
     </section>
   )}
 </section>
@@ -242,62 +243,100 @@ const fallbackMetrics = [
     node.parentNode?.replaceChild(fragment, node);
   }
 
+  const reportShell = document.querySelector('.report-shell');
+  const evidenceToggle = document.querySelector('.evidence-toggle');
+  if (reportShell && evidenceToggle) {
+    const showLabel = evidenceToggle.dataset.showLabel || 'Show refs';
+    const hideLabel = evidenceToggle.dataset.hideLabel || 'Hide refs';
+    const setRefsVisible = (visible) => {
+      reportShell.classList.toggle('refs-visible', visible);
+      evidenceToggle.setAttribute('aria-pressed', String(visible));
+      evidenceToggle.textContent = visible ? hideLabel : showLabel;
+    };
+    evidenceToggle.addEventListener('click', () => setRefsVisible(!reportShell.classList.contains('refs-visible')));
+    setRefsVisible(false);
+  }
+
 </script>
 
 <style>
-  .report-shell { padding-block: var(--space-6) 0; overflow-x: clip; }
+  .report-shell {
+    --report-fs-kicker: clamp(0.82rem, 0.12vw + 0.78rem, 0.9rem);
+    --report-fs-caption: clamp(0.88rem, 0.14vw + 0.82rem, 0.98rem);
+    --report-fs-body: clamp(1.02rem, 0.18vw + 0.96rem, 1.12rem);
+    --report-fs-table: clamp(0.94rem, 0.14vw + 0.88rem, 1.02rem);
+    --report-fs-note: var(--report-fs-body);
+    --report-fs-subhead: clamp(1.35rem, 0.6vw + 1.05rem, 1.7rem);
+    --report-fs-section: clamp(1.75rem, 1.1vw + 1.15rem, 2.2rem);
+    padding-block: var(--space-6) 0;
+    overflow-x: clip;
+    font-size: var(--report-fs-body);
+  }
   .report-cover { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); gap: var(--space-7); align-items: start; padding-block: 0 var(--space-6); }
-  .report-eyebrow { display: inline-block; margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
   .report-cover h1 { margin: 0 0 var(--space-4); max-width: 28ch; font-family: var(--font-display); font-size: var(--fs-3xl); font-weight: 700; letter-spacing: var(--tracking-display-tight); line-height: var(--lh-display-hero); }
   .report-subtitle, .report-headline { width: 100%; color: var(--ink-page); font-family: var(--font-sans); line-height: 1.55; }
-  .report-subtitle { font-size: var(--fs-md); color: var(--caption-gray); }
-  .report-meta-line { display: flex; flex-wrap: wrap; column-gap: var(--space-4); row-gap: var(--space-2); margin-top: var(--space-4); font-family: var(--font-sans); font-size: var(--fs-sm); }
+  .report-subtitle { font-size: var(--report-fs-body); color: var(--caption-gray); }
+  .report-meta-line { display: flex; flex-wrap: wrap; column-gap: var(--space-4); row-gap: var(--space-2); margin-top: var(--space-4); font-family: var(--font-sans); font-size: var(--report-fs-caption); }
   .report-meta-line span { color: var(--caption-gray); }
+  .evidence-toggle { appearance: none; border: var(--report-rule); background: transparent; color: var(--claret); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 2px var(--space-2); }
+  .evidence-toggle:hover, .evidence-toggle:focus-visible, .evidence-toggle[aria-pressed="true"] { border-color: var(--claret); background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); outline: none; }
   .decision-card { align-self: start; border-top: 2px solid var(--claret); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
   .decision-card dl { margin: 0; display: grid; gap: var(--space-3); }
   .decision-card div { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); }
-  .decision-card dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  .decision-card dd { margin: 0; font-family: var(--font-display); font-weight: 700; color: var(--ink-page); text-align: right; }
+  .decision-card dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  .decision-card dd { margin: 0; font-family: var(--font-display); font-size: var(--report-fs-body); font-weight: 700; color: var(--ink-page); text-align: right; }
   .report-section, .report-chapter { padding-block: var(--space-6); }
   .report-chapter { border-top: var(--report-rule); }
   .report-section h2, .report-chapter > h2 { margin: 0 0 var(--space-4); }
-  .report-section h2 { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); font-size: var(--fs-sm); line-height: 1.2; }
-  .report-chapter > h2 { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: 700; letter-spacing: var(--tracking-display-snug); line-height: var(--lh-display-block); }
+  .report-section h2 { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); font-size: var(--report-fs-kicker); line-height: 1.2; }
+  .report-chapter > h2 { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); font-family: var(--font-display); font-size: var(--report-fs-section); font-weight: 700; letter-spacing: var(--tracking-display-snug); line-height: var(--lh-display-block); }
   .report-chapter > h2 span { color: var(--claret); }
   .chapter-section { margin-top: var(--space-6); }
-  .chapter-section h3 { margin-bottom: var(--space-3); font-size: var(--fs-xl); font-weight: 700; letter-spacing: var(--tracking-display-snug); }
-  .chapter-section p, .chapter-section li, .report-section p { width: 100%; max-width: none; line-height: 1.68; }
-  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
-  .metric-grid article { background: color-mix(in srgb, var(--surface-paper) 52%, transparent); padding: var(--space-4); }
-  .metric-grid span { display: block; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  .metric-grid strong { display: block; margin-top: var(--space-1); font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 700; letter-spacing: var(--tracking-display-snug); }
+  .chapter-section h3 { margin-bottom: var(--space-3); font-size: var(--report-fs-subhead); font-weight: 700; letter-spacing: var(--tracking-display-snug); }
+  .chapter-section p, .chapter-section li, .report-section p { width: 100%; max-width: none; font-size: var(--report-fs-body); line-height: 1.65; }
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
+  .metric-grid article { position: relative; display: grid; align-content: space-between; min-height: 10.5rem; border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); }
+  .metric-grid article::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: color-mix(in srgb, var(--claret) 70%, var(--surface-paper)); }
+  .metric-grid article:hover { background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); }
+  .metric-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); padding-left: var(--space-2); }
+  .metric-label { display: block; max-width: 18ch; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; color: var(--claret); }
+  .metric-topline em { flex: 0 0 auto; font-family: var(--font-mono); font-size: var(--report-fs-caption); font-style: normal; font-weight: 600; color: color-mix(in srgb, var(--caption-gray) 74%, transparent); }
+  .metric-grid strong { display: block; align-self: end; padding-left: var(--space-2); font-family: var(--font-display); font-size: clamp(1.55rem, 1.25vw + 1.05rem, 2.2rem); font-weight: 800; letter-spacing: -0.035em; line-height: 0.98; color: var(--ink-page); overflow-wrap: anywhere; }
+  .metric-grid article > :global(.claim-ref) { align-self: end; margin-top: var(--space-3); padding-left: var(--space-2); }
   .intro-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-4); }
   .intro-grid div { background: color-mix(in srgb, var(--surface-paper) 42%, transparent); padding: var(--space-3); }
-  .intro-grid dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  .intro-grid dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
   .intro-grid dd { margin: var(--space-1) 0 0; }
   .toc ol { columns: 2; }
   .toc a { color: var(--ink-page); text-decoration-color: var(--claret); }
   .report-callout { margin: var(--space-5) 0; border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 5%, transparent); padding: var(--space-4); }
-  .report-callout h4 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--fs-xl); }
+  .report-callout h4 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--report-fs-subhead); }
   .callout-opportunity { border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
   .callout-risk-alert { border-left-color: #b42318; background: color-mix(in srgb, #b42318 7%, transparent); }
-  .table-frame { width: 100%; max-width: 100%; overflow-x: auto; margin: var(--space-5) 0; background: transparent; }
-  table { width: 100%; min-width: 720px; border-collapse: collapse; background: transparent; border-top: var(--report-rule); border-bottom: var(--report-rule); font-family: var(--font-sans); }
-  caption { caption-side: top; text-align: left; padding: 0 0 var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  th, td { border-bottom: var(--report-rule); padding: var(--space-3); text-align: left; vertical-align: top; font-size: var(--fs-sm); }
-  th { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  .table-frame { width: 100%; max-width: 100%; overflow-x: auto; margin: var(--space-5) 0; border: var(--report-rule); border-top: 3px solid var(--claret); background: var(--surface-paper); }
+  table { width: 100%; min-width: 780px; border-collapse: separate; border-spacing: 0; background: transparent; font-family: var(--font-sans); }
+  caption { caption-side: top; text-align: left; padding: var(--space-3) var(--space-4); border-bottom: var(--report-rule); background: color-mix(in srgb, var(--claret) 6%, transparent); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  th, td { border-bottom: var(--report-rule); padding: var(--space-3) var(--space-4); text-align: left; vertical-align: top; font-size: var(--report-fs-table); line-height: 1.55; }
+  th { background: color-mix(in srgb, var(--paper) 78%, white); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: color-mix(in srgb, var(--claret) 88%, var(--ink-page)); white-space: nowrap; }
+  tbody tr:nth-child(2n) { background: color-mix(in srgb, var(--surface-paper) 68%, transparent); }
+  tbody tr:hover { background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); }
   tbody tr:last-child td { border-bottom: 0; }
-  .table-note { margin: var(--space-3) 0 0; color: var(--caption-gray); font-size: var(--fs-sm); line-height: 1.5; }
+  td:first-child { font-weight: 650; }
+  .table-note { margin: 0; border-top: var(--report-rule); padding: var(--space-3) var(--space-4); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--report-fs-table); line-height: 1.55; }
   .equation { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
   .three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
   .three-col article { border-top: var(--report-rule); padding-top: var(--space-3); }
-  .disclaimer p { font-size: var(--fs-sm); color: var(--caption-gray); }
+  .disclaimer p { font-size: var(--report-fs-note); color: var(--caption-gray); }
   .evidence-index tr:target { background: color-mix(in srgb, var(--claret) 9%, transparent); scroll-margin-top: var(--space-6); }
   .evidence-id { font-family: var(--font-mono); color: var(--claret); text-decoration: none; }
   .evidence-id:hover, .evidence-id:focus-visible { text-decoration: underline; }
-  .report-shell :global(.claim-ref) { color: var(--caption-gray); font-family: var(--font-mono); font-size: var(--fs-xs); display: inline; margin-left: 0.25em; vertical-align: baseline; overflow-wrap: anywhere; }
+  .report-shell :global(.claim-ref) { color: var(--caption-gray); font-family: var(--font-mono); font-size: var(--report-fs-caption); display: inline; margin-left: 0.25em; vertical-align: baseline; overflow-wrap: anywhere; }
+  .report-shell:not(.refs-visible) :global(.claim-ref) { display: none !important; }
+  .report-shell.refs-visible :global(.claim-ref) { display: inline; }
   .report-shell :global(.claim-ref a) { color: var(--claret); text-decoration: none; }
   .report-shell :global(.claim-ref a:hover), .report-shell :global(.claim-ref a:focus-visible) { text-decoration: underline; }
-  .table-frame > :global(.claim-ref) { display: block; margin: var(--space-2) 0 0; }
+  .table-frame :global(.claim-ref) { font-size: var(--report-fs-caption); white-space: nowrap; }
+  .table-frame > :global(.claim-ref) { display: block; margin: 0; border-top: var(--report-rule); padding: var(--space-3) var(--space-4); }
+  .report-shell.refs-visible .table-frame > :global(.claim-ref) { display: block; }
   @media (max-width: 900px) { .report-cover, .metric-grid, .intro-grid, .three-col { grid-template-columns: 1fr; } .toc ol { columns: 1; } }
 </style>

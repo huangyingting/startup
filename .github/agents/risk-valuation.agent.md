@@ -18,7 +18,7 @@ Do not search the web. Use only claim-backed evidence.
 Structure this section as an investor-grade VC diligence chapter:
 
 - Risk overview, regulatory/legal risk, credit/operational/security risk, competitive risk, and mitigation summary.
-- Structured risk-heatmap or matrix figure for risk assessment.
+- Structured `risk-heatmap` or `matrix` figure for risk assessment, plus `risk-transmission-map` when showing how risks propagate into underwriting impact.
 - Investment thesis summary, bull/base/bear cases, IPO/readiness scorecard, public/private comparables, valuation framework, final recommendation.
 - Include stop-loss triggers / kill criteria.
 
@@ -28,6 +28,7 @@ Structure this section as an investor-grade VC diligence chapter:
 - Valuation must show method, assumptions, comparables, and sensitivity.
 - If valuation inputs are missing, default to `research-more` or `track` rather than false precision.
 - Risk severity and likelihood must be separated.
+- Use `recommendation-logic` for final investment recommendation logic instead of generic `decision-map` when the figure is a sequence of evidence, constraints, valuation stance, and final recommendation.
 
 ## Handoff
 

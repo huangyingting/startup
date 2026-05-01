@@ -67,16 +67,16 @@ const metricRows = [
     padding: var(--space-4);
     color: inherit;
     text-decoration: none;
-    transition: transform 160ms ease, box-shadow 160ms ease;
+    transition: border-color 120ms ease, background-color 120ms ease;
   }
-  .report-card:hover { transform: translateY(-2px); box-shadow: 0 16px 32px color-mix(in srgb, var(--ink-page) 10%, transparent); }
+  .report-card:hover { border-color: var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); }
   .card-topline, .card-footer, .card-badges { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 800; color: var(--caption-gray); text-transform: uppercase; }
   .card-topline { justify-content: space-between; color: var(--claret); }
   h3 { margin: var(--space-3) 0 var(--space-2); font-size: var(--fs-xl); line-height: 1.05; }
   p { color: var(--caption-gray); }
-  .card-badges span { border: var(--report-rule); border-radius: 999px; padding: 3px 8px; background: color-mix(in srgb, var(--paper) 72%, white); color: var(--ink-page); }
+  .card-badges span { border: var(--report-rule); padding: 3px 8px; background: var(--paper); color: var(--ink-page); }
   .card-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-1) var(--space-3); margin: var(--space-4) 0; font-family: var(--font-sans); font-size: var(--fs-sm); }
   .card-metrics dt { color: var(--caption-gray); }
   .card-metrics dd { margin: 0; font-weight: 800; color: var(--ink-page); }
-  .card-footer strong { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--claret); color: white; }
+  .card-footer strong { display: inline-grid; place-items: center; min-width: 34px; height: 34px; border: 1px solid var(--claret); background: var(--claret); color: white; padding-inline: var(--space-2); }
 </style>

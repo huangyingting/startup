@@ -52,10 +52,23 @@ function fixColonPaste(value: unknown): unknown {
   return value;
 }
 
+function normalizeYamlScalars(value: unknown): unknown {
+  if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
+  if (Array.isArray(value)) return value.map(normalizeYamlScalars);
+  if (value && typeof value === 'object') {
+    const proto = Object.getPrototypeOf(value);
+    if (proto !== Object.prototype && proto !== null) return value;
+    const out: Record<string, unknown> = {};
+    for (const [key, child] of Object.entries(value as Record<string, unknown>)) out[key] = normalizeYamlScalars(child);
+    return out;
+  }
+  return value;
+}
+
 function readYaml(path: string): Record<string, any> | null {
   if (!existsSync(path)) return null;
   try {
-    return fixColonPaste(yaml.load(readFileSync(path, 'utf8'))) as Record<string, any>;
+    return normalizeYamlScalars(fixColonPaste(yaml.load(readFileSync(path, 'utf8')))) as Record<string, any>;
   } catch {
     return null;
   }

@@ -153,7 +153,7 @@ tables:
 figures:
   - id: F201
     title: string
-    type: timeline|flow|decision-map|evidence-map|quadrant|competitive-matrix|metric-bars|bars|waterfall|risk-heatmap|matrix|architecture-stack|stack|sensitivity|xy|other
+    type: timeline|flow|decision-map|evidence-map|quadrant|competitive-matrix|metric-bars|bars|waterfall|risk-heatmap|matrix|architecture-stack|market-sizing-lens|unit-economics-waterfall|customer-surface-map|recommendation-logic|risk-transmission-map|stack|sensitivity|xy|other
     layout: compact|standard|wide
     summary: string|null
     data:
@@ -173,6 +173,8 @@ sections:
     body: string
     claimRefs: [C001]
 ```
+
+Section artifacts must use the same figure rendering contracts listed under `10-report-document.yaml` below. Prefer the most semantic figure type available instead of generic `flow`.
 
 ## `02-company-snapshot.yaml`
 
@@ -212,7 +214,6 @@ company:
   subtitle: string|null
 reportMeta:
   title: string
-  classification: string|null
   preparedBy: string|null
   contact: string|null
   generatedUsing: string|null
@@ -222,7 +223,7 @@ reportMeta:
   valuationStance: attractive|fair|stretched|expensive|unknown
 coverMetrics:
   - label: string
-    value: string
+    value: string # display string, e.g. "$157B post-money" or "1.0M"
     numericValue: 0|null
     unit: string|null
     claimRefs: [C001]
@@ -263,7 +264,7 @@ chapters:
 figures:
   - id: F101
     title: string
-    type: timeline|flow|decision-map|evidence-map|quadrant|competitive-matrix|metric-bars|bars|waterfall|risk-heatmap|matrix|architecture-stack|stack|sensitivity|xy|other
+    type: timeline|flow|decision-map|evidence-map|quadrant|competitive-matrix|metric-bars|bars|waterfall|risk-heatmap|matrix|architecture-stack|market-sizing-lens|unit-economics-waterfall|customer-surface-map|recommendation-logic|risk-transmission-map|stack|sensitivity|xy|other
     layout: compact|standard|wide
     summary: string|null
     data:
@@ -277,6 +278,34 @@ figures:
       layers: []
     approximationNotes: string|null
     claimRefs: [C001]
+```
+
+### Figure rendering contracts
+
+The website renders figures automatically from `type` plus structured `data`. Agents must select the most semantic `type`; do not rely on `title` text for renderer selection.
+
+- `timeline`: `data.items[]` with `date|label`, `label`, `detail`, optional `tone`.
+- `flow`: `data.nodes[]` and `data.edges[]`; use for generic causal/product/customer flows.
+- `decision-map`: `data.nodes[]` and optional `data.edges[]`; use for decision trees or evaluation logic when `recommendation-logic` is not specific enough.
+- `evidence-map`: `data.nodes[]` and optional `data.edges[]`; use for evidence/source-to-claim maps.
+- `quadrant` / `competitive-matrix`: `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include `data.xAxis` and `data.yAxis` labels when useful.
+- `metric-bars` / `bars`: `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`.
+- `waterfall`: `data.items[]` in sequence with signed numeric `value`, optional `displayValue`, optional `tone`.
+- `risk-heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; each value may include `label` and `tone: low|medium|high|critical|risk`.
+- `architecture-stack`: `data.layers[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`.
+- `market-sizing-lens`: `data.nodes[]` or `data.items[]` ordered from broad market to served footprint; use for TAM/SAM/SOM or evidence-constrained market sizing where unsupported dollar values should not be invented. Typical labels are `TAM`, `SAM`, and `SOM`; each node has `label`, `detail`, and optional `tone`.
+- `unit-economics-waterfall`: `data.nodes[]` or `data.items[]` ordered from known public anchor through missing unit-economics bridges to underwriting output; use when the report must show where public pricing/adoption evidence stops before gross margin, CAC, LTV/CAC, or payback can be calculated. First node should be the disclosed/list-price anchor; later nodes should identify unknown bridges or blockers.
+- `customer-surface-map`: `data.nodes[]` or `data.items[]` ordered from customer acquisition surface through major customer segments and expansion loops; use for consumer / enterprise / developer / ecosystem surface maps. First node should be the broad entry surface; later nodes should be segment or expansion cards.
+- `recommendation-logic`: `data.nodes[]` ordered from evidence/constraint to final recommendation; each node has `label`, `detail`, `tone`.
+- `risk-transmission-map`: `data.nodes[]` and `data.edges[]`; nodes with no incoming edges render as risk sources, nodes with both incoming and outgoing edges render as transmission pressure, nodes with no outgoing edges render as underwriting impact.
+- `stack`: `data.layers[]` or `data.items[]` with `label`, `detail`, optional `tone`.
+- `sensitivity`: `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`.
+- `xy`: `data.points[]` or `data.series[0].points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include axis labels when useful.
+- `other`: fallback only; avoid unless no semantic renderer fits.
+
+The remainder of `10-report-document.yaml` continues as:
+
+```yaml
 tables:
   - id: T101
     title: string

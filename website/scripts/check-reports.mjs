@@ -39,9 +39,32 @@ const RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 
 const CONFIDENCE = new Set(['high', 'medium', 'low']);
 const RISK_RATINGS = new Set(['low', 'moderate', 'significant', 'critical', 'unknown']);
 const VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
-const FIGURE_TYPES = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'quadrant', 'competitive-matrix', 'metric-bars', 'bars', 'waterfall', 'risk-heatmap', 'matrix', 'architecture-stack', 'stack', 'sensitivity', 'xy', 'other']);
+const FIGURE_TYPES = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'quadrant', 'competitive-matrix', 'metric-bars', 'bars', 'waterfall', 'risk-heatmap', 'matrix', 'architecture-stack', 'market-sizing-lens', 'unit-economics-waterfall', 'customer-surface-map', 'recommendation-logic', 'risk-transmission-map', 'stack', 'sensitivity', 'xy', 'other']);
 const FIGURE_LAYOUTS = new Set(['compact', 'standard', 'wide']);
+const FIGURE_CONTRACTS = new Map([
+  ['timeline', [['items']]],
+  ['flow', [['nodes'], ['edges']]],
+  ['decision-map', [['nodes']]],
+  ['evidence-map', [['nodes']]],
+  ['quadrant', [['points']]],
+  ['competitive-matrix', [['points']]],
+  ['metric-bars', [['items', 'series']]],
+  ['bars', [['items', 'series']]],
+  ['waterfall', [['items']]],
+  ['risk-heatmap', [['columns'], ['rows']]],
+  ['matrix', [['columns'], ['rows']]],
+  ['architecture-stack', [['layers']]],
+  ['market-sizing-lens', [['nodes', 'items']]],
+  ['unit-economics-waterfall', [['nodes', 'items']]],
+  ['customer-surface-map', [['nodes', 'items']]],
+  ['recommendation-logic', [['nodes']]],
+  ['risk-transmission-map', [['nodes'], ['edges']]],
+  ['stack', [['layers', 'items']]],
+  ['sensitivity', [['series']]],
+  ['xy', [['points', 'series']]],
+]);
 const LEGACY_FIGURE_FIELDS = ['mer' + 'maid', 'mer' + 'maidType'];
+const REMOVED_REPORT_META_FIELDS = ['class' + 'ification'];
 
 function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
@@ -73,6 +96,9 @@ function walkClaimRefs(value, refs = []) {
     }
   }
   return refs;
+}
+function hasAnyArray(data, keys) {
+  return keys.some((key) => Array.isArray(data?.[key]) && data[key].length > 0);
 }
 
 try {
@@ -172,6 +198,12 @@ try {
       if (!FIGURE_TYPES.has(figure.type)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} has invalid type ${figure.type}`);
       if (!FIGURE_LAYOUTS.has(figure.layout)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} has invalid layout ${figure.layout}`);
       if (!figure.data || typeof figure.data !== 'object' || Array.isArray(figure.data)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} missing structured data object`);
+      else {
+        const contract = FIGURE_CONTRACTS.get(figure.type) ?? [];
+        for (const alternatives of contract) {
+          if (!hasAnyArray(figure.data, alternatives)) failures.push(`${run}/10-report-document.yaml: figure ${figure.id} type ${figure.type} requires data.${alternatives.join(' or data.')}`);
+        }
+      }
     }
     pushIfInvalidEnum(failures, `${run}/11-report-card.yaml`, 'recommendation', card?.recommendation, RECOMMENDATIONS);
     pushIfInvalidEnum(failures, `${run}/11-report-card.yaml`, 'confidence', card?.confidence, CONFIDENCE);
@@ -181,6 +213,9 @@ try {
     pushIfInvalidEnum(failures, `${run}/10-report-document.yaml`, 'confidence', reportDoc?.reportMeta?.confidence, CONFIDENCE);
     pushIfInvalidEnum(failures, `${run}/10-report-document.yaml`, 'riskRating', reportDoc?.reportMeta?.riskRating, RISK_RATINGS);
     pushIfInvalidEnum(failures, `${run}/10-report-document.yaml`, 'valuationStance', reportDoc?.reportMeta?.valuationStance, VALUATION_STANCES);
+    for (const field of REMOVED_REPORT_META_FIELDS) {
+      if (Object.hasOwn(reportDoc?.reportMeta ?? {}, field)) failures.push(`${run}/10-report-document.yaml: reportMeta contains removed field ${field}`);
+    }
     if (card?.figureCount !== undefined && card.figureCount !== (reportDoc?.figures ?? []).length) failures.push(`${run}/11-report-card.yaml: figureCount does not match report document`);
     if (card?.tableCount !== undefined && card.tableCount !== (reportDoc?.tables ?? []).length) failures.push(`${run}/11-report-card.yaml: tableCount does not match report document`);
     if (card?.reportFiles?.reportDocument !== '10-report-document.yaml') failures.push(`${run}/11-report-card.yaml: reportFiles.reportDocument must be 10-report-document.yaml`);

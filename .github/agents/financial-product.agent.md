@@ -23,7 +23,7 @@ Structure this section as an investor-grade VC diligence chapter:
 - Financial projection scenarios only when defensible; otherwise use `null` and diligence gaps.
 - Product platform overview, modules, AI/automation, roadmap, architecture, and integrations.
 - Customer base, segmentation, customer case studies, retention, churn, and satisfaction.
-- Structured native figures for revenue mix, unit-economics waterfall, platform architecture, and customer growth where evidence supports them.
+- Structured native figures for revenue mix, unit-economics waterfall, platform architecture, customer growth, and customer-surface expansion where evidence supports them.
 
 ## Analysis rules
 
@@ -31,6 +31,7 @@ Structure this section as an investor-grade VC diligence chapter:
 - Use `estimateBasis` for every derived numeric value.
 - Do not infer revenue from users/traffic without labeling the inference low confidence.
 - If retention, CAC, LTV, or margins are not disclosed, say so and define exact diligence asks.
+- Use `unit-economics-waterfall` for public-data-constrained unit-economics bridges, `architecture-stack` for platform architecture, and `customer-surface-map` for consumer / enterprise / developer / ecosystem customer-surface expansion. Avoid generic `flow` for these semantic use cases.
 
 ## Handoff
 

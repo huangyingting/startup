@@ -51,20 +51,26 @@ function formatCell(value: unknown) {
 <style>
   .table-wrap {
     overflow-x: auto;
-    margin-top: var(--space-5);
-    background: transparent;
+    margin: var(--space-5) 0;
+    border: var(--report-rule);
+    border-top: 3px solid var(--claret);
+    background: var(--surface-paper);
   }
   .report-table {
-    min-width: 720px;
-    border-collapse: collapse;
+    min-width: 780px;
+    border-collapse: separate;
+    border-spacing: 0;
     background: transparent;
   }
   .report-table caption {
     text-align: left;
-    padding: 0 0 var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: var(--report-rule);
+    background: color-mix(in srgb, var(--claret) 6%, var(--surface-paper));
     font-family: var(--font-sans);
     font-variant-caps: all-small-caps;
-    font-weight: 700;
+    font-size: var(--report-fs-kicker, var(--fs-sm));
+    font-weight: 800;
     letter-spacing: var(--tracking-eyebrow);
     color: var(--claret);
     caption-side: top;
@@ -72,16 +78,24 @@ function formatCell(value: unknown) {
   .report-table th,
   .report-table td {
     border-bottom: var(--report-rule);
-    padding: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     vertical-align: top;
-    font-size: var(--fs-sm);
+    font-size: var(--report-fs-table, var(--fs-md));
+    line-height: 1.55;
   }
   .report-table th {
-    color: var(--claret);
+    background: color-mix(in srgb, var(--paper) 78%, white);
+    color: color-mix(in srgb, var(--claret) 88%, var(--ink-page));
+    font-variant-caps: all-small-caps;
+    font-weight: 800;
+    letter-spacing: var(--tracking-eyebrow);
     white-space: nowrap;
   }
+  .report-table tbody tr:nth-child(2n) {
+    background: color-mix(in srgb, var(--surface-paper) 68%, transparent);
+  }
   .report-table tbody tr:hover {
-    background: color-mix(in srgb, var(--claret) 5%, transparent);
+    background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper));
   }
   .report-table tbody tr:last-child td {
     border-bottom: 0;
@@ -89,9 +103,16 @@ function formatCell(value: unknown) {
   .report-table td {
     max-width: 420px;
     color: var(--ink-page);
-    line-height: 1.48;
+  }
+  .report-table td:first-child {
+    font-weight: 650;
   }
   .refs-cell {
     min-width: 120px;
+    white-space: nowrap;
+  }
+  .table-wrap :global(.claim-ref) {
+    font-size: var(--report-fs-caption, var(--fs-xs));
+    white-space: nowrap;
   }
 </style>

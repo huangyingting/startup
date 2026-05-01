@@ -11,33 +11,28 @@ const { figure, claims = [], sources = [] } = Astro.props;
 const type = figure?.type ?? 'flow';
 const layout = figure?.layout ?? 'standard';
 const data = figure?.data ?? {};
+const chartTypes = new Set(['flow', 'decision-map', 'evidence-map', 'bars', 'metric-bars', 'pie', 'waterfall', 'quadrant', 'competitive-matrix', 'matrix', 'risk-heatmap', 'sensitivity', 'xy']);
+const usesCanvasChart = chartTypes.has(type);
+const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
 const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
-const pct = (value: unknown) => {
-  const n = Number(value);
-  if (!Number.isFinite(n)) return 0;
-  return Math.max(0, Math.min(100, n));
-};
-const relativePct = (value: unknown, max: number) => {
-  const n = Number(value);
-  if (!Number.isFinite(n) || max <= 0) return 0;
-  return Math.max(4, Math.min(100, (n / max) * 100));
-};
-const pointPct = (value: unknown) => {
-  const n = Number(value);
-  if (!Number.isFinite(n)) return 50;
-  return Math.max(4, Math.min(96, n));
-};
 const toneClass = (tone: unknown) => `tone-${String(tone ?? 'neutral').replace(/[^a-z0-9-]/gi, '-')}`;
 const blockRefs = (block: any) => arr<string>(block?.claimRefs).slice(0, 6);
-const flowNodes = arr(data.nodes);
-const flowEdges = arr(data.edges);
 const timelineItems = arr(data.items);
-const barItems = arr(data.items);
-const barMax = Math.max(100, ...barItems.map((item: any) => Number(item.value) || 0));
-const quadrantPoints = arr(data.points);
-const matrixRows = arr(data.rows);
-const matrixColumns = arr(data.columns);
 const stackLayers = arr(data.layers ?? data.items);
+const marketSizingNodes = arr(data.nodes ?? data.items);
+const unitEconomicsNodes = arr(data.nodes ?? data.items);
+const customerSurfaceNodes = arr(data.nodes ?? data.items);
+const recommendationNodes = arr(data.nodes ?? data.items);
+const transmissionNodes = arr(data.nodes ?? data.items);
+const transmissionEdges = arr(data.edges);
+const transmissionSourceIds = new Set(transmissionEdges.map((edge: any) => edge.from));
+const transmissionTargetIds = new Set(transmissionEdges.map((edge: any) => edge.to));
+const transmissionSources = transmissionNodes.filter((node: any) => !transmissionTargetIds.has(node.id));
+const transmissionBridges = transmissionNodes.filter((node: any) => transmissionSourceIds.has(node.id) && transmissionTargetIds.has(node.id));
+const transmissionOutcomes = transmissionNodes.filter((node: any) => transmissionTargetIds.has(node.id) && !transmissionSourceIds.has(node.id));
+const moduleItems = (layer: any) => arr(layer?.modules ?? layer?.items);
+const outputItems = (layer: any) => arr<string>(layer?.outputs);
+const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title, data } : null;
 ---
 
 <figure class:list={['native-figure', `figure-${type}`, `layout-${layout}`]}>
@@ -57,68 +52,17 @@ const stackLayers = arr(data.layers ?? data.items);
     </ol>
   )}
 
-  {(type === 'flow' || type === 'decision-map' || type === 'evidence-map') && (
-    <div class="flow-viz">
-      <div class="flow-grid">
-        {flowNodes.map((node: any, index: number) => (
-          <article class:list={['flow-node', toneClass(node.tone)]}>
-            <span>{node.kicker ?? node.id}</span>
-            <i>{String(index + 1).padStart(2, '0')}</i>
-            <strong>{node.label}</strong>
-            {node.detail && <p>{node.detail}</p>}
-          </article>
-        ))}
-      </div>
-      {flowEdges.length > 0 && (
-        <ol class="edge-list" aria-label="Relationships">
-          {flowEdges.map((edge: any) => (
-            <li><span>{edge.from}</span><b>→</b><span>{edge.to}</span>{edge.label && <em>{edge.label}</em>}</li>
-          ))}
-        </ol>
-      )}
-    </div>
-  )}
+  {(type === 'flow' || type === 'decision-map' || type === 'evidence-map') && <div id={chartId} class="echart-figure chart-relationship" data-chart-type={type}></div>}
 
-  {(type === 'bars' || type === 'metric-bars' || type === 'pie' || type === 'waterfall') && (
-    <div class="bars-viz">
-      {barItems.map((item: any) => (
-        <div class:list={['bar-row', toneClass(item.tone)]}>
-          <div class="bar-label"><strong>{item.label}</strong>{item.detail && <span>{item.detail}</span>}</div>
-          <div class="bar-track"><span style={`width: ${relativePct(item.value, barMax)}%`}></span></div>
-          <b>{item.displayValue ?? item.value}</b>
-        </div>
-      ))}
-    </div>
-  )}
+  {(type === 'bars' || type === 'metric-bars' || type === 'pie' || type === 'waterfall') && <div id={chartId} class="echart-figure chart-bars" data-chart-type={type}></div>}
 
   {(type === 'quadrant' || type === 'competitive-matrix') && (
-    <div class="quadrant-viz">
-      <div class="axis axis-y">{data.yAxis ?? 'Higher'}</div>
-      <div class="axis axis-x">{data.xAxis ?? 'Higher'}</div>
-      <span class="quad-label quad-top-left">Low x / High y</span>
-      <span class="quad-label quad-top-right">High x / High y</span>
-      <span class="quad-label quad-bottom-left">Low x / Low y</span>
-      <span class="quad-label quad-bottom-right">High x / Low y</span>
-      {quadrantPoints.map((point: any) => (
-        <span class:list={['quad-point', toneClass(point.tone)]} style={`left: ${pointPct(point.x)}%; bottom: ${pointPct(point.y)}%`}><b></b>{point.label}</span>
-      ))}
-    </div>
+    <div id={chartId} class="echart-figure chart-quadrant" data-chart-type={type}></div>
   )}
 
-  {(type === 'matrix' || type === 'risk-heatmap') && (
-    <div class="matrix-viz" style={`--matrix-cols: ${Math.max(matrixColumns.length, 1)}`}>
-      {matrixColumns.length > 0 && <span class="matrix-corner"></span>}
-      {matrixColumns.map((column: any) => <strong class="matrix-head">{column}</strong>)}
-      {matrixRows.map((row: any) => (
-        <>
-          <strong class="matrix-row-head">{row.label}</strong>
-          {arr(row.values).map((cell: any) => <span class:list={['matrix-cell', toneClass(cell.tone)]}>{cell.label ?? cell}</span>)}
-        </>
-      ))}
-    </div>
-  )}
+  {(type === 'matrix' || type === 'risk-heatmap') && <div id={chartId} class="echart-figure chart-heatmap" data-chart-type={type}></div>}
 
-  {(type === 'stack' || type === 'architecture-stack') && (
+  {type === 'stack' && (
     <div class="stack-viz">
       {stackLayers.map((layer: any) => (
         <article class:list={['stack-layer', toneClass(layer.tone)]}>
@@ -130,102 +74,608 @@ const stackLayers = arr(data.layers ?? data.items);
     </div>
   )}
 
-  {(type === 'sensitivity' || type === 'xy') && (
-    <div class="sensitivity-viz">
-      {arr(data.series).map((series: any) => (
-        <section>
-          <strong>{series.label}</strong>
-          <div class="scale"><span>Low</span><span>Mid</span><span>High</span></div>
-          <div class="bars-viz compact">
-            {arr(series.points).map((point: any) => {
-              const points = arr(series.points);
-              const max = Math.max(...points.map((candidate: any) => Number(candidate.value) || 0), 1);
-              return (
-              <div class="bar-row tone-neutral">
-                <div class="bar-label"><strong>{point.label}</strong></div>
-                <div class="bar-track"><span style={`width: ${relativePct(point.value, max)}%`}></span></div>
-                <b>{point.displayValue ?? point.value}</b>
+  {type === 'market-sizing-lens' && (
+    <div class="market-sizing-viz" aria-label={`${figure.title} market sizing lens`}>
+      <div class="market-sizing-axis">
+        <span>Broad market envelope</span>
+        <span>Served footprint</span>
+      </div>
+      <div class="market-sizing-stack">
+        {marketSizingNodes.map((node: any, index: number) => {
+          const label = String(node.label ?? node.id ?? 'Layer');
+          const width = index === 0 ? '100%' : index === 1 ? '86%' : index === 2 ? '68%' : '76%';
+          return (
+            <article class:list={['market-layer', `layer-${index + 1}`, toneClass(node.tone)]} style={`--market-layer-width: ${width}`}>
+              <div class="market-layer-head">
+                <span>{label}</span>
+                <strong>{label === 'TAM' ? 'Addressable universe' : label === 'SAM' ? 'Commercially reachable market' : label === 'SOM' ? 'Evidence-backed served footprint' : node.label}</strong>
               </div>
-            )})}
+              {node.detail && <p>{node.detail}</p>}
+            </article>
+          );
+        })}
+      </div>
+      <div class="market-sizing-warning">
+        <strong>No unsupported market math</strong>
+        <p>Dollar TAM/SAM/SOM values stay out of the chart unless the evidence ledger contains a defensible source.</p>
+      </div>
+    </div>
+  )}
+
+  {type === 'unit-economics-waterfall' && (
+    <div class="unit-economics-viz" aria-label={`${figure.title} unit economics waterfall`}>
+      <section class="unit-anchor-card">
+        <span>Public anchor</span>
+        <strong>{unitEconomicsNodes[0]?.label ?? 'Known input'}</strong>
+        {unitEconomicsNodes[0]?.detail && <p>{unitEconomicsNodes[0].detail}</p>}
+      </section>
+      <div class="unit-waterfall-chain">
+        {unitEconomicsNodes.slice(1).map((node: any, index: number) => {
+          const isOutcome = index === unitEconomicsNodes.slice(1).length - 1;
+          return (
+            <article class:list={['unit-step-card', toneClass(node.tone), isOutcome && 'is-outcome']}>
+              <div class="unit-step-kicker">
+                <span>{String(index + 2).padStart(2, '0')}</span>
+                <em>{isOutcome ? 'Underwriting blocker' : 'Missing bridge'}</em>
+              </div>
+              <strong>{node.label}</strong>
+              {node.detail && <p>{node.detail}</p>}
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  )}
+
+  {type === 'customer-surface-map' && (
+    <div class="customer-surface-viz" aria-label={`${figure.title} customer surface map`}>
+      {customerSurfaceNodes.map((node: any, index: number) => {
+        let role = 'expansion';
+        if (index === 0) role = 'entry';
+        else if (index < 3) role = 'segment';
+        return (
+          <article class:list={['customer-surface-card', `surface-${role}`, `surface-${index + 1}`, toneClass(node.tone)]}>
+            <div class="surface-kicker">
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <em>{role === 'entry' ? 'Acquisition surface' : role === 'segment' ? 'Customer segment' : 'Expansion loop'}</em>
+            </div>
+            <strong>{node.label}</strong>
+            {node.detail && <p>{node.detail}</p>}
+          </article>
+        );
+      })}
+    </div>
+  )}
+
+  {type === 'architecture-stack' && (
+    <div class="architecture-viz" aria-label={`${figure.title} architecture diagram`}>
+      {stackLayers.map((layer: any, index: number) => (
+        <article class:list={['arch-layer', toneClass(layer.tone)]}>
+          <div class="arch-layer-head">
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <strong>{layer.label}</strong>
+            {layer.detail && <p>{layer.detail}</p>}
           </div>
-        </section>
+          <div class="arch-layer-body">
+            {moduleItems(layer).length > 0 ? (
+              <div class="arch-modules">
+                {moduleItems(layer).map((module: any) => (
+                  <section class:list={['arch-module', toneClass(module.tone ?? layer.tone)]}>
+                    <strong>{module.label ?? module}</strong>
+                    {module.detail && <p>{module.detail}</p>}
+                  </section>
+                ))}
+              </div>
+            ) : layer.detail ? (
+              <p class="arch-detail">{layer.detail}</p>
+            ) : null}
+            {outputItems(layer).length > 0 && (
+              <ul class="arch-outputs" aria-label="Layer outputs">
+                {outputItems(layer).map((output) => <li>{output}</li>)}
+              </ul>
+            )}
+          </div>
+        </article>
       ))}
+    </div>
+  )}
+
+  {type === 'recommendation-logic' && (
+    <div class="recommendation-viz" aria-label={`${figure.title} recommendation logic`}>
+      {recommendationNodes.map((node: any, index: number) => {
+        const isOutcome = /recommendation|decision|outcome/i.test(String(node.label ?? '')) || index === recommendationNodes.length - 1;
+        return (
+          <article class:list={['logic-card', toneClass(node.tone), isOutcome && 'is-outcome']}>
+            <div class="logic-kicker">
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <em>{isOutcome ? 'Decision' : node.tone === 'risk' || node.tone === 'critical' || node.tone === 'high' ? 'Constraint' : 'Evidence'}</em>
+            </div>
+            <strong>{node.label}</strong>
+            {node.detail && <p>{node.detail}</p>}
+          </article>
+        );
+      })}
+    </div>
+  )}
+
+  {type === 'risk-transmission-map' && (
+    <div class="risk-transmission-viz" aria-label={`${figure.title} risk transmission map`}>
+      <section class="risk-column risk-inputs">
+        <div class="risk-column-head"><span>01</span><strong>Risk sources</strong></div>
+        <div class="risk-card-list">
+          {transmissionSources.map((node: any) => (
+            <article class:list={['risk-card', toneClass(node.tone)]}>
+              <strong>{node.label}</strong>
+              {node.detail && <p>{node.detail}</p>}
+            </article>
+          ))}
+        </div>
+      </section>
+      <section class="risk-column risk-bridge">
+        <div class="risk-column-head"><span>02</span><strong>Transmission pressure</strong></div>
+        <div class="risk-card-list">
+          {(transmissionBridges.length ? transmissionBridges : transmissionNodes.slice(-2, -1)).map((node: any) => (
+            <article class:list={['risk-card', 'is-bridge', toneClass(node.tone)]}>
+              <strong>{node.label}</strong>
+              {node.detail && <p>{node.detail}</p>}
+            </article>
+          ))}
+        </div>
+      </section>
+      <section class="risk-column risk-outcomes">
+        <div class="risk-column-head"><span>03</span><strong>Underwriting impact</strong></div>
+        <div class="risk-card-list">
+          {(transmissionOutcomes.length ? transmissionOutcomes : transmissionNodes.slice(-1)).map((node: any) => (
+            <article class:list={['risk-card', 'is-outcome', toneClass(node.tone)]}>
+              <strong>{node.label}</strong>
+              {node.detail && <p>{node.detail}</p>}
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  )}
+
+  {(type === 'sensitivity' || type === 'xy') && <div id={chartId} class="echart-figure chart-sensitivity" data-chart-type={type}></div>}
+
+  {type === 'other' && (
+    <div class="figure-fallback" role="note">
+      <strong>Structured figure data available</strong>
+      <p>This figure type does not yet have a dedicated renderer. Use a semantic type such as <code>recommendation-logic</code>, <code>risk-transmission-map</code>, <code>architecture-stack</code>, <code>risk-heatmap</code>, <code>metric-bars</code>, or <code>xy</code> for automatic visual rendering.</p>
     </div>
   )}
 
   {figure.approximationNotes && <p class="figure-note">{figure.approximationNotes}</p>}
   <ClaimRefs refs={blockRefs(figure)} claims={claims} sources={sources} />
+  {chartPayload && <script type="application/json" class="figure-chart-data" set:html={JSON.stringify(chartPayload)}></script>}
 </figure>
 
+<script>
+  import * as echarts from 'echarts/core';
+  import { BarChart, GraphChart, HeatmapChart, ScatterChart } from 'echarts/charts';
+  import { GridComponent, MarkLineComponent, TooltipComponent, VisualMapComponent } from 'echarts/components';
+  import { CanvasRenderer } from 'echarts/renderers';
+
+  echarts.use([BarChart, GraphChart, HeatmapChart, ScatterChart, GridComponent, MarkLineComponent, TooltipComponent, VisualMapComponent, CanvasRenderer]);
+
+  const palette = {
+    claret: '#990f3d',
+    ink: '#33302e',
+    muted: '#6b625c',
+    border: '#d8ccc2',
+    paper: '#fff7ef',
+    positive: '#0f766e',
+    risk: '#b42318',
+    opportunity: '#b8860b',
+    neutral: '#990f3d',
+  };
+
+  const arr = (value) => Array.isArray(value) ? value : [];
+  const colorForTone = (tone) => {
+    if (tone === 'positive' || tone === 'low') return palette.positive;
+    if (tone === 'risk' || tone === 'critical' || tone === 'high') return palette.risk;
+    if (tone === 'opportunity') return palette.opportunity;
+    return palette.neutral;
+  };
+  const riskValue = (tone) => {
+    if (tone === 'high' || tone === 'critical' || tone === 'risk') return 3;
+    if (tone === 'medium' || tone === 'neutral') return 2;
+    return 1;
+  };
+  const baseText = {
+    fontFamily: 'Mona Sans, Noto Sans SC, sans-serif',
+    color: palette.ink,
+  };
+  const chartFont = {
+    axis: 14,
+    label: 14,
+    heatmap: 13,
+    tooltip: 14,
+  };
+  const axisStyle = {
+    axisLine: { lineStyle: { color: palette.border } },
+    axisTick: { lineStyle: { color: palette.border } },
+    axisLabel: { color: palette.muted, fontSize: chartFont.axis },
+    splitLine: { lineStyle: { color: '#eaded4' } },
+  };
+  const tooltip = {
+    trigger: 'item',
+    confine: true,
+    backgroundColor: '#fff7ef',
+    borderColor: palette.border,
+    textStyle: { color: palette.ink, fontSize: chartFont.tooltip },
+  };
+  const labelText = (text, max = 24) => String(text ?? '').length > max ? `${String(text).slice(0, max - 1)}…` : String(text ?? '');
+  const numberValue = (value) => Number(value) || 0;
+  const valueLabel = (item) => item?.displayValue ?? item?.value ?? '';
+
+  const graphOption = (payload) => {
+    const nodes = arr(payload.data.nodes);
+    const edges = arr(payload.data.edges);
+    const columns = Math.min(Math.max(nodes.length, 1), payload.type === 'decision-map' ? 5 : 4);
+    const chartNodes = nodes.map((node, index) => {
+      const col = index % columns;
+      const row = Math.floor(index / columns);
+      return {
+        id: node.id,
+        name: node.label,
+        value: node.detail,
+        x: col * 210,
+        y: row * 135,
+        symbolSize: 54,
+        itemStyle: { color: colorForTone(node.tone), borderColor: '#fff7ef', borderWidth: 3 },
+        label: { show: true, formatter: labelText(node.label, 26), color: palette.ink, fontSize: chartFont.label, fontWeight: 700, position: 'bottom', width: 172, overflow: 'break' },
+        tooltip: { formatter: `<strong>${node.label}</strong><br/>${node.detail ?? ''}` },
+      };
+    });
+    return {
+      textStyle: baseText,
+      tooltip,
+      animationDuration: 500,
+      grid: { left: 8, right: 8, top: 8, bottom: 8 },
+      series: [{
+        type: 'graph',
+        layout: 'none',
+        coordinateSystem: null,
+        roam: false,
+        draggable: false,
+        edgeSymbol: ['none', 'arrow'],
+        edgeSymbolSize: [0, 11],
+        symbol: 'rect',
+        data: chartNodes,
+        links: edges.map((edge) => ({ source: edge.from, target: edge.to, label: { show: Boolean(edge.label), formatter: edge.label, color: palette.muted, fontSize: chartFont.heatmap }, lineStyle: { color: palette.claret, width: 1.6, curveness: 0.08 } })),
+        lineStyle: { color: palette.claret, width: 1.6, opacity: 0.75, curveness: 0.08 },
+        emphasis: { focus: 'adjacency' },
+      }],
+    };
+  };
+
+  const barOption = (payload) => {
+    const items = arr(payload.data.items).length ? arr(payload.data.items) : arr(arr(payload.data.series)[0]?.points);
+    const isMetric = payload.type === 'metric-bars';
+    return {
+      textStyle: baseText,
+      tooltip,
+      grid: { left: isMetric ? 172 : 150, right: 62, top: 12, bottom: 22 },
+      xAxis: { type: 'value', ...axisStyle },
+      yAxis: { type: 'category', data: items.map((item) => item.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, width: 172, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
+      series: [{
+        type: 'bar',
+        data: items.map((item) => ({ value: numberValue(item.value), itemStyle: { color: colorForTone(item.tone) }, label: { formatter: valueLabel(item) } })),
+        barWidth: isMetric ? 20 : 18,
+        itemStyle: { borderColor: palette.paper, borderWidth: 1 },
+        label: { show: true, position: 'right', color: palette.ink, fontFamily: 'Mona Sans, Noto Sans SC, sans-serif', fontSize: chartFont.label, fontWeight: isMetric ? 800 : 650 },
+      }],
+    };
+  };
+
+  const waterfallOption = (payload) => {
+    const items = arr(payload.data.items);
+    let running = 0;
+    const bases = [];
+    const values = [];
+    items.forEach((item) => {
+      const value = numberValue(item.value);
+      const start = Math.min(running, running + value);
+      bases.push(start);
+      values.push({ value: Math.abs(value), rawValue: value, label: { formatter: valueLabel(item) }, itemStyle: { color: value < 0 ? palette.risk : colorForTone(item.tone) } });
+      running += value;
+    });
+    return {
+      textStyle: baseText,
+      tooltip: { ...tooltip, formatter: (params) => `<strong>${params.name}</strong><br/>${params.data?.rawValue ?? params.value}` },
+      grid: { left: 50, right: 32, top: 18, bottom: 72 },
+      xAxis: { type: 'category', data: items.map((item) => item.label), axisLabel: { color: palette.ink, fontSize: chartFont.axis, interval: 0, width: 118, overflow: 'break', lineHeight: 18 }, axisLine: { lineStyle: { color: palette.border } }, axisTick: { show: false } },
+      yAxis: { type: 'value', ...axisStyle },
+      series: [
+        { type: 'bar', stack: 'total', data: bases, itemStyle: { color: 'transparent' }, emphasis: { disabled: true }, silent: true },
+        { type: 'bar', stack: 'total', data: values, barWidth: 24, label: { show: true, position: 'top', color: palette.ink, fontSize: chartFont.label, fontWeight: 700 } },
+      ],
+    };
+  };
+
+  const quadrantOption = (payload) => {
+    const points = arr(payload.data.points);
+    return {
+      textStyle: baseText,
+      tooltip,
+      grid: { left: 44, right: 28, top: 24, bottom: 44 },
+      xAxis: { min: 0, max: 100, name: payload.data.xAxis ?? 'X', nameLocation: 'middle', nameGap: 28, ...axisStyle },
+      yAxis: { min: 0, max: 100, name: payload.data.yAxis ?? 'Y', nameLocation: 'middle', nameGap: 32, ...axisStyle },
+      series: [{
+        type: 'scatter',
+        symbolSize: 24,
+        data: points.map((point) => ({ name: point.label, value: [Number(point.x) || 50, Number(point.y) || 50], itemStyle: { color: colorForTone(point.tone) }, label: { formatter: point.label } })),
+        label: { show: true, position: 'right', color: palette.ink, fontSize: chartFont.label, fontWeight: 700 },
+        markLine: { silent: true, symbol: 'none', lineStyle: { color: palette.border, type: 'dashed' }, data: [{ xAxis: 50 }, { yAxis: 50 }] },
+      }],
+    };
+  };
+
+  const heatmapOption = (payload) => {
+    const columns = arr(payload.data.columns);
+    const rows = arr(payload.data.rows);
+    const cells = [];
+    const heatColors = {
+      1: '#dcebe7',
+      2: '#f2d8a0',
+      3: '#c94f43',
+    };
+    const heatTextColors = {
+      1: palette.ink,
+      2: palette.ink,
+      3: '#fff7ef',
+    };
+    const riskLabel = (value) => value >= 3 ? 'High' : value === 2 ? 'Medium' : 'Low';
+    const rowLabelWidth = Math.min(196, Math.max(128, Math.max(...rows.map((row) => String(row.label ?? '').length), 8) * 8));
+    rows.forEach((row, rowIndex) => arr(row.values).forEach((cell, colIndex) => {
+      const value = riskValue(cell.tone);
+      const label = cell.label ?? cell;
+      cells.push({
+        value: [colIndex, rowIndex, value, label, cell.tone ?? riskLabel(value).toLowerCase(), row.label ?? '', columns[colIndex] ?? ''],
+        itemStyle: {
+          color: heatColors[value],
+          borderColor: '#fff7ef',
+          borderWidth: 4,
+          borderRadius: 7,
+        },
+        label: {
+          color: heatTextColors[value],
+          fontWeight: value >= 2 ? 800 : 650,
+        },
+      });
+    }));
+    return {
+      textStyle: baseText,
+      backgroundColor: '#fff7ef',
+      tooltip: {
+        ...tooltip,
+        extraCssText: 'box-shadow: none; border-radius: 0; line-height: 1.45;',
+        formatter: (params) => {
+          const value = params.value ?? [];
+          const severity = riskLabel(Number(value[2]) || 1);
+          return `<strong>${value[5] ?? ''} × ${value[6] ?? ''}</strong><br/><span style="color:${palette.muted}">${severity} signal</span><br/>${value[3] ?? ''}`;
+        },
+      },
+      grid: { left: rowLabelWidth, right: 22, top: 42, bottom: 38, containLabel: false },
+      xAxis: {
+        type: 'category',
+        data: columns,
+        position: 'top',
+        axisLabel: { color: palette.ink, fontSize: chartFont.axis, fontWeight: 800, margin: 12, interval: 0, width: 118, overflow: 'break', lineHeight: 18 },
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitArea: { show: true, areaStyle: { color: ['rgba(255,241,229,.38)', 'rgba(255,247,239,.44)'] } },
+      },
+      yAxis: {
+        type: 'category',
+        data: rows.map((row) => row.label),
+        inverse: true,
+        axisLabel: { color: palette.ink, fontSize: chartFont.axis, fontWeight: 800, margin: 14, width: rowLabelWidth - 18, overflow: 'break', lineHeight: 18 },
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitArea: { show: true, areaStyle: { color: ['rgba(255,247,239,.34)', 'rgba(255,241,229,.42)'] } },
+      },
+      visualMap: { show: false, min: 1, max: 3, inRange: { color: [heatColors[1], heatColors[2], heatColors[3]] } },
+      series: [{
+        type: 'heatmap',
+        data: cells,
+        label: { show: true, formatter: (params) => labelText(params.value?.[3], 34), fontSize: chartFont.heatmap, lineHeight: 18, overflow: 'break' },
+        emphasis: { itemStyle: { shadowBlur: 0, borderColor: palette.claret, borderWidth: 2 } },
+      }],
+    };
+  };
+
+  const sensitivityOption = (payload) => {
+    const series = arr(payload.data.series)[0] ?? {};
+    const points = arr(series.points);
+    return {
+      textStyle: baseText,
+      tooltip,
+      grid: { left: 122, right: 54, top: 22, bottom: 24 },
+      xAxis: { type: 'value', ...axisStyle },
+      yAxis: { type: 'category', data: points.map((point) => point.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, width: 156, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
+      series: [{ type: 'bar', data: points.map((point) => ({ value: Number(point.value) || 0, label: { formatter: point.displayValue ?? point.value } })), barWidth: 20, itemStyle: { color: palette.claret }, label: { show: true, position: 'right', color: palette.ink, fontSize: chartFont.label } }],
+    };
+  };
+
+  const xyOption = (payload) => {
+    const points = arr(payload.data.points).length ? arr(payload.data.points) : arr(arr(payload.data.series)[0]?.points);
+    return {
+      textStyle: baseText,
+      tooltip: { ...tooltip, formatter: (params) => `<strong>${params.name}</strong><br/>x: ${params.value?.[0] ?? ''}<br/>y: ${params.value?.[1] ?? ''}` },
+      grid: { left: 54, right: 32, top: 28, bottom: 50 },
+      xAxis: { type: 'value', name: payload.data.xAxis ?? 'X', nameLocation: 'middle', nameGap: 32, ...axisStyle },
+      yAxis: { type: 'value', name: payload.data.yAxis ?? 'Y', nameLocation: 'middle', nameGap: 38, ...axisStyle },
+      series: [{
+        type: 'scatter',
+        symbolSize: 24,
+        data: points.map((point) => ({ name: point.label, value: [numberValue(point.x ?? point.value?.[0]), numberValue(point.y ?? point.value?.[1])], itemStyle: { color: colorForTone(point.tone) } })),
+        label: { show: true, position: 'right', color: palette.ink, fontSize: chartFont.label, fontWeight: 700, formatter: (params) => labelText(params.name, 22) },
+      }],
+    };
+  };
+
+  const optionFor = (payload) => {
+    if (['flow', 'decision-map', 'evidence-map'].includes(payload.type)) return graphOption(payload);
+    if (payload.type === 'waterfall') return waterfallOption(payload);
+    if (['bars', 'metric-bars', 'pie'].includes(payload.type)) return barOption(payload);
+    if (['quadrant', 'competitive-matrix'].includes(payload.type)) return quadrantOption(payload);
+    if (['matrix', 'risk-heatmap'].includes(payload.type)) return heatmapOption(payload);
+    if (payload.type === 'xy') return xyOption(payload);
+    if (payload.type === 'sensitivity') return sensitivityOption(payload);
+    return {};
+  };
+
+  const charts = [];
+  const renderCharts = () => {
+    document.querySelectorAll('script.figure-chart-data').forEach((script) => {
+      if (script.dataset.rendered === 'true') return;
+      const payload = JSON.parse(script.textContent || '{}');
+      const element = document.getElementById(payload.id);
+      if (!element) return;
+      const chart = echarts.init(element, null, { renderer: 'canvas' });
+      chart.setOption(optionFor(payload));
+      charts.push(chart);
+      script.dataset.rendered = 'true';
+    });
+  };
+  renderCharts();
+  window.addEventListener('resize', () => charts.forEach((chart) => chart.resize()));
+</script>
+
 <style>
-  .native-figure { --figure-width: 760px; width: min(100%, var(--figure-width)); margin: var(--space-6) auto; padding: var(--space-4); background: linear-gradient(180deg, color-mix(in srgb, var(--surface-paper) 72%, transparent), color-mix(in srgb, var(--surface-paper) 48%, transparent)); border-top: 2px solid var(--claret); box-shadow: 0 18px 40px rgba(0,0,0,0.045); }
+  .native-figure { --figure-width: 760px; --report-fs-kicker: clamp(0.76rem, 0.1vw + 0.72rem, 0.84rem); --report-fs-caption: clamp(0.8rem, 0.12vw + 0.76rem, 0.9rem); --report-fs-body: clamp(0.94rem, 0.14vw + 0.88rem, 1.02rem); --report-fs-note: clamp(0.9rem, 0.12vw + 0.86rem, 0.98rem); width: min(100%, var(--figure-width)); margin: var(--space-6) auto var(--space-6) 0; padding: var(--space-4); background: var(--surface-paper); border: var(--report-rule); border-top: 2px solid var(--claret); }
   .layout-compact { --figure-width: 560px; }
   .layout-standard { --figure-width: 760px; }
   .layout-wide { --figure-width: 980px; }
-  figcaption { margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-2xs); font-weight: 700; letter-spacing: 0.04em; line-height: 1.35; color: var(--claret); }
-  .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--fs-sm); line-height: 1.5; }
+  figcaption { margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker, 0.9rem); font-weight: 700; letter-spacing: 0.04em; line-height: 1.35; color: var(--claret); }
+  .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--report-fs-note, 1rem); line-height: 1.55; }
   .figure-note { margin-top: var(--space-3); }
+  .echart-figure { width: 100%; min-height: 340px; margin: var(--space-3) 0; }
+  .chart-relationship { min-height: 430px; }
+  .chart-bars, .chart-sensitivity { min-height: 240px; }
+  .chart-quadrant { min-height: 380px; }
+  .chart-heatmap { min-height: 430px; }
+  .figure-fallback { border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); padding: var(--space-4); }
+  .figure-fallback strong { display: block; margin-bottom: var(--space-2); font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); }
+  .figure-fallback p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.55; }
+  .figure-fallback code { font-family: var(--font-mono); color: var(--claret); }
   .timeline-viz { position: relative; display: grid; gap: var(--space-3); margin: 0; padding: 0 0 0 var(--space-5); list-style: none; }
-  .timeline-viz::before { content: ''; position: absolute; left: 0.43rem; top: 0.35rem; bottom: 0.35rem; width: 2px; background: linear-gradient(var(--claret), color-mix(in srgb, var(--claret) 18%, transparent)); }
+  .timeline-viz::before { content: ''; position: absolute; left: 0.43rem; top: 0.35rem; bottom: 0.35rem; width: 2px; background: var(--claret); }
   .timeline-viz li { position: relative; display: grid; grid-template-columns: minmax(92px, 0.25fr) minmax(0, 1fr); gap: var(--space-3); border-top: var(--report-rule); padding-top: var(--space-3); }
-  .timeline-viz li::before { content: ''; position: absolute; left: calc(-1 * var(--space-5) + 0.09rem); top: var(--space-3); width: 0.78rem; height: 0.78rem; border: 2px solid var(--claret); border-radius: 999px; background: var(--surface-page); box-shadow: 0 0 0 4px color-mix(in srgb, var(--claret) 8%, transparent); }
-  .timeline-marker, .flow-node span { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--claret); }
-  .timeline-viz strong, .flow-node strong, .stack-layer strong { font-family: var(--font-display); font-size: var(--fs-md); line-height: 1.2; }
-  .timeline-viz p, .flow-node p, .stack-layer p { grid-column: 2; margin: 0; color: var(--caption-gray); font-size: var(--fs-sm); line-height: 1.45; }
-  .flow-viz { display: grid; gap: var(--space-3); }
-  .flow-grid { counter-reset: flow-step; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--space-4); align-items: stretch; }
-  .flow-node, .stack-layer { position: relative; border-top: 2px solid var(--claret); background: color-mix(in srgb, var(--surface-paper) 62%, transparent); padding: var(--space-3); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--claret) 8%, transparent); }
-  .flow-node::after { content: '→'; position: absolute; right: calc(-1 * var(--space-3)); top: 50%; transform: translateY(-50%); color: var(--claret); font-family: var(--font-display); font-size: var(--fs-xl); line-height: 1; }
-  .flow-node:last-child::after { content: none; }
-  .flow-node i { position: absolute; right: var(--space-2); top: var(--space-2); font-style: normal; font-family: var(--font-mono); font-size: var(--fs-2xs); color: color-mix(in srgb, var(--caption-gray) 78%, transparent); }
-  .edge-list { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-3) 0 0; padding: 0; list-style: none; font-family: var(--font-sans); font-size: var(--fs-xs); color: var(--caption-gray); }
-  .edge-list::before { content: 'relationships'; align-self: center; font-variant-caps: all-small-caps; letter-spacing: 0.05em; color: var(--claret); }
-  .edge-list li { display: flex; align-items: center; gap: 0.45rem; border: var(--report-rule); background: color-mix(in srgb, var(--surface-paper) 42%, transparent); padding: var(--space-1) var(--space-2); }
-  .edge-list b { color: var(--claret); }
-  .edge-list em { font-style: normal; color: var(--ink-page); }
-  .bars-viz { display: grid; gap: var(--space-3); }
-  .bars-viz.compact { margin-top: var(--space-2); }
-  .bar-row { display: grid; grid-template-columns: minmax(130px, 0.8fr) minmax(160px, 1.5fr) auto; gap: var(--space-3); align-items: center; }
-  .bar-label { display: grid; gap: 0.1rem; font-family: var(--font-sans); font-size: var(--fs-sm); }
-  .bar-label span { color: var(--caption-gray); font-size: var(--fs-xs); }
-  .bar-track { height: 0.72rem; background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--claret) 7%, transparent), color-mix(in srgb, var(--claret) 7%, transparent) 1px, transparent 1px, transparent 20%); border: 1px solid color-mix(in srgb, var(--claret) 14%, transparent); overflow: hidden; }
-  .bar-track span { display: block; height: 100%; background: linear-gradient(90deg, color-mix(in srgb, var(--claret) 84%, #000), var(--claret)); }
-  .bar-row b { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-page); }
-  .quadrant-viz { position: relative; min-height: 380px; border: var(--report-rule); background: linear-gradient(90deg, transparent 49.8%, var(--border-muted) 50%, transparent 50.2%), linear-gradient(0deg, transparent 49.8%, var(--border-muted) 50%, transparent 50.2%), radial-gradient(circle at 75% 75%, color-mix(in srgb, #0f766e 9%, transparent), transparent 42%), radial-gradient(circle at 75% 25%, color-mix(in srgb, var(--gold) 11%, transparent), transparent 42%); }
-  .axis { position: absolute; font-family: var(--font-sans); font-size: var(--fs-xs); color: var(--caption-gray); }
-  .axis-y { left: var(--space-2); top: var(--space-2); writing-mode: vertical-rl; }
-  .axis-x { right: var(--space-2); bottom: var(--space-2); }
-  .quad-label { position: absolute; font-family: var(--font-sans); font-size: var(--fs-2xs); color: color-mix(in srgb, var(--caption-gray) 72%, transparent); text-transform: uppercase; letter-spacing: 0.05em; }
-  .quad-top-left { left: var(--space-2); top: var(--space-2); }
-  .quad-top-right { right: var(--space-2); top: var(--space-2); }
-  .quad-bottom-left { left: var(--space-2); bottom: var(--space-2); }
-  .quad-bottom-right { right: var(--space-2); bottom: var(--space-2); }
-  .quad-point { position: absolute; transform: translate(-50%, 50%); display: inline-flex; align-items: center; gap: 0.35rem; max-width: 16ch; border-top: 2px solid var(--claret); background: var(--surface-page); padding: var(--space-2); font-family: var(--font-sans); font-size: var(--fs-xs); line-height: 1.2; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
-  .quad-point b { display: inline-block; width: 0.58rem; height: 0.58rem; border-radius: 999px; background: var(--claret); flex: 0 0 auto; }
-  .matrix-viz { display: grid; grid-template-columns: minmax(120px, 0.8fr) repeat(var(--matrix-cols), minmax(130px, 1fr)); gap: 2px; overflow-x: auto; background: var(--border-muted); border: var(--report-rule); }
-  .matrix-viz > * { min-height: 4.7rem; background: var(--surface-page); padding: var(--space-3); font-family: var(--font-sans); font-size: var(--fs-xs); }
-  .matrix-head, .matrix-row-head { color: var(--claret); font-variant-caps: all-small-caps; letter-spacing: 0.04em; }
-  .matrix-cell { display: flex; align-items: end; line-height: 1.25; }
+  .timeline-viz li::before { content: ''; position: absolute; left: calc(-1 * var(--space-5) + 0.09rem); top: var(--space-3); width: 0.78rem; height: 0.78rem; border: 2px solid var(--claret); background: var(--surface-paper); }
+  .timeline-marker { font-family: var(--font-mono); font-size: var(--report-fs-caption, 0.98rem); color: var(--claret); }
+  .timeline-viz strong, .stack-layer strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.25; }
+  .timeline-viz p, .stack-layer p { grid-column: 2; margin: 0; color: var(--caption-gray); font-size: var(--report-fs-note, 1rem); line-height: 1.55; }
   .stack-viz { display: grid; gap: var(--space-2); }
   .figure-architecture-stack .stack-viz { grid-template-columns: minmax(0, 1fr); }
-  .stack-layer { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); align-items: start; }
+  .stack-layer { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); align-items: start; border: var(--report-rule); border-top: 2px solid var(--claret); background: var(--surface-paper); padding: var(--space-3); }
   .stack-layer span { width: 0.72rem; height: 100%; min-height: 2rem; background: var(--claret); opacity: 0.8; }
   .stack-layer p { grid-column: 2; }
-  .sensitivity-viz { display: grid; gap: var(--space-4); }
-  .sensitivity-viz > section { border-top: var(--report-rule); padding-top: var(--space-3); }
-  .sensitivity-viz > section > strong { font-family: var(--font-display); font-size: var(--fs-md); }
-  .scale { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: var(--space-2); color: var(--caption-gray); font-family: var(--font-mono); font-size: var(--fs-2xs); text-transform: uppercase; }
-  .scale span:nth-child(2) { text-align: center; }
-  .scale span:nth-child(3) { text-align: right; }
+  .market-sizing-viz { display: grid; gap: var(--space-3); }
+  .market-sizing-axis { display: flex; justify-content: space-between; gap: var(--space-3); border-bottom: var(--report-rule); padding-bottom: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
+  .market-sizing-stack { display: grid; gap: var(--space-2); }
+  .market-layer { position: relative; display: grid; justify-self: center; box-sizing: border-box; width: var(--market-layer-width, 100%); gap: var(--space-2); min-height: 7.5rem; border: var(--report-rule); border-left: 5px solid var(--claret); background: var(--surface-paper); padding: var(--space-4); }
+  .market-layer::after { content: ''; position: absolute; inset: auto 0 0; height: 0; border-bottom: var(--report-rule); opacity: 0.8; }
+  .market-layer:not(:last-child)::before { content: '↓'; position: absolute; left: 50%; bottom: -1rem; z-index: 2; display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border: var(--report-rule); background: var(--surface-paper); color: var(--claret); font-family: var(--font-display); font-weight: 800; transform: translateX(-50%); }
+  .market-layer-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+  .market-layer-head span { font-family: var(--font-display); font-size: clamp(1.15rem, 2.75vw, 2.05rem); font-weight: 900; line-height: 1; letter-spacing: -0.04em; color: color-mix(in srgb, var(--claret) 88%, var(--ink-page)); }
+  .market-layer-head strong { max-width: 17rem; text-align: right; font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.16; letter-spacing: var(--tracking-display-snug); color: var(--ink-page); }
+  .market-layer p { max-width: 62rem; margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.5; }
+  .market-layer.layer-3 { background: color-mix(in srgb, var(--teal) 7%, var(--surface-paper)); }
+  .market-layer.tone-positive { border-left-color: #0f766e; }
+  .market-layer.tone-opportunity { border-left-color: var(--gold); }
+  .market-layer.tone-risk, .market-layer.tone-critical, .market-layer.tone-high { border-left-color: #b42318; }
+  .market-sizing-warning { border: var(--report-rule); border-left: 4px solid var(--gold); background: color-mix(in srgb, var(--gold) 7%, var(--surface-paper)); padding: var(--space-3); }
+  .market-sizing-warning strong { display: block; margin-bottom: var(--space-1); font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); }
+  .market-sizing-warning p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-note, 1rem); line-height: 1.45; }
+  .unit-economics-viz { display: grid; grid-template-columns: minmax(190px, 0.32fr) minmax(0, 1fr); gap: var(--space-4); align-items: stretch; }
+  .unit-anchor-card { display: grid; align-content: start; gap: var(--space-3); border: var(--report-rule); border-top: 4px solid #0f766e; background: color-mix(in srgb, #0f766e 6%, var(--surface-paper)); padding: var(--space-4); }
+  .unit-anchor-card span { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: #0f766e; }
+  .unit-anchor-card strong { font-family: var(--font-display); font-size: clamp(1.25rem, 2.55vw, 2.05rem); line-height: 1; letter-spacing: var(--tracking-display-snug); color: var(--ink-page); }
+  .unit-anchor-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
+  .unit-waterfall-chain { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
+  .unit-step-card { position: relative; display: grid; align-content: start; gap: var(--space-3); min-height: 14rem; border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); }
+  .unit-step-card:not(:last-child)::after { content: '−'; position: absolute; top: 50%; right: -0.7rem; z-index: 2; display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border: var(--report-rule); background: var(--surface-paper); color: #b42318; font-family: var(--font-display); font-weight: 900; transform: translateY(-50%); }
+  .unit-step-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: #b42318; }
+  .unit-step-kicker { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
+  .unit-step-kicker span { font-family: var(--font-mono); color: var(--claret); }
+  .unit-step-kicker em { font-style: normal; }
+  .unit-step-card strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.18; letter-spacing: var(--tracking-display-snug); }
+  .unit-step-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
+  .unit-step-card.is-outcome { background: color-mix(in srgb, #b42318 5%, var(--surface-paper)); }
+  .unit-step-card.is-outcome strong { color: #b42318; }
+  .customer-surface-viz { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-areas: 'entry enterprise developer ecosystem' 'entry deployment community ecosystem'; border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
+  .customer-surface-card { position: relative; display: grid; align-content: start; gap: var(--space-3); min-height: 13rem; border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); }
+  .customer-surface-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: var(--claret); }
+  .customer-surface-card:not(:last-child)::after { content: '→'; position: absolute; top: 50%; right: -0.7rem; z-index: 2; display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border: var(--report-rule); background: var(--surface-paper); color: var(--claret); font-family: var(--font-display); font-weight: 800; transform: translateY(-50%); }
+  .customer-surface-card.surface-1 { grid-area: entry; min-height: 100%; background: color-mix(in srgb, #0f766e 6%, var(--surface-paper)); }
+  .customer-surface-card.surface-2 { grid-area: enterprise; }
+  .customer-surface-card.surface-3 { grid-area: developer; }
+  .customer-surface-card.surface-4 { grid-area: deployment; background: color-mix(in srgb, var(--gold) 6%, var(--surface-paper)); }
+  .customer-surface-card.surface-5 { grid-area: community; background: color-mix(in srgb, var(--gold) 6%, var(--surface-paper)); }
+  .surface-kicker { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
+  .surface-kicker span { font-family: var(--font-mono); color: var(--claret); }
+  .surface-kicker em { font-style: normal; }
+  .customer-surface-card strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.18; letter-spacing: var(--tracking-display-snug); }
+  .customer-surface-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
+  .customer-surface-card.tone-positive::before { background: #0f766e; }
+  .customer-surface-card.tone-opportunity::before { background: var(--gold); }
+  .customer-surface-card.tone-risk::before, .customer-surface-card.tone-critical::before, .customer-surface-card.tone-high::before { background: #b42318; }
+  .architecture-viz { display: grid; gap: var(--space-4); counter-reset: arch-layer; }
+  .arch-layer { position: relative; display: grid; grid-template-columns: minmax(160px, 0.32fr) minmax(0, 1fr); gap: var(--space-4); align-items: stretch; border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--surface-paper) 68%, transparent); padding: var(--space-3); }
+  .arch-layer:not(:last-child)::after { content: '↓'; position: absolute; left: calc(32% + var(--space-2)); bottom: calc(-1 * var(--space-4) - 0.25rem); z-index: 1; display: grid; place-items: center; width: 1.45rem; height: 1.45rem; background: var(--surface-page); color: var(--claret); font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1; }
+  .arch-layer-head { display: grid; align-content: start; gap: var(--space-2); border-right: var(--report-rule); padding-right: var(--space-3); }
+  .arch-layer-head span { width: fit-content; font-family: var(--font-mono); font-size: var(--report-fs-caption, 0.98rem); color: var(--claret); }
+  .arch-layer-head strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.2; }
+  .arch-layer-head p, .arch-detail, .arch-module p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-note, 1rem); line-height: 1.5; }
+  .arch-layer-body { display: grid; gap: var(--space-3); align-content: start; }
+  .arch-modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-3); }
+  .arch-module { min-height: 5.2rem; border: var(--report-rule); border-top: 2px solid var(--claret); background: var(--surface-paper); padding: var(--space-3); }
+  .arch-module strong { display: block; margin-bottom: var(--space-1); font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.2; }
+  .arch-outputs { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+  .arch-outputs li { border: var(--report-rule); background: color-mix(in srgb, var(--claret) 6%, transparent); padding: var(--space-1) var(--space-2); font-family: var(--font-sans); font-size: var(--report-fs-caption, 0.98rem); color: var(--claret); }
+  .recommendation-viz { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
+  .logic-card { position: relative; display: grid; align-content: start; gap: var(--space-3); min-height: 15rem; border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); }
+  .logic-card:not(:last-child)::after { content: '→'; position: absolute; top: 50%; right: -0.7rem; z-index: 2; display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border: var(--report-rule); background: var(--surface-paper); color: var(--claret); font-family: var(--font-display); font-weight: 800; transform: translateY(-50%); }
+  .logic-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: var(--claret); }
+  .logic-kicker { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
+  .logic-kicker span { font-family: var(--font-mono); color: var(--claret); }
+  .logic-kicker em { font-style: normal; color: var(--caption-gray); }
+  .logic-card strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.18; letter-spacing: var(--tracking-display-snug); }
+  .logic-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
+  .logic-card.tone-positive::before { background: #0f766e; }
+  .logic-card.tone-risk::before, .logic-card.tone-critical::before, .logic-card.tone-high::before { background: #b42318; }
+  .logic-card.tone-opportunity::before { background: var(--gold); }
+  .logic-card.is-outcome { background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); }
+  .logic-card.is-outcome strong { color: var(--claret); }
+  .risk-transmission-viz { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr) minmax(0, 0.95fr); border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
+  .risk-column { position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: var(--space-3); border-right: var(--report-rule); border-bottom: var(--report-rule); padding: var(--space-4); }
+  .risk-column:not(:last-child)::after { content: '→'; position: absolute; top: 50%; right: -0.72rem; z-index: 2; display: grid; place-items: center; width: 1.44rem; height: 1.44rem; border: var(--report-rule); background: var(--surface-paper); color: var(--claret); font-family: var(--font-display); font-weight: 800; transform: translateY(-50%); }
+  .risk-column-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); border-bottom: var(--report-rule); padding-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  .risk-column-head span { font-family: var(--font-mono); font-size: var(--report-fs-caption, 0.98rem); color: var(--caption-gray); }
+  .risk-column-head strong { font-size: var(--report-fs-kicker, 0.9rem); line-height: 1.2; }
+  .risk-card-list { display: grid; align-content: start; gap: var(--space-3); }
+  .risk-card { position: relative; display: grid; gap: var(--space-2); border: var(--report-rule); border-left: 4px solid var(--claret); background: var(--surface-paper); padding: var(--space-3); }
+  .risk-card strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.2; letter-spacing: var(--tracking-display-snug); }
+  .risk-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
+  .risk-card.tone-risk, .risk-card.tone-critical, .risk-card.tone-high { border-left-color: #b42318; }
+  .risk-card.tone-positive { border-left-color: #0f766e; }
+  .risk-card.tone-opportunity { border-left-color: var(--gold); }
+  .risk-card.is-bridge { background: color-mix(in srgb, #b42318 5%, var(--surface-paper)); }
+  .risk-card.is-outcome { background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); border-left-color: var(--claret); }
+  .risk-card.is-outcome strong { color: var(--claret); }
   .tone-positive { border-top-color: #0f766e; }
   .tone-risk, .tone-critical, .tone-high { border-top-color: #b42318; }
   .tone-opportunity { border-top-color: var(--gold); }
   .tone-neutral, .tone-medium { border-top-color: var(--claret); }
-  .tone-positive .bar-track span, .tone-positive.stack-layer span, .tone-positive.quad-point b { background: #0f766e; }
-  .tone-risk .bar-track span, .tone-critical .bar-track span, .tone-high .bar-track span, .tone-risk.stack-layer span, .tone-critical.stack-layer span, .tone-high.stack-layer span, .tone-risk.quad-point b, .tone-critical.quad-point b, .tone-high.quad-point b { background: #b42318; }
-  .tone-opportunity .bar-track span, .tone-opportunity.stack-layer span, .tone-opportunity.quad-point b { background: var(--gold); }
-  .matrix-cell.tone-high, .matrix-cell.tone-critical { background: color-mix(in srgb, #b42318 12%, var(--surface-page)); }
-  .matrix-cell.tone-medium { background: color-mix(in srgb, var(--gold) 16%, var(--surface-page)); }
-  .matrix-cell.tone-low, .matrix-cell.tone-positive { background: color-mix(in srgb, #0f766e 10%, var(--surface-page)); }
-  @media (max-width: 700px) { .bar-row, .timeline-viz li { grid-template-columns: 1fr; } .timeline-viz p { grid-column: auto; } .flow-node::after { content: none; } }
+  .arch-layer.tone-positive, .arch-module.tone-positive { border-left-color: #0f766e; border-top-color: #0f766e; }
+  .arch-layer.tone-risk, .arch-layer.tone-critical, .arch-layer.tone-high, .arch-module.tone-risk, .arch-module.tone-critical, .arch-module.tone-high { border-left-color: #b42318; border-top-color: #b42318; }
+  .arch-layer.tone-opportunity, .arch-module.tone-opportunity { border-left-color: var(--gold); border-top-color: var(--gold); }
+  .tone-positive.stack-layer span { background: #0f766e; }
+  .tone-risk.stack-layer span, .tone-critical.stack-layer span, .tone-high.stack-layer span { background: #b42318; }
+  .tone-opportunity.stack-layer span { background: var(--gold); }
+  @media (max-width: 900px) { .recommendation-viz, .risk-transmission-viz, .unit-waterfall-chain, .customer-surface-viz { grid-template-columns: 1fr; grid-template-areas: none; } .unit-economics-viz { grid-template-columns: 1fr; } .logic-card, .unit-step-card, .customer-surface-card { min-height: auto; grid-area: auto; } .logic-card:not(:last-child)::after, .risk-column:not(:last-child)::after, .unit-step-card:not(:last-child)::after, .customer-surface-card:not(:last-child)::after { top: auto; right: auto; left: 50%; bottom: -0.72rem; content: '↓'; transform: translateX(-50%); } }
+  @media (max-width: 700px) { .timeline-viz li, .arch-layer { grid-template-columns: 1fr; } .timeline-viz p { grid-column: auto; } .arch-layer-head { border-right: 0; border-bottom: var(--report-rule); padding: 0 0 var(--space-3); } .arch-layer:not(:last-child)::after { left: 50%; transform: translateX(-50%); } .market-layer-head { display: grid; } .market-layer-head strong { max-width: none; text-align: left; } }
 </style>

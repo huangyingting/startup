@@ -18,7 +18,7 @@ Do not search the web. Use only the evidence ledger. Every fact must cite `claim
 Structure this section as an investor-grade VC diligence chapter:
 
 - Market definitions and sizing table.
-- TAM/SAM/SOM analysis with a structured native figure spec.
+- TAM/SAM/SOM analysis with a `market-sizing-lens` structured native figure spec when evidence supports market-layer framing.
 - Market growth drivers and segment analysis.
 - Competitive overview, primary competitors, incumbent competitors, feature matrix, and moat assessment.
 - Structured quadrant or competitive-matrix figure for competitive positioning where evidence supports it.
@@ -29,6 +29,7 @@ Structure this section as an investor-grade VC diligence chapter:
 - Estimates require `estimateBasis`.
 - Competitors must be named real companies or clearly labeled substitutes.
 - Do not invent market share, penetration, or growth rates without evidence.
+- Do not use generic `flow` for TAM/SAM/SOM. Use `market-sizing-lens` with ordered TAM, SAM, and SOM nodes/items, and keep unsupported dollar values out of the figure.
 
 ## Handoff
 
