@@ -4,21 +4,118 @@ slug: openai
 runDate: 2026-05-01
 company:
   name: OpenAI
-publicComparables: []
-privateOrTransactionComparables: []
+publicComparables:
+  - company: CoreWeave
+    ticker: CRWV
+    category: AI 基础设施云
+    relevance: '可作为 AI 算力基础设施经济性与 OpenAI 供应商敞口的公开市场代理，但不是直接模型平台可比公司。'
+    revenueUsdM: 1915
+    revenuePeriod: FY2024
+    valuationUsdM: null
+    revenueMultiple: null
+    marginSignal: '2024 年收入成本为收入的 26%，技术与基础设施费用为收入的 50%，净亏损为 8.63 亿美元。'
+    notes: 'CoreWeave 披露 RPO 为 151 亿美元，拥有 32 个活跃数据中心、超过 25 万个 GPU，以及 OpenAI 到 2030 年 10 月最高约 119 亿美元的承诺。'
+    claimRefs: [C061, C062]
+privateOrTransactionComparables:
+  - company: Anthropic
+    transaction: F 轮融资
+    date: 2025-09-02
+    postMoneyValuationUsdM: 183000
+    roundSizeUsdM: 13000
+    revenueRunRateUsdM: 5000
+    impliedRevenueMultiple: 36.6
+    relevance: '最接近的私有前沿模型平台可比项，披露了估值与收入运行率。'
+    notes: 'Anthropic 还披露超过 30 万企业客户和大客户数同比近 7 倍增长，但数据为公司披露而非审计数据。'
+    claimRefs: [C063]
+  - company: OpenAI
+    transaction: 2025 年 3 月融资
+    date: 2025-03-31
+    postMoneyValuationUsdM: 300000
+    roundSizeUsdM: 40000
+    revenueRunRateUsdM: 10000
+    impliedRevenueMultiple: 30
+    relevance: '先前 OpenAI 市场出清融资锚，具备独立报道与后续 ARR 交叉验证。'
+    notes: 'CNBC 报道 400 亿美元融资对应 3000 亿美元 post-money，并随后称该估值按 2025 年 6 月指标约为 30 倍收入。'
+    claimRefs: [C052, C055, C056]
+  - company: OpenAI
+    transaction: SoftBank 2026 年后续投资
+    date: 2026-02-27
+    postMoneyValuationUsdM: 760000
+    roundSizeUsdM: 30000
+    revenueRunRateUsdM: 24000
+    impliedRevenueMultiple: 31.7
+    relevance: '在公司自报 2026 年 3 月 8520 亿美元 post-money 轮次前，由投资人披露的优先股融资锚。'
+    notes: '基于 SoftBank 披露的 7300 亿美元 pre-money 加 300 亿美元计划投资；分母使用 OpenAI 后续 240 亿美元年化收入运行率作为跨期粗略参照。'
+    claimRefs: [C038, C058, C059]
+  - company: Anthropic / AWS
+    transaction: 战略算力与投资扩张
+    date: 2026-04-20
+    postMoneyValuationUsdM: null
+    roundSizeUsdM: 5000
+    revenueRunRateUsdM: 30000
+    impliedRevenueMultiple: null
+    relevance: '算力承诺和战略融资可比项，而非纯估值可比项。'
+    notes: 'Anthropic 披露超过 1000 亿美元、十年 AWS 技术承诺以获取最高 5GW 容量，且 Amazon 立即投资 50 亿美元、未来可能追加最高 200 亿美元。'
+    claimRefs: [C064]
 valuationFramework:
   preferredApproach: revenue-multiple
-  rationale: '当前来源集合并未提供可直接用于比较的公开或私募估值基准及可用倍数，因此最不差的框架，是锚定 OpenAI 自身在 2026 年 3 月公司自报的融资，以及同一篇文章中披露的明确月收入声明。以每月 20 亿美元推导出的低置信度 240 亿美元年化收入运行率计算，披露的 8520 亿美元 post-money 估值对应约 35.5 倍收入。围绕这一观测锚点给出 25 倍到 50 倍运行率收入的合理敏感性区间，可得到约 6000 亿到 1.2 万亿美元的估值区间，同时反映执行上行空间以及毛利率、留存与资本效率方面的重大不透明性。'
+  rationale: '刷新后新增了可用但不完美的市场锚点：CNBC 对 OpenAI 2025 年 3 月融资的报道按 2025 年 6 月 ARR 约为 30 倍收入，SoftBank 2026 年后续投资约为后续年化收入运行率的 31.7 倍，Anthropic 2025 年 9 月 F 轮约为披露收入运行率的 36.6 倍。CoreWeave 是用于算力经济性的公开 AI 基础设施可比项，而不是模型平台倍数。以 OpenAI 公司自报的 2026 年 3 月月收入推导出的低置信度 240 亿美元年化收入运行率计算，8520 亿美元 post-money 估值对应约 35.5 倍收入，与私有前沿 AI 可比项大体一致，但在缺乏经审计毛利率、留存、烧钱和客户集中度的情况下仍然很苛刻。'
   impliedValueLowUsdM: 600000
   impliedValueMidUsdM: 852000
   impliedValueHighUsdM: 1200000
   keyAssumptions:
     - '采用由公司自报的 2026 年 3 月约 20 亿美元月收入推导出的低置信度 240 亿美元年化收入运行率。'
-    - '将 2026 年 3 月公司自报、post-money 估值为 8520 亿美元的融资，视为当前来源集合中最清晰的市场出清锚点。'
+    - '用 CNBC 的 2025 年融资/ARR 报道、SoftBank 2026 年优先股后续投资披露，以及 Anthropic 披露的 F 轮估值和收入运行率进行交叉验证。'
+    - '将 CoreWeave 视为基础设施成本与供应商敞口可比项，而非 OpenAI 模型/应用平台的干净估值倍数。'
     - '由于公开证据未披露经审计的分部结构、毛利率、留存、烧钱或客户集中度，因此采用 25 倍到 50 倍收入的宽敏感性区间。'
-  sensitivityNotes: '一旦对收入耐久性、企业收入占比或资本强度的信心发生小幅变化，公允价值就可能大幅波动，因为当前轮次本身已经是在公司自报收入基础上给出的极高倍数。'
+  sensitivityNotes: '一旦对收入耐久性、企业收入占比、Microsoft 收入分成负担、算力承诺或资本强度的信心发生小幅变化，公允价值就可能大幅波动，因为当前轮次本身已经是在部分公司自报收入基础上给出的高倍数。'
   confidence: low
-  claimRefs: [C038, C039, C044, C048]
+  claimRefs: [C038, C039, C044, C048, C052, C055, C056, C058, C061, C063]
+valuationBridge:
+  currentValuationUsdM: 852000
+  annualizedRevenueRunRateUsdM: 24000
+  impliedRevenueMultiple: 35.5
+  publicCompsMedianMultiple: null
+  privateCompsMedianMultiple: 35.5
+  growthPremiumPct: null
+  marginDiscountPct: null
+  governanceDiscountPct: null
+  liquidityDiscountPct: null
+  fairValueRangeUsdM:
+    low: 600000
+    mid: 852000
+    high: 1200000
+  bridgeSteps:
+    - step: '2025 年独立报道 ARR 锚点'
+      value: '100 亿美元 ARR 与 3000 亿美元 post-money'
+      interpretation: 'CNBC 的 2025 年报道隐含约 30 倍收入，并建立了一个宣传色彩较低的 2026 年前估值基准。'
+      claimRefs: [C052, C055, C056]
+    - step: '公司自报的 2026 年 3 月收入运行率'
+      value: '240 亿美元年化'
+      interpretation: '采用 20 亿美元月收入 × 12；由于为公司自报且未分部披露，置信度较低。'
+      claimRefs: [C038]
+    - step: 'SoftBank 优先股后续投资锚点'
+      value: '7300 亿美元 pre-money / 约 7600 亿美元 post-money'
+      interpretation: '投资人披露的 2026 年定价接近 OpenAI 随后公司自报的 8520 亿美元 post-money 锚点。'
+      claimRefs: [C058, C059]
+    - step: '私有前沿 AI 可比项'
+      value: 'Anthropic 约为披露收入运行率的 36.6 倍'
+      interpretation: 'Anthropic 支持私有前沿 AI 轮次可按极高收入倍数出清，但公司披露数据和算力义务限制了可比性。'
+      claimRefs: [C063, C064]
+    - step: '观测到的 post-money 估值'
+      value: '8520 亿美元'
+      interpretation: '将 2026 年 3 月融资视为当前最清晰的市场出清锚点。'
+      claimRefs: [C038]
+    - step: '隐含收入倍数'
+      value: '35.5 倍'
+      interpretation: '与私有前沿 AI 可比倍数一致，但除非收入质量、毛利率和留存被证明异常出色，否则仍然非常苛刻。'
+      claimRefs: [C038, C039, C063]
+    - step: '风险调整后的敏感性区间'
+      value: '6000 亿至 1.2 万亿美元'
+      interpretation: '宽区间反映了卓越战略地位与单位经济、治理和算力义务公开证据有限之间的拉扯。'
+      claimRefs: [C039, C044, C048, C057, C060, C062]
+  conclusion: '估值桥仍支持继续研究：该价格现在有更好的私有前沿 AI 可比项三角验证，但仍需要证明收入质量、算力经济性与投资人权利远强于当前公开可见水平。'
+  claimRefs: [C038, C039, C044, C048, C052, C055, C056, C058, C063]
 dealConsiderations:
   recommendedCheckUsdM: 85
   ownershipTargetPct: 0.01
@@ -27,9 +124,27 @@ dealConsiderations:
   alignmentRisks:
     - '使命优先治理赋予 OpenAI Foundation 相较于普通商业投资者异常强的控制权。'
     - 'Microsoft 已持有 OpenAI Group 约 27% 的股份，可能影响战略一致性与经济分配。'
+    - 'OpenAI 披露其对 Microsoft 的收入分成付款将持续至 2030 年，并受上限约束。'
+    - 'SoftBank 2026 年后续投资使用自动转换优先股，但完整优先权与投资者权利条款仍未披露。'
     - '在当前估值水平下，公开层面对利润率、烧钱与客户集中度的披露仍然薄弱。'
     - '关键人物依赖与领导层连续性仍是实质性考量。'
-  claimRefs: [C002, C003, C004, C005, C039, C045, C046]
+  claimRefs: [C002, C003, C004, C005, C039, C045, C046, C057, C058]
+ownershipSensitivity:
+  - entryValuationUsdM: 600000
+    checkSizeUsdM: 85
+    impliedOwnershipPct: 0.0142
+    requiredExitUsdMFor3x: 1800000
+    interpretation: '如果进入估值明显更低，则在 OpenAI 达到公开市场超大市值时，存在较可行的风投式上行路径。'
+  - entryValuationUsdM: 852000
+    checkSizeUsdM: 85
+    impliedOwnershipPct: 0.01
+    requiredExitUsdMFor3x: 2556000
+    interpretation: '在已披露估值锚下，若不考虑稀释，3 倍 gross outcome 需要约 2.6 万亿美元退出价值。'
+  - entryValuationUsdM: 1200000
+    checkSizeUsdM: 85
+    impliedOwnershipPct: 0.0071
+    requiredExitUsdMFor3x: 3600000
+    interpretation: '若以上行价格进入，则需要极其罕见的长期公开市场结果才能补偿新资金风险。'
 expectedReturns:
   exitScenarios:
     - name: downside
@@ -61,6 +176,36 @@ expectedReturns:
       claimRefs: [C018, C022, C031, C038, C041, C048, C050]
 valuationVerdict:
   stance: stretched
-  rationale: '即便承认增长很强，2026 年 3 月披露的融资仍意味着在公司自报收入基础上的约 35.5 倍年化运行率收入倍数，而公开层面对利润率、留存、烧钱与集中度的可见性仍十分有限。对于追求独特前沿 AI 敞口的投资者而言，这个价格或许仍可辩护，但除非 OpenAI 能实质性超越已经极高的预期，否则几乎不给传统风投式回报留下空间。'
+  rationale: '即便承认增长很强且现在拥有更好的可比项三角验证，2026 年 3 月披露的融资仍意味着在部分公司自报收入基础上的约 35.5 倍年化运行率收入倍数，而公开层面对利润率、留存、烧钱、集中度和投资人权利的可见性仍十分有限。对于追求独特前沿 AI 敞口的投资者而言，这个价格或许仍可辩护，Anthropic 披露的轮次也说明私有可比项可在类似倍数出清，但除非 OpenAI 能实质性超越已经极高的预期，否则几乎不给传统风投式回报留下空间。'
   confidence: medium
-  claimRefs: [C038, C039, C044, C048]
+  claimRefs: [C038, C039, C044, C048, C052, C055, C056, C058, C063, C064]
+exitPathAnalysis:
+  likelyExitPaths:
+    - path: ipo
+      likelihood: medium
+      earliestYear: 2030
+      blockers:
+        - '治理复杂性与 Foundation 控制可能需要更清晰的公开市场叙事。'
+        - '经审计的利润率、留存与资本开支画像需要支撑超大市值。'
+      claimRefs: [C002, C003, C038, C039]
+    - path: strategic-acquisition
+      likelihood: low
+      earliestYear: null
+      blockers:
+        - '规模、国家安全重要性与竞争审查，使被大型平台收购变得困难。'
+        - 'Microsoft 持股与伙伴条款会使任何替代战略流程更加复杂。'
+      claimRefs: [C004, C032, C033, C034, C035]
+    - path: secondary-liquidity
+      likelihood: high
+      earliestYear: 2027
+      blockers:
+        - '定价可能高度依赖持续准入需求，尽管财务披露有限。'
+        - '信息权和转让限制可能收窄买方范围。'
+      claimRefs: [C038, C039]
+  publicMarketReadiness:
+    revenueScale: strong
+    growthNarrative: strong
+    governance: weak
+    profitability: unknown
+    disclosureQuality: weak
+  verdict: 'IPO 是最清晰的长期流动性路径，但公开市场就绪度取决于能否把战略重要性转化为经审计的财务质量，以及公众投资者可以承销的治理叙事。'

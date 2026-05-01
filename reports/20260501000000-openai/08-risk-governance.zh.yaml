@@ -7,12 +7,12 @@ company:
 riskRegister:
   - id: R001
     category: financial
-    risk: '相较于底层单位经济学，公开估值与收入叙事要容易观察得多，这使投资者暴露于倍数压缩或利润率失望的风险。'
+    risk: '相较于底层单位经济学，公开估值与收入叙事要容易观察得多，这使投资者暴露于倍数压缩、利润率失望，或由算力与收入分成义务造成的现金流拖累风险。'
     severity: critical
     likelihood: high
     timeHorizon: near
     mitigation: '在承销价格之前，应要求获得经审计或其他可信方式披露的分部收入、毛利率、烧钱、留存和客户集中度。'
-    claimRefs: [C038, C039]
+    claimRefs: [C038, C039, C055, C056, C057, C060, C062]
   - id: R002
     category: governance
     risk: 'Foundation 控制与使命优先职责限制了普通投资者对董事会构成、战略和下行管理的影响力。'
@@ -63,21 +63,31 @@ riskRegister:
     claimRefs: [C030, C031, C033, C048]
   - id: R008
     category: funding
-    risk: '前沿模型开发在结构上仍然高度资本密集，因此即便收入极大，也可能同时伴随持续高额资本需求。'
+    risk: '前沿模型开发和部署在结构上仍然高度资本密集，因此即便收入极大，也可能同时伴随持续高额资本需求、供应商承诺与结构化融资复杂性。'
+    severity: high
+    likelihood: high
+    timeHorizon: medium
+    mitigation: '应获取对算力承诺、Microsoft 经济安排、基础设施融资、SPV、桥式融资以及情景级现金需求的可见性。'
+    claimRefs: [C044, C046, C057, C060, C062, C064]
+  - id: R009
+    category: financing-terms
+    risk: '融资条件、自动转换优先股、可转换票据和由桥式融资支持的后续投资，可能带来公开来源不可见的优先权、转换和信息权问题。'
     severity: high
     likelihood: medium
-    timeHorizon: medium
-    mitigation: '应获取对算力承诺、基础设施融资以及情景级现金需求的可见性。'
-    claimRefs: [C044, C046]
+    timeHorizon: near
+    mitigation: '投资前应审阅最终融资文件、清算优先权、转换触发条件、pro rata 权、信息权以及任何重组条件。'
+    claimRefs: [C051, C053, C058, C059]
 governance:
   controlStructure: 'OpenAI 采用 Foundation 加 PBC 的结构：OpenAI Foundation 治理 OpenAI Group PBC，任命全部 Group 董事，并通过独立董事会委员会监督安全。'
   keyPersonRisk: high
-  investorAlignment: '投资者具备经济上行空间，但治理明确以使命优先，董事会控制并不遵循普通风投惯例；Microsoft 也已持有较大股份。'
+  investorAlignment: '投资者具备经济上行空间，但治理明确以使命优先，董事会控制并不遵循普通风投惯例；Microsoft 也已持有较大股份，且 SoftBank 披露的优先股机制需要文件级审查。'
   transparencyConcerns:
     - '公开披露未提供经审计的分部收入、毛利率、烧钱、留存或客户集中度。'
     - '2026 年最大的用户、订阅者、收入与估值数字均为公司自报，而非独立验证。'
+    - '2025 年 ARR 与付费企业用户报道改善了三角验证，但经审计收入质量、毛利率与留存仍未披露。'
+    - '公开材料未披露完整的 Microsoft 收入分成上限、优先股经济条款、可转换票据条款或算力承诺现金流时间表。'
     - '相比于 headline 层面的董事会结构，领导层连续性与日常运营归属的透明度更低。'
-  claimRefs: [C002, C003, C004, C005, C036, C038, C039, C045]
+  claimRefs: [C002, C003, C004, C005, C036, C038, C039, C045, C051, C053, C055, C057, C058]
 legalRegulatory:
   knownIssues:
     - 'CMA 曾审查 Microsoft/OpenAI 关系，随后认定其不构成英国并购条款下的调查对象。'
@@ -102,9 +112,13 @@ redFlags:
   - flag: '即便收入继续增长，算力与基础设施强度也可能长期维持高位。'
     severity: high
     evidenceQuality: medium
-    claimRefs: [C044, C046]
+    claimRefs: [C044, C046, C057, C060, C062]
+  - flag: '融资条款与伙伴经济安排可能比 headline 估值数字所暗示的更复杂。'
+    severity: high
+    evidenceQuality: medium
+    claimRefs: [C051, C053, C057, C058, C059]
 riskVerdict:
   overallRisk: high
-  rationale: 'OpenAI 在运营上看起来很强，但在制度上相当复杂。最大的风险并非需求不足，而是：在经济性不透明的情况下为估值买单、使命控制型治理导致投资者杠杆有限、领导层集中，以及前沿 AI 的资本密集度。'
+  rationale: 'OpenAI 在运营上看起来很强，但在制度上相当复杂。最大的风险并非需求不足，而是：在经济性不透明的情况下为估值买单、使命控制型治理导致投资者杠杆有限、领导层集中、融资条款复杂、Microsoft 收入分成义务，以及前沿 AI 基础设施的资本密集度。'
   confidence: medium
-  claimRefs: [C002, C003, C005, C038, C039, C044, C045, C046]
+  claimRefs: [C002, C003, C005, C038, C039, C044, C045, C046, C051, C053, C055, C057, C058, C060, C062]
