@@ -12,6 +12,6 @@ export async function getStaticPaths() {
 const { entry } = Astro.props as { entry: CollectionEntry<'reports'> };
 const stages = loadStageFiles(entry.id, 'en') as any;
 ---
-<BaseLayout title={`${entry.data.company.name} — Startup Research`} description={entry.data.headline}>
+<BaseLayout title={`${entry.data.company.name} — Startup Research`} description={entry.data.headline} alternateHref={`${import.meta.env.BASE_URL}zh/${entry.data.folderSlug}/`}>
   <DiligenceReport entry={entry} data={entry.data} stages={stages} lang="en" />
 </BaseLayout>

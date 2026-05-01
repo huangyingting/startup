@@ -7,8 +7,9 @@ interface Props {
   title: string;
   description?: string;
   lang?: Lang;
+  alternateHref?: string;
 }
-const { title, description = t('deck', 'en'), lang = 'en' } = Astro.props;
+const { title, description = t('deck', 'en'), lang = 'en', alternateHref } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const homeHref = lang === 'zh' ? `${base}zh/` : base;
 const archiveHref = lang === 'zh' ? `${base}zh/archive/` : `${base}archive/`;
@@ -16,7 +17,7 @@ const sectorsHref = lang === 'zh' ? `${base}zh/sectors/` : `${base}sectors/`;
 const topRatedHref = lang === 'zh' ? `${base}zh/top-rated/` : `${base}top-rated/`;
 const searchHref = lang === 'zh' ? `${base}zh/search/` : `${base}search/`;
 const rssHref = lang === 'zh' ? `${base}zh/rss.xml` : `${base}rss.xml`;
-const altHref = lang === 'zh' ? base : `${base}zh/`;
+const altHref = alternateHref ?? (lang === 'zh' ? base : `${base}zh/`);
 const altLabel = lang === 'zh' ? 'EN' : '中文';
 const brandLabel = t('title', lang);
 ---
