@@ -28,6 +28,7 @@ const OPTIONAL_EXTENDED = [
 const OPTIONAL_LOCALIZED = [...REQUIRED, ...OPTIONAL_EXTENDED].map((file) => file.replace('.yaml', '.zh.yaml'));
 const ALLOWED_YAML = new Set([...REQUIRED, ...OPTIONAL_EXTENDED, ...OPTIONAL_LOCALIZED]);
 const SCHEMA_VERSION = 'startup-diligence-v1';
+const LEGACY_COMPARABLE_FIELDS = ['name', 'eventType', 'rationale', 'revenueMultipleNtm', 'headlineValuationUsdM'];
 
 function requiredFields(file, doc) {
   const checks = {
@@ -47,6 +48,46 @@ function requiredFields(file, doc) {
     '13-milestones-catalysts.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'horizons'],
   }[file] ?? [];
   return checks.filter((field) => !(doc && typeof doc === 'object' && field in doc));
+}
+
+function validateComparables(file, doc) {
+  if (!file.startsWith('12-comparables-valuation')) return [];
+  if (!doc || typeof doc !== 'object') return [];
+
+  const failures = [];
+  const groups = [
+    ['publicComparables', doc.publicComparables, ['compId', 'company', 'category', 'relevance']],
+    ['privateOrTransactionComparables', doc.privateOrTransactionComparables, ['compId', 'company', 'transaction', 'relevance']],
+  ];
+
+  for (const [groupName, rows, required] of groups) {
+    if (rows === undefined || rows === null) continue;
+    if (!Array.isArray(rows)) {
+      failures.push(`${file}: ${groupName} must be an array`);
+      continue;
+    }
+    const seen = new Set();
+    rows.forEach((row, index) => {
+      const path = `${file}: ${groupName}[${index}]`;
+      if (!row || typeof row !== 'object') {
+        failures.push(`${path} must be an object`);
+        return;
+      }
+      for (const field of required) {
+        if (!(field in row) || row[field] === null || row[field] === '') failures.push(`${path} missing ${field}`);
+      }
+      if (typeof row.compId === 'string') {
+        if (!/^K\d{3}$/.test(row.compId)) failures.push(`${path} compId must look like K001`);
+        if (seen.has(row.compId)) failures.push(`${path} duplicate compId ${row.compId}`);
+        seen.add(row.compId);
+      }
+      for (const field of LEGACY_COMPARABLE_FIELDS) {
+        if (field in row) failures.push(`${path} uses legacy field ${field}`);
+      }
+    });
+  }
+
+  return failures;
 }
 
 try {
@@ -92,6 +133,7 @@ try {
           const missing = requiredFields(file, doc);
           for (const field of missing) fieldFailures.push(`${run}/${file}: missing ${field}`);
         }
+        for (const failure of validateComparables(file, doc)) consistencyFailures.push(`${run}/${failure}`);
       } catch (err) {
         parseFailures.push(`${run}/${file}: ${err.message.split('\n')[0]}`);
       }
