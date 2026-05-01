@@ -44,7 +44,7 @@ function requiredFields(file, doc) {
     '09-investment-memo.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'memo', 'scorecard'],
     '10-summary-card.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'headline', 'recommendation', 'sourceStats'],
     '11-team-people.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'teamSnapshot', 'founders'],
-    '12-comparables-valuation.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'valuationFramework'],
+    '12-comparables-valuation.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'publicComparables', 'privateOrTransactionComparables', 'valuationFramework'],
     '13-milestones-catalysts.yaml': ['schemaVersion', 'artifact', 'slug', 'runDate', 'company', 'horizons'],
   }[file] ?? [];
   return checks.filter((field) => !(doc && typeof doc === 'object' && field in doc));
@@ -60,13 +60,16 @@ function validateComparables(file, doc) {
     ['privateOrTransactionComparables', doc.privateOrTransactionComparables, ['compId', 'company', 'transaction', 'relevance']],
   ];
 
+  const seen = new Set();
   for (const [groupName, rows, required] of groups) {
-    if (rows === undefined || rows === null) continue;
+    if (rows === undefined || rows === null) {
+      failures.push(`${file}: ${groupName} is required and must be an array`);
+      continue;
+    }
     if (!Array.isArray(rows)) {
       failures.push(`${file}: ${groupName} must be an array`);
       continue;
     }
-    const seen = new Set();
     rows.forEach((row, index) => {
       const path = `${file}: ${groupName}[${index}]`;
       if (!row || typeof row !== 'object') {
@@ -76,11 +79,10 @@ function validateComparables(file, doc) {
       for (const field of required) {
         if (!(field in row) || row[field] === null || row[field] === '') failures.push(`${path} missing ${field}`);
       }
-      if (typeof row.compId === 'string') {
-        if (!/^K\d{3}$/.test(row.compId)) failures.push(`${path} compId must look like K001`);
-        if (seen.has(row.compId)) failures.push(`${path} duplicate compId ${row.compId}`);
-        seen.add(row.compId);
-      }
+      if (typeof row.compId !== 'string') failures.push(`${path} compId must be a string like K001`);
+      else if (!/^K\d{3}$/.test(row.compId)) failures.push(`${path} compId must look like K001`);
+      else if (seen.has(row.compId)) failures.push(`${path} duplicate compId ${row.compId}`);
+      else seen.add(row.compId);
       for (const field of LEGACY_COMPARABLE_FIELDS) {
         if (field in row) failures.push(`${path} uses legacy field ${field}`);
       }

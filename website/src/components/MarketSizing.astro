@@ -1,8 +1,0 @@
----
-interface Props { tam: string | null; sam: string | null; som: string | null; }
-const { tam, sam, som } = Astro.props;
-const rows = [['TAM', tam], ['SAM', sam], ['SOM', som]];
----
-<div class="sr-grid">
-  {rows.map(([label, value]) => <div class="sr-card"><div class="sr-meta">{label}</div><h3>{value ?? 'Unknown'}</h3></div>)}
-</div>

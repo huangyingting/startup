@@ -222,7 +222,8 @@ runDate: YYYY-MM-DD
 company:
   name: string
 publicComparables:
-  - company: string
+  - compId: K001
+    company: string
     ticker: string|null
     category: string|null
     relevance: string
@@ -234,7 +235,8 @@ publicComparables:
     notes: string|null
     claimRefs: [C001]
 privateOrTransactionComparables:
-  - company: string
+  - compId: K002
+    company: string
     transaction: string
     date: YYYY-MM-DD|null
     postMoneyValuationUsdM: 0|null
