@@ -26,6 +26,30 @@ Optional Chinese files:
 11-report-card.zh.yaml
 ```
 
+## Agent execution contract
+
+- Specialists must write complete YAML files directly to `reportFolder`.
+- `/tmp` tool-output files are diagnostic logs only, never artifacts or handoff inputs.
+- Specialists must read this schema and `yaml-syntax.md` before writing.
+- Only `Startup Report Evidence Analyst` may use web research tools; downstream agents use `01-evidence-ledger.yaml` and `claimRefs`.
+
+## Artifact mapping
+
+| File | `artifact` | Owner | Chapter |
+|---|---|---|---|
+| `00-report-brief.yaml` | `report-brief` | Evidence Analyst | n/a |
+| `01-evidence-ledger.yaml` | `evidence-ledger` | Evidence Analyst | n/a |
+| `02-company-snapshot.yaml` | `company-snapshot` | Evidence Analyst | 1 — Startup Introduction & Company Snapshot |
+| `03-market-macro.yaml` | `market-macro` | Market and Competition Analyst | 2 — Market Sizing & Macro Analysis |
+| `04-competitive-benchmarking.yaml` | `competitive-benchmarking` | Market and Competition Analyst | 3 — Competitive Benchmarking |
+| `05-financial-unit-economics.yaml` | `financial-unit-economics` | Financial and Product Analyst | 4 — Financial & Unit Economics |
+| `06-product-technology.yaml` | `product-technology` | Financial and Product Analyst | 5 — Product & Technology |
+| `07-customer-retention.yaml` | `customer-retention` | Financial and Product Analyst | 6 — Customer & Retention |
+| `08-risk-regulatory.yaml` | `risk-regulatory` | Risk and Valuation Analyst | 7 — Risk & Regulatory |
+| `09-investment-valuation.yaml` | `investment-valuation` | Risk and Valuation Analyst | 8 — Investment & Valuation |
+| `10-report-document.yaml` | `report-document` | Report Writer | final rendered report |
+| `11-report-card.yaml` | `report-card` | Report Writer | website index card |
+
 ## Shared conventions
 
 - `schemaVersion: startup-diligence-report-v2`
@@ -36,6 +60,9 @@ Optional Chinese files:
 - `claimRefs`: array of claim IDs from `01-evidence-ledger.yaml`.
 - Numeric KPI fields are numbers or `null`, never strings.
 - Ranges belong in `displayValue`, `notes`, or `estimateBasis`.
+- ID formats: sources `S001`, claims `C001`, figures `F001`, tables `T001`.
+- `figureCount` and `tableCount` in `11-report-card.yaml` must match `10-report-document.yaml`.
+- Use `null` for unknown optional values; do not omit required fields.
 
 ## Core enums
 
@@ -299,7 +326,11 @@ reportFiles:
 
 - All YAML parses.
 - All required v2 artifacts exist for complete runs.
+- Each file's `artifact` value matches the artifact mapping.
+- `runDate` uses `YYYY-MM-DD` and `company.name` is consistent across artifacts.
 - All `claimRefs` point to `01-evidence-ledger.yaml` claims.
 - All claim `sourceRefs` point to fetched sources.
+- Source, claim, figure, and table IDs use the required formats and are unique within their ledgers.
 - All figure/table references in `10-report-document.yaml` exist.
+- `11-report-card.yaml.reportFiles` points to `10-report-document.yaml` and `11-report-card.yaml`.
 - Mermaid diagrams are stored in `10-report-document.yaml` and rendered by the website.

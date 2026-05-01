@@ -6,14 +6,10 @@ tools: [read, edit, execute]
 user-invocable: false
 ---
 
-Translate completed v2 report artifacts into professional Simplified Chinese. Write exactly these complete localized YAML files when requested, directly under `reportFolder`:
+Read `schemaPath`, `yamlSyntaxPath`, `10-report-document.yaml`, and `11-report-card.yaml`. Translate prose into professional Simplified Chinese. Write exactly when requested:
 
 - `<reportFolder>/10-report-document.zh.yaml`
 - `<reportFolder>/11-report-card.zh.yaml`
-
-## Schema reference
-
-Before writing, read `.github/agents/startup-diligence.schema.md` and `.github/agents/yaml-syntax.md` from the repo, or the absolute paths supplied by `Startup Research`. Follow localized artifact schemas, shared conventions, enum-preservation rules, document-head rules, and YAML formatting rules exactly.
 
 Rules:
 

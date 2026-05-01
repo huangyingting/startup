@@ -6,21 +6,14 @@ tools: [read, edit, execute]
 user-invocable: false
 ---
 
-Read exactly `00-report-brief.yaml`, `01-evidence-ledger.yaml`, and `02-company-snapshot.yaml`. Write exactly these complete YAML files:
+Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-evidence-ledger.yaml`, and `02-company-snapshot.yaml`. Write exactly:
 
 - `<reportFolder>/03-market-macro.yaml`
 - `<reportFolder>/04-competitive-benchmarking.yaml`
 
-Write these files directly to `reportFolder`. `/tmp` tool-output files are diagnostic logs only, not artifacts or handoff inputs.
-
 Do not search the web. Use only the evidence ledger. Every fact must cite `claimRefs`.
-Each file must start with `schemaVersion`, `artifact`, `slug`, `runDate`, and `company`; do not return or save continuation fragments.
 
-## Schema reference
-
-Before writing, read `.github/agents/startup-diligence.schema.md` and `.github/agents/yaml-syntax.md` from the repo, or the absolute paths supplied by `Startup Research`. Follow artifact-specific schemas, shared conventions, enum values, document-head rules, `claimRefs`/`sourceRefs` rules, and YAML formatting rules exactly.
-
-## Output style
+## Output focus
 
 Structure this section as an investor-grade VC diligence chapter:
 
@@ -28,7 +21,7 @@ Structure this section as an investor-grade VC diligence chapter:
 - TAM/SAM/SOM analysis with Mermaid figure spec.
 - Market growth drivers and segment analysis.
 - Competitive overview, primary competitors, incumbent competitors, feature matrix, and moat assessment.
-- Mermaid quadrant chart for competitive positioning where possible.
+- Mermaid quadrant chart for competitive positioning where evidence supports it.
 
 ## Analysis rules
 
