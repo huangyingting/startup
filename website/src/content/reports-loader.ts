@@ -137,9 +137,11 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): Record<st
 function reportCardPath(folder: string, lang: Lang = 'en'): string | null {
   const localizedV2 = join(folder, `11-report-card.${lang}.yaml`);
   const v2 = join(folder, '11-report-card.yaml');
+  const requiredZhDocument = join(folder, '10-report-document.zh.yaml');
+  const requiredZhCard = join(folder, '11-report-card.zh.yaml');
+  if (!existsSync(v2) || !existsSync(requiredZhDocument) || !existsSync(requiredZhCard)) return null;
   if (lang === 'zh' && existsSync(localizedV2)) return localizedV2;
-  if (existsSync(v2)) return v2;
-  return null;
+  return v2;
 }
 
 function readLocalizedYaml(folder: string, basename: string, lang: Lang): unknown | null {
@@ -174,7 +176,7 @@ export function reportsLoader(): Loader {
 
 export function hasZhTranslation(runId: string): boolean {
   const folder = join(REPORTS_DIR, runId);
-  return existsSync(join(folder, '11-report-card.zh.yaml'));
+  return existsSync(join(folder, '10-report-document.zh.yaml')) && existsSync(join(folder, '11-report-card.zh.yaml'));
 }
 
 export function loadLocalizedIndex(runId: string, lang: Lang = 'en'): Record<string, unknown> | null {

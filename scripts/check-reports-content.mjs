@@ -135,7 +135,11 @@ try {
 
   for (const run of runs) {
     const dir = join(REPORTS_DIR, run);
-    if (!existsSync(join(dir, '11-report-card.yaml'))) continue;
+    const hasYaml = readdirSync(dir).some((name) => name.endsWith('.yaml'));
+    if (!existsSync(join(dir, '11-report-card.yaml'))) {
+      if (hasYaml) failures.push(`${run}: partial report folder has YAML files but is missing 11-report-card.yaml`);
+      continue;
+    }
     checked += 1;
 
     const ledgerPath = join(dir, '01-evidence-ledger.yaml');
