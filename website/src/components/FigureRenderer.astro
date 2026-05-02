@@ -398,18 +398,164 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
 
   const quadrantOption = (payload) => {
     const points = arr(payload.data.points);
+    const xAxisLabel = payload.data.xAxis ?? 'X';
+    const yAxisLabel = payload.data.yAxis ?? 'Y';
+
+    // Auto-fit axes to the data extent so empty regions don't dominate the canvas.
+    // Always include the 50 reference line in the visible window so quadrant context survives.
+    const xs = points.map((p) => Number(p.x)).filter(Number.isFinite);
+    const ys = points.map((p) => Number(p.y)).filter(Number.isFinite);
+    const safeRange = (vals, anchor = 50) => {
+      if (vals.length === 0) return { min: 0, max: 100 };
+      const lo = Math.min(...vals);
+      const hi = Math.max(...vals);
+      const padBase = Math.max((hi - lo) * 0.18, 6);
+      let min = Math.floor((lo - padBase) / 5) * 5;
+      let max = Math.ceil((hi + padBase) / 5) * 5;
+      // Always show the 50 reference line if the data is on one side of it.
+      if (lo >= anchor) min = Math.min(min, anchor - 5);
+      if (hi <= anchor) max = Math.max(max, anchor + 5);
+      min = Math.max(0, min);
+      max = Math.min(100, max);
+      if (max - min < 20) {
+        const center = (min + max) / 2;
+        min = Math.max(0, Math.floor((center - 10) / 5) * 5);
+        max = Math.min(100, Math.ceil((center + 10) / 5) * 5);
+      }
+      return { min, max };
+    };
+    const xRange = safeRange(xs);
+    const yRange = safeRange(ys);
+
+    // Render the four-quadrant tint only over the visible window.
+    const xMid = 50;
+    const yMid = 50;
+    const xMidVisible = xMid > xRange.min && xMid < xRange.max;
+    const yMidVisible = yMid > yRange.min && yMid < yRange.max;
+    const tints = [];
+    if (xMidVisible && yMidVisible) {
+      tints.push([xRange.min, yMid, xMid, yRange.max, 'rgba(60, 130, 110, 0.06)']);    // top-left
+      tints.push([xMid, yMid, xRange.max, yRange.max, 'rgba(96, 158, 138, 0.10)']);    // top-right (sweet spot)
+      tints.push([xRange.min, yRange.min, xMid, yMid, 'rgba(160, 90, 70, 0.05)']);     // bottom-left
+      tints.push([xMid, yRange.min, xRange.max, yMid, 'rgba(200, 150, 60, 0.06)']);    // bottom-right
+    }
+    const markLines = [];
+    if (xMidVisible) markLines.push({ xAxis: xMid });
+    if (yMidVisible) markLines.push({ yAxis: yMid });
+
+    // Pick the best label position (top / bottom / left / right) for each point so labels
+    // fan out away from the cluster's centroid and away from the nearest axis edge.
+    // For points that are very close to a neighbour, prefer top/bottom so labels don't run
+    // into each other horizontally (which is the common failure mode for right-clustered data).
+    const cx = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 50;
+    const cy = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : 50;
+    const xSpan = xRange.max - xRange.min || 1;
+    const ySpan = yRange.max - yRange.min || 1;
+    const xClose = xSpan * 0.18; // points within ~18% of axis on X are "horizontally close"
+
+    const chooseLabelPosition = (px, py, idx) => {
+      // Look for any neighbour that is horizontally close. If yes, decide top vs bottom
+      // by relative Y so the two labels separate vertically instead of overlapping.
+      const neighbours = points
+        .map((q, qi) => ({ qi, qx: Number(q.x), qy: Number(q.y) }))
+        .filter(({ qi, qx, qy }) => qi !== idx && Number.isFinite(qx) && Number.isFinite(qy) && Math.abs(qx - px) < xClose);
+      if (neighbours.length > 0) {
+        const higherNeighbour = neighbours.some(({ qy }) => qy > py + 0.5);
+        const lowerNeighbour = neighbours.some(({ qy }) => qy < py - 0.5);
+        // If there is a neighbour above me, push my label below; if below me, push above.
+        if (higherNeighbour && !lowerNeighbour && py - yRange.min > ySpan * 0.12) return 'bottom';
+        if (lowerNeighbour && !higherNeighbour && yRange.max - py > ySpan * 0.12) return 'top';
+        // If sandwiched, prefer the side with more vertical room.
+        if (higherNeighbour && lowerNeighbour) {
+          return (yRange.max - py) > (py - yRange.min) ? 'top' : 'bottom';
+        }
+      }
+
+      // Fall back to the radial-from-centroid heuristic.
+      const dx = px - cx;
+      const dy = py - cy;
+      if (Math.abs(dy) >= Math.abs(dx)) {
+        if (dy > 0 && yRange.max - py > ySpan * 0.08) return 'top';
+        if (dy < 0 && py - yRange.min > ySpan * 0.08) return 'bottom';
+      }
+      if (dx > 0 && xRange.max - px > xSpan * 0.10) return 'right';
+      if (dx < 0 && px - xRange.min > xSpan * 0.10) return 'left';
+      return (yRange.max - py) > (py - yRange.min) ? 'top' : 'bottom';
+    };
+
     return {
       textStyle: baseText,
-      tooltip,
-      grid: { left: 44, right: 28, top: 24, bottom: 44 },
-      xAxis: { min: 0, max: 100, name: payload.data.xAxis ?? 'X', nameLocation: 'middle', nameGap: 28, ...axisStyle },
-      yAxis: { min: 0, max: 100, name: payload.data.yAxis ?? 'Y', nameLocation: 'middle', nameGap: 32, ...axisStyle },
+      tooltip: {
+        ...tooltip,
+        trigger: 'item',
+        formatter: (params) => {
+          const v = params.value ?? [];
+          return `<strong>${params.name}</strong><br/><span style="color:${palette.muted}">${xAxisLabel}: ${v[0]}\u2003·\u2003${yAxisLabel}: ${v[1]}</span>`;
+        },
+      },
+      grid: { left: 56, right: 56, top: 44, bottom: 56, containLabel: true },
+      xAxis: { min: xRange.min, max: xRange.max, name: xAxisLabel, nameLocation: 'middle', nameGap: 32, splitLine: { show: false }, ...axisStyle },
+      yAxis: { min: yRange.min, max: yRange.max, name: yAxisLabel, nameLocation: 'middle', nameGap: 44, splitLine: { show: false }, ...axisStyle },
       series: [{
         type: 'scatter',
-        symbolSize: 24,
-        data: points.map((point) => ({ name: point.label, value: [Number(point.x) || 50, Number(point.y) || 50], itemStyle: { color: colorForTone(point.tone) }, label: { formatter: point.label } })),
-        label: { show: true, position: 'right', color: palette.ink, fontSize: chartFont.label, fontWeight: 700 },
-        markLine: { silent: true, symbol: 'none', lineStyle: { color: palette.border, type: 'dashed' }, data: [{ xAxis: 50 }, { yAxis: 50 }] },
+        symbolSize: 22,
+        z: 3,
+        data: points.map((point, idx) => {
+          const x = Number(point.x);
+          const y = Number(point.y);
+          const safeX = Number.isFinite(x) ? x : 50;
+          const safeY = Number.isFinite(y) ? y : 50;
+          return {
+            name: point.label,
+            value: [safeX, safeY],
+            itemStyle: { color: colorForTone(point.tone), borderColor: '#fff7ef', borderWidth: 2 },
+            label: { position: chooseLabelPosition(safeX, safeY, idx) },
+          };
+        }),
+        label: {
+          show: true,
+          distance: 10,
+          color: palette.ink,
+          fontSize: chartFont.label,
+          fontWeight: 700,
+          formatter: (params) => params.name,
+          backgroundColor: 'rgba(255, 247, 239, 0.96)',
+          padding: [3, 7],
+          borderRadius: 3,
+        },
+        labelLayout: {
+          hideOverlap: false,
+          moveOverlap: 'shiftY',
+        },
+        labelLine: {
+          show: true,
+          length: 8,
+          length2: 8,
+          smooth: false,
+          lineStyle: { color: palette.border, width: 1 },
+        },
+        emphasis: {
+          scale: 1.2,
+          itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,0.18)' },
+          label: { fontWeight: 800 },
+        },
+        markArea: tints.length ? {
+          silent: true,
+          z: 1,
+          itemStyle: { opacity: 1 },
+          data: tints.map(([x0, y0, x1, y1, color]) => [
+            { coord: [x0, y0], itemStyle: { color } },
+            { coord: [x1, y1] },
+          ]),
+        } : undefined,
+        markLine: markLines.length ? {
+          silent: true,
+          symbol: 'none',
+          z: 2,
+          lineStyle: { color: palette.border, type: 'dashed', width: 1 },
+          label: { show: false },
+          data: markLines,
+        } : undefined,
       }],
     };
   };

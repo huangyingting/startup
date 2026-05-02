@@ -35,7 +35,6 @@ Structure this as an investor-grade product and technology chapter:
 
 - Product platform overview and module map.
 - Detailed raw product evidence retained in this artifact: module-by-module facts, release chronology, feature availability, architecture and integration evidence, security/compliance claims, reliability signals, unsupported technical metrics, and dated recency notes.
-- Official-site discovery notes: record which homepage, sitemap, docs, product, pricing, changelog, trust/security, status, integrations, and blog/news pages were reviewed; if any expected official page family is missing, include an explicit product diligence gap.
 - Core product module analysis by functional area, such as cards/payments, expense management, AP, procurement, travel, treasury, analytics, workflow, infrastructure, developer/API, or company-specific modules.
 - AI/automation capabilities and technical differentiation, including agentic automation, anomaly/fraud detection, recommendations, policy automation, forecasting, or copilot workflows where relevant.
 - Architecture, integrations, APIs, data model, implementation/onboarding model, real-time processing, reliability, and scalability evidence.
@@ -56,4 +55,4 @@ Immediately after writing `05-product-technology.yaml`, write `05-product-techno
 
 ## Handoff note
 
-After writing, record a concise internal summary: output path, product verdict, technical moat, figure count, table count, evidence gaps closed, evidence gaps remaining, and `web_search` calls made with query labels or `web_search: not called`.
+After writing, record a concise internal summary: output path, product verdict, technical moat, figure count, table count, evidence gaps closed, evidence gaps remaining, official-site pages reviewed (homepage, sitemap, docs, product, pricing, changelog, trust/security, status, integrations, blog/news) and any expected page family that was missing, and `web_search` calls made with query labels or `web_search: not called`. Do not include this discovery list as a public table or block in `05-product-technology.yaml`; if a missing official page family is itself a diligence concern, log it under `evidenceGaps`.

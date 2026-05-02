@@ -47,57 +47,6 @@ callouts:
       - C075
       - C076
 tables:
-  - id: T501
-    title: Official-site discovery notes
-    columns:
-      - Surface reviewed
-      - URL / evidence
-      - What it supports
-      - Gap if any
-    rows:
-      - - Homepage
-        - https://www.anthropic.com/
-        - Public benefit corporation positioning and safety-first product narrative
-        - No architecture detail.
-      - - Sitemap
-        - https://www.anthropic.com/sitemap.xml
-        - Identified product/model, engineering, legal, events, news, and trust/security surfaces
-        - Sitemap truncated in fetch; not every URL family reviewed.
-      - - Docs
-        - https://docs.claude.com/
-        - Messages API, Managed Agents, model family, developer journey
-        - Detailed API reference not fully mined in this stage.
-      - - Pricing
-        - https://www.anthropic.com/pricing
-        - Plans, API model pricing, managed agents, web search, code execution, enterprise controls
-        - Enterprise contract details and usage limits not disclosed.
-      - - Status
-        - https://status.anthropic.com/
-        - Operational status and recent incident history across Claude surfaces
-        - No SLA percentage or long-run uptime export captured.
-      - - Trust center
-        - https://trust.anthropic.com/
-        - Security/compliance portal exists; meta description states secure practices and transparency
-        - Certification list requires authenticated or JS-rendered access.
-      - - Privacy
-        - https://www.anthropic.com/legal/privacy
-        - Data-controller/processor distinctions, Inputs/Outputs, Feedback, device/usage/log data
-        - Commercial DPA details not fully reviewed.
-      - - Vulnerability disclosure
-        - https://www.anthropic.com/coordinated-vulnerability-disclosure
-        - 90-day disclosure target and human-reviewed AI-assisted vulnerability reports
-        - External researcher policy not reviewed.
-    notes: Official-site mining prioritized current product, docs, pricing, trust, status, legal, and engineering evidence.
-    claimRefs:
-      - C063
-      - C066
-      - C067
-      - C068
-      - C069
-      - C070
-      - C073
-      - C077
-      - C078
   - id: T502
     title: Product module matrix
     columns:
@@ -142,9 +91,8 @@ tables:
         - Developers and teams with domain workflows
         - Open standard / product capability
         - Evaluate skill governance, provenance, and sandbox safety.
-    notes: >-
-      Module maturity ranges from GA products to evolving agent infrastructure; where status is unclear, a diligence gap
-      is retained.
+    notes: Module maturity ranges from GA products to evolving agent infrastructure; where status is unclear, a diligence
+      gap is retained.
     claimRefs:
       - C063
       - C064
@@ -163,9 +111,8 @@ tables:
       - Risk / limitation
     rows:
       - - Agentic coding
-        - >-
-          Claude Code run-rate revenue above $2.5B; engineering posts describe effort settings, thinking history, prompt
-          caching, and code review context
+        - Claude Code run-rate revenue above $2.5B; engineering posts describe effort settings, thinking history, prompt caching,
+          and code review context
         - Strong developer wedge and workflow data
         - Quality regression showed product-layer defaults can harm outcomes.
       - - Long-horizon agents
@@ -236,15 +183,13 @@ tables:
       - Gap
     rows:
       - - Privacy roles
-        - >-
-          Privacy policy distinguishes Anthropic as data controller for consumer services and processor for commercial
-          customer use cases
+        - Privacy policy distinguishes Anthropic as data controller for consumer services and processor for commercial customer
+          use cases
         - Clear privacy-role boundary
         - Commercial DPA controls and retention details require review.
       - - Inputs/outputs and feedback
-        - >-
-          Privacy policy says Anthropic collects prompts/inputs, outputs, feedback, technical, usage, log, and
-          troubleshooting information
+        - Privacy policy says Anthropic collects prompts/inputs, outputs, feedback, technical, usage, log, and troubleshooting
+          information
         - Transparent collection categories
         - Enterprise opt-outs and retention need contract review.
       - - Trust center
@@ -256,15 +201,11 @@ tables:
         - Security research process is documented
         - Responsible disclosure policy and bug bounty scope need review.
       - - Status / reliability
-        - >-
-          Status page shows all major surfaces operational on May 2 and records multiple resolved incidents in late
-          April
+        - Status page shows all major surfaces operational on May 2 and records multiple resolved incidents in late April
         - Public status transparency
         - Need uptime history, SLA, incident severity, and enterprise credit terms.
       - - Quality regression
-        - >-
-          Postmortem states API/inference layer unaffected but Claude Code, Agent SDK, and Cowork were degraded by three
-          changes
+        - Postmortem states API/inference layer unaffected but Claude Code, Agent SDK, and Cowork were degraded by three changes
         - Strong postmortem transparency
         - Need release gates, customer communication thresholds, and regression suite evidence.
     notes: Compliance claims beyond visible public evidence are not assumed.
@@ -284,16 +225,12 @@ tables:
     rows:
       - - Agent infrastructure
         - Managed Agents launched as hosted long-horizon agent infrastructure
-        - >-
-          Review GA status, customer adoption, isolation model, observability, VPC/private deployment, and incident
-          history.
+        - Review GA status, customer adoption, isolation model, observability, VPC/private deployment, and incident history.
       - - Claude Code quality
         - April postmortem resolved issues and reset usage limits
         - Review regression dashboards, eval coverage, rollout policies, and customer churn after the incident.
       - - Compliance readiness
-        - >-
-          Trust center exists and Enterprise includes Compliance API, retention controls, IP allowlisting, HIPAA-ready
-          availability
+        - Trust center exists and Enterprise includes Compliance API, retention controls, IP allowlisting, HIPAA-ready availability
         - Obtain SOC 2/ISO/HIPAA documentation, BAA terms, DPA, and security questionnaire.
       - - Data privacy
         - Privacy policy identifies data categories collected and controller/processor roles
@@ -317,8 +254,7 @@ figures:
     title: Claude product architecture stack
     type: architecture-stack
     layout: wide
-    summary: >-
-      Public architecture evidence shows Claude as a layered model, API, agent, integration, and enterprise-control
+    summary: Public architecture evidence shows Claude as a layered model, API, agent, integration, and enterprise-control
       platform.
     data:
       layers:
@@ -366,8 +302,7 @@ figures:
           outputs:
             - Enterprise workflow automation
         - label: Enterprise controls
-          detail: >-
-            Team/Enterprise packaging adds SSO, SCIM, audit logs, Compliance API, retention controls, IP allowlisting,
+          detail: Team/Enterprise packaging adds SSO, SCIM, audit logs, Compliance API, retention controls, IP allowlisting,
             and HIPAA-ready availability.
           tone: positive
           modules:
@@ -379,8 +314,7 @@ figures:
           outputs:
             - Governed deployments
         - label: Reliability and release governance
-          detail: >-
-            Public status page and postmortems provide transparency, but recent quality regressions show this layer
+          detail: Public status page and postmortems provide transparency, but recent quality regressions show this layer
             needs diligence.
           tone: risk
           modules:
@@ -390,7 +324,8 @@ figures:
           outputs:
             - Customer trust
             - SLA confidence
-    approximationNotes: Architecture stack is synthesized from public docs and engineering posts; internal architecture is not public.
+    approximationNotes: Architecture stack is synthesized from public docs and engineering posts; internal architecture is
+      not public.
     claimRefs:
       - C063
       - C064
@@ -406,8 +341,7 @@ figures:
     title: Product reliability risk flow
     type: risk-transmission-map
     layout: standard
-    summary: >-
-      Recent Claude quality issues demonstrate how product-layer changes can affect enterprise trust even when model
+    summary: Recent Claude quality issues demonstrate how product-layer changes can affect enterprise trust even when model
       weights and API are stable.
     data:
       nodes:
@@ -429,8 +363,7 @@ figures:
           tone: neutral
         - id: p5
           label: Diligence implication
-          detail: >-
-            Investors need evidence of agent-specific evals, staged rollouts, status signaling, and enterprise incident
+          detail: Investors need evidence of agent-specific evals, staged rollouts, status signaling, and enterprise incident
             communications.
           tone: high
       edges:
