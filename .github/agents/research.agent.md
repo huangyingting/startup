@@ -43,7 +43,7 @@ Generate these files in order. The Simplified Chinese files are required and pro
 11-report-card.zh.yaml
 ```
 
-All artifacts must be written directly under `reportFolder`. `/tmp` tool-output files are diagnostic logs only: never treat them as report artifacts, handoff inputs, or sources of truth. If a stage produces only a snippet or temporary transcript, repair it by writing complete files to `reportFolder` before moving on.
+All artifacts must be written directly under `reportFolder`. `/tmp` tool-output files are diagnostic logs only: never treat them as report artifacts, handoff inputs, or sources of truth. If a stage produces only a snippet or temporary transcript, rewrite it as a complete file under `reportFolder` before moving on.
 
 ## Skill sequence
 
@@ -53,8 +53,8 @@ Use exactly this skill sequence inside this agent:
 2. `startup-market-competition` writes `03`, `04` and may add market/competition sources and claims to `01`.
 3. `startup-financial-product` writes `05`, `06`, `07` and may add financial/product/customer sources and claims to `01`.
 4. `startup-risk-valuation` writes `08`, `09` and may add risk/valuation sources and claims to `01`.
-5. `startup-report-writer` writes `10`, `11` from already-researched analysis.
-6. `startup-report-zh` writes `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
+5. `startup-report-writer` assembles `10` and `11` from artifacts `02`–`09`.
+6. `startup-report-zh` translates `10` and `11` into `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 
 Do not invoke separate stage agents for `00`–`11`. All stage logic lives in the skills listed above, and this single agent owns all reads, searches, edits, validation, and final reporting.
 
@@ -90,11 +90,11 @@ After `02-company-snapshot.yaml`, run `node scripts/check-company-dedup.mjs <rep
 
 ## Dynamic gap loop
 
-The old separate repair-agent loop is replaced by per-skill dynamic evidence use:
+Each analysis skill closes its own supportable gaps before writing:
 
-1. Before each analysis skill writes its artifacts, inspect its required table families, figures, metrics, `evidenceGaps`, and downstream chapter needs.
-2. If a missing item appears supportable, run targeted `web_search` immediately inside that skill, append cited sources/claims to `01-evidence-ledger.yaml`, then write the artifact using the new `claimRefs`.
-3. If targeted searches do not find usable cited evidence, write the gap explicitly in that artifact.
+1. Before writing an artifact, inspect its required table families, figures, metrics, `evidenceGaps`, and downstream chapter needs.
+2. If a missing item appears supportable, run targeted `web_search` inside that skill, append cited sources/claims to `01-evidence-ledger.yaml`, then write the artifact using the new `claimRefs`.
+3. If targeted searches do not find usable cited evidence, document the gap explicitly in that artifact instead of inventing values.
 4. If a later skill discovers a missing item belonging to an earlier domain, return to the relevant skill, append evidence if available, rewrite affected artifacts, then continue forward.
 5. Proceed to `startup-report-writer` only after `03`–`09` have either closed supportable gaps or explicitly documented unsupported ones.
 
@@ -102,20 +102,20 @@ The old separate repair-agent loop is replaced by per-skill dynamic evidence use
 
 After `startup-report-zh` writes both required `.zh.yaml` files:
 
-- Rebuild `reports/_index.yaml` if needed with `node scripts/build-reports-index.mjs --strict`.
-- Run `npm run validate` when dependencies are available.
-- Remove failed, duplicate, or incomplete partial report folders before final validation/commit.
+- Rebuild `reports/_index.yaml` with `node scripts/build-reports-index.mjs --strict`.
+- Run `npm run validate`.
+- Remove failed, duplicate, or incomplete partial report folders before commit.
 
 ## Final response
 
 Summarize: report folder, generated YAML files (English plus required Simplified Chinese), source count, claim count, recommendation, confidence, risk rating, valuation stance, structured figure count, table count, validation status, and main diligence gaps.
 
-## Repair an existing report
+## Update an existing report
 
-Use the same skill-based dynamic gap loop for an existing report when a review finds accidental omissions, thin sections, or report data that appears supportable but was not captured.
+When a review finds accidental omissions, thin sections, or supportable data that was not captured, run the dynamic gap loop above on the existing report folder.
 
 - Never rename existing `S###` / `C###` IDs. Add new IDs after the current maximum and keep existing `claimRefs` stable.
-- The relevant analysis skill updates `00-report-brief.yaml` / `01-evidence-ledger.yaml` plus its owned `02`–`09` artifacts.
+- The relevant analysis skill updates `00-report-brief.yaml` and `01-evidence-ledger.yaml` plus its owned `02`–`09` artifacts.
 - If new claims materially change recommendation/confidence/riskRating/valuationStance, rerun downstream affected skills, then rerun `startup-report-writer` and `startup-report-zh`.
 - Do not commit a partially-updated report folder.
-- After repair and reruns, run `npm run validate`.
+- After updates and reruns, run `npm run validate`.

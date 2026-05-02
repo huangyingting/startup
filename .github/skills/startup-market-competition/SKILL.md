@@ -17,7 +17,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly when the ledger is too thin for market/competition work. Search only for chapter-specific missing facts, parse `web_search` packets per the evidence-ledger rules, append new cited sources/claims to `01-evidence-ledger.yaml`, then cite the new `claimRefs` in `03`/`04`.
+You may use `web_search` directly when the ledger is too thin for market/competition work. Search only for chapter-specific missing facts, parse `web_search` packets per the shared ledger rules in [`startup-foundation/SKILL.md`](../startup-foundation/SKILL.md), append new cited sources/claims to `01-evidence-ledger.yaml`, then cite the new `claimRefs` in `03`/`04`.
 
 Do not invent market sizes, growth rates, market share, pricing, or competitor capabilities. If targeted searches do not produce cited evidence, keep the gap visible.
 

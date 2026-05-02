@@ -17,7 +17,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing regulatory, legal, security, valuation, comparables, IPO-readiness, or recommendation-critical facts. Parse response packets per the evidence-ledger rules, append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `08`/`09`.
+You may use `web_search` directly for missing regulatory, legal, security, valuation, comparables, IPO-readiness, or recommendation-critical facts. Parse response packets per the shared ledger rules in [`startup-foundation/SKILL.md`](../startup-foundation/SKILL.md), append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `08`/`09`.
 
 If valuation inputs are missing, default to `research-more` or `track` rather than false precision. Do not invent valuation, revenue multiples, legal outcomes, regulatory posture, or return scenarios.
 

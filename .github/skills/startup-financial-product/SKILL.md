@@ -18,7 +18,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing financial, product, customer, retention, security, or compliance facts. Parse response packets per the evidence-ledger rules, append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `05`/`06`/`07`.
+You may use `web_search` directly for missing financial, product, customer, retention, security, or compliance facts. Parse response packets per the shared ledger rules in [`startup-foundation/SKILL.md`](../startup-foundation/SKILL.md), append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `05`/`06`/`07`.
 
 If revenue, gross margin, CAC, LTV, retention, churn, NRR, customer counts, or customer concentration are not publicly supported, use `null` with exact diligence asks. Do not infer metrics without labeling estimates and confidence.
 
