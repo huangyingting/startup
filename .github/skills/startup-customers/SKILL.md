@@ -45,8 +45,9 @@ Cover these universal topics:
 ## Required figures
 
 - **Customer journey map** — `type: journey-map`; show customer segments, adoption surfaces, and expansion loops.
-- **Adoption / deployment funnel** — `type: flow`; show discovery-to-purchase-to-deployment-to-expansion path when relevant.
+- **Adoption / deployment funnel** — `type: funnel` or `flow`; show discovery-to-purchase-to-deployment-to-expansion path when relevant.
 - **Customer growth / usage / retention chart** — `type: bars` or `scatter`; numeric values only and source-backed.
+- **Retention / repeat cohort** — `type: cohort` when renewal, repeat usage, NRR/GRR, repeat purchase, or churn cohorts are available.
 - **Customer proof matrix** — `type: matrix`; compare evidence quality, outcome specificity, retention visibility, or production maturity.
 
 ## Evidence collection strategy

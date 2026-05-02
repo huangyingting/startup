@@ -51,7 +51,9 @@ Cover these universal topics:
 
 - **Recommendation logic** — `type: logic-chain`; show the chain from scale/proof/risks/valuation to recommendation.
 - **Valuation sensitivity** — `type: sensitivity`; show sensitivity to revenue, margin, multiple, milestone probability, utilization, take rate, unit margin, capex, or other relevant driver.
-- **Scenario outcome chart** — `type: bars`, `waterfall`, or `matrix`; show bull/base/bear outcomes or downside bridge when numeric support exists.
+- **Scenario outcome chart** — `type: scenario-tree`, `bars`, `waterfall`, or `matrix`; show bull/base/bear outcomes or downside bridge when numeric support exists.
+- **Valuation / return range** — `type: range` for low/base/high valuation, exit, dilution, or return outcomes with explicit assumptions.
+- **Investment scorecard** — `type: scorecard` for IC-ready scoring across market, proof, moat, economics, risk, valuation, and evidence quality.
 - **Exit readiness map** — `type: matrix` when IPO/M&A/commercialization/project readiness needs scoring.
 
 ## Evidence collection strategy

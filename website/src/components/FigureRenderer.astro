@@ -11,7 +11,7 @@ const { figure, claims = [], sources = [] } = Astro.props;
 const type = figure?.type ?? 'flow';
 const layout = figure?.layout ?? 'standard';
 const data = figure?.data ?? {};
-const chartTypes = new Set(['flow', 'decision-map', 'evidence-map', 'bars', 'waterfall', 'quadrant', 'positioning-map', 'matrix', 'heatmap', 'sensitivity', 'scatter']);
+const chartTypes = new Set(['flow', 'decision-map', 'evidence-map', 'scenario-tree', 'dependency-map', 'bars', 'waterfall', 'funnel', 'range', 'quadrant', 'positioning-map', 'matrix', 'heatmap', 'cohort', 'sensitivity', 'scatter']);
 const usesCanvasChart = chartTypes.has(type);
 const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
 const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
@@ -23,6 +23,7 @@ const marketSizingNodes = arr(data.nodes ?? data.items);
 const unitEconomicsNodes = arr(data.nodes ?? data.items);
 const customerSurfaceNodes = arr(data.nodes ?? data.items);
 const recommendationNodes = arr(data.nodes ?? data.items);
+const scorecardItems = arr(data.items ?? data.nodes);
 const transmissionNodes = arr(data.nodes ?? data.items);
 const transmissionEdges = arr(data.edges);
 const transmissionSourceIds = new Set(transmissionEdges.map((edge: any) => edge.from));
@@ -55,15 +56,15 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
     </ol>
   )}
 
-  {(type === 'flow' || type === 'decision-map' || type === 'evidence-map') && <div id={chartId} class="echart-figure chart-relationship" data-chart-type={type}></div>}
+  {(type === 'flow' || type === 'decision-map' || type === 'evidence-map' || type === 'scenario-tree' || type === 'dependency-map') && <div id={chartId} class="echart-figure chart-relationship" data-chart-type={type}></div>}
 
-  {(type === 'bars' || type === 'waterfall') && <div id={chartId} class="echart-figure chart-bars" data-chart-type={type}></div>}
+  {(type === 'bars' || type === 'waterfall' || type === 'funnel' || type === 'range') && <div id={chartId} class="echart-figure chart-bars" data-chart-type={type}></div>}
 
   {(type === 'quadrant' || type === 'positioning-map') && (
     <div id={chartId} class="echart-figure chart-quadrant" data-chart-type={type}></div>
   )}
 
-  {(type === 'matrix' || type === 'heatmap') && <div id={chartId} class="echart-figure chart-heatmap" data-chart-type={type}></div>}
+  {(type === 'matrix' || type === 'heatmap' || type === 'cohort') && <div id={chartId} class="echart-figure chart-heatmap" data-chart-type={type}></div>}
 
   {type === 'stack' && !hasRichStackLayers && (
     <div class="stack-viz">
@@ -239,12 +240,27 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
     </div>
   )}
 
+  {type === 'scorecard' && (
+    <div class="scorecard-viz" aria-label={`${figure.title} scorecard`}>
+      {scorecardItems.map((item: any, index: number) => (
+        <article class:list={['scorecard-card', toneClass(item.tone)]}>
+          <div class="scorecard-head">
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <strong>{item.label}</strong>
+          </div>
+          <div class="scorecard-value">{item.displayValue ?? item.value ?? item.score ?? '—'}</div>
+          {item.detail && <p>{item.detail}</p>}
+        </article>
+      ))}
+    </div>
+  )}
+
   {(type === 'sensitivity' || type === 'scatter') && <div id={chartId} class="echart-figure chart-sensitivity" data-chart-type={type}></div>}
 
   {type === 'other' && (
     <div class="figure-fallback" role="note">
       <strong>Structured figure data available</strong>
-      <p>This figure type does not yet have a dedicated renderer. Use a generic type such as <code>logic-chain</code>, <code>causal-map</code>, <code>stack</code>, <code>heatmap</code>, <code>bars</code>, or <code>scatter</code> for automatic visual rendering.</p>
+      <p>This figure type does not yet have a dedicated renderer. Use a generic type such as <code>logic-chain</code>, <code>causal-map</code>, <code>stack</code>, <code>heatmap</code>, <code>bars</code>, <code>funnel</code>, <code>cohort</code>, <code>range</code>, <code>scorecard</code>, or <code>scatter</code> for automatic visual rendering.</p>
     </div>
   )}
 
@@ -392,6 +408,54 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
       series: [
         { type: 'bar', stack: 'total', data: bases, itemStyle: { color: 'transparent' }, emphasis: { disabled: true }, silent: true },
         { type: 'bar', stack: 'total', data: values, barWidth: 24, label: { show: true, position: 'top', color: palette.ink, fontSize: chartFont.label, fontWeight: 700 } },
+      ],
+    };
+  };
+
+  const funnelOption = (payload) => {
+    const items = arr(payload.data.items).length ? arr(payload.data.items) : arr(arr(payload.data.series)[0]?.points);
+    const max = Math.max(...items.map((item) => numberValue(item.value)), 1);
+    return {
+      textStyle: baseText,
+      tooltip,
+      grid: { left: 168, right: 70, top: 16, bottom: 28 },
+      xAxis: { type: 'value', min: 0, max, ...axisStyle },
+      yAxis: { type: 'category', data: items.map((item) => item.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, width: 168, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
+      series: [{
+        type: 'bar',
+        data: items.map((item, index) => ({ value: numberValue(item.value), itemStyle: { color: colorForTone(item.tone ?? (index === items.length - 1 ? 'positive' : 'neutral')) }, label: { formatter: valueLabel(item) } })),
+        barWidth: 24,
+        itemStyle: { borderColor: palette.paper, borderWidth: 1, borderRadius: [0, 4, 4, 0] },
+        label: { show: true, position: 'right', color: palette.ink, fontFamily: 'Mona Sans, Noto Sans SC, sans-serif', fontSize: chartFont.label, fontWeight: 800 },
+      }],
+    };
+  };
+
+  const rangeOption = (payload) => {
+    const items = arr(payload.data.items);
+    const lows = items.map((item) => numberValue(item.low ?? item.min));
+    const highs = items.map((item) => numberValue(item.high ?? item.max ?? item.value));
+    const min = Math.min(...lows, 0);
+    const max = Math.max(...highs, 1);
+    return {
+      textStyle: baseText,
+      tooltip: { ...tooltip, formatter: (params) => {
+        const item = items[params.dataIndex] ?? {};
+        return `<strong>${item.label ?? ''}</strong><br/>${item.displayValue ?? `${item.low ?? item.min ?? ''}–${item.high ?? item.max ?? ''}`}`;
+      } },
+      grid: { left: 168, right: 70, top: 16, bottom: 28 },
+      xAxis: { type: 'value', min, max, ...axisStyle },
+      yAxis: { type: 'category', data: items.map((item) => item.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, width: 168, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
+      series: [
+        { type: 'bar', stack: 'range', data: lows, itemStyle: { color: 'transparent' }, emphasis: { disabled: true }, silent: true },
+        {
+          type: 'bar',
+          stack: 'range',
+          data: items.map((item, index) => ({ value: Math.max(0, highs[index] - lows[index]), itemStyle: { color: colorForTone(item.tone) }, label: { formatter: item.displayValue ?? `${item.low ?? item.min}–${item.high ?? item.max}` } })),
+          barWidth: 18,
+          itemStyle: { borderRadius: 9 },
+          label: { show: true, position: 'right', color: palette.ink, fontSize: chartFont.label, fontWeight: 800 },
+        },
       ],
     };
   };
@@ -634,6 +698,36 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
     };
   };
 
+  const cohortOption = (payload) => {
+    const columns = arr(payload.data.columns);
+    const rows = arr(payload.data.rows);
+    const values = [];
+    rows.forEach((row, rowIndex) => arr(row.values).forEach((cell, colIndex) => {
+      const value = Number(cell?.value ?? String(cell?.label ?? '').replace(/[^0-9.-]/g, ''));
+      values.push({
+        value: [colIndex, rowIndex, Number.isFinite(value) ? value : 0, cell?.label ?? cell?.displayValue ?? '', row.label ?? '', columns[colIndex] ?? ''],
+        itemStyle: { borderColor: '#fff7ef', borderWidth: 4, borderRadius: 7 },
+      });
+    }));
+    return {
+      textStyle: baseText,
+      tooltip: { ...tooltip, formatter: (params) => {
+        const value = params.value ?? [];
+        return `<strong>${value[4] ?? ''} × ${value[5] ?? ''}</strong><br/>${value[3] ?? value[2] ?? ''}`;
+      } },
+      grid: { left: 156, right: 28, top: 42, bottom: 38 },
+      xAxis: { type: 'category', data: columns, position: 'top', axisLabel: { color: palette.ink, fontSize: chartFont.axis, fontWeight: 800, margin: 12, interval: 0, width: 108, overflow: 'break', lineHeight: 18 }, axisLine: { show: false }, axisTick: { show: false } },
+      yAxis: { type: 'category', data: rows.map((row) => row.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, fontWeight: 800, width: 140, overflow: 'break', lineHeight: 18 }, axisLine: { show: false }, axisTick: { show: false } },
+      visualMap: { show: false, min: 0, max: 100, inRange: { color: ['#f4c7bd', '#f2d8a0', '#dcebe7', '#0f766e'] } },
+      series: [{
+        type: 'heatmap',
+        data: values,
+        label: { show: true, formatter: (params) => labelText(params.value?.[3] || params.value?.[2], 18), fontSize: chartFont.heatmap, fontWeight: 800, color: palette.ink },
+        emphasis: { itemStyle: { shadowBlur: 0, borderColor: palette.claret, borderWidth: 2 } },
+      }],
+    };
+  };
+
   const sensitivityOption = (payload) => {
     const series = arr(payload.data.series)[0] ?? {};
     const points = arr(series.points);
@@ -665,10 +759,13 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
   };
 
   const optionFor = (payload) => {
-    if (['flow', 'decision-map', 'evidence-map'].includes(payload.type)) return graphOption(payload);
+    if (['flow', 'decision-map', 'evidence-map', 'scenario-tree', 'dependency-map'].includes(payload.type)) return graphOption(payload);
     if (payload.type === 'waterfall') return waterfallOption(payload);
+    if (payload.type === 'funnel') return funnelOption(payload);
+    if (payload.type === 'range') return rangeOption(payload);
     if (payload.type === 'bars') return barOption(payload);
     if (['quadrant', 'positioning-map'].includes(payload.type)) return quadrantOption(payload);
+    if (payload.type === 'cohort') return cohortOption(payload);
     if (['matrix', 'heatmap'].includes(payload.type)) return heatmapOption(payload);
     if (payload.type === 'scatter') return xyOption(payload);
     if (payload.type === 'sensitivity') return sensitivityOption(payload);
@@ -814,6 +911,16 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
   .risk-card.is-bridge { background: color-mix(in srgb, #b42318 5%, var(--surface-paper)); }
   .risk-card.is-outcome { background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); border-left-color: var(--claret); }
   .risk-card.is-outcome strong { color: var(--claret); }
+  .scorecard-viz { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--space-3); }
+  .scorecard-card { display: grid; align-content: start; gap: var(--space-3); min-height: 11rem; border: var(--report-rule); border-top: 4px solid var(--claret); background: var(--surface-paper); padding: var(--space-4); }
+  .scorecard-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+  .scorecard-head span { font-family: var(--font-mono); font-size: var(--report-fs-caption, 0.98rem); color: var(--caption-gray); }
+  .scorecard-head strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.18; letter-spacing: var(--tracking-display-snug); }
+  .scorecard-value { font-family: var(--font-display); font-size: clamp(1.65rem, 4vw, 3rem); font-weight: 900; line-height: 0.95; letter-spacing: -0.06em; color: var(--claret); }
+  .scorecard-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
+  .scorecard-card.tone-positive { border-top-color: #0f766e; }
+  .scorecard-card.tone-risk, .scorecard-card.tone-critical, .scorecard-card.tone-high { border-top-color: #b42318; }
+  .scorecard-card.tone-opportunity { border-top-color: var(--gold); }
   .tone-positive { border-top-color: #0f766e; }
   .tone-risk, .tone-critical, .tone-high { border-top-color: #b42318; }
   .tone-opportunity { border-top-color: var(--gold); }

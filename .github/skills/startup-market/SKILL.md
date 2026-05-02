@@ -46,8 +46,9 @@ Cover these universal topics:
 
 - **Market sizing lens** — `type: layered-lens`; show TAM/SAM/SOM or constrained sizing layers with numeric values when supported.
 - **Market growth / sizing comparison** — `type: bars`; compare estimates, segments, geographies, or adoption proxies using numeric values only.
+- **Market estimate range** — `type: range` when credible sources provide low/base/high market, penetration, or forecast ranges.
 - **Buyer / segment map** — `type: matrix`, `journey-map`, or `flow`; show buyer-user-payer relationships and adoption path.
-- **Adoption funnel or value-chain market map** — `type: flow` when purchase/deployment requires multiple steps or value-chain actors.
+- **Adoption funnel or value-chain market map** — `type: funnel` or `flow` when purchase/deployment requires multiple steps or value-chain actors.
 
 ## Evidence collection strategy
 

@@ -47,7 +47,7 @@ Cover these universal topics:
 - **Risk heatmap** — `type: heatmap`; show impact, likelihood, mitigation maturity, or residual severity.
 - **Risk transmission map** — `type: causal-map`; show how risks flow into revenue, customers, margin, financing, operations, and valuation.
 - **Regulatory / approval pathway map** — `type: flow` when approvals, licenses, permits, clinical/regulatory steps, or government procurement matter.
-- **Dependency map** — `type: matrix` or `flow`; show critical partners, suppliers, platforms, regulators, facilities, or financing dependencies.
+- **Dependency map** — `type: dependency-map`, `matrix`, or `flow`; show critical partners, suppliers, platforms, regulators, facilities, or financing dependencies.
 
 ## Evidence collection strategy
 

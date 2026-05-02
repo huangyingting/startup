@@ -5,13 +5,13 @@ import { readYaml } from './text-utils.mjs';
 
 const ANALYSIS = [
   { file: '01-company-snapshot.yaml', chapter: '01', minSections: 5, minTables: 3, minFigures: 2, requiredFigureTypes: ['timeline'] },
-  { file: '02-market-macro.yaml', chapter: '02', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['layered-lens', 'bars'] },
-  { file: '03-competitive-benchmarking.yaml', chapter: '03', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['quadrant', 'positioning-map'] },
-  { file: '04-financial-unit-economics.yaml', chapter: '04', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['bridge', 'waterfall', 'bars', 'scatter'] },
-  { file: '05-product-technology.yaml', chapter: '05', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['stack', 'flow'] },
-  { file: '06-customer-retention.yaml', chapter: '06', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['journey-map', 'bars', 'scatter'] },
-  { file: '07-risk-regulatory.yaml', chapter: '07', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['heatmap', 'matrix', 'causal-map'] },
-  { file: '08-investment-valuation.yaml', chapter: '08', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['logic-chain', 'sensitivity'] },
+  { file: '02-market-macro.yaml', chapter: '02', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['layered-lens', 'bars', 'range'] },
+  { file: '03-competitive-benchmarking.yaml', chapter: '03', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['quadrant', 'positioning-map', 'scorecard'] },
+  { file: '04-financial-unit-economics.yaml', chapter: '04', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['bridge', 'waterfall', 'bars', 'scatter', 'range'] },
+  { file: '05-product-technology.yaml', chapter: '05', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['stack', 'flow', 'dependency-map'] },
+  { file: '06-customer-retention.yaml', chapter: '06', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['journey-map', 'bars', 'scatter', 'funnel', 'cohort'] },
+  { file: '07-risk-regulatory.yaml', chapter: '07', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['heatmap', 'matrix', 'causal-map', 'dependency-map'] },
+  { file: '08-investment-valuation.yaml', chapter: '08', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['logic-chain', 'sensitivity', 'scorecard', 'scenario-tree', 'range'] },
 ];
 
 const args = process.argv.slice(2);

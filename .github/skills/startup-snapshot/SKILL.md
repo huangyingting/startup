@@ -48,6 +48,7 @@ Cover these universal topics:
 
 - **Company milestone timeline** — `type: timeline`; include dated milestone items with labels, details, tone, and claim refs.
 - **Company snapshot logic** — `type: logic-chain` or `flow`; show how identity, product/service, customers, capital, dependencies, and risks connect.
+- **Snapshot scorecard** — `type: scorecard` when cover-metric evidence quality, maturity, risk, traction, or investability can be summarized compactly.
 - **Governance / stakeholder map** — `type: flow` or `matrix` when control, strategic partners, investors, regulators, facilities, or ecosystem dependencies are material.
 
 ## Evidence collection strategy

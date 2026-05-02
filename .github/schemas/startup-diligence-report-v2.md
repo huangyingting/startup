@@ -204,7 +204,7 @@ tables:
 figures:
   - id: F201
     title: string
-    type: timeline|flow|decision-map|evidence-map|quadrant|positioning-map|bars|waterfall|heatmap|matrix|stack|layered-lens|bridge|journey-map|logic-chain|causal-map|sensitivity|scatter|other
+    type: timeline|flow|decision-map|evidence-map|quadrant|positioning-map|bars|waterfall|heatmap|matrix|stack|layered-lens|bridge|journey-map|logic-chain|causal-map|sensitivity|scatter|funnel|cohort|range|scorecard|scenario-tree|dependency-map|other
     layout: compact|standard|wide
     summary: string|null
     data:
@@ -356,7 +356,7 @@ chapters:
 figures:
   - id: F101
     title: string
-    type: timeline|flow|decision-map|evidence-map|quadrant|positioning-map|bars|waterfall|heatmap|matrix|stack|layered-lens|bridge|journey-map|logic-chain|causal-map|sensitivity|scatter|other
+    type: timeline|flow|decision-map|evidence-map|quadrant|positioning-map|bars|waterfall|heatmap|matrix|stack|layered-lens|bridge|journey-map|logic-chain|causal-map|sensitivity|scatter|funnel|cohort|range|scorecard|scenario-tree|dependency-map|other
     layout: compact|standard|wide
     summary: string|null
     data:
@@ -420,10 +420,15 @@ Renderer-specific contracts:
 - `flow`: `data.nodes[]` and `data.edges[]` for generic causal/product/customer flows.
 - `decision-map`: `data.nodes[]` and optional `data.edges[]` for decision trees or evaluation logic.
 - `evidence-map`: `data.nodes[]` and optional `data.edges[]` for source-to-claim maps.
+- `scenario-tree`: `data.nodes[]` and `data.edges[]` for bull/base/bear or milestone-dependent scenario paths.
+- `dependency-map`: `data.nodes[]` and `data.edges[]` for critical suppliers, platforms, regulators, partners, customers, or single points of failure.
 - `quadrant` / `positioning-map`: `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include `data.xAxis` and `data.yAxis` when useful.
 - `bars`: `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`.
+- `funnel`: ordered `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`; use for stage conversion or sequential narrowing.
 - `waterfall`: ordered `data.items[]` with signed numeric `value`, optional `displayValue`, optional `tone`.
+- `range`: `data.items[]` with `label`, numeric `low` or `min`, numeric `high` or `max`, optional numeric `mid`, optional `displayValue`, optional `tone`.
 - `heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; `row.values.length === data.columns.length`. Do not include the row identifier as a first column.
+- `cohort`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; each value should include numeric `value` when retention/repeat rates are available and may include `label`/`displayValue`.
 - `stack`: `data.layers[]` or `data.items[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`.
 - `layered-lens`: `data.nodes[]` or `data.items[]` from broad context to constrained footprint; do not invent unsupported values.
 - `bridge`: `data.nodes[]` or `data.items[]` from an evidence-backed anchor through missing bridges to an underwriting output.
@@ -432,6 +437,7 @@ Renderer-specific contracts:
 - `causal-map`: `data.nodes[]` and `data.edges[]`; causes, transmissions, and impacts are inferred by edge direction.
 - `sensitivity`: `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`.
 - `scatter`: `data.points[]` or `data.series[0].points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include axis labels when useful.
+- `scorecard`: `data.items[]` or `data.nodes[]` with `label`, numeric or displayable `value`/`score`, optional `displayValue`, optional `detail`, optional `tone`.
 - `other`: fallback only; avoid unless no semantic renderer fits.
 
 Canonical examples:
@@ -445,7 +451,7 @@ data:
       detail: Evidence-backed description
       tone: positive
 
-# flow / decision-map / evidence-map / causal-map
+# flow / decision-map / evidence-map / causal-map / scenario-tree / dependency-map
 data:
   nodes:
     - id: n1
@@ -457,13 +463,23 @@ data:
       to: n2
       label: Optional edge label
 
-# bars / waterfall
+# bars / funnel / waterfall
 data:
   items:
     - label: Metric label
       value: 123.4
       displayValue: "$123.4M"
       tone: positive
+
+# range
+data:
+  items:
+    - label: Scenario label
+      low: 120
+      mid: 180
+      high: 250
+      displayValue: "$120M–$250M"
+      tone: neutral
 
 # quadrant / positioning-map / scatter
 data:
@@ -475,7 +491,7 @@ data:
       y: 60
       tone: neutral
 
-# heatmap / matrix
+# heatmap / matrix / cohort
 data:
   columns: [Likelihood, Impact]
   rows:
@@ -503,6 +519,15 @@ data:
     - label: Card label
       detail: Card detail
       tone: neutral
+
+# scorecard
+data:
+  items:
+    - label: Dimension label
+      value: 4
+      displayValue: "4 / 5"
+      detail: Evidence-backed score rationale
+      tone: positive
 
 # sensitivity
 data:

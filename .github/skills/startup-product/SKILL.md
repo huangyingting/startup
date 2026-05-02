@@ -49,6 +49,7 @@ Cover these universal topics:
 - **Product architecture map** — `type: stack`; show layers/modules/components with details.
 - **Customer workflow / operating flow** — `type: flow`; show how the product/service is used or delivered.
 - **Product maturity / capability map** — `type: matrix`; show maturity or strength across modules/capabilities.
+- **Critical dependency map** — `type: dependency-map` when the product depends on suppliers, platforms, data rights, regulators, facilities, scientific proof, or key partners.
 - **Roadmap or development timeline** — `type: timeline` when milestones, releases, trials, certifications, facilities, or launches matter.
 
 ## Evidence collection strategy

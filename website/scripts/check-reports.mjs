@@ -39,19 +39,24 @@ const RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 
 const CONFIDENCE = new Set(['high', 'medium', 'low']);
 const RISK_RATINGS = new Set(['low', 'moderate', 'significant', 'critical', 'unknown']);
 const VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
-const FIGURE_TYPES = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'quadrant', 'positioning-map', 'bars', 'waterfall', 'heatmap', 'matrix', 'stack', 'layered-lens', 'bridge', 'journey-map', 'logic-chain', 'causal-map', 'sensitivity', 'scatter', 'other']);
+const FIGURE_TYPES = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'quadrant', 'positioning-map', 'bars', 'waterfall', 'heatmap', 'matrix', 'stack', 'layered-lens', 'bridge', 'journey-map', 'logic-chain', 'causal-map', 'sensitivity', 'scatter', 'funnel', 'cohort', 'range', 'scorecard', 'scenario-tree', 'dependency-map', 'other']);
 const FIGURE_LAYOUTS = new Set(['compact', 'standard', 'wide']);
 const FIGURE_CONTRACTS = new Map([
   ['timeline', [['items']]],
   ['flow', [['nodes'], ['edges']]],
   ['decision-map', [['nodes']]],
   ['evidence-map', [['nodes']]],
+  ['scenario-tree', [['nodes'], ['edges']]],
+  ['dependency-map', [['nodes'], ['edges']]],
   ['quadrant', [['points']]],
   ['positioning-map', [['points']]],
   ['bars', [['items', 'series']]],
+  ['funnel', [['items', 'series']]],
   ['waterfall', [['items']]],
+  ['range', [['items']]],
   ['heatmap', [['columns'], ['rows']]],
   ['matrix', [['columns'], ['rows']]],
+  ['cohort', [['columns'], ['rows']]],
   ['stack', [['layers', 'items']]],
   ['layered-lens', [['nodes', 'items']]],
   ['bridge', [['nodes', 'items']]],
@@ -60,6 +65,7 @@ const FIGURE_CONTRACTS = new Map([
   ['causal-map', [['nodes'], ['edges']]],
   ['sensitivity', [['series']]],
   ['scatter', [['points', 'series']]],
+  ['scorecard', [['items', 'nodes']]],
 ]);
 const NON_CANONICAL_FIGURE_DATA_FIELDS = new Set(['children', 'steps', 'cards', 'buckets', 'groups', 'components', 'name']);
 
@@ -134,7 +140,7 @@ function checkFigure(failures, path, figure) {
     if (!hasText(row?.label)) failures.push(`${path}: figure ${figure.id} row ${index + 1} requires label`);
     if (Array.isArray(row?.values) && row.values.length === 0) failures.push(`${path}: figure ${figure.id} row ${index + 1} has empty values`);
   }
-  if (['matrix', 'heatmap'].includes(figure.type)) {
+  if (['matrix', 'heatmap', 'cohort'].includes(figure.type)) {
     const cols = Array.isArray(figure.data.columns) ? figure.data.columns : [];
     const rows = Array.isArray(figure.data.rows) ? figure.data.rows : [];
     if (cols.length < 1) failures.push(`${path}: figure ${figure.id} type ${figure.type} requires at least 1 data.columns entry (X-axis label per value column)`);
@@ -143,9 +149,18 @@ function checkFigure(failures, path, figure) {
       if (values.length !== cols.length) failures.push(`${path}: figure ${figure.id} row ${index + 1} (${row?.label ?? '?'}) has ${values.length} values but data.columns declares ${cols.length}; columns are X-axis labels and row.label is the Y-axis label, so values.length must equal columns.length`);
     }
   }
-  if (['bars', 'waterfall'].includes(figure.type)) {
+  if (['bars', 'waterfall', 'funnel'].includes(figure.type)) {
     for (const [index, item] of (figure.data.items ?? []).entries()) {
       if (!isNumber(item?.value)) failures.push(`${path}: figure ${figure.id} item ${index + 1} requires numeric value`);
+    }
+  }
+  if (figure.type === 'range') {
+    for (const [index, item] of (figure.data.items ?? []).entries()) {
+      const low = item?.low ?? item?.min;
+      const high = item?.high ?? item?.max;
+      if (!isNumber(low) || !isNumber(high)) failures.push(`${path}: figure ${figure.id} range item ${index + 1} requires numeric low/min and high/max`);
+      else if (high < low) failures.push(`${path}: figure ${figure.id} range item ${index + 1} has high/max below low/min`);
+      if (item?.mid != null && !isNumber(item.mid)) failures.push(`${path}: figure ${figure.id} range item ${index + 1} mid must be numeric when present`);
     }
   }
   if (['quadrant', 'positioning-map', 'scatter'].includes(figure.type)) {
