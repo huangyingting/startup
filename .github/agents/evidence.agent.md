@@ -77,7 +77,7 @@ Before writing `01-evidence-ledger.yaml`:
 5. **Independence**: at least 15% of retained sources must be `independence: independent`. Do not treat company posts, investor blurbs, partner announcements, or wire-copy stories as independent corroboration; label `independence` accurately.
 6. **Uncited sources**: at most 50% of retained sources may be uncited by any claim; either cite them or prune them.
 7. **Source-target**: if `sources.length < coverage.sourceTarget`, keep searching new angles. If unmet, record in `coverageGaps`, lower confidence, and flag the run incomplete in the handoff.
-8. **Bucket coverage**: if official, startup-news, third-party-database, customer/partner, regulatory, or technical buckets are missing, run another wave or record a specific `coverageGaps` item.
+8. **Bucket coverage**: if `official`, `tier-one-news` / `trade-press`, `analyst-market-data`, `customer-proof` / `partner-proof`, `regulatory` / `filing`, or `technical-docs` buckets are missing, run another wave or record a specific `coverageGaps` item.
 
 ## Output focus
 
@@ -134,7 +134,7 @@ Escalation (when 02–11 must be regenerated, not repaired):
 Repair workflow:
 
 1. Diagnose by re-reading the warnings from `npm run check:reports-content` and the schema gates: depth minimum, publisher concentration, independence ratio, uncited ratio, freshness, bucket coverage, source-target.
-2. Plan additive search waves keyed to the unmet gate. Prefer independent buckets the ledger is missing (tier-one news, analyst, regulatory, customer/partner, technical-docs).
+2. Plan additive search waves keyed to the unmet gate. Prefer independent buckets the ledger is missing (`tier-one-news`, `analyst-market-data`, `regulatory` / `filing`, `customer-proof` / `partner-proof`, `technical-docs`).
 3. Fetch and add new sources (`fetchVerified: true`, fresh `accessDate`, accurate `independence`, `reputationTier`, `topics`). Add new claims that cite them and tie them to a chapter need.
 4. Pruning is allowed only for sources that are simultaneously: (a) uncited by every claim, (b) duplicates of a dominant publisher or stale, and (c) safe to remove without dropping `sources.length` below the depth minimum (`deep ≥100`, `standard ≥40`).
 5. Update `coverage.sourceTarget` to the current depth minimum if the ledger still uses a legacy lower value. Recompute `coverage.sourcesFetched`, `coverage.sourcesRetained`, `coverage.claimsCreated`. Update `sourceDiversityNotes`, `deduplicationNotes`, `recencyNotes`, `coverageGaps` to describe what changed.

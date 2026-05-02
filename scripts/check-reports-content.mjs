@@ -74,7 +74,7 @@ function checkEvidenceCoverage(failures, warnings, run, ledger) {
     }
     const independentCount = sources.filter((s) => s.independence === 'independent').length;
     if (independentCount / sources.length < 0.15) {
-      warnings.push(`${run}/01-evidence-ledger.yaml: only ${independentCount}/${sources.length} retained sources are independent (<15%); add tier-one news, analyst, or filing sources`);
+      warnings.push(`${run}/01-evidence-ledger.yaml: only ${independentCount}/${sources.length} retained sources are independent (<15%); add tier-one-news, analyst-market-data, or filing sources`);
     }
   }
 }
