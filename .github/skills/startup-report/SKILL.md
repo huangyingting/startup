@@ -56,7 +56,7 @@ The final report must consume the analysis record, not summarize it away. Apply 
 
 Before saving `101`, compute and verify:
 
-1. `sectionCountPerChapter[chapter N for N in 2..9] >= len(artifact[N-1].sections)`.
+1. `sectionCountPerChapter[chapter N for N in 2..9] >= len(artifact[N-1].sections)`. Note the off-by-one: `101` chapter `N` corresponds to analysis artifact `XX = N-1` (chapter 2 ↔ `01-company-snapshot.yaml`, chapter 9 ↔ `08-investment-valuation.yaml`). When you renumber the source artifact's sections from `(N-1).X` to `N.X` for inclusion in `101`, keep an explicit mapping comment so `startup-report-zh` can reverse the remap when assembling `101-report-document.zh.yaml`.
 2. `set(101.tables[*].id) >= union(artifact[01..08].tables[*].id)` minus IDs explicitly listed in `reportMeta.coverageNotes`.
 3. `set(101.figures[*].id) >= union(artifact[01..08].figures[*].id)` minus IDs explicitly listed in `reportMeta.coverageNotes`.
 4. `set(claimRefs collected from 101) >= set(100-evidence-ledger.yaml.claims[*].id)` minus IDs explicitly noted as superseded.

@@ -23,7 +23,7 @@ Do not use `web_search` or add new facts. Derive all values from `100-evidence-l
 ## Card requirements
 
 - `overallScore` is a 0–10 number, never 0–100.
-- `figureCount` and `tableCount` are top-level fields and must equal `101-report-document.yaml` counts.
+- `figureCount` and `tableCount` are top-level fields and **must equal the current `101-report-document.yaml` counts**. After editing `101` (e.g. dropping a duplicate table, adding the executive summary KPI table, or removing an empty appendix block), recompute `len(101.tables)` and `len(101.figures)` and write the new totals into `102-report-card.yaml` and `102-report-card.zh.yaml` in the same commit. The website lint fails the build if either count drifts.
 - `sourceStats` contains only `sourcesRetained` and `claimsReviewed`.
 - `keyMetrics` should carry the report's investor-facing cover metrics where schema fields exist: valuation, revenue/run-rate or ARR, total raised, customer count, headcount, revenue growth, gross margin, and NRR. If a due-diligence cover metric does not map to a schema key, preserve it in the report document and summarize the gap rather than inventing a new card field.
 - When any `keyMetrics.*` is `null`, list a matching `unresolvedGaps` entry.

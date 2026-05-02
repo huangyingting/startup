@@ -26,7 +26,8 @@ Read `.github/references/zh-translation.md` before writing.
 
 1. Load `101-report-document.yaml`, every `01–08.yaml`, and every `01–08.zh.yaml`.
 2. For each chapter `2–9` of `101-report-document.zh.yaml`, mirror the chapter structure of `101-report-document.yaml`.
-   - For each section block whose source is a chapter section in an analysis artifact, copy the title and body from the matching `XX.zh.yaml` section by section number.
+   - **Section number remap**: `101` chapter `N` uses sections numbered `N.X` (`2.1, 3.1, ...`), but the corresponding source artifact is `XX = N-1` and its sections are numbered `(N-1).X` (`1.1` for chapter 2, `8.1` for chapter 9). When looking up the matching `XX.zh.yaml` section, translate `N.X` back to `(N-1).X` first. Failing to remap leaves chapters 2 and 9 untranslated because the lookup keys do not exist in the source.
+   - For each section block whose source is a chapter section in an analysis artifact, copy the title and body from the matching `XX.zh.yaml` section using the remapped number.
    - For each `table` block, the table itself is referenced by `tableRef`; copy the corresponding entry from the union of `01–08.zh.yaml` `tables[]` into the document-level `tables[]`.
    - For each `figure` block, copy the corresponding entry from the union of `01–08.zh.yaml` `figures[]` into the document-level `figures[]`.
    - For each `callout` block, copy the corresponding callout from the matching `XX.zh.yaml` `callouts[]`.

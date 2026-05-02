@@ -20,9 +20,11 @@ Translate `102-report-card.yaml` into Simplified Chinese, preserving structure e
 
 ## Translate
 
+Translate every one of the following fields. The website renders these as the headline content on report cards and search results, so missing translations are highly visible.
+
 - `company.sector`, `company.stage`, `company.headquarters`, `company.shortDescription`
-- `title`, `subtitle`, `headline`
-- Every entry of `topStrengths[]`, `topRisks[]`, `unresolvedGaps[]`
+- `title`, `subtitle`, `headline` (the `headline` is the one-sentence summary on the report card; never leave it in English)
+- Every entry of `topStrengths[]`, `topRisks[]`, `unresolvedGaps[]` (these are bullet-list items shown under the Chinese-localised section labels `核心亮点 / 核心风险 / 未解问题`; English content here is conspicuous to readers)
 
 ## Preserve exactly
 
