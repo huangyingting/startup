@@ -11,31 +11,11 @@ const { figure, claims = [], sources = [] } = Astro.props;
 const type = figure?.type ?? 'flow';
 const layout = figure?.layout ?? 'standard';
 const data = figure?.data ?? {};
-const chartTypes = new Set(['flow', 'decision-map', 'evidence-map', 'scenario-tree', 'dependency-map', 'bars', 'waterfall', 'funnel', 'range', 'quadrant', 'positioning-map', 'matrix', 'heatmap', 'cohort', 'sensitivity', 'scatter']);
+const chartTypes = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'scenario-tree', 'dependency-map', 'bars', 'waterfall', 'funnel', 'range', 'quadrant', 'positioning-map', 'matrix', 'heatmap', 'cohort', 'sensitivity', 'scatter', 'stack', 'layered-lens', 'bridge', 'journey-map', 'logic-chain', 'causal-map', 'scorecard']);
 const usesD3Chart = chartTypes.has(type);
 const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
 const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
-const toneClass = (tone: unknown) => `tone-${String(tone ?? 'neutral').replace(/[^a-z0-9-]/gi, '-')}`;
 const blockRefs = (block: any) => arr<string>(block?.claimRefs).slice(0, 6);
-const timelineItems = arr(data.items);
-const stackLayers = arr(data.layers ?? data.items);
-const marketSizingNodes = arr(data.nodes ?? data.items);
-const unitEconomicsNodes = arr(data.nodes ?? data.items);
-const customerSurfaceNodes = arr(data.nodes ?? data.items);
-const recommendationNodes = arr(data.nodes ?? data.items);
-const scorecardItems = arr(data.items ?? data.nodes);
-const transmissionNodes = arr(data.nodes ?? data.items);
-const transmissionEdges = arr(data.edges);
-const transmissionSourceIds = new Set(transmissionEdges.map((edge: any) => edge.from));
-const transmissionTargetIds = new Set(transmissionEdges.map((edge: any) => edge.to));
-const transmissionSources = transmissionNodes.filter((node: any) => !transmissionTargetIds.has(node.id));
-const transmissionBridges = transmissionNodes.filter((node: any) => transmissionSourceIds.has(node.id) && transmissionTargetIds.has(node.id));
-const transmissionOutcomes = transmissionNodes.filter((node: any) => transmissionTargetIds.has(node.id) && !transmissionSourceIds.has(node.id));
-const layerLabel = (layer: any) => layer?.label ?? layer?.name ?? layer?.id ?? 'Layer';
-const layerDetail = (layer: any) => layer?.detail ?? layer?.description ?? null;
-const moduleItems = (layer: any) => arr(layer?.modules ?? layer?.items ?? layer?.components);
-const outputItems = (layer: any) => arr<string>(layer?.outputs);
-const hasRichStackLayers = stackLayers.some((layer: any) => moduleItems(layer).length > 0 || outputItems(layer).length > 0);
 const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, data } : null;
 ---
 
@@ -44,218 +24,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
 
   {figure.summary && <p class="figure-summary">{figure.summary}</p>}
 
-  {type === 'timeline' && (
-    <ol class="timeline-viz">
-      {timelineItems.map((item: any) => (
-        <li>
-          <span class="timeline-marker">{item.date ?? item.label}</span>
-          <strong>{item.label}</strong>
-          {item.detail && <p>{item.detail}</p>}
-        </li>
-      ))}
-    </ol>
-  )}
-
-  {(type === 'flow' || type === 'decision-map' || type === 'evidence-map' || type === 'scenario-tree' || type === 'dependency-map') && <div id={chartId} class="d3-figure chart-relationship" data-chart-type={type}></div>}
-
-  {(type === 'bars' || type === 'waterfall' || type === 'funnel' || type === 'range') && <div id={chartId} class="d3-figure chart-bars" data-chart-type={type}></div>}
-
-  {(type === 'quadrant' || type === 'positioning-map') && (
-    <div id={chartId} class="d3-figure chart-quadrant" data-chart-type={type}></div>
-  )}
-
-  {(type === 'matrix' || type === 'heatmap' || type === 'cohort') && <div id={chartId} class="d3-figure chart-heatmap" data-chart-type={type}></div>}
-
-  {type === 'stack' && !hasRichStackLayers && (
-    <div class="stack-viz">
-      {stackLayers.map((layer: any) => (
-        <article class:list={['stack-layer', toneClass(layer.tone)]}>
-          <span></span>
-          <strong>{layerLabel(layer)}</strong>
-          {layerDetail(layer) && <p>{layerDetail(layer)}</p>}
-        </article>
-      ))}
-    </div>
-  )}
-
-  {type === 'layered-lens' && (
-    <div class="market-sizing-viz" aria-label={`${figure.title} market sizing lens`}>
-      <div class="market-sizing-axis">
-        <span>Broad market envelope</span>
-        <span>Served footprint</span>
-      </div>
-      <div class="market-sizing-stack">
-        {marketSizingNodes.map((node: any, index: number) => {
-          const label = String(node.label ?? node.id ?? 'Layer');
-          const width = index === 0 ? '100%' : index === 1 ? '86%' : index === 2 ? '68%' : '76%';
-          return (
-            <article class:list={['market-layer', `layer-${index + 1}`, toneClass(node.tone)]} style={`--market-layer-width: ${width}`}>
-              <div class="market-layer-head">
-                <span>{label}</span>
-                <strong>{label === 'TAM' ? 'Addressable universe' : label === 'SAM' ? 'Commercially reachable market' : label === 'SOM' ? 'Evidence-backed served footprint' : node.label}</strong>
-              </div>
-              {node.detail && <p>{node.detail}</p>}
-            </article>
-          );
-        })}
-      </div>
-      <div class="market-sizing-warning">
-        <strong>No unsupported market math</strong>
-        <p>Dollar TAM/SAM/SOM values stay out of the chart unless the evidence ledger contains a defensible source.</p>
-      </div>
-    </div>
-  )}
-
-  {type === 'bridge' && (
-    <div class="unit-economics-viz" aria-label={`${figure.title} unit economics waterfall`}>
-      <section class="unit-anchor-card">
-        <span>Public anchor</span>
-        <strong>{unitEconomicsNodes[0]?.label ?? 'Known input'}</strong>
-        {unitEconomicsNodes[0]?.detail && <p>{unitEconomicsNodes[0].detail}</p>}
-      </section>
-      <div class="unit-waterfall-chain">
-        {unitEconomicsNodes.slice(1).map((node: any, index: number) => {
-          const isOutcome = index === unitEconomicsNodes.slice(1).length - 1;
-          return (
-            <article class:list={['unit-step-card', toneClass(node.tone), isOutcome && 'is-outcome']}>
-              <div class="unit-step-kicker">
-                <span>{String(index + 2).padStart(2, '0')}</span>
-                <em>{isOutcome ? 'Underwriting blocker' : 'Missing bridge'}</em>
-              </div>
-              <strong>{node.label}</strong>
-              {node.detail && <p>{node.detail}</p>}
-            </article>
-          );
-        })}
-      </div>
-    </div>
-  )}
-
-  {type === 'journey-map' && (
-    <div class="customer-surface-viz" aria-label={`${figure.title} customer surface map`}>
-      {customerSurfaceNodes.map((node: any, index: number) => {
-        let role = 'expansion';
-        if (index === 0) role = 'entry';
-        else if (index < 3) role = 'segment';
-        return (
-          <article class:list={['customer-surface-card', `surface-${role}`, `surface-${index + 1}`, toneClass(node.tone)]}>
-            <div class="surface-kicker">
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <em>{role === 'entry' ? 'Acquisition surface' : role === 'segment' ? 'Customer segment' : 'Expansion loop'}</em>
-            </div>
-            <strong>{node.label}</strong>
-            {node.detail && <p>{node.detail}</p>}
-          </article>
-        );
-      })}
-    </div>
-  )}
-
-  {type === 'stack' && hasRichStackLayers && (
-    <div class="architecture-viz" aria-label={`${figure.title} architecture diagram`}>
-      {stackLayers.map((layer: any, index: number) => (
-        <article class:list={['arch-layer', toneClass(layer.tone)]}>
-          <div class="arch-layer-head">
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <strong>{layerLabel(layer)}</strong>
-            {layerDetail(layer) && <p>{layerDetail(layer)}</p>}
-          </div>
-          <div class="arch-layer-body">
-            {moduleItems(layer).length > 0 ? (
-              <div class="arch-modules">
-                {moduleItems(layer).map((module: any) => (
-                  <section class:list={['arch-module', toneClass(module.tone ?? layer.tone)]}>
-                    <strong>{module.label ?? module}</strong>
-                    {module.detail && <p>{module.detail}</p>}
-                  </section>
-                ))}
-              </div>
-            ) : layerDetail(layer) ? (
-              <p class="arch-detail">{layerDetail(layer)}</p>
-            ) : null}
-            {outputItems(layer).length > 0 && (
-              <ul class="arch-outputs" aria-label="Layer outputs">
-                {outputItems(layer).map((output) => <li>{output}</li>)}
-              </ul>
-            )}
-          </div>
-        </article>
-      ))}
-    </div>
-  )}
-
-  {type === 'logic-chain' && (
-    <div class="recommendation-viz" aria-label={`${figure.title} recommendation logic`}>
-      {recommendationNodes.map((node: any, index: number) => {
-        const isOutcome = /recommendation|decision|outcome/i.test(String(node.label ?? '')) || index === recommendationNodes.length - 1;
-        return (
-          <article class:list={['logic-card', toneClass(node.tone), isOutcome && 'is-outcome']}>
-            <div class="logic-kicker">
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <em>{isOutcome ? 'Decision' : node.tone === 'risk' || node.tone === 'critical' || node.tone === 'high' ? 'Constraint' : 'Evidence'}</em>
-            </div>
-            <strong>{node.label}</strong>
-            {node.detail && <p>{node.detail}</p>}
-          </article>
-        );
-      })}
-    </div>
-  )}
-
-  {type === 'causal-map' && (
-    <div class="risk-transmission-viz" aria-label={`${figure.title} risk transmission map`}>
-      <section class="risk-column risk-inputs">
-        <div class="risk-column-head"><span>01</span><strong>Risk sources</strong></div>
-        <div class="risk-card-list">
-          {transmissionSources.map((node: any) => (
-            <article class:list={['risk-card', toneClass(node.tone)]}>
-              <strong>{node.label}</strong>
-              {node.detail && <p>{node.detail}</p>}
-            </article>
-          ))}
-        </div>
-      </section>
-      <section class="risk-column risk-bridge">
-        <div class="risk-column-head"><span>02</span><strong>Transmission pressure</strong></div>
-        <div class="risk-card-list">
-          {(transmissionBridges.length ? transmissionBridges : transmissionNodes.slice(-2, -1)).map((node: any) => (
-            <article class:list={['risk-card', 'is-bridge', toneClass(node.tone)]}>
-              <strong>{node.label}</strong>
-              {node.detail && <p>{node.detail}</p>}
-            </article>
-          ))}
-        </div>
-      </section>
-      <section class="risk-column risk-outcomes">
-        <div class="risk-column-head"><span>03</span><strong>Underwriting impact</strong></div>
-        <div class="risk-card-list">
-          {(transmissionOutcomes.length ? transmissionOutcomes : transmissionNodes.slice(-1)).map((node: any) => (
-            <article class:list={['risk-card', 'is-outcome', toneClass(node.tone)]}>
-              <strong>{node.label}</strong>
-              {node.detail && <p>{node.detail}</p>}
-            </article>
-          ))}
-        </div>
-      </section>
-    </div>
-  )}
-
-  {type === 'scorecard' && (
-    <div class="scorecard-viz" aria-label={`${figure.title} scorecard`}>
-      {scorecardItems.map((item: any, index: number) => (
-        <article class:list={['scorecard-card', toneClass(item.tone)]}>
-          <div class="scorecard-head">
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <strong>{item.label}</strong>
-          </div>
-          <div class="scorecard-value">{item.displayValue ?? item.value ?? item.score ?? '—'}</div>
-          {item.detail && <p>{item.detail}</p>}
-        </article>
-      ))}
-    </div>
-  )}
-
-  {(type === 'sensitivity' || type === 'scatter') && <div id={chartId} class="d3-figure chart-sensitivity" data-chart-type={type}></div>}
+  {usesD3Chart && <div id={chartId} class:list={['d3-figure', `chart-${type}`]} data-chart-type={type}></div>}
 
   {type === 'other' && (
     <div class="figure-fallback" role="note">
@@ -299,8 +68,67 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
   const labelText = (text, max = 24) => String(text ?? '').length > max ? `${String(text).slice(0, max - 1)}…` : String(text ?? '');
   const numberValue = (value) => Number(value) || 0;
   const valueLabel = (item) => item?.displayValue ?? item?.value ?? '';
+  const fullValueLabel = (item) => item?.displayValue ?? item?.value ?? item?.score ?? item?.label ?? '';
 
   const chartFont = { axis: 13, label: 14, small: 12 };
+  const tooltip = (() => {
+    const node = d3.select('body').selectAll('.d3-chart-tooltip').data([null]).join('div').attr('class', 'd3-chart-tooltip');
+    const move = (event) => {
+      const offset = 14;
+      node.style('left', `${event.clientX + offset}px`).style('top', `${event.clientY + offset}px`);
+    };
+    return {
+      show(event, html) {
+        node.html(html).classed('is-visible', true);
+        move(event);
+      },
+      move,
+      hide() {
+        node.classed('is-visible', false);
+      },
+    };
+  })();
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+  const tooltipHtml = (title, lines = []) => `<strong>${escapeHtml(title)}</strong>${lines.filter(Boolean).map((line) => `<span>${escapeHtml(line)}</span>`).join('')}`;
+  const withTooltip = (selection, htmlForDatum) => selection
+    .style('cursor', 'default')
+    .on('pointerenter', function(event, datum) {
+      d3.select(this).classed('is-hovered', true);
+      tooltip.show(event, typeof htmlForDatum === 'function' ? htmlForDatum(datum) : htmlForDatum);
+    })
+    .on('pointermove', tooltip.move)
+    .on('pointerleave', function() {
+      d3.select(this).classed('is-hovered', false);
+      tooltip.hide();
+    });
+  const wrapWords = (text, maxChars = 18, maxLines = 2) => {
+    const words = String(text ?? '').split(/\s+/).filter(Boolean);
+    if (!words.length) return [''];
+    const lines = [];
+    let line = '';
+    words.forEach((word) => {
+      const next = line ? `${line} ${word}` : word;
+      if (next.length > maxChars && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = next;
+      }
+    });
+    if (line) lines.push(line);
+    const clipped = lines.slice(0, maxLines);
+    if (lines.length > maxLines) clipped[clipped.length - 1] = labelText(clipped[clipped.length - 1], Math.max(4, maxChars - 1));
+    return clipped;
+  };
+  const renderWrappedText = (selection, text, { maxChars = 18, maxLines = 2, lineHeight = 15, dy = 0 } = {}) => {
+    const x = selection.attr('x') ?? 0;
+    selection.text(null);
+    const lines = wrapWords(text, maxChars, maxLines);
+    const offset = dy - ((lines.length - 1) * lineHeight) / 2;
+    lines.forEach((line, index) => {
+      selection.append('tspan').attr('x', x).attr('dy', index === 0 ? offset : lineHeight).text(line);
+    });
+  };
   const svgBase = (element, height = 340) => {
     const width = Math.max(520, Math.floor(element.getBoundingClientRect().width || 760));
     d3.select(element).selectAll('*').remove();
@@ -313,7 +141,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .style('display', 'block');
     return { svg, width, height };
   };
-  const addTitle = (selection, text) => selection.append('title').text(String(text ?? ''));
+  const addTitle = (selection, text) => selection.attr('aria-label', String(text ?? ''));
   const axisBottom = (g, scale, y, ticks = 4) => g.append('g')
     .attr('transform', `translate(0,${y})`)
     .call(d3.axisBottom(scale).ticks(ticks).tickSizeOuter(0))
@@ -325,12 +153,15 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     .call(d3.axisLeft(scale).tickSizeOuter(0))
     .call((axis) => axis.select('.domain').remove())
     .call((axis) => axis.selectAll('line').remove())
-    .call((axis) => axis.selectAll('text').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 700));
+    .call((axis) => axis.selectAll('text').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 700).each(function(d) {
+      const text = d3.select(this);
+      renderWrappedText(text, d, { maxChars: 19, maxLines: 2, lineHeight: 13 });
+    }));
 
   const renderGraph = (element, payload) => {
     const nodes = arr(payload.data.nodes);
     const edges = arr(payload.data.edges);
-    const columns = Math.min(Math.max(nodes.length, 1), payload.type === 'decision-map' ? 5 : 4);
+    const columns = Math.min(Math.max(nodes.length, 1), payload.type === 'decision-map' ? 3 : 2);
     const rows = Math.max(1, Math.ceil(nodes.length / columns));
     const { svg, width } = svgBase(element, Math.max(360, rows * 145 + 110));
     const margin = { top: 32, right: 36, bottom: 54, left: 36 };
@@ -357,15 +188,205 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('fill', 'none').attr('stroke', palette.claret).attr('stroke-width', 1.7).attr('opacity', 0.72).attr('marker-end', `url(#${payload.id}-arrow)`);
     const card = svg.append('g').selectAll('g').data(positioned).join('g').attr('transform', (node) => `translate(${node.x},${node.y})`);
     card.append('rect').attr('x', -82).attr('y', -31).attr('width', 164).attr('height', 62).attr('rx', 4).attr('fill', '#fff7ef').attr('stroke', (node) => colorForTone(node.tone)).attr('stroke-width', 2);
-    card.append('text').attr('text-anchor', 'middle').attr('y', -4).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((node) => labelText(node.label, 22));
-    card.append('text').attr('text-anchor', 'middle').attr('y', 17).attr('fill', palette.muted).attr('font-size', chartFont.small).text((node) => labelText(node.detail, 30));
+    card.append('text').attr('text-anchor', 'middle').attr('y', -4).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).each(function(node) {
+      renderWrappedText(d3.select(this), node.label, { maxChars: 18, maxLines: 2, lineHeight: 14, dy: -3 });
+    });
+    card.append('text').attr('text-anchor', 'middle').attr('y', 20).attr('fill', palette.muted).attr('font-size', chartFont.small).text((node) => labelText(node.detail, 26));
     card.each(function(node) { addTitle(d3.select(this), `${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
+    withTooltip(card, (node) => tooltipHtml(node.label, [node.detail]));
+  };
+
+  const renderFlow = (element, payload) => {
+    const nodes = arr(payload.data.nodes).map((node, index) => ({ ...node, _index: index, _key: node.id ?? node.label ?? String(index + 1) }));
+    const edges = arr(payload.data.edges);
+    const edgeBetween = (source, target) => edges.find((edge) => {
+      const from = edge.from ?? edge.source;
+      const to = edge.to ?? edge.target;
+      return (from === source._key || from === source.id || from === source.label) && (to === target._key || to === target.id || to === target.label);
+    });
+    const cardH = 78;
+    const gap = 38;
+    const margin = { top: 22, right: 34, bottom: 28, left: 34 };
+    const { svg, width, height } = svgBase(element, Math.max(260, margin.top + margin.bottom + nodes.length * cardH + Math.max(0, nodes.length - 1) * gap));
+    const cardW = width - margin.left - margin.right;
+    const cardX = margin.left;
+    const defs = svg.append('defs');
+    defs.append('marker').attr('id', `${payload.id}-flow-arrow`).attr('viewBox', '0 0 10 10').attr('refX', 5).attr('refY', 8).attr('markerWidth', 8).attr('markerHeight', 8).attr('orient', 'auto')
+      .append('path').attr('d', 'M1,1 L5,9 L9,1').attr('fill', palette.claret);
+    const stepY = (index) => margin.top + index * (cardH + gap);
+    const connectors = svg.append('g').selectAll('g').data(nodes.slice(0, -1).map((node, index) => ({ source: node, target: nodes[index + 1], edge: edgeBetween(node, nodes[index + 1]), index }))).join('g');
+    connectors.append('line')
+      .attr('x1', width / 2)
+      .attr('x2', width / 2)
+      .attr('y1', (d) => stepY(d.index) + cardH + 4)
+      .attr('y2', (d) => stepY(d.index + 1) - 8)
+      .attr('stroke', palette.claret)
+      .attr('stroke-width', 2.2)
+      .attr('marker-end', `url(#${payload.id}-flow-arrow)`);
+    connectors.append('text')
+      .attr('x', width / 2 + 14)
+      .attr('y', (d) => stepY(d.index) + cardH + gap / 2 + 3)
+      .attr('fill', palette.muted)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', 800)
+      .text((d) => labelText(d.edge?.label ?? 'next', 34));
+    const cards = svg.append('g').selectAll('g').data(nodes).join('g').attr('transform', (_node, index) => `translate(${cardX},${stepY(index)})`);
+    cards.append('rect')
+      .attr('width', cardW)
+      .attr('height', cardH)
+      .attr('rx', 8)
+      .attr('fill', (_node, index) => index === 0 ? 'rgba(15, 118, 110, 0.08)' : index === nodes.length - 1 ? 'rgba(153, 15, 61, 0.08)' : '#fff7ef')
+      .attr('stroke', (node) => colorForTone(node.tone))
+      .attr('stroke-width', 1.8);
+    cards.append('circle').attr('cx', 28).attr('cy', cardH / 2).attr('r', 16).attr('fill', (node) => colorForTone(node.tone));
+    cards.append('text').attr('x', 28).attr('y', cardH / 2 + 4).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', 12).attr('font-weight', 900).text((node) => node._index + 1);
+    cards.append('text').attr('x', 58).attr('y', 27).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 900).each(function(node) {
+      renderWrappedText(d3.select(this), node.label, { maxChars: 52, maxLines: 1, lineHeight: 14 });
+    });
+    cards.append('text').attr('x', 58).attr('y', 53).attr('fill', palette.muted).attr('font-size', chartFont.small).attr('font-weight', 650).each(function(node) {
+      renderWrappedText(d3.select(this), node.detail, { maxChars: 76, maxLines: 2, lineHeight: 13 });
+    });
+    cards.each(function(node) { addTitle(d3.select(this), `${node._index + 1}. ${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
+    withTooltip(cards, (node) => tooltipHtml(`${node._index + 1}. ${node.label}`, [node.detail]));
+  };
+
+  const firstNonEmpty = (...values) => values.find((value) => Array.isArray(value) && value.length > 0) ?? [];
+  const normalizedItems = (data) => firstNonEmpty(data.items, data.nodes, data.layers, arr(data.series)[0]?.points, data.points).map((item, index) => ({ ...item, _index: index, label: item.label ?? item.name ?? item.id ?? `Item ${index + 1}`, detail: item.detail ?? item.description ?? item.summary }));
+
+  const renderTimeline = (element, payload) => {
+    const items = normalizedItems(payload.data);
+    const margin = { top: 26, right: 34, bottom: 32, left: 34 };
+    const rowH = 92;
+    const { svg, width, height } = svgBase(element, Math.max(260, margin.top + margin.bottom + items.length * rowH));
+    const railX = margin.left + 20;
+    svg.append('line').attr('x1', railX).attr('x2', railX).attr('y1', margin.top + 8).attr('y2', height - margin.bottom - 8).attr('stroke', palette.claret).attr('stroke-width', 2.4).attr('opacity', 0.8);
+    const rows = svg.append('g').selectAll('g').data(items).join('g').attr('transform', (_d, index) => `translate(0,${margin.top + index * rowH})`);
+    rows.append('circle').attr('cx', railX).attr('cy', 28).attr('r', 9).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 3);
+    rows.append('rect').attr('x', railX + 26).attr('y', 0).attr('width', width - railX - margin.right - 26).attr('height', 68).attr('rx', 10).attr('fill', (d, index) => index % 2 === 0 ? 'rgba(153, 15, 61, 0.055)' : '#fff7ef').attr('stroke', palette.border);
+    rows.append('text').attr('x', railX + 44).attr('y', 20).attr('fill', palette.claret).attr('font-size', chartFont.small).attr('font-weight', 900).text((d) => labelText(d.date ?? d.period ?? d.year ?? d.label, 24));
+    rows.append('text').attr('x', railX + 44).attr('y', 42).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 900).text((d) => labelText(d.label, 48));
+    rows.append('text').attr('x', railX + 44).attr('y', 61).attr('fill', palette.muted).attr('font-size', chartFont.small).text((d) => labelText(d.detail, 86));
+    rows.each(function(d) { addTitle(d3.select(this), `${d.date ?? ''} ${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
+    withTooltip(rows, (d) => tooltipHtml(d.label, [d.date ?? d.period ?? d.year, d.detail]));
+  };
+
+  const renderStack = (element, payload) => {
+    const layers = normalizedItems({ layers: payload.data.layers ?? payload.data.items ?? payload.data.nodes });
+    const margin = { top: 24, right: 30, bottom: 28, left: 30 };
+    const layerH = 92;
+    const { svg, width, height } = svgBase(element, Math.max(280, margin.top + margin.bottom + layers.length * layerH));
+    const cardW = width - margin.left - margin.right;
+    const groups = svg.append('g').selectAll('g').data(layers).join('g').attr('transform', (_d, index) => `translate(${margin.left},${margin.top + index * layerH})`);
+    groups.append('rect').attr('width', cardW).attr('height', 72).attr('rx', 12).attr('fill', (_d, index) => d3.interpolateRgb('#fff7ef', '#f4e6dc')(Math.min(0.85, index / Math.max(1, layers.length)))).attr('stroke', (d) => colorForTone(d.tone)).attr('stroke-width', 1.6);
+    groups.append('rect').attr('width', 6).attr('height', 72).attr('rx', 3).attr('fill', (d) => colorForTone(d.tone));
+    groups.append('text').attr('x', 22).attr('y', 26).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 900).text((d) => labelText(d.label, 52));
+    groups.append('text').attr('x', 22).attr('y', 48).attr('fill', palette.muted).attr('font-size', chartFont.small).text((d) => labelText(d.detail, 78));
+    groups.append('text').attr('x', cardW - 20).attr('y', 42).attr('text-anchor', 'end').attr('fill', palette.claret).attr('font-size', 18).attr('font-weight', 900).text((_d, index) => String(index + 1).padStart(2, '0'));
+    groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
+    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail]));
+  };
+
+  const renderLayeredLens = (element, payload) => {
+    const items = normalizedItems(payload.data);
+    const margin = { top: 28, right: 34, bottom: 34, left: 34 };
+    const layerH = 86;
+    const { svg, width, height } = svgBase(element, Math.max(300, margin.top + margin.bottom + items.length * layerH));
+    const maxW = width - margin.left - margin.right;
+    const groups = svg.append('g').selectAll('g').data(items).join('g').attr('transform', (_d, index) => {
+      const w = maxW * (1 - index * 0.1);
+      return `translate(${(width - w) / 2},${margin.top + index * layerH})`;
+    });
+    groups.append('rect').attr('width', (_d, index) => maxW * (1 - index * 0.1)).attr('height', 66).attr('rx', 14).attr('fill', (_d, index) => d3.interpolateRgb('#fff7ef', '#ead8cf')(index / Math.max(1, items.length - 1))).attr('stroke', (d) => colorForTone(d.tone)).attr('stroke-width', 1.7);
+    groups.append('text').attr('x', 22).attr('y', 27).attr('fill', palette.claret).attr('font-size', 20).attr('font-weight', 950).text((d) => labelText(d.label, 18));
+    groups.append('text').attr('x', 22).attr('y', 50).attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 750).text((d) => labelText(d.detail, 74));
+    groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
+    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail]));
+  };
+
+  const renderBridge = (element, payload) => {
+    const items = normalizedItems(payload.data);
+    renderFlow(element, { ...payload, data: { nodes: items, edges: items.slice(0, -1).map((item, index) => ({ from: item.label, to: items[index + 1].label, label: index === 0 ? 'bridge' : 'constraint' })) } });
+  };
+
+  const renderJourneyMap = (element, payload) => {
+    const items = normalizedItems(payload.data);
+    const margin = { top: 34, right: 34, bottom: 46, left: 34 };
+    const { svg, width, height } = svgBase(element, 360);
+    const x = d3.scalePoint().domain(items.map((d) => d.label)).range([margin.left + 22, width - margin.right - 22]).padding(0.5);
+    const yMid = height / 2;
+    const line = d3.line().curve(d3.curveCatmullRom.alpha(0.6)).x((d) => x(d.label)).y((d, index) => yMid + (index % 2 === 0 ? -28 : 28));
+    svg.append('path').attr('d', line(items)).attr('fill', 'none').attr('stroke', palette.claret).attr('stroke-width', 3).attr('opacity', 0.8);
+    const groups = svg.append('g').selectAll('g').data(items).join('g').attr('transform', (d, index) => `translate(${x(d.label)},${yMid + (index % 2 === 0 ? -28 : 28)})`);
+    groups.append('circle').attr('r', 18).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 3);
+    groups.append('text').attr('text-anchor', 'middle').attr('y', 4).attr('fill', '#fff7ef').attr('font-size', 12).attr('font-weight', 900).text((d) => d._index + 1);
+    groups.append('rect').attr('x', -72).attr('y', (_d, index) => index % 2 === 0 ? -92 : 34).attr('width', 144).attr('height', 52).attr('rx', 9).attr('fill', '#fff7ef').attr('stroke', palette.border);
+    groups.append('text').attr('x', 0).attr('y', (_d, index) => index % 2 === 0 ? -68 : 57).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 850).each(function(d) { renderWrappedText(d3.select(this), d.label, { maxChars: 18, maxLines: 2, lineHeight: 13 }); });
+    groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
+    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail]));
+  };
+
+  const renderLogicChain = (element, payload) => {
+    const items = normalizedItems(payload.data);
+    renderFlow(element, { ...payload, data: { nodes: items, edges: items.slice(0, -1).map((item, index) => ({ from: item.label, to: items[index + 1].label, label: index === items.length - 2 ? 'decision' : 'therefore' })) } });
+  };
+
+  const renderCausalMap = (element, payload) => {
+    const nodes = normalizedItems(payload.data);
+    const edges = arr(payload.data.edges);
+    const sourceIds = new Set(edges.map((edge) => edge.from ?? edge.source));
+    const targetIds = new Set(edges.map((edge) => edge.to ?? edge.target));
+    const keyOf = (node) => node.id ?? node.label;
+    const columns = [
+      { label: 'Risk sources', nodes: nodes.filter((node) => !targetIds.has(keyOf(node))) },
+      { label: 'Transmission', nodes: nodes.filter((node) => sourceIds.has(keyOf(node)) && targetIds.has(keyOf(node))) },
+      { label: 'Impact', nodes: nodes.filter((node) => targetIds.has(keyOf(node)) && !sourceIds.has(keyOf(node))) },
+    ];
+    if (columns.every((column) => column.nodes.length === 0)) {
+      columns[0].nodes = nodes.slice(0, Math.ceil(nodes.length / 3));
+      columns[1].nodes = nodes.slice(Math.ceil(nodes.length / 3), Math.ceil(nodes.length * 2 / 3));
+      columns[2].nodes = nodes.slice(Math.ceil(nodes.length * 2 / 3));
+    }
+    const margin = { top: 28, right: 28, bottom: 32, left: 28 };
+    const cardH = 66;
+    const maxRows = Math.max(...columns.map((column) => column.nodes.length), 1);
+    const { svg, width, height } = svgBase(element, Math.max(340, margin.top + margin.bottom + 54 + maxRows * (cardH + 14)));
+    const colW = (width - margin.left - margin.right) / 3;
+    const cols = svg.append('g').selectAll('g').data(columns).join('g').attr('transform', (_d, index) => `translate(${margin.left + index * colW},${margin.top})`);
+    cols.append('text').attr('x', colW / 2).attr('y', 0).attr('text-anchor', 'middle').attr('fill', palette.claret).attr('font-size', chartFont.label).attr('font-weight', 950).text((d) => d.label);
+    cols.append('line').attr('x1', 16).attr('x2', colW - 16).attr('y1', 18).attr('y2', 18).attr('stroke', palette.border);
+    cols.each(function(column) {
+      const cards = d3.select(this).append('g').selectAll('g').data(column.nodes).join('g').attr('transform', (_d, index) => `translate(12,${38 + index * (cardH + 14)})`);
+      cards.append('rect').attr('width', colW - 24).attr('height', cardH).attr('rx', 10).attr('fill', '#fff7ef').attr('stroke', (d) => colorForTone(d.tone)).attr('stroke-width', 1.5);
+      cards.append('text').attr('x', 14).attr('y', 24).attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 900).text((d) => labelText(d.label, 24));
+      cards.append('text').attr('x', 14).attr('y', 45).attr('fill', palette.muted).attr('font-size', 11).text((d) => labelText(d.detail, 32));
+      cards.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
+      withTooltip(cards, (d) => tooltipHtml(d.label, [d.detail]));
+    });
+    [1, 2].forEach((index) => svg.append('text').attr('x', margin.left + index * colW).attr('y', margin.top + 110).attr('text-anchor', 'middle').attr('fill', palette.claret).attr('font-size', 24).attr('font-weight', 900).text('→'));
+  };
+
+  const renderScorecard = (element, payload) => {
+    const items = normalizedItems({ items: payload.data.items ?? payload.data.nodes });
+    const columns = Math.min(3, Math.max(1, items.length));
+    const margin = { top: 24, right: 28, bottom: 30, left: 28 };
+    const cardH = 128;
+    const rows = Math.ceil(items.length / columns);
+    const { svg, width } = svgBase(element, Math.max(260, margin.top + margin.bottom + rows * (cardH + 18)));
+    const cardW = (width - margin.left - margin.right - (columns - 1) * 16) / columns;
+    const groups = svg.append('g').selectAll('g').data(items).join('g').attr('transform', (_d, index) => `translate(${margin.left + (index % columns) * (cardW + 16)},${margin.top + Math.floor(index / columns) * (cardH + 18)})`);
+    groups.append('rect').attr('width', cardW).attr('height', cardH).attr('rx', 14).attr('fill', '#fff7ef').attr('stroke', (d) => colorForTone(d.tone)).attr('stroke-width', 1.7);
+    groups.append('rect').attr('width', cardW).attr('height', 6).attr('rx', 3).attr('fill', (d) => colorForTone(d.tone));
+    groups.append('text').attr('x', 16).attr('y', 34).attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 900).each(function(d) { renderWrappedText(d3.select(this), d.label, { maxChars: Math.max(14, Math.floor(cardW / 9)), maxLines: 2, lineHeight: 13 }); });
+    groups.append('text').attr('x', 16).attr('y', 78).attr('fill', palette.claret).attr('font-size', 26).attr('font-weight', 950).text((d) => labelText(fullValueLabel(d), 12));
+    groups.append('text').attr('x', 16).attr('y', 106).attr('fill', palette.muted).attr('font-size', 11).text((d) => labelText(d.detail, Math.max(18, Math.floor(cardW / 7))));
+    groups.each(function(d) { addTitle(d3.select(this), `${d.label}: ${fullValueLabel(d)}${d.detail ? ` — ${d.detail}` : ''}`); });
+    withTooltip(groups, (d) => tooltipHtml(d.label, [fullValueLabel(d), d.detail]));
   };
 
   const renderBars = (element, payload) => {
     const items = arr(payload.data.items).length ? arr(payload.data.items) : arr(arr(payload.data.series)[0]?.points);
-    const { svg, width, height } = svgBase(element, Math.max(240, items.length * 34 + 72));
-    const margin = { top: 18, right: 84, bottom: 34, left: 168 };
+    const { svg, width, height } = svgBase(element, Math.max(260, items.length * 42 + 78));
+    const margin = { top: 18, right: 112, bottom: 38, left: Math.min(220, Math.max(152, Math.max(...items.map((item) => String(item.label ?? '').length), 8) * 7.5)) };
     const x = d3.scaleLinear().domain([0, d3.max(items, (d) => numberValue(d.value)) || 1]).nice().range([margin.left, width - margin.right]);
     const y = d3.scaleBand().domain(items.map((d) => d.label)).range([margin.top, height - margin.bottom]).padding(0.26);
     axisBottom(svg, x, height - margin.bottom);
@@ -374,9 +395,10 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('x', x(0)).attr('y', (d) => y(d.label)).attr('width', (d) => Math.max(2, x(numberValue(d.value)) - x(0))).attr('height', y.bandwidth())
       .attr('rx', 4).attr('fill', (d) => colorForTone(d.tone));
     bars.each(function(d) { addTitle(d3.select(this), `${d.label}: ${valueLabel(d)}`); });
+    withTooltip(bars, (d) => tooltipHtml(d.label, [valueLabel(d), d.detail]));
     svg.append('g').selectAll('text').data(items).join('text')
-      .attr('x', (d) => x(numberValue(d.value)) + 8).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4)
-      .attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => valueLabel(d));
+      .attr('x', (d) => Math.min(width - margin.right + 6, x(numberValue(d.value)) + 8)).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4)
+      .attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => labelText(valueLabel(d), 16));
   };
 
   const renderWaterfall = (element, payload) => {
@@ -402,9 +424,10 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('x', (d) => x(d.label)).attr('width', x.bandwidth()).attr('y', (d) => y(d.end)).attr('height', (d) => Math.max(2, y(d.start) - y(d.end)))
       .attr('fill', (d) => d.value < 0 ? palette.risk : colorForTone(d.tone)).attr('rx', 3);
     bars.each(function(d) { addTitle(d3.select(this), `${d.label}: ${valueLabel(d) || d.value}`); });
+    withTooltip(bars, (d) => tooltipHtml(d.label, [valueLabel(d) || d.value, d.detail]));
     svg.append('g').selectAll('text').data(points).join('text')
-      .attr('x', (d) => x(d.label) + x.bandwidth() / 2).attr('y', (d) => y(d.end) - 7).attr('text-anchor', 'middle')
-      .attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 800).text((d) => valueLabel(d));
+      .attr('x', (d) => x(d.label) + x.bandwidth() / 2).attr('y', (d) => Math.max(margin.top + 10, y(d.end) - 7)).attr('text-anchor', 'middle')
+      .attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 800).text((d) => labelText(valueLabel(d), 10));
   };
 
   const renderFunnel = (element, payload) => {
@@ -428,6 +451,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       stage.append('text').attr('x', cx).attr('y', y + stageH / 2 - 3).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', chartFont.label).attr('font-weight', 900).text(labelText(item.label, 24));
       stage.append('text').attr('x', cx).attr('y', y + stageH / 2 + 17).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', chartFont.small).attr('font-weight', 700).text(valueLabel(item));
       addTitle(stage, `${item.label}: ${valueLabel(item)}`);
+      withTooltip(stage, tooltipHtml(item.label, [valueLabel(item), item.detail]));
     });
   };
 
@@ -437,8 +461,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const highs = items.map((item) => numberValue(item.high ?? item.max ?? item.value));
     const min = Math.min(...lows, 0);
     const max = Math.max(...highs, 1);
-    const { svg, width, height } = svgBase(element, Math.max(240, items.length * 38 + 78));
-    const margin = { top: 20, right: 98, bottom: 34, left: 168 };
+    const { svg, width, height } = svgBase(element, Math.max(260, items.length * 44 + 78));
+    const margin = { top: 20, right: 120, bottom: 38, left: Math.min(220, Math.max(152, Math.max(...items.map((item) => String(item.label ?? '').length), 8) * 7.5)) };
     const x = d3.scaleLinear().domain([min, max]).nice().range([margin.left, width - margin.right]);
     const y = d3.scaleBand().domain(items.map((d) => d.label)).range([margin.top, height - margin.bottom]).padding(0.38);
     axisBottom(svg, x, height - margin.bottom);
@@ -446,26 +470,35 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const groups = svg.append('g').selectAll('g').data(items).join('g');
     groups.append('line').attr('x1', (d) => x(numberValue(d.low ?? d.min))).attr('x2', (d) => x(numberValue(d.high ?? d.max ?? d.value))).attr('y1', (d) => y(d.label) + y.bandwidth() / 2).attr('y2', (d) => y(d.label) + y.bandwidth() / 2).attr('stroke', (d) => colorForTone(d.tone)).attr('stroke-width', 9).attr('stroke-linecap', 'round');
     groups.append('circle').attr('cx', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max)) / 2)))).attr('cy', (d) => y(d.label) + y.bandwidth() / 2).attr('r', 5).attr('fill', '#fff7ef').attr('stroke', palette.ink).attr('stroke-width', 2);
-    groups.append('text').attr('x', (d) => x(numberValue(d.high ?? d.max ?? d.value)) + 10).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`);
+    groups.append('text').attr('x', (d) => Math.min(width - margin.right + 8, x(numberValue(d.high ?? d.max ?? d.value)) + 10)).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => labelText(d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`, 16));
     groups.each(function(d) { addTitle(d3.select(this), `${d.label}: ${d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`}`); });
+    withTooltip(groups, (d) => tooltipHtml(d.label, [d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`, d.detail]));
   };
 
   const renderQuadrant = (element, payload) => {
     const points = arr(payload.data.points);
-    const xAxisLabel = payload.data.xAxis ?? 'X';
-    const yAxisLabel = payload.data.yAxis ?? 'Y';
+    const xAxisLabel = payload.data.xAxis ?? payload.data.xLabel ?? payload.data.x ?? (payload.type === 'positioning-map' ? 'Distribution leverage' : 'X');
+    const yAxisLabel = payload.data.yAxis ?? payload.data.yLabel ?? payload.data.y ?? (payload.type === 'positioning-map' ? 'Workflow depth' : 'Y');
     const xs = points.map((p) => Number(p.x)).filter(Number.isFinite);
     const ys = points.map((p) => Number(p.y)).filter(Number.isFinite);
-    const safeRange = (vals, anchor = 50) => {
-      if (vals.length === 0) return { min: 0, max: 100 };
+    const allValues = [...xs, ...ys];
+    const finiteMin = allValues.length ? Math.min(...allValues) : 0;
+    const finiteMax = allValues.length ? Math.max(...allValues) : 100;
+    const isTenPointScore = finiteMin >= 0 && finiteMax <= 10;
+    const isUnitScore = finiteMin >= 0 && finiteMax <= 1;
+    const referenceValue = isTenPointScore ? 5 : isUnitScore ? 0.5 : 50;
+    const safeRange = (vals) => {
+      if (vals.length === 0) return isTenPointScore ? { min: 0, max: 10 } : isUnitScore ? { min: 0, max: 1 } : { min: 0, max: 100 };
+      if (isTenPointScore) return { min: 0, max: 10 };
+      if (isUnitScore) return { min: 0, max: 1 };
       const lo = Math.min(...vals);
       const hi = Math.max(...vals);
       const padBase = Math.max((hi - lo) * 0.18, 6);
       let min = Math.floor((lo - padBase) / 5) * 5;
       let max = Math.ceil((hi + padBase) / 5) * 5;
-      // Always show the 50 reference line if the data is on one side of it.
-      if (lo >= anchor) min = Math.min(min, anchor - 5);
-      if (hi <= anchor) max = Math.max(max, anchor + 5);
+      // For 0-100-style scores, keep the midpoint reference visible when relevant.
+      if (lo >= referenceValue) min = Math.min(min, referenceValue - 5);
+      if (hi <= referenceValue) max = Math.max(max, referenceValue + 5);
       min = Math.max(0, min);
       max = Math.min(100, max);
       if (max - min < 20) {
@@ -477,21 +510,45 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     };
     const xRange = safeRange(xs);
     const yRange = safeRange(ys);
-    const { svg, width, height } = svgBase(element, 380);
-    const margin = { top: 34, right: 48, bottom: 64, left: 62 };
+    const { svg, width, height } = svgBase(element, Math.max(380, points.length * 28 + 130));
+    const margin = { top: 34, right: 190, bottom: 64, left: 62 };
     const x = d3.scaleLinear().domain([xRange.min, xRange.max]).range([margin.left, width - margin.right]);
     const y = d3.scaleLinear().domain([yRange.min, yRange.max]).range([height - margin.bottom, margin.top]);
     svg.append('rect').attr('x', margin.left).attr('y', margin.top).attr('width', width - margin.left - margin.right).attr('height', height - margin.top - margin.bottom).attr('fill', 'rgba(153, 15, 61, 0.025)').attr('stroke', palette.border);
-    if (xRange.min < 50 && xRange.max > 50) svg.append('line').attr('x1', x(50)).attr('x2', x(50)).attr('y1', margin.top).attr('y2', height - margin.bottom).attr('stroke', palette.border).attr('stroke-dasharray', '4 4');
-    if (yRange.min < 50 && yRange.max > 50) svg.append('line').attr('x1', margin.left).attr('x2', width - margin.right).attr('y1', y(50)).attr('y2', y(50)).attr('stroke', palette.border).attr('stroke-dasharray', '4 4');
+    if (xRange.min < referenceValue && xRange.max > referenceValue) svg.append('line').attr('x1', x(referenceValue)).attr('x2', x(referenceValue)).attr('y1', margin.top).attr('y2', height - margin.bottom).attr('stroke', palette.border).attr('stroke-dasharray', '4 4');
+    if (yRange.min < referenceValue && yRange.max > referenceValue) svg.append('line').attr('x1', margin.left).attr('x2', width - margin.right).attr('y1', y(referenceValue)).attr('y2', y(referenceValue)).attr('stroke', palette.border).attr('stroke-dasharray', '4 4');
     axisBottom(svg, x, height - margin.bottom);
     axisLeft(svg, y, margin.left);
     svg.append('text').attr('x', width / 2).attr('y', height - 18).attr('text-anchor', 'middle').attr('fill', palette.muted).attr('font-size', chartFont.axis).attr('font-weight', 800).text(xAxisLabel);
     svg.append('text').attr('transform', `translate(18,${height / 2}) rotate(-90)`).attr('text-anchor', 'middle').attr('fill', palette.muted).attr('font-size', chartFont.axis).attr('font-weight', 800).text(yAxisLabel);
-    const dots = svg.append('g').selectAll('g').data(points).join('g').attr('transform', (d) => `translate(${x(numberValue(d.x))},${y(numberValue(d.y))})`);
-    dots.append('circle').attr('r', 9).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 2);
-    dots.append('text').attr('x', 13).attr('y', 5).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => labelText(d.label, 22));
-    dots.each(function(d) { addTitle(d3.select(this), `${d.label}: ${xAxisLabel} ${d.x}; ${yAxisLabel} ${d.y}`); });
+    const plotPoints = points.map((point, index) => {
+      const targetX = x(numberValue(point.x));
+      const targetY = y(numberValue(point.y));
+      return { ...point, _index: index, _valueX: point.x, _valueY: point.y, _targetX: targetX, _targetY: targetY, x: targetX, y: targetY };
+    });
+    d3.forceSimulation(plotPoints)
+      .force('x', d3.forceX((d) => d._targetX).strength(0.28))
+      .force('y', d3.forceY((d) => d._targetY).strength(0.28))
+      .force('collide', d3.forceCollide(14))
+      .stop()
+      .tick(90);
+    plotPoints.forEach((point) => {
+      point.x = Math.max(margin.left + 14, Math.min(width - margin.right - 14, point.x));
+      point.y = Math.max(margin.top + 14, Math.min(height - margin.bottom - 14, point.y));
+    });
+    const dots = svg.append('g').selectAll('g').data(plotPoints).join('g').attr('transform', (d) => `translate(${d.x},${d.y})`);
+    dots.append('circle').attr('r', 11).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 2);
+    dots.append('text').attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('fill', '#fff7ef').attr('font-size', 11).attr('font-weight', 900).text((d) => d._index + 1);
+    dots.each(function(d) { addTitle(d3.select(this), `${d.label}: ${xAxisLabel} ${d._valueX}; ${yAxisLabel} ${d._valueY}`); });
+    withTooltip(dots, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d._valueX}`, `${yAxisLabel}: ${d._valueY}`, d.detail]));
+    const legendX = width - margin.right + 24;
+    const legend = svg.append('g').attr('transform', `translate(${legendX},${margin.top + 6})`);
+    legend.append('text').attr('x', 0).attr('y', 0).attr('fill', palette.muted).attr('font-size', chartFont.small).attr('font-weight', 900).text('Points');
+    const legendRows = legend.selectAll('g').data(points.map((point, index) => ({ ...point, _index: index }))).join('g').attr('transform', (_d, index) => `translate(0,${20 + index * 26})`);
+    legendRows.append('circle').attr('cx', 6).attr('cy', -4).attr('r', 7).attr('fill', (d) => colorForTone(d.tone));
+    legendRows.append('text').attr('x', 6).attr('y', 0).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', 8).attr('font-weight', 900).text((d) => d._index + 1);
+    legendRows.append('text').attr('x', 20).attr('y', 0).attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 800).text((d) => labelText(d.label, 20));
+    withTooltip(legendRows, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d.x}`, `${yAxisLabel}: ${d.y}`, d.detail]));
   };
 
   const renderHeatmap = (element, payload) => {
@@ -512,13 +569,18 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const x = d3.scaleBand().domain(columns).range([margin.left, width - margin.right]).padding(0.08);
     const y = d3.scaleBand().domain(rows.map((row) => row.label)).range([margin.top, height - margin.bottom]).padding(0.08);
     svg.append('g').selectAll('text').data(columns).join('text').attr('x', (d) => x(d) + x.bandwidth() / 2).attr('y', margin.top - 16).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).text((d) => labelText(d, 14));
-    svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).text((d) => labelText(d.label, 24));
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).each(function(d) {
+      renderWrappedText(d3.select(this), d.label, { maxChars: 22, maxLines: 2, lineHeight: 13 });
+    });
     const cells = [];
     rows.forEach((row) => arr(row.values).forEach((cell, colIndex) => cells.push({ row: row.label, column: columns[colIndex], cell, value: riskValue(cell.tone) })));
     const g = svg.append('g').selectAll('g').data(cells).join('g');
     g.append('rect').attr('x', (d) => x(d.column)).attr('y', (d) => y(d.row)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 7).attr('fill', (d) => heatColors[d.value]).attr('stroke', '#fff7ef').attr('stroke-width', 3);
-    g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2 + 5).attr('text-anchor', 'middle').attr('fill', (d) => heatTextColors[d.value]).attr('font-size', chartFont.small).attr('font-weight', 800).text((d) => labelText(d.cell.label ?? d.cell, 18));
+    g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('fill', (d) => heatTextColors[d.value]).attr('font-size', chartFont.small).attr('font-weight', 800).each(function(d) {
+      renderWrappedText(d3.select(this), d.cell.label ?? d.cell, { maxChars: Math.max(8, Math.floor(x.bandwidth() / 7)), maxLines: Math.max(1, Math.floor(y.bandwidth() / 16)), lineHeight: 13 });
+    });
     g.each(function(d) { addTitle(d3.select(this), `${d.row} × ${d.column}: ${d.cell.label ?? d.cell}`); });
+    withTooltip(g, (d) => tooltipHtml(`${d.row} × ${d.column}`, [d.cell.label ?? d.cell, d.cell.detail]));
   };
 
   const renderCohort = (element, payload) => {
@@ -530,7 +592,9 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const y = d3.scaleBand().domain(rows.map((row) => row.label)).range([margin.top, height - margin.bottom]).padding(0.08);
     const color = d3.scaleLinear().domain([0, 50, 100]).range(['#f4c7bd', '#f2d8a0', '#0f766e']);
     svg.append('g').selectAll('text').data(columns).join('text').attr('x', (d) => x(d) + x.bandwidth() / 2).attr('y', margin.top - 16).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).text((d) => labelText(d, 14));
-    svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).text((d) => labelText(d.label, 22));
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).each(function(d) {
+      renderWrappedText(d3.select(this), d.label, { maxChars: 20, maxLines: 2, lineHeight: 13 });
+    });
     const cells = [];
     rows.forEach((row) => arr(row.values).forEach((cell, colIndex) => {
       const value = Number(cell?.value ?? String(cell?.label ?? '').replace(/[^0-9.-]/g, ''));
@@ -538,8 +602,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     }));
     const g = svg.append('g').selectAll('g').data(cells).join('g');
     g.append('rect').attr('x', (d) => x(d.column)).attr('y', (d) => y(d.row)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 7).attr('fill', (d) => color(d.value)).attr('stroke', '#fff7ef').attr('stroke-width', 3);
-    g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2 + 5).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 800).text((d) => labelText(d.cell.label ?? d.cell.displayValue ?? d.value, 14));
+    g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 800).each(function(d) {
+      renderWrappedText(d3.select(this), d.cell.label ?? d.cell.displayValue ?? d.value, { maxChars: Math.max(7, Math.floor(x.bandwidth() / 7)), maxLines: Math.max(1, Math.floor(y.bandwidth() / 16)), lineHeight: 13 });
+    });
     g.each(function(d) { addTitle(d3.select(this), `${d.row} × ${d.column}: ${d.cell.label ?? d.cell.displayValue ?? d.value}`); });
+    withTooltip(g, (d) => tooltipHtml(`${d.row} × ${d.column}`, [d.cell.label ?? d.cell.displayValue ?? d.value, d.cell.detail]));
   };
 
   const renderSensitivity = (element, payload) => {
@@ -553,17 +620,33 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     renderQuadrant(element, { ...payload, data: { ...payload.data, points: mapped } });
   };
 
+  const GRAPH_TYPES = new Set(['decision-map', 'evidence-map', 'scenario-tree', 'dependency-map']);
+  const QUADRANT_TYPES = new Set(['quadrant', 'positioning-map']);
+  const HEATMAP_TYPES = new Set(['matrix', 'heatmap']);
+  const RENDERERS = {
+    timeline: renderTimeline,
+    flow: renderFlow,
+    stack: renderStack,
+    'layered-lens': renderLayeredLens,
+    bridge: renderBridge,
+    'journey-map': renderJourneyMap,
+    'logic-chain': renderLogicChain,
+    'causal-map': renderCausalMap,
+    scorecard: renderScorecard,
+    waterfall: renderWaterfall,
+    funnel: renderFunnel,
+    range: renderRange,
+    bars: renderBars,
+    cohort: renderCohort,
+    scatter: renderScatter,
+    sensitivity: renderSensitivity,
+  };
+
   const renderD3 = (element, payload) => {
-    if (['flow', 'decision-map', 'evidence-map', 'scenario-tree', 'dependency-map'].includes(payload.type)) renderGraph(element, payload);
-    else if (payload.type === 'waterfall') renderWaterfall(element, payload);
-    else if (payload.type === 'funnel') renderFunnel(element, payload);
-    else if (payload.type === 'range') renderRange(element, payload);
-    else if (payload.type === 'bars') renderBars(element, payload);
-    else if (['quadrant', 'positioning-map'].includes(payload.type)) renderQuadrant(element, payload);
-    else if (payload.type === 'cohort') renderCohort(element, payload);
-    else if (['matrix', 'heatmap'].includes(payload.type)) renderHeatmap(element, payload);
-    else if (payload.type === 'scatter') renderScatter(element, payload);
-    else if (payload.type === 'sensitivity') renderSensitivity(element, payload);
+    if (GRAPH_TYPES.has(payload.type)) return renderGraph(element, payload);
+    if (QUADRANT_TYPES.has(payload.type)) return renderQuadrant(element, payload);
+    if (HEATMAP_TYPES.has(payload.type)) return renderHeatmap(element, payload);
+    return RENDERERS[payload.type]?.(element, payload);
   };
 
   const renderCharts = () => {
@@ -593,8 +676,13 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
   figcaption { margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker, 0.9rem); font-weight: 700; letter-spacing: 0.04em; line-height: 1.35; color: var(--claret); }
   .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--report-fs-note, 1rem); line-height: 1.55; }
   .figure-note { margin-top: var(--space-3); }
-  .d3-figure { width: 100%; min-height: 340px; margin: var(--space-3) 0; }
-  .chart-relationship { min-height: 430px; }
+  .d3-figure { position: relative; width: 100%; min-height: 340px; margin: var(--space-3) 0; overflow: visible; }
+  .d3-figure svg text { pointer-events: none; }
+  .d3-figure .is-hovered rect, .d3-figure .is-hovered circle, .d3-figure .is-hovered polygon, .d3-figure rect.is-hovered, .d3-figure circle.is-hovered, .d3-figure polygon.is-hovered { filter: drop-shadow(0 0.18rem 0.3rem rgba(51, 48, 46, 0.2)); stroke-width: 2.4px; }
+  :global(.d3-chart-tooltip) { position: fixed; z-index: 1000; display: grid; gap: 0.2rem; max-width: min(22rem, calc(100vw - 2rem)); border: 1px solid var(--rule); border-left: 4px solid var(--claret); background: var(--surface-paper); color: var(--ink-page); padding: 0.65rem 0.75rem; font-family: var(--font-sans); font-size: 0.86rem; line-height: 1.35; box-shadow: 0 0.75rem 2rem rgba(51, 48, 46, 0.16); opacity: 0; pointer-events: none; transform: translateY(0.25rem); transition: opacity 120ms ease, transform 120ms ease; }
+  :global(.d3-chart-tooltip.is-visible) { opacity: 1; transform: translateY(0); }
+  :global(.d3-chart-tooltip strong) { display: block; font-family: var(--font-display); font-size: 0.94rem; line-height: 1.2; color: var(--claret); }
+  :global(.d3-chart-tooltip span) { display: block; color: var(--caption-gray); }
   .chart-bars, .chart-sensitivity { min-height: 240px; }
   .chart-quadrant { min-height: 380px; }
   .chart-heatmap { min-height: 430px; }
@@ -602,131 +690,4 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
   .figure-fallback strong { display: block; margin-bottom: var(--space-2); font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); }
   .figure-fallback p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.55; }
   .figure-fallback code { font-family: var(--font-mono); color: var(--claret); }
-  .timeline-viz { position: relative; display: grid; gap: var(--space-3); margin: 0; padding: 0 0 0 var(--space-5); list-style: none; }
-  .timeline-viz::before { content: ''; position: absolute; left: 0.43rem; top: 0.35rem; bottom: 0.35rem; width: 2px; background: var(--claret); }
-  .timeline-viz li { position: relative; display: grid; grid-template-columns: minmax(92px, 0.25fr) minmax(0, 1fr); gap: var(--space-3); border-top: var(--report-rule); padding-top: var(--space-3); }
-  .timeline-viz li::before { content: ''; position: absolute; left: calc(-1 * var(--space-5) + 0.09rem); top: var(--space-3); width: 0.78rem; height: 0.78rem; border: 2px solid var(--claret); background: var(--surface-paper); }
-  .timeline-marker { font-family: var(--font-mono); font-size: var(--report-fs-caption, 0.98rem); color: var(--claret); }
-  .timeline-viz strong, .stack-layer strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.25; }
-  .timeline-viz p, .stack-layer p { grid-column: 2; margin: 0; color: var(--caption-gray); font-size: var(--report-fs-note, 1rem); line-height: 1.55; }
-  .stack-viz { display: grid; gap: var(--space-2); }
-  .figure-stack .stack-viz { grid-template-columns: minmax(0, 1fr); }
-  .stack-layer { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); align-items: start; border: var(--report-rule); border-top: 2px solid var(--claret); background: var(--surface-paper); padding: var(--space-3); }
-  .stack-layer span { width: 0.72rem; height: 100%; min-height: 2rem; background: var(--claret); opacity: 0.8; }
-  .stack-layer p { grid-column: 2; }
-  .market-sizing-viz { display: grid; gap: var(--space-3); }
-  .market-sizing-axis { display: flex; justify-content: space-between; gap: var(--space-3); border-bottom: var(--report-rule); padding-bottom: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
-  .market-sizing-stack { display: grid; gap: var(--space-2); }
-  .market-layer { position: relative; display: grid; justify-self: center; box-sizing: border-box; width: var(--market-layer-width, 100%); gap: var(--space-2); min-height: 7.5rem; border: var(--report-rule); border-left: 5px solid var(--claret); background: var(--surface-paper); padding: var(--space-4); }
-  .market-layer::after { content: ''; position: absolute; inset: auto 0 0; height: 0; border-bottom: var(--report-rule); opacity: 0.8; }
-  .market-layer:not(:last-child)::before { content: '↓'; position: absolute; left: 50%; bottom: -1rem; z-index: 2; display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border: var(--report-rule); background: var(--surface-paper); color: var(--claret); font-family: var(--font-display); font-weight: 800; transform: translateX(-50%); }
-  .market-layer-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
-  .market-layer-head span { font-family: var(--font-display); font-size: clamp(1.15rem, 2.75vw, 2.05rem); font-weight: 900; line-height: 1; letter-spacing: -0.04em; color: color-mix(in srgb, var(--claret) 88%, var(--ink-page)); }
-  .market-layer-head strong { max-width: 17rem; text-align: right; font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.16; letter-spacing: var(--tracking-display-snug); color: var(--ink-page); }
-  .market-layer p { max-width: 62rem; margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.5; }
-  .market-layer.layer-3 { background: color-mix(in srgb, var(--teal) 7%, var(--surface-paper)); }
-  .market-layer.tone-positive { border-left-color: #0f766e; }
-  .market-layer.tone-opportunity { border-left-color: var(--gold); }
-  .market-layer.tone-risk, .market-layer.tone-critical, .market-layer.tone-high { border-left-color: #b42318; }
-  .market-sizing-warning { border: var(--report-rule); border-left: 4px solid var(--gold); background: color-mix(in srgb, var(--gold) 7%, var(--surface-paper)); padding: var(--space-3); }
-  .market-sizing-warning strong { display: block; margin-bottom: var(--space-1); font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); }
-  .market-sizing-warning p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-note, 1rem); line-height: 1.45; }
-  .unit-economics-viz { display: grid; grid-template-columns: minmax(190px, 0.32fr) minmax(0, 1fr); gap: var(--space-4); align-items: stretch; }
-  .unit-anchor-card { display: grid; align-content: start; gap: var(--space-3); border: var(--report-rule); border-top: 4px solid #0f766e; background: color-mix(in srgb, #0f766e 6%, var(--surface-paper)); padding: var(--space-4); }
-  .unit-anchor-card span { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: #0f766e; }
-  .unit-anchor-card strong { font-family: var(--font-display); font-size: clamp(1.25rem, 2.55vw, 2.05rem); line-height: 1; letter-spacing: var(--tracking-display-snug); color: var(--ink-page); }
-  .unit-anchor-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
-  .unit-waterfall-chain { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
-  .unit-step-card { position: relative; display: grid; align-content: start; gap: var(--space-3); min-height: 14rem; border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); }
-  .unit-step-card:not(:last-child)::after { content: '−'; position: absolute; top: 50%; right: -0.7rem; z-index: 2; display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border: var(--report-rule); background: var(--surface-paper); color: #b42318; font-family: var(--font-display); font-weight: 900; transform: translateY(-50%); }
-  .unit-step-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: #b42318; }
-  .unit-step-kicker { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
-  .unit-step-kicker span { font-family: var(--font-mono); color: var(--claret); }
-  .unit-step-kicker em { font-style: normal; }
-  .unit-step-card strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.18; letter-spacing: var(--tracking-display-snug); }
-  .unit-step-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
-  .unit-step-card.is-outcome { background: color-mix(in srgb, #b42318 5%, var(--surface-paper)); }
-  .unit-step-card.is-outcome strong { color: #b42318; }
-  .customer-surface-viz { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-areas: 'entry enterprise developer ecosystem' 'entry deployment community ecosystem'; border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
-  .customer-surface-card { position: relative; display: grid; align-content: start; gap: var(--space-3); min-height: 13rem; border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); }
-  .customer-surface-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: var(--claret); }
-  .customer-surface-card:not(:last-child)::after { content: '→'; position: absolute; top: 50%; right: -0.7rem; z-index: 2; display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border: var(--report-rule); background: var(--surface-paper); color: var(--claret); font-family: var(--font-display); font-weight: 800; transform: translateY(-50%); }
-  .customer-surface-card.surface-1 { grid-area: entry; min-height: 100%; background: color-mix(in srgb, #0f766e 6%, var(--surface-paper)); }
-  .customer-surface-card.surface-2 { grid-area: enterprise; }
-  .customer-surface-card.surface-3 { grid-area: developer; }
-  .customer-surface-card.surface-4 { grid-area: deployment; background: color-mix(in srgb, var(--gold) 6%, var(--surface-paper)); }
-  .customer-surface-card.surface-5 { grid-area: community; background: color-mix(in srgb, var(--gold) 6%, var(--surface-paper)); }
-  .surface-kicker { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
-  .surface-kicker span { font-family: var(--font-mono); color: var(--claret); }
-  .surface-kicker em { font-style: normal; }
-  .customer-surface-card strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.18; letter-spacing: var(--tracking-display-snug); }
-  .customer-surface-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
-  .customer-surface-card.tone-positive::before { background: #0f766e; }
-  .customer-surface-card.tone-opportunity::before { background: var(--gold); }
-  .customer-surface-card.tone-risk::before, .customer-surface-card.tone-critical::before, .customer-surface-card.tone-high::before { background: #b42318; }
-  .architecture-viz { display: grid; gap: var(--space-4); counter-reset: arch-layer; }
-  .arch-layer { position: relative; display: grid; grid-template-columns: minmax(160px, 0.32fr) minmax(0, 1fr); gap: var(--space-4); align-items: stretch; border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--surface-paper) 68%, transparent); padding: var(--space-3); }
-  .arch-layer:not(:last-child)::after { content: '↓'; position: absolute; left: calc(32% + var(--space-2)); bottom: calc(-1 * var(--space-4) - 0.25rem); z-index: 1; display: grid; place-items: center; width: 1.45rem; height: 1.45rem; background: var(--surface-page); color: var(--claret); font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1; }
-  .arch-layer-head { display: grid; align-content: start; gap: var(--space-2); border-right: var(--report-rule); padding-right: var(--space-3); }
-  .arch-layer-head span { width: fit-content; font-family: var(--font-mono); font-size: var(--report-fs-caption, 0.98rem); color: var(--claret); }
-  .arch-layer-head strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.2; }
-  .arch-layer-head p, .arch-detail, .arch-module p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-note, 1rem); line-height: 1.5; }
-  .arch-layer-body { display: grid; gap: var(--space-3); align-content: start; }
-  .arch-modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-3); }
-  .arch-module { min-height: 5.2rem; border: var(--report-rule); border-top: 2px solid var(--claret); background: var(--surface-paper); padding: var(--space-3); }
-  .arch-module strong { display: block; margin-bottom: var(--space-1); font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.2; }
-  .arch-outputs { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
-  .arch-outputs li { border: var(--report-rule); background: color-mix(in srgb, var(--claret) 6%, transparent); padding: var(--space-1) var(--space-2); font-family: var(--font-sans); font-size: var(--report-fs-caption, 0.98rem); color: var(--claret); }
-  .recommendation-viz { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
-  .logic-card { position: relative; display: grid; align-content: start; gap: var(--space-3); min-height: 15rem; border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); }
-  .logic-card:not(:last-child)::after { content: '→'; position: absolute; top: 50%; right: -0.7rem; z-index: 2; display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border: var(--report-rule); background: var(--surface-paper); color: var(--claret); font-family: var(--font-display); font-weight: 800; transform: translateY(-50%); }
-  .logic-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: var(--claret); }
-  .logic-kicker { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption, 0.98rem); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
-  .logic-kicker span { font-family: var(--font-mono); color: var(--claret); }
-  .logic-kicker em { font-style: normal; color: var(--caption-gray); }
-  .logic-card strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.18; letter-spacing: var(--tracking-display-snug); }
-  .logic-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
-  .logic-card.tone-positive::before { background: #0f766e; }
-  .logic-card.tone-risk::before, .logic-card.tone-critical::before, .logic-card.tone-high::before { background: #b42318; }
-  .logic-card.tone-opportunity::before { background: var(--gold); }
-  .logic-card.is-outcome { background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); }
-  .logic-card.is-outcome strong { color: var(--claret); }
-  .risk-transmission-viz { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr) minmax(0, 0.95fr); border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
-  .risk-column { position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: var(--space-3); border-right: var(--report-rule); border-bottom: var(--report-rule); padding: var(--space-4); }
-  .risk-column:not(:last-child)::after { content: '→'; position: absolute; top: 50%; right: -0.72rem; z-index: 2; display: grid; place-items: center; width: 1.44rem; height: 1.44rem; border: var(--report-rule); background: var(--surface-paper); color: var(--claret); font-family: var(--font-display); font-weight: 800; transform: translateY(-50%); }
-  .risk-column-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); border-bottom: var(--report-rule); padding-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  .risk-column-head span { font-family: var(--font-mono); font-size: var(--report-fs-caption, 0.98rem); color: var(--caption-gray); }
-  .risk-column-head strong { font-size: var(--report-fs-kicker, 0.9rem); line-height: 1.2; }
-  .risk-card-list { display: grid; align-content: start; gap: var(--space-3); }
-  .risk-card { position: relative; display: grid; gap: var(--space-2); border: var(--report-rule); border-left: 4px solid var(--claret); background: var(--surface-paper); padding: var(--space-3); }
-  .risk-card strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.2; letter-spacing: var(--tracking-display-snug); }
-  .risk-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
-  .risk-card.tone-risk, .risk-card.tone-critical, .risk-card.tone-high { border-left-color: #b42318; }
-  .risk-card.tone-positive { border-left-color: #0f766e; }
-  .risk-card.tone-opportunity { border-left-color: var(--gold); }
-  .risk-card.is-bridge { background: color-mix(in srgb, #b42318 5%, var(--surface-paper)); }
-  .risk-card.is-outcome { background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); border-left-color: var(--claret); }
-  .risk-card.is-outcome strong { color: var(--claret); }
-  .scorecard-viz { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--space-3); }
-  .scorecard-card { display: grid; align-content: start; gap: var(--space-3); min-height: 11rem; border: var(--report-rule); border-top: 4px solid var(--claret); background: var(--surface-paper); padding: var(--space-4); }
-  .scorecard-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
-  .scorecard-head span { font-family: var(--font-mono); font-size: var(--report-fs-caption, 0.98rem); color: var(--caption-gray); }
-  .scorecard-head strong { font-family: var(--font-display); font-size: var(--report-fs-body, 1.1rem); line-height: 1.18; letter-spacing: var(--tracking-display-snug); }
-  .scorecard-value { font-family: var(--font-display); font-size: clamp(1.65rem, 4vw, 3rem); font-weight: 900; line-height: 0.95; letter-spacing: -0.06em; color: var(--claret); }
-  .scorecard-card p { margin: 0; color: var(--caption-gray); font-size: var(--report-fs-body, 1.1rem); line-height: 1.45; }
-  .scorecard-card.tone-positive { border-top-color: #0f766e; }
-  .scorecard-card.tone-risk, .scorecard-card.tone-critical, .scorecard-card.tone-high { border-top-color: #b42318; }
-  .scorecard-card.tone-opportunity { border-top-color: var(--gold); }
-  .tone-positive { border-top-color: #0f766e; }
-  .tone-risk, .tone-critical, .tone-high { border-top-color: #b42318; }
-  .tone-opportunity { border-top-color: var(--gold); }
-  .tone-neutral, .tone-medium { border-top-color: var(--claret); }
-  .arch-layer.tone-positive, .arch-module.tone-positive { border-left-color: #0f766e; border-top-color: #0f766e; }
-  .arch-layer.tone-risk, .arch-layer.tone-critical, .arch-layer.tone-high, .arch-module.tone-risk, .arch-module.tone-critical, .arch-module.tone-high { border-left-color: #b42318; border-top-color: #b42318; }
-  .arch-layer.tone-opportunity, .arch-module.tone-opportunity { border-left-color: var(--gold); border-top-color: var(--gold); }
-  .tone-positive.stack-layer span { background: #0f766e; }
-  .tone-risk.stack-layer span, .tone-critical.stack-layer span, .tone-high.stack-layer span { background: #b42318; }
-  .tone-opportunity.stack-layer span { background: var(--gold); }
-  @media (max-width: 900px) { .recommendation-viz, .risk-transmission-viz, .unit-waterfall-chain, .customer-surface-viz { grid-template-columns: 1fr; grid-template-areas: none; } .unit-economics-viz { grid-template-columns: 1fr; } .logic-card, .unit-step-card, .customer-surface-card { min-height: auto; grid-area: auto; } .logic-card:not(:last-child)::after, .risk-column:not(:last-child)::after, .unit-step-card:not(:last-child)::after, .customer-surface-card:not(:last-child)::after { top: auto; right: auto; left: 50%; bottom: -0.72rem; content: '↓'; transform: translateX(-50%); } }
-  @media (max-width: 700px) { .timeline-viz li, .arch-layer { grid-template-columns: 1fr; } .timeline-viz p { grid-column: auto; } .arch-layer-head { border-right: 0; border-bottom: var(--report-rule); padding: 0 0 var(--space-3); } .arch-layer:not(:last-child)::after { left: 50%; transform: translateX(-50%); } .market-layer-head { display: grid; } .market-layer-head strong { max-width: none; text-align: left; } }
 </style>

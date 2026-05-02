@@ -403,141 +403,45 @@ Appendix rules:
 
 The website renders figures from `type` plus structured `data`. Do not rely on `title` for renderer selection.
 
-Global rules:
+Rules:
 
-- Always include `id`, `title`, `type`, `layout`, `summary`, `data`, `approximationNotes`, and `claimRefs`.
-- `data` is a structured object, not Markdown, Mermaid, SVG, prose, or JSON string.
-- Use renderer-known canonical fields only: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`, plus axis labels where allowed.
-- Do not invent primary fields such as `children`, `steps`, `cards`, `buckets`, `groups`, `components`, `name`, or `description`.
-- Every visible item/node/layer/point/row has a human-readable `label` unless a stricter required field applies.
-- Numeric chart coordinates and bar values are numbers; formatted text goes in `displayValue`.
-- For missing metrics, keep a visual node/card with the gap in `detail`; do not leave required arrays empty.
-- Allowed tones: `positive`, `neutral`, `opportunity`, `risk`, `low`, `medium`, `high`, `critical`.
+- Each figure must include `id`, `title`, `type`, `layout`, `summary`, `data`, `approximationNotes`, and `claimRefs`.
+- `data` must be structured YAML. Do not use Markdown, Mermaid, SVG, prose, or JSON strings.
+- Use only these top-level `data` fields: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`, `xAxis`, `yAxis`.
+- Populate only the required field(s) for the selected `type`; do not split one chart across multiple arrays.
+- Do not include empty sibling arrays such as `items: []`, `nodes: []`, `edges: []`, `points: []`, `columns: []`, `rows: []`, `series: []`, or `layers: []`.
+- Every visible item/node/layer/point/row must have `label`. Use `detail` for narrative context and `displayValue` for formatted numeric text.
+- Numeric chart values and coordinates must be numbers, not formatted strings.
+- Allowed `tone` values: `positive`, `neutral`, `opportunity`, `risk`, `low`, `medium`, `high`, `critical`.
+- If data is unavailable, render the gap as a labeled node/card with `detail`; do not leave the required array empty.
 
-Renderer-specific contracts:
-
-- `timeline`: `data.items[]` with `date|label`, `label`, `detail`, optional `tone`. Company timelines should cover founding, priced rounds, product launches, operating-scale milestones, strategic deals, and material legal/governance/safety events. Aim for at least 8 entries and freshness within roughly 3 months of `currentDate` when public sources support it.
-- `flow`: `data.nodes[]` and `data.edges[]` for generic causal/product/customer flows.
-- `decision-map`: `data.nodes[]` and optional `data.edges[]` for decision trees or evaluation logic.
-- `evidence-map`: `data.nodes[]` and optional `data.edges[]` for source-to-claim maps.
-- `scenario-tree`: `data.nodes[]` and `data.edges[]` for bull/base/bear or milestone-dependent scenario paths.
-- `dependency-map`: `data.nodes[]` and `data.edges[]` for critical suppliers, platforms, regulators, partners, customers, or single points of failure.
-- `quadrant` / `positioning-map`: `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include `data.xAxis` and `data.yAxis` when useful.
-- `bars`: `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`.
-- `funnel`: ordered `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`; use for stage conversion or sequential narrowing.
-- `waterfall`: ordered `data.items[]` with signed numeric `value`, optional `displayValue`, optional `tone`.
-- `range`: `data.items[]` with `label`, numeric `low` or `min`, numeric `high` or `max`, optional numeric `mid`, optional `displayValue`, optional `tone`.
-- `heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; `row.values.length === data.columns.length`. Do not include the row identifier as a first column.
-- `cohort`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; each value should include numeric `value` when retention/repeat rates are available and may include `label`/`displayValue`.
-- `stack`: `data.layers[]` or `data.items[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`.
-- `layered-lens`: `data.nodes[]` or `data.items[]` from broad context to constrained footprint; do not invent unsupported values.
-- `bridge`: `data.nodes[]` or `data.items[]` from an evidence-backed anchor through missing bridges to an underwriting output.
-- `journey-map`: `data.nodes[]` or `data.items[]` from entry surface through segments, stages, or expansion loops.
-- `logic-chain`: ordered `data.nodes[]` with `label`, `detail`, `tone`.
-- `causal-map`: `data.nodes[]` and `data.edges[]`; causes, transmissions, and impacts are inferred by edge direction.
-- `sensitivity`: `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`.
-- `scatter`: `data.points[]` or `data.series[0].points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include axis labels when useful.
-- `scorecard`: `data.items[]` or `data.nodes[]` with `label`, numeric or displayable `value`/`score`, optional `displayValue`, optional `detail`, optional `tone`.
-- `other`: fallback only; avoid unless no semantic renderer fits.
-
-Canonical examples:
-
-```yaml
-# timeline
-data:
-  items:
-    - date: "2026-Q1"
-      label: Event label
-      detail: Evidence-backed description
-      tone: positive
-
-# flow / decision-map / evidence-map / causal-map / scenario-tree / dependency-map
-data:
-  nodes:
-    - id: n1
-      label: Node label
-      detail: Node detail
-      tone: neutral
-  edges:
-    - from: n1
-      to: n2
-      label: Optional edge label
-
-# bars / funnel / waterfall
-data:
-  items:
-    - label: Metric label
-      value: 123.4
-      displayValue: "$123.4M"
-      tone: positive
-
-# range
-data:
-  items:
-    - label: Scenario label
-      low: 120
-      mid: 180
-      high: 250
-      displayValue: "$120M–$250M"
-      tone: neutral
-
-# quadrant / positioning-map / scatter
-data:
-  xAxis: X-axis label
-  yAxis: Y-axis label
-  points:
-    - label: Company or item
-      x: 75
-      y: 60
-      tone: neutral
-
-# heatmap / matrix / cohort
-data:
-  columns: [Likelihood, Impact]
-  rows:
-    - label: Risk theme
-      values:
-        - label: Medium likelihood
-          tone: medium
-        - label: High impact
-          tone: high
-
-# stack
-data:
-  layers:
-    - label: Layer label
-      detail: Layer detail
-      tone: neutral
-      modules:
-        - Module label
-      outputs:
-        - Output label
-
-# card-like figure families
-data:
-  items:
-    - label: Card label
-      detail: Card detail
-      tone: neutral
-
-# scorecard
-data:
-  items:
-    - label: Dimension label
-      value: 4
-      displayValue: "4 / 5"
-      detail: Evidence-backed score rationale
-      tone: positive
-
-# sensitivity
-data:
-  series:
-    - label: Scenario set
-      points:
-        - label: Scenario label
-          value: 123
-          displayValue: "123x"
-```
+| `type` | Required populated `data` field(s) | Required item shape |
+|---|---|---|
+| `timeline` | `items[]` | `date|label`, `label`, `detail`, optional `tone` |
+| `flow` | `nodes[]`, `edges[]` | node: `id`, `label`; edge: `from`, `to`, optional `label` |
+| `decision-map` | `nodes[]` | `label`, optional `id`, `detail`, `tone`; optional `edges[]` |
+| `evidence-map` | `nodes[]` | `label`, optional `id`, `detail`, `tone`; optional `edges[]` |
+| `scenario-tree` | `nodes[]`, `edges[]` | node: `id`, `label`; edge: `from`, `to`, optional `label` |
+| `dependency-map` | `nodes[]`, `edges[]` | node: `id`, `label`; edge: `from`, `to`, optional `label` |
+| `quadrant` | `points[]` | `label`, numeric `x`, numeric `y`, optional `tone`; optional `xAxis`, `yAxis` |
+| `positioning-map` | `points[]` | `label`, numeric `x`, numeric `y`, optional `tone`; optional `xAxis`, `yAxis` |
+| `scatter` | `points[]` preferred; `series[0].points[]` allowed | `label`, numeric `x`, numeric `y`, optional `tone` |
+| `bars` | `items[]` preferred; `series[0].points[]` allowed | `label`, numeric `value`, optional `displayValue`, `tone` |
+| `funnel` | `items[]` preferred; `series[0].points[]` allowed | ordered `label`, numeric `value`, optional `displayValue`, `tone` |
+| `waterfall` | `items[]` | ordered `label`, signed numeric `value`, optional `displayValue`, `tone` |
+| `range` | `items[]` | `label`, numeric `low|min`, numeric `high|max`, optional numeric `mid`, `displayValue`, `tone` |
+| `sensitivity` | `series[0].points[]` | `label`, numeric `value`, optional `displayValue` |
+| `heatmap` | `columns[]`, `rows[]` | row: `label`, `values[]`; `values.length === columns.length` |
+| `matrix` | `columns[]`, `rows[]` | row: `label`, `values[]`; `values.length === columns.length` |
+| `cohort` | `columns[]`, `rows[]` | row: `label`, `values[]`; values may include numeric `value`, `label`, `displayValue` |
+| `stack` | `layers[]` preferred; `items[]` allowed | `label`, `detail`, optional `tone`, `modules[]`, `outputs[]` |
+| `layered-lens` | `nodes[]` preferred; `items[]` allowed | ordered `label`, `detail`, optional `tone` |
+| `bridge` | `nodes[]` preferred; `items[]` allowed | ordered `label`, `detail`, optional `tone` |
+| `journey-map` | `nodes[]` preferred; `items[]` allowed | ordered `label`, `detail`, optional `tone` |
+| `logic-chain` | `nodes[]` | ordered `label`, `detail`, `tone`; `items[]` is not canonical |
+| `causal-map` | `nodes[]`, `edges[]` | node: `id`, `label`; edge: `from`, `to`; direction defines causality |
+| `scorecard` | `items[]` preferred; `nodes[]` allowed | `label`, `value|score|displayValue`, optional `detail`, `tone` |
+| `other` | none | Fallback only; avoid when any semantic type fits |
 
 ## `102-report-card.yaml`
 

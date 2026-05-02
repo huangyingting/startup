@@ -41,6 +41,8 @@ const RISK_RATINGS = new Set(['low', 'moderate', 'significant', 'critical', 'unk
 const VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
 const FIGURE_TYPES = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'quadrant', 'positioning-map', 'bars', 'waterfall', 'heatmap', 'matrix', 'stack', 'layered-lens', 'bridge', 'journey-map', 'logic-chain', 'causal-map', 'sensitivity', 'scatter', 'funnel', 'cohort', 'range', 'scorecard', 'scenario-tree', 'dependency-map', 'other']);
 const FIGURE_LAYOUTS = new Set(['compact', 'standard', 'wide']);
+const FIGURE_DATA_FIELDS = new Set(['items', 'nodes', 'edges', 'points', 'columns', 'rows', 'series', 'layers', 'xAxis', 'yAxis']);
+const FIGURE_ARRAY_FIELDS = ['items', 'nodes', 'edges', 'points', 'columns', 'rows', 'series', 'layers'];
 const FIGURE_CONTRACTS = new Map([
   ['timeline', [['items']]],
   ['flow', [['nodes'], ['edges']]],
@@ -67,7 +69,33 @@ const FIGURE_CONTRACTS = new Map([
   ['scatter', [['points', 'series']]],
   ['scorecard', [['items', 'nodes']]],
 ]);
-const NON_CANONICAL_FIGURE_DATA_FIELDS = new Set(['children', 'steps', 'cards', 'buckets', 'groups', 'components', 'name']);
+const FIGURE_ALLOWED_POPULATED_FIELDS = new Map([
+  ['timeline', new Set(['items'])],
+  ['flow', new Set(['nodes', 'edges'])],
+  ['decision-map', new Set(['nodes', 'edges'])],
+  ['evidence-map', new Set(['nodes', 'edges'])],
+  ['scenario-tree', new Set(['nodes', 'edges'])],
+  ['dependency-map', new Set(['nodes', 'edges'])],
+  ['quadrant', new Set(['points'])],
+  ['positioning-map', new Set(['points'])],
+  ['scatter', new Set(['points', 'series'])],
+  ['bars', new Set(['items', 'series'])],
+  ['funnel', new Set(['items', 'series'])],
+  ['waterfall', new Set(['items'])],
+  ['range', new Set(['items'])],
+  ['sensitivity', new Set(['series'])],
+  ['heatmap', new Set(['columns', 'rows'])],
+  ['matrix', new Set(['columns', 'rows'])],
+  ['cohort', new Set(['columns', 'rows'])],
+  ['stack', new Set(['layers', 'items'])],
+  ['layered-lens', new Set(['nodes', 'items'])],
+  ['bridge', new Set(['nodes', 'items'])],
+  ['journey-map', new Set(['nodes', 'items'])],
+  ['logic-chain', new Set(['nodes'])],
+  ['causal-map', new Set(['nodes', 'edges'])],
+  ['scorecard', new Set(['items', 'nodes'])],
+  ['other', new Set()],
+]);
 
 function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
@@ -101,7 +129,11 @@ function walkClaimRefs(value, refs = []) {
   return refs;
 }
 function hasAnyArray(data, keys) {
-  return keys.some((key) => Array.isArray(data?.[key]) && data[key].length > 0);
+  return keys.some((key) => hasPopulatedField(data, key));
+}
+function hasPopulatedField(data, key) {
+  if (key === 'series') return Array.isArray(data?.series) && data.series.some((series) => Array.isArray(series?.points) && series.points.length > 0);
+  return Array.isArray(data?.[key]) && data[key].length > 0;
 }
 function hasText(value) {
   return typeof value === 'string' && value.trim().length > 0;
@@ -117,11 +149,18 @@ function checkFigure(failures, path, figure) {
     return;
   }
   for (const field of Object.keys(figure.data)) {
-    if (NON_CANONICAL_FIGURE_DATA_FIELDS.has(field)) failures.push(`${path}: figure ${figure.id} uses non-canonical data.${field}`);
+    if (!FIGURE_DATA_FIELDS.has(field)) failures.push(`${path}: figure ${figure.id} uses unsupported data.${field}; allowed fields are ${[...FIGURE_DATA_FIELDS].join(', ')}`);
+    if (FIGURE_ARRAY_FIELDS.includes(field) && Array.isArray(figure.data[field]) && figure.data[field].length === 0) failures.push(`${path}: figure ${figure.id} must not include empty placeholder data.${field}; omit unused figure data arrays`);
   }
   const contract = FIGURE_CONTRACTS.get(figure.type) ?? [];
   for (const alternatives of contract) {
     if (!hasAnyArray(figure.data, alternatives)) failures.push(`${path}: figure ${figure.id} type ${figure.type} requires data.${alternatives.join(' or data.')}`);
+    const populatedAlternatives = alternatives.filter((key) => hasPopulatedField(figure.data, key));
+    if (populatedAlternatives.length > 1) failures.push(`${path}: figure ${figure.id} type ${figure.type} must use exactly one of data.${alternatives.join(' or data.')}, not ${populatedAlternatives.map((key) => `data.${key}`).join(' and ')}`);
+  }
+  const allowedPopulated = FIGURE_ALLOWED_POPULATED_FIELDS.get(figure.type) ?? new Set();
+  for (const field of FIGURE_ARRAY_FIELDS) {
+    if (hasPopulatedField(figure.data, field) && !allowedPopulated.has(field)) failures.push(`${path}: figure ${figure.id} type ${figure.type} must not populate data.${field}`);
   }
   for (const [index, item] of (figure.data.items ?? []).entries()) {
     if (!hasText(item?.label)) failures.push(`${path}: figure ${figure.id} item ${index + 1} requires label`);
@@ -153,6 +192,12 @@ function checkFigure(failures, path, figure) {
     for (const [index, item] of (figure.data.items ?? []).entries()) {
       if (!isNumber(item?.value)) failures.push(`${path}: figure ${figure.id} item ${index + 1} requires numeric value`);
     }
+    for (const [seriesIndex, series] of (figure.data.series ?? []).entries()) {
+      for (const [pointIndex, point] of (series.points ?? []).entries()) {
+        if (!hasText(point?.label)) failures.push(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires label`);
+        if (!isNumber(point?.value)) failures.push(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires numeric value`);
+      }
+    }
   }
   if (figure.type === 'range') {
     for (const [index, item] of (figure.data.items ?? []).entries()) {
@@ -166,6 +211,14 @@ function checkFigure(failures, path, figure) {
   if (['quadrant', 'positioning-map', 'scatter'].includes(figure.type)) {
     for (const [index, point] of (figure.data.points ?? []).entries()) {
       if (!isNumber(point?.x) || !isNumber(point?.y)) failures.push(`${path}: figure ${figure.id} point ${index + 1} requires numeric x and y`);
+    }
+    if (figure.type === 'scatter') {
+      for (const [seriesIndex, series] of (figure.data.series ?? []).entries()) {
+        for (const [pointIndex, point] of (series.points ?? []).entries()) {
+          if (!hasText(point?.label)) failures.push(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires label`);
+          if (!isNumber(point?.x) || !isNumber(point?.y)) failures.push(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires numeric x and y`);
+        }
+      }
     }
   }
   if (figure.type === 'sensitivity') {

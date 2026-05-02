@@ -32,6 +32,7 @@ Final English report stage. Compose `101-report-document.yaml` from the consolid
 - `startupIntroduction` object.
 - Chapters `2`–`9` mapped one-to-one to artifacts `01`–`08`.
 - Document-level `tables[]` and `figures[]` preserving upstream IDs/data unless explicitly omitted.
+- Preserve each upstream figure's `data` object as semantic chart data; do not normalize it into an all-fields template.
 - Appendices only when they add value; number sequentially `A`, `B`, `C`, ... without gaps.
 
 ## Coverage rules
@@ -42,6 +43,7 @@ Final English report stage. Compose `101-report-document.yaml` from the consolid
 - Each chapter section needs narrative (`paragraph` or `callout`) plus relevant table/figure references.
 - A table/figure should have one home in the report; avoid duplicate references across chapters/appendices.
 - When near-duplicate tables exist across artifacts, keep the freshest/most complete version and record dropped IDs in `coverageNotes`.
+- When copying figures into `101`, include only populated/canonical `data` fields for that figure type; never add empty sibling arrays such as `items: []`, `nodes: []`, `edges: []`, `points: []`, `columns: []`, `rows: []`, `series: []`, or `layers: []`.
 
 ## Quality gates
 
@@ -49,6 +51,7 @@ Final English report stage. Compose `101-report-document.yaml` from the consolid
 - Preserve useful detail; do not collapse a rich competitor/customer/risk/financial table into a short summary.
 - Use structured figure specs only; no legacy diagram-source fields.
 - Numeric chart values must be numbers.
+- Reject any figure whose `data` object contains empty placeholder arrays or a populated field disallowed by the figure type.
 
 ## Pre-save audit
 
@@ -63,5 +66,6 @@ Fix coverage gaps before saving. Do not proceed to `startup-card` if final table
 
 ## Completion check
 
+- Run `node scripts/sanitize-report-figures.mjs <reportFolder> --check`; if it fails, run without `--check`, review the diff, then rerun validation.
 - `101-report-document.yaml` parses and validates against canonical claim IDs.
 - Output summary includes path, recommendation, table count, figure count, and website readiness.

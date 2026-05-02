@@ -25,6 +25,7 @@ Chinese report assembly stage. Build `101-report-document.zh.yaml` by mirroring 
 - Reuse translated chapter content, tables, figures, and callouts from `01`–`08.zh.yaml` for chapters `2`–`9`.
 - Translate only report-unique content: executive summary, cover metrics, startup introduction text, appendices, disclaimer, report metadata, and other fields not present upstream.
 - Preserve company, product, person, and investor proper names.
+- Preserve figure `data` fields exactly from the translated source or English structure; do not add empty placeholder arrays for unused chart fields.
 
 ## Section remap
 
@@ -42,6 +43,7 @@ English `101` chapter `N` maps to source artifact `N-1`.
 
 ## Completion check
 
+- Run `node scripts/sanitize-report-figures.mjs <reportFolder> --check`; if it fails, run without `--check`, review the diff, then rerun validation.
 - Structural parity with English `101`: chapters, sections, blocks, tables, rows, columns, figures, appendices, cover metrics, founders.
 - ID/reference parity: table IDs, figure IDs, claimRefs, `S###`, `C###`, `T###`, `F###` byte-identical.
 - Residual-English sweep on translated fields per `zh-translation.md`.
