@@ -31,7 +31,7 @@ Required Simplified Chinese files (must ship with every report):
 - Specialists must write complete YAML files directly to `reportFolder`.
 - `/tmp` tool-output files are diagnostic logs only, never artifacts or handoff inputs.
 - Specialists must read this schema and `yaml-syntax.md` before writing.
-- Only `Startup Report Evidence Analyst` may use web research tools; downstream agents use `01-evidence-ledger.yaml` and `claimRefs`.
+- Only `Startup Report Evidence Analyst` has the `web_search` tool; downstream agents use `01-evidence-ledger.yaml` and `claimRefs`.
 
 ## Artifact mapping
 
@@ -78,8 +78,7 @@ Required Simplified Chinese files (must ship with every report):
 Evidence ledger quality requirements:
 
 - Source breadth: retained sources should span multiple independent source buckets whenever available, including official/company material, startup or business news, independent third-party databases/analyst sources, customer or partner proof, regulatory/legal/filing sources, and technical/product documentation.
-- Source target semantics: `coverage.sourceTarget` is the minimum count of retained, `web_search`-verified, report-relevant `sources[]` entries. It is not a claim target. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`.
-- Depth minimums: `standard` requires at least 40 retained sources; `deep` requires at least 100 retained sources. A report with 100 claims but materially fewer retained sources fails the evidence standard.
+- Coverage semantics: there is no fixed source-count target. `coverage.sourcesConsidered` counts cited/annotated `web_search` source candidates reviewed before retention. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`. Coverage is sufficient when downstream chapter claims are supported or unsupported facts are documented in `evidenceGaps`.
 - Source recency: claims about current company status, funding, valuation, customers, revenue scale, headcount, product packaging, pricing, and regulatory posture should prefer sources from the last 24 months. Older sources are acceptable for durable historical facts and should normally support claims marked `freshness: historical`.
 - Source deduplication: repeated coverage of the same underlying event does not equal independent evidence. Cluster sources by event/topic/date and retain only sources that add original facts, primary quotes, independent confirmation, or materially different interpretation.
 - Query iteration: the evidence process should vary search queries by company name, product names, founders, investors, competitors, customers, market category, geography, funding/valuation terms, product/security terms, regulatory/legal terms, reviews, hiring, and negative/disconfirming angles.
@@ -93,9 +92,7 @@ runDate: YYYY-MM-DD
 company:
   name: string
 coverage:
-  depth: standard|deep
-  sourceTarget: 100
-  sourcesFetched: 0 # web_search-returned/cited source count considered before retention
+  sourcesConsidered: 0 # cited/annotated web_search source candidates reviewed before retention
   sourcesRetained: 0
   claimsCreated: 0
   sourceDiversityNotes: string|null
@@ -479,7 +476,7 @@ reportFiles:
 - Each file's `artifact` value matches the artifact mapping.
 - `runDate` uses `YYYY-MM-DD` and `company.name` is consistent across artifacts.
 - All `claimRefs` point to `01-evidence-ledger.yaml` claims.
-- All claim `sourceRefs` point to `web_search`-verified sources.
+- All claim `sourceRefs` point to retained ledger sources whose URLs appeared in `web_search` citations/annotations.
 - Source, claim, figure, and table IDs use the required formats and are unique within their ledgers.
 - All figure/table references in `10-report-document.yaml` exist.
 - `11-report-card.yaml.reportFiles` points to `10-report-document.yaml` and `11-report-card.yaml`.

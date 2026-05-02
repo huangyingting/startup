@@ -12,7 +12,7 @@ Read `schemaPath` and `yamlSyntaxPath` before writing. Write exactly:
 - `<reportFolder>/01-evidence-ledger.yaml`
 - `<reportFolder>/02-company-snapshot.yaml`
 
-Verify the company, gather `web_search`-verified evidence, and create the claim ledger used by all downstream sections.
+Verify the company, gather evidence from cited/annotated `web_search` results, and create the claim ledger used by all downstream sections.
 
 ## Report-driven evidence plan
 
@@ -29,9 +29,9 @@ The ledger exists to feed downstream chapters. Before searching, draft `00-repor
 
 Track this plan in `00-report-brief.yaml` (`researchQuestions`, `expectedTables`, `expectedFigures`, `sourceStrategy`). When a chapter need has no evidence, record it in `evidenceGaps` rather than skipping it silently.
 
-## Source target
+## Source retention
 
-See schema `01-evidence-ledger.yaml` for `coverage.*` semantics. Standard requires ≥40 retained sources; deep requires ≥100. Retained sources, not claim count, satisfy the target. Every retained source must come from `web_search` output with URL citation/annotation and must support a claim, document an evidence gap, or be removed.
+See schema `01-evidence-ledger.yaml` for `coverage.*` semantics. There is no fixed source-count target: gather enough evidence to cover the downstream chapter plan with supported claims or explicit `evidenceGaps`. Every retained source must be a URL cited or annotated by `web_search`, deduplicated by canonical URL and underlying event, and must support a claim, document an evidence gap, or be removed.
 
 Prefer official pages, filings, credible news, databases, pricing/product docs, customer proof, regulatory sources, reviews, and disconfirming evidence. Never cite generic search-result pages or URLs that are not present in `web_search` citations/annotations.
 
@@ -61,8 +61,8 @@ Press-release / wire-copy rule:
 
 - For each downstream artifact need, generate targeted `web_search` queries first, then extract facts from the answer text and its URL citations/annotations. Do not start with generic company searches only.
 - Run independent query waves keyed to the chapter plan above (identity, market/competitors, financials/funding, product/tech, customers/retention, risk/regulatory, valuation/comparables, disconfirming).
-- Treat `web_search` responses as verified research material when they include URL citations/annotations. Use answer text to draft candidate claims and use cited URLs as `sources[]` entries.
-- Retain only source URLs that appear in `web_search` citations/annotations and support the extracted fact; no second web-retrieval step is required.
+- Treat `web_search` responses with URL citations/annotations as usable evidence material. Use answer text to draft candidate claims and use cited URLs as `sources[]` entries.
+- Retain only source URLs that appear in `web_search` citations/annotations and support the extracted fact; do not use any additional web tool.
 - When `web_search` returns a useful summary with URL annotations, do not restart the evidence task just because the first result is a summary. Extract the claims and cited URLs, classify each cited source, and continue writing the required YAML artifacts if the quality gates are met.
 - Follow source chains through targeted queries: if a low-reputation or translated/aggregated article points to an original official release, filing, TechCrunch/CNBC/NYT/Reuters/Bloomberg article, or analyst source, run a query for that underlying source and cite it instead of relying only on the aggregator.
 - Vary queries across company/product/founder/investor/competitor/customer/market/geography/funding/security/legal terms, plus date-bounded and negative-angle queries. Change the angle when results repeat.
@@ -80,8 +80,8 @@ Before writing `01-evidence-ledger.yaml`:
 4. **Freshness**: for `current`/`recent` claims, use the newest reliable source.
 5. **Independence**: at least 15% of retained sources must be `independence: independent`. Do not treat company posts, investor blurbs, partner announcements, or wire-copy stories as independent corroboration; label `independence` accurately.
 6. **Uncited sources**: at most 50% of retained sources may be uncited by any claim; either cite them or prune them.
-7. **Source-target**: if `sources.length < coverage.sourceTarget`, keep searching new angles. If unmet, record in `coverageGaps`, lower confidence, and flag the run incomplete in the handoff.
-8. **Bucket coverage**: if `official`, `tier-one-news` / `trade-press`, `analyst-market-data`, `customer-proof` / `partner-proof`, `regulatory` / `filing`, or `technical-docs` buckets are missing, run another wave or record a specific `coverageGaps` item.
+7. **Citation-source dedup**: each retained `sources[]` entry must come from a `web_search` citation/annotation; dedupe by canonical URL and underlying event before assigning IDs.
+8. **Bucket coverage**: if `official`, `tier-one-news` / `trade-press`, `analyst-market-data`, `customer-proof` / `partner-proof`, `regulatory` / `filing`, or `technical-docs` buckets are missing for a chapter that needs them, run another wave or record a specific `coverageGaps` item.
 
 ## Output focus
 
@@ -137,11 +137,11 @@ Escalation (when 02–11 must be regenerated, not repaired):
 
 Repair workflow:
 
-1. Diagnose by re-reading the warnings from `npm run check:reports-content` and the schema gates: depth minimum, publisher concentration, independence ratio, uncited ratio, freshness, bucket coverage, source-target.
+1. Diagnose by re-reading the warnings from `npm run check:reports-content` and the schema gates: citation-source provenance, duplicate sources/events, publisher concentration, independence ratio, uncited ratio, freshness, and bucket coverage.
 2. Plan additive search waves keyed to the unmet gate. Prefer independent buckets the ledger is missing (`tier-one-news`, `analyst-market-data`, `regulatory` / `filing`, `customer-proof` / `partner-proof`, `technical-docs`).
-3. Run targeted `web_search` queries and add new search-verified sources (fresh `accessDate`, accurate `independence`, `reputationTier`, `topics`). Add new claims that cite them and tie them to a chapter need.
-4. Pruning is allowed only for sources that are simultaneously: (a) uncited by every claim, (b) duplicates of a dominant publisher or stale, and (c) safe to remove without dropping `sources.length` below the depth minimum (`deep ≥100`, `standard ≥40`).
-5. Update `coverage.sourceTarget` to the current depth minimum if the ledger still uses a legacy lower value. Recompute `coverage.sourcesFetched`, `coverage.sourcesRetained`, `coverage.claimsCreated`. Update `sourceDiversityNotes`, `deduplicationNotes`, `recencyNotes`, `coverageGaps` to describe what changed.
+3. Run targeted `web_search` queries and add new cited/annotated source URLs (fresh `accessDate`, accurate `independence`, `reputationTier`, `topics`). Add new claims that cite them and tie them to a chapter need.
+4. Pruning is allowed for sources that are uncited, duplicate wire-copy/event coverage, stale, or unsupported by any `web_search` citation/annotation, as long as cited claims and documented gaps remain valid.
+5. Recompute `coverage.sourcesConsidered`, `coverage.sourcesRetained`, `coverage.claimsCreated`. Update `sourceDiversityNotes`, `deduplicationNotes`, `recencyNotes`, `coverageGaps` to describe what changed.
 6. Run `npm run validate` from the repo root. The repair is only complete when `check:reports-content` reports no warnings for that report folder.
 
 Repair handoff:

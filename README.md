@@ -44,7 +44,7 @@ npm run preview
 
 Invoke the `Startup Research` agent with a named startup and optional URL, for example:
 
-> Research Perplexity AI — official site https://www.perplexity.ai — deep report with Chinese translation.
+> Research Perplexity AI — official site https://www.perplexity.ai — with Chinese translation.
 
 The report should be written to `reports/<timestamp>-<company-slug>/` and will appear on the website after validation/build.
 

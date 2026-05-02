@@ -24,36 +24,53 @@ function readYaml(path) {
   return yaml.load(readFileSync(path, 'utf8')) ?? {};
 }
 
+function canonicalSourceUrl(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return '';
+  try {
+    const url = new URL(raw);
+    url.hash = '';
+    for (const key of [...url.searchParams.keys()]) {
+      const lower = key.toLowerCase();
+      if (lower.startsWith('utm_') || ['fbclid', 'gclid', 'mc_cid', 'mc_eid'].includes(lower)) {
+        url.searchParams.delete(key);
+      }
+    }
+    url.searchParams.sort();
+    url.hostname = url.hostname.toLowerCase().replace(/^www\./, '');
+    url.pathname = url.pathname.replace(/\/$/, '') || '/';
+    return url.toString().replace(/\/$/, '').toLowerCase();
+  } catch {
+    return raw.replace(/#.*$/, '').replace(/\?.*utm_[^#]*/i, '').replace(/\/$/, '').toLowerCase();
+  }
+}
+
 function checkEvidenceCoverage(failures, warnings, run, ledger) {
   const coverage = ledger?.coverage ?? {};
   const sources = ledger?.sources ?? [];
   const claims = ledger?.claims ?? [];
-  const sourceTarget = Number(coverage.sourceTarget);
-  const sourcesFetched = Number(coverage.sourcesFetched);
+  const sourcesConsidered = Number(coverage.sourcesConsidered);
   const sourcesRetained = Number(coverage.sourcesRetained);
   const claimsCreated = Number(coverage.claimsCreated);
 
-  if (Number.isFinite(sourceTarget) && sourceTarget > 0 && sources.length < sourceTarget) {
-    failures.push(`${run}/01-evidence-ledger.yaml: sources.length ${sources.length} is below coverage.sourceTarget ${sourceTarget}`);
-  }
   if (Number.isFinite(sourcesRetained) && sourcesRetained !== sources.length) {
     failures.push(`${run}/01-evidence-ledger.yaml: coverage.sourcesRetained ${sourcesRetained} must equal sources.length ${sources.length}`);
   }
-  if (Number.isFinite(sourcesFetched) && sourcesFetched < sources.length) {
-    failures.push(`${run}/01-evidence-ledger.yaml: coverage.sourcesFetched ${sourcesFetched} cannot be less than sources.length ${sources.length}`);
+  if (Number.isFinite(sourcesConsidered) && sourcesConsidered < sources.length) {
+    failures.push(`${run}/01-evidence-ledger.yaml: coverage.sourcesConsidered ${sourcesConsidered} cannot be less than sources.length ${sources.length}`);
   }
   if (Number.isFinite(claimsCreated) && claimsCreated !== claims.length) {
     failures.push(`${run}/01-evidence-ledger.yaml: coverage.claimsCreated ${claimsCreated} must equal claims.length ${claims.length}`);
   }
-  if (coverage.depth === 'deep' && Number.isFinite(sourceTarget) && sourceTarget < 100) {
-    warnings.push(`${run}/01-evidence-ledger.yaml: legacy deep sourceTarget ${sourceTarget} is below the current 100-source standard; regenerate when practical`);
-  } else if (coverage.depth === 'deep' && sources.length < 100) {
-    failures.push(`${run}/01-evidence-ledger.yaml: deep evidence requires at least 100 retained sources, got ${sources.length}`);
-  }
-  if (coverage.depth === 'standard' && Number.isFinite(sourceTarget) && sourceTarget < 40) {
-    warnings.push(`${run}/01-evidence-ledger.yaml: legacy standard sourceTarget ${sourceTarget} is below the current 40-source standard; regenerate when practical`);
-  } else if (coverage.depth === 'standard' && sources.length < 40) {
-    failures.push(`${run}/01-evidence-ledger.yaml: standard evidence requires at least 40 retained sources, got ${sources.length}`);
+
+  const urls = new Map();
+  for (const source of sources) {
+    if (!source.url) continue;
+    const normalized = canonicalSourceUrl(source.url);
+    if (!normalized) continue;
+    const existing = urls.get(normalized);
+    if (existing) failures.push(`${run}/01-evidence-ledger.yaml: duplicate source URL ${source.url} appears in ${existing} and ${source.id}`);
+    else urls.set(normalized, source.id);
   }
 
   const citedSourceIds = new Set(claims.flatMap((claim) => claim.sourceRefs ?? []));

@@ -23,15 +23,6 @@ on:
         required: false
         default: ""
         type: string
-      depth:
-        description: "Research depth"
-        required: false
-        default: "deep"
-        type: choice
-        options:
-          - standard
-          - deep
-
 permissions:
   contents: write
 
@@ -72,12 +63,10 @@ jobs:
         env:
           RAW_COMPANY: ${{ github.event.inputs.companyName }}
           RAW_URL: ${{ github.event.inputs.companyUrl }}
-          RAW_DEPTH: ${{ github.event.inputs.depth }}
         run: |
           set -euo pipefail
           COMPANY="$(printf '%s' "${RAW_COMPANY//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
           URL="$(printf '%s' "${RAW_URL//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
-          DEPTH="${RAW_DEPTH:-deep}"
           MODE="single-company"
           if [ -z "$COMPANY" ] && [ -z "$URL" ]; then
             MODE="recent-unicorns"
@@ -93,7 +82,6 @@ jobs:
             echo "url<<EOF"
             echo "$URL"
             echo "EOF"
-            echo "depth=$DEPTH"
           } >> "$GITHUB_OUTPUT"
 
       - name: Run Startup Research orchestrator
@@ -102,7 +90,6 @@ jobs:
           MODE: ${{ steps.inputs.outputs.mode }}
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
-          DEPTH: ${{ steps.inputs.outputs.depth }}
         run: |
           set -euo pipefail
           if [ "$MODE" = "recent-unicorns" ]; then
@@ -114,9 +101,7 @@ jobs:
           For each selected company, launch the Startup Research agent concurrently, one agent run per selected company. Do not run the specialist agents directly from this top-level default agent; each Startup Research agent must own its full specialist sequence.
 
           Minimum company count: 5
-          Depth: $DEPTH
-
-          For every selected company, pass the Startup Research agent this required context: company name, official URL when available, depth, schemaVersion startup-diligence-report-v2, schema reference .github/agents/startup-diligence.schema.md, and YAML syntax reference .github/agents/yaml-syntax.md. Each company must produce one complete YAML artifact set directly under its own reports/<run>/ folder, including 00-report-brief.yaml through 11-report-card.yaml plus the required Simplified Chinese 10-report-document.zh.yaml and 11-report-card.zh.yaml. Do not generate non-YAML report artifacts. Keep every factual claim linked through 01-evidence-ledger.yaml claimRefs/sourceRefs. Evidence collection must generate targeted web_search queries from downstream YAML needs, use cited/annotated web_search results as verified source material, prefer recent sources for current claims, dedupe repeated reporting of the same event, and vary search queries when results repeat. Evidence source targets are retained-source targets, not claim-count targets: deep requires at least 100 retained web_search-verified sources, standard requires at least 40. Use null, with explanation, for unsupported metrics. Delete duplicate or failed partial report folders before final validation. Startup Research subagents must not invoke Startup Research recursively. Do not run git add or git commit.
+          For every selected company, pass the Startup Research agent this required context: company name, official URL when available, schemaVersion startup-diligence-report-v2, schema reference .github/agents/startup-diligence.schema.md, and YAML syntax reference .github/agents/yaml-syntax.md. Each company must produce one complete YAML artifact set directly under its own reports/<run>/ folder, including 00-report-brief.yaml through 11-report-card.yaml plus the required Simplified Chinese 10-report-document.zh.yaml and 11-report-card.zh.yaml. Do not generate non-YAML report artifacts. Keep every factual claim linked through 01-evidence-ledger.yaml claimRefs/sourceRefs. Evidence collection is web_search-only: generate targeted queries from downstream YAML needs, extract facts from answer text plus URL citations/annotations, generate `sources[]` only from cited/annotated URLs, dedupe by canonical URL and underlying event, prefer recent sources for current claims, and vary queries when results repeat. Evidence coverage is need-based: retain enough sources to support downstream claims or document `evidenceGaps`; do not apply fixed source-count targets. Use null, with explanation, for unsupported metrics. Delete duplicate or failed partial report folders before final validation. Startup Research subagents must not invoke Startup Research recursively. Do not run git add or git commit.
           EOF
           )
             copilot --yolo --no-ask-user -p "$PROMPT"
@@ -126,9 +111,7 @@ jobs:
 
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-null}
-          Depth: $DEPTH
-
-          Use schemaVersion startup-diligence-report-v2 only. Invoke the configured specialist agents in this order: Startup Report Evidence Analyst -> Startup Market and Competition Analyst -> Startup Financial and Product Analyst -> Startup Risk and Valuation Analyst -> Startup Report Writer -> Startup Report Translator ZH. Pass each specialist the schema reference .github/agents/startup-diligence.schema.md and YAML syntax reference .github/agents/yaml-syntax.md. Write the complete YAML artifact set directly under reports/<run>/, including 00-report-brief.yaml through 11-report-card.yaml plus the required Simplified Chinese 10-report-document.zh.yaml and 11-report-card.zh.yaml. Do not generate non-YAML report artifacts. Keep every factual claim linked through 01-evidence-ledger.yaml claimRefs/sourceRefs. Evidence collection must generate targeted web_search queries from downstream YAML needs, use cited/annotated web_search results as verified source material, prefer recent sources for current claims, dedupe repeated reporting of the same event, and vary search queries when results repeat. Evidence source targets are retained-source targets, not claim-count targets: deep requires at least 100 retained web_search-verified sources, standard requires at least 40. Use null, with explanation, for unsupported metrics. Delete duplicate or failed partial report folders before final validation. Do not invoke Startup Research recursively. Do not run git add or git commit.
+          Use schemaVersion startup-diligence-report-v2 only. Invoke the configured specialist agents in this order: Startup Report Evidence Analyst -> Startup Market and Competition Analyst -> Startup Financial and Product Analyst -> Startup Risk and Valuation Analyst -> Startup Report Writer -> Startup Report Translator ZH. Pass each specialist the schema reference .github/agents/startup-diligence.schema.md and YAML syntax reference .github/agents/yaml-syntax.md. Write the complete YAML artifact set directly under reports/<run>/, including 00-report-brief.yaml through 11-report-card.yaml plus the required Simplified Chinese 10-report-document.zh.yaml and 11-report-card.zh.yaml. Do not generate non-YAML report artifacts. Keep every factual claim linked through 01-evidence-ledger.yaml claimRefs/sourceRefs. Evidence collection is web_search-only: generate targeted queries from downstream YAML needs, extract facts from answer text plus URL citations/annotations, generate `sources[]` only from cited/annotated URLs, dedupe by canonical URL and underlying event, prefer recent sources for current claims, and vary queries when results repeat. Evidence coverage is need-based: retain enough sources to support downstream claims or document `evidenceGaps`; do not apply fixed source-count targets. Use null, with explanation, for unsupported metrics. Delete duplicate or failed partial report folders before final validation. Do not invoke Startup Research recursively. Do not run git add or git commit.
           EOF
           )
             copilot --yolo --no-ask-user --agent "Startup Research" -p "$PROMPT"

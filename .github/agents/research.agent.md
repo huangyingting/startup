@@ -15,7 +15,6 @@ Resolve before running specialists:
 
 - `companyName`: required.
 - `companyUrl`: optional identity anchor, never proof.
-- `depth`: `standard` or `deep`; default `deep`.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/agents/startup-diligence.schema.md`.
@@ -58,22 +57,21 @@ Use the agent tool to invoke each specialist by its exact `name` in the sequence
 ```text
 Company: <companyName>
 Company URL: <companyUrl|null>
-Depth: <standard|deep>
 Report folder: <absolute path>
 Schema: startup-diligence-report-v2
 Schema reference: <absolute path to .github/agents/startup-diligence.schema.md>
 YAML syntax reference: <absolute path to .github/agents/yaml-syntax.md>
 Style target: comprehensive VC due diligence report; tables and structured native figures required.
 Evidence rule: every external factual assertion must cite claimRefs / inline [Cxxx].
-Evidence search rule: require diverse, recent, non-duplicative evidence. The Evidence Analyst must generate targeted `web_search` queries from downstream YAML needs, extract facts from answer text plus URL annotations, and retain only cited/annotated source URLs. It must vary queries across source categories, avoid overusing one site/domain, filter stale sources for current facts, use follow-up queries to replace aggregators with original sources where possible, and dedupe repeated reports of the same underlying event.
+Evidence search rule: the Evidence Analyst must generate targeted `web_search` queries from downstream YAML needs, extract facts from answer text plus URL citations/annotations, and retain only cited/annotated source URLs. It must diversify source categories, prefer recent sources for current claims, replace aggregators with original sources where possible, and dedupe repeated reports of the same event.
 ```
 
 ## Evidence and quality rules
 
 - `01-evidence-ledger.yaml` is the evidence backbone; the Evidence Analyst owns source/claim quality (see `evidence.agent.md`).
-- Evidence source targets count retained `sources[]` entries: deep ≥100, standard ≥40. A ledger with many claims but few retained sources fails the gate.
+- Evidence coverage is need-based, not count-based: retained `sources[]` must be enough to support downstream chapter claims or document `evidenceGaps`.
 - Every artifact starts with the document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`). IDs use `S001`/`C001`/`F001`/`T001`.
-- Every external assertion in later YAML cites `claimRefs`. Every claim with `sourceRefs` references `web_search`-verified sources from `01-evidence-ledger.yaml`.
+- Every external assertion in later YAML cites `claimRefs`. Every claim with `sourceRefs` references sources from `01-evidence-ledger.yaml` that were cited or annotated by `web_search`.
 - Numeric KPI fields are numbers or `null` (with explanation). Never invent values.
 - Figures use structured `data` per the Figure rendering contracts in `.github/agents/startup-diligence.schema.md`. No diagram-language strings; no non-canonical primary fields (`cards`, `steps`, `children`, `groups`, `components`, `name`).
 
@@ -85,10 +83,10 @@ After every specialist:
 - Confirm the expected files exist in `reportFolder`; ignore `/tmp/*copilot-tool-output*` files except for debugging failed runs.
 - Check `schemaVersion: startup-diligence-report-v2`.
 - Check `slug`, `runDate`, and `company.name` consistency.
-- After `Startup Report Evidence Analyst`, check that `coverage.sourceTarget`, `coverage.sourcesFetched` (web_search-returned/cited candidates considered), `coverage.sourcesRetained`, `sources.length`, and `claims.length` are internally consistent. Reject deep ledgers with fewer than 100 retained sources and standard ledgers with fewer than 40 retained sources unless the run is explicitly marked incomplete and rerun/repaired before downstream specialists begin.
+- After `Startup Report Evidence Analyst`, check that `coverage.sourcesConsidered`, `coverage.sourcesRetained`, `sources.length`, and `claims.length` are internally consistent. Reject ledgers whose retained sources are not generated from `web_search` citations/annotations, are materially duplicated, or leave chapter-critical claims unsupported without `evidenceGaps`.
 - After `02-company-snapshot.yaml`, run `node scripts/check-company-dedup.mjs <reportFolder>/02-company-snapshot.yaml`; stop on duplicate-risk unless the user explicitly requested a refresh.
 - Validate all `claimRefs` against `01-evidence-ledger.yaml`.
-- Validate all `sourceRefs` against `web_search`-verified sources.
+- Validate all `sourceRefs` against ledger sources cited or annotated by `web_search`.
 - Validate every figure against its schema Figure rendering contract. Reject empty arrays, non-canonical field shapes, string-valued numeric chart values, or figures whose visible cards/layers/nodes lack `label` plus `detail`/renderable content.
 - Reject any artifact that is missing its document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`) or begins with continuation prose / a mid-list fragment.
 
@@ -100,7 +98,7 @@ Summarize: report folder, generated YAML files (English plus required Simplified
 
 ## Repair an existing report
 
-Use this flow when `npm run check:reports-content` reports evidence-ledger warnings (publisher concentration, independence ratio, uncited sources, legacy `sourceTarget`, depth minimum) on an already-generated report and the user wants to fix them without regenerating downstream chapters or translations.
+Use this flow when `npm run check:reports-content` reports evidence-ledger warnings (citation-source provenance, duplicate sources/events, publisher concentration, independence ratio, uncited sources) on an already-generated report and the user wants to fix them without regenerating downstream chapters or translations.
 
 - Invoke only `Startup Report Evidence Analyst` with `mode: repair` and the existing `reportFolder`. Do not run other specialists.
 - The Evidence Analyst must follow its Repair-mode rules: never rename or delete existing `S###`/`C###` IDs that are referenced by 02–11; only add sources/claims and prune uncited duplicates; update `coverage.*` and notes; do not edit 02–11 EN or any `*.zh.yaml`.

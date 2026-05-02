@@ -3,7 +3,7 @@
 ## Working approach
 
 - Keep the system YAML-first: generated reports are structured YAML artifacts rendered by the website, not prose-only deliverables.
-- Keep reports evidence-first: every external factual claim should trace through `claimRefs` to claims in `01-evidence-ledger.yaml`, and each claim should trace to `web_search`-verified `sourceRefs`.
+- Keep reports evidence-first: every external factual claim should trace through `claimRefs` to claims in `01-evidence-ledger.yaml`, and each claim should trace to source URLs cited or annotated by `web_search`.
 - Make surgical changes. Do not preserve obsolete schema paths or reintroduce legacy compatibility unless explicitly requested.
 - Validate after every report-generation, schema, loader, renderer, or workflow change with `npm run validate` from the repo root when dependencies are installed.
 - Prefer simple static artifacts over databases until the project clearly needs mutable app state.
@@ -22,16 +22,16 @@
 
 ## Report workflow
 
-- Use the `Startup Research` agent for a full named-company report. The default `depth` is `deep`; use `standard` only when explicitly requested.
+- Use the `Startup Research` agent for a full named-company report.
 - If no company name and no company URL are supplied, run automatic recent-unicorn discovery: select at least 5 recent private unicorn startups, avoid duplicates from `reports/_index.yaml` unless materially justified, then launch independent `Startup Research` runs for each company.
 - In recent-unicorns mode, the default Copilot agent is the top-level orchestrator and should not be invoked with `--agent "Startup Research"`. It should fan out to `Startup Research` subagents, one per selected company.
-- Do not use a `focus` input. The report scope is governed by the schema and `depth`.
+- Do not use a `focus` input. The report scope is governed by the schema and the downstream chapter requirements.
 - The specialist pipeline is: `Startup Report Evidence Analyst → Startup Market and Competition Analyst → Startup Financial and Product Analyst → Startup Risk and Valuation Analyst → Startup Report Writer → Startup Report Translator ZH`.
-- Only `Startup Report Evidence Analyst` should use web research tools. Downstream agents must work from `01-evidence-ledger.yaml` and cite `claimRefs`.
+- Only `Startup Report Evidence Analyst` should use `web_search`. Downstream agents must work from `01-evidence-ledger.yaml` and cite `claimRefs`.
 - Downstream stages must not run until upstream YAML exists, parses, and all `claimRefs` / `sourceRefs` are valid.
 - Agents must write complete YAML artifacts directly under `reports/<run>/`; do not use temporary files as canonical report output.
 - A complete report folder contains `00-report-brief.yaml` through `11-report-card.yaml` plus the required `10-report-document.zh.yaml` and `11-report-card.zh.yaml`. The website index includes complete reports only.
-- To clear evidence-ledger warnings (publisher concentration, independence ratio, uncited sources, legacy `sourceTarget`, depth minimum) on an existing report, run only `Startup Report Evidence Analyst` in `mode: repair`. Repair mode adds independent sources/claims and prunes uncited duplicates without renaming existing IDs or touching 02–11 EN or any `*.zh.yaml`, so downstream chapters and translations do not need to be regenerated. New evidence must corroborate existing analysis or close `evidenceGaps`; if it changes facts, numbers, or recommendation, the Evidence Analyst returns `repairEscalationNeeded: true` and the orchestrator reruns the affected specialists, the Report Writer, and the ZH translator.
+- To clear evidence-ledger warnings (citation-source provenance, duplicate sources/events, publisher concentration, independence ratio, uncited sources) on an existing report, run only `Startup Report Evidence Analyst` in `mode: repair`. Repair mode adds independent sources/claims and prunes uncited duplicates without renaming existing IDs or touching 02–11 EN or any `*.zh.yaml`, so downstream chapters and translations do not need to be regenerated. New evidence must corroborate existing analysis or close `evidenceGaps`; if it changes facts, numbers, or recommendation, the Evidence Analyst returns `repairEscalationNeeded: true` and the orchestrator reruns the affected specialists, the Report Writer, and the ZH translator.
 
 ## YAML schema conventions
 
@@ -39,8 +39,8 @@
 - Required artifacts are `00-report-brief.yaml`, `01-evidence-ledger.yaml`, `02-company-snapshot.yaml`, `03-market-macro.yaml`, `04-competitive-benchmarking.yaml`, `05-financial-unit-economics.yaml`, `06-product-technology.yaml`, `07-customer-retention.yaml`, `08-risk-regulatory.yaml`, `09-investment-valuation.yaml`, `10-report-document.yaml`, and `11-report-card.yaml`.
 - Required Simplified Chinese localized artifacts are `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 - Every artifact must include `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
-- `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite `web_search`-verified `sourceRefs`. Sources should include `accessDate` and concise `keyQuote` when available.
-- Evidence source targets count retained `sources[]` entries (deep ≥100, standard ≥40). Many claims from a small source set do not satisfy the target.
+- `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite retained `sourceRefs` from cited/annotated `web_search` results. Sources should include `accessDate` and concise `keyQuote` when available.
+- Evidence coverage is need-based, not count-based: retained `sources[]` must come from `web_search` citations/annotations, be deduplicated by URL/event, and support downstream claims or documented `evidenceGaps`.
 - Evidence must be broad (multiple source buckets), fresh (last 24 months for current facts), and deduplicated by underlying event. Vary search angles instead of repeating one domain or query family. Detailed rules live in `.github/agents/evidence.agent.md`.
 - Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Figure IDs use `F001`, `F002`, etc. Table IDs use `T001`, `T002`, etc.
 - Use descriptive camelCase field names.
