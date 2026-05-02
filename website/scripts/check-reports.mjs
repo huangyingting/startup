@@ -241,6 +241,7 @@ try {
       }
     };
     walkBlocks(reportDoc?.chapters ?? []);
+    walkBlocks(reportDoc?.appendices ?? []);
     for (const [type, ref] of refs) {
       if (type === 'figure' && !figureIds.has(ref)) failures.push(`${run}/10-report-document.yaml: missing figure ${ref}`);
       if (type === 'table' && !tableIds.has(ref)) failures.push(`${run}/10-report-document.yaml: missing table ${ref}`);

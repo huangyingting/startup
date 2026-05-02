@@ -28,27 +28,28 @@ Required Simplified Chinese files (must ship with every report):
 
 ## Agent execution contract
 
-- Specialists must write complete YAML files directly to `reportFolder`.
+- `Startup Research` is the single report-generation agent. It uses workspace skills under `.github/skills/` for each stage instead of invoking specialist subagents.
+- Skills must write complete YAML files directly to `reportFolder`.
 - `/tmp` tool-output files are diagnostic logs only, never artifacts or handoff inputs.
-- Specialists must read this schema and `yaml-syntax.md` before writing.
-- Only `Startup Report Evidence Analyst` has the `web_search` tool; downstream agents use `01-evidence-ledger.yaml` and `claimRefs`.
+- `Startup Research` must read this schema and `.github/references/yaml-syntax.md` before writing.
+- `web_search` is available to the single `Startup Research` agent and may be used dynamically by analysis skills when chapter data is missing. All new external facts must flow through `01-evidence-ledger.yaml` claims before downstream artifacts cite them.
 
 ## Artifact mapping
 
 | File | `artifact` | Owner | Chapter |
 |---|---|---|---|
-| `00-report-brief.yaml` | `report-brief` | Evidence Analyst | n/a |
-| `01-evidence-ledger.yaml` | `evidence-ledger` | Evidence Analyst | n/a |
-| `02-company-snapshot.yaml` | `company-snapshot` | Evidence Analyst | 1 — Startup Introduction & Company Snapshot |
-| `03-market-macro.yaml` | `market-macro` | Market and Competition Analyst | 2 — Market Sizing & Macro Analysis |
-| `04-competitive-benchmarking.yaml` | `competitive-benchmarking` | Market and Competition Analyst | 3 — Competitive Benchmarking |
-| `05-financial-unit-economics.yaml` | `financial-unit-economics` | Financial and Product Analyst | 4 — Financial & Unit Economics |
-| `06-product-technology.yaml` | `product-technology` | Financial and Product Analyst | 5 — Product & Technology |
-| `07-customer-retention.yaml` | `customer-retention` | Financial and Product Analyst | 6 — Customer & Retention |
-| `08-risk-regulatory.yaml` | `risk-regulatory` | Risk and Valuation Analyst | 7 — Risk & Regulatory |
-| `09-investment-valuation.yaml` | `investment-valuation` | Risk and Valuation Analyst | 8 — Investment & Valuation |
-| `10-report-document.yaml` | `report-document` | Report Writer | final rendered report |
-| `11-report-card.yaml` | `report-card` | Report Writer | website index card |
+| `00-report-brief.yaml` | `report-brief` | `startup-foundation` skill | n/a |
+| `01-evidence-ledger.yaml` | `evidence-ledger` | shared ledger, updated by analysis skills | n/a |
+| `02-company-snapshot.yaml` | `company-snapshot` | `startup-foundation` skill | 1 — Startup Introduction & Company Snapshot |
+| `03-market-macro.yaml` | `market-macro` | `startup-market-competition` skill | 2 — Market Sizing & Macro Analysis |
+| `04-competitive-benchmarking.yaml` | `competitive-benchmarking` | `startup-market-competition` skill | 3 — Competitive Benchmarking |
+| `05-financial-unit-economics.yaml` | `financial-unit-economics` | `startup-financial-product` skill | 4 — Financial & Unit Economics |
+| `06-product-technology.yaml` | `product-technology` | `startup-financial-product` skill | 5 — Product & Technology |
+| `07-customer-retention.yaml` | `customer-retention` | `startup-financial-product` skill | 6 — Customer & Retention |
+| `08-risk-regulatory.yaml` | `risk-regulatory` | `startup-risk-valuation` skill | 7 — Risk & Regulatory |
+| `09-investment-valuation.yaml` | `investment-valuation` | `startup-risk-valuation` skill | 8 — Investment & Valuation |
+| `10-report-document.yaml` | `report-document` | `startup-report-writer` skill | final rendered report |
+| `11-report-card.yaml` | `report-card` | `startup-report-writer` skill | website index card |
 
 ## Shared conventions
 
@@ -83,6 +84,7 @@ Evidence ledger quality requirements:
 - Source deduplication: repeated coverage of the same underlying event does not equal independent evidence. Cluster sources by event/topic/date and retain only sources that add original facts, primary quotes, independent confirmation, or materially different interpretation.
 - Query iteration: the evidence process should vary search queries by company name, product names, founders, investors, competitors, customers, market category, geography, funding/valuation terms, product/security terms, regulatory/legal terms, reviews, hiring, and negative/disconfirming angles.
 - Concentration control: no single publisher/domain family should exceed 34% of retained sources; at least 15% of retained sources should be `independence: independent`; at most 50% of retained sources should be uncited by any claim. Treat repeated press-release or wire-copy coverage as one event group, not independent corroboration. Document a coverage gap when independent coverage is unavailable.
+- `web_search` packet usage: `output_text.text.value` is candidate narrative, `output_text.text.annotations[].url_citation` is the source-candidate list, annotation spans map nearby answer facts to cited URLs when valid, and `bing_searches[]` is query provenance only. Do not retain generic Bing/search-result URLs. If annotation spans are empty or malformed, do not invent `keyQuote`; use `null` and run targeted follow-up searches for important facts.
 
 ```yaml
 schemaVersion: startup-diligence-report-v2
@@ -92,7 +94,7 @@ runDate: YYYY-MM-DD
 company:
   name: string
 coverage:
-  sourcesConsidered: 0 # cited/annotated web_search source candidates reviewed before retention
+  sourcesConsidered: 0 # unique cited/annotated web_search URL candidates reviewed before retention, after canonical URL dedupe
   sourcesRetained: 0
   claimsCreated: 0
   sourceDiversityNotes: string|null
@@ -110,7 +112,7 @@ sources:
     sourceType: official|filing|regulatory|tier-one-news|trade-press|analyst-market-data|technical-docs|customer-proof|partner-proof|developer-signal|review|legal|other
     reputationTier: high|medium|low
     independence: company|partner|customer|competitor|independent|unknown
-    keyQuote: string|null
+    keyQuote: string|null # concise cited answer span or null if no reliable quote/snippet was returned
     topics: [identity|team|market|customer|product|technology|traction|gtm|competition|financials|funding|risk|valuation|other]
 claims:
   - id: C001
@@ -416,12 +418,21 @@ tables:
 appendices:
   - id: A
     title: string
-    blocks: []
+    blocks:
+      - type: paragraph|list|equation|callout|table|figure
+        title: string|null
+        body: string|null
+        items: [string]
+        tableRef: T001|null
+        figureRef: F001|null
+        claimRefs: [C001]
 bibliography:
   - sourceRef: S001
     citation: string
 disclaimer: string
 ```
+
+Appendix guidance: use appendices to preserve underwriting detail that would clutter the main narrative but should not be lost, such as detailed financial/projection models, competitive feature deep dives, management-team notes, investor-base notes, source caveats, and unresolved diligence gaps. Appendices must still cite `claimRefs`; if a detailed model is not evidence-supported, include the requested model as a diligence gap rather than inventing values.
 
 ## `11-report-card.yaml`
 

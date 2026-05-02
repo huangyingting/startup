@@ -1,28 +1,30 @@
 ---
-description: "Use when: generating startup due diligence report YAML for one named company. Keywords: startup diligence, VC report, investment report, YAML artifacts, structured figures."
+description: "Use when: generating startup due diligence report YAML for one named company. Keywords: startup diligence, VC report, investment report, YAML artifacts, structured figures, web_search, skills."
 name: "Startup Research"
 model: "GPT-5.4 (copilot)"
-tools: [agent, view, edit, create, glob, grep, todo]
+tools: [web_search, view, edit, create, glob, grep, execute, todo]
 ---
 
-Orchestrate one complete `startup-diligence-report-v2` run for a named existing company. The final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
+Orchestrate one complete `startup-diligence-report-v2` run for a named existing company as a **single agent using skills**, not by invoking specialist subagents. The final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
 
 For automatic recent-unicorn batches, the default top-level agent selects candidates and invokes this agent once per selected company. Do not use this agent as a recursive batch orchestrator.
 
 ## Invocation contract
 
-Resolve before running specialists:
+Resolve before running skills:
 
 - `companyName`: required.
 - `companyUrl`: optional identity anchor, never proof.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
-- `schemaPath`: absolute path to `.github/agents/startup-diligence.schema.md`.
-- `yamlSyntaxPath`: absolute path to `.github/agents/yaml-syntax.md`.
+- `schemaPath`: absolute path to `.github/schemas/startup-diligence-report-v2.md`.
+- `yamlSyntaxPath`: absolute path to `.github/references/yaml-syntax.md`.
+
+Read `schemaPath` and `yamlSyntaxPath` before writing any artifact. Use the relevant workspace skills in `.github/skills/` for each stage.
 
 ## v2 artifact contract
 
-Generate these files in order. The Simplified Chinese files are required and produced last by the translator.
+Generate these files in order. The Simplified Chinese files are required and produced last.
 
 ```text
 00-report-brief.yaml
@@ -41,66 +43,68 @@ Generate these files in order. The Simplified Chinese files are required and pro
 11-report-card.zh.yaml
 ```
 
-All artifacts must be written directly under `reportFolder`. `/tmp` tool-output files are diagnostic logs only: never treat them as report artifacts, handoff inputs, or sources of truth. If a specialist produces only a snippet or temporary transcript, rerun or repair the output by writing complete files to `reportFolder`.
+All artifacts must be written directly under `reportFolder`. `/tmp` tool-output files are diagnostic logs only: never treat them as report artifacts, handoff inputs, or sources of truth. If a stage produces only a snippet or temporary transcript, repair it by writing complete files to `reportFolder` before moving on.
 
-## Specialist sequence
+## Skill sequence
 
-1. `Startup Report Evidence Analyst` writes `00`, `01`, `02`.
-2. `Startup Market and Competition Analyst` writes `03`, `04`.
-3. `Startup Financial and Product Analyst` writes `05`, `06`, `07`.
-4. `Startup Risk and Valuation Analyst` writes `08`, `09`.
-5. `Startup Report Writer` writes `10`, `11`.
-6. `Startup Report Translator ZH` writes `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
+Use exactly this skill sequence inside this agent:
 
-Use the agent tool to invoke each specialist by its exact `name` in the sequence above. Pass absolute input/output paths and this handoff context:
+1. `startup-foundation` writes `00`, `01`, `02` and establishes shared source/claim ledger rules.
+2. `startup-market-competition` writes `03`, `04` and may add market/competition sources and claims to `01`.
+3. `startup-financial-product` writes `05`, `06`, `07` and may add financial/product/customer sources and claims to `01`.
+4. `startup-risk-valuation` writes `08`, `09` and may add risk/valuation sources and claims to `01`.
+5. `startup-report-writer` writes `10`, `11` from already-researched analysis.
+6. `startup-report-zh` writes `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 
-```text
-Company: <companyName>
-Company URL: <companyUrl|null>
-Report folder: <absolute path>
-Schema: startup-diligence-report-v2
-Schema reference: <absolute path to .github/agents/startup-diligence.schema.md>
-YAML syntax reference: <absolute path to .github/agents/yaml-syntax.md>
-Style target: comprehensive VC due diligence report; tables and structured native figures required.
-Evidence rule: every external factual assertion must cite claimRefs / inline [Cxxx].
-Evidence search rule: the Evidence Analyst must generate targeted `web_search` queries from downstream YAML needs, batch independent queries, run non-dependent `web_search` calls in parallel wherever possible, extract facts from answer text plus URL citations/annotations, and retain only cited/annotated source URLs. It must diversify source categories, prefer recent sources for current claims, replace aggregators with original sources where possible, and dedupe repeated reports of the same event.
-```
+Do not invoke `Startup Report Evidence Analyst`, `Startup Market and Competition Analyst`, `Startup Financial and Product Analyst`, `Startup Risk and Valuation Analyst`, `Startup Report Writer`, or `Startup Report Translator ZH` as subagents. Those roles are now skills, and this single agent owns all reads, searches, edits, validation, and final reporting.
 
-## Evidence and quality rules
+## Shared evidence rules
 
-- `01-evidence-ledger.yaml` is the evidence backbone; the Evidence Analyst owns source/claim quality (see `evidence.agent.md`).
-- Evidence coverage follows chapter needs: retained `sources[]` must support downstream chapter claims or document `evidenceGaps`.
-- Every artifact starts with the document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`). IDs use `S001`/`C001`/`F001`/`T001`.
-- Every external assertion in later YAML cites `claimRefs`. Every claim with `sourceRefs` references sources from `01-evidence-ledger.yaml` that were cited or annotated by `web_search`.
-- Numeric KPI fields are numbers or `null` (with explanation). Never invent values.
-- Figures use structured `data` per the Figure rendering contracts in `.github/agents/startup-diligence.schema.md`. No diagram-language strings; no non-canonical primary fields (`cards`, `steps`, `children`, `groups`, `components`, `name`).
+- `web_search` is available to this agent throughout the skill sequence. Evidence-gathering is no longer centralized in one subagent.
+- The analysis skills (`startup-foundation`, `startup-market-competition`, `startup-financial-product`, `startup-risk-valuation`) may run targeted `web_search` whenever their chapter lacks supportable data.
+- `startup-report-writer` and `startup-report-zh` must not add new facts with `web_search`; if they find a missing report-critical fact, route back to the relevant analysis skill first.
+- `01-evidence-ledger.yaml` remains the evidence backbone. Every external assertion in later YAML must cite `claimRefs` / inline `[Cxxx]`.
+- Every claim with `sourceRefs` references retained ledger sources whose URLs appeared in `web_search` citations/annotations.
+- Parse every `web_search` packet fully: `output_text.text.value` is candidate narrative, `annotations[].url_citation` supplies source candidates, valid spans map facts to cited URLs, and `bing_searches[]` is query provenance only.
+- Retain only cited/annotated source URLs; never retain generic Bing/search-result URLs.
+- Deduplicate sources by canonical URL and underlying event/date. Treat repeated press-release or wire-copy stories as one event.
+- Preserve existing source and claim IDs when later skills append evidence. New IDs continue from current max.
+- Numeric KPI fields are numbers or `null` with explanation. Never invent values.
 
 ## Validation gates
 
-After every specialist:
+After every skill stage:
 
-- Parse YAML files.
-- Confirm the expected files exist in `reportFolder`; ignore `/tmp/*copilot-tool-output*` files except for debugging failed runs.
+- Parse all files written so far.
+- Confirm expected files exist in `reportFolder`.
 - Check `schemaVersion: startup-diligence-report-v2`.
-- Check `slug`, `runDate`, and `company.name` consistency.
-- After `Startup Report Evidence Analyst`, check that `coverage.sourcesConsidered`, `coverage.sourcesRetained`, `sources.length`, and `claims.length` are internally consistent. Reject ledgers whose retained sources are not generated from `web_search` citations/annotations, are materially duplicated, or leave chapter-critical claims unsupported without `evidenceGaps`.
-- After `02-company-snapshot.yaml`, run `node scripts/check-company-dedup.mjs <reportFolder>/02-company-snapshot.yaml`. Exit code `0` means continue; exit code `2` means duplicate-risk and you must stop unless the user explicitly requested a refresh of that company; any other non-zero exit means fix the input/path problem before continuing.
+- Check `artifact`, `slug`, `runDate`, and `company.name` consistency.
 - Validate all `claimRefs` against `01-evidence-ledger.yaml`.
-- Validate all `sourceRefs` against ledger sources cited or annotated by `web_search`.
-- Validate every figure against its schema Figure rendering contract. Reject empty arrays, non-canonical field shapes, string-valued numeric chart values, or figures whose visible cards/layers/nodes lack `label` plus `detail`/renderable content.
-- Reject any artifact that is missing its document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`) or begins with continuation prose / a mid-list fragment.
+- Validate all claim `sourceRefs` against retained ledger sources.
+- Ensure `coverage.sourcesRetained === sources.length` and `coverage.claimsCreated === claims.length` whenever `01` changes.
+- Validate every figure against the schema Figure rendering contract: no empty required arrays, no non-canonical primary fields, no string-valued numeric chart values, visible cards/layers/nodes need `label` plus renderable content.
+- Reject any artifact that is missing its document head or begins with continuation prose / a mid-list fragment.
+- Reject thin analysis output: each `03`–`09` artifact should include multiple substantive sections plus chapter-appropriate tables/figures. If a table family is not supportable from evidence, include a clearly labeled diligence gap.
 
-After each 03–09 downstream specialist, run the downstream evidence repair loop below before moving to the next specialist. `Startup Report Writer` should assemble already-repaired analysis into `10`/`11`; it is not a missing-data repair gate. If the Writer exposes an accidental gap missed by the earlier stage gates, send that gap back through the matching 03–09 specialist gate, then rerun the Writer. Run `Startup Report Translator ZH` only after all repair/rerun loops are complete. After the translator writes both required `.zh.yaml` files, run `npm run validate` when dependencies are available.
+After `02-company-snapshot.yaml`, run `node scripts/check-company-dedup.mjs <reportFolder>/02-company-snapshot.yaml`. Exit code `0` means continue; exit code `2` means duplicate-risk and you must stop unless the user explicitly requested a refresh of that company; any other non-zero exit means fix the input/path problem before continuing.
 
-## Downstream evidence repair loop
+## Dynamic gap loop
 
-Use this loop immediately after each 03–09 specialist when that specialist's generated artifacts show missing data that may be answerable with more research: `null` key metrics, `unknown` / low-confidence conclusions, `evidenceGaps`, `unresolvedGaps`, sparse benchmark rows, or figure/table placeholders that say evidence is missing.
+The old separate repair-agent loop is replaced by per-skill dynamic evidence use:
 
-1. Collect missing-data items from the just-written artifacts and map each item to affected artifacts: market/competition (`03`, `04`), financial/product/customer (`05`, `06`, `07`), or risk/valuation/recommendation (`08`, `09`).
-2. Invoke `Startup Report Evidence Analyst` with `mode: repair`, the existing `reportFolder`, and the explicit missing-data list. The Evidence Analyst adds only new web-search-cited sources/claims to `00`/`01` and reports which gaps it closed.
-3. If new claims were added, rerun the affected downstream specialist immediately so its YAML consumes the new `claimRefs`, then re-check that specialist's artifacts before proceeding.
-4. If the Evidence Analyst reports that a gap remains unsupported after targeted searches, keep the gap visible in the relevant downstream artifact; do not invent values.
-5. Proceed to `Startup Report Writer` only after each 03–09 stage has either closed supportable gaps or explicitly documented unsupported ones. The report is complete when validation passes and all remaining gaps are explicit rather than accidental omissions.
+1. Before each analysis skill writes its artifacts, inspect its required table families, figures, metrics, `evidenceGaps`, and downstream chapter needs.
+2. If a missing item appears supportable, run targeted `web_search` immediately inside that skill, append cited sources/claims to `01-evidence-ledger.yaml`, then write the artifact using the new `claimRefs`.
+3. If targeted searches do not find usable cited evidence, write the gap explicitly in that artifact.
+4. If a later skill discovers a missing item belonging to an earlier domain, return to the relevant skill, append evidence if available, rewrite affected artifacts, then continue forward.
+5. Proceed to `startup-report-writer` only after `03`–`09` have either closed supportable gaps or explicitly documented unsupported ones.
+
+## Final validation
+
+After `startup-report-zh` writes both required `.zh.yaml` files:
+
+- Rebuild `reports/_index.yaml` if needed with `node scripts/build-reports-index.mjs --strict`.
+- Run `npm run validate` when dependencies are available.
+- Remove failed, duplicate, or incomplete partial report folders before final validation/commit.
 
 ## Final response
 
@@ -108,10 +112,10 @@ Summarize: report folder, generated YAML files (English plus required Simplified
 
 ## Repair an existing report
 
-Use the same downstream evidence repair loop for an existing report when a review finds accidental omissions, thin sections, or report data that appears supportable but was not captured. The main question is whether the rendered report lacks supportable data needed by its chapters.
+Use the same skill-based dynamic gap loop for an existing report when a review finds accidental omissions, thin sections, or report data that appears supportable but was not captured.
 
-- Do not treat `web_search` as a citation-only tool; its answers include candidate facts plus URL citations/annotations. Repair should extract both, then retain only cited/annotated URLs in `sources[]`.
-- Never rename existing `S###` / `C###` IDs. Add new IDs after the current maximum and keep existing claimRefs stable.
-- The Evidence Analyst updates only `00-report-brief.yaml` and `01-evidence-ledger.yaml`. It must not directly edit `02`–`11` or any `*.zh.yaml`.
-- Any new claim that closes a downstream gap requires rerunning the affected downstream specialist(s) before `Startup Report Writer`, then rerunning `Startup Report Writer` and `Startup Report Translator ZH`. Do not commit a partially-updated report folder.
+- Never rename existing `S###` / `C###` IDs. Add new IDs after the current maximum and keep existing `claimRefs` stable.
+- The relevant analysis skill updates `00-report-brief.yaml` / `01-evidence-ledger.yaml` plus its owned `02`–`09` artifacts.
+- If new claims materially change recommendation/confidence/riskRating/valuationStance, rerun downstream affected skills, then rerun `startup-report-writer` and `startup-report-zh`.
+- Do not commit a partially-updated report folder.
 - After repair and reruns, run `npm run validate`.

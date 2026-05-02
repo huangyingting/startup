@@ -23,11 +23,11 @@ const tables = new Map((doc?.tables ?? []).map((table: any) => [table.id, table]
 const labels = lang === 'zh'
   ? {
       recommendation: '建议', confidence: '置信度', riskRating: '风险评级', valuationStance: '估值判断', score: '评分', sources: '来源', claims: '声明', figures: '图表', tables: '表格',
-      coverMetrics: '封面指标', startupIntro: '创业公司基本介绍', founded: '创立时间', founders: '创始人', foundingLocation: '创立地点', headquarters: '总部', product: '产品', customers: '客户', businessModel: '商业模式', stage: '阶段', fundingStatus: '融资状态', strengths: '核心亮点', risks: '核心风险', gaps: '未解问题', contents: '目录', bibliography: '参考文献', disclaimer: '免责声明', evidence: '证据索引', showRefs: '显示引用', hideRefs: '隐藏引用'
+      coverMetrics: '封面指标', startupIntro: '创业公司基本介绍', founded: '创立时间', founders: '创始人', foundingLocation: '创立地点', headquarters: '总部', product: '产品', customers: '客户', businessModel: '商业模式', stage: '阶段', fundingStatus: '融资状态', strengths: '核心亮点', risks: '核心风险', gaps: '未解问题', contents: '目录', appendix: '附录', bibliography: '参考文献', disclaimer: '免责声明', evidence: '证据索引', showRefs: '显示引用', hideRefs: '隐藏引用'
     }
   : {
       recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating', valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims', figures: 'figures', tables: 'tables',
-      coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction', founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location', headquarters: 'Headquarters', product: 'Product', customers: 'Customers', businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status', strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps', contents: 'Contents', bibliography: 'Bibliography', disclaimer: 'Disclaimer', evidence: 'Evidence index', showRefs: 'Show refs', hideRefs: 'Hide refs'
+      coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction', founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location', headquarters: 'Headquarters', product: 'Product', customers: 'Customers', businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status', strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps', contents: 'Contents', appendix: 'Appendix', bibliography: 'Bibliography', disclaimer: 'Disclaimer', evidence: 'Evidence index', showRefs: 'Show refs', hideRefs: 'Hide refs'
     };
 
 function arr<T = any>(value: T[] | undefined | null): T[] { return Array.isArray(value) ? value : []; }
@@ -74,6 +74,8 @@ const startupIntroduction = documentStartupIntroduction || snapshotStartupIntrod
     }
   : null;
 const chapters = arr(doc?.chapters);
+const appendices = arr(doc?.appendices);
+const bibliography = arr(doc?.bibliography);
 const reportFigures = arr(doc?.figures);
 const reportTables = arr(doc?.tables);
 const figureCount = reportFigures.length || data.figureCount || 0;
@@ -158,7 +160,10 @@ const fallbackMetrics = [
   {chapters.length > 0 && (
     <nav class="report-section toc" aria-label={labels.contents}>
       <h2>{labels.contents}</h2>
-      <ol>{chapters.map((chapter: any) => <li><a href={`#chapter-${chapter.number}`}>{chapter.title}</a></li>)}</ol>
+      <ol>
+        {chapters.map((chapter: any) => <li><a href={`#chapter-${chapter.number}`}>{chapter.title}</a></li>)}
+        {appendices.map((appendix: any) => <li><a href={`#appendix-${appendix.id}`}>{labels.appendix} {appendix.id}: {appendix.title}</a></li>)}
+      </ol>
     </nav>
   )}
 
@@ -196,12 +201,33 @@ const fallbackMetrics = [
     </section>
   )}
 
-  {arr(doc?.appendices).map((appendix: any) => (
-    <section class="report-section appendix">
-      <h2>Appendix {appendix.id}: {appendix.title}</h2>
-      {arr(appendix.blocks).map((block: any) => <p>{splitClaimRefsText(block.body ?? arr(block.items).join(' ')).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>)}
+  {appendices.map((appendix: any) => (
+    <section class="report-section appendix" id={`appendix-${appendix.id}`}>
+      <h2>{labels.appendix} {appendix.id}: {appendix.title}</h2>
+      {arr(appendix.blocks).map((block: any) => {
+        const table = block.tableRef ? tables.get(block.tableRef) as any : null;
+        const figure = block.figureRef ? figures.get(block.figureRef) as any : null;
+        const blockHasInlineRefs = hasInlineClaimRefs(block?.body) || arr(block?.items).some((item) => hasInlineClaimRefs(item));
+        return (
+          <>
+            {block.type === 'paragraph' && <p>{splitClaimRefsText(block.body).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)} <ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></p>}
+            {block.type === 'list' && <><ul>{arr(block.items).map((item) => <li>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</li>)}</ul><ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></>}
+            {block.type === 'equation' && <div class="equation">{block.equation}</div>}
+            {block.type === 'callout' && <aside class={blockClass(block.calloutType)}><h4>{block.title}</h4><p>{splitClaimRefsText(block.body).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p><ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></aside>}
+            {block.type === 'table' && table && <div class="table-frame"><table><caption>{table.title}</caption><thead><tr>{arr(table.columns).map((column) => <th>{column}</th>)}</tr></thead><tbody>{arr(table.rows).map((row: any[]) => <tr>{arr(row).map((cell) => <td>{splitClaimRefsText(cell).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</td>)}</tr>)}</tbody></table>{table.notes && <p class="table-note">{splitClaimRefsText(table.notes).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>}<ClaimRefs refs={blockRefs(table)} claims={claims} sources={sources} /></div>}
+            {block.type === 'figure' && figure && <FigureRenderer figure={figure} claims={claims} sources={sources} />}
+          </>
+        );
+      })}
     </section>
   ))}
+
+  {bibliography.length > 0 && (
+    <section class="report-section bibliography">
+      <h2>{labels.bibliography}</h2>
+      <div class="table-frame"><table><caption>{labels.bibliography}</caption><thead><tr><th>Source</th><th>Citation</th></tr></thead><tbody>{bibliography.map((entry: any) => <tr><td>{entry.sourceRef ? <a class="evidence-id" href={`#source-${entry.sourceRef}`}>{entry.sourceRef}</a> : '—'}</td><td>{entry.citation}</td></tr>)}</tbody></table></div>
+    </section>
+  )}
 
   {doc?.disclaimer && <section class="report-section disclaimer"><h2>{labels.disclaimer}</h2><p>{doc.disclaimer}</p></section>}
 
