@@ -12,50 +12,116 @@ Startup generates evidence-backed diligence reports for named startup companies.
 
 ## Report artifact flow
 
+Each analysis skill writes both the English artifact and its Simplified Chinese sibling in the same pass. After all 8 analysis pairs exist, `startup-ledger` consolidates evidence, `startup-report` synthesizes 101, and `startup-report-zh` assembles the Chinese 101 by reusing already-translated content from the `01–08.zh.yaml` siblings (only the executive summary and report-only fields are translated freshly).
+
 ```mermaid
 flowchart TD
-  A[Manual workflow<br/>research-startup.yml] --> B{Inputs}
-  B -->|company name or URL| WF[Default Copilot agent<br/>Startup Research workflow]
-  B -->|blank inputs| DISC[Recent-unicorn discovery]
-  DISC --> PICK[Select at least 5 recent private unicorns<br/>avoid reports/_index.yaml duplicates]
-  PICK --> WF
+  Start([User: research company X]) --> Setup[prepare-report-folder.mjs<br/>create reports/&lt;ts&gt;-&lt;slug&gt;/]
+  Setup --> Snapshot
 
-  WF --> FOLDER[Prepare report folder<br/>reports/&lt;timestamp&gt;-&lt;company-slug&gt;/]
-  FOLDER --> S01[startup-snapshot<br/>01-company-snapshot.yaml]
-  S01 --> DEDUP[Duplicate-company check]
-  DEDUP -->|duplicate-risk| STOP[Stop unless refresh was requested]
-  DEDUP -->|clear| S02[startup-market<br/>02-market-macro.yaml]
-  S02 --> S03[startup-competition<br/>03-competitive-benchmarking.yaml]
-  S03 --> S04[startup-financials<br/>04-financial-unit-economics.yaml]
-  S04 --> S05[startup-product<br/>05-product-technology.yaml]
-  S05 --> S06[startup-customers<br/>06-customer-retention.yaml]
-  S06 --> S07[startup-risks<br/>07-risk-regulatory.yaml]
-  S07 --> S08[startup-valuation<br/>08-investment-valuation.yaml]
-  S08 --> LEDGER[startup-ledger<br/>100-evidence-ledger.yaml]
-  LEDGER --> REPORT[startup-report<br/>101-report-document.yaml]
-  REPORT --> CARD[startup-card<br/>102-report-card.yaml]
-  CARD --> REPORTZH[startup-report-zh<br/>101-report-document.zh.yaml]
-  REPORTZH --> CARDZH[startup-card-zh<br/>102-report-card.zh.yaml]
-  CARDZH --> INDEX[Build reports/_index.yaml]
-  INDEX --> VALIDATE[npm run validate]
-  VALIDATE --> COMMIT[Reject partial folders<br/>commit reports when changed]
+  subgraph Stage1[Stage 1 — Analysis artifacts 01-08 + zh siblings]
+    Snapshot[startup-snapshot<br/>writes 01.yaml + 01.zh.yaml]
+    Snapshot --> Dedup{check-company-dedup.mjs}
+    Dedup -- exit 2: duplicate --> Stop([STOP unless refresh requested])
+    Dedup -- exit 0 --> Market
+
+    Market[startup-market<br/>writes 02.yaml + 02.zh.yaml] --> Compete
+    Compete[startup-competition<br/>writes 03.yaml + 03.zh.yaml] --> Fin
+    Fin[startup-financials<br/>writes 04.yaml + 04.zh.yaml] --> Prod
+    Prod[startup-product<br/>writes 05.yaml + 05.zh.yaml<br/>official-site mining → handoff note] --> Cust
+    Cust[startup-customers<br/>writes 06.yaml + 06.zh.yaml] --> Risk
+    Risk[startup-risks<br/>writes 07.yaml + 07.zh.yaml] --> Val
+    Val[startup-valuation<br/>writes 08.yaml + 08.zh.yaml]
+  end
+
+  Val --> Ledger
+
+  subgraph Stage2[Stage 2 — Consolidate]
+    Ledger[startup-ledger<br/>scripts/consolidate-evidence.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 AND 01-08.zh claimRefs<br/>writes 100-evidence-ledger.yaml]
+  end
+
+  Ledger --> Report
+
+  subgraph Stage3[Stage 3 — Report assembly]
+    Report[startup-report<br/>writes 101-report-document.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events]
+    Report --> ReportZh[startup-report-zh<br/>ASSEMBLE 101.zh.yaml<br/>reuse chapters 2-9 from 01-08.zh<br/>translate exec summary + cover metrics + appendices]
+    ReportZh --> Card[startup-card<br/>writes 102-report-card.yaml<br/>derives from 100 + 101]
+    Card --> CardZh[startup-card-zh<br/>translate 102 → 102.zh.yaml]
+  end
+
+  CardZh --> FinalVal
+
+  subgraph Stage4[Stage 4 — Final validation]
+    FinalVal[build-reports-index.mjs<br/>+ check-reports-content.mjs<br/>+ website check-reports.mjs<br/>+ astro build]
+  end
+
+  FinalVal --> End([Done])
 ```
 
+### Per-skill dynamic gap loop
+
+Every analysis skill closes its own supportable gaps before writing. Volatile facts (funding, valuation, customer counts, releases, lawsuits) are anchored to `currentDate` and audited for freshness; if a query returns thin or stale results the skill rewrites the question from another angle before declaring a gap.
+
+```mermaid
+flowchart TD
+  Plan[Inspect required tables, figures,<br/>metrics, downstream chapter needs] --> Search
+
+  subgraph SearchLoop[Targeted research]
+    Search[Multi-question web_search batch<br/>full-sentence queries tied to currentDate<br/>+ disconfirming/adverse queries]
+    Search --> Site[Mine official site<br/>homepage / sitemap / docs / pricing /<br/>trust / status / blog / customer pages]
+    Site --> Recency[Recency audit<br/>volatile facts must be ≤24mo<br/>or labeled freshness=historical]
+  end
+
+  Recency --> Decision{Evidence sufficient?}
+  Decision -- yes --> Register["Register sources/claims in<br/>localEvidence.sources[] / claims[]<br/>cite local C### in artifact"]
+  Decision -- thin/stale --> Rewrite[Rewrite query from another angle]
+  Rewrite --> Search
+  Decision -- truly unsupported --> Gap[Document in evidenceGaps<br/>with diligencePath]
+  Gap --> Register
+
+  Register --> Write[Write XX-name.yaml + XX-name.zh.yaml<br/>per .github/references/zh-translation.md<br/>residual-English sweep + structural parity]
+  Write --> Done([Hand off to next skill])
+```
+
+### Three-layer defence
+
+Every artifact is constrained by skill prompts, central schema contracts, and build-time lints. Failures are rejected at build and pushed back to the source artifact rather than patched in `101`.
+
+```mermaid
+flowchart LR
+  A[Skill prompt rules<br/>.github/skills/*.md] --> B[Schema contracts<br/>.github/schemas/<br/>startup-diligence-report-v2.md]
+  B --> C[Build-time lints<br/>scripts/check-reports-content.mjs<br/>website/scripts/check-reports.mjs]
+  C --> D{Pass?}
+  D -- yes --> Ship([Astro build OK])
+  D -- no --> Fix[Reject artifact<br/>fix at source<br/>then rerun ledger + report]
+  Fix --> A
+```
+
+Lint coverage today:
+
+- enum fields restricted to schema-defined values (`recommendation`, `confidence`, `riskRating`, `valuationStance`, `claimType`, `freshness`, `corroboration`, `sourceType`, `reputationTier`, `independence`).
+- every table row has exactly `columns.length` cells.
+- `matrix` / `risk-heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
+- each `tableRef` / `figureRef` is referenced from at most one chapter section or appendix block.
+- F102 company milestone timeline must have ≥8 events covering founding, every priced round, major launches, scale milestones, partnerships, and governance/legal events.
+- 8 `XX-name.zh.yaml` siblings exist with byte-identical IDs / table IDs / figure IDs / `runDate` / `slug` to their English source.
+- card `tableCount` / `figureCount` / `overallScore` match `101-report-document.yaml`.
+
+### Required artifacts
+
 ```text
-Startup Research workflow (default agent + skills)
-  ├─ startup-snapshot              → 01-company-snapshot.yaml with localEvidence
-  ├─ startup-market                → 02-market-macro.yaml
-  ├─ startup-competition           → 03-competitive-benchmarking.yaml
-  ├─ startup-financials            → 04-financial-unit-economics.yaml
-  ├─ startup-product               → 05-product-technology.yaml
-  ├─ startup-customers             → 06-customer-retention.yaml
-  ├─ startup-risks                 → 07-risk-regulatory.yaml
-  ├─ startup-valuation             → 08-investment-valuation.yaml
-  ├─ startup-ledger                → 100-evidence-ledger.yaml
-  ├─ startup-report                → 101-report-document.yaml
-  ├─ startup-card                  → 102-report-card.yaml
-  ├─ startup-report-zh             → 101-report-document.zh.yaml
-  └─ startup-card-zh               → 102-report-card.zh.yaml
+reports/<timestamp>-<slug>/
+  ├─ 01-company-snapshot.yaml      ↔ 01-company-snapshot.zh.yaml
+  ├─ 02-market-macro.yaml          ↔ 02-market-macro.zh.yaml
+  ├─ 03-competitive-benchmarking.yaml      ↔ 03-...zh.yaml
+  ├─ 04-financial-unit-economics.yaml      ↔ 04-...zh.yaml
+  ├─ 05-product-technology.yaml            ↔ 05-...zh.yaml
+  ├─ 06-customer-retention.yaml            ↔ 06-...zh.yaml
+  ├─ 07-risk-regulatory.yaml               ↔ 07-...zh.yaml
+  ├─ 08-investment-valuation.yaml          ↔ 08-...zh.yaml
+  ├─ 100-evidence-ledger.yaml      (no zh sibling — citations rendered from sources[])
+  ├─ 101-report-document.yaml      ↔ 101-report-document.zh.yaml
+  └─ 102-report-card.yaml          ↔ 102-report-card.zh.yaml
 ```
 
 ## Local development

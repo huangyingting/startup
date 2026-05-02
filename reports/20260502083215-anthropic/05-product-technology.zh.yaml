@@ -7,14 +7,13 @@ company:
   website: https://www.anthropic.com/
 chapter:
   number: 5
-  title: Product & Technology
+  title: 产品与技术
   summary: |
-    Anthropic has evolved Claude from a model/API product into a multi-surface enterprise AI platform: Claude.ai,
-    Claude Code, Claude Cowork, Team/Enterprise plans, Messages API, Managed Agents, MCP integrations, Agent
-    Skills, and cloud endpoints across AWS, Google Cloud, and Microsoft Azure. The technical moat is strongest
-    in agentic coding, long-horizon agent infrastructure, safety/trust positioning, and enterprise controls.
-    The key product diligence risks are reliability regressions, opaque certification details, compute-cost-driven
-    product tradeoffs, and whether workflow integration depth creates durable switching costs.
+    Anthropic 已将 Claude 从模型/API 产品演进为多触面企业 AI 平台：Claude.ai、Claude Code、
+    Claude Cowork、Team/Enterprise 计划、Messages API、Managed Agents、MCP 集成、Agent Skills，
+    以及 AWS、Google Cloud、Microsoft Azure 上的云端入口。技术护城河在代理式编程、长周期智能体
+    基础设施、安全与信任定位以及企业控制方面最强。主要的产品尽调风险是可靠性回退、不透明的认证
+    细节、由算力成本驱动的产品权衡，以及工作流集成深度能否形成持久转换成本。
   claimRefs:
     - C063
     - C064
@@ -26,73 +25,72 @@ chapter:
     - C075
 callouts:
   - type: key-insight
-    title: Anthropic is building workflow infrastructure, not just a chat model.
+    title: Anthropic 在构建工作流基础设施，而不仅仅是聊天模型。
     body: |
-      Official docs expose both direct Messages API access and Managed Agents; engineering posts describe agent
-      sessions, harnesses, sandboxes, durable event logs, MCP-based tools, and secure credential separation. This
-      is a credible platform architecture for enterprise agentic work, not merely a model endpoint.
+      官方文档同时暴露直接的 Messages API 访问与 Managed Agents；工程帖子描述了智能体会话、
+      外壳、沙箱、持久事件日志、基于 MCP 的工具与安全凭证隔离。这是面向企业代理式工作的可信
+      平台架构，而非仅仅是一个模型端点。
     claimRefs:
       - C063
       - C064
       - C065
       - C071
   - type: risk-alert
-    title: Recent Claude Code/Cowork quality regression shows product-layer risk.
+    title: 近期 Claude Code/Cowork 质量回退暴露了产品层风险。
     body: |
-      Anthropic's April 23 postmortem traced degraded Claude Code, Agent SDK, and Cowork quality to three
-      product-layer changes, while the API and inference layer were not impacted. This validates the need for
-      release governance, customer-visible quality monitoring, and agent-specific regression tests.
+      Anthropic 4 月 23 日的事后分析将 Claude Code、Agent SDK 与 Cowork 的质量下降归因于三处
+      产品层变更，而 API 与推理层未受影响。这印证了发布治理、客户可见质量监控以及智能体专用
+      回归测试的必要性。
     claimRefs:
       - C074
       - C075
       - C076
 tables:
   - id: T502
-    title: Product module matrix
+    title: 产品模块矩阵
     columns:
-      - Module
-      - Evidence-backed capabilities
-      - Buyer / user
-      - Packaging signal
-      - Diligence note
+      - 模块
+      - 证据支撑能力
+      - 买方 / 用户
+      - 打包信号
+      - 尽调备注
     rows:
-      - - Claude.ai / desktop / mobile
-        - Chat, content, code, artifacts/files, web search, memory, connectors, Office-style productivity features
-        - Consumers, professionals, knowledge workers
-        - Free, Pro, Max, Team, Enterprise
-        - Validate retention by segment and privacy controls for connected apps.
+      - - Claude.ai / 桌面 / 移动
+        - 对话、内容、代码、artifacts/文件、Web 搜索、记忆、连接器、Office 风格生产力功能
+        - 消费者、专业人士、知识工作者
+        - Free、Pro、Max、Team、Enterprise
+        - 验证按细分的留存与连接应用的隐私控制。
       - - Claude Code
-        - Agentic coding; official revenue scale; affected by March-April 2026 quality issues now resolved
-        - Developers and engineering teams
-        - Included in Pro and Team; enterprise usage tied to technical seats/API usage
-        - Measure repo-scale success, security defects, and gross margin.
+        - 代理式编程；官方收入规模；2026 年 3-4 月质量问题已修复
+        - 开发者与工程团队
+        - 包含在 Pro 与 Team；企业用量与技术席位/API 用量挂钩
+        - 衡量代码库级成功率、安全缺陷与毛利率。
       - - Claude Cowork
-        - Broader agentic work product cited in Series G disclosure and affected by postmortem scope
-        - Knowledge workers and enterprise teams
-        - Included in Pro/Team packaging and enterprise workflows
-        - Clarify GA maturity, use cases, and adoption metrics.
+        - G 轮披露中提及、且在事后分析范围内的更广义代理式工作产品
+        - 知识工作者与企业团队
+        - 包含在 Pro/Team 打包与企业工作流中
+        - 厘清 GA 成熟度、用例与采用指标。
       - - Messages API
-        - Direct model access where developers manage turns, state, and tool loop
-        - Developers and platform teams
-        - Token pricing by Opus/Sonnet/Haiku
-        - Assess rate limits, data retention, and production SLAs.
+        - 由开发者管理回合、状态与工具循环的直接模型访问
+        - 开发者与平台团队
+        - 按 Opus/Sonnet/Haiku 的 token 定价
+        - 评估速率限制、数据留存与生产 SLA。
       - - Managed Agents
-        - Hosted long-horizon agents with session logs, harnesses, sandboxes, tools, and runtime pricing
-        - Enterprise developer/platform teams
-        - $0.08 per active runtime session-hour plus tokens
-        - Assess security boundary, recovery semantics, and VPC/private deployment options.
-      - - MCP / connectors
-        - MCP used for external tools; OAuth tokens stored in secure vault for Managed Agents
-        - Enterprise IT and workflow teams
-        - Connector-enabled team/enterprise workflows
-        - Review connector permissioning, audit logs, and prompt-injection controls.
+        - 托管的长周期智能体，配备会话日志、外壳、沙箱、工具与运行时定价
+        - 企业开发者/平台团队
+        - 0.08 美元/活跃运行时会话小时加 token
+        - 评估安全边界、恢复语义与 VPC/私有部署选项。
+      - - MCP / 连接器
+        - MCP 用于外部工具；Managed Agents 的 OAuth token 存于安全保管库
+        - 企业 IT 与工作流团队
+        - 启用连接器的团队/企业工作流
+        - 审查连接器权限、审计日志与提示注入控制。
       - - Agent Skills
-        - Composable folders of instructions, scripts, and resources loaded dynamically by agents
-        - Developers and teams with domain workflows
-        - Open standard / product capability
-        - Evaluate skill governance, provenance, and sandbox safety.
-    notes: Module maturity ranges from GA products to evolving agent infrastructure; where status is unclear, a diligence
-      gap is retained.
+        - 由智能体动态加载的可组合指令、脚本与资源文件夹
+        - 拥有领域工作流的开发者与团队
+        - 开放标准 / 产品能力
+        - 评估 skill 治理、来源与沙箱安全。
+    notes: 模块成熟度从 GA 产品到演进中的智能体基础设施不等；状态不清时保留尽调缺口。
     claimRefs:
       - C063
       - C064
@@ -103,35 +101,34 @@ tables:
       - C072
       - C074
   - id: T503
-    title: AI/automation capability map
+    title: AI / 自动化能力图
     columns:
-      - Capability
-      - Evidence
-      - Differentiation
-      - Risk / limitation
+      - 能力
+      - 证据
+      - 差异化
+      - 风险 / 局限
     rows:
-      - - Agentic coding
-        - Claude Code run-rate revenue above $2.5B; engineering posts describe effort settings, thinking history, prompt caching,
-          and code review context
-        - Strong developer wedge and workflow data
-        - Quality regression showed product-layer defaults can harm outcomes.
-      - - Long-horizon agents
-        - Managed Agents virtualize session, harness, sandbox, and tools
-        - Architecture designed for recoverable long-running work
-        - Requires robust sandbox and tool security.
-      - - Workflow vs autonomous agent patterns
-        - Anthropic distinguishes predefined workflows from agents that dynamically direct tool use
-        - Clear developer education and design philosophy
-        - Cost/latency tradeoff may limit agentic use cases.
-      - - MCP integration
-        - Engineering and product materials cite MCP for tool access and external services
-        - Open integration strategy and connector ecosystem
-        - Connector trust, token scoping, and data leakage need diligence.
+      - - 代理式编程
+        - Claude Code 收入运行率超过 25 亿美元；工程帖子描述 effort 设置、思考历史、提示缓存与代码评审上下文
+        - 强劲的开发者切入点与工作流数据
+        - 质量回退表明产品层默认配置可能损害结果。
+      - - 长周期智能体
+        - Managed Agents 将会话、外壳、沙箱与工具虚拟化
+        - 为可恢复长时运行设计的架构
+        - 需要稳健的沙箱与工具安全。
+      - - 工作流模式 vs 自主智能体模式
+        - Anthropic 区分预定义工作流与动态指挥工具使用的智能体
+        - 清晰的开发者教育与设计哲学
+        - 成本/延迟权衡可能限制代理式用例。
+      - - MCP 集成
+        - 工程与产品材料援引 MCP 用于工具访问与外部服务
+        - 开放集成战略与连接器生态
+        - 连接器信任、token 范围与数据泄露需要尽调。
       - - Agent Skills
-        - Skills package procedural knowledge, scripts, and resources with progressive disclosure
-        - Creates portable domain specialization
-        - Skill supply chain and execution permissions need governance.
-    notes: Capabilities are company-claimed unless backed by status or external evidence.
+        - Skills 通过渐进式披露打包程序知识、脚本与资源
+        - 形成可移植的领域专精
+        - skill 供应链与执行权限需要治理。
+    notes: 除非有状态或外部证据支撑，能力均视为公司声称。
     claimRefs:
       - C064
       - C065
@@ -140,34 +137,34 @@ tables:
       - C074
       - C075
   - id: T504
-    title: Architecture and infrastructure evidence
+    title: 架构与基础设施证据
     columns:
-      - Layer
-      - Public evidence
-      - Architecture implication
-      - Open technical question
+      - 层级
+      - 公开证据
+      - 架构含义
+      - 待解技术问题
     rows:
-      - - Models
-        - Docs list Opus 4.7, Sonnet 4.6, Haiku 4.5; pricing page lists token prices
-        - Multi-model routing by capability/cost/latency
-        - Actual routing policy, eval gates, and customer-specific model availability.
+      - - 模型
+        - 文档列出 Opus 4.7、Sonnet 4.6、Haiku 4.5；定价页列出 token 价
+        - 按能力/成本/延迟的多模型路由
+        - 实际路由策略、评测门控与按客户的模型可用性。
       - - API
-        - Docs show Messages API and code example with claude-opus-4-7
-        - Developer-managed state and tool loops remain available
-        - SLA, latency percentiles, rate limits, and data retention by plan.
-      - - Managed agent control plane
-        - Managed Agents decouple harness, session log, and sandbox
-        - Recoverable long-horizon agent architecture
-        - Isolation, observability, and enterprise deployment modes.
-      - - Sandbox/tools
-        - Managed Agents keep credentials outside generated-code sandboxes and use MCP proxy/vault patterns
-        - Security-conscious tool execution model
-        - Formal security review, penetration testing, and audit evidence.
-      - - Cloud distribution
-        - Claude available on AWS Bedrock, Google Vertex AI, and Microsoft Azure Foundry
-        - Multi-cloud resilience and buyer procurement flexibility
-        - Channel-specific feature parity and cloud-residency limits.
-    notes: Public architecture is high-level; detailed system design is not public.
+        - 文档展示 Messages API 与使用 claude-opus-4-7 的代码示例
+        - 开发者管理状态与工具循环仍可用
+        - 按计划的 SLA、延迟分位、速率限制与数据留存。
+      - - 托管智能体控制平面
+        - Managed Agents 将外壳、会话日志与沙箱解耦
+        - 可恢复的长周期智能体架构
+        - 隔离、可观测性与企业部署模式。
+      - - 沙箱 / 工具
+        - Managed Agents 将凭证保留在生成代码沙箱之外，并使用 MCP 代理/保管库模式
+        - 注重安全的工具执行模型
+        - 正式安全审查、渗透测试与审计证据。
+      - - 云分发
+        - Claude 在 AWS Bedrock、Google Vertex AI、Microsoft Azure Foundry 上均可获得
+        - 多云韧性与买方采购灵活性
+        - 渠道特定的功能对等与云驻留限制。
+    notes: 公开架构停留在高层；详细系统设计未公开。
     claimRefs:
       - C063
       - C064
@@ -175,40 +172,38 @@ tables:
       - C066
       - C067
   - id: T505
-    title: Security, privacy, compliance, and reliability matrix
+    title: 安全、隐私、合规与可靠性矩阵
     columns:
-      - Area
-      - Public evidence
-      - Strength
-      - Gap
+      - 领域
+      - 公开证据
+      - 优势
+      - 缺口
     rows:
-      - - Privacy roles
-        - Privacy policy distinguishes Anthropic as data controller for consumer services and processor for commercial customer
-          use cases
-        - Clear privacy-role boundary
-        - Commercial DPA controls and retention details require review.
-      - - Inputs/outputs and feedback
-        - Privacy policy says Anthropic collects prompts/inputs, outputs, feedback, technical, usage, log, and troubleshooting
-          information
-        - Transparent collection categories
-        - Enterprise opt-outs and retention need contract review.
-      - - Trust center
-        - Vanta-hosted Anthropic Trust Center exists with transparency/security description
-        - Trust portal indicates compliance program
-        - Certification list not visible in fetched static content.
-      - - Vulnerability disclosure
-        - Anthropic targets 90-day disclosure and human-reviewed vulnerability reports
-        - Security research process is documented
-        - Responsible disclosure policy and bug bounty scope need review.
-      - - Status / reliability
-        - Status page shows all major surfaces operational on May 2 and records multiple resolved incidents in late April
-        - Public status transparency
-        - Need uptime history, SLA, incident severity, and enterprise credit terms.
-      - - Quality regression
-        - Postmortem states API/inference layer unaffected but Claude Code, Agent SDK, and Cowork were degraded by three changes
-        - Strong postmortem transparency
-        - Need release gates, customer communication thresholds, and regression suite evidence.
-    notes: Compliance claims beyond visible public evidence are not assumed.
+      - - 隐私角色
+        - 隐私政策将 Anthropic 区分为消费者服务的数据控制者与商业客户用例的处理者
+        - 隐私角色边界清晰
+        - 商业 DPA 控制与留存细节需要审查。
+      - - Inputs/Outputs 与反馈
+        - 隐私政策称 Anthropic 收集提示/输入、输出、反馈、技术、用量、日志与排障信息
+        - 透明的收集类别
+        - 企业级 opt-out 与留存需要合同审查。
+      - - 信任中心
+        - 由 Vanta 托管的 Anthropic Trust Center 存在，含透明度/安全描述
+        - 信任门户表明合规计划
+        - 抓取的静态内容中未见认证清单。
+      - - 漏洞披露
+        - Anthropic 目标 90 天披露与人工审查的漏洞报告
+        - 安全研究流程有文档
+        - 负责任披露政策与漏洞赏金范围需要审查。
+      - - 状态 / 可靠性
+        - 状态页显示 5 月 2 日所有主要触面运行正常，并记录 4 月下旬多起已解决事件
+        - 公开状态透明度
+        - 需要运行时间历史、SLA、事件严重度与企业信用条款。
+      - - 质量回退
+        - 事后分析说明 API/推理层未受影响，但 Claude Code、Agent SDK 与 Cowork 因三处变更受影响
+        - 事后分析透明度强
+        - 需要发布门控、客户沟通阈值与回归测试套件证据。
+    notes: 不超出可见公开证据范围去推定合规声称。
     claimRefs:
       - C073
       - C074
@@ -217,28 +212,28 @@ tables:
       - C077
       - C078
   - id: T506
-    title: Roadmap and technical diligence asks
+    title: 路线图与技术尽调要求
     columns:
-      - Theme
-      - Current signal
-      - Diligence ask
+      - 主题
+      - 当前信号
+      - 尽调要求
     rows:
-      - - Agent infrastructure
-        - Managed Agents launched as hosted long-horizon agent infrastructure
-        - Review GA status, customer adoption, isolation model, observability, VPC/private deployment, and incident history.
-      - - Claude Code quality
-        - April postmortem resolved issues and reset usage limits
-        - Review regression dashboards, eval coverage, rollout policies, and customer churn after the incident.
-      - - Compliance readiness
-        - Trust center exists and Enterprise includes Compliance API, retention controls, IP allowlisting, HIPAA-ready availability
-        - Obtain SOC 2/ISO/HIPAA documentation, BAA terms, DPA, and security questionnaire.
-      - - Data privacy
-        - Privacy policy identifies data categories collected and controller/processor roles
-        - Map data flows for commercial services, retention, training use, subprocessors, and cross-border transfers.
-      - - Integration ecosystem
-        - MCP, connectors, and skills extend Claude into tools and workflows
-        - Review connector permission model, OAuth vaulting, prompt-injection tests, and audit logs.
-    notes: These asks should be closed before relying on regulated-industry expansion assumptions.
+      - - 智能体基础设施
+        - Managed Agents 已作为托管的长周期智能体基础设施推出
+        - 审查 GA 状态、客户采用、隔离模型、可观测性、VPC/私有部署与事件历史。
+      - - Claude Code 质量
+        - 4 月事后分析已解决问题并重置用量上限
+        - 审查回归仪表盘、评测覆盖、推广策略，以及事件后的客户流失。
+      - - 合规就绪
+        - 信任中心已存在，Enterprise 包含 Compliance API、留存控制、IP 白名单与 HIPAA 就绪
+        - 获取 SOC 2/ISO/HIPAA 文档、BAA 条款、DPA 与安全问卷。
+      - - 数据隐私
+        - 隐私政策识别所收集的数据类别与控制者/处理者角色
+        - 绘制商业服务的数据流、留存、训练用途、子处理者与跨境传输。
+      - - 集成生态
+        - MCP、连接器与 Skills 将 Claude 扩展到工具与工作流
+        - 审查连接器权限模型、OAuth 保管、提示注入测试与审计日志。
+    notes: 在依赖受监管行业扩张假设之前，应关闭这些尽调要求。
     claimRefs:
       - C064
       - C065
@@ -251,81 +246,77 @@ tables:
       - C078
 figures:
   - id: F501
-    title: Claude product architecture stack
+    title: Claude 产品架构栈
     type: architecture-stack
     layout: wide
-    summary: Public architecture evidence shows Claude as a layered model, API, agent, integration, and enterprise-control
-      platform.
+    summary: 公开架构证据显示 Claude 是分层的模型、API、智能体、集成与企业控制平台。
     data:
       layers:
-        - label: Model family
-          detail: Opus 4.7, Sonnet 4.6, and Haiku 4.5 cover capability, balance, and high-volume latency-sensitive workloads.
+        - label: 模型家族
+          detail: Opus 4.7、Sonnet 4.6 与 Haiku 4.5 覆盖能力、平衡与高量延迟敏感工作负载。
           tone: positive
           modules:
             - Opus 4.7
             - Sonnet 4.6
             - Haiku 4.5
           outputs:
-            - Reasoning
-            - coding
-            - chat
-            - analysis
-        - label: Developer platform
-          detail: Messages API provides direct model access while developers manage state and tool loops.
+            - 推理
+            - 编程
+            - 对话
+            - 分析
+        - label: 开发者平台
+          detail: Messages API 提供直接模型访问，由开发者管理状态与工具循环。
           tone: positive
           modules:
             - Messages API
             - SDKs
-            - prompt caching
-            - batch processing
+            - 提示缓存
+            - 批量处理
           outputs:
-            - Custom applications
-            - API integrations
-        - label: Agent infrastructure
-          detail: Managed Agents provide hosted sessions, harnesses, sandboxes, tools, and durable event history.
+            - 自定义应用
+            - API 集成
+        - label: 智能体基础设施
+          detail: Managed Agents 提供托管会话、外壳、沙箱、工具与持久事件历史。
           tone: opportunity
           modules:
             - Managed Agents
             - Claude Agent SDK
-            - sandboxes
-            - session logs
+            - 沙箱
+            - 会话日志
           outputs:
-            - Long-horizon agentic workflows
-        - label: Workflow extensions
-          detail: MCP and Agent Skills connect Claude to tools, credentials, and domain procedures.
+            - 长周期代理式工作流
+        - label: 工作流扩展
+          detail: MCP 与 Agent Skills 将 Claude 与工具、凭证、领域程序连接。
           tone: opportunity
           modules:
             - MCP
-            - OAuth vault
+            - OAuth 保管库
             - Agent Skills
-            - connectors
+            - 连接器
           outputs:
-            - Enterprise workflow automation
-        - label: Enterprise controls
-          detail: Team/Enterprise packaging adds SSO, SCIM, audit logs, Compliance API, retention controls, IP allowlisting,
-            and HIPAA-ready availability.
+            - 企业工作流自动化
+        - label: 企业控制
+          detail: Team/Enterprise 打包增加 SSO、SCIM、审计日志、Compliance API、留存控制、IP 白名单与 HIPAA 就绪。
           tone: positive
           modules:
             - SSO
             - SCIM
-            - audit logs
+            - 审计日志
             - Compliance API
-            - data retention
+            - 数据留存
           outputs:
-            - Governed deployments
-        - label: Reliability and release governance
-          detail: Public status page and postmortems provide transparency, but recent quality regressions show this layer
-            needs diligence.
+            - 受治理部署
+        - label: 可靠性与发布治理
+          detail: 公开状态页与事后分析提供透明度，但近期质量回退表明这一层仍需尽调。
           tone: risk
           modules:
-            - Status page
-            - postmortems
-            - release gates
+            - 状态页
+            - 事后分析
+            - 发布门控
           outputs:
-            - Customer trust
-            - SLA confidence
-    approximationNotes: Architecture stack is synthesized from public docs and engineering posts; internal architecture is
-      not public.
+            - 客户信任
+            - SLA 信心
+    approximationNotes: 架构栈综合自公开文档与工程帖子；内部架构未公开。
     claimRefs:
       - C063
       - C064
@@ -338,61 +329,58 @@ figures:
       - C075
       - C076
   - id: F502
-    title: Product reliability risk flow
+    title: 产品可靠性风险流
     type: risk-transmission-map
     layout: standard
-    summary: Recent Claude quality issues demonstrate how product-layer changes can affect enterprise trust even when model
-      weights and API are stable.
+    summary: 近期 Claude 质量问题表明，即便模型权重与 API 稳定，产品层变更仍可影响企业信任。
     data:
       nodes:
         - id: p1
-          label: Product-layer change
-          detail: Default reasoning effort, session thinking-cache behavior, and verbosity prompts changed in March-April.
+          label: 产品层变更
+          detail: 默认推理 effort、会话思考缓存行为与冗长度提示在 3-4 月发生变化。
           tone: high
         - id: p2
-          label: Agent workflow degradation
-          detail: Users experienced lower perceived intelligence, forgetfulness, repetition, and coding-quality issues.
+          label: 智能体工作流退化
+          detail: 用户感受到智能下降、遗忘、重复与编程质量问题。
           tone: risk
         - id: p3
-          label: Usage and trust impact
-          detail: Usage limits drained faster and Anthropic reset usage limits for subscribers after fixes.
+          label: 用量与信任影响
+          detail: 用量上限消耗加快，Anthropic 在修复后为订阅用户重置用量上限。
           tone: risk
         - id: p4
-          label: Governance response
-          detail: Anthropic published a postmortem and said it would change practices to reduce recurrence.
+          label: 治理回应
+          detail: Anthropic 发布事后分析，并表示将改变实践以减少复发。
           tone: neutral
         - id: p5
-          label: Diligence implication
-          detail: Investors need evidence of agent-specific evals, staged rollouts, status signaling, and enterprise incident
-            communications.
+          label: 尽调含义
+          detail: 投资人需要智能体专用评测、分阶段推广、状态信号传递与企业事件沟通的证据。
           tone: high
       edges:
         - from: p1
           to: p2
-          label: configuration / bug
+          label: 配置 / bug
         - from: p2
           to: p3
-          label: customer impact
+          label: 客户影响
         - from: p3
           to: p4
-          label: remediation
+          label: 修复
         - from: p4
           to: p5
-          label: verify controls
-    approximationNotes: Based on Anthropic's April 23 postmortem; no independent customer churn quantified.
+          label: 验证控制
+    approximationNotes: 基于 Anthropic 4 月 23 日的事后分析；未量化独立的客户流失。
     claimRefs:
       - C074
       - C075
       - C076
 sections:
   - number: '5.1'
-    title: Product platform overview
+    title: 产品平台概览
     body: |
-      Anthropic's product portfolio now spans end-user applications, developer APIs, agent infrastructure, and
-      enterprise governance. The official docs present two main developer surfaces: Messages for direct model
-      access where the customer controls state and tool loops, and Managed Agents for hosted long-horizon agents.
-      Pricing and product pages add Claude Code, Claude Cowork, Team, Enterprise, managed agents, web search,
-      code execution, prompt caching, and model families.
+      Anthropic 的产品组合现已涵盖终端用户应用、开发者 API、智能体基础设施与企业治理。官方文档
+      呈现两个主要开发者触面：Messages 提供由客户控制状态与工具循环的直接模型访问，Managed
+      Agents 提供托管的长周期智能体。定价与产品页面还增加了 Claude Code、Claude Cowork、Team、
+      Enterprise、托管智能体、Web 搜索、代码执行、提示缓存与模型家族。
     claimRefs:
       - C063
       - C066
@@ -400,51 +388,46 @@ sections:
       - C068
       - C069
   - number: '5.2'
-    title: Technical differentiation
+    title: 技术差异化
     body: |
-      The strongest technical differentiation is the shift from model endpoint to agent operating layer. Managed
-      Agents decouple sessions, harnesses, and sandboxes, and Anthropic describes vaulting OAuth credentials
-      outside generated-code sandboxes while Claude calls MCP tools through a proxy. Agent Skills add a portable
-      way to package procedural knowledge, scripts, and resources for dynamic loading. These are credible pieces
-      of a durable workflow moat if they are adopted broadly and governed safely.
+      最强的技术差异化是从模型端点到智能体运行层的转变。Managed Agents 将会话、外壳与沙箱解耦，
+      Anthropic 描述将 OAuth 凭证保留在生成代码沙箱之外，由 Claude 通过代理调用 MCP 工具。
+      Agent Skills 增加一种可移植方式，将程序知识、脚本与资源打包供动态加载。这些都是构建持久
+      工作流护城河的可信组件，前提是被广泛采用且安全治理到位。
     claimRefs:
       - C064
       - C065
       - C071
       - C072
   - number: '5.3'
-    title: Enterprise readiness
+    title: 企业级就绪度
     body: |
-      Enterprise readiness is supported by visible controls such as SSO, SCIM, audit logs, Compliance API,
-      custom data retention, network-level access control, IP allowlisting, HIPAA-ready availability, a trust
-      center, a public status page, privacy policies, and a coordinated vulnerability disclosure framework.
-      However, detailed certifications, SOC reports, BAAs, uptime SLAs, penetration tests, and incident-credit
-      terms must be reviewed directly rather than inferred from marketing pages.
+      企业级就绪度由可见的控制能力支撑：SSO、SCIM、审计日志、Compliance API、自定义数据留存、
+      网络级访问控制、IP 白名单、HIPAA 就绪、信任中心、公开状态页、隐私政策与协调漏洞披露框架。
+      但详细认证、SOC 报告、BAA、运行时间 SLA、渗透测试与事件信用条款必须直接审查文档，不能
+      仅从营销页推断。
     claimRefs:
       - C067
       - C073
       - C077
       - C078
   - number: '5.4'
-    title: Reliability and product risk
+    title: 可靠性与产品风险
     body: |
-      Anthropic's public status page showed all major surfaces operational on May 2, 2026, but it also recorded
-      multiple resolved late-April incidents across Claude.ai, API, Claude Code, and model requests. More
-      importantly, Anthropic's April 23 postmortem attributed perceived Claude Code/Cowork/Agent SDK quality
-      degradation to three product-layer changes. The company deserves credit for transparency, but the incident
-      shows that agent workflows require specialized regression testing and customer communication thresholds.
+      Anthropic 公开状态页显示 2026 年 5 月 2 日所有主要触面运行正常，但同样记录了 4 月下旬涉及
+      Claude.ai、API、Claude Code 与模型请求的多起已解决事件。更重要的是，Anthropic 4 月 23 日
+      的事后分析将感知到的 Claude Code/Cowork/Agent SDK 质量下降归因于三处产品层变更。透明度
+      值得肯定，但事件表明智能体工作流需要专门的回归测试与客户沟通阈值。
     claimRefs:
       - C074
       - C075
       - C076
   - number: '5.5'
-    title: Product verdict
+    title: 产品结论
     body: |
-      Product depth is a strength: Anthropic has credible models, developer surfaces, agent infrastructure,
-      workflow extensions, and enterprise controls. The moat is not just safety branding; it is the ability to
-      turn frontier models into governed, integrated workflows. The diligence burden is to prove that reliability,
-      compliance, integration depth, and unit economics can keep pace with the scale implied by Anthropic's
-      valuation.
+      产品深度是优势：Anthropic 拥有可信的模型、开发者触面、智能体基础设施、工作流扩展与企业
+      控制。护城河不仅是安全品牌，而是将前沿模型转化为受治理、集成式工作流的能力。尽调负担
+      在于证明可靠性、合规、集成深度与单位经济模型能跟上 Anthropic 估值所暗含的规模。
     claimRefs:
       - C063
       - C064
