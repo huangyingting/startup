@@ -1,6 +1,6 @@
 # Startup
 
-Startup is an agent-driven research website for detailed reports on named startup companies. A single `Startup Research` agent uses workspace skills to produce structured YAML artifacts, validation scripts verify them, and an Astro static site renders the reports.
+Startup generates evidence-backed diligence reports for named startup companies. The default Copilot agent follows `AGENTS.md`, calls workspace skills, writes structured YAML artifacts, and an Astro static site renders the reports.
 
 ## What it does
 
@@ -14,49 +14,35 @@ Startup is an agent-driven research website for detailed reports on named startu
 
 ```mermaid
 flowchart TD
-  A[Manual GitHub workflow<br/>research-startup.yml] --> B{Inputs}
-  B -->|company name or URL| C[Startup Research agent<br/>single-company mode]
-  B -->|no company input| D[Default Copilot orchestrator<br/>recent-unicorn discovery]
-  D --> E[Select at least 5 recent private unicorns<br/>avoid existing reports/_index.yaml duplicates]
-  E --> F[Launch one Startup Research agent<br/>per selected company]
-  F --> C
+  A[Manual workflow<br/>research-startup.yml] --> B{Inputs}
+  B -->|company name or URL| WF[Default Copilot agent<br/>Startup Research workflow]
+  B -->|blank inputs| DISC[Recent-unicorn discovery]
+  DISC --> PICK[Select at least 5 recent private unicorns<br/>avoid reports/_index.yaml duplicates]
+  PICK --> WF
 
-  C --> G[Prepare report folder<br/>reports/&lt;timestamp&gt;-&lt;company-slug&gt;/]
-  G --> X[startup-snapshot skill<br/>snapshot + localEvidence]
-  X --> X1[01-company-snapshot.yaml]
-  X1 --> I[Post-01 duplicate-company check<br/>scripts/check-company-dedup.mjs]
-  I -->|duplicate-risk| I1[Stop unless user requested refresh]
-  I -->|clear| J[startup-market skill<br/>dynamic web_search if needed]
-  J --> J1[02-market-macro.yaml]
-  J1 --> K[startup-competition skill<br/>dynamic web_search if needed]
-  K --> K1[03-competitive-benchmarking.yaml]
-  K1 --> L[startup-financials skill<br/>dynamic web_search if needed]
-  L --> L1[04-financial-unit-economics.yaml]
-  L1 --> N[startup-product skill<br/>dynamic web_search if needed]
-  N --> N1[05-product-technology.yaml]
-  N1 --> O[startup-customers skill<br/>dynamic web_search if needed]
-  O --> O1[06-customer-retention.yaml]
-  O1 --> P[startup-risks skill<br/>dynamic web_search if needed]
-  P --> P1[07-risk-regulatory.yaml]
-  P1 --> V[startup-valuation skill<br/>dynamic web_search if needed]
-  V --> V1[08-investment-valuation.yaml]
-  V1 --> EV[startup-ledger skill<br/>consolidate local evidence]
-  EV --> EV1[100-evidence-ledger.yaml<br/>canonical S/C IDs]
-  EV1 --> M[startup-report skill]
-  M --> M1[101-report-document.yaml]
-  M1 --> C[startup-card skill]
-  C --> C1[102-report-card.yaml]
-  C1 --> Q[startup-report-zh skill]
-  Q --> Q1[101-report-document.zh.yaml]
-  Q1 --> ZH[startup-card-zh skill]
-  ZH --> ZH1[102-report-card.zh.yaml]
-  ZH1 --> R[Build reports/_index.yaml]
-  R --> S[npm run validate<br/>content checks, rendering contract, Astro build]
-  S --> T[Reject partial folders<br/>commit reports when changed]
+  WF --> FOLDER[Prepare report folder<br/>reports/&lt;timestamp&gt;-&lt;company-slug&gt;/]
+  FOLDER --> S01[startup-snapshot<br/>01-company-snapshot.yaml]
+  S01 --> DEDUP[Duplicate-company check]
+  DEDUP -->|duplicate-risk| STOP[Stop unless refresh was requested]
+  DEDUP -->|clear| S02[startup-market<br/>02-market-macro.yaml]
+  S02 --> S03[startup-competition<br/>03-competitive-benchmarking.yaml]
+  S03 --> S04[startup-financials<br/>04-financial-unit-economics.yaml]
+  S04 --> S05[startup-product<br/>05-product-technology.yaml]
+  S05 --> S06[startup-customers<br/>06-customer-retention.yaml]
+  S06 --> S07[startup-risks<br/>07-risk-regulatory.yaml]
+  S07 --> S08[startup-valuation<br/>08-investment-valuation.yaml]
+  S08 --> LEDGER[startup-ledger<br/>100-evidence-ledger.yaml]
+  LEDGER --> REPORT[startup-report<br/>101-report-document.yaml]
+  REPORT --> CARD[startup-card<br/>102-report-card.yaml]
+  CARD --> REPORTZH[startup-report-zh<br/>101-report-document.zh.yaml]
+  REPORTZH --> CARDZH[startup-card-zh<br/>102-report-card.zh.yaml]
+  CARDZH --> INDEX[Build reports/_index.yaml]
+  INDEX --> VALIDATE[npm run validate]
+  VALIDATE --> COMMIT[Reject partial folders<br/>commit reports when changed]
 ```
 
 ```text
-Startup Research single agent
+Startup Research workflow (default agent + skills)
   ├─ startup-snapshot              → 01-company-snapshot.yaml with localEvidence
   ├─ startup-market                → 02-market-macro.yaml
   ├─ startup-competition           → 03-competitive-benchmarking.yaml
@@ -92,7 +78,7 @@ npm run preview
 
 ## Generate a report
 
-Invoke the `Startup Research` agent with a named startup and optional URL, for example:
+Ask the default Copilot agent to run the Startup Research workflow with a company name and optional URL, for example:
 
 > Research Perplexity AI — official site https://www.perplexity.ai — with Chinese translation.
 
@@ -101,8 +87,8 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 ## Core files
 
 - `reports/` — generated report folders and `_index.yaml` catalog.
-- `.github/agents/research.agent.md` — single report-generation agent.
-- `.github/skills/` — stage skills used by the `Startup Research` agent.
+- `AGENTS.md` — default-agent workflow contract.
+- `.github/skills/` — stage skills used by the workflow.
 - `.github/schemas/startup-diligence-report-v2.md` — canonical YAML schema and rendering contract.
 - `.github/references/` — shared YAML syntax and evidence-ledger rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.

@@ -16,9 +16,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly to perform research for missing customer, case-study, segmentation, retention, NRR, churn, expansion, satisfaction, review, concentration, or partner proof. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `06-customer-retention.yaml.localEvidence`, then cite those local `claimRefs` in `06`.
-
-Immediately after each `web_search` call, emit a visible run-log line, not YAML, using this shape: `[web_search debug] skill=startup-customers call=<n> query="<query>" citedUrls=<count> retainedSources=<count> outcome="<used|gap>"`. This debug line is only for the chat/workflow transcript and must not be written into report artifacts.
+Use `web_search` for missing customer, case-study, segmentation, retention, NRR, churn, expansion, satisfaction, review, concentration, or partner-proof facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `06-customer-retention.yaml.localEvidence`, then cite those local `claimRefs` in `06`. Emit the `web_search` run-log line defined in `.github/references/evidence-ledger.md` after every call.
 
 If customer count, named customers, retention, churn, NRR, satisfaction, or customer concentration are not publicly supported, use `null` with exact diligence asks. Do not infer retention metrics without labeling estimates and confidence.
 

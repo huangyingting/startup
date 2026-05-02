@@ -49,3 +49,11 @@ For every targeted `web_search` response:
 - At least 15% of retained sources should be independent when the source universe supports it.
 - At most 50% of retained sources may be uncited by any claim.
 - Every retained URL appeared in `web_search` citations/annotations.
+
+## `web_search` run-log line
+
+Immediately after each `web_search` call, the calling skill must emit a single visible run-log line in the chat/workflow transcript. Never write this line into report artifacts.
+
+```text
+[web_search debug] skill=<skill-name> call=<n> query="<query>" citedUrls=<count> retainedSources=<count> outcome="<used|gap>"
+```

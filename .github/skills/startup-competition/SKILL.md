@@ -16,9 +16,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly to perform research for missing competitor, substitute, incumbent, pricing, feature, GTM, customer-proof, market-share-signal, or moat facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `03-competitive-benchmarking.yaml.localEvidence`, then cite those local `claimRefs` in `03`.
-
-Immediately after each `web_search` call, emit a visible run-log line, not YAML, using this shape: `[web_search debug] skill=startup-competition call=<n> query="<query>" citedUrls=<count> retainedSources=<count> outcome="<used|gap>"`. This debug line is only for the chat/workflow transcript and must not be written into report artifacts.
+Use `web_search` for missing competitor, substitute, incumbent, pricing, feature, GTM, customer-proof, market-share-signal, or moat facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `03-competitive-benchmarking.yaml.localEvidence`, then cite those local `claimRefs` in `03`. Emit the `web_search` run-log line defined in `.github/references/evidence-ledger.md` after every call.
 
 Do not invent competitor capabilities, pricing, market share, or customer wins. If targeted searches do not produce cited evidence, keep the gap visible.
 

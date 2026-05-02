@@ -1,7 +1,7 @@
 # Manual startup research run.
 #
-# The `Startup Research` agent owns one complete single-company skill workflow.
-# CI installs deps, invokes the agent, rebuilds reports/_index.yaml, validates the
+# The default Copilot agent runs the AGENTS.md Startup Research workflow. CI
+# installs deps, invokes the CLI, rebuilds reports/_index.yaml, validates the
 # site, and commits completed YAML report artifacts.
 #
 # Required secrets / setup:
@@ -84,7 +84,7 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Run Startup Research
+      - name: Run Startup Research workflow
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
           MODE: ${{ steps.inputs.outputs.mode }}
@@ -94,28 +94,25 @@ jobs:
           set -euo pipefail
           if [ "$MODE" = "recent-unicorns" ]; then
             PROMPT=$(cat <<EOF
-          Run automatic recent-unicorn discovery and batch startup research orchestration.
+          Follow AGENTS.md and run recent-unicorn discovery.
 
-          No specific company name or company URL was provided by the user. You are the default top-level orchestrator. First, identify at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a \$1B valuation, or became newly prominent in the last 12-24 months. Avoid duplicate companies already present in reports/_index.yaml unless a materially new report is justified.
+          Select at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a \$1B valuation, or became newly prominent in the last 12-24 months. Avoid companies already present in reports/_index.yaml unless a materially new report is justified.
 
-          For each selected company, launch the Startup Research agent concurrently, one agent run per selected company. Do not run internal report stages as separate agents from this top-level default agent; each Startup Research run is a single-agent skill workflow in this order: startup-snapshot -> startup-market -> startup-competition -> startup-financials -> startup-product -> startup-customers -> startup-risks -> startup-valuation -> startup-ledger -> startup-report -> startup-card -> startup-report-zh -> startup-card-zh. Each run must own its post-01 duplicate-company check, dynamic per-skill evidence gathering into localEvidence during the 01-08 analysis stages, final evidence consolidation into 100-evidence-ledger.yaml during startup-ledger, and final validation after translation.
-
-          Minimum company count: 5
-          For every selected company, pass the Startup Research agent this required context: company name, official URL when available, schemaVersion startup-diligence-report-v2, schema reference .github/schemas/startup-diligence-report-v2.md, YAML syntax reference .github/references/yaml-syntax.md, and evidence-ledger reference .github/references/evidence-ledger.md. Each company must produce one complete YAML artifact set directly under its own reports/<run>/ folder, including 01-company-snapshot.yaml through 08-investment-valuation.yaml plus final 100-evidence-ledger.yaml, 101-report-document.yaml, 102-report-card.yaml, and required Simplified Chinese 101-report-document.zh.yaml and 102-report-card.zh.yaml. Do not generate non-YAML report artifacts. Analysis skills must write cited sources/claims into their own localEvidence blocks using local S###/C### IDs; startup-ledger must run node scripts/consolidate-evidence.mjs <reportFolder> to dedupe sources/claims, create final 100-evidence-ledger.yaml, and rewrite final claimRefs before startup-report and startup-card run. Keep every final factual claim linked through 100-evidence-ledger.yaml claimRefs/sourceRefs. Evidence collection is web_search-only and available to the single Startup Research agent throughout the analysis skill sequence: generate targeted queries from each skill's YAML needs, batch independent queries, run non-dependent web_search calls in parallel wherever possible, parse each response packet fully (answer text is candidate narrative, annotations[].url_citation supplies source candidates, valid spans map facts to citations, and bing_searches[] is query provenance only), generate sources[] only from cited/annotated URLs, dedupe by canonical URL and underlying event during consolidation, prefer recent sources for current claims, and vary queries when results repeat. Evidence coverage follows chapter needs: retain sources that support downstream claims or document evidenceGaps. Use null, with explanation, for unsupported metrics. During the 01-08 analysis skills, run dynamic per-skill web_search when missing data appears supportable; translate only after consolidation and the English report/card skills finish. Delete duplicate or failed partial report folders before final validation. Startup Research runs must not invoke Startup Research recursively. Do not run git add or git commit.
+          For each selected company, run one complete Startup Research workflow using skills directly. Do not invoke another agent or delegate report stages. Use schemaVersion startup-diligence-report-v2 and the references listed in AGENTS.md. Each company must produce the full required YAML set, including English and Simplified Chinese final files, under its own reports/<run>/ folder. Use web_search only as described by AGENTS.md and .github/references/evidence-ledger.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
           EOF
           )
-            copilot --yolo --no-ask-user -p "$PROMPT"
           else
             PROMPT=$(cat <<EOF
-          Run the full Startup Research pipeline for this company.
+          Follow AGENTS.md and run one complete Startup Research workflow for this company.
 
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-null}
-          Use schemaVersion startup-diligence-report-v2 only. Run the single Startup Research skill workflow in this order: startup-snapshot -> startup-market -> startup-competition -> startup-financials -> startup-product -> startup-customers -> startup-risks -> startup-valuation -> startup-ledger -> startup-report -> startup-card -> startup-report-zh -> startup-card-zh. Use the schema reference .github/schemas/startup-diligence-report-v2.md and YAML syntax reference .github/references/yaml-syntax.md. Read .github/references/evidence-ledger.md before writing localEvidence or consolidating 100-evidence-ledger.yaml. Write the complete YAML artifact set directly under reports/<run>/, including 01-company-snapshot.yaml through 08-investment-valuation.yaml plus final 100-evidence-ledger.yaml, 101-report-document.yaml, 102-report-card.yaml, and required Simplified Chinese 101-report-document.zh.yaml and 102-report-card.zh.yaml. Do not generate non-YAML report artifacts. Analysis skills must write cited sources/claims into their own localEvidence blocks using local S###/C### IDs; startup-ledger must run node scripts/consolidate-evidence.mjs <reportFolder> to dedupe sources/claims, create final 100-evidence-ledger.yaml, and rewrite final claimRefs before startup-report and startup-card run. Keep every final factual claim linked through 100-evidence-ledger.yaml claimRefs/sourceRefs. Evidence collection is web_search-only and available to the single Startup Research agent throughout analysis skills: generate targeted queries from each skill's YAML needs, batch independent queries, run non-dependent web_search calls in parallel wherever possible, parse each response packet fully (answer text is candidate narrative, annotations[].url_citation supplies source candidates, valid spans map facts to citations, and bing_searches[] is query provenance only), generate sources[] only from cited/annotated URLs, dedupe by canonical URL and underlying event during consolidation, prefer recent sources for current claims, and vary queries when results repeat. Evidence coverage follows chapter needs: retain sources that support downstream claims or document evidenceGaps. Use null, with explanation, for unsupported metrics. During the 01-08 analysis skills, run dynamic per-skill web_search when missing data appears supportable; translate only after consolidation and the English report/card skills finish. Delete duplicate or failed partial report folders before final validation. Do not invoke Startup Research recursively. Do not run git add or git commit.
+
+          Use schemaVersion startup-diligence-report-v2 and the references listed in AGENTS.md. Run the required skills in order; do not invoke another agent or delegate report stages. Write the full required YAML set, including English and Simplified Chinese final files, under reports/<run>/. Use web_search only as described by AGENTS.md and .github/references/evidence-ledger.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
           EOF
           )
-            copilot --yolo --no-ask-user --agent "Startup Research" -p "$PROMPT"
           fi
+          copilot --yolo --no-ask-user -p "$PROMPT"
 
       - name: Rebuild reports/_index.yaml
         run: node scripts/build-reports-index.mjs --strict
