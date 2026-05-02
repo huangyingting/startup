@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Snapshot
 
-Use this skill after `00-report-brief.yaml` exists and parses. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, and the evidence rules in `.github/references/evidence-ledger.md`.
+Use this skill as the first report artifact stage after `reportFolder` exists. Read `schemaPath`, `yamlSyntaxPath`, company name, optional company URL, `runTimestamp`, `reportFolder`, and the evidence rules in `.github/references/evidence-ledger.md`.
 
 ## Outputs
 
@@ -20,7 +20,7 @@ Create the company snapshot and its local evidence. This skill does not write `1
 
 ## Dynamic evidence use
 
-Use targeted `web_search` for company identity and snapshot facts: official website, founding, founders, HQ, product summary, funding, valuation, stage, leadership, investors, customers, headcount, and current company status.
+Use targeted `web_search` to perform research for company identity and snapshot facts: official website, founding, founders, HQ, product summary, funding, valuation, stage, leadership, investors, customers, headcount, and current company status.
 
 Parse `web_search` packets per `.github/references/evidence-ledger.md`, register retained sources and atomic claims under `01-company-snapshot.yaml.localEvidence`, then cite those local `claimRefs` in `01-company-snapshot.yaml`.
 

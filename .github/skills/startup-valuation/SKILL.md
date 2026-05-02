@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Valuation
 
-Use this skill after `00`, `01`, and the valuation-critical analysis artifacts exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, `04-financial-unit-economics.yaml`, `06-customer-retention.yaml`, and `07-risk-regulatory.yaml`. Read `02-market-macro.yaml`, `03-competitive-benchmarking.yaml`, or `05-product-technology.yaml` only when market size, moat, or product differentiation materially affects valuation.
+Use this skill after `01` and the valuation-critical analysis artifacts exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `01-company-snapshot.yaml`, `04-financial-unit-economics.yaml`, `06-customer-retention.yaml`, and `07-risk-regulatory.yaml`. Read `02-market-macro.yaml`, `03-competitive-benchmarking.yaml`, or `05-product-technology.yaml` only when market size, moat, or product differentiation materially affects valuation.
 
 ## Outputs
 
@@ -16,7 +16,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing valuation, funding, last-round, public comparable, private comparable, IPO-readiness, exit, scenario, or recommendation-critical facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `08-investment-valuation.yaml.localEvidence`, then cite those local `claimRefs` in `08`.
+You may use `web_search` directly to perform research for missing valuation, funding, last-round, public comparable, private comparable, IPO-readiness, exit, scenario, or recommendation-critical facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `08-investment-valuation.yaml.localEvidence`, then cite those local `claimRefs` in `08`.
 
 If valuation inputs are missing, default to `research-more` or `track` rather than false precision. Do not invent valuation, revenue multiples, return scenarios, IPO timing, or final recommendation support.
 

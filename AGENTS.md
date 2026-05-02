@@ -26,8 +26,8 @@ This file gives coding agents the minimum context needed to work in this reposit
 ## Report generation rules
 
 - Use one `Startup Research` run per company. Internal report stages are skills, not separate agents.
-- Skill order: `startup-brief → startup-snapshot → startup-market → startup-competition → startup-financials → startup-product → startup-customers → startup-risks → startup-valuation → startup-ledger → startup-report → startup-card → startup-report-zh → startup-card-zh`.
-- Reports must be complete YAML artifact sets: `00-report-brief.yaml` through `08-investment-valuation.yaml`, plus final `100-evidence-ledger.yaml`, `101-report-document.yaml`, `102-report-card.yaml`, `101-report-document.zh.yaml`, and `102-report-card.zh.yaml`.
+- Skill order: `startup-snapshot → startup-market → startup-competition → startup-financials → startup-product → startup-customers → startup-risks → startup-valuation → startup-ledger → startup-report → startup-card → startup-report-zh → startup-card-zh`.
+- Reports must be complete YAML artifact sets: `01-company-snapshot.yaml` through `08-investment-valuation.yaml`, plus final `100-evidence-ledger.yaml`, `101-report-document.yaml`, `102-report-card.yaml`, `101-report-document.zh.yaml`, and `102-report-card.zh.yaml`.
 - Analysis skills write per-artifact `localEvidence`; `startup-ledger` runs `scripts/consolidate-evidence.mjs` to dedupe final `100-evidence-ledger.yaml` before final report/card skills run.
 - Do not keep failed, duplicate, or partial report folders under `reports/`.
 

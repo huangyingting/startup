@@ -5,7 +5,6 @@ The current generation schema is `startup-diligence-report-v2`. It is designed t
 ## Artifact list
 
 ```text
-00-report-brief.yaml
 01-company-snapshot.yaml
 02-market-macro.yaml
 03-competitive-benchmarking.yaml
@@ -33,14 +32,13 @@ Required Simplified Chinese files (must ship with every report):
 - `/tmp` tool-output files are diagnostic logs only, never artifacts or handoff inputs.
 - `Startup Research` must read this schema and `.github/references/yaml-syntax.md` before writing.
 - Skills that create local evidence or consolidate `100-evidence-ledger.yaml` must read `.github/references/evidence-ledger.md`.
-- Skills read their minimum dependency set rather than mechanically reading every prior artifact. Every analysis skill uses `00-report-brief.yaml` for scope and `01-company-snapshot.yaml` for identity once available; domain skills read additional upstream artifacts only when needed for their own chapter logic.
+- Skills read their minimum dependency set rather than mechanically reading every prior artifact. Downstream analysis skills use `01-company-snapshot.yaml` for identity once available; domain skills read additional upstream artifacts only when needed for their own chapter logic.
 - `web_search` is available to the single `Startup Research` agent and may be used dynamically by analysis skills when chapter data is missing. Analysis skills first write local `sources[]` / `claims[]` under their own artifact's `localEvidence`; `startup-ledger` then runs `scripts/consolidate-evidence.mjs` to deduplicate sources/claims, create `100-evidence-ledger.yaml`, and rewrite final `claimRefs`.
 
 ## Artifact mapping
 
 | File | `artifact` | Owner | Chapter |
 |---|---|---|---|
-| `00-report-brief.yaml` | `report-brief` | `startup-brief` skill | n/a |
 | `100-evidence-ledger.yaml` | `evidence-ledger` | `startup-ledger` via `scripts/consolidate-evidence.mjs` after `01`–`08` | n/a |
 | `01-company-snapshot.yaml` | `company-snapshot` | `startup-snapshot` skill | 1 — Startup Introduction & Company Snapshot |
 | `02-market-macro.yaml` | `market-macro` | `startup-market` skill | 2 — Market Sizing & Macro Analysis |

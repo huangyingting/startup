@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Financials
 
-Use this skill after `00`–`03` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and relevant context from `02-market-macro.yaml` / `03-competitive-benchmarking.yaml` only when market boundaries, pricing, GTM, or competitor context affects financial interpretation.
+Use this skill after `01`–`03` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `01-company-snapshot.yaml`, and relevant context from `02-market-macro.yaml` / `03-competitive-benchmarking.yaml` only when market boundaries, pricing, GTM, or competitor context affects financial interpretation.
 
 ## Outputs
 
@@ -16,7 +16,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing revenue, pricing, funding, valuation, margin, CAC, LTV, payback, burn, growth, or projection-anchor facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `04-financial-unit-economics.yaml.localEvidence`, then cite those local `claimRefs` in `04`.
+You may use `web_search` directly to perform research for missing revenue, pricing, funding, valuation, margin, CAC, LTV, payback, burn, growth, or projection-anchor facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `04-financial-unit-economics.yaml.localEvidence`, then cite those local `claimRefs` in `04`.
 
 If revenue, gross margin, CAC, LTV, retention, burn, payback, or customer concentration are not publicly supported, use `null` with exact diligence asks. Do not infer metrics without labeling estimates and confidence.
 

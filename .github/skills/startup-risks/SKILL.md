@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Risks
 
-Use this skill after `00`, `01`, and the risk-relevant analysis artifacts exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and only the upstream artifacts needed for the risk at hand, such as product/security context from `05-product-technology.yaml`, customer concentration from `06-customer-retention.yaml`, or financial exposure from `04-financial-unit-economics.yaml`.
+Use this skill after `01` and the risk-relevant analysis artifacts exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `01-company-snapshot.yaml`, and only the upstream artifacts needed for the risk at hand, such as product/security context from `05-product-technology.yaml`, customer concentration from `06-customer-retention.yaml`, or financial exposure from `04-financial-unit-economics.yaml`.
 
 ## Outputs
 
@@ -16,7 +16,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing regulatory, legal, litigation, compliance, security incident, operational, credit, competitive, geopolitical, or mitigation facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `07-risk-regulatory.yaml.localEvidence`, then cite those local `claimRefs` in `07`.
+You may use `web_search` directly to perform research for missing regulatory, legal, litigation, compliance, security incident, operational, credit, competitive, geopolitical, or mitigation facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `07-risk-regulatory.yaml.localEvidence`, then cite those local `claimRefs` in `07`.
 
 Do not invent legal outcomes, regulatory posture, security incidents, or mitigations. If targeted searches do not produce cited evidence, keep the gap visible.
 

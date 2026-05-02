@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Ledger
 
-Use this skill after `00`–`08` exist, parse, and all supportable analysis gaps have either been researched by the relevant skill or documented as gaps.
+Use this skill after `01`–`08` exist, parse, and all supportable analysis gaps have either been researched by the relevant skill or documented as gaps.
 
 ## Outputs
 

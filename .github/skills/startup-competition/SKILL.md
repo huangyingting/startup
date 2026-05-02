@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Competition
 
-Use this skill after `00`–`02` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and `02-market-macro.yaml`. Do not read unrelated prior artifacts unless needed to resolve a specific gap.
+Use this skill after `01`–`02` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `01-company-snapshot.yaml`, and `02-market-macro.yaml`. Do not read unrelated prior artifacts unless needed to resolve a specific gap.
 
 ## Outputs
 
@@ -16,7 +16,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing competitor, substitute, incumbent, pricing, feature, GTM, customer-proof, market-share-signal, or moat facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `03-competitive-benchmarking.yaml.localEvidence`, then cite those local `claimRefs` in `03`.
+You may use `web_search` directly to perform research for missing competitor, substitute, incumbent, pricing, feature, GTM, customer-proof, market-share-signal, or moat facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `03-competitive-benchmarking.yaml.localEvidence`, then cite those local `claimRefs` in `03`.
 
 Do not invent competitor capabilities, pricing, market share, or customer wins. If targeted searches do not produce cited evidence, keep the gap visible.
 

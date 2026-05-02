@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Customers
 
-Use this skill after `00`, `01`, and relevant product/commercial context exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and relevant context from `04-financial-unit-economics.yaml` / `05-product-technology.yaml` when pricing, product modules, or implementation claims affect customer analysis.
+Use this skill after `01` and relevant product/commercial context exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `01-company-snapshot.yaml`, and relevant context from `04-financial-unit-economics.yaml` / `05-product-technology.yaml` when pricing, product modules, or implementation claims affect customer analysis.
 
 ## Outputs
 
@@ -16,7 +16,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing customer, case-study, segmentation, retention, NRR, churn, expansion, satisfaction, review, concentration, or partner proof. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `06-customer-retention.yaml.localEvidence`, then cite those local `claimRefs` in `06`.
+You may use `web_search` directly to perform research for missing customer, case-study, segmentation, retention, NRR, churn, expansion, satisfaction, review, concentration, or partner proof. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `06-customer-retention.yaml.localEvidence`, then cite those local `claimRefs` in `06`.
 
 If customer count, named customers, retention, churn, NRR, satisfaction, or customer concentration are not publicly supported, use `null` with exact diligence asks. Do not infer retention metrics without labeling estimates and confidence.
 

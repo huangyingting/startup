@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Market
 
-Use this skill after `00` and `01` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, and `01-company-snapshot.yaml`.
+Use this skill after `01-company-snapshot.yaml` exists and parses. Read `schemaPath`, `yamlSyntaxPath`, and `01-company-snapshot.yaml`.
 
 ## Outputs
 
@@ -16,7 +16,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing market-definition, sizing, segmentation, buyer, geography, growth-driver, or adoption facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `02-market-macro.yaml.localEvidence`, then cite those local `claimRefs` in `02`.
+You may use `web_search` directly to perform research for missing market-definition, sizing, segmentation, buyer, geography, growth-driver, or adoption facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `02-market-macro.yaml.localEvidence`, then cite those local `claimRefs` in `02`.
 
 Do not invent market sizes, growth rates, penetration, TAM/SAM/SOM, or segment shares. If targeted searches do not produce cited evidence, keep the gap visible.
 

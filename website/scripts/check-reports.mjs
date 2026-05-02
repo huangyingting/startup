@@ -10,7 +10,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPORTS_DIR = resolve(__dirname, '../../reports');
 const V2_SCHEMA = 'startup-diligence-report-v2';
 const V2_REQUIRED = [
-  '00-report-brief.yaml',
   '100-evidence-ledger.yaml',
   '01-company-snapshot.yaml',
   '02-market-macro.yaml',
@@ -24,7 +23,6 @@ const V2_REQUIRED = [
   '102-report-card.yaml',
 ];
 const ARTIFACTS = new Map([
-  ['00-report-brief.yaml', { artifact: 'report-brief' }],
   ['100-evidence-ledger.yaml', { artifact: 'evidence-ledger' }],
   ['01-company-snapshot.yaml', { artifact: 'company-snapshot', chapter: 1 }],
   ['02-market-macro.yaml', { artifact: 'market-macro', chapter: 2 }],

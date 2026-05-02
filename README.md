@@ -22,9 +22,7 @@ flowchart TD
   F --> C
 
   C --> G[Prepare report folder<br/>reports/&lt;timestamp&gt;-&lt;company-slug&gt;/]
-  G --> H[startup-brief skill<br/>research plan]
-  H --> H1[00-report-brief.yaml]
-  H1 --> X[startup-snapshot skill<br/>snapshot + localEvidence]
+  G --> X[startup-snapshot skill<br/>snapshot + localEvidence]
   X --> X1[01-company-snapshot.yaml]
   X1 --> I[Post-01 duplicate-company check<br/>scripts/check-company-dedup.mjs]
   I -->|duplicate-risk| I1[Stop unless user requested refresh]
@@ -59,7 +57,6 @@ flowchart TD
 
 ```text
 Startup Research single agent
-  ├─ startup-brief                 → 00-report-brief.yaml
   ├─ startup-snapshot              → 01-company-snapshot.yaml with localEvidence
   ├─ startup-market                → 02-market-macro.yaml
   ├─ startup-competition           → 03-competitive-benchmarking.yaml

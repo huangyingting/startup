@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Product
 
-Use this skill after `00`, `01`, and any relevant market/competition context exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and relevant context from `02-market-macro.yaml` / `03-competitive-benchmarking.yaml` when positioning, buyer needs, or competitor features affect product analysis. Read `04-financial-unit-economics.yaml` only when pricing or monetization context is needed.
+Use this skill after `01` and any relevant market/competition context exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `01-company-snapshot.yaml`, and relevant context from `02-market-macro.yaml` / `03-competitive-benchmarking.yaml` when positioning, buyer needs, or competitor features affect product analysis. Read `04-financial-unit-economics.yaml` only when pricing or monetization context is needed.
 
 ## Outputs
 
@@ -16,7 +16,7 @@ Write exactly:
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing product, platform, module, AI/automation, architecture, integration, roadmap, implementation, security, privacy, or compliance facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `05-product-technology.yaml.localEvidence`, then cite those local `claimRefs` in `05`.
+You may use `web_search` directly to perform research for missing product, platform, module, AI/automation, architecture, integration, roadmap, implementation, security, privacy, or compliance facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `05-product-technology.yaml.localEvidence`, then cite those local `claimRefs` in `05`.
 
 Do not invent architecture, security certifications, model capabilities, roadmap timing, integrations, or compliance posture. If targeted searches do not produce cited evidence, keep the gap visible.
 

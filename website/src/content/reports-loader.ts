@@ -187,7 +187,6 @@ export function loadLocalizedIndex(runId: string, lang: Lang = 'en'): Record<str
 export function loadStageFiles(runId: string, lang: Lang = 'en') {
   const folder = join(REPORTS_DIR, runId);
   return {
-    reportBrief: readLocalizedYaml(folder, '00-report-brief', lang),
     evidenceLedger: readLocalizedYaml(folder, '100-evidence-ledger', lang),
     companySnapshot: readLocalizedYaml(folder, '01-company-snapshot', lang),
     marketMacro: readLocalizedYaml(folder, '02-market-macro', lang),
