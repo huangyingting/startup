@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Risks
 
-Use this skill after `00`–`06` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `06-customer-retention.yaml`.
+Use this skill after `00`, `01`, and the risk-relevant analysis artifacts exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and only the upstream artifacts needed for the risk at hand, such as product/security context from `05-product-technology.yaml`, customer concentration from `06-customer-retention.yaml`, or financial exposure from `04-financial-unit-economics.yaml`.
 
 ## Outputs
 

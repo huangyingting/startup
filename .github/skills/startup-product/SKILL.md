@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Product
 
-Use this skill after `00`–`04` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `04-financial-unit-economics.yaml`.
+Use this skill after `00`, `01`, and any relevant market/competition context exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and relevant context from `02-market-macro.yaml` / `03-competitive-benchmarking.yaml` when positioning, buyer needs, or competitor features affect product analysis. Read `04-financial-unit-economics.yaml` only when pricing or monetization context is needed.
 
 ## Outputs
 

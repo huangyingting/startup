@@ -67,6 +67,17 @@ Use exactly this skill sequence inside this agent:
 
 Do not invoke separate stage agents for `00`–`102`. All stage logic lives in the skills listed above, and this single agent owns all reads, searches, edits, validation, and final reporting.
 
+## Dependency rules
+
+Downstream skills do not need to mechanically read every prior artifact. Each skill must read its minimum dependency set, plus any upstream artifact needed to resolve a concrete gap or maintain consistency.
+
+- Every analysis skill reads `00-report-brief.yaml` for scope and `01-company-snapshot.yaml` for company identity once `01` exists.
+- Domain skills read only the upstream artifacts that define their required context. For example, competition reads market boundaries; valuation reads financial, customer, and risk evidence.
+- A skill may inspect another artifact's open gaps or relevant tables/figures, but it must not edit another skill's owned artifact directly.
+- If a skill finds a supportable missing fact that belongs to an earlier domain, route back to that earlier skill, update its local evidence and artifact, then continue forward.
+- `startup-ledger`, `startup-report`, and `startup-card` are consolidation/finalization skills; they read the completed artifacts they explicitly depend on and do not gather new facts.
+- `startup-report-zh` and `startup-card-zh` read only their English source artifact and preserve facts, IDs, numbers, and schema shape.
+
 ## Shared evidence rules
 
 - `web_search` is available to this agent throughout the skill sequence. Evidence gathering is distributed across analysis skills, while evidence registration is consolidated at the end into `100-evidence-ledger.yaml`.

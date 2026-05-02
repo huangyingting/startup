@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Competition
 
-Use this skill after `00`–`02` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `02-market-macro.yaml`.
+Use this skill after `00`–`02` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and `02-market-macro.yaml`. Do not read unrelated prior artifacts unless needed to resolve a specific gap.
 
 ## Outputs
 

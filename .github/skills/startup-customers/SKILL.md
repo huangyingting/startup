@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Customers
 
-Use this skill after `00`–`05` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `05-product-technology.yaml`.
+Use this skill after `00`, `01`, and relevant product/commercial context exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and relevant context from `04-financial-unit-economics.yaml` / `05-product-technology.yaml` when pricing, product modules, or implementation claims affect customer analysis.
 
 ## Outputs
 

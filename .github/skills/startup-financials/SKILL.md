@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Financials
 
-Use this skill after `00`–`03` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `03-competitive-benchmarking.yaml`.
+Use this skill after `00`–`03` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-company-snapshot.yaml`, and relevant context from `02-market-macro.yaml` / `03-competitive-benchmarking.yaml` only when market boundaries, pricing, GTM, or competitor context affects financial interpretation.
 
 ## Outputs
 
