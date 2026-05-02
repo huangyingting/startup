@@ -1,50 +1,50 @@
 ---
 name: startup-risks
-description: "Use when: generating 07-risk-regulatory.yaml. Keywords: regulatory risk, legal risk, security incidents, operational risk, compliance, mitigation, web_search."
+description: "Use when: generating 07-risk-regulatory.yaml and 07-risk-regulatory.zh.yaml. Keywords: regulatory risk, legal risk, security incidents, operational risk, compliance, mitigation."
 user-invocable: false
 ---
 
 # Startup Risks
 
-Run after `01` and risk-relevant analysis artifacts parse. Read `01-company-snapshot.yaml` for identity; read additional upstream artifacts only when needed for the risk at hand (product/security context from `05-product-technology.yaml`, customer concentration from `06-customer-retention.yaml`, financial exposure from `04-financial-unit-economics.yaml`). Follow `.github/references/analysis-skill-conventions.md` for inputs, evidence rules, freshness, source quality, figure conventions, the Simplified Chinese sibling, and handoff format.
+Seventh analysis stage. Build the regulatory, legal, security, operational, and thesis-break risk record.
+
+## Read first
+
+- `01-company-snapshot.yaml`
+- `05-product-technology.yaml`, `06-customer-retention.yaml`, and `04-financial-unit-economics.yaml` when product/security, customer concentration, or financial exposure shapes risk.
+- `.github/references/analysis-skill-conventions.md`
 
 ## Outputs
 
 - `07-risk-regulatory.yaml`
 - `07-risk-regulatory.zh.yaml`
 
-## Chapter focus
+## Focus
 
-- Risk overview and severity ranking.
-- Regulatory/legal risk and jurisdiction-specific exposure (sector-specific rules, proposed regulations, state/local exposure, licensing, filings, lawsuits, enforcement signals).
-- Partner, supplier, banking, cloud, model, data, or platform concentration risk where relevant.
-- Credit, fraud, counterparty, macroeconomic, or default-risk framework when the business model has financing, lending, payments, or balance-sheet exposure.
-- Security, privacy, compliance certifications, technology outage, integration failure, AI/model error, operational, platform, and competitive risks.
-- Mitigation evidence, residual risk, risk transmission to financials/valuation, management response.
-- Kill criteria, stop-loss triggers, and unresolved diligence asks.
+- Severity-ranked risk overview.
+- Regulatory/legal exposure by jurisdiction, sector rules, filings, lawsuits, and enforcement signals.
+- Partner, supplier, banking, cloud, model, data, or platform concentration.
+- Credit, fraud, counterparty, macro, or default risk when business model requires it.
+- Security, privacy, compliance, outages, integrations, AI/model error, operational, platform, and competitive risks.
+- Mitigations, residual risk, financial/valuation transmission, stop-loss triggers, kill criteria, and diligence asks.
 
-Each high-severity risk row needs dated evidence, current status, likelihood/severity rationale, mitigation evidence, residual exposure, and investment impact.
+## Evidence targets
 
-## Expected table families
+- Official trust/security/privacy/terms/DPA/compliance/status/incident/responsible-use/legal/subprocessor pages.
+- Legal filings, regulators, court material, incident/status history, reputable adverse reporting, partner concentration evidence, mitigation/governance evidence.
 
-Risk register, regulatory/legal risk, partner/concentration risk, credit/counterparty risk when relevant, operational/security risk, competitive threat assessment, mitigation framework, kill criteria/stop-loss triggers, risk diligence asks.
+## Required tables and figures
 
-## Source mix
+- Risk register with dated evidence, status, likelihood, severity, mitigation, residual exposure, and investment impact.
+- Regulatory/legal risk table.
+- Partner/concentration risk table.
+- Operational/security risk table.
+- Kill criteria / stop-loss trigger table.
+- Preferred figures: `risk-heatmap`, `matrix`, or `risk-transmission-map` with labeled nodes/edges.
 
-Source across official controls (trust/security/privacy/terms/DPA/compliance/status/incident-history/responsible-use/regulatory/legal-notice/subprocessor pages), legal filings or court/regulator material, privacy/security documentation, incident/status history, reputable adverse reporting, partner/concentration evidence, and mitigation/governance evidence.
+## Completion check
 
-## Domain-specific query angles
-
-- Adverse/disconfirming searches are the default; risk work is incomplete without them.
-- For every top risk row, ask one source-finding query and one impact/mitigation query before assigning severity.
-- Use official material for stated controls and mitigations; corroborate legal outcomes, incidents, regulatory posture, and certifications independently. If reports are gated, record the gap and diligence path.
-- Where active litigation, regulatory posture, safety/security incidents, or partner concentration cannot be confirmed, show the exact legal/security/compliance diligence path; do not reduce it to a generic risk warning.
-
-## Preferred figure types
-
-- `risk-heatmap` / `matrix` per the conventions reference (`row.values.length === data.columns.length`; row identifier lives in `row.label`).
-- `risk-transmission-map` with `data.nodes[]` and `data.edges[]` when causal propagation matters.
-
-## Handoff extras
-
-Add `top risks` and `risk rating signal` to the standard handoff fields.
+- Adverse/disconfirming searches are mandatory.
+- For each top risk, ask one source-finding query and one impact/mitigation query before assigning severity.
+- Where active litigation, regulatory posture, certifications, incidents, or concentration cannot be confirmed, record the exact diligence path.
+- Handoff includes top risks and risk rating signal.

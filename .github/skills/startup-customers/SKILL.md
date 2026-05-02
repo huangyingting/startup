@@ -1,50 +1,50 @@
 ---
 name: startup-customers
-description: "Use when: generating 06-customer-retention.yaml. Keywords: customers, retention, NRR, churn, case studies, segmentation, satisfaction, concentration, web_search."
+description: "Use when: generating 06-customer-retention.yaml and 06-customer-retention.zh.yaml. Keywords: customers, retention, NRR, churn, case studies, segmentation, satisfaction, concentration."
 user-invocable: false
 ---
 
 # Startup Customers
 
-Run after `01` and the relevant product/commercial context parse. Read `01-company-snapshot.yaml` for identity; read `04-financial-unit-economics.yaml` / `05-product-technology.yaml` only when pricing, modules, or implementation claims affect customer analysis. Follow `.github/references/analysis-skill-conventions.md` for inputs, evidence rules, freshness, source quality, figure conventions, the Simplified Chinese sibling, and handoff format.
+Sixth analysis stage. Assess customer quality, retention evidence, expansion, and concentration risk.
+
+## Read first
+
+- `01-company-snapshot.yaml`
+- `04-financial-unit-economics.yaml` and `05-product-technology.yaml` when pricing, modules, or implementation claims affect customer analysis.
+- `.github/references/analysis-skill-conventions.md`
 
 ## Outputs
 
 - `06-customer-retention.yaml`
 - `06-customer-retention.zh.yaml`
 
-## Chapter focus
+## Focus
 
 - Customer base overview and segment map.
-- Customer growth trajectory across time when evidence supports it.
-- Customer segmentation by enterprise/mid-market/SMB, geography, vertical, ACV/ARR band, or usage profile where supportable.
-- Named customer proof, case studies, partner proof, use cases, outcomes, referenceability.
-- Retention, logo churn, gross retention, NRR, expansion, satisfaction, support quality, implementation time, reviews, usage signals.
-- Expansion drivers (spend/usage growth, seat expansion, module adoption, pricing-tier upgrades, ecosystem adoption, geography expansion).
-- Customer concentration and cohort-quality risks.
-- Customer diligence asks required before underwriting.
+- Customer growth trajectory when supported.
+- Segmentation by enterprise/mid-market/SMB, geography, vertical, ACV/ARR band, or usage profile.
+- Named customer proof, case studies, use cases, outcomes, referenceability.
+- Retention, churn, GRR, NRR, expansion, satisfaction, support quality, implementation time, reviews, and usage signals.
+- Concentration, cohort-quality risks, and customer diligence asks.
 
-## Expected table families
+## Evidence targets
 
-Customer growth trajectory, customer segmentation, named customer proof, case studies, retention/churn/satisfaction, expansion drivers, concentration risks, customer diligence asks.
+- Official customer pages, case studies, testimonials, partner stories, industry/solution pages, webinars, press releases, marketplaces, and customer blog posts.
+- Separate customer-count claims, named deployments, case-study outcomes, partner/channel proof, usage signals, review evidence, and adverse customer evidence.
+- Logos alone are weak unless they support active deployment or a concrete use case.
 
-## Source mix
+## Required tables and figures
 
-Separate customer-count claims, named customer deployments, case-study outcomes, partner/channel proof, usage signals, review/satisfaction evidence, and adverse customer evidence. Logos alone are weak evidence; look for active deployment language, dated case studies, measurable outcomes, renewal/expansion signals, or independent customer statements.
+- Customer growth trajectory or explicit gap table.
+- Customer segmentation.
+- Named customer proof / case studies.
+- Retention, churn, NRR, satisfaction, or explicit metric-gap table.
+- Expansion drivers and concentration risks.
+- Preferred figure: `customer-surface-map`; use numeric bars only with numeric values. Matrix rows use `row.label`; do not add a fake “Named customer” first column.
 
-## Domain-specific query angles
+## Completion check
 
-- Mine official customer pages, case studies, testimonials, partner stories, industry/solutions pages, webinars, press releases, marketplace announcements, and customer blog posts.
-- Treat logos/testimonials as proof only when they support active deployment or a concrete use case; otherwise mark them weak and seek corroboration.
-- Include at least one adverse query about churn, customer complaints, blocked deployments, concentration, or procurement/security objections.
-- If customer count, named customers, retention, churn, NRR, satisfaction, or concentration are not publicly supported, write `null` plus exact diligence asks (cohort retention, logo churn, NRR/GRR, expansion by product, top-customer concentration, implementation duration, support metrics, reference calls). Do not infer retention metrics without labeling estimates and confidence.
-
-## Preferred figure types
-
-- `customer-surface-map` for acquisition surface, segments, and expansion loops.
-- `bars` / `metric-bars` only with numeric values; otherwise use explanatory cards/nodes with gaps.
-- `matrix` follows the conventions reference: `data.columns[]` is the X-axis, `row.label` is the customer / Y-axis identity, `row.values.length === data.columns.length`. Do not introduce a `Named customer` first column.
-
-## Handoff extras
-
-Add `customer quality` and `retention signal` to the standard handoff fields.
+- Include adverse searches for churn, complaints, blocked deployments, concentration, or procurement/security objections.
+- Unsupported customer count, retention, churn, NRR, satisfaction, or concentration becomes `null` plus exact diligence asks.
+- Handoff includes customer quality and retention signal.

@@ -1,47 +1,46 @@
 ---
 name: startup-market
-description: "Use when: generating 02-market-macro.yaml. Keywords: market sizing, TAM, SAM, SOM, segments, buyers, geography, adoption, web_search."
+description: "Use when: generating 02-market-macro.yaml and 02-market-macro.zh.yaml. Keywords: market sizing, TAM, SAM, SOM, segments, buyers, geography, adoption, budget pools."
 user-invocable: false
 ---
 
 # Startup Market
 
-Run after `01-company-snapshot.yaml` parses. Read it for company identity. Follow `.github/references/analysis-skill-conventions.md` for inputs, evidence rules, freshness, source quality, figure conventions, the Simplified Chinese sibling, and handoff format.
+Second analysis stage. Define the market, size the opportunity, and identify adoption constraints.
+
+## Read first
+
+- `01-company-snapshot.yaml`
+- `.github/references/analysis-skill-conventions.md`
 
 ## Outputs
 
 - `02-market-macro.yaml`
 - `02-market-macro.zh.yaml`
 
-## Chapter focus
+## Focus
 
-- Market definition and category boundaries.
-- TAM/SAM/SOM or evidence-constrained sizing across multiple lenses (each row identifies its boundary, date, geography, included/excluded spend, confidence, and why it matters to the startup).
-- Segment definitions and sizing by adjacent budget pool or workflow category (core software, payments, automation, procurement, AP, treasury, infrastructure, services, etc.) when applicable.
-- Growth drivers and constraints.
-- Buyer/persona segmentation and customer budget owner.
-- Geography, adoption, penetration, and timing — by customer size, vertical, or adoption maturity when supportable.
-- Market attractiveness verdict and open diligence asks.
+- Category boundaries and excluded/included spend.
+- TAM/SAM/SOM or evidence-constrained sizing across multiple lenses.
+- Segment definitions by buyer, workflow, vertical, geography, and adjacent budget pool.
+- Growth drivers, constraints, adoption timing, penetration, and budget ownership.
+- Market attractiveness verdict and diligence asks.
 
-## Expected table families
+## Evidence targets
 
-Market definitions, segment definitions and sizing, TAM/SAM/SOM sizing lenses, growth drivers, buyer/customer segments, geography/penetration constraints, market evidence gaps.
+- Analyst/market-data sources, government/regulatory or industry sources, buyer-budget evidence, adoption/penetration data, company segmentation claims, and at least one disconfirming source on slowdown, saturation, budget pressure, regulation, or ROI uncertainty.
 
-## Source mix
+## Required tables and figures
 
-Analyst or market-data sources, government/regulatory or industry sources where relevant, buyer-budget evidence, adoption/penetration evidence, company segmentation claims, and at least one disconfirming source on adoption slowdown, ROI uncertainty, regulation, or budget pressure. Do not build the chapter from a single broad TAM estimate.
+- Market definition table.
+- Segment/sizing table.
+- TAM/SAM/SOM or constrained sizing lens table.
+- Growth driver / adoption constraint table.
+- Buyer/persona or geography/penetration table.
+- Preferred figures: `market-sizing-lens`, `bars`, or `metric-bars` with numeric values only.
 
-## Domain-specific query angles
+## Completion check
 
-- If broad TAM queries are thin, rewrite for software-only spend, enterprise-only spend, workflow-specific spend, or bottom-up adoption proxies before declaring a gap.
-- Include at least one disconfirming question about market slowdown, saturation, budget pressure, or adoption constraints.
-- If SAM/SOM cannot be isolated, preserve the failed sizing path and the diligence ask; do not replace it with a generic "large market" paragraph.
-
-## Preferred figure types
-
-- `market-sizing-lens` for TAM/SAM/SOM or constrained sizing.
-- `bars` / `metric-bars` only with numeric `value` plus formatted `displayValue`.
-
-## Handoff extras
-
-Add `market attractiveness` to the standard handoff fields.
+- Do not rely on one broad TAM estimate.
+- If SAM/SOM cannot be isolated, preserve failed sizing paths and diligence asks instead of writing a generic “large market” paragraph.
+- Handoff includes market attractiveness.

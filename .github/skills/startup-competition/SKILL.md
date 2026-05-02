@@ -1,45 +1,49 @@
 ---
 name: startup-competition
-description: "Use when: generating 03-competitive-benchmarking.yaml. Keywords: competitors, substitutes, feature matrix, pricing, packaging, moat, positioning, web_search."
+description: "Use when: generating 03-competitive-benchmarking.yaml and 03-competitive-benchmarking.zh.yaml. Keywords: competitors, substitutes, feature matrix, pricing, packaging, moat, positioning."
 user-invocable: false
 ---
 
 # Startup Competition
 
-Run after `01`–`02` parse. Read `01-company-snapshot.yaml` for identity and `02-market-macro.yaml` for category boundaries. Follow `.github/references/analysis-skill-conventions.md` for inputs, evidence rules, freshness, source quality, figure conventions, the Simplified Chinese sibling, and handoff format.
+Third analysis stage. Benchmark the startup against direct, incumbent, adjacent, and substitute competitors.
+
+## Read first
+
+- `01-company-snapshot.yaml`
+- `02-market-macro.yaml`
+- `.github/references/analysis-skill-conventions.md`
 
 ## Outputs
 
 - `03-competitive-benchmarking.yaml`
 - `03-competitive-benchmarking.zh.yaml`
 
-## Chapter focus
+## Focus
 
 - Competitive landscape and category map.
-- Distinguish direct modern competitors, legacy incumbents, adjacent platform players, and potential strategic acquirers.
-- Competitor profiles with valuation/market cap, funding, revenue scale, customer scale, target segment, differentiator, and strategic trajectory when evidence supports them.
-- Feature, product, pricing, packaging, and GTM comparisons.
-- Differentiation, switching costs, defensibility, and moat durability — product velocity, data/network effects, pricing advantage, integration ecosystem, distribution channel, compliance advantage where applicable.
+- Direct startups, legacy incumbents, adjacent platforms, open-source/workflow substitutes, and potential acquirers.
+- Competitor profiles: scale, funding/market cap, target segment, differentiation, strategic trajectory.
+- Feature, pricing, packaging, GTM, customer/review signals, switching costs, defensibility, and moat durability.
 - Competitive risks and diligence asks.
 
-## Expected table families
+## Evidence targets
 
-Competitor profiles, feature matrix, pricing/packaging comparison, GTM comparison, customer/review signal comparison, moat/switching-cost assessment, competitive risk register, appendix-ready feature deep dive.
+- Competitor official docs, product, pricing, customer, changelog, and security pages for claimed capabilities.
+- Independent benchmarks, reviews, customer proof, market reports, funding coverage, and adverse evidence for validation.
+- Never treat vendor-authored comparisons as independent proof.
 
-## Source mix
+## Required tables and figures
 
-Cover each competitor class independently — direct startups, incumbent platforms, adjacent/cloud or open-source substitutes, workflow specialists. Use competitor official docs/pricing/product pages for what competitors claim; use independent benchmarks, customer proof, reviews, market reports, or funding coverage for validation. Mine competitor official surfaces too, but never treat vendor-authored comparisons as independent proof.
+- Competitor profile table.
+- Feature matrix.
+- Pricing/packaging comparison.
+- GTM or customer/review signal table.
+- Moat/switching-cost or competitive risk register.
+- Preferred figure: `quadrant` or `competitive-matrix` with numeric axes and labeled points.
 
-## Domain-specific query angles
+## Completion check
 
-- Vary queries by competitor class and table — do not build the matrix from one generic comparison source.
-- Include at least one adverse query on competitive displacement, commoditization, open-source pressure, customer switching, or pricing compression.
-- Preserve contradictory signals (benchmark leadership vs. pricing compression, customer wins vs. churn, etc.).
-
-## Preferred figure types
-
-- `quadrant` or `competitive-matrix` for positioning, with `data.points[]` carrying `label`, numeric `x`, numeric `y`, optional `tone`, and axis labels.
-
-## Handoff extras
-
-Add `positioning` and `key competitors` to the standard handoff fields.
+- Query by competitor class; do not build the matrix from one generic comparison source.
+- Include adverse evidence on displacement, commoditization, open-source pressure, switching, or pricing compression.
+- Handoff includes positioning and key competitors.

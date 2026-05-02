@@ -6,54 +6,52 @@ user-invocable: false
 
 # Startup Ledger
 
-Use this skill after `01`–`08` exist, parse, and all supportable analysis gaps have either been researched by the relevant skill or documented as gaps.
+Consolidation stage. Generate canonical sources/claims only after `01`–`08` and their `.zh.yaml` siblings exist, parse, and have sufficient local evidence.
 
-## Outputs
-
-Write exactly:
+## Output
 
 - `100-evidence-ledger.yaml` via `node scripts/consolidate-evidence.mjs <reportFolder>`
 
-## Responsibility
+## Do not
 
-Run final evidence consolidation only. Do not write `101-report-document.yaml` or `102-report-card.yaml` in this skill.
+- Do not gather new facts.
+- Do not write `101-report-document.yaml` or any card artifact.
+- Do not hand-write canonical `S###` or `C###` IDs.
 
-The consolidation script must:
+## Pre-consolidation audit
 
-- Read `localEvidence` from `01`–`08`.
-- Deduplicate local sources and claims.
+For each `01`–`08` artifact, verify:
+
+- `localEvidence.sources[]` contains retained, reviewed URLs or cited search annotations.
+- `localEvidence.claims[]` contains atomic claims, not paragraph summaries.
+- Material sections, tables, figures, and callouts have local `claimRefs`.
+- Volatile critical facts are current/recent or explicitly listed as gaps.
+- Source diversity fits the domain skill.
+
+If evidence is empty, placeholder-like, or just enough to pass schema shape, stop and route back to the owning skill.
+
+## Consolidation expectations
+
+The script must:
+
+- Deduplicate sources and claims.
 - Assign canonical `S###` and `C###` IDs.
 - Rewrite `01`–`08` `claimRefs` and inline `[C###]` references to canonical IDs.
-- Remove `localEvidence` unless explicitly debugging with `--keep-local`.
+- Remove `localEvidence` unless debugging with `--keep-local`.
+- Preserve only schema-allowed enum values.
 
-Do not use `web_search` to add new facts at this stage. If a report-critical fact is missing but appears supportable, route back to the relevant analysis skill so it can search, update its `localEvidence`, and rewrite its artifact first. Then rerun this skill.
+## Enum normalization
 
-## Pre-consolidation evidence audit
+- `claimType`: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`.
+- `freshness`: `current`, `recent`, `historical`, `unknown`.
+- `corroboration`: `single-source`, `multi-source`, `conflicting`, `none`.
+- `sourceType`: `official`, `filing`, `regulatory`, `tier-one-news`, `trade-press`, `analyst-market-data`, `technical-docs`, `customer-proof`, `partner-proof`, `developer-signal`, `review`, `legal`, `other`.
+- `reputationTier`: `high`, `medium`, `low`.
+- `independence`: `company`, `partner`, `customer`, `competitor`, `independent`, `unknown`.
+- `confidence`: `high`, `medium`, `low`.
 
-Before running `scripts/consolidate-evidence.mjs`, inspect each `01`–`08` artifact's `localEvidence` and stop if any stage has empty, placeholder, or obviously thin evidence. For each artifact, verify:
+## Completion check
 
-- `localEvidence.sources[]` contains retained URLs that were either directly reviewed or came from cited `web_search` annotations.
-- `localEvidence.claims[]` contains atomic claims, not paragraph summaries.
-- Every material table, figure, callout, and section has `claimRefs` that resolve to local claims.
-- Report-critical volatile facts have current/recent evidence or an explicit `evidenceGaps` item.
-- The source mix fits the domain skill's source collection quality gate.
-
-If most artifacts have just enough generic claims to satisfy schema shape, or if any artifact lacks chapter-specific source diversity, route back to the owning skill. Consolidation should never turn thin local evidence into a polished-looking final ledger.
-
-## Enum fields
-
-Claim and source enum fields are closed; consolidation must preserve only allowed tokens. If an artifact's `localEvidence` uses a non-canonical value, normalize it during consolidation rather than copying it through.
-
-- `claimType`: `observed` | `company-claimed` | `third-party-reported` | `estimated` | `inferred` | `open-question` | `conflicting`
-- `freshness`: `current` | `recent` | `historical` | `unknown`
-- `corroboration`: `single-source` | `multi-source` | `conflicting` | `none`
-- `sourceType`: `official` | `filing` | `regulatory` | `tier-one-news` | `trade-press` | `analyst-market-data` | `technical-docs` | `customer-proof` | `partner-proof` | `developer-signal` | `review` | `legal` | `other`
-- `reputationTier`: `high` | `medium` | `low`
-- `independence`: `company` | `partner` | `customer` | `competitor` | `independent` | `unknown`
-- `confidence`: `high` | `medium` | `low`
-
-Common mappings: a partner's first-party statement about the target company is `third-party-reported` (not `partner-claimed`); a derived multiple or arithmetic result is `estimated` (not `calculated`).
-
-## Handoff note
-
-After writing, record a concise internal summary: output path, source count, claim count, evidence gaps, and whether claim rewrites completed.
+- Output path exists and parses.
+- Source count, claim count, evidence gaps, and claim rewrites are internally summarized.
+- Downstream artifacts must use canonical claim IDs only.

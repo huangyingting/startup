@@ -1,8 +1,12 @@
 # Startup Diligence Report v2 Schema
 
-The current generation schema is `startup-diligence-report-v2`. It is designed to produce a comprehensive VC due diligence report while preserving claim-level evidence traceability.
+Canonical schema and rendering contract for `startup-diligence-report-v2`.
 
-## Artifact list
+The schema supports investor-grade startup diligence reports with claim-level evidence traceability and bilingual English / Simplified Chinese rendering.
+
+## Required artifacts
+
+English artifacts:
 
 ```text
 01-company-snapshot.yaml
@@ -18,7 +22,7 @@ The current generation schema is `startup-diligence-report-v2`. It is designed t
 102-report-card.yaml
 ```
 
-Required Simplified Chinese files (must ship with every report):
+Required Simplified Chinese artifacts:
 
 ```text
 01-company-snapshot.zh.yaml
@@ -33,72 +37,97 @@ Required Simplified Chinese files (must ship with every report):
 102-report-card.zh.yaml
 ```
 
-Each `XX-name.zh.yaml` is the Simplified Chinese sibling of `XX-name.yaml`. The owning analysis skill (`startup-snapshot` through `startup-valuation`) writes both files in the same pass, following `.github/references/zh-translation.md`. `101-report-document.zh.yaml` is assembled by `startup-report-zh` from those siblings plus `101-report-document.yaml`. `102-report-card.zh.yaml` is translated by `startup-card-zh` from `102-report-card.yaml`. `100-evidence-ledger.yaml` has no separate Chinese sibling.
+Notes:
 
-## Agent execution contract
+- `100-evidence-ledger.yaml` has no Chinese sibling.
+- Each analysis skill writes its English artifact and `.zh.yaml` sibling in one stage.
+- `101-report-document.zh.yaml` is assembled by `startup-report-zh` from `101` plus `01`–`08.zh.yaml`.
+- `102-report-card.zh.yaml` is translated by `startup-card-zh` from `102-report-card.yaml`.
 
-- The default Copilot agent runs the `AGENTS.md` Startup Research workflow through `.github/skills/`; report stages are not delegated to other agents.
-- Skills must write complete YAML files directly to `reportFolder`.
-- `/tmp` tool-output files are diagnostic logs only, never artifacts or handoff inputs.
-- The default agent must read this schema and `.github/references/yaml-syntax.md` before writing.
-- Skills that create local evidence or consolidate `100-evidence-ledger.yaml` must read `.github/references/evidence-ledger.md`.
-- Skills read their minimum dependency set rather than mechanically reading every prior artifact. Downstream analysis skills use `01-company-snapshot.yaml` for identity once available; domain skills read additional upstream artifacts only when needed for their own chapter logic.
-- `web_search` is available throughout the workflow and may be used by analysis skills when chapter data is missing. Analysis skills write local `sources[]` / `claims[]` under their artifact's `localEvidence`; `startup-ledger` then runs `scripts/consolidate-evidence.mjs` to deduplicate sources/claims, create `100-evidence-ledger.yaml`, and rewrite final `claimRefs`.
+## Execution contract
+
+- The default agent runs the workflow through `.github/skills/`; do not delegate stages to other agents.
+- Skills write complete YAML files directly under `reportFolder`.
+- `/tmp` and terminal-output files are diagnostics only, never artifacts or handoff inputs.
+- Agents must read this schema and `.github/references/yaml-syntax.md` before writing YAML artifacts.
+- Skills that create local evidence or consolidate `100` must read `.github/references/evidence-ledger.md`.
+- Skills read the minimum required dependency set. Downstream analysis skills use `01-company-snapshot.yaml` for identity; they read other upstream artifacts only when chapter logic needs them.
+- Analysis skills record local evidence under `localEvidence`; `startup-ledger` runs `scripts/consolidate-evidence.mjs` to create canonical evidence and rewrite claim references.
 
 ## Artifact mapping
 
 | File | `artifact` | Owner | Chapter |
 |---|---|---|---|
-| `100-evidence-ledger.yaml` | `evidence-ledger` | `startup-ledger` via `scripts/consolidate-evidence.mjs` after `01`–`08` | n/a |
-| `01-company-snapshot.yaml` | `company-snapshot` | `startup-snapshot` skill | 1 — Startup Introduction & Company Snapshot |
-| `02-market-macro.yaml` | `market-macro` | `startup-market` skill | 2 — Market Sizing & Macro Analysis |
-| `03-competitive-benchmarking.yaml` | `competitive-benchmarking` | `startup-competition` skill | 3 — Competitive Benchmarking |
-| `04-financial-unit-economics.yaml` | `financial-unit-economics` | `startup-financials` skill | 4 — Financial & Unit Economics |
-| `05-product-technology.yaml` | `product-technology` | `startup-product` skill | 5 — Product & Technology |
-| `06-customer-retention.yaml` | `customer-retention` | `startup-customers` skill | 6 — Customer & Retention |
-| `07-risk-regulatory.yaml` | `risk-regulatory` | `startup-risks` skill | 7 — Risk & Regulatory |
-| `08-investment-valuation.yaml` | `investment-valuation` | `startup-valuation` skill | 8 — Investment & Valuation |
-| `101-report-document.yaml` | `report-document` | `startup-report` skill | final rendered report |
-| `102-report-card.yaml` | `report-card` | `startup-card` skill | website index card |
-| `101-report-document.zh.yaml` | `report-document` | `startup-report-zh` skill | Simplified Chinese report |
-| `102-report-card.zh.yaml` | `report-card` | `startup-card-zh` skill | Simplified Chinese report card |
+| `01-company-snapshot.yaml` | `company-snapshot` | `startup-snapshot` | 1 — Startup Introduction & Company Snapshot |
+| `02-market-macro.yaml` | `market-macro` | `startup-market` | 2 — Market Sizing & Macro Analysis |
+| `03-competitive-benchmarking.yaml` | `competitive-benchmarking` | `startup-competition` | 3 — Competitive Benchmarking |
+| `04-financial-unit-economics.yaml` | `financial-unit-economics` | `startup-financials` | 4 — Financial & Unit Economics |
+| `05-product-technology.yaml` | `product-technology` | `startup-product` | 5 — Product & Technology |
+| `06-customer-retention.yaml` | `customer-retention` | `startup-customers` | 6 — Customer & Retention |
+| `07-risk-regulatory.yaml` | `risk-regulatory` | `startup-risks` | 7 — Risk & Regulatory |
+| `08-investment-valuation.yaml` | `investment-valuation` | `startup-valuation` | 8 — Investment & Valuation |
+| `100-evidence-ledger.yaml` | `evidence-ledger` | `startup-ledger` / consolidation script | n/a |
+| `101-report-document.yaml` | `report-document` | `startup-report` | final rendered report |
+| `101-report-document.zh.yaml` | `report-document` | `startup-report-zh` | Simplified Chinese report |
+| `102-report-card.yaml` | `report-card` | `startup-card` | website index card |
+| `102-report-card.zh.yaml` | `report-card` | `startup-card-zh` | Simplified Chinese index card |
 
 ## Shared conventions
 
 - `schemaVersion: startup-diligence-report-v2`
 - Every artifact starts with `schemaVersion`, `artifact`, `slug`, `runDate`, and `company`.
-- `runDate: YYYY-MM-DD`
-- `slug`: stable company slug.
-- `company.name`: consistent in all YAML files.
-- `claimRefs`: before consolidation, IDs from the same artifact's `localEvidence.claims[]`; after consolidation, canonical claim IDs from `100-evidence-ledger.yaml`.
+- `runDate` uses `YYYY-MM-DD`.
+- `slug` is the stable company slug.
+- `company.name` is consistent across all artifacts.
+- `claimRefs` are local before consolidation and canonical after consolidation.
 - Numeric KPI fields are numbers or `null`, never strings.
 - Ranges belong in `displayValue`, `notes`, or `estimateBasis`.
-- ID formats: sources `S001`, claims `C001`, figures `F001`, tables `T001`.
-- `figureCount` and `tableCount` in `102-report-card.yaml` must match `101-report-document.yaml`.
 - Use `null` for unknown optional values; do not omit required fields.
+- `figureCount` and `tableCount` in `102-report-card.yaml` must match `101-report-document.yaml`.
 
-## Core enums
+## ID formats
 
-- Recommendation: `strong-buy`, `buy`, `track`, `research-more`, `avoid`.
-- Confidence: `high`, `medium`, `low`.
-- Risk rating: `low`, `moderate`, `significant`, `critical`, `unknown`.
-- Valuation stance: `attractive`, `fair`, `stretched`, `expensive`, `unknown`.
-- Evidence quality: `high`, `medium`, `low`, `unknown`.
-- Claim type: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`.
+- Sources: `S001`
+- Claims: `C001`
+- Figures: `F001`
+- Tables: `T001`
+- Appendices: `A`, `B`, `C`, ...
+
+## Closed enums
+
+Use exactly one allowed token. Do not append qualifiers, combine values with `/` or `;`, or use free text.
+
+- `recommendation`: `strong-buy`, `buy`, `track`, `research-more`, `avoid`
+- `confidence`: `high`, `medium`, `low`
+- `riskRating`: `low`, `moderate`, `significant`, `critical`, `unknown`
+- `valuationStance`: `attractive`, `fair`, `stretched`, `expensive`, `unknown`
+- `evidenceQuality`: `high`, `medium`, `low`, `unknown`
+- `claimType`: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`
+- `freshness`: `current`, `recent`, `historical`, `unknown`
+- `corroboration`: `single-source`, `multi-source`, `conflicting`, `none`
+- `sourceType`: `official`, `filing`, `regulatory`, `tier-one-news`, `trade-press`, `analyst-market-data`, `technical-docs`, `customer-proof`, `partner-proof`, `developer-signal`, `review`, `legal`, `other`
+- `reputationTier`: `high`, `medium`, `low`
+- `independence`: `company`, `partner`, `customer`, `competitor`, `independent`, `unknown`
+
+---
+
+# Artifact schemas
 
 ## `100-evidence-ledger.yaml`
 
-`100-evidence-ledger.yaml` is a final consolidated artifact. Do not incrementally append to it from analysis skills. Generate it after `01`–`08` exist by running `node scripts/consolidate-evidence.mjs <reportFolder>`, then use the canonical `S###` / `C###` IDs for `101` and `102`.
+Generate only via `node scripts/consolidate-evidence.mjs <reportFolder>` after `01`–`08` exist.
 
-Evidence ledger quality requirements:
+Quality requirements:
 
-- Source breadth: retained sources should span multiple independent source buckets whenever available, including official/company material, startup or business news, independent third-party databases/analyst sources, customer or partner proof, regulatory/legal/filing sources, and technical/product documentation.
-- Coverage semantics: `coverage.sourcesConsidered` counts unique cited/annotated `web_search` candidates plus directly fetched pages reviewed before retention. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`. Coverage is sufficient when downstream chapter claims are supported or unsupported facts are documented in `evidenceGaps`.
-- Source recency: claims about current company status, funding, valuation, customers, revenue scale, headcount, product packaging, pricing, and regulatory posture should prefer sources from the last 24 months. Older sources are acceptable for durable historical facts and should normally support claims marked `freshness: historical`.
-- Source deduplication: repeated coverage of the same underlying event does not equal independent evidence. Cluster sources by event/topic/date and retain only sources that add original facts, primary quotes, independent confirmation, or materially different interpretation.
-- Query iteration: the evidence process should vary search queries by company name, product names, founders, investors, competitors, customers, market category, geography, funding/valuation terms, product/security terms, regulatory/legal terms, reviews, hiring, and negative/disconfirming angles.
-- Concentration control: no single publisher/domain family should exceed 34% of retained sources; at least 15% of retained sources should be `independence: independent`; at most 50% of retained sources should be uncited by any claim. Treat repeated press-release or wire-copy coverage as one event group, not independent corroboration. Document a coverage gap when independent coverage is unavailable.
-- Source provenance: retained URLs must come from cited/annotated `web_search` results or directly fetched pages reviewed from a known URL, sitemap, navigation path, or cited source. Do not retain generic Bing/search-result URLs or unreviewed inferred URLs. If annotation spans are empty or malformed, do not invent `keyQuote`; use `null` and run targeted follow-up searches or direct page reads for important facts.
+- Retained sources span multiple source buckets when available.
+- `coverage.sourcesRetained === sources.length`.
+- `coverage.claimsCreated === claims.length`.
+- Current-status claims prefer sources from the last 24 months.
+- Repeated coverage of the same event is deduped.
+- No single publisher/domain family should exceed 34% when alternatives exist.
+- At least 15% of retained sources should be independent when possible.
+- At most 50% of retained sources should be uncited by any claim.
+- Retained URLs must be cited search results or directly fetched/reviewed pages.
 
 ```yaml
 schemaVersion: startup-diligence-report-v2
@@ -108,7 +137,7 @@ runDate: YYYY-MM-DD
 company:
   name: string
 coverage:
-  sourcesConsidered: 0 # unique web_search candidates plus directly fetched pages reviewed before retention, after canonical URL dedupe
+  sourcesConsidered: 0
   sourcesRetained: 0
   claimsCreated: 0
   sourceDiversityNotes: string|null
@@ -126,7 +155,7 @@ sources:
     sourceType: official|filing|regulatory|tier-one-news|trade-press|analyst-market-data|technical-docs|customer-proof|partner-proof|developer-signal|review|legal|other
     reputationTier: high|medium|low
     independence: company|partner|customer|competitor|independent|unknown
-    keyQuote: string|null # concise cited answer span or null if no reliable quote/snippet was returned
+    keyQuote: string|null
     topics: [identity|team|market|customer|product|technology|traction|gtm|competition|financials|funding|risk|valuation|other]
 claims:
   - id: C001
@@ -144,9 +173,9 @@ evidenceGaps:
     diligencePath: string|null
 ```
 
-## Section artifact pattern
+## Analysis artifacts `01`–`08`
 
-Artifacts `01` through `08` use this common pattern:
+Common pattern:
 
 ```yaml
 schemaVersion: startup-diligence-report-v2
@@ -167,7 +196,7 @@ callouts:
 tables:
   - id: T201
     title: string
-    columns: [string] # each row in `rows` must have exactly columns.length cells
+    columns: [string]
     rows:
       - [string]
     notes: string|null
@@ -196,11 +225,15 @@ sections:
     claimRefs: [C001]
 ```
 
-Section artifacts must use the same figure rendering contracts listed under `101-report-document.yaml` below. Prefer the most semantic figure type available instead of generic `flow`.
+Rules:
 
-### Local evidence in `01`–`08`
+- Each table row length must equal `columns.length`.
+- Figures follow the rendering contracts below.
+- Prefer semantic figure types over generic `flow`.
+- Before consolidation, analysis artifacts may include `localEvidence`.
+- Consolidation rewrites public `claimRefs` to canonical IDs and may remove `localEvidence`.
 
-Analysis artifacts may include a temporary `localEvidence` block before final consolidation. Local IDs are scoped to the artifact file and may repeat across skills. The consolidation script rewrites all public `claimRefs` to canonical ledger IDs and may remove `localEvidence` from final artifacts.
+### Local evidence block
 
 ```yaml
 localEvidence:
@@ -235,9 +268,9 @@ localEvidence:
       diligencePath: string|null
 ```
 
-## `01-company-snapshot.yaml`
+## `01-company-snapshot.yaml` addition
 
-`01-company-snapshot.yaml` follows the section artifact pattern and must also include a startup introduction used at the beginning of the final report:
+`01` follows the analysis artifact pattern and also includes `startupIntroduction`:
 
 ```yaml
 startupIntroduction:
@@ -282,7 +315,7 @@ reportMeta:
   valuationStance: attractive|fair|stretched|expensive|unknown
 coverMetrics:
   - label: string
-    value: string # display string, e.g. "$157B post-money" or "1.0M"
+    value: string
     numericValue: 0|null
     unit: string|null
     claimRefs: [C001]
@@ -337,42 +370,72 @@ figures:
       layers: []
     approximationNotes: string|null
     claimRefs: [C001]
+tables:
+  - id: T101
+    title: string
+    columns: [string]
+    rows:
+      - [string]
+    notes: string|null
+    claimRefs: [C001]
+appendices:
+  - id: A
+    title: string
+    blocks:
+      - type: paragraph|list|equation|callout|table|figure
+        title: string|null
+        body: string|null
+        items: [string]
+        tableRef: T001|null
+        figureRef: F001|null
+        claimRefs: [C001]
+disclaimer: string
 ```
 
-### Figure rendering contracts
+Appendix rules:
 
-The website renders figures automatically from `type` plus structured `data`. Agents must select the most semantic `type`; do not rely on `title` text for renderer selection. Prefer domain-specific figure types (`market-sizing-lens`, `unit-economics-waterfall`, `customer-surface-map`, `architecture-stack`, `risk-transmission-map`, `recommendation-logic`) over generic `flow`, `decision-map`, or `waterfall` when their contract fits the intended figure.
+- Use appendices to preserve underwriting detail that would clutter chapters.
+- Appendices must cite `claimRefs`.
+- Do not invent unsupported detailed models; list them as diligence gaps.
+- Do not duplicate source citations as a separate bibliography array; the website renders sources from `100`.
 
-Global rules for every figure:
+## Figure rendering contracts
+
+The website renders figures from `type` plus structured `data`. Do not rely on `title` for renderer selection.
+
+Global rules:
 
 - Always include `id`, `title`, `type`, `layout`, `summary`, `data`, `approximationNotes`, and `claimRefs`.
-- `data` must be a structured object, not Markdown, Mermaid, SVG, prose, or a JSON string.
-- Use only renderer-known canonical fields listed below. Do not invent primary fields such as `children`, `steps`, `cards`, `buckets`, `groups`, `components`, `name`, or `description` unless the contract explicitly allows them as secondary compatibility fields.
-- Every visible item/node/layer/point/row must include a human-readable `label` unless a more specific required label field is listed.
-- Numeric chart coordinates and bar values must be numbers, not strings. Put formatted display text in `displayValue`.
-- For any missing metric, keep the visual node/card and explain the gap in `detail`; do not delete the whole figure or leave empty arrays.
-- Allowed tones: `positive`, `neutral`, `opportunity`, `risk`, `low`, `medium`, `high`, `critical`. Use `risk/high/critical` for downside cells and `positive/low` for favorable cells.
+- `data` is a structured object, not Markdown, Mermaid, SVG, prose, or JSON string.
+- Use renderer-known canonical fields only: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`, plus axis labels where allowed.
+- Do not invent primary fields such as `children`, `steps`, `cards`, `buckets`, `groups`, `components`, `name`, or `description`.
+- Every visible item/node/layer/point/row has a human-readable `label` unless a stricter required field applies.
+- Numeric chart coordinates and bar values are numbers; formatted text goes in `displayValue`.
+- For missing metrics, keep a visual node/card with the gap in `detail`; do not leave required arrays empty.
+- Allowed tones: `positive`, `neutral`, `opportunity`, `risk`, `low`, `medium`, `high`, `critical`.
 
-- `timeline`: `data.items[]` with `date|label`, `label`, `detail`, optional `tone`. A company milestone timeline must cover founding, every priced funding round in chronological order, major product/platform launches, operating-scale milestones once disclosed (first $X run-rate, first Fortune-N customer), strategic compute/partner deals, and material legal/governance/safety events. Aim for at least 8 entries and avoid gaps of more than ~18 months between consecutive events when an intermediate event is publicly known. Extend the timeline to within ~3 months of `currentDate`; record any unfilled milestone gap in `evidenceGaps`.
-- `flow`: `data.nodes[]` and `data.edges[]`; use for generic causal/product/customer flows.
-- `decision-map`: `data.nodes[]` and optional `data.edges[]`; use for decision trees or evaluation logic when `recommendation-logic` is not specific enough.
-- `evidence-map`: `data.nodes[]` and optional `data.edges[]`; use for evidence/source-to-claim maps.
-- `quadrant` / `competitive-matrix`: `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include `data.xAxis` and `data.yAxis` labels when useful.
+Renderer-specific contracts:
+
+- `timeline`: `data.items[]` with `date|label`, `label`, `detail`, optional `tone`. Company timelines should cover founding, priced rounds, product launches, operating-scale milestones, strategic deals, and material legal/governance/safety events. Aim for at least 8 entries and freshness within roughly 3 months of `currentDate` when public sources support it.
+- `flow`: `data.nodes[]` and `data.edges[]` for generic causal/product/customer flows.
+- `decision-map`: `data.nodes[]` and optional `data.edges[]` for decision trees or evaluation logic.
+- `evidence-map`: `data.nodes[]` and optional `data.edges[]` for source-to-claim maps.
+- `quadrant` / `competitive-matrix`: `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include `data.xAxis` and `data.yAxis` when useful.
 - `metric-bars` / `bars`: `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`.
-- `waterfall`: `data.items[]` in sequence with signed numeric `value`, optional `displayValue`, optional `tone`.
-- `risk-heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; each value may include `label` and `tone: low|medium|high|critical|risk`. The renderer treats `data.columns[]` as the X-axis label per value column and `row.label` as the Y-axis label, so **`row.values.length` must equal `data.columns.length`** (one value per column). Do not declare a column for the row name itself; do not include the row identifier as the first column.
-- `architecture-stack`: `data.layers[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`. Use canonical `label/modules` fields; do not emit `name/components` as the primary shape.
-- `market-sizing-lens`: `data.nodes[]` or `data.items[]` ordered from broad market to served footprint; use for TAM/SAM/SOM or evidence-constrained market sizing where unsupported dollar values should not be invented. Typical labels are `TAM`, `SAM`, and `SOM`; each node has `label`, `detail`, and optional `tone`.
-- `unit-economics-waterfall`: `data.nodes[]` or `data.items[]` ordered from known public anchor through missing unit-economics bridges to underwriting output; use when the report must show where public pricing/adoption evidence stops before gross margin, CAC, LTV/CAC, or payback can be calculated. First node should be the disclosed/list-price anchor; later nodes should identify unknown bridges or blockers.
-- `customer-surface-map`: `data.nodes[]` or `data.items[]` ordered from customer acquisition surface through major customer segments and expansion loops; use for consumer / enterprise / developer / ecosystem surface maps. First node should be the broad entry surface; later nodes should be segment or expansion cards.
-- `recommendation-logic`: `data.nodes[]` ordered from evidence/constraint to final recommendation; each node has `label`, `detail`, `tone`.
-- `risk-transmission-map`: `data.nodes[]` and `data.edges[]`; nodes with no incoming edges render as risk sources, nodes with both incoming and outgoing edges render as transmission pressure, nodes with no outgoing edges render as underwriting impact.
+- `waterfall`: ordered `data.items[]` with signed numeric `value`, optional `displayValue`, optional `tone`.
+- `risk-heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; `row.values.length === data.columns.length`. Do not include the row identifier as a first column.
+- `architecture-stack`: `data.layers[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`.
+- `market-sizing-lens`: `data.nodes[]` or `data.items[]` from broad market to served footprint; do not invent unsupported dollar values.
+- `unit-economics-waterfall`: `data.nodes[]` or `data.items[]` from public anchor through missing unit-economics bridges to underwriting output.
+- `customer-surface-map`: `data.nodes[]` or `data.items[]` from acquisition surface through segments and expansion loops.
+- `recommendation-logic`: ordered `data.nodes[]` with `label`, `detail`, `tone`.
+- `risk-transmission-map`: `data.nodes[]` and `data.edges[]`; sources, transmissions, and impacts are inferred by edge direction.
 - `stack`: `data.layers[]` or `data.items[]` with `label`, `detail`, optional `tone`.
 - `sensitivity`: `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`.
 - `xy`: `data.points[]` or `data.series[0].points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include axis labels when useful.
 - `other`: fallback only; avoid unless no semantic renderer fits.
 
-Canonical field examples by renderer family:
+Canonical examples:
 
 ```yaml
 # timeline
@@ -435,7 +498,7 @@ data:
       outputs:
         - Output label
 
-# market-sizing-lens / unit-economics-waterfall / customer-surface-map / recommendation-logic / stack
+# card-like figure families
 data:
   items:
     - label: Card label
@@ -451,33 +514,6 @@ data:
           value: 123
           displayValue: "123x"
 ```
-
-The remainder of `101-report-document.yaml` continues as:
-
-```yaml
-tables:
-  - id: T101
-    title: string
-    columns: [string] # each row in `rows` must have exactly columns.length cells
-    rows:
-      - [string]
-    notes: string|null
-    claimRefs: [C001]
-appendices:
-  - id: A
-    title: string
-    blocks:
-      - type: paragraph|list|equation|callout|table|figure
-        title: string|null
-        body: string|null
-        items: [string]
-        tableRef: T001|null
-        figureRef: F001|null
-        claimRefs: [C001]
-disclaimer: string
-```
-
-Appendix guidance: use appendices to preserve underwriting detail that would clutter the main narrative but should not be lost, such as detailed financial/projection models, competitive feature deep dives, management-team notes, investor-base notes, source caveats, and unresolved diligence gaps. Appendices must still cite `claimRefs`; if a detailed model is not evidence-supported, include the requested model as a diligence gap rather than inventing values. Source citations are rendered from `100-evidence-ledger.yaml` `sources[]` directly; do not duplicate them as a `bibliography` array on `101-report-document.yaml`.
 
 ## `102-report-card.yaml`
 
@@ -525,30 +561,50 @@ reportFiles:
   reportCard: 102-report-card.yaml
 ```
 
-## Validation expectations
+---
 
-- All YAML parses.
-- All required v2 artifacts exist for complete runs, including `01-08.zh.yaml`, `101-report-document.zh.yaml`, and `102-report-card.zh.yaml`.
-- For each `XX-name.yaml` analysis artifact, `XX-name.zh.yaml` exists, parses, has the same `schemaVersion`, `artifact`, `slug`, `runDate`, IDs, and array shape as the English file. Only prose is translated; numbers, IDs, claim/source IDs, enums, claim `statement`, and source `keyQuote` are preserved.
+# Validation expectations
+
+A complete report run must satisfy all checks below.
+
+## File presence and identity
+
+- All required English and Simplified Chinese artifacts exist.
+- Each file parses as YAML.
 - Each file's `artifact` value matches the artifact mapping.
-- `runDate` uses `YYYY-MM-DD` and `company.name` is consistent across artifacts.
-- Before consolidation, each artifact's `claimRefs` point to its own `localEvidence.claims[]`; after consolidation, all `claimRefs` point to `100-evidence-ledger.yaml` claims.
-- All claim `sourceRefs` point to retained ledger sources with valid provenance: cited/annotated `web_search` result or directly fetched reviewed page.
-- Source, claim, figure, and table IDs use the required formats and are unique within their ledgers.
-- All figure/table references in `101-report-document.yaml` exist.
-- `102-report-card.yaml.reportFiles` points to `101-report-document.yaml` and `102-report-card.yaml`.
-- Figures are stored as structured YAML specs in `101-report-document.yaml` and rendered by native website components.
-- Do not use legacy diagram-source fields or diagram-language strings in artifacts. Use `type`, `layout`, and typed `data` arrays instead.
-- ZH artifacts must preserve the English `schemaVersion`, `artifact`, `slug`, `runDate`, enums, IDs, figure/table structure, and numeric values. Only prose is translated.
-- A report folder is `complete` only when both English and Simplified Chinese required artifacts exist; the website index and loader skip incomplete folders.
-- Enum fields must use exactly one allowed token from the list in `## Core enums`. Do not invent values, append qualifiers, combine multiple values with `;` or `/`, or use free-text descriptions. The website content schema rejects any other value and the build will fail. Closed enums:
-  - `recommendation`: `strong-buy` | `buy` | `track` | `research-more` | `avoid`
-  - `confidence`: `high` | `medium` | `low`
-  - `riskRating`: `low` | `moderate` | `significant` | `critical` | `unknown`
-  - `valuationStance`: `attractive` | `fair` | `stretched` | `expensive` | `unknown`
-  - `claimType`: `observed` | `company-claimed` | `third-party-reported` | `estimated` | `inferred` | `open-question` | `conflicting`
-  - `freshness`: `current` | `recent` | `historical` | `unknown`
-  - `corroboration`: `single-source` | `multi-source` | `conflicting` | `none`
-  - `sourceType`: `official` | `filing` | `regulatory` | `tier-one-news` | `trade-press` | `analyst-market-data` | `technical-docs` | `customer-proof` | `partner-proof` | `developer-signal` | `review` | `legal` | `other`
-  - `reputationTier`: `high` | `medium` | `low`
-  - `independence`: `company` | `partner` | `customer` | `competitor` | `independent` | `unknown`
+- `schemaVersion` is `startup-diligence-report-v2` everywhere.
+- `runDate` uses `YYYY-MM-DD`.
+- `company.name` is consistent across artifacts.
+- `slug` is consistent across artifacts.
+
+## Evidence and references
+
+- Before consolidation, each analysis artifact's `claimRefs` point to its own `localEvidence.claims[]`.
+- After consolidation, all `claimRefs` point to `100-evidence-ledger.yaml` claims.
+- Claim `sourceRefs` point to retained ledger sources with valid provenance.
+- Source and claim IDs use required formats and are unique in their ledgers.
+- Every external factual claim traces to canonical evidence.
+
+## Tables and figures
+
+- Table row length equals column count.
+- All `tableRef` / `figureRef` values in `101` exist.
+- Figures are structured YAML specs rendered by native website components.
+- No legacy diagram-source fields or diagram-language strings are used.
+- Numeric chart values are numbers.
+- Figure arrays required by the selected type are non-empty and contain labels/renderable content.
+
+## Report card
+
+- `102-report-card.yaml.reportFiles.reportDocument` points to `101-report-document.yaml`.
+- `102-report-card.yaml.reportFiles.reportCard` points to `102-report-card.yaml`.
+- `figureCount` and `tableCount` equal counts in `101-report-document.yaml`.
+- Enum fields use exactly one allowed token.
+
+## Simplified Chinese artifacts
+
+- Each `.zh.yaml` preserves English `schemaVersion`, `artifact`, `slug`, `runDate`, IDs, enum values, numeric values, and array shape.
+- Only prose is translated.
+- `claim.statement` and `source.keyQuote` are preserved.
+- Residual-English sweep passes for translatable fields.
+- A report folder is complete only when all required English and Chinese artifacts exist.

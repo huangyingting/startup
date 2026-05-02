@@ -1,53 +1,76 @@
 # AGENTS.md
 
-This file gives coding agents the repository context and the **Startup Research workflow**. The default agent runs the workflow directly through skills; there is no separate research agent.
+Repository instructions for coding agents working on the startup diligence report generator and Astro website.
 
-## Project overview
+## Operating principles
 
-- This repo generates startup diligence reports as structured YAML and renders them with an Astro static website.
+- Work systematically: understand the request, inspect only relevant context, plan briefly, execute, validate, summarize.
+- Be clear and explicit: state what changed, why it changed, and how it was checked.
+- Stay concise: use short bullets, avoid repeating unchanged context, full tool output, or long plans.
+- Keep going when the next useful action is clear; ask only when blocked or when a choice materially changes the result.
+- Report progress at meaningful milestones, not after every small step.
+- Final replies should include the outcome, key files changed, validation status, and important follow-ups or blockers.
+
+## Repository overview
+
+- This repo generates startup diligence reports as structured YAML and renders them with an Astro static site.
 - Reports live in `reports/<YYYYMMDDHHmmss>-<company-slug>/` and are indexed by `reports/_index.yaml`.
-- The report schema is `startup-diligence-report-v2`; see `.github/schemas/startup-diligence-report-v2.md` for exact contracts.
+- The canonical report schema is `.github/schemas/startup-diligence-report-v2.md`.
+- English and Simplified Chinese artifacts are both required for complete reports.
 
 ## Important paths
 
-- `.github/skills/` — stage skills the default agent invokes for the Startup Research workflow.
-- `.github/references/` — shared rules: `yaml-syntax.md`, `evidence-ledger.md`, `analysis-skill-conventions.md` (common rules for `01`–`08` skills), and `zh-translation.md`.
-- `.github/schemas/startup-diligence-report-v2.md` — canonical schema and rendering contract (single source of truth for enums and field shapes).
-- `scripts/` — report folder, index, duplicate, and content checks.
-- `website/` — Astro site and rendering-contract validation.
+- `.github/skills/` — workflow skills used by the default agent.
+- `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
+- `.github/references/` — shared rules: YAML syntax, evidence ledger, analysis conventions, Simplified Chinese translation.
+- `.github/schemas/startup-diligence-report-v2.md` — canonical schema and rendering contract.
+- `scripts/` — report preparation, index, duplicate checks, evidence consolidation, and content checks.
+- `website/` — Astro renderer, content loader, UI components, and website validation.
 
-## Setup and validation
+## Setup and validation commands
 
-- Install root dependencies with `npm install`.
-- Install website dependencies with `npm --prefix website install`.
-- Run full validation from the repo root with `npm run validate`.
-- After report, schema, loader, renderer, workflow, or script changes, run `npm run validate` before finishing.
+- Install root dependencies: `npm install`.
+- Install website dependencies: `npm --prefix website install`.
+- Run full validation from repo root: `npm run validate`.
+- After report, schema, loader, renderer, workflow, or script changes, run `npm run validate` before finishing unless the user explicitly asks for a narrower edit.
+
+## URL and page fetching
+
+- For direct URL/link/page fetches, always load and follow the `fetch-url` skill.
+- Use `node scripts/fetch-url.mjs ...`; do **not** use native `web_fetch` or similarly named built-in page-fetching tools in this repository.
+- Use `--text-only` for readable text intended for grep/skimming.
+- Use `--out` only for diagnostic saved bodies; `/tmp` files are never report artifacts or sources of truth.
+- Use search tools for discovery across many sources, then `fetch-url` for direct page review when needed.
 
 ---
 
 # Startup Research workflow
 
-The default agent runs one complete `startup-diligence-report-v2` workflow per company by calling workspace skills directly. Internal report stages are skills, not delegated agents. The rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
+The default agent runs one complete `startup-diligence-report-v2` workflow per company by invoking workspace skills directly. Do not delegate to a separate research agent or recursively rerun this workflow from inside itself.
 
-For automatic recent-unicorn batches, the default agent selects candidates and runs one workflow per selected company. Do not invoke a separate research agent or recursively re-run this workflow from within itself.
+The final rendered report must include cover metrics, company introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
 
 ## Invocation contract
 
-Resolve before running skills:
+Resolve these inputs before running skills:
 
 - `companyName`: required.
-- `companyUrl`: optional identity anchor, never proof.
+- `companyUrl`: optional identity anchor, never proof by itself.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
-- `currentDate`: required as the actual current date from the chat/session context in `YYYY-MM-DD`; use it as the evidence freshness anchor and the default `runDate` unless the user explicitly requests a historical report.
+- `currentDate`: actual session date in `YYYY-MM-DD`; use as the evidence freshness anchor and default `runDate` unless the user requests a historical report.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/schemas/startup-diligence-report-v2.md`.
 - `yamlSyntaxPath`: absolute path to `.github/references/yaml-syntax.md`.
 
-Read `schemaPath` and `yamlSyntaxPath` before writing any artifact. Use the relevant workspace skills in `.github/skills/` for each stage. Read `.github/references/evidence-ledger.md` before writing local evidence or consolidating `100-evidence-ledger.yaml`. Analysis skills (`01`–`08`) also follow `.github/references/analysis-skill-conventions.md`.
+Before writing artifacts:
 
-## v2 artifact contract
+- Read `schemaPath` and `yamlSyntaxPath`.
+- Read `.github/references/evidence-ledger.md` before writing local evidence or consolidating `100-evidence-ledger.yaml`.
+- For analysis stages `01`–`08`, follow `.github/references/analysis-skill-conventions.md`.
 
-The final report folder must contain these files. `100-evidence-ledger.yaml` is **never written by hand**: it is generated by `node scripts/consolidate-evidence.mjs <reportFolder>` after `01`–`08` (and their Simplified Chinese siblings) exist, by consolidating each artifact's local evidence. Each `XX-name.yaml` is paired with `XX-name.zh.yaml`, written by the same skill immediately after the English file. The final report and card use `101` and `102`; their Simplified Chinese versions are produced last.
+## Required artifact set
+
+Every completed report folder must contain exactly these workflow artifacts:
 
 ```text
 01-company-snapshot.yaml
@@ -68,169 +91,177 @@ The final report folder must contain these files. `100-evidence-ledger.yaml` is 
 08-investment-valuation.zh.yaml
 100-evidence-ledger.yaml
 101-report-document.yaml
-102-report-card.yaml
 101-report-document.zh.yaml
+102-report-card.yaml
 102-report-card.zh.yaml
 ```
 
-All artifacts must be written directly under `reportFolder`. `/tmp` tool-output files are diagnostic logs only: never treat them as report artifacts, handoff inputs, or sources of truth. If a stage produces only a snippet or temporary transcript, rewrite it as a complete file under `reportFolder` before moving on.
+Rules:
+
+- Write all artifacts directly under `reportFolder`.
+- Each `01`–`08` English artifact must be paired with its `.zh.yaml` sibling before moving to the next stage.
+- Never hand-write `100-evidence-ledger.yaml`; generate it with `node scripts/consolidate-evidence.mjs <reportFolder>`.
+- Temporary files, terminal transcripts, and `/tmp` outputs are diagnostics only, not report artifacts or evidence sources.
+- If a tool produces only a snippet or partial transcript, rewrite it as a complete YAML artifact under `reportFolder` before continuing.
 
 ## Skill sequence
 
-Use exactly this skill sequence for one company run. Each analysis skill writes both the English artifact and its Simplified Chinese sibling in a single pass.
+Run skills in this order:
 
-1. `startup-snapshot` writes `01-company-snapshot.yaml` and `01-company-snapshot.zh.yaml`.
-2. `startup-market` writes `02-market-macro.yaml` and `02-market-macro.zh.yaml`.
-3. `startup-competition` writes `03-competitive-benchmarking.yaml` and `03-competitive-benchmarking.zh.yaml`.
-4. `startup-financials` writes `04-financial-unit-economics.yaml` and `04-financial-unit-economics.zh.yaml`.
-5. `startup-product` writes `05-product-technology.yaml` and `05-product-technology.zh.yaml`.
-6. `startup-customers` writes `06-customer-retention.yaml` and `06-customer-retention.zh.yaml`.
-7. `startup-risks` writes `07-risk-regulatory.yaml` and `07-risk-regulatory.zh.yaml`.
-8. `startup-valuation` writes `08-investment-valuation.yaml` and `08-investment-valuation.zh.yaml`.
-9. `startup-ledger` runs `node scripts/consolidate-evidence.mjs <reportFolder>` to create `100` and rewrite `01`–`08` and `01-08.zh` claim IDs.
-10. `startup-report` writes `101-report-document.yaml` from artifacts `01`–`08` using canonical claim IDs.
-11. `startup-report-zh` assembles `101-report-document.zh.yaml` by reusing chapters/tables/figures from `01-08.zh.yaml` and translating only the executive summary, cover metrics, and other report-only fields.
-12. `startup-card` writes `102-report-card.yaml` from `100` and `101`.
-13. `startup-card-zh` translates `102` into `102-report-card.zh.yaml`.
+1. `startup-snapshot` → `01-company-snapshot.yaml`, `01-company-snapshot.zh.yaml`.
+2. `startup-market` → `02-market-macro.yaml`, `02-market-macro.zh.yaml`.
+3. `startup-competition` → `03-competitive-benchmarking.yaml`, `03-competitive-benchmarking.zh.yaml`.
+4. `startup-financials` → `04-financial-unit-economics.yaml`, `04-financial-unit-economics.zh.yaml`.
+5. `startup-product` → `05-product-technology.yaml`, `05-product-technology.zh.yaml`.
+6. `startup-customers` → `06-customer-retention.yaml`, `06-customer-retention.zh.yaml`.
+7. `startup-risks` → `07-risk-regulatory.yaml`, `07-risk-regulatory.zh.yaml`.
+8. `startup-valuation` → `08-investment-valuation.yaml`, `08-investment-valuation.zh.yaml`.
+9. `startup-ledger` → generate `100-evidence-ledger.yaml` and rewrite `01`–`08` claim IDs.
+10. `startup-report` → `101-report-document.yaml` from `01`–`08` and `100`.
+11. `startup-report-zh` → `101-report-document.zh.yaml` from `101` plus `01`–`08.zh.yaml`.
+12. `startup-card` → `102-report-card.yaml` from `100` and `101`.
+13. `startup-card-zh` → `102-report-card.zh.yaml` from `102`.
 
 ## Dependency rules
 
-Downstream skills do not need to mechanically read every prior artifact. Each skill must read its minimum dependency set, plus any upstream artifact needed to resolve a concrete gap or maintain consistency.
+- Every downstream analysis skill reads `01-company-snapshot.yaml` after it exists.
+- Domain skills read only the upstream artifacts needed for their context.
+- Later skills may inspect another artifact's gaps, tables, or figures, but must not directly edit another skill's owned artifact.
+- If later research uncovers a supportable fact owned by an earlier domain, return to that earlier skill, update its local evidence/artifact, then continue forward.
+- Consolidation/finalization skills (`startup-ledger`, `startup-report`, `startup-card`, and Chinese variants) do not gather new facts.
 
-- Every downstream analysis skill reads `01-company-snapshot.yaml` for company identity once `01` exists.
-- Domain skills read only the upstream artifacts that define their required context. For example, competition reads market boundaries; valuation reads financial, customer, and risk evidence.
-- A skill may inspect another artifact's open gaps or relevant tables/figures, but it must not edit another skill's owned artifact directly.
-- If a skill finds a supportable missing fact that belongs to an earlier domain, route back to that earlier skill, update its local evidence and artifact, then continue forward.
-- `startup-ledger`, `startup-report`, and `startup-card` are consolidation/finalization skills; they read the completed artifacts they explicitly depend on and do not gather new facts.
-- `startup-report-zh` assembles `101-report-document.zh.yaml` from `101-report-document.yaml` plus every `01-08.zh.yaml`; `startup-card-zh` translates `102-report-card.yaml`. Both follow `.github/references/zh-translation.md` and preserve facts, IDs, numbers, enums, and schema shape.
+## Section numbering
 
-## Section numbering convention
+- Analysis artifacts number sections from their own chapter: `01` uses `1.x`, `02` uses `2.x`, ..., `08` uses `8.x`.
+- In `101-report-document.yaml`, artifacts become chapters `2`–`9`; mapping is `101 chapter N ↔ artifact N-1`.
+- `startup-report-zh` must reverse this mapping when sourcing section titles/content from `XX.zh.yaml`; otherwise chapters `2` and `9` can retain English titles.
 
-Analysis artifacts `01`–`08` number their sections starting at the artifact's own chapter number (`01` uses `1.1`, `02` uses `2.1`, ..., `08` uses `8.1`). When `startup-report` composes `101-report-document.yaml`, those artifacts become chapters `2`–`9`, so the same section is renumbered (`01`'s `1.1` becomes `101` chapter `2.1`, `08`'s `8.1` becomes `101` chapter `9.1`). The mapping is always `chapter N in 101 ↔ artifact (N-1)`. `startup-report-zh` must reverse this remap when looking up the matching `XX.zh.yaml` section by number; failing to do so leaves chapters `2` and `9` of `101.zh` with English titles. Skills that touch chapter or section numbers in `101` or any `.zh` sibling must respect this convention.
+## Research standards
+
+- Optimize research for the actual report question, not generic keyword recall.
+- Use `currentDate` for freshness; volatile facts require latest/current-status research.
+- Prefer sources from the last 24 months for funding, valuation, revenue, ARR, headcount, customers, product releases, pricing, litigation, regulation, partnerships, and leadership.
+- Use full research questions tied to intended report paragraphs, tables, figures, or gaps; avoid bare keyword strings.
+- Query confirming and adverse angles for each major chapter.
+- Treat AI-generated summaries, SEO roundups, wiki pages, and low-reputation blogs as leads, not final support for critical facts.
+- For critical volatile facts, review at least one direct official, tier-one, legal, analyst, or otherwise authoritative source URL where available.
+- Major valuation, financial, customer, and legal claims need multi-source corroboration or an explicit single-source limitation.
+- Record unsupported but important facts as `evidenceGaps` with a concrete follow-up diligence path.
+
+## Official website and article mining
+
+When `company.website` or `companyUrl` is available, each research skill mines official pages before relying on external snippets.
+
+Review relevant homepage, sitemap, robots.txt, navigation, blog/news/resources, product, pricing, docs, changelog, customer stories, case studies, trust/security, status, partner, press, and funding pages.
+
+Use official pages to extract:
+
+- Product modules, buyer personas, use cases, vertical focus.
+- Customer proof, case studies, partner ecosystem.
+- Pricing/packaging, release chronology, security/compliance posture.
+- Policy statements, fundraising announcements, and management narrative.
+
+Evidence handling:
+
+- Label official-company claims as `company-claimed` or `observed`, not independent validation.
+- Use independent sources to corroborate or challenge official claims.
+- Preserve discovered URLs in the owning artifact's `localEvidence.sources[]`.
+- Convert useful page facts into atomic `localEvidence.claims[]`.
+- If an expected official page family is missing, record an `evidenceGaps` item.
+- For competitor analysis, mine competitor official pages/docs/pricing/changelogs, label competitor-authored claims honestly, and corroborate important comparisons independently where possible.
+
+## Artifact depth gates
+
+Schema validity is necessary but not sufficient. Artifacts must be investor-grade, source-backed, and company-specific.
+
+Minimum depth floors for normal public or late-stage private companies:
+
+- `01-company-snapshot.yaml`: at least 5 substantive sections, 3 tables, 2 figures, and a milestone timeline with at least 8 entries.
+- Each of `02`–`08`: at least 4 substantive sections, 4 tables, and 2 figures; `07` and `08` should usually exceed the floor.
+- `100-evidence-ledger.yaml`: enough retained evidence for the final judgment; for visible companies, below roughly 50 sources or 90 claims is a red flag.
+- `101-report-document.yaml`: preserve the union of upstream tables/figures unless `reportMeta.coverageNotes` explicitly names omissions and reasons.
+
+Reject thin work even if YAML parses:
+
+- Generic diligence prose, placeholder translation, or unsupported synthesis.
+- Reused generic section titles across domains.
+- Generic three-node figures repeated across artifacts.
+- Tables created only to satisfy count rather than diligence utility.
+- Numeric chart values encoded as strings.
+
+Before `startup-ledger`, inspect counts for sources, claims, tables, figures, sections, and gaps. If a stage misses the floor and the company is not genuinely obscure, return to that stage first.
+
+Before `startup-card`, compare `101` table/figure counts against the union of `01`–`08`; unexpectedly low counts mean `startup-report` dropped analysis and must be rerun.
 
 ## Validation gates
 
 After every skill stage:
 
-- Parse all files written so far.
-- Confirm expected files for the current stage exist in `reportFolder`. Each analysis skill must produce both `XX-name.yaml` and `XX-name.zh.yaml` before the next skill starts. Before consolidation, `100-evidence-ledger.yaml` is not expected yet.
+- Parse every file written so far.
+- Confirm expected files for the current stage exist.
 - Check `schemaVersion: startup-diligence-report-v2`.
-- Check `artifact`, `slug`, `runDate`, and `company.name` consistency between each English file and its Simplified Chinese sibling.
+- Check `artifact`, `slug`, `runDate`, and `company.name` consistency between English and Simplified Chinese siblings.
 - Before consolidation, validate each artifact's `claimRefs` against its own `localEvidence.claims[]`.
-- After consolidation, validate all `claimRefs` in `01`–`102` (including `.zh.yaml` files) against `100-evidence-ledger.yaml`.
-- After consolidation, validate all claim `sourceRefs` in `01` against retained ledger sources.
+- After consolidation, validate all `claimRefs` in `01`–`102`, including `.zh.yaml`, against `100-evidence-ledger.yaml`.
+- After consolidation, validate all `01` claim `sourceRefs` against retained ledger sources.
 - Ensure `coverage.sourcesRetained === sources.length` and `coverage.claimsCreated === claims.length` when `01` is consolidated.
-- Validate every figure against the schema Figure rendering contract: no empty required arrays, no non-canonical primary fields, no string-valued numeric chart values, visible cards/layers/nodes need `label` plus renderable content.
-- Reject any artifact that is missing its document head or begins with continuation prose / a mid-list fragment.
-- Reject thin analysis output: each `02`–`08` artifact should include multiple substantive sections plus chapter-appropriate tables/figures. If a table family is not supportable from evidence, include a clearly labeled diligence gap.
-- For each `XX-name.zh.yaml`, run the residual-English sweep and structural-parity check defined in `.github/references/zh-translation.md`.
+- Validate figures against the schema rendering contract: no empty required arrays, no non-canonical primary fields, numeric chart values are numbers, visible cards/layers/nodes have `label` plus renderable content.
+- Reject files missing their document head or beginning with continuation prose / mid-list fragments.
+- For each `.zh.yaml`, run the residual-English sweep and structural-parity checks in `.github/references/zh-translation.md`.
 
-## Minimum depth gates
+After `01-company-snapshot.yaml`, run:
 
-Schema validity is necessary but not sufficient. A complete report must be investor-grade; do not treat `npm run validate` as a substitute for research depth.
+```text
+node scripts/check-company-dedup.mjs <reportFolder>/01-company-snapshot.yaml
+```
 
-- Do not use one-off generator scripts, templates, or bulk cloning to create report prose or Simplified Chinese files. Scripts may help inspect/count/validate artifacts, but the analytical content must be written through the stage skills from reviewed evidence.
-- The report must fail the workflow, even if YAML parses, when an artifact is mostly generic diligence language, placeholder translation, or unsupported synthesis.
-- Numeric floors are minimum gates, not targets. If most `02`–`08` artifacts land exactly at 4 sections, 4 tables, and 2 figures, treat that as a floor-hitting anti-pattern and deepen the report before consolidation.
-- Do not reuse generic section titles across every domain artifact, such as `Evidence base`, `Investor interpretation`, `Contradictions and uncertainty`, and `Private diligence path`. Section titles and bodies must be chapter-specific and reveal the actual diligence work performed.
-- Do not reuse generic three-node figures such as `Public anchor → Private bridge → Underwriting output` across domains. Figures must encode company- and chapter-specific structure: e.g. TAM layers with numeric ranges, competitor positioning axes, unit-economics bridges, product architecture layers, customer expansion loops, risk transmission paths, or valuation sensitivities.
-- Do not create tables merely to satisfy table count. Tables must be detailed enough to be useful in diligence: typically multiple rows with company-specific values, dated evidence, confidence, and a concrete implication or diligence ask. A 4-row table with generic labels is not automatically substantive.
-- For normal public-company or late-stage private-company diligence, use these minimum depth floors unless the company is genuinely obscure and the artifact records why the floor cannot be met:
-  - `01-company-snapshot.yaml`: at least 3 substantive tables, 2 figures, 5 sections, and a milestone timeline with at least 8 entries.
-  - Each of `02`–`08`: at least 4 substantive tables, 2 figures, and 4 sections. `07-risk-regulatory.yaml` and `08-investment-valuation.yaml` should usually exceed this floor.
-  - `100-evidence-ledger.yaml`: enough evidence to support the final judgment. For highly visible companies, a thin ledger below roughly 50 retained sources or 90 atomic claims is a red flag that research was compressed.
-  - `101-report-document.yaml`: preserve the union of upstream analysis tables/figures unless an explicit `reportMeta.coverageNotes` entry names the omitted IDs and gives a reason. A final report with fewer tables/figures than the upstream record is incomplete by default.
-- Before running `startup-ledger`, compute and inspect artifact counts for sources, claims, tables, figures, sections, and evidence gaps. If any stage misses the minimum depth floor, return to that stage before consolidation.
-- Before writing `102-report-card.yaml`, compare `101.tableCount` and `101.figureCount` against the union of `01`–`08`; unexpectedly low final counts mean `startup-report` dropped analysis and must be rerun.
+- Exit `0`: continue.
+- Exit `2`: duplicate risk; stop unless the user explicitly requested a refresh.
+- Any other non-zero exit: fix the input/path issue before continuing.
 
-## Source quality gates
-
-Evidence quality must be high enough to support investment judgment, not merely enough to fill YAML.
-
-- For report-critical volatile facts—latest financing, valuation, revenue/run-rate, headcount, customers, product releases, legal/regulatory status, and partner economics—review at least one direct official/tier-one/legal/analyst source URL where available. Do not rely only on web-search narrative summaries.
-- Treat AI-generated search summaries, SEO statistic roundups, wiki pages, and low-reputation blogs as leads, not final support for critical facts. Retain them only when better sources are unavailable and mark confidence accordingly.
-- Every major valuation, financial, customer, and legal claim should have either multi-source corroboration or an explicit reason why only one source is available.
-- If a web-search result appears implausible, circular, synthetic, or inconsistent with stronger sources, record it as conflicting or discard it; do not average or silently accept it.
-- For companies with rich public coverage, source diversity should include official/company material, tier-one business/news, legal/regulatory sources, technical/product docs, customer/partner proof, and market/analyst sources.
-
-After `01-company-snapshot.yaml`, run `node scripts/check-company-dedup.mjs <reportFolder>/01-company-snapshot.yaml`. Exit code `0` means continue; exit code `2` means duplicate-risk and you must stop unless the user explicitly requested a refresh of that company; any other non-zero exit means fix the input/path problem before continuing.
-
-## Dynamic gap loop
-
-Each analysis skill closes its own supportable gaps before writing:
-
-1. Before writing an artifact, inspect its required table families, figures, metrics, `evidenceGaps`, and downstream chapter needs.
-2. If a missing item appears supportable, use targeted web research or direct page reads in the owning skill, add sources/claims to that artifact's `localEvidence`, then write the artifact using local `claimRefs`.
-3. If targeted searches do not find usable cited evidence, document the gap explicitly in that artifact instead of inventing values.
-4. If a later skill discovers a missing item belonging to an earlier domain, return to the relevant skill, append evidence if available, rewrite affected artifacts, then continue forward.
-5. Proceed to `startup-ledger` only after `02`–`08` have either closed supportable gaps or explicitly documented unsupported ones.
-
-## Research freshness and query design
-
-Every analysis skill must optimize research for the report being written, not for generic keyword recall.
-
-- Use `currentDate` in the research plan. For volatile facts such as funding round, valuation, revenue, ARR, headcount, customers, product releases, pricing, litigation, regulatory posture, partnerships, and leadership, search for the latest/current status as of `currentDate` before writing. Prefer sources from the last 24 months; if a durable older source is used, label the claim `freshness: historical`.
-- Use complete-sentence research questions tied to the intended report paragraph, table, or figure. Avoid bare keyword strings such as `company series f valuation`; ask questions such as `What is the latest funding round and post-money valuation for OpenAI as of May 2, 2026, and did it supersede the previously reported Series F?`.
-- Ask multiple chapter-specific questions before declaring a gap. Cover required sections, table families, figures, key metrics, contradictions, and diligence gaps. Vary wording across official, independent, metric-specific, customer/competitor/regulatory, and adverse-case searches.
-- If results are thin or stale, rewrite the question from another angle before declaring a gap. Example rewrites: `latest valuation` → `most recent financing round and post-money valuation`; `current revenue run-rate` → `annualized revenue estimate and corroborating reports`; `customer list` → `named enterprise deployments and case studies as of <currentDate>`.
-- Before finalizing each artifact, run a recency audit for report-critical facts. If a newer source supersedes an older claim, update the claim, table, figure, and downstream narrative; do not leave stale facts such as an older financing round when a newer round is public.
-- Query both confirming and disconfirming angles. For each major chapter, include at least one question designed to find adverse evidence, constraints, customer complaints, lawsuits, regulatory actions, competitive weakness, or missing metrics.
-- Record unsupported but important current facts as explicit `evidenceGaps` with the exact follow-up diligence path rather than burying them in prose.
-
-## Official website and article mining
-
-When `company.website` or `companyUrl` is available, each research skill mines the startup's official site for chapter-relevant evidence before relying on external snippets. Use homepage, sitemap, robots.txt, navigation, blog/news/resources, product, pricing, docs, changelog, customer stories, case studies, trust/security, status, partner, press, and funding pages as relevant.
-
-- Treat official website pages as strong evidence for what the company claims, sells, packages, documents, announces, and chooses to emphasize. Mark such claims as `company-claimed` or `observed` rather than independent validation.
-- Use official articles to extract product modules, buyer personas, use cases, vertical focus, customer proof, partner ecosystem, pricing/packaging, release chronology, security posture, policy statements, fundraising announcements, and management narrative.
-- Use independent sources to corroborate, challenge, or contextualize official-site claims. Do not treat company-authored blogs as independent proof of market size, competitive superiority, retention, revenue, or risk mitigation.
-- Preserve discovered article URLs in the owning artifact's `localEvidence.sources[]` and convert useful article facts into atomic `localEvidence.claims[]`. If an official page family is expected but missing, record an `evidenceGaps` item.
-- For competitor analysis, mine competitors' official sites, docs, pricing, customer pages, and changelogs when comparing features or packaging, but label competitor-authored claims honestly and corroborate important comparisons with independent sources where possible.
-
-## Raw artifact depth requirements
-
-Artifacts `01`–`08` are the research record, not just a thin handoff to the final report. Preserve enough source-backed detail in the original YAML so `startup-report` can write a detailed analysis with its own investment judgment.
-
-- Each analysis artifact must retain substantive sections, chapter-appropriate tables, structured figures, local sources, atomic local claims, evidence gaps, and notes explaining why key metrics are supported, estimated, conflicting, or unavailable.
-- Do not discard researched material merely because it may not appear on the final report card. Keep useful diligence evidence in the owned artifact under sections, tables, figures, and `localEvidence` so later report-writing can synthesize from a rich record.
-- Tables should include detailed comparables, timelines, pricing, product, customer, risk, and scenario rows where evidence supports them. If exact numbers are unavailable, include the qualitative row with `null` metrics and a clear diligence ask.
-- Final report-writing must synthesize from this raw record and add investor judgment, but it must not create new unsupported facts. If the raw artifacts are too thin for a detailed final view, route back to the owning skill and deepen the artifact before consolidation.
-
-## Final validation
-
-After `startup-card-zh` writes the final required `.zh.yaml` file:
+Final validation after `102-report-card.zh.yaml`:
 
 - Rebuild `reports/_index.yaml` with `node scripts/build-reports-index.mjs --strict`.
 - Run `npm run validate`.
 - Remove failed, duplicate, or incomplete partial report folders before commit.
 
-## Final response
-
-Summarize: report folder, generated YAML files (English plus required Simplified Chinese), source count, claim count, recommendation, confidence, risk rating, valuation stance, structured figure count, table count, validation status, and main diligence gaps.
-
-## Update an existing report
-
-When a review finds accidental omissions, thin sections, or supportable data that was not captured, run the dynamic gap loop above on the existing report folder.
-
-- For already-published reports, preserve existing canonical `S###` / `C###` IDs in `100-evidence-ledger.yaml` whenever possible. Add new canonical IDs after the current maximum and keep existing final `claimRefs` stable.
-- When research scope or planned chapter needs change, update the relevant owned analysis artifact (`01`–`08`) and its `localEvidence`; rerun `startup-ledger` to reconsolidate `100` and rewrite final `claimRefs` as needed.
-- If new claims materially change recommendation/confidence/riskRating/valuationStance, rerun downstream affected skills, then rerun `startup-ledger`, `startup-report`, `startup-card`, `startup-report-zh`, and `startup-card-zh`.
-- Do not commit a partially-updated report folder.
-- After updates and reruns, run `npm run validate`.
-
----
-
 ## Evidence and YAML conventions
 
-- Keep reports YAML-first; do not add prose-only report deliverables.
-- Every final external factual claim should trace through canonical `claimRefs` to `100-evidence-ledger.yaml` claims and retained source URLs with valid provenance: cited search result or directly reviewed page.
-- Use `null` with an explanation for unsupported private metrics; do not invent values.
-- Numeric KPI and chart values must be numbers, not strings.
-- Figures must use structured YAML specs rendered by the website; follow the schema instead of title-based heuristics.
+- Keep reports YAML-first; do not add prose-only deliverables.
+- Every final factual claim must trace through canonical `claimRefs` to `100-evidence-ledger.yaml` claims and retained source URLs.
+- Use `null` plus an explanation for unsupported private metrics; never invent values.
+- Preserve canonical `S###` / `C###` IDs when updating existing published reports where possible.
+- Add new canonical IDs after the current maximum.
+- Figures must use structured YAML specs supported by the website renderer, not title-based heuristics.
+
+## Updating an existing report
+
+When fixing omissions, thin sections, or newly supportable data:
+
+1. Update the owning analysis artifact (`01`–`08`) and its `.zh.yaml` sibling.
+2. Add or revise local evidence in that artifact.
+3. Rerun `startup-ledger` to reconsolidate `100` and claim IDs.
+4. Rerun affected downstream artifacts.
+5. If recommendation, confidence, risk rating, or valuation stance changes, rerun `startup-report`, `startup-card`, and their Chinese siblings.
+6. Run `npm run validate`.
+
+Do not commit or leave a partially updated report folder.
 
 ## Website notes
 
 - Work inside `website/` for frontend changes.
 - Astro uses static output and TypeScript strict mode.
-- Report content is loaded from `../reports/` via `website/src/content/reports-loader.ts`.
-- English and Simplified Chinese report artifacts are both required for complete reports.
+- Reports are loaded from `../reports/` via `website/src/content/reports-loader.ts`.
+- English and Simplified Chinese report artifacts are both required for complete rendering.
+
+## Final response for report runs
+
+Summarize only:
+
+- Report folder.
+- Generated YAML files, English and Simplified Chinese.
+- Source count and claim count.
+- Recommendation, confidence, risk rating, valuation stance.
+- Structured figure count and table count.
+- Validation status.
+- Main diligence gaps.

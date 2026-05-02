@@ -1,53 +1,48 @@
 ---
 name: startup-card-zh
-description: "Use when: generating 102-report-card.zh.yaml from 102-report-card.yaml. Keywords: Chinese localization, Simplified Chinese report card, translation."
+description: "Use when: generating 102-report-card.zh.yaml from 102-report-card.yaml. Keywords: Simplified Chinese report card, localization, translation, website index card."
 user-invocable: false
 ---
 
 # Startup Card ZH
 
-Use this skill after `102-report-card.yaml` exists and validates.
+Chinese report-card stage. Translate `102-report-card.yaml` into Simplified Chinese while preserving structure exactly.
 
-## Outputs
+## Read first
 
-Write exactly:
+- `102-report-card.yaml`
+- `.github/references/zh-translation.md`
+
+## Output
 
 - `102-report-card.zh.yaml`
 
-## Responsibility
-
-Translate `102-report-card.yaml` into Simplified Chinese, preserving structure exactly. Read `.github/references/zh-translation.md` first.
-
 ## Translate
 
-Translate every one of the following fields. The website renders these as the headline content on report cards and search results, so missing translations are highly visible.
-
-- `company.sector`, `company.stage`, `company.headquarters`, `company.shortDescription`
-- `title`, `subtitle`, `headline` (the `headline` is the one-sentence summary on the report card; never leave it in English)
-- Every entry of `topStrengths[]`, `topRisks[]`, `unresolvedGaps[]` (these are bullet-list items shown under the Chinese-localised section labels `核心亮点 / 核心风险 / 未解问题`; English content here is conspicuous to readers)
+- `company.sector`, `company.stage`, `company.headquarters`, `company.shortDescription`.
+- `title`, `subtitle`, `headline`.
+- Every item in `topStrengths[]`, `topRisks[]`, and `unresolvedGaps[]`.
 
 ## Preserve exactly
 
-- All schema keys, list order, and nested object shape.
-- All IDs, URLs, dates, numeric values, booleans, nulls.
-- All enum values: `recommendation`, `confidence`, `riskRating`, `valuationStance`.
-- `reportFiles.reportDocument`, `reportFiles.reportCard`, every `keyMetrics.*` key and value.
+- Schema keys, list order, nested object shape.
+- IDs, URLs, dates, numeric values, booleans, nulls.
+- Enum values: `recommendation`, `confidence`, `riskRating`, `valuationStance`.
+- `reportFiles.*`, every `keyMetrics.*` key and value.
 - Company, product, person, and investor proper names.
 
 ## Do not
 
-- Do not call `web_search`.
-- Do not invent facts or change claims.
-- Do not translate enum values, metric keys, or IDs.
+- Do not search, add facts, or change claims.
+- Do not translate enum values, metric keys, IDs, or report file paths.
 
-## Completion check before saving
+## Completion check
 
-1. Residual-English sweep on translated fields per `.github/references/zh-translation.md`.
-2. Structural parity: counts of `topStrengths`, `topRisks`, `unresolvedGaps`, and any other array equal `102-report-card.yaml`.
-3. Field parity: all numeric metrics, enum fields, and `reportFiles.*` values are byte-identical.
-4. Style parity: line count is within roughly ±10% of `102-report-card.yaml`.
-5. Parse: the file parses as YAML and starts with `schemaVersion: startup-diligence-report-v2`.
+- Residual-English sweep on translated fields.
+- Structural parity with English `102`.
+- Numeric metrics, enums, and `reportFiles.*` byte-identical.
+- YAML parses and starts with `schemaVersion: startup-diligence-report-v2`.
 
-## Handoff note
+## Handoff
 
-After writing, record a concise internal summary: output path and `artifactTranslated: 102-report-card`.
+Record output path and `artifactTranslated: 102-report-card`.

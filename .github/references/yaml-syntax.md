@@ -1,12 +1,47 @@
 # YAML syntax rules
 
-- Use 2-space indentation; never use tabs.
-- Write complete files, not continuation fragments. Every YAML artifact must begin at the document head with `schemaVersion`, `artifact`, `slug`, `runDate`, and `company` before section-specific content.
-- Never start an artifact with prose such as `Continuing...`, a partial list item, or a mid-file comment. If a file is too large, write it directly to disk in one complete document rather than returning a partial snippet.
-- Quote strings containing `: `, `#`, `{`, `}`, `[`, `]`, leading `*`, or leading `&`.
+Shared YAML rules for all report artifacts.
+
+## Document shape
+
+- Write complete files only; never write continuation fragments.
+- Every artifact starts at document head with:
+  - `schemaVersion`
+  - `artifact`
+  - `slug`
+  - `runDate`
+  - `company`
+- Do not start with prose such as `Continuing...`, a partial list item, or a mid-file comment.
+- If content is large, write the complete file directly to disk instead of returning partial snippets.
+
+## Formatting
+
+- Use 2-space indentation.
+- Never use tabs.
+- Keep arrays homogeneous.
 - Use literal blocks (`|`) for long paragraphs, equations, and disclaimers.
 - Use `null` for unknown optional values.
-- Numeric KPI fields must be numbers or `null`.
-- Keep arrays homogeneous.
-- Figure specs must be structured YAML objects, not diagram-language strings.
-- Preserve claim IDs, source IDs, figure IDs, table IDs, URLs, dates, and numeric values exactly across translations.
+- Quote strings containing:
+  - `: `
+  - `#`
+  - `{` or `}`
+  - `[` or `]`
+  - leading `*`
+  - leading `&`
+
+## Values
+
+- Numeric KPI fields are numbers or `null`, not strings.
+- Figure specs are structured YAML objects, not Mermaid, SVG, Markdown, prose, or diagram-language strings.
+- Preserve claim IDs, source IDs, figure IDs, table IDs, URLs, dates, enum values, and numeric values exactly across translations.
+
+## Completion check
+
+Before saving any YAML artifact:
+
+- Parse the file.
+- Confirm required head keys exist.
+- Confirm indentation is spaces-only.
+- Confirm unknown values use `null`.
+- Confirm numeric fields are numeric or `null`.
+- Confirm figure `data` is a structured object.
