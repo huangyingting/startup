@@ -53,6 +53,89 @@ const ZH_PLACEHOLDER_RE = /中文(?:摘要)?[：:]/;
 const CJK_RE = /[\u3400-\u9fff]/;
 const ASCII_WORD_RE = /[A-Za-z]{4,}/g;
 const ENGLISH_SENTENCE_RE = /\b(the|and|with|because|should|requires?|reported|public|customer|revenue|valuation|risk|market|product|evidence|diligence|summary|analysis|recommendation|company|business|enterprise)\b/i;
+const GENERIC_SECTION_TITLES = new Set([
+  'Evidence base',
+  'Investor interpretation',
+  'Contradictions and uncertainty',
+  'Private diligence path',
+  'Snapshot conclusion',
+]);
+const GENERIC_FIGURE_LABELS = new Set([
+  'Public anchor',
+  'Private bridge',
+  'Underwriting output',
+  'Evidence strength',
+  'Unknown private inputs',
+  'Investment implication',
+]);
+const ALLOWED_ZH_ASCII_WORDS = new Set([
+  'AI',
+  'API',
+  'APIs',
+  'ARR',
+  'AWS',
+  'Azure',
+  'Bedrock',
+  'Bloomberg',
+  'CAC',
+  'ChatGPT',
+  'CNBC',
+  'Codex',
+  'DALL',
+  'DPA',
+  'Forbes',
+  'GPT',
+  'GRR',
+  'Llama',
+  'LTV',
+  'Meta',
+  'Microsoft',
+  'NRR',
+  'Nvidia',
+  'OpenAI',
+  'PBC',
+  'SOC',
+  'SoftBank',
+  'Sora',
+  'TAM',
+  'USD',
+  'Vertex',
+  'Anthropic',
+  'Google',
+  'Amazon',
+  'Claude',
+  'Code',
+  'Cowork',
+  'Free',
+  'Pro',
+  'Max',
+  'Team',
+  'Enterprise',
+  'Coherent',
+  'Market',
+  'Insights',
+  'Mordor',
+  'Artificial',
+  'Analysis',
+  'Opus',
+  'Sonnet',
+  'Gemini',
+  'Preview',
+  'Compliance',
+  'HIPAA',
+  'SCIM',
+  'SSO',
+  'Messages',
+  'Managed',
+  'Agents',
+  'Web',
+  'Search',
+  'GitHub',
+  'Copilot',
+  'token',
+  'SaaS',
+  'IPO',
+]);
 
 function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
@@ -76,8 +159,11 @@ function isSkippableTranslationString(value) {
 
 function looksUntranslatedEnglish(value) {
   const text = String(value ?? '').trim();
-  if (isSkippableTranslationString(text) || CJK_RE.test(text)) return false;
-  const words = text.match(ASCII_WORD_RE) ?? [];
+  if (isSkippableTranslationString(text)) return false;
+  const words = (text.match(ASCII_WORD_RE) ?? []).filter((word) => !ALLOWED_ZH_ASCII_WORDS.has(word));
+  if (CJK_RE.test(text)) {
+    return words.length >= 6 && ENGLISH_SENTENCE_RE.test(words.join(' '));
+  }
   return words.length >= 6 && ENGLISH_SENTENCE_RE.test(text);
 }
 
@@ -194,6 +280,8 @@ function checkDepthQuality(failures, warnings, run, dir, ledger, reportDoc, card
     if (existsSync(path)) docs.set(file, readYaml(path));
   }
 
+  let floorHitArtifacts = 0;
+  let templateRiskArtifacts = 0;
   for (const [file, doc] of docs) {
     const tables = doc.tables?.length ?? 0;
     const figures = doc.figures?.length ?? 0;
@@ -205,6 +293,32 @@ function checkDepthQuality(failures, warnings, run, dir, ledger, reportDoc, card
     if (tables < minTables) failures.push(`${run}/${file}: thin analysis (${tables} table(s)); expected at least ${minTables} or an explicit evidence-backed reason`);
     if (figures < minFigures) failures.push(`${run}/${file}: thin analysis (${figures} figure(s)); expected at least ${minFigures}`);
     if (sections < minSections) failures.push(`${run}/${file}: thin analysis (${sections} section(s)); expected at least ${minSections}`);
+
+    const hitsFloor = !isSnapshot && tables === minTables && figures === minFigures && sections === minSections;
+    if (hitsFloor) floorHitArtifacts += 1;
+
+    const genericSectionCount = (doc.sections ?? []).filter((section) => GENERIC_SECTION_TITLES.has(section?.title)).length;
+    const sectionBodies = (doc.sections ?? []).map((section) => String(section?.body ?? '').trim()).filter(Boolean);
+    const duplicateBodyCount = sectionBodies.length - new Set(sectionBodies).size;
+    const genericFigureCount = (doc.figures ?? []).filter((figure) => {
+      const data = figure?.data ?? {};
+      const labels = [...(data.items ?? []), ...(data.nodes ?? []), ...(data.layers ?? [])]
+        .map((item) => item?.label)
+        .filter(Boolean);
+      return labels.length >= 3 && labels.filter((label) => GENERIC_FIGURE_LABELS.has(label)).length >= 3;
+    }).length;
+    const allTablesShort = (doc.tables ?? []).length > 0 && (doc.tables ?? []).every((table) => (table?.rows?.length ?? 0) <= 4);
+    const templateRisk = genericSectionCount >= 3 || duplicateBodyCount >= 1 || genericFigureCount >= 1 || (hitsFloor && allTablesShort);
+    if (templateRisk) {
+      templateRiskArtifacts += 1;
+      warnings.push(`${run}/${file}: template-risk signal (${genericSectionCount} generic section title(s), ${duplicateBodyCount} duplicate section bod(y/ies), ${genericFigureCount} generic figure(s), ${hitsFloor ? 'hits minimum counts exactly' : 'above floor'})`);
+    }
+  }
+  if (floorHitArtifacts >= 5) {
+    warnings.push(`${run}: ${floorHitArtifacts}/7 domain artifacts hit the minimum 4-section/4-table/2-figure floor exactly; investigate floor-targeted generation`);
+  }
+  if (templateRiskArtifacts >= 5) {
+    warnings.push(`${run}: ${templateRiskArtifacts} analysis artifacts show template-risk patterns; report may be schema-valid but not investor-grade`);
   }
 
   const valuationUsdM = Number(card?.keyMetrics?.valuationUsdM ?? 0);

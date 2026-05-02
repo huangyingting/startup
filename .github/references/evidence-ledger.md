@@ -57,6 +57,8 @@ For every targeted `web_search` response:
 - No single publisher/domain family should exceed 34% of retained sources when enough alternatives exist.
 - At least 15% of retained sources should be independent when the source universe supports it.
 - At most 50% of retained sources may be uncited by any claim.
+- Evidence quality is assessed per artifact before consolidation, not only at the final ledger level. Each `01`–`08` file should retain a domain-appropriate source mix and atomic local claims; a final ledger with enough total sources can still be weak if one domain is populated by generic or single-source evidence.
+- Do not treat source and claim counts as quality by themselves. A good ledger shows diversity by source type, recency, independence, claim type, and chapter coverage; a weak ledger overuses official/company sources, broad search summaries, duplicated event coverage, or generic open-question claims.
 
 ## `web_search` run-log line
 

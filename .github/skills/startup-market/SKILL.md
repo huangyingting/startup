@@ -6,53 +6,42 @@ user-invocable: false
 
 # Startup Market
 
-Use this skill after `01-company-snapshot.yaml` exists and parses. Read `schemaPath`, `yamlSyntaxPath`, and `01-company-snapshot.yaml`.
+Run after `01-company-snapshot.yaml` parses. Read it for company identity. Follow `.github/references/analysis-skill-conventions.md` for inputs, evidence rules, freshness, source quality, figure conventions, the Simplified Chinese sibling, and handoff format.
 
 ## Outputs
 
-Write exactly:
-
 - `02-market-macro.yaml`
-- `02-market-macro.zh.yaml` (Simplified Chinese sibling)
+- `02-market-macro.zh.yaml`
 
-## Dynamic evidence use
-
-Use targeted web research and direct page reads for missing market definition, sizing, segmentation, buyer, geography, growth-driver, or adoption facts. Register retained sources/claims in `02-market-macro.yaml.localEvidence` and cite local `claimRefs` in `02`. Parse `web_search` packets per `.github/references/evidence-ledger.md`; log each `web_search` call.
-
-Mine official resources, blog, solutions, industry, customer, and product pages for category definition, buyers, verticals, use cases, budget owners, and adoption narrative. Use company-authored pages for segmentation, not independent TAM/SAM/SOM proof. Corroborate sizing, growth, and penetration with analyst, government, filing, or independent sources.
-
-Treat `currentDate` as the freshness anchor for market sizing, growth rates, adoption, regulation-driven demand, and buyer-budget claims. Use complete-sentence questions written for the specific paragraph/table/figure you need, for example: `What is the latest independently reported size and growth outlook for the enterprise generative AI software market as of <currentDate>, and which buyer budgets does it replace or expand?` Avoid keyword-only searches. Include at least one disconfirming market question about slowdown, saturation, budget pressure, or adoption constraints.
-
-Before writing `02`, ask multiple market-specific questions covering market definition, TAM/SAM/SOM, segment sizing, buyer personas, budget sources, geography, adoption timing, penetration constraints, and market risks. If broad TAM queries are thin, rewrite for software-only spend, enterprise-only spend, workflow spend, or bottom-up adoption proxies before marking a gap.
-
-Do not invent market sizes, growth rates, penetration, TAM/SAM/SOM, or segment shares. If targeted searches do not produce cited evidence, keep the gap visible.
-
-## Output focus
-
-Structure this as an investor-grade market chapter:
+## Chapter focus
 
 - Market definition and category boundaries.
-- Detailed raw market evidence retained in this artifact: cited sizing lenses, segment definitions, geography/adoption notes, buyer budget evidence, contradictory estimates, and dated recency notes.
-- TAM/SAM/SOM or evidence-constrained market-sizing analysis.
+- TAM/SAM/SOM or evidence-constrained sizing across multiple lenses (each row identifies its boundary, date, geography, included/excluded spend, confidence, and why it matters to the startup).
+- Segment definitions and sizing by adjacent budget pool or workflow category (core software, payments, automation, procurement, AP, treasury, infrastructure, services, etc.) when applicable.
 - Growth drivers and constraints.
 - Buyer/persona segmentation and customer budget owner.
-- Geography, adoption, penetration, and timing.
-- Segment definitions and sizing by adjacent budget pool or workflow category when applicable, such as core software, payments, automation, procurement, AP, treasury, infrastructure, or services.
-- Penetration analysis by customer size, geography, vertical, or adoption maturity when evidence supports it; otherwise document as a market diligence gap.
+- Geography, adoption, penetration, and timing — by customer size, vertical, or adoption maturity when supportable.
 - Market attractiveness verdict and open diligence asks.
 
-Expected table families unless unavailable with a documented gap: market definitions, segment definitions and sizing, TAM/SAM/SOM sizing lenses, growth drivers, buyer/customer segments, geography/penetration constraints, market evidence gaps.
+## Expected table families
 
-## Figure rules
+Market definitions, segment definitions and sizing, TAM/SAM/SOM sizing lenses, growth drivers, buyer/customer segments, geography/penetration constraints, market evidence gaps.
 
-- Prefer `market-sizing-lens` for TAM/SAM/SOM or constrained sizing.
-- For bars or metric views, use numeric `value` and formatted `displayValue`.
-- Use canonical renderer fields only: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`.
+## Source mix
 
-## Simplified Chinese sibling
+Analyst or market-data sources, government/regulatory or industry sources where relevant, buyer-budget evidence, adoption/penetration evidence, company segmentation claims, and at least one disconfirming source on adoption slowdown, ROI uncertainty, regulation, or budget pressure. Do not build the chapter from a single broad TAM estimate.
 
-Immediately after writing `02-market-macro.yaml`, write `02-market-macro.zh.yaml` as its full Simplified Chinese translation, following `.github/references/zh-translation.md`. Preserve schema keys, IDs, claim/source IDs, numeric values, enums, array order, and YAML serialization style; translate every prose field including `chapter.title`, `chapter.summary`, callouts, sections, table cells, figure node detail, and notes. Do not move on to the next skill until both English and Chinese files exist and pass the residual-English sweep and structural-parity checks.
+## Domain-specific query angles
 
-## Handoff note
+- If broad TAM queries are thin, rewrite for software-only spend, enterprise-only spend, workflow-specific spend, or bottom-up adoption proxies before declaring a gap.
+- Include at least one disconfirming question about market slowdown, saturation, budget pressure, or adoption constraints.
+- If SAM/SOM cannot be isolated, preserve the failed sizing path and the diligence ask; do not replace it with a generic "large market" paragraph.
 
-After writing, record a concise internal summary: output path, market attractiveness, figure count, table count, evidence gaps closed, evidence gaps remaining, and `web_search` calls made with query labels or `web_search: not called`.
+## Preferred figure types
+
+- `market-sizing-lens` for TAM/SAM/SOM or constrained sizing.
+- `bars` / `metric-bars` only with numeric `value` plus formatted `displayValue`.
+
+## Handoff extras
+
+Add `market attractiveness` to the standard handoff fields.

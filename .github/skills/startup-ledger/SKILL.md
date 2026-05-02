@@ -28,6 +28,18 @@ The consolidation script must:
 
 Do not use `web_search` to add new facts at this stage. If a report-critical fact is missing but appears supportable, route back to the relevant analysis skill so it can search, update its `localEvidence`, and rewrite its artifact first. Then rerun this skill.
 
+## Pre-consolidation evidence audit
+
+Before running `scripts/consolidate-evidence.mjs`, inspect each `01`–`08` artifact's `localEvidence` and stop if any stage has empty, placeholder, or obviously thin evidence. For each artifact, verify:
+
+- `localEvidence.sources[]` contains retained URLs that were either directly reviewed or came from cited `web_search` annotations.
+- `localEvidence.claims[]` contains atomic claims, not paragraph summaries.
+- Every material table, figure, callout, and section has `claimRefs` that resolve to local claims.
+- Report-critical volatile facts have current/recent evidence or an explicit `evidenceGaps` item.
+- The source mix fits the domain skill's source collection quality gate.
+
+If most artifacts have just enough generic claims to satisfy schema shape, or if any artifact lacks chapter-specific source diversity, route back to the owning skill. Consolidation should never turn thin local evidence into a polished-looking final ledger.
+
 ## Enum fields
 
 Claim and source enum fields are closed; consolidation must preserve only allowed tokens. If an artifact's `localEvidence` uses a non-canonical value, normalize it during consolidation rather than copying it through.

@@ -24,6 +24,8 @@ Do not use `web_search` to add new facts at this stage. If a report-critical fac
 
 Before writing `101`, audit `01`–`08` for freshness and depth. If a volatile claim is stale relative to `currentDate`—financing, valuation, product release, customer metric, pricing, lawsuit status, or regulatory posture—route back to the owning skill, refresh the raw artifact, rerun `startup-ledger`, then write `101`. If an upstream artifact is too thin for a detailed investment view, deepen it first.
 
+Reject template-shaped upstream artifacts before composing the final report. Red flags include most domain artifacts having exactly 4 sections / 4 tables / 2 figures, repeated generic section titles such as `Evidence base` or `Investor interpretation`, duplicated section bodies, or generic figures that only say `Public anchor`, `Private bridge`, and `Underwriting output`. Route back to the owning skills until the raw artifacts contain chapter-specific analysis, not validation-floor filler.
+
 ## Document requirements
 
 - Include professional report metadata where supported by schema: title, prepared-by/generated-using fields if available, recommendation, confidence, risk rating, valuation stance, and disclaimer.
@@ -56,7 +58,7 @@ The final report must consume the analysis record, not summarize it away. Apply 
 
 Before saving `101`, compute and verify:
 
-1. `sectionCountPerChapter[chapter N for N in 2..9] >= len(artifact[N-1].sections)`. Note the off-by-one: `101` chapter `N` corresponds to analysis artifact `XX = N-1` (chapter 2 ↔ `01-company-snapshot.yaml`, chapter 9 ↔ `08-investment-valuation.yaml`). When you renumber the source artifact's sections from `(N-1).X` to `N.X` for inclusion in `101`, keep an explicit mapping comment so `startup-report-zh` can reverse the remap when assembling `101-report-document.zh.yaml`.
+1. `sectionCountPerChapter[chapter N for N in 2..9] >= len(artifact[N-1].sections)`. The chapter-N ↔ artifact-(N-1) mapping is defined once in `AGENTS.md` ("Section numbering convention"); when you renumber a source artifact's sections from `(N-1).X` to `N.X` for inclusion in `101`, keep an explicit mapping comment so `startup-report-zh` can reverse the remap.
 2. `set(101.tables[*].id) >= union(artifact[01..08].tables[*].id)` minus IDs explicitly listed in `reportMeta.coverageNotes`.
 3. `set(101.figures[*].id) >= union(artifact[01..08].figures[*].id)` minus IDs explicitly listed in `reportMeta.coverageNotes`.
 4. `set(claimRefs collected from 101) >= set(100-evidence-ledger.yaml.claims[*].id)` minus IDs explicitly noted as superseded.
@@ -80,6 +82,7 @@ Do not proceed to `startup-card` if `reportTableCount` or `reportFigureCount` is
 - Synthesize: write narrative paragraphs, executive summary, recommendation logic, and connect facts across chapters.
 - Preserve: keep every supported table row, figure node, scenario assumption, and risk register entry from `01`–`08`. Do not collapse a 7-row competitor table into a 3-row summary.
 - Refine: clarify wording, fix duplication across artifacts, and reorder for readability. Refining is not the same as dropping.
+- Upgrade weak raw text before finalizing. If source sections are generic, repetitive, or indistinguishable across chapters, do not merely copy them into `101`; return to the relevant skill and replace them with domain-specific synthesis backed by the existing evidence or newly gathered evidence.
 
 ## Figure rules
 
