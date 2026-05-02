@@ -125,6 +125,30 @@ After every skill stage:
 - Reject thin analysis output: each `02`–`08` artifact should include multiple substantive sections plus chapter-appropriate tables/figures. If a table family is not supportable from evidence, include a clearly labeled diligence gap.
 - For each `XX-name.zh.yaml`, run the residual-English sweep and structural-parity check defined in `.github/references/zh-translation.md`.
 
+## Minimum depth gates
+
+Schema validity is necessary but not sufficient. A complete report must be investor-grade; do not treat `npm run validate` as a substitute for research depth.
+
+- Do not use one-off generator scripts, templates, or bulk cloning to create report prose or Simplified Chinese files. Scripts may help inspect/count/validate artifacts, but the analytical content must be written through the stage skills from reviewed evidence.
+- The report must fail the workflow, even if YAML parses, when an artifact is mostly generic diligence language, placeholder translation, or unsupported synthesis.
+- For normal public-company or late-stage private-company diligence, use these minimum depth floors unless the company is genuinely obscure and the artifact records why the floor cannot be met:
+  - `01-company-snapshot.yaml`: at least 3 substantive tables, 2 figures, 5 sections, and a milestone timeline with at least 8 entries.
+  - Each of `02`–`08`: at least 4 substantive tables, 2 figures, and 4 sections. `07-risk-regulatory.yaml` and `08-investment-valuation.yaml` should usually exceed this floor.
+  - `100-evidence-ledger.yaml`: enough evidence to support the final judgment. For highly visible companies, a thin ledger below roughly 50 retained sources or 90 atomic claims is a red flag that research was compressed.
+  - `101-report-document.yaml`: preserve the union of upstream analysis tables/figures unless an explicit `reportMeta.coverageNotes` entry names the omitted IDs and gives a reason. A final report with fewer tables/figures than the upstream record is incomplete by default.
+- Before running `startup-ledger`, compute and inspect artifact counts for sources, claims, tables, figures, sections, and evidence gaps. If any stage misses the minimum depth floor, return to that stage before consolidation.
+- Before writing `102-report-card.yaml`, compare `101.tableCount` and `101.figureCount` against the union of `01`–`08`; unexpectedly low final counts mean `startup-report` dropped analysis and must be rerun.
+
+## Source quality gates
+
+Evidence quality must be high enough to support investment judgment, not merely enough to fill YAML.
+
+- For report-critical volatile facts—latest financing, valuation, revenue/run-rate, headcount, customers, product releases, legal/regulatory status, and partner economics—review at least one direct official/tier-one/legal/analyst source URL where available. Do not rely only on web-search narrative summaries.
+- Treat AI-generated search summaries, SEO statistic roundups, wiki pages, and low-reputation blogs as leads, not final support for critical facts. Retain them only when better sources are unavailable and mark confidence accordingly.
+- Every major valuation, financial, customer, and legal claim should have either multi-source corroboration or an explicit reason why only one source is available.
+- If a web-search result appears implausible, circular, synthetic, or inconsistent with stronger sources, record it as conflicting or discard it; do not average or silently accept it.
+- For companies with rich public coverage, source diversity should include official/company material, tier-one business/news, legal/regulatory sources, technical/product docs, customer/partner proof, and market/analyst sources.
+
 After `01-company-snapshot.yaml`, run `node scripts/check-company-dedup.mjs <reportFolder>/01-company-snapshot.yaml`. Exit code `0` means continue; exit code `2` means duplicate-risk and you must stop unless the user explicitly requested a refresh of that company; any other non-zero exit means fix the input/path problem before continuing.
 
 ## Dynamic gap loop

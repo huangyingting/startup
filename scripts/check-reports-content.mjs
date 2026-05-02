@@ -14,6 +14,45 @@ const RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 
 const CONFIDENCE = new Set(['high', 'medium', 'low']);
 const RISK_RATINGS = new Set(['low', 'moderate', 'significant', 'critical', 'unknown']);
 const VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
+const ANALYSIS_FILES = [
+  '01-company-snapshot.yaml',
+  '02-market-macro.yaml',
+  '03-competitive-benchmarking.yaml',
+  '04-financial-unit-economics.yaml',
+  '05-product-technology.yaml',
+  '06-customer-retention.yaml',
+  '07-risk-regulatory.yaml',
+  '08-investment-valuation.yaml',
+];
+const ANALYSIS_PAIRS = ANALYSIS_FILES.map((file) => [file, file.replace(/\.yaml$/, '.zh.yaml')]);
+const TRANSLATABLE_KEYS = new Set([
+  'background',
+  'body',
+  'businessModel',
+  'customerFocus',
+  'detail',
+  'diligencePath',
+  'disclaimer',
+  'fundingStatus',
+  'gap',
+  'headline',
+  'headquarters',
+  'label',
+  'notes',
+  'productSummary',
+  'role',
+  'sector',
+  'shortDescription',
+  'stage',
+  'subtitle',
+  'summary',
+  'title',
+  'unit',
+]);
+const ZH_PLACEHOLDER_RE = /中文(?:摘要)?[：:]/;
+const CJK_RE = /[\u3400-\u9fff]/;
+const ASCII_WORD_RE = /[A-Za-z]{4,}/g;
+const ENGLISH_SENTENCE_RE = /\b(the|and|with|because|should|requires?|reported|public|customer|revenue|valuation|risk|market|product|evidence|diligence|summary|analysis|recommendation|company|business|enterprise)\b/i;
 
 function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
@@ -22,6 +61,24 @@ function asDateString(value) {
 
 function readYaml(path) {
   return yaml.load(readFileSync(path, 'utf8')) ?? {};
+}
+
+function isSkippableTranslationString(value) {
+  const text = String(value ?? '').trim();
+  if (!text) return true;
+  if (/^https?:\/\//i.test(text)) return true;
+  if (/^[A-Z]\d{3}$/.test(text)) return true;
+  if (/^[$€¥]?[0-9,.]+[A-Za-z%+.-]*$/.test(text)) return true;
+  if (/^\d{4}(-\d{2}){0,2}$/.test(text)) return true;
+  if (/^[a-z]+(?:-[a-z]+)*$/.test(text) && text.length < 24) return true;
+  return false;
+}
+
+function looksUntranslatedEnglish(value) {
+  const text = String(value ?? '').trim();
+  if (isSkippableTranslationString(text) || CJK_RE.test(text)) return false;
+  const words = text.match(ASCII_WORD_RE) ?? [];
+  return words.length >= 6 && ENGLISH_SENTENCE_RE.test(text);
 }
 
 function canonicalSourceUrl(value) {
@@ -96,22 +153,91 @@ function checkEvidenceCoverage(failures, warnings, run, ledger) {
   }
 }
 
+function walkZhStrings(failures, run, file, value, path = []) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => walkZhStrings(failures, run, file, item, [...path, String(index)]));
+    return;
+  }
+  if (value && typeof value === 'object') {
+    for (const [key, child] of Object.entries(value)) {
+      if (key === 'statement' || key === 'keyQuote' || key === 'url') continue;
+      walkZhStrings(failures, run, file, child, [...path, key]);
+    }
+    return;
+  }
+  if (typeof value !== 'string') return;
+
+  const key = path.at(-1) ?? '';
+  const inTableText = path.includes('tables') && (path.includes('rows') || path.includes('columns') || key === 'notes' || key === 'title');
+  const inFigureText = path.includes('figures') && TRANSLATABLE_KEYS.has(key);
+  const inCardList = ['topStrengths', 'topRisks', 'unresolvedGaps'].some((name) => path.includes(name));
+  const shouldCheck = TRANSLATABLE_KEYS.has(key) || inTableText || inFigureText || inCardList;
+  if (!shouldCheck) return;
+
+  if (ZH_PLACEHOLDER_RE.test(value)) {
+    failures.push(`${run}/${file}: placeholder translation marker at ${path.join('.')}`);
+  } else if (looksUntranslatedEnglish(value)) {
+    failures.push(`${run}/${file}: likely untranslated English text at ${path.join('.')}: "${value.slice(0, 120)}"`);
+  }
+}
+
+function checkZhQuality(failures, run, file, zhPath, zhDoc) {
+  const raw = readFileSync(zhPath, 'utf8');
+  if (ZH_PLACEHOLDER_RE.test(raw)) failures.push(`${run}/${file}: contains placeholder translation marker "中文:" or "中文摘要:"`);
+  walkZhStrings(failures, run, file, zhDoc);
+}
+
+function checkDepthQuality(failures, warnings, run, dir, ledger, reportDoc, card) {
+  const docs = new Map();
+  for (const file of ANALYSIS_FILES) {
+    const path = join(dir, file);
+    if (existsSync(path)) docs.set(file, readYaml(path));
+  }
+
+  for (const [file, doc] of docs) {
+    const tables = doc.tables?.length ?? 0;
+    const figures = doc.figures?.length ?? 0;
+    const sections = doc.sections?.length ?? 0;
+    const isSnapshot = file === '01-company-snapshot.yaml';
+    const minTables = isSnapshot ? 3 : 4;
+    const minFigures = 2;
+    const minSections = isSnapshot ? 5 : 4;
+    if (tables < minTables) failures.push(`${run}/${file}: thin analysis (${tables} table(s)); expected at least ${minTables} or an explicit evidence-backed reason`);
+    if (figures < minFigures) failures.push(`${run}/${file}: thin analysis (${figures} figure(s)); expected at least ${minFigures}`);
+    if (sections < minSections) failures.push(`${run}/${file}: thin analysis (${sections} section(s)); expected at least ${minSections}`);
+  }
+
+  const valuationUsdM = Number(card?.keyMetrics?.valuationUsdM ?? 0);
+  const revenueRunRateUsdM = Number(card?.keyMetrics?.revenueRunRateUsdM ?? 0);
+  const highProfile = valuationUsdM >= 100000 || revenueRunRateUsdM >= 10000;
+  if (highProfile && (ledger?.sources?.length ?? 0) < 50) {
+    failures.push(`${run}/100-evidence-ledger.yaml: high-profile company has only ${ledger?.sources?.length ?? 0} retained sources; expected at least 50 or a documented reason`);
+  }
+  if (highProfile && (ledger?.claims?.length ?? 0) < 90) {
+    failures.push(`${run}/100-evidence-ledger.yaml: high-profile company has only ${ledger?.claims?.length ?? 0} claims; expected at least 90 or a documented reason`);
+  }
+
+  const upstreamTables = new Set([...docs.values()].flatMap((doc) => (doc.tables ?? []).map((table) => table.id)));
+  const upstreamFigures = new Set([...docs.values()].flatMap((doc) => (doc.figures ?? []).map((figure) => figure.id)));
+  const reportTables = new Set((reportDoc?.tables ?? []).map((table) => table.id));
+  const reportFigures = new Set((reportDoc?.figures ?? []).map((figure) => figure.id));
+  const coverageNotes = String(reportDoc?.reportMeta?.coverageNotes ?? '');
+  const missingTables = [...upstreamTables].filter((id) => !reportTables.has(id) && !coverageNotes.includes(id));
+  const missingFigures = [...upstreamFigures].filter((id) => !reportFigures.has(id) && !coverageNotes.includes(id));
+  const preservedTableRatio = upstreamTables.size ? reportTables.size / upstreamTables.size : 1;
+  const preservedFigureRatio = upstreamFigures.size ? reportFigures.size / upstreamFigures.size : 1;
+  if (preservedTableRatio < 0.8) failures.push(`${run}/101-report-document.yaml: preserves only ${reportTables.size}/${upstreamTables.size} upstream tables`);
+  if (preservedFigureRatio < 0.8) failures.push(`${run}/101-report-document.yaml: preserves only ${reportFigures.size}/${upstreamFigures.size} upstream figures`);
+  if (missingTables.length) warnings.push(`${run}/101-report-document.yaml: upstream table(s) missing without coverageNotes: ${missingTables.join(', ')}`);
+  if (missingFigures.length) warnings.push(`${run}/101-report-document.yaml: upstream figure(s) missing without coverageNotes: ${missingFigures.join(', ')}`);
+}
+
 function checkZhParity(failures, run, dir) {
-  const analysisPairs = [
-    ['01-company-snapshot.yaml', '01-company-snapshot.zh.yaml'],
-    ['02-market-macro.yaml', '02-market-macro.zh.yaml'],
-    ['03-competitive-benchmarking.yaml', '03-competitive-benchmarking.zh.yaml'],
-    ['04-financial-unit-economics.yaml', '04-financial-unit-economics.zh.yaml'],
-    ['05-product-technology.yaml', '05-product-technology.zh.yaml'],
-    ['06-customer-retention.yaml', '06-customer-retention.zh.yaml'],
-    ['07-risk-regulatory.yaml', '07-risk-regulatory.zh.yaml'],
-    ['08-investment-valuation.yaml', '08-investment-valuation.zh.yaml'],
-  ];
   const reportPairs = [
     ['101-report-document.yaml', '101-report-document.zh.yaml'],
     ['102-report-card.yaml', '102-report-card.zh.yaml'],
   ];
-  for (const [enFile, zhFile] of [...analysisPairs, ...reportPairs]) {
+  for (const [enFile, zhFile] of [...ANALYSIS_PAIRS, ...reportPairs]) {
     const zhPath = join(dir, zhFile);
     const enPath = join(dir, enFile);
     if (!existsSync(enPath)) continue;
@@ -122,6 +248,7 @@ function checkZhParity(failures, run, dir) {
     let enDoc, zhDoc;
     try { enDoc = readYaml(enPath); } catch (err) { failures.push(`${run}/${enFile}: YAML parse failed: ${err.message.split('\n')[0]}`); continue; }
     try { zhDoc = readYaml(zhPath); } catch (err) { failures.push(`${run}/${zhFile}: YAML parse failed: ${err.message.split('\n')[0]}`); continue; }
+    checkZhQuality(failures, run, zhFile, zhPath, zhDoc);
 
     if (zhDoc.schemaVersion !== V2_SCHEMA) failures.push(`${run}/${zhFile}: expected schemaVersion ${V2_SCHEMA}, got ${zhDoc.schemaVersion}`);
     if (zhDoc.artifact !== enDoc.artifact) failures.push(`${run}/${zhFile}: artifact must equal ${enDoc.artifact}`);
@@ -180,14 +307,29 @@ try {
     checked += 1;
 
     const ledgerPath = join(dir, '100-evidence-ledger.yaml');
+    let ledger = null;
     if (existsSync(ledgerPath)) {
       try {
-        const ledger = readYaml(ledgerPath);
+        ledger = readYaml(ledgerPath);
         checkEvidenceCoverage(failures, warnings, run, ledger);
       } catch (err) {
         failures.push(`${run}/100-evidence-ledger.yaml: YAML parse failed: ${err.message.split('\n')[0]}`);
       }
     }
+
+    let reportDoc = null;
+    let card = null;
+    try {
+      reportDoc = readYaml(join(dir, '101-report-document.yaml'));
+    } catch (err) {
+      failures.push(`${run}/101-report-document.yaml: YAML parse failed: ${err.message.split('\n')[0]}`);
+    }
+    try {
+      card = readYaml(join(dir, '102-report-card.yaml'));
+    } catch (err) {
+      failures.push(`${run}/102-report-card.yaml: YAML parse failed: ${err.message.split('\n')[0]}`);
+    }
+    if (ledger && reportDoc && card) checkDepthQuality(failures, warnings, run, dir, ledger, reportDoc, card);
 
     checkZhParity(failures, run, dir);
   }

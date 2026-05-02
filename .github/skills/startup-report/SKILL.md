@@ -64,6 +64,15 @@ Before saving `101`, compute and verify:
 
 If any check fails, fix the report (add the missing section, table, figure, or claim reference) before saving rather than relaxing the threshold.
 
+Also print or record an internal coverage audit before saving:
+
+- `upstreamTableCount`, `reportTableCount`, and any omitted table IDs with reasons.
+- `upstreamFigureCount`, `reportFigureCount`, and any omitted figure IDs with reasons.
+- `ledgerClaimCount`, `reportReferencedClaimCount`, and any unreferenced claim IDs with reasons.
+- `chapterCoverage`: for chapters `2`–`9`, the source artifact, source section count, and final chapter section count.
+
+Do not proceed to `startup-card` if `reportTableCount` or `reportFigureCount` is unexpectedly far below the upstream union. A very short final report that passes schema validation is still a workflow failure.
+
 ## Synthesis vs preservation
 
 `101` adds investor judgment on top of the raw record; it does not replace it.
