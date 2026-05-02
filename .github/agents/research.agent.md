@@ -2,7 +2,7 @@
 description: "Use when: generating startup due diligence report YAML for one named company. Keywords: startup diligence, VC report, investment report, YAML artifacts, structured figures."
 name: "Startup Research"
 model: "GPT-5.4 (copilot)"
-tools: [agent, read, edit, execute, todo]
+tools: [agent, view, edit, create, glob, grep, todo]
 ---
 
 Orchestrate one complete `startup-diligence-report-v2` run for a named existing company. The final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.

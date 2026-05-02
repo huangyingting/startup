@@ -2,7 +2,7 @@
 description: "Use when: generating market sizing, macro analysis, TAM/SAM/SOM, segment analysis, and competitive benchmarking for a VC due diligence report."
 name: "Startup Market and Competition Analyst"
 model: "GPT-5.4 (copilot)"
-tools: [read, edit, execute]
+tools: [view, edit, create, glob, grep]
 user-invocable: false
 ---
 

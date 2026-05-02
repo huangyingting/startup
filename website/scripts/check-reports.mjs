@@ -68,6 +68,7 @@ const FIGURE_CONTRACTS = new Map([
 const LEGACY_FIGURE_FIELDS = ['mer' + 'maid', 'mer' + 'maidType'];
 const NON_CANONICAL_FIGURE_DATA_FIELDS = new Set(['children', 'steps', 'cards', 'buckets', 'groups', 'components', 'name']);
 const REMOVED_REPORT_META_FIELDS = ['class' + 'ification'];
+const REMOVED_REPORT_CARD_FIELDS = ['date', 'companyName', 'memo', 'overallRisk', 'sourceCount', 'claimCount'];
 
 function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
@@ -269,6 +270,9 @@ try {
     if (typeof card?.tableCount !== 'number') failures.push(`${run}/11-report-card.yaml: tableCount is required and must be a number`);
     else if (card.tableCount !== (reportDoc?.tables ?? []).length) failures.push(`${run}/11-report-card.yaml: tableCount does not match report document`);
     if (typeof card?.overallScore !== 'number' || card.overallScore < 0 || card.overallScore > 10) failures.push(`${run}/11-report-card.yaml: overallScore must be a number between 0 and 10`);
+    for (const field of REMOVED_REPORT_CARD_FIELDS) {
+      if (Object.hasOwn(card ?? {}, field)) failures.push(`${run}/11-report-card.yaml: report card contains removed field ${field}`);
+    }
     if (card?.reportFiles?.reportDocument !== '10-report-document.yaml') failures.push(`${run}/11-report-card.yaml: reportFiles.reportDocument must be 10-report-document.yaml`);
     if (card?.reportFiles?.reportCard !== '11-report-card.yaml') failures.push(`${run}/11-report-card.yaml: reportFiles.reportCard must be 11-report-card.yaml`);
     if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {

@@ -2,7 +2,7 @@
 description: "Use when: verifying startup identity and building the evidence ledger for a VC due diligence report. Keywords: source ledger, claims, identity, bibliography, evidence quality."
 name: "Startup Report Evidence Analyst"
 model: "GPT-5.4 (copilot)"
-tools: [web_search, read, edit, execute]
+tools: [web_search, view, edit, create, glob, grep]
 user-invocable: false
 ---
 

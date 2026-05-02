@@ -2,7 +2,7 @@
 description: "Use when: generating financial/unit economics, product/technology, customer analysis, and retention sections for a VC due diligence report."
 name: "Startup Financial and Product Analyst"
 model: "GPT-5.4 (copilot)"
-tools: [read, edit, execute]
+tools: [view, edit, create, glob, grep]
 user-invocable: false
 ---
 

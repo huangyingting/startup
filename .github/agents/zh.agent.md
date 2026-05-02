@@ -2,7 +2,7 @@
 description: "Use when: translating v2 startup due diligence report YAML artifacts into Simplified Chinese. Keywords: Chinese localization, report translation."
 name: "Startup Report Translator ZH"
 model: "GPT-5.4 (copilot)"
-tools: [read, edit, execute]
+tools: [view, edit, create, glob, grep]
 user-invocable: false
 ---
 

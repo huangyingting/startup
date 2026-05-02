@@ -2,7 +2,7 @@
 description: "Use when: generating regulatory risk, risk heatmap, investment thesis, valuation, IPO readiness, return scenarios, and recommendation for a VC diligence report."
 name: "Startup Risk and Valuation Analyst"
 model: "GPT-5.4 (copilot)"
-tools: [read, edit, execute]
+tools: [view, edit, create, glob, grep]
 user-invocable: false
 ---
 

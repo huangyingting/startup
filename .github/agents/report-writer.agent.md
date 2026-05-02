@@ -2,7 +2,7 @@
 description: "Use when: assembling completed v2 diligence artifacts into website report YAML and report-card metadata. Keywords: report document, structured figures, report card, bibliography."
 name: "Startup Report Writer"
 model: "GPT-5.4 (copilot)"
-tools: [read, edit, execute]
+tools: [view, edit, create, glob, grep]
 user-invocable: false
 ---
 

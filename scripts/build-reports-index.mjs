@@ -60,7 +60,7 @@ for (const runId of listRuns()) {
       riskRating: data.riskRating ?? null,
       valuationStance: data.valuationStance ?? null,
       rating: data.overallScore ?? null,
-      sourceCount: data.sourceStats?.sourcesRetained ?? null,
+      sourcesRetained: data.sourceStats?.sourcesRetained ?? null,
       figureCount: data.figureCount ?? null,
       tableCount: data.tableCount ?? null,
       valuationUsdM: metrics.valuationUsdM ?? null,
