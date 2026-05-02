@@ -42,6 +42,26 @@ function tableIds(doc) { return (doc.tables ?? []).map((x) => x?.id).sort().join
 function figureIds(doc) { return (doc.figures ?? []).map((x) => x?.id).sort().join(','); }
 function idSet(items) { return new Set((items ?? []).map((x) => x?.id).filter(Boolean)); }
 function yamlFiles(dir) { return readdirSync(dir).filter((name) => name.endsWith('.yaml')); }
+function isRenderableScalar(value) { return value === null || value === undefined || ['string', 'number', 'boolean'].includes(typeof value) || value instanceof Date; }
+
+function checkRenderableData(run, file, doc) {
+  for (const table of doc?.tables ?? []) {
+    for (const [rowIndex, row] of (table.rows ?? []).entries()) {
+      for (const [cellIndex, cell] of (row ?? []).entries()) {
+        if (!isRenderableScalar(cell)) fail(`${run}/${file}: table ${table.id} row ${rowIndex + 1} cell ${cellIndex + 1} is ${Array.isArray(cell) ? 'an array' : 'an object'}; use a scalar value`);
+      }
+    }
+  }
+
+  for (const figure of doc?.figures ?? []) {
+    if (figure.type !== 'timeline') continue;
+    for (const [itemIndex, item] of (figure.data?.items ?? []).entries()) {
+      for (const key of ['date', 'label', 'detail']) {
+        if (!isRenderableScalar(item?.[key])) fail(`${run}/${file}: timeline figure ${figure.id} item ${itemIndex + 1}.${key} is ${Array.isArray(item?.[key]) ? 'an array' : 'an object'}; use a scalar value`);
+      }
+    }
+  }
+}
 
 function skippableText(value) {
   const text = String(value ?? '').trim();
@@ -108,6 +128,9 @@ function checkZhPair(run, dir, enFile, zhFile) {
   let en, zh;
   try { en = readYaml(enPath); } catch (err) { return fail(`${run}/${enFile}: YAML parse failed: ${err.message.split('\n')[0]}`); }
   try { zh = readYaml(zhPath); } catch (err) { return fail(`${run}/${zhFile}: YAML parse failed: ${err.message.split('\n')[0]}`); }
+
+  checkRenderableData(run, enFile, en);
+  checkRenderableData(run, zhFile, zh);
 
   if (/中文(?:摘要)?[：:]/.test(readFileSync(zhPath, 'utf8'))) fail(`${run}/${zhFile}: contains placeholder translation marker "中文:" or "中文摘要:"`);
   walkZh(run, zhFile, zh);
