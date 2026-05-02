@@ -104,6 +104,10 @@ Downstream skills do not need to mechanically read every prior artifact. Each sk
 - `startup-ledger`, `startup-report`, and `startup-card` are consolidation/finalization skills; they read the completed artifacts they explicitly depend on and do not gather new facts.
 - `startup-report-zh` assembles `101-report-document.zh.yaml` from `101-report-document.yaml` plus every `01-08.zh.yaml`; `startup-card-zh` translates `102-report-card.yaml`. Both follow `.github/references/zh-translation.md` and preserve facts, IDs, numbers, enums, and schema shape.
 
+## Section numbering convention
+
+Analysis artifacts `01`–`08` number their sections starting at the artifact's own chapter number (`01` uses `1.1`, `02` uses `2.1`, ..., `08` uses `8.1`). When `startup-report` composes `101-report-document.yaml`, those artifacts become chapters `2`–`9`, so the same section is renumbered (`01`'s `1.1` becomes `101` chapter `2.1`, `08`'s `8.1` becomes `101` chapter `9.1`). The mapping is always `chapter N in 101 ↔ artifact (N-1)`. `startup-report-zh` must reverse this remap when looking up the matching `XX.zh.yaml` section by number; failing to do so leaves chapters `2` and `9` of `101.zh` with English titles. Skills that touch chapter or section numbers in `101` or any `.zh` sibling must respect this convention.
+
 ## Validation gates
 
 After every skill stage:
