@@ -12,7 +12,7 @@ const type = figure?.type ?? 'flow';
 const layout = figure?.layout ?? 'standard';
 const data = figure?.data ?? {};
 const chartTypes = new Set(['flow', 'decision-map', 'evidence-map', 'scenario-tree', 'dependency-map', 'bars', 'waterfall', 'funnel', 'range', 'quadrant', 'positioning-map', 'matrix', 'heatmap', 'cohort', 'sensitivity', 'scatter']);
-const usesCanvasChart = chartTypes.has(type);
+const usesD3Chart = chartTypes.has(type);
 const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
 const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
 const toneClass = (tone: unknown) => `tone-${String(tone ?? 'neutral').replace(/[^a-z0-9-]/gi, '-')}`;
@@ -36,7 +36,7 @@ const layerDetail = (layer: any) => layer?.detail ?? layer?.description ?? null;
 const moduleItems = (layer: any) => arr(layer?.modules ?? layer?.items ?? layer?.components);
 const outputItems = (layer: any) => arr<string>(layer?.outputs);
 const hasRichStackLayers = stackLayers.some((layer: any) => moduleItems(layer).length > 0 || outputItems(layer).length > 0);
-const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title, data } : null;
+const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, data } : null;
 ---
 
 <figure class:list={['native-figure', `figure-${type}`, `layout-${layout}`]}>
@@ -56,15 +56,15 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
     </ol>
   )}
 
-  {(type === 'flow' || type === 'decision-map' || type === 'evidence-map' || type === 'scenario-tree' || type === 'dependency-map') && <div id={chartId} class="echart-figure chart-relationship" data-chart-type={type}></div>}
+  {(type === 'flow' || type === 'decision-map' || type === 'evidence-map' || type === 'scenario-tree' || type === 'dependency-map') && <div id={chartId} class="d3-figure chart-relationship" data-chart-type={type}></div>}
 
-  {(type === 'bars' || type === 'waterfall' || type === 'funnel' || type === 'range') && <div id={chartId} class="echart-figure chart-bars" data-chart-type={type}></div>}
+  {(type === 'bars' || type === 'waterfall' || type === 'funnel' || type === 'range') && <div id={chartId} class="d3-figure chart-bars" data-chart-type={type}></div>}
 
   {(type === 'quadrant' || type === 'positioning-map') && (
-    <div id={chartId} class="echart-figure chart-quadrant" data-chart-type={type}></div>
+    <div id={chartId} class="d3-figure chart-quadrant" data-chart-type={type}></div>
   )}
 
-  {(type === 'matrix' || type === 'heatmap' || type === 'cohort') && <div id={chartId} class="echart-figure chart-heatmap" data-chart-type={type}></div>}
+  {(type === 'matrix' || type === 'heatmap' || type === 'cohort') && <div id={chartId} class="d3-figure chart-heatmap" data-chart-type={type}></div>}
 
   {type === 'stack' && !hasRichStackLayers && (
     <div class="stack-viz">
@@ -255,7 +255,7 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
     </div>
   )}
 
-  {(type === 'sensitivity' || type === 'scatter') && <div id={chartId} class="echart-figure chart-sensitivity" data-chart-type={type}></div>}
+  {(type === 'sensitivity' || type === 'scatter') && <div id={chartId} class="d3-figure chart-sensitivity" data-chart-type={type}></div>}
 
   {type === 'other' && (
     <div class="figure-fallback" role="note">
@@ -270,12 +270,7 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
 </figure>
 
 <script>
-  import * as echarts from 'echarts/core';
-  import { BarChart, GraphChart, HeatmapChart, ScatterChart } from 'echarts/charts';
-  import { GridComponent, MarkLineComponent, TooltipComponent, VisualMapComponent } from 'echarts/components';
-  import { CanvasRenderer } from 'echarts/renderers';
-
-  echarts.use([BarChart, GraphChart, HeatmapChart, ScatterChart, GridComponent, MarkLineComponent, TooltipComponent, VisualMapComponent, CanvasRenderer]);
+  import * as d3 from 'd3';
 
   const palette = {
     claret: '#990f3d',
@@ -301,172 +296,164 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
     if (tone === 'medium' || tone === 'neutral') return 2;
     return 1;
   };
-  const baseText = {
-    fontFamily: 'Mona Sans, Noto Sans SC, sans-serif',
-    color: palette.ink,
-  };
-  const chartFont = {
-    axis: 14,
-    label: 14,
-    heatmap: 13,
-    tooltip: 14,
-  };
-  const axisStyle = {
-    axisLine: { lineStyle: { color: palette.border } },
-    axisTick: { lineStyle: { color: palette.border } },
-    axisLabel: { color: palette.muted, fontSize: chartFont.axis },
-    splitLine: { lineStyle: { color: '#eaded4' } },
-  };
-  const tooltip = {
-    trigger: 'item',
-    confine: true,
-    backgroundColor: '#fff7ef',
-    borderColor: palette.border,
-    textStyle: { color: palette.ink, fontSize: chartFont.tooltip },
-  };
   const labelText = (text, max = 24) => String(text ?? '').length > max ? `${String(text).slice(0, max - 1)}…` : String(text ?? '');
   const numberValue = (value) => Number(value) || 0;
   const valueLabel = (item) => item?.displayValue ?? item?.value ?? '';
 
-  const graphOption = (payload) => {
+  const chartFont = { axis: 13, label: 14, small: 12 };
+  const svgBase = (element, height = 340) => {
+    const width = Math.max(520, Math.floor(element.getBoundingClientRect().width || 760));
+    d3.select(element).selectAll('*').remove();
+    const svg = d3.select(element)
+      .append('svg')
+      .attr('viewBox', `0 0 ${width} ${height}`)
+      .attr('role', 'img')
+      .attr('width', '100%')
+      .attr('height', height)
+      .style('display', 'block');
+    return { svg, width, height };
+  };
+  const addTitle = (selection, text) => selection.append('title').text(String(text ?? ''));
+  const axisBottom = (g, scale, y, ticks = 4) => g.append('g')
+    .attr('transform', `translate(0,${y})`)
+    .call(d3.axisBottom(scale).ticks(ticks).tickSizeOuter(0))
+    .call((axis) => axis.select('.domain').attr('stroke', palette.border))
+    .call((axis) => axis.selectAll('line').attr('stroke', palette.border))
+    .call((axis) => axis.selectAll('text').attr('fill', palette.muted).attr('font-size', chartFont.axis));
+  const axisLeft = (g, scale, x) => g.append('g')
+    .attr('transform', `translate(${x},0)`)
+    .call(d3.axisLeft(scale).tickSizeOuter(0))
+    .call((axis) => axis.select('.domain').remove())
+    .call((axis) => axis.selectAll('line').remove())
+    .call((axis) => axis.selectAll('text').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 700));
+
+  const renderGraph = (element, payload) => {
     const nodes = arr(payload.data.nodes);
     const edges = arr(payload.data.edges);
     const columns = Math.min(Math.max(nodes.length, 1), payload.type === 'decision-map' ? 5 : 4);
-    const chartNodes = nodes.map((node, index) => {
+    const rows = Math.max(1, Math.ceil(nodes.length / columns));
+    const { svg, width } = svgBase(element, Math.max(360, rows * 145 + 110));
+    const margin = { top: 32, right: 36, bottom: 54, left: 36 };
+    const innerW = width - margin.left - margin.right;
+    const colW = innerW / columns;
+    const rowH = 140;
+    const defs = svg.append('defs');
+    defs.append('marker').attr('id', `${payload.id}-arrow`).attr('viewBox', '0 -5 10 10').attr('refX', 9).attr('refY', 0).attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto')
+      .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', palette.claret);
+    const positioned = nodes.map((node, index) => {
       const col = index % columns;
       const row = Math.floor(index / columns);
-      return {
-        id: node.id,
-        name: node.label,
-        value: node.detail,
-        x: col * 210,
-        y: row * 135,
-        symbolSize: 54,
-        itemStyle: { color: colorForTone(node.tone), borderColor: '#fff7ef', borderWidth: 3 },
-        label: { show: true, formatter: labelText(node.label, 26), color: palette.ink, fontSize: chartFont.label, fontWeight: 700, position: 'bottom', width: 172, overflow: 'break' },
-        tooltip: { formatter: `<strong>${node.label}</strong><br/>${node.detail ?? ''}` },
-      };
+      return { ...node, x: margin.left + colW * col + colW / 2, y: margin.top + rowH * row + 40 };
     });
-    return {
-      textStyle: baseText,
-      tooltip,
-      animationDuration: 500,
-      grid: { left: 8, right: 8, top: 8, bottom: 8 },
-      series: [{
-        type: 'graph',
-        layout: 'none',
-        coordinateSystem: null,
-        roam: false,
-        draggable: false,
-        edgeSymbol: ['none', 'arrow'],
-        edgeSymbolSize: [0, 11],
-        symbol: 'rect',
-        data: chartNodes,
-        links: edges.map((edge) => ({ source: edge.from, target: edge.to, label: { show: Boolean(edge.label), formatter: edge.label, color: palette.muted, fontSize: chartFont.heatmap }, lineStyle: { color: palette.claret, width: 1.6, curveness: 0.08 } })),
-        lineStyle: { color: palette.claret, width: 1.6, opacity: 0.75, curveness: 0.08 },
-        emphasis: { focus: 'adjacency' },
-      }],
-    };
+    const byId = new Map(positioned.map((node) => [node.id, node]));
+    svg.append('g').selectAll('path').data(edges).join('path')
+      .attr('d', (edge) => {
+        const s = byId.get(edge.from);
+        const t = byId.get(edge.to);
+        if (!s || !t) return '';
+        const midX = (s.x + t.x) / 2;
+        return `M${s.x},${s.y + 28} C${midX},${s.y + 56} ${midX},${t.y - 56} ${t.x},${t.y - 31}`;
+      })
+      .attr('fill', 'none').attr('stroke', palette.claret).attr('stroke-width', 1.7).attr('opacity', 0.72).attr('marker-end', `url(#${payload.id}-arrow)`);
+    const card = svg.append('g').selectAll('g').data(positioned).join('g').attr('transform', (node) => `translate(${node.x},${node.y})`);
+    card.append('rect').attr('x', -82).attr('y', -31).attr('width', 164).attr('height', 62).attr('rx', 4).attr('fill', '#fff7ef').attr('stroke', (node) => colorForTone(node.tone)).attr('stroke-width', 2);
+    card.append('text').attr('text-anchor', 'middle').attr('y', -4).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((node) => labelText(node.label, 22));
+    card.append('text').attr('text-anchor', 'middle').attr('y', 17).attr('fill', palette.muted).attr('font-size', chartFont.small).text((node) => labelText(node.detail, 30));
+    card.each(function(node) { addTitle(d3.select(this), `${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
   };
 
-  const barOption = (payload) => {
+  const renderBars = (element, payload) => {
     const items = arr(payload.data.items).length ? arr(payload.data.items) : arr(arr(payload.data.series)[0]?.points);
-    return {
-      textStyle: baseText,
-      tooltip,
-      grid: { left: 160, right: 62, top: 12, bottom: 22 },
-      xAxis: { type: 'value', ...axisStyle },
-      yAxis: { type: 'category', data: items.map((item) => item.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, width: 172, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
-      series: [{
-        type: 'bar',
-        data: items.map((item) => ({ value: numberValue(item.value), itemStyle: { color: colorForTone(item.tone) }, label: { formatter: valueLabel(item) } })),
-        barWidth: 20,
-        itemStyle: { borderColor: palette.paper, borderWidth: 1 },
-        label: { show: true, position: 'right', color: palette.ink, fontFamily: 'Mona Sans, Noto Sans SC, sans-serif', fontSize: chartFont.label, fontWeight: 750 },
-      }],
-    };
+    const { svg, width, height } = svgBase(element, Math.max(240, items.length * 34 + 72));
+    const margin = { top: 18, right: 84, bottom: 34, left: 168 };
+    const x = d3.scaleLinear().domain([0, d3.max(items, (d) => numberValue(d.value)) || 1]).nice().range([margin.left, width - margin.right]);
+    const y = d3.scaleBand().domain(items.map((d) => d.label)).range([margin.top, height - margin.bottom]).padding(0.26);
+    axisBottom(svg, x, height - margin.bottom);
+    axisLeft(svg, y, margin.left);
+    const bars = svg.append('g').selectAll('rect').data(items).join('rect')
+      .attr('x', x(0)).attr('y', (d) => y(d.label)).attr('width', (d) => Math.max(2, x(numberValue(d.value)) - x(0))).attr('height', y.bandwidth())
+      .attr('rx', 4).attr('fill', (d) => colorForTone(d.tone));
+    bars.each(function(d) { addTitle(d3.select(this), `${d.label}: ${valueLabel(d)}`); });
+    svg.append('g').selectAll('text').data(items).join('text')
+      .attr('x', (d) => x(numberValue(d.value)) + 8).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4)
+      .attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => valueLabel(d));
   };
 
-  const waterfallOption = (payload) => {
+  const renderWaterfall = (element, payload) => {
     const items = arr(payload.data.items);
     let running = 0;
-    const bases = [];
-    const values = [];
-    items.forEach((item) => {
+    const points = items.map((item) => {
       const value = numberValue(item.value);
       const start = Math.min(running, running + value);
-      bases.push(start);
-      values.push({ value: Math.abs(value), rawValue: value, label: { formatter: valueLabel(item) }, itemStyle: { color: value < 0 ? palette.risk : colorForTone(item.tone) } });
+      const end = Math.max(running, running + value);
       running += value;
+      return { ...item, value, start, end };
     });
-    return {
-      textStyle: baseText,
-      tooltip: { ...tooltip, formatter: (params) => `<strong>${params.name}</strong><br/>${params.data?.rawValue ?? params.value}` },
-      grid: { left: 50, right: 32, top: 18, bottom: 72 },
-      xAxis: { type: 'category', data: items.map((item) => item.label), axisLabel: { color: palette.ink, fontSize: chartFont.axis, interval: 0, width: 118, overflow: 'break', lineHeight: 18 }, axisLine: { lineStyle: { color: palette.border } }, axisTick: { show: false } },
-      yAxis: { type: 'value', ...axisStyle },
-      series: [
-        { type: 'bar', stack: 'total', data: bases, itemStyle: { color: 'transparent' }, emphasis: { disabled: true }, silent: true },
-        { type: 'bar', stack: 'total', data: values, barWidth: 24, label: { show: true, position: 'top', color: palette.ink, fontSize: chartFont.label, fontWeight: 700 } },
-      ],
-    };
+    const { svg, width, height } = svgBase(element, 340);
+    const margin = { top: 24, right: 28, bottom: 78, left: 54 };
+    const yMin = Math.min(0, d3.min(points, (d) => d.start) || 0, d3.min(points, (d) => d.end) || 0);
+    const yMax = Math.max(1, d3.max(points, (d) => d.start) || 0, d3.max(points, (d) => d.end) || 0);
+    const x = d3.scaleBand().domain(items.map((d) => d.label)).range([margin.left, width - margin.right]).padding(0.34);
+    const y = d3.scaleLinear().domain([yMin, yMax]).nice().range([height - margin.bottom, margin.top]);
+    axisBottom(svg, x, height - margin.bottom, 0);
+    axisLeft(svg, y, margin.left);
+    svg.selectAll('.tick text').attr('font-size', chartFont.small);
+    const bars = svg.append('g').selectAll('rect').data(points).join('rect')
+      .attr('x', (d) => x(d.label)).attr('width', x.bandwidth()).attr('y', (d) => y(d.end)).attr('height', (d) => Math.max(2, y(d.start) - y(d.end)))
+      .attr('fill', (d) => d.value < 0 ? palette.risk : colorForTone(d.tone)).attr('rx', 3);
+    bars.each(function(d) { addTitle(d3.select(this), `${d.label}: ${valueLabel(d) || d.value}`); });
+    svg.append('g').selectAll('text').data(points).join('text')
+      .attr('x', (d) => x(d.label) + x.bandwidth() / 2).attr('y', (d) => y(d.end) - 7).attr('text-anchor', 'middle')
+      .attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 800).text((d) => valueLabel(d));
   };
 
-  const funnelOption = (payload) => {
+  const renderFunnel = (element, payload) => {
     const items = arr(payload.data.items).length ? arr(payload.data.items) : arr(arr(payload.data.series)[0]?.points);
-    const max = Math.max(...items.map((item) => numberValue(item.value)), 1);
-    return {
-      textStyle: baseText,
-      tooltip,
-      grid: { left: 168, right: 70, top: 16, bottom: 28 },
-      xAxis: { type: 'value', min: 0, max, ...axisStyle },
-      yAxis: { type: 'category', data: items.map((item) => item.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, width: 168, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
-      series: [{
-        type: 'bar',
-        data: items.map((item, index) => ({ value: numberValue(item.value), itemStyle: { color: colorForTone(item.tone ?? (index === items.length - 1 ? 'positive' : 'neutral')) }, label: { formatter: valueLabel(item) } })),
-        barWidth: 24,
-        itemStyle: { borderColor: palette.paper, borderWidth: 1, borderRadius: [0, 4, 4, 0] },
-        label: { show: true, position: 'right', color: palette.ink, fontFamily: 'Mona Sans, Noto Sans SC, sans-serif', fontSize: chartFont.label, fontWeight: 800 },
-      }],
-    };
+    const { svg, width, height } = svgBase(element, Math.max(280, items.length * 58 + 42));
+    const max = Math.max(...items.map((d) => numberValue(d.value)), 1);
+    const cx = width / 2;
+    const top = 22;
+    const stageH = Math.min(54, (height - 44) / Math.max(items.length, 1));
+    const maxW = width * 0.78;
+    const minW = width * 0.28;
+    const widths = items.map((d) => Math.max(minW, maxW * (numberValue(d.value) / max)));
+    const group = svg.append('g');
+    items.forEach((item, index) => {
+      const y = top + index * stageH;
+      const w = widths[index];
+      const nextW = widths[index + 1] ?? Math.max(minW, w * 0.82);
+      const poly = [[cx - w / 2, y], [cx + w / 2, y], [cx + nextW / 2, y + stageH - 5], [cx - nextW / 2, y + stageH - 5]];
+      const stage = group.append('g');
+      stage.append('polygon').attr('points', poly.map((p) => p.join(',')).join(' ')).attr('fill', colorForTone(item.tone ?? (index === items.length - 1 ? 'positive' : 'neutral'))).attr('opacity', 0.92).attr('stroke', '#fff7ef').attr('stroke-width', 3);
+      stage.append('text').attr('x', cx).attr('y', y + stageH / 2 - 3).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', chartFont.label).attr('font-weight', 900).text(labelText(item.label, 24));
+      stage.append('text').attr('x', cx).attr('y', y + stageH / 2 + 17).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', chartFont.small).attr('font-weight', 700).text(valueLabel(item));
+      addTitle(stage, `${item.label}: ${valueLabel(item)}`);
+    });
   };
 
-  const rangeOption = (payload) => {
+  const renderRange = (element, payload) => {
     const items = arr(payload.data.items);
     const lows = items.map((item) => numberValue(item.low ?? item.min));
     const highs = items.map((item) => numberValue(item.high ?? item.max ?? item.value));
     const min = Math.min(...lows, 0);
     const max = Math.max(...highs, 1);
-    return {
-      textStyle: baseText,
-      tooltip: { ...tooltip, formatter: (params) => {
-        const item = items[params.dataIndex] ?? {};
-        return `<strong>${item.label ?? ''}</strong><br/>${item.displayValue ?? `${item.low ?? item.min ?? ''}–${item.high ?? item.max ?? ''}`}`;
-      } },
-      grid: { left: 168, right: 70, top: 16, bottom: 28 },
-      xAxis: { type: 'value', min, max, ...axisStyle },
-      yAxis: { type: 'category', data: items.map((item) => item.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, width: 168, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
-      series: [
-        { type: 'bar', stack: 'range', data: lows, itemStyle: { color: 'transparent' }, emphasis: { disabled: true }, silent: true },
-        {
-          type: 'bar',
-          stack: 'range',
-          data: items.map((item, index) => ({ value: Math.max(0, highs[index] - lows[index]), itemStyle: { color: colorForTone(item.tone) }, label: { formatter: item.displayValue ?? `${item.low ?? item.min}–${item.high ?? item.max}` } })),
-          barWidth: 18,
-          itemStyle: { borderRadius: 9 },
-          label: { show: true, position: 'right', color: palette.ink, fontSize: chartFont.label, fontWeight: 800 },
-        },
-      ],
-    };
+    const { svg, width, height } = svgBase(element, Math.max(240, items.length * 38 + 78));
+    const margin = { top: 20, right: 98, bottom: 34, left: 168 };
+    const x = d3.scaleLinear().domain([min, max]).nice().range([margin.left, width - margin.right]);
+    const y = d3.scaleBand().domain(items.map((d) => d.label)).range([margin.top, height - margin.bottom]).padding(0.38);
+    axisBottom(svg, x, height - margin.bottom);
+    axisLeft(svg, y, margin.left);
+    const groups = svg.append('g').selectAll('g').data(items).join('g');
+    groups.append('line').attr('x1', (d) => x(numberValue(d.low ?? d.min))).attr('x2', (d) => x(numberValue(d.high ?? d.max ?? d.value))).attr('y1', (d) => y(d.label) + y.bandwidth() / 2).attr('y2', (d) => y(d.label) + y.bandwidth() / 2).attr('stroke', (d) => colorForTone(d.tone)).attr('stroke-width', 9).attr('stroke-linecap', 'round');
+    groups.append('circle').attr('cx', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max)) / 2)))).attr('cy', (d) => y(d.label) + y.bandwidth() / 2).attr('r', 5).attr('fill', '#fff7ef').attr('stroke', palette.ink).attr('stroke-width', 2);
+    groups.append('text').attr('x', (d) => x(numberValue(d.high ?? d.max ?? d.value)) + 10).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`);
+    groups.each(function(d) { addTitle(d3.select(this), `${d.label}: ${d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`}`); });
   };
 
-  const quadrantOption = (payload) => {
+  const renderQuadrant = (element, payload) => {
     const points = arr(payload.data.points);
     const xAxisLabel = payload.data.xAxis ?? 'X';
     const yAxisLabel = payload.data.yAxis ?? 'Y';
-
-    // Auto-fit axes to the data extent so empty regions don't dominate the canvas.
-    // Always include the 50 reference line in the visible window so quadrant context survives.
     const xs = points.map((p) => Number(p.x)).filter(Number.isFinite);
     const ys = points.map((p) => Number(p.y)).filter(Number.isFinite);
     const safeRange = (vals, anchor = 50) => {
@@ -490,144 +477,26 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
     };
     const xRange = safeRange(xs);
     const yRange = safeRange(ys);
-
-    // Render the four-quadrant tint only over the visible window.
-    const xMid = 50;
-    const yMid = 50;
-    const xMidVisible = xMid > xRange.min && xMid < xRange.max;
-    const yMidVisible = yMid > yRange.min && yMid < yRange.max;
-    const tints = [];
-    if (xMidVisible && yMidVisible) {
-      tints.push([xRange.min, yMid, xMid, yRange.max, 'rgba(60, 130, 110, 0.06)']);    // top-left
-      tints.push([xMid, yMid, xRange.max, yRange.max, 'rgba(96, 158, 138, 0.10)']);    // top-right (sweet spot)
-      tints.push([xRange.min, yRange.min, xMid, yMid, 'rgba(160, 90, 70, 0.05)']);     // bottom-left
-      tints.push([xMid, yRange.min, xRange.max, yMid, 'rgba(200, 150, 60, 0.06)']);    // bottom-right
-    }
-    const markLines = [];
-    if (xMidVisible) markLines.push({ xAxis: xMid });
-    if (yMidVisible) markLines.push({ yAxis: yMid });
-
-    // Pick the best label position (top / bottom / left / right) for each point so labels
-    // fan out away from the cluster's centroid and away from the nearest axis edge.
-    // For points that are very close to a neighbour, prefer top/bottom so labels don't run
-    // into each other horizontally (which is the common failure mode for right-clustered data).
-    const cx = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 50;
-    const cy = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : 50;
-    const xSpan = xRange.max - xRange.min || 1;
-    const ySpan = yRange.max - yRange.min || 1;
-    const xClose = xSpan * 0.18; // points within ~18% of axis on X are "horizontally close"
-
-    const chooseLabelPosition = (px, py, idx) => {
-      // Look for any neighbour that is horizontally close. If yes, decide top vs bottom
-      // by relative Y so the two labels separate vertically instead of overlapping.
-      const neighbours = points
-        .map((q, qi) => ({ qi, qx: Number(q.x), qy: Number(q.y) }))
-        .filter(({ qi, qx, qy }) => qi !== idx && Number.isFinite(qx) && Number.isFinite(qy) && Math.abs(qx - px) < xClose);
-      if (neighbours.length > 0) {
-        const higherNeighbour = neighbours.some(({ qy }) => qy > py + 0.5);
-        const lowerNeighbour = neighbours.some(({ qy }) => qy < py - 0.5);
-        // If there is a neighbour above me, push my label below; if below me, push above.
-        if (higherNeighbour && !lowerNeighbour && py - yRange.min > ySpan * 0.12) return 'bottom';
-        if (lowerNeighbour && !higherNeighbour && yRange.max - py > ySpan * 0.12) return 'top';
-        // If sandwiched, prefer the side with more vertical room.
-        if (higherNeighbour && lowerNeighbour) {
-          return (yRange.max - py) > (py - yRange.min) ? 'top' : 'bottom';
-        }
-      }
-
-      // Fall back to the radial-from-centroid heuristic.
-      const dx = px - cx;
-      const dy = py - cy;
-      if (Math.abs(dy) >= Math.abs(dx)) {
-        if (dy > 0 && yRange.max - py > ySpan * 0.08) return 'top';
-        if (dy < 0 && py - yRange.min > ySpan * 0.08) return 'bottom';
-      }
-      if (dx > 0 && xRange.max - px > xSpan * 0.10) return 'right';
-      if (dx < 0 && px - xRange.min > xSpan * 0.10) return 'left';
-      return (yRange.max - py) > (py - yRange.min) ? 'top' : 'bottom';
-    };
-
-    return {
-      textStyle: baseText,
-      tooltip: {
-        ...tooltip,
-        trigger: 'item',
-        formatter: (params) => {
-          const v = params.value ?? [];
-          return `<strong>${params.name}</strong><br/><span style="color:${palette.muted}">${xAxisLabel}: ${v[0]}\u2003·\u2003${yAxisLabel}: ${v[1]}</span>`;
-        },
-      },
-      grid: { left: 56, right: 56, top: 44, bottom: 56, containLabel: true },
-      xAxis: { min: xRange.min, max: xRange.max, name: xAxisLabel, nameLocation: 'middle', nameGap: 32, splitLine: { show: false }, ...axisStyle },
-      yAxis: { min: yRange.min, max: yRange.max, name: yAxisLabel, nameLocation: 'middle', nameGap: 44, splitLine: { show: false }, ...axisStyle },
-      series: [{
-        type: 'scatter',
-        symbolSize: 22,
-        z: 3,
-        data: points.map((point, idx) => {
-          const x = Number(point.x);
-          const y = Number(point.y);
-          const safeX = Number.isFinite(x) ? x : 50;
-          const safeY = Number.isFinite(y) ? y : 50;
-          return {
-            name: point.label,
-            value: [safeX, safeY],
-            itemStyle: { color: colorForTone(point.tone), borderColor: '#fff7ef', borderWidth: 2 },
-            label: { position: chooseLabelPosition(safeX, safeY, idx) },
-          };
-        }),
-        label: {
-          show: true,
-          distance: 10,
-          color: palette.ink,
-          fontSize: chartFont.label,
-          fontWeight: 700,
-          formatter: (params) => params.name,
-          backgroundColor: 'rgba(255, 247, 239, 0.96)',
-          padding: [3, 7],
-          borderRadius: 3,
-        },
-        labelLayout: {
-          hideOverlap: false,
-          moveOverlap: 'shiftY',
-        },
-        labelLine: {
-          show: true,
-          length: 8,
-          length2: 8,
-          smooth: false,
-          lineStyle: { color: palette.border, width: 1 },
-        },
-        emphasis: {
-          scale: 1.2,
-          itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,0.18)' },
-          label: { fontWeight: 800 },
-        },
-        markArea: tints.length ? {
-          silent: true,
-          z: 1,
-          itemStyle: { opacity: 1 },
-          data: tints.map(([x0, y0, x1, y1, color]) => [
-            { coord: [x0, y0], itemStyle: { color } },
-            { coord: [x1, y1] },
-          ]),
-        } : undefined,
-        markLine: markLines.length ? {
-          silent: true,
-          symbol: 'none',
-          z: 2,
-          lineStyle: { color: palette.border, type: 'dashed', width: 1 },
-          label: { show: false },
-          data: markLines,
-        } : undefined,
-      }],
-    };
+    const { svg, width, height } = svgBase(element, 380);
+    const margin = { top: 34, right: 48, bottom: 64, left: 62 };
+    const x = d3.scaleLinear().domain([xRange.min, xRange.max]).range([margin.left, width - margin.right]);
+    const y = d3.scaleLinear().domain([yRange.min, yRange.max]).range([height - margin.bottom, margin.top]);
+    svg.append('rect').attr('x', margin.left).attr('y', margin.top).attr('width', width - margin.left - margin.right).attr('height', height - margin.top - margin.bottom).attr('fill', 'rgba(153, 15, 61, 0.025)').attr('stroke', palette.border);
+    if (xRange.min < 50 && xRange.max > 50) svg.append('line').attr('x1', x(50)).attr('x2', x(50)).attr('y1', margin.top).attr('y2', height - margin.bottom).attr('stroke', palette.border).attr('stroke-dasharray', '4 4');
+    if (yRange.min < 50 && yRange.max > 50) svg.append('line').attr('x1', margin.left).attr('x2', width - margin.right).attr('y1', y(50)).attr('y2', y(50)).attr('stroke', palette.border).attr('stroke-dasharray', '4 4');
+    axisBottom(svg, x, height - margin.bottom);
+    axisLeft(svg, y, margin.left);
+    svg.append('text').attr('x', width / 2).attr('y', height - 18).attr('text-anchor', 'middle').attr('fill', palette.muted).attr('font-size', chartFont.axis).attr('font-weight', 800).text(xAxisLabel);
+    svg.append('text').attr('transform', `translate(18,${height / 2}) rotate(-90)`).attr('text-anchor', 'middle').attr('fill', palette.muted).attr('font-size', chartFont.axis).attr('font-weight', 800).text(yAxisLabel);
+    const dots = svg.append('g').selectAll('g').data(points).join('g').attr('transform', (d) => `translate(${x(numberValue(d.x))},${y(numberValue(d.y))})`);
+    dots.append('circle').attr('r', 9).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 2);
+    dots.append('text').attr('x', 13).attr('y', 5).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => labelText(d.label, 22));
+    dots.each(function(d) { addTitle(d3.select(this), `${d.label}: ${xAxisLabel} ${d.x}; ${yAxisLabel} ${d.y}`); });
   };
 
-  const heatmapOption = (payload) => {
+  const renderHeatmap = (element, payload) => {
     const columns = arr(payload.data.columns);
     const rows = arr(payload.data.rows);
-    const cells = [];
     const heatColors = {
       1: '#dcebe7',
       2: '#f2d8a0',
@@ -638,155 +507,82 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
       2: palette.ink,
       3: '#fff7ef',
     };
-    const riskLabel = (value) => value >= 3 ? 'High' : value === 2 ? 'Medium' : 'Low';
-    const rowLabelWidth = Math.min(196, Math.max(128, Math.max(...rows.map((row) => String(row.label ?? '').length), 8) * 8));
-    rows.forEach((row, rowIndex) => arr(row.values).forEach((cell, colIndex) => {
-      const value = riskValue(cell.tone);
-      const label = cell.label ?? cell;
-      cells.push({
-        value: [colIndex, rowIndex, value, label, cell.tone ?? riskLabel(value).toLowerCase(), row.label ?? '', columns[colIndex] ?? ''],
-        itemStyle: {
-          color: heatColors[value],
-          borderColor: '#fff7ef',
-          borderWidth: 4,
-          borderRadius: 7,
-        },
-        label: {
-          color: heatTextColors[value],
-          fontWeight: value >= 2 ? 800 : 650,
-        },
-      });
-    }));
-    return {
-      textStyle: baseText,
-      backgroundColor: '#fff7ef',
-      tooltip: {
-        ...tooltip,
-        extraCssText: 'box-shadow: none; border-radius: 0; line-height: 1.45;',
-        formatter: (params) => {
-          const value = params.value ?? [];
-          const severity = riskLabel(Number(value[2]) || 1);
-          return `<strong>${value[5] ?? ''} × ${value[6] ?? ''}</strong><br/><span style="color:${palette.muted}">${severity} signal</span><br/>${value[3] ?? ''}`;
-        },
-      },
-      grid: { left: rowLabelWidth, right: 22, top: 42, bottom: 38, containLabel: false },
-      xAxis: {
-        type: 'category',
-        data: columns,
-        position: 'top',
-        axisLabel: { color: palette.ink, fontSize: chartFont.axis, fontWeight: 800, margin: 12, interval: 0, width: 118, overflow: 'break', lineHeight: 18 },
-        axisLine: { show: false },
-        axisTick: { show: false },
-        splitArea: { show: true, areaStyle: { color: ['rgba(255,241,229,.38)', 'rgba(255,247,239,.44)'] } },
-      },
-      yAxis: {
-        type: 'category',
-        data: rows.map((row) => row.label),
-        inverse: true,
-        axisLabel: { color: palette.ink, fontSize: chartFont.axis, fontWeight: 800, margin: 14, width: rowLabelWidth - 18, overflow: 'break', lineHeight: 18 },
-        axisLine: { show: false },
-        axisTick: { show: false },
-        splitArea: { show: true, areaStyle: { color: ['rgba(255,247,239,.34)', 'rgba(255,241,229,.42)'] } },
-      },
-      visualMap: { show: false, min: 1, max: 3, inRange: { color: [heatColors[1], heatColors[2], heatColors[3]] } },
-      series: [{
-        type: 'heatmap',
-        data: cells,
-        label: { show: true, formatter: (params) => labelText(params.value?.[3], 34), fontSize: chartFont.heatmap, lineHeight: 18, overflow: 'break' },
-        emphasis: { itemStyle: { shadowBlur: 0, borderColor: palette.claret, borderWidth: 2 } },
-      }],
-    };
+    const { svg, width, height } = svgBase(element, Math.max(340, rows.length * 68 + 96));
+    const margin = { top: 58, right: 24, bottom: 26, left: Math.min(220, Math.max(136, Math.max(...rows.map((row) => String(row.label ?? '').length), 8) * 8)) };
+    const x = d3.scaleBand().domain(columns).range([margin.left, width - margin.right]).padding(0.08);
+    const y = d3.scaleBand().domain(rows.map((row) => row.label)).range([margin.top, height - margin.bottom]).padding(0.08);
+    svg.append('g').selectAll('text').data(columns).join('text').attr('x', (d) => x(d) + x.bandwidth() / 2).attr('y', margin.top - 16).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).text((d) => labelText(d, 14));
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).text((d) => labelText(d.label, 24));
+    const cells = [];
+    rows.forEach((row) => arr(row.values).forEach((cell, colIndex) => cells.push({ row: row.label, column: columns[colIndex], cell, value: riskValue(cell.tone) })));
+    const g = svg.append('g').selectAll('g').data(cells).join('g');
+    g.append('rect').attr('x', (d) => x(d.column)).attr('y', (d) => y(d.row)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 7).attr('fill', (d) => heatColors[d.value]).attr('stroke', '#fff7ef').attr('stroke-width', 3);
+    g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2 + 5).attr('text-anchor', 'middle').attr('fill', (d) => heatTextColors[d.value]).attr('font-size', chartFont.small).attr('font-weight', 800).text((d) => labelText(d.cell.label ?? d.cell, 18));
+    g.each(function(d) { addTitle(d3.select(this), `${d.row} × ${d.column}: ${d.cell.label ?? d.cell}`); });
   };
 
-  const cohortOption = (payload) => {
+  const renderCohort = (element, payload) => {
     const columns = arr(payload.data.columns);
     const rows = arr(payload.data.rows);
-    const values = [];
-    rows.forEach((row, rowIndex) => arr(row.values).forEach((cell, colIndex) => {
+    const { svg, width, height } = svgBase(element, Math.max(340, rows.length * 58 + 92));
+    const margin = { top: 58, right: 24, bottom: 26, left: 156 };
+    const x = d3.scaleBand().domain(columns).range([margin.left, width - margin.right]).padding(0.08);
+    const y = d3.scaleBand().domain(rows.map((row) => row.label)).range([margin.top, height - margin.bottom]).padding(0.08);
+    const color = d3.scaleLinear().domain([0, 50, 100]).range(['#f4c7bd', '#f2d8a0', '#0f766e']);
+    svg.append('g').selectAll('text').data(columns).join('text').attr('x', (d) => x(d) + x.bandwidth() / 2).attr('y', margin.top - 16).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).text((d) => labelText(d, 14));
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', 800).text((d) => labelText(d.label, 22));
+    const cells = [];
+    rows.forEach((row) => arr(row.values).forEach((cell, colIndex) => {
       const value = Number(cell?.value ?? String(cell?.label ?? '').replace(/[^0-9.-]/g, ''));
-      values.push({
-        value: [colIndex, rowIndex, Number.isFinite(value) ? value : 0, cell?.label ?? cell?.displayValue ?? '', row.label ?? '', columns[colIndex] ?? ''],
-        itemStyle: { borderColor: '#fff7ef', borderWidth: 4, borderRadius: 7 },
-      });
+      cells.push({ row: row.label, column: columns[colIndex], cell, value: Number.isFinite(value) ? value : 0 });
     }));
-    return {
-      textStyle: baseText,
-      tooltip: { ...tooltip, formatter: (params) => {
-        const value = params.value ?? [];
-        return `<strong>${value[4] ?? ''} × ${value[5] ?? ''}</strong><br/>${value[3] ?? value[2] ?? ''}`;
-      } },
-      grid: { left: 156, right: 28, top: 42, bottom: 38 },
-      xAxis: { type: 'category', data: columns, position: 'top', axisLabel: { color: palette.ink, fontSize: chartFont.axis, fontWeight: 800, margin: 12, interval: 0, width: 108, overflow: 'break', lineHeight: 18 }, axisLine: { show: false }, axisTick: { show: false } },
-      yAxis: { type: 'category', data: rows.map((row) => row.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, fontWeight: 800, width: 140, overflow: 'break', lineHeight: 18 }, axisLine: { show: false }, axisTick: { show: false } },
-      visualMap: { show: false, min: 0, max: 100, inRange: { color: ['#f4c7bd', '#f2d8a0', '#dcebe7', '#0f766e'] } },
-      series: [{
-        type: 'heatmap',
-        data: values,
-        label: { show: true, formatter: (params) => labelText(params.value?.[3] || params.value?.[2], 18), fontSize: chartFont.heatmap, fontWeight: 800, color: palette.ink },
-        emphasis: { itemStyle: { shadowBlur: 0, borderColor: palette.claret, borderWidth: 2 } },
-      }],
-    };
+    const g = svg.append('g').selectAll('g').data(cells).join('g');
+    g.append('rect').attr('x', (d) => x(d.column)).attr('y', (d) => y(d.row)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 7).attr('fill', (d) => color(d.value)).attr('stroke', '#fff7ef').attr('stroke-width', 3);
+    g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2 + 5).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 800).text((d) => labelText(d.cell.label ?? d.cell.displayValue ?? d.value, 14));
+    g.each(function(d) { addTitle(d3.select(this), `${d.row} × ${d.column}: ${d.cell.label ?? d.cell.displayValue ?? d.value}`); });
   };
 
-  const sensitivityOption = (payload) => {
+  const renderSensitivity = (element, payload) => {
     const series = arr(payload.data.series)[0] ?? {};
-    const points = arr(series.points);
-    return {
-      textStyle: baseText,
-      tooltip,
-      grid: { left: 122, right: 54, top: 22, bottom: 24 },
-      xAxis: { type: 'value', ...axisStyle },
-      yAxis: { type: 'category', data: points.map((point) => point.label), inverse: true, axisLabel: { color: palette.ink, fontSize: chartFont.axis, width: 156, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
-      series: [{ type: 'bar', data: points.map((point) => ({ value: Number(point.value) || 0, label: { formatter: point.displayValue ?? point.value } })), barWidth: 20, itemStyle: { color: palette.claret }, label: { show: true, position: 'right', color: palette.ink, fontSize: chartFont.label } }],
-    };
+    renderBars(element, { ...payload, data: { items: arr(series.points) } });
   };
 
-  const xyOption = (payload) => {
+  const renderScatter = (element, payload) => {
     const points = arr(payload.data.points).length ? arr(payload.data.points) : arr(arr(payload.data.series)[0]?.points);
-    return {
-      textStyle: baseText,
-      tooltip: { ...tooltip, formatter: (params) => `<strong>${params.name}</strong><br/>x: ${params.value?.[0] ?? ''}<br/>y: ${params.value?.[1] ?? ''}` },
-      grid: { left: 54, right: 32, top: 28, bottom: 50 },
-      xAxis: { type: 'value', name: payload.data.xAxis ?? 'X', nameLocation: 'middle', nameGap: 32, ...axisStyle },
-      yAxis: { type: 'value', name: payload.data.yAxis ?? 'Y', nameLocation: 'middle', nameGap: 38, ...axisStyle },
-      series: [{
-        type: 'scatter',
-        symbolSize: 24,
-        data: points.map((point) => ({ name: point.label, value: [numberValue(point.x ?? point.value?.[0]), numberValue(point.y ?? point.value?.[1])], itemStyle: { color: colorForTone(point.tone) } })),
-        label: { show: true, position: 'right', color: palette.ink, fontSize: chartFont.label, fontWeight: 700, formatter: (params) => labelText(params.name, 22) },
-      }],
-    };
+    const mapped = points.map((point) => ({ ...point, x: numberValue(point.x ?? point.value?.[0]), y: numberValue(point.y ?? point.value?.[1]) }));
+    renderQuadrant(element, { ...payload, data: { ...payload.data, points: mapped } });
   };
 
-  const optionFor = (payload) => {
-    if (['flow', 'decision-map', 'evidence-map', 'scenario-tree', 'dependency-map'].includes(payload.type)) return graphOption(payload);
-    if (payload.type === 'waterfall') return waterfallOption(payload);
-    if (payload.type === 'funnel') return funnelOption(payload);
-    if (payload.type === 'range') return rangeOption(payload);
-    if (payload.type === 'bars') return barOption(payload);
-    if (['quadrant', 'positioning-map'].includes(payload.type)) return quadrantOption(payload);
-    if (payload.type === 'cohort') return cohortOption(payload);
-    if (['matrix', 'heatmap'].includes(payload.type)) return heatmapOption(payload);
-    if (payload.type === 'scatter') return xyOption(payload);
-    if (payload.type === 'sensitivity') return sensitivityOption(payload);
-    return {};
+  const renderD3 = (element, payload) => {
+    if (['flow', 'decision-map', 'evidence-map', 'scenario-tree', 'dependency-map'].includes(payload.type)) renderGraph(element, payload);
+    else if (payload.type === 'waterfall') renderWaterfall(element, payload);
+    else if (payload.type === 'funnel') renderFunnel(element, payload);
+    else if (payload.type === 'range') renderRange(element, payload);
+    else if (payload.type === 'bars') renderBars(element, payload);
+    else if (['quadrant', 'positioning-map'].includes(payload.type)) renderQuadrant(element, payload);
+    else if (payload.type === 'cohort') renderCohort(element, payload);
+    else if (['matrix', 'heatmap'].includes(payload.type)) renderHeatmap(element, payload);
+    else if (payload.type === 'scatter') renderScatter(element, payload);
+    else if (payload.type === 'sensitivity') renderSensitivity(element, payload);
   };
 
-  const charts = [];
   const renderCharts = () => {
     document.querySelectorAll('script.figure-chart-data').forEach((script) => {
       if (script.dataset.rendered === 'true') return;
       const payload = JSON.parse(script.textContent || '{}');
       const element = document.getElementById(payload.id);
       if (!element) return;
-      const chart = echarts.init(element, null, { renderer: 'canvas' });
-      chart.setOption(optionFor(payload));
-      charts.push(chart);
+      renderD3(element, payload);
       script.dataset.rendered = 'true';
     });
   };
   renderCharts();
-  window.addEventListener('resize', () => charts.forEach((chart) => chart.resize()));
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('script.figure-chart-data').forEach((script) => {
+      script.dataset.rendered = 'false';
+    });
+    renderCharts();
+  });
 </script>
 
 <style>
@@ -797,7 +593,7 @@ const chartPayload = usesCanvasChart ? { id: chartId, type, title: figure?.title
   figcaption { margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker, 0.9rem); font-weight: 700; letter-spacing: 0.04em; line-height: 1.35; color: var(--claret); }
   .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--report-fs-note, 1rem); line-height: 1.55; }
   .figure-note { margin-top: var(--space-3); }
-  .echart-figure { width: 100%; min-height: 340px; margin: var(--space-3) 0; }
+  .d3-figure { width: 100%; min-height: 340px; margin: var(--space-3) 0; }
   .chart-relationship { min-height: 430px; }
   .chart-bars, .chart-sensitivity { min-height: 240px; }
   .chart-quadrant { min-height: 380px; }
