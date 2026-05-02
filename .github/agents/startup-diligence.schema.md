@@ -476,7 +476,7 @@ reportFiles:
 ## Validation expectations
 
 - All YAML parses.
-- All required v2 artifacts exist for complete runs.
+- All required v2 artifacts exist for complete runs, including `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 - Each file's `artifact` value matches the artifact mapping.
 - `runDate` uses `YYYY-MM-DD` and `company.name` is consistent across artifacts.
 - All `claimRefs` point to `01-evidence-ledger.yaml` claims.
@@ -486,3 +486,5 @@ reportFiles:
 - `11-report-card.yaml.reportFiles` points to `10-report-document.yaml` and `11-report-card.yaml`.
 - Figures are stored as structured YAML specs in `10-report-document.yaml` and rendered by native website components.
 - Do not use legacy diagram-source fields or diagram-language strings in artifacts. Use `type`, `layout`, and typed `data` arrays instead.
+- ZH artifacts must preserve the English `schemaVersion`, `artifact`, `slug`, `runDate`, enums, IDs, figure/table structure, and numeric values. Only prose is translated.
+- A report folder is `complete` only when both English and Simplified Chinese required artifacts exist; the website index and loader skip incomplete folders.

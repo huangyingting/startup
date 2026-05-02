@@ -31,6 +31,7 @@
 - Downstream stages must not run until upstream YAML exists, parses, and all `claimRefs` / `sourceRefs` are valid.
 - Agents must write complete YAML artifacts directly under `reports/<run>/`; do not use temporary files as canonical report output.
 - A complete report folder contains `00-report-brief.yaml` through `11-report-card.yaml` plus the required `10-report-document.zh.yaml` and `11-report-card.zh.yaml`. The website index includes complete reports only.
+- To clear evidence-ledger warnings (publisher concentration, independence ratio, uncited sources, legacy `sourceTarget`, depth minimum) on an existing report, run only `Startup Report Evidence Analyst` in `mode: repair`. Repair mode adds independent sources/claims and prunes uncited duplicates without renaming existing IDs or touching 02–11 EN or any `*.zh.yaml`, so downstream chapters and translations do not need to be regenerated. New evidence must corroborate existing analysis or close `evidenceGaps`; if it changes facts, numbers, or recommendation, the Evidence Analyst returns `repairEscalationNeeded: true` and the orchestrator reruns the affected specialists, the Report Writer, and the ZH translator.
 
 ## YAML schema conventions
 

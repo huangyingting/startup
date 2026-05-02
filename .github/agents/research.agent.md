@@ -97,3 +97,13 @@ After `Startup Report Writer`, validate `10-report-document.yaml` figure/table r
 ## Final response
 
 Summarize: report folder, generated YAML files (English plus required Simplified Chinese), source count, claim count, recommendation, confidence, risk rating, valuation stance, structured figure count, table count, validation status, and main diligence gaps.
+
+## Repair an existing report
+
+Use this flow when `npm run check:reports-content` reports evidence-ledger warnings (publisher concentration, independence ratio, uncited sources, legacy `sourceTarget`, depth minimum) on an already-generated report and the user wants to fix them without regenerating downstream chapters or translations.
+
+- Invoke only `Startup Report Evidence Analyst` with `mode: repair` and the existing `reportFolder`. Do not run other specialists.
+- The Evidence Analyst must follow its Repair-mode rules: never rename or delete existing `S###`/`C###` IDs that are referenced by 02–11; only add sources/claims and prune uncited duplicates; update `coverage.*` and notes; do not edit 02–11 EN or any `*.zh.yaml`.
+- Repair-mode additions strengthen existing analysis only. New evidence must corroborate existing claims or close documented `evidenceGaps`. It must not introduce new facts/numbers/judgments that would change wording, tables, figures, or recommendation in 02–11.
+- If the Evidence Analyst returns `repairEscalationNeeded: true`, stop the repair and trigger a targeted regeneration: rerun the affected downstream specialists, then `Startup Report Writer`, then `Startup Report Translator ZH`. Do not commit a partially-updated report folder.
+- After repair, run `npm run validate`. The repair is complete only when no warnings remain for that report folder.
