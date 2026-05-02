@@ -1,0 +1,49 @@
+# Evidence ledger rules
+
+Use these rules whenever a skill reads or updates `01-evidence-ledger.yaml`.
+
+## Ledger model
+
+- Evidence gathering is distributed across analysis skills.
+- Evidence registration is centralized in `01-evidence-ledger.yaml`.
+- Every retained external source is registered once in `sources[]`.
+- Every reusable external factual assertion becomes an atomic `claims[]` entry.
+- Downstream artifacts cite `claimRefs`; claims cite `sourceRefs`.
+- Preserve existing `S###` and `C###` IDs. New IDs continue from the current maximum.
+
+## `web_search` packet parsing
+
+For every targeted `web_search` response:
+
+1. Treat `output_text.text.value` as candidate narrative, not a source.
+2. Treat each `output_text.text.annotations[].url_citation.url` as a source candidate.
+3. Use `start_index` / `end_index` to map nearby answer facts to cited URLs when valid.
+4. If spans are missing, malformed, empty, or garbled, associate the citation with the closest topical paragraph and use `keyQuote: null`; never invent a quote.
+5. Split the answer into atomic claims: one fact per claim.
+6. Attach only cited URLs that support that specific fact.
+7. Use `bing_searches[]` as query provenance for `sourceStrategy` / notes only; never retain Bing/search-result URLs in `sources[]`.
+
+## Source rules
+
+- Retain only URLs cited/annotated by `web_search`.
+- Deduplicate by canonical URL and underlying event/date.
+- Cluster press-release or wire-copy repeats as one event; do not count them as independent corroboration.
+- Prefer fit-for-purpose sources: official pages, filings/regulators, tier-one news, analyst/market data, customer proof, technical docs, reviews, and disconfirming evidence.
+- Label `sourceType`, `reputationTier`, and `independence` honestly.
+- Use recent sources for current company status, funding, valuation, customers, metrics, product packaging, pricing, and regulatory posture; durable historical facts can be `freshness: historical`.
+
+## Update invariants
+
+- Do not delete any source or claim referenced by downstream artifacts.
+- Every new external fact needs a `claims[]` entry.
+- Every claim needs `sourceRefs` unless it is explicitly `open-question` with `corroboration: none`.
+- Update `coverage.sourcesConsidered`, `coverage.sourcesRetained`, and `coverage.claimsCreated` after edits.
+- Record unsupported but important facts in `evidenceGaps` with impact and diligence path.
+
+## Quality gates
+
+- Every downstream chapter need has support or an explicit `evidenceGaps` entry.
+- No single publisher/domain family should exceed 34% of retained sources when enough alternatives exist.
+- At least 15% of retained sources should be independent when the source universe supports it.
+- At most 50% of retained sources may be uncited by any claim.
+- Every retained URL appeared in `web_search` citations/annotations.

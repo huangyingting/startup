@@ -21,6 +21,7 @@ Resolve before running skills:
 - `yamlSyntaxPath`: absolute path to `.github/references/yaml-syntax.md`.
 
 Read `schemaPath` and `yamlSyntaxPath` before writing any artifact. Use the relevant workspace skills in `.github/skills/` for each stage.
+Read `.github/references/evidence-ledger.md` before creating or updating `01-evidence-ledger.yaml`.
 
 ## v2 artifact contract
 
@@ -49,19 +50,24 @@ All artifacts must be written directly under `reportFolder`. `/tmp` tool-output 
 
 Use exactly this skill sequence inside this agent:
 
-1. `startup-foundation` writes `00`, `01`, `02` and establishes shared source/claim ledger rules.
-2. `startup-market-competition` writes `03`, `04` and may add market/competition sources and claims to `01`.
-3. `startup-financial-product` writes `05`, `06`, `07` and may add financial/product/customer sources and claims to `01`.
-4. `startup-risk-valuation` writes `08`, `09` and may add risk/valuation sources and claims to `01`.
-5. `startup-report-writer` assembles `10` and `11` from artifacts `02`–`09`.
-6. `startup-report-zh` translates `10` and `11` into `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
+1. `startup-brief` writes `00` and defines downstream research needs.
+2. `startup-company-snapshot` writes `01`, `02` and initializes the shared evidence ledger.
+3. `startup-market` writes `03` and may add market sources and claims to `01`.
+4. `startup-competition` writes `04` and may add competition sources and claims to `01`.
+5. `startup-financials` writes `05` and may add financial sources and claims to `01`.
+6. `startup-product-technology` writes `06` and may add product/technology sources and claims to `01`.
+7. `startup-customer-retention` writes `07` and may add customer/retention sources and claims to `01`.
+8. `startup-risk-regulatory` writes `08` and may add risk/regulatory sources and claims to `01`.
+9. `startup-investment-valuation` writes `09` and may add investment/valuation sources and claims to `01`.
+10. `startup-report-writer` assembles `10` and `11` from artifacts `02`–`09`.
+11. `startup-report-zh` translates `10` and `11` into `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 
 Do not invoke separate stage agents for `00`–`11`. All stage logic lives in the skills listed above, and this single agent owns all reads, searches, edits, validation, and final reporting.
 
 ## Shared evidence rules
 
 - `web_search` is available to this agent throughout the skill sequence. Evidence gathering is distributed across analysis skills, while evidence registration remains centralized in `01-evidence-ledger.yaml`.
-- The analysis skills (`startup-foundation`, `startup-market-competition`, `startup-financial-product`, `startup-risk-valuation`) may run targeted `web_search` whenever their chapter lacks supportable data.
+- The analysis skills (`startup-company-snapshot`, `startup-market`, `startup-competition`, `startup-financials`, `startup-product-technology`, `startup-customer-retention`, `startup-risk-regulatory`, `startup-investment-valuation`) may run targeted `web_search` whenever their chapter lacks supportable data.
 - `startup-report-writer` and `startup-report-zh` must not add new facts with `web_search`; if they find a missing report-critical fact, route back to the relevant analysis skill first.
 - `01-evidence-ledger.yaml` remains the evidence backbone. Every external assertion in later YAML must cite `claimRefs` / inline `[Cxxx]`.
 - Every claim with `sourceRefs` references retained ledger sources whose URLs appeared in `web_search` citations/annotations.
@@ -79,8 +85,8 @@ After every skill stage:
 - Confirm expected files exist in `reportFolder`.
 - Check `schemaVersion: startup-diligence-report-v2`.
 - Check `artifact`, `slug`, `runDate`, and `company.name` consistency.
-- Validate all `claimRefs` against `01-evidence-ledger.yaml`.
-- Validate all claim `sourceRefs` against retained ledger sources.
+- After `01-evidence-ledger.yaml` exists, validate all `claimRefs` against it.
+- After `01-evidence-ledger.yaml` exists, validate all claim `sourceRefs` against retained ledger sources.
 - Ensure `coverage.sourcesRetained === sources.length` and `coverage.claimsCreated === claims.length` whenever `01` changes.
 - Validate every figure against the schema Figure rendering contract: no empty required arrays, no non-canonical primary fields, no string-valued numeric chart values, visible cards/layers/nodes need `label` plus renderable content.
 - Reject any artifact that is missing its document head or begins with continuation prose / a mid-list fragment.

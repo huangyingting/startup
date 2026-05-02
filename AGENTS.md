@@ -12,7 +12,7 @@ This file gives coding agents the minimum context needed to work in this reposit
 
 - `.github/agents/research.agent.md` — the single `Startup Research` agent.
 - `.github/skills/` — stage skills used by that agent.
-- `.github/references/yaml-syntax.md` — shared YAML syntax rules.
+- `.github/references/` — shared YAML and evidence-ledger rules.
 - `scripts/` — report folder, index, duplicate, and content checks.
 - `website/` — Astro site and rendering-contract validation.
 
@@ -26,7 +26,7 @@ This file gives coding agents the minimum context needed to work in this reposit
 ## Report generation rules
 
 - Use one `Startup Research` run per company. Internal report stages are skills, not separate agents.
-- Skill order: `startup-foundation → startup-market-competition → startup-financial-product → startup-risk-valuation → startup-report-writer → startup-report-zh`.
+- Skill order: `startup-brief → startup-company-snapshot → startup-market → startup-competition → startup-financials → startup-product-technology → startup-customer-retention → startup-risk-regulatory → startup-investment-valuation → startup-report-writer → startup-report-zh`.
 - Reports must be complete YAML artifact sets: `00-report-brief.yaml` through `11-report-card.yaml`, plus `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 - Do not keep failed, duplicate, or partial report folders under `reports/`.
 

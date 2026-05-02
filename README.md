@@ -22,17 +22,27 @@ flowchart TD
   F --> C
 
   C --> G[Prepare report folder<br/>reports/&lt;timestamp&gt;-&lt;company-slug&gt;/]
-  G --> H[startup-foundation skill<br/>brief + ledger + snapshot]
-  H --> H1[00-report-brief.yaml<br/>01-evidence-ledger.yaml<br/>02-company-snapshot.yaml]
-  H1 --> I[Post-02 duplicate-company check<br/>scripts/check-company-dedup.mjs]
+  G --> H[startup-brief skill<br/>research plan]
+  H --> H1[00-report-brief.yaml]
+  H1 --> X[startup-company-snapshot skill<br/>ledger + snapshot]
+  X --> X1[01-evidence-ledger.yaml<br/>02-company-snapshot.yaml]
+  X1 --> I[Post-02 duplicate-company check<br/>scripts/check-company-dedup.mjs]
   I -->|duplicate-risk| I1[Stop unless user requested refresh]
-  I -->|clear| J[startup-market-competition skill<br/>dynamic web_search if needed]
-  J --> J1[03-market-macro.yaml<br/>04-competitive-benchmarking.yaml]
-  J1 --> K[startup-financial-product skill<br/>dynamic web_search if needed]
-  K --> K1[05-financial-unit-economics.yaml<br/>06-product-technology.yaml<br/>07-customer-retention.yaml]
-  K1 --> L[startup-risk-valuation skill<br/>dynamic web_search if needed]
-  L --> L1[08-risk-regulatory.yaml<br/>09-investment-valuation.yaml]
-  L1 --> M[startup-report-writer skill]
+  I -->|clear| J[startup-market skill<br/>dynamic web_search if needed]
+  J --> J1[03-market-macro.yaml]
+  J1 --> K[startup-competition skill<br/>dynamic web_search if needed]
+  K --> K1[04-competitive-benchmarking.yaml]
+  K1 --> L[startup-financials skill<br/>dynamic web_search if needed]
+  L --> L1[05-financial-unit-economics.yaml]
+  L1 --> N[startup-product-technology skill<br/>dynamic web_search if needed]
+  N --> N1[06-product-technology.yaml]
+  N1 --> O[startup-customer-retention skill<br/>dynamic web_search if needed]
+  O --> O1[07-customer-retention.yaml]
+  O1 --> P[startup-risk-regulatory skill<br/>dynamic web_search if needed]
+  P --> P1[08-risk-regulatory.yaml]
+  P1 --> V[startup-investment-valuation skill<br/>dynamic web_search if needed]
+  V --> V1[09-investment-valuation.yaml]
+  V1 --> M[startup-report-writer skill]
   M --> M1[10-report-document.yaml<br/>11-report-card.yaml]
   M1 --> Q[startup-report-zh skill]
   Q --> Q1[10-report-document.zh.yaml<br/>11-report-card.zh.yaml]
@@ -43,10 +53,15 @@ flowchart TD
 
 ```text
 Startup Research single agent
-  ├─ startup-foundation            → 00-report-brief.yaml, 01-evidence-ledger.yaml, 02-company-snapshot.yaml
-  ├─ startup-market-competition    → 03-market-macro.yaml, 04-competitive-benchmarking.yaml
-  ├─ startup-financial-product     → 05-financial-unit-economics.yaml, 06-product-technology.yaml, 07-customer-retention.yaml
-  ├─ startup-risk-valuation        → 08-risk-regulatory.yaml, 09-investment-valuation.yaml
+  ├─ startup-brief                 → 00-report-brief.yaml
+  ├─ startup-company-snapshot      → 01-evidence-ledger.yaml, 02-company-snapshot.yaml
+  ├─ startup-market                → 03-market-macro.yaml
+  ├─ startup-competition           → 04-competitive-benchmarking.yaml
+  ├─ startup-financials            → 05-financial-unit-economics.yaml
+  ├─ startup-product-technology    → 06-product-technology.yaml
+  ├─ startup-customer-retention    → 07-customer-retention.yaml
+  ├─ startup-risk-regulatory       → 08-risk-regulatory.yaml
+  ├─ startup-investment-valuation  → 09-investment-valuation.yaml
   ├─ startup-report-writer         → 10-report-document.yaml, 11-report-card.yaml
   └─ startup-report-zh             → 10-report-document.zh.yaml, 11-report-card.zh.yaml
 ```
@@ -83,7 +98,7 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `.github/agents/research.agent.md` — single report-generation agent.
 - `.github/skills/` — stage skills used by the `Startup Research` agent.
 - `.github/schemas/startup-diligence-report-v2.md` — canonical YAML schema and rendering contract.
-- `.github/references/yaml-syntax.md` — shared YAML syntax rules.
+- `.github/references/` — shared YAML syntax and evidence-ledger rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
 - `scripts/check-company-dedup.mjs` — fails with duplicate-risk details for matching company names or domains.
 - `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and EN↔ZH parity checks.

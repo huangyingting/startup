@@ -32,22 +32,23 @@ Required Simplified Chinese files (must ship with every report):
 - Skills must write complete YAML files directly to `reportFolder`.
 - `/tmp` tool-output files are diagnostic logs only, never artifacts or handoff inputs.
 - `Startup Research` must read this schema and `.github/references/yaml-syntax.md` before writing.
+- Skills that create or update `01-evidence-ledger.yaml` must read `.github/references/evidence-ledger.md`.
 - `web_search` is available to the single `Startup Research` agent and may be used dynamically by analysis skills when chapter data is missing. All new external facts must flow through `01-evidence-ledger.yaml` claims before downstream artifacts cite them.
 
 ## Artifact mapping
 
 | File | `artifact` | Owner | Chapter |
 |---|---|---|---|
-| `00-report-brief.yaml` | `report-brief` | `startup-foundation` skill | n/a |
+| `00-report-brief.yaml` | `report-brief` | `startup-brief` skill | n/a |
 | `01-evidence-ledger.yaml` | `evidence-ledger` | shared ledger, updated by analysis skills | n/a |
-| `02-company-snapshot.yaml` | `company-snapshot` | `startup-foundation` skill | 1 — Startup Introduction & Company Snapshot |
-| `03-market-macro.yaml` | `market-macro` | `startup-market-competition` skill | 2 — Market Sizing & Macro Analysis |
-| `04-competitive-benchmarking.yaml` | `competitive-benchmarking` | `startup-market-competition` skill | 3 — Competitive Benchmarking |
-| `05-financial-unit-economics.yaml` | `financial-unit-economics` | `startup-financial-product` skill | 4 — Financial & Unit Economics |
-| `06-product-technology.yaml` | `product-technology` | `startup-financial-product` skill | 5 — Product & Technology |
-| `07-customer-retention.yaml` | `customer-retention` | `startup-financial-product` skill | 6 — Customer & Retention |
-| `08-risk-regulatory.yaml` | `risk-regulatory` | `startup-risk-valuation` skill | 7 — Risk & Regulatory |
-| `09-investment-valuation.yaml` | `investment-valuation` | `startup-risk-valuation` skill | 8 — Investment & Valuation |
+| `02-company-snapshot.yaml` | `company-snapshot` | `startup-company-snapshot` skill | 1 — Startup Introduction & Company Snapshot |
+| `03-market-macro.yaml` | `market-macro` | `startup-market` skill | 2 — Market Sizing & Macro Analysis |
+| `04-competitive-benchmarking.yaml` | `competitive-benchmarking` | `startup-competition` skill | 3 — Competitive Benchmarking |
+| `05-financial-unit-economics.yaml` | `financial-unit-economics` | `startup-financials` skill | 4 — Financial & Unit Economics |
+| `06-product-technology.yaml` | `product-technology` | `startup-product-technology` skill | 5 — Product & Technology |
+| `07-customer-retention.yaml` | `customer-retention` | `startup-customer-retention` skill | 6 — Customer & Retention |
+| `08-risk-regulatory.yaml` | `risk-regulatory` | `startup-risk-regulatory` skill | 7 — Risk & Regulatory |
+| `09-investment-valuation.yaml` | `investment-valuation` | `startup-investment-valuation` skill | 8 — Investment & Valuation |
 | `10-report-document.yaml` | `report-document` | `startup-report-writer` skill | final rendered report |
 | `11-report-card.yaml` | `report-card` | `startup-report-writer` skill | website index card |
 
