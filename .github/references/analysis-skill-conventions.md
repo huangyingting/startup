@@ -75,6 +75,17 @@ Before writing an artifact:
 - Never invent values, capabilities, certifications, customers, multiples, outcomes, or metrics.
 - Convert each retained source into atomic claims; do not keep bibliography-only sources.
 
+## Research completeness gate
+
+Before finalizing each analysis artifact, verify that the research record includes all four lenses below. If a lens produces no usable evidence, add an explicit `evidenceGaps` entry rather than silently omitting it.
+
+- Official surface: company pages, docs, pricing, newsroom/blog, trust/status, customer/partner pages, sitemap-linked pages.
+- Independent corroboration: tier-one news, filings/regulators, analyst or market data, credible trade press, customer/partner proof, or comparable public-company evidence.
+- Adverse/disconfirming evidence: lawsuits, regulatory scrutiny, outages, churn/reviews, leadership departures, pricing pressure, customer pushback, competitor attacks, or contrary estimates.
+- Freshness check: current facts within roughly 24 months, and volatile facts refreshed against `currentDate`.
+
+For every major table or figure, ask: “Which source would change this cell/node if it were wrong?” If the answer is “none,” either source it, remove it, or mark it as a diligence gap.
+
 ## Artifact depth
 
 Artifacts `01`–`08` are the research record, not thin handoffs. Each must retain:
