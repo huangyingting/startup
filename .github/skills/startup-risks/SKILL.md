@@ -33,6 +33,17 @@ Seventh analysis stage. Build the regulatory, legal, security, operational, and 
 - Official trust/security/privacy/terms/DPA/compliance/status/incident/responsible-use/legal/subprocessor pages.
 - Legal filings, regulators, court material, incident/status history, reputable adverse reporting, partner concentration evidence, mitigation/governance evidence.
 
+## Section evidence acquisition
+
+Use `web_search` to find adverse/current risk evidence; use `fetch-url` on the strongest primary or independent URL before assigning severity.
+
+- Risk register: legal, regulatory, security, operational, partner, customer, financial, competitive risks.
+- Regulatory/legal: lawsuits, settlements, agency actions, rules, licensing, filings, court/regulator pages.
+- Security/privacy/compliance: trust center, SOC/ISO/HIPAA/BAA/DPA, subprocessors, incidents, breaches.
+- Concentration: cloud, banking, model, data, distribution, channel, dependency terms.
+- Operational/product: outages, regressions, failures, misuse, policy enforcement, complaints.
+- Mitigation/stop-loss: controls, governance, management response, measurable kill criteria.
+
 ## Required tables and figures
 
 - Risk register with dated evidence, status, likelihood, severity, mitigation, residual exposure, and investment impact.

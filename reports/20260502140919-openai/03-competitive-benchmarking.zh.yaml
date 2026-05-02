@@ -1,0 +1,357 @@
+schemaVersion: startup-diligence-report-v2
+artifact: competitive-benchmarking
+slug: openai
+runDate: '2026-05-02'
+company:
+  name: OpenAI
+  website: https://openai.com/
+chapter:
+  number: 3
+  title: 竞争格局基准分析
+  summary: >
+    OpenAI 同时在多个战场竞争：高端消费者助手、开发者 API、企业 copilot、编程智能体，以及工作流自动化。 直接对标对象横跨
+    Anthropic、Google、Microsoft，以及不断增强的开放权重替代方案。OpenAI 的优势在于 产品与分发广度；风险则在于竞争对手能够把相近能力捆绑进现有软件套件，或者用更低成本的开放模型压缩其定价权。
+  claimRefs:
+    - C031
+    - C032
+    - C033
+    - C034
+    - C037
+callouts:
+  - type: key-insight
+    title: OpenAI 的优势在于生态广度，而不是某一个孤立功能。
+    body: |
+      OpenAI 同时覆盖消费者分发、企业工作区产品、API 工具、编程智能体和快速扩展中的企业栈。竞争对手通常 通过一个主要切入点进入——套件捆绑、企业安全，或低成本模型——而不是同样的全栈组合。
+    claimRefs:
+      - C031
+      - C032
+      - C033
+      - C034
+      - C035
+  - type: risk-alert
+    title: 开源 / 开放权重与套件捆绑会同时压缩定价权。
+    body: |
+      BenchLM 这类独立榜单以及各家官方价格页说明，竞争压力来自两端：开放权重模型挑战 API 溢价，
+      而 Microsoft 和 Google 则能依托更大的生产力套件与企业采购关系进行捆绑。
+    claimRefs:
+      - C036
+      - C037
+      - C038
+tables:
+  - id: T301
+    title: 竞争对手画像表
+    columns:
+      - 竞争类别
+      - 公司 / 产品
+      - 核心切入点
+      - 相关证据点
+      - 对 OpenAI 的含义
+    rows:
+      - - 直接前沿实验室
+        - Anthropic / Claude
+        - 以安全叙事切入的前沿助手，同时覆盖编程、企业与 API 打包
+        - 定价页突出 Claude Code、Claude Cowork、Claude Security、Team 与 Enterprise
+        - 在企业与开发者场景中构成最直接替代。
+      - - 套件型巨头
+        - Google / Gemini Enterprise
+        - Workspace 与云平台捆绑，辅以无代码智能体和连接器深度
+        - Gemini Enterprise Business 版起价每席位每月 21 美元，并包含 Agent Designer 与连接器
+        - 在 Google 原生组织里构成强分发威胁。
+      - - 套件型巨头
+        - Microsoft / Microsoft 365 Copilot
+        - 深度集成 M365、Copilot Chat、agents 与企业控制
+        - Business 方案起价每用户每月 18 美元（年付）；合格企业用户可使用包含在内的 Copilot Chat
+        - 在现有 Microsoft 体系内形成最强采购捆绑压力。
+      - - 开放权重替代
+        - DeepSeek / Qwen / other low-cost open models
+        - 成本更低的自托管或廉价推理
+        - BenchLM 等榜单将开放权重方案视为成本压力来源
+        - 限制 OpenAI 长期维持高 API 溢价的空间。
+      - - OpenAI 当前定位
+        - ChatGPT + Business / Enterprise + API + Codex
+        - 全栈产品与分发飞轮
+        - Business 定价覆盖无席位费 Codex 使用、每月 25 新元 Business、定制 Enterprise 与 API 定价
+        - 广度是护城河，但也扩大执行面。
+    notes: 竞争格局并非单一维度。OpenAI 同时面对直接模型竞争、生产力套件竞争，以及开放权重替代。
+    claimRefs:
+      - C031
+      - C032
+      - C033
+      - C034
+      - C035
+      - C036
+      - C037
+  - id: T302
+    title: 功能与平台矩阵
+    columns:
+      - 能力
+      - OpenAI
+      - Anthropic
+      - Google Gemini
+      - Microsoft Copilot
+      - 竞争备注
+    rows:
+      - - 消费者助手规模
+        - 'Yes'
+        - 'Yes'
+        - 保留证据中不明确
+        - 保留证据中不明确
+        - 在保留证据里，OpenAI 的消费者规模信号最明确。
+      - - 编程智能体
+        - Codex
+        - Claude Code
+        - Gemini Code Assist in enterprise bundle
+        - Copilot plus agents
+        - 编程已成为前沿玩家的基本配置。
+      - - 工作区 / 团队智能体
+        - Workspace agents
+        - Skills, connectors, plugins
+        - Agent Designer and Google-made agents
+        - Copilot Studio and workflow agents
+        - 当前真正的打包竞赛在于智能体编排。
+      - - 企业管理与治理
+        - 'Yes'
+        - 'Yes'
+        - 'Yes'
+        - 'Yes'
+        - 安全与治理本身已不再构成明显差异化。
+      - - API 与开发者变现
+        - 'Yes'
+        - 'Yes'
+        - 主要通过云平台打包体现
+        - Metered agent and app access
+        - 在保留证据里，OpenAI 与 Anthropic 仍是最清晰的 API-first 对照组。
+    notes: 该表体现出明显的能力收敛：大多数可信竞争者如今都提供编程、智能体和企业控制。差异化正更多来自分发、 定价和工作流深度。
+    claimRefs:
+      - C031
+      - C032
+      - C033
+      - C034
+      - C038
+  - id: T303
+    title: 定价与打包比较
+    columns:
+      - 提供商
+      - 商业版入门价格
+      - 企业打包方式
+      - API / 使用量打包
+      - 定价含义
+    rows:
+      - - OpenAI
+        - Business 每用户每月 25 新元
+        - Enterprise 定制定价
+        - Business Codex 无固定席位费；API 为按量计费
+        - 全栈变现灵活，但并不是最低的企业席位价格。
+      - - Anthropic
+        - Team 每席位每月 20 美元（年付）
+        - Enterprise 标示为每席位 20 美元外加按 API 定价计费
+        - API 按模型与 token 公开定价
+        - 企业/编程定位强，token 定价透明度较高。
+      - - Google Gemini
+        - Business edition 每席位每月 21 美元
+        - Standard / Plus 每席位每月 30 美元起
+        - 打包重心在连接器、智能体与治理能力
+        - 更多通过套件整体价值竞争，而非单纯模型价格。
+      - - Microsoft 365 Copilot
+        - Business 每用户每月 18 美元（年付）
+        - 合格企业用户可使用包含在内的 Copilot Chat；企业扩展和 agents 为计量计费
+        - agents 与 tools 使用可通过 Copilot Studio 按量计费
+        - 在保留证据中是最激进的套件捆绑威胁。
+    notes: OpenAI 并没有在最低企业席位价格上占优。其定价权必须来自产品广度、模型质量和工作流 ROI。
+    claimRefs:
+      - C031
+      - C032
+      - C033
+      - C034
+      - C035
+  - id: T304
+    title: GTM 与分发信号
+    columns:
+      - 提供商
+      - 分发锚点
+      - 客户动作
+      - 切换摩擦
+      - 竞争结论
+    rows:
+      - - OpenAI
+        - 从消费者到工作场景的转换，加上 API / 开发者动作
+        - 自下而上与自上而下并存
+        - 中
+        - 在保留证据中具备最强的多渠道动作。
+      - - Anthropic
+        - 直接企业与开发者平台
+        - 从团队向企业扩张
+        - 中
+        - 在安全与编程场景里是强直接对手。
+      - - Google Gemini
+        - Google Cloud 与 Workspace 存量
+        - 以企业管理和管理员为中心的自上而下销售
+        - 在 Google 原生环境中偏高
+        - 连接器与治理捆绑会降低客户迁移意愿。
+      - - Microsoft 365 Copilot
+        - Microsoft 365 安装基数
+        - 企业采购驱动的自上而下销售
+        - 在 Microsoft 存量环境中偏高
+        - 是最强的套件交叉销售威胁。
+      - - 开放权重模型
+        - 开放生态与自托管
+        - 由 builder 或基础设施团队驱动
+        - 可变
+        - 对成本敏感或主权敏感团队的切换门槛更低。
+    notes: 分发不对称很关键：套件型巨头依赖既有软件栈，OpenAI 则依赖用户拉动和 API 普适性。
+    claimRefs:
+      - C031
+      - C032
+      - C033
+      - C034
+      - C036
+      - C037
+  - id: T305
+    title: 护城河持续性与竞争风险登记表
+    columns:
+      - 风险
+      - 重要性
+      - 当前证据
+      - 缓释或尽调问题
+    rows:
+      - - 套件捆绑压力
+        - Google 与 Microsoft 可以把 AI 成本隐藏在更大的合同里
+        - 官方价格页显示了较低的商业入门价格和包含式企业聊天
+        - 需要测试 OpenAI 被买作第二套 AI 栈的频率，而非标准平台。
+      - - 开放权重商品化
+        - 更便宜的替代会压缩 API 与编程利润率
+        - 独立榜单突出低成本开放权重挑战者
+        - 需要衡量在成本调整后，OpenAI 在高价值任务上是否仍有质量优势。
+      - - 能力收敛
+        - 对手现在都在卖 agents、coding 和企业治理
+        - Anthropic、Google 和 Microsoft 官方页面都呈现明显功能重叠
+        - 差异化必须建立在工作流深度与采用质量，而非 checklist。
+      - - 采购碎片化
+        - 买方可能标准化到套件 AI，同时允许少量专家工具并存
+        - Copilot 与 Gemini 都嵌在更大的生产力生态里
+        - 需要验证 OpenAI 能否成为 system of record，而非侧挂工具。
+      - - 执行面过宽
+        - OpenAI 同时覆盖消费者、企业、API 与智能体产品
+        - 广度是护城河，同时也是管理负担
+        - 需要追踪按产品面的毛利率、路线图优先级和产品一致性。
+    notes: OpenAI 的护城河仍然真实，但并非垄断式。竞争持续性取决于它能否在抵御捆绑与商品化压力的同时，持续保持显著的质量与工作流优势。
+    claimRefs:
+      - C031
+      - C033
+      - C036
+      - C037
+      - C038
+figures:
+  - id: F301
+    title: 前沿 AI 竞争矩阵
+    type: competitive-matrix
+    layout: wide
+    summary: 按分发杠杆与工作流深度对主要竞争者进行定位。
+    data:
+      points:
+        - label: OpenAI
+          x: 9
+          'y': 9
+          detail: 在保留证据中同时具备最广的消费者拉动、API 触达、编程、智能体和企业打包能力。
+        - label: Anthropic
+          x: 6
+          'y': 8
+          detail: 工作流深度和企业打包能力强，但在保留证据里的大众分发规模弱于 OpenAI。
+        - label: Google Gemini
+          x: 8
+          'y': 7
+          detail: 套件和云平台分发强，辅以智能体与连接器能力。
+        - label: Microsoft Copilot
+          x: 9
+          'y': 7
+          detail: 存量安装基数和企业捆绑极强。
+        - label: Open-weight models
+          x: 5
+          'y': 6
+          detail: 企业分发较弱，但在成本与主权方面吸引力强。
+    approximationNotes: 横纵轴为基于保留的定价、打包与分发证据综合形成的 1-10 合成分值。
+    claimRefs:
+      - C031
+      - C032
+      - C033
+      - C034
+      - C036
+  - id: F302
+    title: 商业版入门席位价格比较
+    type: bars
+    layout: standard
+    summary: 已公布的商业版席位价格显示，OpenAI 与主要直接对手处于相近价格带。
+    data:
+      items:
+        - label: OpenAI Business
+          value: 25
+        - label: Anthropic Team
+          value: 20
+        - label: Google Gemini Business
+          value: 21
+        - label: Google Gemini Standard/Plus
+          value: 30
+        - label: Microsoft Copilot Business
+          value: 18
+    approximationNotes: 数值反映各页面公布的席位价格，因币种与计费单位不同，仅作方向性打包比较。
+    claimRefs:
+      - C031
+      - C032
+      - C033
+      - C034
+sections:
+  - number: '3.1'
+    title: 竞争格局
+    body: |
+      OpenAI 的竞争对手并不是单一的某个前沿模型实验室。Anthropic 是在编程、API 与企业工作流中最直接的替代；
+      Google 与 Microsoft 则通过套件分发和管理员控制竞争；开放权重模型则通过成本与可部署性竞争。这意味着
+      OpenAI 面对的是一场多线作战，而不是简单的双寡头竞争。
+    claimRefs:
+      - C031
+      - C032
+      - C033
+      - C036
+  - number: '3.2'
+    title: 定价与打包
+    body: |
+      官方价格页表明，OpenAI 并不靠“最低价格”获胜。它的 ChatGPT Business 为每用户每月 25 新元；
+      Anthropic Team 为每席位每月 20 美元（年付）；Google Gemini Business 起价每席位每月 21 美元；
+      Microsoft 365 Copilot Business 则是每用户每月 18 美元（年付）。因此，OpenAI 需要靠产品广度与
+      工作流 ROI 来证明其溢价定位。
+    claimRefs:
+      - C031
+      - C032
+      - C033
+      - C034
+  - number: '3.3'
+    title: 差异化与切换成本
+    body: |
+      OpenAI 的核心差异化在于广度：同一供应商覆盖消费者使用、Business 工作区、Enterprise 部署、编程智能体、
+      API 工具和按使用量计费的开发者变现。客户一旦同时使用多个触面，切换成本会提高；但如果竞争套件能够在
+      现有合同和管理员系统内提供“足够好”的 AI，切换壁垒就会被削弱。
+    claimRefs:
+      - C031
+      - C035
+      - C037
+  - number: '3.4'
+    title: 套件捆绑与开放权重压力
+    body: |
+      最关键的反向证据并不是某一个对手在所有维度都更强，而是买方越来越容易获得更便宜或更嵌入式的替代方案。
+      Microsoft 可以把 Copilot 捆进 Microsoft 体系，Google 可以把 Gemini 捆进 Workspace 和 Cloud，
+      开放权重模型则在成本或主权更重要时压缩定价空间。
+    claimRefs:
+      - C033
+      - C034
+      - C036
+      - C038
+  - number: '3.5'
+    title: 定位结论
+    body: |
+      当客户希望用同一供应商同时覆盖消费者分发、企业工作区 AI、API 访问，以及编程/智能体工作流时，
+      OpenAI 仍然是当前最强的定位者。但竞争风险在于市场可能分裂：套件厂商赢下捆绑生产力，专业玩家赢下
+      安全或编程场景，开放权重模型赢下价格。OpenAI 的护城河可信，但若没有持续的产品领先，也并不安全。
+    claimRefs:
+      - C031
+      - C035
+      - C036
+      - C038

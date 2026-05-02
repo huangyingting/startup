@@ -1,0 +1,435 @@
+schemaVersion: startup-diligence-report-v2
+artifact: risk-regulatory
+slug: openai
+runDate: '2026-05-02'
+company:
+  name: OpenAI
+  website: https://openai.com/
+chapter:
+  number: 7
+  title: 风险与监管
+  summary: >
+    OpenAI 体现的是一家 frontier AI 基础设施公司的风险画像，并叠加了非常规治理复杂性。最高风险集群包括治理与 重组审查、围绕 Microsoft 与云基础设施的伙伴集中度、诉讼驱动的隐私冲突、frontier
+    model 监管，以及当平台 进入 connectors 和自主动作后暴露出的运营可靠性。缓释措施确实存在，而且正在制度化，但残余风险仍高，因为 这些问题都可能直接传导到客户信任、利润率结构与融资灵活性。
+  claimRefs:
+    - C069
+    - C070
+    - C071
+    - C072
+    - C075
+    - C076
+callouts:
+  - type: key-insight
+    title: OpenAI 最大的风险是结构性的，而不是表面的。
+    body: |
+      治理设计、云与股东集中度、诉讼引发的隐私义务，以及 AI 监管都紧贴公司的核心运营模型。这些不是靠更好的 对外叙事就能解决的边缘问题。
+    claimRefs:
+      - C069
+      - C070
+      - C071
+      - C075
+      - C076
+  - type: risk-alert
+    title: 运营和法律摩擦会很快传导成客户与估值压力。
+    body: |
+      法院要求的数据保留、持续演进的 GPAI 监管，以及实时 connector 事故，都说明法律和运营事件会穿透隐私姿态、
+      企业信任、续约风险和利润率。OpenAI 的规模同时放大了上行和爆炸半径。
+    claimRefs:
+      - C075
+      - C076
+      - C077
+      - C078
+tables:
+  - id: T701
+    title: 按严重程度排序的风险登记表
+    columns:
+      - 风险
+      - 日期化证据
+      - 可能性
+      - 严重性
+      - 当前缓释
+      - 残余暴露
+      - 投资影响
+    rows:
+      - - 治理与重组审查
+        - OpenAI 结构页于 2025 年 10 月更新；CNBC 于 2025 年 5 月报道称在 AG 沟通后保留 nonprofit 控制
+        - Medium-high
+        - High
+        - Foundation 控制权、PBC 结构、独立董事会、AG 沟通
+        - High
+        - 延迟或争议可能削弱融资、治理清晰度与战略灵活性。
+      - - Microsoft / 云集中度
+        - 2026 年 4 月修订后的合作协议称 Microsoft 仍是 primary cloud partner 与 major shareholder
+        - High
+        - High
+        - 非独占 IP 许可与跨云服务灵活性
+        - High
+        - 供应商或伙伴摩擦会影响算力获取、毛利率与谈判力。
+      - - 隐私与诉讼冲突
+        - 2025 年 6 月 OpenAI 对 NYT 保全令的回应；2025 年 10 月更新说明保留数据子集
+        - Medium
+        - High
+        - 法律保留隔离存储、Enterprise/Edu/ZDR 排除、持续上诉
+        - Medium-high
+        - 法律命令可能与隐私承诺冲突，并造成企业信任担忧。
+      - - 欧盟与 frontier AI 监管
+        - EU AI Act 的 GPAI 规则自 2025 年 8 月生效，更广的透明度/高风险义务在 2026-2027 年落地
+        - High
+        - High
+        - 安全委员会监督、透明度报告、外部协作、合规控制
+        - Medium-high
+        - 合规成本、发布摩擦和模型治理义务都可能显著上升。
+      - - 运营可靠性与 connector 执行
+        - OpenAI 状态页显示 live workspace connector write-action disruption
+        - Medium
+        - Medium-high
+        - 聚合 uptime 披露、管理控制、审批闸门、审计日志
+        - Medium
+        - 动作层故障会削弱企业信任并提高支持经济性压力。
+      - - 安全与滥用治理
+        - 2024 年 9 月安全更新创建了可延迟发布的独立 SSC
+        - Medium
+        - High
+        - 董事会监督、system cards、外部测试、政府协作
+        - Medium-high
+        - 严重模型安全事件可能引发监管、声誉与客户反弹。
+    notes: 最高等级的风险都紧贴 OpenAI 以规模化方式部署模型、同时维持信任、资本获取和平台杠杆的能力。
+    claimRefs:
+      - C069
+      - C070
+      - C071
+      - C072
+      - C075
+      - C076
+      - C077
+  - id: T702
+    title: 监管与法律风险表
+    columns:
+      - 风险领域
+      - 证据
+      - 重要性
+      - 缓释证据
+      - 尽调请求
+    rows:
+      - - 治理与慈善法审查
+        - OpenAI 称重组在加州和特拉华州 AG 办公室沟通近一年后完成；CNBC 报道 nonprofit 控制是在外部压力后保留
+        - 公司结构对监管者和批评者都异常显眼
+        - Foundation 控制权与独立董事会仍然存在
+        - 请求法律顾问备忘录，说明剩余监管审批、条件与挑战路径。
+      - - 诉讼驱动的数据保留
+        - OpenAI 称 NYT 命令强制保留 consumer ChatGPT 和 API 内容，并与隐私承诺冲突
+        - 法院命令可与删除预期和国际隐私姿态冲突
+        - 数据被隔离、法律保留、访问受控，并排除 Enterprise、Edu 和 ZDR 客户
+        - 请求诉讼时间表、保全范围、上诉状态和客户通知协议。
+      - - GPAI 合规
+        - EU AI Act 对 GPAI 引入透明度、版权和系统性风险义务，部分规则已生效
+        - OpenAI 很可能是欧洲监管关注的 GPAI 核心对象
+        - 安全与安全委员会、透明度报告、合规控制
+        - 请求欧盟合规路线图、模型分类判断与资源配置计划。
+      - - 平台透明度与内容治理义务
+        - Trust 页面发布 DSA 资源、请求统计与内容审核材料
+        - 随着平台覆盖面和多模态能力扩大，报告负担会增加
+        - 已有透明度报告节奏与 trust portal
+        - 请求事故报告阈值和监管沟通日志。
+    notes: 法律与监管暴露已经不是理论问题。OpenAI 已经在真实的报告、治理与隐私压力框架下运营。
+    claimRefs:
+      - C069
+      - C070
+      - C074
+      - C075
+      - C076
+  - id: T703
+    title: 伙伴与集中度风险表
+    columns:
+      - 集中领域
+      - 公开证据
+      - 风险传导
+      - 缓释项
+      - 剩余缺口
+    rows:
+      - - 云依赖
+        - Microsoft 仍是 OpenAI 的 primary cloud partner；产品优先在 Azure 发布，除非 Microsoft 无法或不选择支持所需能力
+        - 算力获取和经济性仍对单一大对手敏感
+        - OpenAI 现在可以把产品服务给任何云上的客户
+        - 实际多云容量结构与故障转移准备情况并未公开。
+      - - 股东影响力
+        - Microsoft 约持有 27%，Foundation 持有 26%，剩余 47% 属于员工和投资人
+        - 治理、经济性和战略可选性仍然纠缠在一起
+        - Foundation 保留对 Group 董事会的任命与替换权
+        - 请求 side letters、否决权与保留事项清单。
+      - - IP 与收入分成经济关系
+        - Microsoft 持有至 2032 年的非独占 IP 许可；OpenAI 向 Microsoft 的收入分成持续到 2030 年且有总额上限
+        - 影响毛利率、退出灵活性与议价能力
+        - 修订协议降低了独占性并简化了部分条款
+        - 实际 take rate、cap 大小和情景敏感性仍属私有。
+      - - 客户集中度
+        - 公共材料披露了具名部署，但未披露前十大账户暴露
+        - 若少数大型企业账户主导收入，冲击会被放大
+        - 广泛 business 数量与多元案例研究提供一定分散信号
+        - 请求前十大客户清单和续约日历。
+    notes: OpenAI 降低了一部分独占性风险，但没有消除集中度风险。其伙伴栈仍然是运营和经济性的核心。
+    claimRefs:
+      - C069
+      - C071
+      - C079
+  - id: T704
+    title: 运营与安全风险表
+    columns:
+      - 风险领域
+      - 证据
+      - 可能性
+      - 缓释证据
+      - 尽调请求
+    rows:
+      - - Connector 与工作流可靠性
+        - 状态页显示 workspace connector write actions 连续多日中断
+        - Medium
+        - 聚合 uptime 披露、管理员恢复路径、审批与监控控制
+        - 请求 connector 事故历史和 write-action RCA 档案。
+      - - 安全与隐私控制漂移
+        - 安全页面列出 SOC 2、ISO、ISO 42001、PCI-DSS、CSA STAR、audit logs、bug bounty 和 data residency
+        - Medium
+        - 第三方审计、安全门户、加密、访问控制、漏洞赏金
+        - 按产品面确认最新证书范围和例外。
+      - - 安全治理执行
+        - SSC 可接收模型评估汇报，并在疑虑未解决时延迟发布
+        - Medium
+        - 董事会委员会监督以及与安全组织和 AI Safety Institutes 的外部协作
+        - 请求延迟发布实例、override 权限与升级协议。
+      - - 数据治理信任
+        - Enterprise privacy 页面承诺所有权、默认不训练、保留控制和 SAML SSO
+        - Medium
+        - 明确的企业承诺以及对法律保留数据的单独处理
+        - 测试这些承诺在诉讼和事故场景下能否持续稳定执行。
+    notes: OpenAI 的缓释体系不弱，但产品面正在扩展到更多动作密集和合规敏感的工作流。
+    claimRefs:
+      - C072
+      - C073
+      - C077
+      - C078
+  - id: T705
+    title: 缓释框架与 kill criteria
+    columns:
+      - 风险集群
+      - 缓释证据
+      - 残余风险
+      - Stop-loss / kill criteria
+    rows:
+      - - 治理与重组
+        - Foundation 控制、PBC 结构、独立董事会、AG 沟通
+        - High
+        - 出现实质性不利裁定或监管行动，阻断或逆转结构；或发现治理权弱于公开描述。
+      - - 伙伴集中度
+        - 非独占 IP 许可与跨云服务权限
+        - High
+        - Microsoft 关系显著恶化、算力获取中断，或经济条款显著恶化毛利率潜力。
+      - - 诉讼与隐私
+        - 法律保留隔离、Enterprise/Edu/ZDR 排除、持续上诉
+        - Medium-high
+        - 数据保留义务被扩大到影响企业数据承诺，或触发重大隐私法冲突。
+      - - 安全与监管
+        - SSC 监督、system cards、透明度报告、AI Act 对齐工作
+        - Medium-high
+        - 发生重大安全事故、监管认定 GPAI 不合规，或无法在关键市场发布核心模型。
+      - - 可靠性与客户信任
+        - 状态报告、管理控制、审计日志、connector 治理
+        - Medium
+        - 动作层反复事故、与可靠性相关的企业 churn，或持续 SLA 失守。
+    notes: 风险框架应通过明确的停损条件进行监控，而不是只依赖“AI 领先者叙事”带来的主观舒适感。
+    claimRefs:
+      - C069
+      - C071
+      - C072
+      - C076
+      - C077
+figures:
+  - id: F701
+    title: OpenAI 风险热力图
+    type: risk-heatmap
+    layout: wide
+    summary: 残余风险最高的领域，同时具备高影响和对对手方、监管者或法院的高依赖。
+    data:
+      columns:
+        - Impact
+        - Likelihood
+        - Mitigation maturity
+      rows:
+        - label: Governance and restructuring
+          values:
+            - label: High
+              tone: high
+            - label: Medium-high
+              tone: medium
+            - label: Medium
+              tone: medium
+        - label: Microsoft / cloud concentration
+          values:
+            - label: High
+              tone: high
+            - label: High
+              tone: high
+            - label: Medium
+              tone: medium
+        - label: Litigation and privacy conflict
+          values:
+            - label: High
+              tone: high
+            - label: Medium
+              tone: medium
+            - label: Medium
+              tone: medium
+        - label: EU AI Act and GPAI regulation
+          values:
+            - label: High
+              tone: high
+            - label: High
+              tone: high
+            - label: Medium-high
+              tone: positive
+        - label: Operational reliability
+          values:
+            - label: Medium-high
+              tone: medium
+            - label: Medium
+              tone: medium
+            - label: Medium
+              tone: medium
+        - label: Safety governance
+          values:
+            - label: High
+              tone: high
+            - label: Medium
+              tone: medium
+            - label: Medium-high
+              tone: positive
+    approximationNotes: 定性评级仅反映公开证据；内部法律和运营数据可能显著改变排序。
+    claimRefs:
+      - C069
+      - C070
+      - C071
+      - C072
+      - C075
+      - C076
+      - C077
+  - id: F702
+    title: 风险传导图
+    type: risk-transmission-map
+    layout: standard
+    summary: 治理、法律和伙伴风险会直接传导到信任、利润率和估值。
+    data:
+      nodes:
+        - id: governance
+          label: 治理 / 重组
+          detail: Foundation 控制、PBC 转换、AG 审查与诉讼外观。
+          tone: high
+        - id: partner
+          label: Microsoft 与云集中度
+          detail: primary cloud dependency、股东重叠、IP 许可与收入分成。
+          tone: high
+        - id: legal
+          label: 诉讼与隐私冲突
+          detail: 法院要求的数据保留可能与删除和隐私承诺冲突。
+          tone: high
+        - id: regulation
+          label: GPAI 与平台监管
+          detail: EU AI Act、DSA 透明度，以及更广的安全报告义务。
+          tone: risk
+        - id: trust
+          label: 企业信任
+          detail: 客户关注隐私、保留、可靠性与治理可信度。
+          tone: risk
+        - id: economics
+          label: 单位经济学
+          detail: 合规、法律、支持和伙伴成本会影响毛利率与现金流转化。
+          tone: high
+        - id: valuation
+          label: 估值 / 融资风险
+          detail: OpenAI 的估值依赖增长、信任和资本获取韧性。
+          tone: risk
+      edges:
+        - from: governance
+          to: valuation
+          label: structure confidence
+        - from: partner
+          to: economics
+          label: cloud and revenue-share terms
+        - from: legal
+          to: trust
+          label: privacy conflict
+        - from: regulation
+          to: economics
+          label: compliance cost
+        - from: regulation
+          to: trust
+          label: launch and disclosure burden
+        - from: trust
+          to: valuation
+          label: renewal multiple
+        - from: economics
+          to: valuation
+          label: margin multiple
+    approximationNotes: 该传导图是定性的，应使用法律时间表、伙伴条款和客户队列数据进行压力测试。
+    claimRefs:
+      - C069
+      - C071
+      - C075
+      - C076
+      - C077
+      - C078
+sections:
+  - number: '7.1'
+    title: 风险总览
+    body: |
+      OpenAI 的风险画像属于那种法律、治理和基础设施依赖都紧贴核心业务模型的 frontier AI 平台。最重要的风险
+      不是边缘场景，而是公司结构、融资、监管与部署方式的直接结果。
+    claimRefs:
+      - C069
+      - C070
+      - C071
+      - C075
+      - C076
+  - number: '7.2'
+    title: 治理与法律暴露
+    body: |
+      治理仍是一个活跃尽调问题，因为 OpenAI 的结构即使放在 founder-control 或 dual-class 公司中也非常特殊。
+      公司称 Foundation 通过特殊投票和治理权控制 PBC，而 CNBC 报道称，在与加州和特拉华州监管方沟通及外部
+      压力下，nonprofit control 被明确保留。除此之外，NYT 数据保留争议也说明：法律程序可以强迫公司做出与
+      隐私定位相冲突的运营选择。
+    claimRefs:
+      - C069
+      - C070
+      - C076
+  - number: '7.3'
+    title: 监管与安全风险
+    body: |
+      监管环境正在朝着 OpenAI 所构建系统的核心区域收紧。EU AI Act 已经对 GPAI 施加义务，并将在 2026 和
+      2027 年引入更广的透明度与高风险责任。OpenAI 的应对是把安全治理进一步制度化，包括可延迟发布的独立
+      Safety and Security Committee，但实际的合规与文档负担仍可能继续上升。
+    claimRefs:
+      - C072
+      - C074
+      - C075
+  - number: '7.4'
+    title: 伙伴与运营集中度
+    body: |
+      相比更早期的合作结构，OpenAI 已提升了一部分灵活性，但集中度仍然很高。Microsoft 仍是 primary cloud
+      partner，持有至 2032 年的非独占 IP 许可、持续到 2030 年的收入分成安排，并持有约 27% 股权。与此同时，
+      OpenAI 深入 connectors 和 agent actions 后，也创造了更多运营失效点，这一点已被公开状态页上的 live
+      workspace connector 事故所证明。
+    claimRefs:
+      - C069
+      - C071
+      - C077
+      - C079
+  - number: '7.5'
+    title: 风险结论
+    body: |
+      OpenAI 的风险评级应理解为“偏高，但尚非灾难性”。公司拥有可信的缓释措施——董事会层面的安全监督、企业隐私
+      控制、透明度报告，以及更灵活的合作条款——但残余风险仍高，因为治理、法律和基础设施问题都可能直接传导到
+      客户信任、利润率和融资结果。
+    claimRefs:
+      - C071
+      - C072
+      - C073
+      - C076
+      - C077

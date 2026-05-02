@@ -34,6 +34,17 @@ Sixth analysis stage. Assess customer quality, retention evidence, expansion, an
 - Separate customer-count claims, named deployments, case-study outcomes, partner/channel proof, usage signals, review evidence, and adverse customer evidence.
 - Logos alone are weak unless they support active deployment or a concrete use case.
 
+## Section evidence acquisition
+
+Use `web_search` to discover customer proof and adverse signals; use `fetch-url` to verify original customer, partner, review, or news pages.
+
+- Base/growth: customer counts, logos, milestones, usage counts, growth claims.
+- Segmentation: verticals, size bands, geography, ACV/ARR bands, deployment types, personas.
+- Named proof: case studies, customer blogs, press releases, webinars, partner announcements.
+- Retention/satisfaction: NRR, GRR, churn, renewals, expansion, support, reviews, complaints.
+- Expansion/concentration: seat/module expansion, large-account exposure, channel dependence, procurement/security objections.
+- Customer-risk asks: churn, blocked deployments, outage reactions, contract/security objections.
+
 ## Required tables and figures
 
 - Customer growth trajectory or explicit gap table.

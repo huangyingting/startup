@@ -33,6 +33,17 @@ First analysis stage. Build the company identity record reused by every downstre
 - Official about, leadership, newsroom, funding, investor, careers, product, and trust pages.
 - Tier-one financing/valuation coverage, leadership/founder sources, investor/partner proof, customer/scale signals, adverse/current-status reporting.
 
+## Section evidence acquisition
+
+Use `web_search` to discover candidates, conflicts, and current status; use `fetch-url` to review every retained direct URL.
+
+- Identity: official homepage/about, founding, HQ, website, founders.
+- Leadership/governance: board, executives, trustees, founder backgrounds, departures.
+- Funding/valuation: latest priced rounds, valuation, lead investors, secondaries, conflicting reports.
+- Cover metrics: revenue/run-rate, ARR, customers, headcount, usage, partner-scale signals.
+- Milestones: dated founding, rounds, product launches, operating scale, partnerships, legal/governance/headcount events.
+- Adverse checks: duplicate identity, controversies, leadership churn, stale or contradictory scale claims.
+
 ## Required tables and figures
 
 - Snapshot KPI table with value, growth signal, benchmark, confidence, and diligence gap.

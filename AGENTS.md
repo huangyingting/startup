@@ -136,45 +136,20 @@ Run skills in this order:
 - In `101-report-document.yaml`, artifacts become chapters `2`–`9`; mapping is `101 chapter N ↔ artifact N-1`.
 - `startup-report-zh` must reverse this mapping when sourcing section titles/content from `XX.zh.yaml`; otherwise chapters `2` and `9` can retain English titles.
 
-## Research standards
+## Research and evidence standards
 
-- Optimize research for the actual report question, not generic keyword recall.
-- Use `currentDate` for freshness; volatile facts require latest/current-status research.
-- Prefer sources from the last 24 months for funding, valuation, revenue, ARR, headcount, customers, product releases, pricing, litigation, regulation, partnerships, and leadership.
-- Use full research questions tied to intended report paragraphs, tables, figures, or gaps; avoid bare keyword strings.
-- Query confirming and adverse angles for each major chapter.
-- Treat AI-generated summaries, SEO roundups, wiki pages, and low-reputation blogs as leads, not final support for critical facts.
-- For critical volatile facts, review at least one direct official, tier-one, legal, analyst, or otherwise authoritative source URL where available.
-- Major valuation, financial, customer, and legal claims need multi-source corroboration or an explicit single-source limitation.
-- Record unsupported but important facts as `evidenceGaps` with a concrete follow-up diligence path.
+Follow `.github/references/evidence-ledger.md` and `.github/references/analysis-skill-conventions.md` for detailed rules. Core expectations:
 
-## Official website and article mining
-
-When `company.website` or `companyUrl` is available, each research skill mines official pages before relying on external snippets.
-
-Review relevant homepage, sitemap, robots.txt, navigation, blog/news/resources, product, pricing, docs, changelog, customer stories, case studies, trust/security, status, partner, press, and funding pages.
-
-Use official pages to extract:
-
-- Product modules, buyer personas, use cases, vertical focus.
-- Customer proof, case studies, partner ecosystem.
-- Pricing/packaging, release chronology, security/compliance posture.
-- Policy statements, fundraising announcements, and management narrative.
-
-Evidence handling:
-
-- Label official-company claims as `company-claimed` or `observed`, not independent validation.
-- Use independent sources to corroborate or challenge official claims.
-- Preserve discovered URLs in the owning artifact's `localEvidence.sources[]`.
-- Convert useful page facts into atomic `localEvidence.claims[]`.
-- If an expected official page family is missing, record an `evidenceGaps` item.
-- For competitor analysis, mine competitor official pages/docs/pricing/changelogs, label competitor-authored claims honestly, and corroborate important comparisons independently where possible.
+- Use `currentDate` for volatile facts; prefer sources from the last 24 months.
+- Ask report-specific research questions, including adverse/disconfirming angles.
+- Use `web_search` for discovery and `fetch-url` for direct page review of retained sources.
+- Mine official pages first when `companyUrl` exists, but label official claims as `company-claimed` or `observed`.
+- Corroborate valuation, financial, customer, legal, and regulatory claims independently when possible.
+- Put unsupported important facts in `evidenceGaps` with a concrete diligence path.
 
 ## Artifact depth gates
 
-Schema validity is necessary but not sufficient. Artifacts must be investor-grade, source-backed, and company-specific.
-
-Minimum depth floors for normal public or late-stage private companies:
+Schema validity is necessary but not sufficient. For normal public or late-stage private companies, use these floors:
 
 - `01-company-snapshot.yaml`: at least 5 substantive sections, 3 tables, 2 figures, and a milestone timeline with at least 8 entries.
 - Each of `02`–`08`: at least 4 substantive sections, 4 tables, and 2 figures; `07` and `08` should usually exceed the floor.
@@ -183,11 +158,9 @@ Minimum depth floors for normal public or late-stage private companies:
 
 Reject thin work even if YAML parses:
 
-- Generic diligence prose, placeholder translation, or unsupported synthesis.
-- Reused generic section titles across domains.
-- Generic three-node figures repeated across artifacts.
-- Tables created only to satisfy count rather than diligence utility.
-- Numeric chart values encoded as strings.
+- generic prose, placeholder translation, unsupported synthesis;
+- repeated generic section titles or three-node figures;
+- count-filler tables or string-valued chart numbers.
 
 Before `startup-ledger`, inspect counts for sources, claims, tables, figures, sections, and gaps. If a stage misses the floor and the company is not genuinely obscure, return to that stage first.
 
@@ -195,19 +168,7 @@ Before `startup-card`, compare `101` table/figure counts against the union of `0
 
 ## Validation gates
 
-After every skill stage:
-
-- Parse every file written so far.
-- Confirm expected files for the current stage exist.
-- Check `schemaVersion: startup-diligence-report-v2`.
-- Check `artifact`, `slug`, `runDate`, and `company.name` consistency between English and Simplified Chinese siblings.
-- Before consolidation, validate each artifact's `claimRefs` against its own `localEvidence.claims[]`.
-- After consolidation, validate all `claimRefs` in `01`–`102`, including `.zh.yaml`, against `100-evidence-ledger.yaml`.
-- After consolidation, validate all `01` claim `sourceRefs` against retained ledger sources.
-- Ensure `coverage.sourcesRetained === sources.length` and `coverage.claimsCreated === claims.length` when `01` is consolidated.
-- Validate figures against the schema rendering contract: no empty required arrays, no non-canonical primary fields, numeric chart values are numbers, visible cards/layers/nodes have `label` plus renderable content.
-- Reject files missing their document head or beginning with continuation prose / mid-list fragments.
-- For each `.zh.yaml`, run the residual-English sweep and structural-parity checks in `.github/references/zh-translation.md`.
+After each stage, parse files and verify expected outputs, identity fields, claim refs, figure contracts, and Chinese parity. Use the schema and references for exact checks.
 
 After `01-company-snapshot.yaml`, run:
 
@@ -227,12 +188,11 @@ Final validation after `102-report-card.zh.yaml`:
 
 ## Evidence and YAML conventions
 
-- Keep reports YAML-first; do not add prose-only deliverables.
-- Every final factual claim must trace through canonical `claimRefs` to `100-evidence-ledger.yaml` claims and retained source URLs.
-- Use `null` plus an explanation for unsupported private metrics; never invent values.
-- Preserve canonical `S###` / `C###` IDs when updating existing published reports where possible.
-- Add new canonical IDs after the current maximum.
-- Figures must use structured YAML specs supported by the website renderer, not title-based heuristics.
+- Keep reports YAML-first; no prose-only deliverables.
+- Trace factual claims through canonical `claimRefs` to `100-evidence-ledger.yaml`.
+- Use `null` plus explanation for unsupported private metrics; never invent values.
+- Preserve published canonical `S###` / `C###` IDs where possible.
+- Figures must use structured YAML specs supported by the website renderer.
 
 ## Updating an existing report
 

@@ -30,6 +30,16 @@ Second analysis stage. Define the market, size the opportunity, and identify ado
 
 - Analyst/market-data sources, government/regulatory or industry sources, buyer-budget evidence, adoption/penetration data, company segmentation claims, and at least one disconfirming source on slowdown, saturation, budget pressure, regulation, or ROI uncertainty.
 
+## Section evidence acquisition
+
+Use `web_search` to discover market lenses and adverse narratives; use `fetch-url` to review each retained source page.
+
+- Boundaries: category labels, substitutes, included/excluded spend, buyer budget lines.
+- Sizing: TAM/SAM/SOM lenses, geographies, workflow spend, dollar values, growth rates.
+- Segments/buyers: personas, verticals, geography, adoption maturity, budget owners.
+- Drivers/constraints: ROI proof, regulation, budget pressure, saturation, adoption blockers.
+- Verdict: strongest confirming and disconfirming sources behind market attractiveness.
+
 ## Required tables and figures
 
 - Market definition table.

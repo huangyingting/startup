@@ -33,6 +33,17 @@ Third analysis stage. Benchmark the startup against direct, incumbent, adjacent,
 - Independent benchmarks, reviews, customer proof, market reports, funding coverage, and adverse evidence for validation.
 - Never treat vendor-authored comparisons as independent proof.
 
+## Section evidence acquisition
+
+Use `web_search` to identify competitors and adverse signals; use `fetch-url` to verify official pages and retained independent evidence.
+
+- Landscape: direct competitors, incumbents, adjacent platforms, open-source substitutes, acquirers.
+- Profiles: funding, valuation/market cap, revenue/customer scale, target segment, strategic moves.
+- Feature matrix: docs, changelogs, API references, product pages, benchmark pages.
+- Pricing/packaging: plan names, token/seat pricing, enterprise packaging, discounts.
+- Moat/risk: reviews, benchmark shifts, commoditization, switching, open-source and pricing pressure.
+- Positioning figure: source-backed axes and point placement.
+
 ## Required tables and figures
 
 - Competitor profile table.

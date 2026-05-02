@@ -32,6 +32,17 @@ Fifth analysis stage. Map product, technology, integrations, roadmap, and techni
 - Inspect homepage, robots.txt, sitemap, product pages, docs/developer portals, API references, changelog/release notes, pricing, trust/security, status, integrations, customer/solutions, and product blog/news.
 - Use external sources for corroboration, adverse evidence, benchmarks, reviews, implementation proof, outages, security incidents, or commoditization risk.
 
+## Section evidence acquisition
+
+Use `web_search` to discover official surfaces, technical proof, and adverse signals; use `fetch-url` to review retained pages directly.
+
+- Module map: homepage, sitemap, product, solutions, docs, pricing, packaging.
+- AI/automation: model capabilities, agents/workflows, benchmarks, engineering posts, technical reviews.
+- Architecture/API/integrations: docs, SDKs, integration catalogs, MCP/plugins, data/deployment/onboarding.
+- Roadmap: changelogs, release notes, launches, roadmap hints, version history.
+- Trust/reliability: trust center, certifications, privacy/DPA/terms, status, vulnerability disclosure, incidents.
+- Technical risk: outages, regressions, safety failures, open-source substitutes, implementation complaints.
+
 ## Required tables and figures
 
 - Product module matrix.

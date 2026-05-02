@@ -36,6 +36,17 @@ Eighth analysis stage. Produce the investment recommendation, valuation stance, 
 
 - Latest valuation coverage, financing structure, investor syndicate, public comparable multiples, private comparables, revenue/growth anchors, IPO/governance readiness, liquidity constraints, and adverse overvaluation/downside evidence.
 
+## Section evidence acquisition
+
+Use `web_search` to test thesis, anti-thesis, comps, and downside; use `fetch-url` on sources behind each recommendation-critical claim.
+
+- Thesis/anti-thesis: market, product, customer, financial, risk, and competitive proof.
+- Recommendation: latest valuation, revenue scale, growth, risk events, investor demand, adverse evidence.
+- Scenarios: drivers, multiples, downside triggers, legal/regulatory exposure, sensitivities.
+- Comparables: public/private comps, revenue multiples, margins, growth, IPO/exit analogs.
+- IPO/readiness: CFO/board maturity, controls, governance, litigation/regulation, liquidity.
+- Stop-loss/diligence asks: overvaluation, down-round risk, multiple compression, concentration, legal outcomes.
+
 ## Required tables and figures
 
 - Recommendation summary.

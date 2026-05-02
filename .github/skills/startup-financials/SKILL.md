@@ -33,6 +33,17 @@ Fourth analysis stage. Assess revenue quality, pricing, unit economics, funding,
 - Distinguish reported metrics, company-claimed pricing, independent estimates, funding/valuation events, and cost-driver evidence.
 - Seek at least two credible sources for volatile revenue, valuation, burn, margin, customer concentration, infrastructure cost, or partner economics claims; otherwise state the single-source limitation.
 
+## Section evidence acquisition
+
+Use `web_search` to find public metrics, estimates, and conflicts; use `fetch-url` to review source pages before retaining numbers.
+
+- Revenue/mix: run-rate, ARR, product/channel revenue, transaction volume, revenue-recognition concerns.
+- Pricing/monetization: list pricing, token/seat/usage pricing, packaging, partner/channel fees.
+- Funding/valuation: latest rounds, investor syndicate, secondary marks, rumored/preemptive rounds.
+- Unit economics: CAC, LTV, gross margin, cloud cost, partner take rates, NRR, payback, burn, runway, concentration.
+- Cost drivers: infrastructure commitments, cloud pricing, serving cost, automation leverage, pricing/regulatory pressure.
+- Scenarios: source every numeric assumption; unsupported inputs become `null` plus diligence asks.
+
 ## Required tables and figures
 
 - Revenue streams.
