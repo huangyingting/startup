@@ -1,11 +1,9 @@
 #!/usr/bin/env node
-// Consolidate per-artifact localEvidence blocks into final 100-evidence-ledger.yaml.
-// Usage: node scripts/consolidate-evidence.mjs <report-folder> [--keep-local]
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import yaml from 'js-yaml';
+import { canonicalSourceUrl, compactText, readYaml, writeYaml } from './text-utils.mjs';
 
-const REPORT_FILES = [
+const FILES = [
   '01-company-snapshot.yaml',
   '02-market-macro.yaml',
   '03-competitive-benchmarking.yaml',
@@ -16,145 +14,87 @@ const REPORT_FILES = [
   '08-investment-valuation.yaml',
 ];
 
-const folderArg = process.argv[2];
+const [folder] = process.argv.slice(2);
 const keepLocal = process.argv.includes('--keep-local');
-
-if (!folderArg) {
+if (!folder) {
   console.error('Usage: node scripts/consolidate-evidence.mjs <report-folder> [--keep-local]');
   process.exit(1);
 }
 
-const reportFolder = resolve(folderArg);
-
-function readYaml(filePath) {
-  return yaml.load(readFileSync(filePath, 'utf8')) ?? {};
-}
-
-function writeYaml(filePath, data) {
-  writeFileSync(filePath, yaml.dump(data, { lineWidth: 120, noRefs: true, sortKeys: false }), 'utf8');
-}
-
-function id(prefix, index) {
-  return `${prefix}${String(index).padStart(3, '0')}`;
-}
-
-function normalizeText(value) {
-  return String(value ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
-}
-
-function canonicalSourceUrl(value) {
-  const raw = String(value ?? '').trim();
-  if (!raw) return '';
-  try {
-    const url = new URL(raw);
-    url.hash = '';
-    for (const key of [...url.searchParams.keys()]) {
-      const lower = key.toLowerCase();
-      if (lower.startsWith('utm_') || ['fbclid', 'gclid', 'mc_cid', 'mc_eid'].includes(lower)) url.searchParams.delete(key);
-    }
-    url.searchParams.sort();
-    url.hostname = url.hostname.toLowerCase().replace(/^www\./, '');
-    url.pathname = url.pathname.replace(/\/$/, '') || '/';
-    return url.toString().replace(/\/$/, '').toLowerCase();
-  } catch {
-    return raw.replace(/#.*$/, '').replace(/\?.*utm_[^#]*/i, '').replace(/\/$/, '').toLowerCase();
-  }
-}
-
-function sourceKey(source) {
-  const url = canonicalSourceUrl(source?.url);
-  if (url) return `url:${url}`;
-  return ['fallback', source?.publisher, source?.title, source?.date].map(normalizeText).join('|');
-}
-
-function claimKey(claim, sourceRefs) {
-  return [normalizeText(claim?.statement), normalizeText(claim?.topic), [...sourceRefs].sort().join(',')].join('|');
-}
-
-function rewriteClaimRefs(value, claimMap, file) {
-  if (Array.isArray(value)) return value.map((item) => rewriteClaimRefs(item, claimMap, file));
-  if (value && typeof value === 'object') {
-    const next = {};
-    for (const [key, child] of Object.entries(value)) {
-      if (key === 'localEvidence' && !keepLocal) continue;
-      if (key === 'claimRefs' && Array.isArray(child)) {
-        next[key] = child.map((ref) => claimMap.get(`${file}:${ref}`) ?? ref);
-      } else {
-        next[key] = rewriteClaimRefs(child, claimMap, file);
-      }
-    }
-    return next;
-  }
-  if (typeof value === 'string') {
-    return value.replace(/\[C\d{3}\]/g, (match) => {
-      const localId = match.slice(1, -1);
-      return `[${claimMap.get(`${file}:${localId}`) ?? localId}]`;
-    });
-  }
-  return value;
-}
-
-const docs = new Map();
-for (const file of REPORT_FILES) {
+const reportFolder = resolve(folder);
+const docs = new Map(FILES.flatMap((file) => {
   const path = join(reportFolder, file);
-  if (!existsSync(path)) continue;
-  docs.set(file, readYaml(path));
-}
-
-if (docs.size === 0) {
+  return existsSync(path) ? [[file, readYaml(path)]] : [];
+}));
+if (!docs.size) {
   console.error(`[consolidate-evidence] no report artifacts found in ${reportFolder}`);
   process.exit(1);
 }
 
-const firstDoc = docs.values().next().value;
-const sourceByKey = new Map();
-const sourceMap = new Map();
+const nextId = (prefix, count) => `${prefix}${String(count + 1).padStart(3, '0')}`;
+const keyText = (value) => compactText(value).toLowerCase();
+const sourceKey = (s) => canonicalSourceUrl(s?.url) || ['fallback', s?.publisher, s?.title, s?.date].map(keyText).join('|');
+const claimKey = (c, refs) => [keyText(c?.statement), keyText(c?.topic), [...refs].sort().join(',')].join('|');
+
+const sourceIds = new Map();
+const sourceKeys = new Map();
+const claimIds = new Map();
+const claimKeys = new Map();
 const sources = [];
+const claims = [];
+const evidenceGaps = [];
 let sourcesConsidered = 0;
 
 for (const [file, doc] of docs) {
-  const local = doc.localEvidence ?? {};
-  const localSources = Array.isArray(local.sources) ? local.sources : [];
-  sourcesConsidered += Number(local.coverage?.sourcesConsidered ?? localSources.length) || 0;
+  const localSources = doc.localEvidence?.sources ?? [];
+  sourcesConsidered += Number(doc.localEvidence?.coverage?.sourcesConsidered ?? localSources.length) || 0;
   for (const source of localSources) {
     const key = sourceKey(source);
-    let finalId = sourceByKey.get(key);
-    if (!finalId) {
-      finalId = id('S', sources.length + 1);
-      sourceByKey.set(key, finalId);
+    const finalId = sourceKeys.get(key) ?? nextId('S', sources.length);
+    if (!sourceKeys.has(key)) {
+      sourceKeys.set(key, finalId);
       sources.push({ ...source, id: finalId });
     }
-    if (source?.id) sourceMap.set(`${file}:${source.id}`, finalId);
+    if (source.id) sourceIds.set(`${file}:${source.id}`, finalId);
   }
 }
-
-const claimByKey = new Map();
-const claimMap = new Map();
-const claims = [];
-const evidenceGaps = [];
 
 for (const [file, doc] of docs) {
   const local = doc.localEvidence ?? {};
-  for (const gap of local.evidenceGaps ?? []) evidenceGaps.push(gap);
+  evidenceGaps.push(...(local.evidenceGaps ?? []));
   for (const claim of local.claims ?? []) {
-    const finalSourceRefs = (claim.sourceRefs ?? []).map((ref) => sourceMap.get(`${file}:${ref}`) ?? ref);
-    const key = claimKey(claim, finalSourceRefs);
-    let finalId = claimByKey.get(key);
-    if (!finalId) {
-      finalId = id('C', claims.length + 1);
-      claimByKey.set(key, finalId);
-      claims.push({ ...claim, id: finalId, sourceRefs: finalSourceRefs });
+    const sourceRefs = (claim.sourceRefs ?? []).map((ref) => sourceIds.get(`${file}:${ref}`) ?? ref);
+    const key = claimKey(claim, sourceRefs);
+    const finalId = claimKeys.get(key) ?? nextId('C', claims.length);
+    if (!claimKeys.has(key)) {
+      claimKeys.set(key, finalId);
+      claims.push({ ...claim, id: finalId, sourceRefs });
     }
-    if (claim?.id) claimMap.set(`${file}:${claim.id}`, finalId);
+    if (claim.id) claimIds.set(`${file}:${claim.id}`, finalId);
   }
 }
 
-const ledger = {
-  schemaVersion: firstDoc.schemaVersion,
+function rewrite(value, file) {
+  if (Array.isArray(value)) return value.map((item) => rewrite(item, file));
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).flatMap(([key, child]) => {
+      if (key === 'localEvidence' && !keepLocal) return [];
+      if (key === 'claimRefs' && Array.isArray(child)) return [[key, child.map((ref) => claimIds.get(`${file}:${ref}`) ?? ref)]];
+      return [[key, rewrite(child, file)]];
+    }));
+  }
+  return typeof value === 'string'
+    ? value.replace(/\[C\d{3}\]/g, (match) => `[${claimIds.get(`${file}:${match.slice(1, -1)}`) ?? match.slice(1, -1)}]`)
+    : value;
+}
+
+const first = docs.values().next().value;
+writeYaml(join(reportFolder, '100-evidence-ledger.yaml'), {
+  schemaVersion: first.schemaVersion,
   artifact: 'evidence-ledger',
-  slug: firstDoc.slug,
-  runDate: firstDoc.runDate,
-  company: firstDoc.company,
+  slug: first.slug,
+  runDate: first.runDate,
+  company: first.company,
   coverage: {
     sourcesConsidered: Math.max(sourcesConsidered, sources.length),
     sourcesRetained: sources.length,
@@ -167,27 +107,15 @@ const ledger = {
   sources,
   claims,
   evidenceGaps,
-};
+});
 
-writeYaml(join(reportFolder, '100-evidence-ledger.yaml'), ledger);
-
-for (const [file, doc] of docs) {
-  writeYaml(join(reportFolder, file), rewriteClaimRefs(doc, claimMap, file));
-}
-
-// Rewrite claimRefs in Simplified Chinese siblings using the same per-file claim map.
-// Each XX.zh.yaml uses the same local C### IDs as its English XX.yaml.
-let zhRewritten = 0;
-for (const file of REPORT_FILES) {
-  const zhFile = file.replace(/\.yaml$/, '.zh.yaml');
-  const zhPath = join(reportFolder, zhFile);
-  if (!existsSync(zhPath)) continue;
-  const zhDoc = readYaml(zhPath);
-  writeYaml(zhPath, rewriteClaimRefs(zhDoc, claimMap, file));
-  zhRewritten += 1;
-}
+for (const [file, doc] of docs) writeYaml(join(reportFolder, file), rewrite(doc, file));
+const zhCount = FILES.filter((file) => {
+  const path = join(reportFolder, file.replace(/\.yaml$/, '.zh.yaml'));
+  if (!existsSync(path)) return false;
+  writeYaml(path, rewrite(readYaml(path), file));
+  return true;
+}).length;
 
 console.log(`[consolidate-evidence] wrote ${join(reportFolder, '100-evidence-ledger.yaml')} (${sources.length} sources, ${claims.length} claims)`);
-if (zhRewritten > 0) {
-  console.log(`[consolidate-evidence] rewrote claimRefs in ${zhRewritten} Simplified Chinese sibling artifact(s).`);
-}
+if (zhCount) console.log(`[consolidate-evidence] rewrote claimRefs in ${zhCount} Simplified Chinese sibling artifact(s).`);
