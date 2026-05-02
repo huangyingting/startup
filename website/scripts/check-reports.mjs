@@ -218,9 +218,6 @@ try {
     const sourceIds = new Set((ledger?.sources ?? []).map((source) => source.id));
     checkUniqueId(failures, run, 'source', ledger?.sources, /^S\d{3}$/);
     checkUniqueId(failures, run, 'claim', ledger?.claims, /^C\d{3}$/);
-    for (const source of ledger?.sources ?? []) {
-      if (source.fetchVerified !== true) failures.push(`${run}: source ${source.id} is not fetchVerified`);
-    }
     for (const claim of ledger?.claims ?? []) {
       for (const ref of claim.sourceRefs ?? []) {
         if (!sourceIds.has(ref)) failures.push(`${run}: claim ${claim.id} references missing source ${ref}`);

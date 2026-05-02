@@ -3,7 +3,7 @@
 ## Working approach
 
 - Keep the system YAML-first: generated reports are structured YAML artifacts rendered by the website, not prose-only deliverables.
-- Keep reports evidence-first: every external factual claim should trace through `claimRefs` to claims in `01-evidence-ledger.yaml`, and each claim should trace to fetched `sourceRefs`.
+- Keep reports evidence-first: every external factual claim should trace through `claimRefs` to claims in `01-evidence-ledger.yaml`, and each claim should trace to `web_search`-verified `sourceRefs`.
 - Make surgical changes. Do not preserve obsolete schema paths or reintroduce legacy compatibility unless explicitly requested.
 - Validate after every report-generation, schema, loader, renderer, or workflow change with `npm run validate` from the repo root when dependencies are installed.
 - Prefer simple static artifacts over databases until the project clearly needs mutable app state.
@@ -39,7 +39,7 @@
 - Required artifacts are `00-report-brief.yaml`, `01-evidence-ledger.yaml`, `02-company-snapshot.yaml`, `03-market-macro.yaml`, `04-competitive-benchmarking.yaml`, `05-financial-unit-economics.yaml`, `06-product-technology.yaml`, `07-customer-retention.yaml`, `08-risk-regulatory.yaml`, `09-investment-valuation.yaml`, `10-report-document.yaml`, and `11-report-card.yaml`.
 - Required Simplified Chinese localized artifacts are `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 - Every artifact must include `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
-- `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. Sources should include `accessDate`, `fetchVerified: true`, and concise `keyQuote` when available.
+- `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite `web_search`-verified `sourceRefs`. Sources should include `accessDate` and concise `keyQuote` when available.
 - Evidence source targets count retained `sources[]` entries (deep ≥100, standard ≥40). Many claims from a small source set do not satisfy the target.
 - Evidence must be broad (multiple source buckets), fresh (last 24 months for current facts), and deduplicated by underlying event. Vary search angles instead of repeating one domain or query family. Detailed rules live in `.github/agents/evidence.agent.md`.
 - Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Figure IDs use `F001`, `F002`, etc. Table IDs use `T001`, `T002`, etc.

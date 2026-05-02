@@ -78,7 +78,7 @@ Required Simplified Chinese files (must ship with every report):
 Evidence ledger quality requirements:
 
 - Source breadth: retained sources should span multiple independent source buckets whenever available, including official/company material, startup or business news, independent third-party databases/analyst sources, customer or partner proof, regulatory/legal/filing sources, and technical/product documentation.
-- Source target semantics: `coverage.sourceTarget` is the minimum count of retained, fetched, report-relevant `sources[]` entries. It is not a claim target. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`.
+- Source target semantics: `coverage.sourceTarget` is the minimum count of retained, `web_search`-verified, report-relevant `sources[]` entries. It is not a claim target. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`.
 - Depth minimums: `standard` requires at least 40 retained sources; `deep` requires at least 100 retained sources. A report with 100 claims but materially fewer retained sources fails the evidence standard.
 - Source recency: claims about current company status, funding, valuation, customers, revenue scale, headcount, product packaging, pricing, and regulatory posture should prefer sources from the last 24 months. Older sources are acceptable for durable historical facts and should normally support claims marked `freshness: historical`.
 - Source deduplication: repeated coverage of the same underlying event does not equal independent evidence. Cluster sources by event/topic/date and retain only sources that add original facts, primary quotes, independent confirmation, or materially different interpretation.
@@ -95,7 +95,7 @@ company:
 coverage:
   depth: standard|deep
   sourceTarget: 100
-  sourcesFetched: 0
+  sourcesFetched: 0 # web_search-returned/cited source count considered before retention
   sourcesRetained: 0
   claimsCreated: 0
   sourceDiversityNotes: string|null
@@ -113,7 +113,6 @@ sources:
     sourceType: official|filing|regulatory|tier-one-news|trade-press|analyst-market-data|technical-docs|customer-proof|partner-proof|developer-signal|review|legal|other
     reputationTier: high|medium|low
     independence: company|partner|customer|competitor|independent|unknown
-    fetchVerified: true
     keyQuote: string|null
     topics: [identity|team|market|customer|product|technology|traction|gtm|competition|financials|funding|risk|valuation|other]
 claims:
@@ -480,7 +479,7 @@ reportFiles:
 - Each file's `artifact` value matches the artifact mapping.
 - `runDate` uses `YYYY-MM-DD` and `company.name` is consistent across artifacts.
 - All `claimRefs` point to `01-evidence-ledger.yaml` claims.
-- All claim `sourceRefs` point to fetched sources.
+- All claim `sourceRefs` point to `web_search`-verified sources.
 - Source, claim, figure, and table IDs use the required formats and are unique within their ledgers.
 - All figure/table references in `10-report-document.yaml` exist.
 - `11-report-card.yaml.reportFiles` points to `10-report-document.yaml` and `11-report-card.yaml`.
