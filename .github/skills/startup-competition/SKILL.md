@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Competition
 
-Third analysis stage. Benchmark the startup against direct, incumbent, adjacent, and substitute competitors.
+Third analysis stage. This skill owns the competitive benchmarking chapter. It must explain who can take the same customer budget, why the startup wins or loses, and what would erode the moat.
 
 ## Read first
 
@@ -19,42 +19,59 @@ Third analysis stage. Benchmark the startup against direct, incumbent, adjacent,
 - `03-competitive-benchmarking.yaml`
 - `03-competitive-benchmarking.zh.yaml`
 
-## Focus
+## Chapter purpose
 
-- Competitive landscape and category map.
-- Direct startups, legacy incumbents, adjacent platforms, open-source/workflow substitutes, and potential acquirers.
-- Competitor profiles: scale, funding/market cap, target segment, differentiation, strategic trajectory.
-- Feature, pricing, packaging, GTM, customer/review signals, switching costs, defensibility, and moat durability.
-- Competitive risks and diligence asks.
+Answer: Who are the direct, incumbent, adjacent, substitute, and status-quo competitors; how does the company compare on the buying criteria that matter; and how durable is its differentiation?
 
-## Evidence targets
+## Required chapter content
 
-- Competitor official docs, product, pricing, customer, changelog, and security pages for claimed capabilities.
-- Independent benchmarks, reviews, customer proof, market reports, funding coverage, and adverse evidence for validation.
-- Never treat vendor-authored comparisons as independent proof.
+Cover these universal topics:
 
-## Section evidence acquisition
+- Competitive landscape: direct peers, incumbents, adjacent platforms, substitutes, status quo/manual workflow, internal build, and likely acquirers/entrants.
+- Competitor profiles: scale, funding/market cap, revenue/customer signals, geography, target customer, product scope, pricing, and strategic direction.
+- Feature/capability, pricing/packaging, GTM/distribution, brand/trust, performance, regulatory/compliance, and implementation comparisons.
+- Switching costs, buyer lock-in, multi-homing, distribution power, supply/partner access, and cost/performance curves.
+- Moat durability, commoditization/displacement risks, competitor adverse evidence, and diligence asks.
 
-Use `web_search` to identify competitors and adverse signals; use `fetch-url` to verify official pages and retained independent evidence.
+## Required tables
 
-- Landscape: direct competitors, incumbents, adjacent platforms, open-source substitutes, acquirers.
-- Profiles: funding, valuation/market cap, revenue/customer scale, target segment, strategic moves.
-- Feature matrix: docs, changelogs, API references, product pages, benchmark pages.
-- Pricing/packaging: plan names, token/seat pricing, enterprise packaging, discounts.
-- Moat/risk: reviews, benchmark shifts, commoditization, switching, open-source and pricing pressure.
-- Positioning figure: source-backed axes and point placement.
+- **Competitor profile table** — competitor, category, scale/funding, target segment, differentiation, evidence, limitation.
+- **Feature / capability matrix** — buying criteria, company, competitors, evidence notes, unsupported cells marked clearly.
+- **Pricing / packaging comparison** — price/unit/contract model, included capabilities, discount or unknowns, implication.
+- **GTM / distribution comparison** — channel, installed base, partner access, geography, sales motion, switching leverage.
+- **Moat durability / competitive risk register** — moat claim, evidence, threat, severity, mitigation/diligence ask.
 
-## Required tables and figures
+## Required figures
 
-- Competitor profile table.
-- Feature matrix.
-- Pricing/packaging comparison.
-- GTM or customer/review signal table.
-- Moat/switching-cost or competitive risk register.
-- Preferred figure: `quadrant` or `competitive-matrix` with numeric axes and labeled points.
+- **Competitive positioning map** — `type: positioning-map` or `quadrant`; use evidence-backed numeric axes and labeled points.
+- **Feature breadth / capability map** — `type: matrix`; show capability coverage and strength by competitor.
+- **Price-value or performance map** — `type: scatter` or `quadrant` when pricing/performance materially affects buying.
+- **Incumbent displacement map** — `type: flow` when the key competition is status quo, legacy process, internal build, or channel lock-in.
+
+## Evidence collection strategy
+
+Use search to identify competitor classes and `fetch-url` to verify retained pages.
+
+- Competitor official surfaces: product, pricing, docs, case studies, security/compliance, support, integrations, channel pages, and changelogs.
+- Independent proof: benchmarks, reviews, public filings, funding/valuation coverage, market reports, customer references, procurement pages, and adverse reporting.
+- Never treat vendor-authored comparison pages as independent proof.
+- For each matrix axis or point placement, retain evidence that would change the score if wrong.
+
+## Domain-adaptive additions
+
+Infer what customers actually compare.
+
+- If the customer can choose “do nothing,” include manual/status-quo workflow as a competitor.
+- If incumbents control distribution, add incumbent channel power, switching cost, contract lock-in, trust, compliance, and installed-base analysis.
+- If technical performance matters, add benchmark, reliability, certification, accuracy, uptime, safety, or field-performance comparisons.
+- If physical products matter, add BOM/cost curve, manufacturing scale, quality, warranty, supply access, and certification comparisons.
+- If brand/channel matters, add brand awareness, retail shelf/channel access, price tier, community, and repeat purchase differentiation.
+- If regulated access matters, add licenses, approvals, reimbursement, compliance maturity, and regulator trust.
+- If network effects matter, add liquidity, multi-homing, supply exclusivity, disintermediation, and take-rate defensibility.
 
 ## Completion check
 
 - Query by competitor class; do not build the matrix from one generic comparison source.
-- Include adverse evidence on displacement, commoditization, open-source pressure, switching, or pricing compression.
-- Handoff includes positioning and key competitors.
+- Include adverse evidence on displacement, commoditization, switching, pricing compression, channel conflict, or incumbent response.
+- Unsupported matrix cells should be marked unknown or become evidence gaps, not guessed.
+- Handoff includes positioning, key competitors, chosen axes, and selected domain-adaptive additions.

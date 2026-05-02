@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Valuation
 
-Eighth analysis stage. Produce the investment recommendation, valuation stance, scenarios, and exit/readiness view.
+Eighth analysis stage. This skill owns the investment recommendation and valuation chapter. It must convert evidence from prior chapters into a price-sensitive investment view.
 
 ## Read first
 
@@ -22,40 +22,59 @@ Eighth analysis stage. Produce the investment recommendation, valuation stance, 
 - `08-investment-valuation.yaml`
 - `08-investment-valuation.zh.yaml`
 
-## Focus
+## Chapter purpose
 
-- Thesis and anti-thesis.
-- Recommendation, confidence, risk rating, valuation stance, target return, hold period, exit route, and position sizing where supportable.
-- Bull/base/bear cases with explicit assumptions, ranges, upside/downside logic, and constraints.
-- Public/private comparables, sensitivity, entry discipline, current valuation acceptability, and preferred entry conditions.
-- IPO/readiness scorecard, governance/readiness signals, exit routes, final diligence asks.
-- DCF-style analysis only when defensible inputs exist; otherwise make it a gap.
-- Stop-loss / thesis-break triggers tied to measurable operating, regulatory, customer, financial, or management events.
+Answer: Given the evidence, what is the investment recommendation, how confident are we, what valuation stance is appropriate, what scenarios matter, and what diligence would change the decision?
 
-## Evidence targets
+## Required chapter content
 
-- Latest valuation coverage, financing structure, investor syndicate, public comparable multiples, private comparables, revenue/growth anchors, IPO/governance readiness, liquidity constraints, and adverse overvaluation/downside evidence.
+Cover these universal topics:
 
-## Section evidence acquisition
+- Investment thesis and anti-thesis tied to market, product, customers, financials, competition, and risks.
+- Recommendation, confidence, risk rating, valuation stance, target return/hold period/exit route/position sizing where supportable.
+- Current financing/valuation context, entry discipline, and whether public evidence supports the price.
+- Bull/base/bear cases with explicit assumptions, valuation ranges or qualitative bands, probability signals, and downside triggers.
+- Comparable set: public companies, private rounds, M&A, milestone/asset comparables, project comps, brand/channel comps, or other model-appropriate references.
+- Exit readiness: IPO, strategic M&A, secondary/private liquidity, licensing/partnership, project sale, commercialization milestone, or other realistic routes.
+- Final diligence asks and thesis-break triggers.
 
-Use `web_search` to test thesis, anti-thesis, comps, and downside; use `fetch-url` on sources behind each recommendation-critical claim.
+## Required tables
 
-- Thesis/anti-thesis: market, product, customer, financial, risk, and competitive proof.
-- Recommendation: latest valuation, revenue scale, growth, risk events, investor demand, adverse evidence.
-- Scenarios: drivers, multiples, downside triggers, legal/regulatory exposure, sensitivities.
-- Comparables: public/private comps, revenue multiples, margins, growth, IPO/exit analogs.
-- IPO/readiness: CFO/board maturity, controls, governance, litigation/regulation, liquidity.
-- Stop-loss/diligence asks: overvaluation, down-round risk, multiple compression, concentration, legal outcomes.
+- **Recommendation summary table** — recommendation, confidence, risk rating, valuation stance, evidence, decision implication.
+- **Thesis / anti-thesis table** — argument, evidence, what would change the view, claim refs.
+- **Bull / base / bear scenario table** — assumptions, valuation/return logic, key risks, probability signal.
+- **Comparable valuation table** — comparable, metric, multiple/valuation/status, relevance, limitation.
+- **Exit readiness table** — exit route, readiness dimension, current evidence, score/status, diligence ask.
+- **Position sizing / thesis-break / final diligence table** — stance, trigger, evidence needed, action implication.
 
-## Required tables and figures
+## Required figures
 
-- Recommendation summary.
-- Thesis / anti-thesis.
-- Bull/base/bear cases.
-- IPO/readiness scorecard.
-- Public and/or private comparables.
-- Sensitivity, return scenario, position sizing, stop-loss, or final diligence ask table.
-- Preferred figures: `recommendation-logic` and `sensitivity`.
+- **Recommendation logic** — `type: logic-chain`; show the chain from scale/proof/risks/valuation to recommendation.
+- **Valuation sensitivity** — `type: sensitivity`; show sensitivity to revenue, margin, multiple, milestone probability, utilization, take rate, unit margin, capex, or other relevant driver.
+- **Scenario outcome chart** — `type: bars`, `waterfall`, or `matrix`; show bull/base/bear outcomes or downside bridge when numeric support exists.
+- **Exit readiness map** — `type: matrix` when IPO/M&A/commercialization/project readiness needs scoring.
+
+## Evidence collection strategy
+
+Use search to test thesis, anti-thesis, comps, and downside; use `fetch-url` on sources behind recommendation-critical claims.
+
+- Pull from upstream artifacts first; do not introduce new facts unless necessary and then route them to the owning chapter when they belong there.
+- Valuation/financing: latest rounds, valuation marks, cap table/preference clues, investor syndicate, debt/project finance, public comps, private comps, M&A transactions, secondary marks.
+- Scenario drivers: revenue/growth, margin, retention, unit economics, volume/utilization, approvals, clinical milestones, manufacturing scale, loss rates, commodity prices, market multiples, exit window.
+- Adverse/downside: overvaluation, down-round risk, multiple compression, regulatory/legal blockers, customer concentration, failed commercialization, cost overruns, safety/quality events, liquidity constraints.
+
+## Domain-adaptive additions
+
+Select the valuation method from the business model and stage.
+
+- If the company has recurring or visible revenue, use revenue, gross margin, growth, retention, cash efficiency, and comparable multiples.
+- If it is pre-revenue or milestone-driven, use milestone-based valuation, technical/regulatory de-risking, capital needs, and probability-weighted paths.
+- If scientific/clinical assets drive value, use pipeline stage, indication/market, approval probability, safety, IP term, milestone/royalty economics, and financing runway.
+- If hardware or physical product scale drives value, use manufacturing scale, gross margin path, inventory/capex, channel margin, warranty/quality, and category comps.
+- If marketplace or transaction economics drive value, use GMV/TPV, take rate, contribution margin, liquidity, frequency, concentration, and network durability.
+- If consumer brand/channel drives value, use repeat purchase, gross margin, channel scalability, brand strength, distribution, and inventory/working capital.
+- If infrastructure/project/asset yield drives value, use contracted revenue, utilization/capacity factor, project IRR, capex, financing structure, counterparty credit, and regulatory/permit status.
+- If lending/insurance/financial risk drives value, use NIM/take rate, loss/claims ratio, funding cost, reserves, capital requirements, and cycle sensitivity.
 
 ## Enum discipline
 
@@ -63,7 +82,8 @@ Use `web_search` to test thesis, anti-thesis, comps, and downside; use `fetch-ur
 
 ## Completion check
 
-- Include adverse searches on overvaluation, down-round risk, governance, liquidity, or multiple compression.
-- Do not issue `buy` unless thesis and anti-thesis are both evidence-supported.
+- Include adverse searches on overvaluation, down-round risk, governance, liquidity, multiple compression, commercialization failure, or model-specific downside.
+- Do not issue `buy` unless thesis and anti-thesis are both evidence-supported and valuation has sufficient support.
 - If valuation inputs are missing, prefer `research-more` or `track` over false precision.
-- Handoff includes recommendation, confidence, and valuation stance.
+- Recommendation must be price-sensitive and evidence-sensitive, not a generic company-quality score.
+- Handoff includes recommendation, confidence, risk rating, valuation stance, selected valuation method, and selected domain-adaptive additions.

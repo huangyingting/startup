@@ -39,7 +39,7 @@ const RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 
 const CONFIDENCE = new Set(['high', 'medium', 'low']);
 const RISK_RATINGS = new Set(['low', 'moderate', 'significant', 'critical', 'unknown']);
 const VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
-const FIGURE_TYPES = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'quadrant', 'competitive-matrix', 'metric-bars', 'bars', 'waterfall', 'risk-heatmap', 'matrix', 'architecture-stack', 'market-sizing-lens', 'unit-economics-waterfall', 'customer-surface-map', 'recommendation-logic', 'risk-transmission-map', 'stack', 'sensitivity', 'xy', 'other']);
+const FIGURE_TYPES = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'quadrant', 'positioning-map', 'bars', 'waterfall', 'heatmap', 'matrix', 'stack', 'layered-lens', 'bridge', 'journey-map', 'logic-chain', 'causal-map', 'sensitivity', 'scatter', 'other']);
 const FIGURE_LAYOUTS = new Set(['compact', 'standard', 'wide']);
 const FIGURE_CONTRACTS = new Map([
   ['timeline', [['items']]],
@@ -47,21 +47,19 @@ const FIGURE_CONTRACTS = new Map([
   ['decision-map', [['nodes']]],
   ['evidence-map', [['nodes']]],
   ['quadrant', [['points']]],
-  ['competitive-matrix', [['points']]],
-  ['metric-bars', [['items', 'series']]],
+  ['positioning-map', [['points']]],
   ['bars', [['items', 'series']]],
   ['waterfall', [['items']]],
-  ['risk-heatmap', [['columns'], ['rows']]],
+  ['heatmap', [['columns'], ['rows']]],
   ['matrix', [['columns'], ['rows']]],
-  ['architecture-stack', [['layers']]],
-  ['market-sizing-lens', [['nodes', 'items']]],
-  ['unit-economics-waterfall', [['nodes', 'items']]],
-  ['customer-surface-map', [['nodes', 'items']]],
-  ['recommendation-logic', [['nodes']]],
-  ['risk-transmission-map', [['nodes'], ['edges']]],
   ['stack', [['layers', 'items']]],
+  ['layered-lens', [['nodes', 'items']]],
+  ['bridge', [['nodes', 'items']]],
+  ['journey-map', [['nodes', 'items']]],
+  ['logic-chain', [['nodes']]],
+  ['causal-map', [['nodes'], ['edges']]],
   ['sensitivity', [['series']]],
-  ['xy', [['points', 'series']]],
+  ['scatter', [['points', 'series']]],
 ]);
 const NON_CANONICAL_FIGURE_DATA_FIELDS = new Set(['children', 'steps', 'cards', 'buckets', 'groups', 'components', 'name']);
 
@@ -130,13 +128,13 @@ function checkFigure(failures, path, figure) {
   }
   for (const [index, layer] of (figure.data.layers ?? []).entries()) {
     if (!hasText(layer?.label)) failures.push(`${path}: figure ${figure.id} layer ${index + 1} requires label`);
-    if (figure.type === 'architecture-stack' && !hasText(layer?.detail) && !hasAnyArray(layer, ['modules', 'outputs'])) failures.push(`${path}: figure ${figure.id} architecture layer ${index + 1} has no detail, modules, or outputs`);
+    if (figure.type === 'stack' && !hasText(layer?.detail) && !hasAnyArray(layer, ['modules', 'outputs'])) failures.push(`${path}: figure ${figure.id} stack layer ${index + 1} has no detail, modules, or outputs`);
   }
   for (const [index, row] of (figure.data.rows ?? []).entries()) {
     if (!hasText(row?.label)) failures.push(`${path}: figure ${figure.id} row ${index + 1} requires label`);
     if (Array.isArray(row?.values) && row.values.length === 0) failures.push(`${path}: figure ${figure.id} row ${index + 1} has empty values`);
   }
-  if (['matrix', 'risk-heatmap'].includes(figure.type)) {
+  if (['matrix', 'heatmap'].includes(figure.type)) {
     const cols = Array.isArray(figure.data.columns) ? figure.data.columns : [];
     const rows = Array.isArray(figure.data.rows) ? figure.data.rows : [];
     if (cols.length < 1) failures.push(`${path}: figure ${figure.id} type ${figure.type} requires at least 1 data.columns entry (X-axis label per value column)`);
@@ -145,12 +143,12 @@ function checkFigure(failures, path, figure) {
       if (values.length !== cols.length) failures.push(`${path}: figure ${figure.id} row ${index + 1} (${row?.label ?? '?'}) has ${values.length} values but data.columns declares ${cols.length}; columns are X-axis labels and row.label is the Y-axis label, so values.length must equal columns.length`);
     }
   }
-  if (['bars', 'metric-bars', 'waterfall'].includes(figure.type)) {
+  if (['bars', 'waterfall'].includes(figure.type)) {
     for (const [index, item] of (figure.data.items ?? []).entries()) {
       if (!isNumber(item?.value)) failures.push(`${path}: figure ${figure.id} item ${index + 1} requires numeric value`);
     }
   }
-  if (['quadrant', 'competitive-matrix', 'xy'].includes(figure.type)) {
+  if (['quadrant', 'positioning-map', 'scatter'].includes(figure.type)) {
     for (const [index, point] of (figure.data.points ?? []).entries()) {
       if (!isNumber(point?.x) || !isNumber(point?.y)) failures.push(`${path}: figure ${figure.id} point ${index + 1} requires numeric x and y`);
     }

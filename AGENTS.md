@@ -61,12 +61,14 @@ Resolve these inputs before running skills:
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/schemas/startup-diligence-report-v2.md`.
 - `yamlSyntaxPath`: absolute path to `.github/references/yaml-syntax.md`.
+- `runCustomizationPath`: optional `reportFolder/000-run-customization.yaml` or prompt-time customization instructions. Customization is run-local and section-owned; do not use a repo-level industry-template file.
 
 Before writing artifacts:
 
 - Read `schemaPath` and `yamlSyntaxPath`.
 - Read `.github/references/evidence-ledger.md` before writing local evidence or consolidating `100-evidence-ledger.yaml`.
 - For analysis stages `01`–`08`, follow `.github/references/analysis-skill-conventions.md`.
+- For each analysis stage, follow that stage's `startup-*` skill as the chapter generation contract: required chapter content, required tables, required figures, evidence acquisition, and domain-adaptive additions live in the owning skill.
 
 ## Required artifact set
 
@@ -103,6 +105,7 @@ Rules:
 - Never hand-write `100-evidence-ledger.yaml`; generate it with `node scripts/consolidate-evidence.mjs <reportFolder>`.
 - Temporary files, terminal transcripts, and `/tmp` outputs are diagnostics only, not report artifacts or evidence sources.
 - If a tool produces only a snippet or partial transcript, rewrite it as a complete YAML artifact under `reportFolder` before continuing.
+- Optional customization files, research packs, and cached page snapshots are diagnostics/handoffs only; they are not part of the required final artifact set.
 
 ## Skill sequence
 
@@ -129,6 +132,41 @@ Run skills in this order:
 - Later skills may inspect another artifact's gaps, tables, or figures, but must not directly edit another skill's owned artifact.
 - If later research uncovers a supportable fact owned by an earlier domain, return to that earlier skill, update its local evidence/artifact, then continue forward.
 - Consolidation/finalization skills (`startup-ledger`, `startup-report`, `startup-card`, and Chinese variants) do not gather new facts.
+
+## Concurrency model
+
+Default safe mode is serialized artifact writing. Use parallelism only where the work is read-only and cannot race on shared YAML files.
+
+Allowed after `01-company-snapshot.yaml` passes duplicate check:
+
+- Parallel source discovery, direct URL review, official-surface fetching, cached text snapshots, and chapter research notes for `02`–`08`.
+- Parallel preparation of diagnostic research packs, provided each pack is written to a unique path and no final artifact is modified.
+
+Not allowed without a dedicated orchestrator and locking/merge protocol:
+
+- Parallel writes to `01`–`08` YAML artifacts or their `.zh.yaml` siblings.
+- Parallel edits to `100-evidence-ledger.yaml`, `101-report-document.yaml`, `101-report-document.zh.yaml`, `102-report-card.yaml`, `102-report-card.zh.yaml`, or `reports/_index.yaml`.
+- Running `startup-ledger` while any analysis artifact is still being edited.
+
+Synchronization points:
+
+1. `01-company-snapshot.yaml` identity gate and duplicate check.
+2. Pre-ledger readiness audit after all `01`–`08` English/Chinese pairs exist.
+3. `startup-ledger` consolidation.
+4. `startup-report` / `startup-report-zh` assembly.
+5. `startup-card` / `startup-card-zh` generation.
+6. Final index rebuild and `npm run validate`.
+
+## Section-owned customization and research packs
+
+- Treat `due_diligence.md`-style prose reports as quality exemplars, not output format. Convert cover metrics, Mermaid-style diagrams, tables, appendices, bibliography, and citations into schema-native YAML artifacts, structured figures, `100` sources/claims, and `claimRefs`.
+- Do not centralize industry templates in a repo-level customization file. The workflow must support any startup category, not just software/Internet companies.
+- If the user provides audience, investment lens, required metrics, required competitors/comparables, required figures, or chapter-specific diligence questions, treat them as run-local customization from the prompt or optional `reportFolder/000-run-customization.yaml`.
+- Each `startup-*` skill owns its chapter content contract. The skill must define universal chapter requirements, required tables, required structured figures, evidence collection strategy, and domain-adaptive additions.
+- Domain-adaptive additions are inferred from the company domain, business model, value-chain position, buyer/user/payment structure, revenue mechanism, regulatory exposure, physical/scientific/data/financial dependencies, and operating model. Do not hard-code the report around a small set of sectors.
+- For high-depth reports, create diagnostic per-chapter research packs after `01` and before artifact writing. Each pack should list reviewed URLs, source type, independence, candidate claims, key quotes, freshness, conflicts, adverse findings, and open gaps.
+- Cached fetched pages are for extraction speed only; cite the reviewed original URL in `localEvidence.sources[]`, not the cache path.
+- Every customization-critical request must be either satisfied in the owning artifact or recorded as an explicit `evidenceGaps[]` item with a diligence path.
 
 ## Section numbering
 
@@ -163,6 +201,14 @@ Reject thin work even if YAML parses:
 - count-filler tables or string-valued chart numbers.
 
 Before `startup-ledger`, inspect counts for sources, claims, tables, figures, sections, and gaps. If a stage misses the floor and the company is not genuinely obscure, return to that stage first.
+
+Run the readiness audit before `startup-ledger` when a report folder has draft `01`–`08` artifacts:
+
+```text
+node scripts/audit-report-readiness.mjs <reportFolder> --pre-ledger
+```
+
+Fix failures before consolidation. Warnings are acceptable only when the report explicitly documents why evidence is unavailable.
 
 Before `startup-card`, compare `101` table/figure counts against the union of `01`–`08`; unexpectedly low counts mean `startup-report` dropped analysis and must be rerun.
 

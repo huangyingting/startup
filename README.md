@@ -101,7 +101,7 @@ Lint coverage today:
 
 - enum fields restricted to schema-defined values (`recommendation`, `confidence`, `riskRating`, `valuationStance`, `claimType`, `freshness`, `corroboration`, `sourceType`, `reputationTier`, `independence`).
 - every table row has exactly `columns.length` cells.
-- `matrix` / `risk-heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
+- `matrix` / `heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
 - each `tableRef` / `figureRef` is referenced from at most one chapter section or appendix block.
 - F102 company milestone timeline must have ≥8 events covering founding, every priced round, major launches, scale milestones, partnerships, and governance/legal events.
 - 8 `XX-name.zh.yaml` siblings exist with byte-identical IDs / table IDs / figure IDs / `runDate` / `slug` to their English source.

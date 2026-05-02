@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Product
 
-Fifth analysis stage. Map product, technology, integrations, roadmap, and technical risk.
+Fifth analysis stage. This skill owns the product and technology chapter. It must explain what the company delivers, how it works, how mature it is, and what product/technical evidence supports or weakens the moat.
 
 ## Read first
 
@@ -19,42 +19,62 @@ Fifth analysis stage. Map product, technology, integrations, roadmap, and techni
 - `05-product-technology.yaml`
 - `05-product-technology.zh.yaml`
 
-## Focus
+## Chapter purpose
 
-- Platform overview, module map, release chronology, feature availability.
-- Company-specific product modules, AI/automation, architecture, integrations, APIs, data model, onboarding, reliability, scalability.
-- Roadmap and packaging implications.
-- Security, privacy, compliance, certifications, regulated-industry readiness, technical diligence asks.
+Answer: What product/service is being sold, how does the customer use it, what capabilities or assets make it differentiated, what is the maturity level, and what technical/product risks remain?
 
-## Evidence targets
+## Required chapter content
 
-- Official-site mining is mandatory when `company.website` or `companyUrl` exists.
-- Inspect homepage, robots.txt, sitemap, product pages, docs/developer portals, API references, changelog/release notes, pricing, trust/security, status, integrations, customer/solutions, and product blog/news.
-- Use external sources for corroboration, adverse evidence, benchmarks, reviews, implementation proof, outages, security incidents, or commoditization risk.
+Cover these universal topics:
 
-## Section evidence acquisition
+- Product/service definition and value proposition in customer workflow terms, not only marketing language.
+- Module, SKU, asset, pipeline, facility, service, or product-line map as appropriate to the company.
+- Architecture or operating model: software stack, hardware design, manufacturing process, clinical/scientific mechanism, logistics network, service workflow, marketplace matching, or project delivery model.
+- Deployment/onboarding path, integrations, implementation requirements, quality/reliability, support/service model, and roadmap.
+- Differentiation: technology, IP, data, manufacturing know-how, supply access, brand/product design, regulatory approvals, distribution, or operational process.
+- Trust, safety, security, privacy, compliance, certification, reliability, or quality controls where relevant.
+- Product verdict: maturity, defensibility, scalability, and diligence gaps.
 
-Use `web_search` to discover official surfaces, technical proof, and adverse signals; use `fetch-url` to review retained pages directly.
+## Required tables
 
-- Module map: homepage, sitemap, product, solutions, docs, pricing, packaging.
-- AI/automation: model capabilities, agents/workflows, benchmarks, engineering posts, technical reviews.
-- Architecture/API/integrations: docs, SDKs, integration catalogs, MCP/plugins, data/deployment/onboarding.
-- Roadmap: changelogs, release notes, launches, roadmap hints, version history.
-- Trust/reliability: trust center, certifications, privacy/DPA/terms, status, vulnerability disclosure, incidents.
-- Technical risk: outages, regressions, safety failures, open-source substitutes, implementation complaints.
+- **Product module / asset matrix** — module/asset/product line, user, status/maturity, evidence, differentiation, diligence gap.
+- **Workflow / use-case table** — user job, current workflow, company solution, measurable benefit, evidence, limitation.
+- **Technology / operating architecture table** — layer/process/component, role, evidence, dependency, risk.
+- **Roadmap / release / development-stage table** — date/stage, feature/milestone, status, implication, source.
+- **Trust / quality / compliance table** — control/certification/quality metric, status, scope, evidence, gap.
+- **Implementation / integration / deployment table** — step, owner, timeline/friction, dependency, evidence, diligence ask.
 
-## Required tables and figures
+## Required figures
 
-- Product module matrix.
-- AI/automation capability map.
-- Roadmap or release chronology.
-- Integration/API matrix.
-- Security/compliance matrix.
-- Architecture/infrastructure or implementation/onboarding table.
-- Preferred figure: `architecture-stack` with labeled layers; use `flow` for product/data flows.
+- **Product architecture map** — `type: stack`; show layers/modules/components with details.
+- **Customer workflow / operating flow** — `type: flow`; show how the product/service is used or delivered.
+- **Product maturity / capability map** — `type: matrix`; show maturity or strength across modules/capabilities.
+- **Roadmap or development timeline** — `type: timeline` when milestones, releases, trials, certifications, facilities, or launches matter.
+
+## Evidence collection strategy
+
+Official-surface mining is mandatory when a company URL exists. Use `fetch-url` on retained direct pages.
+
+- Official pages: homepage, sitemap, product/service pages, docs/developer portals, catalogs, API references, release notes, changelog, integrations, pricing, trust/security, status, privacy, terms, certifications, customer stories, and product blog/news.
+- Technical proof: patents, papers, clinical/trial records, certifications, regulatory databases, manufacturing/quality documentation, benchmarks, performance tests, uptime/status, implementation guides.
+- External proof: reviews, customer deployments, partner announcements, independent benchmarks, regulator filings, recalls/incidents, security/adverse reporting.
+- Do not infer architecture, approvals, certifications, throughput, accuracy, reliability, or safety from vague marketing copy.
+
+## Domain-adaptive additions
+
+Infer the product/operating dependency.
+
+- If it is software or data-driven, add APIs, integrations, data flows, security/privacy controls, deployment model, reliability, and workflow depth.
+- If it is hardware or robotics, add BOM/critical components, manufacturing process, certification, field reliability, maintenance, safety, and supply chain.
+- If it is scientific, clinical, or biotech, add mechanism, pipeline/stage, trial/preclinical evidence, safety, IP estate, regulatory path, and manufacturing/CMC readiness.
+- If it is consumer product or brand-led, add formulation/design, packaging, SKU architecture, sensory/user experience, channel feedback, quality, and repeat-use cues.
+- If it is marketplace/platform, add matching mechanism, trust/safety, supply onboarding, demand conversion, liquidity tooling, payments/dispute flows, and platform governance.
+- If it is industrial, energy, infrastructure, or deeptech, add technical readiness level, pilot results, uptime, deployment constraints, permitting/certification, and scaling bottlenecks.
+- If it is service/operations-heavy, add service workflow, labor model, training, quality assurance, utilization, SLA, and repeatability.
 
 ## Completion check
 
-- Do not infer architecture from marketing copy; unsupported architecture, certifications, or integrations become gaps.
-- Each module row states availability, evidence URL, buyer/user, differentiation, and diligence gap.
-- Handoff includes product verdict, technical moat, official page families reviewed, and expected families missing.
+- Each module row states maturity/status, evidence URL, buyer/user, differentiation, and diligence gap.
+- Unsupported architecture, certifications, integrations, performance, safety, or roadmap claims become gaps.
+- Figures use structured YAML fields, not Mermaid or prose diagrams.
+- Handoff includes product verdict, technical moat, official page families reviewed/missing, and selected domain-adaptive additions.

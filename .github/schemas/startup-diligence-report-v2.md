@@ -204,7 +204,7 @@ tables:
 figures:
   - id: F201
     title: string
-    type: timeline|flow|decision-map|evidence-map|quadrant|competitive-matrix|metric-bars|bars|waterfall|risk-heatmap|matrix|architecture-stack|market-sizing-lens|unit-economics-waterfall|customer-surface-map|recommendation-logic|risk-transmission-map|stack|sensitivity|xy|other
+    type: timeline|flow|decision-map|evidence-map|quadrant|positioning-map|bars|waterfall|heatmap|matrix|stack|layered-lens|bridge|journey-map|logic-chain|causal-map|sensitivity|scatter|other
     layout: compact|standard|wide
     summary: string|null
     data:
@@ -356,7 +356,7 @@ chapters:
 figures:
   - id: F101
     title: string
-    type: timeline|flow|decision-map|evidence-map|quadrant|competitive-matrix|metric-bars|bars|waterfall|risk-heatmap|matrix|architecture-stack|market-sizing-lens|unit-economics-waterfall|customer-surface-map|recommendation-logic|risk-transmission-map|stack|sensitivity|xy|other
+    type: timeline|flow|decision-map|evidence-map|quadrant|positioning-map|bars|waterfall|heatmap|matrix|stack|layered-lens|bridge|journey-map|logic-chain|causal-map|sensitivity|scatter|other
     layout: compact|standard|wide
     summary: string|null
     data:
@@ -420,19 +420,18 @@ Renderer-specific contracts:
 - `flow`: `data.nodes[]` and `data.edges[]` for generic causal/product/customer flows.
 - `decision-map`: `data.nodes[]` and optional `data.edges[]` for decision trees or evaluation logic.
 - `evidence-map`: `data.nodes[]` and optional `data.edges[]` for source-to-claim maps.
-- `quadrant` / `competitive-matrix`: `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include `data.xAxis` and `data.yAxis` when useful.
-- `metric-bars` / `bars`: `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`.
+- `quadrant` / `positioning-map`: `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include `data.xAxis` and `data.yAxis` when useful.
+- `bars`: `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`.
 - `waterfall`: ordered `data.items[]` with signed numeric `value`, optional `displayValue`, optional `tone`.
-- `risk-heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; `row.values.length === data.columns.length`. Do not include the row identifier as a first column.
-- `architecture-stack`: `data.layers[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`.
-- `market-sizing-lens`: `data.nodes[]` or `data.items[]` from broad market to served footprint; do not invent unsupported dollar values.
-- `unit-economics-waterfall`: `data.nodes[]` or `data.items[]` from public anchor through missing unit-economics bridges to underwriting output.
-- `customer-surface-map`: `data.nodes[]` or `data.items[]` from acquisition surface through segments and expansion loops.
-- `recommendation-logic`: ordered `data.nodes[]` with `label`, `detail`, `tone`.
-- `risk-transmission-map`: `data.nodes[]` and `data.edges[]`; sources, transmissions, and impacts are inferred by edge direction.
-- `stack`: `data.layers[]` or `data.items[]` with `label`, `detail`, optional `tone`.
+- `heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; `row.values.length === data.columns.length`. Do not include the row identifier as a first column.
+- `stack`: `data.layers[]` or `data.items[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`.
+- `layered-lens`: `data.nodes[]` or `data.items[]` from broad context to constrained footprint; do not invent unsupported values.
+- `bridge`: `data.nodes[]` or `data.items[]` from an evidence-backed anchor through missing bridges to an underwriting output.
+- `journey-map`: `data.nodes[]` or `data.items[]` from entry surface through segments, stages, or expansion loops.
+- `logic-chain`: ordered `data.nodes[]` with `label`, `detail`, `tone`.
+- `causal-map`: `data.nodes[]` and `data.edges[]`; causes, transmissions, and impacts are inferred by edge direction.
 - `sensitivity`: `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`.
-- `xy`: `data.points[]` or `data.series[0].points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include axis labels when useful.
+- `scatter`: `data.points[]` or `data.series[0].points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include axis labels when useful.
 - `other`: fallback only; avoid unless no semantic renderer fits.
 
 Canonical examples:
@@ -446,7 +445,7 @@ data:
       detail: Evidence-backed description
       tone: positive
 
-# flow / decision-map / evidence-map / risk-transmission-map
+# flow / decision-map / evidence-map / causal-map
 data:
   nodes:
     - id: n1
@@ -458,7 +457,7 @@ data:
       to: n2
       label: Optional edge label
 
-# bars / metric-bars / waterfall
+# bars / waterfall
 data:
   items:
     - label: Metric label
@@ -466,7 +465,7 @@ data:
       displayValue: "$123.4M"
       tone: positive
 
-# quadrant / competitive-matrix / xy
+# quadrant / positioning-map / scatter
 data:
   xAxis: X-axis label
   yAxis: Y-axis label
@@ -476,7 +475,7 @@ data:
       y: 60
       tone: neutral
 
-# risk-heatmap / matrix
+# heatmap / matrix
 data:
   columns: [Likelihood, Impact]
   rows:
@@ -487,7 +486,7 @@ data:
         - label: High impact
           tone: high
 
-# architecture-stack
+# stack
 data:
   layers:
     - label: Layer label

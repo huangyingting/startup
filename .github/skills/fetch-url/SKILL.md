@@ -24,6 +24,19 @@ Options:
 
 - Homepage, sitemap, robots.txt, docs, pricing, blog/news, changelog, trust/security, status, customer, partner, or press pages.
 - One-off URL reachability checks, page-title extraction, and grep-friendly text dumps.
+- Diagnostic local text snapshots for research packs. Save with `--text-only --out <diagnostic-path>` when repeated extraction or grep will speed up analysis.
+
+## Official-surface checklist
+
+For startup diligence runs, review official pages in this order when available:
+
+1. homepage and canonical redirects;
+2. `robots.txt` and sitemap URLs;
+3. about/company, leadership, careers, newsroom/blog, and press pages;
+4. product, solutions, pricing, packaging, customer, partner, and case-study pages;
+5. docs/API/developer portals, changelog/release notes, integrations, status, trust/security, privacy, DPA, subprocessors, terms, and compliance pages.
+
+Retain the original reviewed URL in `localEvidence.sources[]`; do not cite the local snapshot path.
 
 ## Do not use for
 

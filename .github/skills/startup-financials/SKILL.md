@@ -6,7 +6,7 @@ user-invocable: false
 
 # Startup Financials
 
-Fourth analysis stage. Assess revenue quality, pricing, unit economics, funding, and scenario support.
+Fourth analysis stage. This skill owns the financial and unit-economics chapter. It must explain how the company makes money, what unit drives margin, how capital intensive the model is, and which financial inputs are still missing.
 
 ## Read first
 
@@ -19,44 +19,64 @@ Fourth analysis stage. Assess revenue quality, pricing, unit economics, funding,
 - `04-financial-unit-economics.yaml`
 - `04-financial-unit-economics.zh.yaml`
 
-## Focus
+## Chapter purpose
 
-- Revenue streams and revenue mix evolution.
-- Pricing/packaging, monetization mechanics, and partner economics.
-- Public traction, growth, funding, valuation, burn, runway, and margin anchors.
-- Unit economics: CAC, LTV, payback, gross margin, customer concentration, segment economics.
-- Scenario/projection model only when defensible; otherwise record missing inputs.
-- Margin expansion/compression drivers.
+Answer: What is the revenue model, what are the cost and margin drivers, what unit economics can be supported, how much capital is needed, and what financial evidence is insufficient for underwriting?
 
-## Evidence targets
+## Required chapter content
 
-- Distinguish reported metrics, company-claimed pricing, independent estimates, funding/valuation events, and cost-driver evidence.
-- Seek at least two credible sources for volatile revenue, valuation, burn, margin, customer concentration, infrastructure cost, or partner economics claims; otherwise state the single-source limitation.
+Cover these universal topics:
 
-## Section evidence acquisition
+- Revenue streams, pricing model, revenue recognition issues, and revenue mix where supportable.
+- Cost structure, gross margin drivers, contribution margin logic, working capital, capex, inventory, partner/channel costs, or service-delivery costs.
+- Public traction: revenue, ARR/run-rate, GMV/volume, units, backlog, bookings, locations, utilization, active users, or other business-model-specific financial proxies.
+- Funding, valuation, debt/credit/project finance, burn/runway, cash needs, and financing dependency.
+- Unit economics: CAC, LTV, payback, retention/expansion, loss rates, utilization, take rate, BOM, store economics, project margin, royalty economics, or explicit gaps.
+- Scenario/projection support only when assumptions are source-backed; otherwise show missing inputs.
+- Financial verdict: revenue quality, margin path, capital intensity, and diligence blockers.
 
-Use `web_search` to find public metrics, estimates, and conflicts; use `fetch-url` to review source pages before retaining numbers.
+## Required tables
 
-- Revenue/mix: run-rate, ARR, product/channel revenue, transaction volume, revenue-recognition concerns.
-- Pricing/monetization: list pricing, token/seat/usage pricing, packaging, partner/channel fees.
-- Funding/valuation: latest rounds, investor syndicate, secondary marks, rumored/preemptive rounds.
-- Unit economics: CAC, LTV, gross margin, cloud cost, partner take rates, NRR, payback, burn, runway, concentration.
-- Cost drivers: infrastructure commitments, cloud pricing, serving cost, automation leverage, pricing/regulatory pressure.
-- Scenarios: source every numeric assumption; unsupported inputs become `null` plus diligence asks.
+- **Revenue streams table** — stream, mechanism, unit, current value/status, evidence, quality note, diligence request.
+- **Pricing / monetization table** — price/unit/contract terms, list vs realized pricing, discounts/unknowns, source.
+- **Unit economics table** — metric, value/null, confidence, why it matters, evidence or diligence ask.
+- **Funding / capital needs table** — round/debt/facility/project capital, amount, date, participants, use of funds, runway/capex implication.
+- **Margin / cost-driver bridge table** — cost driver, direction, evidence, sensitivity, margin implication.
+- **Public financial gaps table** — missing private metrics, impact, exact diligence path.
 
-## Required tables and figures
+## Required figures
 
-- Revenue streams.
-- Pricing/packaging.
-- Public financial anchors.
-- Partner/interchange/transaction economics when relevant.
-- CAC/LTV/payback or explicit gap table.
-- Margin/cost-driver bridge or scenario model.
-- Preferred figures: `unit-economics-waterfall`, `waterfall`, `bars`, `metric-bars`, or `xy` with numeric values only.
+- **Revenue model bridge** — `type: flow` or `waterfall`; show how customer activity converts into revenue and gross profit.
+- **Unit economics bridge** — `type: bridge` when inputs exist; otherwise use qualitative nodes and explicit `approximationNotes`.
+- **Revenue / volume / margin trend** — `type: bars` or `scatter`; numeric values only and source-backed.
+- **Capital intensity / cash-flow map** — `type: flow`, `matrix`, or `waterfall` when capex, inventory, project finance, clinical burn, manufacturing scale-up, or credit exposure is material.
+
+## Evidence collection strategy
+
+Use search for public metrics/conflicts and `fetch-url` for retained source pages.
+
+- Revenue/pricing: official pricing, customer contracts/examples, filings, interviews, investor announcements, credible estimates, app/store/channel data, tender/project disclosures.
+- Funding/valuation: company/investor announcements, filings, tier-one coverage, debt/project finance sources, secondary/tender reports.
+- Unit economics: public-company comps, customer case studies, cost benchmarks, partner terms, channel fees, manufacturing cost data, reimbursement/pricing schedules, loan/credit metrics, utilization data.
+- Adverse checks: burn concerns, margin compression, pricing pressure, regulation, defaults/losses, inventory issues, cost overruns, failed projects, recalls, reimbursement cuts, customer concentration.
+
+## Domain-adaptive additions
+
+Infer the economic model, not the industry label.
+
+- If subscription/recurring revenue drives economics, add ARR/MRR quality, contract duration, churn, NRR/GRR, expansion, CAC payback, and discounting.
+- If transaction/take-rate revenue drives economics, add GMV/TPV/volume, take rate, refunds, fraud, payment/network costs, transaction frequency, and concentration.
+- If physical product or hardware sales drive economics, add BOM, manufacturing yield, inventory, warranty, channel margin, logistics, returns, and scale economies.
+- If services or project delivery drives economics, add backlog, milestone payments, utilization, labor leverage, delivery margin, working-capital timing, and change-order risk.
+- If licensing/royalty/milestone economics drive value, add milestone payments, royalty rate, partner concentration, approval probability, and IP term.
+- If lending/credit/insurance/financial risk is present, add loss rate, funding cost, delinquency, claims, reserves, capital requirements, and counterparty risk.
+- If asset/project yield matters, add utilization, contracted revenue, capacity factor, offtake terms, capex, project IRR, and financing structure.
+- If advertising/attention/community monetization matters, add audience quality, engagement, fill rate, CPM/CPA, creator/channel economics, and platform dependence.
 
 ## Completion check
 
 - Official pricing is list pricing, not realized revenue or margin.
 - Every `null` unit-economics field needs a specific diligence request.
 - Scenario inputs must be labeled public, estimated, or unavailable.
-- Handoff includes revenue quality and unit-economics verdict.
+- Do not write generic software metrics unless the revenue model actually supports them.
+- Handoff includes revenue quality, unit-economics verdict, capital intensity, and selected domain-adaptive additions.

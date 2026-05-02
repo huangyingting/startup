@@ -24,6 +24,7 @@ Each analysis skill receives the invocation contract from `AGENTS.md`:
 - `reportFolder`
 - `schemaPath`
 - `yamlSyntaxPath`
+- optional run-local customization from prompt instructions or `reportFolder/000-run-customization.yaml`
 
 Before writing:
 
@@ -31,6 +32,56 @@ Before writing:
 - Read `yamlSyntaxPath`.
 - Read `.github/references/evidence-ledger.md` before touching local evidence.
 - Read upstream artifacts only when the chapter or a discovered gap needs them.
+
+## Section-owned chapter contracts
+
+Each analysis skill is the authoritative generation contract for its report chapter. The owning skill must state:
+
+- chapter purpose and required analysis content;
+- required tables, with intended columns and evidence expectations;
+- required structured figures, with preferred renderer types and required data shape;
+- evidence collection strategy and source classes;
+- domain-adaptive additions inferred from the company, business model, and operating dependencies;
+- completion checklist and handoff fields.
+
+Global instructions define workflow, evidence, YAML, localization, and validation rules only. Section-level content belongs in the section skill, not in a central industry-template file.
+
+## Run-local customization merge
+
+Each analysis skill must merge requirements in this order:
+
+1. Base workflow, schema, and the skill's universal chapter requirements.
+2. Domain-adaptive additions inferred by the skill for the current company.
+3. Run-specific customization from the user or optional `000-run-customization.yaml`.
+
+Run-specific customization wins unless it conflicts with schema, evidence provenance, renderer constraints, or factual support. Never invent values to satisfy customization.
+
+Optional run-local customization is diagnostic and should stay under the report folder. It may name audience, investment lens, chapter focus, required topics, required metrics, required tables, required figure purposes/types, required competitors/comparables, source preferences, forbidden domains, or chapter-specific diligence questions. It is not part of the final artifact set.
+
+Before finalizing a chapter, verify every customization item assigned to that chapter:
+
+- required topics or sections;
+- required metrics;
+- required tables and required columns;
+- required figure types or purposes;
+- required competitors or comparables;
+- chapter-specific diligence questions;
+- source preferences or forbidden domains.
+
+If evidence is unavailable, do not invent values. Use `null`, explanatory notes, and `evidenceGaps[]` with a concrete diligence path. Mention unresolved customization items in the handoff note.
+
+## Domain inference
+
+Before drafting, each analysis skill must infer enough context to select domain-adaptive additions. Use upstream artifacts, official pages, and source discovery to identify:
+
+- company domain and value-chain position;
+- buyer, user, payer, and regulator distinctions;
+- revenue mechanism: subscription, transaction, hardware sale, service/project, royalty/licensing, lending/credit, advertising/attention, marketplace take rate, usage-based, asset/project yield, or other;
+- operating dependencies: physical assets, manufacturing, supply chain, scientific/clinical proof, regulated approvals, data/model rights, labor/service delivery, logistics, financial risk, partner platforms, or geopolitical exposure;
+- adoption motion: consumer, enterprise, government, healthcare/provider/payer, channel/retail, marketplace liquidity, developer, distributor, or project finance;
+- most decision-critical metrics and failure modes for that model.
+
+Do not assume the company is an IT, Internet, software, SaaS, or AI startup. If the domain is unclear, record the ambiguity and add a diligence path rather than forcing a template.
 
 ## Outputs
 
@@ -42,6 +93,30 @@ Each analysis skill writes exactly two files:
 Both files must exist and parse before the next skill starts.
 
 Analysis skills never write `100-evidence-ledger.yaml`; that is `startup-ledger`'s job.
+
+Diagnostic research packs or cached text snapshots may be created during research, but they are not final artifacts and must not be cited as sources of truth.
+
+## Parallel research packs
+
+After `01-company-snapshot.yaml` is complete and duplicate check passes, research for `02`–`08` may be prepared in parallel as diagnostic packs. Parallel packs are read-only with respect to final artifacts.
+
+Recommended pack contents:
+
+- research questions asked, including adverse/disconfirming questions;
+- reviewed URLs and fetch status;
+- source type, independence, freshness, and reputation notes;
+- candidate atomic claims and key quotes;
+- conflicting facts and source disagreements;
+- tables/figures the evidence can support;
+- open gaps and diligence paths;
+- run-local customization items satisfied or still unresolved;
+- domain-adaptive additions selected and why.
+
+Rules:
+
+- Write each pack to a unique diagnostic path if persisted.
+- Do not write or rewrite final `XX-name.yaml` files from parallel workers.
+- When serializing the final artifact, convert retained evidence into `localEvidence.sources[]` and `localEvidence.claims[]`; never cite the pack file itself.
 
 ## Local evidence
 
@@ -63,6 +138,18 @@ Analysis skills never write `100-evidence-ledger.yaml`; that is `startup-ledger`
 - Label official/company-authored claims as `company-claimed` or `observed`.
 - Corroborate volatile or judgment-critical claims independently when possible.
 - For competitor/comparable work, mine competitor official surfaces too, but never treat vendor-authored comparisons as independent proof.
+
+Official-surface review order when applicable:
+
+1. homepage and canonical domain redirects;
+2. `robots.txt` and sitemap URLs;
+3. about/company, leadership, careers, newsroom/blog, and press pages;
+4. product, solution, pricing, packaging, customer, partner, and case-study pages;
+5. docs, API/developer portals, changelog/release notes, integrations, status, trust/security, privacy, DPA, subprocessors, terms, and compliance pages;
+6. marketplace listings, customer/partner announcements, filings/regulators, reviews, and independent reporting;
+7. adverse/disconfirming sources tied to the chapter's claims.
+
+Use official pages for observed/company-claimed facts, then use independent or primary third-party evidence for volatile, valuation-critical, customer, legal, regulatory, and recommendation-critical claims.
 
 ## Source quality gate
 
@@ -86,6 +173,10 @@ Before finalizing each analysis artifact, verify that the research record includ
 
 For every major table or figure, ask: “Which source would change this cell/node if it were wrong?” If the answer is “none,” either source it, remove it, or mark it as a diligence gap.
 
+For every run-specific customization item, ask: “Where is this addressed?” If the answer is “nowhere,” add the missing analysis or record an evidence gap before moving on.
+
+For every domain-adaptive addition selected by the skill, ask: “Which table, figure, section, or gap carries this?” If the answer is “none,” add it before moving on.
+
 ## Artifact depth
 
 Artifacts `01`–`08` are the research record, not thin handoffs. Each must retain:
@@ -100,6 +191,8 @@ Artifacts `01`–`08` are the research record, not thin handoffs. Each must reta
 
 Tables should include company-specific values, dated evidence, confidence, implication, and diligence asks. Tables created only to hit a count are not substantive.
 
+When a skill specifies required table columns, preserve those columns unless a better schema-compatible table design covers the same information. At minimum, diligence tables should expose the fact/metric, value or status, evidence date/source, confidence, implication, and diligence ask.
+
 Figures must encode chapter-specific structure, such as:
 
 - TAM layers;
@@ -109,6 +202,8 @@ Figures must encode chapter-specific structure, such as:
 - retention loops;
 - risk transmission paths;
 - valuation sensitivities.
+
+Markdown, Mermaid, SVG, prose diagrams, and JSON strings must be converted into structured YAML figures before saving artifacts.
 
 Avoid:
 
@@ -125,6 +220,7 @@ Depth floors in `AGENTS.md` are minimums, not targets.
 - Use only canonical renderer fields: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`.
 - Do not introduce non-canonical primary fields such as `name`, `components`, `children`, `steps`, `cards`, or `groups`.
 - Numeric chart values must be numbers, not strings.
+- Numeric chart values should match the corresponding table value or claim-supported numeric assumption. If a chart uses transformed or estimated values, explain the transformation in `approximationNotes`.
 - Visible cards/layers/nodes need a `label` plus renderable content.
 - Required arrays must not be empty.
 - For `matrix` / heatmap figures:
@@ -156,6 +252,8 @@ After writing, record a concise internal summary:
 - output paths;
 - figure count;
 - table count;
+- customization items satisfied and unresolved;
+- research pack path, or `research pack: not persisted`;
 - evidence gaps closed;
 - evidence gaps remaining;
 - `web_search` calls with query labels, or `web_search: not called`;
