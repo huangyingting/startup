@@ -61,6 +61,7 @@ Press-release / wire-copy rule:
 
 - For each downstream artifact need, generate targeted `web_search` queries first, then extract facts from the answer text and its URL citations/annotations. Do not start with generic company searches only.
 - Run independent query waves keyed to the chapter plan above (identity, market/competitors, financials/funding, product/tech, customers/retention, risk/regulatory, valuation/comparables, disconfirming).
+- Maximize parallelism: plan each wave as a batch of independent `web_search` calls and execute as many non-dependent searches concurrently as the tool/runtime allows. Only sequence searches when a later query depends on a prior result, such as following a source chain to an original filing or article; when those follow-up queries are identified, batch and parallelize them too.
 - Treat `web_search` responses with URL citations/annotations as usable evidence material. Use answer text to draft candidate claims and use cited URLs as `sources[]` entries.
 - Retain only source URLs that appear in `web_search` citations/annotations and support the extracted fact; do not use any additional web tool.
 - When `web_search` returns a useful summary with URL annotations, do not restart the evidence task just because the first result is a summary. Extract the claims and cited URLs, classify each cited source, and continue writing the required YAML artifacts if the quality gates are met.
@@ -141,7 +142,7 @@ Downstream rerun rule:
 Repair workflow:
 
 1. Diagnose by reading downstream artifacts and the provided missing-data list. Prioritize accidental omissions: null metrics that may be public, thin competitor/customer/product tables, unsupported valuation inputs, and gaps that affect recommendation quality.
-2. Convert each missing item into targeted `web_search` queries. Use the answer text for candidate facts and the URL citations/annotations for retained `sources[]`; do not use uncited URLs.
+2. Convert each missing item into targeted `web_search` queries. Batch independent missing-item queries and run them in parallel wherever possible. Use the answer text for candidate facts and the URL citations/annotations for retained `sources[]`; do not use uncited URLs.
 3. Add new cited/annotated source URLs (fresh `accessDate`, accurate `independence`, `reputationTier`, `topics`). Add new claims that cite them and tie each claim to the affected chapter need.
 4. If targeted searches do not find usable cited evidence, leave or add a precise `evidenceGaps` entry naming the downstream artifact and missing fact.
 5. Pruning is allowed for sources that are uncited, duplicate wire-copy/event coverage, stale, or unsupported by any `web_search` citation/annotation, as long as cited claims and documented gaps remain valid.

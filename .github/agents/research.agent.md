@@ -63,7 +63,7 @@ Schema reference: <absolute path to .github/agents/startup-diligence.schema.md>
 YAML syntax reference: <absolute path to .github/agents/yaml-syntax.md>
 Style target: comprehensive VC due diligence report; tables and structured native figures required.
 Evidence rule: every external factual assertion must cite claimRefs / inline [Cxxx].
-Evidence search rule: the Evidence Analyst must generate targeted `web_search` queries from downstream YAML needs, extract facts from answer text plus URL citations/annotations, and retain only cited/annotated source URLs. It must diversify source categories, prefer recent sources for current claims, replace aggregators with original sources where possible, and dedupe repeated reports of the same event.
+Evidence search rule: the Evidence Analyst must generate targeted `web_search` queries from downstream YAML needs, batch independent queries, run non-dependent `web_search` calls in parallel wherever possible, extract facts from answer text plus URL citations/annotations, and retain only cited/annotated source URLs. It must diversify source categories, prefer recent sources for current claims, replace aggregators with original sources where possible, and dedupe repeated reports of the same event.
 ```
 
 ## Evidence and quality rules
