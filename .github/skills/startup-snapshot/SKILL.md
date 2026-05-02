@@ -24,6 +24,8 @@ Use targeted `web_search` to perform research for company identity and snapshot 
 
 Parse `web_search` packets per `.github/references/evidence-ledger.md`, register retained sources and atomic claims under `01-company-snapshot.yaml.localEvidence`, then cite those local `claimRefs` in `01-company-snapshot.yaml`.
 
+Immediately after each `web_search` call, emit a visible run-log line, not YAML, using this shape: `[web_search debug] skill=startup-snapshot call=<n> query="<query>" citedUrls=<count> retainedSources=<count> outcome="<used|gap>"`. This debug line is only for the chat/workflow transcript and must not be written into report artifacts.
+
 ## `localEvidence`
 
 Initialize the local source and claim registry:
@@ -46,4 +48,4 @@ Create an investor-grade company snapshot with:
 
 ## Handoff note
 
-After writing, record a concise internal summary: output paths, source count, claim count, identity confidence, duplicate-check readiness, evidence gaps closed, evidence gaps remaining.
+After writing, record a concise internal summary: output paths, source count, claim count, identity confidence, duplicate-check readiness, evidence gaps closed, evidence gaps remaining, and `web_search` calls made with query labels or `web_search: not called`.

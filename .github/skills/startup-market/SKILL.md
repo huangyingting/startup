@@ -18,6 +18,8 @@ Write exactly:
 
 You may use `web_search` directly to perform research for missing market-definition, sizing, segmentation, buyer, geography, growth-driver, or adoption facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `02-market-macro.yaml.localEvidence`, then cite those local `claimRefs` in `02`.
 
+Immediately after each `web_search` call, emit a visible run-log line, not YAML, using this shape: `[web_search debug] skill=startup-market call=<n> query="<query>" citedUrls=<count> retainedSources=<count> outcome="<used|gap>"`. This debug line is only for the chat/workflow transcript and must not be written into report artifacts.
+
 Do not invent market sizes, growth rates, penetration, TAM/SAM/SOM, or segment shares. If targeted searches do not produce cited evidence, keep the gap visible.
 
 ## Output focus
@@ -41,4 +43,4 @@ Expected table families unless unavailable with a documented gap: market definit
 
 ## Handoff note
 
-After writing, record a concise internal summary: output path, market attractiveness, figure count, table count, evidence gaps closed, evidence gaps remaining.
+After writing, record a concise internal summary: output path, market attractiveness, figure count, table count, evidence gaps closed, evidence gaps remaining, and `web_search` calls made with query labels or `web_search: not called`.

@@ -18,6 +18,8 @@ Write exactly:
 
 You may use `web_search` directly to perform research for missing valuation, funding, last-round, public comparable, private comparable, IPO-readiness, exit, scenario, or recommendation-critical facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `08-investment-valuation.yaml.localEvidence`, then cite those local `claimRefs` in `08`.
 
+Immediately after each `web_search` call, emit a visible run-log line, not YAML, using this shape: `[web_search debug] skill=startup-valuation call=<n> query="<query>" citedUrls=<count> retainedSources=<count> outcome="<used|gap>"`. This debug line is only for the chat/workflow transcript and must not be written into report artifacts.
+
 If valuation inputs are missing, default to `research-more` or `track` rather than false precision. Do not invent valuation, revenue multiples, return scenarios, IPO timing, or final recommendation support.
 
 ## Output focus
@@ -41,4 +43,4 @@ Expected table families unless unavailable with a documented gap: thesis/anti-th
 
 ## Handoff note
 
-After writing, record a concise internal summary: output path, recommendation, confidence, valuation stance, figure count, table count, evidence gaps closed, evidence gaps remaining.
+After writing, record a concise internal summary: output path, recommendation, confidence, valuation stance, figure count, table count, evidence gaps closed, evidence gaps remaining, and `web_search` calls made with query labels or `web_search: not called`.
