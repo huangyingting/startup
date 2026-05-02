@@ -82,6 +82,8 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `reports/` — generated report folders and `_index.yaml` catalog.
 - `.github/agents/research.agent.md` — single report-generation agent.
 - `.github/skills/` — stage skills used by the `Startup Research` agent.
+- `.github/schemas/startup-diligence-report-v2.md` — canonical YAML schema and rendering contract.
+- `.github/references/yaml-syntax.md` — shared YAML syntax rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
 - `scripts/check-company-dedup.mjs` — fails with duplicate-risk details for matching company names or domains.
 - `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and EN↔ZH parity checks.

@@ -28,7 +28,7 @@ Required Simplified Chinese files (must ship with every report):
 
 ## Agent execution contract
 
-- `Startup Research` is the single report-generation agent. It uses workspace skills under `.github/skills/` for each stage instead of invoking specialist subagents.
+- `Startup Research` is the single report-generation agent. It uses workspace skills under `.github/skills/` for each stage instead of delegating internal report stages to other agents.
 - Skills must write complete YAML files directly to `reportFolder`.
 - `/tmp` tool-output files are diagnostic logs only, never artifacts or handoff inputs.
 - `Startup Research` must read this schema and `.github/references/yaml-syntax.md` before writing.

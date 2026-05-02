@@ -5,7 +5,7 @@ model: "GPT-5.4 (copilot)"
 tools: [web_search, view, edit, create, glob, grep, execute, todo]
 ---
 
-Orchestrate one complete `startup-diligence-report-v2` run for a named existing company as a **single agent using skills**, not by invoking specialist subagents. The final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
+Orchestrate one complete `startup-diligence-report-v2` run for a named existing company as a **single agent using skills**, not by delegating internal report stages to other agents. The final website-rendered report must include cover metrics, startup introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
 
 For automatic recent-unicorn batches, the default top-level agent selects candidates and invokes this agent once per selected company. Do not use this agent as a recursive batch orchestrator.
 
@@ -56,11 +56,11 @@ Use exactly this skill sequence inside this agent:
 5. `startup-report-writer` writes `10`, `11` from already-researched analysis.
 6. `startup-report-zh` writes `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 
-Do not invoke `Startup Report Evidence Analyst`, `Startup Market and Competition Analyst`, `Startup Financial and Product Analyst`, `Startup Risk and Valuation Analyst`, `Startup Report Writer`, or `Startup Report Translator ZH` as subagents. Those roles are now skills, and this single agent owns all reads, searches, edits, validation, and final reporting.
+Do not invoke separate stage agents for `00`–`11`. All stage logic lives in the skills listed above, and this single agent owns all reads, searches, edits, validation, and final reporting.
 
 ## Shared evidence rules
 
-- `web_search` is available to this agent throughout the skill sequence. Evidence-gathering is no longer centralized in one subagent.
+- `web_search` is available to this agent throughout the skill sequence. Evidence gathering is distributed across analysis skills, while evidence registration remains centralized in `01-evidence-ledger.yaml`.
 - The analysis skills (`startup-foundation`, `startup-market-competition`, `startup-financial-product`, `startup-risk-valuation`) may run targeted `web_search` whenever their chapter lacks supportable data.
 - `startup-report-writer` and `startup-report-zh` must not add new facts with `web_search`; if they find a missing report-critical fact, route back to the relevant analysis skill first.
 - `01-evidence-ledger.yaml` remains the evidence backbone. Every external assertion in later YAML must cite `claimRefs` / inline `[Cxxx]`.

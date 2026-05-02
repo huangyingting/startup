@@ -19,7 +19,7 @@ Write exactly:
 
 Turn analytical artifacts into a professional VC due diligence report represented entirely as YAML. The website renders `10-report-document.yaml`.
 
-Do not compress the report into a short summary. Preserve important specialist sections, tables, figures, scenario models, diligence gaps, and appendices from `02`–`09`. If a topic is unsupported, keep it visible as a gap or diligence ask rather than silently dropping it.
+Do not compress the report into a short summary. Preserve important analysis sections, tables, figures, scenario models, diligence gaps, and appendices from `02`–`09`. If a topic is unsupported, keep it visible as a gap or diligence ask rather than silently dropping it.
 
 Do not use `web_search` to add new facts at this stage. If a report-critical fact is missing but appears supportable, route back to the relevant analysis skill so it can search, update `01-evidence-ledger.yaml`, and rewrite its artifact first.
 

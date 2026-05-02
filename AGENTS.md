@@ -11,7 +11,10 @@
 
 ## Repository map
 
-- `.github/agents/` contains custom agent definitions plus the canonical schema and YAML syntax references.
+- `.github/agents/` contains custom agent definitions.
+- `.github/skills/` contains stage skills used by the `Startup Research` agent.
+- `.github/schemas/` contains canonical report schema contracts.
+- `.github/references/` contains shared writing and syntax references.
 - `.github/workflows/research-startup.yml` is the manual report-generation workflow.
 - `reports/` contains generated startup research artifacts. Each report lives in `<YYYYMMDDHHmmss>-<company-slug>/`.
 - `reports/_index.yaml` is the aggregated report catalog, rebuilt by `scripts/build-reports-index.mjs`.
@@ -24,7 +27,7 @@
 
 - Use the `Startup Research` agent for a full named-company report.
 - If no company name and no company URL are supplied, run automatic recent-unicorn discovery: select at least 5 recent private unicorn startups, avoid duplicates from `reports/_index.yaml` unless materially justified, then launch independent `Startup Research` runs for each company.
-- In recent-unicorns mode, the default Copilot agent is the top-level orchestrator and should not be invoked with `--agent "Startup Research"`. It should fan out to `Startup Research` subagents, one per selected company.
+- In recent-unicorns mode, the default Copilot agent is the top-level orchestrator and should not be invoked with `--agent "Startup Research"`. It should launch one independent `Startup Research` run per selected company.
 - Do not use a `focus` input. The report scope is governed by the schema and the downstream chapter requirements.
 - The report pipeline is a single `Startup Research` agent using workspace skills in order: `startup-foundation → startup-market-competition → startup-financial-product → startup-risk-valuation → startup-report-writer → startup-report-zh`.
 - `web_search` belongs to the single `Startup Research` agent and may be used dynamically by the analysis skills (`startup-foundation`, `startup-market-competition`, `startup-financial-product`, `startup-risk-valuation`) when their chapter needs supportable data. Writer and translator skills must not add new facts via search; route missing report-critical evidence back to the relevant analysis skill.
