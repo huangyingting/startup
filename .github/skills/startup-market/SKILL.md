@@ -1,22 +1,22 @@
 ---
 name: startup-market
-description: "Use when: generating 03-market-macro.yaml. Keywords: market sizing, TAM, SAM, SOM, segments, buyers, geography, adoption, web_search."
+description: "Use when: generating 02-market-macro.yaml. Keywords: market sizing, TAM, SAM, SOM, segments, buyers, geography, adoption, web_search."
 user-invocable: false
 ---
 
 # Startup Market
 
-Use this skill after `00`–`02` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-evidence-ledger.yaml`, and `02-company-snapshot.yaml`.
+Use this skill after `00` and `01` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, and `01-company-snapshot.yaml`.
 
 ## Outputs
 
 Write exactly:
 
-- `03-market-macro.yaml`
+- `02-market-macro.yaml`
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing market-definition, sizing, segmentation, buyer, geography, growth-driver, or adoption facts. Parse packets per `.github/references/evidence-ledger.md`, append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `03`.
+You may use `web_search` directly for missing market-definition, sizing, segmentation, buyer, geography, growth-driver, or adoption facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `02-market-macro.yaml.localEvidence`, then cite those local `claimRefs` in `02`.
 
 Do not invent market sizes, growth rates, penetration, TAM/SAM/SOM, or segment shares. If targeted searches do not produce cited evidence, keep the gap visible.
 

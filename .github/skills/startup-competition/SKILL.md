@@ -1,22 +1,22 @@
 ---
 name: startup-competition
-description: "Use when: generating 04-competitive-benchmarking.yaml. Keywords: competitors, substitutes, feature matrix, pricing, packaging, moat, positioning, web_search."
+description: "Use when: generating 03-competitive-benchmarking.yaml. Keywords: competitors, substitutes, feature matrix, pricing, packaging, moat, positioning, web_search."
 user-invocable: false
 ---
 
 # Startup Competition
 
-Use this skill after `00`–`03` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `03-market-macro.yaml`.
+Use this skill after `00`–`02` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `02-market-macro.yaml`.
 
 ## Outputs
 
 Write exactly:
 
-- `04-competitive-benchmarking.yaml`
+- `03-competitive-benchmarking.yaml`
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing competitor, substitute, incumbent, pricing, feature, GTM, customer-proof, market-share-signal, or moat facts. Parse packets per `.github/references/evidence-ledger.md`, append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `04`.
+You may use `web_search` directly for missing competitor, substitute, incumbent, pricing, feature, GTM, customer-proof, market-share-signal, or moat facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `03-competitive-benchmarking.yaml.localEvidence`, then cite those local `claimRefs` in `03`.
 
 Do not invent competitor capabilities, pricing, market share, or customer wins. If targeted searches do not produce cited evidence, keep the gap visible.
 

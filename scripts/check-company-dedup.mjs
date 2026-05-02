@@ -6,7 +6,7 @@ import { normalizeCompanyName, normalizeDomain } from './text-utils.mjs';
 
 const [companyYamlPath, indexPath = 'reports/_index.yaml'] = process.argv.slice(2);
 if (!companyYamlPath) {
-  console.error('Usage: node scripts/check-company-dedup.mjs <02-company-snapshot.yaml> [reports/_index.yaml]');
+  console.error('Usage: node scripts/check-company-dedup.mjs <01-company-snapshot.yaml> [reports/_index.yaml]');
   process.exit(1);
 }
 

@@ -6,24 +6,24 @@ The current generation schema is `startup-diligence-report-v2`. It is designed t
 
 ```text
 00-report-brief.yaml
-01-evidence-ledger.yaml
-02-company-snapshot.yaml
-03-market-macro.yaml
-04-competitive-benchmarking.yaml
-05-financial-unit-economics.yaml
-06-product-technology.yaml
-07-customer-retention.yaml
-08-risk-regulatory.yaml
-09-investment-valuation.yaml
-10-report-document.yaml
-11-report-card.yaml
+01-company-snapshot.yaml
+02-market-macro.yaml
+03-competitive-benchmarking.yaml
+04-financial-unit-economics.yaml
+05-product-technology.yaml
+06-customer-retention.yaml
+07-risk-regulatory.yaml
+08-investment-valuation.yaml
+100-evidence-ledger.yaml
+101-report-document.yaml
+102-report-card.yaml
 ```
 
 Required Simplified Chinese files (must ship with every report):
 
 ```text
-10-report-document.zh.yaml
-11-report-card.zh.yaml
+101-report-document.zh.yaml
+102-report-card.zh.yaml
 ```
 
 ## Agent execution contract
@@ -32,25 +32,27 @@ Required Simplified Chinese files (must ship with every report):
 - Skills must write complete YAML files directly to `reportFolder`.
 - `/tmp` tool-output files are diagnostic logs only, never artifacts or handoff inputs.
 - `Startup Research` must read this schema and `.github/references/yaml-syntax.md` before writing.
-- Skills that create or update `01-evidence-ledger.yaml` must read `.github/references/evidence-ledger.md`.
-- `web_search` is available to the single `Startup Research` agent and may be used dynamically by analysis skills when chapter data is missing. All new external facts must flow through `01-evidence-ledger.yaml` claims before downstream artifacts cite them.
+- Skills that create local evidence or consolidate `100-evidence-ledger.yaml` must read `.github/references/evidence-ledger.md`.
+- `web_search` is available to the single `Startup Research` agent and may be used dynamically by analysis skills when chapter data is missing. Analysis skills first write local `sources[]` / `claims[]` under their own artifact's `localEvidence`; `startup-ledger` then runs `scripts/consolidate-evidence.mjs` to deduplicate sources/claims, create `100-evidence-ledger.yaml`, and rewrite final `claimRefs`.
 
 ## Artifact mapping
 
 | File | `artifact` | Owner | Chapter |
 |---|---|---|---|
 | `00-report-brief.yaml` | `report-brief` | `startup-brief` skill | n/a |
-| `01-evidence-ledger.yaml` | `evidence-ledger` | shared ledger, updated by analysis skills | n/a |
-| `02-company-snapshot.yaml` | `company-snapshot` | `startup-company-snapshot` skill | 1 — Startup Introduction & Company Snapshot |
-| `03-market-macro.yaml` | `market-macro` | `startup-market` skill | 2 — Market Sizing & Macro Analysis |
-| `04-competitive-benchmarking.yaml` | `competitive-benchmarking` | `startup-competition` skill | 3 — Competitive Benchmarking |
-| `05-financial-unit-economics.yaml` | `financial-unit-economics` | `startup-financials` skill | 4 — Financial & Unit Economics |
-| `06-product-technology.yaml` | `product-technology` | `startup-product-technology` skill | 5 — Product & Technology |
-| `07-customer-retention.yaml` | `customer-retention` | `startup-customer-retention` skill | 6 — Customer & Retention |
-| `08-risk-regulatory.yaml` | `risk-regulatory` | `startup-risk-regulatory` skill | 7 — Risk & Regulatory |
-| `09-investment-valuation.yaml` | `investment-valuation` | `startup-investment-valuation` skill | 8 — Investment & Valuation |
-| `10-report-document.yaml` | `report-document` | `startup-report-writer` skill | final rendered report |
-| `11-report-card.yaml` | `report-card` | `startup-report-writer` skill | website index card |
+| `100-evidence-ledger.yaml` | `evidence-ledger` | `startup-ledger` via `scripts/consolidate-evidence.mjs` after `01`–`08` | n/a |
+| `01-company-snapshot.yaml` | `company-snapshot` | `startup-snapshot` skill | 1 — Startup Introduction & Company Snapshot |
+| `02-market-macro.yaml` | `market-macro` | `startup-market` skill | 2 — Market Sizing & Macro Analysis |
+| `03-competitive-benchmarking.yaml` | `competitive-benchmarking` | `startup-competition` skill | 3 — Competitive Benchmarking |
+| `04-financial-unit-economics.yaml` | `financial-unit-economics` | `startup-financials` skill | 4 — Financial & Unit Economics |
+| `05-product-technology.yaml` | `product-technology` | `startup-product` skill | 5 — Product & Technology |
+| `06-customer-retention.yaml` | `customer-retention` | `startup-customers` skill | 6 — Customer & Retention |
+| `07-risk-regulatory.yaml` | `risk-regulatory` | `startup-risks` skill | 7 — Risk & Regulatory |
+| `08-investment-valuation.yaml` | `investment-valuation` | `startup-valuation` skill | 8 — Investment & Valuation |
+| `101-report-document.yaml` | `report-document` | `startup-report` skill | final rendered report |
+| `102-report-card.yaml` | `report-card` | `startup-card` skill | website index card |
+| `101-report-document.zh.yaml` | `report-document` | `startup-report-zh` skill | Simplified Chinese report |
+| `102-report-card.zh.yaml` | `report-card` | `startup-card-zh` skill | Simplified Chinese report card |
 
 ## Shared conventions
 
@@ -59,11 +61,11 @@ Required Simplified Chinese files (must ship with every report):
 - `runDate: YYYY-MM-DD`
 - `slug`: stable company slug.
 - `company.name`: consistent in all YAML files.
-- `claimRefs`: array of claim IDs from `01-evidence-ledger.yaml`.
+- `claimRefs`: before consolidation, IDs from the same artifact's `localEvidence.claims[]`; after consolidation, canonical claim IDs from `100-evidence-ledger.yaml`.
 - Numeric KPI fields are numbers or `null`, never strings.
 - Ranges belong in `displayValue`, `notes`, or `estimateBasis`.
 - ID formats: sources `S001`, claims `C001`, figures `F001`, tables `T001`.
-- `figureCount` and `tableCount` in `11-report-card.yaml` must match `10-report-document.yaml`.
+- `figureCount` and `tableCount` in `102-report-card.yaml` must match `101-report-document.yaml`.
 - Use `null` for unknown optional values; do not omit required fields.
 
 ## Core enums
@@ -75,7 +77,9 @@ Required Simplified Chinese files (must ship with every report):
 - Evidence quality: `high`, `medium`, `low`, `unknown`.
 - Claim type: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`.
 
-## `01-evidence-ledger.yaml`
+## `100-evidence-ledger.yaml`
+
+`100-evidence-ledger.yaml` is a final consolidated artifact. Do not incrementally append to it from analysis skills. Generate it after `01`–`08` exist by running `node scripts/consolidate-evidence.mjs <reportFolder>`, then use the canonical `S###` / `C###` IDs for `101` and `102`.
 
 Evidence ledger quality requirements:
 
@@ -136,7 +140,7 @@ evidenceGaps:
 
 ## Section artifact pattern
 
-Artifacts `02` through `09` use this common pattern:
+Artifacts `01` through `08` use this common pattern:
 
 ```yaml
 schemaVersion: startup-diligence-report-v2
@@ -186,11 +190,48 @@ sections:
     claimRefs: [C001]
 ```
 
-Section artifacts must use the same figure rendering contracts listed under `10-report-document.yaml` below. Prefer the most semantic figure type available instead of generic `flow`.
+Section artifacts must use the same figure rendering contracts listed under `101-report-document.yaml` below. Prefer the most semantic figure type available instead of generic `flow`.
 
-## `02-company-snapshot.yaml`
+### Local evidence in `01`–`08`
 
-`02-company-snapshot.yaml` follows the section artifact pattern and must also include a startup introduction used at the beginning of the final report:
+Analysis artifacts may include a temporary `localEvidence` block before final consolidation. Local IDs are scoped to the artifact file and may repeat across skills. The consolidation script rewrites all public `claimRefs` to canonical ledger IDs and may remove `localEvidence` from final artifacts.
+
+```yaml
+localEvidence:
+  coverage:
+    sourcesConsidered: 0
+  sources:
+    - id: S001
+      publisher: string
+      title: string
+      author: string|null
+      date: YYYY-MM-DD|null
+      accessDate: YYYY-MM-DD
+      url: string
+      sourceType: official|filing|regulatory|tier-one-news|trade-press|analyst-market-data|technical-docs|customer-proof|partner-proof|developer-signal|review|legal|other
+      reputationTier: high|medium|low
+      independence: company|partner|customer|competitor|independent|unknown
+      keyQuote: string|null
+      topics: [identity|team|market|customer|product|technology|traction|gtm|competition|financials|funding|risk|valuation|other]
+  claims:
+    - id: C001
+      statement: string
+      claimType: observed|company-claimed|third-party-reported|estimated|inferred|open-question|conflicting
+      topic: identity|team|market|customer|product|technology|traction|gtm|competition|financials|funding|risk|valuation|other
+      sourceRefs: [S001]
+      confidence: high|medium|low
+      freshness: current|recent|historical|unknown
+      corroboration: single-source|multi-source|conflicting|none
+      notes: string|null
+  evidenceGaps:
+    - gap: string
+      impact: high|medium|low
+      diligencePath: string|null
+```
+
+## `01-company-snapshot.yaml`
+
+`01-company-snapshot.yaml` follows the section artifact pattern and must also include a startup introduction used at the beginning of the final report:
 
 ```yaml
 startupIntroduction:
@@ -213,7 +254,7 @@ startupIntroduction:
   claimRefs: [C001]
 ```
 
-## `10-report-document.yaml`
+## `101-report-document.yaml`
 
 ```yaml
 schemaVersion: startup-diligence-report-v2
@@ -405,7 +446,7 @@ data:
           displayValue: "123x"
 ```
 
-The remainder of `10-report-document.yaml` continues as:
+The remainder of `101-report-document.yaml` continues as:
 
 ```yaml
 tables:
@@ -435,7 +476,7 @@ disclaimer: string
 
 Appendix guidance: use appendices to preserve underwriting detail that would clutter the main narrative but should not be lost, such as detailed financial/projection models, competitive feature deep dives, management-team notes, investor-base notes, source caveats, and unresolved diligence gaps. Appendices must still cite `claimRefs`; if a detailed model is not evidence-supported, include the requested model as a diligence gap rather than inventing values.
 
-## `11-report-card.yaml`
+## `102-report-card.yaml`
 
 ```yaml
 schemaVersion: startup-diligence-report-v2
@@ -477,22 +518,22 @@ topStrengths: [string]
 topRisks: [string]
 unresolvedGaps: [string]
 reportFiles:
-  reportDocument: 10-report-document.yaml
-  reportCard: 11-report-card.yaml
+  reportDocument: 101-report-document.yaml
+  reportCard: 102-report-card.yaml
 ```
 
 ## Validation expectations
 
 - All YAML parses.
-- All required v2 artifacts exist for complete runs, including `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
+- All required v2 artifacts exist for complete runs, including `101-report-document.zh.yaml` and `102-report-card.zh.yaml`.
 - Each file's `artifact` value matches the artifact mapping.
 - `runDate` uses `YYYY-MM-DD` and `company.name` is consistent across artifacts.
-- All `claimRefs` point to `01-evidence-ledger.yaml` claims.
+- Before consolidation, each artifact's `claimRefs` point to its own `localEvidence.claims[]`; after consolidation, all `claimRefs` point to `100-evidence-ledger.yaml` claims.
 - All claim `sourceRefs` point to retained ledger sources whose URLs appeared in `web_search` citations/annotations.
 - Source, claim, figure, and table IDs use the required formats and are unique within their ledgers.
-- All figure/table references in `10-report-document.yaml` exist.
-- `11-report-card.yaml.reportFiles` points to `10-report-document.yaml` and `11-report-card.yaml`.
-- Figures are stored as structured YAML specs in `10-report-document.yaml` and rendered by native website components.
+- All figure/table references in `101-report-document.yaml` exist.
+- `102-report-card.yaml.reportFiles` points to `101-report-document.yaml` and `102-report-card.yaml`.
+- Figures are stored as structured YAML specs in `101-report-document.yaml` and rendered by native website components.
 - Do not use legacy diagram-source fields or diagram-language strings in artifacts. Use `type`, `layout`, and typed `data` arrays instead.
 - ZH artifacts must preserve the English `schemaVersion`, `artifact`, `slug`, `runDate`, enums, IDs, figure/table structure, and numeric values. Only prose is translated.
 - A report folder is `complete` only when both English and Simplified Chinese required artifacts exist; the website index and loader skip incomplete folders.

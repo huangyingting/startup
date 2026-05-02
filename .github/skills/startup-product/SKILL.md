@@ -1,22 +1,22 @@
 ---
-name: startup-product-technology
-description: "Use when: generating 06-product-technology.yaml. Keywords: product, platform, modules, architecture, AI, integrations, roadmap, security, compliance, web_search."
+name: startup-product
+description: "Use when: generating 05-product-technology.yaml. Keywords: product, platform, modules, architecture, AI, integrations, roadmap, security, compliance, web_search."
 user-invocable: false
 ---
 
-# Startup Product and Technology
+# Startup Product
 
-Use this skill after `00`–`05` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `05-financial-unit-economics.yaml`.
+Use this skill after `00`–`04` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `04-financial-unit-economics.yaml`.
 
 ## Outputs
 
 Write exactly:
 
-- `06-product-technology.yaml`
+- `05-product-technology.yaml`
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing product, platform, module, AI/automation, architecture, integration, roadmap, implementation, security, privacy, or compliance facts. Parse packets per `.github/references/evidence-ledger.md`, append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `06`.
+You may use `web_search` directly for missing product, platform, module, AI/automation, architecture, integration, roadmap, implementation, security, privacy, or compliance facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `05-product-technology.yaml.localEvidence`, then cite those local `claimRefs` in `05`.
 
 Do not invent architecture, security certifications, model capabilities, roadmap timing, integrations, or compliance posture. If targeted searches do not produce cited evidence, keep the gap visible.
 

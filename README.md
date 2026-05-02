@@ -24,29 +24,35 @@ flowchart TD
   C --> G[Prepare report folder<br/>reports/&lt;timestamp&gt;-&lt;company-slug&gt;/]
   G --> H[startup-brief skill<br/>research plan]
   H --> H1[00-report-brief.yaml]
-  H1 --> X[startup-company-snapshot skill<br/>ledger + snapshot]
-  X --> X1[01-evidence-ledger.yaml<br/>02-company-snapshot.yaml]
-  X1 --> I[Post-02 duplicate-company check<br/>scripts/check-company-dedup.mjs]
+  H1 --> X[startup-snapshot skill<br/>snapshot + localEvidence]
+  X --> X1[01-company-snapshot.yaml]
+  X1 --> I[Post-01 duplicate-company check<br/>scripts/check-company-dedup.mjs]
   I -->|duplicate-risk| I1[Stop unless user requested refresh]
   I -->|clear| J[startup-market skill<br/>dynamic web_search if needed]
-  J --> J1[03-market-macro.yaml]
+  J --> J1[02-market-macro.yaml]
   J1 --> K[startup-competition skill<br/>dynamic web_search if needed]
-  K --> K1[04-competitive-benchmarking.yaml]
+  K --> K1[03-competitive-benchmarking.yaml]
   K1 --> L[startup-financials skill<br/>dynamic web_search if needed]
-  L --> L1[05-financial-unit-economics.yaml]
-  L1 --> N[startup-product-technology skill<br/>dynamic web_search if needed]
-  N --> N1[06-product-technology.yaml]
-  N1 --> O[startup-customer-retention skill<br/>dynamic web_search if needed]
-  O --> O1[07-customer-retention.yaml]
-  O1 --> P[startup-risk-regulatory skill<br/>dynamic web_search if needed]
-  P --> P1[08-risk-regulatory.yaml]
-  P1 --> V[startup-investment-valuation skill<br/>dynamic web_search if needed]
-  V --> V1[09-investment-valuation.yaml]
-  V1 --> M[startup-report-writer skill]
-  M --> M1[10-report-document.yaml<br/>11-report-card.yaml]
-  M1 --> Q[startup-report-zh skill]
-  Q --> Q1[10-report-document.zh.yaml<br/>11-report-card.zh.yaml]
-  Q1 --> R[Build reports/_index.yaml]
+  L --> L1[04-financial-unit-economics.yaml]
+  L1 --> N[startup-product skill<br/>dynamic web_search if needed]
+  N --> N1[05-product-technology.yaml]
+  N1 --> O[startup-customers skill<br/>dynamic web_search if needed]
+  O --> O1[06-customer-retention.yaml]
+  O1 --> P[startup-risks skill<br/>dynamic web_search if needed]
+  P --> P1[07-risk-regulatory.yaml]
+  P1 --> V[startup-valuation skill<br/>dynamic web_search if needed]
+  V --> V1[08-investment-valuation.yaml]
+  V1 --> EV[startup-ledger skill<br/>consolidate local evidence]
+  EV --> EV1[100-evidence-ledger.yaml<br/>canonical S/C IDs]
+  EV1 --> M[startup-report skill]
+  M --> M1[101-report-document.yaml]
+  M1 --> C[startup-card skill]
+  C --> C1[102-report-card.yaml]
+  C1 --> Q[startup-report-zh skill]
+  Q --> Q1[101-report-document.zh.yaml]
+  Q1 --> ZH[startup-card-zh skill]
+  ZH --> ZH1[102-report-card.zh.yaml]
+  ZH1 --> R[Build reports/_index.yaml]
   R --> S[npm run validate<br/>content checks, rendering contract, Astro build]
   S --> T[Reject partial folders<br/>commit reports when changed]
 ```
@@ -54,16 +60,19 @@ flowchart TD
 ```text
 Startup Research single agent
   ├─ startup-brief                 → 00-report-brief.yaml
-  ├─ startup-company-snapshot      → 01-evidence-ledger.yaml, 02-company-snapshot.yaml
-  ├─ startup-market                → 03-market-macro.yaml
-  ├─ startup-competition           → 04-competitive-benchmarking.yaml
-  ├─ startup-financials            → 05-financial-unit-economics.yaml
-  ├─ startup-product-technology    → 06-product-technology.yaml
-  ├─ startup-customer-retention    → 07-customer-retention.yaml
-  ├─ startup-risk-regulatory       → 08-risk-regulatory.yaml
-  ├─ startup-investment-valuation  → 09-investment-valuation.yaml
-  ├─ startup-report-writer         → 10-report-document.yaml, 11-report-card.yaml
-  └─ startup-report-zh             → 10-report-document.zh.yaml, 11-report-card.zh.yaml
+  ├─ startup-snapshot              → 01-company-snapshot.yaml with localEvidence
+  ├─ startup-market                → 02-market-macro.yaml
+  ├─ startup-competition           → 03-competitive-benchmarking.yaml
+  ├─ startup-financials            → 04-financial-unit-economics.yaml
+  ├─ startup-product               → 05-product-technology.yaml
+  ├─ startup-customers             → 06-customer-retention.yaml
+  ├─ startup-risks                 → 07-risk-regulatory.yaml
+  ├─ startup-valuation             → 08-investment-valuation.yaml
+  ├─ startup-ledger                → 100-evidence-ledger.yaml
+  ├─ startup-report                → 101-report-document.yaml
+  ├─ startup-card                  → 102-report-card.yaml
+  ├─ startup-report-zh             → 101-report-document.zh.yaml
+  └─ startup-card-zh               → 102-report-card.zh.yaml
 ```
 
 ## Local development
@@ -101,6 +110,7 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `.github/references/` — shared YAML syntax and evidence-ledger rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
 - `scripts/check-company-dedup.mjs` — fails with duplicate-risk details for matching company names or domains.
+- `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `100-evidence-ledger.yaml`.
 - `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and EN↔ZH parity checks.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure types, enums, refs).

@@ -132,10 +132,10 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): Record<st
 }
 
 function reportCardPath(folder: string, lang: Lang = 'en'): string | null {
-  const localizedV2 = join(folder, `11-report-card.${lang}.yaml`);
-  const v2 = join(folder, '11-report-card.yaml');
-  const requiredZhDocument = join(folder, '10-report-document.zh.yaml');
-  const requiredZhCard = join(folder, '11-report-card.zh.yaml');
+  const localizedV2 = join(folder, `102-report-card.${lang}.yaml`);
+  const v2 = join(folder, '102-report-card.yaml');
+  const requiredZhDocument = join(folder, '101-report-document.zh.yaml');
+  const requiredZhCard = join(folder, '102-report-card.zh.yaml');
   if (!existsSync(v2) || !existsSync(requiredZhDocument) || !existsSync(requiredZhCard)) return null;
   if (lang === 'zh' && existsSync(localizedV2)) return localizedV2;
   return v2;
@@ -173,7 +173,7 @@ export function reportsLoader(): Loader {
 
 export function hasZhTranslation(runId: string): boolean {
   const folder = join(REPORTS_DIR, runId);
-  return existsSync(join(folder, '10-report-document.zh.yaml')) && existsSync(join(folder, '11-report-card.zh.yaml'));
+  return existsSync(join(folder, '101-report-document.zh.yaml')) && existsSync(join(folder, '102-report-card.zh.yaml'));
 }
 
 export function loadLocalizedIndex(runId: string, lang: Lang = 'en'): Record<string, unknown> | null {
@@ -188,16 +188,16 @@ export function loadStageFiles(runId: string, lang: Lang = 'en') {
   const folder = join(REPORTS_DIR, runId);
   return {
     reportBrief: readLocalizedYaml(folder, '00-report-brief', lang),
-    evidenceLedger: readLocalizedYaml(folder, '01-evidence-ledger', lang),
-    companySnapshot: readLocalizedYaml(folder, '02-company-snapshot', lang),
-    marketMacro: readLocalizedYaml(folder, '03-market-macro', lang),
-    competitiveBenchmarking: readLocalizedYaml(folder, '04-competitive-benchmarking', lang),
-    financialUnitEconomics: readLocalizedYaml(folder, '05-financial-unit-economics', lang),
-    productTechnology: readLocalizedYaml(folder, '06-product-technology', lang),
-    customerRetention: readLocalizedYaml(folder, '07-customer-retention', lang),
-    riskRegulatory: readLocalizedYaml(folder, '08-risk-regulatory', lang),
-    investmentValuation: readLocalizedYaml(folder, '09-investment-valuation', lang),
-    reportDocument: readLocalizedYaml(folder, '10-report-document', lang),
+    evidenceLedger: readLocalizedYaml(folder, '100-evidence-ledger', lang),
+    companySnapshot: readLocalizedYaml(folder, '01-company-snapshot', lang),
+    marketMacro: readLocalizedYaml(folder, '02-market-macro', lang),
+    competitiveBenchmarking: readLocalizedYaml(folder, '03-competitive-benchmarking', lang),
+    financialUnitEconomics: readLocalizedYaml(folder, '04-financial-unit-economics', lang),
+    productTechnology: readLocalizedYaml(folder, '05-product-technology', lang),
+    customerRetention: readLocalizedYaml(folder, '06-customer-retention', lang),
+    riskRegulatory: readLocalizedYaml(folder, '07-risk-regulatory', lang),
+    investmentValuation: readLocalizedYaml(folder, '08-investment-valuation', lang),
+    reportDocument: readLocalizedYaml(folder, '101-report-document', lang),
     reportCard: loadLocalizedIndex(runId, lang),
   };
 }

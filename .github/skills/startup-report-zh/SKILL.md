@@ -1,19 +1,18 @@
 ---
 name: startup-report-zh
-description: "Use when: translating 10-report-document.yaml and 11-report-card.yaml into Simplified Chinese localized YAML. Keywords: Chinese localization, translation, zh report."
+description: "Use when: generating 101-report-document.zh.yaml from 101-report-document.yaml. Keywords: Chinese localization, Simplified Chinese report document, translation."
 user-invocable: false
 ---
 
-# Startup Report Simplified Chinese Translation
+# Startup Report ZH
 
-Use this skill after English `10-report-document.yaml` and `11-report-card.yaml` exist and validate.
+Use this skill after English `101-report-document.yaml` exists and validates.
 
 ## Outputs
 
 Write exactly:
 
-- `10-report-document.zh.yaml`
-- `11-report-card.zh.yaml`
+- `101-report-document.zh.yaml`
 
 ## Rules
 
@@ -25,4 +24,4 @@ Write exactly:
 
 ## Handoff note
 
-After writing, record a concise internal summary: paths and `artifactsTranslated: 2`.
+After writing, record a concise internal summary: output path and `artifactTranslated: 101-report-document`.

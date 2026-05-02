@@ -25,7 +25,7 @@ Create the report plan only. Do not own the evidence ledger and do not write com
 `00-report-brief.yaml` should include:
 
 - Report scope and company identity inputs.
-- `researchQuestions` keyed to artifacts `02`–`10`.
+- `researchQuestions` keyed to artifacts `01`–`08` and final report needs.
 - `expectedTables` and `expectedFigures` for each downstream chapter.
 - `sourceStrategy` with query angles and source buckets needed by later skills.
 - Initial `evidenceGaps` for facts likely to need targeted search.
@@ -34,15 +34,15 @@ Create the report plan only. Do not own the evidence ledger and do not write com
 
 Cover downstream needs for:
 
-- `02` identity, founding, founders, HQ, stage, funding, leadership, investors, headcount, cover metrics.
-- `03` market definition, TAM/SAM/SOM, growth drivers, segmentation, geography.
-- `04` named competitors, substitutes, feature/pricing comparisons, share signals, moat.
-- `05` revenue model, pricing, ARR/run-rate, growth, margin, CAC/LTV/payback, burn, funding.
-- `06` product modules, AI/automation, architecture, integrations, roadmap, security/compliance.
-- `07` named customers, case studies, segmentation, retention/NRR/churn, satisfaction, concentration.
-- `08` regulatory regime, filings, lawsuits, security incidents, operational/competitive risks.
-- `09` last round terms, valuation marks, public/private comparables, IPO readiness.
-- `10` appendices: management-team backgrounds, investor base, financial/projection anchors, competitive feature details, source caveats, unresolved diligence asks.
+- `01` identity, founding, founders, HQ, stage, funding, leadership, investors, headcount, cover metrics.
+- `02` market definition, TAM/SAM/SOM, growth drivers, segmentation, geography.
+- `03` named competitors, substitutes, feature/pricing comparisons, share signals, moat.
+- `04` revenue model, pricing, ARR/run-rate, growth, margin, CAC/LTV/payback, burn, funding.
+- `05` product modules, AI/automation, architecture, integrations, roadmap, security/compliance.
+- `06` named customers, case studies, segmentation, retention/NRR/churn, satisfaction, concentration.
+- `07` regulatory regime, filings, lawsuits, security incidents, operational/competitive risks.
+- `08` last round terms, valuation marks, public/private comparables, IPO readiness.
+- `101` appendices: management-team backgrounds, investor base, financial/projection anchors, competitive feature details, source caveats, unresolved diligence asks.
 
 ## Handoff note
 

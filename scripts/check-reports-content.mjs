@@ -54,13 +54,13 @@ function checkEvidenceCoverage(failures, warnings, run, ledger) {
   const claimsCreated = Number(coverage.claimsCreated);
 
   if (Number.isFinite(sourcesRetained) && sourcesRetained !== sources.length) {
-    failures.push(`${run}/01-evidence-ledger.yaml: coverage.sourcesRetained ${sourcesRetained} must equal sources.length ${sources.length}`);
+    failures.push(`${run}/100-evidence-ledger.yaml: coverage.sourcesRetained ${sourcesRetained} must equal sources.length ${sources.length}`);
   }
   if (Number.isFinite(sourcesConsidered) && sourcesConsidered < sources.length) {
-    failures.push(`${run}/01-evidence-ledger.yaml: coverage.sourcesConsidered ${sourcesConsidered} cannot be less than sources.length ${sources.length}`);
+    failures.push(`${run}/100-evidence-ledger.yaml: coverage.sourcesConsidered ${sourcesConsidered} cannot be less than sources.length ${sources.length}`);
   }
   if (Number.isFinite(claimsCreated) && claimsCreated !== claims.length) {
-    failures.push(`${run}/01-evidence-ledger.yaml: coverage.claimsCreated ${claimsCreated} must equal claims.length ${claims.length}`);
+    failures.push(`${run}/100-evidence-ledger.yaml: coverage.claimsCreated ${claimsCreated} must equal claims.length ${claims.length}`);
   }
 
   const urls = new Map();
@@ -69,14 +69,14 @@ function checkEvidenceCoverage(failures, warnings, run, ledger) {
     const normalized = canonicalSourceUrl(source.url);
     if (!normalized) continue;
     const existing = urls.get(normalized);
-    if (existing) failures.push(`${run}/01-evidence-ledger.yaml: duplicate source URL ${source.url} appears in ${existing} and ${source.id}`);
+    if (existing) failures.push(`${run}/100-evidence-ledger.yaml: duplicate source URL ${source.url} appears in ${existing} and ${source.id}`);
     else urls.set(normalized, source.id);
   }
 
   const citedSourceIds = new Set(claims.flatMap((claim) => claim.sourceRefs ?? []));
   const uncitedCount = sources.filter((source) => !citedSourceIds.has(source.id)).length;
   if (sources.length > 0 && uncitedCount / sources.length > 0.5) {
-    warnings.push(`${run}/01-evidence-ledger.yaml: ${uncitedCount}/${sources.length} retained sources are not cited by claims; consider pruning irrelevant sources or creating missing claims`);
+    warnings.push(`${run}/100-evidence-ledger.yaml: ${uncitedCount}/${sources.length} retained sources are not cited by claims; consider pruning irrelevant sources or creating missing claims`);
   }
 
   if (sources.length >= 20) {
@@ -87,17 +87,17 @@ function checkEvidenceCoverage(failures, warnings, run, ledger) {
     }
     const [topPublisher, topCount] = [...publishers.entries()].sort((a, b) => b[1] - a[1])[0] ?? [];
     if (topPublisher && topCount / sources.length > 0.34) {
-      warnings.push(`${run}/01-evidence-ledger.yaml: publisher "${topPublisher}" accounts for ${topCount}/${sources.length} retained sources (>34%); diversify independent reporting`);
+      warnings.push(`${run}/100-evidence-ledger.yaml: publisher "${topPublisher}" accounts for ${topCount}/${sources.length} retained sources (>34%); diversify independent reporting`);
     }
     const independentCount = sources.filter((s) => s.independence === 'independent').length;
     if (independentCount / sources.length < 0.15) {
-      warnings.push(`${run}/01-evidence-ledger.yaml: only ${independentCount}/${sources.length} retained sources are independent (<15%); add tier-one-news, analyst-market-data, or filing sources`);
+      warnings.push(`${run}/100-evidence-ledger.yaml: only ${independentCount}/${sources.length} retained sources are independent (<15%); add tier-one-news, analyst-market-data, or filing sources`);
     }
   }
 }
 
 function checkZhParity(failures, run, dir) {
-  for (const [enFile, zhFile] of [['10-report-document.yaml', '10-report-document.zh.yaml'], ['11-report-card.yaml', '11-report-card.zh.yaml']]) {
+  for (const [enFile, zhFile] of [['101-report-document.yaml', '101-report-document.zh.yaml'], ['102-report-card.yaml', '102-report-card.zh.yaml']]) {
     const zhPath = join(dir, zhFile);
     const enPath = join(dir, enFile);
     if (!existsSync(enPath)) continue;
@@ -114,7 +114,7 @@ function checkZhParity(failures, run, dir) {
     if (zhDoc.slug !== enDoc.slug) failures.push(`${run}/${zhFile}: slug must equal ${enDoc.slug}`);
     if (asDateString(zhDoc.runDate) !== asDateString(enDoc.runDate)) failures.push(`${run}/${zhFile}: runDate must equal English version`);
 
-    if (zhFile === '11-report-card.zh.yaml') {
+    if (zhFile === '102-report-card.zh.yaml') {
       for (const [field, allowed] of [['recommendation', RECOMMENDATIONS], ['confidence', CONFIDENCE], ['riskRating', RISK_RATINGS], ['valuationStance', VALUATION_STANCES]]) {
         if (zhDoc[field] !== enDoc[field]) failures.push(`${run}/${zhFile}: ${field} must equal English (translator must preserve enums)`);
         if (zhDoc[field] !== undefined && !allowed.has(zhDoc[field])) failures.push(`${run}/${zhFile}: invalid ${field} ${zhDoc[field]}`);
@@ -123,7 +123,7 @@ function checkZhParity(failures, run, dir) {
       if (zhDoc.tableCount !== enDoc.tableCount) failures.push(`${run}/${zhFile}: tableCount must equal English`);
       if (zhDoc.overallScore !== enDoc.overallScore) failures.push(`${run}/${zhFile}: overallScore must equal English`);
     }
-    if (zhFile === '10-report-document.zh.yaml') {
+    if (zhFile === '101-report-document.zh.yaml') {
       const enFigIds = (enDoc.figures ?? []).map((f) => f.id).sort().join(',');
       const zhFigIds = (zhDoc.figures ?? []).map((f) => f.id).sort().join(',');
       if (enFigIds !== zhFigIds) failures.push(`${run}/${zhFile}: figure IDs must match English`);
@@ -153,19 +153,19 @@ try {
   for (const run of runs) {
     const dir = join(REPORTS_DIR, run);
     const hasYaml = readdirSync(dir).some((name) => name.endsWith('.yaml'));
-    if (!existsSync(join(dir, '11-report-card.yaml'))) {
-      if (hasYaml) failures.push(`${run}: partial report folder has YAML files but is missing 11-report-card.yaml`);
+    if (!existsSync(join(dir, '102-report-card.yaml'))) {
+      if (hasYaml) failures.push(`${run}: partial report folder has YAML files but is missing 102-report-card.yaml`);
       continue;
     }
     checked += 1;
 
-    const ledgerPath = join(dir, '01-evidence-ledger.yaml');
+    const ledgerPath = join(dir, '100-evidence-ledger.yaml');
     if (existsSync(ledgerPath)) {
       try {
         const ledger = readYaml(ledgerPath);
         checkEvidenceCoverage(failures, warnings, run, ledger);
       } catch (err) {
-        failures.push(`${run}/01-evidence-ledger.yaml: YAML parse failed: ${err.message.split('\n')[0]}`);
+        failures.push(`${run}/100-evidence-ledger.yaml: YAML parse failed: ${err.message.split('\n')[0]}`);
       }
     }
 

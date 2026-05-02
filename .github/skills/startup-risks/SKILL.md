@@ -1,22 +1,22 @@
 ---
-name: startup-risk-regulatory
-description: "Use when: generating 08-risk-regulatory.yaml. Keywords: regulatory risk, legal risk, security incidents, operational risk, compliance, mitigation, web_search."
+name: startup-risks
+description: "Use when: generating 07-risk-regulatory.yaml. Keywords: regulatory risk, legal risk, security incidents, operational risk, compliance, mitigation, web_search."
 user-invocable: false
 ---
 
-# Startup Risk and Regulatory
+# Startup Risks
 
-Use this skill after `00`–`07` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `07-customer-retention.yaml`.
+Use this skill after `00`–`06` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `06-customer-retention.yaml`.
 
 ## Outputs
 
 Write exactly:
 
-- `08-risk-regulatory.yaml`
+- `07-risk-regulatory.yaml`
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing regulatory, legal, litigation, compliance, security incident, operational, credit, competitive, geopolitical, or mitigation facts. Parse packets per `.github/references/evidence-ledger.md`, append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `08`.
+You may use `web_search` directly for missing regulatory, legal, litigation, compliance, security incident, operational, credit, competitive, geopolitical, or mitigation facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `07-risk-regulatory.yaml.localEvidence`, then cite those local `claimRefs` in `07`.
 
 Do not invent legal outcomes, regulatory posture, security incidents, or mitigations. If targeted searches do not produce cited evidence, keep the gap visible.
 

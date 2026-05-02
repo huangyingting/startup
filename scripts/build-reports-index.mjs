@@ -27,9 +27,9 @@ function listRuns() {
 
 function cardPath(runId) {
   const dir = join(reportsDir, runId);
-  const v2 = join(dir, '11-report-card.yaml');
-  const zhDocument = join(dir, '10-report-document.zh.yaml');
-  const zhCard = join(dir, '11-report-card.zh.yaml');
+  const v2 = join(dir, '102-report-card.yaml');
+  const zhDocument = join(dir, '101-report-document.zh.yaml');
+  const zhCard = join(dir, '102-report-card.zh.yaml');
   if (existsSync(v2) && existsSync(zhDocument) && existsSync(zhCard)) return v2;
   return null;
 }
@@ -65,7 +65,7 @@ for (const runId of listRuns()) {
       tableCount: data.tableCount ?? null,
       valuationUsdM: metrics.valuationUsdM ?? null,
       revenueRunRateUsdM: metrics.revenueRunRateUsdM ?? null,
-      path: `reports/${runId}/11-report-card.yaml`,
+      path: `reports/${runId}/102-report-card.yaml`,
     });
   } catch (err) {
     failures.push(`${runId}: card parse failed: ${err.message}`);

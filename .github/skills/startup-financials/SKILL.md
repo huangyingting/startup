@@ -1,22 +1,22 @@
 ---
 name: startup-financials
-description: "Use when: generating 05-financial-unit-economics.yaml. Keywords: revenue, pricing, unit economics, CAC, LTV, margins, burn, funding, projections, web_search."
+description: "Use when: generating 04-financial-unit-economics.yaml. Keywords: revenue, pricing, unit economics, CAC, LTV, margins, burn, funding, projections, web_search."
 user-invocable: false
 ---
 
 # Startup Financials
 
-Use this skill after `00`–`04` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `04-competitive-benchmarking.yaml`.
+Use this skill after `00`–`03` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `03-competitive-benchmarking.yaml`.
 
 ## Outputs
 
 Write exactly:
 
-- `05-financial-unit-economics.yaml`
+- `04-financial-unit-economics.yaml`
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing revenue, pricing, funding, valuation, margin, CAC, LTV, payback, burn, growth, or projection-anchor facts. Parse packets per `.github/references/evidence-ledger.md`, append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `05`.
+You may use `web_search` directly for missing revenue, pricing, funding, valuation, margin, CAC, LTV, payback, burn, growth, or projection-anchor facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `04-financial-unit-economics.yaml.localEvidence`, then cite those local `claimRefs` in `04`.
 
 If revenue, gross margin, CAC, LTV, retention, burn, payback, or customer concentration are not publicly supported, use `null` with exact diligence asks. Do not infer metrics without labeling estimates and confidence.
 

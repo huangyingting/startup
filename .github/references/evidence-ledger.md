@@ -1,15 +1,17 @@
 # Evidence ledger rules
 
-Use these rules whenever a skill reads or updates `01-evidence-ledger.yaml`.
+Use these rules whenever a skill writes local evidence or consolidates `100-evidence-ledger.yaml`.
 
 ## Ledger model
 
 - Evidence gathering is distributed across analysis skills.
-- Evidence registration is centralized in `01-evidence-ledger.yaml`.
-- Every retained external source is registered once in `sources[]`.
-- Every reusable external factual assertion becomes an atomic `claims[]` entry.
+- Each analysis artifact first registers evidence in its own `localEvidence.sources[]` and `localEvidence.claims[]`.
+- Local `S###` and `C###` IDs are scoped to one artifact file and may repeat across skills.
+- Final evidence registration is centralized in `100-evidence-ledger.yaml`, generated after `01`–`08` by `scripts/consolidate-evidence.mjs`.
+- Every retained external source is registered once in final `sources[]` after dedupe.
+- Every reusable external factual assertion becomes an atomic final `claims[]` entry.
 - Downstream artifacts cite `claimRefs`; claims cite `sourceRefs`.
-- Preserve existing `S###` and `C###` IDs. New IDs continue from the current maximum.
+- For existing published reports, preserve final `S###` and `C###` IDs when possible. New final IDs continue from the current maximum.
 
 ## `web_search` packet parsing
 
@@ -34,10 +36,10 @@ For every targeted `web_search` response:
 
 ## Update invariants
 
-- Do not delete any source or claim referenced by downstream artifacts.
-- Every new external fact needs a `claims[]` entry.
-- Every claim needs `sourceRefs` unless it is explicitly `open-question` with `corroboration: none`.
-- Update `coverage.sourcesConsidered`, `coverage.sourcesRetained`, and `coverage.claimsCreated` after edits.
+- Do not delete any final source or claim referenced by downstream artifacts.
+- Every new external fact needs a local `claims[]` entry before consolidation.
+- Every local and final claim needs `sourceRefs` unless it is explicitly `open-question` with `corroboration: none`.
+- Analysis skills update local `coverage.sourcesConsidered`; consolidation updates final `coverage.sourcesConsidered`, `coverage.sourcesRetained`, and `coverage.claimsCreated`.
 - Record unsupported but important facts in `evidenceGaps` with impact and diligence path.
 
 ## Quality gates

@@ -1,22 +1,22 @@
 ---
-name: startup-investment-valuation
-description: "Use when: generating 09-investment-valuation.yaml. Keywords: investment thesis, valuation, comparables, IPO readiness, scenarios, recommendation, web_search."
+name: startup-valuation
+description: "Use when: generating 08-investment-valuation.yaml. Keywords: investment thesis, valuation, comparables, IPO readiness, scenarios, recommendation, web_search."
 user-invocable: false
 ---
 
-# Startup Investment and Valuation
+# Startup Valuation
 
-Use this skill after `00`–`08` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `08-risk-regulatory.yaml`.
+Use this skill after `00`–`07` exist and parse. Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `07-risk-regulatory.yaml`.
 
 ## Outputs
 
 Write exactly:
 
-- `09-investment-valuation.yaml`
+- `08-investment-valuation.yaml`
 
 ## Dynamic evidence use
 
-You may use `web_search` directly for missing valuation, funding, last-round, public comparable, private comparable, IPO-readiness, exit, scenario, or recommendation-critical facts. Parse packets per `.github/references/evidence-ledger.md`, append new cited sources/claims to `01-evidence-ledger.yaml`, then cite those `claimRefs` in `09`.
+You may use `web_search` directly for missing valuation, funding, last-round, public comparable, private comparable, IPO-readiness, exit, scenario, or recommendation-critical facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `08-investment-valuation.yaml.localEvidence`, then cite those local `claimRefs` in `08`.
 
 If valuation inputs are missing, default to `research-more` or `track` rather than false precision. Do not invent valuation, revenue multiples, return scenarios, IPO timing, or final recommendation support.
 
