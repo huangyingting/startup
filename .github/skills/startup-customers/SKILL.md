@@ -16,7 +16,13 @@ Write exactly:
 
 ## Dynamic evidence use
 
-Use `web_search` for missing customer, case-study, segmentation, retention, NRR, churn, expansion, satisfaction, review, concentration, or partner-proof facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `06-customer-retention.yaml.localEvidence`, then cite those local `claimRefs` in `06`. Emit the `web_search` run-log line defined in `.github/references/evidence-ledger.md` after every call.
+Use targeted web research and direct page reads for missing customer, case-study, segmentation, retention, NRR, churn, expansion, satisfaction, review, concentration, or partner-proof facts. Register retained sources/claims in `06-customer-retention.yaml.localEvidence` and cite local `claimRefs` in `06`. Parse `web_search` packets per `.github/references/evidence-ledger.md`; log each `web_search` call.
+
+Mine official customer pages, case studies, testimonials, partner stories, industry/solutions pages, webinars, press releases, marketplace announcements, and customer blog posts. Extract named customers, deployments, outcomes, verticals, personas, implementation details, expansion paths, and referenceability. Treat logos/testimonials as proof only when they support active deployment or a concrete use case; otherwise mark them weak and seek corroboration.
+
+Treat `currentDate` as the freshness anchor for customer count, named customers, enterprise adoption, retention, churn, usage, satisfaction, and partner-proof claims. Use complete-sentence questions tied to the customer paragraph/table being written, for example: `Which named enterprise customers, customer counts, usage metrics, and retention signals are publicly reported for <companyName> as of <currentDate>?` Avoid keyword-only searches. Include at least one adverse query about churn, customer complaints, blocked deployments, concentration, or procurement/security objections.
+
+Before writing `06`, ask multiple customer-specific questions covering customer count, named customers, case studies, segment mix, geography, usage, retention, churn, NRR, reviews, satisfaction, support, expansion, concentration, partner proof, and adverse evidence. Do not treat logos as retained customers without active-deployment or customer-proof support.
 
 If customer count, named customers, retention, churn, NRR, satisfaction, or customer concentration are not publicly supported, use `null` with exact diligence asks. Do not infer retention metrics without labeling estimates and confidence.
 
@@ -25,6 +31,7 @@ If customer count, named customers, retention, churn, NRR, satisfaction, or cust
 Structure this as an investor-grade customer and retention chapter:
 
 - Customer base overview and segment map.
+- Detailed raw customer evidence retained in this artifact: named customer proof, case-study outcomes, segment notes, usage metrics, reviews, partner references, contradictory signals, retention gaps, and customer diligence asks.
 - Customer growth trajectory across time when evidence supports it.
 - Customer segmentation by enterprise/mid-market/SMB, geography, vertical, ACV/ARR band, or usage profile where supportable.
 - Named customer proof, case studies, partner proof, use cases, outcomes, and referenceability.

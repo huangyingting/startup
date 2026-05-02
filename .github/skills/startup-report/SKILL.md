@@ -22,6 +22,8 @@ Do not compress the report into a short summary. Preserve important analysis sec
 
 Do not use `web_search` to add new facts at this stage. If a report-critical fact is missing but appears supportable, route back to the relevant analysis skill, then rerun `startup-ledger` before writing `101`.
 
+Before writing `101`, audit `01`–`08` for freshness and depth. If a volatile claim is stale relative to `currentDate`—financing, valuation, product release, customer metric, pricing, lawsuit status, or regulatory posture—route back to the owning skill, refresh the raw artifact, rerun `startup-ledger`, then write `101`. If an upstream artifact is too thin for a detailed investment view, deepen it first.
+
 ## Document requirements
 
 - Include professional report metadata where supported by schema: title, prepared-by/generated-using fields if available, recommendation, confidence, risk rating, valuation stance, and disclaimer.
@@ -33,7 +35,7 @@ Do not use `web_search` to add new facts at this stage. If a report-critical fac
 - Preserve canonical `claimRefs` from `100-evidence-ledger.yaml` for every factual block, table, and figure.
 - Use only schema-listed `reportMeta` keys.
 - Include appendices when upstream artifacts support them: detailed financial/projection model, competitive feature deep dive, management team, investor base, source notes, unresolved diligence gaps, bibliography, and disclaimer.
-- Preserve appendix-ready depth from `04`, `03`, `01`, and `08`; do not drop detailed financial models, feature matrices, management-team tables, investor-base tables, or stop-loss triggers if supported.
+- Preserve appendix-ready depth from `01`–`08`: financing chronology, financial models, feature matrices, management/investor tables, customer proof, risk registers, valuation scenarios, and stop-loss triggers. Synthesize the raw YAML record into investor judgment; do not merely restate summaries.
 - Appendix blocks may use `paragraph`, `list`, `equation`, `callout`, `table`, and `figure`. Put appendix tables/figures in document-level `tables[]` / `figures[]` and reference them via `tableRef` / `figureRef`.
 
 ## Figure rules

@@ -16,7 +16,13 @@ Write exactly:
 
 ## Dynamic evidence use
 
-Use `web_search` for missing market-definition, sizing, segmentation, buyer, geography, growth-driver, or adoption facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `02-market-macro.yaml.localEvidence`, then cite those local `claimRefs` in `02`. Emit the `web_search` run-log line defined in `.github/references/evidence-ledger.md` after every call.
+Use targeted web research and direct page reads for missing market definition, sizing, segmentation, buyer, geography, growth-driver, or adoption facts. Register retained sources/claims in `02-market-macro.yaml.localEvidence` and cite local `claimRefs` in `02`. Parse `web_search` packets per `.github/references/evidence-ledger.md`; log each `web_search` call.
+
+Mine official resources, blog, solutions, industry, customer, and product pages for category definition, buyers, verticals, use cases, budget owners, and adoption narrative. Use company-authored pages for segmentation, not independent TAM/SAM/SOM proof. Corroborate sizing, growth, and penetration with analyst, government, filing, or independent sources.
+
+Treat `currentDate` as the freshness anchor for market sizing, growth rates, adoption, regulation-driven demand, and buyer-budget claims. Use complete-sentence questions written for the specific paragraph/table/figure you need, for example: `What is the latest independently reported size and growth outlook for the enterprise generative AI software market as of <currentDate>, and which buyer budgets does it replace or expand?` Avoid keyword-only searches. Include at least one disconfirming market question about slowdown, saturation, budget pressure, or adoption constraints.
+
+Before writing `02`, ask multiple market-specific questions covering market definition, TAM/SAM/SOM, segment sizing, buyer personas, budget sources, geography, adoption timing, penetration constraints, and market risks. If broad TAM queries are thin, rewrite for software-only spend, enterprise-only spend, workflow spend, or bottom-up adoption proxies before marking a gap.
 
 Do not invent market sizes, growth rates, penetration, TAM/SAM/SOM, or segment shares. If targeted searches do not produce cited evidence, keep the gap visible.
 
@@ -25,6 +31,7 @@ Do not invent market sizes, growth rates, penetration, TAM/SAM/SOM, or segment s
 Structure this as an investor-grade market chapter:
 
 - Market definition and category boundaries.
+- Detailed raw market evidence retained in this artifact: cited sizing lenses, segment definitions, geography/adoption notes, buyer budget evidence, contradictory estimates, and dated recency notes.
 - TAM/SAM/SOM or evidence-constrained market-sizing analysis.
 - Growth drivers and constraints.
 - Buyer/persona segmentation and customer budget owner.

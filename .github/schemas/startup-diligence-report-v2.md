@@ -83,12 +83,12 @@ Required Simplified Chinese files (must ship with every report):
 Evidence ledger quality requirements:
 
 - Source breadth: retained sources should span multiple independent source buckets whenever available, including official/company material, startup or business news, independent third-party databases/analyst sources, customer or partner proof, regulatory/legal/filing sources, and technical/product documentation.
-- Coverage semantics: `coverage.sourcesConsidered` counts cited/annotated `web_search` source candidates reviewed before retention. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`. Coverage is sufficient when downstream chapter claims are supported or unsupported facts are documented in `evidenceGaps`.
+- Coverage semantics: `coverage.sourcesConsidered` counts unique cited/annotated `web_search` candidates plus directly fetched pages reviewed before retention. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`. Coverage is sufficient when downstream chapter claims are supported or unsupported facts are documented in `evidenceGaps`.
 - Source recency: claims about current company status, funding, valuation, customers, revenue scale, headcount, product packaging, pricing, and regulatory posture should prefer sources from the last 24 months. Older sources are acceptable for durable historical facts and should normally support claims marked `freshness: historical`.
 - Source deduplication: repeated coverage of the same underlying event does not equal independent evidence. Cluster sources by event/topic/date and retain only sources that add original facts, primary quotes, independent confirmation, or materially different interpretation.
 - Query iteration: the evidence process should vary search queries by company name, product names, founders, investors, competitors, customers, market category, geography, funding/valuation terms, product/security terms, regulatory/legal terms, reviews, hiring, and negative/disconfirming angles.
 - Concentration control: no single publisher/domain family should exceed 34% of retained sources; at least 15% of retained sources should be `independence: independent`; at most 50% of retained sources should be uncited by any claim. Treat repeated press-release or wire-copy coverage as one event group, not independent corroboration. Document a coverage gap when independent coverage is unavailable.
-- `web_search` packet usage: `output_text.text.value` is candidate narrative, `output_text.text.annotations[].url_citation` is the source-candidate list, annotation spans map nearby answer facts to cited URLs when valid, and `bing_searches[]` is query provenance only. Do not retain generic Bing/search-result URLs. If annotation spans are empty or malformed, do not invent `keyQuote`; use `null` and run targeted follow-up searches for important facts.
+- Source provenance: retained URLs must come from cited/annotated `web_search` results or directly fetched pages reviewed from a known URL, sitemap, navigation path, or cited source. Do not retain generic Bing/search-result URLs or unreviewed inferred URLs. If annotation spans are empty or malformed, do not invent `keyQuote`; use `null` and run targeted follow-up searches or direct page reads for important facts.
 
 ```yaml
 schemaVersion: startup-diligence-report-v2
@@ -98,7 +98,7 @@ runDate: YYYY-MM-DD
 company:
   name: string
 coverage:
-  sourcesConsidered: 0 # unique cited/annotated web_search URL candidates reviewed before retention, after canonical URL dedupe
+  sourcesConsidered: 0 # unique web_search candidates plus directly fetched pages reviewed before retention, after canonical URL dedupe
   sourcesRetained: 0
   claimsCreated: 0
   sourceDiversityNotes: string|null
@@ -528,7 +528,7 @@ reportFiles:
 - Each file's `artifact` value matches the artifact mapping.
 - `runDate` uses `YYYY-MM-DD` and `company.name` is consistent across artifacts.
 - Before consolidation, each artifact's `claimRefs` point to its own `localEvidence.claims[]`; after consolidation, all `claimRefs` point to `100-evidence-ledger.yaml` claims.
-- All claim `sourceRefs` point to retained ledger sources whose URLs appeared in `web_search` citations/annotations.
+- All claim `sourceRefs` point to retained ledger sources with valid provenance: cited/annotated `web_search` result or directly fetched reviewed page.
 - Source, claim, figure, and table IDs use the required formats and are unique within their ledgers.
 - All figure/table references in `101-report-document.yaml` exist.
 - `102-report-card.yaml.reportFiles` points to `101-report-document.yaml` and `102-report-card.yaml`.

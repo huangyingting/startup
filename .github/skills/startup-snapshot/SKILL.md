@@ -20,19 +20,13 @@ Create the company snapshot and its local evidence. This skill does not write `1
 
 ## Dynamic evidence use
 
-Use targeted `web_search` for identity and snapshot facts: official website, founding, founders, HQ, product summary, funding, valuation, stage, leadership, investors, customers, headcount, and current company status.
+Use targeted web research and direct page reads for identity and snapshot facts: website, founding, founders, HQ, product summary, funding, valuation, stage, leadership, investors, customers, headcount, and current status. Register retained sources/claims in `01-company-snapshot.yaml.localEvidence` and cite local `claimRefs` in `01`. Parse `web_search` packets per `.github/references/evidence-ledger.md`; log each `web_search` call.
 
-Parse `web_search` packets per `.github/references/evidence-ledger.md`, register retained sources and atomic claims under `01-company-snapshot.yaml.localEvidence`, then cite those local `claimRefs` in `01-company-snapshot.yaml`. Emit the `web_search` run-log line defined in `.github/references/evidence-ledger.md` after every call.
+Mine official about, leadership, newsroom, funding, investor/partner, careers, contact, and product pages for self-description, footprint, financing milestones, and positioning. Label official claims as `company-claimed` or `observed`; corroborate financing, valuation, headcount, and customer scale independently when possible.
 
-## `localEvidence`
+Treat `currentDate` as the freshness anchor for volatile snapshot facts. Use complete-sentence questions that include latest/current wording and the as-of date, for example: `What is the latest funding round and valuation for <companyName> as of <currentDate>, and did it supersede any previously reported round?` Avoid keyword-only searches. Include at least one adverse/current-status query.
 
-Initialize the local source and claim registry:
-
-- Retain only source URLs cited/annotated by `web_search`.
-- Create atomic `claims[]` entries for reusable external facts.
-- Set `localEvidence.coverage.sourcesConsidered` correctly.
-- Record unsupported but important identity facts in `evidenceGaps`.
-- Local `S###` and `C###` IDs are scoped to this file and may start at `S001` / `C001`.
+Before writing `01`, ask multiple snapshot-specific questions covering identity, leadership, HQ, latest financing, valuation, investors, headcount, customers, and product status. If a query returns stale or thin results, rewrite it from another angle (for example `latest funding round` → `most recent financing round and post-money valuation`) before declaring a gap. Every snapshot table row needs support or an explicit gap.
 
 ## `01-company-snapshot.yaml`
 
@@ -40,6 +34,7 @@ Create an investor-grade company snapshot with:
 
 - `startupIntroduction` for final report reuse.
 - Identity facts, founding, founders, headquarters, website, product summary, business model, stage, funding status.
+- Detailed raw diligence material retained in this artifact: leadership timeline, financing chronology, investor base, current operating scale signals, conflicting public reports, and explicit notes on which current metrics remain unsupported.
 - Cover metrics where supported: valuation, total funding, revenue/run-rate or ARR, transaction/payment volume, customer count, headcount, and other company-specific KPIs.
 - Key performance indicator table with value, growth signal, benchmark, confidence, and diligence gap for unsupported values.
 - Leadership, management-team backgrounds, investor base, board/investor roles, timeline, investment highlights, key risks summary, and open identity questions.

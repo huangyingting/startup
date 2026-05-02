@@ -13,6 +13,15 @@ Use these rules whenever a skill writes local evidence or consolidates `100-evid
 - Downstream artifacts cite `claimRefs`; claims cite `sourceRefs`.
 - For existing published reports, preserve final `S###` and `C###` IDs when possible. New final IDs continue from the current maximum.
 
+## Source provenance
+
+Retained sources may come from either:
+
+- cited/annotated `web_search` results; or
+- directly fetched official, first-party, regulatory, filing, partner, customer, technical-doc, or competitor pages discovered from a known URL, sitemap, navigation, or cited source.
+
+Never retain generic search-result URLs or URLs inferred but not opened/reviewed.
+
 ## `web_search` packet parsing
 
 For every targeted `web_search` response:
@@ -27,7 +36,6 @@ For every targeted `web_search` response:
 
 ## Source rules
 
-- Retain only URLs cited/annotated by `web_search`.
 - Deduplicate by canonical URL and underlying event/date.
 - Cluster press-release or wire-copy repeats as one event; do not count them as independent corroboration.
 - Prefer fit-for-purpose sources: official pages, filings/regulators, tier-one news, analyst/market data, customer proof, technical docs, reviews, and disconfirming evidence.
@@ -45,10 +53,10 @@ For every targeted `web_search` response:
 ## Quality gates
 
 - Every downstream chapter need has support or an explicit `evidenceGaps` entry.
+- Every retained URL must satisfy `## Source provenance` above.
 - No single publisher/domain family should exceed 34% of retained sources when enough alternatives exist.
 - At least 15% of retained sources should be independent when the source universe supports it.
 - At most 50% of retained sources may be uncited by any claim.
-- Every retained URL appeared in `web_search` citations/annotations.
 
 ## `web_search` run-log line
 

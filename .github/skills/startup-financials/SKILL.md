@@ -16,7 +16,13 @@ Write exactly:
 
 ## Dynamic evidence use
 
-Use `web_search` for missing revenue, pricing, funding, valuation, margin, CAC, LTV, payback, burn, growth, or projection-anchor facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `04-financial-unit-economics.yaml.localEvidence`, then cite those local `claimRefs` in `04`. Emit the `web_search` run-log line defined in `.github/references/evidence-ledger.md` after every call.
+Use targeted web research and direct page reads for missing revenue, pricing, funding, valuation, margin, CAC, LTV, payback, burn, growth, or projection anchors. Register retained sources/claims in `04-financial-unit-economics.yaml.localEvidence` and cite local `claimRefs` in `04`. Parse `web_search` packets per `.github/references/evidence-ledger.md`; log each `web_search` call.
+
+Mine official pricing, plans, marketplace listings, packaging, API docs, usage limits, funding/press releases, partner announcements, and monetized-product posts. Use them for revenue streams, pricing/packaging, funding chronology, and monetization mechanics. Official pricing is list pricing, not realized revenue or margin; corroborate company revenue, funding, and valuation claims independently when possible.
+
+Treat `currentDate` as the freshness anchor for revenue, ARR/run-rate, pricing, funding, valuation, burn, margin, growth, and monetization claims. Use complete-sentence questions tied to the exact financial model component, for example: `What is the latest reported revenue run-rate, ARR, or annualized revenue estimate for <companyName> as of <currentDate>, and what sources corroborate or conflict with it?` Avoid keyword-only searches. Include at least one adverse query about losses, margin pressure, compute costs, customer concentration, or financing risk.
+
+Before writing `04`, ask multiple financial questions covering revenue run-rate, ARR, mix, pricing, discounting, funding, valuation changes, margin, infrastructure cost, CAC, LTV, payback, burn, runway, concentration, and scenario anchors. If private metrics are unavailable, search for adjacent public anchors before recording `null` with a diligence ask.
 
 If revenue, gross margin, CAC, LTV, retention, burn, payback, or customer concentration are not publicly supported, use `null` with exact diligence asks. Do not infer metrics without labeling estimates and confidence.
 
@@ -25,6 +31,7 @@ If revenue, gross margin, CAC, LTV, retention, burn, payback, or customer concen
 Structure this as an investor-grade financial chapter:
 
 - Revenue model and revenue stream table.
+- Detailed raw financial evidence retained in this artifact: public revenue anchors, pricing schedules, funding chronology, valuation changes, cost-driver evidence, conflicting estimates, unsupported unit-economics fields, scenario assumptions, and explicit recency notes.
 - Revenue mix evolution across historical and forecast periods when evidence or defensible assumptions support it.
 - Revenue component economics, including payments/interchange, subscriptions/SaaS, float/interest, services, usage, marketplace, or other company-specific streams.
 - If the company has payments/card exposure, analyze interchange economics, network/bank partner splits, transaction volume, gross-to-net revenue, and regulation sensitivity where supportable.

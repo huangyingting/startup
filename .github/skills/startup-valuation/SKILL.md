@@ -16,7 +16,13 @@ Write exactly:
 
 ## Dynamic evidence use
 
-Use `web_search` for missing valuation, funding, last-round, public-comparable, private-comparable, IPO-readiness, exit, scenario, or recommendation-critical facts. Parse packets per `.github/references/evidence-ledger.md`, write cited sources/claims to `08-investment-valuation.yaml.localEvidence`, then cite those local `claimRefs` in `08`. Emit the `web_search` run-log line defined in `.github/references/evidence-ledger.md` after every call.
+Use targeted web research and direct page reads for missing valuation, funding, last-round, public-comparable, private-comparable, IPO-readiness, exit, scenario, or recommendation-critical facts. Register retained sources/claims in `08-investment-valuation.yaml.localEvidence` and cite local `claimRefs` in `08`. Parse `web_search` packets per `.github/references/evidence-ledger.md`; log each `web_search` call.
+
+Mine official funding, investor/partner, milestone, annual/open-letter, hosted leadership interview, product launch, customer milestone, governance, and policy pages. Use them for management narrative, financing chronology, use of proceeds, investor syndicate, growth milestones, and IPO-readiness signals. Treat official valuation/momentum claims as company-claimed; corroborate valuation, investor demand, secondary pricing, comparables, and exit context independently before using them in recommendation logic.
+
+Treat `currentDate` as the freshness anchor for valuation, latest round, comparable trading multiples, IPO-readiness, exit environment, secondary pricing, and recommendation-critical constraints. Use complete-sentence questions tied to the investment judgment being written, for example: `What is the latest reported valuation, financing structure, and investor demand for <companyName> as of <currentDate>, and what entry discipline would a growth investor need?` Avoid keyword-only searches. Include at least one adverse query about overvaluation, down-round risk, governance, liquidity constraints, or comparable multiple compression.
+
+Before writing `08`, ask multiple valuation-specific questions covering latest primary valuation, secondary pricing, financing structure, comparable rounds, public multiples, IPO readiness, governance, exits, revenue-multiple sensitivity, downside cases, investor demand, and adverse valuation signals. Do not issue `buy` unless cited evidence or explicit gaps support both thesis and anti-thesis.
 
 If valuation inputs are missing, default to `research-more` or `track` rather than false precision. Do not invent valuation, revenue multiples, return scenarios, IPO timing, or final recommendation support.
 
@@ -25,6 +31,7 @@ If valuation inputs are missing, default to `research-more` or `track` rather th
 Structure this as an investor-grade investment chapter:
 
 - Investment thesis and anti-thesis.
+- Detailed raw valuation evidence retained in this artifact: latest financing and valuation chronology, comparable sets, scenario assumptions, entry-price constraints, IPO/readiness signals, governance/liquidity gaps, and explicit reasons for the final recommendation.
 - Recommendation summary with confidence, risk rating, valuation stance, target return where supportable, suggested hold period, exit route, and position-sizing guidance.
 - Bull/base/bear cases with explicit assumptions, scenario valuation ranges, upside/downside logic, and scenario constraints.
 - Public and private comparables where supportable.

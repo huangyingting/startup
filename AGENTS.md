@@ -38,6 +38,7 @@ Resolve before running skills:
 - `companyName`: required.
 - `companyUrl`: optional identity anchor, never proof.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
+- `currentDate`: required as the actual current date from the chat/session context in `YYYY-MM-DD`; use it as the evidence freshness anchor and the default `runDate` unless the user explicitly requests a historical report.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/schemas/startup-diligence-report-v2.md`.
 - `yamlSyntaxPath`: absolute path to `.github/references/yaml-syntax.md`.
@@ -84,8 +85,6 @@ Use exactly this skill sequence for one company run:
 12. `startup-report-zh` translates `101` into `101-report-document.zh.yaml`.
 13. `startup-card-zh` translates `102` into `102-report-card.zh.yaml`.
 
-Do not invoke separate agents for `01`–`102`. The default agent performs all reads, searches, edits, validation, and final reporting.
-
 ## Dependency rules
 
 Downstream skills do not need to mechanically read every prior artifact. Each skill must read its minimum dependency set, plus any upstream artifact needed to resolve a concrete gap or maintain consistency.
@@ -120,10 +119,41 @@ After `01-company-snapshot.yaml`, run `node scripts/check-company-dedup.mjs <rep
 Each analysis skill closes its own supportable gaps before writing:
 
 1. Before writing an artifact, inspect its required table families, figures, metrics, `evidenceGaps`, and downstream chapter needs.
-2. If a missing item appears supportable, run targeted `web_search` inside that skill, add cited sources/claims to that artifact's `localEvidence`, then write the artifact using local `claimRefs`.
+2. If a missing item appears supportable, use targeted web research or direct page reads in the owning skill, add sources/claims to that artifact's `localEvidence`, then write the artifact using local `claimRefs`.
 3. If targeted searches do not find usable cited evidence, document the gap explicitly in that artifact instead of inventing values.
 4. If a later skill discovers a missing item belonging to an earlier domain, return to the relevant skill, append evidence if available, rewrite affected artifacts, then continue forward.
 5. Proceed to `startup-ledger` only after `02`–`08` have either closed supportable gaps or explicitly documented unsupported ones.
+
+## Research freshness and query design
+
+Every analysis skill must optimize research for the report being written, not for generic keyword recall.
+
+- Use `currentDate` in the research plan. For volatile facts such as funding round, valuation, revenue, ARR, headcount, customers, product releases, pricing, litigation, regulatory posture, partnerships, and leadership, search for the latest/current status as of `currentDate` before writing. Prefer sources from the last 24 months; if a durable older source is used, label the claim `freshness: historical`.
+- Use complete-sentence research questions tied to the intended report paragraph, table, or figure. Avoid bare keyword strings such as `company series f valuation`; ask questions such as `What is the latest funding round and post-money valuation for OpenAI as of May 2, 2026, and did it supersede the previously reported Series F?`.
+- Ask multiple chapter-specific questions before declaring a gap. Cover required sections, table families, figures, key metrics, contradictions, and diligence gaps. Vary wording across official, independent, metric-specific, customer/competitor/regulatory, and adverse-case searches.
+- If results are thin or stale, rewrite the question from another angle before declaring a gap. Example rewrites: `latest valuation` → `most recent financing round and post-money valuation`; `current revenue run-rate` → `annualized revenue estimate and corroborating reports`; `customer list` → `named enterprise deployments and case studies as of <currentDate>`.
+- Before finalizing each artifact, run a recency audit for report-critical facts. If a newer source supersedes an older claim, update the claim, table, figure, and downstream narrative; do not leave stale facts such as an older financing round when a newer round is public.
+- Query both confirming and disconfirming angles. For each major chapter, include at least one question designed to find adverse evidence, constraints, customer complaints, lawsuits, regulatory actions, competitive weakness, or missing metrics.
+- Record unsupported but important current facts as explicit `evidenceGaps` with the exact follow-up diligence path rather than burying them in prose.
+
+## Official website and article mining
+
+When `company.website` or `companyUrl` is available, each research skill mines the startup's official site for chapter-relevant evidence before relying on external snippets. Use homepage, sitemap, robots.txt, navigation, blog/news/resources, product, pricing, docs, changelog, customer stories, case studies, trust/security, status, partner, press, and funding pages as relevant.
+
+- Treat official website pages as strong evidence for what the company claims, sells, packages, documents, announces, and chooses to emphasize. Mark such claims as `company-claimed` or `observed` rather than independent validation.
+- Use official articles to extract product modules, buyer personas, use cases, vertical focus, customer proof, partner ecosystem, pricing/packaging, release chronology, security posture, policy statements, fundraising announcements, and management narrative.
+- Use independent sources to corroborate, challenge, or contextualize official-site claims. Do not treat company-authored blogs as independent proof of market size, competitive superiority, retention, revenue, or risk mitigation.
+- Preserve discovered article URLs in the owning artifact's `localEvidence.sources[]` and convert useful article facts into atomic `localEvidence.claims[]`. If an official page family is expected but missing, record an `evidenceGaps` item.
+- For competitor analysis, mine competitors' official sites, docs, pricing, customer pages, and changelogs when comparing features or packaging, but label competitor-authored claims honestly and corroborate important comparisons with independent sources where possible.
+
+## Raw artifact depth requirements
+
+Artifacts `01`–`08` are the research record, not just a thin handoff to the final report. Preserve enough source-backed detail in the original YAML so `startup-report` can write a detailed analysis with its own investment judgment.
+
+- Each analysis artifact must retain substantive sections, chapter-appropriate tables, structured figures, local sources, atomic local claims, evidence gaps, and notes explaining why key metrics are supported, estimated, conflicting, or unavailable.
+- Do not discard researched material merely because it may not appear on the final report card. Keep useful diligence evidence in the owned artifact under sections, tables, figures, and `localEvidence` so later report-writing can synthesize from a rich record.
+- Tables should include detailed comparables, timelines, pricing, product, customer, risk, and scenario rows where evidence supports them. If exact numbers are unavailable, include the qualitative row with `null` metrics and a clear diligence ask.
+- Final report-writing must synthesize from this raw record and add investor judgment, but it must not create new unsupported facts. If the raw artifacts are too thin for a detailed final view, route back to the owning skill and deepen the artifact before consolidation.
 
 ## Final validation
 
@@ -152,7 +182,7 @@ When a review finds accidental omissions, thin sections, or supportable data tha
 ## Evidence and YAML conventions
 
 - Keep reports YAML-first; do not add prose-only report deliverables.
-- Every final external factual claim should trace through canonical `claimRefs` to `100-evidence-ledger.yaml` claims and retained source URLs from `web_search` citations/annotations.
+- Every final external factual claim should trace through canonical `claimRefs` to `100-evidence-ledger.yaml` claims and retained source URLs with valid provenance: cited search result or directly reviewed page.
 - Use `null` with an explanation for unsupported private metrics; do not invent values.
 - Numeric KPI and chart values must be numbers, not strings.
 - Figures must use structured YAML specs rendered by the website; follow the schema instead of title-based heuristics.
