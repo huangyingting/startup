@@ -28,19 +28,25 @@ flowchart TD
   I -->|duplicate-risk| I1[Stop unless user requested refresh]
   I -->|clear| J[Startup Market and Competition Analyst]
   J --> J1[03-market-macro.yaml<br/>04-competitive-benchmarking.yaml]
-  J1 --> K[Startup Financial and Product Analyst]
+  J1 --> N1{Market/competition gaps<br/>supportable by more search?}
+  N1 -->|yes| O1[Evidence Analyst repair mode<br/>targeted web_search for stage gaps]
+  O1 --> O1a[Append cited sources and claims<br/>to 00/01 only]
+  O1a --> J
+  N1 -->|no, or explicitly documented| K[Startup Financial and Product Analyst]
   K --> K1[05-financial-unit-economics.yaml<br/>06-product-technology.yaml<br/>07-customer-retention.yaml]
-  K1 --> L[Startup Risk and Valuation Analyst]
+  K1 --> N2{Financial/product/customer gaps<br/>supportable by more search?}
+  N2 -->|yes| O2[Evidence Analyst repair mode<br/>targeted web_search for stage gaps]
+  O2 --> O2a[Append cited sources and claims<br/>to 00/01 only]
+  O2a --> K
+  N2 -->|no, or explicitly documented| L[Startup Risk and Valuation Analyst]
   L --> L1[08-risk-regulatory.yaml<br/>09-investment-valuation.yaml]
-  L1 --> M[Startup Report Writer]
+  L1 --> N3{Risk/valuation gaps<br/>supportable by more search?}
+  N3 -->|yes| O3[Evidence Analyst repair mode<br/>targeted web_search for stage gaps]
+  O3 --> O3a[Append cited sources and claims<br/>to 00/01 only]
+  O3a --> L
+  N3 -->|no, or explicitly documented| M[Startup Report Writer]
   M --> M1[10-report-document.yaml<br/>11-report-card.yaml]
-
-  M1 --> N{Accidental missing data?}
-  N -->|yes: null metrics, sparse tables,<br/>evidenceGaps, unresolvedGaps| O[Evidence Analyst repair mode<br/>targeted web_search for downstream gaps]
-  O --> O1[Append cited sources and claims<br/>to 00/01 only]
-  O1 --> P[Rerun affected specialist agents]
-  P --> M
-  N -->|no, or gaps unsupported<br/>and explicitly documented| Q[Startup Report Translator ZH]
+  M1 --> Q[Startup Report Translator ZH]
   Q --> Q1[10-report-document.zh.yaml<br/>11-report-card.zh.yaml]
   Q1 --> R[Build reports/_index.yaml]
   R --> S[npm run validate<br/>content checks, rendering contract, Astro build]

@@ -90,7 +90,7 @@ After every specialist:
 - Validate every figure against its schema Figure rendering contract. Reject empty arrays, non-canonical field shapes, string-valued numeric chart values, or figures whose visible cards/layers/nodes lack `label` plus `detail`/renderable content.
 - Reject any artifact that is missing its document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`) or begins with continuation prose / a mid-list fragment.
 
-After each 03–09 downstream specialist, run the downstream evidence repair loop below before moving to the next specialist. `Startup Report Writer` should assemble already-repaired analysis into `10`/`11`; after it runs, validate figure/table references and only repair if the writer exposed an accidental gap missed by the earlier stage gates. Run `Startup Report Translator ZH` only after all repair/rerun loops are complete. After the translator writes both required `.zh.yaml` files, run `npm run validate` when dependencies are available.
+After each 03–09 downstream specialist, run the downstream evidence repair loop below before moving to the next specialist. `Startup Report Writer` should assemble already-repaired analysis into `10`/`11`; it is not a missing-data repair gate. If the Writer exposes an accidental gap missed by the earlier stage gates, send that gap back through the matching 03–09 specialist gate, then rerun the Writer. Run `Startup Report Translator ZH` only after all repair/rerun loops are complete. After the translator writes both required `.zh.yaml` files, run `npm run validate` when dependencies are available.
 
 ## Downstream evidence repair loop
 
