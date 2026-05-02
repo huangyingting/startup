@@ -31,7 +31,7 @@
 - Downstream stages must not run until upstream YAML exists, parses, and all `claimRefs` / `sourceRefs` are valid.
 - Agents must write complete YAML artifacts directly under `reports/<run>/`; do not use temporary files as canonical report output.
 - A complete report folder contains `00-report-brief.yaml` through `11-report-card.yaml` plus the required `10-report-document.zh.yaml` and `11-report-card.zh.yaml`. The website index includes complete reports only.
-- Use repair as a downstream-gap evidence loop. After downstream artifacts are generated, inspect null metrics, `evidenceGaps`, `unresolvedGaps`, sparse figures/tables, and “unknown” conclusions. For gaps that are likely answerable by more research, rerun `Startup Report Evidence Analyst` in `mode: repair` to add cited/annotated `web_search` sources and claims to `01-evidence-ledger.yaml`, then rerun the affected downstream specialists, the Report Writer, and the ZH translator. The Evidence Analyst must not edit 02–11 or translations directly.
+- Use repair as a downstream-gap evidence loop during the 03–09 specialist stages. After each downstream specialist writes its artifacts, inspect null metrics, `evidenceGaps`, `unresolvedGaps`, sparse figures/tables, and “unknown” conclusions before moving to the next stage. For gaps that are likely answerable by more research, rerun `Startup Report Evidence Analyst` in `mode: repair` to add cited/annotated `web_search` sources and claims to `01-evidence-ledger.yaml`, then rerun the affected specialist. `10-report-document.yaml` and `11-report-card.yaml` should assemble already-repaired analysis, not be the first place accidental data gaps are discovered.
 
 ## YAML schema conventions
 
@@ -74,5 +74,5 @@
 
 - `research-startup.yml` uses Node 22, installs `@github/copilot`, runs generation, rebuilds `reports/_index.yaml`, validates, rejects partial report folders, then commits `reports/` when changed.
 - Required secrets are `COPILOT_PAT` for the Copilot CLI and `STARTUP_PAT` for checkout/push.
-- Single-company mode invokes `copilot --agent "Startup Research"`.
-- Recent-unicorns mode invokes the default Copilot agent without `--agent`, then the default agent launches company-specific `Startup Research` subagents.
+- Single-company mode invokes `copilot --agent "Startup Research"`; the `Startup Research` agent owns specialist orchestration, the post-`02` duplicate-company check, downstream-gap repair/rerun loops, and final validation.
+- Recent-unicorns mode invokes the default Copilot agent without `--agent`, then the default agent launches company-specific `Startup Research` subagents. Each subagent owns its own duplicate check and downstream-gap repair loop before producing required ZH artifacts.
