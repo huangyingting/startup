@@ -75,7 +75,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const node = d3.select('body').selectAll('.d3-chart-tooltip').data([null]).join('div').attr('class', 'd3-chart-tooltip');
     const move = (event) => {
       const offset = 14;
-      node.style('left', `${event.clientX + offset}px`).style('top', `${event.clientY + offset}px`);
+      const tooltipNode = node.node();
+      const box = tooltipNode?.getBoundingClientRect?.() ?? { width: 0, height: 0 };
+      const left = Math.max(8, Math.min(window.innerWidth - box.width - 8, event.clientX + offset));
+      const top = Math.max(8, Math.min(window.innerHeight - box.height - 8, event.clientY + offset));
+      node.style('left', `${left}px`).style('top', `${top}px`);
     };
     return {
       show(event, html) {
@@ -90,13 +94,18 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
   })();
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
   const tooltipHtml = (title, lines = []) => `<strong>${escapeHtml(title)}</strong>${lines.filter(Boolean).map((line) => `<span>${escapeHtml(line)}</span>`).join('')}`;
+  const shouldShowTooltip = () => window.innerWidth >= 700 && !window.matchMedia?.('(pointer: coarse)')?.matches;
   const withTooltip = (selection, htmlForDatum) => selection
     .style('cursor', 'default')
     .on('pointerenter', function(event, datum) {
       d3.select(this).classed('is-hovered', true);
-      tooltip.show(event, typeof htmlForDatum === 'function' ? htmlForDatum(datum) : htmlForDatum);
+      if (!shouldShowTooltip()) return;
+      const html = typeof htmlForDatum === 'function' ? htmlForDatum(datum) : htmlForDatum;
+      tooltip.show(event, html);
     })
-    .on('pointermove', tooltip.move)
+    .on('pointermove', (event) => {
+      if (shouldShowTooltip()) tooltip.move(event);
+    })
     .on('pointerleave', function() {
       d3.select(this).classed('is-hovered', false);
       tooltip.hide();
@@ -130,14 +139,16 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     });
   };
   const svgBase = (element, height = 340) => {
-    const width = Math.max(520, Math.floor(element.getBoundingClientRect().width || 760));
+    const containerWidth = Math.floor(element.getBoundingClientRect().width || 760);
+    const width = Math.max(520, containerWidth);
+    const displayHeight = Math.ceil(height * Math.min(1, containerWidth / width));
     d3.select(element).selectAll('*').remove();
     const svg = d3.select(element)
       .append('svg')
       .attr('viewBox', `0 0 ${width} ${height}`)
       .attr('role', 'img')
       .attr('width', '100%')
-      .attr('height', height)
+      .attr('height', displayHeight)
       .style('display', 'block');
     return { svg, width, height };
   };
@@ -193,7 +204,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     });
     card.append('text').attr('text-anchor', 'middle').attr('y', 20).attr('fill', palette.muted).attr('font-size', chartFont.small).text((node) => labelText(node.detail, 26));
     card.each(function(node) { addTitle(d3.select(this), `${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
-    withTooltip(card, (node) => tooltipHtml(node.label, [node.detail]));
   };
 
   const renderFlow = (element, payload) => {
@@ -204,50 +214,80 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       const to = edge.to ?? edge.target;
       return (from === source._key || from === source.id || from === source.label) && (to === target._key || to === target.id || to === target.label);
     });
-    const cardH = 78;
-    const gap = 38;
-    const margin = { top: 22, right: 34, bottom: 28, left: 34 };
+    const containerWidth = element.getBoundingClientRect().width || 760;
+    const compact = containerWidth < 520;
+    const cardH = compact ? 96 : 118;
+    const gap = compact ? 18 : 34;
+    const margin = compact ? { top: 14, right: 18, bottom: 18, left: 16 } : { top: 24, right: 34, bottom: 30, left: 30 };
     const { svg, width, height } = svgBase(element, Math.max(260, margin.top + margin.bottom + nodes.length * cardH + Math.max(0, nodes.length - 1) * gap));
-    const cardW = width - margin.left - margin.right;
-    const cardX = margin.left;
+    const railX = margin.left + (compact ? 24 : 34);
+    const cardX = margin.left + (compact ? 64 : 96);
+    const cardW = width - cardX - margin.right;
     const defs = svg.append('defs');
-    defs.append('marker').attr('id', `${payload.id}-flow-arrow`).attr('viewBox', '0 0 10 10').attr('refX', 5).attr('refY', 8).attr('markerWidth', 8).attr('markerHeight', 8).attr('orient', 'auto')
-      .append('path').attr('d', 'M1,1 L5,9 L9,1').attr('fill', palette.claret);
+    const gradient = defs.append('linearGradient').attr('id', `${payload.id}-flow-card-bg`).attr('x1', '0%').attr('x2', '100%');
+    gradient.append('stop').attr('offset', '0%').attr('stop-color', '#fff7ef');
+    gradient.append('stop').attr('offset', '100%').attr('stop-color', '#fbf0e8');
+    defs.append('filter').attr('id', `${payload.id}-flow-shadow`).attr('x', '-8%').attr('y', '-16%').attr('width', '116%').attr('height', '132%')
+      .append('feDropShadow').attr('dx', 0).attr('dy', 2).attr('stdDeviation', 3).attr('flood-color', '#33302e').attr('flood-opacity', 0.12);
+    defs.append('marker').attr('id', `${payload.id}-flow-arrow`).attr('viewBox', '0 0 10 10').attr('refX', 8.5).attr('refY', 5).attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto')
+      .append('path').attr('d', 'M0,0 L10,5 L0,10 Z').attr('fill', palette.claret);
     const stepY = (index) => margin.top + index * (cardH + gap);
-    const connectors = svg.append('g').selectAll('g').data(nodes.slice(0, -1).map((node, index) => ({ source: node, target: nodes[index + 1], edge: edgeBetween(node, nodes[index + 1]), index }))).join('g');
+    const connectorData = nodes.slice(0, -1).map((node, index) => ({ source: node, target: nodes[index + 1], edge: edgeBetween(node, nodes[index + 1]), index }));
+    const visibleEdgeLabel = (edge) => {
+      const label = String(edge?.label ?? '').trim();
+      if (!label || ['therefore', 'decision', 'next'].includes(label.toLowerCase())) return null;
+      return label;
+    };
+    const connectors = svg.append('g').selectAll('g').data(connectorData).join('g');
     connectors.append('line')
-      .attr('x1', width / 2)
-      .attr('x2', width / 2)
-      .attr('y1', (d) => stepY(d.index) + cardH + 4)
-      .attr('y2', (d) => stepY(d.index + 1) - 8)
+      .attr('x1', railX)
+      .attr('x2', railX)
+      .attr('y1', (d) => stepY(d.index) + cardH / 2 + (compact ? 18 : 24))
+      .attr('y2', (d) => stepY(d.index + 1) + cardH / 2 - (compact ? 18 : 24))
       .attr('stroke', palette.claret)
-      .attr('stroke-width', 2.2)
+      .attr('stroke-width', compact ? 2 : 2.4)
+      .attr('stroke-linecap', 'round')
       .attr('marker-end', `url(#${payload.id}-flow-arrow)`);
-    connectors.append('text')
-      .attr('x', width / 2 + 14)
-      .attr('y', (d) => stepY(d.index) + cardH + gap / 2 + 3)
-      .attr('fill', palette.muted)
+    const connectorLabels = svg.append('g').selectAll('g').data(connectorData.filter((d) => visibleEdgeLabel(d.edge))).join('g');
+    connectorLabels.append('rect')
+      .attr('x', railX - 42)
+      .attr('y', (d) => (stepY(d.index) + stepY(d.index + 1) + cardH) / 2 - 12)
+      .attr('width', 84)
+      .attr('height', 24)
+      .attr('rx', 12)
+      .attr('fill', palette.paper)
+      .attr('stroke', palette.border);
+    connectorLabels.append('text')
+      .attr('x', railX)
+      .attr('y', (d) => (stepY(d.index) + stepY(d.index + 1) + cardH) / 2 + 4)
+      .attr('text-anchor', 'middle')
+      .attr('fill', palette.claret)
       .attr('font-size', chartFont.small)
-      .attr('font-weight', 800)
-      .text((d) => labelText(d.edge?.label ?? 'next', 34));
+      .attr('font-weight', 900)
+      .text((d) => labelText(visibleEdgeLabel(d.edge), 12));
+    const railNodes = svg.append('g').selectAll('g').data(nodes).join('g').attr('transform', (_node, index) => `translate(${railX},${stepY(index) + cardH / 2})`);
+    railNodes.append('circle').attr('r', compact ? 17 : 22).attr('fill', '#fff7ef').attr('stroke', (node) => colorForTone(node.tone)).attr('stroke-width', compact ? 2.4 : 3);
+    railNodes.append('circle').attr('r', compact ? 12 : 16).attr('fill', (node) => colorForTone(node.tone));
+    railNodes.append('text').attr('y', compact ? 4 : 5).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', compact ? 10 : 12).attr('font-weight', 950).text((node) => node._index + 1);
     const cards = svg.append('g').selectAll('g').data(nodes).join('g').attr('transform', (_node, index) => `translate(${cardX},${stepY(index)})`);
     cards.append('rect')
       .attr('width', cardW)
       .attr('height', cardH)
-      .attr('rx', 8)
-      .attr('fill', (_node, index) => index === 0 ? 'rgba(15, 118, 110, 0.08)' : index === nodes.length - 1 ? 'rgba(153, 15, 61, 0.08)' : '#fff7ef')
+      .attr('rx', 12)
+      .attr('fill', (_node, index) => index === 0 ? 'rgba(15, 118, 110, 0.08)' : index === nodes.length - 1 ? 'rgba(153, 15, 61, 0.08)' : `url(#${payload.id}-flow-card-bg)`)
       .attr('stroke', (node) => colorForTone(node.tone))
-      .attr('stroke-width', 1.8);
-    cards.append('circle').attr('cx', 28).attr('cy', cardH / 2).attr('r', 16).attr('fill', (node) => colorForTone(node.tone));
-    cards.append('text').attr('x', 28).attr('y', cardH / 2 + 4).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', 12).attr('font-weight', 900).text((node) => node._index + 1);
-    cards.append('text').attr('x', 58).attr('y', 27).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 900).each(function(node) {
-      renderWrappedText(d3.select(this), node.label, { maxChars: 52, maxLines: 1, lineHeight: 14 });
+      .attr('stroke-width', 1.9)
+      .attr('filter', `url(#${payload.id}-flow-shadow)`);
+    cards.append('rect').attr('width', compact ? 5 : 7).attr('height', cardH).attr('rx', 4).attr('fill', (node) => colorForTone(node.tone));
+    const textX = compact ? 18 : 24;
+    cards.append('text').attr('x', textX).attr('y', compact ? 18 : 26).attr('fill', palette.claret).attr('font-size', compact ? 8.5 : 10).attr('font-weight', 900).attr('letter-spacing', '0.08em').text((node) => node._index === nodes.length - 1 ? 'DECISION' : node.tone === 'risk' || node.tone === 'critical' || node.tone === 'high' ? 'CONSTRAINT' : 'EVIDENCE');
+    cards.append('text').attr('x', textX).attr('y', compact ? 40 : 52).attr('fill', palette.ink).attr('font-size', compact ? 14.5 : 17).attr('font-weight', 950).each(function(node) {
+      renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(compact ? 22 : 24, Math.floor((cardW - textX * 2) / (compact ? 7.8 : 8.4))), maxLines: 2, lineHeight: compact ? 15 : 18 });
     });
-    cards.append('text').attr('x', 58).attr('y', 53).attr('fill', palette.muted).attr('font-size', chartFont.small).attr('font-weight', 650).each(function(node) {
-      renderWrappedText(d3.select(this), node.detail, { maxChars: 76, maxLines: 2, lineHeight: 13 });
+    cards.append('text').attr('x', textX).attr('y', compact ? 66 : 84).attr('fill', palette.muted).attr('font-size', compact ? 10.5 : chartFont.small).attr('font-weight', 680).each(function(node) {
+      renderWrappedText(d3.select(this), node.detail, { maxChars: Math.max(compact ? 34 : 40, Math.floor((cardW - textX * 2) / (compact ? 6.2 : 6.5))), maxLines: compact ? 2 : 3, lineHeight: compact ? 12 : 15 });
     });
     cards.each(function(node) { addTitle(d3.select(this), `${node._index + 1}. ${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
-    withTooltip(cards, (node) => tooltipHtml(`${node._index + 1}. ${node.label}`, [node.detail]));
   };
 
   const firstNonEmpty = (...values) => values.find((value) => Array.isArray(value) && value.length > 0) ?? [];
@@ -267,7 +307,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     rows.append('text').attr('x', railX + 44).attr('y', 42).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 900).text((d) => labelText(d.label, 48));
     rows.append('text').attr('x', railX + 44).attr('y', 61).attr('fill', palette.muted).attr('font-size', chartFont.small).text((d) => labelText(d.detail, 86));
     rows.each(function(d) { addTitle(d3.select(this), `${d.date ?? ''} ${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
-    withTooltip(rows, (d) => tooltipHtml(d.label, [d.date ?? d.period ?? d.year, d.detail]));
   };
 
   const renderStack = (element, payload) => {
@@ -283,7 +322,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     groups.append('text').attr('x', 22).attr('y', 48).attr('fill', palette.muted).attr('font-size', chartFont.small).text((d) => labelText(d.detail, 78));
     groups.append('text').attr('x', cardW - 20).attr('y', 42).attr('text-anchor', 'end').attr('fill', palette.claret).attr('font-size', 18).attr('font-weight', 900).text((_d, index) => String(index + 1).padStart(2, '0'));
     groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
-    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail]));
   };
 
   const renderLayeredLens = (element, payload) => {
@@ -300,7 +338,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     groups.append('text').attr('x', 22).attr('y', 27).attr('fill', palette.claret).attr('font-size', 20).attr('font-weight', 950).text((d) => labelText(d.label, 18));
     groups.append('text').attr('x', 22).attr('y', 50).attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 750).text((d) => labelText(d.detail, 74));
     groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
-    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail]));
   };
 
   const renderBridge = (element, payload) => {
@@ -322,7 +359,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     groups.append('rect').attr('x', -72).attr('y', (_d, index) => index % 2 === 0 ? -92 : 34).attr('width', 144).attr('height', 52).attr('rx', 9).attr('fill', '#fff7ef').attr('stroke', palette.border);
     groups.append('text').attr('x', 0).attr('y', (_d, index) => index % 2 === 0 ? -68 : 57).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 850).each(function(d) { renderWrappedText(d3.select(this), d.label, { maxChars: 18, maxLines: 2, lineHeight: 13 }); });
     groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
-    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail]));
   };
 
   const renderLogicChain = (element, payload) => {
@@ -360,7 +396,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       cards.append('text').attr('x', 14).attr('y', 24).attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 900).text((d) => labelText(d.label, 24));
       cards.append('text').attr('x', 14).attr('y', 45).attr('fill', palette.muted).attr('font-size', 11).text((d) => labelText(d.detail, 32));
       cards.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
-      withTooltip(cards, (d) => tooltipHtml(d.label, [d.detail]));
     });
     [1, 2].forEach((index) => svg.append('text').attr('x', margin.left + index * colW).attr('y', margin.top + 110).attr('text-anchor', 'middle').attr('fill', palette.claret).attr('font-size', 24).attr('font-weight', 900).text('→'));
   };
@@ -380,7 +415,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     groups.append('text').attr('x', 16).attr('y', 78).attr('fill', palette.claret).attr('font-size', 26).attr('font-weight', 950).text((d) => labelText(fullValueLabel(d), 12));
     groups.append('text').attr('x', 16).attr('y', 106).attr('fill', palette.muted).attr('font-size', 11).text((d) => labelText(d.detail, Math.max(18, Math.floor(cardW / 7))));
     groups.each(function(d) { addTitle(d3.select(this), `${d.label}: ${fullValueLabel(d)}${d.detail ? ` — ${d.detail}` : ''}`); });
-    withTooltip(groups, (d) => tooltipHtml(d.label, [fullValueLabel(d), d.detail]));
   };
 
   const renderBars = (element, payload) => {
@@ -395,7 +429,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('x', x(0)).attr('y', (d) => y(d.label)).attr('width', (d) => Math.max(2, x(numberValue(d.value)) - x(0))).attr('height', y.bandwidth())
       .attr('rx', 4).attr('fill', (d) => colorForTone(d.tone));
     bars.each(function(d) { addTitle(d3.select(this), `${d.label}: ${valueLabel(d)}`); });
-    withTooltip(bars, (d) => tooltipHtml(d.label, [valueLabel(d), d.detail]));
     svg.append('g').selectAll('text').data(items).join('text')
       .attr('x', (d) => Math.min(width - margin.right + 6, x(numberValue(d.value)) + 8)).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4)
       .attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => labelText(valueLabel(d), 16));
@@ -424,7 +457,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('x', (d) => x(d.label)).attr('width', x.bandwidth()).attr('y', (d) => y(d.end)).attr('height', (d) => Math.max(2, y(d.start) - y(d.end)))
       .attr('fill', (d) => d.value < 0 ? palette.risk : colorForTone(d.tone)).attr('rx', 3);
     bars.each(function(d) { addTitle(d3.select(this), `${d.label}: ${valueLabel(d) || d.value}`); });
-    withTooltip(bars, (d) => tooltipHtml(d.label, [valueLabel(d) || d.value, d.detail]));
     svg.append('g').selectAll('text').data(points).join('text')
       .attr('x', (d) => x(d.label) + x.bandwidth() / 2).attr('y', (d) => Math.max(margin.top + 10, y(d.end) - 7)).attr('text-anchor', 'middle')
       .attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', 800).text((d) => labelText(valueLabel(d), 10));
@@ -451,7 +483,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       stage.append('text').attr('x', cx).attr('y', y + stageH / 2 - 3).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', chartFont.label).attr('font-weight', 900).text(labelText(item.label, 24));
       stage.append('text').attr('x', cx).attr('y', y + stageH / 2 + 17).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', chartFont.small).attr('font-weight', 700).text(valueLabel(item));
       addTitle(stage, `${item.label}: ${valueLabel(item)}`);
-      withTooltip(stage, tooltipHtml(item.label, [valueLabel(item), item.detail]));
     });
   };
 
@@ -472,7 +503,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     groups.append('circle').attr('cx', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max)) / 2)))).attr('cy', (d) => y(d.label) + y.bandwidth() / 2).attr('r', 5).attr('fill', '#fff7ef').attr('stroke', palette.ink).attr('stroke-width', 2);
     groups.append('text').attr('x', (d) => Math.min(width - margin.right + 8, x(numberValue(d.high ?? d.max ?? d.value)) + 10)).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', 800).text((d) => labelText(d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`, 16));
     groups.each(function(d) { addTitle(d3.select(this), `${d.label}: ${d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`}`); });
-    withTooltip(groups, (d) => tooltipHtml(d.label, [d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`, d.detail]));
   };
 
   const renderQuadrant = (element, payload) => {
@@ -683,6 +713,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
   :global(.d3-chart-tooltip.is-visible) { opacity: 1; transform: translateY(0); }
   :global(.d3-chart-tooltip strong) { display: block; font-family: var(--font-display); font-size: 0.94rem; line-height: 1.2; color: var(--claret); }
   :global(.d3-chart-tooltip span) { display: block; color: var(--caption-gray); }
+  @media (max-width: 699px), (pointer: coarse) { :global(.d3-chart-tooltip), :global(.d3-chart-tooltip.is-visible) { display: none; opacity: 0; } }
   .chart-bars, .chart-sensitivity { min-height: 240px; }
   .chart-quadrant { min-height: 380px; }
   .chart-heatmap { min-height: 430px; }
