@@ -13,6 +13,7 @@ Use this skill after `01-company-snapshot.yaml` exists and parses. Read `schemaP
 Write exactly:
 
 - `02-market-macro.yaml`
+- `02-market-macro.zh.yaml` (Simplified Chinese sibling)
 
 ## Dynamic evidence use
 
@@ -47,6 +48,10 @@ Expected table families unless unavailable with a documented gap: market definit
 - Prefer `market-sizing-lens` for TAM/SAM/SOM or constrained sizing.
 - For bars or metric views, use numeric `value` and formatted `displayValue`.
 - Use canonical renderer fields only: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`.
+
+## Simplified Chinese sibling
+
+Immediately after writing `02-market-macro.yaml`, write `02-market-macro.zh.yaml` as its full Simplified Chinese translation, following `.github/references/zh-translation.md`. Preserve schema keys, IDs, claim/source IDs, numeric values, enums, array order, and YAML serialization style; translate every prose field including `chapter.title`, `chapter.summary`, callouts, sections, table cells, figure node detail, and notes. Do not move on to the next skill until both English and Chinese files exist and pass the residual-English sweep and structural-parity checks.
 
 ## Handoff note
 

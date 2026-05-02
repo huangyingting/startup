@@ -1,0 +1,670 @@
+schemaVersion: startup-diligence-report-v2
+artifact: risk-regulatory
+slug: anthropic
+runDate: 2026-05-02
+company:
+  name: Anthropic
+  website: https://www.anthropic.com/
+chapter:
+  number: 7
+  title: Risk & Regulatory
+  summary: |
+    Anthropic's risk profile is high but unusually visible. The biggest underwriting risks are copyright/data
+    provenance litigation, compute and hyperscaler concentration, product reliability regressions, AI misuse,
+    privacy/data-retention exposure, and frontier-AI safety regulation. Mitigants include a public Responsible
+    Scaling Policy, SB 53 compliance framework, commercial no-training terms, trust/security programs, usage
+    policy enforcement, multi-cloud deployment, and unusually detailed postmortems. Residual risk remains high
+    because legal outcomes, gross-to-net cloud economics, critical-incident history, customer concentration, and
+    formal certification details are not fully public.
+  claimRefs:
+    - C093
+    - C094
+    - C095
+    - C096
+    - C097
+    - C098
+    - C099
+    - C100
+    - C101
+    - C102
+    - C103
+    - C104
+callouts:
+  - type: risk-alert
+    title: Copyright litigation is a quantified, still-pending legal overhang.
+    body: |
+      The Bartz settlement is preliminarily approved at $1.5B, with final approval scheduled for May 14, 2026.
+      It narrows one major class-action path but does not eliminate broader data-provenance, licensing, music
+      publisher, or future rightsholder claims.
+    claimRefs:
+      - C093
+      - C094
+      - C095
+  - type: key-insight
+    title: Safety governance is a real mitigation, not just marketing.
+    body: |
+      Anthropic publicly maintains an RSP, a Frontier Compliance Framework for California SB 53, system cards,
+      voluntary-commitments reporting, threat-intelligence reports, policy enforcement, and vulnerability
+      disclosure processes. Investors should still verify operating evidence and compliance artifacts directly.
+    claimRefs:
+      - C096
+      - C097
+      - C098
+      - C099
+      - C100
+      - C107
+tables:
+  - id: T701
+    title: Severity-ranked risk register
+    columns:
+      - Risk
+      - Severity
+      - Probability
+      - Evidence
+      - Residual underwriting view
+    rows:
+      - - Copyright and training-data litigation
+        - High
+        - High
+        - $1.5B Bartz settlement pending final approval; music publisher litigation remains pending
+        - Quantified cash hit plus ongoing licensing/provenance precedent risk.
+      - - Compute / cloud concentration
+        - High
+        - High
+        - $100B+ AWS commitment, AWS primary provider, multiple-gigawatt Google/Broadcom TPU expansion
+        - Strategic asset but fixed-capacity, partner, silicon, and gross-margin risk.
+      - - Product reliability and quality regression
+        - High
+        - Medium
+        - April 2026 Claude Code/Agent SDK/Cowork quality postmortem; 2025 infrastructure-bug postmortem
+        - Can affect developer trust and renewal even without model-weight degradation.
+      - - Frontier AI regulation and safety obligations
+        - High
+        - Medium
+        - California SB 53 compliance framework, RSP v3.2, system-card/risk-report practices
+        - Regulatory burden and incident-reporting exposure likely rise with capability.
+      - - AI misuse and cyber abuse
+        - High
+        - Medium
+        - Anthropic reported Claude misuse in extortion, fraud, ransomware, and cyber operations
+        - Controls are active but arms race is structural.
+      - - Privacy and data-retention exposure
+        - Medium
+        - Medium
+        - Consumer model-improvement choice and five-year retention if enabled; commercial no-training terms
+        - Enterprise risk lower under contracts; consumer/prosumer confusion remains.
+      - - Customer concentration / retention opacity
+        - High
+        - Medium
+        - 1,000+ $1M customers but no public top-customer schedule, NRR, GRR, or churn
+        - Can amplify revenue and valuation downside if top accounts churn.
+      - - Geopolitical/export controls
+        - Medium
+        - Medium
+        - Anthropic supports AI chip/model-weight export controls and notes offshore semiconductor vulnerabilities
+        - Policy helps U.S. moat but constrains international growth and supply flexibility.
+      - - Certification / security evidence gap
+        - Medium
+        - Medium
+        - Trust center exists; fetched content did not expose complete SOC/ISO/BAA/security reports
+        - Must verify certifications, pentests, and incident response before regulated underwriting.
+    notes: Severity reflects investment downside, not only legal liability.
+    claimRefs:
+      - C093
+      - C094
+      - C095
+      - C096
+      - C097
+      - C098
+      - C099
+      - C100
+      - C101
+      - C102
+      - C103
+      - C104
+      - C105
+      - C106
+      - C107
+      - C112
+  - id: T702
+    title: Regulatory and legal risk table
+    columns:
+      - Risk area
+      - Current evidence
+      - Status
+      - Mitigation
+      - Open diligence
+    rows:
+      - - Bartz book-copyright settlement
+        - >-
+          Authors Guild says summary judgment found legal-book training fair use for named plaintiffs but piracy claims
+          were not fair use; settlement fund is $1.5B
+        - Preliminarily approved; final hearing scheduled May 14, 2026
+        - Settlement process and eligible-work claims administration
+        - >-
+          Final approval, appeals, payment timing, insurance coverage, accounting treatment, and future data-licensing
+          controls.
+      - - Music publishers / lyrics litigation
+        - >-
+          Reliable reporting says publishers seek rulings against Anthropic's fair-use defenses while Anthropic argues
+          training is transformative
+        - Pending
+        - Fair-use defense and output controls
+        - Case docket, injunction risk, damages range, settlement posture, and training-data/license remediation.
+      - - Frontier AI safety regulation
+        - >-
+          SB 53 requires public catastrophic-risk framework; Anthropic published a Frontier Compliance Framework and
+          maintains RSP
+        - Active compliance requirement
+        - RSP, FCF, system cards, risk reports, whistleblower channels
+        - Board oversight, internal audit, incident-reporting drills, and regulator correspondence.
+      - - Privacy and data protection
+        - >-
+          Privacy policy identifies inputs, outputs, feedback, usage/log data, controller/processor roles, and
+          model-training data sources
+        - Ongoing compliance exposure
+        - >-
+          Commercial terms state no model training on Customer Content; consumer users can control model-improvement
+          setting
+        - DPA, subprocessors, cross-border transfers, deletion SLAs, opt-out UX, and non-user data rights.
+      - - Usage-policy enforcement
+        - >-
+          Usage Policy prohibits illegal, cyber, weapons, privacy, and high-risk abuse and allows
+          throttling/suspension/output blocking
+        - Operationally active
+        - Detection/monitoring, safeguards team, account enforcement
+        - False positive/negative rates, enforcement audit logs, appeal path, and reseller enforcement.
+    notes: No unsupported government-investigation claims are included.
+    claimRefs:
+      - C093
+      - C094
+      - C095
+      - C096
+      - C097
+      - C098
+      - C099
+      - C107
+      - C108
+      - C109
+  - id: T703
+    title: Partner, supplier, and concentration risk
+    columns:
+      - Dependency
+      - Evidence
+      - Risk transmission
+      - Mitigation / offset
+      - Diligence ask
+    rows:
+      - - AWS
+        - >-
+          Amazon says Anthropic committed to spend more than $100B over ten years, secure up to 5GW capacity, and use
+          AWS as primary training/cloud provider
+        - Vendor pricing, Trainium roadmap, AWS outages, committed spend, and channel gross-to-net economics
+        - Primary provider with Project Rainier, AWS distribution, and Amazon investment
+        - Contract minimums, termination rights, service credits, data residency, and related-party economics.
+      - - Google / Broadcom TPUs
+        - Anthropic announced multiple-gigawatt next-generation TPU capacity with Google and Broadcom starting in 2027
+        - Hardware availability, TPU roadmap, Broadcom supply, and concentration in hyperscaler silicon
+        - Multi-chip portfolio across AWS Trainium, Google TPUs, and NVIDIA GPUs
+        - Capacity schedule, price/performance, feature parity, and migration constraints.
+      - - Microsoft Azure
+        - Anthropic says Claude is available on AWS Bedrock, Google Vertex AI, and Microsoft Azure Foundry
+        - Distribution dependency and enterprise procurement expectations
+        - Multi-cloud availability reduces single-channel customer lock-in
+        - Actual Azure share, terms, support obligations, and regional availability.
+      - - Strategic customers / platform partners
+        - Customer chapter shows strong platform proof but no public top-customer revenue schedule
+        - Concentrated account churn can propagate to revenue, valuation, and compute commitments
+        - 1,000+ $1M customers and 8/10 Fortune 10 provide breadth signal
+        - Top 10/25 revenue, renewal timing, and partner/customer overlap.
+      - - Semiconductor geopolitics
+        - >-
+          Anthropic notes 90% of leading-edge semiconductors are made outside the U.S. and advocates stronger export
+          controls
+        - Supply disruption, export restrictions, non-U.S. market access limits
+        - U.S.-sited infrastructure commitments and export-control advocacy
+        - Supply chain resilience, geography of data centers, and export-license exposure.
+    notes: >-
+      The key risk is not single-cloud dependence; it is concentration in a few hyperscalers and fixed compute
+      commitments.
+    claimRefs:
+      - C101
+      - C102
+      - C103
+      - C104
+      - C106
+      - C112
+  - id: T704
+    title: Operational, security, privacy, and model-risk table
+    columns:
+      - Risk
+      - Public evidence
+      - Severity
+      - Current mitigation
+      - Residual gap
+    rows:
+      - - Claude Code / agent quality regression
+        - April 23 postmortem traced quality issues to product-layer changes and said all were resolved April 20
+        - High
+        - Postmortem, revert/fixes, usage-limit reset, planned process changes
+        - Enterprise churn, support tickets, incident credits, and regression dashboard.
+      - - Infrastructure output degradation
+        - >-
+          Anthropic postmortem says August-September 2025 bugs degraded Claude responses on subsets of traffic across
+          routing, TPU output corruption, and compiler behavior
+        - High
+        - Fixes, tests, monitoring, cross-platform validation
+        - Longitudinal uptime/quality SLOs and cloud-specific incident history.
+      - - Security vulnerabilities discovered by Anthropic
+        - >-
+          Coordinated Vulnerability Disclosure policy targets 90-day disclosure, 7-day timelines for actively exploited
+          critical vulnerabilities, and human-reviewed AI-assisted reports
+        - Medium
+        - Disclosure policy, pacing, maintainer coordination, vulnerability handling
+        - External researcher scope, bug bounty results, pentest findings.
+      - - AI misuse
+        - >-
+          Threat-intelligence report documents large-scale extortion using Claude Code, North Korean employment fraud,
+          and ransomware-related misuse
+        - High
+        - Banned accounts, tailored classifier, new detection methods, sharing indicators with authorities
+        - Detection recall/precision, abuse operations backlog, and regulator/customer notification thresholds.
+      - - Consumer privacy / retention
+        - >-
+          Consumer users may allow Free/Pro/Max and consumer Claude Code chats/coding sessions to improve Claude; data
+          retained five years if enabled
+        - Medium
+        - User control, deletion exclusion from future training, sensitive-data filtering, no sale of user data
+        - Opt-in/opt-out UX evidence, audit logs, and regulated-user education.
+      - - Commercial data confidentiality
+        - >-
+          Commercial Terms state customer retains Inputs, owns Outputs, and Anthropic may not train models on Customer
+          Content
+        - Medium
+        - Commercial Terms, DPA incorporation, confidentiality terms
+        - Enterprise DPA review, subprocessors, audit rights, and breach notice terms.
+    notes: Operational risks are not hypothetical; Anthropic's transparency helps quantify the control gaps.
+    claimRefs:
+      - C098
+      - C099
+      - C100
+      - C105
+      - C107
+      - C108
+      - C109
+      - C110
+  - id: T705
+    title: Credit, counterparty, and balance-sheet risk framework
+    columns:
+      - Risk type
+      - Applicability
+      - Evidence
+      - Underwriting implication
+    rows:
+      - - Credit/default risk
+        - Low direct relevance
+        - Anthropic is not a lending/payments balance-sheet company in public evidence
+        - Focus diligence on contractual liabilities rather than loan loss.
+      - - Legal-payment risk
+        - High relevance
+        - $1.5B Bartz settlement pending final approval
+        - Confirm cash reserve, insurance, expense recognition, and incremental litigation exposure.
+      - - Compute-commitment risk
+        - High relevance
+        - $100B+ AWS commitment plus multiple-gigawatt Google/Broadcom expansion
+        - Treat as capex-like fixed obligation in downside scenarios.
+      - - Counterparty concentration
+        - High relevance
+        - AWS primary provider; Google/Broadcom secondary expansion; cloud marketplaces and strategic investors overlap
+        - Analyze related-party terms, channel economics, and operational dependency.
+      - - Customer receivables / revenue quality
+        - Medium relevance
+        - Public revenue scale but no disclosed concentration or net revenue
+        - Request aging, committed spend, refunds/credits, and gross-to-net reconciliation.
+    notes: >-
+      Anthropic has no obvious credit underwriting exposure, but large contractual obligations create balance-sheet
+      risk.
+    claimRefs:
+      - C093
+      - C101
+      - C102
+      - C103
+  - id: T706
+    title: Mitigation framework and kill criteria
+    columns:
+      - Risk cluster
+      - Mitigation evidence
+      - Residual risk
+      - Stop-loss / kill criteria
+    rows:
+      - - Copyright/data provenance
+        - Settlement process; privacy/model-training disclosures; commercial no-training terms
+        - High
+        - >-
+          Material adverse copyright ruling beyond reserved liability; inability to evidence licensed/provenanced
+          training data; new injunction limiting core model use.
+      - - Safety/regulation
+        - RSP v3.2, SB 53 FCF, system cards, risk reports, voluntary commitments
+        - Medium-high
+        - >-
+          Regulatory finding of framework noncompliance; undisclosed severe safety incident; whistleblower
+          substantiation of governance failure.
+      - - Compute economics
+        - AWS/Google/Broadcom capacity, multi-hardware strategy
+        - High
+        - >-
+          Contractual obligations exceed downside revenue capacity; gross margin fails to improve despite
+          routing/caching; supplier roadmap slippage.
+      - - Reliability/security
+        - Status page, postmortems, vulnerability disclosure, bug bounty/private reporting programs
+        - Medium-high
+        - Repeated critical outages, unresolved data exposure, or enterprise SLA failures causing churn.
+      - - AI misuse
+        - Usage policy, classifiers, account bans, threat-intelligence sharing
+        - Medium-high
+        - Regulator/customer loss from preventable misuse; inability to control agentic cyber abuse at scale.
+      - - Customer quality
+        - 1,000+ $1M customers, 8/10 Fortune 10, named case studies
+        - High due opacity
+        - >-
+          NRR below top-tier enterprise software norms, top-customer concentration above investment policy, or
+          significant churn after quality incidents.
+    notes: These criteria should be tested before any late-stage investment at current valuation levels.
+    claimRefs:
+      - C093
+      - C096
+      - C097
+      - C098
+      - C099
+      - C100
+      - C101
+      - C102
+      - C105
+      - C107
+      - C109
+      - C112
+  - id: T707
+    title: Risk diligence asks
+    columns:
+      - Ask
+      - Priority
+      - Evidence needed
+      - Owner / source
+    rows:
+      - - Copyright/legal schedule
+        - High
+        - All active cases, reserves, insurance, settlement status, appeals, indemnities, and data-licensing contracts
+        - Legal / CFO
+      - - Compute obligation model
+        - High
+        - >-
+          Committed spend, capacity delivery schedule, cloud credits, related-party accounting, cancellation rights, and
+          margin bridge
+        - CFO / Infrastructure
+      - - Security/compliance packet
+        - High
+        - >-
+          SOC 2, ISO, HIPAA/BAA, penetration tests, data-flow diagrams, subprocessors, incident response, and customer
+          audits
+        - CISO / Legal
+      - - Reliability and product-quality metrics
+        - High
+        - Uptime, incident history, SLA credits, eval regressions, quality dashboards, postmortem action completion
+        - Engineering / Customer Success
+      - - Misuse/safety operations
+        - Medium
+        - Classifier precision/recall, abuse cases, regulator contacts, critical incident logs, red-team results
+        - Safeguards / Policy
+      - - Customer concentration and churn
+        - High
+        - Top 25 revenue, NRR, GRR, churn reasons, support escalations, renewal pipeline
+        - Sales / Finance
+      - - Privacy and data-retention compliance
+        - Medium
+        - Consumer opt-in rates, deletion processing, non-user requests, DPA, regional transfer mechanisms
+        - Privacy / Legal
+    notes: These asks map to the highest-severity residual risks.
+    claimRefs:
+      - C093
+      - C096
+      - C097
+      - C098
+      - C099
+      - C100
+      - C101
+      - C102
+      - C107
+      - C108
+      - C109
+      - C110
+figures:
+  - id: F701
+    title: Anthropic risk heatmap
+    type: risk-heatmap
+    layout: wide
+    summary: Highest residual risks combine high impact with incomplete public disclosure.
+    data:
+      columns:
+        - Impact
+        - Likelihood
+        - Mitigation maturity
+      rows:
+        - label: Copyright / data provenance
+          values:
+            - label: High
+              tone: high
+            - label: High
+              tone: high
+            - label: Medium
+              tone: medium
+        - label: Compute commitments
+          values:
+            - label: High
+              tone: high
+            - label: High
+              tone: high
+            - label: Medium
+              tone: medium
+        - label: Product reliability
+          values:
+            - label: High
+              tone: high
+            - label: Medium
+              tone: medium
+            - label: Medium-high
+              tone: medium
+        - label: Safety regulation
+          values:
+            - label: High
+              tone: high
+            - label: Medium
+              tone: medium
+            - label: High
+              tone: positive
+        - label: AI misuse
+          values:
+            - label: High
+              tone: high
+            - label: Medium
+              tone: medium
+            - label: Medium
+              tone: medium
+        - label: Privacy
+          values:
+            - label: Medium
+              tone: medium
+            - label: Medium
+              tone: medium
+            - label: Medium
+              tone: medium
+    approximationNotes: Qualitative ratings based on public evidence; management data may change positions.
+    claimRefs:
+      - C093
+      - C096
+      - C097
+      - C098
+      - C099
+      - C100
+      - C101
+      - C105
+      - C107
+      - C108
+      - C109
+  - id: F702
+    title: Risk transmission map
+    type: risk-transmission-map
+    layout: standard
+    summary: Legal, compute, quality, and safety risks transmit into gross margin, retention, regulatory burden, and valuation.
+    data:
+      nodes:
+        - id: legal
+          label: Copyright / data provenance
+          detail: Settlement, pending cases, licensing expectations, and potential injunctions.
+          tone: high
+        - id: compute
+          label: Compute commitments
+          detail: AWS primary provider, Google/Broadcom expansion, fixed capacity, and chip supply.
+          tone: high
+        - id: reliability
+          label: Product reliability
+          detail: Quality regressions and infrastructure bugs can affect developer and enterprise trust.
+          tone: risk
+        - id: misuse
+          label: AI misuse and safety
+          detail: Agentic misuse, cyber abuse, and frontier-risk obligations increase control burden.
+          tone: high
+        - id: customers
+          label: Customer retention
+          detail: Top-customer concentration, NRR, and support metrics are not public.
+          tone: risk
+        - id: economics
+          label: Unit economics
+          detail: Legal cost, cloud commitments, support load, and security spending affect margin.
+          tone: high
+        - id: valuation
+          label: Valuation / exit risk
+          detail: Current valuation requires sustained growth, margin expansion, and regulatory resilience.
+          tone: risk
+      edges:
+        - from: legal
+          to: economics
+          label: settlement / licensing cost
+        - from: compute
+          to: economics
+          label: fixed capacity and vendor terms
+        - from: reliability
+          to: customers
+          label: trust and renewal impact
+        - from: misuse
+          to: economics
+          label: safeguards and compliance cost
+        - from: customers
+          to: valuation
+          label: retention multiple
+        - from: economics
+          to: valuation
+          label: margin multiple
+    approximationNotes: Transmission is qualitative and should be tested with management financials and legal schedules.
+    claimRefs:
+      - C093
+      - C096
+      - C098
+      - C099
+      - C100
+      - C101
+      - C102
+      - C105
+      - C107
+sections:
+  - number: '7.1'
+    title: Risk overview
+    body: |
+      Anthropic has the risk profile of a frontier infrastructure company rather than a conventional SaaS vendor.
+      Legal, compute, safety, privacy, reliability, and customer-concentration risks are all material because each
+      can propagate into margins and valuation. The offset is that Anthropic is unusually transparent: it publishes
+      postmortems, safety frameworks, compliance materials, threat-intelligence examples, and legal/privacy terms
+      that make the risk picture more diligenceable than many private AI peers.
+    claimRefs:
+      - C096
+      - C097
+      - C098
+      - C099
+      - C100
+      - C101
+      - C105
+      - C107
+      - C108
+  - number: '7.2'
+    title: Legal and regulatory risk
+    body: |
+      Copyright/data provenance is the most concrete legal risk. Bartz has a $1.5B settlement fund and a final
+      approval hearing scheduled after the report date. The settlement reduces uncertainty but does not close
+      music-publisher litigation, future rightsholder claims, licensing cost escalation, or the need to prove
+      that future training corpora are licensed, permissioned, or otherwise defensible. Frontier AI regulation is
+      a second high-impact cluster; California SB 53 turns many safety transparency practices into mandatory
+      obligations for large developers, and Anthropic's FCF is now part of its compliance posture.
+    claimRefs:
+      - C093
+      - C094
+      - C095
+      - C096
+      - C097
+  - number: '7.3'
+    title: Security, privacy, and misuse risk
+    body: |
+      Anthropic's commercial terms are favorable for enterprise trust because they state that customer Inputs are
+      retained by the customer, Outputs are owned by the customer, and Anthropic may not train models on Customer
+      Content from commercial services. Consumer privacy is more nuanced: Free/Pro/Max users may allow chats and
+      coding sessions to improve Claude, with five-year retention if enabled. Misuse risk is active: Anthropic's
+      own threat-intelligence reporting documents Claude Code abuse in extortion, North Korean employment fraud,
+      and AI-generated ransomware, with mitigations including account bans, classifiers, detection methods, and
+      indicator sharing.
+    claimRefs:
+      - C099
+      - C100
+      - C107
+      - C108
+      - C109
+      - C110
+  - number: '7.4'
+    title: Operational and compute concentration risk
+    body: |
+      Compute is both Anthropic's strategic advantage and a balance-sheet-style risk. Amazon says Anthropic has
+      committed more than $100B over ten years to AWS and will secure up to 5GW of capacity, while Anthropic has
+      also announced multiple-gigawatt TPU capacity with Google and Broadcom. Multi-cloud and multi-chip deployment
+      reduce single-platform failure risk, but they do not eliminate fixed-commitment, supplier-roadmap, power,
+      data-center, channel, and gross-margin risk.
+    claimRefs:
+      - C101
+      - C102
+      - C103
+      - C104
+  - number: '7.5'
+    title: Product reliability and customer trust
+    body: |
+      Anthropic has acknowledged both 2025 infrastructure bugs and 2026 Claude Code/Agent SDK/Cowork product-layer
+      regressions. Its postmortems are high-quality mitigants, but the commercial consequence must be checked in
+      renewal, support, SLA credit, and churn data. For a developer-heavy product with $2.5B+ Claude Code run-rate
+      revenue, perceived quality degradation can become a customer-retention issue even when the underlying model
+      or API is not degraded.
+    claimRefs:
+      - C098
+      - C105
+      - C106
+  - number: '7.6'
+    title: Risk verdict
+    body: |
+      The risk rating is high with above-average mitigation maturity. Anthropic has credible controls and a strong
+      transparency posture, but the remaining unknowns are too large to underwrite lightly: final legal exposure,
+      compute-commitment economics, formal security/compliance evidence, customer concentration, retention after
+      quality incidents, and the operating cost of AI safety and misuse controls.
+    claimRefs:
+      - C093
+      - C096
+      - C097
+      - C098
+      - C099
+      - C100
+      - C101
+      - C102
+      - C107

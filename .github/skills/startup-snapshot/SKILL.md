@@ -13,6 +13,7 @@ Use this skill as the first report artifact stage after `reportFolder` exists. R
 Write exactly:
 
 - `01-company-snapshot.yaml`
+- `01-company-snapshot.zh.yaml` (Simplified Chinese sibling)
 
 ## Responsibility
 
@@ -40,6 +41,35 @@ Create an investor-grade company snapshot with:
 - Leadership, management-team backgrounds, investor base, board/investor roles, timeline, investment highlights, key risks summary, and open identity questions.
 - Company-level graphical abstract inputs for the final report: business description, major thesis pillars, core revenue vectors, exit/IPO path if relevant, and top risk nodes.
 - Local `claimRefs` for every external factual block, table, and figure.
+
+## Milestone timeline (F102) coverage
+
+The financing-and-scale timeline figure must be substantive, not a 3-bullet skeleton. Before writing it, run dedicated milestone-discovery searches and aim to capture at least one entry per category whenever a public source supports it:
+
+- Founding and incorporation (year, founders, place, original mission).
+- Every named priced funding round in chronological order: seed, Series A/B/C/D/E/F/G..., bridge, secondary, strategic. For each: date (`YYYY-MM` if known), round name, amount raised, post-money valuation, lead investors. If the lifetime round count is N, the timeline should reference at least the rounds that materially changed valuation or capitalization (typically every priced round, plus any secondary or strategic that crossed valuation thresholds).
+- Major product or platform launches: first GA of the flagship product, model/version generations, spin-off products, API releases, regulated-industry editions.
+- Operating-scale milestones once disclosed: first revenue disclosure, first $X run-rate revenue, first $1M / $10M / $100M / $1B / $10B run-rate or ARR step, customer-count milestones (e.g. 10K, 100K, 1M, first Fortune 100 customer).
+- Strategic compute / partner / customer milestones: hyperscaler partnerships, capacity commitments, exclusive deals, marketplace launches, government or sovereign deals.
+- Material legal, regulatory, governance, or safety milestones: PBC conversion, board-level changes, settlement or ruling, voluntary safety commitments, frontier-AI compliance frameworks.
+- Headcount milestones if reported (1st 100 / 500 / 1,000 / 5,000 employees).
+- Most recent confirmed event close to `currentDate` (the timeline must extend to within ~3 months of `currentDate`; large gaps from the latest event to `currentDate` are themselves a diligence gap to flag).
+
+Run a dedicated milestone-discovery query batch before writing F102, e.g.:
+
+- `<companyName> funding history list of rounds Series A through latest`
+- `<companyName> all priced rounds dates valuations Crunchbase | PitchBook coverage`
+- `<companyName> product launch history flagship model versions <currentYear-3>..<currentYear>`
+- `<companyName> revenue milestones first $1M $10M $100M $1B $10B disclosed`
+- `<companyName> hyperscaler / cloud / compute partnership history`
+- `<companyName> headcount milestones <currentYear-3>..<currentYear>`
+- `<companyName> regulatory or governance milestones <currentYear-3>..<currentYear>`
+
+If the timeline has fewer than 8 entries or skips more than 18 months between consecutive events when public sources support an intermediate event, treat it as incomplete: rerun targeted searches until the gap closes or document the unfilled gap explicitly in `evidenceGaps` with the specific missing milestone(s) and follow-up diligence path.
+
+## Simplified Chinese sibling
+
+Immediately after writing `01-company-snapshot.yaml`, write `01-company-snapshot.zh.yaml` as its full Simplified Chinese translation, following `.github/references/zh-translation.md`. Preserve schema keys, IDs, claim/source IDs, numeric values, enums, array order, and YAML serialization style; translate every prose field including `chapter.title`, `chapter.summary`, callouts, sections, table cells, figure node detail, and notes. Do not move on to the next skill until both English and Chinese files exist and pass the residual-English sweep and structural-parity checks.
 
 ## Handoff note
 

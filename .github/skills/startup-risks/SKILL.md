@@ -13,6 +13,7 @@ Use this skill after `01` and the risk-relevant analysis artifacts exist and par
 Write exactly:
 
 - `07-risk-regulatory.yaml`
+- `07-risk-regulatory.zh.yaml` (Simplified Chinese sibling)
 
 ## Dynamic evidence use
 
@@ -43,9 +44,13 @@ Expected table families unless unavailable with a documented gap: risk register,
 
 ## Figure rules
 
-- Use `risk-heatmap` / `matrix` with `data.columns[]` and `data.rows[].values[]`.
+- Use `risk-heatmap` / `matrix` with `data.columns[]` and `data.rows[].values[]`. `data.columns[]` lists X-axis labels; `row.label` is the Y-axis (risk) name. **`row.values.length` must equal `data.columns.length`** (one value per column). Do not include the row identifier (e.g. `Risk`) as the first column — the row name lives in `row.label`, not in `columns[]`.
 - Use `risk-transmission-map` with `data.nodes[]` and `data.edges[]` when causal propagation matters.
 - Use canonical renderer fields only; do not invent primary fields.
+
+## Simplified Chinese sibling
+
+Immediately after writing `07-risk-regulatory.yaml`, write `07-risk-regulatory.zh.yaml` as its full Simplified Chinese translation, following `.github/references/zh-translation.md`. Preserve schema keys, IDs, claim/source IDs, numeric values, enums, array order, and YAML serialization style; translate every prose field including `chapter.title`, `chapter.summary`, callouts, sections, table cells, figure node detail, and notes. Do not move on to the next skill until both English and Chinese files exist and pass the residual-English sweep and structural-parity checks.
 
 ## Handoff note
 

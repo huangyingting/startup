@@ -1,12 +1,12 @@
 ---
 name: startup-report-zh
-description: "Use when: generating 101-report-document.zh.yaml from 101-report-document.yaml. Keywords: Chinese localization, Simplified Chinese report document, translation."
+description: "Use when: assembling 101-report-document.zh.yaml from 01-08.zh.yaml siblings and 101-report-document.yaml. Keywords: Chinese localization, Simplified Chinese report document, assembly."
 user-invocable: false
 ---
 
 # Startup Report ZH
 
-Use this skill after English `101-report-document.yaml` exists and validates.
+Use this skill after `101-report-document.yaml` exists and validates, and after every `01-08.zh.yaml` Simplified Chinese sibling exists.
 
 ## Outputs
 
@@ -14,51 +14,63 @@ Write exactly:
 
 - `101-report-document.zh.yaml`
 
-## Translation scope
+## Responsibility
 
-This is a full Simplified Chinese translation, not a partial header pass. Every user-visible text string must be translated. Numbers, IDs, URLs, enums, and structural keys must be preserved exactly.
+Assemble the Simplified Chinese report by reusing already-translated content from `01–08.zh.yaml`. Translate only the small set of fields that exist in `101-report-document.yaml` but not in any `01–08` artifact (executive summary, cover metrics, appendices, disclaimer, report-level metadata).
 
-### Translate every occurrence of these fields
+This is primarily a structural copy job. The `startup-report` skill produced `101-report-document.yaml` by composing analysis artifacts; this skill produces `101-report-document.zh.yaml` by composing the same English structure with the corresponding Chinese strings drawn from each `XX.zh.yaml`.
 
-Walk the entire document and translate the value of every one of these fields wherever they appear, at any nesting depth:
+Read `.github/references/zh-translation.md` before writing.
+
+## Assembly procedure
+
+1. Load `101-report-document.yaml`, every `01–08.yaml`, and every `01–08.zh.yaml`.
+2. For each chapter `2–9` of `101-report-document.zh.yaml`, mirror the chapter structure of `101-report-document.yaml`.
+   - For each section block whose source is a chapter section in an analysis artifact, copy the title and body from the matching `XX.zh.yaml` section by section number.
+   - For each `table` block, the table itself is referenced by `tableRef`; copy the corresponding entry from the union of `01–08.zh.yaml` `tables[]` into the document-level `tables[]`.
+   - For each `figure` block, copy the corresponding entry from the union of `01–08.zh.yaml` `figures[]` into the document-level `figures[]`.
+   - For each `callout` block, copy the corresponding callout from the matching `XX.zh.yaml` `callouts[]`.
+3. For chapter `1` (Executive Summary) and any other content unique to `101-report-document.yaml` (cover metrics, startup introduction text, executive callouts, executive `list[]` items, appendices, disclaimer, `reportMeta.title`, `reportMeta.coverageNotes`, `company.subtitle`), translate directly from the English `101-report-document.yaml` into Simplified Chinese, following `.github/references/zh-translation.md`.
+4. Preserve every figure, table, and claim ID and every `claimRefs` array exactly as written in `101-report-document.yaml`.
+5. Keep the document key order, array order, and YAML serialization style identical to `101-report-document.yaml`.
+
+## Translate (only these fields are net new at this stage)
 
 - `company.subtitle`
 - `reportMeta.title`
-- `coverMetrics[].label`, `coverMetrics[].unit` (translate units like `USD millions` → `百万美元`; keep numeric `value` strings such as `$183B` unchanged when they are recognized financial shorthand)
-- `startupIntroduction.summary`, `productSummary`, `customerFocus`, `businessModel`, `stage`, `fundingStatus`, `headquarters`, `foundingLocation`
-- `startupIntroduction.founders[].role`, `background`
-- `chapters[].title`, `chapters[].sections[].title`
-- For every block in `chapters[].sections[].blocks[]`: `title`, `body`, `calloutType` label text only when it is free text (keep enum values like `final-recommendation` as-is), and every entry of `items[]`
-- Every `tables[]` entry: `title`, `columns[]`, `rows[][]` cells that are natural-language text, and `notes`
-- Every `figures[]` entry: `title`, `summary`, `approximationNotes`, `data.xAxis`, `data.yAxis`, and the `label` / `detail` of every `nodes[]`, `items[]`, `layers[]`, `points[]`, `series[]`, `series[].points[]`, `columns[]`, `rows[]`, `rows[].values[]`, `edges[].label`, `layers[].modules[]`, `layers[].outputs[]`
-- `appendices[].title`, and inside each appendix block the same fields as chapter blocks (`title`, `body`, `items[]`)
-- `bibliography[].citation` natural-language portions only; keep publisher names, URLs, dates, and source IDs unchanged
+- `coverMetrics[].label`, `coverMetrics[].unit`
+- `startupIntroduction.summary`, `productSummary`, `customerFocus`, `businessModel`, `stage`, `fundingStatus`, `headquarters`, `foundingLocation`, `founders[].role`, `founders[].background`
+- Chapter `1` (Executive Summary) `chapters[0].title`, `sections[].title`, every block `title`, `body`, and `items[]` entry
+- Any new appendix block authored in `101-report-document.yaml` that does not appear in an analysis artifact
 - `disclaimer`
 
-### Preserve exactly (never translate, reword, or reorder)
+## Reuse (do not re-translate)
 
-- All schema keys.
-- All IDs: `S###`, `C###`, `T###`, `F###`, section numbers, chapter numbers.
-- All URLs, email addresses, dates (`YYYY-MM-DD`), numeric values, booleans, nulls.
-- All enum values: `recommendation`, `confidence`, `riskRating`, `valuationStance`, `tone`, `type`, `layout`, `claimType`, `freshness`, `corroboration`, `independence`, `reputationTier`, `sourceType`, block `type`, `calloutType` enum values.
-- Company, product, person, and investor proper names; keep the common English form unless a standard Simplified Chinese name is unambiguous.
-- Order of arrays and shape of every nested object.
+- Chapters `2–9`: section titles, section bodies, callout titles/bodies, table titles/columns/rows/notes, figure titles/summaries/data labels and details, and approximation notes already present in `01–08.zh.yaml`.
+- The website renders source citations directly from `100-evidence-ledger.yaml` `sources[]`; `101-report-document.yaml` does not carry a `bibliography` array, so there is nothing to copy here.
 
-### Do not
+## Preserve exactly
 
-- Do not add facts, change claims, soften or strengthen the investment view, or use `web_search`.
-- Do not translate enum values or IDs even when they look like English words.
-- Do not leave English prose in any translatable field listed above. If the source string is empty or `null`, keep it as is.
+- All schema keys, ID formats, enums, URLs, dates, numeric values, booleans, and nulls.
+- Order of arrays and shape of every nested object, byte-identical to `101-report-document.yaml`.
+- Company, product, person, and investor proper names.
+
+## Do not
+
+- Do not call `web_search`.
+- Do not invent facts, soften or strengthen claims, or rewrite analysis.
+- Do not produce content that disagrees with `101-report-document.yaml` on numbers, IDs, claim references, or recommendation enums.
+- Do not collapse, drop, or rewrite any chapter, section, table, figure, or appendix that exists in `101-report-document.yaml`.
 
 ## Completion check before saving
 
-Before returning, scan the output and confirm:
-
-- No `body`, `summary`, `detail`, `notes`, `approximationNotes`, `headline`, `subtitle`, or natural-language `label` field still contains a sentence written in English.
-- Counts of `chapters`, `sections`, `blocks`, `tables`, `figures`, `appendices`, `bibliography`, `coverMetrics`, `founders`, and every nested array equal the English source.
-- All `claimRefs`, `tableRef`, `figureRef`, and ID lists are byte-identical to the English source.
-- The file parses as YAML and starts with `schemaVersion: startup-diligence-report-v2`.
+1. Structural parity: counts of `chapters`, `sections`, `blocks`, `tables`, `tables[].rows`, `tables[].columns`, `figures`, `figures[].data` arrays, `appendices`, `appendices[].blocks`, `coverMetrics`, and `founders` equal `101-report-document.yaml`.
+2. ID/reference parity: `set(101.zh.tables[*].id) == set(101.tables[*].id)`; `set(101.zh.figures[*].id) == set(101.figures[*].id)`; every `claimRefs`, `tableRef`, `figureRef`, `S###`, `C###`, `T###`, `F###` value is byte-identical to the English source.
+3. Residual-English sweep on translated fields (chapter 1 plus the `Translate` list above), per `.github/references/zh-translation.md`.
+4. Source-of-truth check: for each chapter `2–9` block, confirm the corresponding section/table/figure/callout text matches the matching `XX.zh.yaml` content. If a Chinese sibling is missing or stale, stop and rerun the relevant analysis skill before writing `101-report-document.zh.yaml`.
+5. Style parity: line count is within roughly ±10% of `101-report-document.yaml`.
+6. Parse: the file parses as YAML and starts with `schemaVersion: startup-diligence-report-v2`.
 
 ## Handoff note
 
-After writing, record a concise internal summary: output path and `artifactTranslated: 101-report-document`.
+After writing, record a concise internal summary: output path, chapters/sections/tables/figures assembled, sources of translated text (which `XX.zh.yaml` provided which content), and `artifactTranslated: 101-report-document`.

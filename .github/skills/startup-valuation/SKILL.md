@@ -13,6 +13,7 @@ Use this skill after `01` and the valuation-critical analysis artifacts exist an
 Write exactly:
 
 - `08-investment-valuation.yaml`
+- `08-investment-valuation.zh.yaml` (Simplified Chinese sibling)
 
 ## Dynamic evidence use
 
@@ -25,6 +26,17 @@ Treat `currentDate` as the freshness anchor for valuation, latest round, compara
 Before writing `08`, ask multiple valuation-specific questions covering latest primary valuation, secondary pricing, financing structure, comparable rounds, public multiples, IPO readiness, governance, exits, revenue-multiple sensitivity, downside cases, investor demand, and adverse valuation signals. Do not issue `buy` unless cited evidence or explicit gaps support both thesis and anti-thesis.
 
 If valuation inputs are missing, default to `research-more` or `track` rather than false precision. Do not invent valuation, revenue multiples, return scenarios, IPO timing, or final recommendation support.
+
+## Enum fields
+
+The `recommendation`, `confidence`, `riskRating`, and `valuationStance` fields are closed enums; the website content schema rejects any other value. Use exactly one token; do not combine values with `;`, `/`, or free-text qualifiers.
+
+- `recommendation`: `strong-buy` | `buy` | `track` | `research-more` | `avoid`
+- `confidence`: `high` | `medium` | `low`
+- `riskRating`: `low` | `moderate` | `significant` | `critical` | `unknown`
+- `valuationStance`: `attractive` | `fair` | `stretched` | `expensive` | `unknown`
+
+If the underwriting nuance does not fit one token (for example "expensive at confirmed mark, unattractive at rumored mark"), pick the single best-fit enum value and place the nuance in `recommendation` body text, callouts, or scenario tables, not in the enum field.
 
 ## Output focus
 
@@ -48,6 +60,10 @@ Expected table families unless unavailable with a documented gap: recommendation
 - Use `sensitivity` for supported valuation sensitivity.
 - Use numeric chart values only when evidence supports them; otherwise show gaps as diligence asks.
 - Use canonical renderer fields only.
+
+## Simplified Chinese sibling
+
+Immediately after writing `08-investment-valuation.yaml`, write `08-investment-valuation.zh.yaml` as its full Simplified Chinese translation, following `.github/references/zh-translation.md`. Preserve schema keys, IDs, claim/source IDs, numeric values, enums, array order, and YAML serialization style; translate every prose field including `chapter.title`, `chapter.summary`, callouts, sections, table cells, figure node detail, and notes. Do not move on to the next skill until both English and Chinese files exist and pass the residual-English sweep and structural-parity checks.
 
 ## Handoff note
 

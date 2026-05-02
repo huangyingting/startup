@@ -13,6 +13,7 @@ Use this skill after `01`–`03` exist and parse. Read `schemaPath`, `yamlSyntax
 Write exactly:
 
 - `04-financial-unit-economics.yaml`
+- `04-financial-unit-economics.zh.yaml` (Simplified Chinese sibling)
 
 ## Dynamic evidence use
 
@@ -49,6 +50,10 @@ Expected table families unless unavailable with a documented gap: revenue stream
 - Use `waterfall`, `bars`, `metric-bars`, or `xy` only with numeric values.
 - Use revenue-mix and projection figures only when numeric values are supported or clearly labeled as estimates with claim-backed assumptions.
 - Preserve unknown metrics as explanatory nodes/cards rather than empty arrays.
+
+## Simplified Chinese sibling
+
+Immediately after writing `04-financial-unit-economics.yaml`, write `04-financial-unit-economics.zh.yaml` as its full Simplified Chinese translation, following `.github/references/zh-translation.md`. Preserve schema keys, IDs, claim/source IDs, numeric values, enums, array order, and YAML serialization style; translate every prose field including `chapter.title`, `chapter.summary`, callouts, sections, table cells, figure node detail, and notes. Do not move on to the next skill until both English and Chinese files exist and pass the residual-English sweep and structural-parity checks.
 
 ## Handoff note
 

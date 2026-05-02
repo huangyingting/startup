@@ -47,17 +47,25 @@ Read `schemaPath` and `yamlSyntaxPath` before writing any artifact. Use the rele
 
 ## v2 artifact contract
 
-The final report folder must contain these files. `100-evidence-ledger.yaml` is generated after `01`–`08` by consolidating each artifact's local evidence, not by shared incremental appends. The final report and card use `101` and `102`; Simplified Chinese files use the same numbers and are produced last.
+The final report folder must contain these files. `100-evidence-ledger.yaml` is generated after `01`–`08` (and their Simplified Chinese siblings) by consolidating each artifact's local evidence, not by shared incremental appends. Each `XX-name.yaml` is paired with `XX-name.zh.yaml`, written by the same skill immediately after the English file. The final report and card use `101` and `102`; their Simplified Chinese versions are produced last.
 
 ```text
 01-company-snapshot.yaml
+01-company-snapshot.zh.yaml
 02-market-macro.yaml
+02-market-macro.zh.yaml
 03-competitive-benchmarking.yaml
+03-competitive-benchmarking.zh.yaml
 04-financial-unit-economics.yaml
+04-financial-unit-economics.zh.yaml
 05-product-technology.yaml
+05-product-technology.zh.yaml
 06-customer-retention.yaml
+06-customer-retention.zh.yaml
 07-risk-regulatory.yaml
+07-risk-regulatory.zh.yaml
 08-investment-valuation.yaml
+08-investment-valuation.zh.yaml
 100-evidence-ledger.yaml
 101-report-document.yaml
 102-report-card.yaml
@@ -69,20 +77,20 @@ All artifacts must be written directly under `reportFolder`. `/tmp` tool-output 
 
 ## Skill sequence
 
-Use exactly this skill sequence for one company run:
+Use exactly this skill sequence for one company run. Each analysis skill writes both the English artifact and its Simplified Chinese sibling in a single pass.
 
-1. `startup-snapshot` writes `01` with local identity/snapshot sources and claims.
-2. `startup-market` writes `02` with local market sources and claims.
-3. `startup-competition` writes `03` with local competition sources and claims.
-4. `startup-financials` writes `04` with local financial sources and claims.
-5. `startup-product` writes `05` with local product/technology sources and claims.
-6. `startup-customers` writes `06` with local customer/retention sources and claims.
-7. `startup-risks` writes `07` with local risk/regulatory sources and claims.
-8. `startup-valuation` writes `08` with local investment/valuation sources and claims.
-9. `startup-ledger` runs `node scripts/consolidate-evidence.mjs <reportFolder>` to create `100` and rewrite `01`–`08` claim IDs.
-10. `startup-report` writes `101` from artifacts `01`–`08` using canonical claim IDs.
-11. `startup-card` writes `102` from `100` and `101`.
-12. `startup-report-zh` translates `101` into `101-report-document.zh.yaml`.
+1. `startup-snapshot` writes `01-company-snapshot.yaml` and `01-company-snapshot.zh.yaml`.
+2. `startup-market` writes `02-market-macro.yaml` and `02-market-macro.zh.yaml`.
+3. `startup-competition` writes `03-competitive-benchmarking.yaml` and `03-competitive-benchmarking.zh.yaml`.
+4. `startup-financials` writes `04-financial-unit-economics.yaml` and `04-financial-unit-economics.zh.yaml`.
+5. `startup-product` writes `05-product-technology.yaml` and `05-product-technology.zh.yaml`.
+6. `startup-customers` writes `06-customer-retention.yaml` and `06-customer-retention.zh.yaml`.
+7. `startup-risks` writes `07-risk-regulatory.yaml` and `07-risk-regulatory.zh.yaml`.
+8. `startup-valuation` writes `08-investment-valuation.yaml` and `08-investment-valuation.zh.yaml`.
+9. `startup-ledger` runs `node scripts/consolidate-evidence.mjs <reportFolder>` to create `100` and rewrite `01`–`08` and `01-08.zh` claim IDs.
+10. `startup-report` writes `101-report-document.yaml` from artifacts `01`–`08` using canonical claim IDs.
+11. `startup-report-zh` assembles `101-report-document.zh.yaml` by reusing chapters/tables/figures from `01-08.zh.yaml` and translating only the executive summary, cover metrics, and other report-only fields.
+12. `startup-card` writes `102-report-card.yaml` from `100` and `101`.
 13. `startup-card-zh` translates `102` into `102-report-card.zh.yaml`.
 
 ## Dependency rules
@@ -94,23 +102,24 @@ Downstream skills do not need to mechanically read every prior artifact. Each sk
 - A skill may inspect another artifact's open gaps or relevant tables/figures, but it must not edit another skill's owned artifact directly.
 - If a skill finds a supportable missing fact that belongs to an earlier domain, route back to that earlier skill, update its local evidence and artifact, then continue forward.
 - `startup-ledger`, `startup-report`, and `startup-card` are consolidation/finalization skills; they read the completed artifacts they explicitly depend on and do not gather new facts.
-- `startup-report-zh` and `startup-card-zh` read only their English source artifact and preserve facts, IDs, numbers, and schema shape.
+- `startup-report-zh` assembles `101-report-document.zh.yaml` from `101-report-document.yaml` plus every `01-08.zh.yaml`; `startup-card-zh` translates `102-report-card.yaml`. Both follow `.github/references/zh-translation.md` and preserve facts, IDs, numbers, enums, and schema shape.
 
 ## Validation gates
 
 After every skill stage:
 
 - Parse all files written so far.
-- Confirm expected files for the current stage exist in `reportFolder`. Before consolidation, `100-evidence-ledger.yaml` is not expected yet.
+- Confirm expected files for the current stage exist in `reportFolder`. Each analysis skill must produce both `XX-name.yaml` and `XX-name.zh.yaml` before the next skill starts. Before consolidation, `100-evidence-ledger.yaml` is not expected yet.
 - Check `schemaVersion: startup-diligence-report-v2`.
-- Check `artifact`, `slug`, `runDate`, and `company.name` consistency.
+- Check `artifact`, `slug`, `runDate`, and `company.name` consistency between each English file and its Simplified Chinese sibling.
 - Before consolidation, validate each artifact's `claimRefs` against its own `localEvidence.claims[]`.
-- After consolidation, validate all `claimRefs` in `01`–`102` against `100-evidence-ledger.yaml`.
+- After consolidation, validate all `claimRefs` in `01`–`102` (including `.zh.yaml` files) against `100-evidence-ledger.yaml`.
 - After consolidation, validate all claim `sourceRefs` in `01` against retained ledger sources.
 - Ensure `coverage.sourcesRetained === sources.length` and `coverage.claimsCreated === claims.length` when `01` is consolidated.
 - Validate every figure against the schema Figure rendering contract: no empty required arrays, no non-canonical primary fields, no string-valued numeric chart values, visible cards/layers/nodes need `label` plus renderable content.
 - Reject any artifact that is missing its document head or begins with continuation prose / a mid-list fragment.
 - Reject thin analysis output: each `02`–`08` artifact should include multiple substantive sections plus chapter-appropriate tables/figures. If a table family is not supportable from evidence, include a clearly labeled diligence gap.
+- For each `XX-name.zh.yaml`, run the residual-English sweep and structural-parity check defined in `.github/references/zh-translation.md`.
 
 After `01-company-snapshot.yaml`, run `node scripts/check-company-dedup.mjs <reportFolder>/01-company-snapshot.yaml`. Exit code `0` means continue; exit code `2` means duplicate-risk and you must stop unless the user explicitly requested a refresh of that company; any other non-zero exit means fix the input/path problem before continuing.
 

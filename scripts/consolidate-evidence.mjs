@@ -166,10 +166,6 @@ const ledger = {
   },
   sources,
   claims,
-  bibliography: sources.map((source) => ({
-    sourceRef: source.id,
-    citation: [source.publisher, source.title, source.date, source.url].filter(Boolean).join(' — '),
-  })),
   evidenceGaps,
 };
 
@@ -179,4 +175,19 @@ for (const [file, doc] of docs) {
   writeYaml(join(reportFolder, file), rewriteClaimRefs(doc, claimMap, file));
 }
 
+// Rewrite claimRefs in Simplified Chinese siblings using the same per-file claim map.
+// Each XX.zh.yaml uses the same local C### IDs as its English XX.yaml.
+let zhRewritten = 0;
+for (const file of REPORT_FILES) {
+  const zhFile = file.replace(/\.yaml$/, '.zh.yaml');
+  const zhPath = join(reportFolder, zhFile);
+  if (!existsSync(zhPath)) continue;
+  const zhDoc = readYaml(zhPath);
+  writeYaml(zhPath, rewriteClaimRefs(zhDoc, claimMap, file));
+  zhRewritten += 1;
+}
+
 console.log(`[consolidate-evidence] wrote ${join(reportFolder, '100-evidence-ledger.yaml')} (${sources.length} sources, ${claims.length} claims)`);
+if (zhRewritten > 0) {
+  console.log(`[consolidate-evidence] rewrote claimRefs in ${zhRewritten} Simplified Chinese sibling artifact(s).`);
+}

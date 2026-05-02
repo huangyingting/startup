@@ -13,6 +13,7 @@ Use this skill after `01` and any relevant market/competition context exist and 
 Write exactly:
 
 - `05-product-technology.yaml`
+- `05-product-technology.zh.yaml` (Simplified Chinese sibling)
 
 ## Dynamic evidence use
 
@@ -48,6 +49,10 @@ Expected table families unless unavailable with a documented gap: product module
 - Use `architecture-stack` with `data.layers[]` entries containing `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`.
 - Use `flow` only for generic product or data flows.
 - Use canonical renderer fields only; do not use `name`, `components`, `children`, `steps`, `cards`, or `groups` as primary fields.
+
+## Simplified Chinese sibling
+
+Immediately after writing `05-product-technology.yaml`, write `05-product-technology.zh.yaml` as its full Simplified Chinese translation, following `.github/references/zh-translation.md`. Preserve schema keys, IDs, claim/source IDs, numeric values, enums, array order, and YAML serialization style; translate every prose field including `chapter.title`, `chapter.summary`, callouts, sections, table cells, figure node detail, and notes. Do not move on to the next skill until both English and Chinese files exist and pass the residual-English sweep and structural-parity checks.
 
 ## Handoff note
 

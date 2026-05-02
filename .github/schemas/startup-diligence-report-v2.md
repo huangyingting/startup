@@ -21,9 +21,19 @@ The current generation schema is `startup-diligence-report-v2`. It is designed t
 Required Simplified Chinese files (must ship with every report):
 
 ```text
+01-company-snapshot.zh.yaml
+02-market-macro.zh.yaml
+03-competitive-benchmarking.zh.yaml
+04-financial-unit-economics.zh.yaml
+05-product-technology.zh.yaml
+06-customer-retention.zh.yaml
+07-risk-regulatory.zh.yaml
+08-investment-valuation.zh.yaml
 101-report-document.zh.yaml
 102-report-card.zh.yaml
 ```
+
+Each `XX-name.zh.yaml` is the Simplified Chinese sibling of `XX-name.yaml`. The owning analysis skill (`startup-snapshot` through `startup-valuation`) writes both files in the same pass, following `.github/references/zh-translation.md`. `101-report-document.zh.yaml` is assembled by `startup-report-zh` from those siblings plus `101-report-document.yaml`. `102-report-card.zh.yaml` is translated by `startup-card-zh` from `102-report-card.yaml`. `100-evidence-ledger.yaml` has no separate Chinese sibling.
 
 ## Agent execution contract
 
@@ -128,9 +138,6 @@ claims:
     freshness: current|recent|historical|unknown
     corroboration: single-source|multi-source|conflicting|none
     notes: string|null
-bibliography:
-  - sourceRef: S001
-    citation: string
 evidenceGaps:
   - gap: string
     impact: high|medium|low
@@ -160,7 +167,7 @@ callouts:
 tables:
   - id: T201
     title: string
-    columns: [string]
+    columns: [string] # each row in `rows` must have exactly columns.length cells
     rows:
       - [string]
     notes: string|null
@@ -346,14 +353,14 @@ Global rules for every figure:
 - For any missing metric, keep the visual node/card and explain the gap in `detail`; do not delete the whole figure or leave empty arrays.
 - Allowed tones: `positive`, `neutral`, `opportunity`, `risk`, `low`, `medium`, `high`, `critical`. Use `risk/high/critical` for downside cells and `positive/low` for favorable cells.
 
-- `timeline`: `data.items[]` with `date|label`, `label`, `detail`, optional `tone`.
+- `timeline`: `data.items[]` with `date|label`, `label`, `detail`, optional `tone`. A company milestone timeline must cover founding, every priced funding round in chronological order, major product/platform launches, operating-scale milestones once disclosed (first $X run-rate, first Fortune-N customer), strategic compute/partner deals, and material legal/governance/safety events. Aim for at least 8 entries and avoid gaps of more than ~18 months between consecutive events when an intermediate event is publicly known. Extend the timeline to within ~3 months of `currentDate`; record any unfilled milestone gap in `evidenceGaps`.
 - `flow`: `data.nodes[]` and `data.edges[]`; use for generic causal/product/customer flows.
 - `decision-map`: `data.nodes[]` and optional `data.edges[]`; use for decision trees or evaluation logic when `recommendation-logic` is not specific enough.
 - `evidence-map`: `data.nodes[]` and optional `data.edges[]`; use for evidence/source-to-claim maps.
 - `quadrant` / `competitive-matrix`: `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`; include `data.xAxis` and `data.yAxis` labels when useful.
 - `metric-bars` / `bars`: `data.items[]` or `data.series[0].points[]` with `label`, numeric `value`, optional `displayValue`, optional `tone`.
 - `waterfall`: `data.items[]` in sequence with signed numeric `value`, optional `displayValue`, optional `tone`.
-- `risk-heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; each value may include `label` and `tone: low|medium|high|critical|risk`.
+- `risk-heatmap` / `matrix`: `data.columns[]`; `data.rows[]` with `label` and `values[]`; each value may include `label` and `tone: low|medium|high|critical|risk`. The renderer treats `data.columns[]` as the X-axis label per value column and `row.label` as the Y-axis label, so **`row.values.length` must equal `data.columns.length`** (one value per column). Do not declare a column for the row name itself; do not include the row identifier as the first column.
 - `architecture-stack`: `data.layers[]` with `label`, `detail`, optional `tone`, optional `modules[]`, optional `outputs[]`. Use canonical `label/modules` fields; do not emit `name/components` as the primary shape.
 - `market-sizing-lens`: `data.nodes[]` or `data.items[]` ordered from broad market to served footprint; use for TAM/SAM/SOM or evidence-constrained market sizing where unsupported dollar values should not be invented. Typical labels are `TAM`, `SAM`, and `SOM`; each node has `label`, `detail`, and optional `tone`.
 - `unit-economics-waterfall`: `data.nodes[]` or `data.items[]` ordered from known public anchor through missing unit-economics bridges to underwriting output; use when the report must show where public pricing/adoption evidence stops before gross margin, CAC, LTV/CAC, or payback can be calculated. First node should be the disclosed/list-price anchor; later nodes should identify unknown bridges or blockers.
@@ -451,7 +458,7 @@ The remainder of `101-report-document.yaml` continues as:
 tables:
   - id: T101
     title: string
-    columns: [string]
+    columns: [string] # each row in `rows` must have exactly columns.length cells
     rows:
       - [string]
     notes: string|null
@@ -467,13 +474,10 @@ appendices:
         tableRef: T001|null
         figureRef: F001|null
         claimRefs: [C001]
-bibliography:
-  - sourceRef: S001
-    citation: string
 disclaimer: string
 ```
 
-Appendix guidance: use appendices to preserve underwriting detail that would clutter the main narrative but should not be lost, such as detailed financial/projection models, competitive feature deep dives, management-team notes, investor-base notes, source caveats, and unresolved diligence gaps. Appendices must still cite `claimRefs`; if a detailed model is not evidence-supported, include the requested model as a diligence gap rather than inventing values.
+Appendix guidance: use appendices to preserve underwriting detail that would clutter the main narrative but should not be lost, such as detailed financial/projection models, competitive feature deep dives, management-team notes, investor-base notes, source caveats, and unresolved diligence gaps. Appendices must still cite `claimRefs`; if a detailed model is not evidence-supported, include the requested model as a diligence gap rather than inventing values. Source citations are rendered from `100-evidence-ledger.yaml` `sources[]` directly; do not duplicate them as a `bibliography` array on `101-report-document.yaml`.
 
 ## `102-report-card.yaml`
 
@@ -524,7 +528,8 @@ reportFiles:
 ## Validation expectations
 
 - All YAML parses.
-- All required v2 artifacts exist for complete runs, including `101-report-document.zh.yaml` and `102-report-card.zh.yaml`.
+- All required v2 artifacts exist for complete runs, including `01-08.zh.yaml`, `101-report-document.zh.yaml`, and `102-report-card.zh.yaml`.
+- For each `XX-name.yaml` analysis artifact, `XX-name.zh.yaml` exists, parses, has the same `schemaVersion`, `artifact`, `slug`, `runDate`, IDs, and array shape as the English file. Only prose is translated; numbers, IDs, claim/source IDs, enums, claim `statement`, and source `keyQuote` are preserved.
 - Each file's `artifact` value matches the artifact mapping.
 - `runDate` uses `YYYY-MM-DD` and `company.name` is consistent across artifacts.
 - Before consolidation, each artifact's `claimRefs` point to its own `localEvidence.claims[]`; after consolidation, all `claimRefs` point to `100-evidence-ledger.yaml` claims.
@@ -536,3 +541,14 @@ reportFiles:
 - Do not use legacy diagram-source fields or diagram-language strings in artifacts. Use `type`, `layout`, and typed `data` arrays instead.
 - ZH artifacts must preserve the English `schemaVersion`, `artifact`, `slug`, `runDate`, enums, IDs, figure/table structure, and numeric values. Only prose is translated.
 - A report folder is `complete` only when both English and Simplified Chinese required artifacts exist; the website index and loader skip incomplete folders.
+- Enum fields must use exactly one allowed token from the list in `## Core enums`. Do not invent values, append qualifiers, combine multiple values with `;` or `/`, or use free-text descriptions. The website content schema rejects any other value and the build will fail. Closed enums:
+  - `recommendation`: `strong-buy` | `buy` | `track` | `research-more` | `avoid`
+  - `confidence`: `high` | `medium` | `low`
+  - `riskRating`: `low` | `moderate` | `significant` | `critical` | `unknown`
+  - `valuationStance`: `attractive` | `fair` | `stretched` | `expensive` | `unknown`
+  - `claimType`: `observed` | `company-claimed` | `third-party-reported` | `estimated` | `inferred` | `open-question` | `conflicting`
+  - `freshness`: `current` | `recent` | `historical` | `unknown`
+  - `corroboration`: `single-source` | `multi-source` | `conflicting` | `none`
+  - `sourceType`: `official` | `filing` | `regulatory` | `tier-one-news` | `trade-press` | `analyst-market-data` | `technical-docs` | `customer-proof` | `partner-proof` | `developer-signal` | `review` | `legal` | `other`
+  - `reputationTier`: `high` | `medium` | `low`
+  - `independence`: `company` | `partner` | `customer` | `competitor` | `independent` | `unknown`

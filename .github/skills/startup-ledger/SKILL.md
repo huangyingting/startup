@@ -28,6 +28,20 @@ The consolidation script must:
 
 Do not use `web_search` to add new facts at this stage. If a report-critical fact is missing but appears supportable, route back to the relevant analysis skill so it can search, update its `localEvidence`, and rewrite its artifact first. Then rerun this skill.
 
+## Enum fields
+
+Claim and source enum fields are closed; consolidation must preserve only allowed tokens. If an artifact's `localEvidence` uses a non-canonical value, normalize it during consolidation rather than copying it through.
+
+- `claimType`: `observed` | `company-claimed` | `third-party-reported` | `estimated` | `inferred` | `open-question` | `conflicting`
+- `freshness`: `current` | `recent` | `historical` | `unknown`
+- `corroboration`: `single-source` | `multi-source` | `conflicting` | `none`
+- `sourceType`: `official` | `filing` | `regulatory` | `tier-one-news` | `trade-press` | `analyst-market-data` | `technical-docs` | `customer-proof` | `partner-proof` | `developer-signal` | `review` | `legal` | `other`
+- `reputationTier`: `high` | `medium` | `low`
+- `independence`: `company` | `partner` | `customer` | `competitor` | `independent` | `unknown`
+- `confidence`: `high` | `medium` | `low`
+
+Common mappings: a partner's first-party statement about the target company is `third-party-reported` (not `partner-claimed`); a derived multiple or arithmetic result is `estimated` (not `calculated`).
+
 ## Handoff note
 
 After writing, record a concise internal summary: output path, source count, claim count, evidence gaps, and whether claim rewrites completed.

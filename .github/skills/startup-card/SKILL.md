@@ -28,6 +28,11 @@ Do not use `web_search` or add new facts. Derive all values from `100-evidence-l
 - `keyMetrics` should carry the report's investor-facing cover metrics where schema fields exist: valuation, revenue/run-rate or ARR, total raised, customer count, headcount, revenue growth, gross margin, and NRR. If a due-diligence cover metric does not map to a schema key, preserve it in the report document and summarize the gap rather than inventing a new card field.
 - When any `keyMetrics.*` is `null`, list a matching `unresolvedGaps` entry.
 - Preserve recommendation, confidence, risk rating, valuation stance, key strengths, key risks, and diligence gaps from the report document.
+- Enum fields are closed; use exactly one allowed token. The website content schema rejects any other value and the build will fail.
+  - `recommendation`: `strong-buy` | `buy` | `track` | `research-more` | `avoid`
+  - `confidence`: `high` | `medium` | `low`
+  - `riskRating`: `low` | `moderate` | `significant` | `critical` | `unknown`
+  - `valuationStance`: `attractive` | `fair` | `stretched` | `expensive` | `unknown`
 
 ## Handoff note
 

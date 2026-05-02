@@ -136,6 +136,15 @@ function checkFigure(failures, path, figure) {
     if (!hasText(row?.label)) failures.push(`${path}: figure ${figure.id} row ${index + 1} requires label`);
     if (Array.isArray(row?.values) && row.values.length === 0) failures.push(`${path}: figure ${figure.id} row ${index + 1} has empty values`);
   }
+  if (['matrix', 'risk-heatmap'].includes(figure.type)) {
+    const cols = Array.isArray(figure.data.columns) ? figure.data.columns : [];
+    const rows = Array.isArray(figure.data.rows) ? figure.data.rows : [];
+    if (cols.length < 1) failures.push(`${path}: figure ${figure.id} type ${figure.type} requires at least 1 data.columns entry (X-axis label per value column)`);
+    for (const [index, row] of rows.entries()) {
+      const values = Array.isArray(row?.values) ? row.values : [];
+      if (values.length !== cols.length) failures.push(`${path}: figure ${figure.id} row ${index + 1} (${row?.label ?? '?'}) has ${values.length} values but data.columns declares ${cols.length}; columns are X-axis labels and row.label is the Y-axis label, so values.length must equal columns.length`);
+    }
+  }
   if (['bars', 'metric-bars', 'waterfall'].includes(figure.type)) {
     for (const [index, item] of (figure.data.items ?? []).entries()) {
       if (!isNumber(item?.value)) failures.push(`${path}: figure ${figure.id} item ${index + 1} requires numeric value`);
@@ -153,6 +162,12 @@ function checkFigure(failures, path, figure) {
         if (!isNumber(point?.value)) failures.push(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires numeric value`);
       }
     }
+  }
+  // Company milestone timeline (F102 in 01-company-snapshot.yaml or 101-report-document.yaml)
+  // must be substantive: at least 8 items spanning founding → near-current.
+  if (figure.type === 'timeline' && /\/(01-company-snapshot|101-report-document)\.yaml$/.test(path) && figure.id === 'F102') {
+    const items = Array.isArray(figure.data.items) ? figure.data.items : [];
+    if (items.length < 8) failures.push(`${path}: figure ${figure.id} (company milestone timeline) has ${items.length} items but must include at least 8 (founding, every priced funding round, major product launches, scale milestones, partnerships, governance/legal events). Run a milestone-discovery search batch and document any unfilled gaps in evidenceGaps.`);
   }
 }
 
@@ -243,6 +258,32 @@ try {
     for (const [type, ref] of refs) {
       if (type === 'figure' && !figureIds.has(ref)) failures.push(`${run}/101-report-document.yaml: missing figure ${ref}`);
       if (type === 'table' && !tableIds.has(ref)) failures.push(`${run}/101-report-document.yaml: missing table ${ref}`);
+    }
+    // Tables must not be referenced from more than one location (chapter section or appendix block).
+    const refCounts = new Map();
+    for (const [type, ref] of refs) {
+      const key = `${type}:${ref}`;
+      refCounts.set(key, (refCounts.get(key) ?? 0) + 1);
+    }
+    for (const [key, count] of refCounts) {
+      if (count > 1) failures.push(`${run}/101-report-document.yaml: ${key.replace(':', ' ')} is referenced ${count} times; each table/figure must have exactly one home in the report`);
+    }
+    // Validate column/cell shape inside every table.
+    for (const [file, doc] of parsed) {
+      for (const table of doc?.tables ?? []) {
+        if (!Array.isArray(table?.columns) || table.columns.length === 0) {
+          failures.push(`${run}/${file}: table ${table?.id ?? '?'} requires non-empty data.columns`);
+          continue;
+        }
+        const expectedCols = table.columns.length;
+        for (const [index, row] of (table.rows ?? []).entries()) {
+          if (!Array.isArray(row)) {
+            failures.push(`${run}/${file}: table ${table.id} row ${index + 1} must be an array`);
+            continue;
+          }
+          if (row.length !== expectedCols) failures.push(`${run}/${file}: table ${table.id} row ${index + 1} has ${row.length} cells but columns declares ${expectedCols}`);
+        }
+      }
     }
     for (const [file, doc] of parsed) {
       for (const figure of doc?.figures ?? []) checkFigure(failures, `${run}/${file}`, figure);

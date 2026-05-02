@@ -97,7 +97,21 @@ function checkEvidenceCoverage(failures, warnings, run, ledger) {
 }
 
 function checkZhParity(failures, run, dir) {
-  for (const [enFile, zhFile] of [['101-report-document.yaml', '101-report-document.zh.yaml'], ['102-report-card.yaml', '102-report-card.zh.yaml']]) {
+  const analysisPairs = [
+    ['01-company-snapshot.yaml', '01-company-snapshot.zh.yaml'],
+    ['02-market-macro.yaml', '02-market-macro.zh.yaml'],
+    ['03-competitive-benchmarking.yaml', '03-competitive-benchmarking.zh.yaml'],
+    ['04-financial-unit-economics.yaml', '04-financial-unit-economics.zh.yaml'],
+    ['05-product-technology.yaml', '05-product-technology.zh.yaml'],
+    ['06-customer-retention.yaml', '06-customer-retention.zh.yaml'],
+    ['07-risk-regulatory.yaml', '07-risk-regulatory.zh.yaml'],
+    ['08-investment-valuation.yaml', '08-investment-valuation.zh.yaml'],
+  ];
+  const reportPairs = [
+    ['101-report-document.yaml', '101-report-document.zh.yaml'],
+    ['102-report-card.yaml', '102-report-card.zh.yaml'],
+  ];
+  for (const [enFile, zhFile] of [...analysisPairs, ...reportPairs]) {
     const zhPath = join(dir, zhFile);
     const enPath = join(dir, enFile);
     if (!existsSync(enPath)) continue;
@@ -114,6 +128,20 @@ function checkZhParity(failures, run, dir) {
     if (zhDoc.slug !== enDoc.slug) failures.push(`${run}/${zhFile}: slug must equal ${enDoc.slug}`);
     if (asDateString(zhDoc.runDate) !== asDateString(enDoc.runDate)) failures.push(`${run}/${zhFile}: runDate must equal English version`);
 
+    if (Array.isArray(enDoc.tables)) {
+      const enTabIds = enDoc.tables.map((t) => t?.id).sort().join(',');
+      const zhTabIds = (zhDoc.tables ?? []).map((t) => t?.id).sort().join(',');
+      if (enTabIds !== zhTabIds) failures.push(`${run}/${zhFile}: table IDs must match English`);
+    }
+    if (Array.isArray(enDoc.figures)) {
+      const enFigIds = enDoc.figures.map((f) => f?.id).sort().join(',');
+      const zhFigIds = (zhDoc.figures ?? []).map((f) => f?.id).sort().join(',');
+      if (enFigIds !== zhFigIds) failures.push(`${run}/${zhFile}: figure IDs must match English`);
+    }
+    if (Array.isArray(enDoc.sections) && Array.isArray(zhDoc.sections) && enDoc.sections.length !== zhDoc.sections.length) {
+      failures.push(`${run}/${zhFile}: sections count ${zhDoc.sections.length} must equal English ${enDoc.sections.length}`);
+    }
+
     if (zhFile === '102-report-card.zh.yaml') {
       for (const [field, allowed] of [['recommendation', RECOMMENDATIONS], ['confidence', CONFIDENCE], ['riskRating', RISK_RATINGS], ['valuationStance', VALUATION_STANCES]]) {
         if (zhDoc[field] !== enDoc[field]) failures.push(`${run}/${zhFile}: ${field} must equal English (translator must preserve enums)`);
@@ -122,14 +150,6 @@ function checkZhParity(failures, run, dir) {
       if (zhDoc.figureCount !== enDoc.figureCount) failures.push(`${run}/${zhFile}: figureCount must equal English`);
       if (zhDoc.tableCount !== enDoc.tableCount) failures.push(`${run}/${zhFile}: tableCount must equal English`);
       if (zhDoc.overallScore !== enDoc.overallScore) failures.push(`${run}/${zhFile}: overallScore must equal English`);
-    }
-    if (zhFile === '101-report-document.zh.yaml') {
-      const enFigIds = (enDoc.figures ?? []).map((f) => f.id).sort().join(',');
-      const zhFigIds = (zhDoc.figures ?? []).map((f) => f.id).sort().join(',');
-      if (enFigIds !== zhFigIds) failures.push(`${run}/${zhFile}: figure IDs must match English`);
-      const enTabIds = (enDoc.tables ?? []).map((t) => t.id).sort().join(',');
-      const zhTabIds = (zhDoc.tables ?? []).map((t) => t.id).sort().join(',');
-      if (enTabIds !== zhTabIds) failures.push(`${run}/${zhFile}: table IDs must match English`);
     }
   }
 }

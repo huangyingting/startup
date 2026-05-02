@@ -13,6 +13,7 @@ Use this skill after `01`–`02` exist and parse. Read `schemaPath`, `yamlSyntax
 Write exactly:
 
 - `03-competitive-benchmarking.yaml`
+- `03-competitive-benchmarking.zh.yaml` (Simplified Chinese sibling)
 
 ## Dynamic evidence use
 
@@ -46,6 +47,10 @@ Expected table families unless unavailable with a documented gap: competitor pro
 - Prefer `quadrant` or `competitive-matrix` for positioning.
 - Use `data.points[]` with `label`, numeric `x`, numeric `y`, optional `tone`, and axis labels when useful.
 - Use canonical renderer fields only; do not use `name`, `components`, `children`, `steps`, `cards`, or `groups` as primary fields.
+
+## Simplified Chinese sibling
+
+Immediately after writing `03-competitive-benchmarking.yaml`, write `03-competitive-benchmarking.zh.yaml` as its full Simplified Chinese translation, following `.github/references/zh-translation.md`. Preserve schema keys, IDs, claim/source IDs, numeric values, enums, array order, and YAML serialization style; translate every prose field including `chapter.title`, `chapter.summary`, callouts, sections, table cells, figure node detail, and notes. Do not move on to the next skill until both English and Chinese files exist and pass the residual-English sweep and structural-parity checks.
 
 ## Handoff note
 
