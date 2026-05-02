@@ -121,7 +121,7 @@ Summarize: report folder, generated YAML files (English plus required Simplified
 When a review finds accidental omissions, thin sections, or supportable data that was not captured, run the dynamic gap loop above on the existing report folder.
 
 - Never rename existing `S###` / `C###` IDs. Add new IDs after the current maximum and keep existing `claimRefs` stable.
-- The relevant analysis skill updates `00-report-brief.yaml` and `01-evidence-ledger.yaml` plus its owned `02`–`09` artifacts.
+- Update `00-report-brief.yaml` only via `startup-brief` when research scope or planned chapter needs change. The relevant analysis skill updates `01-evidence-ledger.yaml` plus its owned `02`–`09` artifact.
 - If new claims materially change recommendation/confidence/riskRating/valuationStance, rerun downstream affected skills, then rerun `startup-report-writer` and `startup-report-zh`.
 - Do not commit a partially-updated report folder.
 - After updates and reruns, run `npm run validate`.
