@@ -27,12 +27,15 @@ If valuation inputs are missing, default to `research-more` or `track` rather th
 Structure this as an investor-grade investment chapter:
 
 - Investment thesis and anti-thesis.
-- Bull/base/bear cases and scenario constraints.
+- Recommendation summary with confidence, risk rating, valuation stance, target return where supportable, suggested hold period, exit route, and position-sizing guidance.
+- Bull/base/bear cases with explicit assumptions, scenario valuation ranges, upside/downside logic, and scenario constraints.
 - Public and private comparables where supportable.
-- Valuation framework, sensitivity, expected return, and entry discipline.
-- IPO/readiness, exit routes, position sizing, final recommendation, and diligence asks.
+- Valuation framework, sensitivity, expected return, entry discipline, current price/valuation acceptability, and preferred entry conditions.
+- IPO/readiness scorecard, governance/readiness signals, CFO/board/control maturity where relevant, exit routes, final recommendation, and diligence asks.
+- DCF-style analysis only when defensible inputs exist; otherwise show as a diligence gap rather than inventing terminal values, WACC, or margins.
+- Stop-loss or thesis-break triggers tied to measurable operating, regulatory, customer, financial, or management events.
 
-Expected table families unless unavailable with a documented gap: thesis/anti-thesis, bull/base/bear cases, IPO/readiness scorecard, public comparables, private comparables, valuation sensitivity, return scenarios, position sizing, final diligence asks.
+Expected table families unless unavailable with a documented gap: recommendation summary, thesis/anti-thesis, bull/base/bear cases, IPO/readiness scorecard, public comparables, private comparables, DCF or discounted scenario inputs when supportable, valuation sensitivity, return scenarios, position sizing, stop-loss/thesis-break triggers, final diligence asks.
 
 ## Figure rules
 

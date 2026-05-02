@@ -27,12 +27,14 @@ Do not invent legal outcomes, regulatory posture, security incidents, or mitigat
 Structure this as an investor-grade risk chapter:
 
 - Risk overview and severity ranking.
-- Regulatory/legal risk and jurisdiction-specific exposure.
-- Security, privacy, operational, credit, platform, and competitive risks.
-- Mitigation evidence and residual risk.
-- Kill criteria and unresolved diligence asks for risk reduction.
+- Regulatory/legal risk and jurisdiction-specific exposure, including sector-specific rules, proposed regulations, state/local exposure, licensing, filings, lawsuits, and enforcement signals where relevant.
+- Partner, supplier, banking, cloud, model, data, or platform concentration risk where relevant.
+- Credit, fraud, counterparty, macroeconomic, or default-risk framework when the business model has financing, lending, payments, or balance-sheet exposure.
+- Security, privacy, compliance certifications, technology outage, integration failure, AI/model error, operational, platform, and competitive risks.
+- Mitigation evidence, residual risk, risk transmission to financials/valuation, and management response.
+- Kill criteria, stop-loss triggers, and unresolved diligence asks for risk reduction.
 
-Expected table families unless unavailable with a documented gap: risk register, regulatory/legal risk, operational/security risk, competitive risk, mitigation framework, kill criteria, risk diligence asks.
+Expected table families unless unavailable with a documented gap: risk register, regulatory/legal risk, partner/concentration risk, credit/counterparty risk when relevant, operational/security risk, competitive threat assessment, mitigation framework, kill criteria/stop-loss triggers, risk diligence asks.
 
 ## Figure rules
 

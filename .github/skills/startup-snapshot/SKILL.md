@@ -42,8 +42,10 @@ Create an investor-grade company snapshot with:
 
 - `startupIntroduction` for final report reuse.
 - Identity facts, founding, founders, headquarters, website, product summary, business model, stage, funding status.
-- Cover metrics where supported.
-- Leadership, investor base, timeline, investment highlights, and open identity questions.
+- Cover metrics where supported: valuation, total funding, revenue/run-rate or ARR, transaction/payment volume, customer count, headcount, and other company-specific KPIs.
+- Key performance indicator table with value, growth signal, benchmark, confidence, and diligence gap for unsupported values.
+- Leadership, management-team backgrounds, investor base, board/investor roles, timeline, investment highlights, key risks summary, and open identity questions.
+- Company-level graphical abstract inputs for the final report: business description, major thesis pillars, core revenue vectors, exit/IPO path if relevant, and top risk nodes.
 - Local `claimRefs` for every external factual block, table, and figure.
 
 ## Handoff note

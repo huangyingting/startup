@@ -27,17 +27,22 @@ If revenue, gross margin, CAC, LTV, retention, burn, payback, or customer concen
 Structure this as an investor-grade financial chapter:
 
 - Revenue model and revenue stream table.
+- Revenue mix evolution across historical and forecast periods when evidence or defensible assumptions support it.
+- Revenue component economics, including payments/interchange, subscriptions/SaaS, float/interest, services, usage, marketplace, or other company-specific streams.
+- If the company has payments/card exposure, analyze interchange economics, network/bank partner splits, transaction volume, gross-to-net revenue, and regulation sensitivity where supportable.
 - Pricing/packaging and monetization mechanics.
 - Publicly supported traction, growth, funding, and valuation anchors.
-- Unit economics, CAC, LTV, LTV/CAC, payback, margin trajectory, and burn where supportable.
-- Projection/scenario model only when defensible; otherwise document the missing inputs.
+- Unit economics, CAC, LTV, LTV/CAC, payback, margin trajectory, burn, runway, customer concentration, and segment-level economics where supportable.
+- Projection/scenario model only when defensible; include revenue, gross profit, gross margin, operating expenses, EBITDA, EBITDA margin, free cash flow, and key assumptions where supportable; otherwise document the missing inputs.
+- Margin expansion or compression drivers, including mix shift, operating leverage, automation, pricing, infrastructure costs, partner economics, or regulatory pressure.
 
-Expected table families unless unavailable with a documented gap: revenue streams, pricing/packaging, public financial anchors, CAC/LTV/payback, margin or cost-driver bridge, projection/scenario model, financial diligence asks.
+Expected table families unless unavailable with a documented gap: revenue streams, revenue mix evolution, pricing/packaging, public financial anchors, partner/interchange or transaction economics when relevant, CAC/LTV/payback by segment, margin or cost-driver bridge, projection/scenario model, detailed appendix-ready financial model, financial diligence asks.
 
 ## Figure rules
 
 - Use `unit-economics-waterfall` for public-data-constrained economics bridges.
-- Use `waterfall`, `bars`, or `metric-bars` only with numeric values.
+- Use `waterfall`, `bars`, `metric-bars`, or `xy` only with numeric values.
+- Use revenue-mix and projection figures only when numeric values are supported or clearly labeled as estimates with claim-backed assumptions.
 - Preserve unknown metrics as explanatory nodes/cards rather than empty arrays.
 
 ## Handoff note

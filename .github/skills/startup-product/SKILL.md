@@ -27,12 +27,13 @@ Do not invent architecture, security certifications, model capabilities, roadmap
 Structure this as an investor-grade product and technology chapter:
 
 - Product platform overview and module map.
-- AI/automation capabilities and technical differentiation.
-- Architecture, integrations, APIs, data model, implementation/onboarding model.
+- Core product module analysis by functional area, such as cards/payments, expense management, AP, procurement, travel, treasury, analytics, workflow, infrastructure, developer/API, or company-specific modules.
+- AI/automation capabilities and technical differentiation, including agentic automation, anomaly/fraud detection, recommendations, policy automation, forecasting, or copilot workflows where relevant.
+- Architecture, integrations, APIs, data model, implementation/onboarding model, real-time processing, reliability, and scalability evidence.
 - Roadmap and packaging implications.
-- Security, privacy, compliance, reliability, and technical diligence asks.
+- Security, privacy, compliance, reliability, certifications, regulated-industry readiness, and technical diligence asks.
 
-Expected table families unless unavailable with a documented gap: product module matrix, AI/automation capability map, integration matrix, security/compliance matrix, roadmap evidence, implementation/onboarding model, technical diligence asks.
+Expected table families unless unavailable with a documented gap: product module matrix, AI/automation capability map, product roadmap, integration matrix, security/compliance matrix, architecture/infrastructure evidence, implementation/onboarding model, technical diligence asks.
 
 ## Figure rules
 

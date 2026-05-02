@@ -24,11 +24,16 @@ Do not use `web_search` to add new facts at this stage. If a report-critical fac
 
 ## Document requirements
 
+- Include professional report metadata where supported by schema: title, prepared-by/generated-using fields if available, recommendation, confidence, risk rating, valuation stance, and disclaimer.
+- Build an executive summary chapter with investment highlights, recommendation summary, target return/hold period when supported, key KPI table, thesis overview, key risks, and valuation summary.
+- Include cover metrics derived from upstream artifacts: valuation, funding, revenue/run-rate, transaction/payment volume, customer count, headcount, and company-specific KPIs where supported.
+- Include a structured graphical abstract / investment thesis overview figure when upstream artifacts support it; use a native structured figure such as `flow`, `decision-map`, or `recommendation-logic`, not Mermaid.
 - Create an opening `startupIntroduction` object.
 - Create numbered chapters with section blocks, callouts, tables, and structured native figures.
 - Preserve canonical `claimRefs` from `100-evidence-ledger.yaml` for every factual block, table, and figure.
 - Use only schema-listed `reportMeta` keys.
-- Include appendices when upstream artifacts support them: detailed financial/projection model, competitive feature deep dive, management team, investor base, source notes, unresolved diligence gaps.
+- Include appendices when upstream artifacts support them: detailed financial/projection model, competitive feature deep dive, management team, investor base, source notes, unresolved diligence gaps, bibliography, and disclaimer.
+- Preserve appendix-ready depth from `04`, `03`, `01`, and `08`; do not drop detailed financial models, feature matrices, management-team tables, investor-base tables, or stop-loss triggers if supported.
 - Appendix blocks may use `paragraph`, `list`, `equation`, `callout`, `table`, and `figure`. Put appendix tables/figures in document-level `tables[]` / `figures[]` and reference them via `tableRef` / `figureRef`.
 
 ## Figure rules

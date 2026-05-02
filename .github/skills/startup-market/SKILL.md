@@ -31,9 +31,11 @@ Structure this as an investor-grade market chapter:
 - Growth drivers and constraints.
 - Buyer/persona segmentation and customer budget owner.
 - Geography, adoption, penetration, and timing.
+- Segment definitions and sizing by adjacent budget pool or workflow category when applicable, such as core software, payments, automation, procurement, AP, treasury, infrastructure, or services.
+- Penetration analysis by customer size, geography, vertical, or adoption maturity when evidence supports it; otherwise document as a market diligence gap.
 - Market attractiveness verdict and open diligence asks.
 
-Expected table families unless unavailable with a documented gap: market definitions, sizing lenses, growth drivers, buyer/customer segments, geography/penetration constraints, market evidence gaps.
+Expected table families unless unavailable with a documented gap: market definitions, segment definitions and sizing, TAM/SAM/SOM sizing lenses, growth drivers, buyer/customer segments, geography/penetration constraints, market evidence gaps.
 
 ## Figure rules
 

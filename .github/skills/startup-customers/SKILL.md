@@ -27,12 +27,15 @@ If customer count, named customers, retention, churn, NRR, satisfaction, or cust
 Structure this as an investor-grade customer and retention chapter:
 
 - Customer base overview and segment map.
-- Named customer proof, case studies, partner proof, and referenceability.
-- Retention, churn, NRR, expansion, satisfaction, and usage signals.
+- Customer growth trajectory across time when evidence supports it.
+- Customer segmentation by enterprise/mid-market/SMB, geography, vertical, ACV/ARR band, or usage profile where supportable.
+- Named customer proof, case studies, partner proof, use cases, outcomes, and referenceability.
+- Retention, logo churn, gross retention, NRR, expansion, satisfaction, support quality, implementation time, reviews, and usage signals.
+- Expansion drivers such as spend/usage growth, seat expansion, module adoption, pricing-tier upgrades, ecosystem adoption, or geography expansion.
 - Customer concentration and cohort-quality risks.
 - Customer diligence asks required before underwriting.
 
-Expected table families unless unavailable with a documented gap: customer segmentation, named customer proof, case studies, retention/churn/satisfaction, expansion drivers, concentration risks, customer diligence asks.
+Expected table families unless unavailable with a documented gap: customer growth trajectory, customer segmentation, named customer proof, case studies, retention/churn/satisfaction, expansion drivers, concentration risks, customer diligence asks.
 
 ## Figure rules
 

@@ -28,11 +28,13 @@ Structure this as an investor-grade competition chapter:
 
 - Competitive landscape and category map.
 - Primary competitors, incumbents, substitutes, and adjacent platforms.
+- Distinguish direct modern competitors, legacy incumbents, adjacent platform players, and potential strategic acquirers where relevant.
+- Competitor profiles should include valuation or market cap, funding, revenue scale, customer scale, target segment, differentiator, and strategic trajectory when evidence supports them.
 - Feature, product, pricing, packaging, and GTM comparisons.
-- Differentiation, switching costs, defensibility, and moat durability.
+- Differentiation, switching costs, defensibility, and moat durability, including product velocity, data/network effects, pricing advantage, integration ecosystem, distribution channel, or compliance advantage when applicable.
 - Competitive risks and diligence asks.
 
-Expected table families unless unavailable with a documented gap: competitor profiles, feature matrix, pricing/packaging comparison, GTM comparison, moat/switching-cost assessment, competitive risk register.
+Expected table families unless unavailable with a documented gap: competitor profiles, feature matrix, pricing/packaging comparison, GTM comparison, customer/review signal comparison, moat/switching-cost assessment, competitive risk register, detailed appendix-ready feature deep dive.
 
 ## Figure rules
 
