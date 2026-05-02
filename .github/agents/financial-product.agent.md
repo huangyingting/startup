@@ -12,7 +12,7 @@ Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `04-comp
 - `<reportFolder>/06-product-technology.yaml`
 - `<reportFolder>/07-customer-retention.yaml`
 
-Do not search the web. Use only claim-backed evidence.
+Do not search the web. Use only claim-backed evidence; if evidence is missing, write a clearly labeled diligence gap instead of inventing a claim.
 
 ## Output focus
 

@@ -31,7 +31,7 @@ Track this plan in `00-report-brief.yaml` (`researchQuestions`, `expectedTables`
 
 ## Source retention
 
-See schema `01-evidence-ledger.yaml` for `coverage.*` semantics. There is no fixed source-count target: gather enough evidence to cover the downstream chapter plan with supported claims or explicit `evidenceGaps`. Every retained source must be a URL cited or annotated by `web_search`, deduplicated by canonical URL and underlying event, and must support a claim, document an evidence gap, or be removed.
+See schema `01-evidence-ledger.yaml` for `coverage.*` semantics. Gather enough evidence to cover the downstream chapter plan with supported claims or explicit `evidenceGaps`. Every retained source must be a URL cited or annotated by `web_search`, deduplicated by canonical URL and underlying event, and must support a claim, document an evidence gap, or be removed.
 
 Prefer official pages, filings, credible news, databases, pricing/product docs, customer proof, regulatory sources, reviews, and disconfirming evidence. Never cite generic search-result pages or URLs that are not present in `web_search` citations/annotations.
 
@@ -72,7 +72,7 @@ Press-release / wire-copy rule:
 
 ## Pre-write gates
 
-Before writing `01-evidence-ledger.yaml`:
+Before writing `01-evidence-ledger.yaml`, satisfy these need-based quality gates:
 
 1. **Chapter coverage**: every downstream artifact above has at least one supporting claim, or a documented `evidenceGaps` entry naming the chapter and the missing fact.
 2. **Concentration**: no single publisher/domain family may exceed 34% of retained sources; replace low-marginal entries until under that threshold.
@@ -108,13 +108,13 @@ largestEvidenceGap: <sentence>
 
 ## Repair mode
 
-Use this mode to fix evidence-ledger warnings on an existing report without regenerating downstream artifacts (02–11 EN/ZH). Trigger: invoke this agent with `mode: repair` and an existing `reportFolder`.
+Use this mode to supplement the evidence ledger when downstream artifacts reveal missing data. `web_search` results include answer facts plus URL citations/annotations, so repair should search for the missing fact, extract the fact from the answer, and retain only cited/annotated URLs as `sources[]` entries. Trigger: invoke this agent with `mode: repair`, an existing `reportFolder`, and a missing-data list from downstream artifacts.
 
 Allowed inputs:
 
 - `<reportFolder>/01-evidence-ledger.yaml` — read and update in place.
 - `<reportFolder>/00-report-brief.yaml` — update only `sourceStrategy`, `evidenceGaps`, and any plan notes that describe new searches.
-- `<reportFolder>/02-company-snapshot.yaml` — must NOT change. Repair must not rewrite analytical artifacts.
+- `<reportFolder>/02-company-snapshot.yaml` through `<reportFolder>/11-report-card.yaml` plus `*.zh.yaml` — read only, to identify null metrics, `evidenceGaps`, `unresolvedGaps`, thin tables/figures, or unsupported conclusions. Repair must not rewrite analytical artifacts or translations.
 
 Hard invariants:
 
@@ -124,25 +124,29 @@ Hard invariants:
 - Do not change `schemaVersion`, `slug`, `runDate`, `company.name`, or any existing `claim.statement` / `claim.sourceRefs` that downstream artifacts depend on. Adding extra `sourceRefs` to an existing claim is allowed.
 - Do not touch `10-report-document*.yaml`, `11-report-card*.yaml`, or any `*.zh.yaml`.
 
-Scope of acceptable changes (so 02–11 do NOT need to be regenerated):
+Scope of repair changes:
 
 - Pruning sources that are uncited, duplicate wire-copy, or stale, subject to the rules below.
 - Adding independent sources to existing claims by appending to that claim's `sourceRefs` (multi-sourcing the same fact).
-- Adding new claims only to close items already listed in `evidenceGaps`, and only when the new claim restates a chapter need that 02–11 already discusses qualitatively. New claims must not introduce facts, numbers, or judgments that would change wording, tables, figures, recommendation, valuation stance, or risk rating in 02–11.
+- Adding new claims to close missing-data items found in downstream artifacts, including null metrics, `evidenceGaps`, `unresolvedGaps`, sparse tables/figures, or “unknown” conclusions.
+- Mark every new claim with topics/notes that identify the affected chapter need so the orchestrator can rerun the right specialist.
 
-Escalation (when 02–11 must be regenerated, not repaired):
+Downstream rerun rule:
 
-- If repair surfaces evidence that contradicts an existing claim cited by 02–11, materially changes a financial/market/risk number, reveals a new round/valuation, or would shift recommendation/confidence/riskRating/valuationStance.
-- In that case, stop the repair, leave the ledger unchanged for the conflicting fact, and report `repairEscalationNeeded: true` with a one-line reason in the handoff. The orchestrator decides which downstream specialists to rerun.
+- If repair adds claims for market/competition gaps, report `affectedSpecialists: Startup Market and Competition Analyst`.
+- If repair adds claims for financial/product/customer gaps, report `affectedSpecialists: Startup Financial and Product Analyst`.
+- If repair adds claims for risk/valuation/recommendation gaps, report `affectedSpecialists: Startup Risk and Valuation Analyst`.
+- If repair surfaces evidence that contradicts existing report conclusions or materially changes recommendation/confidence/riskRating/valuationStance, still add the cited claim when reliable, and set `repairEscalationNeeded: true` with the affected specialist list. The orchestrator reruns those specialists, then the Report Writer and ZH translator.
 
 Repair workflow:
 
-1. Diagnose by re-reading the warnings from `npm run check:reports-content` and the schema gates: citation-source provenance, duplicate sources/events, publisher concentration, independence ratio, uncited ratio, freshness, and bucket coverage.
-2. Plan additive search waves keyed to the unmet gate. Prefer independent buckets the ledger is missing (`tier-one-news`, `analyst-market-data`, `regulatory` / `filing`, `customer-proof` / `partner-proof`, `technical-docs`).
-3. Run targeted `web_search` queries and add new cited/annotated source URLs (fresh `accessDate`, accurate `independence`, `reputationTier`, `topics`). Add new claims that cite them and tie them to a chapter need.
-4. Pruning is allowed for sources that are uncited, duplicate wire-copy/event coverage, stale, or unsupported by any `web_search` citation/annotation, as long as cited claims and documented gaps remain valid.
-5. Recompute `coverage.sourcesConsidered`, `coverage.sourcesRetained`, `coverage.claimsCreated`. Update `sourceDiversityNotes`, `deduplicationNotes`, `recencyNotes`, `coverageGaps` to describe what changed.
-6. Run `npm run validate` from the repo root. The repair is only complete when `check:reports-content` reports no warnings for that report folder.
+1. Diagnose by reading downstream artifacts and the provided missing-data list. Prioritize accidental omissions: null metrics that may be public, thin competitor/customer/product tables, unsupported valuation inputs, and gaps that affect recommendation quality.
+2. Convert each missing item into targeted `web_search` queries. Use the answer text for candidate facts and the URL citations/annotations for retained `sources[]`; do not use uncited URLs.
+3. Add new cited/annotated source URLs (fresh `accessDate`, accurate `independence`, `reputationTier`, `topics`). Add new claims that cite them and tie each claim to the affected chapter need.
+4. If targeted searches do not find usable cited evidence, leave or add a precise `evidenceGaps` entry naming the downstream artifact and missing fact.
+5. Pruning is allowed for sources that are uncited, duplicate wire-copy/event coverage, stale, or unsupported by any `web_search` citation/annotation, as long as cited claims and documented gaps remain valid.
+6. Recompute `coverage.sourcesConsidered`, `coverage.sourcesRetained`, `coverage.claimsCreated`. Update `sourceDiversityNotes`, `deduplicationNotes`, `recencyNotes`, and `coverageGaps` to describe what changed.
+7. Report affected specialists in the handoff. Do not edit downstream artifacts yourself.
 
 Repair handoff:
 
@@ -153,8 +157,9 @@ paths: <01>[,<00>]
 sourcesAdded: <number>
 sourcesPruned: <number>
 claimsAdded: <number>
-warningsResolved: <comma-separated short labels>
-remainingWarnings: <comma-separated short labels|none>
+downstreamGapsClosed: <comma-separated short labels>
+downstreamGapsRemaining: <comma-separated short labels|none>
+affectedSpecialists: <comma-separated exact agent names|none>
 repairEscalationNeeded: <true|false>
 escalationReason: <sentence|null>
 ```

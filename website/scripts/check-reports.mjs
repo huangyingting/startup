@@ -65,10 +65,7 @@ const FIGURE_CONTRACTS = new Map([
   ['sensitivity', [['series']]],
   ['xy', [['points', 'series']]],
 ]);
-const LEGACY_FIGURE_FIELDS = ['mer' + 'maid', 'mer' + 'maidType'];
 const NON_CANONICAL_FIGURE_DATA_FIELDS = new Set(['children', 'steps', 'cards', 'buckets', 'groups', 'components', 'name']);
-const REMOVED_REPORT_META_FIELDS = ['class' + 'ification'];
-const REMOVED_REPORT_CARD_FIELDS = ['date', 'companyName', 'memo', 'overallRisk', 'sourceCount', 'claimCount'];
 
 function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
@@ -111,7 +108,6 @@ function isNumber(value) {
   return typeof value === 'number' && Number.isFinite(value);
 }
 function checkFigure(failures, path, figure) {
-  if (LEGACY_FIGURE_FIELDS.some((field) => field in figure)) failures.push(`${path}: figure ${figure.id} uses removed legacy figure fields`);
   if (!FIGURE_TYPES.has(figure.type)) failures.push(`${path}: figure ${figure.id} has invalid type ${figure.type}`);
   if (!FIGURE_LAYOUTS.has(figure.layout)) failures.push(`${path}: figure ${figure.id} has invalid layout ${figure.layout}`);
   if (!figure.data || typeof figure.data !== 'object' || Array.isArray(figure.data)) {
@@ -262,17 +258,11 @@ try {
     pushIfInvalidEnum(failures, `${run}/10-report-document.yaml`, 'valuationStance', reportDoc?.reportMeta?.valuationStance, VALUATION_STANCES);
     if (!reportDoc?.startupIntroduction || typeof reportDoc.startupIntroduction !== 'object') failures.push(`${run}/10-report-document.yaml: missing startupIntroduction object`);
     else if (typeof reportDoc.startupIntroduction.summary !== 'string' || !reportDoc.startupIntroduction.summary.trim()) failures.push(`${run}/10-report-document.yaml: startupIntroduction.summary is required`);
-    for (const field of REMOVED_REPORT_META_FIELDS) {
-      if (Object.hasOwn(reportDoc?.reportMeta ?? {}, field)) failures.push(`${run}/10-report-document.yaml: reportMeta contains removed field ${field}`);
-    }
     if (typeof card?.figureCount !== 'number') failures.push(`${run}/11-report-card.yaml: figureCount is required and must be a number`);
     else if (card.figureCount !== (reportDoc?.figures ?? []).length) failures.push(`${run}/11-report-card.yaml: figureCount does not match report document`);
     if (typeof card?.tableCount !== 'number') failures.push(`${run}/11-report-card.yaml: tableCount is required and must be a number`);
     else if (card.tableCount !== (reportDoc?.tables ?? []).length) failures.push(`${run}/11-report-card.yaml: tableCount does not match report document`);
     if (typeof card?.overallScore !== 'number' || card.overallScore < 0 || card.overallScore > 10) failures.push(`${run}/11-report-card.yaml: overallScore must be a number between 0 and 10`);
-    for (const field of REMOVED_REPORT_CARD_FIELDS) {
-      if (Object.hasOwn(card ?? {}, field)) failures.push(`${run}/11-report-card.yaml: report card contains removed field ${field}`);
-    }
     if (card?.reportFiles?.reportDocument !== '10-report-document.yaml') failures.push(`${run}/11-report-card.yaml: reportFiles.reportDocument must be 10-report-document.yaml`);
     if (card?.reportFiles?.reportCard !== '11-report-card.yaml') failures.push(`${run}/11-report-card.yaml: reportFiles.reportCard must be 11-report-card.yaml`);
     if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {

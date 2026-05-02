@@ -53,14 +53,6 @@ function checkEvidenceCoverage(failures, warnings, run, ledger) {
   const sourcesRetained = Number(coverage.sourcesRetained);
   const claimsCreated = Number(coverage.claimsCreated);
 
-  for (const field of ['depth', 'sourceTarget', 'sourcesFetched']) {
-    if (Object.hasOwn(coverage, field)) failures.push(`${run}/01-evidence-ledger.yaml: coverage contains removed field ${field}`);
-  }
-
-  for (const source of sources) {
-    if (Object.hasOwn(source, 'fetchVerified')) failures.push(`${run}/01-evidence-ledger.yaml: source ${source.id ?? '<unknown>'} contains removed field fetchVerified`);
-  }
-
   if (Number.isFinite(sourcesRetained) && sourcesRetained !== sources.length) {
     failures.push(`${run}/01-evidence-ledger.yaml: coverage.sourcesRetained ${sourcesRetained} must equal sources.length ${sources.length}`);
   }

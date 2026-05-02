@@ -11,7 +11,7 @@ Read `schemaPath`, `yamlSyntaxPath`, `00-report-brief.yaml`, `01-evidence-ledger
 - `<reportFolder>/03-market-macro.yaml`
 - `<reportFolder>/04-competitive-benchmarking.yaml`
 
-Do not search the web. Use only the evidence ledger. Every fact must cite `claimRefs`.
+Do not search the web. Use only the evidence ledger. Every fact must cite `claimRefs`; if evidence is missing, write a clearly labeled gap instead of inventing a claim.
 
 ## Output focus
 

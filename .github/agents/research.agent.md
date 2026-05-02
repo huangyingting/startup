@@ -69,7 +69,7 @@ Evidence search rule: the Evidence Analyst must generate targeted `web_search` q
 ## Evidence and quality rules
 
 - `01-evidence-ledger.yaml` is the evidence backbone; the Evidence Analyst owns source/claim quality (see `evidence.agent.md`).
-- Evidence coverage is need-based, not count-based: retained `sources[]` must be enough to support downstream chapter claims or document `evidenceGaps`.
+- Evidence coverage follows chapter needs: retained `sources[]` must support downstream chapter claims or document `evidenceGaps`.
 - Every artifact starts with the document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`). IDs use `S001`/`C001`/`F001`/`T001`.
 - Every external assertion in later YAML cites `claimRefs`. Every claim with `sourceRefs` references sources from `01-evidence-ledger.yaml` that were cited or annotated by `web_search`.
 - Numeric KPI fields are numbers or `null` (with explanation). Never invent values.
@@ -90,7 +90,17 @@ After every specialist:
 - Validate every figure against its schema Figure rendering contract. Reject empty arrays, non-canonical field shapes, string-valued numeric chart values, or figures whose visible cards/layers/nodes lack `label` plus `detail`/renderable content.
 - Reject any artifact that is missing its document head (`schemaVersion`, `artifact`, `slug`, `runDate`, `company`) or begins with continuation prose / a mid-list fragment.
 
-After `Startup Report Writer`, validate `10-report-document.yaml` figure/table references, then run `Startup Report Translator ZH`. After the translator writes both required `.zh.yaml` files, run `npm run validate` when dependencies are available.
+After `Startup Report Writer`, validate `10-report-document.yaml` figure/table references and run the downstream evidence repair loop below if the report still has accidental missing data. Run `Startup Report Translator ZH` only after any repair/rerun loop is complete. After the translator writes both required `.zh.yaml` files, run `npm run validate` when dependencies are available.
+
+## Downstream evidence repair loop
+
+Use this loop when generated downstream artifacts show missing data that may be answerable with more research: `null` key metrics, `unknown` / low-confidence conclusions, `evidenceGaps`, `unresolvedGaps`, sparse benchmark rows, or figure/table placeholders that say evidence is missing.
+
+1. Collect the missing-data items and map each item to affected artifacts: market/competition (`03`, `04`), financial/product/customer (`05`, `06`, `07`), or risk/valuation/recommendation (`08`, `09`).
+2. Invoke `Startup Report Evidence Analyst` with `mode: repair`, the existing `reportFolder`, and the explicit missing-data list. The Evidence Analyst adds only new web-search-cited sources/claims to `00`/`01` and reports which gaps it closed.
+3. If new claims were added, rerun the affected downstream specialists so their YAML consumes the new `claimRefs`. Then always rerun `Startup Report Writer` and `Startup Report Translator ZH`.
+4. If the Evidence Analyst reports that a gap remains unsupported after targeted searches, keep the gap visible in the relevant downstream artifact; do not invent values.
+5. Run `npm run validate`. The report is complete when validation passes and all remaining gaps are explicitly documented rather than accidental omissions.
 
 ## Final response
 
@@ -98,10 +108,10 @@ Summarize: report folder, generated YAML files (English plus required Simplified
 
 ## Repair an existing report
 
-Use this flow when `npm run check:reports-content` reports evidence-ledger warnings (citation-source provenance, duplicate sources/events, publisher concentration, independence ratio, uncited sources) on an already-generated report and the user wants to fix them without regenerating downstream chapters or translations.
+Use the same downstream evidence repair loop for an existing report when a review finds accidental omissions, thin sections, or report data that appears supportable but was not captured. The main question is whether the rendered report lacks supportable data needed by its chapters.
 
-- Invoke only `Startup Report Evidence Analyst` with `mode: repair` and the existing `reportFolder`. Do not run other specialists.
-- The Evidence Analyst must follow its Repair-mode rules: never rename or delete existing `S###`/`C###` IDs that are referenced by 02–11; only add sources/claims and prune uncited duplicates; update `coverage.*` and notes; do not edit 02–11 EN or any `*.zh.yaml`.
-- Repair-mode additions strengthen existing analysis only. New evidence must corroborate existing claims or close documented `evidenceGaps`. It must not introduce new facts/numbers/judgments that would change wording, tables, figures, or recommendation in 02–11.
-- If the Evidence Analyst returns `repairEscalationNeeded: true`, stop the repair and trigger a targeted regeneration: rerun the affected downstream specialists, then `Startup Report Writer`, then `Startup Report Translator ZH`. Do not commit a partially-updated report folder.
-- After repair, run `npm run validate`. The repair is complete only when no warnings remain for that report folder.
+- Do not treat `web_search` as a citation-only tool; its answers include candidate facts plus URL citations/annotations. Repair should extract both, then retain only cited/annotated URLs in `sources[]`.
+- Never rename existing `S###` / `C###` IDs. Add new IDs after the current maximum and keep existing claimRefs stable.
+- The Evidence Analyst updates only `00-report-brief.yaml` and `01-evidence-ledger.yaml`. It must not directly edit `02`–`11` or any `*.zh.yaml`.
+- Any new claim that closes a downstream gap requires rerunning the affected downstream specialist(s), then `Startup Report Writer`, then `Startup Report Translator ZH`. Do not commit a partially-updated report folder.
+- After repair and reruns, run `npm run validate`.

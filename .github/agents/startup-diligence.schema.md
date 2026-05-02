@@ -78,7 +78,7 @@ Required Simplified Chinese files (must ship with every report):
 Evidence ledger quality requirements:
 
 - Source breadth: retained sources should span multiple independent source buckets whenever available, including official/company material, startup or business news, independent third-party databases/analyst sources, customer or partner proof, regulatory/legal/filing sources, and technical/product documentation.
-- Coverage semantics: there is no fixed source-count target. `coverage.sourcesConsidered` counts cited/annotated `web_search` source candidates reviewed before retention. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`. Coverage is sufficient when downstream chapter claims are supported or unsupported facts are documented in `evidenceGaps`.
+- Coverage semantics: `coverage.sourcesConsidered` counts cited/annotated `web_search` source candidates reviewed before retention. `coverage.sourcesRetained` must equal the number of retained `sources[]` entries; `coverage.claimsCreated` must equal `claims.length`. Coverage is sufficient when downstream chapter claims are supported or unsupported facts are documented in `evidenceGaps`.
 - Source recency: claims about current company status, funding, valuation, customers, revenue scale, headcount, product packaging, pricing, and regulatory posture should prefer sources from the last 24 months. Older sources are acceptable for durable historical facts and should normally support claims marked `freshness: historical`.
 - Source deduplication: repeated coverage of the same underlying event does not equal independent evidence. Cluster sources by event/topic/date and retain only sources that add original facts, primary quotes, independent confirmation, or materially different interpretation.
 - Query iteration: the evidence process should vary search queries by company name, product names, founders, investors, competitors, customers, market category, geography, funding/valuation terms, product/security terms, regulatory/legal terms, reviews, hiring, and negative/disconfirming angles.
@@ -291,7 +291,7 @@ figures:
 
 ### Figure rendering contracts
 
-The website renders figures automatically from `type` plus structured `data`. Agents must select the most semantic `type`; do not rely on `title` text for renderer selection.
+The website renders figures automatically from `type` plus structured `data`. Agents must select the most semantic `type`; do not rely on `title` text for renderer selection. Prefer domain-specific figure types (`market-sizing-lens`, `unit-economics-waterfall`, `customer-surface-map`, `architecture-stack`, `risk-transmission-map`, `recommendation-logic`) over generic `flow`, `decision-map`, or `waterfall` when their contract fits the intended figure.
 
 Global rules for every figure:
 

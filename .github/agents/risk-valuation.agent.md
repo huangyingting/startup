@@ -11,7 +11,7 @@ Read `schemaPath`, `yamlSyntaxPath`, and `00-report-brief.yaml` through `07-cust
 - `<reportFolder>/08-risk-regulatory.yaml`
 - `<reportFolder>/09-investment-valuation.yaml`
 
-Do not search the web. Use only claim-backed evidence.
+Do not search the web. Use only claim-backed evidence; if evidence is missing, write a clearly labeled diligence gap instead of inventing a claim.
 
 ## Output focus
 

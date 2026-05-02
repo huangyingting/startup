@@ -31,7 +31,7 @@
 - Downstream stages must not run until upstream YAML exists, parses, and all `claimRefs` / `sourceRefs` are valid.
 - Agents must write complete YAML artifacts directly under `reports/<run>/`; do not use temporary files as canonical report output.
 - A complete report folder contains `00-report-brief.yaml` through `11-report-card.yaml` plus the required `10-report-document.zh.yaml` and `11-report-card.zh.yaml`. The website index includes complete reports only.
-- To clear evidence-ledger warnings (citation-source provenance, duplicate sources/events, publisher concentration, independence ratio, uncited sources) on an existing report, run only `Startup Report Evidence Analyst` in `mode: repair`. Repair mode adds independent sources/claims and prunes uncited duplicates without renaming existing IDs or touching 02–11 EN or any `*.zh.yaml`, so downstream chapters and translations do not need to be regenerated. New evidence must corroborate existing analysis or close `evidenceGaps`; if it changes facts, numbers, or recommendation, the Evidence Analyst returns `repairEscalationNeeded: true` and the orchestrator reruns the affected specialists, the Report Writer, and the ZH translator.
+- Use repair as a downstream-gap evidence loop. After downstream artifacts are generated, inspect null metrics, `evidenceGaps`, `unresolvedGaps`, sparse figures/tables, and “unknown” conclusions. For gaps that are likely answerable by more research, rerun `Startup Report Evidence Analyst` in `mode: repair` to add cited/annotated `web_search` sources and claims to `01-evidence-ledger.yaml`, then rerun the affected downstream specialists, the Report Writer, and the ZH translator. The Evidence Analyst must not edit 02–11 or translations directly.
 
 ## YAML schema conventions
 
@@ -40,7 +40,7 @@
 - Required Simplified Chinese localized artifacts are `10-report-document.zh.yaml` and `11-report-card.zh.yaml`.
 - Every artifact must include `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
 - `01-evidence-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite retained `sourceRefs` from cited/annotated `web_search` results. Sources should include `accessDate` and concise `keyQuote` when available.
-- Evidence coverage is need-based, not count-based: retained `sources[]` must come from `web_search` citations/annotations, be deduplicated by URL/event, and support downstream claims or documented `evidenceGaps`.
+- Evidence coverage follows chapter needs: retained `sources[]` must come from `web_search` citations/annotations, be deduplicated by URL/event, and support downstream claims or documented `evidenceGaps`.
 - Evidence must be broad (multiple source buckets), fresh (last 24 months for current facts), and deduplicated by underlying event. Vary search angles instead of repeating one domain or query family. Detailed rules live in `.github/agents/evidence.agent.md`.
 - Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Figure IDs use `F001`, `F002`, etc. Table IDs use `T001`, `T002`, etc.
 - Use descriptive camelCase field names.
