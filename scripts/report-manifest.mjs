@@ -1,5 +1,20 @@
 export const SCHEMA_VERSION = 'startup-diligence-report-v2';
 
+export const ANALYSIS_DEPTH_FLOORS = {
+  snapshot: {
+    minSectionBodyWords: 40,
+    minSectionWordsTotal: 300,
+    minTableRowsTotal: 12,
+    minFigureDataPointsTotal: 6,
+  },
+  standard: {
+    minSectionBodyWords: 40,
+    minSectionWordsTotal: 250,
+    minTableRowsTotal: 20,
+    minFigureDataPointsTotal: 6,
+  },
+};
+
 export const ANALYSIS_ARTIFACTS = [
   {
     file: '01-company-snapshot.yaml',
@@ -13,6 +28,7 @@ export const ANALYSIS_ARTIFACTS = [
     minSections: 5,
     minTables: 3,
     minFigures: 2,
+    depthFloor: ANALYSIS_DEPTH_FLOORS.snapshot,
     requiredFigureTypes: ['timeline'],
   },
   {
@@ -27,6 +43,7 @@ export const ANALYSIS_ARTIFACTS = [
     minSections: 4,
     minTables: 4,
     minFigures: 2,
+    depthFloor: ANALYSIS_DEPTH_FLOORS.standard,
     requiredFigureTypes: ['layered-lens', 'bars', 'range'],
   },
   {
@@ -41,6 +58,7 @@ export const ANALYSIS_ARTIFACTS = [
     minSections: 4,
     minTables: 4,
     minFigures: 2,
+    depthFloor: ANALYSIS_DEPTH_FLOORS.standard,
     requiredFigureTypes: ['quadrant', 'positioning-map', 'scorecard'],
   },
   {
@@ -55,6 +73,7 @@ export const ANALYSIS_ARTIFACTS = [
     minSections: 4,
     minTables: 4,
     minFigures: 2,
+    depthFloor: ANALYSIS_DEPTH_FLOORS.standard,
     requiredFigureTypes: ['bridge', 'waterfall', 'bars', 'scatter', 'range'],
   },
   {
@@ -69,6 +88,7 @@ export const ANALYSIS_ARTIFACTS = [
     minSections: 4,
     minTables: 4,
     minFigures: 2,
+    depthFloor: ANALYSIS_DEPTH_FLOORS.standard,
     requiredFigureTypes: ['stack', 'flow', 'dependency-map'],
   },
   {
@@ -83,6 +103,7 @@ export const ANALYSIS_ARTIFACTS = [
     minSections: 4,
     minTables: 4,
     minFigures: 2,
+    depthFloor: ANALYSIS_DEPTH_FLOORS.standard,
     requiredFigureTypes: ['journey-map', 'bars', 'scatter', 'funnel', 'cohort'],
   },
   {
@@ -97,6 +118,7 @@ export const ANALYSIS_ARTIFACTS = [
     minSections: 4,
     minTables: 4,
     minFigures: 2,
+    depthFloor: ANALYSIS_DEPTH_FLOORS.standard,
     requiredFigureTypes: ['heatmap', 'matrix', 'causal-map', 'dependency-map'],
   },
   {
@@ -111,6 +133,7 @@ export const ANALYSIS_ARTIFACTS = [
     minSections: 4,
     minTables: 4,
     minFigures: 2,
+    depthFloor: ANALYSIS_DEPTH_FLOORS.standard,
     requiredFigureTypes: ['logic-chain', 'sensitivity', 'scorecard', 'scenario-tree', 'range'],
   },
 ];

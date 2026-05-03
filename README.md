@@ -16,14 +16,14 @@ Each analysis skill writes both the English artifact and its Simplified Chinese 
 
 ```mermaid
 flowchart TD
-  Start([User: research company X]) --> Setup[prepare-report-folder.mjs<br/>create reports/&lt;ts&gt;-&lt;slug&gt;/]
+  Start([User: research company X]) --> PreDedup{check-company-dedup.mjs<br/>--company / --website}
+  PreDedup -- exit 2: duplicate --> Stop([STOP unless refresh requested])
+  PreDedup -- exit 0 --> Setup[prepare-report-folder.mjs<br/>create reports/&lt;ts&gt;-&lt;slug&gt;/]
   Setup --> Snapshot
 
   subgraph Stage1[Stage 1 — Analysis artifacts 01-08 + zh siblings]
     Snapshot[startup-snapshot<br/>writes 01.yaml + 01.zh.yaml]
-    Snapshot --> Dedup{check-company-dedup.mjs}
-    Dedup -- exit 2: duplicate --> Stop([STOP unless refresh requested])
-    Dedup -- exit 0 --> Market
+    Snapshot --> Market
 
     Market[startup-market<br/>writes 02.yaml + 02.zh.yaml] --> Compete
     Compete[startup-competition<br/>writes 03.yaml + 03.zh.yaml] --> Fin
@@ -156,7 +156,7 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `.github/schemas/startup-diligence-report-v2.md` — canonical YAML schema and rendering contract.
 - `.github/references/` — shared YAML syntax and evidence-ledger rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
-- `scripts/check-company-dedup.mjs` — fails with duplicate-risk details for matching company names or domains.
+- `scripts/check-company-dedup.mjs` — pre-stage duplicate-risk check for matching company names or domains; also supports legacy snapshot-file checks.
 - `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `100-evidence-ledger.yaml`.
 - `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and EN↔ZH parity checks.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.

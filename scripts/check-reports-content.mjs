@@ -4,7 +4,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { asDateString, canonicalSourceUrl, listDirs, readYaml, reportsDir, tryReadYaml } from './text-utils.mjs';
-import { ANALYSIS_FILES, REQUIRED_LOCALIZED_PAIRS, SCHEMA_VERSION } from './report-manifest.mjs';
+import { ANALYSIS_ARTIFACTS, ANALYSIS_FILES, REQUIRED_LOCALIZED_PAIRS, SCHEMA_VERSION } from './report-manifest.mjs';
 import { CARD_ENUM_FIELDS } from './report-registry.mjs';
 
 const PUBLISHER_CONCENTRATION_LIMIT = 0.34;
@@ -303,7 +303,61 @@ function genericFigureCount(figures) {
   }).length;
 }
 
-function checkAnalysisFloors(run, doc, file) {
+function wordCount(value) {
+  return String(value ?? '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+function figureDataPointCount(figure) {
+  const data = figure?.data ?? {};
+  return Math.max(
+    data.items?.length ?? 0,
+    data.nodes?.length ?? 0,
+    data.edges?.length ?? 0,
+    data.layers?.length ?? 0,
+    data.series?.length ?? 0,
+    data.rows?.length ?? 0,
+    data.points?.length ?? 0,
+    data.branches?.length ?? 0,
+  );
+}
+
+function detailStats(doc) {
+  const sectionWords = (doc.sections ?? []).map((section) => wordCount(section?.body));
+  const tableRows = (doc.tables ?? []).map((table) => table?.rows?.length ?? 0);
+  const figureDataPoints = (doc.figures ?? []).map(figureDataPointCount);
+  return {
+    minSectionWords: sectionWords.length ? Math.min(...sectionWords) : 0,
+    sectionWordsTotal: sectionWords.reduce((sum, count) => sum + count, 0),
+    tableRowsTotal: tableRows.reduce((sum, count) => sum + count, 0),
+    figureDataPointsTotal: figureDataPoints.reduce((sum, count) => sum + count, 0),
+  };
+}
+
+function checkDetailFloor(run, doc, file) {
+  const spec = ANALYSIS_ARTIFACTS.find((item) => item.file === file);
+  const floor = spec?.depthFloor;
+  if (!floor) return;
+  const stats = detailStats(doc);
+  const misses = [];
+  if (stats.minSectionWords < floor.minSectionBodyWords) misses.push(`shortest section ${stats.minSectionWords}<${floor.minSectionBodyWords} words`);
+  if (stats.sectionWordsTotal < floor.minSectionWordsTotal) misses.push(`section words ${stats.sectionWordsTotal}<${floor.minSectionWordsTotal}`);
+  if (stats.tableRowsTotal < floor.minTableRowsTotal) misses.push(`table rows ${stats.tableRowsTotal}<${floor.minTableRowsTotal}`);
+  if (stats.figureDataPointsTotal < floor.minFigureDataPointsTotal) misses.push(`figure data points ${stats.figureDataPointsTotal}<${floor.minFigureDataPointsTotal}`);
+  if (misses.length) warn(`${run}/${file}: below detailed-report depth floor (${misses.join('; ')})`);
+}
+
+function isSyntheticQaReport(card, report) {
+  const haystack = [
+    card?.company?.stage,
+    card?.company?.sector,
+    card?.title,
+    card?.subtitle,
+    report?.reportMeta?.coverageNotes,
+  ].join(' ').toLowerCase();
+  return haystack.includes('synthetic') && haystack.includes('qa');
+}
+
+function checkAnalysisFloors(run, doc, file, { skipDetailFloor = false } = {}) {
   const isSnapshot = file === '01-company-snapshot.yaml';
   const floors = { tables: isSnapshot ? 3 : 4, figures: 2, sections: isSnapshot ? 5 : 4 };
   const counts = {
@@ -314,6 +368,7 @@ function checkAnalysisFloors(run, doc, file) {
   for (const [key, min] of Object.entries(floors)) {
     if (counts[key] < min) fail(`${run}/${file}: thin analysis (${counts[key]} ${key.slice(0, -1)}(s)); expected at least ${min}`);
   }
+  if (!skipDetailFloor) checkDetailFloor(run, doc, file);
   return { isSnapshot, counts };
 }
 
@@ -377,8 +432,9 @@ function checkDepth(run, dir, ledger, report, card) {
 
   let floorHits = 0;
   let templateRisks = 0;
+  const skipDetailFloor = isSyntheticQaReport(card, report);
   for (const [file, doc] of docs) {
-    const { isSnapshot, counts } = checkAnalysisFloors(run, doc, file);
+    const { isSnapshot, counts } = checkAnalysisFloors(run, doc, file, { skipDetailFloor });
     const { hitsFloorExactly, templateRisk } = checkAnalysisTemplateRisks(run, doc, file, isSnapshot, counts);
     if (hitsFloorExactly) floorHits += 1;
     if (templateRisk) templateRisks += 1;

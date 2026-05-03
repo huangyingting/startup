@@ -69,6 +69,53 @@ function textHaystack(doc) {
   }).toLowerCase();
 }
 
+function wordCount(value) {
+  return String(value ?? '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+function figureDataPointCount(figure) {
+  const data = figure?.data ?? {};
+  return Math.max(
+    data.items?.length ?? 0,
+    data.nodes?.length ?? 0,
+    data.edges?.length ?? 0,
+    data.layers?.length ?? 0,
+    data.series?.length ?? 0,
+    data.rows?.length ?? 0,
+    data.points?.length ?? 0,
+    data.branches?.length ?? 0,
+  );
+}
+
+function detailStats(doc) {
+  const sectionWords = (doc.sections ?? []).map((section) => wordCount(section?.body));
+  const tableRows = (doc.tables ?? []).map((table) => table?.rows?.length ?? 0);
+  const figureDataPoints = (doc.figures ?? []).map(figureDataPointCount);
+  return {
+    minSectionWords: sectionWords.length ? Math.min(...sectionWords) : 0,
+    sectionWordsTotal: sectionWords.reduce((sum, count) => sum + count, 0),
+    tableRowsTotal: tableRows.reduce((sum, count) => sum + count, 0),
+    figureDataPointsTotal: figureDataPoints.reduce((sum, count) => sum + count, 0),
+  };
+}
+
+function checkDepthFloor(file, doc, floor) {
+  if (!floor) return;
+  const stats = detailStats(doc);
+  if (stats.minSectionWords < floor.minSectionBodyWords) {
+    fail(`${file}: thin section prose (${stats.minSectionWords} words in shortest section); expected every section body to have at least ${floor.minSectionBodyWords}`);
+  }
+  if (stats.sectionWordsTotal < floor.minSectionWordsTotal) {
+    fail(`${file}: thin section prose (${stats.sectionWordsTotal} total section words); expected at least ${floor.minSectionWordsTotal}`);
+  }
+  if (stats.tableRowsTotal < floor.minTableRowsTotal) {
+    fail(`${file}: thin table analysis (${stats.tableRowsTotal} total table rows); expected at least ${floor.minTableRowsTotal}`);
+  }
+  if (stats.figureDataPointsTotal < floor.minFigureDataPointsTotal) {
+    fail(`${file}: thin figure data (${stats.figureDataPointsTotal} total figure data points); expected at least ${floor.minFigureDataPointsTotal}`);
+  }
+}
+
 function normalizeColumn(value) {
   return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
 }
@@ -90,43 +137,6 @@ function tableSatisfiesAnyColumnSet(doc, requiredColumnsAny) {
 function reportContractIssue(message) {
   if (args.preLedger || args.strict) fail(message);
   else warn(message);
-}
-
-function valuesForChapter(value, chapter) {
-  if (!value) return [];
-  if (Array.isArray(value)) return value.filter((item) => !item?.chapter || item.chapter === chapter);
-  if (typeof value === 'object') return value[chapter] ?? [];
-  return [];
-}
-
-function chapterCustomizationFor(customization, chapter) {
-  if (!customization) return { topics: [], figures: [], tables: [], metrics: [], questions: [] };
-  return {
-    topics: [
-      ...valuesForChapter(customization.requiredTopics, chapter),
-      ...valuesForChapter(customization.requiredSections, chapter),
-    ],
-    figures: valuesForChapter(customization.requiredFigures, chapter),
-    tables: valuesForChapter(customization.requiredTables, chapter),
-    metrics: valuesForChapter(customization.requiredMetrics, chapter),
-    questions: [
-      ...valuesForChapter(customization.requiredQuestions, chapter),
-      ...valuesForChapter(customization.diligenceQuestions, chapter),
-    ],
-  };
-}
-
-function topicLabel(topic) {
-  if (typeof topic === 'string') return topic;
-  return topic?.name ?? topic?.topic ?? topic?.title ?? JSON.stringify(topic);
-}
-
-function questionKeywords(question) {
-  return String(question)
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((word) => word.length >= 5)
-    .slice(0, 3);
 }
 
 function checkContract(file, doc, contract, types) {
@@ -185,53 +195,6 @@ function checkChineseSibling(zhFile, en, zh) {
   if (zh.company?.name !== en.company?.name) fail(`${zhFile}: company.name does not match English`);
 }
 
-function checkCustomization(file, doc, types, chapterReq) {
-  const haystack = textHaystack(doc);
-  for (const topic of chapterReq.topics) {
-    const label = topicLabel(topic);
-    if (label && !haystack.includes(String(label).toLowerCase())) {
-      fail(`${file}: customization required topic not addressed: ${label}`);
-    }
-  }
-  for (const figure of chapterReq.figures) {
-    if (figure?.type && !types.has(figure.type)) {
-      fail(`${file}: customization required figure type missing: ${figure.type}`);
-    }
-    if (figure?.purpose && !haystack.includes(String(figure.purpose).toLowerCase())) {
-      warn(`${file}: customization figure purpose not obvious in artifact: ${figure.purpose}`);
-    }
-  }
-  for (const table of chapterReq.tables) {
-    if (!tableHasColumns(doc, table?.requiredColumns)) {
-      fail(`${file}: customization required table columns missing: ${(table?.requiredColumns ?? []).join(', ')}`);
-    }
-    if (table?.purpose && !haystack.includes(String(table.purpose).toLowerCase())) {
-      warn(`${file}: customization table purpose not obvious in artifact: ${table.purpose}`);
-    }
-  }
-  for (const metric of chapterReq.metrics) {
-    if (metric?.required && metric?.name && !haystack.includes(String(metric.name).toLowerCase())) {
-      fail(`${file}: customization required metric not addressed: ${metric.name}`);
-    }
-  }
-  for (const question of chapterReq.questions) {
-    const keywords = questionKeywords(question);
-    if (keywords.length && !keywords.some((word) => haystack.includes(word))) {
-      warn(`${file}: customization diligence question may be unaddressed: ${question}`);
-    }
-  }
-}
-
-function readCustomization() {
-  const doc = loadYamlFile('000-run-customization.yaml', { required: false })
-    ?? loadYamlFile('000-customization.yaml', { required: false });
-  if (doc && doc.artifact && doc.artifact !== 'run-customization') {
-    warn('run customization: artifact should be run-customization when present');
-  }
-  return doc;
-}
-
-const customization = readCustomization();
 const totals = { sources: 0, claims: 0, gaps: 0 };
 const rows = [];
 
@@ -258,6 +221,7 @@ for (const spec of ANALYSIS_ARTIFACTS) {
   if (counts.sections < spec.minSections) fail(`${spec.file}: ${counts.sections} sections, expected at least ${spec.minSections}`);
   if (counts.tables < spec.minTables) fail(`${spec.file}: ${counts.tables} tables, expected at least ${spec.minTables}`);
   if (counts.figures < spec.minFigures) fail(`${spec.file}: ${counts.figures} figures, expected at least ${spec.minFigures}`);
+  checkDepthFloor(spec.file, doc, spec.depthFloor);
 
   const types = figureTypeSet(doc);
   if (!spec.requiredFigureTypes.some((type) => types.has(type))) {
@@ -267,7 +231,6 @@ for (const spec of ANALYSIS_ARTIFACTS) {
   checkContract(spec.file, doc, contract, types);
   if (args.preLedger) checkPreLedgerEvidence(spec.file, doc, counts);
   if (zh) checkChineseSibling(zhFile, doc, zh);
-  checkCustomization(spec.file, doc, types, chapterCustomizationFor(customization, spec.chapterKey));
 }
 
 if (args.preLedger) {

@@ -24,7 +24,7 @@ Each analysis skill receives the invocation contract from `AGENTS.md`:
 - `reportFolder`
 - `schemaPath`
 - `yamlSyntaxPath`
-- optional run-local customization from prompt instructions or `reportFolder/000-run-customization.yaml`
+- prompt-derived run requirements inferred from the user's instructions, if any
 
 Before writing:
 
@@ -41,6 +41,7 @@ Each analysis skill is the authoritative generation contract for its report chap
 - required tables, with intended columns and evidence expectations;
 - required structured figures, with preferred renderer types and required data shape;
 - evidence collection strategy and source classes;
+- research breadth expectations: exhaust decision-relevant official, independent, adverse, and freshness sources until additional credible sources no longer change the chapter's facts, tables, figures, or gaps;
 - domain-adaptive additions inferred from the company, business model, and operating dependencies;
 - completion checklist and handoff fields.
 
@@ -48,19 +49,19 @@ Each analysis skill also has a sibling `contract.yaml` that mirrors the machine-
 
 Global instructions define workflow, evidence, YAML, localization, and validation rules only. Section-level content belongs in the section skill, not in a central industry-template file.
 
-## Run-local customization merge
+## Prompt-derived run requirements
 
 Each analysis skill must merge requirements in this order:
 
 1. Base workflow, schema, and the skill's universal chapter requirements.
 2. Domain-adaptive additions inferred by the skill for the current company.
-3. Run-specific customization from the user or optional `000-run-customization.yaml`.
+3. Prompt-derived run requirements inferred from the user's instructions.
 
-Run-specific customization wins unless it conflicts with schema, evidence provenance, renderer constraints, or factual support. Never invent values to satisfy customization.
+Prompt-derived run requirements win unless they conflict with schema, evidence provenance, renderer constraints, or factual support. Never invent values to satisfy a prompt requirement.
 
-Optional run-local customization is diagnostic and should stay under the report folder. It may name audience, investment lens, chapter focus, required topics, required metrics, required tables, required figure purposes/types, required competitors/comparables, source preferences, forbidden domains, or chapter-specific diligence questions. It is not part of the final artifact set.
+The orchestrator and each chapter skill must infer run-specific requirements directly from the user's prompt. Examples include audience, investment lens, chapter focus, required topics, required metrics, required tables, required figure purposes/types, required competitors/comparables, source preferences, forbidden domains, or chapter-specific diligence questions. Keep these requirements in the working context and satisfy them in the owned artifacts; do not introduce a separate configuration artifact or a repo-level industry template.
 
-Before finalizing a chapter, verify every customization item assigned to that chapter:
+Before finalizing a chapter, verify every prompt-derived requirement assigned to that chapter:
 
 - required topics or sections;
 - required metrics;
@@ -70,7 +71,7 @@ Before finalizing a chapter, verify every customization item assigned to that ch
 - chapter-specific diligence questions;
 - source preferences or forbidden domains.
 
-If evidence is unavailable, do not invent values. Use `null`, explanatory notes, and `evidenceGaps[]` with a concrete diligence path. Mention unresolved customization items in the handoff note.
+If evidence is unavailable, do not invent values. Use `null`, explanatory notes, and `evidenceGaps[]` with a concrete diligence path. Mention unresolved prompt-derived requirements in the handoff note.
 
 ## Domain inference
 
@@ -100,7 +101,7 @@ Diagnostic research packs or cached text snapshots may be created during researc
 
 ## Parallel research packs
 
-After `01-company-snapshot.yaml` is complete and duplicate check passes, research for `02`–`08` may be prepared in parallel as diagnostic packs. Parallel packs are read-only with respect to final artifacts.
+After the pre-stage duplicate check passes and `01-company-snapshot.yaml` is complete, research for `02`–`08` may be prepared in parallel as diagnostic packs. Parallel packs are read-only with respect to final artifacts.
 
 Recommended pack contents:
 
@@ -111,7 +112,7 @@ Recommended pack contents:
 - conflicting facts and source disagreements;
 - tables/figures the evidence can support;
 - open gaps and diligence paths;
-- run-local customization items satisfied or still unresolved;
+- prompt-derived run requirements satisfied or still unresolved;
 - domain-adaptive additions selected and why.
 
 Rules:
@@ -131,6 +132,8 @@ Rules:
 ## Research and freshness
 
 - Treat `currentDate` as the freshness anchor.
+- Default to investor-grade research depth, not minimum viable output. Each chapter should collect as much decision-relevant, non-duplicative, evidence-backed material as practical before drafting; stop only when additional credible sources are repetitive, low quality, or no longer change the analysis.
+- Retain breadth across source classes rather than volume for its own sake: official/company-authored sources, independent corroboration, adverse/disconfirming sources, and recent/freshness checks should all be represented or explicitly gapped.
 - Refresh volatile chapter-relevant facts: funding, valuation, revenue, pricing, product launches, customers, partnerships, lawsuits, regulatory posture, leadership, and similar facts.
 - Ask complete-sentence research questions tied to the intended paragraph, table, figure, or gap.
 - Avoid keyword-only queries.
@@ -175,9 +178,11 @@ Before finalizing each analysis artifact, verify that the research record includ
 
 For every major table or figure, ask: “Which source would change this cell/node if it were wrong?” If the answer is “none,” either source it, remove it, or mark it as a diligence gap.
 
-For every run-specific customization item, ask: “Where is this addressed?” If the answer is “nowhere,” add the missing analysis or record an evidence gap before moving on.
+For every prompt-derived run requirement, ask: “Where is this addressed?” If the answer is “nowhere,” add the missing analysis or record an evidence gap before moving on.
 
 For every domain-adaptive addition selected by the skill, ask: “Which table, figure, section, or gap carries this?” If the answer is “none,” add it before moving on.
+
+If a chapter only meets the minimum section/table/figure floors but credible evidence supports deeper treatment, continue research and expand the artifact before handoff. Minimum floors are readiness gates, not stopping conditions.
 
 ## Artifact depth
 
@@ -192,6 +197,8 @@ Artifacts `01`–`08` are the research record, not thin handoffs. Each must reta
 - notes explaining supported, estimated, conflicting, or unavailable metrics.
 
 Tables should include company-specific values, dated evidence, confidence, implication, and diligence asks. Tables created only to hit a count are not substantive.
+
+Prefer richer artifacts when evidence supports them: additional sections, tables, figures, rows, sourced notes, and evidence gaps are expected for visible companies, complex domains, or prompt-critical topics. Do not compress useful research just to match a minimal template.
 
 When a skill specifies required table columns, preserve those columns unless a better schema-compatible table design covers the same information. At minimum, diligence tables should expose the fact/metric, value or status, evidence date/source, confidence, implication, and diligence ask.
 
@@ -254,7 +261,7 @@ After writing, record a concise internal summary:
 - output paths;
 - figure count;
 - table count;
-- customization items satisfied and unresolved;
+- prompt-derived run requirements satisfied and unresolved;
 - research pack path, or `research pack: not persisted`;
 - evidence gaps closed;
 - evidence gaps remaining;

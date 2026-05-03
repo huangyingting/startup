@@ -18,10 +18,11 @@ Resolve these inputs before running any chapter skill:
 - `companyUrl`: optional identity anchor, never proof by itself.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
 - `currentDate`: actual session date in `YYYY-MM-DD`; use as the evidence freshness anchor and default `runDate` unless the user requests a historical report.
+- `duplicateCheck`: run `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before creating or writing the report folder. Exit `2` means duplicate risk; stop unless the user explicitly requested a refresh/update of an existing company.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/schemas/startup-diligence-report-v2.md`.
 - `yamlSyntaxPath`: absolute path to `.github/references/yaml-syntax.md`.
-- `runCustomizationPath`: optional `reportFolder/000-run-customization.yaml` or prompt-time customization instructions. Customization is run-local and section-owned; do not use a repo-level industry-template file.
+- Prompt-derived run requirements: infer any audience, investment lens, required topics, metrics, competitors/comparables, figures, source constraints, or diligence questions from the user's prompt. These requirements are run-local and section-owned; satisfy them in the relevant artifacts or record an evidence gap.
 
 Before writing artifacts:
 
@@ -65,7 +66,7 @@ Rules:
 - Never hand-write `100-evidence-ledger.yaml`; generate it with `node scripts/consolidate-evidence.mjs <reportFolder>`.
 - Temporary files, terminal transcripts, and `/tmp` outputs are diagnostics only, not report artifacts or evidence sources.
 - If a tool produces only a snippet or partial transcript, rewrite it as a complete YAML artifact under `reportFolder` before continuing.
-- Optional customization files, research packs, and cached page snapshots are diagnostics/handoffs only; they are not part of the required final artifact set.
+- Research packs and cached page snapshots are diagnostics/handoffs only; they are not part of the required final artifact set.
 
 ## Skill sequence
 
@@ -97,7 +98,7 @@ The orchestrator does not delegate to a separate research agent and does not rec
 
 Default safe mode is serialized artifact writing. Use parallelism only where the work is read-only and cannot race on shared YAML files.
 
-Allowed after `01-company-snapshot.yaml` passes the duplicate check:
+Allowed after the pre-stage duplicate check passes and `01-company-snapshot.yaml` exists:
 
 - Parallel source discovery, direct URL review, official-surface fetching, cached text snapshots, and chapter research notes for `02`–`08`.
 - Parallel preparation of diagnostic research packs, provided each pack is written to a unique path and no final artifact is modified.
@@ -110,23 +111,25 @@ Not allowed without a dedicated orchestrator and locking/merge protocol:
 
 Synchronization points:
 
-1. `01-company-snapshot.yaml` identity gate and duplicate check.
-2. Pre-ledger readiness audit after all `01`–`08` English/Chinese pairs exist.
-3. `startup-ledger` consolidation.
-4. `startup-report` assembly (English + Simplified Chinese in one stage).
-5. `startup-card` generation (English + Simplified Chinese in one stage).
-6. Final index rebuild and `npm run validate`.
+1. Pre-stage duplicate check before report folder creation or stage 1 writing.
+2. `01-company-snapshot.yaml` identity gate after the snapshot artifact exists.
+3. Pre-ledger readiness audit after all `01`–`08` English/Chinese pairs exist.
+4. `startup-ledger` consolidation.
+5. `startup-report` assembly (English + Simplified Chinese in one stage).
+6. `startup-card` generation (English + Simplified Chinese in one stage).
+7. Final index rebuild and `npm run validate`.
 
-## Section-owned customization and research packs
+## Section-owned prompt requirements and research packs
 
 - Treat `due_diligence.md`-style prose reports as quality exemplars, not output format. Convert cover metrics, Mermaid-style diagrams, tables, appendices, bibliography, and citations into schema-native YAML artifacts, structured figures, `100` sources/claims, and `claimRefs`.
-- Do not centralize industry templates in a repo-level customization file. The workflow must support any startup category, not just software/Internet companies.
-- If the user provides audience, investment lens, required metrics, required competitors/comparables, required figures, or chapter-specific diligence questions, treat them as run-local customization from the prompt or optional `reportFolder/000-run-customization.yaml`.
+- Do not centralize one-off prompt requirements or industry templates in repo-level files. The workflow must support any startup category, not just software/Internet companies.
+- If the user provides audience, investment lens, required metrics, required competitors/comparables, required figures, source constraints, or chapter-specific diligence questions, infer them from the prompt and route each requirement to the owning chapter skill.
 - Each `startup-*` chapter skill owns its chapter content contract. The skill must define universal chapter requirements, required tables, required structured figures, evidence collection strategy, and domain-adaptive additions.
 - Domain-adaptive additions are inferred from the company domain, business model, value-chain position, buyer/user/payment structure, revenue mechanism, regulatory exposure, physical/scientific/data/financial dependencies, and operating model. Do not hard-code the report around a small set of sectors.
-- For high-depth reports, create diagnostic per-chapter research packs after `01` and before artifact writing. Each pack should list reviewed URLs, source type, independence, candidate claims, key quotes, freshness, conflicts, adverse findings, and open gaps.
+- For normal report runs, pursue investor-grade research depth in every chapter: collect the useful official, independent, adverse, and freshness evidence that can change the chapter's sections, tables, figures, claims, or gaps. Stop adding sources only when new credible sources become duplicative or non-material.
+- Create or maintain diagnostic per-chapter research packs after `01` and before artifact writing whenever research is broad enough to need a handoff. Each pack should list reviewed URLs, source type, independence, candidate claims, key quotes, freshness, conflicts, adverse findings, open gaps, and why additional sources were or were not material.
 - Cached fetched pages are for extraction speed only; cite the reviewed original URL in `localEvidence.sources[]`, not the cache path.
-- Every customization-critical request must be either satisfied in the owning artifact or recorded as an explicit `evidenceGaps[]` item with a diligence path.
+- Every prompt-critical request must be either satisfied in the owning artifact or recorded as an explicit `evidenceGaps[]` item with a diligence path.
 
 ## Section numbering
 
@@ -160,6 +163,8 @@ Reject thin work even if YAML parses:
 - repeated generic section titles or three-node figures;
 - count-filler tables or string-valued chart numbers.
 
+Do not stop because a chapter has reached the minimum floor. If credible evidence supports more rows, sections, figures, source diversity, or domain-specific treatment, expand the owning artifact before moving forward.
+
 Before `startup-ledger`, inspect counts for sources, claims, tables, figures, sections, and gaps. If a stage misses the floor and the company is not genuinely obscure, return to that stage first.
 
 Run the readiness audit before `startup-ledger` when a report folder has draft `01`–`08` artifacts:
@@ -176,15 +181,21 @@ Before `startup-card`, compare `101` table/figure counts against the union of `0
 
 After each stage, parse files and verify expected outputs, identity fields, claim refs, figure contracts, and Chinese parity. Use the schema and references for exact checks.
 
-After `01-company-snapshot.yaml`, run:
+Before creating or writing a new report folder, run:
 
 ```text
-node scripts/check-company-dedup.mjs <reportFolder>/01-company-snapshot.yaml
+node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]
 ```
 
 - Exit `0`: continue.
 - Exit `2`: duplicate risk; stop unless the user explicitly requested a refresh.
 - Any other non-zero exit: fix the input/path issue before continuing.
+
+The legacy snapshot-file mode remains available only for manual cross-checks after `01-company-snapshot.yaml` exists:
+
+```text
+node scripts/check-company-dedup.mjs <reportFolder>/01-company-snapshot.yaml
+```
 
 Final validation after `102-report-card.zh.yaml`:
 
