@@ -189,11 +189,17 @@ if (doc) {
   };
 
   const gate = spec.gate;
-  const minTables = Math.max(gate.minTables, spec.requiredTables.length);
-  const minFigures = Math.max(gate.minFigures, spec.requiredFigures.length);
+  // Tables and figures are interchangeable artifact slots: agents may swap a
+  // required figure for an additional table when the collected data does not
+  // fit the planned figure type. Enforce the combined floor instead of two
+  // independent floors so a substitution does not fail the gate.
+  const minArtifacts = Math.max(
+    gate.minTables + gate.minFigures,
+    spec.requiredTables.length + spec.requiredFigures.length,
+  );
+  const totalArtifacts = counts.tables + counts.figures;
   if (counts.sections < gate.minSections) fail(`${spec.file}: ${counts.sections} sections, expected at least ${gate.minSections}`);
-  if (counts.tables < minTables) fail(`${spec.file}: ${counts.tables} tables, expected at least ${minTables} (config minTables=${gate.minTables}, requiredTables=${spec.requiredTables.length})`);
-  if (counts.figures < minFigures) fail(`${spec.file}: ${counts.figures} figures, expected at least ${minFigures} (config minFigures=${gate.minFigures}, requiredFigures=${spec.requiredFigures.length})`);
+  if (totalArtifacts < minArtifacts) fail(`${spec.file}: ${counts.tables} tables + ${counts.figures} figures = ${totalArtifacts} artifacts, expected at least ${minArtifacts} (requiredTables=${spec.requiredTables.length}, requiredFigures=${spec.requiredFigures.length}; figures may be substituted with tables when data shape does not fit)`);
   if (counts.sections > gate.maxSections) warn(`${spec.file}: ${counts.sections} sections exceeds target range maximum ${gate.maxSections}; verify the chapter is not over-fragmented or duplicative`);
   if (counts.tables > gate.maxTables) warn(`${spec.file}: ${counts.tables} tables exceeds target range maximum ${gate.maxTables}; verify the chapter is not over-fragmented or duplicative`);
   if (counts.figures > gate.maxFigures) warn(`${spec.file}: ${counts.figures} figures exceeds target range maximum ${gate.maxFigures}; verify the chapter is not over-fragmented or duplicative`);

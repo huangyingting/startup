@@ -114,7 +114,7 @@ chapters:
         requirement: TAM/SAM/SOM or constrained sizing layers with numeric values when supported.
       - name: Market estimate range
         types: [range]
-        requirement: Low/base/high estimates of one market quantity (e.g. TAM, SAM, penetration, growth forecast) with source-backed bounds and one consistent unit. Do not mix incompatible units (percent vs $B vs index) on the same chart. Required only when such bounded data exists; if the chapter only has independent point estimates, omit this figure.
+        requirement: Low/base/high estimates of one market quantity (e.g. TAM, SAM, penetration, growth forecast) with source-backed bounds and one consistent unit. Do not mix incompatible units (percent vs $B vs index) across rows.
       - name: Buyer / segment map
         types: [matrix, journey-map, flow]
         requirement: Buyer-user-payer relationships and adoption path.
@@ -328,7 +328,7 @@ chapters:
         requirement: Evidence quality, outcome specificity, retention visibility, or production maturity.
       - name: Retention / repeat cohort
         types: [cohort]
-        requirement: Required only when public time-series retention data exists — columns are time buckets (e.g. month-1/3/6 or year-1/2) and cell values are retention percentages 0–100. If no such cohort data is available, omit this figure entirely; do not substitute a matrix here (the Customer proof matrix figure above already covers ordinal evidence-quality scoring across customers).
+        requirement: Time-series retention only — columns are time buckets (e.g. month-1/3/6 or year-1/2) and cell values are retention percentages 0–100.
     evidenceStrategy:
       - Official customer evidence — customer pages, case studies, testimonials, partner stories, marketplaces; logos only when tied to use.
       - Independent evidence — procurement/tender records, reviews, marketplace ratings, public customer announcements, filings, analyst reports.
