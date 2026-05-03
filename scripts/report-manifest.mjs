@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 'startup-diligence-report-v2';
+export const SCHEMA_VERSION = 'report-v2';
 
 export const ANALYSIS_DEPTH_FLOORS = {
   standard: {
@@ -127,10 +127,10 @@ export const ANALYSIS_ARTIFACTS = [
 export const ANALYSIS_FILES = ANALYSIS_ARTIFACTS.map((item) => item.file);
 
 export const CORE_ARTIFACTS = [
-  { file: '100-evidence-ledger.yaml', artifact: 'evidence-ledger' },
   ...ANALYSIS_ARTIFACTS.map(({ file, artifact, chapter }) => ({ file, artifact, chapter })),
-  { file: '101-report-document.yaml', artifact: 'report-document' },
-  { file: '102-report-card.yaml', artifact: 'report-card' },
+  { file: '90-evidence-ledger.yaml', artifact: 'evidence-ledger' },
+  { file: '91-report-document.yaml', artifact: 'report-document' },
+  { file: '92-report-card.yaml', artifact: 'report-card' },
 ];
 
 export const REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);

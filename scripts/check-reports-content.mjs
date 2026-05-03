@@ -101,7 +101,7 @@ function checkRenderableData(run, file, doc) {
 
 function checkLedger(run, ledger) {
   const { coverage = {}, sources = [], claims = [] } = ledger;
-  const file = `${run}/100-evidence-ledger.yaml`;
+  const file = `${run}/90-evidence-ledger.yaml`;
   if (Number(coverage.sourcesRetained) !== sources.length) {
     fail(`${file}: coverage.sourcesRetained ${coverage.sourcesRetained} must equal sources.length ${sources.length}`);
   }
@@ -286,10 +286,10 @@ function checkHighProfileEvidence(run, ledger, card) {
   const sourceCount = ledger.sources?.length ?? 0;
   const claimCount = ledger.claims?.length ?? 0;
   if (sourceCount < MIN_HIGH_PROFILE_SOURCES) {
-    fail(`${run}/100-evidence-ledger.yaml: high-profile company has only ${sourceCount} retained sources; expected at least ${MIN_HIGH_PROFILE_SOURCES} or a documented reason`);
+    fail(`${run}/90-evidence-ledger.yaml: high-profile company has only ${sourceCount} retained sources; expected at least ${MIN_HIGH_PROFILE_SOURCES} or a documented reason`);
   }
   if (claimCount < MIN_HIGH_PROFILE_CLAIMS) {
-    fail(`${run}/100-evidence-ledger.yaml: high-profile company has only ${claimCount} claims; expected at least ${MIN_HIGH_PROFILE_CLAIMS} or a documented reason`);
+    fail(`${run}/90-evidence-ledger.yaml: high-profile company has only ${claimCount} claims; expected at least ${MIN_HIGH_PROFILE_CLAIMS} or a documented reason`);
   }
 }
 
@@ -302,13 +302,13 @@ function checkReportCoverage(run, docs, report) {
   const missingTables = [...upstreamTables].filter((id) => !reportTables.has(id) && !notes.includes(id));
   const missingFigures = [...upstreamFigures].filter((id) => !reportFigures.has(id) && !notes.includes(id));
   if (upstreamTables.size && reportTables.size / upstreamTables.size < REPORT_COVERAGE_FLOOR) {
-    fail(`${run}/101-report-document.yaml: preserves only ${reportTables.size}/${upstreamTables.size} upstream tables`);
+    fail(`${run}/91-report-document.yaml: preserves only ${reportTables.size}/${upstreamTables.size} upstream tables`);
   }
   if (upstreamFigures.size && reportFigures.size / upstreamFigures.size < REPORT_COVERAGE_FLOOR) {
-    fail(`${run}/101-report-document.yaml: preserves only ${reportFigures.size}/${upstreamFigures.size} upstream figures`);
+    fail(`${run}/91-report-document.yaml: preserves only ${reportFigures.size}/${upstreamFigures.size} upstream figures`);
   }
-  if (missingTables.length) warn(`${run}/101-report-document.yaml: upstream table(s) missing without coverageNotes: ${missingTables.join(', ')}`);
-  if (missingFigures.length) warn(`${run}/101-report-document.yaml: upstream figure(s) missing without coverageNotes: ${missingFigures.join(', ')}`);
+  if (missingTables.length) warn(`${run}/91-report-document.yaml: upstream table(s) missing without coverageNotes: ${missingTables.join(', ')}`);
+  if (missingFigures.length) warn(`${run}/91-report-document.yaml: upstream figure(s) missing without coverageNotes: ${missingFigures.join(', ')}`);
 }
 
 function checkDepth(run, dir, ledger, report, card) {
@@ -341,7 +341,7 @@ function checkDepth(run, dir, ledger, report, card) {
 
 function loadCoreArtifacts(run, dir) {
   const out = { ledger: null, report: null, card: null };
-  for (const [key, file] of [['ledger', '100-evidence-ledger.yaml'], ['report', '101-report-document.yaml'], ['card', '102-report-card.yaml']]) {
+  for (const [key, file] of [['ledger', '90-evidence-ledger.yaml'], ['report', '91-report-document.yaml'], ['card', '92-report-card.yaml']]) {
     const value = loadYaml(join(dir, file));
     if (!value) {
       fail(`${run}/${file}: YAML parse failed or missing`);
@@ -354,8 +354,8 @@ function loadCoreArtifacts(run, dir) {
 
 function checkRun(run) {
   const dir = join(reportsDir, run);
-  if (!existsSync(join(dir, '102-report-card.yaml'))) {
-    if (yamlFiles(dir).length) fail(`${run}: partial report folder has YAML files but is missing 102-report-card.yaml`);
+  if (!existsSync(join(dir, '92-report-card.yaml'))) {
+    if (yamlFiles(dir).length) fail(`${run}: partial report folder has YAML files but is missing 92-report-card.yaml`);
     return false;
   }
   const { ledger, report, card } = loadCoreArtifacts(run, dir);
@@ -363,7 +363,7 @@ function checkRun(run) {
     const doc = loadYaml(join(dir, file));
     if (doc) checkRenderableData(run, file, doc);
   }
-  if (report) checkRenderableData(run, '101-report-document.yaml', report);
+  if (report) checkRenderableData(run, '91-report-document.yaml', report);
   if (ledger) checkLedger(run, ledger);
   if (ledger && report && card) checkDepth(run, dir, ledger, report, card);
   return true;

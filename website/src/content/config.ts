@@ -14,7 +14,7 @@ const reports = defineCollection({
     runId: z.string(),
     runTimestamp: z.string(),
     folderSlug: z.string(),
-    schemaVersion: z.literal('startup-diligence-report-v2'),
+    schemaVersion: z.literal('report-v2'),
     artifact: z.literal('report-card'),
     slug: z.string(),
     runDate: dateString,

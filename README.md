@@ -12,7 +12,7 @@ Startup generates evidence-backed diligence reports for named startup companies.
 
 ## Report artifact flow
 
-Each analysis skill writes one English artifact. After all 8 analysis artifacts exist, `startup-ledger` consolidates evidence, `startup-report` synthesizes `101-report-document.yaml`, and `startup-card` produces `102-report-card.yaml`.
+Each analysis skill writes one English artifact. After all 8 analysis artifacts exist, `startup-ledger` consolidates evidence, `startup-report` synthesizes `91-report-document.yaml`, and `startup-card` produces `92-report-card.yaml`.
 
 ```mermaid
 flowchart TD
@@ -37,14 +37,14 @@ flowchart TD
   Val --> Ledger
 
   subgraph Stage2[Stage 2 — Consolidate]
-    Ledger[startup-ledger<br/>scripts/consolidate-evidence.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 100-evidence-ledger.yaml]
+    Ledger[startup-ledger<br/>scripts/consolidate-evidence.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 90-evidence-ledger.yaml]
   end
 
   Ledger --> Report
 
   subgraph Stage3[Stage 3 — Report assembly]
-    Report[startup-report<br/>writes 101-report-document.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events]
-    Report --> Card[startup-card<br/>writes 102-report-card.yaml<br/>derives from 100 + 101]
+    Report[startup-report<br/>writes 91-report-document.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events]
+    Report --> Card[startup-card<br/>writes 92-report-card.yaml<br/>derives from 90 + 91]
   end
 
   Card --> FinalVal
@@ -83,11 +83,11 @@ flowchart TD
 
 ### Three-layer defence
 
-Every artifact is constrained by skill requirements, central schema rules, and build-time lints. Failures are rejected at build and pushed back to the source artifact rather than patched in `101`.
+Every artifact is constrained by skill requirements, central schema rules, and build-time lints. Failures are rejected at build and pushed back to the source artifact rather than patched in `91`.
 
 ```mermaid
 flowchart LR
-  A[Skill requirements<br/>.github/skills/*.md] --> B[Schema rules<br/>.github/schemas/<br/>startup-diligence-report-v2.md]
+  A[Skill requirements<br/>.github/skills/*.md] --> B[Schema rules<br/>.github/schemas/<br/>report-v2.md]
   B --> C[Build-time lints<br/>scripts/check-reports-content.mjs<br/>website/scripts/check-reports.mjs]
   C --> D{Pass?}
   D -- yes --> Ship([Astro build OK])
@@ -102,7 +102,7 @@ Lint coverage today:
 - `matrix` / `heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
 - each `tableRef` / `figureRef` is referenced from at most one chapter section or appendix block.
 - F102 company milestone timeline must have ≥8 events covering founding, every priced round, major launches, scale milestones, partnerships, and governance/legal events.
-- card `tableCount` / `figureCount` / `overallScore` match `101-report-document.yaml`.
+- card `tableCount` / `figureCount` / `overallScore` match `91-report-document.yaml`.
 
 ### Required artifacts
 
@@ -116,9 +116,9 @@ reports/<timestamp>-<slug>/
   ├─ 06-customer-retention.yaml
   ├─ 07-risk-regulatory.yaml
   ├─ 08-investment-valuation.yaml
-  ├─ 100-evidence-ledger.yaml
-  ├─ 101-report-document.yaml
-  └─ 102-report-card.yaml
+  ├─ 90-evidence-ledger.yaml
+  ├─ 91-report-document.yaml
+  └─ 92-report-card.yaml
 ```
 
 ## Local development
@@ -152,11 +152,11 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `reports/` — generated report folders and `_index.yaml` catalog.
 - `AGENTS.md` — repo-wide agent operating rules; the full report workflow lives in `.github/skills/startup-diligence/SKILL.md`.
 - `.github/skills/` — stage skills used by the workflow.
-- `.github/schemas/startup-diligence-report-v2.md` — canonical YAML schema and rendering contract.
+- `.github/schemas/report-v2.md` — canonical YAML schema and rendering contract.
 - `.github/references/` — shared YAML syntax and analysis rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
 - `scripts/check-company-dedup.mjs` — pre-stage duplicate-risk check for matching company names or domains.
-- `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `100-evidence-ledger.yaml`.
+- `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence-ledger.yaml`.
 - `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and content-depth checks.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure types, enums, refs).

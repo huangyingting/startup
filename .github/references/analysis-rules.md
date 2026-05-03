@@ -22,7 +22,7 @@ Every `01`–`08` analysis artifact owns local evidence before consolidation:
 - Register every reusable atomic fact in `localEvidence.claims[]`.
 - Local `S###` and `C###` IDs are scoped to one artifact and may repeat across skills.
 - Cite local claims through `claimRefs` from sections, tables, figures, callouts, and notes.
-- Analysis skills never hand-write `100-evidence-ledger.yaml`; `startup-ledger` consolidates local evidence, rewrites claim IDs, and removes `localEvidence` unless debugging with `--keep-local`.
+- Analysis skills never hand-write `90-evidence-ledger.yaml`; `startup-ledger` consolidates local evidence, rewrites claim IDs, and removes `localEvidence` unless debugging with `--keep-local`.
 
 ## Source provenance
 

@@ -143,7 +143,7 @@ function checkDocumentHead(run, file, doc) {
 
 function checkLedgerSources(run, sources) {
   for (const source of sources) {
-    const path = `${run}/100-evidence-ledger.yaml: source ${source?.id ?? '?'}`;
+    const path = `${run}/90-evidence-ledger.yaml: source ${source?.id ?? '?'}`;
     for (const field of ['publisher', 'title', 'accessDate', 'url', 'sourceType', 'reputationTier', 'independence', 'topics']) {
       if (source?.[field] === undefined) fail(`${path} missing ${field}`);
     }
@@ -165,7 +165,7 @@ function checkLedgerSources(run, sources) {
 
 function checkLedgerClaims(run, claims) {
   for (const claim of claims) {
-    const path = `${run}/100-evidence-ledger.yaml: claim ${claim?.id ?? '?'}`;
+    const path = `${run}/90-evidence-ledger.yaml: claim ${claim?.id ?? '?'}`;
     for (const field of ['statement', 'claimType', 'topic', 'sourceRefs', 'confidence', 'freshness', 'corroboration']) {
       if (claim?.[field] === undefined) fail(`${path} missing ${field}`);
     }
@@ -199,7 +199,7 @@ function checkReportBlocks(run, reportDoc) {
   collectBlocks(reportDoc?.appendices ?? [], 'appendices', blocks);
 
   for (const [location, block] of blocks) {
-    const path = `${run}/101-report-document.yaml:${location}`;
+    const path = `${run}/91-report-document.yaml:${location}`;
     if (!SET.blockType.has(block.type)) {
       fail(`${path} invalid block.type ${block.type}`);
       continue;
@@ -370,7 +370,7 @@ function checkSensitivityFigure(path, figure) {
   }
 }
 
-const COMPANY_TIMELINE_PATH_RE = /\/(01-company-snapshot|101-report-document)\.yaml$/;
+const COMPANY_TIMELINE_PATH_RE = /\/(01-company-snapshot|91-report-document)\.yaml$/;
 
 function checkCompanyMilestoneTimeline(path, figure) {
   if (figure.type !== 'timeline') return;
@@ -440,10 +440,10 @@ function checkRefs(run, reportDoc) {
 
   for (const [type, ref] of refs) {
     if (type === 'figure' && !figureIds.has(ref)) {
-      fail(`${run}/101-report-document.yaml: missing figure ${ref}`);
+      fail(`${run}/91-report-document.yaml: missing figure ${ref}`);
     }
     if (type === 'table' && !tableIds.has(ref)) {
-      fail(`${run}/101-report-document.yaml: missing table ${ref}`);
+      fail(`${run}/91-report-document.yaml: missing table ${ref}`);
     }
   }
 
@@ -454,7 +454,7 @@ function checkRefs(run, reportDoc) {
   }
   for (const [key, count] of counts) {
     if (count > 1) {
-      fail(`${run}/101-report-document.yaml: ${key.replace(':', ' ')} is referenced ${count} times; each table/figure must have exactly one home in the report`);
+      fail(`${run}/91-report-document.yaml: ${key.replace(':', ' ')} is referenced ${count} times; each table/figure must have exactly one home in the report`);
     }
   }
 }
@@ -502,7 +502,7 @@ function checkLedgerCrossReferences(run, ledger, parsed) {
     }
   }
   for (const [file, doc] of parsed) {
-    if (file === '100-evidence-ledger.yaml') continue;
+    if (file === '90-evidence-ledger.yaml') continue;
     for (const ref of collectClaimRefs(doc)) {
       if (!claimIds.has(ref)) fail(`${run}/${file}: missing claimRef ${ref}`);
     }
@@ -510,7 +510,7 @@ function checkLedgerCrossReferences(run, ledger, parsed) {
 }
 
 function checkCardConsistency(run, card, reportDoc, ledger) {
-  const cardPath = `${run}/102-report-card.yaml`;
+  const cardPath = `${run}/92-report-card.yaml`;
   failEnum(cardPath, 'recommendation', card?.recommendation, SET.recommendations);
   failEnum(cardPath, 'confidence', card?.confidence, SET.confidence);
   failEnum(cardPath, 'riskRating', card?.riskRating, SET.riskRatings);
@@ -523,11 +523,11 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
   if (typeof card?.overallScore !== 'number' || card.overallScore < 0 || card.overallScore > 10) {
     fail(`${cardPath}: overallScore must be a number between 0 and 10`);
   }
-  if (card?.reportFiles?.reportDocument !== '101-report-document.yaml') {
-    fail(`${cardPath}: reportFiles.reportDocument must be 101-report-document.yaml`);
+  if (card?.reportFiles?.reportDocument !== '91-report-document.yaml') {
+    fail(`${cardPath}: reportFiles.reportDocument must be 91-report-document.yaml`);
   }
-  if (card?.reportFiles?.reportCard !== '102-report-card.yaml') {
-    fail(`${cardPath}: reportFiles.reportCard must be 102-report-card.yaml`);
+  if (card?.reportFiles?.reportCard !== '92-report-card.yaml') {
+    fail(`${cardPath}: reportFiles.reportCard must be 92-report-card.yaml`);
   }
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
     fail(`${cardPath}: claimsReviewed exceeds ledger claims`);
@@ -535,7 +535,7 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
 }
 
 function checkReportConsistency(run, reportDoc) {
-  const reportPath = `${run}/101-report-document.yaml`;
+  const reportPath = `${run}/91-report-document.yaml`;
   failEnum(reportPath, 'recommendation', reportDoc?.reportMeta?.recommendation, SET.recommendations);
   failEnum(reportPath, 'confidence', reportDoc?.reportMeta?.confidence, SET.confidence);
   failEnum(reportPath, 'riskRating', reportDoc?.reportMeta?.riskRating, SET.riskRatings);
@@ -557,7 +557,7 @@ function checkCrossArtifactIdentity(run, parsed) {
 
 function checkRun(run) {
   const dir = join(REPORTS_DIR, run);
-  if (!existsSync(join(dir, '102-report-card.yaml'))) return false;
+  if (!existsSync(join(dir, '92-report-card.yaml'))) return false;
 
   const beforeMissing = failures.length;
   for (const file of REQUIRED_ENGLISH_FILES) {
@@ -566,9 +566,9 @@ function checkRun(run) {
   if (failures.length > beforeMissing) return true;
 
   const parsed = parseRunArtifacts(run, dir);
-  const ledger = parsed.get('100-evidence-ledger.yaml');
-  const reportDoc = parsed.get('101-report-document.yaml');
-  const card = parsed.get('102-report-card.yaml');
+  const ledger = parsed.get('90-evidence-ledger.yaml');
+  const reportDoc = parsed.get('91-report-document.yaml');
+  const card = parsed.get('92-report-card.yaml');
 
   checkCrossArtifactIdentity(run, parsed);
   checkLedgerCrossReferences(run, ledger, parsed);

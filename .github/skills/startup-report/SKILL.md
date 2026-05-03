@@ -1,29 +1,29 @@
 ---
 name: startup-report
-description: "Use when: generating 101-report-document.yaml from completed 01-08 analysis artifacts and 100-evidence-ledger.yaml. Keywords: report document, chapters, appendices, coverage, structured figures."
+description: "Use when: generating 91-report-document.yaml from completed 01-08 analysis artifacts and 90-evidence-ledger.yaml. Keywords: report document, chapters, appendices, coverage, structured figures."
 user-invocable: false
 ---
 
 # Startup Report
 
-Final report assembly stage. This skill produces the English `101-report-document.yaml` from completed analysis artifacts and the consolidated evidence ledger.
+Final report assembly stage. This skill produces the English `91-report-document.yaml` from completed analysis artifacts and the consolidated evidence ledger.
 
 ## Read first
 
-- `100-evidence-ledger.yaml`
+- `90-evidence-ledger.yaml`
 - All `01`–`08` English artifacts
 - `schemaPath`
 
 ## Output
 
-- `101-report-document.yaml`
+- `91-report-document.yaml`
 
 ## Do not
 
 - Do not gather new facts or use search.
 - Do not compress the report into a short summary.
 - Do not silently drop upstream sections, tables, figures, scenarios, risk registers, or gaps.
-- If a critical fact is missing or stale, route back to the owning analysis skill, rerun `startup-ledger`, then compose `101`.
+- If a critical fact is missing or stale, route back to the owning analysis skill, rerun `startup-ledger`, then compose `91`.
 
 ## Required structure
 
@@ -38,12 +38,12 @@ Final report assembly stage. This skill produces the English `101-report-documen
 ## Coverage rules
 
 - Chapters `2`–`9` must have at least as many sections as their source artifacts.
-- Every upstream table and figure must appear in `101` unless explicitly listed in `reportMeta.coverageNotes` with a reason.
-- Every canonical claim in `100` should be referenced somewhere in `101`, except IDs explicitly noted as superseded.
+- Every upstream table and figure must appear in `91` unless explicitly listed in `reportMeta.coverageNotes` with a reason.
+- Every canonical claim in `90` should be referenced somewhere in `91`, except IDs explicitly noted as superseded.
 - Each chapter section needs narrative (`paragraph` or `callout`) plus relevant table/figure references.
 - A table/figure should have one home in the report; avoid duplicate references across chapters/appendices.
 - When near-duplicate tables exist across artifacts, keep the freshest/most complete version and record dropped IDs in `coverageNotes`.
-- When copying figures into `101`, include only populated/canonical `data` fields for that figure type; never add empty sibling arrays such as `items: []`, `nodes: []`, `edges: []`, `points: []`, `columns: []`, `rows: []`, `series: []`, or `layers: []`.
+- When copying figures into `91`, include only populated/canonical `data` fields for that figure type; never add empty sibling arrays such as `items: []`, `nodes: []`, `edges: []`, `points: []`, `columns: []`, `rows: []`, `series: []`, or `layers: []`.
 
 ## Quality gates
 
@@ -67,13 +67,13 @@ Run a synthesis reflection pass:
 - Check whether the executive summary, recommendation logic, risk rating, valuation stance, and appendix gaps faithfully reflect the strongest and weakest upstream evidence.
 - Check for contradictions across chapters; resolve date/scope/definition mismatches or carry unresolved conflicts into the report.
 - Check whether every top risk, strength, and unresolved gap is backed by canonical claimRefs or explicitly framed as a diligence gap.
-- Check whether the report over-polishes thin upstream work; if so, route back to the owning analysis skill rather than smoothing it in `101`.
+- Check whether the report over-polishes thin upstream work; if so, route back to the owning analysis skill rather than smoothing it in `91`.
 
 Fix coverage gaps before saving. Do not proceed to `startup-card` if final table/figure counts are unexpectedly low.
 
 ## Completion check (English)
 
 - Run `node scripts/sanitize-report-figures.mjs <reportFolder> --check`; if it fails, run without `--check`, review the diff, then rerun validation.
-- `101-report-document.yaml` parses and validates against canonical claim IDs.
+- `91-report-document.yaml` parses and validates against canonical claim IDs.
 - Output summary includes path, recommendation, table count, figure count, and website readiness.
 
