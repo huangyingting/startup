@@ -20,7 +20,7 @@ Use these rules whenever a skill writes local evidence or consolidates `100-evid
 
 Retain a source only if it is either:
 
-- a cited/annotated `web_search` result URL; or
+- a cited/annotated search/discovery result URL; or
 - a directly reviewed official, first-party, regulatory, filing, partner, customer, technical-doc, competitor, or other page discovered from a known URL, sitemap, navigation path, or cited source.
 
 Never retain:
@@ -30,9 +30,9 @@ Never retain:
 - duplicate wire-copy pages that add no original fact;
 - sources kept only as bibliography filler.
 
-## `web_search` packet handling
+## Search/discovery packet handling
 
-For each targeted `web_search` response:
+For each targeted search/discovery response that includes cited URL annotations:
 
 1. Treat `output_text.text.value` as candidate narrative, not source truth.
 2. Treat `output_text.text.annotations[].url_citation.url` as source candidates.
@@ -42,10 +42,10 @@ For each targeted `web_search` response:
 6. Attach only URLs that support that exact claim.
 7. Use `bing_searches[]` only as query provenance in notes; never retain Bing/search-result URLs in `sources[]`.
 
-Immediately after each `web_search` call, emit this visible run-log line in chat/workflow transcript. Do not write it into YAML artifacts.
+Immediately after each search/discovery call, emit this visible run-log line in chat/workflow transcript. Do not write it into YAML artifacts.
 
 ```text
-[web_search debug] skill=<skill-name> call=<n> query="<query>" citedUrls=<count> retainedSources=<count> outcome="<used|gap>"
+[search debug] skill=<skill-name> call=<n> query="<query>" citedUrls=<count> retainedSources=<count> outcome="<used|gap>"
 ```
 
 ## Source rules

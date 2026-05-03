@@ -125,7 +125,7 @@ Rules:
 - Register every retained external source in `localEvidence.sources[]`.
 - Register every reusable atomic fact in `localEvidence.claims[]`.
 - Cite claims through local `claimRefs` from sections, tables, figures, callouts, and notes.
-- Parse `web_search` packets and emit run-log lines per `.github/references/evidence-ledger.md`.
+- Parse search/discovery packets and emit run-log lines per `.github/references/evidence-ledger.md`.
 - Keep provenance strict: cited search URLs or directly reviewed pages only.
 
 ## Research and freshness
@@ -258,7 +258,7 @@ After writing, record a concise internal summary:
 - research pack path, or `research pack: not persisted`;
 - evidence gaps closed;
 - evidence gaps remaining;
-- `web_search` calls with query labels, or `web_search: not called`;
+- search/discovery calls with query labels, or `search: not called`;
 - any skill-specific handoff fields listed in that skill.
 
 ## Routing back

@@ -11,6 +11,7 @@ Final card stage. This skill produces both the English `102-report-card.yaml` an
 ## Read first
 
 - `101-report-document.yaml`
+- `101-report-document.zh.yaml`
 - `100-evidence-ledger.yaml`
 - Completed `01`–`08` artifacts for sanity checks
 - `schemaPath`

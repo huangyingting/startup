@@ -65,7 +65,7 @@ flowchart TD
   Plan[Inspect required tables, figures,<br/>metrics, downstream chapter needs] --> Search
 
   subgraph SearchLoop[Targeted research]
-    Search[Multi-question web_search batch<br/>full-sentence queries tied to currentDate<br/>+ disconfirming/adverse queries]
+    Search[Multi-question search/discovery batch<br/>full-sentence queries tied to currentDate<br/>+ disconfirming/adverse queries]
     Search --> Site[Mine official site<br/>homepage / sitemap / docs / pricing /<br/>trust / status / blog / customer pages]
     Site --> Recency[Recency audit<br/>volatile facts must be ≤24mo<br/>or labeled freshness=historical]
   end

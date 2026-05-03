@@ -140,7 +140,7 @@ Follow `.github/references/evidence-ledger.md` and `.github/references/analysis-
 
 - Use `currentDate` for volatile facts; prefer sources from the last 24 months.
 - Ask report-specific research questions, including adverse/disconfirming angles.
-- Use `web_search` for discovery and `fetch-url` for direct page review of retained sources.
+- Use available search/discovery tools for source discovery and `fetch-url` for direct page review of retained sources.
 - Mine official pages first when `companyUrl` exists, but label official claims as `company-claimed` or `observed`.
 - Corroborate valuation, financial, customer, legal, and regulatory claims independently when possible.
 - Put unsupported important facts in `evidenceGaps` with a concrete diligence path.

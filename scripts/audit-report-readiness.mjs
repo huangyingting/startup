@@ -137,15 +137,15 @@ function checkContract(file, doc, contract, types) {
   if (contract.chapter && contract.chapter !== doc.chapter?.number) {
     reportContractIssue(`${file}: skill contract chapter ${contract.chapter} does not match document chapter ${doc.chapter?.number}`);
   }
+  const haystack = textHaystack(doc);
+  for (const sectionReq of contract.requiredSections ?? []) {
+    if (!sectionRequirementSatisfied(haystack, sectionReq.keywordsAny ?? [])) {
+      reportContractIssue(`${file}: required section concept not satisfied (${sectionReq.key ?? sectionReq.purpose ?? 'unnamed'}); expected one of: ${JSON.stringify(sectionReq.keywordsAny ?? [])}`);
+    }
+  }
   for (const tableReq of contract.requiredTables ?? []) {
     if (!tableSatisfiesAnyColumnSet(doc, tableReq.requiredColumnsAny)) {
       reportContractIssue(`${file}: required table contract not satisfied (${tableReq.key ?? tableReq.purpose ?? 'unnamed'}); expected one of column sets: ${JSON.stringify(tableReq.requiredColumnsAny ?? [])}`);
-    }
-    if (tableReq.purpose) {
-      const probe = String(tableReq.purpose).toLowerCase().split(/[^a-z0-9]+/).find((word) => word.length >= 5) ?? '';
-      if (probe && !textHaystack(doc).includes(probe)) {
-        warn(`${file}: required table purpose not obvious in artifact text: ${tableReq.purpose}`);
-      }
     }
   }
   for (const figureReq of contract.requiredFigures ?? []) {
@@ -154,6 +154,14 @@ function checkContract(file, doc, contract, types) {
       reportContractIssue(`${file}: required figure contract not satisfied (${figureReq.key ?? figureReq.purpose ?? 'unnamed'}); expected one of: ${allowed.join(', ')}`);
     }
   }
+}
+
+function sectionRequirementSatisfied(haystack, alternatives) {
+  if (!alternatives.length) return true;
+  return alternatives.some((alternative) => {
+    const keywords = Array.isArray(alternative) ? alternative : [alternative];
+    return keywords.every((keyword) => haystack.includes(String(keyword).toLowerCase()));
+  });
 }
 
 function checkPreLedgerEvidence(file, doc, counts) {

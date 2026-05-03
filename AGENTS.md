@@ -45,6 +45,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 - For direct URL/link/page fetches, always load and follow the `fetch-url` skill.
 - Use `node scripts/fetch-url.mjs ...`; do **not** use native `web_fetch` or similarly named built-in page-fetching tools in this repository.
+- If a higher-priority runtime instruction requires a platform-provided fetch tool for a user-supplied URL, follow that instruction, then apply this repository's evidence and citation rules to the fetched content.
 - Use `--text-only` for readable text intended for grep/skimming.
 - Use `--out` only for diagnostic saved bodies; `/tmp` files are never report artifacts or sources of truth.
 - Use search tools for discovery across many sources, then `fetch-url` for direct page review when needed.

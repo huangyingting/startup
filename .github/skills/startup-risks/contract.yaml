@@ -3,27 +3,57 @@ chapter: 7
 minSections: 4
 minTables: 4
 minFigures: 2
+requiredSections:
+  - key: risk-overview
+    purpose: Severity-ranked risk overview and underwriting view
+    keywordsAny:
+      - [risk, overview]
+      - [risk, register]
+      - [severity]
+  - key: regulatory-legal-security
+    purpose: Regulatory/legal/security/privacy/safety exposure and current mitigation
+    keywordsAny:
+      - [regulatory]
+      - [legal]
+      - [security]
+      - [privacy]
+      - [safety]
+  - key: concentration-mitigation
+    purpose: Operational, supplier, partner, concentration, mitigation, and kill criteria
+    keywordsAny:
+      - [concentration]
+      - [operational]
+      - [mitigation]
+      - [kill]
 requiredTables:
   - key: risk-register
-    purpose: Risk register across legal, regulatory, security, operational, and market risks
+    purpose: Severity-ranked risk register across legal, regulatory, security, operational, and market risks
     requiredColumnsAny:
+      - [risk, severity, probability, evidence, residual underwriting view]
+      - [risk, dated evidence, likelihood, severity, current mitigation, residual exposure, investment impact]
       - [risk, category, evidence, likelihood, impact, mitigation, diligence ask]
-  - key: regulatory-map
-    purpose: Regulatory exposure, obligations, and approval/compliance posture
+  - key: regulatory-legal-risk
+    purpose: Regulatory, legal, governance, safety, or compliance exposure and mitigations
     requiredColumnsAny:
+      - [risk area, current evidence, status, mitigation, open diligence]
+      - [risk area, evidence, why it matters, mitigation evidence, diligence ask]
       - [regime/requirement, applicability, evidence, risk, diligence ask]
-  - key: legal-security-incidents
-    purpose: Legal, security, privacy, safety, or incident evidence
+  - key: operational-concentration-risk
+    purpose: Partner, supplier, operational, compute, counterparty, or concentration risk
     requiredColumnsAny:
-      - [issue, status, evidence/source, impact, mitigation]
+      - [dependency, evidence, risk transmission, mitigation / offset, diligence ask]
+      - [concentration area, public evidence, risk transmission, mitigant, remaining gap]
+      - [risk type, applicability, evidence, underwriting implication]
   - key: mitigation-monitoring
-    purpose: Mitigation plan and monitoring diligence
+    purpose: Mitigation framework, residual risk, stop-loss criteria, and diligence asks
     requiredColumnsAny:
+      - [risk cluster, mitigation evidence, residual risk, stop-loss / kill criteria]
+      - [ask, priority, evidence needed, owner / source]
       - [risk area, mitigation, owner/evidence, residual risk, diligence path]
 requiredFigures:
   - key: risk-heatmap
     purpose: Risk severity or exposure heatmap
     allowedTypes: [heatmap, matrix]
   - key: risk-transmission
-    purpose: Risk causal, dependency, or transmission map
+    purpose: Risk causal, dependency, concentration, or transmission map
     allowedTypes: [causal-map, dependency-map, flow]
