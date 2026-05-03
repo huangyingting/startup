@@ -21,7 +21,7 @@ Consolidation stage. Generate canonical sources/claims only after `01`–`08` ex
 
 ## Pre-consolidation audit
 
-Before consolidation, each `01`–`08` artifact must already have passed its own chapter-scoped audit:
+Before consolidation, each `01`–`08` artifact must already have passed its own chapter-scoped readiness check:
 
 ```text
 node scripts/check-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger

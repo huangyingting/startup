@@ -96,7 +96,7 @@ flowchart LR
 
 Lint coverage today:
 
-- render-critical structure is checked at build time; business vocabulary such as recommendations, risk ratings, callout labels, and evidence labels is governed by `.github/references/report-schema-v2.md` plus chapter review rather than validate-time enum registries.
+- render-critical structure is checked at build time; business vocabulary such as recommendations, risk ratings, callout labels, and evidence labels is governed by `.github/references/report-schema-v2.md` plus chapter review rather than build-time enum checks.
 - every table row has exactly `columns.length` cells.
 - `matrix` / `heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
 - each `tableRef` / `figureRef` is referenced from at most one chapter section or appendix block.
@@ -158,4 +158,4 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `scripts/build-evidence-ledger.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
 - `scripts/check-chapter-readiness.mjs` — chapter-scoped evidence, depth, table, and figure readiness check for `01`–`08` artifacts.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
-- `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure types, enums, refs).
+- `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure contracts, refs, and card/report consistency).

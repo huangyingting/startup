@@ -106,7 +106,7 @@ Synchronization points:
 
 1. Pre-stage duplicate check before report folder creation or analysis artifact writing.
 2. Identity consistency gate before each artifact write: document headers must preserve the resolved `company.name`, `slug`, and `runDate`.
-3. Chapter-level readiness audit immediately after each `01`–`08` artifact write, scoped to the owning artifact so failures return directly to that chapter skill.
+3. Chapter-level readiness check immediately after each `01`–`08` artifact write, scoped to the owning artifact so failures return directly to that chapter skill.
 4. `startup-evidence` consolidation after all `01`–`08` artifacts have passed their own chapter audit.
 5. `startup-full-report` assembly.
 6. `startup-summary-card` generation.
@@ -127,7 +127,7 @@ Synchronization points:
 
 Schema validity is necessary but not sufficient. Each owning chapter skill defines its own `01`–`08` completion and minimum-depth gates; this workflow only coordinates cross-artifact readiness and finalization gates.
 
-After each `01`–`08` artifact write, inspect that chapter's sources, claims, tables, figures, sections, and gaps with a chapter-scoped readiness audit. If it fails or warns on placeholders, unsupported synthesis, count-filler tables, duplicate table/figure content, malformed figures, missing claim refs, or thin depth, return directly to the owning chapter skill before moving on. Chapter-owned problems must be fixed at chapter time.
+After each `01`–`08` artifact write, inspect that chapter's sources, claims, tables, figures, sections, and gaps with a chapter-scoped readiness check. If it fails or warns on placeholders, unsupported synthesis, count-filler tables, duplicate table/figure content, malformed figures, missing claim refs, or thin depth, return directly to the owning chapter skill before moving on. Chapter-owned problems must be fixed at chapter time.
 
 Finalization gates:
 
@@ -135,7 +135,7 @@ Finalization gates:
 - `91-full-report.yaml`: preserve the union of upstream tables/figures unless `reportMeta.coverageNotes` explicitly names omissions and reasons.
 - `92-summary-card.yaml`: summary counts and recommendation fields must reflect the current `91-full-report.yaml` and `90-evidence.yaml`.
 
-Run the chapter-level readiness audit immediately after each analysis artifact is written:
+Run the chapter-level readiness check immediately after each analysis artifact is written:
 
 ```text
 node scripts/check-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger
@@ -147,7 +147,7 @@ Before `startup-summary-card`, compare `91` table/figure counts against the unio
 
 ## Validation gates
 
-After each analysis artifact write, parse only that artifact and run the chapter-scoped readiness audit so failures can be routed back to the owning chapter skill immediately. Verify expected outputs, identity fields, claim refs, table/figure non-duplication, and figure contracts. Use the schema and references for exact checks.
+After each analysis artifact write, parse only that artifact and run the chapter-scoped readiness check so failures can be routed back to the owning chapter skill immediately. Verify expected outputs, identity fields, claim refs, table/figure non-duplication, and figure contracts. Use the schema and references for exact checks.
 
 Final validation after `92-summary-card.yaml`:
 

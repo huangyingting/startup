@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Chapter-scoped readiness audit for one analysis artifact (01-08).
+// Chapter-scoped readiness check for one analysis artifact (01-08).
 // Feedback is intentionally scoped to the owning chapter skill.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
