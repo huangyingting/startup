@@ -194,9 +194,11 @@ if (doc) {
   };
 
   const gate = spec.gate;
+  const minTables = Math.max(gate.minTables, spec.requiredTables.length);
+  const minFigures = Math.max(gate.minFigures, spec.requiredFigures.length);
   if (counts.sections < gate.minSections) fail(`${spec.file}: ${counts.sections} sections, expected at least ${gate.minSections}`);
-  if (counts.tables < gate.minTables) fail(`${spec.file}: ${counts.tables} tables, expected at least ${gate.minTables}`);
-  if (counts.figures < gate.minFigures) fail(`${spec.file}: ${counts.figures} figures, expected at least ${gate.minFigures}`);
+  if (counts.tables < minTables) fail(`${spec.file}: ${counts.tables} tables, expected at least ${minTables} (config minTables=${gate.minTables}, requiredTables=${spec.requiredTables.length})`);
+  if (counts.figures < minFigures) fail(`${spec.file}: ${counts.figures} figures, expected at least ${minFigures} (config minFigures=${gate.minFigures}, requiredFigures=${spec.requiredFigures.length})`);
   if (counts.sections > gate.maxSections) warn(`${spec.file}: ${counts.sections} sections exceeds target range maximum ${gate.maxSections}; verify the chapter is not over-fragmented or duplicative`);
   if (counts.tables > gate.maxTables) warn(`${spec.file}: ${counts.tables} tables exceeds target range maximum ${gate.maxTables}; verify the chapter is not over-fragmented or duplicative`);
   if (counts.figures > gate.maxFigures) warn(`${spec.file}: ${counts.figures} figures exceeds target range maximum ${gate.maxFigures}; verify the chapter is not over-fragmented or duplicative`);
