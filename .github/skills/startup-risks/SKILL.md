@@ -1,6 +1,6 @@
 ---
 name: startup-risks
-description: "Use when: generating 07-risk-regulatory.yaml. Keywords: regulatory risk, legal risk, security incidents, operational risk, compliance, mitigation."
+description: "Use when: generating 07-risks.yaml. Keywords: regulatory risk, legal risk, security incidents, operational risk, compliance, mitigation."
 user-invocable: false
 ---
 
@@ -10,13 +10,13 @@ Seventh analysis stage. This skill owns the risk and regulatory chapter. It must
 
 ## Read first
 
-- `01-company-snapshot.yaml`
-- `05-product-technology.yaml`, `06-customer-retention.yaml`, and `04-financial-unit-economics.yaml` when product/security, customer concentration, or financial exposure shapes risk.
+- `01-company-overview.yaml`
+- `05-product-tech.yaml`, `06-customers.yaml`, and `04-financials.yaml` when product/security, customer concentration, or financial exposure shapes risk.
 - `.github/references/analysis-rules.md`
 
 ## Outputs
 
-- `07-risk-regulatory.yaml`
+- `07-risks.yaml`
 
 ## Chapter purpose
 

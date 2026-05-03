@@ -1,6 +1,6 @@
 ---
 name: startup-financials
-description: "Use when: generating 04-financial-unit-economics.yaml. Keywords: revenue, pricing, unit economics, CAC, LTV, margins, burn, funding, projections."
+description: "Use when: generating 04-financials.yaml. Keywords: revenue, pricing, unit economics, CAC, LTV, margins, burn, funding, projections."
 user-invocable: false
 ---
 
@@ -10,13 +10,13 @@ Fourth analysis stage. This skill owns the financial and unit-economics chapter.
 
 ## Read first
 
-- `01-company-snapshot.yaml`
-- `02-market-macro.yaml` and `03-competitive-benchmarking.yaml` when market, pricing, GTM, or competitor context affects interpretation.
+- `01-company-overview.yaml`
+- `02-market-analysis.yaml` and `03-competitors.yaml` when market, pricing, GTM, or competitor context affects interpretation.
 - `.github/references/analysis-rules.md`
 
 ## Outputs
 
-- `04-financial-unit-economics.yaml`
+- `04-financials.yaml`
 
 ## Chapter purpose
 

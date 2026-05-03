@@ -2,7 +2,7 @@
 
 Repository instructions for coding agents working on the startup diligence report generator and Astro website.
 
-This file holds repo-wide operating rules, paths, validation commands, and extension points. The end-to-end workflow for producing a complete report lives in the [`startup-diligence`](.github/skills/startup-diligence/SKILL.md) skill — start there when asked to generate or update a report.
+This file holds repo-wide operating rules, paths, validation commands, and extension points. The end-to-end workflow for producing a complete report lives in the [`startup-research`](.github/skills/startup-research/SKILL.md) skill — start there when asked to generate or update a report.
 
 ## Operating principles
 
@@ -31,8 +31,8 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 ## Important paths
 
-- `.github/skills/startup-diligence/SKILL.md` — single workflow entry point that sequences chapter and integration skills end-to-end.
-- `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (snapshot, market, competition, financials, product, customers, risks, valuation, ledger, report, card). The analysis skills are the single source for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
+- `.github/skills/startup-research/SKILL.md` — single workflow entry point that sequences chapter and integration skills end-to-end.
+- `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (overview, market analysis, competitors, financials, product tech, customers, risks, valuation, evidence, full report, summary card). The analysis skills are the single source for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
 - `scripts/report-manifest.mjs` — artifact identity, chapter order, loader keys, preferred figure types, and numeric depth floors. Integration checks live in `scripts/check-reports-content.mjs` and `website/scripts/check-reports.mjs`.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
 - `.github/references/` — shared YAML syntax and analysis rules.
@@ -60,7 +60,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 ## Generating or updating reports
 
-Producing a complete report — including all `01`–`08` analysis artifacts, the evidence ledger, the report document, and the report card — is governed by the [`startup-diligence`](.github/skills/startup-diligence/SKILL.md) skill. That skill defines:
+Producing a complete report — including all `01`–`08` analysis artifacts, the evidence file, the full report, and the summary card — is governed by the [`startup-research`](.github/skills/startup-research/SKILL.md) skill. That skill defines:
 
 - the invocation contract;
 - required artifact set;
@@ -69,7 +69,7 @@ Producing a complete report — including all `01`–`08` analysis artifacts, th
 - depth floors, readiness audit, and final validation gates;
 - final response format.
 
-Do not duplicate that workflow here. When working on a report, follow `startup-diligence` end-to-end and the per-chapter skills it delegates to.
+Do not duplicate that workflow here. When working on a report, follow `startup-research` end-to-end and the per-chapter skills it delegates to.
 
 ## Extension points
 

@@ -4,7 +4,7 @@ Shared rules for the eight `startup-*` analysis skills. Each chapter skill docum
 
 ## Ownership boundary
 
-Chapter-specific expectations live in the owning `SKILL.md`. Workflow inputs, prompt routing, artifact order, concurrency, and stage handoffs live in `startup-diligence/SKILL.md`.
+Chapter-specific expectations live in the owning `SKILL.md`. Workflow inputs, prompt routing, artifact order, concurrency, and stage handoffs live in `startup-research/SKILL.md`.
 
 ## Domain reflection and sufficiency gate
 
@@ -22,7 +22,7 @@ Every `01`–`08` analysis artifact owns local evidence before consolidation:
 - Register every reusable atomic fact in `localEvidence.claims[]`.
 - Local `S###` and `C###` IDs are scoped to one artifact and may repeat across skills.
 - Cite local claims through `claimRefs` from sections, tables, figures, callouts, and notes.
-- Analysis skills never hand-write `90-evidence-ledger.yaml`; `startup-ledger` consolidates local evidence, rewrites claim IDs, and removes `localEvidence` unless debugging with `--keep-local`.
+- Analysis skills never hand-write `90-evidence.yaml`; `startup-evidence` consolidates local evidence, rewrites claim IDs, and removes `localEvidence` unless debugging with `--keep-local`.
 
 ## Source provenance
 

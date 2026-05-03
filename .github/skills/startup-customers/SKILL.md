@@ -1,6 +1,6 @@
 ---
 name: startup-customers
-description: "Use when: generating 06-customer-retention.yaml. Keywords: customers, retention, NRR, churn, case studies, segmentation, satisfaction, concentration."
+description: "Use when: generating 06-customers.yaml. Keywords: customers, retention, NRR, churn, case studies, segmentation, satisfaction, concentration."
 user-invocable: false
 ---
 
@@ -10,13 +10,13 @@ Sixth analysis stage. This skill owns the customer quality and retention chapter
 
 ## Read first
 
-- `01-company-snapshot.yaml`
-- `04-financial-unit-economics.yaml` and `05-product-technology.yaml` when pricing, modules, or implementation claims affect customer analysis.
+- `01-company-overview.yaml`
+- `04-financials.yaml` and `05-product-tech.yaml` when pricing, modules, or implementation claims affect customer analysis.
 - `.github/references/analysis-rules.md`
 
 ## Outputs
 
-- `06-customer-retention.yaml`
+- `06-customers.yaml`
 
 ## Chapter purpose
 

@@ -127,7 +127,7 @@ jobs:
           partials=()
           for dir in reports/*/; do
             if compgen -G "${dir}*.yaml" > /dev/null; then
-              for required in 92-report-card.yaml; do
+              for required in 92-summary-card.yaml; do
                 if [ ! -f "${dir}${required}" ]; then
                   partials+=("${dir%/} (missing ${required})")
                 fi

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Consolidate localEvidence from analysis artifacts 01-08 into a single
-// 90-evidence-ledger.yaml, deduplicating sources by canonical URL and claims
+// 90-evidence.yaml, deduplicating sources by canonical URL and claims
 // by statement+topic+sourceRefs. Rewrites claimRefs in-place across English
 // analysis artifacts.
 import { existsSync } from 'node:fs';
@@ -27,9 +27,9 @@ if (!docs.size) {
   console.error(`[consolidate-evidence] no report artifacts found in ${reportFolder}`);
   process.exit(1);
 }
-for (const downstream of ['91-report-document.yaml', '92-report-card.yaml']) {
+for (const downstream of ['91-full-report.yaml', '92-summary-card.yaml']) {
   if (existsSync(join(reportFolder, downstream))) {
-    console.warn(`[consolidate-evidence] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run startup-report and startup-card after consolidation.`);
+    console.warn(`[consolidate-evidence] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run startup-full-report and startup-summary-card after consolidation.`);
     break;
   }
 }
@@ -37,12 +37,12 @@ for (const downstream of ['91-report-document.yaml', '92-report-card.yaml']) {
 const { sources, claims, sourceIds, claimIds, evidenceGaps, sourcesConsidered } = consolidate(docs);
 const ledger = buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered);
 
-writeYaml(join(reportFolder, '90-evidence-ledger.yaml'), ledger);
+writeYaml(join(reportFolder, '90-evidence.yaml'), ledger);
 for (const [file, doc] of docs) {
   writeYaml(join(reportFolder, file), rewrite(doc, file, claimIds));
 }
 
-console.log(`[consolidate-evidence] wrote ${join(reportFolder, '90-evidence-ledger.yaml')} (${sources.length} sources, ${claims.length} claims)`);
+console.log(`[consolidate-evidence] wrote ${join(reportFolder, '90-evidence.yaml')} (${sources.length} sources, ${claims.length} claims)`);
 
 // ---------------------------------------------------------------------------
 
@@ -181,7 +181,7 @@ function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
   const recencyNotes = summarizeRecency(first.runDate, sources, claims);
   return {
     schemaVersion: first.schemaVersion,
-    artifact: 'evidence-ledger',
+    artifact: 'evidence',
     slug: first.slug,
     runDate: first.runDate,
     company: first.company,

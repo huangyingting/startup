@@ -1,10 +1,10 @@
 ---
-name: startup-snapshot
-description: "Use when: generating 01-company-snapshot.yaml. Keywords: company identity, founders, HQ, funding, leadership, investors, snapshot, milestones, localEvidence."
+name: startup-overview
+description: "Use when: generating 01-company-overview.yaml. Keywords: company identity, founders, HQ, funding, leadership, investors, overview, milestones, localEvidence."
 user-invocable: false
 ---
 
-# Startup Snapshot
+# Startup Overview
 
 First analysis stage. This skill owns the company introduction and snapshot chapter. It must make the company legible before any downstream market, financial, product, customer, risk, or valuation work begins.
 
@@ -16,7 +16,7 @@ First analysis stage. This skill owns the company introduction and snapshot chap
 
 ## Outputs
 
-- `01-company-snapshot.yaml`
+- `01-company-overview.yaml`
 
 ## Chapter purpose
 
@@ -79,4 +79,4 @@ Infer the company domain and operating model; add relevant snapshot rows/section
 - Timeline has enough dated entries or the gaps explain why not.
 - Unsupported cover metrics use `null` plus a concrete diligence path.
 - Handoff includes identity confidence, selected domain-adaptive additions, and any post-snapshot identity ambiguity.
-- Do not wait until this skill to perform the first duplicate check; the startup-diligence orchestrator runs `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before stage 1 starts.
+- Do not wait until this skill to perform the first duplicate check; the startup-research orchestrator runs `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before stage 1 starts.

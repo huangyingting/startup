@@ -1,22 +1,22 @@
 ---
-name: startup-competition
-description: "Use when: generating 03-competitive-benchmarking.yaml. Keywords: competitors, substitutes, feature matrix, pricing, packaging, moat, positioning."
+name: startup-competitors
+description: "Use when: generating 03-competitors.yaml. Keywords: competitors, substitutes, feature matrix, pricing, packaging, moat, positioning."
 user-invocable: false
 ---
 
-# Startup Competition
+# Startup Competitors
 
 Third analysis stage. This skill owns the competitive benchmarking chapter. It must explain who can take the same customer budget, why the startup wins or loses, and what would erode the moat.
 
 ## Read first
 
-- `01-company-snapshot.yaml`
-- `02-market-macro.yaml`
+- `01-company-overview.yaml`
+- `02-market-analysis.yaml`
 - `.github/references/analysis-rules.md`
 
 ## Outputs
 
-- `03-competitive-benchmarking.yaml`
+- `03-competitors.yaml`
 
 ## Chapter purpose
 

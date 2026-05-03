@@ -1,6 +1,6 @@
 ---
 name: startup-valuation
-description: "Use when: generating 08-investment-valuation.yaml. Keywords: investment thesis, valuation, comparables, IPO readiness, scenarios, recommendation."
+description: "Use when: generating 08-valuation.yaml. Keywords: investment thesis, valuation, comparables, IPO readiness, scenarios, recommendation."
 user-invocable: false
 ---
 
@@ -10,16 +10,16 @@ Eighth analysis stage. This skill owns the investment recommendation and valuati
 
 ## Read first
 
-- `01-company-snapshot.yaml`
-- `04-financial-unit-economics.yaml`
-- `06-customer-retention.yaml`
-- `07-risk-regulatory.yaml`
-- `02-market-macro.yaml`, `03-competitive-benchmarking.yaml`, or `05-product-technology.yaml` when market, moat, or product differentiation materially affects valuation.
+- `01-company-overview.yaml`
+- `04-financials.yaml`
+- `06-customers.yaml`
+- `07-risks.yaml`
+- `02-market-analysis.yaml`, `03-competitors.yaml`, or `05-product-tech.yaml` when market, moat, or product differentiation materially affects valuation.
 - `.github/references/analysis-rules.md`
 
 ## Outputs
 
-- `08-investment-valuation.yaml`
+- `08-valuation.yaml`
 
 ## Chapter purpose
 

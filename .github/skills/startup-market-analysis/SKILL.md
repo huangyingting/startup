@@ -1,21 +1,21 @@
 ---
-name: startup-market
-description: "Use when: generating 02-market-macro.yaml. Keywords: market sizing, TAM, SAM, SOM, segments, buyers, geography, adoption, budget pools."
+name: startup-market-analysis
+description: "Use when: generating 02-market-analysis.yaml. Keywords: market sizing, TAM, SAM, SOM, segments, buyers, geography, adoption, budget pools."
 user-invocable: false
 ---
 
-# Startup Market
+# Startup Market Analysis
 
 Second analysis stage. This skill owns the market sizing and macro chapter. It must define the market boundary, quantify the opportunity as far as evidence allows, and show why adoption should or should not happen.
 
 ## Read first
 
-- `01-company-snapshot.yaml`
+- `01-company-overview.yaml`
 - `.github/references/analysis-rules.md`
 
 ## Outputs
 
-- `02-market-macro.yaml`
+- `02-market-analysis.yaml`
 
 ## Chapter purpose
 

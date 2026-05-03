@@ -12,8 +12,8 @@ interface Props {
 
 const { data, stages } = Astro.props;
 
-const doc = stages.reportDocument ?? null;
-const ledger = stages.evidenceLedger ?? {};
+const doc = stages.fullReport ?? null;
+const ledger = stages.evidence ?? {};
 const claims: any[] = Array.isArray(ledger.claims) ? ledger.claims : [];
 const sources: any[] = Array.isArray(ledger.sources) ? ledger.sources : [];
 const figures = new Map<string, any>((doc?.figures ?? []).map((figure: any) => [figure.id, figure]));
@@ -75,7 +75,7 @@ function blockRefs(value: any): string[] {
 
 const coverMetrics = arr(doc?.coverMetrics);
 const documentIntro = doc?.startupIntroduction ?? null;
-const snapshotIntro = stages.companySnapshot?.startupIntroduction ?? null;
+const snapshotIntro = stages.companyOverview?.startupIntroduction ?? null;
 const startupIntroduction = documentIntro || snapshotIntro
   ? {
       ...(snapshotIntro ?? {}),

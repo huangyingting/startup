@@ -12,7 +12,7 @@ Startup generates evidence-backed diligence reports for named startup companies.
 
 ## Report artifact flow
 
-Each analysis skill writes one English artifact. After all 8 analysis artifacts exist, `startup-ledger` consolidates evidence, `startup-report` synthesizes `91-report-document.yaml`, and `startup-card` produces `92-report-card.yaml`.
+Each analysis skill writes one English artifact. After all 8 analysis artifacts exist, `startup-evidence` consolidates evidence, `startup-full-report` synthesizes `91-full-report.yaml`, and `startup-summary-card` produces `92-summary-card.yaml`.
 
 ```mermaid
 flowchart TD
@@ -22,13 +22,13 @@ flowchart TD
   Setup --> Snapshot
 
   subgraph Stage1[Stage 1 — Analysis artifacts 01-08]
-    Snapshot[startup-snapshot<br/>writes 01.yaml]
+    Snapshot[startup-overview<br/>writes 01.yaml]
     Snapshot --> Market
 
-    Market[startup-market<br/>writes 02.yaml] --> Compete
-    Compete[startup-competition<br/>writes 03.yaml] --> Fin
+    Market[startup-market-analysis<br/>writes 02.yaml] --> Compete
+    Compete[startup-competitors<br/>writes 03.yaml] --> Fin
     Fin[startup-financials<br/>writes 04.yaml] --> Prod
-    Prod[startup-product<br/>writes 05.yaml<br/>official-site mining → handoff note] --> Cust
+    Prod[startup-product-tech<br/>writes 05.yaml<br/>official-site mining → handoff note] --> Cust
     Cust[startup-customers<br/>writes 06.yaml] --> Risk
     Risk[startup-risks<br/>writes 07.yaml] --> Val
     Val[startup-valuation<br/>writes 08.yaml]
@@ -37,14 +37,14 @@ flowchart TD
   Val --> Ledger
 
   subgraph Stage2[Stage 2 — Consolidate]
-    Ledger[startup-ledger<br/>scripts/consolidate-evidence.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 90-evidence-ledger.yaml]
+    Ledger[startup-evidence<br/>scripts/consolidate-evidence.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 90-evidence.yaml]
   end
 
   Ledger --> Report
 
   subgraph Stage3[Stage 3 — Report assembly]
-    Report[startup-report<br/>writes 91-report-document.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events]
-    Report --> Card[startup-card<br/>writes 92-report-card.yaml<br/>derives from 90 + 91]
+    Report[startup-full-report<br/>writes 91-full-report.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events]
+    Report --> Card[startup-summary-card<br/>writes 92-summary-card.yaml<br/>derives from 90 + 91]
   end
 
   Card --> FinalVal
@@ -102,23 +102,23 @@ Lint coverage today:
 - `matrix` / `heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
 - each `tableRef` / `figureRef` is referenced from at most one chapter section or appendix block.
 - F102 company milestone timeline must have ≥8 events covering founding, every priced round, major launches, scale milestones, partnerships, and governance/legal events.
-- card `tableCount` / `figureCount` / `overallScore` match `91-report-document.yaml`.
+- card `tableCount` / `figureCount` / `overallScore` match `91-full-report.yaml`.
 
 ### Required artifacts
 
 ```text
 reports/<timestamp>-<slug>/
-  ├─ 01-company-snapshot.yaml
-  ├─ 02-market-macro.yaml
-  ├─ 03-competitive-benchmarking.yaml
-  ├─ 04-financial-unit-economics.yaml
-  ├─ 05-product-technology.yaml
-  ├─ 06-customer-retention.yaml
-  ├─ 07-risk-regulatory.yaml
-  ├─ 08-investment-valuation.yaml
-  ├─ 90-evidence-ledger.yaml
-  ├─ 91-report-document.yaml
-  └─ 92-report-card.yaml
+  ├─ 01-company-overview.yaml
+  ├─ 02-market-analysis.yaml
+  ├─ 03-competitors.yaml
+  ├─ 04-financials.yaml
+  ├─ 05-product-tech.yaml
+  ├─ 06-customers.yaml
+  ├─ 07-risks.yaml
+  ├─ 08-valuation.yaml
+  ├─ 90-evidence.yaml
+  ├─ 91-full-report.yaml
+  └─ 92-summary-card.yaml
 ```
 
 ## Local development
@@ -150,13 +150,13 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 ## Core files
 
 - `reports/` — generated report folders and `_index.yaml` catalog.
-- `AGENTS.md` — repo-wide agent operating rules; the full report workflow lives in `.github/skills/startup-diligence/SKILL.md`.
+- `AGENTS.md` — repo-wide agent operating rules; the full report workflow lives in `.github/skills/startup-research/SKILL.md`.
 - `.github/skills/` — stage skills used by the workflow.
 - `.github/schemas/report-v2.md` — canonical YAML schema and rendering contract.
 - `.github/references/` — shared YAML syntax and analysis rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
 - `scripts/check-company-dedup.mjs` — pre-stage duplicate-risk check for matching company names or domains.
-- `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence-ledger.yaml`.
+- `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
 - `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and content-depth checks.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure types, enums, refs).

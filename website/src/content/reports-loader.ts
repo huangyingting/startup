@@ -9,7 +9,7 @@ const REPORTS_DIR = resolve(process.cwd(), '..', 'reports');
 
 interface ReportCardData extends Record<string, unknown> {
   schemaVersion: typeof SCHEMA_VERSION;
-  artifact: 'report-card';
+  artifact: 'summary-card';
   slug: string;
   runDate: string;
   company: {
@@ -129,7 +129,7 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
   const metrics = raw.keyMetrics ?? {};
   return {
     schemaVersion: SCHEMA_VERSION,
-    artifact: 'report-card',
+    artifact: 'summary-card',
     slug: raw.slug ?? runId,
     runDate: raw.runDate ?? '1970-01-01',
     company: {
@@ -181,12 +181,12 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
 // ---------------------------------------------------------------------------
 
 function isPublishableRun(folder: string): boolean {
-  return existsSync(join(folder, '92-report-card.yaml'));
+  return existsSync(join(folder, '92-summary-card.yaml'));
 }
 
 function reportCardPath(folder: string): string | null {
   if (!isPublishableRun(folder)) return null;
-  return join(folder, '92-report-card.yaml');
+  return join(folder, '92-summary-card.yaml');
 }
 
 function readStageYaml(folder: string, basename: string): unknown | null {
@@ -231,9 +231,9 @@ export function loadReportCard(runId: string): ReportCardData | null {
 export function loadStageFiles(runId: string): Record<string, unknown> {
   const folder = join(REPORTS_DIR, runId);
   const stages: Record<string, unknown> = {
-    evidenceLedger: readStageYaml(folder, '90-evidence-ledger'),
-    reportDocument: readStageYaml(folder, '91-report-document'),
-    reportCard: loadReportCard(runId),
+    evidence: readStageYaml(folder, '90-evidence'),
+    fullReport: readStageYaml(folder, '91-full-report'),
+    summaryCard: loadReportCard(runId),
   };
   for (const artifact of ANALYSIS_ARTIFACTS as Array<{ loaderKey: string; file: string }>) {
     stages[artifact.loaderKey] = readStageYaml(folder, artifact.file.replace(/\.yaml$/, ''));

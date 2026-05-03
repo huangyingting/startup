@@ -17,17 +17,17 @@ When this Markdown contract and a machine-readable registry disagree, update the
 Required artifacts:
 
 ```text
-01-company-snapshot.yaml
-02-market-macro.yaml
-03-competitive-benchmarking.yaml
-04-financial-unit-economics.yaml
-05-product-technology.yaml
-06-customer-retention.yaml
-07-risk-regulatory.yaml
-08-investment-valuation.yaml
-90-evidence-ledger.yaml
-91-report-document.yaml
-92-report-card.yaml
+01-company-overview.yaml
+02-market-analysis.yaml
+03-competitors.yaml
+04-financials.yaml
+05-product-tech.yaml
+06-customers.yaml
+07-risks.yaml
+08-valuation.yaml
+90-evidence.yaml
+91-full-report.yaml
+92-summary-card.yaml
 ```
 
 ## Execution contract
@@ -37,24 +37,24 @@ Required artifacts:
 - `/tmp` and terminal-output files are diagnostics only, never artifacts or handoff inputs.
 - Agents must read this schema and `.github/references/yaml-rules.md` before writing YAML artifacts.
 - Skills that create local evidence must follow `.github/references/analysis-rules.md`.
-- Skills read the minimum required dependency set. Downstream analysis skills use `01-company-snapshot.yaml` for identity; they read other upstream artifacts only when chapter logic needs them.
-- Analysis skills record local evidence under `localEvidence`; `startup-ledger` runs `scripts/consolidate-evidence.mjs` to create canonical evidence and rewrite claim references.
+- Skills read the minimum required dependency set. Downstream analysis skills use `01-company-overview.yaml` for identity; they read other upstream artifacts only when chapter logic needs them.
+- Analysis skills record local evidence under `localEvidence`; `startup-evidence` runs `scripts/consolidate-evidence.mjs` to create canonical evidence and rewrite claim references.
 
 ## Artifact mapping
 
 | File | `artifact` | Owner | Chapter |
 |---|---|---|---|
-| `01-company-snapshot.yaml` | `company-snapshot` | `startup-snapshot` | 1 — Startup Introduction & Company Snapshot |
-| `02-market-macro.yaml` | `market-macro` | `startup-market` | 2 — Market Sizing & Macro Analysis |
-| `03-competitive-benchmarking.yaml` | `competitive-benchmarking` | `startup-competition` | 3 — Competitive Benchmarking |
-| `04-financial-unit-economics.yaml` | `financial-unit-economics` | `startup-financials` | 4 — Financial & Unit Economics |
-| `05-product-technology.yaml` | `product-technology` | `startup-product` | 5 — Product & Technology |
-| `06-customer-retention.yaml` | `customer-retention` | `startup-customers` | 6 — Customer & Retention |
-| `07-risk-regulatory.yaml` | `risk-regulatory` | `startup-risks` | 7 — Risk & Regulatory |
-| `08-investment-valuation.yaml` | `investment-valuation` | `startup-valuation` | 8 — Investment & Valuation |
-| `90-evidence-ledger.yaml` | `evidence-ledger` | `startup-ledger` / consolidation script | n/a |
-| `91-report-document.yaml` | `report-document` | `startup-report` | final rendered report |
-| `92-report-card.yaml` | `report-card` | `startup-card` | website index card |
+| `01-company-overview.yaml` | `company-overview` | `startup-overview` | 1 — Startup Introduction & Company Overview |
+| `02-market-analysis.yaml` | `market-analysis` | `startup-market-analysis` | 2 — Market Sizing & Market Analysis |
+| `03-competitors.yaml` | `competitors` | `startup-competitors` | 3 — Competitors |
+| `04-financials.yaml` | `financials` | `startup-financials` | 4 — Financials |
+| `05-product-tech.yaml` | `product-tech` | `startup-product-tech` | 5 — Product & Technology |
+| `06-customers.yaml` | `customers` | `startup-customers` | 6 — Customers |
+| `07-risks.yaml` | `risks` | `startup-risks` | 7 — Risks |
+| `08-valuation.yaml` | `valuation` | `startup-valuation` | 8 — Valuation |
+| `90-evidence.yaml` | `evidence` | `startup-evidence` / consolidation script | n/a |
+| `91-full-report.yaml` | `full-report` | `startup-full-report` | final rendered report |
+| `92-summary-card.yaml` | `summary-card` | `startup-summary-card` | website index card |
 
 ## Shared conventions
 
@@ -62,12 +62,13 @@ Required artifacts:
 - Every artifact starts with `schemaVersion`, `artifact`, `slug`, `runDate`, and `company`.
 - `runDate` uses `YYYY-MM-DD`.
 - `slug` is the stable company slug.
-- `company.name` is consistent across all artifacts.
+- `company.name` is the only required company header field and is consistent across all artifacts.
+- Company profile details such as website, sector, stage, founding year, headquarters, and description belong in the relevant analysis/report content when useful; they are not required artifact header fields.
 - `claimRefs` are local before consolidation and canonical after consolidation.
 - Numeric KPI fields are numbers or `null`, never strings.
 - Ranges belong in `displayValue`, `notes`, or `estimateBasis`.
 - Use `null` for unknown optional values; do not omit required fields.
-- `figureCount` and `tableCount` in `92-report-card.yaml` must match `91-report-document.yaml`.
+- `figureCount` and `tableCount` in `92-summary-card.yaml` must match `91-full-report.yaml`.
 
 ## ID formats
 
@@ -98,7 +99,7 @@ Use exactly one allowed token. Do not append qualifiers, combine values with `/`
 
 # Artifact schemas
 
-## `90-evidence-ledger.yaml`
+## `90-evidence.yaml`
 
 Generate only via `node scripts/consolidate-evidence.mjs <reportFolder>` after `01`–`08` exist.
 
@@ -116,17 +117,11 @@ Quality requirements:
 
 ```yaml
 schemaVersion: report-v2
-artifact: evidence-ledger
+artifact: evidence
 slug: string
 runDate: YYYY-MM-DD
 company:
   name: string
-  website: string|null
-  sector: string|null
-  stage: string|null
-  foundedYear: number|null
-  headquarters: string|null
-  shortDescription: string
 coverage:
   sourcesConsidered: number
   sourcesRetained: number
@@ -168,17 +163,11 @@ Before consolidation, analysis artifacts may include `localEvidence`.
 
 ```yaml
 schemaVersion: report-v2
-artifact: company-snapshot|market-macro|competitive-benchmarking|financial-unit-economics|product-technology|customer-retention|risk-regulatory|investment-valuation
+artifact: company-overview|market-analysis|competitors|financials|product-tech|customers|risks|valuation
 slug: string
 runDate: YYYY-MM-DD
 company:
   name: string
-  website: string|null
-  sector: string|null
-  stage: string|null
-  foundedYear: number|null
-  headquarters: string|null
-  shortDescription: string
 chapter:
   number: number
   title: string
@@ -258,59 +247,64 @@ Notes:
 - Do not include empty figure data arrays that are not used by the figure type.
 - See `scripts/figure-registry.mjs` for figure data contracts.
 
-## `91-report-document.yaml`
+## `91-full-report.yaml`
 
 ```yaml
 schemaVersion: report-v2
-artifact: report-document
+artifact: full-report
 slug: string
 runDate: YYYY-MM-DD
 company:
   name: string
-  website: string|null
-  sector: string|null
-  stage: string|null
-  foundedYear: number|null
-  headquarters: string|null
-  shortDescription: string
 reportMeta:
   title: string
   subtitle: string
   generatedAt: ISO-8601 string
   schemaVersion: report-v2
-  coverageNotes: string|null
-executiveSummary:
   recommendation: strong-buy|buy|track|research-more|avoid
   confidence: high|medium|low
   riskRating: low|moderate|significant|critical|unknown
   valuationStance: attractive|fair|stretched|expensive|unknown
-  thesis: string
-  keyPoints: [string]
-  keyMetrics:
-    - label: string
-      value: number|null
-      unit: string|null
-      displayValue: string|null
-      estimateBasis: string|null
+  coverageNotes: string|null
+coverMetrics:
+  - label: string
+    value: string
+    numericValue: number|null
+    unit: string|null
+    claimRefs: [C001]
+startupIntroduction:
+  summary: string
+  foundedDate: YYYY-MM-DD|null
+  foundedYear: number|null
+  founders:
+    - name: string
+      role: string|null
+      background: string|null
       claimRefs: [C001]
+  foundingLocation: string|null
+  headquarters: string|null
+  productSummary: string
+  customerFocus: string|null
+  businessModel: string|null
+  stage: string|null
+  fundingStatus: string|null
+  claimRefs: [C001]
 chapters:
   - number: number
     title: string
-    summary: string
-    blocks:
-      - type: paragraph|tableRef|figureRef|callout|bulletList|metricGrid
+    sections:
+      - number: string
         title: string|null
-        body: string|null
-        refId: string|null
-        items: [string]
-        metrics:
-          - label: string
-            value: number|null
-            unit: string|null
-            displayValue: string|null
-            estimateBasis: string|null
+        blocks:
+          - type: paragraph|callout|table|figure|list|equation
+            title: string|null
+            body: string|null
+            calloutType: investment-recommendation|key-insight|opportunity|risk-alert|final-recommendation|null
+            tableRef: T001|null
+            figureRef: F001|null
+            items: [string]
+            equation: string|null
             claimRefs: [C001]
-        claimRefs: [C001]
 tables:
   - id: T001
     title: string
@@ -332,32 +326,29 @@ appendices:
   - id: A
     title: string
     blocks:
-      - type: paragraph|tableRef|figureRef|callout|bulletList|metricGrid
+      - type: paragraph|callout|table|figure|list|equation
         title: string|null
         body: string|null
-        refId: string|null
+        calloutType: investment-recommendation|key-insight|opportunity|risk-alert|final-recommendation|null
+        tableRef: T001|null
+        figureRef: F001|null
         items: [string]
+        equation: string|null
         claimRefs: [C001]
 bibliography:
   sourceRefs: [S001]
 disclaimer: string
 ```
 
-## `92-report-card.yaml`
+## `92-summary-card.yaml`
 
 ```yaml
 schemaVersion: report-v2
-artifact: report-card
+artifact: summary-card
 slug: string
 runDate: YYYY-MM-DD
 company:
   name: string
-  website: string|null
-  sector: string|null
-  stage: string|null
-  foundedYear: number|null
-  headquarters: string|null
-  shortDescription: string
 title: string
 subtitle: string
 headline: string
@@ -367,23 +358,26 @@ riskRating: low|moderate|significant|critical|unknown
 valuationStance: attractive|fair|stretched|expensive|unknown
 overallScore: number
 sourceStats:
-  sources: number
-  claims: number
-  evidenceQuality: high|medium|low|unknown
+  sourcesRetained: number
+  claimsReviewed: number
 figureCount: number
 tableCount: number
 keyMetrics:
-  - label: string
-    value: number|null
-    unit: string|null
-    displayValue: string|null
-    estimateBasis: string|null
+  valuationUsdM: number|null
+  revenueRunRateUsdM: number|null
+  arrUsdM: number|null
+  revenueGrowthYoYPct: number|null
+  grossMarginPct: number|null
+  nrrPct: number|null
+  totalRaisedUsdM: number|null
+  customerCount: number|null
+  headcount: number|null
 topStrengths: [string]
 topRisks: [string]
 unresolvedGaps: [string]
 reportFiles:
-  reportDocument: 91-report-document.yaml
-  reportCard: 92-report-card.yaml
+  fullReport: 91-full-report.yaml
+  summaryCard: 92-summary-card.yaml
 ```
 
 ## Figure contract
@@ -428,7 +422,7 @@ Renderer data contracts:
 - `schemaVersion` is `report-v2` everywhere.
 - Required artifact filenames match `scripts/report-manifest.mjs`.
 - Before consolidation, each analysis artifact's `claimRefs` point to its own `localEvidence.claims[]`.
-- After consolidation, all `claimRefs` point to `90-evidence-ledger.yaml` claims.
-- `91-report-document.yaml` preserves upstream table/figure IDs unless omissions are listed in `reportMeta.coverageNotes`.
-- `92-report-card.yaml` counts match `91-report-document.yaml`.
+- After consolidation, all `claimRefs` point to `90-evidence.yaml` claims.
+- `91-full-report.yaml` preserves upstream table/figure IDs unless omissions are listed in `reportMeta.coverageNotes`.
+- `92-summary-card.yaml` counts match `91-full-report.yaml`.
 - Website rendering and validator checks pass with `npm run validate`.

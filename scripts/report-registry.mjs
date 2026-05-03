@@ -7,7 +7,7 @@ export const CONFIDENCE = ['high', 'medium', 'low'];
 export const RISK_RATINGS = ['low', 'moderate', 'significant', 'critical', 'unknown'];
 export const VALUATION_STANCES = ['attractive', 'fair', 'stretched', 'expensive', 'unknown'];
 
-// Report-document chapter blocks.
+// Full-report chapter blocks.
 export const BLOCK_TYPES = ['paragraph', 'callout', 'table', 'figure', 'list', 'equation'];
 
 // Allowed callout flavours inside a chapter or appendix block.

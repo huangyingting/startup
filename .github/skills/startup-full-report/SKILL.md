@@ -1,29 +1,29 @@
 ---
-name: startup-report
-description: "Use when: generating 91-report-document.yaml from completed 01-08 analysis artifacts and 90-evidence-ledger.yaml. Keywords: report document, chapters, appendices, coverage, structured figures."
+name: startup-full-report
+description: "Use when: generating 91-full-report.yaml from completed 01-08 analysis artifacts and 90-evidence.yaml. Keywords: full report, chapters, appendices, coverage, structured figures."
 user-invocable: false
 ---
 
-# Startup Report
+# Startup Full Report
 
-Final report assembly stage. This skill produces the English `91-report-document.yaml` from completed analysis artifacts and the consolidated evidence ledger.
+Final report assembly stage. This skill produces the English `91-full-report.yaml` from completed analysis artifacts and the consolidated evidence file.
 
 ## Read first
 
-- `90-evidence-ledger.yaml`
+- `90-evidence.yaml`
 - All `01`–`08` English artifacts
 - `schemaPath`
 
 ## Output
 
-- `91-report-document.yaml`
+- `91-full-report.yaml`
 
 ## Do not
 
 - Do not gather new facts or use search.
 - Do not compress the report into a short summary.
 - Do not silently drop upstream sections, tables, figures, scenarios, risk registers, or gaps.
-- If a critical fact is missing or stale, route back to the owning analysis skill, rerun `startup-ledger`, then compose `91`.
+- If a critical fact is missing or stale, route back to the owning analysis skill, rerun `startup-evidence`, then compose `91`.
 
 ## Required structure
 
@@ -69,11 +69,11 @@ Run a synthesis reflection pass:
 - Check whether every top risk, strength, and unresolved gap is backed by canonical claimRefs or explicitly framed as a diligence gap.
 - Check whether the report over-polishes thin upstream work; if so, route back to the owning analysis skill rather than smoothing it in `91`.
 
-Fix coverage gaps before saving. Do not proceed to `startup-card` if final table/figure counts are unexpectedly low.
+Fix coverage gaps before saving. Do not proceed to `startup-summary-card` if final table/figure counts are unexpectedly low.
 
 ## Completion check (English)
 
 - Run `node scripts/sanitize-report-figures.mjs <reportFolder> --check`; if it fails, run without `--check`, review the diff, then rerun validation.
-- `91-report-document.yaml` parses and validates against canonical claim IDs.
+- `91-full-report.yaml` parses and validates against canonical claim IDs.
 - Output summary includes path, recommendation, table count, figure count, and website readiness.
 

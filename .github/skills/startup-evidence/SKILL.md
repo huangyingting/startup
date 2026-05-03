@@ -1,22 +1,22 @@
 ---
-name: startup-ledger
-description: "Use when: generating 90-evidence-ledger.yaml from 01-08 localEvidence. Keywords: evidence ledger, consolidation, dedupe, canonical S### C###, claimRefs."
+name: startup-evidence
+description: "Use when: generating 90-evidence.yaml from 01-08 localEvidence. Keywords: evidence ledger, consolidation, dedupe, canonical S### C###, claimRefs."
 user-invocable: false
 ---
 
-# Startup Ledger
+# Startup Evidence
 
 Consolidation stage. Generate canonical sources/claims only after `01`–`08` exist, parse, and have sufficient local evidence.
 
 ## Output
 
-- `90-evidence-ledger.yaml` via `node scripts/consolidate-evidence.mjs <reportFolder>`
+- `90-evidence.yaml` via `node scripts/consolidate-evidence.mjs <reportFolder>`
 - The script also rewrites `claimRefs` and inline `[C###]` references inside `01`–`08`, and removes `localEvidence` unless `--keep-local` is passed.
 
 ## Do not
 
 - Do not gather new facts.
-- Do not write `91-report-document.yaml` or any card artifact.
+- Do not write `91-full-report.yaml` or any card artifact.
 - Do not hand-write canonical `S###` or `C###` IDs.
 
 ## Pre-consolidation audit

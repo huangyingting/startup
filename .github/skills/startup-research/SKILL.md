@@ -1,10 +1,10 @@
 ---
-name: startup-diligence
+name: startup-research
 description: "Use when: producing a startup research report, company research report, startup diligence report, investment diligence report, or full end-to-end research on a named company. Trigger phrases include: research X company, research company X, analyze X startup, generate a report for X, startup research, company diligence, investment research, due diligence, full diligence workflow, report-v2."
 user-invocable: true
 ---
 
-# Startup Diligence (workflow orchestrator)
+# Startup Research (workflow orchestrator)
 
 This is the single entry point for generating a complete `report-v2` report. It does not produce content itself; it sequences chapter skills and integration skills, enforces synchronization points, and runs the final validation gates.
 
@@ -35,23 +35,23 @@ Before writing artifacts:
 Every completed report folder must contain the artifacts declared by `scripts/report-manifest.mjs`. That manifest is authoritative for artifact order, required files, loader keys, and depth floors; if prose below diverges, update the manifest first and then sync this workflow. Current v2 baseline:
 
 ```text
-01-company-snapshot.yaml
-02-market-macro.yaml
-03-competitive-benchmarking.yaml
-04-financial-unit-economics.yaml
-05-product-technology.yaml
-06-customer-retention.yaml
-07-risk-regulatory.yaml
-08-investment-valuation.yaml
-90-evidence-ledger.yaml
-91-report-document.yaml
-92-report-card.yaml
+01-company-overview.yaml
+02-market-analysis.yaml
+03-competitors.yaml
+04-financials.yaml
+05-product-tech.yaml
+06-customers.yaml
+07-risks.yaml
+08-valuation.yaml
+90-evidence.yaml
+91-full-report.yaml
+92-summary-card.yaml
 ```
 
 Rules:
 
 - Write all artifacts directly under `reportFolder`.
-- Never hand-write `90-evidence-ledger.yaml`; generate it with `node scripts/consolidate-evidence.mjs <reportFolder>`.
+- Never hand-write `90-evidence.yaml`; generate it with `node scripts/consolidate-evidence.mjs <reportFolder>`.
 - Temporary files, terminal transcripts, and `/tmp` outputs are diagnostics only, not report artifacts or evidence sources.
 - If a tool produces only a snippet or partial transcript, rewrite it as a complete YAML artifact under `reportFolder` before continuing.
 - Research packs and cached page snapshots are diagnostics/handoffs only; they are not part of the required final artifact set.
@@ -60,27 +60,27 @@ Rules:
 
 Run skills in the order declared by `scripts/report-manifest.mjs`. The current v2 baseline is:
 
-1. `startup-snapshot` → `01-company-snapshot.yaml`.
-2. `startup-market` → `02-market-macro.yaml`.
-3. `startup-competition` → `03-competitive-benchmarking.yaml`.
-4. `startup-financials` → `04-financial-unit-economics.yaml`.
-5. `startup-product` → `05-product-technology.yaml`.
-6. `startup-customers` → `06-customer-retention.yaml`.
-7. `startup-risks` → `07-risk-regulatory.yaml`.
-8. `startup-valuation` → `08-investment-valuation.yaml`.
-9. `startup-ledger` → `90-evidence-ledger.yaml` and rewrite `01`–`08` claim IDs.
-10. `startup-report` → `91-report-document.yaml`.
-11. `startup-card` → `92-report-card.yaml`.
+1. `startup-overview` → `01-company-overview.yaml`.
+2. `startup-market-analysis` → `02-market-analysis.yaml`.
+3. `startup-competitors` → `03-competitors.yaml`.
+4. `startup-financials` → `04-financials.yaml`.
+5. `startup-product-tech` → `05-product-tech.yaml`.
+6. `startup-customers` → `06-customers.yaml`.
+7. `startup-risks` → `07-risks.yaml`.
+8. `startup-valuation` → `08-valuation.yaml`.
+9. `startup-evidence` → `90-evidence.yaml` and rewrite `01`–`08` claim IDs.
+10. `startup-full-report` → `91-full-report.yaml`.
+11. `startup-summary-card` → `92-summary-card.yaml`.
 
 The orchestrator does not delegate to a separate research agent and does not recursively rerun this workflow from inside itself.
 
 ## Dependency rules
 
-- Every downstream analysis skill reads `01-company-snapshot.yaml` after it exists.
+- Every downstream analysis skill reads `01-company-overview.yaml` after it exists.
 - Domain skills read only the upstream artifacts needed for their context.
 - Later skills may inspect another artifact's gaps, tables, or figures, but must not directly edit another skill's owned artifact.
 - If later research uncovers a supportable fact owned by an earlier domain, return to that earlier skill, update its local evidence/artifact, then continue forward.
-- Consolidation/finalization skills (`startup-ledger`, `startup-report`, `startup-card`) do not gather new facts.
+- Consolidation/finalization skills (`startup-evidence`, `startup-full-report`, `startup-summary-card`) do not gather new facts.
 
 ## Concurrency model
 
@@ -94,19 +94,19 @@ Allowed after the pre-stage duplicate check passes, for chapters whose dependenc
 Not allowed without a dedicated orchestrator and locking/merge protocol:
 
 - Parallel writes to `01`–`08` YAML artifacts.
-- Parallel edits to `90-evidence-ledger.yaml`, `91-report-document.yaml`, `92-report-card.yaml`, or `reports/_index.yaml`.
-- Running `startup-ledger` while any analysis artifact is still being edited.
+- Parallel edits to `90-evidence.yaml`, `91-full-report.yaml`, `92-summary-card.yaml`, or `reports/_index.yaml`.
+- Running `startup-evidence` while any analysis artifact is still being edited.
 
 For automated or multi-agent runs, create one report-folder write lock before modifying final YAML artifacts and release it after the file parses. If the lock already exists, wait or stop; never merge concurrent writes by hand.
 
 Synchronization points:
 
 1. Pre-stage duplicate check before report folder creation or stage 1 writing.
-2. `01-company-snapshot.yaml` identity gate after the snapshot artifact exists.
+2. `01-company-overview.yaml` identity gate after the company overview artifact exists.
 3. Pre-ledger readiness audit after all `01`–`08` analysis artifacts exist.
-4. `startup-ledger` consolidation.
-5. `startup-report` assembly.
-6. `startup-card` generation.
+4. `startup-evidence` consolidation.
+5. `startup-full-report` assembly.
+6. `startup-summary-card` generation.
 7. Final index rebuild and `npm run validate`.
 
 ## Section-owned prompt requirements and research packs
@@ -126,7 +126,7 @@ Synchronization points:
 ## Section numbering
 
 - Analysis artifacts number sections from their own chapter: `01` uses `1.x`, `02` uses `2.x`, ..., `08` uses `8.x`.
-- In `91-report-document.yaml`, artifacts become chapters `2`–`9`; mapping is `report chapter N ↔ artifact N-1`.
+- In `91-full-report.yaml`, artifacts become chapters `2`–`9`; mapping is `report chapter N ↔ artifact N-1`.
 
 ## Research and evidence standards
 
@@ -144,8 +144,8 @@ Follow `.github/references/analysis-rules.md` for detailed analysis, evidence, a
 
 Schema validity is necessary but not sufficient. `scripts/report-manifest.mjs` is the machine source for analysis depth floors, and each owning chapter skill defines chapter-specific required content. Additional gates:
 
-- `90-evidence-ledger.yaml`: enough retained evidence for the final judgment; for visible companies, below roughly 50 sources or 90 claims is a red flag.
-- `91-report-document.yaml`: preserve the union of upstream tables/figures unless `reportMeta.coverageNotes` explicitly names omissions and reasons.
+- `90-evidence.yaml`: enough retained evidence for the final judgment; for visible companies, below roughly 50 sources or 90 claims is a red flag.
+- `91-full-report.yaml`: preserve the union of upstream tables/figures unless `reportMeta.coverageNotes` explicitly names omissions and reasons.
 
 Reject thin work even if YAML parses:
 
@@ -157,9 +157,9 @@ Do not stop because a chapter has reached the minimum floor. If credible evidenc
 
 Before accepting any `01`–`08` chapter, confirm the owning skill performed domain reflection: inferred the relevant domain archetype(s), added supportable domain-specific content beyond its universal requirements, and recorded evidence gaps where public evidence is insufficient.
 
-Before `startup-ledger`, inspect counts for sources, claims, tables, figures, sections, and gaps. If a stage misses the floor and the company is not genuinely obscure, return to that stage first.
+Before `startup-evidence`, inspect counts for sources, claims, tables, figures, sections, and gaps. If a stage misses the floor and the company is not genuinely obscure, return to that stage first.
 
-Run the readiness audit before `startup-ledger` when a report folder has draft `01`–`08` artifacts:
+Run the readiness audit before `startup-evidence` when a report folder has draft `01`–`08` artifacts:
 
 ```text
 node scripts/audit-report-readiness.mjs <reportFolder> --pre-ledger
@@ -167,7 +167,7 @@ node scripts/audit-report-readiness.mjs <reportFolder> --pre-ledger
 
 Fix failures before consolidation. Warnings are acceptable only when the report explicitly documents why evidence is unavailable.
 
-Before `startup-card`, compare `91` table/figure counts against the union of `01`–`08`; unexpectedly low counts mean `startup-report` dropped analysis and must be rerun.
+Before `startup-summary-card`, compare `91` table/figure counts against the union of `01`–`08`; unexpectedly low counts mean `startup-full-report` dropped analysis and must be rerun.
 
 ## Validation gates
 
@@ -183,7 +183,7 @@ node scripts/check-company-dedup.mjs --company <companyName> [--website <company
 - Exit `2`: duplicate risk; stop unless the user explicitly requested a refresh.
 - Any other non-zero exit: fix the input/path issue before continuing.
 
-Final validation after `92-report-card.yaml`:
+Final validation after `92-summary-card.yaml`:
 
 - Rebuild `reports/_index.yaml` with `node scripts/build-reports-index.mjs --strict`.
 - Run `npm run validate`.
@@ -192,9 +192,9 @@ Final validation after `92-report-card.yaml`:
 ## Evidence and YAML conventions
 
 - Keep reports YAML-first; no prose-only deliverables.
-- Trace factual claims through canonical `claimRefs` to `90-evidence-ledger.yaml`.
+- Trace factual claims through canonical `claimRefs` to `90-evidence.yaml`.
 - Use `null` plus explanation for unsupported private metrics; never invent values.
-- Canonical `S###` / `C###` IDs are reassigned by each `consolidate-evidence` run; never cache or hand-edit them outside the artifacts that script rewrites, and re-run `startup-report` and `startup-card` after any reconsolidation.
+- Canonical `S###` / `C###` IDs are reassigned by each `consolidate-evidence` run; never cache or hand-edit them outside the artifacts that script rewrites, and re-run `startup-full-report` and `startup-summary-card` after any reconsolidation.
 - Figures must use structured YAML specs supported by the website renderer.
 
 ## Updating an existing report
@@ -203,9 +203,9 @@ When fixing omissions, thin sections, or newly supportable data:
 
 1. Update the owning analysis artifact (`01`–`08`).
 2. Add or revise local evidence in that artifact.
-3. Rerun `startup-ledger` to reconsolidate `90` and claim IDs.
+3. Rerun `startup-evidence` to reconsolidate `90` and claim IDs.
 4. Rerun affected downstream artifacts.
-5. If recommendation, confidence, risk rating, or valuation stance changes, rerun `startup-report` and `startup-card`.
+5. If recommendation, confidence, risk rating, or valuation stance changes, rerun `startup-full-report` and `startup-summary-card`.
 6. Run `npm run validate`.
 
 Do not commit or leave a partially updated report folder.

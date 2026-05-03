@@ -1,22 +1,22 @@
 ---
-name: startup-product
-description: "Use when: generating 05-product-technology.yaml. Keywords: product, platform, modules, architecture, AI, integrations, roadmap, security, compliance, docs, sitemap."
+name: startup-product-tech
+description: "Use when: generating 05-product-tech.yaml. Keywords: product, platform, modules, architecture, AI, integrations, roadmap, security, compliance, docs, sitemap."
 user-invocable: false
 ---
 
-# Startup Product
+# Startup Product Tech
 
 Fifth analysis stage. This skill owns the product and technology chapter. It must explain what the company delivers, how it works, how mature it is, and what product/technical evidence supports or weakens the moat.
 
 ## Read first
 
-- `01-company-snapshot.yaml`
-- `02-market-macro.yaml`, `03-competitive-benchmarking.yaml`, or `04-financial-unit-economics.yaml` only when positioning, feature, pricing, or monetization context matters.
+- `01-company-overview.yaml`
+- `02-market-analysis.yaml`, `03-competitors.yaml`, or `04-financials.yaml` only when positioning, feature, pricing, or monetization context matters.
 - `.github/references/analysis-rules.md`
 
 ## Outputs
 
-- `05-product-technology.yaml`
+- `05-product-tech.yaml`
 
 ## Chapter purpose
 
