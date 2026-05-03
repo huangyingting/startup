@@ -1,22 +1,27 @@
 #!/usr/bin/env node
+// Remove empty placeholder figure data arrays such as data.items: [] that
+// satisfy YAML structure but break renderer contracts.
 import { existsSync, statSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { readYaml, writeYaml } from './text-utils.mjs';
+import { FIGURE_ARRAY_FIELDS } from './figure-registry.mjs';
 
-const FIGURE_ARRAY_FIELDS = ['items', 'nodes', 'edges', 'points', 'columns', 'rows', 'series', 'layers'];
 const REPORT_FILES = ['101-report-document.yaml', '101-report-document.zh.yaml'];
 
-const args = process.argv.slice(2);
-const checkOnly = args.includes('--check');
-const targets = args.filter((arg) => arg !== '--check');
+function parseArgs(argv) {
+  const checkOnly = argv.includes('--check');
+  const targets = argv.filter((arg) => arg !== '--check');
+  return { checkOnly, targets };
+}
 
-if (!targets.length) {
+const args = parseArgs(process.argv.slice(2));
+if (!args.targets.length) {
   console.error('Usage: node scripts/sanitize-report-figures.mjs <report-folder|yaml-file...> [--check]');
   process.exit(1);
 }
 
 function resolveTargets(values) {
-  const files = [];
+  const files = new Set();
   for (const value of values) {
     const path = resolve(value);
     if (!existsSync(path)) {
@@ -27,13 +32,13 @@ function resolveTargets(values) {
     if (stat.isDirectory()) {
       for (const file of REPORT_FILES) {
         const candidate = join(path, file);
-        if (existsSync(candidate)) files.push(candidate);
+        if (existsSync(candidate)) files.add(candidate);
       }
     } else if (stat.isFile() && /\.ya?ml$/i.test(path)) {
-      files.push(path);
+      files.add(path);
     }
   }
-  return [...new Set(files)];
+  return [...files];
 }
 
 function sanitizeFigureData(data) {
@@ -61,7 +66,7 @@ function sanitizeDoc(doc) {
   return changes;
 }
 
-const files = resolveTargets(targets);
+const files = resolveTargets(args.targets);
 if (!files.length) {
   console.error('[sanitize-report-figures] no report document YAML files found.');
   process.exit(1);
@@ -73,16 +78,23 @@ for (const file of files) {
   const changes = sanitizeDoc(doc);
   if (!changes.length) continue;
   allChanges.push({ file, changes });
-  if (!checkOnly) writeYaml(file, doc);
+  if (!args.checkOnly) writeYaml(file, doc);
 }
 
-if (allChanges.length) {
-  const summary = allChanges.flatMap(({ file, changes }) => changes.map((change) => `  - ${file}: figure ${change.id} removed ${change.removed.map((field) => `data.${field}`).join(', ')}`)).join('\n');
-  if (checkOnly) {
-    console.error(`[sanitize-report-figures] ${allChanges.length} file(s) contain empty figure placeholder arrays:\n${summary}`);
-    process.exit(1);
-  }
-  console.log(`[sanitize-report-figures] sanitized ${allChanges.length} file(s):\n${summary}`);
-} else {
-  console.log(`[sanitize-report-figures] ✓ ${files.length} file(s) already clean${files.length === 1 ? ` (${basename(files[0])})` : ''}.`);
+if (!allChanges.length) {
+  const detail = files.length === 1 ? ` (${basename(files[0])})` : '';
+  console.log(`[sanitize-report-figures] ✓ ${files.length} file(s) already clean${detail}.`);
+  process.exit(0);
 }
+
+const summary = allChanges
+  .flatMap(({ file, changes }) => changes.map((change) =>
+    `  - ${file}: figure ${change.id} removed ${change.removed.map((field) => `data.${field}`).join(', ')}`
+  ))
+  .join('\n');
+
+if (args.checkOnly) {
+  console.error(`[sanitize-report-figures] ${allChanges.length} file(s) contain empty figure placeholder arrays:\n${summary}`);
+  process.exit(1);
+}
+console.log(`[sanitize-report-figures] sanitized ${allChanges.length} file(s):\n${summary}`);

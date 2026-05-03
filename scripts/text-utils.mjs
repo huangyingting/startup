@@ -81,3 +81,27 @@ export function asDateString(value) {
 export function compactText(value) {
   return String(value ?? '').trim().replace(/\s+/g, ' ');
 }
+
+// Recursively collects every value found under a `claimRefs` array anywhere in
+// the document, regardless of nesting depth.
+export function collectClaimRefs(value, refs = []) {
+  if (Array.isArray(value)) {
+    for (const item of value) collectClaimRefs(item, refs);
+  } else if (value && typeof value === 'object') {
+    for (const [key, child] of Object.entries(value)) {
+      if (key === 'claimRefs' && Array.isArray(child)) refs.push(...child);
+      else collectClaimRefs(child, refs);
+    }
+  }
+  return refs;
+}
+
+// Convenience reader that throws a clear error message rather than the bare
+// js-yaml stack trace.
+export function tryReadYaml(path) {
+  try {
+    return { ok: true, value: readYaml(path) };
+  } catch (err) {
+    return { ok: false, error: err.message.split('\n')[0] };
+  }
+}

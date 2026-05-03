@@ -2,7 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { Lang } from '../lib/i18n';
 import ClaimRefs from './ClaimRefs.astro';
-import FigureRenderer from './FigureRenderer.astro';
+import ReportBlock from './ReportBlock.astro';
 import { displayLabel } from '../lib/display';
 
 interface Props {
@@ -13,40 +13,62 @@ interface Props {
 }
 
 const { data, stages, lang = 'en' } = Astro.props;
+
 const doc = stages.reportDocument ?? null;
 const ledger = stages.evidenceLedger ?? {};
-const claims = Array.isArray(ledger.claims) ? ledger.claims : [];
-const sources = Array.isArray(ledger.sources) ? ledger.sources : [];
-const figures = new Map((doc?.figures ?? []).map((figure: any) => [figure.id, figure]));
-const tables = new Map((doc?.tables ?? []).map((table: any) => [table.id, table]));
+const claims: any[] = Array.isArray(ledger.claims) ? ledger.claims : [];
+const sources: any[] = Array.isArray(ledger.sources) ? ledger.sources : [];
+const figures = new Map<string, any>((doc?.figures ?? []).map((figure: any) => [figure.id, figure]));
+const tables = new Map<string, any>((doc?.tables ?? []).map((table: any) => [table.id, table]));
 
 const labels = lang === 'zh'
   ? {
-      recommendation: '建议', confidence: '置信度', riskRating: '风险评级', valuationStance: '估值判断', score: '评分', sources: '来源', claims: '声明', figures: '图表', tables: '表格',
-      coverMetrics: '封面指标', startupIntro: '创业公司基本介绍', founded: '创立时间', founders: '创始人', foundingLocation: '创立地点', headquarters: '总部', product: '产品', customers: '客户', businessModel: '商业模式', stage: '阶段', fundingStatus: '融资状态', strengths: '核心亮点', risks: '核心风险', gaps: '未解问题', contents: '目录', appendix: '附录', disclaimer: '免责声明', evidence: '证据索引', showRefs: '显示引用', hideRefs: '隐藏引用'
+      recommendation: '建议', confidence: '置信度', riskRating: '风险评级', valuationStance: '估值判断',
+      score: '评分', sources: '来源', claims: '声明', figures: '图表', tables: '表格',
+      coverMetrics: '封面指标', startupIntro: '创业公司基本介绍',
+      founded: '创立时间', founders: '创始人', foundingLocation: '创立地点', headquarters: '总部',
+      product: '产品', customers: '客户', businessModel: '商业模式', stage: '阶段', fundingStatus: '融资状态',
+      strengths: '核心亮点', risks: '核心风险', gaps: '未解问题',
+      contents: '目录', appendix: '附录', disclaimer: '免责声明',
+      evidence: '证据索引', showRefs: '显示引用', hideRefs: '隐藏引用',
     }
   : {
-      recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating', valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims', figures: 'figures', tables: 'tables',
-      coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction', founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location', headquarters: 'Headquarters', product: 'Product', customers: 'Customers', businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status', strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps', contents: 'Contents', appendix: 'Appendix', disclaimer: 'Disclaimer', evidence: 'Evidence index', showRefs: 'Show refs', hideRefs: 'Hide refs'
+      recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating',
+      valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims',
+      figures: 'figures', tables: 'tables',
+      coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction',
+      founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location',
+      headquarters: 'Headquarters', product: 'Product', customers: 'Customers',
+      businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status',
+      strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps',
+      contents: 'Contents', appendix: 'Appendix', disclaimer: 'Disclaimer',
+      evidence: 'Evidence index', showRefs: 'Show refs', hideRefs: 'Hide refs',
     };
 
-function arr<T = any>(value: T[] | undefined | null): T[] { return Array.isArray(value) ? value : []; }
-function labelValue(value: unknown) { return displayLabel(value); }
-function metric(value: unknown, suffix = '') {
+function arr<T = unknown>(value: T[] | undefined | null): T[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function metric(value: unknown, suffix = ''): string {
   if (value === null || value === undefined || value === '') return '—';
   if (typeof value === 'number') return `${value.toLocaleString()}${suffix}`;
   return String(value);
 }
-function moneyM(value: unknown) {
+
+function moneyM(value: unknown): string {
   if (value === null || value === undefined || value === '') return '—';
   if (typeof value !== 'number') return String(value);
-  if (Math.abs(value) >= 1000) return `$${(value / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
+  if (Math.abs(value) >= 1000) {
+    return `$${(value / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
+  }
   return `$${value.toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
 }
-function cleanHeadline(value: unknown) {
+
+function cleanHeadline(value: unknown): string {
   return String(value ?? '').replace(/(?:\s*\[C\d{3}\])+\.?$/g, '.').trim();
 }
-function splitClaimRefsText(value: unknown) {
+
+function splitClaimRefsText(value: unknown): Array<{ text?: string; ref?: string }> {
   const text = String(value ?? '');
   const parts: Array<{ text?: string; ref?: string }> = [];
   const pattern = /\[(C\d{3})\]/g;
@@ -59,32 +81,37 @@ function splitClaimRefsText(value: unknown) {
   if (lastIndex < text.length) parts.push({ text: text.slice(lastIndex) });
   return parts.length ? parts : [{ text }];
 }
-function hasInlineClaimRefs(value: unknown) { return /\[C\d{3}\]/.test(String(value ?? '')); }
-function blockRefs(block: any) { return arr<string>(block?.claimRefs).slice(0, 6); }
-function blockClass(type: string | null | undefined) { return `report-callout callout-${String(type ?? 'key-insight').replace(/[^a-z0-9-]/gi, '-')}`; }
+
+function blockRefs(value: any): string[] {
+  return arr<string>(value?.claimRefs).slice(0, 6);
+}
 
 const coverMetrics = arr(doc?.coverMetrics);
-const documentStartupIntroduction = doc?.startupIntroduction ?? null;
-const snapshotStartupIntroduction = stages.companySnapshot?.startupIntroduction ?? null;
-const startupIntroduction = documentStartupIntroduction || snapshotStartupIntroduction
+const documentIntro = doc?.startupIntroduction ?? null;
+const snapshotIntro = stages.companySnapshot?.startupIntroduction ?? null;
+const startupIntroduction = documentIntro || snapshotIntro
   ? {
-      ...(snapshotStartupIntroduction ?? {}),
-      ...(documentStartupIntroduction ?? {}),
-      summary: documentStartupIntroduction?.summary ?? documentStartupIntroduction?.body ?? snapshotStartupIntroduction?.summary ?? snapshotStartupIntroduction?.body ?? null,
+      ...(snapshotIntro ?? {}),
+      ...(documentIntro ?? {}),
+      summary: documentIntro?.summary
+        ?? documentIntro?.body
+        ?? snapshotIntro?.summary
+        ?? snapshotIntro?.body
+        ?? null,
     }
   : null;
-const chapters = arr(doc?.chapters);
-const appendices = arr(doc?.appendices);
+
+const chapters = arr<any>(doc?.chapters);
+const appendices = arr<any>(doc?.appendices);
 const reportFigures = arr(doc?.figures);
 const reportTables = arr(doc?.tables);
 const figureCount = reportFigures.length || data.figureCount || 0;
 const tableCount = reportTables.length || data.tableCount || 0;
-const claimLinkMap = Object.fromEntries(claims.map((claim: any) => {
-  return [claim.id, {
-    href: `#claim-${claim.id}`,
-    title: claim.statement ?? claim.id,
-  }];
-}));
+
+const claimLinkMap = Object.fromEntries(
+  claims.map((claim: any) => [claim.id, { href: `#claim-${claim.id}`, title: claim.statement ?? claim.id }])
+);
+
 const keyMetrics = data.keyMetrics ?? {};
 const fallbackMetrics = [
   ['Valuation', moneyM(keyMetrics.valuationUsdM)],
@@ -109,15 +136,21 @@ const fallbackMetrics = [
         <span>{data.sourceStats.claimsReviewed} {labels.claims}</span>
         <span>{figureCount} {labels.figures}</span>
         <span>{tableCount} {labels.tables}</span>
-        <button type="button" class="evidence-toggle" aria-pressed="false" data-show-label={labels.showRefs} data-hide-label={labels.hideRefs}>{labels.showRefs}</button>
+        <button
+          type="button"
+          class="evidence-toggle"
+          aria-pressed="false"
+          data-show-label={labels.showRefs}
+          data-hide-label={labels.hideRefs}
+        >{labels.showRefs}</button>
       </div>
     </div>
     <aside class="decision-card">
       <dl>
-        <div><dt>{labels.recommendation}</dt><dd>{labelValue(data.recommendation)}</dd></div>
-        <div><dt>{labels.confidence}</dt><dd>{labelValue(data.confidence)}</dd></div>
-        <div><dt>{labels.riskRating}</dt><dd>{labelValue(data.riskRating)}</dd></div>
-        <div><dt>{labels.valuationStance}</dt><dd>{labelValue(data.valuationStance)}</dd></div>
+        <div><dt>{labels.recommendation}</dt><dd>{displayLabel(data.recommendation)}</dd></div>
+        <div><dt>{labels.confidence}</dt><dd>{displayLabel(data.confidence)}</dd></div>
+        <div><dt>{labels.riskRating}</dt><dd>{displayLabel(data.riskRating)}</dd></div>
+        <div><dt>{labels.valuationStance}</dt><dd>{displayLabel(data.valuationStance)}</dd></div>
         <div><dt>{labels.score}</dt><dd>{data.overallScore.toFixed(1)}</dd></div>
       </dl>
     </aside>
@@ -126,13 +159,26 @@ const fallbackMetrics = [
   <section class="report-section cover-metrics">
     <h2>{labels.coverMetrics}</h2>
     <div class="metric-grid">
-      {coverMetrics.length ? coverMetrics.map((item: any, index: number) => (
-        <article>
-          <div class="metric-topline"><span class="metric-label">{item.label}</span><em>{String(index + 1).padStart(2, '0')}</em></div>
-          <strong>{item.value}</strong>
-          <ClaimRefs refs={blockRefs(item)} claims={claims} sources={sources} />
-        </article>
-      )) : fallbackMetrics.map(([label, value], index) => <article><div class="metric-topline"><span class="metric-label">{label}</span><em>{String(index + 1).padStart(2, '0')}</em></div><strong>{value}</strong></article>)}
+      {coverMetrics.length
+        ? coverMetrics.map((item: any, index: number) => (
+            <article>
+              <div class="metric-topline">
+                <span class="metric-label">{item.label}</span>
+                <em>{String(index + 1).padStart(2, '0')}</em>
+              </div>
+              <strong>{item.value}</strong>
+              <ClaimRefs refs={blockRefs(item)} claims={claims} sources={sources} />
+            </article>
+          ))
+        : fallbackMetrics.map(([label, value], index) => (
+            <article>
+              <div class="metric-topline">
+                <span class="metric-label">{label}</span>
+                <em>{String(index + 1).padStart(2, '0')}</em>
+              </div>
+              <strong>{value}</strong>
+            </article>
+          ))}
     </div>
   </section>
 
@@ -140,10 +186,20 @@ const fallbackMetrics = [
     <section class="report-section startup-intro">
       <h2>{labels.startupIntro}</h2>
       {startupIntroduction.heading && <p class="intro-heading"><strong>{startupIntroduction.heading}</strong></p>}
-      {startupIntroduction.summary && <p>{splitClaimRefsText(startupIntroduction.summary).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>}
+      {startupIntroduction.summary && (
+        <p>
+          {splitClaimRefsText(startupIntroduction.summary).map((part) => part.ref
+            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+            : part.text)}
+        </p>
+      )}
       <dl class="intro-grid">
-        {(startupIntroduction.foundedDate || startupIntroduction.foundedYear) && <div><dt>{labels.founded}</dt><dd>{startupIntroduction.foundedDate ?? startupIntroduction.foundedYear}</dd></div>}
-        {arr(startupIntroduction.founders).length > 0 && <div><dt>{labels.founders}</dt><dd>{arr(startupIntroduction.founders).map((founder: any) => founder.name).join(', ')}</dd></div>}
+        {(startupIntroduction.foundedDate || startupIntroduction.foundedYear) && (
+          <div><dt>{labels.founded}</dt><dd>{startupIntroduction.foundedDate ?? startupIntroduction.foundedYear}</dd></div>
+        )}
+        {arr(startupIntroduction.founders).length > 0 && (
+          <div><dt>{labels.founders}</dt><dd>{arr(startupIntroduction.founders).map((founder: any) => founder.name).join(', ')}</dd></div>
+        )}
         {startupIntroduction.foundingLocation && <div><dt>{labels.foundingLocation}</dt><dd>{startupIntroduction.foundingLocation}</dd></div>}
         {startupIntroduction.headquarters && <div><dt>{labels.headquarters}</dt><dd>{startupIntroduction.headquarters}</dd></div>}
         {startupIntroduction.productSummary && <div><dt>{labels.product}</dt><dd>{startupIntroduction.productSummary}</dd></div>}
@@ -152,7 +208,7 @@ const fallbackMetrics = [
         {startupIntroduction.stage && <div><dt>{labels.stage}</dt><dd>{startupIntroduction.stage}</dd></div>}
         {startupIntroduction.fundingStatus && <div><dt>{labels.fundingStatus}</dt><dd>{startupIntroduction.fundingStatus}</dd></div>}
       </dl>
-      <ClaimRefs refs={arr(startupIntroduction.claimRefs).slice(0, 8)} claims={claims} sources={sources} />
+      <ClaimRefs refs={(startupIntroduction.claimRefs ?? []).slice(0, 8)} claims={claims} sources={sources} />
     </section>
   )}
 
@@ -160,8 +216,12 @@ const fallbackMetrics = [
     <nav class="report-section toc" aria-label={labels.contents}>
       <h2>{labels.contents}</h2>
       <ol>
-        {chapters.map((chapter: any) => <li><a href={`#chapter-${chapter.number}`}>{chapter.title}</a></li>)}
-        {appendices.map((appendix: any) => <li><a href={`#appendix-${appendix.id}`}>{labels.appendix} {appendix.id}: {appendix.title}</a></li>)}
+        {chapters.map((chapter: any) => (
+          <li><a href={`#chapter-${chapter.number}`}>{chapter.title}</a></li>
+        ))}
+        {appendices.map((appendix: any) => (
+          <li><a href={`#appendix-${appendix.id}`}>{labels.appendix} {appendix.id}: {appendix.title}</a></li>
+        ))}
       </ol>
     </nav>
   )}
@@ -172,21 +232,9 @@ const fallbackMetrics = [
       {arr(chapter.sections).map((section: any) => (
         <section class="chapter-section">
           <h3>{section.number} {section.title}</h3>
-          {arr(section.blocks).map((block: any) => {
-            const table = block.tableRef ? tables.get(block.tableRef) as any : null;
-            const figure = block.figureRef ? figures.get(block.figureRef) as any : null;
-            const blockHasInlineRefs = hasInlineClaimRefs(block?.body) || arr(block?.items).some((item) => hasInlineClaimRefs(item));
-            return (
-              <>
-                {block.type === 'paragraph' && <p>{splitClaimRefsText(block.body).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)} <ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></p>}
-                {block.type === 'list' && <><ul>{arr(block.items).map((item) => <li>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</li>)}</ul><ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></>}
-                {block.type === 'equation' && <div class="equation">{block.equation}</div>}
-                {block.type === 'callout' && <aside class={blockClass(block.calloutType)}><h4>{block.title}</h4><p>{splitClaimRefsText(block.body).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p><ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></aside>}
-                {block.type === 'table' && table && <div class="table-frame"><table><caption>{table.title}</caption><thead><tr>{arr(table.columns).map((column) => <th>{column}</th>)}</tr></thead><tbody>{arr(table.rows).map((row: any[]) => <tr>{arr(row).map((cell) => <td>{splitClaimRefsText(cell).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</td>)}</tr>)}</tbody></table>{table.notes && <p class="table-note">{splitClaimRefsText(table.notes).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>}<ClaimRefs refs={blockRefs(table)} claims={claims} sources={sources} /></div>}
-                {block.type === 'figure' && figure && <FigureRenderer figure={figure} claims={claims} sources={sources} />}
-              </>
-            );
-          })}
+          {arr(section.blocks).map((block: any) => (
+            <ReportBlock block={block} tables={tables} figures={figures} claims={claims} sources={sources} />
+          ))}
         </section>
       ))}
     </article>
@@ -194,48 +242,104 @@ const fallbackMetrics = [
 
   {(data.topStrengths.length > 0 || data.topRisks.length > 0 || data.unresolvedGaps.length > 0) && (
     <section class="report-section three-col">
-      <article><h2>{labels.strengths}</h2>{arr(data.topStrengths).map((item) => <p>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>)}</article>
-      <article><h2>{labels.risks}</h2>{arr(data.topRisks).map((item) => <p>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>)}</article>
-      <article><h2>{labels.gaps}</h2>{arr(data.unresolvedGaps).map((item) => <p>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>)}</article>
+      <article>
+        <h2>{labels.strengths}</h2>
+        {arr(data.topStrengths).map((item) => (
+          <p>{splitClaimRefsText(item).map((part) => part.ref
+            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+            : part.text)}</p>
+        ))}
+      </article>
+      <article>
+        <h2>{labels.risks}</h2>
+        {arr(data.topRisks).map((item) => (
+          <p>{splitClaimRefsText(item).map((part) => part.ref
+            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+            : part.text)}</p>
+        ))}
+      </article>
+      <article>
+        <h2>{labels.gaps}</h2>
+        {arr(data.unresolvedGaps).map((item) => (
+          <p>{splitClaimRefsText(item).map((part) => part.ref
+            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+            : part.text)}</p>
+        ))}
+      </article>
     </section>
   )}
 
   {appendices.map((appendix: any) => (
     <section class="report-section appendix" id={`appendix-${appendix.id}`}>
       <h2>{labels.appendix} {appendix.id}: {appendix.title}</h2>
-      {arr(appendix.blocks).map((block: any) => {
-        const table = block.tableRef ? tables.get(block.tableRef) as any : null;
-        const figure = block.figureRef ? figures.get(block.figureRef) as any : null;
-        const blockHasInlineRefs = hasInlineClaimRefs(block?.body) || arr(block?.items).some((item) => hasInlineClaimRefs(item));
-        return (
-          <>
-            {block.type === 'paragraph' && <p>{splitClaimRefsText(block.body).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)} <ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></p>}
-            {block.type === 'list' && <><ul>{arr(block.items).map((item) => <li>{splitClaimRefsText(item).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</li>)}</ul><ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></>}
-            {block.type === 'equation' && <div class="equation">{block.equation}</div>}
-            {block.type === 'callout' && <aside class={blockClass(block.calloutType)}><h4>{block.title}</h4><p>{splitClaimRefsText(block.body).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p><ClaimRefs refs={blockHasInlineRefs ? [] : blockRefs(block)} claims={claims} sources={sources} /></aside>}
-            {block.type === 'table' && table && <div class="table-frame"><table><caption>{table.title}</caption><thead><tr>{arr(table.columns).map((column) => <th>{column}</th>)}</tr></thead><tbody>{arr(table.rows).map((row: any[]) => <tr>{arr(row).map((cell) => <td>{splitClaimRefsText(cell).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</td>)}</tr>)}</tbody></table>{table.notes && <p class="table-note">{splitClaimRefsText(table.notes).map((part) => part.ref ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} /> : part.text)}</p>}<ClaimRefs refs={blockRefs(table)} claims={claims} sources={sources} /></div>}
-            {block.type === 'figure' && figure && <FigureRenderer figure={figure} claims={claims} sources={sources} />}
-          </>
-        );
-      })}
+      {arr(appendix.blocks).map((block: any) => (
+        <ReportBlock block={block} tables={tables} figures={figures} claims={claims} sources={sources} />
+      ))}
     </section>
   ))}
 
-  {doc?.disclaimer && <section class="report-section disclaimer"><h2>{labels.disclaimer}</h2><p>{doc.disclaimer}</p></section>}
+  {doc?.disclaimer && (
+    <section class="report-section disclaimer"><h2>{labels.disclaimer}</h2><p>{doc.disclaimer}</p></section>
+  )}
 
   {(claims.length > 0 || sources.length > 0) && (
     <section class="report-section evidence-index">
       <h2>{labels.evidence}</h2>
-      {claims.length > 0 && <div class="table-frame"><table><caption>Claims</caption><thead><tr><th>ID</th><th>Statement</th><th>Confidence</th><th>Sources</th></tr></thead><tbody>{claims.map((claim: any) => <tr id={`claim-${claim.id}`}><td><a class="evidence-id" href={`#claim-${claim.id}`}>{claim.id}</a></td><td>{claim.statement}</td><td>{labelValue(claim.confidence)}</td><td>{arr(claim.sourceRefs).map((sourceRef, index) => <><a href={`#source-${sourceRef}`}>{sourceRef}</a>{index < arr(claim.sourceRefs).length - 1 ? ', ' : ''}</>)}</td></tr>)}</tbody></table></div>}
-      {sources.length > 0 && <div class="table-frame"><table><caption>Sources</caption><thead><tr><th>ID</th><th>Publisher</th><th>Title</th><th>Quote</th></tr></thead><tbody>{sources.map((source: any) => <tr id={`source-${source.id}`}><td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td><td>{source.publisher}</td><td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td><td>{source.keyQuote}</td></tr>)}</tbody></table></div>}
+      {claims.length > 0 && (
+        <div class="table-frame">
+          <table>
+            <caption>Claims</caption>
+            <thead><tr><th>ID</th><th>Statement</th><th>Confidence</th><th>Sources</th></tr></thead>
+            <tbody>
+              {claims.map((claim: any) => (
+                <tr id={`claim-${claim.id}`}>
+                  <td><a class="evidence-id" href={`#claim-${claim.id}`}>{claim.id}</a></td>
+                  <td>{claim.statement}</td>
+                  <td>{displayLabel(claim.confidence)}</td>
+                  <td>
+                    {(claim.sourceRefs ?? []).map((ref: string, index: number, list: string[]) => (
+                      <>
+                        <a href={`#source-${ref}`}>{ref}</a>{index < list.length - 1 ? ', ' : ''}
+                      </>
+                    ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {sources.length > 0 && (
+        <div class="table-frame">
+          <table>
+            <caption>Sources</caption>
+            <thead><tr><th>ID</th><th>Publisher</th><th>Title</th><th>Quote</th></tr></thead>
+            <tbody>
+              {sources.map((source: any) => (
+                <tr id={`source-${source.id}`}>
+                  <td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td>
+                  <td>{source.publisher}</td>
+                  <td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td>
+                  <td>{source.keyQuote}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   )}
 </section>
 
 <script type="application/json" id="claim-link-map" set:html={JSON.stringify(claimLinkMap)}></script>
 <script type="module" is:inline>
+  // Replace inline `[C123]` markers in body text with linked spans, and wire
+  // the evidence toggle to show/hide the markers throughout the report.
   const claimLinkMapElement = document.getElementById('claim-link-map');
-  const claimLinkMap = claimLinkMapElement ? JSON.parse(claimLinkMapElement.textContent || '{}') : {};
+  const claimLinkMap = claimLinkMapElement
+    ? JSON.parse(claimLinkMapElement.textContent || '{}')
+    : {};
+
   const makeClaimRef = (ref) => {
     const link = claimLinkMap[ref] || { href: `#claim-${ref}`, title: ref };
     const span = document.createElement('span');
@@ -248,29 +352,32 @@ const fallbackMetrics = [
     span.append(anchor, ']');
     return span;
   };
-  const walker = document.createTreeWalker(document.querySelector('.report-shell'), NodeFilter.SHOW_TEXT, {
-    acceptNode(node) {
-      const parent = node.parentElement;
-      if (!parent || parent.closest('script, style, pre, a, .claim-ref')) return NodeFilter.FILTER_REJECT;
-      return /\[C\d{3}\]/.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-    },
-  });
-  const rawClaimTextNodes = [];
-  while (walker.nextNode()) rawClaimTextNodes.push(walker.currentNode);
-  for (const node of rawClaimTextNodes) {
-    const fragment = document.createDocumentFragment();
-    const text = node.nodeValue || '';
-    let lastIndex = 0;
-    for (const match of text.matchAll(/\[(C\d{3})\]/g)) {
-      if (match.index > lastIndex) fragment.append(text.slice(lastIndex, match.index));
-      fragment.append(makeClaimRef(match[1]));
-      lastIndex = match.index + match[0].length;
-    }
-    if (lastIndex < text.length) fragment.append(text.slice(lastIndex));
-    node.parentNode?.replaceChild(fragment, node);
-  }
 
   const reportShell = document.querySelector('.report-shell');
+  if (reportShell) {
+    const walker = document.createTreeWalker(reportShell, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent || parent.closest('script, style, pre, a, .claim-ref')) return NodeFilter.FILTER_REJECT;
+        return /\[C\d{3}\]/.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      },
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const node of nodes) {
+      const fragment = document.createDocumentFragment();
+      const text = node.nodeValue || '';
+      let lastIndex = 0;
+      for (const match of text.matchAll(/\[(C\d{3})\]/g)) {
+        if (match.index > lastIndex) fragment.append(text.slice(lastIndex, match.index));
+        fragment.append(makeClaimRef(match[1]));
+        lastIndex = match.index + match[0].length;
+      }
+      if (lastIndex < text.length) fragment.append(text.slice(lastIndex));
+      node.parentNode?.replaceChild(fragment, node);
+    }
+  }
+
   const evidenceToggle = document.querySelector('.evidence-toggle');
   if (reportShell && evidenceToggle) {
     const showLabel = evidenceToggle.dataset.showLabel || 'Show refs';
@@ -280,10 +387,11 @@ const fallbackMetrics = [
       evidenceToggle.setAttribute('aria-pressed', String(visible));
       evidenceToggle.textContent = visible ? hideLabel : showLabel;
     };
-    evidenceToggle.addEventListener('click', () => setRefsVisible(!reportShell.classList.contains('refs-visible')));
+    evidenceToggle.addEventListener('click', () => {
+      setRefsVisible(!reportShell.classList.contains('refs-visible'));
+    });
     setRefsVisible(false);
   }
-
 </script>
 
 <style>

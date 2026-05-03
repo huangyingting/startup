@@ -1,16 +1,27 @@
 #!/usr/bin/env node
+// Build reports/_index.yaml by walking every report folder that has a
+// 102-report-card.yaml plus required Simplified Chinese siblings.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import yaml from 'js-yaml';
-import { listDirs, normalizeCompanyName, normalizeDomain, readYaml, reportsDir, writeYaml } from './text-utils.mjs';
+import {
+  listDirs,
+  normalizeCompanyName,
+  normalizeDomain,
+  readYaml,
+  reportsDir,
+  writeYaml,
+} from './text-utils.mjs';
 
+const REQUIRED_FILES = ['102-report-card.yaml', '101-report-document.zh.yaml', '102-report-card.zh.yaml'];
+const OUTPUT_PATH = join(reportsDir, '_index.yaml');
 const args = new Set(process.argv.slice(2));
-const outPath = join(reportsDir, '_index.yaml');
-const required = ['102-report-card.yaml', '101-report-document.zh.yaml', '102-report-card.zh.yaml'];
 
 function completeCardPath(runId) {
   const dir = join(reportsDir, runId);
-  return required.every((file) => existsSync(join(dir, file))) ? join(dir, '102-report-card.yaml') : null;
+  return REQUIRED_FILES.every((file) => existsSync(join(dir, file)))
+    ? join(dir, '102-report-card.yaml')
+    : null;
 }
 
 function indexEntry(runId, card) {
@@ -40,27 +51,38 @@ function indexEntry(runId, card) {
   };
 }
 
-const failures = [];
-const reports = listDirs(reportsDir).sort().reverse().flatMap((runId) => {
-  const path = completeCardPath(runId);
-  if (!path) return [];
-  try { return [indexEntry(runId, readYaml(path))]; }
-  catch (err) { failures.push(`${runId}: card parse failed: ${err.message}`); return []; }
-});
+function collectReports() {
+  const failures = [];
+  const reports = [];
+  for (const runId of listDirs(reportsDir).sort().reverse()) {
+    const path = completeCardPath(runId);
+    if (!path) continue;
+    try {
+      reports.push(indexEntry(runId, readYaml(path)));
+    } catch (err) {
+      failures.push(`${runId}: card parse failed: ${err.message}`);
+    }
+  }
+  return { reports, failures };
+}
 
+const { reports, failures } = collectReports();
 if (failures.length && args.has('--strict')) {
-  console.error('[build:reports-index] failures:\n' + failures.map((x) => `  - ${x}`).join('\n'));
+  console.error('[build:reports-index] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
   process.exit(1);
 }
 
-const output = yaml.dump({ count: reports.length, reports }, { lineWidth: 120, noRefs: true, sortKeys: false });
+const document = { count: reports.length, reports };
+const serialized = yaml.dump(document, { lineWidth: 120, noRefs: true, sortKeys: false });
+
 if (args.has('--check')) {
-  if ((existsSync(outPath) ? readFileSync(outPath, 'utf8') : '') !== output) {
+  const onDisk = existsSync(OUTPUT_PATH) ? readFileSync(OUTPUT_PATH, 'utf8') : '';
+  if (onDisk !== serialized) {
     console.error('[build:reports-index] reports/_index.yaml is out of date. Run npm run build:reports-index.');
     process.exit(1);
   }
   console.log(`[build:reports-index] ✓ reports/_index.yaml is current (${reports.length} report(s)).`);
 } else {
-  writeYaml(outPath, { count: reports.length, reports });
-  console.log(`[build:reports-index] ✓ wrote ${outPath} (${reports.length} report(s)).`);
+  writeYaml(OUTPUT_PATH, document);
+  console.log(`[build:reports-index] ✓ wrote ${OUTPUT_PATH} (${reports.length} report(s)).`);
 }

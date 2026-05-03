@@ -36,7 +36,3 @@ const strings = {
 export function t(key: keyof typeof strings.en, lang: Lang = 'en'): string {
   return strings[lang][key] ?? strings.en[key];
 }
-
-export function prefixFor(lang: Lang): string {
-  return lang === 'zh' ? '/zh' : '';
-}

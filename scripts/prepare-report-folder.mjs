@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// Create a fresh report folder under reports/<timestamp>-<slug>/.
+// Adds a numeric suffix when the slug already exists.
 import { existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { reportsDir, slugify } from './text-utils.mjs';
@@ -11,6 +13,8 @@ if (!/^\d{14}$/.test(timestamp ?? '')) {
 
 const base = `${timestamp}-${slugify(nameParts.join(' ') || 'startup')}`;
 let path = join(reportsDir, base);
-for (let n = 2; existsSync(path); n += 1) path = join(reportsDir, `${base}-${n}`);
+for (let suffix = 2; existsSync(path); suffix += 1) {
+  path = join(reportsDir, `${base}-${suffix}`);
+}
 mkdirSync(path, { recursive: true });
 console.log(path);

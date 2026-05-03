@@ -49,8 +49,8 @@ Notes:
 
 - `100-evidence-ledger.yaml` has no Chinese sibling.
 - Each analysis skill writes its English artifact and `.zh.yaml` sibling in one stage.
-- `101-report-document.zh.yaml` is assembled by `startup-report-zh` from `101` plus `01`–`08.zh.yaml`.
-- `102-report-card.zh.yaml` is translated by `startup-card-zh` from `102-report-card.yaml`.
+- `101-report-document.zh.yaml` is assembled by `startup-report` (Simplified Chinese stage) from `101` plus `01`–`08.zh.yaml`.
+- `102-report-card.zh.yaml` is translated by `startup-card` (Simplified Chinese stage) from `102-report-card.yaml`.
 
 ## Execution contract
 
@@ -76,9 +76,9 @@ Notes:
 | `08-investment-valuation.yaml` | `investment-valuation` | `startup-valuation` | 8 — Investment & Valuation |
 | `100-evidence-ledger.yaml` | `evidence-ledger` | `startup-ledger` / consolidation script | n/a |
 | `101-report-document.yaml` | `report-document` | `startup-report` | final rendered report |
-| `101-report-document.zh.yaml` | `report-document` | `startup-report-zh` | Simplified Chinese report |
+| `101-report-document.zh.yaml` | `report-document` | `startup-report` | Simplified Chinese report |
 | `102-report-card.yaml` | `report-card` | `startup-card` | website index card |
-| `102-report-card.zh.yaml` | `report-card` | `startup-card-zh` | Simplified Chinese index card |
+| `102-report-card.zh.yaml` | `report-card` | `startup-card` | Simplified Chinese index card |
 
 ## Shared conventions
 

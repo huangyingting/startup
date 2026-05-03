@@ -12,7 +12,7 @@ Startup generates evidence-backed diligence reports for named startup companies.
 
 ## Report artifact flow
 
-Each analysis skill writes both the English artifact and its Simplified Chinese sibling in the same pass. After all 8 analysis pairs exist, `startup-ledger` consolidates evidence, `startup-report` synthesizes 101, and `startup-report-zh` assembles the Chinese 101 by reusing already-translated content from the `01–08.zh.yaml` siblings (only the executive summary and report-only fields are translated freshly).
+Each analysis skill writes both the English artifact and its Simplified Chinese sibling in the same pass. After all 8 analysis pairs exist, `startup-ledger` consolidates evidence, then `startup-report` synthesizes both `101-report-document.yaml` and `101-report-document.zh.yaml` (English assembly + Chinese assembly in one stage by reusing already-translated content from `01–08.zh.yaml`), and finally `startup-card` produces both `102-report-card.yaml` and `102-report-card.zh.yaml` in the same way.
 
 ```mermaid
 flowchart TD
@@ -43,13 +43,11 @@ flowchart TD
   Ledger --> Report
 
   subgraph Stage3[Stage 3 — Report assembly]
-    Report[startup-report<br/>writes 101-report-document.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events]
-    Report --> ReportZh[startup-report-zh<br/>ASSEMBLE 101.zh.yaml<br/>reuse chapters 2-9 from 01-08.zh<br/>translate exec summary + cover metrics + appendices]
-    ReportZh --> Card[startup-card<br/>writes 102-report-card.yaml<br/>derives from 100 + 101]
-    Card --> CardZh[startup-card-zh<br/>translate 102 → 102.zh.yaml]
+    Report[startup-report<br/>writes 101-report-document.yaml + 101-report-document.zh.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events;<br/>Chinese assembly reuses chapters 2-9 from 01-08.zh]
+    Report --> Card[startup-card<br/>writes 102-report-card.yaml + 102-report-card.zh.yaml<br/>derives from 100 + 101]
   end
 
-  CardZh --> FinalVal
+  Card --> FinalVal
 
   subgraph Stage4[Stage 4 — Final validation]
     FinalVal[build-reports-index.mjs<br/>+ check-reports-content.mjs<br/>+ website check-reports.mjs<br/>+ astro build]

@@ -1,4 +1,11 @@
 #!/usr/bin/env node
+// Reject a new 01-company-snapshot.yaml when reports/_index.yaml already
+// contains the same normalized company name or domain.
+//
+// Exit codes:
+//   0 - low duplicate risk
+//   1 - missing input or other invocation error
+//   2 - duplicate detected
 import { existsSync } from 'node:fs';
 import { basename, dirname } from 'node:path';
 import { normalizeCompanyName, normalizeDomain, readYaml } from './text-utils.mjs';
@@ -17,16 +24,27 @@ if (!existsSync(indexPath)) {
   process.exit(0);
 }
 
-const doc = readYaml(snapshotPath);
+const snapshot = readYaml(snapshotPath);
 const runId = basename(dirname(snapshotPath));
-const name = normalizeCompanyName(doc.company?.name);
-const domain = normalizeDomain(doc.company?.website ?? doc.startupIntroduction?.website);
-const reports = readYaml(indexPath).reports ?? [];
-const matches = reports.filter((r) => r.runId !== runId && ((name && normalizeCompanyName(r.companyName) === name) || (domain && normalizeDomain(r.website) === domain)));
+const candidateName = normalizeCompanyName(snapshot.company?.name);
+const candidateDomain = normalizeDomain(
+  snapshot.company?.website ?? snapshot.startupIntroduction?.website
+);
+
+const index = readYaml(indexPath);
+const reports = Array.isArray(index?.reports) ? index.reports : [];
+const matches = reports.filter((report) => {
+  if (report.runId === runId) return false;
+  const sameName = candidateName && normalizeCompanyName(report.companyName) === candidateName;
+  const sameDomain = candidateDomain && normalizeDomain(report.website) === candidateDomain;
+  return sameName || sameDomain;
+});
 
 if (matches.length) {
   console.error('[check-company-dedup] duplicate-risk: high');
-  for (const m of matches) console.error(`  - ${m.companyName ?? m.slug} (${m.path})`);
+  for (const match of matches) {
+    console.error(`  - ${match.companyName ?? match.slug} (${match.path})`);
+  }
   process.exit(2);
 }
 console.log('[check-company-dedup] duplicate risk low.');

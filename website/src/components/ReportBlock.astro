@@ -1,0 +1,127 @@
+---
+// Renders a single block from a chapter section or appendix.
+// Block shapes: paragraph | list | equation | callout | table | figure.
+import ClaimRefs from './ClaimRefs.astro';
+import FigureRenderer from './FigureRenderer.astro';
+
+interface Props {
+  block: any;
+  tables: Map<string, any>;
+  figures: Map<string, any>;
+  claims: any[];
+  sources: any[];
+}
+
+const { block, tables, figures, claims, sources } = Astro.props;
+
+function arr<T = unknown>(value: T[] | undefined | null): T[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function blockRefs(value: any): string[] {
+  return arr<string>(value?.claimRefs).slice(0, 6);
+}
+
+function hasInlineClaimRefs(value: unknown): boolean {
+  return /\[C\d{3}\]/.test(String(value ?? ''));
+}
+
+function splitClaimRefsText(value: unknown): Array<{ text?: string; ref?: string }> {
+  const text = String(value ?? '');
+  const parts: Array<{ text?: string; ref?: string }> = [];
+  const pattern = /\[(C\d{3})\]/g;
+  let lastIndex = 0;
+  for (const match of text.matchAll(pattern)) {
+    if (match.index > lastIndex) parts.push({ text: text.slice(lastIndex, match.index) });
+    parts.push({ ref: match[1] });
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) parts.push({ text: text.slice(lastIndex) });
+  return parts.length ? parts : [{ text }];
+}
+
+function blockClass(type: string | null | undefined): string {
+  return `report-callout callout-${String(type ?? 'key-insight').replace(/[^a-z0-9-]/gi, '-')}`;
+}
+
+const refsForFooter = (() => {
+  const inline = hasInlineClaimRefs(block?.body) || arr(block?.items).some((item) => hasInlineClaimRefs(item));
+  return inline ? [] : blockRefs(block);
+})();
+
+const table = block.type === 'table' && block.tableRef ? tables.get(block.tableRef) : null;
+const figure = block.type === 'figure' && block.figureRef ? figures.get(block.figureRef) : null;
+---
+{block.type === 'paragraph' && (
+  <p>
+    {splitClaimRefsText(block.body).map((part) => part.ref
+      ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+      : part.text)}
+    <ClaimRefs refs={refsForFooter} claims={claims} sources={sources} />
+  </p>
+)}
+
+{block.type === 'list' && (
+  <>
+    <ul>
+      {arr(block.items).map((item) => (
+        <li>
+          {splitClaimRefsText(item).map((part) => part.ref
+            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+            : part.text)}
+        </li>
+      ))}
+    </ul>
+    <ClaimRefs refs={refsForFooter} claims={claims} sources={sources} />
+  </>
+)}
+
+{block.type === 'equation' && <div class="equation">{block.equation}</div>}
+
+{block.type === 'callout' && (
+  <aside class={blockClass(block.calloutType)}>
+    <h4>{block.title}</h4>
+    <p>
+      {splitClaimRefsText(block.body).map((part) => part.ref
+        ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+        : part.text)}
+    </p>
+    <ClaimRefs refs={refsForFooter} claims={claims} sources={sources} />
+  </aside>
+)}
+
+{block.type === 'table' && table && (
+  <div class="table-frame">
+    <table>
+      <caption>{table.title}</caption>
+      <thead>
+        <tr>{arr(table.columns).map((column) => <th>{column}</th>)}</tr>
+      </thead>
+      <tbody>
+        {arr(table.rows).map((row: any[]) => (
+          <tr>
+            {arr(row).map((cell) => (
+              <td>
+                {splitClaimRefsText(cell).map((part) => part.ref
+                  ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+                  : part.text)}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    {table.notes && (
+      <p class="table-note">
+        {splitClaimRefsText(table.notes).map((part) => part.ref
+          ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+          : part.text)}
+      </p>
+    )}
+    <ClaimRefs refs={blockRefs(table)} claims={claims} sources={sources} />
+  </div>
+)}
+
+{block.type === 'figure' && figure && (
+  <FigureRenderer figure={figure} claims={claims} sources={sources} />
+)}
