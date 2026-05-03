@@ -18,7 +18,19 @@ Options:
 
 - `--text-only` / `-t`: strip HTML/script/style into readable text.
 - `--out <path>` / `-o <path>`: save raw HTML or cleaned text to a diagnostic file.
+- `--user-agent <ua>`: override the default desktop Chrome UA.
+- `--via-wayback`: rewrite the URL through `web.archive.org` before fetching (force snapshot).
+- `--no-wayback`: disable the automatic Wayback retry.
 - `--help`: print CLI usage.
+
+## Bot-protected sites (Reuters, etc.)
+
+Some publishers (Reuters, WSJ, FT, many news/social sites behind DataDome or Cloudflare) block direct HTTP fetches with a 401/403/451/503 or a JS challenge page even when the User-Agent looks legitimate. The script handles this automatically:
+
+- If the origin response is a known bot-challenge status or body marker, it retries through `https://web.archive.org/web/<currentYear>/<url>` and prints `Source: wayback (web.archive.org snapshot)`.
+- The Wayback toolbar (`<div id="wm-ipp-base">` etc.) is stripped before `--text-only` output so the readable text is just the archived page.
+- Use `--via-wayback` to skip the origin attempt and go straight to the snapshot, or `--no-wayback` to disable the fallback when you only want the raw bot-challenge body.
+- Cite the original publisher URL in `localEvidence.sources[]`; treat the archived snapshot as a retrieval mechanism, not the canonical source.
 
 ## Use for
 
