@@ -1,0 +1,141 @@
+export const SCHEMA_VERSION = 'startup-diligence-report-v2';
+
+export const ANALYSIS_ARTIFACTS = [
+  {
+    file: '01-company-snapshot.yaml',
+    zhFile: '01-company-snapshot.zh.yaml',
+    artifact: 'company-snapshot',
+    skill: 'startup-snapshot',
+    loaderKey: 'companySnapshot',
+    chapter: 1,
+    chapterKey: '01',
+    reportChapter: 2,
+    minSections: 5,
+    minTables: 3,
+    minFigures: 2,
+    requiredFigureTypes: ['timeline'],
+  },
+  {
+    file: '02-market-macro.yaml',
+    zhFile: '02-market-macro.zh.yaml',
+    artifact: 'market-macro',
+    skill: 'startup-market',
+    loaderKey: 'marketMacro',
+    chapter: 2,
+    chapterKey: '02',
+    reportChapter: 3,
+    minSections: 4,
+    minTables: 4,
+    minFigures: 2,
+    requiredFigureTypes: ['layered-lens', 'bars', 'range'],
+  },
+  {
+    file: '03-competitive-benchmarking.yaml',
+    zhFile: '03-competitive-benchmarking.zh.yaml',
+    artifact: 'competitive-benchmarking',
+    skill: 'startup-competition',
+    loaderKey: 'competitiveBenchmarking',
+    chapter: 3,
+    chapterKey: '03',
+    reportChapter: 4,
+    minSections: 4,
+    minTables: 4,
+    minFigures: 2,
+    requiredFigureTypes: ['quadrant', 'positioning-map', 'scorecard'],
+  },
+  {
+    file: '04-financial-unit-economics.yaml',
+    zhFile: '04-financial-unit-economics.zh.yaml',
+    artifact: 'financial-unit-economics',
+    skill: 'startup-financials',
+    loaderKey: 'financialUnitEconomics',
+    chapter: 4,
+    chapterKey: '04',
+    reportChapter: 5,
+    minSections: 4,
+    minTables: 4,
+    minFigures: 2,
+    requiredFigureTypes: ['bridge', 'waterfall', 'bars', 'scatter', 'range'],
+  },
+  {
+    file: '05-product-technology.yaml',
+    zhFile: '05-product-technology.zh.yaml',
+    artifact: 'product-technology',
+    skill: 'startup-product',
+    loaderKey: 'productTechnology',
+    chapter: 5,
+    chapterKey: '05',
+    reportChapter: 6,
+    minSections: 4,
+    minTables: 4,
+    minFigures: 2,
+    requiredFigureTypes: ['stack', 'flow', 'dependency-map'],
+  },
+  {
+    file: '06-customer-retention.yaml',
+    zhFile: '06-customer-retention.zh.yaml',
+    artifact: 'customer-retention',
+    skill: 'startup-customers',
+    loaderKey: 'customerRetention',
+    chapter: 6,
+    chapterKey: '06',
+    reportChapter: 7,
+    minSections: 4,
+    minTables: 4,
+    minFigures: 2,
+    requiredFigureTypes: ['journey-map', 'bars', 'scatter', 'funnel', 'cohort'],
+  },
+  {
+    file: '07-risk-regulatory.yaml',
+    zhFile: '07-risk-regulatory.zh.yaml',
+    artifact: 'risk-regulatory',
+    skill: 'startup-risks',
+    loaderKey: 'riskRegulatory',
+    chapter: 7,
+    chapterKey: '07',
+    reportChapter: 8,
+    minSections: 4,
+    minTables: 4,
+    minFigures: 2,
+    requiredFigureTypes: ['heatmap', 'matrix', 'causal-map', 'dependency-map'],
+  },
+  {
+    file: '08-investment-valuation.yaml',
+    zhFile: '08-investment-valuation.zh.yaml',
+    artifact: 'investment-valuation',
+    skill: 'startup-valuation',
+    loaderKey: 'investmentValuation',
+    chapter: 8,
+    chapterKey: '08',
+    reportChapter: 9,
+    minSections: 4,
+    minTables: 4,
+    minFigures: 2,
+    requiredFigureTypes: ['logic-chain', 'sensitivity', 'scorecard', 'scenario-tree', 'range'],
+  },
+];
+
+export const ANALYSIS_FILES = ANALYSIS_ARTIFACTS.map((item) => item.file);
+
+export const CORE_ARTIFACTS = [
+  { file: '100-evidence-ledger.yaml', artifact: 'evidence-ledger' },
+  ...ANALYSIS_ARTIFACTS.map(({ file, artifact, chapter }) => ({ file, artifact, chapter })),
+  { file: '101-report-document.yaml', artifact: 'report-document' },
+  { file: '102-report-card.yaml', artifact: 'report-card' },
+];
+
+export const REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);
+
+export const REQUIRED_ZH_FILES = [
+  ...ANALYSIS_ARTIFACTS.map((item) => item.zhFile),
+  '101-report-document.zh.yaml',
+  '102-report-card.zh.yaml',
+];
+
+export const REQUIRED_LOCALIZED_PAIRS = [
+  ...ANALYSIS_ARTIFACTS.map((item) => [item.file, item.zhFile]),
+  ['101-report-document.yaml', '101-report-document.zh.yaml'],
+  ['102-report-card.yaml', '102-report-card.zh.yaml'],
+];
+
+export const ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item]));

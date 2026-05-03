@@ -4,9 +4,10 @@ import { createHash } from 'node:crypto';
 import yaml from 'js-yaml';
 import type { Loader } from 'astro/loaders';
 import type { Lang } from '../lib/i18n';
+import { ANALYSIS_ARTIFACTS, SCHEMA_VERSION } from '../../../scripts/report-manifest.mjs';
 
 const REPORTS_DIR = resolve(process.cwd(), '..', 'reports');
-const V2_SCHEMA = 'startup-diligence-report-v2';
+const V2_SCHEMA = SCHEMA_VERSION;
 
 function listRuns(): string[] {
   if (!existsSync(REPORTS_DIR)) return [];
@@ -186,16 +187,13 @@ export function loadLocalizedIndex(runId: string, lang: Lang = 'en'): Record<str
 
 export function loadStageFiles(runId: string, lang: Lang = 'en') {
   const folder = join(REPORTS_DIR, runId);
+  const analysisStages = Object.fromEntries(ANALYSIS_ARTIFACTS.map((artifact: any) => [
+    artifact.loaderKey,
+    readLocalizedYaml(folder, artifact.file.replace(/\.yaml$/, ''), lang),
+  ]));
   return {
     evidenceLedger: readLocalizedYaml(folder, '100-evidence-ledger', lang),
-    companySnapshot: readLocalizedYaml(folder, '01-company-snapshot', lang),
-    marketMacro: readLocalizedYaml(folder, '02-market-macro', lang),
-    competitiveBenchmarking: readLocalizedYaml(folder, '03-competitive-benchmarking', lang),
-    financialUnitEconomics: readLocalizedYaml(folder, '04-financial-unit-economics', lang),
-    productTechnology: readLocalizedYaml(folder, '05-product-technology', lang),
-    customerRetention: readLocalizedYaml(folder, '06-customer-retention', lang),
-    riskRegulatory: readLocalizedYaml(folder, '07-risk-regulatory', lang),
-    investmentValuation: readLocalizedYaml(folder, '08-investment-valuation', lang),
+    ...analysisStages,
     reportDocument: readLocalizedYaml(folder, '101-report-document', lang),
     reportCard: loadLocalizedIndex(runId, lang),
   };

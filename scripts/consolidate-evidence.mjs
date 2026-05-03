@@ -2,17 +2,9 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { canonicalSourceUrl, compactText, readYaml, writeYaml } from './text-utils.mjs';
+import { ANALYSIS_FILES } from './report-manifest.mjs';
 
-const FILES = [
-  '01-company-snapshot.yaml',
-  '02-market-macro.yaml',
-  '03-competitive-benchmarking.yaml',
-  '04-financial-unit-economics.yaml',
-  '05-product-technology.yaml',
-  '06-customer-retention.yaml',
-  '07-risk-regulatory.yaml',
-  '08-investment-valuation.yaml',
-];
+const FILES = ANALYSIS_FILES;
 
 const [folder] = process.argv.slice(2);
 const keepLocal = process.argv.includes('--keep-local');

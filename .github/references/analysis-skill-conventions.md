@@ -44,6 +44,8 @@ Each analysis skill is the authoritative generation contract for its report chap
 - domain-adaptive additions inferred from the company, business model, and operating dependencies;
 - completion checklist and handoff fields.
 
+Each analysis skill also has a sibling `contract.yaml` that mirrors the machine-checkable subset of the chapter contract: artifact name, chapter number, minimum section/table/figure floors, required table column alternatives, and required figure type alternatives. `scripts/audit-report-readiness.mjs` reads these files, so update `contract.yaml` whenever a required table or figure changes.
+
 Global instructions define workflow, evidence, YAML, localization, and validation rules only. Section-level content belongs in the section skill, not in a central industry-template file.
 
 ## Run-local customization merge

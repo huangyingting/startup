@@ -1,0 +1,33 @@
+artifact: market-macro
+chapter: 2
+minSections: 4
+minTables: 4
+minFigures: 2
+requiredTables:
+  - key: market-definition
+    purpose: Market definition table
+    requiredColumnsAny:
+      - [segment/category, included spend, excluded spend, buyer/payer, relevance]
+      - [category, included spend, excluded spend, buyer, relevance]
+  - key: sizing-lens
+    purpose: TAM/SAM/SOM or sizing lens table
+    requiredColumnsAny:
+      - [source, year, geography, value, cagr, methodology, confidence, limitation]
+  - key: segment-buyer-map
+    purpose: Segment, buyer, user, payer, and workflow map
+    requiredColumnsAny:
+      - [segment, buyer, user, payer, workflow/job-to-be-done, budget owner, adoption trigger]
+  - key: drivers-constraints
+    purpose: Growth drivers and adoption constraints
+    requiredColumnsAny:
+      - [driver/constraint, direction, evidence, timing, implication, diligence ask]
+requiredFigures:
+  - key: sizing-lens
+    purpose: Market sizing lens
+    allowedTypes: [layered-lens]
+  - key: sizing-comparison
+    purpose: Market growth or sizing comparison
+    allowedTypes: [bars, range]
+  - key: buyer-segment-map
+    purpose: Buyer, segment, or adoption-path map
+    allowedTypes: [matrix, journey-map, flow, funnel]

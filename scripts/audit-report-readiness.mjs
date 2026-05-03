@@ -1,18 +1,10 @@
 #!/usr/bin/env node
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { readYaml } from './text-utils.mjs';
+import { readYaml, repoRoot } from './text-utils.mjs';
+import { ANALYSIS_ARTIFACTS } from './report-manifest.mjs';
 
-const ANALYSIS = [
-  { file: '01-company-snapshot.yaml', chapter: '01', minSections: 5, minTables: 3, minFigures: 2, requiredFigureTypes: ['timeline'] },
-  { file: '02-market-macro.yaml', chapter: '02', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['layered-lens', 'bars', 'range'] },
-  { file: '03-competitive-benchmarking.yaml', chapter: '03', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['quadrant', 'positioning-map', 'scorecard'] },
-  { file: '04-financial-unit-economics.yaml', chapter: '04', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['bridge', 'waterfall', 'bars', 'scatter', 'range'] },
-  { file: '05-product-technology.yaml', chapter: '05', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['stack', 'flow', 'dependency-map'] },
-  { file: '06-customer-retention.yaml', chapter: '06', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['journey-map', 'bars', 'scatter', 'funnel', 'cohort'] },
-  { file: '07-risk-regulatory.yaml', chapter: '07', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['heatmap', 'matrix', 'causal-map', 'dependency-map'] },
-  { file: '08-investment-valuation.yaml', chapter: '08', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['logic-chain', 'sensitivity', 'scorecard', 'scenario-tree', 'range'] },
-];
+const ANALYSIS = ANALYSIS_ARTIFACTS.map((item) => ({ ...item, chapter: item.chapterKey }));
 
 const args = process.argv.slice(2);
 const folderArg = args.find((arg) => !arg.startsWith('-'));
@@ -45,6 +37,23 @@ function loadYaml(file, required = true) {
   }
 }
 
+function loadYamlPath(path, required = true) {
+  if (!existsSync(path)) {
+    if (required) fail(`${path}: missing`);
+    return null;
+  }
+  try {
+    return readYaml(path);
+  } catch (err) {
+    fail(`${path}: YAML parse failed: ${err.message.split('\n')[0]}`);
+    return null;
+  }
+}
+
+function loadContract(spec) {
+  return loadYamlPath(join(repoRoot, '.github', 'skills', spec.skill, 'contract.yaml'), false);
+}
+
 function walkClaimRefs(value, refs = []) {
   if (Array.isArray(value)) value.forEach((item) => walkClaimRefs(item, refs));
   else if (value && typeof value === 'object') {
@@ -72,11 +81,25 @@ function textHaystack(doc) {
 
 function hasTableWithColumns(doc, requiredColumns = []) {
   if (!requiredColumns.length) return true;
-  const required = requiredColumns.map((column) => String(column).toLowerCase());
+  const required = requiredColumns.map(normalizeColumn);
   return (doc?.tables ?? []).some((table) => {
-    const columns = (table?.columns ?? []).map((column) => String(column).toLowerCase());
+    const columns = (table?.columns ?? []).map(normalizeColumn);
     return required.every((column) => columns.includes(column));
   });
+}
+
+function normalizeColumn(value) {
+  return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function hasTableWithAnyColumnSet(doc, requiredColumnsAny = []) {
+  if (!requiredColumnsAny.length) return true;
+  return requiredColumnsAny.some((requiredColumns) => hasTableWithColumns(doc, requiredColumns.map(normalizeColumn)));
+}
+
+function contractCheck(message) {
+  if (preLedger || strict) fail(message);
+  else warn(message);
 }
 
 function valuesForChapter(value, chapter) {
@@ -116,6 +139,7 @@ for (const spec of ANALYSIS) {
   const doc = loadYaml(spec.file);
   const zhFile = spec.file.replace(/\.yaml$/, '.zh.yaml');
   const zh = loadYaml(zhFile);
+  const contract = loadContract(spec);
   if (!doc) continue;
 
   const counts = {
@@ -138,6 +162,25 @@ for (const spec of ANALYSIS) {
   const types = figureTypes(doc);
   if (!spec.requiredFigureTypes.some((type) => types.has(type))) {
     warn(`${spec.file}: no preferred figure type found (${spec.requiredFigureTypes.join(' or ')})`);
+  }
+
+  if (contract) {
+    if (contract.artifact && contract.artifact !== doc.artifact) contractCheck(`${spec.file}: skill contract artifact ${contract.artifact} does not match document artifact ${doc.artifact}`);
+    if (contract.chapter && contract.chapter !== doc.chapter?.number) contractCheck(`${spec.file}: skill contract chapter ${contract.chapter} does not match document chapter ${doc.chapter?.number}`);
+    for (const tableReq of contract.requiredTables ?? []) {
+      if (!hasTableWithAnyColumnSet(doc, tableReq.requiredColumnsAny ?? [])) {
+        contractCheck(`${spec.file}: required table contract not satisfied (${tableReq.key ?? tableReq.purpose ?? 'unnamed'}); expected one of column sets: ${JSON.stringify(tableReq.requiredColumnsAny ?? [])}`);
+      }
+      if (tableReq.purpose && !textHaystack(doc).includes(String(tableReq.purpose).toLowerCase().split(/[^a-z0-9]+/).filter((word) => word.length >= 5)[0] ?? '')) {
+        warn(`${spec.file}: required table purpose not obvious in artifact text: ${tableReq.purpose}`);
+      }
+    }
+    for (const figureReq of contract.requiredFigures ?? []) {
+      const allowed = figureReq.allowedTypes ?? [];
+      if (allowed.length && !allowed.some((type) => types.has(type))) {
+        contractCheck(`${spec.file}: required figure contract not satisfied (${figureReq.key ?? figureReq.purpose ?? 'unnamed'}); expected one of: ${allowed.join(', ')}`);
+      }
+    }
   }
 
   if (preLedger) {

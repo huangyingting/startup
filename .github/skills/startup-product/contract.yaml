@@ -1,0 +1,29 @@
+artifact: product-technology
+chapter: 5
+minSections: 4
+minTables: 4
+minFigures: 2
+requiredTables:
+  - key: product-modules
+    purpose: Product modules and customer workflow coverage
+    requiredColumnsAny:
+      - [module, user, workflow, evidence, diligence ask]
+  - key: architecture-dependencies
+    purpose: Architecture, infrastructure, and dependency map
+    requiredColumnsAny:
+      - [layer/dependency, role, evidence, risk, diligence ask]
+  - key: integrations-docs
+    purpose: Integrations, APIs, docs, and developer surface
+    requiredColumnsAny:
+      - [surface, status, evidence, customer implication, gap]
+  - key: security-compliance
+    purpose: Security, privacy, compliance, and trust posture
+    requiredColumnsAny:
+      - [control/certification, status, evidence, limitation, diligence ask]
+requiredFigures:
+  - key: architecture-stack
+    purpose: Product or architecture stack
+    allowedTypes: [stack]
+  - key: workflow-dependency-map
+    purpose: Product workflow or dependency map
+    allowedTypes: [flow, dependency-map, journey-map]

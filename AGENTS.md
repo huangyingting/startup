@@ -21,9 +21,12 @@ Repository instructions for coding agents working on the startup diligence repor
 ## Important paths
 
 - `.github/skills/` — workflow skills used by the default agent.
+- `.github/skills/startup-*/contract.yaml` — machine-readable per-chapter validation contract for required tables, figures, and depth floors.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
 - `.github/references/` — shared rules: YAML syntax, evidence ledger, analysis conventions, Simplified Chinese translation.
 - `.github/schemas/startup-diligence-report-v2.md` — canonical schema and rendering contract.
+- `scripts/report-manifest.mjs` — machine-readable workflow artifact/chapter manifest used by validation and consolidation scripts.
+- `scripts/figure-registry.mjs` — machine-readable native figure type/data contract used by validation and rendering.
 - `scripts/` — report preparation, index, duplicate checks, evidence consolidation, and content checks.
 - `website/` — Astro renderer, content loader, UI components, and website validation.
 
@@ -72,7 +75,7 @@ Before writing artifacts:
 
 ## Required artifact set
 
-Every completed report folder must contain exactly these workflow artifacts:
+Every completed report folder must contain all workflow artifacts declared by `scripts/report-manifest.mjs`. For the current v2 baseline, this means exactly these workflow artifacts:
 
 ```text
 01-company-snapshot.yaml
@@ -109,7 +112,7 @@ Rules:
 
 ## Skill sequence
 
-Run skills in this order:
+Run skills in the order declared by `scripts/report-manifest.mjs`; the current v2 baseline order is:
 
 1. `startup-snapshot` → `01-company-snapshot.yaml`, `01-company-snapshot.zh.yaml`.
 2. `startup-market` → `02-market-macro.yaml`, `02-market-macro.zh.yaml`.
@@ -239,6 +242,30 @@ Final validation after `102-report-card.zh.yaml`:
 - Use `null` plus explanation for unsupported private metrics; never invent values.
 - Preserve published canonical `S###` / `C###` IDs where possible.
 - Figures must use structured YAML specs supported by the website renderer.
+
+## Extension points
+
+When adding a new analysis chapter or changing chapter order:
+
+1. Add or update the artifact entry in `scripts/report-manifest.mjs`.
+2. Add or update the owning `.github/skills/startup-*/SKILL.md` prose guidance and `.github/skills/startup-*/contract.yaml` machine-readable chapter contract.
+3. Ensure consolidation, readiness audit, report assembly, and website loading consume the manifest rather than new hard-coded file lists.
+4. Run `npm run validate`.
+
+When adding a required table, figure, metric, or diligence question inside an existing chapter:
+
+1. Update that chapter's `SKILL.md` when the agent needs reasoning guidance.
+2. Update that chapter's `contract.yaml` when the requirement should be checked by `scripts/audit-report-readiness.mjs`.
+3. Keep table column requirements schema-compatible and figure types limited to `scripts/figure-registry.mjs`.
+4. Run the readiness audit for a draft report folder and then `npm run validate` for final artifacts.
+
+When adding a new native figure/chart type:
+
+1. Add the type, required data fields, allowed populated fields, and data-shape constraints to `scripts/figure-registry.mjs`.
+2. Implement or route the renderer in `website/src/components/FigureRenderer.astro`.
+3. Add a synthetic example in `scripts/generate-chart-gallery-report.mjs`.
+4. Reference the type from the relevant section-owned skill only after the renderer and validator support it.
+5. Run `node scripts/generate-chart-gallery-report.mjs`, rebuild `reports/_index.yaml`, and run `npm run validate`.
 
 ## Updating an existing report
 

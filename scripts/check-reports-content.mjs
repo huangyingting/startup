@@ -2,23 +2,11 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { asDateString, canonicalSourceUrl, listDirs, readYaml, reportsDir } from './text-utils.mjs';
+import { ANALYSIS_FILES, REQUIRED_LOCALIZED_PAIRS, SCHEMA_VERSION } from './report-manifest.mjs';
 
-const SCHEMA = 'startup-diligence-report-v2';
-const ANALYSIS = [
-  '01-company-snapshot.yaml',
-  '02-market-macro.yaml',
-  '03-competitive-benchmarking.yaml',
-  '04-financial-unit-economics.yaml',
-  '05-product-technology.yaml',
-  '06-customer-retention.yaml',
-  '07-risk-regulatory.yaml',
-  '08-investment-valuation.yaml',
-];
-const PAIRS = [
-  ...ANALYSIS.map((file) => [file, file.replace(/\.yaml$/, '.zh.yaml')]),
-  ['101-report-document.yaml', '101-report-document.zh.yaml'],
-  ['102-report-card.yaml', '102-report-card.zh.yaml'],
-];
+const SCHEMA = SCHEMA_VERSION;
+const ANALYSIS = ANALYSIS_FILES;
+const PAIRS = REQUIRED_LOCALIZED_PAIRS;
 const ENUMS = {
   recommendation: new Set(['strong-buy', 'buy', 'track', 'research-more', 'avoid']),
   confidence: new Set(['high', 'medium', 'low']),

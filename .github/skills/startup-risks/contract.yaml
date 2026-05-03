@@ -1,0 +1,29 @@
+artifact: risk-regulatory
+chapter: 7
+minSections: 4
+minTables: 4
+minFigures: 2
+requiredTables:
+  - key: risk-register
+    purpose: Risk register across legal, regulatory, security, operational, and market risks
+    requiredColumnsAny:
+      - [risk, category, evidence, likelihood, impact, mitigation, diligence ask]
+  - key: regulatory-map
+    purpose: Regulatory exposure, obligations, and approval/compliance posture
+    requiredColumnsAny:
+      - [regime/requirement, applicability, evidence, risk, diligence ask]
+  - key: legal-security-incidents
+    purpose: Legal, security, privacy, safety, or incident evidence
+    requiredColumnsAny:
+      - [issue, status, evidence/source, impact, mitigation]
+  - key: mitigation-monitoring
+    purpose: Mitigation plan and monitoring diligence
+    requiredColumnsAny:
+      - [risk area, mitigation, owner/evidence, residual risk, diligence path]
+requiredFigures:
+  - key: risk-heatmap
+    purpose: Risk severity or exposure heatmap
+    allowedTypes: [heatmap, matrix]
+  - key: risk-transmission
+    purpose: Risk causal, dependency, or transmission map
+    allowedTypes: [causal-map, dependency-map, flow]

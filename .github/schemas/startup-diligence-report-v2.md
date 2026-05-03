@@ -4,6 +4,14 @@ Canonical schema and rendering contract for `startup-diligence-report-v2`.
 
 The schema supports investor-grade startup diligence reports with claim-level evidence traceability and bilingual English / Simplified Chinese rendering.
 
+Machine-readable workflow and rendering registries live in:
+
+- `scripts/report-manifest.mjs` — artifact list, analysis chapter order, owner skills, depth floors, and preferred figure types.
+- `scripts/evidence-registry.mjs` — evidence enum values and extensible topic vocabulary used by ledger/source/claim validation.
+- `scripts/figure-registry.mjs` — supported figure types, allowed figure data fields, required populated fields, and renderer-facing data contracts.
+
+When this Markdown contract and a machine-readable registry disagree, update the registry first, then update this document and the relevant skill instructions.
+
 ## Required artifacts
 
 English artifacts:
@@ -108,6 +116,7 @@ Use exactly one allowed token. Do not append qualifiers, combine values with `/`
 - `sourceType`: `official`, `filing`, `regulatory`, `tier-one-news`, `trade-press`, `analyst-market-data`, `technical-docs`, `customer-proof`, `partner-proof`, `developer-signal`, `review`, `legal`, `other`
 - `reputationTier`: `high`, `medium`, `low`
 - `independence`: `company`, `partner`, `customer`, `competitor`, `independent`, `unknown`
+- `topic` / source `topics[]`: use the machine-readable vocabulary in `scripts/evidence-registry.mjs`; add domain-specific values there before using them in artifacts.
 
 ---
 
@@ -313,6 +322,7 @@ reportMeta:
   confidence: high|medium|low
   riskRating: low|moderate|significant|critical|unknown
   valuationStance: attractive|fair|stretched|expensive|unknown
+  coverageNotes: string|null
 coverMetrics:
   - label: string
     value: string
@@ -403,6 +413,8 @@ Appendix rules:
 
 The website renders figures from `type` plus structured `data`. Do not rely on `title` for renderer selection.
 
+The authoritative machine-readable figure list is `scripts/figure-registry.mjs`. Keep this section synchronized with that registry whenever a figure type or data contract changes.
+
 Rules:
 
 - Each figure must include `id`, `title`, `type`, `layout`, `summary`, `data`, `approximationNotes`, and `claimRefs`.
@@ -423,8 +435,8 @@ Rules:
 | `evidence-map` | `nodes[]` | `label`, optional `id`, `detail`, `tone`; optional `edges[]` |
 | `scenario-tree` | `nodes[]`, `edges[]` | node: `id`, `label`; edge: `from`, `to`, optional `label` |
 | `dependency-map` | `nodes[]`, `edges[]` | node: `id`, `label`; edge: `from`, `to`, optional `label` |
-| `quadrant` | `points[]` | `label`, numeric `x`, numeric `y`, optional `tone`; optional `xAxis`, `yAxis` |
-| `positioning-map` | `points[]` | `label`, numeric `x`, numeric `y`, optional `tone`; optional `xAxis`, `yAxis` |
+| `quadrant` | `points[]` | Four-zone threshold matrix for high/low interpretation; `label`, numeric `x`, numeric `y`, optional `tone`; optional `xAxis`, `yAxis` |
+| `positioning-map` | `points[]` | Competitive/perceptual positioning map, not a four-zone quadrant; `label`, numeric `x`, numeric `y`, optional `tone`; optional `xAxis`, `yAxis` |
 | `scatter` | `points[]` preferred; `series[0].points[]` allowed | `label`, numeric `x`, numeric `y`, optional `tone` |
 | `bars` | `items[]` preferred; `series[0].points[]` allowed | `label`, numeric `value`, optional `displayValue`, `tone` |
 | `funnel` | `items[]` preferred; `series[0].points[]` allowed | ordered `label`, numeric `value`, optional `displayValue`, `tone` |

@@ -5,97 +5,33 @@ import { readdirSync, statSync, existsSync, readFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
+import { ARTIFACT_BY_FILE, REQUIRED_ENGLISH_FILES, SCHEMA_VERSION } from '../../scripts/report-manifest.mjs';
+import { CLAIM_TYPES, CORROBORATION, EVIDENCE_TOPICS, FRESHNESS, INDEPENDENCE, REPUTATION_TIERS, SOURCE_TYPES } from '../../scripts/evidence-registry.mjs';
+import { FIGURE_ALLOWED_POPULATED_FIELDS, FIGURE_ARRAY_FIELDS, FIGURE_CONTRACTS, FIGURE_DATA_FIELDS, FIGURE_LAYOUTS, FIGURE_TYPES } from '../../scripts/figure-registry.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPORTS_DIR = resolve(__dirname, '../../reports');
-const V2_SCHEMA = 'startup-diligence-report-v2';
-const V2_REQUIRED = [
-  '100-evidence-ledger.yaml',
-  '01-company-snapshot.yaml',
-  '02-market-macro.yaml',
-  '03-competitive-benchmarking.yaml',
-  '04-financial-unit-economics.yaml',
-  '05-product-technology.yaml',
-  '06-customer-retention.yaml',
-  '07-risk-regulatory.yaml',
-  '08-investment-valuation.yaml',
-  '101-report-document.yaml',
-  '102-report-card.yaml',
-];
-const ARTIFACTS = new Map([
-  ['100-evidence-ledger.yaml', { artifact: 'evidence-ledger' }],
-  ['01-company-snapshot.yaml', { artifact: 'company-snapshot', chapter: 1 }],
-  ['02-market-macro.yaml', { artifact: 'market-macro', chapter: 2 }],
-  ['03-competitive-benchmarking.yaml', { artifact: 'competitive-benchmarking', chapter: 3 }],
-  ['04-financial-unit-economics.yaml', { artifact: 'financial-unit-economics', chapter: 4 }],
-  ['05-product-technology.yaml', { artifact: 'product-technology', chapter: 5 }],
-  ['06-customer-retention.yaml', { artifact: 'customer-retention', chapter: 6 }],
-  ['07-risk-regulatory.yaml', { artifact: 'risk-regulatory', chapter: 7 }],
-  ['08-investment-valuation.yaml', { artifact: 'investment-valuation', chapter: 8 }],
-  ['101-report-document.yaml', { artifact: 'report-document' }],
-  ['102-report-card.yaml', { artifact: 'report-card' }],
-]);
+const V2_SCHEMA = SCHEMA_VERSION;
+const V2_REQUIRED = REQUIRED_ENGLISH_FILES;
+const ARTIFACTS = ARTIFACT_BY_FILE;
 const RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 'avoid']);
 const CONFIDENCE = new Set(['high', 'medium', 'low']);
 const RISK_RATINGS = new Set(['low', 'moderate', 'significant', 'critical', 'unknown']);
 const VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
-const FIGURE_TYPES = new Set(['timeline', 'flow', 'decision-map', 'evidence-map', 'quadrant', 'positioning-map', 'bars', 'waterfall', 'heatmap', 'matrix', 'stack', 'layered-lens', 'bridge', 'journey-map', 'logic-chain', 'causal-map', 'sensitivity', 'scatter', 'funnel', 'cohort', 'range', 'scorecard', 'scenario-tree', 'dependency-map', 'other']);
-const FIGURE_LAYOUTS = new Set(['compact', 'standard', 'wide']);
-const FIGURE_DATA_FIELDS = new Set(['items', 'nodes', 'edges', 'points', 'columns', 'rows', 'series', 'layers', 'xAxis', 'yAxis']);
-const FIGURE_ARRAY_FIELDS = ['items', 'nodes', 'edges', 'points', 'columns', 'rows', 'series', 'layers'];
-const FIGURE_CONTRACTS = new Map([
-  ['timeline', [['items']]],
-  ['flow', [['nodes'], ['edges']]],
-  ['decision-map', [['nodes']]],
-  ['evidence-map', [['nodes']]],
-  ['scenario-tree', [['nodes'], ['edges']]],
-  ['dependency-map', [['nodes'], ['edges']]],
-  ['quadrant', [['points']]],
-  ['positioning-map', [['points']]],
-  ['bars', [['items', 'series']]],
-  ['funnel', [['items', 'series']]],
-  ['waterfall', [['items']]],
-  ['range', [['items']]],
-  ['heatmap', [['columns'], ['rows']]],
-  ['matrix', [['columns'], ['rows']]],
-  ['cohort', [['columns'], ['rows']]],
-  ['stack', [['layers', 'items']]],
-  ['layered-lens', [['nodes', 'items']]],
-  ['bridge', [['nodes', 'items']]],
-  ['journey-map', [['nodes', 'items']]],
-  ['logic-chain', [['nodes']]],
-  ['causal-map', [['nodes'], ['edges']]],
-  ['sensitivity', [['series']]],
-  ['scatter', [['points', 'series']]],
-  ['scorecard', [['items', 'nodes']]],
-]);
-const FIGURE_ALLOWED_POPULATED_FIELDS = new Map([
-  ['timeline', new Set(['items'])],
-  ['flow', new Set(['nodes', 'edges'])],
-  ['decision-map', new Set(['nodes', 'edges'])],
-  ['evidence-map', new Set(['nodes', 'edges'])],
-  ['scenario-tree', new Set(['nodes', 'edges'])],
-  ['dependency-map', new Set(['nodes', 'edges'])],
-  ['quadrant', new Set(['points'])],
-  ['positioning-map', new Set(['points'])],
-  ['scatter', new Set(['points', 'series'])],
-  ['bars', new Set(['items', 'series'])],
-  ['funnel', new Set(['items', 'series'])],
-  ['waterfall', new Set(['items'])],
-  ['range', new Set(['items'])],
-  ['sensitivity', new Set(['series'])],
-  ['heatmap', new Set(['columns', 'rows'])],
-  ['matrix', new Set(['columns', 'rows'])],
-  ['cohort', new Set(['columns', 'rows'])],
-  ['stack', new Set(['layers', 'items'])],
-  ['layered-lens', new Set(['nodes', 'items'])],
-  ['bridge', new Set(['nodes', 'items'])],
-  ['journey-map', new Set(['nodes', 'items'])],
-  ['logic-chain', new Set(['nodes'])],
-  ['causal-map', new Set(['nodes', 'edges'])],
-  ['scorecard', new Set(['items', 'nodes'])],
-  ['other', new Set()],
-]);
+const CLAIM_TYPE_SET = new Set(CLAIM_TYPES);
+const EVIDENCE_TOPIC_SET = new Set(EVIDENCE_TOPICS);
+const FRESHNESS_SET = new Set(FRESHNESS);
+const CORROBORATION_SET = new Set(CORROBORATION);
+const SOURCE_TYPE_SET = new Set(SOURCE_TYPES);
+const REPUTATION_TIER_SET = new Set(REPUTATION_TIERS);
+const INDEPENDENCE_SET = new Set(INDEPENDENCE);
+const BLOCK_TYPES = new Set(['paragraph', 'callout', 'table', 'figure', 'list', 'equation']);
+const CALLOUT_TYPES = new Set(['investment-recommendation', 'key-insight', 'opportunity', 'risk-alert', 'final-recommendation']);
+const FIGURE_TYPE_SET = new Set(FIGURE_TYPES);
+const FIGURE_LAYOUT_SET = new Set(FIGURE_LAYOUTS);
+const FIGURE_DATA_FIELD_SET = new Set(FIGURE_DATA_FIELDS);
+const FIGURE_CONTRACT_MAP = new Map(Object.entries(FIGURE_CONTRACTS));
+const FIGURE_ALLOWED_POPULATED_FIELD_MAP = new Map(Object.entries(FIGURE_ALLOWED_POPULATED_FIELDS).map(([type, fields]) => [type, new Set(fields)]));
 
 function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
@@ -141,24 +77,84 @@ function hasText(value) {
 function isNumber(value) {
   return typeof value === 'number' && Number.isFinite(value);
 }
+
+function checkLedgerSchema(failures, run, ledger) {
+  for (const source of ledger?.sources ?? []) {
+    const path = `${run}/100-evidence-ledger.yaml: source ${source?.id ?? '?'}`;
+    for (const field of ['publisher', 'title', 'accessDate', 'url', 'sourceType', 'reputationTier', 'independence', 'topics']) {
+      if (source?.[field] === undefined) failures.push(`${path} missing ${field}`);
+    }
+    if (source?.date != null && !/^\d{4}-\d{2}-\d{2}$/.test(asDateString(source.date))) failures.push(`${path} date must be YYYY-MM-DD or null`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(asDateString(source?.accessDate))) failures.push(`${path} accessDate must be YYYY-MM-DD`);
+    pushIfInvalidEnum(failures, path, 'sourceType', source?.sourceType, SOURCE_TYPE_SET);
+    pushIfInvalidEnum(failures, path, 'reputationTier', source?.reputationTier, REPUTATION_TIER_SET);
+    pushIfInvalidEnum(failures, path, 'independence', source?.independence, INDEPENDENCE_SET);
+    if (!Array.isArray(source?.topics) || source.topics.length === 0) failures.push(`${path} topics must be a non-empty array`);
+    for (const topic of source?.topics ?? []) pushIfInvalidEnum(failures, path, 'topic', topic, EVIDENCE_TOPIC_SET);
+  }
+
+  for (const claim of ledger?.claims ?? []) {
+    const path = `${run}/100-evidence-ledger.yaml: claim ${claim?.id ?? '?'}`;
+    for (const field of ['statement', 'claimType', 'topic', 'sourceRefs', 'confidence', 'freshness', 'corroboration']) {
+      if (claim?.[field] === undefined) failures.push(`${path} missing ${field}`);
+    }
+    if (!hasText(claim?.statement)) failures.push(`${path} statement must be non-empty`);
+    pushIfInvalidEnum(failures, path, 'claimType', claim?.claimType, CLAIM_TYPE_SET);
+    pushIfInvalidEnum(failures, path, 'topic', claim?.topic, EVIDENCE_TOPIC_SET);
+    pushIfInvalidEnum(failures, path, 'confidence', claim?.confidence, CONFIDENCE);
+    pushIfInvalidEnum(failures, path, 'freshness', claim?.freshness, FRESHNESS_SET);
+    pushIfInvalidEnum(failures, path, 'corroboration', claim?.corroboration, CORROBORATION_SET);
+    if (!Array.isArray(claim?.sourceRefs)) failures.push(`${path} sourceRefs must be an array`);
+  }
+}
+
+function checkReportBlocks(failures, run, reportDoc) {
+  const blocks = [];
+  const collect = (value, location) => {
+    if (Array.isArray(value)) return value.forEach((item, index) => collect(item, `${location}.${index}`));
+    if (!value || typeof value !== 'object') return;
+    if (value.type !== undefined) blocks.push([location, value]);
+    for (const [key, child] of Object.entries(value)) collect(child, `${location}.${key}`);
+  };
+  collect(reportDoc?.chapters ?? [], 'chapters');
+  collect(reportDoc?.appendices ?? [], 'appendices');
+
+  for (const [location, block] of blocks) {
+    const path = `${run}/101-report-document.yaml:${location}`;
+    if (!BLOCK_TYPES.has(block.type)) {
+      failures.push(`${path} invalid block.type ${block.type}`);
+      continue;
+    }
+    if (block.type === 'paragraph' && !hasText(block.body)) failures.push(`${path} paragraph block requires body`);
+    if (block.type === 'list' && (!Array.isArray(block.items) || block.items.length === 0)) failures.push(`${path} list block requires non-empty items`);
+    if (block.type === 'equation' && !hasText(block.equation)) failures.push(`${path} equation block requires equation`);
+    if (block.type === 'callout') {
+      if (!hasText(block.body)) failures.push(`${path} callout block requires body`);
+      if (block.calloutType != null && !CALLOUT_TYPES.has(block.calloutType)) failures.push(`${path} invalid calloutType ${block.calloutType}`);
+    }
+    if (block.type === 'table' && !hasText(block.tableRef)) failures.push(`${path} table block requires tableRef`);
+    if (block.type === 'figure' && !hasText(block.figureRef)) failures.push(`${path} figure block requires figureRef`);
+  }
+}
+
 function checkFigure(failures, path, figure) {
-  if (!FIGURE_TYPES.has(figure.type)) failures.push(`${path}: figure ${figure.id} has invalid type ${figure.type}`);
-  if (!FIGURE_LAYOUTS.has(figure.layout)) failures.push(`${path}: figure ${figure.id} has invalid layout ${figure.layout}`);
+  if (!FIGURE_TYPE_SET.has(figure.type)) failures.push(`${path}: figure ${figure.id} has invalid type ${figure.type}`);
+  if (!FIGURE_LAYOUT_SET.has(figure.layout)) failures.push(`${path}: figure ${figure.id} has invalid layout ${figure.layout}`);
   if (!figure.data || typeof figure.data !== 'object' || Array.isArray(figure.data)) {
     failures.push(`${path}: figure ${figure.id} missing structured data object`);
     return;
   }
   for (const field of Object.keys(figure.data)) {
-    if (!FIGURE_DATA_FIELDS.has(field)) failures.push(`${path}: figure ${figure.id} uses unsupported data.${field}; allowed fields are ${[...FIGURE_DATA_FIELDS].join(', ')}`);
+    if (!FIGURE_DATA_FIELD_SET.has(field)) failures.push(`${path}: figure ${figure.id} uses unsupported data.${field}; allowed fields are ${FIGURE_DATA_FIELDS.join(', ')}`);
     if (FIGURE_ARRAY_FIELDS.includes(field) && Array.isArray(figure.data[field]) && figure.data[field].length === 0) failures.push(`${path}: figure ${figure.id} must not include empty placeholder data.${field}; omit unused figure data arrays`);
   }
-  const contract = FIGURE_CONTRACTS.get(figure.type) ?? [];
+  const contract = FIGURE_CONTRACT_MAP.get(figure.type) ?? [];
   for (const alternatives of contract) {
     if (!hasAnyArray(figure.data, alternatives)) failures.push(`${path}: figure ${figure.id} type ${figure.type} requires data.${alternatives.join(' or data.')}`);
     const populatedAlternatives = alternatives.filter((key) => hasPopulatedField(figure.data, key));
     if (populatedAlternatives.length > 1) failures.push(`${path}: figure ${figure.id} type ${figure.type} must use exactly one of data.${alternatives.join(' or data.')}, not ${populatedAlternatives.map((key) => `data.${key}`).join(' and ')}`);
   }
-  const allowedPopulated = FIGURE_ALLOWED_POPULATED_FIELDS.get(figure.type) ?? new Set();
+  const allowedPopulated = FIGURE_ALLOWED_POPULATED_FIELD_MAP.get(figure.type) ?? new Set();
   for (const field of FIGURE_ARRAY_FIELDS) {
     if (hasPopulatedField(figure.data, field) && !allowedPopulated.has(field)) failures.push(`${path}: figure ${figure.id} type ${figure.type} must not populate data.${field}`);
   }
@@ -292,6 +288,7 @@ try {
 
     const claimIds = new Set((ledger?.claims ?? []).map((claim) => claim.id));
     const sourceIds = new Set((ledger?.sources ?? []).map((source) => source.id));
+    checkLedgerSchema(failures, run, ledger);
     checkUniqueId(failures, run, 'source', ledger?.sources, /^S\d{3}$/);
     checkUniqueId(failures, run, 'claim', ledger?.claims, /^C\d{3}$/);
     for (const claim of ledger?.claims ?? []) {
@@ -308,6 +305,7 @@ try {
 
     const figureIds = new Set((reportDoc?.figures ?? []).map((figure) => figure.id));
     const tableIds = new Set((reportDoc?.tables ?? []).map((table) => table.id));
+    checkReportBlocks(failures, run, reportDoc);
     checkUniqueId(failures, run, 'figure', reportDoc?.figures, /^F\d{3}$/);
     checkUniqueId(failures, run, 'table', reportDoc?.tables, /^T\d{3}$/);
     const refs = [];

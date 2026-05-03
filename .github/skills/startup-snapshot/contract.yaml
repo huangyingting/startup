@@ -1,0 +1,28 @@
+artifact: company-snapshot
+chapter: 1
+minSections: 5
+minTables: 3
+minFigures: 2
+requiredTables:
+  - key: identity-snapshot
+    purpose: Company identity and operating snapshot
+    requiredColumnsAny:
+      - [field, value, source, confidence, diligence ask]
+      - [dimension, status, evidence, implication, diligence ask]
+  - key: founders-leadership
+    purpose: Founder, leadership, and governance map
+    requiredColumnsAny:
+      - [name, role, background, current status, evidence]
+      - [person, role, background, relevance, source]
+  - key: funding-milestones
+    purpose: Funding, investors, and milestone chronology
+    requiredColumnsAny:
+      - [date, milestone, amount, source, implication]
+      - [event, date, evidence, investor relevance, diligence ask]
+requiredFigures:
+  - key: milestone-timeline
+    purpose: Company milestone timeline
+    allowedTypes: [timeline]
+  - key: identity-map
+    purpose: Identity, product, customer, and business-model map
+    allowedTypes: [flow, stack, evidence-map, decision-map]
