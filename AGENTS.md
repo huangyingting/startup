@@ -24,7 +24,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 ## Canonical sources and machine mirrors
 
 - `.github/skills/startup-research/SKILL.md` is canonical for the end-to-end workflow, required artifact set, artifact mapping, execution order, concurrency model, synchronization points, and report-run gates.
-- `.github/skills/startup-*/SKILL.md` files are canonical for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
+- `.github/skills/startup-*/SKILL.md` files are canonical for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence acquisition strategy, and completion checks.
 - `scripts/figure-registry.mjs` is canonical for supported native figure types and their data contracts.
 - `scripts/evidence-registry.mjs` is canonical for evidence enums such as claim types, topics, source types, freshness, reputation, and independence.
 - `scripts/report-registry.mjs` is canonical for report/card enums, full-report block/callout types, and analysis artifact callout types.
@@ -33,7 +33,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 ## Important paths
 
 - `.github/skills/startup-research/SKILL.md` — single workflow entry point that orchestrates chapter and integration skills end-to-end.
-- `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (overview, market analysis, competitors, financials, product tech, customers, risks, valuation, evidence, full report, summary card). The analysis skills are the single source for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
+- `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (overview, market analysis, competitors, financials, product tech, customers, risks, valuation, evidence, full report, summary card). The analysis skills are the single source for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence acquisition strategy, and completion checks.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
 - `.github/references/` — shared YAML syntax, analysis rules, and report schema reference.
 - `.github/references/report-schema-v2.md` — canonical report schema and rendering contract.
@@ -76,7 +76,7 @@ Do not duplicate that workflow here. When working on a report, follow `startup-r
 When adding a new analysis chapter or changing chapter order:
 
 1. Update `.github/skills/startup-research/SKILL.md` with the workflow order and required artifact set.
-2. Add or update the owning `.github/skills/startup-*/SKILL.md` guidance, including chapter purpose, required content, tables, figures, evidence strategy, and completion checks.
+2. Add or update the owning `.github/skills/startup-*/SKILL.md` guidance, including chapter mission, required content, tables, figures, evidence acquisition strategy, and completion checks.
 3. Sync consolidation, readiness audit, report assembly checks, website validation, and website loading code where they need local machine constants for the new artifacts.
 4. Run `npm run validate`.
 

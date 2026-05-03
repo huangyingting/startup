@@ -30,17 +30,12 @@ Inputs from `startup-research`:
 
 - `03-competitors.yaml`
 
-## Agent workflow
+## Skill workflow
 
-1. Confirm the shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, and the owning output filename.
-2. Pull in prompt-derived requirements routed to this chapter; optional coordination artifacts may be used only when already available and must not block this chapter.
-3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes.
-4. Build chapter-specific research questions from the required content, required tables, required figures, evidence strategy, domain-adaptive additions, optional coordination context, and prompt requirements.
-5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
-6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
-7. Draft schema-native sections, tables, callouts, and structured figures for this chapter; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
-8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, domain-adaptive additions are visible, and the completion check below passes.
-9. Write only this skill's owned artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+- Follow the common chapter workflow in `.github/references/analysis-rules.md`.
+- Apply that workflow to this skill's mission, required content specification, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, quality bar, and completion check.
+- Use optional coordination context only when already available; never block this chapter on peer artifacts.
+- Write only `03-competitors.yaml`; route facts owned by other chapters back through `startup-research`.
 
 ## Chapter mission
 

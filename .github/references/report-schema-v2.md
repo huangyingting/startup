@@ -6,7 +6,7 @@ The schema supports investor-grade English startup diligence reports with claim-
 
 Workflow source and machine-readable rendering/validation mirrors live in:
 
-- `.github/skills/startup-research/SKILL.md` — source of truth for required artifacts, analysis chapter order, owner skills, workflow gates, and final validation.
+- `.github/skills/startup-research/SKILL.md` — source of truth for required artifacts, artifact mapping/numbering, owner skills, workflow gates, and final validation.
 - `scripts/evidence-registry.mjs` — evidence enum values and extensible topic vocabulary used by ledger/source/claim validation.
 - `scripts/figure-registry.mjs` — supported figure types, allowed figure data fields, required populated fields, and renderer-facing data contracts.
 
@@ -37,12 +37,14 @@ The authoritative required artifact set is defined in `.github/skills/startup-re
 - `/tmp` and terminal-output files are diagnostics only, never artifacts or handoff inputs.
 - Agents must read this schema and `.github/references/yaml-rules.md` before writing YAML artifacts.
 - Skills that create local evidence must follow `.github/references/analysis-rules.md`.
-- Skills read the minimum required dependency set. Run inputs provide the shared identity anchor; chapter skills read peer or upstream artifacts only when chapter logic needs them.
+- Run inputs provide the shared identity anchor. Analysis chapter skills may use already available peer artifacts as optional coordination context, but peer artifacts are not hard prerequisites during parallel `01`–`08` analysis.
 - Analysis skills record local evidence under `localEvidence`; `startup-evidence` runs `scripts/consolidate-evidence.mjs` to create canonical evidence and rewrite claim references.
 
 ## Artifact mapping
 
-| File | `artifact` | Owner | Chapter |
+The labels below describe the source analysis artifacts. In `91-full-report.yaml`, these artifacts are assembled as report chapters `2`–`9` according to the workflow skill.
+
+| File | `artifact` | Owner | Analysis chapter label |
 |---|---|---|---|
 | `01-company-overview.yaml` | `company-overview` | `startup-overview` | 1 — Startup Introduction & Company Overview |
 | `02-market-analysis.yaml` | `market-analysis` | `startup-market-analysis` | 2 — Market Sizing & Market Analysis |

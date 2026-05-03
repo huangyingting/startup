@@ -29,7 +29,7 @@ Before writing artifacts:
 
 - Read `.github/references/report-schema-v2.md` and `.github/references/yaml-rules.md`.
 - For analysis stages `01`–`08`, follow `.github/references/analysis-rules.md`.
-- For each analysis stage, follow that stage's `startup-*` skill as the chapter requirements source: required chapter content, required tables, required figures, evidence acquisition, and domain-adaptive additions live in the owning skill.
+- For each analysis artifact, follow that artifact's `startup-*` skill as the chapter requirements source: required content specification, required tables, required figures, evidence acquisition, and domain-adaptive additions live in the owning skill.
 
 ## Required artifact set
 
@@ -117,7 +117,7 @@ Synchronization points:
 
 - Treat external prose-style due-diligence reports as input requirements or quality examples, not output format; convert useful content into schema-native YAML artifacts, structured figures, evidence claims, and `claimRefs`.
 - Route prompt-derived audiences, investment lenses, required metrics, competitors/comparables, figures, source constraints, and diligence questions to the owning `startup-*` chapter skill.
-- Do not centralize one-off prompt requirements or industry templates in repo-level files. Chapter content, evidence strategy, and domain-adaptive additions belong to the owning chapter skill and `.github/references/analysis-rules.md`.
+- Do not centralize one-off prompt requirements or industry templates in repo-level files. Chapter content, evidence acquisition strategy, and domain-adaptive additions belong to the owning chapter skill and `.github/references/analysis-rules.md`.
 
 ## Section numbering
 
