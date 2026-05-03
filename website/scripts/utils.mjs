@@ -51,13 +51,39 @@ function mergeGate(defaultGate, chapterGate) {
   };
 }
 
+// Each chapter is identified solely by `key` (kebab-case slug) and `order`.
+// All other identifiers are deterministic functions of those two.
+function kebabToCamel(value) {
+  return String(value).replace(/-([a-z0-9])/g, (_match, char) => char.toUpperCase());
+}
+
+function deriveChapterIdentity(chapter) {
+  const order = Number(chapter.order);
+  const key = String(chapter.key ?? '');
+  return {
+    key,
+    order,
+    artifact: key,
+    loaderKey: kebabToCamel(key),
+    file: `${String(order).padStart(2, '0')}-${key}.yaml`,
+    chapterNumber: order,
+    reportChapterNumber: order + 1,
+  };
+}
+
 export function loadWorkflowConfig() {
   if (!existsSync(workflowConfigPath)) {
     throw new Error(`[workflow-config] missing ${workflowConfigPath}`);
   }
   const config = readYaml(workflowConfigPath);
   const chapters = (config.chapters ?? [])
-    .map((chapter) => ({ ...chapter, gate: mergeGate(config.analysisDefaults?.gate ?? {}, chapter.gate ?? {}) }))
+    .map((chapter) => ({
+      ...deriveChapterIdentity(chapter),
+      title: chapter.title,
+      requiredTables: chapter.requiredTables ?? [],
+      requiredFigures: chapter.requiredFigures ?? [],
+      gate: mergeGate(config.analysisDefaults?.gate ?? {}, chapter.gate ?? {}),
+    }))
     .sort((a, b) => Number(a.order) - Number(b.order));
   return { ...config, chapters };
 }
@@ -73,7 +99,6 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
     title: chapter.title,
     loaderKey: chapter.loaderKey,
     gate: chapter.gate,
-    preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? [],
   }));
 }
 

@@ -34,17 +34,36 @@ For each chapter `order` from the loader:
 
 1. Load the chapter packet:
    `node .github/skills/startup-research/scripts/chapter.mjs --order <n> --format json --include-workflow`
-2. Use only `packet.chapter` as the chapter brief: `file`, `artifact`, `title`, `mission`, `optionalContext`, `contentRequirements`, `requiredTables`, `requiredFigures`, `preferredFigureTypes`, `evidenceStrategy`, `qualityBar`, and `gate`.
+   Optionally append `--include-context` to inline the sections, tables, figures, and consolidated claimRefs of every file listed in `optionalContext` so the chapter brief carries reusable ground truth from earlier chapters.
+2. Use only `packet.chapter` as the chapter brief: `file`, `artifact`, `title`, `mission`, `optionalContext`, `contentRequirements`, `requiredTables`, `requiredFigures`, `evidenceStrategy`, `qualityBar`, and `gate`.
 3. Generate at least `packet.chapter.gate.minResearchQuestions` targeted search questions from the packet's content and output requirements; plan to retain at least `gate.minLocalSources` reviewed sources and `gate.minLocalClaims` atomic claims. Use `currentDate` in searches for volatile facts so results can reflect the latest funding, valuation, customers, pricing, legal, regulatory, outage, or product status.
 4. Use `web_search` or available search tools to discover relevant facts and URLs, then review retained direct URLs with `fetch-url`:
    `node .github/skills/fetch-url/scripts/fetch.mjs <url> --text-only`
 5. Convert reviewed evidence into `localEvidence.researchQuestions[]` (the search/diligence questions you ran), `localEvidence.sources[]`, `localEvidence.claims[]`, and `localEvidence.evidenceGaps[]`.
-6. For each entry in `requiredFigures`, check whether the data you actually collected satisfies the figure type's data contract (e.g. `dag` needs `edges`, `cohort` needs time-bucket retention percentages 0–100, `range` needs comparable units across rows). If it does, write the figure into the chapter YAML; if it does not, omit the figure and write the same content as a new table or extra rows in an existing table, then note the substitution in the table's `notes` or in the chapter's `evidenceGaps`.
+6. For each entry in `requiredFigures`, check whether the data you actually collected satisfies the figure type's data contract (e.g. `dag` needs `edges`, `cohort` needs time-bucket retention percentages 0–100, `range` needs comparable units across rows). If it does, write the figure into the chapter YAML; if it does not, **substitute** the figure for an extra table covering the same content and note the substitution in that table's `notes` or in the chapter's `evidenceGaps`. Tables and figures share one combined artifact slot in the gate, so a substitution does not fail the gate.
 7. Generate the chapter YAML at `reportFolder/<chapter.file>` according to the packet's output requirements and the report schema.
-8. Run the packet gate:
-   `node .github/skills/startup-research/scripts/gate.mjs <reportFolder> <chapter.file> --pre-ledger`
-9. If the gate exits nonzero, start the chapter loop again for the failed dimensions: generate narrower queries, search/fetch more evidence, update the YAML, and rerun the gate. Retry up to `packet.workflow.researchLoop.maxGateIterations`; advance only when the gate exits `0`.
-10. Advance with `packet.nextChapter`; if it is `null`, move to finalization.
+8. Run the packet gate with structured output:
+   `node .github/skills/startup-research/scripts/gate.mjs <reportFolder> <chapter.file> --format json`
+   Exit `0` means the chapter is ready. On nonzero exit, parse `failedDimensions[]` from the JSON to scope the retry — see "Retry scope" below.
+9. Advance with `packet.nextChapter`; if it is `null`, move to finalization.
+
+### Retry scope
+
+The gate emits a `failedDimensions[]` enum with stable keys. Map them to the right retry action; do not redo the whole chapter when only one dimension fails.
+
+| Failed dimension | Targeted action |
+|---|---|
+| `researchQuestions` | Add new diligence questions; do not regenerate sections. |
+| `sources` | Run additional searches and `fetch-url` calls to grow `localEvidence.sources`. |
+| `claims` | Extract more atomic claims from already-reviewed sources before broadening search. |
+| `claimRefs` | Resolve dangling refs by adding the missing claim or correcting the citation; do not duplicate evidence. |
+| `sectionsMin` / `artifactsMin` | Add the missing section, table, or figure (or substitute per step 6). |
+| `depthSection` / `depthSectionTotal` | Expand the prose of the shortest section(s) only; leave the others untouched. |
+| `depthTableRows` / `depthFigureData` | Add rows/data points to existing tables/figures. |
+| `duplicateAnalysis` (warning) | Merge the redundant table/figure pair or sharpen one to answer a distinct question. |
+| `figureType` (warning) | Either add a planned figure type or document the substitution in evidenceGaps. |
+
+Retry up to `packet.workflow.researchLoop.maxGateIterations`. Advance only when the gate exits `0`.
 
 ## Research and evidence rules
 
@@ -69,16 +88,21 @@ After all analysis chapters pass:
 
 1. Build evidence:
    `node .github/skills/startup-research/scripts/ledger.mjs <reportFolder>`
-2. Write `91-full-report.yaml` from the analysis artifacts and `90-evidence.yaml`.
-3. Write `92-summary-card.yaml` from `91-full-report.yaml` and `90-evidence.yaml`.
-4. Rebuild index:
+2. Write `report-meta.yaml` in the report folder with the judgment fields the analysis chapters do not encode (recommendation, confidence, risk rating, valuation stance, cover metrics, startup introduction, top strengths/risks, unresolved gaps, overall score, headline, summary-card company facts). See `references/report-meta-schema.md` for the exact shape.
+3. Assemble the consolidated artifacts:
+   `node .github/skills/startup-research/scripts/assemble.mjs <reportFolder>`
+   This deterministically stitches `01-08`-chapter YAMLs + `90-evidence.yaml` + `report-meta.yaml` into `91-full-report.yaml` and `92-summary-card.yaml`. Re-run after editing any chapter or `report-meta.yaml`.
+4. Run the cross-chapter consistency check:
+   `node .github/skills/startup-research/scripts/cross-chapter.mjs <reportFolder>`
+   Resolve any drift it reports (mismatched valuations, founding dates, customer counts, ARR figures referenced from multiple chapters) before validating.
+5. Rebuild index:
    `node .github/skills/startup-research/scripts/index.mjs --strict`
-5. Validate:
+6. Validate:
    `npm run validate`
 
 ## Hard rules
 
-- Do not hand-write `90-evidence.yaml`; use the script.
+- Do not hand-write `90-evidence.yaml`, `91-full-report.yaml`, or `92-summary-card.yaml`; let the scripts assemble them. Edit the source chapter YAMLs or `report-meta.yaml` instead.
 - Do not edit another chapter's artifact while working on the current chapter.
 - Do not invent facts, metrics, customers, funding, valuation, or dates.
 - Use structured YAML figures only; no Mermaid/SVG/prose diagrams.

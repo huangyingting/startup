@@ -60,10 +60,14 @@ function loadAnalysisStageFiles(): AnalysisStageFile[] {
   if (!chapters.length) throw new Error('[reports-loader] workflow config must define chapters[]');
   return chapters
     .map((chapter) => {
-      if (!chapter?.file || !chapter?.loaderKey || typeof chapter.order !== 'number') {
-        throw new Error('[reports-loader] each chapter config entry requires file, loaderKey, and numeric order');
+      if (!chapter?.key || typeof chapter.order !== 'number') {
+        throw new Error('[reports-loader] each chapter config entry requires kebab-case key and numeric order');
       }
-      return { file: chapter.file, loaderKey: chapter.loaderKey, order: chapter.order };
+      const order: number = chapter.order;
+      const key: string = chapter.key;
+      const file = `${String(order).padStart(2, '0')}-${key}.yaml`;
+      const loaderKey = key.replace(/-([a-z0-9])/g, (_match, char) => char.toUpperCase());
+      return { file, loaderKey, order };
     })
     .sort((a, b) => a.order - b.order);
 }

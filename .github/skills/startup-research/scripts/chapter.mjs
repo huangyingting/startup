@@ -63,7 +63,6 @@ function compactChapter(chapter) {
     contentRequirements: chapter.contentRequirements ?? [],
     requiredTables: chapter.requiredTables ?? [],
     requiredFigures: chapter.requiredFigures ?? [],
-    preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? [],
     evidenceStrategy: chapter.evidenceStrategy ?? [],
     qualityBar: chapter.qualityBar ?? [],
     gate: chapter.gate,
@@ -185,8 +184,6 @@ function printPacketMarkdown(packet) {
   console.log(tableItems(chapter.requiredTables));
   console.log('\n## Required figures\n');
   console.log(figureItems(chapter.requiredFigures));
-  console.log('\n## Preferred figure types\n');
-  console.log(listItems(chapter.preferredFigureTypes));
   console.log('\n## Evidence strategy\n');
   console.log(listItems(chapter.evidenceStrategy));
   console.log('\n## Quality bar\n');

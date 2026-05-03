@@ -136,6 +136,28 @@ function mergeGate(defaultGate, chapterGate) {
   };
 }
 
+// Each chapter is identified solely by `key` (kebab-case slug) and `order`.
+// Every other identifier is a deterministic function of those two so that
+// adding a chapter only requires touching one entry per source of truth.
+function kebabToCamel(value) {
+  return String(value).replace(/-([a-z0-9])/g, (_match, char) => char.toUpperCase());
+}
+
+function deriveChapterIdentity(chapter) {
+  const order = Number(chapter.order);
+  const key = String(chapter.key ?? '');
+  return {
+    key,
+    order,
+    artifact: key,
+    loaderKey: kebabToCamel(key),
+    file: `${String(order).padStart(2, '0')}-${key}.yaml`,
+    chapterNumber: order,
+    // The report's first chapter is the cover/intro; analysis chapters get bumped by 1.
+    reportChapterNumber: order + 1,
+  };
+}
+
 function normalizeWorkflowConfig(config) {
   assertConfig(config && typeof config === 'object', `${workflowConfigPath} must contain a YAML object`);
   assertConfig(config.schemaVersion === 'workflow-config-v1', `expected schemaVersion workflow-config-v1, got ${config.schemaVersion}`);
@@ -147,30 +169,36 @@ function normalizeWorkflowConfig(config) {
 
   const figureTypes = new Set(FIGURE_TYPES);
   const chapters = config.chapters
-    .map((chapter) => ({ ...chapter, gate: mergeGate(config.analysisDefaults?.gate ?? {}, chapter.gate ?? {}) }))
+    .map((chapter) => {
+      assertConfig(chapter && typeof chapter === 'object', 'each chapter entry must be an object');
+      assertConfig(chapter.key, 'chapter is missing key');
+      assertConfig(/^[a-z][a-z0-9-]*$/.test(chapter.key), `${chapter.key}: key must be kebab-case (a-z, 0-9, -)`);
+      assertConfig(Number.isInteger(Number(chapter.order)) && Number(chapter.order) > 0, `${chapter.key}: order must be a positive integer`);
+      return {
+        ...deriveChapterIdentity(chapter),
+        title: chapter.title,
+        mission: chapter.mission,
+        optionalContext: chapter.optionalContext ?? [],
+        contentRequirements: chapter.contentRequirements ?? [],
+        requiredTables: chapter.requiredTables ?? [],
+        requiredFigures: chapter.requiredFigures ?? [],
+        evidenceStrategy: chapter.evidenceStrategy ?? [],
+        qualityBar: chapter.qualityBar ?? [],
+        gate: mergeGate(config.analysisDefaults?.gate ?? {}, chapter.gate ?? {}),
+      };
+    })
     .sort((a, b) => Number(a.order) - Number(b.order));
 
   assertUnique(chapters.map((chapter) => chapter.order), 'chapters[].order');
-  assertUnique(chapters.map((chapter) => chapter.file), 'chapters[].file');
-  assertUnique(chapters.map((chapter) => chapter.artifact), 'chapters[].artifact');
-  assertUnique(chapters.map((chapter) => chapter.chapterNumber), 'chapters[].chapterNumber');
-  assertUnique(chapters.map((chapter) => chapter.loaderKey), 'chapters[].loaderKey');
+  assertUnique(chapters.map((chapter) => chapter.key), 'chapters[].key');
 
   for (const chapter of chapters) {
-    assertConfig(chapter.file?.endsWith('.yaml'), `${chapter.key}: file must end with .yaml`);
-    assertConfig(chapter.artifact, `${chapter.key}: artifact is required`);
     assertConfig(chapter.title, `${chapter.key}: title is required`);
-    assertConfig(chapter.loaderKey, `${chapter.key}: loaderKey is required`);
-    assertConfig(Number.isInteger(chapter.chapterNumber), `${chapter.key}: chapterNumber must be an integer`);
-    assertConfig(Number.isInteger(chapter.reportChapterNumber), `${chapter.key}: reportChapterNumber must be an integer`);
     for (const field of ['minSections', 'maxSections', 'minTables', 'maxTables', 'minFigures', 'maxFigures', 'minResearchQuestions', 'minLocalSources', 'minLocalClaims']) {
       assertConfig(Number.isFinite(chapter.gate?.[field]), `${chapter.key}: gate.${field} must be a number`);
     }
     for (const field of ['minSectionBodyWords', 'minSectionWordsTotal', 'minTableRowsTotal', 'minFigureDataPointsTotal']) {
       assertConfig(Number.isFinite(chapter.gate?.depthFloor?.[field]), `${chapter.key}: gate.depthFloor.${field} must be a number`);
-    }
-    for (const type of chapter.gate?.preferredFigureTypes ?? []) {
-      assertConfig(figureTypes.has(type), `${chapter.key}: unknown preferred figure type ${type}`);
     }
     for (const figure of chapter.requiredFigures ?? []) {
       for (const type of figure.types ?? []) {
@@ -200,7 +228,6 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
     title: chapter.title,
     loaderKey: chapter.loaderKey,
     gate: chapter.gate,
-    preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? [],
     requiredTables: chapter.requiredTables ?? [],
     requiredFigures: chapter.requiredFigures ?? [],
   }));
