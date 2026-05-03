@@ -346,18 +346,7 @@ function checkDetailFloor(run, doc, file) {
   if (misses.length) warn(`${run}/${file}: below detailed-report depth floor (${misses.join('; ')})`);
 }
 
-function isSyntheticQaReport(card, report) {
-  const haystack = [
-    card?.company?.stage,
-    card?.company?.sector,
-    card?.title,
-    card?.subtitle,
-    report?.reportMeta?.coverageNotes,
-  ].join(' ').toLowerCase();
-  return haystack.includes('synthetic') && haystack.includes('qa');
-}
-
-function checkAnalysisFloors(run, doc, file, { skipDetailFloor = false } = {}) {
+function checkAnalysisFloors(run, doc, file) {
   const isSnapshot = file === '01-company-snapshot.yaml';
   const floors = { tables: isSnapshot ? 3 : 4, figures: 2, sections: isSnapshot ? 5 : 4 };
   const counts = {
@@ -368,7 +357,7 @@ function checkAnalysisFloors(run, doc, file, { skipDetailFloor = false } = {}) {
   for (const [key, min] of Object.entries(floors)) {
     if (counts[key] < min) fail(`${run}/${file}: thin analysis (${counts[key]} ${key.slice(0, -1)}(s)); expected at least ${min}`);
   }
-  if (!skipDetailFloor) checkDetailFloor(run, doc, file);
+  checkDetailFloor(run, doc, file);
   return { isSnapshot, counts };
 }
 
@@ -432,9 +421,8 @@ function checkDepth(run, dir, ledger, report, card) {
 
   let floorHits = 0;
   let templateRisks = 0;
-  const skipDetailFloor = isSyntheticQaReport(card, report);
   for (const [file, doc] of docs) {
-    const { isSnapshot, counts } = checkAnalysisFloors(run, doc, file, { skipDetailFloor });
+    const { isSnapshot, counts } = checkAnalysisFloors(run, doc, file);
     const { hitsFloorExactly, templateRisk } = checkAnalysisTemplateRisks(run, doc, file, isSnapshot, counts);
     if (hitsFloorExactly) floorHits += 1;
     if (templateRisk) templateRisks += 1;

@@ -31,7 +31,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `scripts/report-manifest.mjs` — central manifest of artifacts, chapter order, loader keys, and depth floors; consumed by validation, consolidation, audit, and the website loader.
 - `scripts/figure-registry.mjs` — central native figure type/data contract; consumed by validators and the renderer.
 - `scripts/evidence-registry.mjs` — central evidence enums (claim types, topics, freshness, source types, reputation tiers, independence).
-- `scripts/` — report preparation, index, duplicate checks, evidence consolidation, content checks, and chart-gallery generation.
+- `scripts/` — report preparation, index, duplicate checks, evidence consolidation, and content checks.
 - `website/` — Astro renderer, content loader, UI components, and website validation.
 
 ## Setup and validation commands
@@ -83,9 +83,8 @@ When adding a new native figure/chart type:
 
 1. Add the type, required data fields, allowed populated fields, and data-shape constraints to `scripts/figure-registry.mjs`.
 2. Implement or route the renderer in `website/src/components/FigureRenderer.astro`.
-3. Add a synthetic example in `scripts/generate-chart-gallery-report.mjs`.
-4. Reference the type from the relevant section-owned skill only after the renderer and validator support it.
-5. Run `node scripts/generate-chart-gallery-report.mjs`, rebuild `reports/_index.yaml`, and run `npm run validate`.
+3. Reference the type from the relevant section-owned skill only after the renderer and validator support it.
+4. Rebuild `reports/_index.yaml` and run `npm run validate`.
 
 When adding a new evidence topic, source type, or other ledger enum:
 
