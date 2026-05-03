@@ -32,8 +32,8 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 ## Important paths
 
 - `.github/skills/startup-diligence/SKILL.md` — single workflow entry point that sequences chapter and integration skills end-to-end.
-- `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (snapshot, market, competition, financials, product, customers, risks, valuation, ledger, report, card).
-- `.github/skills/startup-{snapshot,market,competition,financials,product,customers,risks,valuation}/contract.yaml` — machine-readable per-chapter semantic validation contracts for required section concepts, table column alternatives, and figure type alternatives (consumed by `scripts/audit-report-readiness.mjs`). Integration skills (`startup-diligence`, `startup-ledger`, `startup-report`, `startup-card`) do not have contracts; their checks live in `scripts/check-reports-content.mjs` and `website/scripts/check-reports.mjs`. Artifact identity, chapter order, loader keys, preferred figure types, and numeric depth floors live in `scripts/report-manifest.mjs`.
+- `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (snapshot, market, competition, financials, product, customers, risks, valuation, ledger, report, card). The analysis skills are the single source for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
+- `scripts/report-manifest.mjs` — artifact identity, chapter order, loader keys, preferred figure types, and numeric depth floors. Integration checks live in `scripts/check-reports-content.mjs` and `website/scripts/check-reports.mjs`.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
 - `.github/references/` — shared rules: YAML syntax, evidence ledger, and analysis conventions.
 - `.github/schemas/startup-diligence-report-v2.md` — canonical schema and rendering contract.
@@ -76,17 +76,16 @@ Do not duplicate that workflow here. When working on a report, follow `startup-d
 
 When adding a new analysis chapter or changing chapter order:
 
-1. Add or update the artifact entry in `scripts/report-manifest.mjs` (file, zh sibling, skill, loader key, chapter number, depth floors, preferred figure types).
-2. Add or update the owning `.github/skills/startup-*/SKILL.md` prose guidance and `.github/skills/startup-*/contract.yaml` machine-readable chapter contract.
+1. Add or update the artifact entry in `scripts/report-manifest.mjs` (file, skill, loader key, chapter number, depth floors, preferred figure types).
+2. Add or update the owning `.github/skills/startup-*/SKILL.md` guidance, including chapter purpose, required content, tables, figures, evidence strategy, and completion checks.
 3. Ensure consolidation, readiness audit, report assembly, and website loading consume the manifest rather than new hard-coded file lists.
 4. Run `npm run validate`.
 
 When adding a required table, figure, metric, or diligence question inside an existing chapter:
 
-1. Update that chapter's `SKILL.md` when the agent needs reasoning guidance.
-2. Update that chapter's `contract.yaml` when the requirement should be checked by `scripts/audit-report-readiness.mjs`.
-3. Keep table column requirements schema-compatible and figure types limited to `scripts/figure-registry.mjs`.
-4. Run the readiness audit for a draft report folder and then `npm run validate` for final artifacts.
+1. Update that chapter's `SKILL.md` with the required content, table, figure, metric, source, or diligence requirement.
+2. Keep table column requirements schema-compatible and figure types limited to `scripts/figure-registry.mjs`.
+3. Run the readiness audit for a draft report folder and then `npm run validate` for final artifacts.
 
 When adding a new native figure/chart type:
 
