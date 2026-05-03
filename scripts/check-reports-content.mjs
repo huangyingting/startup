@@ -143,6 +143,14 @@ function looksLikeUntranslatedEnglish(value) {
   return CJK_RANGE.test(text) ? ENGLISH_PROSE_HINT.test(words.join(' ')) : ENGLISH_PROSE_HINT.test(text);
 }
 
+function looksLikeCopiedEnglish(value) {
+  const text = String(value ?? '').trim();
+  if (isSkippableForTranslation(text) || CJK_RANGE.test(text)) return false;
+  const words = (text.match(ASCII_WORD) ?? []).filter((word) => !ALLOWED_ASCII_TOKENS.has(word));
+  if (!words.length) return false;
+  return ENGLISH_PROSE_HINT.test(text) || words.length >= 4;
+}
+
 function isTranslatableLocation(path) {
   const key = path.at(-1) ?? '';
   if (TRANSLATABLE_KEYS.has(key)) return true;
@@ -172,6 +180,29 @@ function walkChineseDocument(run, file, value, path = []) {
   }
   if (looksLikeUntranslatedEnglish(value)) {
     fail(`${run}/${file}: likely untranslated English text at ${path.join('.')}: "${value.slice(0, 120)}"`);
+  }
+}
+
+function walkTranslationParity(run, file, enValue, zhValue, path = []) {
+  if (Array.isArray(enValue) && Array.isArray(zhValue)) {
+    const length = Math.min(enValue.length, zhValue.length);
+    for (let index = 0; index < length; index += 1) {
+      walkTranslationParity(run, file, enValue[index], zhValue[index], [...path, String(index)]);
+    }
+    return;
+  }
+  if (enValue && zhValue && typeof enValue === 'object' && typeof zhValue === 'object') {
+    for (const key of Object.keys(enValue)) {
+      if (['statement', 'keyQuote', 'url'].includes(key)) continue;
+      walkTranslationParity(run, file, enValue[key], zhValue[key], [...path, key]);
+    }
+    return;
+  }
+  if (typeof enValue !== 'string' || typeof zhValue !== 'string') return;
+  if (!isTranslatableLocation(path)) return;
+  if (enValue.trim() !== zhValue.trim()) return;
+  if (looksLikeCopiedEnglish(zhValue)) {
+    fail(`${run}/${file}: translatable field appears copied from English at ${path.join('.')}: "${zhValue.slice(0, 120)}"`);
   }
 }
 
@@ -293,6 +324,7 @@ function checkPair(run, dir, enFile, zhFile) {
     fail(`${run}/${zhFile}: contains placeholder translation marker "中文:" or "中文摘要:"`);
   }
   walkChineseDocument(run, zhFile, zh);
+  walkTranslationParity(run, zhFile, en, zh);
 
   if (zh.schemaVersion !== SCHEMA_VERSION) {
     fail(`${run}/${zhFile}: expected schemaVersion ${SCHEMA_VERSION}, got ${zh.schemaVersion}`);

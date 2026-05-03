@@ -31,6 +31,7 @@ Before writing:
 - Read `schemaPath`.
 - Read `yamlSyntaxPath`.
 - Read `.github/references/evidence-ledger.md` before touching local evidence.
+- Read `.github/references/zh-translation.md` before writing any `.zh.yaml` sibling.
 - Read upstream artifacts only when the chapter or a discovered gap needs them.
 
 ## Section-owned chapter contracts
@@ -74,9 +75,11 @@ Before finalizing a chapter, verify every prompt-derived requirement assigned to
 
 If evidence is unavailable, do not invent values. Use `null`, explanatory notes, and `evidenceGaps[]` with a concrete diligence path. Mention unresolved prompt-derived requirements in the handoff note.
 
-## Domain inference
+## Domain reflection and sufficiency gate
 
-Before drafting, each analysis skill must infer enough context to select domain-adaptive additions. Use upstream artifacts, official pages, and source discovery to identify:
+Before drafting, each analysis skill must explicitly reflect on the company's domain and decide whether the neutral `contract.yaml` floor is enough. The contract is only a minimum readiness shape; it is not the chapter plan.
+
+Use upstream artifacts, official pages, and source discovery to identify:
 
 - company domain and value-chain position;
 - buyer, user, payer, and regulator distinctions;
@@ -85,7 +88,24 @@ Before drafting, each analysis skill must infer enough context to select domain-
 - adoption motion: consumer, enterprise, government, healthcare/provider/payer, channel/retail, marketplace liquidity, developer, distributor, or project finance;
 - most decision-critical metrics and failure modes for that model.
 
+Then decide, before writing, which domain-adaptive sections, tables, figures, source classes, and diligence questions this chapter needs beyond its minimal contract. Examples:
+
+- physical-product companies may need manufacturing, capacity, warranty, certification, channel, and unit-cost treatment;
+- healthcare/life-science companies may need clinical evidence, reimbursement, regulatory stage, safety, and provider/payer workflow;
+- marketplaces may need liquidity, take-rate, multi-homing, cohort, and supply/demand quality;
+- financial-risk businesses may need licensing, loss-rate, funding cost, delinquency, reserves, capital, and counterparty analysis;
+- infrastructure/project businesses may need permitting, project finance, utilization, contracted backlog, offtake, capex, and commissioning milestones;
+- AI/software companies may need model capability, data rights, compute, security, workflow integration, pricing/packaging, retention, and platform dependency.
+
 Do not assume the company is an IT, Internet, software, SaaS, or AI startup. If the domain is unclear, record the ambiguity and add a diligence path rather than forcing a template.
+
+Before finalizing, run this sufficiency check:
+
+1. Which domain archetype(s) did this chapter infer, and why?
+2. Which extra domain-specific sections, tables, figures, source classes, and questions were added because of that inference?
+3. Is the chapter merely satisfying `contract.yaml`, or does it answer the domain-specific underwriting questions an investor would ask?
+4. If content is still thin, can more credible research change the answer? If yes, continue research and expand the artifact. If no, add explicit `evidenceGaps[]` and explain why public evidence is unavailable.
+5. If a requested or domain-critical table/figure cannot be supported, include the failed path and diligence ask rather than substituting a generic chart.
 
 ## Outputs
 
@@ -186,6 +206,8 @@ For every prompt-derived run requirement, ask: “Where is this addressed?” If
 
 For every domain-adaptive addition selected by the skill, ask: “Which table, figure, section, or gap carries this?” If the answer is “none,” add it before moving on.
 
+For every chapter, ask: “What would a domain expert expect to see here that the minimal contract did not name?” If the answer is supportable, add it. If not supportable, record it as an evidence gap with a diligence path.
+
 If a chapter only meets the minimum section/table/figure floors but credible evidence supports deeper treatment, continue research and expand the artifact before handoff. Minimum floors are readiness gates, not stopping conditions.
 
 ## Artifact depth
@@ -245,6 +267,8 @@ Depth floors in `scripts/report-manifest.mjs` and the `startup-diligence` workfl
 ## Simplified Chinese sibling
 
 Immediately after writing English, write the `.zh.yaml` sibling per `.github/references/zh-translation.md`.
+
+Do not create a Chinese sibling by copying the English file and only changing metadata. Start from the English structure, then translate every user-visible prose field before saving.
 
 Preserve exactly:
 

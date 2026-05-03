@@ -28,6 +28,7 @@ For each `01`–`08` artifact, verify:
 - Material sections, tables, figures, and callouts have local `claimRefs`.
 - Volatile critical facts are current/recent or explicitly listed as gaps.
 - Source diversity fits the domain skill.
+- The artifact shows domain reflection: selected domain-adaptive additions appear in sections, tables, figures, or evidence gaps rather than only satisfying the minimal `contract.yaml` shape.
 
 If evidence is empty, placeholder-like, or just enough to pass schema shape, stop and route back to the owning skill.
 

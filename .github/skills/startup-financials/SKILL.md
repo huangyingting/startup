@@ -13,6 +13,7 @@ Fourth analysis stage. This skill owns the financial and unit-economics chapter.
 - `01-company-snapshot.yaml`
 - `02-market-macro.yaml` and `03-competitive-benchmarking.yaml` when market, pricing, GTM, or competitor context affects interpretation.
 - `.github/references/analysis-skill-conventions.md`
+- `.github/references/zh-translation.md`
 
 ## Outputs
 
@@ -76,6 +77,8 @@ Infer the economic model, not the industry label.
 
 ## Completion check
 
+- The Simplified Chinese sibling translates every user-visible prose field per `.github/references/zh-translation.md`; it is not an English copy with only metadata preserved.
+- Domain reflection is explicit: identify the revenue/economic archetype(s), add supportable domain-specific unit-economics tables or figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
 - Official pricing is list pricing, not realized revenue or margin.
 - Every `null` unit-economics field needs a specific diligence request.
 - Scenario inputs must be labeled public, estimated, or unavailable.

@@ -28,6 +28,7 @@ Before writing artifacts:
 
 - Read `schemaPath` and `yamlSyntaxPath`.
 - Read `.github/references/evidence-ledger.md` before writing local evidence or consolidating `100-evidence-ledger.yaml`.
+- Read `.github/references/zh-translation.md` before writing any `.zh.yaml` artifact; Chinese siblings must translate user-visible prose, not merely mirror English content.
 - For analysis stages `01`–`08`, follow `.github/references/analysis-skill-conventions.md`.
 - For each analysis stage, follow that stage's `startup-*` skill as the chapter generation contract: required chapter content, required tables, required figures, evidence acquisition, and domain-adaptive additions live in the owning skill.
 
@@ -167,6 +168,8 @@ Reject thin work even if YAML parses:
 - count-filler tables or string-valued chart numbers.
 
 Do not stop because a chapter has reached the minimum floor. If credible evidence supports more rows, sections, figures, source diversity, or domain-specific treatment, expand the owning artifact before moving forward.
+
+Before accepting any `01`–`08` chapter, confirm the owning skill performed domain reflection: inferred the relevant domain archetype(s), added supportable domain-specific content beyond `contract.yaml`, and recorded evidence gaps where public evidence is insufficient.
 
 Before `startup-ledger`, inspect counts for sources, claims, tables, figures, sections, and gaps. If a stage misses the floor and the company is not genuinely obscure, return to that stage first.
 

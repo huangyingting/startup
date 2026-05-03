@@ -13,6 +13,7 @@ Seventh analysis stage. This skill owns the risk and regulatory chapter. It must
 - `01-company-snapshot.yaml`
 - `05-product-technology.yaml`, `06-customer-retention.yaml`, and `04-financial-unit-economics.yaml` when product/security, customer concentration, or financial exposure shapes risk.
 - `.github/references/analysis-skill-conventions.md`
+- `.github/references/zh-translation.md`
 
 ## Outputs
 
@@ -73,6 +74,8 @@ Infer the company's real failure modes.
 
 ## Completion check
 
+- The Simplified Chinese sibling translates every user-visible prose field per `.github/references/zh-translation.md`; it is not an English copy with only metadata preserved.
+- Domain reflection is explicit: identify the risk/regulatory archetype(s), add supportable domain-specific risk registers or transmission figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
 - Do not assign severity from intuition; cite evidence and mitigation for each top risk.
 - Where active litigation, regulatory posture, certifications, incidents, safety, or concentration cannot be confirmed, record the exact diligence path.
 - Include thesis-break triggers tied to measurable operating, regulatory, customer, financial, safety, or management events.

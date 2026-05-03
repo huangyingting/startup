@@ -14,6 +14,7 @@ First analysis stage. This skill owns the company introduction and snapshot chap
 - `yamlSyntaxPath`
 - `.github/references/analysis-skill-conventions.md`
 - `.github/references/evidence-ledger.md`
+- `.github/references/zh-translation.md`
 
 ## Outputs
 
@@ -76,6 +77,8 @@ Infer the company domain and operating model; add relevant snapshot rows/section
 ## Completion check
 
 - Both English and Simplified Chinese files parse and share `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
+- The Simplified Chinese sibling translates every user-visible prose field per `.github/references/zh-translation.md`; it is not an English copy with only metadata preserved.
+- Domain reflection is explicit: identify the company archetype(s), add supportable domain-specific snapshot fields beyond `contract.yaml`, and record gaps where public evidence is insufficient.
 - Every `claimRefs` resolves to local evidence before consolidation.
 - Timeline has enough dated entries or the gaps explain why not.
 - Unsupported cover metrics use `null` plus a concrete diligence path.
