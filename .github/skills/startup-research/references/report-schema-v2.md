@@ -290,7 +290,7 @@ block:
 ## Figure types
 
 ```yaml
-figureType: timeline | flow | decision-map | evidence-map | quadrant | positioning-map | bars | waterfall | matrix | stack | layered-lens | journey-map | causal-map | funnel | cohort | range | scorecard | scenario-tree | dependency-map | other
+figureType: timeline | flow | quadrant | positioning-map | bars | waterfall | matrix | stack | layered-lens | journey-map | funnel | cohort | range | scorecard | dependency-map | other
 figure.data fields: items | nodes | edges | points | columns | rows | series | layers | xAxis | yAxis
 ```
 
@@ -303,12 +303,8 @@ Universal rules:
 | Type | When to use it | Required data | Key constraints |
 |---|---|---|---|
 | `timeline` | Dated events on one axis (milestones, releases, regulatory steps). | `items[]` | Each item has `date` + `label`. |
-| `flow` | Linear or branching process flow. | `nodes[]` | Add `edges[]` to show direction; otherwise nodes render in declared order. |
-| `decision-map` | Decision → option → outcome tree. | `nodes[]` (+ `edges[]` recommended) | Edges show option → outcome paths. |
-| `evidence-map` | Source → claim relationships. | `nodes[]` (+ `edges[]` recommended) | Edges link sources to claims. |
-| `scenario-tree` | Branching scenarios from one root. | `nodes[]` (+ `edges[]` recommended) | Edges define scenario branches. |
-| `dependency-map` | Inputs → core dependency → impact. | `nodes[]` and `edges[]` (required) | Renderer stages by topological depth; without edges it collapses to one column. |
-| `causal-map` | Cause → mechanism → outcome chains. | `nodes[]` and `edges[]` (required) | Renderer stages by topological depth; without edges it collapses to one column. |
+| `flow` | Linear or branching process flow (also covers logic chain, bridge, decision tree, and scenario branches). | `nodes[]` | Add `edges[]` to show direction; otherwise nodes render in declared order. |
+| `dependency-map` | Inputs → core dependency → impact, or any cause → mechanism → outcome chain (also covers risk transmission, evidence → claim links, decision option trees). | `nodes[]` and `edges[]` (required) | Renderer stages by topological depth; without edges it collapses to one column. |
 | `quadrant` | Two-axis positioning of items (also covers scatter / distribution use cases). | `points[]` | Numeric `x`, `y`. |
 | `positioning-map` | Competitive / market positioning. | `points[]` | Numeric `x`, `y`. Use ordinal 0–10 scoring when source-backed numbers don't exist. |
 | `bars` | Compare quantities across categories (also covers single-driver sensitivity rankings). | `items[]` or `series[]` | Numeric `value` per item / series point. |
