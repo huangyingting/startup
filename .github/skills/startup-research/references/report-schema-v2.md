@@ -178,7 +178,7 @@ appendices:
     blocks: [block]
 bibliography:
   sourceRefs: [S001]
-disclaimer: string
+disclaimer: string                  # Required; non-empty.
 ```
 
 ## Summary card schema
@@ -199,12 +199,12 @@ recommendation: strong-buy | buy | track | research-more | avoid
 confidence: high | medium | low
 riskRating: low | moderate | significant | critical | unknown
 valuationStance: attractive | fair | stretched | expensive | unknown
-overallScore: number
+overallScore: number              # 0–10 ordinal score, one decimal place (e.g. 7.4); validator rejects values outside this range.
 sourceStats:
   sourcesRetained: number
-  claimsReviewed: number
-figureCount: number
-tableCount: number
+  claimsReviewed: number          # Must not exceed evidence ledger claims count.
+figureCount: number               # Must equal the number of figures in 91-full-report.yaml.
+tableCount: number                # Must equal the number of tables in 91-full-report.yaml.
 keyMetrics:
   valuationUsdM: number | null
   revenueRunRateUsdM: number | null
@@ -219,8 +219,8 @@ topStrengths: [string]
 topRisks: [string]
 unresolvedGaps: [string]
 reportFiles:
-  fullReport: 91-full-report.yaml
-  summaryCard: 92-summary-card.yaml
+  fullReport: 91-full-report.yaml   # Literal value; do not rename.
+  summaryCard: 92-summary-card.yaml # Literal value; do not rename.
 ```
 
 ## Reusable objects
@@ -231,20 +231,20 @@ source:
   publisher: string
   title: string
   url: string
-  date: YYYY-MM-DD | null
-  accessDate: YYYY-MM-DD
+  date: YYYY-MM-DD | null                          # null only when no publish/document date exists.
+  accessDate: YYYY-MM-DD                           # Required; never null — the date the source was reviewed.
   sourceType: sourceType
   reputationTier: high | medium | low
   independence: company | partner | customer | competitor | independent | unknown
-  topics: [string]
+  topics: [string]                                 # Non-empty; at least one topic.
   keyQuote: string | null
 
 claim:
   id: C001
-  statement: string
+  statement: string                                # Non-empty; one atomic fact per claim.
   claimType: claimType
   topic: string
-  sourceRefs: [S001]
+  sourceRefs: [S001]                               # May be empty only when claimType is open-question and corroboration is none.
   confidence: high | medium | low
   freshness: current | recent | historical | unknown
   corroboration: single-source | multi-source | conflicting | none
@@ -277,12 +277,12 @@ figure:
 block:
   type: paragraph | callout | table | figure | list | equation
   title: string | null
-  body: string | null
+  body: string | null              # Required (non-empty) when type is paragraph or callout.
   calloutType: investment-recommendation | key-insight | opportunity | risk-alert | final-recommendation | null
-  tableRef: T001 | null
-  figureRef: F001 | null
-  items: [string]
-  equation: string | null
+  tableRef: T001 | null            # Required when type is table.
+  figureRef: F001 | null           # Required when type is figure.
+  items: [string]                  # Required (non-empty) when type is list.
+  equation: string | null          # Required (non-empty) when type is equation.
   claimRefs: [C001]
 ```
 
@@ -324,5 +324,5 @@ Universal rules:
 | `bridge` | Two-end connection through intermediate steps. | `nodes[]` or `items[]` | Provide ordered nodes; renderer reuses `flow`. |
 | `journey-map` | Customer / user journey across surfaces. | `nodes[]` or `items[]` | Order = journey sequence. |
 | `logic-chain` | Inference chain (premise → premise → conclusion). | `nodes[]` | Renderer chains nodes in declared order. |
-| `scorecard` | Compact KPI / score grid. | `items[]` or `nodes[]` | Each entry has a `value` or `score`. |
+| `scorecard` | Compact KPI / score grid. | `items[]` or `nodes[]` | Each entry has a `value` or `score` (use 0–10 ordinal scoring unless source-backed numbers exist). |
 | `other` | Last resort. | none | Avoid; prefer a real type. |
