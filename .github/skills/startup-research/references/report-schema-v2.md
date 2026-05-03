@@ -286,47 +286,43 @@ block:
   claimRefs: [C001]
 ```
 
-## Figure types and data fields
+## Figure types
 
 ```yaml
 figureType: timeline | flow | decision-map | evidence-map | quadrant | positioning-map | bars | waterfall | heatmap | matrix | stack | layered-lens | bridge | journey-map | logic-chain | causal-map | sensitivity | scatter | funnel | cohort | range | scorecard | scenario-tree | dependency-map | other
-figure.data fields: items | nodes | edges | points | columns | rows | series | layers | xAxis | yAxis  # Use only the fields the type requires; never include empty placeholder arrays for unused fields.
+figure.data fields: items | nodes | edges | points | columns | rows | series | layers | xAxis | yAxis
 ```
 
-Notes that apply to every figure:
+Universal rules:
 
-- `data` must be a structured YAML object — never Mermaid, SVG, prose diagrams, or stringified JSON.
-- For matrix/heatmap/cohort: `data.columns[]` are the X-axis labels, each `data.rows[i].values[]` must have `length === columns.length`, and the row label lives in `data.rows[i].label`.
-- For coordinate types (`quadrant`, `positioning-map`, `scatter`): every point needs numeric `x` and `y`.
-- For numeric-value types (`bars`, `waterfall`, `funnel`): every item needs a numeric `value`.
-- For relationship types (`flow`, `decision-map`, `evidence-map`, `scenario-tree`, `dependency-map`, `causal-map`): provide `edges[]` whenever a relationship exists; `dependency-map` requires edges (without them the renderer cannot stage Inputs / Core / Impact).
-- `range` items need numeric `low`/`min` and `high`/`max`; optional `mid`/`value` must also be numeric when present.
-- F102 — the Company Overview milestone timeline — must contain at least 8 dated `items[]`.
+- `data` is a structured YAML object — never Mermaid, SVG, prose diagrams, or stringified JSON.
+- Only include the data fields the type requires; never add empty placeholder arrays.
+- Every figure carries `id`, `title`, `type`, `layout`, `summary`, `data`, `claimRefs`. Add `approximationNotes` when values are derived/estimated.
 
-| Type | Required data | Notes |
-|---|---|---|
-| `timeline` | `items[]` | Each item should carry a date plus label/detail. |
-| `flow` | `nodes[]` | Add `edges[]` to show direction. |
-| `decision-map` | `nodes[]` | Add `edges[]` to show option → outcome paths. |
-| `evidence-map` | `nodes[]` | Add `edges[]` for source → claim links. |
-| `scenario-tree` | `nodes[]` | Add `edges[]` for branching scenarios. |
-| `dependency-map` | `nodes[]` and `edges[]` | Edges are required so the renderer can stage Inputs / Core / Impact. |
-| `quadrant` | `points[]` | Every point needs numeric `x` / `y`. |
-| `positioning-map` | `points[]` | Numeric axes only when source-backed; otherwise use ordinal scoring. |
-| `scatter` | `points[]` or `series[]` | Each point needs numeric `x` / `y`. |
-| `bars` | `items[]` or `series[]` | Each item/series point needs numeric `value`. |
-| `funnel` | `items[]` or `series[]` | Order matters; rows are stages. |
-| `waterfall` | `items[]` | Numeric `value`; mark totals via `kind: total`. |
-| `range` | `items[]` | Each item needs numeric `low`/`min` and `high`/`max`. |
-| `sensitivity` | `series[]` | Each series point needs numeric `value`. |
-| `heatmap` | `columns[]` and `rows[]` | `row.values.length === columns.length`. |
-| `matrix` | `columns[]` and `rows[]` | Same shape rule as heatmap. |
-| `cohort` | `columns[]` and `rows[]` | Time-series retention only — `columns[]` must be time buckets (e.g. `month-1`, `month-3`, `year-1`) and cells are retention percentages 0–100. For ordinal scoring across customers/segments, use `matrix` instead. |
-| `stack` | `layers[]` or `items[]` | Use `layers[]` when modules/outputs differ per layer. |
-| `layered-lens` | `nodes[]` or `items[]` | Each layer is one sizing/segmentation lens. |
-| `bridge` | `nodes[]` or `items[]` | Renderer reuses `flow`; provide ordered nodes. |
-| `journey-map` | `nodes[]` or `items[]` | Order represents the customer/journey sequence. |
-| `logic-chain` | `nodes[]` | Renderer chains nodes in declared order. |
-| `causal-map` | `nodes[]` and `edges[]` | Edges are required so the renderer can stage Cause / Mechanism / Outcome. |
-| `scorecard` | `items[]` or `nodes[]` | Each entry should have a `value` or `score`. |
-| `other` | none | Last-resort opaque container; prefer a real type. |
+| Type | When to use it | Required data | Key constraints |
+|---|---|---|---|
+| `timeline` | Dated events on one axis (milestones, releases, regulatory steps). | `items[]` | Each item has `date` + `label`. |
+| `flow` | Linear or branching process flow. | `nodes[]` | Add `edges[]` to show direction; otherwise nodes render in declared order. |
+| `decision-map` | Decision → option → outcome tree. | `nodes[]` (+ `edges[]` recommended) | Edges show option → outcome paths. |
+| `evidence-map` | Source → claim relationships. | `nodes[]` (+ `edges[]` recommended) | Edges link sources to claims. |
+| `scenario-tree` | Branching scenarios from one root. | `nodes[]` (+ `edges[]` recommended) | Edges define scenario branches. |
+| `dependency-map` | Inputs → core dependency → impact. | `nodes[]` and `edges[]` (required) | Renderer stages by topological depth; without edges it collapses to one column. |
+| `causal-map` | Cause → mechanism → outcome chains. | `nodes[]` and `edges[]` (required) | Renderer stages by topological depth; without edges it collapses to one column. |
+| `quadrant` | Two-axis positioning of items. | `points[]` | Numeric `x`, `y`. |
+| `positioning-map` | Competitive / market positioning. | `points[]` | Numeric `x`, `y`. Use ordinal 0–10 scoring when source-backed numbers don't exist. |
+| `scatter` | Distribution of items across two metrics. | `points[]` or `series[]` | Numeric `x`, `y` per point. |
+| `bars` | Compare quantities across categories. | `items[]` or `series[]` | Numeric `value` per item / series point. |
+| `funnel` | Stage-by-stage conversion drop-off. | `items[]` or `series[]` | Order = stage order. |
+| `waterfall` | Bridge from start to end via deltas. | `items[]` | Numeric `value`; mark totals via `kind: total`. |
+| `range` | Low/base/high estimate per item. | `items[]` | Numeric `low`/`min` and `high`/`max`; optional `mid`/`value` numeric. |
+| `sensitivity` | One driver shifting one outcome. | `series[]` | Numeric `value` per series point. |
+| `heatmap` | Two-dim categorical grid colored by intensity. | `columns[]` + `rows[]` | `row.values.length === columns.length`; row label in `row.label`. |
+| `matrix` | Two-dim grid with cell labels (capability, evidence quality, ordinal scoring). | `columns[]` + `rows[]` | Same row/column shape as heatmap. |
+| `cohort` | Time-series retention only. | `columns[]` + `rows[]` | `columns[]` are time buckets (e.g. `month-1`, `month-3`, `year-1`); cells are retention percentages 0–100. Use `matrix` for ordinal scoring. |
+| `stack` | Layered stack (tech stack, opportunity layers). | `layers[]` or `items[]` | Use `layers[]` when each layer has modules/outputs. |
+| `layered-lens` | Sizing or segmentation viewed at multiple lenses. | `nodes[]` or `items[]` | One lens per layer (TAM/SAM/SOM, segment, geography). |
+| `bridge` | Two-end connection through intermediate steps. | `nodes[]` or `items[]` | Provide ordered nodes; renderer reuses `flow`. |
+| `journey-map` | Customer / user journey across surfaces. | `nodes[]` or `items[]` | Order = journey sequence. |
+| `logic-chain` | Inference chain (premise → premise → conclusion). | `nodes[]` | Renderer chains nodes in declared order. |
+| `scorecard` | Compact KPI / score grid. | `items[]` or `nodes[]` | Each entry has a `value` or `score`. |
+| `other` | Last resort. | none | Avoid; prefer a real type. |

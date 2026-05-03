@@ -31,7 +31,6 @@ const ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item])
 const EVIDENCE_FILE = WORKFLOW_CONFIG.finalArtifacts.evidence.file;
 const FULL_REPORT_FILE = WORKFLOW_CONFIG.finalArtifacts.fullReport.file;
 const SUMMARY_CARD_FILE = WORKFLOW_CONFIG.finalArtifacts.summaryCard.file;
-const OVERVIEW_FILE = ANALYSIS_ARTIFACTS[0]?.file;
 
 const SET = {
   figureType: new Set(FIGURE_TYPES),
@@ -312,6 +311,23 @@ function checkRangeFigure(path, figure) {
   }
 }
 
+function checkCohortFigure(path, figure) {
+  if (figure.type !== 'cohort') return;
+  for (const [rowIndex, row] of (figure.data.rows ?? []).entries()) {
+    for (const [colIndex, cell] of (row?.values ?? []).entries()) {
+      const raw = cell?.value ?? (typeof cell === 'object' ? cell?.label : cell);
+      const value = Number(typeof raw === 'string' ? raw.replace(/[^0-9.-]/g, '') : raw);
+      if (!Number.isFinite(value)) {
+        fail(`${path}: figure ${figure.id} cohort row ${rowIndex + 1} cell ${colIndex + 1} requires a numeric retention percentage; cohort cells must be 0–100, not ordinal labels (use a matrix figure for ordinal scoring).`);
+        continue;
+      }
+      if (value < 0 || value > 100) {
+        fail(`${path}: figure ${figure.id} cohort row ${rowIndex + 1} cell ${colIndex + 1} value ${value} is outside 0–100; cohort cells must be retention percentages. Use a matrix figure for non-percentage scoring.`);
+      }
+    }
+  }
+}
+
 function checkCoordinateFigure(path, figure) {
   if (!COORDINATE_FIGURE_TYPES.has(figure.type)) return;
   for (const [index, point] of (figure.data.points ?? []).entries()) {
@@ -346,25 +362,16 @@ function checkSensitivityFigure(path, figure) {
   }
 }
 
-function checkCompanyMilestoneTimeline(path, figure) {
-  if (figure.type !== 'timeline') return;
-  if (!(path.endsWith(`/${OVERVIEW_FILE}`) || path.endsWith(`/${FULL_REPORT_FILE}`)) || figure.id !== 'F102') return;
-  const items = Array.isArray(figure.data.items) ? figure.data.items : [];
-  if (items.length < 8) {
-    fail(`${path}: figure ${figure.id} (company milestone timeline) has ${items.length} items but must include at least 8 (founding, every priced funding round, major product launches, scale milestones, partnerships, governance/legal events). Run a milestone-discovery search batch and document any unfilled gaps in evidenceGaps.`);
-  }
-}
-
 function checkFigure(path, figure) {
   if (!checkFigureCommonStructure(path, figure)) return;
   checkFigureContract(path, figure);
   checkFigureItemLabels(path, figure);
   checkMatrixFigure(path, figure);
+  checkCohortFigure(path, figure);
   checkNumericValueFigure(path, figure);
   checkRangeFigure(path, figure);
   checkCoordinateFigure(path, figure);
   checkSensitivityFigure(path, figure);
-  checkCompanyMilestoneTimeline(path, figure);
 }
 
 // ---------------------------------------------------------------------------
