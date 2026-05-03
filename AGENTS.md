@@ -18,7 +18,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 - This repo generates startup diligence reports as structured YAML and renders them with an Astro static site.
 - Reports live in `reports/<YYYYMMDDHHmmss>-<company-slug>/` and are indexed by `reports/_index.yaml`.
-- The canonical report schema is `.github/schemas/report-v2.md`.
+- The canonical report schema reference is `.github/references/report-schema-v2.md`.
 - Reports are generated as English YAML artifacts.
 
 ## Canonical machine sources
@@ -35,8 +35,8 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (overview, market analysis, competitors, financials, product tech, customers, risks, valuation, evidence, full report, summary card). The analysis skills are the single source for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
 - `scripts/report-manifest.mjs` — artifact identity, chapter order, loader keys, preferred figure types, and numeric depth floors. Integration checks live in `scripts/check-reports-content.mjs` and `website/scripts/check-reports.mjs`.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
-- `.github/references/` — shared YAML syntax and analysis rules.
-- `.github/schemas/report-v2.md` — canonical schema and rendering contract.
+- `.github/references/` — shared YAML syntax, analysis rules, and report schema reference.
+- `.github/references/report-schema-v2.md` — canonical report schema and rendering contract.
 - `scripts/figure-registry.mjs` — central native figure type/data contract; consumed by validators and the renderer.
 - `scripts/evidence-registry.mjs` — central evidence enums (claim types, topics, freshness, source types, reputation tiers, independence).
 - `scripts/` — report preparation, index, duplicate checks, evidence consolidation, and content checks.
@@ -96,7 +96,7 @@ When adding a new native figure/chart type:
 When adding a new evidence topic, source type, or other ledger enum:
 
 1. Update `scripts/evidence-registry.mjs`.
-2. Update `.github/schemas/report-v2.md` if the schema doc lists the enum.
+2. Update `.github/references/report-schema-v2.md` if the schema reference lists the enum.
 3. Run `npm run validate`.
 
 ## Website notes

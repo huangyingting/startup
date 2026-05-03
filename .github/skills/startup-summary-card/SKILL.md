@@ -13,7 +13,7 @@ Final card stage. This skill produces the English `92-summary-card.yaml` from th
 - `91-full-report.yaml`
 - `90-evidence.yaml`
 - Completed `01`–`08` artifacts for sanity checks
-- `schemaPath`
+- `.github/references/report-schema-v2.md`
 
 ## Output
 

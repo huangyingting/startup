@@ -12,21 +12,22 @@ The final rendered report must include cover metrics, company introduction, exec
 
 ## Invocation contract
 
-Resolve these inputs before running any chapter skill:
+Resolve these run inputs before setup:
 
 - `companyName`: required.
 - `companyUrl`: optional identity anchor, never proof by itself.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
 - `currentDate`: actual session date in `YYYY-MM-DD`; use as the evidence freshness anchor, search-query recency anchor, and default `runDate` unless the user requests a historical report.
-- `duplicateCheck`: run `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before creating or writing the report folder. Exit `2` means duplicate risk; stop unless the user explicitly requested a refresh/update of an existing company.
-- `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
-- `schemaPath`: absolute path to `.github/schemas/report-v2.md`.
-- `yamlRulesPath`: absolute path to `.github/references/yaml-rules.md`.
 - Prompt-derived run requirements: infer any audience, investment lens, required topics, metrics, competitors/comparables, figures, source constraints, or diligence questions from the user's prompt. These requirements are run-local and section-owned; satisfy them in the relevant artifacts or record an evidence gap.
+
+Before running any chapter skill:
+
+- Run `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before creating or writing the report folder. Exit `2` means duplicate risk; stop unless the user explicitly requested a refresh/update of an existing company.
+- Create the report folder with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and use the printed absolute path as `reportFolder` for all artifacts.
 
 Before writing artifacts:
 
-- Read `schemaPath` and `yamlRulesPath`.
+- Read `.github/references/report-schema-v2.md` and `.github/references/yaml-rules.md`.
 - For analysis stages `01`–`08`, follow `.github/references/analysis-rules.md`.
 - For each analysis stage, follow that stage's `startup-*` skill as the chapter requirements source: required chapter content, required tables, required figures, evidence acquisition, and domain-adaptive additions live in the owning skill.
 

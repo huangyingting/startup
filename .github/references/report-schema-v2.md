@@ -1,6 +1,6 @@
-# Report v2 schema
+# Report schema v2
 
-Canonical schema and rendering contract for `report-v2`.
+Canonical report schema and rendering contract for `report-v2`.
 
 The schema supports investor-grade English startup diligence reports with claim-level evidence traceability.
 
@@ -127,8 +127,10 @@ coverage:
   sourcesRetained: number
   claimsCreated: number
   evidenceQuality: high|medium|low|unknown
+  sourceDiversityNotes: string|null
   deduplicationNotes: string
   recencyNotes: string
+  coverageGaps: [string]
 sources:
   - id: S001
     publisher: string
@@ -191,17 +193,7 @@ figures:
     type: timeline|flow|decision-map|evidence-map|quadrant|positioning-map|bars|waterfall|heatmap|matrix|stack|layered-lens|bridge|journey-map|logic-chain|causal-map|sensitivity|scatter|funnel|cohort|range|scorecard|scenario-tree|dependency-map|other
     layout: compact|standard|wide
     summary: string
-    data:
-      items: []
-      nodes: []
-      edges: []
-      points: []
-      columns: []
-      rows: []
-      series: []
-      layers: []
-      xAxis: string|null
-      yAxis: string|null
+    data: {}
     approximationNotes: string|null
     claimRefs: [C001]
 callouts:
@@ -244,7 +236,9 @@ Notes:
 
 - Before consolidation, analysis artifacts may include `localEvidence`.
 - Consolidation rewrites public `claimRefs` to canonical IDs and may remove `localEvidence`.
+- `data: {}` is a placeholder in the skeleton; actual figures must populate only the data fields required by their `type`.
 - Do not include empty figure data arrays that are not used by the figure type.
+- `open-question` claims must use `sourceRefs: []` and `corroboration: none`.
 - See `scripts/figure-registry.mjs` for figure data contracts.
 
 ## `91-full-report.yaml`
@@ -258,7 +252,7 @@ company:
   name: string
 reportMeta:
   title: string
-  subtitle: string
+  subtitle: string|null
   generatedAt: ISO-8601 string
   schemaVersion: report-v2
   recommendation: strong-buy|buy|track|research-more|avoid
@@ -350,7 +344,7 @@ runDate: YYYY-MM-DD
 company:
   name: string
 title: string
-subtitle: string
+subtitle: string|null
 headline: string
 recommendation: strong-buy|buy|track|research-more|avoid
 confidence: high|medium|low
@@ -392,11 +386,11 @@ Renderer data contracts:
 | Type | Required populated data | Notes |
 |---|---|---|
 | `timeline` | `items[]` | item: `date`, `label`, `detail`, optional `tone` |
-| `flow` | `nodes[]` or `edges[]` | node/edge labels and descriptions |
-| `decision-map` | `nodes[]` | decision nodes, tradeoffs, asks |
-| `evidence-map` | `nodes[]` | evidence nodes with source strength |
-| `scenario-tree` | `nodes[]` or `edges[]` | scenario branches and likelihood |
-| `dependency-map` | `nodes[]` or `edges[]` | dependency nodes and edges |
+| `flow` | `nodes[]` | edge labels are optional and use `edges[]` when present |
+| `decision-map` | `nodes[]` | decision nodes, tradeoffs, asks; `edges[]` optional |
+| `evidence-map` | `nodes[]` | evidence nodes with source strength; `edges[]` optional |
+| `scenario-tree` | `nodes[]` | scenario branches and likelihood; `edges[]` optional |
+| `dependency-map` | `nodes[]` | dependency nodes; `edges[]` optional |
 | `quadrant` | `points[]` | Four-zone threshold matrix for high/low interpretation; `label`, numeric `x`, numeric `y`, optional `tone`; optional `xAxis`, `yAxis` |
 | `positioning-map` | `points[]` | Competitive map; `label`, numeric `x`, numeric `y`, optional `tone`; optional `xAxis`, `yAxis` |
 | `scatter` | `points[]` or `series[]` | numeric `x`, `y` |
@@ -413,7 +407,7 @@ Renderer data contracts:
 | `bridge` | `nodes[]` or `items[]` | bridge components |
 | `journey-map` | `nodes[]` or `items[]` | journey stages |
 | `logic-chain` | `nodes[]` | reasoning chain |
-| `causal-map` | `nodes[]` or `edges[]` | causal nodes/edges |
+| `causal-map` | `nodes[]` | causal nodes; `edges[]` optional |
 | `scorecard` | `items[]` or `nodes[]` | scored dimensions |
 | `other` | none | Avoid unless renderer intentionally handles generic data |
 

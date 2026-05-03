@@ -87,7 +87,7 @@ Every artifact is constrained by skill requirements, central schema rules, and b
 
 ```mermaid
 flowchart LR
-  A[Skill requirements<br/>.github/skills/*.md] --> B[Schema rules<br/>.github/schemas/<br/>report-v2.md]
+  A[Skill requirements<br/>.github/skills/*.md] --> B[Schema rules<br/>.github/references/<br/>report-schema-v2.md]
   B --> C[Build-time lints<br/>scripts/check-reports-content.mjs<br/>website/scripts/check-reports.mjs]
   C --> D{Pass?}
   D -- yes --> Ship([Astro build OK])
@@ -152,7 +152,7 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `reports/` — generated report folders and `_index.yaml` catalog.
 - `AGENTS.md` — repo-wide agent operating rules; the full report workflow lives in `.github/skills/startup-research/SKILL.md`.
 - `.github/skills/` — stage skills used by the workflow.
-- `.github/schemas/report-v2.md` — canonical YAML schema and rendering contract.
+- `.github/references/report-schema-v2.md` — canonical YAML schema and rendering contract.
 - `.github/references/` — shared YAML syntax and analysis rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
 - `scripts/check-company-dedup.mjs` — pre-stage duplicate-risk check for matching company names or domains.

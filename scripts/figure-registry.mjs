@@ -33,19 +33,19 @@ export const FIGURE_DATA_FIELDS = ['items', 'nodes', 'edges', 'points', 'columns
 export const FIGURE_ARRAY_FIELDS = ['items', 'nodes', 'edges', 'points', 'columns', 'rows', 'series', 'layers'];
 
 // FIGURE_CONTRACTS encodes required `data.*` array fields per figure type.
-// Outer array = alternative requirement sets (figure is valid if ANY set is satisfied).
-// Inner array = fields that must ALL be populated together for that alternative.
+// Outer array = requirement groups that must all be satisfied.
+// Inner array = exactly one populated field from that group is required.
 // Examples:
 //   timeline: [['items']]              -> requires data.items
-//   bars:     [['items', 'series']]    -> requires data.items AND data.series
-//   flow:     [['nodes'], ['edges']]   -> requires data.nodes OR data.edges (either alone is valid)
+//   bars:     [['items', 'series']]    -> requires exactly one of data.items or data.series
+//   heatmap:  [['columns'], ['rows']]  -> requires data.columns and data.rows
 export const FIGURE_CONTRACTS = {
   timeline: [['items']],
-  flow: [['nodes'], ['edges']],
+  flow: [['nodes']],
   'decision-map': [['nodes']],
   'evidence-map': [['nodes']],
-  'scenario-tree': [['nodes'], ['edges']],
-  'dependency-map': [['nodes'], ['edges']],
+  'scenario-tree': [['nodes']],
+  'dependency-map': [['nodes']],
   quadrant: [['points']],
   'positioning-map': [['points']],
   bars: [['items', 'series']],
@@ -60,7 +60,7 @@ export const FIGURE_CONTRACTS = {
   bridge: [['nodes', 'items']],
   'journey-map': [['nodes', 'items']],
   'logic-chain': [['nodes']],
-  'causal-map': [['nodes'], ['edges']],
+  'causal-map': [['nodes']],
   sensitivity: [['series']],
   scatter: [['points', 'series']],
   scorecard: [['items', 'nodes']],

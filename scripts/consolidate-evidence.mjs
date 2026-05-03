@@ -189,6 +189,7 @@ function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
       sourcesConsidered: Math.max(sourcesConsidered, sources.length),
       sourcesRetained: sources.length,
       claimsCreated: claims.length,
+      evidenceQuality: inferEvidenceQuality(sources, claims),
       sourceDiversityNotes: null,
       deduplicationNotes: `Consolidated from ${docs.size} artifacts; sources deduplicated by canonical URL or publisher/title/date fallback.`,
       recencyNotes,
@@ -198,5 +199,18 @@ function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
     claims,
     evidenceGaps,
   };
+}
+
+function inferEvidenceQuality(sources, claims) {
+  if (!sources.length || !claims.length) return 'unknown';
+  const independentCount = sources.filter((source) => source.independence === 'independent').length;
+  const highReputationCount = sources.filter((source) => source.reputationTier === 'high').length;
+  const multiSourceClaims = claims.filter((claim) => claim.corroboration === 'multi-source').length;
+  const independentShare = independentCount / sources.length;
+  const highReputationShare = highReputationCount / sources.length;
+  const multiSourceShare = multiSourceClaims / claims.length;
+  if (sources.length >= 30 && claims.length >= 50 && independentShare >= 0.2 && highReputationShare >= 0.35 && multiSourceShare >= 0.2) return 'high';
+  if (sources.length >= 10 && claims.length >= 20 && (independentShare >= 0.1 || highReputationShare >= 0.25)) return 'medium';
+  return 'low';
 }
 

@@ -12,7 +12,7 @@ Final report assembly stage. This skill produces the English `91-full-report.yam
 
 - `90-evidence.yaml`
 - All `01`–`08` English artifacts
-- `schemaPath`
+- `.github/references/report-schema-v2.md`
 
 ## Output
 
