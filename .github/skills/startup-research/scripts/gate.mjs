@@ -66,9 +66,9 @@ function figureDataPointCount(figure) {
     data.edges?.length ?? 0,
     data.layers?.length ?? 0,
     data.series?.length ?? 0,
+    data.columns?.length ?? 0,
     data.rows?.length ?? 0,
     data.points?.length ?? 0,
-    data.branches?.length ?? 0,
   );
 }
 

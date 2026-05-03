@@ -34,7 +34,7 @@ For each chapter `order` from the loader:
 
 1. Load the chapter packet:
    `node .github/skills/startup-research/scripts/chapter.mjs --order <n> --format json --include-workflow`
-2. Use only `packet.chapter` as the chapter brief: `file`, `artifact`, `title`, `mission`, `contentRequirements`, `requiredTables`, `requiredFigures`, `preferredFigureTypes`, `evidenceStrategy`, and `gate`.
+2. Use only `packet.chapter` as the chapter brief: `file`, `artifact`, `title`, `mission`, `optionalContext`, `contentRequirements`, `requiredTables`, `requiredFigures`, `preferredFigureTypes`, `evidenceStrategy`, `qualityBar`, and `gate`.
 3. Generate targeted search questions from the packet's content and output requirements. Use `currentDate` in searches for volatile facts so results can reflect the latest funding, valuation, customers, pricing, legal, regulatory, outage, or product status.
 4. Use `web_search` or available search tools to discover relevant facts and URLs, then review retained direct URLs with `fetch-url`:
    `node .github/skills/fetch-url/scripts/fetch.mjs <url> --text-only`

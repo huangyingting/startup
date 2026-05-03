@@ -41,11 +41,11 @@ function checkDuplicateRisk({ companyName, website, indexPath, allowDuplicate })
   });
   if (!matches.length) return;
 
-  console.error('[create-report-run] duplicate-risk: high');
+  console.error('[new] duplicate-risk: high');
   for (const match of matches) {
     console.error(`  - ${match.companyName ?? match.slug} (${match.path})`);
   }
-  console.error('[create-report-run] stop unless this is an intentional refresh/update; pass --allow-duplicate to override.');
+  console.error('[new] stop unless this is an intentional refresh/update; pass --allow-duplicate to override.');
   process.exit(2);
 }
 

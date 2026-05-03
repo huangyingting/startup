@@ -28,12 +28,12 @@ if (!args.folder) {
 const reportFolder = resolve(args.folder);
 const docs = loadAnalysisDocs(reportFolder);
 if (!docs.size) {
-  console.error(`[build-evidence-ledger] no report artifacts found in ${reportFolder}`);
+  console.error(`[ledger] no report artifacts found in ${reportFolder}`);
   process.exit(1);
 }
 for (const downstream of DOWNSTREAM_FILES) {
   if (existsSync(join(reportFolder, downstream))) {
-    console.warn(`[build-evidence-ledger] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run full-report and summary-card assembly after ledger rebuild.`);
+    console.warn(`[ledger] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run full-report and summary-card assembly after ledger rebuild.`);
     break;
   }
 }
@@ -46,7 +46,7 @@ for (const [file, doc] of docs) {
   writeYaml(join(reportFolder, file), rewrite(doc, file, claimIds));
 }
 
-console.log(`[build-evidence-ledger] wrote ${join(reportFolder, EVIDENCE_FILE)} (${sources.length} sources, ${claims.length} claims)`);
+console.log(`[ledger] wrote ${join(reportFolder, EVIDENCE_FILE)} (${sources.length} sources, ${claims.length} claims)`);
 
 // ---------------------------------------------------------------------------
 

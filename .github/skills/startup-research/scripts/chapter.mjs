@@ -65,7 +65,6 @@ function compactChapter(chapter) {
     requiredFigures: chapter.requiredFigures ?? [],
     preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? chapter.preferredFigureTypes ?? [],
     evidenceStrategy: chapter.evidenceStrategy ?? [],
-    domainAdaptiveAdditions: chapter.domainAdaptiveAdditions ?? [],
     qualityBar: chapter.qualityBar ?? [],
     gate: chapter.gate,
   };
@@ -190,8 +189,6 @@ function printPacketMarkdown(packet) {
   console.log(listItems(chapter.preferredFigureTypes));
   console.log('\n## Evidence strategy\n');
   console.log(listItems(chapter.evidenceStrategy));
-  console.log('\n## Domain-adaptive additions\n');
-  console.log(listItems(chapter.domainAdaptiveAdditions));
   console.log('\n## Quality bar\n');
   console.log(listItems(chapter.qualityBar));
   console.log('\n## Gate\n');
@@ -223,7 +220,7 @@ function main() {
 
   const chapter = selectChapter(config, args);
   if (!chapter) {
-    console.error('[load-chapter] no chapter matched the provided selector');
+    console.error('[chapter] no chapter matched the provided selector');
     process.exit(1);
   }
   const packet = buildPacket(config, chapter);
