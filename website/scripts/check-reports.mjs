@@ -43,7 +43,7 @@ const FIGURE_ALLOWED_POPULATED_MAP = new Map(
   Object.entries(FIGURE_ALLOWED_POPULATED_FIELDS).map(([type, fields]) => [type, new Set(fields)])
 );
 const COORDINATE_FIGURE_TYPES = new Set(['quadrant', 'positioning-map']);
-const NUMERIC_VALUE_FIGURE_TYPES = new Set(['bars', 'waterfall', 'funnel']);
+const NUMERIC_VALUE_FIGURE_TYPES = new Set(['bar', 'waterfall', 'funnel']);
 const MATRIX_FIGURE_TYPES = new Set(['matrix', 'cohort']);
 
 const failures = [];

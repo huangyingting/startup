@@ -3,17 +3,17 @@ export const FIGURE_TYPES = [
   'flow',
   'quadrant',
   'positioning-map',
-  'bars',
+  'bar',
   'waterfall',
   'matrix',
   'stack',
-  'layered-lens',
+  'pyramid',
   'journey-map',
   'funnel',
   'cohort',
   'range',
   'scorecard',
-  'dependency-map',
+  'dag',
   'other',
 ];
 
@@ -28,22 +28,22 @@ export const FIGURE_ARRAY_FIELDS = ['items', 'nodes', 'edges', 'points', 'column
 // Inner array = exactly one populated field from that group is required.
 // Examples:
 //   timeline: [['items']]              -> requires data.items
-//   bars:     [['items', 'series']]    -> requires exactly one of data.items or data.series
+//   bar:      [['items', 'series']]    -> requires exactly one of data.items or data.series
 //   matrix:   [['columns'], ['rows']]  -> requires data.columns and data.rows
 export const FIGURE_CONTRACTS = {
   timeline: [['items']],
   flow: [['nodes']],
-  'dependency-map': [['nodes'], ['edges']],
+  dag: [['nodes'], ['edges']],
   quadrant: [['points']],
   'positioning-map': [['points']],
-  bars: [['items', 'series']],
+  bar: [['items', 'series']],
   funnel: [['items', 'series']],
   waterfall: [['items']],
   range: [['items']],
   matrix: [['columns'], ['rows']],
   cohort: [['columns'], ['rows']],
   stack: [['layers', 'items']],
-  'layered-lens': [['nodes', 'items']],
+  pyramid: [['nodes', 'items']],
   'journey-map': [['nodes', 'items']],
   scorecard: [['items', 'nodes']],
 };
@@ -51,17 +51,17 @@ export const FIGURE_CONTRACTS = {
 export const FIGURE_ALLOWED_POPULATED_FIELDS = {
   timeline: ['items'],
   flow: ['nodes', 'edges'],
-  'dependency-map': ['nodes', 'edges'],
+  dag: ['nodes', 'edges'],
   quadrant: ['points'],
   'positioning-map': ['points'],
-  bars: ['items', 'series'],
+  bar: ['items', 'series'],
   funnel: ['items', 'series'],
   waterfall: ['items'],
   range: ['items'],
   matrix: ['columns', 'rows'],
   cohort: ['columns', 'rows'],
   stack: ['layers', 'items'],
-  'layered-lens': ['nodes', 'items'],
+  pyramid: ['nodes', 'items'],
   'journey-map': ['nodes', 'items'],
   scorecard: ['items', 'nodes'],
   other: [],

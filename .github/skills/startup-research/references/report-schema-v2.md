@@ -290,7 +290,7 @@ block:
 ## Figure types
 
 ```yaml
-figureType: timeline | flow | quadrant | positioning-map | bars | waterfall | matrix | stack | layered-lens | journey-map | funnel | cohort | range | scorecard | dependency-map | other
+figureType: timeline | flow | quadrant | positioning-map | bar | waterfall | matrix | stack | pyramid | journey-map | funnel | cohort | range | scorecard | dag | other
 figure.data fields: items | nodes | edges | points | columns | rows | series | layers | xAxis | yAxis
 ```
 
@@ -304,17 +304,17 @@ Universal rules:
 |---|---|---|---|
 | `timeline` | Dated events on one axis (milestones, releases, regulatory steps). | `items[]` | Each item has `date` + `label`. |
 | `flow` | Linear or branching process flow (also covers logic chain, bridge, decision tree, and scenario branches). | `nodes[]` | Add `edges[]` to show direction; otherwise nodes render in declared order. |
-| `dependency-map` | Inputs → core dependency → impact, or any cause → mechanism → outcome chain (also covers risk transmission, evidence → claim links, decision option trees). | `nodes[]` and `edges[]` (required) | Renderer stages by topological depth; without edges it collapses to one column. |
+| `dag` | Directed acyclic graph: inputs → core dependency → impact, or any cause → mechanism → outcome chain (also covers risk transmission, evidence → claim links, decision option trees). | `nodes[]` and `edges[]` (required) | Renderer stages by topological depth; without edges it collapses to one column. |
 | `quadrant` | Two-axis positioning of items (also covers scatter / distribution use cases). | `points[]` | Numeric `x`, `y`. |
 | `positioning-map` | Competitive / market positioning. | `points[]` | Numeric `x`, `y`. Use ordinal 0–10 scoring when source-backed numbers don't exist. |
-| `bars` | Compare quantities across categories (also covers single-driver sensitivity rankings). | `items[]` or `series[]` | Numeric `value` per item / series point. |
+| `bar` | Compare quantities across categories (also covers single-driver sensitivity rankings). | `items[]` or `series[]` | Numeric `value` per item / series point. |
 | `funnel` | Stage-by-stage conversion drop-off. | `items[]` or `series[]` | Order = stage order. |
 | `waterfall` | Bridge from start to end via deltas. | `items[]` | Numeric `value`; mark totals via `kind: total`. |
 | `range` | Low/base/high estimate per item. | `items[]` | Numeric `low`/`min` and `high`/`max`; optional `mid`/`value` numeric. |
 | `matrix` | Two-dim grid with cell labels (capability, evidence quality, risk heatmap, ordinal scoring). | `columns[]` + `rows[]` | `row.values.length === columns.length`; row label in `row.label`. Cell `tone` drives discrete color. |
 | `cohort` | Time-series retention only. | `columns[]` + `rows[]` | `columns[]` are time buckets (e.g. `month-1`, `month-3`, `year-1`); cells are retention percentages 0–100. Use `matrix` for ordinal scoring. |
 | `stack` | Layered stack (tech stack, opportunity layers). | `layers[]` or `items[]` | Use `layers[]` when each layer has modules/outputs. |
-| `layered-lens` | Sizing or segmentation viewed at multiple lenses. | `nodes[]` or `items[]` | One lens per layer (TAM/SAM/SOM, segment, geography). |
+| `pyramid` | Nested narrowing levels for sizing or segmentation (TAM/SAM/SOM, segment, geography). | `nodes[]` or `items[]` | One level per layer; renderer draws each level slightly narrower than the one below. |
 | `journey-map` | Customer / user journey across surfaces. | `nodes[]` or `items[]` | Order = journey sequence. |
 | `scorecard` | Compact KPI / score grid. | `items[]` or `nodes[]` | Each entry has a `value` or `score` (use 0–10 ordinal scoring unless source-backed numbers exist). |
 | `other` | Last resort. | none | Avoid; prefer a real type. |

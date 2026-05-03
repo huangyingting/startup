@@ -248,7 +248,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       renderWrappedText(text, d, { maxChars: 19, maxLines: 2, lineHeight: chartFont.lineHeight.tight });
     }));
 
-  const renderDependencyMap = (element, payload) => {
+  const renderDag = (element, payload) => {
     const nodes = arr(payload.data.nodes).map((node, index) => ({ ...node, _key: node.id ?? node.label ?? String(index + 1), _index: index }));
     const edges = arr(payload.data.edges).map((edge, index) => ({ ...edge, _edgeIndex: index, from: edge.from ?? edge.source, to: edge.to ?? edge.target }));
     if (!nodes.length) return;
@@ -713,7 +713,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail, arr(d.modules).length ? `Modules: ${arr(d.modules).join(', ')}` : '', arr(d.outputs).length ? `Outputs: ${arr(d.outputs).join(', ')}` : '']));
   };
 
-  const renderLayeredLens = (element, payload) => {
+  const renderPyramid = (element, payload) => {
     const items = normalizedItems(payload.data);
     // Probe container width up front so we can compute per-layer text wrapping
     // before allocating the SVG canvas. We need final card heights to set
@@ -803,7 +803,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     groups.each(function(d) { addTitle(d3.select(this), `${d.label}: ${fullValueLabel(d)}${d.detail ? ` — ${d.detail}` : ''}`); });
   };
 
-  const renderBars = (element, payload) => {
+  const renderBar = (element, payload) => {
     const items = arr(payload.data.items).length ? arr(payload.data.items) : arr(arr(payload.data.series)[0]?.points);
     const { svg, width, height } = svgBase(element, Math.max(260, items.length * 42 + 78));
     const margin = { top: 18, right: 112, bottom: 38, left: Math.min(220, Math.max(152, Math.max(...items.map((item) => String(item.label ?? '').length), 8) * 7.5)) };
@@ -1510,18 +1510,18 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     timeline: renderTimeline,
     flow: renderFlow,
     stack: renderStack,
-    'layered-lens': renderLayeredLens,
+    pyramid: renderPyramid,
     'journey-map': renderJourneyMap,
     scorecard: renderScorecard,
     waterfall: renderWaterfall,
     funnel: renderFunnel,
     range: renderRange,
-    bars: renderBars,
+    bar: renderBar,
     matrix: renderHeatmap,
     cohort: renderCohort,
     quadrant: renderQuadrant,
     'positioning-map': renderPositioningMap,
-    'dependency-map': renderDependencyMap,
+    dag: renderDag,
   };
 
   const normalizeRenderedTypography = (element) => {
@@ -1583,7 +1583,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
   :global(.d3-chart-tooltip strong) { display: block; margin-bottom: 0.05rem; font-family: var(--font-display); font-size: calc(var(--tooltip-font) * 1.08); line-height: 1.18; color: var(--claret); }
   :global(.d3-chart-tooltip span) { display: block; color: var(--caption-gray); }
   :global(.d3-chart-tooltip span + span) { padding-top: 0.12rem; border-top: 1px solid color-mix(in srgb, var(--rule) 62%, transparent); }
-  .chart-bars, .chart-quadrant, .chart-matrix { min-height: 0; }
+  .chart-bar, .chart-quadrant, .chart-matrix { min-height: 0; }
   .figure-fallback { border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); padding: var(--space-4); }
   .figure-fallback strong { display: block; margin-bottom: var(--space-2); font-family: var(--font-display); font-size: var(--chart-fs-body); font-weight: var(--chart-fw-strong); }
   .figure-fallback p { margin: 0; color: var(--caption-gray); font-size: var(--chart-fs-body); line-height: var(--chart-leading-body); }

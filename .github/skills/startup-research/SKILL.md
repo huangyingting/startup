@@ -39,7 +39,7 @@ For each chapter `order` from the loader:
 4. Use `web_search` or available search tools to discover relevant facts and URLs, then review retained direct URLs with `fetch-url`:
    `node .github/skills/fetch-url/scripts/fetch.mjs <url> --text-only`
 5. Convert reviewed evidence into `localEvidence.researchQuestions[]` (the search/diligence questions you ran), `localEvidence.sources[]`, `localEvidence.claims[]`, and `localEvidence.evidenceGaps[]`.
-6. For each entry in `requiredFigures`, check whether the data you actually collected satisfies the figure type's data contract (e.g. `dependency-map` needs `edges`, `cohort` needs time-bucket retention percentages 0–100, `range` needs comparable units across rows). If it does, write the figure into the chapter YAML; if it does not, omit the figure and write the same content as a new table or extra rows in an existing table, then note the substitution in the table's `notes` or in the chapter's `evidenceGaps`.
+6. For each entry in `requiredFigures`, check whether the data you actually collected satisfies the figure type's data contract (e.g. `dag` needs `edges`, `cohort` needs time-bucket retention percentages 0–100, `range` needs comparable units across rows). If it does, write the figure into the chapter YAML; if it does not, omit the figure and write the same content as a new table or extra rows in an existing table, then note the substitution in the table's `notes` or in the chapter's `evidenceGaps`.
 7. Generate the chapter YAML at `reportFolder/<chapter.file>` according to the packet's output requirements and the report schema.
 8. Run the packet gate:
    `node .github/skills/startup-research/scripts/gate.mjs <reportFolder> <chapter.file> --pre-ledger`
