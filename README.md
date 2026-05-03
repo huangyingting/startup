@@ -96,7 +96,7 @@ flowchart LR
 
 Lint coverage today:
 
-- report/card enum fields restricted to schema-defined values (`recommendation`, `confidence`, `riskRating`, `valuationStance`); evidence vocabulary is governed by `.github/references/report-schema-v2.md` and chapter review rather than a separate registry file.
+- render-critical structure is checked at build time; business vocabulary such as recommendations, risk ratings, callout labels, and evidence labels is governed by `.github/references/report-schema-v2.md` plus chapter review rather than validate-time enum registries.
 - every table row has exactly `columns.length` cells.
 - `matrix` / `heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
 - each `tableRef` / `figureRef` is referenced from at most one chapter section or appendix block.
