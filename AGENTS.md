@@ -26,8 +26,8 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `.github/skills/startup-research/SKILL.md` is canonical for the end-to-end workflow, required artifact set, artifact mapping, execution order, concurrency model, synchronization points, and report-run gates.
 - `.github/skills/startup-*/SKILL.md` files are canonical for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence acquisition strategy, and completion checks.
 - `scripts/figure-registry.mjs` is canonical for supported native figure types and their data contracts.
-- `scripts/report-registry.mjs` is canonical for report/card enums, full-report block/callout types, and analysis artifact callout types.
-- For workflow/artifact changes, update the owning skill first, then sync validators, loaders, and scripts that need local machine constants. For report/card enum, figure type, or rendering-contract changes, update the relevant registry first, then sync references and skills. For evidence field vocabulary, update `.github/references/report-schema-v2.md` first.
+- `.github/references/report-schema-v2.md` is canonical for report/card enums, full-report block/callout types, analysis artifact callout types, and evidence field vocabulary.
+- For workflow/artifact changes, update the owning skill first, then sync validators, loaders, and scripts that need local machine constants. For figure type or rendering-contract changes, update the figure registry first, then sync references and skills. For schema vocabulary, update `.github/references/report-schema-v2.md` first.
 
 ## Important paths
 
@@ -37,7 +37,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `.github/references/` — shared YAML syntax, analysis rules, and report schema reference.
 - `.github/references/report-schema-v2.md` — canonical report schema and rendering contract.
 - `scripts/figure-registry.mjs` — central native figure type/data contract; consumed by validators and the renderer.
-- `scripts/` — report preparation, index, evidence consolidation, registries, and chapter readiness checks.
+- `scripts/` — report preparation, index, evidence consolidation, figure contracts, and chapter readiness checks.
 - `website/` — Astro renderer, content loader, UI components, and website validation.
 
 ## Setup and validation commands

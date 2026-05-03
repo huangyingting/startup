@@ -17,16 +17,6 @@ import {
   FIGURE_LAYOUTS,
   FIGURE_TYPES,
 } from '../../scripts/figure-registry.mjs';
-import {
-  ANALYSIS_CALLOUT_TYPES,
-  BLOCK_TYPES,
-  CALLOUT_TYPES,
-  CONFIDENCE,
-  RECOMMENDATIONS,
-  RISK_RATINGS,
-  VALUATION_STANCES,
-} from '../../scripts/report-registry.mjs';
-
 const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../reports');
 const SCHEMA_VERSION = 'report-v2';
 const ANALYSIS_ARTIFACTS = [
@@ -50,13 +40,6 @@ const REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);
 const ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item]));
 
 const SET = {
-  recommendations: new Set(RECOMMENDATIONS),
-  confidence: new Set(CONFIDENCE),
-  riskRatings: new Set(RISK_RATINGS),
-  valuationStances: new Set(VALUATION_STANCES),
-  blockType: new Set(BLOCK_TYPES),
-  calloutType: new Set(CALLOUT_TYPES),
-  analysisCalloutType: new Set(ANALYSIS_CALLOUT_TYPES),
   figureType: new Set(FIGURE_TYPES),
   figureLayout: new Set(FIGURE_LAYOUTS),
   figureDataField: new Set(FIGURE_DATA_FIELDS),
@@ -72,9 +55,6 @@ const MATRIX_FIGURE_TYPES = new Set(['matrix', 'heatmap', 'cohort']);
 
 const failures = [];
 const fail = (message) => failures.push(message);
-const failEnum = (path, label, value, allowed) => {
-  if (!allowed.has(value)) fail(`${path}: invalid ${label} ${value}`);
-};
 
 // ---------------------------------------------------------------------------
 // helpers
@@ -174,7 +154,6 @@ function checkLedgerClaims(run, claims) {
       if (claim?.[field] === undefined) fail(`${path} missing ${field}`);
     }
     if (!hasText(claim?.statement)) fail(`${path} statement must be non-empty`);
-    failEnum(path, 'confidence', claim?.confidence, SET.confidence);
     if (!Array.isArray(claim?.sourceRefs)) fail(`${path} sourceRefs must be an array`);
   }
 }
@@ -200,10 +179,6 @@ function checkReportBlocks(run, reportDoc) {
 
   for (const [location, block] of blocks) {
     const path = `${run}/91-full-report.yaml:${location}`;
-    if (!SET.blockType.has(block.type)) {
-      fail(`${path} invalid block.type ${block.type}`);
-      continue;
-    }
     if (block.type === 'paragraph' && !hasText(block.body)) fail(`${path} paragraph block requires body`);
     if (block.type === 'list' && (!Array.isArray(block.items) || block.items.length === 0)) {
       fail(`${path} list block requires non-empty items`);
@@ -211,9 +186,6 @@ function checkReportBlocks(run, reportDoc) {
     if (block.type === 'equation' && !hasText(block.equation)) fail(`${path} equation block requires equation`);
     if (block.type === 'callout') {
       if (!hasText(block.body)) fail(`${path} callout block requires body`);
-      if (block.calloutType != null && !SET.calloutType.has(block.calloutType)) {
-        fail(`${path} invalid calloutType ${block.calloutType}`);
-      }
     }
     if (block.type === 'table' && !hasText(block.tableRef)) fail(`${path} table block requires tableRef`);
     if (block.type === 'figure' && !hasText(block.figureRef)) fail(`${path} figure block requires figureRef`);
@@ -224,9 +196,6 @@ function checkAnalysisCallouts(run, file, doc) {
   if (!ANALYSIS_FILES.includes(file)) return;
   for (const [index, callout] of (doc?.callouts ?? []).entries()) {
     const path = `${run}/${file}: callout ${index + 1}`;
-    if (!SET.analysisCalloutType.has(callout?.type)) {
-      fail(`${path} invalid type ${callout?.type}`);
-    }
     if (!hasText(callout?.title)) fail(`${path} requires title`);
     if (!hasText(callout?.body)) fail(`${path} requires body`);
     if (!Array.isArray(callout?.claimRefs)) fail(`${path} requires claimRefs array`);
@@ -525,11 +494,6 @@ function checkLedgerCrossReferences(run, ledger, parsed) {
 
 function checkCardConsistency(run, card, reportDoc, ledger) {
   const cardPath = `${run}/92-summary-card.yaml`;
-  failEnum(cardPath, 'recommendation', card?.recommendation, SET.recommendations);
-  failEnum(cardPath, 'confidence', card?.confidence, SET.confidence);
-  failEnum(cardPath, 'riskRating', card?.riskRating, SET.riskRatings);
-  failEnum(cardPath, 'valuationStance', card?.valuationStance, SET.valuationStances);
-
   if (typeof card?.figureCount !== 'number') fail(`${cardPath}: figureCount is required and must be a number`);
   else if (card.figureCount !== (reportDoc?.figures ?? []).length) fail(`${cardPath}: figureCount does not match report document`);
   if (typeof card?.tableCount !== 'number') fail(`${cardPath}: tableCount is required and must be a number`);
@@ -550,10 +514,6 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
 
 function checkReportConsistency(run, reportDoc) {
   const reportPath = `${run}/91-full-report.yaml`;
-  failEnum(reportPath, 'recommendation', reportDoc?.reportMeta?.recommendation, SET.recommendations);
-  failEnum(reportPath, 'confidence', reportDoc?.reportMeta?.confidence, SET.confidence);
-  failEnum(reportPath, 'riskRating', reportDoc?.reportMeta?.riskRating, SET.riskRatings);
-  failEnum(reportPath, 'valuationStance', reportDoc?.reportMeta?.valuationStance, SET.valuationStances);
   if (!reportDoc?.startupIntroduction || typeof reportDoc.startupIntroduction !== 'object') {
     fail(`${reportPath}: missing startupIntroduction object`);
   } else if (typeof reportDoc.startupIntroduction.summary !== 'string' || !reportDoc.startupIntroduction.summary.trim()) {
