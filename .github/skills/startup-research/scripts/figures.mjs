@@ -60,7 +60,7 @@ export const FIGURE_CONTRACTS = {
   bridge: [['nodes', 'items']],
   'journey-map': [['nodes', 'items']],
   'logic-chain': [['nodes']],
-  'causal-map': [['nodes']],
+  'causal-map': [['nodes'], ['edges']],
   sensitivity: [['series']],
   scatter: [['points', 'series']],
   scorecard: [['items', 'nodes']],

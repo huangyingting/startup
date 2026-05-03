@@ -1376,16 +1376,56 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const sourceIds = new Set(edges.map((edge) => edge.from ?? edge.source));
     const targetIds = new Set(edges.map((edge) => edge.to ?? edge.target));
     const keyOf = (node) => node.id ?? node.label;
-    const columns = [
-      { label: 'Risk sources', kicker: 'CAUSE', nodes: nodes.filter((node) => !targetIds.has(keyOf(node))) },
-      { label: 'Transmission', kicker: 'MECHANISM', nodes: nodes.filter((node) => sourceIds.has(keyOf(node)) && targetIds.has(keyOf(node))) },
-      { label: 'Impact', kicker: 'OUTCOME', nodes: nodes.filter((node) => targetIds.has(keyOf(node)) && !sourceIds.has(keyOf(node))) },
-    ];
-    if (columns.every((column) => column.nodes.length === 0)) {
-      columns[0].nodes = nodes.slice(0, Math.ceil(nodes.length / 3));
-      columns[1].nodes = nodes.slice(Math.ceil(nodes.length / 3), Math.ceil(nodes.length * 2 / 3));
-      columns[2].nodes = nodes.slice(Math.ceil(nodes.length * 2 / 3));
+    // BFS topological depth from roots (nodes with no inbound edge). Direct
+    // cause→outcome graphs collapse to 2 columns; longer chains keep their
+    // natural depth instead of being forced into a fixed Cause/Mechanism/Outcome
+    // 3-column layout that leaves the middle column empty.
+    const incoming = d3.group(edges, (edge) => edge.to ?? edge.target);
+    const outgoing = d3.group(edges, (edge) => edge.from ?? edge.source);
+    const byKeyTopo = new Map(nodes.map((node) => [keyOf(node), node]));
+    const roots = nodes.filter((node) => !targetIds.has(keyOf(node)));
+    const depthByKey = new Map();
+    const queue = (roots.length ? roots : nodes.slice(0, 1)).map((node) => {
+      depthByKey.set(keyOf(node), 0);
+      return node;
+    });
+    while (queue.length) {
+      const current = queue.shift();
+      const currentDepth = depthByKey.get(keyOf(current)) ?? 0;
+      for (const edge of arr(outgoing.get(keyOf(current)))) {
+        const target = byKeyTopo.get(edge.to ?? edge.target);
+        if (!target) continue;
+        const nextDepth = currentDepth + 1;
+        if (!depthByKey.has(keyOf(target)) || depthByKey.get(keyOf(target)) < nextDepth) {
+          depthByKey.set(keyOf(target), nextDepth);
+          queue.push(target);
+        }
+      }
     }
+    for (const node of nodes) if (!depthByKey.has(keyOf(node))) depthByKey.set(keyOf(node), 0);
+    const maxDepth = Math.max(0, ...depthByKey.values());
+    const stageCount = maxDepth + 1;
+    const stageMeta = stageCount === 1
+      ? [{ label: 'Causes', kicker: 'CAUSE' }]
+      : stageCount === 2
+        ? [{ label: 'Cause', kicker: 'CAUSE' }, { label: 'Outcome', kicker: 'OUTCOME' }]
+        : stageCount === 3
+          ? [{ label: 'Risk sources', kicker: 'CAUSE' }, { label: 'Transmission', kicker: 'MECHANISM' }, { label: 'Impact', kicker: 'OUTCOME' }]
+          : Array.from({ length: stageCount }, (_, index) => index === 0
+            ? { label: 'Cause', kicker: 'CAUSE' }
+            : index === stageCount - 1
+              ? { label: 'Outcome', kicker: 'OUTCOME' }
+              : { label: `Stage ${index + 1}`, kicker: `STAGE ${index + 1}` });
+    const columns = stageMeta.map((meta, index) => ({ ...meta, nodes: [] }));
+    nodes.forEach((node) => columns[depthByKey.get(keyOf(node)) ?? 0].nodes.push(node));
+    if (columns.every((column) => column.nodes.length === 0)) {
+      const slice = Math.ceil(nodes.length / Math.max(stageCount, 1));
+      columns.forEach((column, index) => { column.nodes = nodes.slice(index * slice, (index + 1) * slice); });
+    }
+    const outcomeIndex = columns.length - 1;
+    const columnFill = (index) => index === outcomeIndex && columns.length > 1
+      ? 'rgba(153, 15, 61, 0.035)'
+      : 'rgba(15, 118, 110, 0.028)';
     const containerWidth = element.getBoundingClientRect().width || 760;
     const compact = containerWidth < 640;
     if (compact) {
@@ -1433,7 +1473,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
         .attr('width', (section) => section.w)
         .attr('height', (section) => section.h)
         .attr('rx', 18)
-        .attr('fill', (section) => section._column === 1 ? 'rgba(153, 15, 61, 0.035)' : 'rgba(15, 118, 110, 0.028)')
+        .attr('fill', (section) => columnFill(section._column))
         .attr('stroke', palette.border)
         .attr('stroke-opacity', 0.42)
         .attr('stroke-width', 1);
@@ -1519,11 +1559,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const { svg, width, height } = svgBase(element, Math.max(compact ? 390 : 410, margin.top + margin.bottom + headerH + maxRows * cardH + Math.max(0, maxRows - 1) * rowGap));
     const innerW = width - margin.left - margin.right;
     const colGap = compact ? 14 : 22;
-    const colW = (innerW - colGap * 2) / 3;
+    const colCount = Math.max(columns.length, 1);
+    const colW = (innerW - colGap * (colCount - 1)) / colCount;
     const cardW = colW - (compact ? 10 : 14);
     const columnX = (index) => margin.left + index * (colW + colGap);
     const cardX = (index) => columnX(index) + (colW - cardW) / 2;
-    const cardY = (index) => margin.top + headerH + index * (cardH + rowGap);
     const positioned = [];
     columns.forEach((column, columnIndex) => {
       const totalH = column.nodes.length * cardH + Math.max(0, column.nodes.length - 1) * rowGap;
@@ -1555,7 +1595,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('width', colW)
       .attr('height', height - margin.top - margin.bottom)
       .attr('rx', 18)
-      .attr('fill', (_d, index) => index === 1 ? 'rgba(153, 15, 61, 0.035)' : 'rgba(15, 118, 110, 0.028)')
+      .attr('fill', (_d, index) => columnFill(index))
       .attr('stroke', palette.border)
       .attr('stroke-opacity', 0.42)
       .attr('stroke-width', 1);

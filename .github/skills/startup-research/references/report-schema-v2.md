@@ -327,6 +327,6 @@ Notes that apply to every figure:
 | `bridge` | `nodes[]` or `items[]` | Renderer reuses `flow`; provide ordered nodes. |
 | `journey-map` | `nodes[]` or `items[]` | Order represents the customer/journey sequence. |
 | `logic-chain` | `nodes[]` | Renderer chains nodes in declared order. |
-| `causal-map` | `nodes[]` | Add `edges[]` for cause → effect direction. |
+| `causal-map` | `nodes[]` and `edges[]` | Edges are required so the renderer can stage Cause / Mechanism / Outcome. |
 | `scorecard` | `items[]` or `nodes[]` | Each entry should have a `value` or `score`. |
 | `other` | none | Last-resort opaque container; prefer a real type. |
