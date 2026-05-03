@@ -33,7 +33,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 - `.github/skills/startup-diligence/SKILL.md` — single workflow entry point that sequences chapter and integration skills end-to-end.
 - `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (snapshot, market, competition, financials, product, customers, risks, valuation, ledger, report, card).
-- `.github/skills/startup-*/contract.yaml` — machine-readable per-chapter validation contract for required section concepts, tables, and figures (consumed by `scripts/audit-report-readiness.mjs`). Numeric depth floors live in `scripts/report-manifest.mjs`.
+- `.github/skills/startup-{snapshot,market,competition,financials,product,customers,risks,valuation}/contract.yaml` — machine-readable per-chapter validation contracts for required section concepts, tables, and figures (consumed by `scripts/audit-report-readiness.mjs`). Integration skills (`startup-diligence`, `startup-ledger`, `startup-report`, `startup-card`) do not have contracts; their checks live in `scripts/check-reports-content.mjs` and `website/scripts/check-reports.mjs`. Numeric depth floors live in `scripts/report-manifest.mjs`.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
 - `.github/references/` — shared rules: YAML syntax, evidence ledger, analysis conventions, Simplified Chinese translation.
 - `.github/schemas/startup-diligence-report-v2.md` — canonical schema and rendering contract.

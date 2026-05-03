@@ -27,6 +27,12 @@ if (!docs.size) {
   console.error(`[consolidate-evidence] no report artifacts found in ${reportFolder}`);
   process.exit(1);
 }
+for (const downstream of ['101-report-document.yaml', '101-report-document.zh.yaml', '102-report-card.yaml', '102-report-card.zh.yaml']) {
+  if (existsSync(join(reportFolder, downstream))) {
+    console.warn(`[consolidate-evidence] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run startup-report and startup-card after consolidation.`);
+    break;
+  }
+}
 
 const { sources, claims, sourceIds, claimIds, evidenceGaps, sourcesConsidered } = consolidate(docs);
 const ledger = buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered);

@@ -121,7 +121,7 @@ Synchronization points:
 
 ## Section-owned prompt requirements and research packs
 
-- Treat `due_diligence.md`-style prose reports as quality exemplars, not output format. Convert cover metrics, Mermaid-style diagrams, tables, appendices, bibliography, and citations into schema-native YAML artifacts, structured figures, `100` sources/claims, and `claimRefs`.
+- Treat external prose-style due-diligence reports as depth/quality exemplars, not output format. Convert cover metrics, Mermaid-style diagrams, tables, appendices, bibliography, and citations into schema-native YAML artifacts, structured figures, `100` sources/claims, and `claimRefs`.
 - Do not centralize one-off prompt requirements or industry templates in repo-level files. The workflow must support any startup category, not just software/Internet companies.
 - If the user provides audience, investment lens, required metrics, required competitors/comparables, required figures, source constraints, or chapter-specific diligence questions, infer them from the prompt and route each requirement to the owning chapter skill.
 - Each `startup-*` chapter skill owns its chapter content contract. The skill must define universal chapter requirements, required tables, required structured figures, evidence collection strategy, and domain-adaptive additions.
@@ -211,7 +211,7 @@ Final validation after `102-report-card.zh.yaml`:
 - Keep reports YAML-first; no prose-only deliverables.
 - Trace factual claims through canonical `claimRefs` to `100-evidence-ledger.yaml`.
 - Use `null` plus explanation for unsupported private metrics; never invent values.
-- Preserve published canonical `S###` / `C###` IDs where possible.
+- Canonical `S###` / `C###` IDs are reassigned by each `consolidate-evidence` run; never cache or hand-edit them outside the artifacts that script rewrites, and re-run `startup-report` and `startup-card` after any reconsolidation.
 - Figures must use structured YAML specs supported by the website renderer.
 
 ## Updating an existing report

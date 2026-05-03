@@ -14,7 +14,7 @@ Use these rules whenever a skill writes local evidence or consolidates `100-evid
 - Final retained sources are deduped into `sources[]`.
 - Final reusable factual assertions are deduped into atomic `claims[]`.
 - Downstream artifacts cite `claimRefs`; claims cite `sourceRefs`.
-- For already-published reports, preserve existing canonical `S###` and `C###` IDs when possible. New IDs continue after the current maximum.
+- Each consolidation run reassigns canonical `S###` and `C###` IDs sequentially from the current `01`–`08` evidence. IDs are stable within a run but are not guaranteed across re-runs; never cache or hand-link `S###` / `C###` outside the artifacts the script rewrites.
 
 ## Source provenance
 

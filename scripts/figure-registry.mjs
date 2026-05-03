@@ -32,6 +32,13 @@ export const FIGURE_DATA_FIELDS = ['items', 'nodes', 'edges', 'points', 'columns
 
 export const FIGURE_ARRAY_FIELDS = ['items', 'nodes', 'edges', 'points', 'columns', 'rows', 'series', 'layers'];
 
+// FIGURE_CONTRACTS encodes required `data.*` array fields per figure type.
+// Outer array = alternative requirement sets (figure is valid if ANY set is satisfied).
+// Inner array = fields that must ALL be populated together for that alternative.
+// Examples:
+//   timeline: [['items']]              -> requires data.items
+//   bars:     [['items', 'series']]    -> requires data.items AND data.series
+//   flow:     [['nodes'], ['edges']]   -> requires data.nodes OR data.edges (either alone is valid)
 export const FIGURE_CONTRACTS = {
   timeline: [['items']],
   flow: [['nodes'], ['edges']],

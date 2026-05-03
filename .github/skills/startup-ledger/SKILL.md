@@ -11,6 +11,7 @@ Consolidation stage. Generate canonical sources/claims only after `01`–`08` an
 ## Output
 
 - `100-evidence-ledger.yaml` via `node scripts/consolidate-evidence.mjs <reportFolder>`
+- The script also rewrites `claimRefs` and inline `[C###]` references inside `01`–`08` and their `.zh.yaml` siblings, and removes `localEvidence` unless `--keep-local` is passed.
 
 ## Do not
 
