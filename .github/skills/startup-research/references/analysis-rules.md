@@ -1,32 +1,32 @@
 # Analysis rules
 
-Shared rules for the eight `startup-*` analysis skills. Each chapter skill documents chapter-specific work; this file only covers cross-chapter analysis, evidence, research, and validation rules.
+Shared rules for the eight configured startup analysis chapters. `./chapters.yaml` documents chapter-specific work; this file covers cross-chapter analysis, evidence, research, freshness, and validation rules.
 
 ## Ownership boundary
 
-Chapter-specific expectations live in the owning `SKILL.md`. Workflow inputs, prompt routing, artifact mapping, concurrency, synchronization points, and artifact handoffs live in `startup-research/SKILL.md`.
+Chapter-specific expectations live in `./chapters.yaml`. Workflow inputs, prompt routing, artifact mapping, concurrency, synchronization points, chapter iteration, and artifact handoffs live in `../SKILL.md`.
 
 ## Common chapter workflow
 
-Every `01`–`08` analysis chapter skill follows this execution loop, then applies its own mission, required content, tables, figures, evidence acquisition strategy, domain-adaptive additions, quality bar, and completion check:
+Every `01`–`08` analysis chapter follows this execution loop, then applies the configured mission, required content, tables, figures, evidence acquisition strategy, domain-adaptive additions, quality bar, and completion gate from `./chapters.yaml`:
 
 1. Confirm shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and the owning output filename.
 2. Pull in prompt-derived requirements routed to the chapter; do not create repo-level templates from one-off user requirements.
 3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes; select the domain-adaptive additions that should become chapter outputs.
-4. Build a chapter-specific research-question backlog from the owning skill's required content, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, optional coordination context, and prompt requirements; include questions intended to support every material section, table, figure, and gap.
+4. Build a chapter-specific research-question backlog from the configured required content, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, optional coordination context, and prompt requirements; include questions intended to support every material section, table, figure, and gap.
 5. Work the question backlog iteratively: use verified answer/search discovery to refine questions and candidate sources, then review retained direct URLs with `fetch-url`; keep asking follow-up questions around missing data until the chapter's evidence-depth gate passes or public-evidence limits are documented.
 6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths; derive content from the claims rather than writing claims after the prose.
 7. Draft schema-native sections, tables, callouts, and structured figures for the chapter; make selected domain-adaptive additions visible in the artifact rather than only in notes; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
-8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive and non-duplicative, claim refs resolve locally, selected domain-adaptive additions appear in sections and at least one table or figure where supportable, evidence depth is adequate, and the owning skill's completion check passes.
-9. Write only the owning skill's artifact, then run `node scripts/check-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger` so failures route directly back to this chapter. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive and non-duplicative, claim refs resolve locally, selected domain-adaptive additions appear in sections and at least one table or figure where supportable, evidence depth is adequate, and the configured completion gate passes.
+9. Write only the configured artifact, then run `node .github/skills/startup-research/scripts/check-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger` so failures route directly back to this chapter. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
 
 ## Domain reflection and sufficiency gate
 
-Before drafting, identify the company's domain archetype, value-chain position, buyer/user/payer/regulator distinctions, revenue mechanism, operating dependencies, adoption motion, and failure modes. Then apply the domain-adaptive additions defined in the owning chapter skill as first-class research targets.
+Before drafting, identify the company's domain archetype, value-chain position, buyer/user/payer/regulator distinctions, revenue mechanism, operating dependencies, adoption motion, and failure modes. Then apply the domain-adaptive additions defined in `./chapters.yaml` as first-class research targets.
 
 Do not assume the company is an IT, Internet, software, SaaS, or AI startup. If the domain is unclear, record the ambiguity and add a diligence path rather than forcing a template.
 
-Before finalizing, confirm the chapter answers domain-specific underwriting questions, not just the skill's universal checklist. Each chapter should include at least one domain-specific section and at least one domain-specific table or structured figure when evidence supports it. If public evidence is unavailable, record an explicit `evidenceGaps[]` item with the failed path, diligence ask, and the table/figure/section that could not be completed.
+Before finalizing, confirm the chapter answers domain-specific underwriting questions, not just the configured universal checklist. Each chapter should include at least one domain-specific section and at least one domain-specific table or structured figure when evidence supports it. If public evidence is unavailable, record an explicit `evidenceGaps[]` item with the failed path, diligence ask, and the table/figure/section that could not be completed.
 
 ## Local evidence model
 
@@ -36,7 +36,7 @@ Every `01`–`08` analysis artifact owns local evidence before consolidation:
 - Register every reusable atomic fact in `localEvidence.claims[]`.
 - Local `S###` and `C###` IDs are scoped to one artifact and may repeat across skills.
 - Cite local claims through `claimRefs` from sections, tables, figures, callouts, and notes.
-- Analysis skills never hand-write `90-evidence.yaml`; `startup-evidence` consolidates local evidence, rewrites claim IDs, and removes `localEvidence` unless debugging with `--keep-local`.
+- Analysis chapters never hand-write `90-evidence.yaml`; `startup-research` runs `.github/skills/startup-research/scripts/build-evidence-ledger.mjs` to consolidate local evidence, rewrite claim IDs, and remove `localEvidence` unless debugging with `--keep-local`.
 
 ## Question-driven research loop
 
@@ -77,7 +77,7 @@ Never retain:
 
 Deduplicate by canonical URL and underlying event/date. Cluster press-release or wire-copy repeats as one event. Prefer fit-for-purpose sources: official pages, filings/regulators, tier-one news, analyst/market data, customer proof, technical docs, reviews, and disconfirming evidence.
 
-Label `sourceType`, `reputationTier`, and `independence` honestly using the vocabulary documented in `.github/references/report-schema-v2.md`. These are semantic authoring rules; do not rely on build-time enum validation to catch business-vocabulary mistakes.
+Label `sourceType`, `reputationTier`, and `independence` honestly using the vocabulary documented in `./report-schema-v2.md`. These are semantic authoring rules; do not rely on build-time enum validation to catch business-vocabulary mistakes.
 
 ## Research tool usage
 
@@ -86,7 +86,7 @@ Use two complementary research tracks:
 1. **Verified answer / discovery track** — use search/discovery tools, including `web_search` when available, to answer targeted diligence questions, surface current facts, triangulate source families, find cited URLs, and test confirming, disconfirming, and adverse hypotheses. Treat cited/verified answer text as research guidance and contradiction detection, not as a substitute for claim-level provenance.
 2. **Direct source review track** — use direct URL review for retained sources so material claims trace back to source pages, filings, regulator records, official pages, customer/partner pages, competitor pages, docs, or adverse articles.
 
-Use the repository `fetch-url` workflow for every retained direct URL, including official pages, cited search results, filings, regulator pages, customer/partner pages, competitor pages, docs, and adverse articles. In this repository, direct page review means following `.github/skills/fetch-url/SKILL.md` and using `node scripts/fetch-url.mjs ...` rather than native page-fetch tools unless higher-priority runtime instructions require otherwise; when such an instruction requires a platform fetch first, still apply this repository's source-provenance and claim-level citation rules to any retained source.
+Use the repository `fetch-url` workflow for every retained direct URL, including official pages, cited search results, filings, regulator pages, customer/partner pages, competitor pages, docs, and adverse articles. In this repository, direct page review means following `.github/skills/fetch-url/SKILL.md` and using `node .github/skills/fetch-url/scripts/fetch-url.mjs ...` rather than native page-fetch tools unless higher-priority runtime instructions require otherwise; when such an instruction requires a platform fetch first, still apply this repository's source-provenance and claim-level citation rules to any retained source.
 
 For each retained source, the artifact should reflect what was actually reviewed: URL, title/source identity, publication or access date when available, source type, reputation/independence labels, and claim-level support. Do not retain a URL only because it appeared in search results.
 
@@ -104,7 +104,7 @@ After each targeted search/discovery call, record this run-log line in the chat/
 
 ## Time, research, and freshness
 
-- Treat `currentDate` as the anchor for recency, volatile-fact review, search-query freshness, and default `runDate`. `currentDate` is resolved once by `startup-research` from the runtime/session date, or from `date -u +%F` if the session does not provide a reliable date; chapter skills inherit it and must not recompute it from stale reports, model knowledge, source dates, or company events.
+- Treat `currentDate` as the anchor for recency, volatile-fact review, search-query freshness, and default `runDate`. `currentDate` is resolved once by `startup-research` from the runtime/session date, or from `date -u +%F` if the session does not provide a reliable date; configured chapters inherit it and must not recompute it from stale reports, model knowledge, source dates, or company events.
 - Build search/discovery questions with the actual `currentDate` context in mind. For volatile facts, include freshness cues such as the current year, "latest", "recent", "as of <currentDate>", funding/status/product/pricing/security/legal terms, or a bounded date window instead of relying on evergreen company-profile queries.
 - For each chapter, run a final freshness sweep before drafting or finalizing: re-query the most decision-critical volatile facts using current-year/latest phrasing, compare against retained sources, and update claims or record an explicit freshness gap when fresher corroboration is unavailable.
 - Ask complete-sentence research questions tied to the intended paragraph, table, figure, or gap; avoid keyword-only queries.
@@ -137,9 +137,9 @@ Every new external fact needs an atomic, reusable local `claims[]` entry before 
 
 ## Source quality and coverage gates
 
-Before writing, confirm that retained sources cover the chapter's required source classes. If a required source class has no usable evidence, add `evidenceGaps[]` rather than silently omitting it. Never invent values, capabilities, certifications, customers, multiples, outcomes, or metrics.
+Before writing, confirm that retained sources cover the chapter's configured required source classes. If a required source class has no usable evidence, add `evidenceGaps[]` rather than silently omitting it. Never invent values, capabilities, certifications, customers, multiples, outcomes, or metrics.
 
-Before consolidation, ensure every retained URL satisfies source provenance rules, material sections/tables/figures/callouts cite local claims, and `localEvidence.coverage.sourcesConsidered` is updated. Chapter evidence coverage, depth, table, and figure thresholds are enforced by `scripts/check-chapter-readiness.mjs` before the ledger is built.
+Before consolidation, ensure every retained URL satisfies source provenance rules, material sections/tables/figures/callouts cite local claims, and `localEvidence.coverage.sourcesConsidered` is updated. Chapter evidence coverage, depth, table, and figure thresholds are enforced by `.github/skills/startup-research/scripts/check-chapter-readiness.mjs` before the ledger is built.
 
 Reflection questions: Would a source change each major table cell, figure node, or conclusion if it were wrong? What investor decision does each major table/figure support? Does each important gap affect recommendation, confidence, risk, valuation stance, or only follow-up diligence? Resolve source contradictions as freshness, scope, definition, or true-conflict issues.
 
@@ -153,7 +153,7 @@ Prefer richer artifacts when evidence supports them; do not compress useful rese
 
 Use tables and figures as alternative expressions for a specific analysis, not duplicate containers for the same content. If a diligence question is best answered by exact rows, comparisons, evidence dates, confidence, and diligence asks, use a table. If it is best answered by structure, flow, positioning, causality, scenario shape, or sensitivity, use a figure. Do not create both a table and a figure that repeat the same title, claim set, rows/nodes, or conclusion; choose the stronger representation and use narrative cross-reference for any complementary interpretation.
 
-When a skill specifies required table columns, preserve those columns unless a better schema-compatible table design covers the same information. At minimum, diligence tables should expose the fact/metric, value or status, evidence date/source, confidence, implication, and diligence ask.
+When the chapter config specifies required table columns or row concepts, preserve them unless a better schema-compatible table design covers the same information. At minimum, diligence tables should expose the fact/metric, value or status, evidence date/source, confidence, implication, and diligence ask.
 
 Figures must encode chapter-specific structure such as TAM layers, positioning quadrants, unit-economics bridges, architecture stacks, retention loops, risk transmission paths, or valuation sensitivities.
 
@@ -165,12 +165,12 @@ Avoid:
 - reused section titles such as `Evidence base`, `Investor interpretation`, `Contradictions and uncertainty`, or `Private diligence path` across all artifacts;
 - floor-only output when evidence supports more depth.
 
-Minimum-depth gates defined by each owning chapter skill and enforced by automated checks are minimums, not targets.
+Minimum-depth gates defined by `./chapters.yaml` and enforced by automated checks are minimums, not targets.
 
 ## Figure rules
 
 - Use structured YAML figure objects rendered by the website.
-- Use only canonical figure data fields from `scripts/figure-registry.mjs`: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`, `xAxis`, `yAxis`.
+- Use only canonical figure data fields from `.github/skills/startup-research/scripts/figure-registry.mjs`: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`, `xAxis`, `yAxis`.
 - Do not introduce non-canonical primary fields such as `name`, `components`, `children`, `steps`, `cards`, or `groups`.
 - Do not fabricate numeric chart values, coordinates, or time series to satisfy a requested figure type. If public evidence cannot support a numeric figure, use a schema-supported qualitative alternative such as `matrix`, `flow`, `logic-chain`, `scorecard`, or `dependency-map`, and record the missing numeric input as a note or `evidenceGaps[]` item.
 - Numeric chart values must be numbers, not strings.

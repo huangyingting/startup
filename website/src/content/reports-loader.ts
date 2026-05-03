@@ -5,17 +5,14 @@ import yaml from 'js-yaml';
 import type { Loader } from 'astro/loaders';
 
 const REPORTS_DIR = resolve(process.cwd(), '..', 'reports');
+const WORKFLOW_CONFIG_PATH = resolve(process.cwd(), '..', '.github', 'skills', 'startup-research', 'references', 'chapters.yaml');
 const SCHEMA_VERSION = 'report-v2' as const;
-const ANALYSIS_STAGE_FILES = [
-  { file: '01-company-overview.yaml', loaderKey: 'companyOverview' },
-  { file: '02-market-analysis.yaml', loaderKey: 'marketAnalysis' },
-  { file: '03-competitors.yaml', loaderKey: 'competitors' },
-  { file: '04-financials.yaml', loaderKey: 'financials' },
-  { file: '05-product-tech.yaml', loaderKey: 'productTech' },
-  { file: '06-customers.yaml', loaderKey: 'customers' },
-  { file: '07-risks.yaml', loaderKey: 'risks' },
-  { file: '08-valuation.yaml', loaderKey: 'valuation' },
-] as const;
+
+interface AnalysisStageFile {
+  file: string;
+  loaderKey: string;
+  order: number;
+}
 
 interface ReportCardData extends Record<string, unknown> {
   schemaVersion: typeof SCHEMA_VERSION;
@@ -53,6 +50,25 @@ interface ReportCardData extends Record<string, unknown> {
 }
 
 const RUN_ID_RE = /^(\d{14})-(.+)$/;
+
+function loadAnalysisStageFiles(): AnalysisStageFile[] {
+  if (!existsSync(WORKFLOW_CONFIG_PATH)) {
+    throw new Error(`[reports-loader] Missing workflow config: ${WORKFLOW_CONFIG_PATH}`);
+  }
+  const config = yaml.load(readFileSync(WORKFLOW_CONFIG_PATH, 'utf8')) as Record<string, any> | null;
+  const chapters = Array.isArray(config?.chapters) ? config.chapters : [];
+  if (!chapters.length) throw new Error('[reports-loader] workflow config must define chapters[]');
+  return chapters
+    .map((chapter) => {
+      if (!chapter?.file || !chapter?.loaderKey || typeof chapter.order !== 'number') {
+        throw new Error('[reports-loader] each chapter config entry requires file, loaderKey, and numeric order');
+      }
+      return { file: chapter.file, loaderKey: chapter.loaderKey, order: chapter.order };
+    })
+    .sort((a, b) => a.order - b.order);
+}
+
+const ANALYSIS_STAGE_FILES = loadAnalysisStageFiles();
 
 // ---------------------------------------------------------------------------
 // run discovery

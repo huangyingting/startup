@@ -5,18 +5,12 @@
 // analysis artifacts.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { asDateString, canonicalSourceUrl, compactText, readYaml, writeYaml } from './report-utils.mjs';
+import { asDateString, canonicalSourceUrl, compactText, getAnalysisArtifacts, loadWorkflowConfig, readYaml, writeYaml } from './report-utils.mjs';
 
-const ANALYSIS_FILES = [
-  '01-company-overview.yaml',
-  '02-market-analysis.yaml',
-  '03-competitors.yaml',
-  '04-financials.yaml',
-  '05-product-tech.yaml',
-  '06-customers.yaml',
-  '07-risks.yaml',
-  '08-valuation.yaml',
-];
+const WORKFLOW_CONFIG = loadWorkflowConfig();
+const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
+const EVIDENCE_FILE = WORKFLOW_CONFIG.finalArtifacts.evidence.file;
+const DOWNSTREAM_FILES = [WORKFLOW_CONFIG.finalArtifacts.fullReport.file, WORKFLOW_CONFIG.finalArtifacts.summaryCard.file];
 
 function parseArgs(argv) {
   return {
@@ -27,7 +21,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
-  console.error('Usage: node scripts/build-evidence-ledger.mjs <report-folder> [--keep-local]');
+  console.error('Usage: node .github/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder> [--keep-local]');
   process.exit(1);
 }
 
@@ -37,9 +31,9 @@ if (!docs.size) {
   console.error(`[build-evidence-ledger] no report artifacts found in ${reportFolder}`);
   process.exit(1);
 }
-for (const downstream of ['91-full-report.yaml', '92-summary-card.yaml']) {
+for (const downstream of DOWNSTREAM_FILES) {
   if (existsSync(join(reportFolder, downstream))) {
-    console.warn(`[build-evidence-ledger] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run startup-full-report and startup-summary-card after ledger rebuild.`);
+    console.warn(`[build-evidence-ledger] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run full-report and summary-card assembly after ledger rebuild.`);
     break;
   }
 }
@@ -47,12 +41,12 @@ for (const downstream of ['91-full-report.yaml', '92-summary-card.yaml']) {
 const { sources, claims, sourceIds, claimIds, evidenceGaps, sourcesConsidered } = consolidate(docs);
 const ledger = buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered);
 
-writeYaml(join(reportFolder, '90-evidence.yaml'), ledger);
+writeYaml(join(reportFolder, EVIDENCE_FILE), ledger);
 for (const [file, doc] of docs) {
   writeYaml(join(reportFolder, file), rewrite(doc, file, claimIds));
 }
 
-console.log(`[build-evidence-ledger] wrote ${join(reportFolder, '90-evidence.yaml')} (${sources.length} sources, ${claims.length} claims)`);
+console.log(`[build-evidence-ledger] wrote ${join(reportFolder, EVIDENCE_FILE)} (${sources.length} sources, ${claims.length} claims)`);
 
 // ---------------------------------------------------------------------------
 

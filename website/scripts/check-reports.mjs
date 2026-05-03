@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 // Schema and renderer-contract checks for report YAML.
-// Run before `astro build`. Chapter content readiness is checked by scripts/check-chapter-readiness.mjs.
+// Run before `astro build`. Chapter content readiness is checked by the startup-research skill scripts.
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   asDateString,
   collectClaimRefs,
+  getAnalysisArtifacts,
+  getCoreArtifacts,
+  loadWorkflowConfig,
   tryReadYaml,
-} from '../../scripts/report-utils.mjs';
+} from '../../.github/skills/startup-research/scripts/report-utils.mjs';
 import {
   FIGURE_ALLOWED_POPULATED_FIELDS,
   FIGURE_ARRAY_FIELDS,
@@ -16,28 +19,19 @@ import {
   FIGURE_DATA_FIELDS,
   FIGURE_LAYOUTS,
   FIGURE_TYPES,
-} from '../../scripts/figure-registry.mjs';
+} from '../../.github/skills/startup-research/scripts/figure-registry.mjs';
 const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../reports');
 const SCHEMA_VERSION = 'report-v2';
-const ANALYSIS_ARTIFACTS = [
-  { file: '01-company-overview.yaml', artifact: 'company-overview', chapter: 1 },
-  { file: '02-market-analysis.yaml', artifact: 'market-analysis', chapter: 2 },
-  { file: '03-competitors.yaml', artifact: 'competitors', chapter: 3 },
-  { file: '04-financials.yaml', artifact: 'financials', chapter: 4 },
-  { file: '05-product-tech.yaml', artifact: 'product-tech', chapter: 5 },
-  { file: '06-customers.yaml', artifact: 'customers', chapter: 6 },
-  { file: '07-risks.yaml', artifact: 'risks', chapter: 7 },
-  { file: '08-valuation.yaml', artifact: 'valuation', chapter: 8 },
-];
-const CORE_ARTIFACTS = [
-  ...ANALYSIS_ARTIFACTS,
-  { file: '90-evidence.yaml', artifact: 'evidence' },
-  { file: '91-full-report.yaml', artifact: 'full-report' },
-  { file: '92-summary-card.yaml', artifact: 'summary-card' },
-];
+const WORKFLOW_CONFIG = loadWorkflowConfig();
+const ANALYSIS_ARTIFACTS = getAnalysisArtifacts(WORKFLOW_CONFIG);
+const CORE_ARTIFACTS = getCoreArtifacts(WORKFLOW_CONFIG);
 const ANALYSIS_FILES = ANALYSIS_ARTIFACTS.map((item) => item.file);
 const REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);
 const ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item]));
+const EVIDENCE_FILE = WORKFLOW_CONFIG.finalArtifacts.evidence.file;
+const FULL_REPORT_FILE = WORKFLOW_CONFIG.finalArtifacts.fullReport.file;
+const SUMMARY_CARD_FILE = WORKFLOW_CONFIG.finalArtifacts.summaryCard.file;
+const OVERVIEW_FILE = ANALYSIS_ARTIFACTS[0]?.file;
 
 const SET = {
   figureType: new Set(FIGURE_TYPES),
@@ -124,7 +118,7 @@ function checkDocumentHead(run, file, doc) {
 
 function checkLedgerSources(run, sources) {
   for (const source of sources) {
-    const path = `${run}/90-evidence.yaml: source ${source?.id ?? '?'}`;
+    const path = `${run}/${EVIDENCE_FILE}: source ${source?.id ?? '?'}`;
     for (const field of ['publisher', 'title', 'accessDate', 'url', 'sourceType', 'reputationTier', 'independence', 'topics']) {
       if (source?.[field] === undefined) fail(`${path} missing ${field}`);
     }
@@ -141,7 +135,7 @@ function checkLedgerSources(run, sources) {
 }
 
 function checkLedgerCoverage(run, coverage) {
-  const path = `${run}/90-evidence.yaml: coverage`;
+  const path = `${run}/${EVIDENCE_FILE}: coverage`;
   for (const field of ['sourcesConsidered', 'sourcesRetained', 'claimsCreated', 'evidenceQuality']) {
     if (coverage?.[field] === undefined) fail(`${path} missing ${field}`);
   }
@@ -149,7 +143,7 @@ function checkLedgerCoverage(run, coverage) {
 
 function checkLedgerClaims(run, claims) {
   for (const claim of claims) {
-    const path = `${run}/90-evidence.yaml: claim ${claim?.id ?? '?'}`;
+    const path = `${run}/${EVIDENCE_FILE}: claim ${claim?.id ?? '?'}`;
     for (const field of ['statement', 'claimType', 'topic', 'sourceRefs', 'confidence', 'freshness', 'corroboration']) {
       if (claim?.[field] === undefined) fail(`${path} missing ${field}`);
     }
@@ -178,7 +172,7 @@ function checkReportBlocks(run, reportDoc) {
   collectBlocks(reportDoc?.appendices ?? [], 'appendices', blocks);
 
   for (const [location, block] of blocks) {
-    const path = `${run}/91-full-report.yaml:${location}`;
+    const path = `${run}/${FULL_REPORT_FILE}:${location}`;
     if (block.type === 'paragraph' && !hasText(block.body)) fail(`${path} paragraph block requires body`);
     if (block.type === 'list' && (!Array.isArray(block.items) || block.items.length === 0)) {
       fail(`${path} list block requires non-empty items`);
@@ -352,11 +346,9 @@ function checkSensitivityFigure(path, figure) {
   }
 }
 
-const COMPANY_TIMELINE_PATH_RE = /\/(01-company-overview|91-full-report)\.yaml$/;
-
 function checkCompanyMilestoneTimeline(path, figure) {
   if (figure.type !== 'timeline') return;
-  if (!COMPANY_TIMELINE_PATH_RE.test(path) || figure.id !== 'F102') return;
+  if (!(path.endsWith(`/${OVERVIEW_FILE}`) || path.endsWith(`/${FULL_REPORT_FILE}`)) || figure.id !== 'F102') return;
   const items = Array.isArray(figure.data.items) ? figure.data.items : [];
   if (items.length < 8) {
     fail(`${path}: figure ${figure.id} (company milestone timeline) has ${items.length} items but must include at least 8 (founding, every priced funding round, major product launches, scale milestones, partnerships, governance/legal events). Run a milestone-discovery search batch and document any unfilled gaps in evidenceGaps.`);
@@ -422,10 +414,10 @@ function checkRefs(run, reportDoc) {
 
   for (const [type, ref] of refs) {
     if (type === 'figure' && !figureIds.has(ref)) {
-      fail(`${run}/91-full-report.yaml: missing figure ${ref}`);
+      fail(`${run}/${FULL_REPORT_FILE}: missing figure ${ref}`);
     }
     if (type === 'table' && !tableIds.has(ref)) {
-      fail(`${run}/91-full-report.yaml: missing table ${ref}`);
+      fail(`${run}/${FULL_REPORT_FILE}: missing table ${ref}`);
     }
   }
 
@@ -436,7 +428,7 @@ function checkRefs(run, reportDoc) {
   }
   for (const [key, count] of counts) {
     if (count > 1) {
-      fail(`${run}/91-full-report.yaml: ${key.replace(':', ' ')} is referenced ${count} times; each table/figure must have exactly one home in the report`);
+      fail(`${run}/${FULL_REPORT_FILE}: ${key.replace(':', ' ')} is referenced ${count} times; each table/figure must have exactly one home in the report`);
     }
   }
 }
@@ -485,7 +477,7 @@ function checkLedgerCrossReferences(run, ledger, parsed) {
     }
   }
   for (const [file, doc] of parsed) {
-    if (file === '90-evidence.yaml') continue;
+    if (file === EVIDENCE_FILE) continue;
     for (const ref of collectClaimRefs(doc)) {
       if (!claimIds.has(ref)) fail(`${run}/${file}: missing claimRef ${ref}`);
     }
@@ -493,7 +485,7 @@ function checkLedgerCrossReferences(run, ledger, parsed) {
 }
 
 function checkCardConsistency(run, card, reportDoc, ledger) {
-  const cardPath = `${run}/92-summary-card.yaml`;
+  const cardPath = `${run}/${SUMMARY_CARD_FILE}`;
   if (typeof card?.figureCount !== 'number') fail(`${cardPath}: figureCount is required and must be a number`);
   else if (card.figureCount !== (reportDoc?.figures ?? []).length) fail(`${cardPath}: figureCount does not match report document`);
   if (typeof card?.tableCount !== 'number') fail(`${cardPath}: tableCount is required and must be a number`);
@@ -501,11 +493,11 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
   if (typeof card?.overallScore !== 'number' || card.overallScore < 0 || card.overallScore > 10) {
     fail(`${cardPath}: overallScore must be a number between 0 and 10`);
   }
-  if (card?.reportFiles?.fullReport !== '91-full-report.yaml') {
-    fail(`${cardPath}: reportFiles.fullReport must be 91-full-report.yaml`);
+  if (card?.reportFiles?.fullReport !== FULL_REPORT_FILE) {
+    fail(`${cardPath}: reportFiles.fullReport must be ${FULL_REPORT_FILE}`);
   }
-  if (card?.reportFiles?.summaryCard !== '92-summary-card.yaml') {
-    fail(`${cardPath}: reportFiles.summaryCard must be 92-summary-card.yaml`);
+  if (card?.reportFiles?.summaryCard !== SUMMARY_CARD_FILE) {
+    fail(`${cardPath}: reportFiles.summaryCard must be ${SUMMARY_CARD_FILE}`);
   }
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
     fail(`${cardPath}: claimsReviewed exceeds ledger claims`);
@@ -513,7 +505,7 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
 }
 
 function checkReportConsistency(run, reportDoc) {
-  const reportPath = `${run}/91-full-report.yaml`;
+  const reportPath = `${run}/${FULL_REPORT_FILE}`;
   if (!reportDoc?.startupIntroduction || typeof reportDoc.startupIntroduction !== 'object') {
     fail(`${reportPath}: missing startupIntroduction object`);
   } else if (typeof reportDoc.startupIntroduction.summary !== 'string' || !reportDoc.startupIntroduction.summary.trim()) {
@@ -531,7 +523,7 @@ function checkCrossArtifactIdentity(run, parsed) {
 
 function checkRun(run) {
   const dir = join(REPORTS_DIR, run);
-  if (!existsSync(join(dir, '92-summary-card.yaml'))) return false;
+  if (!existsSync(join(dir, SUMMARY_CARD_FILE))) return false;
 
   const beforeMissing = failures.length;
   for (const file of REQUIRED_ENGLISH_FILES) {
@@ -540,9 +532,9 @@ function checkRun(run) {
   if (failures.length > beforeMissing) return true;
 
   const parsed = parseRunArtifacts(run, dir);
-  const ledger = parsed.get('90-evidence.yaml');
-  const reportDoc = parsed.get('91-full-report.yaml');
-  const card = parsed.get('92-summary-card.yaml');
+  const ledger = parsed.get(EVIDENCE_FILE);
+  const reportDoc = parsed.get(FULL_REPORT_FILE);
+  const card = parsed.get(SUMMARY_CARD_FILE);
 
   checkCrossArtifactIdentity(run, parsed);
   checkLedgerCrossReferences(run, ledger, parsed);

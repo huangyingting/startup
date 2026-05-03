@@ -6,14 +6,15 @@ The schema supports investor-grade English startup diligence reports with claim-
 
 Workflow source and machine-readable rendering/validation mirrors live in:
 
-- `.github/skills/startup-research/SKILL.md` — source of truth for required artifacts, artifact mapping/numbering, owner skills, workflow gates, and final validation.
-- `scripts/figure-registry.mjs` — supported figure types, allowed figure data fields, required populated fields, and renderer-facing data contracts.
+- `.github/skills/startup-research/SKILL.md` — source of truth for the end-to-end workflow, chapter iteration loop, finalization, and validation cadence.
+- `.github/skills/startup-research/references/chapters.yaml` — machine-readable source of truth for required artifacts, artifact mapping/numbering, chapter requirements, chapter gates, loader keys, and final artifact names.
+- `.github/skills/startup-research/scripts/figure-registry.mjs` — supported figure types, allowed figure data fields, required populated fields, and renderer-facing data contracts.
 
-When this Markdown contract and a figure registry disagree, update the figure registry first, then update this document and the relevant skill instructions. When workflow rules disagree, `.github/skills/startup-research/SKILL.md` is authoritative.
+When this Markdown contract and a figure registry disagree, update the figure registry first, then update this document and the relevant workflow/config instructions. When workflow rules disagree, `.github/skills/startup-research/SKILL.md` is authoritative for process and `.github/skills/startup-research/references/chapters.yaml` is authoritative for artifact/chapter data.
 
 ## Required artifacts
 
-The authoritative required artifact set is defined in `.github/skills/startup-research/SKILL.md`. The current v2 artifact set is:
+The authoritative required artifact set is defined in `.github/skills/startup-research/references/chapters.yaml` and executed by `.github/skills/startup-research/SKILL.md`. The current v2 artifact set is:
 
 ```text
 01-company-overview.yaml
@@ -32,30 +33,30 @@ The authoritative required artifact set is defined in `.github/skills/startup-re
 ## Execution contract
 
 - The default agent runs the workflow through `.github/skills/`; do not delegate stages to other agents.
-- Skills write complete YAML files directly under `reportFolder`.
+- `startup-research` writes complete YAML files directly under `reportFolder`.
 - `/tmp` and terminal-output files are diagnostics only, never artifacts or handoff inputs.
-- Agents must read this schema and `.github/references/yaml-rules.md` before writing YAML artifacts.
-- Skills that create local evidence must follow `.github/references/analysis-rules.md`.
-- Run inputs provide the shared identity anchor. Analysis chapter skills may use already available peer artifacts as optional coordination context, but peer artifacts are not hard prerequisites during parallel `01`–`08` analysis.
-- Analysis skills record local evidence under `localEvidence`; `startup-evidence` runs `scripts/build-evidence-ledger.mjs` to create canonical evidence and rewrite claim references.
+- Agents must read this schema and `.github/skills/startup-research/references/yaml-rules.md` before writing YAML artifacts.
+- Skills that create local evidence must follow `.github/skills/startup-research/references/analysis-rules.md`.
+- Run inputs provide the shared identity anchor. Configured analysis chapters may use already available peer artifacts as optional coordination context, but peer artifacts are not hard prerequisites during parallel `01`–`08` analysis.
+- Configured analysis chapters record local evidence under `localEvidence`; `startup-research` runs `.github/skills/startup-research/scripts/build-evidence-ledger.mjs` to create canonical evidence and rewrite claim references.
 
 ## Artifact mapping
 
 The labels below describe the source analysis artifacts. In `91-full-report.yaml`, these artifacts are assembled as report chapters `2`–`9` according to the workflow skill.
 
-| File | `artifact` | Owner | Analysis chapter label |
+| File | `artifact` | Config key | Analysis chapter label |
 |---|---|---|---|
-| `01-company-overview.yaml` | `company-overview` | `startup-overview` | 1 — Startup Introduction & Company Overview |
-| `02-market-analysis.yaml` | `market-analysis` | `startup-market-analysis` | 2 — Market Sizing & Market Analysis |
-| `03-competitors.yaml` | `competitors` | `startup-competitors` | 3 — Competitors |
-| `04-financials.yaml` | `financials` | `startup-financials` | 4 — Financials |
-| `05-product-tech.yaml` | `product-tech` | `startup-product-tech` | 5 — Product & Technology |
-| `06-customers.yaml` | `customers` | `startup-customers` | 6 — Customers |
-| `07-risks.yaml` | `risks` | `startup-risks` | 7 — Risks |
-| `08-valuation.yaml` | `valuation` | `startup-valuation` | 8 — Valuation |
-| `90-evidence.yaml` | `evidence` | `startup-evidence` / consolidation script | n/a |
-| `91-full-report.yaml` | `full-report` | `startup-full-report` | final rendered report |
-| `92-summary-card.yaml` | `summary-card` | `startup-summary-card` | website index card |
+| `01-company-overview.yaml` | `company-overview` | `company-overview` | 1 — Startup Introduction & Company Overview |
+| `02-market-analysis.yaml` | `market-analysis` | `market-analysis` | 2 — Market Sizing & Market Analysis |
+| `03-competitors.yaml` | `competitors` | `competitors` | 3 — Competitors |
+| `04-financials.yaml` | `financials` | `financials` | 4 — Financials |
+| `05-product-tech.yaml` | `product-tech` | `product-tech` | 5 — Product & Technology |
+| `06-customers.yaml` | `customers` | `customers` | 6 — Customers |
+| `07-risks.yaml` | `risks` | `risks` | 7 — Risks |
+| `08-valuation.yaml` | `valuation` | `valuation` | 8 — Valuation |
+| `90-evidence.yaml` | `evidence` | `finalArtifacts.evidence` | n/a |
+| `91-full-report.yaml` | `full-report` | `finalArtifacts.fullReport` | final rendered report |
+| `92-summary-card.yaml` | `summary-card` | `finalArtifacts.summaryCard` | website index card |
 
 ## Shared conventions
 
@@ -103,7 +104,7 @@ Use exactly one allowed token. Do not append qualifiers, combine values with `/`
 
 ## `90-evidence.yaml`
 
-Generate only via `node scripts/build-evidence-ledger.mjs <reportFolder>` after `01`–`08` exist.
+Generate only via `node .github/skills/startup-research/scripts/build-evidence-ledger.mjs <reportFolder>` after `01`–`08` exist.
 
 Quality requirements:
 
@@ -242,7 +243,7 @@ Notes:
 - `data: {}` is a placeholder in the skeleton; actual figures must populate only the data fields required by their `type`.
 - Do not include empty figure data arrays that are not used by the figure type.
 - `open-question` claims must use `sourceRefs: []` and `corroboration: none`.
-- See `scripts/figure-registry.mjs` for figure data contracts.
+- See `.github/skills/startup-research/scripts/figure-registry.mjs` for figure data contracts.
 
 ## `91-full-report.yaml`
 
@@ -380,7 +381,7 @@ reportFiles:
 ## Figure contract
 
 - Each figure must include `id`, `title`, `type`, `layout`, `summary`, `data`, `approximationNotes`, and `claimRefs`.
-- Use only supported figure `type` values from `scripts/figure-registry.mjs`.
+- Use only supported figure `type` values from `.github/skills/startup-research/scripts/figure-registry.mjs`.
 - Use only supported `data` fields: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`, `xAxis`, `yAxis`.
 - Do not include empty placeholder arrays for unused data fields.
 
@@ -417,7 +418,7 @@ Renderer data contracts:
 ## Validation expectations
 
 - `schemaVersion` is `report-v2` everywhere.
-- Required artifact filenames match `.github/skills/startup-research/SKILL.md`.
+- Required artifact filenames match `.github/skills/startup-research/references/chapters.yaml`.
 - Before consolidation, each analysis artifact's `claimRefs` point to its own `localEvidence.claims[]`.
 - After consolidation, all `claimRefs` point to `90-evidence.yaml` claims.
 - `91-full-report.yaml` preserves upstream table/figure IDs unless omissions are listed in `reportMeta.coverageNotes`.

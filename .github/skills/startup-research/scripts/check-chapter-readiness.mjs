@@ -1,28 +1,11 @@
 #!/usr/bin/env node
 // Chapter-scoped readiness check for one analysis artifact (01-08).
-// Feedback is intentionally scoped to the owning chapter skill.
+// Feedback is intentionally scoped to the configured analysis chapter.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { collectClaimRefs, tryReadYaml } from './report-utils.mjs';
+import { collectClaimRefs, getAnalysisArtifacts, tryReadYaml } from './report-utils.mjs';
 
-const MIN_LOCAL_SOURCES_PER_CHAPTER = 50;
-const MIN_LOCAL_CLAIMS_PER_CHAPTER = 75;
-const STANDARD_DEPTH_FLOOR = {
-  minSectionBodyWords: 100,
-  minSectionWordsTotal: 900,
-  minTableRowsTotal: 36,
-  minFigureDataPointsTotal: 18,
-};
-const ANALYSIS_ARTIFACTS = [
-  { file: '01-company-overview.yaml', minSections: 3, maxSections: 8, minTables: 4, maxTables: 8, minFigures: 3, maxFigures: 6, requiredFigureTypes: ['timeline'], depthFloor: STANDARD_DEPTH_FLOOR },
-  { file: '02-market-analysis.yaml', minSections: 3, maxSections: 8, minTables: 4, maxTables: 8, minFigures: 3, maxFigures: 6, requiredFigureTypes: ['layered-lens', 'bars', 'range'], depthFloor: STANDARD_DEPTH_FLOOR },
-  { file: '03-competitors.yaml', minSections: 3, maxSections: 8, minTables: 4, maxTables: 8, minFigures: 3, maxFigures: 6, requiredFigureTypes: ['quadrant', 'positioning-map', 'scorecard'], depthFloor: STANDARD_DEPTH_FLOOR },
-  { file: '04-financials.yaml', minSections: 3, maxSections: 8, minTables: 4, maxTables: 8, minFigures: 3, maxFigures: 6, requiredFigureTypes: ['bridge', 'waterfall', 'bars', 'scatter', 'range'], depthFloor: STANDARD_DEPTH_FLOOR },
-  { file: '05-product-tech.yaml', minSections: 3, maxSections: 8, minTables: 4, maxTables: 8, minFigures: 3, maxFigures: 6, requiredFigureTypes: ['stack', 'flow', 'dependency-map'], depthFloor: STANDARD_DEPTH_FLOOR },
-  { file: '06-customers.yaml', minSections: 3, maxSections: 8, minTables: 4, maxTables: 8, minFigures: 3, maxFigures: 6, requiredFigureTypes: ['journey-map', 'bars', 'scatter', 'funnel', 'cohort'], depthFloor: STANDARD_DEPTH_FLOOR },
-  { file: '07-risks.yaml', minSections: 3, maxSections: 8, minTables: 4, maxTables: 8, minFigures: 3, maxFigures: 6, requiredFigureTypes: ['heatmap', 'matrix', 'causal-map', 'dependency-map'], depthFloor: STANDARD_DEPTH_FLOOR },
-  { file: '08-valuation.yaml', minSections: 3, maxSections: 8, minTables: 4, maxTables: 8, minFigures: 3, maxFigures: 6, requiredFigureTypes: ['logic-chain', 'sensitivity', 'scorecard', 'scenario-tree', 'range'], depthFloor: STANDARD_DEPTH_FLOOR },
-];
+const ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
 
 function parseArgs(argv) {
   const positional = argv.filter((arg) => !arg.startsWith('-'));
@@ -36,7 +19,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
-  console.error('Usage: node scripts/check-chapter-readiness.mjs <report-folder> <01-08-artifact.yaml> [--pre-ledger] [--strict]');
+  console.error('Usage: node .github/skills/startup-research/scripts/check-chapter-readiness.mjs <report-folder> <01-08-artifact.yaml> [--pre-ledger] [--strict]');
   process.exit(1);
 }
 
@@ -173,19 +156,21 @@ function checkTableFigureOverlap(file, doc) {
 }
 
 function checkPreLedgerEvidence(file, doc, counts) {
+  const minLocalSources = spec.gate.minLocalSources;
+  const minLocalClaims = spec.gate.minLocalClaims;
   if (!doc.localEvidence) {
     fail(`${file}: missing localEvidence before ledger consolidation`);
     return;
   }
   if (!counts.sources) fail(`${file}: localEvidence.sources is empty`);
   if (!counts.claims) fail(`${file}: localEvidence.claims is empty`);
-  if (counts.sources < MIN_LOCAL_SOURCES_PER_CHAPTER) {
-    const message = `${file}: only ${counts.sources} retained local sources; expected at least ${MIN_LOCAL_SOURCES_PER_CHAPTER} before consolidation or explicit evidenceGaps[] explaining public-evidence limits`;
+  if (counts.sources < minLocalSources) {
+    const message = `${file}: only ${counts.sources} retained local sources; expected at least ${minLocalSources} before consolidation or explicit evidenceGaps[] explaining public-evidence limits`;
     if (counts.gaps > 0) warn(message);
     else fail(message);
   }
-  if (counts.claims < MIN_LOCAL_CLAIMS_PER_CHAPTER) {
-    const message = `${file}: only ${counts.claims} local claims; expected at least ${MIN_LOCAL_CLAIMS_PER_CHAPTER} before consolidation or explicit evidenceGaps[] explaining public-evidence limits`;
+  if (counts.claims < minLocalClaims) {
+    const message = `${file}: only ${counts.claims} local claims; expected at least ${minLocalClaims} before consolidation or explicit evidenceGaps[] explaining public-evidence limits`;
     if (counts.gaps > 0) warn(message);
     else fail(message);
   }
@@ -208,19 +193,20 @@ if (doc) {
     gaps: doc.localEvidence?.evidenceGaps?.length ?? 0,
   };
 
-  if (counts.sections < spec.minSections) fail(`${spec.file}: ${counts.sections} sections, expected at least ${spec.minSections}`);
-  if (counts.tables < spec.minTables) fail(`${spec.file}: ${counts.tables} tables, expected at least ${spec.minTables}`);
-  if (counts.figures < spec.minFigures) fail(`${spec.file}: ${counts.figures} figures, expected at least ${spec.minFigures}`);
-  if (counts.sections > spec.maxSections) warn(`${spec.file}: ${counts.sections} sections exceeds target range maximum ${spec.maxSections}; verify the chapter is not over-fragmented or duplicative`);
-  if (counts.tables > spec.maxTables) warn(`${spec.file}: ${counts.tables} tables exceeds target range maximum ${spec.maxTables}; verify the chapter is not over-fragmented or duplicative`);
-  if (counts.figures > spec.maxFigures) warn(`${spec.file}: ${counts.figures} figures exceeds target range maximum ${spec.maxFigures}; verify the chapter is not over-fragmented or duplicative`);
+  const gate = spec.gate;
+  if (counts.sections < gate.minSections) fail(`${spec.file}: ${counts.sections} sections, expected at least ${gate.minSections}`);
+  if (counts.tables < gate.minTables) fail(`${spec.file}: ${counts.tables} tables, expected at least ${gate.minTables}`);
+  if (counts.figures < gate.minFigures) fail(`${spec.file}: ${counts.figures} figures, expected at least ${gate.minFigures}`);
+  if (counts.sections > gate.maxSections) warn(`${spec.file}: ${counts.sections} sections exceeds target range maximum ${gate.maxSections}; verify the chapter is not over-fragmented or duplicative`);
+  if (counts.tables > gate.maxTables) warn(`${spec.file}: ${counts.tables} tables exceeds target range maximum ${gate.maxTables}; verify the chapter is not over-fragmented or duplicative`);
+  if (counts.figures > gate.maxFigures) warn(`${spec.file}: ${counts.figures} figures exceeds target range maximum ${gate.maxFigures}; verify the chapter is not over-fragmented or duplicative`);
 
-  checkDepthFloor(spec.file, doc, spec.depthFloor);
+  checkDepthFloor(spec.file, doc, gate.depthFloor);
   checkTableFigureOverlap(spec.file, doc);
 
   const types = figureTypeSet(doc);
-  if (!spec.requiredFigureTypes.some((type) => types.has(type))) {
-    warn(`${spec.file}: no preferred figure type found (${spec.requiredFigureTypes.join(' or ')})`);
+  if (!spec.preferredFigureTypes.some((type) => types.has(type))) {
+    warn(`${spec.file}: no preferred figure type found (${spec.preferredFigureTypes.join(' or ')})`);
   }
 
   if (args.preLedger) checkPreLedgerEvidence(spec.file, doc, counts);

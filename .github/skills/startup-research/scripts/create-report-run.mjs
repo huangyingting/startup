@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { normalizeCompanyName, normalizeDomain, readYaml, reportsDir, slugify } from './report-utils.mjs';
 
 function usage() {
-  console.error('Usage: node scripts/create-report-run.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--allow-duplicate] [--index reports/_index.yaml]');
+  console.error('Usage: node .github/skills/startup-research/scripts/create-report-run.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--allow-duplicate] [--index reports/_index.yaml]');
   process.exit(1);
 }
 

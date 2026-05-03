@@ -12,7 +12,7 @@ Startup generates evidence-backed diligence reports for named startup companies.
 
 ## Report artifact flow
 
-Each analysis skill writes one English artifact. After all 8 analysis artifacts exist, `startup-evidence` consolidates evidence, `startup-full-report` synthesizes `91-full-report.yaml`, and `startup-summary-card` produces `92-summary-card.yaml`.
+`startup-research` is the single workflow skill. It reads `.github/skills/startup-research/references/chapters.yaml`, runs each configured analysis chapter through the shared research/evidence/gate loop, then serially builds `90-evidence.yaml`, `91-full-report.yaml`, and `92-summary-card.yaml`.
 
 ```mermaid
 flowchart TD
@@ -20,30 +20,30 @@ flowchart TD
   Setup -- exit 2: duplicate --> Stop([STOP unless refresh requested])
   Setup -- created --> Snapshot
 
-  subgraph Stage1[Stage 1 — Analysis artifacts 01-08]
-    Snapshot[startup-overview<br/>writes 01.yaml]
+  subgraph Stage1[Stage 1 — Configured analysis artifacts 01-08]
+    Snapshot[startup-research + chapters.yaml<br/>writes 01.yaml]
     Snapshot --> Market
 
-    Market[startup-market-analysis<br/>writes 02.yaml] --> Compete
-    Compete[startup-competitors<br/>writes 03.yaml] --> Fin
-    Fin[startup-financials<br/>writes 04.yaml] --> Prod
-    Prod[startup-product-tech<br/>writes 05.yaml<br/>official-site mining → handoff note] --> Cust
-    Cust[startup-customers<br/>writes 06.yaml] --> Risk
-    Risk[startup-risks<br/>writes 07.yaml] --> Val
-    Val[startup-valuation<br/>writes 08.yaml]
+    Market[configured market-analysis<br/>writes 02.yaml] --> Compete
+    Compete[configured competitors<br/>writes 03.yaml] --> Fin
+    Fin[configured financials<br/>writes 04.yaml] --> Prod
+    Prod[configured product-tech<br/>writes 05.yaml<br/>official-site mining → handoff note] --> Cust
+    Cust[configured customers<br/>writes 06.yaml] --> Risk
+    Risk[configured risks<br/>writes 07.yaml] --> Val
+    Val[configured valuation<br/>writes 08.yaml]
   end
 
   Val --> Ledger
 
   subgraph Stage2[Stage 2 — Consolidate]
-    Ledger[startup-evidence<br/>scripts/build-evidence-ledger.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 90-evidence.yaml]
+    Ledger[startup-research<br/>startup-research/scripts/build-evidence-ledger.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 90-evidence.yaml]
   end
 
   Ledger --> Report
 
   subgraph Stage3[Stage 3 — Report assembly]
-    Report[startup-full-report<br/>writes 91-full-report.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events]
-    Report --> Card[startup-summary-card<br/>writes 92-summary-card.yaml<br/>derives from 90 + 91]
+    Report[startup-research full-report assembly<br/>writes 91-full-report.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events]
+    Report --> Card[startup-research summary-card assembly<br/>writes 92-summary-card.yaml<br/>derives from 90 + 91]
   end
 
   Card --> FinalVal
@@ -55,9 +55,9 @@ flowchart TD
   FinalVal --> End([Done])
 ```
 
-### Per-skill dynamic gap loop
+### Per-chapter dynamic gap loop
 
-Every analysis skill closes its own supportable gaps before writing. Volatile facts (funding, valuation, customer counts, releases, lawsuits) are anchored to `currentDate` and audited for freshness; if a query returns thin or stale results the skill rewrites the question from another angle before declaring a gap.
+Every configured analysis chapter closes its own supportable gaps before writing. Volatile facts (funding, valuation, customer counts, releases, lawsuits) are anchored to `currentDate` and audited for freshness; if a query returns thin or stale results the workflow rewrites the question from another angle before declaring a gap.
 
 ```mermaid
 flowchart TD
@@ -82,12 +82,12 @@ flowchart TD
 
 ### Three-layer defence
 
-Every artifact is constrained by skill requirements, central schema rules, and build-time lints. Failures are rejected at build and pushed back to the source artifact rather than patched in `91`.
+Every artifact is constrained by chapter config, central schema rules, and build-time lints. Failures are rejected at build and pushed back to the source artifact rather than patched in `91`.
 
 ```mermaid
 flowchart LR
-  A[Skill requirements<br/>.github/skills/*.md] --> B[Schema rules<br/>.github/references/<br/>report-schema-v2.md]
-  B --> C[Chapter readiness check<br/>scripts/check-chapter-readiness.mjs<br/>+ website/scripts/check-reports.mjs]
+  A[Chapter config<br/>startup-research/references/chapters.yaml] --> B[Schema rules<br/>startup-research/references/<br/>report-schema-v2.md]
+  B --> C[Chapter readiness check<br/>startup-research/scripts/check-chapter-readiness.mjs<br/>+ website/scripts/check-reports.mjs]
   C --> D{Pass?}
   D -- yes --> Ship([Astro build OK])
   D -- no --> Fix[Reject artifact<br/>fix at source<br/>then rerun ledger + report]
@@ -96,7 +96,7 @@ flowchart LR
 
 Lint coverage today:
 
-- render-critical structure is checked at build time; business vocabulary such as recommendations, risk ratings, callout labels, and evidence labels is governed by `.github/references/report-schema-v2.md` plus chapter review rather than build-time enum checks.
+- render-critical structure is checked at build time; business vocabulary such as recommendations, risk ratings, callout labels, and evidence labels is governed by `.github/skills/startup-research/references/report-schema-v2.md` plus chapter review rather than build-time enum checks.
 - every table row has exactly `columns.length` cells.
 - `matrix` / `heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
 - each `tableRef` / `figureRef` is referenced from at most one chapter section or appendix block.
@@ -150,12 +150,13 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 
 - `reports/` — generated report folders and `_index.yaml` catalog.
 - `AGENTS.md` — repo-wide agent operating rules; the full report workflow lives in `.github/skills/startup-research/SKILL.md`.
-- `.github/skills/` — stage skills used by the workflow.
-- `.github/references/report-schema-v2.md` — canonical YAML schema and rendering contract.
-- `.github/references/` — shared YAML syntax and analysis rules.
-- `scripts/build-report-index.mjs` — rebuilds `reports/_index.yaml`.
-- `scripts/create-report-run.mjs` — duplicate-risk check plus report folder creation.
-- `scripts/build-evidence-ledger.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
-- `scripts/check-chapter-readiness.mjs` — chapter-scoped evidence, depth, table, and figure readiness check for `01`–`08` artifacts.
+- `.github/skills/startup-research/` — the single startup report workflow skill.
+- `.github/skills/startup-research/references/chapters.yaml` — canonical chapter and artifact configuration.
+- `.github/skills/startup-research/references/report-schema-v2.md` — canonical YAML schema and rendering contract.
+- `.github/skills/startup-research/references/` — private YAML syntax, analysis rules, chapter config, and schema references for the workflow skill.
+- `.github/skills/startup-research/scripts/build-report-index.mjs` — rebuilds `reports/_index.yaml`.
+- `.github/skills/startup-research/scripts/create-report-run.mjs` — duplicate-risk check plus report folder creation.
+- `.github/skills/startup-research/scripts/build-evidence-ledger.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
+- `.github/skills/startup-research/scripts/check-chapter-readiness.mjs` — chapter-scoped evidence, depth, table, and figure readiness check for `01`–`08` artifacts.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure contracts, refs, and card/report consistency).
