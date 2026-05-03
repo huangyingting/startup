@@ -4,10 +4,10 @@
 // Adds a numeric suffix when the slug already exists.
 import { existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { normalizeCompanyName, normalizeDomain, readYaml, reportsDir, slugify } from './report-utils.mjs';
+import { normalizeCompanyName, normalizeDomain, readYaml, reportsDir, slugify } from './utils.mjs';
 
 function usage() {
-  console.error('Usage: node .github/skills/startup-research/scripts/create-report-run.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--allow-duplicate] [--index reports/_index.yaml]');
+  console.error('Usage: node .github/skills/startup-research/scripts/new.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--allow-duplicate] [--index reports/_index.yaml]');
   process.exit(1);
 }
 

@@ -11,7 +11,7 @@ import {
   readYaml,
   reportsDir,
   writeYaml,
-} from './report-utils.mjs';
+} from './utils.mjs';
 
 const REQUIRED_FILES = ['92-summary-card.yaml'];
 const OUTPUT_PATH = join(reportsDir, '_index.yaml');
@@ -78,7 +78,7 @@ const serialized = yaml.dump(document, { lineWidth: 120, noRefs: true, sortKeys:
 if (args.has('--check')) {
   const onDisk = existsSync(OUTPUT_PATH) ? readFileSync(OUTPUT_PATH, 'utf8') : '';
   if (onDisk !== serialized) {
-    console.error('[build:report-index] reports/_index.yaml is out of date. Run npm run build:report-index.');
+    console.error('[build:report-index] reports/_index.yaml is out of date. Run node .github/skills/startup-research/scripts/index.mjs --strict.');
     process.exit(1);
   }
   console.log(`[build:report-index] ✓ reports/_index.yaml is current (${reports.length} report(s)).`);

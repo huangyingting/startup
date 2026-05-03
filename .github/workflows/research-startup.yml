@@ -98,7 +98,7 @@ jobs:
 
           Select at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a \$1B valuation, or became newly prominent in the last 12-24 months. Avoid companies already present in reports/_index.yaml unless a materially new report is justified.
 
-          For each selected company, run one complete Startup Research workflow using skills directly. Do not invoke another agent or delegate report stages. Use schemaVersion report-v2 and the references listed in AGENTS.md. Each company must produce the full required English YAML set under its own reports/<run>/ folder. Use web_search only as described by AGENTS.md and .github/skills/startup-research/references/analysis-rules.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
+          For each selected company, run one complete Startup Research workflow using skills directly. Do not invoke another agent or delegate report stages. Use schemaVersion report-v2 and the references listed in AGENTS.md. Each company must produce the full required English YAML set under its own reports/<run>/ folder. Use web_search only as described by AGENTS.md and .github/skills/startup-research/SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
           EOF
           )
           else
@@ -108,14 +108,14 @@ jobs:
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-null}
 
-          Use schemaVersion report-v2 and the references listed in AGENTS.md. Run the required skills in order; do not invoke another agent or delegate report stages. Write the full required English YAML set under reports/<run>/. Use web_search only as described by AGENTS.md and .github/skills/startup-research/references/analysis-rules.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
+          Use schemaVersion report-v2 and the references listed in AGENTS.md. Run the required skills in order; do not invoke another agent or delegate report stages. Write the full required English YAML set under reports/<run>/. Use web_search only as described by AGENTS.md and .github/skills/startup-research/SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
           EOF
           )
           fi
           copilot --yolo --no-ask-user -p "$PROMPT"
 
       - name: Rebuild reports/_index.yaml
-        run: node .github/skills/startup-research/scripts/build-report-index.mjs --strict
+        run: node .github/skills/startup-research/scripts/index.mjs --strict
 
       - name: Validate generated report and website
         run: npm run validate
@@ -149,7 +149,7 @@ jobs:
           git config user.email "startup-research-bot@users.noreply.github.com"
           git fetch origin "${{ github.ref_name }}"
           git rebase --autostash "origin/${{ github.ref_name }}"
-          node .github/skills/startup-research/scripts/build-report-index.mjs --strict
+          node .github/skills/startup-research/scripts/index.mjs --strict
           git add reports/
           if git diff --cached --quiet; then
             echo "No new or updated startup reports."

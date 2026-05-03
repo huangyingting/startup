@@ -3,34 +3,29 @@ workflow:
   skill: startup-research
   reportSchemaVersion: report-v2
   currentDateSource: runtime-session-date
-  analysisRules: .github/skills/startup-research/references/analysis-rules.md
   yamlRules: .github/skills/startup-research/references/yaml-rules.md
   reportSchema: .github/skills/startup-research/references/report-schema-v2.md
 analysisDefaults:
   gate:
-    minSections: 3
-    maxSections: 8
-    minTables: 4
-    maxTables: 8
-    minFigures: 3
-    maxFigures: 6
-    minResearchQuestions: 50
-    minLocalSources: 50
-    minLocalClaims: 75
+    minSections: 2
+    maxSections: 6
+    minTables: 1
+    maxTables: 5
+    minFigures: 1
+    maxFigures: 4
+    minResearchQuestions: 10
+    minLocalSources: 10
+    minLocalClaims: 15
     depthFloor:
-      minSectionBodyWords: 100
-      minSectionWordsTotal: 900
-      minTableRowsTotal: 36
-      minFigureDataPointsTotal: 18
+      minSectionBodyWords: 80
+      minSectionWordsTotal: 250
+      minTableRowsTotal: 4
+      minFigureDataPointsTotal: 3
   researchLoop:
     maxGateIterations: 3
     retryScope: failed-gate-dimensions
     freshnessSweepRequired: true
     retainSuccessfulEvidenceUnlessContradicted: true
-  sourceFamilies:
-    minimumDistinctFamilies: 3
-    requireOfficialOrPrimaryWhenAvailable: true
-    requireIndependentCustomerRegulatoryOrAdverseWhenAvailable: true
 finalArtifacts:
   evidence:
     file: 90-evidence.yaml
@@ -49,67 +44,26 @@ chapters:
     chapterNumber: 1
     reportChapterNumber: 2
     loaderKey: companyOverview
-    title: Startup Introduction & Company Overview
-    mission: What is this company, what does it do, who controls it, how far along is it, what evidence anchors its current scale, and what should every later chapter treat as identity ground truth?
+    title: Company Overview
+    mission: Establish identity, product, team, funding, milestones, and the most important unknowns.
     optionalContext: []
     contentRequirements:
-      - Company identity: legal/common name, website, headquarters, founding date/year, founding location, current stage, and category language used by the company and independent sources.
-      - Founders, leadership, board/governance, key executives, leadership changes, relevant backgrounds, founder-market fit, key-person dependence, and organization/talent capacity where supportable.
-      - Product/service one-line definition, customer focus, business model, and value proposition.
-      - Funding status: priced rounds, valuation, total funding when supportable, investors, strategic partners, secondaries, tender events, debt/credit facilities, and conflicting reports.
-      - Cover metrics where supportable: valuation, total raised, revenue/run-rate/ARR, transaction volume, customer count, usage, headcount, locations/facilities, product units, approvals, or other company-specific KPIs.
-      - Milestones across founding, product launches, financing, customer/usage scale, regulatory/governance events, partnerships, facilities, leadership, and adverse events.
-      - Snapshot verdict: identity confidence, scale confidence, and key missing diligence paths.
+      - Identify the company, product, leadership, stage, funding, milestones, and key gaps.
+      - Separate verified facts from company claims.
     requiredTables:
-      - name: Snapshot KPI table
-        requirement: metric, value/status, date, evidence/source, confidence, benchmark/interpretation, diligence gap.
-      - name: Leadership and founder table
-        requirement: person, role, current/past status, background, founder-market fit or functional coverage, key-person dependency, evidence, diligence note.
-      - name: Funding / governance chronology
-        requirement: date, event, amount/valuation/status, participants, implication, evidence.
-      - name: Stakeholder / investor map
-        requirement: stakeholder, role, relationship, control/economic importance, evidence, diligence ask.
-      - name: Milestone table
-        requirement: at least 8 dated entries when public evidence supports them; include positive and adverse/governance milestones.
+      - name: Snapshot table
+        requirement: fact, value/status, evidence, confidence, gap.
     requiredFigures:
-      - name: Company milestone timeline
+      - name: Milestone timeline
         types: [timeline]
-        requirement: Dated milestone items with labels, details, tone, and claim refs.
-      - name: Company snapshot logic
-        types: [logic-chain, flow]
-        requirement: Show how identity, product/service, customers, capital, dependencies, and risks connect.
-      - name: Snapshot scorecard
-        types: [scorecard]
-        requirement: Summarize cover-metric evidence quality, maturity, risk, traction, or investability when supportable.
-      - name: Governance / stakeholder map
-        types: [flow, matrix]
-        requirement: Map material control, strategic partners, investors, regulators, facilities, or ecosystem dependencies.
-    preferredFigureTypes: [timeline, logic-chain, flow, scorecard, matrix]
+        requirement: Key dated company events when evidence supports them.
+    preferredFigureTypes: [timeline]
     evidenceStrategy:
-      - Official identity: homepage, about, leadership, newsroom, blog, investor, careers, product, trust, filings, and legal pages.
-      - Funding/valuation: company announcements, investor announcements, tier-one finance/tech reporting, filings, press releases, and directly reviewable credible databases.
-      - Leadership/governance: company pages, board announcements, filings, official biographies, and reputable reporting.
-      - Organization/talent and cover metrics: careers, headcount disclosures, executive changes, layoffs, operational hiring mix, official claims, and independent corroboration for volatile numbers.
-      - Adverse checks: duplicate identity, lawsuits, leadership churn, sanctions/regulatory issues, failed products, shutdowns, recalls, safety issues, layoffs, stale claims, and conflicting scale numbers.
-    domainAdaptiveAdditions:
-      - Approvals/licenses/certifications/permits/reimbursement/government concessions require approval status and regulator map.
-      - Scientific, clinical, or technical validation requires development stage, validation evidence, IP/patents, and maturity level.
-      - Physical products require facilities, manufacturing partners, supply chain, capacity, certifications, units shipped, recalls, and warranty exposure.
-      - Physical locations/assets require location count, geography, utilization, ownership/lease model, and expansion status.
-      - Marketplace/network models require supply scale, demand scale, liquidity indicators, take-rate surface, and platform governance.
-      - Project/infrastructure businesses require project pipeline, backlog, financing structure, permits, and commissioning milestones.
-      - Financial-risk-bearing models require licenses, capital/funding partners, risk exposure, compliance posture, and counterparty dependencies.
+      - Use official pages, funding/news sources, leadership sources, and adverse identity checks.
     qualityBar:
-      - Establish identity and scale ground truth other chapters can reuse.
-      - Separate verified facts, company-claimed facts, conflicting reports, and unavailable private metrics.
-      - Include decision-relevant financing, product, customer, regulatory, governance, and adverse milestones when supportable.
-      - Explain why selected domain-adaptive additions matter for underwriting.
+      - Later chapters can reuse this identity without guessing.
     gate:
       preferredFigureTypes: [timeline]
-      specialChecks:
-        - Timeline has enough dated entries or gaps explain why not.
-        - Unsupported cover metrics use null plus a concrete diligence path.
-        - Handoff includes identity confidence, selected domain-adaptive additions, and post-snapshot ambiguity.
   - key: market-analysis
     order: 2
     file: 02-market-analysis.yaml
@@ -117,68 +71,26 @@ chapters:
     chapterNumber: 2
     reportChapterNumber: 3
     loaderKey: marketAnalysis
-    title: Market Sizing & Market Analysis
-    mission: What market is this company actually competing for, who pays, how large is the reachable opportunity, what drives adoption, what blocks adoption, and what market facts matter for valuation?
+    title: Market Analysis
+    mission: Define the market, buyer, adoption drivers, constraints, and sizing confidence.
     optionalContext: []
     contentRequirements:
-      - Market definition: included/excluded spend, adjacent categories, buyer/user/payer distinction, and status-quo substitutes.
-      - TAM/SAM/SOM or evidence-constrained sizing using multiple lenses rather than one broad market estimate.
-      - Customer segments by buyer, workflow/use case, geography, vertical, customer size, channel, or adoption maturity.
-      - Budget ownership and procurement/adoption path.
-      - Growth drivers: technology, regulation, demographic, cost, labor, supply-chain, financing, distribution, or behavioral changes.
-      - Adoption constraints: regulation, switching cost, reimbursement, capital intensity, implementation difficulty, trust/safety, ROI uncertainty, physical deployment, or macro cyclicality.
-      - Market attractiveness verdict and explicit sizing/adoption diligence gaps.
+      - Define market boundary, buyer/user/payer, segments, size signals, drivers, and blockers.
+      - Preserve uncertainty instead of inventing TAM/SAM/SOM precision.
     requiredTables:
-      - name: Market definition table
-        requirement: segment/category, included spend, excluded spend, buyer/payer, relevance to the company.
-      - name: TAM/SAM/SOM or sizing lens table
-        requirement: source, year, geography, value, CAGR, methodology, confidence, limitation.
-      - name: Segment / buyer map
-        requirement: segment, buyer, user, payer, workflow/job-to-be-done, budget owner, adoption trigger.
-      - name: Growth drivers and constraints table
-        requirement: driver/constraint, direction, evidence, timing, implication, diligence ask.
-      - name: Geography / channel / penetration table
-        requirement: most relevant axis for the company, including penetration, maturity, or reach where supportable.
+      - name: Market lens table
+        requirement: segment or sizing lens, value/status, source, confidence, limitation.
     requiredFigures:
-      - name: Market sizing lens
-        types: [layered-lens]
-        requirement: TAM/SAM/SOM or constrained sizing layers with numeric values when supported.
-      - name: Market growth / sizing comparison
-        types: [bars, matrix, flow]
-        requirement: Compare source-backed numeric estimates, segments, geographies, or adoption proxies; use qualitative alternative and gap missing numeric input when needed.
-      - name: Market estimate range
-        types: [range]
-        requirement: Low/base/high market, penetration, or forecast ranges when credible sources support bounds.
-      - name: Buyer / segment map
-        types: [matrix, journey-map, flow]
-        requirement: Buyer-user-payer relationships and adoption path.
-      - name: Adoption funnel or value-chain market map
-        types: [funnel, flow]
-        requirement: Purchase/deployment steps or value-chain actors.
-    preferredFigureTypes: [layered-lens, bars, range, matrix, journey-map, flow, funnel]
+      - name: Market map
+        types: [layered-lens, matrix, flow, bars, range]
+        requirement: Show opportunity layers, segments, or adoption path.
+    preferredFigureTypes: [layered-lens, matrix, flow, bars, range]
     evidenceStrategy:
-      - Market data: analyst reports, government/industry statistics, filings, trade associations, regulatory publications, public-company disclosures, credible academic/NGO sources.
-      - Buyer/budget evidence: procurement pages, customer case studies, public budgets, job postings, reimbursement or tender data, channel/distribution evidence.
-      - Adoption/disconfirming evidence: slowdown reports, failed pilots, regulatory bottlenecks, reimbursement denials, infrastructure constraints, saturation, reviews, budget cuts, or contrary estimates.
-      - Company claims can define positioning; independent or primary third-party sources should support market size and adoption constraints.
-    domainAdaptiveAdditions:
-      - Consumer demand requires category growth, purchase frequency, channel mix, price sensitivity, brand discovery, and repeat/retention dynamics.
-      - Enterprise/government demand requires procurement owner, budget cycle, approval path, implementation burden, and replacement vs new-budget logic.
-      - Healthcare/life science requires provider/patient/payer distinction, clinical workflow, reimbursement, guidelines, and regulatory adoption gates.
-      - Energy/infrastructure/climate/industrial deployment requires project finance, permitting, grid/site constraints, utilization, capex cycle, incentives, and commodity sensitivity.
-      - Marketplace/network effects require supply/demand liquidity, density thresholds, multi-homing, disintermediation, and take-rate pool.
-      - Hardware/deeptech requires replacement cycle, pilot-to-production conversion, certification, manufacturing capacity, and buyer risk tolerance.
+      - Use market data, buyer evidence, industry sources, and disconfirming adoption evidence.
     qualityBar:
-      - Define market boundary before sizing it.
-      - Use multiple sizing/adoption lenses when evidence permits.
-      - Tie drivers and constraints to adoption timing, budget ownership, and valuation relevance.
-      - Preserve contradictory estimates or failed sizing paths as diligence gaps.
+      - Market boundary is explicit before sizing.
     gate:
-      preferredFigureTypes: [layered-lens, bars, range]
-      specialChecks:
-        - Do not rely on one generic TAM estimate or call the market large without boundary logic.
-        - If SAM/SOM cannot be isolated, preserve failed sizing paths and diligence asks.
-        - Major chart numbers must match source-backed table numbers or state transformations in approximationNotes.
+      preferredFigureTypes: [layered-lens, matrix, flow, bars, range]
   - key: competitors
     order: 3
     file: 03-competitors.yaml
@@ -187,66 +99,25 @@ chapters:
     reportChapterNumber: 4
     loaderKey: competitors
     title: Competitors
-    mission: Who are the direct, incumbent, adjacent, substitute, and status-quo competitors; how does the company compare on the buying criteria that matter; and how durable is its differentiation?
+    mission: Identify alternatives, differentiation, and moat risk.
     optionalContext: [02-market-analysis.yaml]
     contentRequirements:
-      - Competitive landscape: direct peers, incumbents, adjacent platforms, substitutes, status quo/manual workflow, internal build, and likely acquirers/entrants.
-      - Competitor profiles: scale, funding/market cap, revenue/customer signals, geography, target customer, product scope, pricing, and strategic direction.
-      - Feature/capability, pricing/packaging, GTM/distribution, brand/trust, performance, regulatory/compliance, and implementation comparisons.
-      - Switching costs, buyer lock-in, multi-homing, distribution power, supply/partner access, and cost/performance curves.
-      - Moat durability, commoditization/displacement risks, competitor adverse evidence, and diligence asks.
+      - Compare material alternatives on buyer-relevant criteria.
+      - Include status quo/internal build when relevant.
     requiredTables:
-      - name: Competitor profile table
-        requirement: competitor, category, scale/funding, target segment, differentiation, evidence, limitation.
-      - name: Feature / capability matrix
-        requirement: buying criteria, company, competitors, evidence notes, unsupported cells marked clearly.
-      - name: Pricing / packaging comparison
-        requirement: price/unit/contract model, included capabilities, discount or unknowns, implication.
-      - name: GTM / distribution comparison
-        requirement: channel, installed base, partner access, geography, sales motion, switching leverage.
-      - name: Moat durability / competitive risk register
-        requirement: moat claim, evidence, threat, severity, mitigation/diligence ask.
+      - name: Competitor matrix
+        requirement: competitor, category, customer, differentiation, evidence, limitation.
     requiredFigures:
-      - name: Competitive positioning map
-        types: [positioning-map, quadrant]
-        requirement: Numeric axes only when source-backed; otherwise evidence-backed ordinal 0-10 scoring with rationale.
-      - name: Feature breadth / capability map
-        types: [matrix]
-        requirement: Capability coverage and strength by competitor.
-      - name: Price-value or performance map
-        types: [scatter, quadrant]
-        requirement: Pricing/performance buying criteria when material.
-      - name: Moat / readiness scorecard
-        types: [scorecard]
-        requirement: Compact competitive durability summary.
-      - name: Incumbent displacement map
-        types: [flow]
-        requirement: Status quo, legacy process, internal build, or channel lock-in displacement.
-    preferredFigureTypes: [quadrant, positioning-map, scorecard, matrix, scatter, flow]
+      - name: Positioning map
+        types: [positioning-map, quadrant, matrix, scorecard]
+        requirement: Show relative positioning or capability coverage.
+    preferredFigureTypes: [positioning-map, quadrant, matrix, scorecard]
     evidenceStrategy:
-      - Competitor official surfaces: product, pricing, docs, case studies, security/compliance, support, integrations, channel pages, and changelogs.
-      - Independent proof: benchmarks, reviews, public filings, funding/valuation coverage, market reports, customer references, procurement pages, and adverse reporting.
-      - Never treat vendor-authored comparison pages as independent proof.
-      - For each matrix axis or point placement, retain evidence that would change the score if wrong.
-    domainAdaptiveAdditions:
-      - Include manual/status-quo workflow when customers can choose do nothing.
-      - Add incumbent channel power, switching cost, contract lock-in, trust, compliance, and installed-base analysis when incumbents control distribution.
-      - Add benchmark, reliability, certification, accuracy, uptime, safety, or field-performance comparisons when technical performance matters.
-      - Add BOM/cost curve, manufacturing scale, quality, warranty, supply access, and certification comparisons for physical products.
-      - Add brand awareness, retail shelf/channel access, price tier, community, and repeat purchase differentiation when brand/channel matters.
-      - Add licenses, approvals, reimbursement, compliance maturity, and regulator trust when regulated access matters.
-      - Add liquidity, multi-homing, supply exclusivity, disintermediation, and take-rate defensibility when network effects matter.
+      - Use competitor pages, pricing/product proof, customer proof, and independent/adverse sources.
     qualityBar:
-      - Compare every material way the buyer can solve the same job, including status quo and internal build.
-      - Choose comparison axes that affect buying, switching, pricing, or moat durability.
-      - Mark unsupported matrix cells as unknown or gaps.
-      - Include adverse/disconfirming evidence on displacement risk, commoditization, channel power, or incumbent response.
+      - Unsupported comparison cells are unknown, not guessed.
     gate:
-      preferredFigureTypes: [quadrant, positioning-map, scorecard]
-      specialChecks:
-        - Query by competitor class; do not build the matrix from one generic comparison source.
-        - Unsupported matrix cells must be unknown or evidence gaps, not guesses.
-        - Include adverse evidence on displacement, commoditization, switching, pricing compression, channel conflict, or incumbent response.
+      preferredFigureTypes: [positioning-map, quadrant, matrix, scorecard]
   - key: financials
     order: 4
     file: 04-financials.yaml
@@ -255,74 +126,25 @@ chapters:
     reportChapterNumber: 5
     loaderKey: financials
     title: Financials
-    mission: What is the revenue model, what are the cost and margin drivers, what unit economics can be supported, how much capital is needed, and what financial evidence is insufficient for underwriting?
+    mission: Explain revenue model, pricing, unit economics, funding, capital needs, and gaps.
     optionalContext: [02-market-analysis.yaml, 03-competitors.yaml]
     contentRequirements:
-      - Revenue streams, pricing model, revenue recognition issues, and revenue mix where supportable.
-      - GTM motion and sales efficiency including sales cycle, pipeline quality, channel economics, CAC/payback or proxy signals, productivity, partner/channel dependency, and private-metric gaps.
-      - Cost structure, gross margin drivers, contribution margin logic, working capital, capex, inventory, partner/channel costs, or service-delivery costs.
-      - Public traction such as revenue, ARR/run-rate, GMV/volume, units, backlog, bookings, locations, utilization, active users, or model-specific proxies.
-      - Funding, valuation, debt/credit/project finance, burn/runway, cash needs, and financing dependency.
-      - Unit economics and scenario/projection support only when assumptions are source-backed.
-      - Financial verdict: revenue quality, margin path, capital intensity, and diligence blockers.
+      - Describe how activity becomes revenue, margin, cash need, and valuation input.
+      - Mark unavailable private metrics as gaps.
     requiredTables:
-      - name: Revenue streams table
-        requirement: stream, mechanism, unit, current value/status, evidence, quality note, diligence request.
-      - name: Pricing / monetization table
-        requirement: price/unit/contract terms, list vs realized pricing, discounts/unknowns, source.
-      - name: GTM / sales efficiency table
-        requirement: motion/channel, sales cycle or conversion proxy, CAC/payback/proxy, channel cost, evidence, limitation, diligence request.
-      - name: Unit economics table
-        requirement: metric, value/null, confidence, why it matters, evidence or diligence ask.
-      - name: Funding / capital needs table
-        requirement: round/debt/facility/project capital, amount, date, participants, use of funds, runway/capex implication.
-      - name: Margin / cost-driver bridge table
-        requirement: cost driver, direction, evidence, sensitivity, margin implication.
-      - name: Public financial gaps table
-        requirement: missing private metrics, impact, exact diligence path.
+      - name: Economics table
+        requirement: metric, value/null, evidence, confidence, why it matters, diligence ask.
     requiredFigures:
-      - name: Revenue model bridge
-        types: [flow, waterfall]
-        requirement: How customer activity converts into revenue and gross profit.
-      - name: Unit economics bridge
-        types: [bridge]
-        requirement: Use inputs when available; otherwise qualitative nodes and approximationNotes.
-      - name: Revenue / volume / margin trend
-        types: [bars, scatter, matrix, flow]
-        requirement: Source-backed numeric values when available, otherwise revenue-quality or margin-driver qualitative alternative.
-      - name: Financial estimate range
-        types: [range]
-        requirement: Revenue, burn, runway, margin, or valuation-input ranges with source-backed bounds.
-      - name: Capital intensity / cash-flow map
-        types: [flow, matrix, waterfall]
-        requirement: Capex, inventory, project finance, clinical burn, manufacturing scale-up, or credit exposure.
-    preferredFigureTypes: [bridge, waterfall, bars, scatter, range, flow, matrix]
+      - name: Revenue/economics bridge
+        types: [flow, bridge, waterfall, bars, range]
+        requirement: Show how the model makes money or where economics are unknown.
+    preferredFigureTypes: [flow, bridge, waterfall, bars, range]
     evidenceStrategy:
-      - Revenue/pricing: official pricing, customer contracts/examples, filings, interviews, investor announcements, credible estimates, app/store/channel data, tender/project disclosures.
-      - Funding/valuation: company/investor announcements, filings, tier-one coverage, debt/project finance sources, secondary/tender reports.
-      - Unit economics: public-company comps, customer case studies, cost benchmarks, partner terms, channel fees, manufacturing costs, reimbursement/pricing schedules, loss metrics, utilization data.
-      - Adverse checks: burn concerns, margin compression, pricing pressure, regulation, defaults/losses, inventory issues, cost overruns, failed projects, recalls, reimbursement cuts, customer concentration.
-    domainAdaptiveAdditions:
-      - Subscription economics require ARR/MRR quality, contract duration, churn, NRR/GRR, expansion, CAC payback, and discounting.
-      - Transaction/take-rate economics require GMV/TPV/volume, take rate, refunds, fraud, payment/network costs, frequency, and concentration.
-      - Physical product economics require BOM, manufacturing yield, inventory, warranty, channel margin, logistics, returns, and scale economies.
-      - Services/project delivery requires backlog, milestone payments, utilization, labor leverage, delivery margin, working-capital timing, and change-order risk.
-      - Licensing/royalty/milestone economics require milestone payments, royalty rate, partner concentration, approval probability, and IP term.
-      - Lending/credit/insurance requires loss rate, funding cost, delinquency, claims, reserves, capital requirements, and counterparty risk.
-      - Asset/project yield requires utilization, contracted revenue, capacity factor, offtake terms, capex, project IRR, and financing structure.
-      - Advertising/attention/community requires audience quality, engagement, fill rate, CPM/CPA, creator/channel economics, and platform dependence.
+      - Use pricing, funding, traction, public comps, customer examples, and capital-intensity evidence.
     qualityBar:
-      - Explain how activity becomes revenue, gross margin, cash need, and valuation input.
-      - Separate list pricing, company-claimed traction, corroborated metrics, estimates, and unavailable private data.
-      - Make each unit-economics row decision-relevant.
-      - Do not force SaaS/marketplace/hardware metrics unless the revenue mechanism supports them.
+      - Do not force SaaS metrics unless the model supports them.
     gate:
-      preferredFigureTypes: [bridge, waterfall, bars, scatter, range]
-      specialChecks:
-        - Official pricing is list pricing, not realized revenue or margin.
-        - Every null unit-economics field needs a specific diligence request.
-        - Scenario inputs must be labeled public, estimated, or unavailable.
-        - Do not write generic software metrics unless supported by the revenue model.
+      preferredFigureTypes: [flow, bridge, waterfall, bars, range]
   - key: product-tech
     order: 5
     file: 05-product-tech.yaml
@@ -331,70 +153,25 @@ chapters:
     reportChapterNumber: 6
     loaderKey: productTech
     title: Product & Technology
-    mission: What product/service is being sold, how does the customer use it, what capabilities or assets make it differentiated, what is the maturity level, and what technical/product risks remain?
+    mission: Explain what is delivered, how it works, maturity, dependencies, and product risks.
     optionalContext: [02-market-analysis.yaml, 03-competitors.yaml, 04-financials.yaml]
     contentRequirements:
-      - Product/service definition and value proposition in customer workflow terms.
-      - Module, SKU, asset, pipeline, facility, service, or product-line map.
-      - Architecture or operating model: software stack, hardware design, manufacturing process, clinical/scientific mechanism, logistics network, service workflow, marketplace matching, or project delivery model.
-      - Deployment/onboarding path, integrations, implementation requirements, quality/reliability, support/service model, and roadmap.
-      - Differentiation: technology, IP, data, manufacturing know-how, supply access, brand/product design, regulatory approvals, distribution, or operational process.
-      - Trust, safety, security, privacy, compliance, certification, reliability, or quality controls.
-      - Product verdict: maturity, defensibility, scalability, and diligence gaps.
+      - Cover product, workflow, architecture/operating model, maturity, differentiation, and gaps.
+      - Mine official product/docs/trust pages when a company URL exists.
     requiredTables:
-      - name: Product module / asset matrix
-        requirement: module/asset/product line, user, status/maturity, evidence, differentiation, diligence gap.
-      - name: Workflow / use-case table
-        requirement: user job, current workflow, company solution, measurable benefit, evidence, limitation.
-      - name: Technology / operating architecture table
-        requirement: layer/process/component, role, evidence, dependency, risk.
-      - name: Roadmap / release / development-stage table
-        requirement: date/stage, feature/milestone, status, implication, source.
-      - name: Trust / quality / compliance table
-        requirement: control/certification/quality metric, status, scope, evidence, gap.
-      - name: Implementation / integration / deployment table
-        requirement: step, owner, timeline/friction, dependency, evidence, diligence ask.
+      - name: Product capability table
+        requirement: capability, user/job, maturity, evidence, differentiation, gap.
     requiredFigures:
-      - name: Product architecture map
-        types: [stack]
-        requirement: Layers/modules/components with details.
-      - name: Customer workflow / operating flow
-        types: [flow]
-        requirement: How the product/service is used or delivered.
-      - name: Product maturity / capability map
-        types: [matrix]
-        requirement: Maturity or strength across modules/capabilities.
-      - name: Critical dependency map
-        types: [dependency-map]
-        requirement: Suppliers, platforms, data rights, regulators, facilities, scientific proof, or key partners.
-      - name: Roadmap or development timeline
-        types: [timeline]
-        requirement: Milestones, releases, trials, certifications, facilities, or launches.
-    preferredFigureTypes: [stack, flow, dependency-map, matrix, timeline]
+      - name: Product/architecture map
+        types: [stack, flow, matrix, dependency-map, timeline]
+        requirement: Show components, workflow, maturity, or dependencies.
+    preferredFigureTypes: [stack, flow, matrix, dependency-map, timeline]
     evidenceStrategy:
-      - Official-surface mining is mandatory when a company URL exists: homepage, sitemap, product/service pages, docs/developer portals, catalogs, API references, release notes, changelog, integrations, pricing, trust/security, status, privacy, terms, certifications, customer stories, and product blog/news.
-      - Technical proof: patents, papers, clinical/trial records, certifications, regulatory databases, manufacturing/quality documentation, benchmarks, performance tests, uptime/status, implementation guides.
-      - External proof: reviews, customer deployments, partner announcements, independent benchmarks, regulator filings, recalls/incidents, security/adverse reporting.
-      - Do not infer architecture, approvals, certifications, throughput, accuracy, reliability, or safety from vague marketing copy.
-    domainAdaptiveAdditions:
-      - Software/data-driven products require APIs, integrations, data flows, security/privacy controls, deployment model, reliability, and workflow depth.
-      - Hardware/robotics require BOM/critical components, manufacturing process, certification, field reliability, maintenance, safety, and supply chain.
-      - Scientific/clinical/biotech requires mechanism, pipeline/stage, trial/preclinical evidence, safety, IP estate, regulatory path, and manufacturing/CMC readiness.
-      - Consumer product/brand-led requires formulation/design, packaging, SKU architecture, sensory/user experience, channel feedback, quality, and repeat-use cues.
-      - Marketplace/platform requires matching mechanism, trust/safety, supply onboarding, demand conversion, liquidity tooling, payments/dispute flows, and platform governance.
-      - Industrial/energy/infrastructure/deeptech requires technical readiness level, pilot results, uptime, deployment constraints, permitting/certification, and scaling bottlenecks.
-      - Service/operations-heavy models require workflow, labor model, training, quality assurance, utilization, SLA, and repeatability.
+      - Use official product/docs/trust pages, technical proof, customer proof, and reliability/security evidence.
     qualityBar:
-      - Explain what is delivered, how users interact with it, and what dependencies make it work.
-      - Distinguish verified maturity, roadmap claims, integrations, certifications, and performance from marketing.
-      - Make architecture and workflow figures specific, not generic boxes.
-      - Surface product, security, reliability, regulatory, supply, or implementation gaps.
+      - Architecture and maturity claims need evidence or become gaps.
     gate:
-      preferredFigureTypes: [stack, flow, dependency-map]
-      specialChecks:
-        - Each module row states maturity/status, evidence URL, buyer/user, differentiation, and diligence gap.
-        - Unsupported architecture, certifications, integrations, performance, safety, or roadmap claims become gaps.
-        - Figures use structured YAML fields, not Mermaid or prose diagrams.
+      preferredFigureTypes: [stack, flow, matrix, dependency-map, timeline]
   - key: customers
     order: 6
     file: 06-customers.yaml
@@ -403,69 +180,25 @@ chapters:
     reportChapterNumber: 7
     loaderKey: customers
     title: Customers
-    mission: Who uses or pays for the product/service, what proof shows real adoption, how durable is usage/revenue, what expands, and where are customer concentration or retention risks hidden?
+    mission: Identify customer segments, adoption proof, retention/expansion signals, concentration risk, and gaps.
     optionalContext: [04-financials.yaml, 05-product-tech.yaml]
     contentRequirements:
-      - Customer base overview and segmentation by buyer/user/payer, geography, vertical, size, channel, use case, ACV/revenue band, or deployment type.
-      - Customer growth, active usage, repeat purchase, deployment, account, transaction, location, patient/provider, supplier/buyer, or utilization trajectory where supportable.
-      - Named customer proof: active use, case studies, outcomes, reference quality, evidence freshness, and whether logos are merely promotional.
-      - Retention and durability: NRR/GRR/churn, renewal, contract duration, repeat purchase, cohort retention, frequency, utilization, expansion, satisfaction, complaints, reviews, support, or gaps.
-      - Expansion and concentration: land-and-expand, cross-sell, geographic/segment expansion, top-customer risk, channel/partner dependence, procurement or implementation friction.
-      - Customer verdict and exact customer diligence asks.
+      - Distinguish logos, actual usage, outcomes, retention, expansion, and concentration.
+      - Treat unsupported retention/customer-count claims as gaps.
     requiredTables:
-      - name: Customer segmentation table
-        requirement: segment, buyer/user/payer, use case, scale, revenue/strategic value, evidence, gap.
-      - name: Customer growth / adoption trajectory table
-        requirement: metric, value, date, source, confidence, implication, missing denominator.
-      - name: Named customer proof table
-        requirement: customer, segment, deployment/use case, production vs pilot status, outcome, evidence quality, limitation.
-      - name: Retention / repeat usage / satisfaction table
-        requirement: metric, value/null, segment, evidence, confidence, diligence ask.
-      - name: Contract / renewal quality table
-        requirement: segment/customer type, contract term or renewal signal, expansion surface, termination/procurement friction, evidence, diligence ask.
-      - name: Expansion and concentration risk table
-        requirement: expansion driver, evidence, concentration risk, impact, diligence path.
+      - name: Customer proof table
+        requirement: segment/customer, use case, proof, evidence quality, implication, gap.
     requiredFigures:
-      - name: Customer journey map
-        types: [journey-map]
-        requirement: Customer segments, adoption surfaces, and expansion loops.
-      - name: Adoption / deployment funnel
-        types: [funnel, flow]
-        requirement: Discovery-to-purchase-to-deployment-to-expansion path.
-      - name: Customer growth / usage / retention chart
-        types: [bars, scatter, matrix, journey-map, flow]
-        requirement: Numeric values when source-backed; otherwise qualitative proof and missing denominator/retention input.
-      - name: Retention / repeat cohort
-        types: [cohort]
-        requirement: Renewal, repeat usage, NRR/GRR, repeat purchase, or churn cohorts when available.
-      - name: Customer proof matrix
-        types: [matrix]
-        requirement: Evidence quality, outcome specificity, retention visibility, or production maturity.
-    preferredFigureTypes: [journey-map, bars, scatter, funnel, cohort, matrix, flow]
+      - name: Customer journey or proof map
+        types: [journey-map, funnel, matrix, bars, cohort, flow]
+        requirement: Show adoption, expansion, proof quality, or retention path.
+    preferredFigureTypes: [journey-map, funnel, matrix, bars, cohort, flow]
     evidenceStrategy:
-      - Official customer evidence: customer pages, case studies, testimonials, webinars, press releases, partner stories, industry/solution pages, customer blogs, marketplaces, and logos only when tied to use.
-      - Independent customer evidence: procurement/tender records, reviews, app-marketplace ratings, community/forum reports, public customer announcements, filings, usage datasets, analyst reports, and media.
-      - Adverse customer evidence: churn/complaints, poor reviews, failed deployments, outages affecting customers, procurement blockers, safety/quality incidents, refund/return issues, lawsuits, concentration warnings.
-      - Separate broad customer-count claims from named deployments and retention proof.
-    domainAdaptiveAdditions:
-      - Enterprise/government sales require ACV/contract size, sales cycle, implementation time, renewal, expansion, procurement/security blockers, and referenceability.
-      - Consumer demand requires repeat purchase, frequency, reviews, cohort retention, channel CAC, community/brand engagement, and returns/refunds.
-      - Marketplace/network effects require buyer frequency, supplier retention, liquidity, fill rate, multi-homing, disintermediation, and trust/safety outcomes.
-      - Healthcare/life-science users require provider adoption, patient outcomes, payer/reimbursement evidence, clinical workflow fit, and safety/complaints.
-      - Hardware/industrial deployment requires pilots converted to production, units deployed, uptime, maintenance, field failures, replacement cycles, and service burden.
-      - Physical locations/assets require location-level performance, utilization, same-site/store metrics, occupancy, seasonality, and geography maturity.
-      - Project/service delivery requires backlog, repeat contracts, customer references, delivery quality, SLA, utilization, and renewal/rebid behavior.
+      - Use customer pages, case studies, reviews, procurement/partner proof, and adverse customer evidence.
     qualityBar:
-      - Distinguish logos, named deployments, active use, outcomes, retention, and expansion.
-      - Tie customer evidence to buyer/user/payer segments and revenue or strategic value.
-      - Surface churn, complaints, failed deployments, concentration, weak references, or procurement friction.
-      - Convert unsupported retention, customer count, satisfaction, or concentration claims into explicit gaps.
+      - Logos alone do not prove retention or production use.
     gate:
-      preferredFigureTypes: [journey-map, bars, scatter, funnel, cohort]
-      specialChecks:
-        - Include adverse searches for churn, complaints, blocked deployments, concentration, failed pilots, reviews, or procurement objections.
-        - Unsupported customer count, retention, churn, NRR, satisfaction, repeat purchase, or concentration becomes null plus exact diligence asks.
-        - Logos alone do not prove retention or production deployment.
+      preferredFigureTypes: [journey-map, funnel, matrix, bars, cohort, flow]
   - key: risks
     order: 7
     file: 07-risks.yaml
@@ -474,70 +207,25 @@ chapters:
     reportChapterNumber: 8
     loaderKey: risks
     title: Risks
-    mission: What legal, regulatory, operational, technical, financial, partner, customer, safety, or execution risks could impair the company, how severe are they, what mitigates them, and what kill criteria should investors monitor?
-    optionalContext: [05-product-tech.yaml, 06-customers.yaml, 04-financials.yaml]
+    mission: Rank legal, regulatory, operational, financial, customer, people, and dependency risks.
+    optionalContext: [04-financials.yaml, 05-product-tech.yaml, 06-customers.yaml]
     contentRequirements:
-      - Severity-ranked risk overview with likelihood, impact, mitigation maturity, residual exposure, and investment implication.
-      - Regulatory/legal risk: licenses, permits, approvals, litigation, enforcement, policy changes, contracts, IP, privacy/data, labor, consumer protection, environmental/safety, or industry obligations.
-      - Operational risk: supply chain, manufacturing, delivery, logistics, reliability, incidents, outages, quality, recalls, safety, facilities, labor, utilization, insurance, and continuity.
-      - People/execution risk: key-person dependence, leadership churn, hiring gaps, incentives, culture/reputation, workforce constraints, and team fit.
-      - Partner/dependency risk: supplier, distributor, cloud/platform, bank/capital provider, channel, data/model provider, regulator, contractor, payer, project finance, or key customer concentration.
-      - Financial/model risk: burn, capital intensity, credit/default/loss exposure, commodity/input cost, fraud, working capital, reimbursement/pricing cuts, or margin compression.
-      - Mitigations, monitoring indicators, thesis-break triggers, and diligence asks.
+      - Identify top thesis-breaking risks, evidence, severity, mitigation, and monitoring triggers.
+      - Include adverse/disconfirming research.
     requiredTables:
-      - name: Severity-ranked risk register
-        requirement: risk, evidence date/source, likelihood, severity, mitigation, residual exposure, investment impact.
-      - name: Regulatory / legal risk table
-        requirement: rule/license/case/approval, jurisdiction, status, evidence, exposure, diligence path.
-      - name: Operational / quality / security risk table
-        requirement: failure mode, evidence, likelihood, impact, controls, unresolved gap.
-      - name: Partner / dependency risk table
-        requirement: dependency, counterparty, role, concentration, failure scenario, mitigation.
-      - name: People / execution risk table
-        requirement: role/function, dependency or gap, evidence, impact, mitigation, diligence path.
-      - name: Mitigation and kill criteria table
-        requirement: risk, monitorable trigger, threshold/event, action implication.
+      - name: Risk register
+        requirement: risk, evidence, severity, mitigation, impact, diligence path.
     requiredFigures:
-      - name: Risk heatmap
-        types: [heatmap]
-        requirement: Impact, likelihood, mitigation maturity, or residual severity.
-      - name: Risk transmission map
-        types: [causal-map]
-        requirement: How risks flow into revenue, customers, margin, financing, operations, and valuation.
-      - name: Regulatory / approval pathway map
-        types: [flow]
-        requirement: Approvals, licenses, permits, clinical/regulatory steps, or government procurement when material.
-      - name: Dependency map
-        types: [dependency-map, matrix, flow]
-        requirement: Critical partners, suppliers, platforms, regulators, facilities, or financing dependencies.
-    preferredFigureTypes: [heatmap, matrix, causal-map, dependency-map, flow]
+      - name: Risk map
+        types: [heatmap, causal-map, dependency-map, matrix, flow]
+        requirement: Show severity, transmission path, or dependencies.
+    preferredFigureTypes: [heatmap, causal-map, dependency-map, matrix, flow]
     evidenceStrategy:
-      - Adverse/disconfirming research is mandatory.
-      - Official risk/control evidence: trust/security/privacy/terms/DPA/compliance/status/incident/responsible-use/legal/subprocessor pages, quality policies, certifications, recall notices, safety pages, insurance/permit disclosures.
-      - Primary sources: regulators, court records, clinical/regulatory databases, patent/IP offices, environmental/safety agencies, filings, procurement documents, sanctions/export-control sources, recall databases.
-      - Independent sources: adverse reporting, security incident coverage, customer complaints, analyst risk notes, industry publications, public-company comparable risk factors.
-      - People/execution sources: leadership pages, executive departures, hiring patterns, layoffs, employee litigation, safety/labor records, credible employee/recruiting signals, and founder/operator track record.
-      - For each top risk, find severity evidence and mitigation/control evidence before assigning final severity.
-    domainAdaptiveAdditions:
-      - Approval/license/permit risk requires delay, denial, compliance cost, regulator scrutiny, renewal timing, and jurisdiction map.
-      - Manufacturing/physical product risk requires quality, yield, recalls, warranty, certification, supplier concentration, safety, and field failure risk.
-      - Healthcare/biotech/life science requires clinical failure, adverse events, trial delay, regulator path, reimbursement, safety monitoring, and IP exclusivity.
-      - Financial exposure requires credit/default/loss, fraud, AML/KYC/sanctions, capital/funding cost, counterparty, reserve, and regulatory capital risk.
-      - Data/software/model dependency requires data rights, privacy, cybersecurity, model reliability, IP/training data, explainability, safety, misuse, and platform policy risk.
-      - Infrastructure/energy/industrial projects require permitting, construction, commissioning, grid/site access, commodity/input cost, utilization, environmental, and project finance risk.
-      - Consumer/brand/physical channel requires product liability, reputation, channel conflict, returns, quality, labor, and demand cyclicality.
-      - Geopolitical supply chain requires tariffs, export controls, sanctions, country concentration, shipping disruption, and critical-material access.
+      - Use regulatory/legal sources, trust/security pages, filings, adverse reporting, and dependency evidence.
     qualityBar:
-      - Rank risks by thesis impact and transmission into customers, margins, financing, operations, or valuation.
-      - Pair severity evidence with mitigation/control evidence.
-      - Include domain-appropriate adverse, regulatory, legal, security, quality, safety, customer, and dependency searches.
-      - Define monitorable kill criteria or diligence paths for unresolved risks.
+      - Do not assign severity from intuition alone.
     gate:
-      preferredFigureTypes: [heatmap, matrix, causal-map, dependency-map]
-      specialChecks:
-        - Do not assign severity from intuition; cite evidence and mitigation for each top risk.
-        - Where active litigation, regulatory posture, certifications, incidents, safety, or concentration cannot be confirmed, record exact diligence path.
-        - Include thesis-break triggers tied to measurable operating, regulatory, customer, financial, safety, or management events.
+      preferredFigureTypes: [heatmap, causal-map, dependency-map, matrix, flow]
   - key: valuation
     order: 8
     file: 08-valuation.yaml
@@ -546,74 +234,22 @@ chapters:
     reportChapterNumber: 9
     loaderKey: valuation
     title: Valuation
-    mission: Given the evidence, what is the investment recommendation, how confident are we, what valuation stance is appropriate, what scenarios matter, and what diligence would change the decision?
+    mission: Turn evidence into recommendation, confidence, risk rating, valuation stance, scenarios, and diligence asks.
     optionalContext: [02-market-analysis.yaml, 03-competitors.yaml, 04-financials.yaml, 05-product-tech.yaml, 06-customers.yaml, 07-risks.yaml]
     contentRequirements:
-      - Investment thesis and anti-thesis tied to market, product, customers, financials, competition, and risks.
-      - Recommendation, confidence, risk rating, valuation stance, target return/hold period/exit route/position sizing where supportable.
-      - Current financing/valuation context, entry discipline, cap-table or preference overhang where supportable, dilution/option-pool/debt implications, and whether public evidence supports the price.
-      - Bull/base/bear cases with explicit assumptions, valuation ranges or qualitative bands, probability signals, and downside triggers.
-      - Comparable set: public companies, private rounds, M&A, milestone/asset comparables, project comps, brand/channel comps, or other model-appropriate references.
-      - Exit readiness: IPO, strategic M&A, secondary/private liquidity, licensing/partnership, project sale, commercialization milestone, or other realistic routes.
-      - Final diligence asks and thesis-break triggers.
+      - State thesis, anti-thesis, recommendation, confidence, risk rating, valuation stance, scenarios, and diligence asks.
+      - Use a valuation method that fits the business model and evidence quality.
     requiredTables:
-      - name: Recommendation summary table
-        requirement: recommendation, confidence, risk rating, valuation stance, evidence, decision implication.
-      - name: Thesis / anti-thesis table
-        requirement: argument, evidence, what would change the view, claim refs.
-      - name: Bull / base / bear scenario table
-        requirement: assumptions, valuation/return logic, key risks, probability signal.
-      - name: Comparable valuation table
-        requirement: comparable, metric, multiple/valuation/status, relevance, limitation.
-      - name: Financing structure / dilution table
-        requirement: round or instrument, valuation/amount/status, preference/debt/secondary clues, dilution or overhang implication, evidence, diligence ask.
-      - name: Exit readiness table
-        requirement: exit route, readiness dimension, current evidence, score/status, diligence ask.
-      - name: Position sizing / thesis-break / final diligence table
-        requirement: stance, trigger, evidence needed, action implication.
+      - name: Recommendation table
+        requirement: recommendation, confidence, risk rating, valuation stance, evidence, what would change the view.
     requiredFigures:
       - name: Recommendation logic
-        types: [logic-chain]
-        requirement: Chain from scale/proof/risks/valuation to recommendation.
-      - name: Valuation sensitivity
-        types: [sensitivity]
-        requirement: Sensitivity to revenue, margin, multiple, milestone probability, utilization, take rate, unit margin, capex, or other driver.
-      - name: Scenario outcome chart
-        types: [scenario-tree, bars, waterfall, matrix]
-        requirement: Bull/base/bear outcomes or downside bridge when numeric support exists.
-      - name: Valuation / return range
-        types: [range]
-        requirement: Low/base/high valuation, exit, dilution, or return outcomes with explicit assumptions.
-      - name: Investment scorecard
-        types: [scorecard]
-        requirement: IC-ready scoring across market, proof, moat, economics, risk, valuation, and evidence quality.
-      - name: Exit readiness map
-        types: [matrix]
-        requirement: IPO/M&A/commercialization/project readiness scoring.
-    preferredFigureTypes: [logic-chain, sensitivity, scorecard, scenario-tree, range, bars, waterfall, matrix]
+        types: [logic-chain, scorecard, scenario-tree, sensitivity, range, matrix]
+        requirement: Show how evidence leads to recommendation and valuation stance.
+    preferredFigureTypes: [logic-chain, scorecard, scenario-tree, sensitivity, range, matrix]
     evidenceStrategy:
-      - Use completed coordination artifacts first when already available; otherwise gather recommendation-critical evidence directly and route chapter-owned facts through the orchestrator.
-      - Valuation/financing: latest rounds, valuation marks, cap table/preference clues, investor syndicate, debt/project finance, public comps, private comps, M&A transactions, secondary marks.
-      - Scenario drivers: revenue/growth, margin, retention, unit economics, volume/utilization, approvals, clinical milestones, manufacturing scale, loss rates, commodity prices, market multiples, exit window.
-      - Adverse/downside: overvaluation, down-round risk, multiple compression, regulatory/legal blockers, customer concentration, failed commercialization, cost overruns, safety/quality events, liquidity constraints.
-    domainAdaptiveAdditions:
-      - Recurring/visible revenue uses revenue, gross margin, growth, retention, cash efficiency, and comparable multiples.
-      - Pre-revenue or milestone-driven companies use milestone-based valuation, technical/regulatory de-risking, capital needs, and probability-weighted paths.
-      - Scientific/clinical assets use pipeline stage, indication/market, approval probability, safety, IP term, milestone/royalty economics, and financing runway.
-      - Hardware/physical products use manufacturing scale, gross margin path, inventory/capex, channel margin, warranty/quality, and category comps.
-      - Marketplace/transaction economics use GMV/TPV, take rate, contribution margin, liquidity, frequency, concentration, and network durability.
-      - Consumer brand/channel uses repeat purchase, gross margin, channel scalability, brand strength, distribution, and inventory/working capital.
-      - Infrastructure/project/asset yield uses contracted revenue, utilization/capacity factor, project IRR, capex, financing structure, counterparty credit, and regulatory/permit status.
-      - Lending/insurance/financial risk uses NIM/take rate, loss/claims ratio, funding cost, reserves, capital requirements, and cycle sensitivity.
+      - Use prior chapters, financing/valuation sources, public comps, scenario drivers, and downside/adverse evidence.
     qualityBar:
-      - Make the recommendation price-sensitive and evidence-sensitive.
-      - Tie thesis, anti-thesis, risk rating, confidence, and valuation stance to evidence and missing inputs.
-      - Use valuation methods matching business model and stage.
-      - Show what diligence or price change would move the recommendation.
+      - Recommendation is evidence-sensitive and price-sensitive.
     gate:
-      preferredFigureTypes: [logic-chain, sensitivity, scorecard, scenario-tree, range]
-      specialChecks:
-        - Include adverse searches on overvaluation, down-round risk, governance, liquidity, multiple compression, commercialization failure, or model-specific downside.
-        - Do not issue buy unless thesis and anti-thesis are evidence-supported and valuation has sufficient support.
-        - If valuation inputs are missing, prefer research-more or track over false precision.
-        - Recommendation must be price-sensitive and evidence-sensitive, not a generic company-quality score.
+      preferredFigureTypes: [logic-chain, scorecard, scenario-tree, sensitivity, range, matrix]

@@ -11,7 +11,7 @@ import {
   getCoreArtifacts,
   loadWorkflowConfig,
   tryReadYaml,
-} from '../../.github/skills/startup-research/scripts/report-utils.mjs';
+} from '../../.github/skills/startup-research/scripts/utils.mjs';
 import {
   FIGURE_ALLOWED_POPULATED_FIELDS,
   FIGURE_ARRAY_FIELDS,
@@ -19,7 +19,7 @@ import {
   FIGURE_DATA_FIELDS,
   FIGURE_LAYOUTS,
   FIGURE_TYPES,
-} from '../../.github/skills/startup-research/scripts/figure-registry.mjs';
+} from '../../.github/skills/startup-research/scripts/figures.mjs';
 const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../reports');
 const SCHEMA_VERSION = 'report-v2';
 const WORKFLOW_CONFIG = loadWorkflowConfig();

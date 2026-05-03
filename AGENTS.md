@@ -25,7 +25,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 - `.github/skills/startup-research/SKILL.md` is the single startup workflow skill and is canonical for the end-to-end workflow, chapter iteration loop, execution order, concurrency model, synchronization points, finalization, and report-run gates.
 - `.github/skills/startup-research/references/chapters.yaml` is canonical for required artifact set, artifact mapping, chapter order/numbering, loader keys, chapter-specific semantic requirements, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, and completion gates.
-- `.github/skills/startup-research/scripts/figure-registry.mjs` is canonical for supported native figure types and their data contracts.
+- `.github/skills/startup-research/scripts/figures.mjs` is canonical for supported native figure types and their data contracts.
 - `.github/skills/startup-research/references/report-schema-v2.md` is canonical for report/card enums, full-report block/callout types, analysis artifact callout types, and evidence field vocabulary.
 - For workflow-process changes, update `startup-research` first. For artifact/chapter changes, update `.github/skills/startup-research/references/chapters.yaml` first; validators, loaders, and scripts consume that config. For figure type or rendering-contract changes, update the figure registry first, then sync startup-research references and chapter config. For schema vocabulary, update `.github/skills/startup-research/references/report-schema-v2.md` first.
 
@@ -34,9 +34,9 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `.github/skills/startup-research/SKILL.md` — single workflow entry point that runs configured analysis chapters, evidence consolidation, full-report assembly, summary-card generation, and validation end-to-end.
 - `.github/skills/startup-research/references/chapters.yaml` — chapter and final artifact configuration consumed by workflow scripts, validators, and the website loader.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
-- `.github/skills/startup-research/references/` — private startup-research YAML syntax, analysis rules, chapter config, and report schema references.
+- `.github/skills/startup-research/references/` — private startup-research YAML syntax, chapter config, and report schema references.
 - `.github/skills/startup-research/references/report-schema-v2.md` — canonical report schema and rendering contract.
-- `.github/skills/startup-research/scripts/figure-registry.mjs` — central native figure type/data contract; consumed by validators and the renderer.
+- `.github/skills/startup-research/scripts/figures.mjs` — central native figure type/data contract; consumed by validators and the renderer.
 - `.github/skills/startup-research/scripts/` — report preparation, index, evidence consolidation, figure contracts, workflow config validation, and chapter readiness checks.
 - `.github/skills/fetch-url/scripts/` — direct URL fetch helper script used by the `fetch-url` skill.
 - `website/` — Astro renderer, content loader, UI components, and website validation.
@@ -51,7 +51,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 ## URL and page fetching
 
 - For direct URL/link/page fetches, always load and follow the `fetch-url` skill.
-- Use `node .github/skills/fetch-url/scripts/fetch-url.mjs ...`; do **not** use native `web_fetch` or similarly named built-in page-fetching tools in this repository.
+- Use `node .github/skills/fetch-url/scripts/fetch.mjs ...` for direct page review; do **not** use native `web_fetch` or similarly named built-in page-fetching tools in this repository.
 - If a higher-priority runtime instruction requires a platform-provided fetch tool for a user-supplied URL, follow that instruction, then apply this repository's evidence and citation rules to the fetched content.
 - Use `--text-only` for readable text intended for grep/skimming.
 - Use `--out` only for diagnostic saved bodies; `/tmp` files are never report artifacts or sources of truth.
@@ -81,12 +81,12 @@ When adding a new analysis chapter or changing chapter order:
 When adding a required table, figure, metric, or diligence question inside an existing chapter:
 
 1. Update that chapter entry in `.github/skills/startup-research/references/chapters.yaml` with the required content, table, figure, metric, source, or diligence requirement.
-2. Keep table column requirements schema-compatible and figure types limited to `.github/skills/startup-research/scripts/figure-registry.mjs`.
+2. Keep table column requirements schema-compatible and figure types limited to `.github/skills/startup-research/scripts/figures.mjs`.
 3. Run the chapter readiness check for affected draft artifacts and then `npm run validate` for final artifacts.
 
 When adding a new native figure/chart type:
 
-1. Add the type, required data fields, allowed populated fields, and data-shape constraints to `.github/skills/startup-research/scripts/figure-registry.mjs`.
+1. Add the type, required data fields, allowed populated fields, and data-shape constraints to `.github/skills/startup-research/scripts/figures.mjs`.
 2. Implement or route the renderer in `website/src/components/FigureRenderer.astro`.
 3. Reference the type from the relevant chapter entry in `.github/skills/startup-research/references/chapters.yaml` only after the renderer and validator support it.
 4. Rebuild `reports/_index.yaml` and run `npm run validate`.

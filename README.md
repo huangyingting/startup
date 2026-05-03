@@ -16,7 +16,7 @@ Startup generates evidence-backed diligence reports for named startup companies.
 
 ```mermaid
 flowchart TD
-  Start([User: research company X]) --> Setup{create-report-run.mjs<br/>dedupe + create reports/&lt;ts&gt;-&lt;slug&gt;/}
+  Start([User: research company X]) --> Setup{new.mjs<br/>dedupe + create reports/&lt;ts&gt;-&lt;slug&gt;/}
   Setup -- exit 2: duplicate --> Stop([STOP unless refresh requested])
   Setup -- created --> Snapshot
 
@@ -36,7 +36,7 @@ flowchart TD
   Val --> Ledger
 
   subgraph Stage2[Stage 2 — Consolidate]
-    Ledger[startup-research<br/>startup-research/scripts/build-evidence-ledger.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 90-evidence.yaml]
+    Ledger[startup-research<br/>startup-research/scripts/ledger.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 90-evidence.yaml]
   end
 
   Ledger --> Report
@@ -49,7 +49,7 @@ flowchart TD
   Card --> FinalVal
 
   subgraph Stage4[Stage 4 — Final validation]
-    FinalVal[build-report-index.mjs<br/>+ website check-reports.mjs<br/>+ astro build]
+    FinalVal[index.mjs<br/>+ website check-reports.mjs<br/>+ astro build]
   end
 
   FinalVal --> End([Done])
@@ -87,7 +87,7 @@ Every artifact is constrained by chapter config, central schema rules, and build
 ```mermaid
 flowchart LR
   A[Chapter config<br/>startup-research/references/chapters.yaml] --> B[Schema rules<br/>startup-research/references/<br/>report-schema-v2.md]
-  B --> C[Chapter readiness check<br/>startup-research/scripts/check-chapter-readiness.mjs<br/>+ website/scripts/check-reports.mjs]
+  B --> C[Chapter readiness check<br/>startup-research/scripts/gate.mjs<br/>+ website/scripts/check-reports.mjs]
   C --> D{Pass?}
   D -- yes --> Ship([Astro build OK])
   D -- no --> Fix[Reject artifact<br/>fix at source<br/>then rerun ledger + report]
@@ -153,10 +153,10 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `.github/skills/startup-research/` — the single startup report workflow skill.
 - `.github/skills/startup-research/references/chapters.yaml` — canonical chapter and artifact configuration.
 - `.github/skills/startup-research/references/report-schema-v2.md` — canonical YAML schema and rendering contract.
-- `.github/skills/startup-research/references/` — private YAML syntax, analysis rules, chapter config, and schema references for the workflow skill.
-- `.github/skills/startup-research/scripts/build-report-index.mjs` — rebuilds `reports/_index.yaml`.
-- `.github/skills/startup-research/scripts/create-report-run.mjs` — duplicate-risk check plus report folder creation.
-- `.github/skills/startup-research/scripts/build-evidence-ledger.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
-- `.github/skills/startup-research/scripts/check-chapter-readiness.mjs` — chapter-scoped evidence, depth, table, and figure readiness check for `01`–`08` artifacts.
+- `.github/skills/startup-research/references/` — private YAML syntax, chapter config, and schema references for the workflow skill.
+- `.github/skills/startup-research/scripts/index.mjs` — rebuilds `reports/_index.yaml`.
+- `.github/skills/startup-research/scripts/new.mjs` — duplicate-risk check plus report folder creation.
+- `.github/skills/startup-research/scripts/ledger.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
+- `.github/skills/startup-research/scripts/gate.mjs` — chapter-scoped evidence, depth, table, and figure readiness check for `01`–`08` artifacts.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure contracts, refs, and card/report consistency).

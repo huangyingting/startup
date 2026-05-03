@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from '
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
-import { FIGURE_TYPES } from './figure-registry.mjs';
+import { FIGURE_TYPES } from './figures.mjs';
 
 export const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const reportsDir = join(repoRoot, 'reports');

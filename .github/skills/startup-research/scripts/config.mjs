@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Validate the config-driven startup research workflow metadata.
-import { getAnalysisArtifacts, getCoreArtifacts, loadWorkflowConfig, workflowConfigPath } from './report-utils.mjs';
+import { getAnalysisArtifacts, getCoreArtifacts, loadWorkflowConfig, workflowConfigPath } from './utils.mjs';
 
 try {
   const config = loadWorkflowConfig();

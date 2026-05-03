@@ -6,12 +6,12 @@ argument-hint: "<url> [--out <file>] [--text-only]"
 
 # Fetch URL
 
-Use this skill for direct URL/link/page reads in this repository. It wraps `./scripts/fetch-url.mjs` and replaces native `web_fetch`-style tools.
+Use this skill for direct URL/link/page reads in this repository. It wraps `./scripts/fetch.mjs` and replaces native `web_fetch`-style tools.
 
 ## Run
 
 ```sh
-node .github/skills/fetch-url/scripts/fetch-url.mjs <url>
+node .github/skills/fetch-url/scripts/fetch.mjs <url>
 ```
 
 Options:

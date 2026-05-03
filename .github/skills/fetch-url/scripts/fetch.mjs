@@ -37,7 +37,7 @@ function parseArgs(args) {
 }
 
 function help() {
-  console.log(`Usage: node .github/skills/fetch-url/scripts/fetch-url.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>]\n\nDefault URL: ${DEFAULT_URL}`);
+  console.log(`Usage: node .github/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>]\n\nDefault URL: ${DEFAULT_URL}`);
 }
 
 export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent = DEFAULT_USER_AGENT } = {}) {

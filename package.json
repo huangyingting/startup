@@ -3,11 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:report-index": "node .github/skills/startup-research/scripts/build-report-index.mjs",
-    "build:evidence-ledger": "node .github/skills/startup-research/scripts/build-evidence-ledger.mjs",
-    "check:workflow-config": "node .github/skills/startup-research/scripts/check-workflow-config.mjs",
-    "check:chapter": "node .github/skills/startup-research/scripts/check-chapter-readiness.mjs",
-    "check:report-index": "node .github/skills/startup-research/scripts/build-report-index.mjs --strict --check",
+    "check:workflow-config": "node .github/skills/startup-research/scripts/config.mjs",
+    "check:report-index": "node .github/skills/startup-research/scripts/index.mjs --strict --check",
     "check:reports": "npm --prefix website run check:reports",
     "validate": "npm run check:workflow-config && npm run check:report-index && npm run check:reports && npm --prefix website run build"
   },

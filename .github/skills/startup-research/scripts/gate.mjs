@@ -3,7 +3,7 @@
 // Feedback is intentionally scoped to the configured analysis chapter.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { collectClaimRefs, getAnalysisArtifacts, tryReadYaml } from './report-utils.mjs';
+import { collectClaimRefs, getAnalysisArtifacts, tryReadYaml } from './utils.mjs';
 
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
 
@@ -19,7 +19,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
-  console.error('Usage: node .github/skills/startup-research/scripts/check-chapter-readiness.mjs <report-folder> <01-08-artifact.yaml> [--pre-ledger] [--strict]');
+  console.error('Usage: node .github/skills/startup-research/scripts/gate.mjs <report-folder> <01-08-artifact.yaml> [--pre-ledger] [--strict]');
   process.exit(1);
 }
 

@@ -5,7 +5,7 @@
 // analysis artifacts.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { asDateString, canonicalSourceUrl, compactText, getAnalysisArtifacts, loadWorkflowConfig, readYaml, writeYaml } from './report-utils.mjs';
+import { asDateString, canonicalSourceUrl, compactText, getAnalysisArtifacts, loadWorkflowConfig, readYaml, writeYaml } from './utils.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
@@ -21,7 +21,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
-  console.error('Usage: node .github/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder> [--keep-local]');
+  console.error('Usage: node .github/skills/startup-research/scripts/ledger.mjs <report-folder> [--keep-local]');
   process.exit(1);
 }
 
