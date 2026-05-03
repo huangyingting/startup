@@ -1,11 +1,11 @@
-# YAML syntax rules
+# YAML rules
 
-Shared YAML rules for all report artifacts.
+Shared YAML syntax rules for report artifacts.
 
 ## Document shape
 
 - Write complete files only; never write continuation fragments.
-- Every artifact starts at document head with:
+- Every report artifact starts at document head with:
   - `schemaVersion`
   - `artifact`
   - `slug`
@@ -18,6 +18,7 @@ Shared YAML rules for all report artifacts.
 
 - Use 2-space indentation.
 - Never use tabs.
+- Do not use YAML anchors or aliases.
 - Keep arrays homogeneous.
 - Use literal blocks (`|`) for long paragraphs, equations, and disclaimers.
 - Use `null` for unknown optional values.

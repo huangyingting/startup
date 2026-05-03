@@ -21,12 +21,12 @@ Resolve these inputs before running any chapter skill:
 - `duplicateCheck`: run `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before creating or writing the report folder. Exit `2` means duplicate risk; stop unless the user explicitly requested a refresh/update of an existing company.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/schemas/startup-diligence-report-v2.md`.
-- `yamlSyntaxPath`: absolute path to `.github/references/yaml-syntax.md`.
+- `yamlRulesPath`: absolute path to `.github/references/yaml-rules.md`.
 - Prompt-derived run requirements: infer any audience, investment lens, required topics, metrics, competitors/comparables, figures, source constraints, or diligence questions from the user's prompt. These requirements are run-local and section-owned; satisfy them in the relevant artifacts or record an evidence gap.
 
 Before writing artifacts:
 
-- Read `schemaPath` and `yamlSyntaxPath`.
+- Read `schemaPath` and `yamlRulesPath`.
 - For analysis stages `01`–`08`, follow `.github/references/analysis-rules.md`.
 - For each analysis stage, follow that stage's `startup-*` skill as the chapter requirements source: required chapter content, required tables, required figures, evidence acquisition, and domain-adaptive additions live in the owning skill.
 

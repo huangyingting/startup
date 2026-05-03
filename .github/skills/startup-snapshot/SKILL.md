@@ -11,7 +11,7 @@ First analysis stage. This skill owns the company introduction and snapshot chap
 ## Read first
 
 - `schemaPath`
-- `yamlSyntaxPath`
+- `yamlRulesPath`
 - `.github/references/analysis-rules.md`
 
 ## Outputs

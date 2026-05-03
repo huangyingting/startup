@@ -35,7 +35,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (snapshot, market, competition, financials, product, customers, risks, valuation, ledger, report, card). The analysis skills are the single source for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
 - `scripts/report-manifest.mjs` — artifact identity, chapter order, loader keys, preferred figure types, and numeric depth floors. Integration checks live in `scripts/check-reports-content.mjs` and `website/scripts/check-reports.mjs`.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
-- `.github/references/` — shared rules: YAML syntax, evidence ledger, and analysis conventions.
+- `.github/references/` — shared YAML syntax and analysis rules.
 - `.github/schemas/startup-diligence-report-v2.md` — canonical schema and rendering contract.
 - `scripts/figure-registry.mjs` — central native figure type/data contract; consumed by validators and the renderer.
 - `scripts/evidence-registry.mjs` — central evidence enums (claim types, topics, freshness, source types, reputation tiers, independence).

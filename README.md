@@ -153,7 +153,7 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `AGENTS.md` — repo-wide agent operating rules; the full report workflow lives in `.github/skills/startup-diligence/SKILL.md`.
 - `.github/skills/` — stage skills used by the workflow.
 - `.github/schemas/startup-diligence-report-v2.md` — canonical YAML schema and rendering contract.
-- `.github/references/` — shared YAML syntax and evidence-ledger rules.
+- `.github/references/` — shared YAML syntax and analysis rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
 - `scripts/check-company-dedup.mjs` — pre-stage duplicate-risk check for matching company names or domains.
 - `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `100-evidence-ledger.yaml`.

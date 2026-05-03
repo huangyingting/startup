@@ -35,7 +35,7 @@ Required artifacts:
 - The default agent runs the workflow through `.github/skills/`; do not delegate stages to other agents.
 - Skills write complete YAML files directly under `reportFolder`.
 - `/tmp` and terminal-output files are diagnostics only, never artifacts or handoff inputs.
-- Agents must read this schema and `.github/references/yaml-syntax.md` before writing YAML artifacts.
+- Agents must read this schema and `.github/references/yaml-rules.md` before writing YAML artifacts.
 - Skills that create local evidence must follow `.github/references/analysis-rules.md`.
 - Skills read the minimum required dependency set. Downstream analysis skills use `01-company-snapshot.yaml` for identity; they read other upstream artifacts only when chapter logic needs them.
 - Analysis skills record local evidence under `localEvidence`; `startup-ledger` runs `scripts/consolidate-evidence.mjs` to create canonical evidence and rewrite claim references.
