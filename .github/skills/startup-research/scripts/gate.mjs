@@ -158,6 +158,7 @@ function checkTableFigureOverlap(file, doc) {
 function checkPreLedgerEvidence(file, doc, counts) {
   const minLocalSources = spec.gate.minLocalSources;
   const minLocalClaims = spec.gate.minLocalClaims;
+  const minResearchQuestions = spec.gate.minResearchQuestions;
   if (!doc.localEvidence) {
     fail(`${file}: missing localEvidence before ledger consolidation`);
     return;
@@ -165,14 +166,13 @@ function checkPreLedgerEvidence(file, doc, counts) {
   if (!counts.sources) fail(`${file}: localEvidence.sources is empty`);
   if (!counts.claims) fail(`${file}: localEvidence.claims is empty`);
   if (counts.sources < minLocalSources) {
-    const message = `${file}: only ${counts.sources} retained local sources; expected at least ${minLocalSources} before consolidation or explicit evidenceGaps[] explaining public-evidence limits`;
-    if (counts.gaps > 0) warn(message);
-    else fail(message);
+    fail(`${file}: only ${counts.sources} retained local sources; expected at least ${minLocalSources} (evidenceGaps[] documents missing public data, but does not waive the minimum)`);
   }
   if (counts.claims < minLocalClaims) {
-    const message = `${file}: only ${counts.claims} local claims; expected at least ${minLocalClaims} before consolidation or explicit evidenceGaps[] explaining public-evidence limits`;
-    if (counts.gaps > 0) warn(message);
-    else fail(message);
+    fail(`${file}: only ${counts.claims} local claims; expected at least ${minLocalClaims} (evidenceGaps[] documents missing public data, but does not waive the minimum)`);
+  }
+  if (counts.researchQuestions < minResearchQuestions) {
+    fail(`${file}: only ${counts.researchQuestions} research questions in localEvidence.researchQuestions[]; expected at least ${minResearchQuestions}`);
   }
   const localClaimIds = new Set((doc.localEvidence.claims ?? []).map((claim) => claim?.id));
   for (const ref of collectClaimRefs(doc)) {
@@ -191,6 +191,7 @@ if (doc) {
     sources: doc.localEvidence?.sources?.length ?? 0,
     claims: doc.localEvidence?.claims?.length ?? 0,
     gaps: doc.localEvidence?.evidenceGaps?.length ?? 0,
+    researchQuestions: doc.localEvidence?.researchQuestions?.length ?? 0,
   };
 
   const gate = spec.gate;
@@ -215,7 +216,7 @@ if (doc) {
 
   console.log(`[check:chapter] reportFolder=${reportFolder}`);
   console.log(`[check:chapter] artifact=${spec.file} mode=${args.preLedger ? 'pre-ledger' : 'general'} strict=${args.strict ? 'yes' : 'no'}`);
-  console.log(`[check:chapter] sections=${counts.sections} tables=${counts.tables} figures=${counts.figures} localSources=${counts.sources} localClaims=${counts.claims} gaps=${counts.gaps}`);
+  console.log(`[check:chapter] sections=${counts.sections} tables=${counts.tables} figures=${counts.figures} localSources=${counts.sources} localClaims=${counts.claims} researchQuestions=${counts.researchQuestions} gaps=${counts.gaps}`);
 }
 
 if (warnings.length) {

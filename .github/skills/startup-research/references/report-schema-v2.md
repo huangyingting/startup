@@ -89,6 +89,7 @@ callouts:
 localEvidence:
   coverage:
     sourcesConsidered: number
+  researchQuestions: [string]                  # Search / diligence questions raised before evidence collection; gate --pre-ledger requires ≥ minResearchQuestions.
   sources: [source]
   claims: [claim]
   evidenceGaps: [evidenceGap]
