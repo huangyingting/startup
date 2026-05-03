@@ -12,7 +12,7 @@ Sixth analysis stage. This skill owns the customer quality and retention chapter
 
 - `01-company-snapshot.yaml`
 - `04-financial-unit-economics.yaml` and `05-product-technology.yaml` when pricing, modules, or implementation claims affect customer analysis.
-- `.github/references/analysis-skill-conventions.md`
+- `.github/references/analysis-rules.md`
 
 ## Outputs
 

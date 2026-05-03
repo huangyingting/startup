@@ -11,7 +11,7 @@ Second analysis stage. This skill owns the market sizing and macro chapter. It m
 ## Read first
 
 - `01-company-snapshot.yaml`
-- `.github/references/analysis-skill-conventions.md`
+- `.github/references/analysis-rules.md`
 
 ## Outputs
 

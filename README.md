@@ -83,11 +83,11 @@ flowchart TD
 
 ### Three-layer defence
 
-Every artifact is constrained by skill prompts, central schema contracts, and build-time lints. Failures are rejected at build and pushed back to the source artifact rather than patched in `101`.
+Every artifact is constrained by skill requirements, central schema rules, and build-time lints. Failures are rejected at build and pushed back to the source artifact rather than patched in `101`.
 
 ```mermaid
 flowchart LR
-  A[Skill prompt rules<br/>.github/skills/*.md] --> B[Schema contracts<br/>.github/schemas/<br/>startup-diligence-report-v2.md]
+  A[Skill requirements<br/>.github/skills/*.md] --> B[Schema rules<br/>.github/schemas/<br/>startup-diligence-report-v2.md]
   B --> C[Build-time lints<br/>scripts/check-reports-content.mjs<br/>website/scripts/check-reports.mjs]
   C --> D{Pass?}
   D -- yes --> Ship([Astro build OK])
@@ -155,7 +155,7 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `.github/schemas/startup-diligence-report-v2.md` — canonical YAML schema and rendering contract.
 - `.github/references/` — shared YAML syntax and evidence-ledger rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
-- `scripts/check-company-dedup.mjs` — pre-stage duplicate-risk check for matching company names or domains; also supports legacy snapshot-file checks.
+- `scripts/check-company-dedup.mjs` — pre-stage duplicate-risk check for matching company names or domains.
 - `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `100-evidence-ledger.yaml`.
 - `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and content-depth checks.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.

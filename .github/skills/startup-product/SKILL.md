@@ -12,7 +12,7 @@ Fifth analysis stage. This skill owns the product and technology chapter. It mus
 
 - `01-company-snapshot.yaml`
 - `02-market-macro.yaml`, `03-competitive-benchmarking.yaml`, or `04-financial-unit-economics.yaml` only when positioning, feature, pricing, or monetization context matters.
-- `.github/references/analysis-skill-conventions.md`
+- `.github/references/analysis-rules.md`
 
 ## Outputs
 

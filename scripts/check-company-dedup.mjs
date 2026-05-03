@@ -1,30 +1,22 @@
 #!/usr/bin/env node
 // Reject a new report when reports/_index.yaml already contains the same
-// normalized company name or domain. Prefer running with --company/--website
-// before creating or writing a report folder; the legacy snapshot-file mode is
-// retained for compatibility.
+// normalized company name or domain. Run before creating or writing a report folder.
 //
 // Exit codes:
 //   0 - low duplicate risk
 //   1 - missing input or other invocation error
 //   2 - duplicate detected
 import { existsSync } from 'node:fs';
-import { basename, dirname } from 'node:path';
 import { normalizeCompanyName, normalizeDomain, readYaml } from './text-utils.mjs';
 
 function usage() {
-  console.error('Usage:');
-  console.error('  node scripts/check-company-dedup.mjs --company <name> [--website <url>] [--run-id <id>] [--index reports/_index.yaml]');
-  console.error('  node scripts/check-company-dedup.mjs <01-company-snapshot.yaml> [reports/_index.yaml]');
+  console.error('Usage: node scripts/check-company-dedup.mjs --company <name> [--website <url>] [--run-id <id>] [--index reports/_index.yaml]');
   process.exit(1);
 }
 
 function parseArgs(argv) {
   if (!argv.length) usage();
-  if (!argv[0].startsWith('-')) {
-    return { mode: 'snapshot', snapshotPath: argv[0], indexPath: argv[1] ?? 'reports/_index.yaml' };
-  }
-  const args = { mode: 'input', indexPath: 'reports/_index.yaml', runId: null, company: '', website: '' };
+  const args = { indexPath: 'reports/_index.yaml', runId: null, company: '', website: '' };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--company' || arg === '--name') args.company = argv[++i] ?? '';
@@ -37,23 +29,8 @@ function parseArgs(argv) {
   return args;
 }
 
-function candidateFromSnapshot(snapshotPath) {
-  if (!existsSync(snapshotPath)) {
-    console.error(`[check-company-dedup] missing ${snapshotPath}`);
-    process.exit(1);
-  }
-  const snapshot = readYaml(snapshotPath);
-  return {
-    runId: basename(dirname(snapshotPath)),
-    name: snapshot.company?.name,
-    website: snapshot.company?.website ?? snapshot.startupIntroduction?.website,
-  };
-}
-
 const args = parseArgs(process.argv.slice(2));
-const candidate = args.mode === 'snapshot'
-  ? candidateFromSnapshot(args.snapshotPath)
-  : { runId: args.runId, name: args.company, website: args.website };
+const candidate = { runId: args.runId, name: args.company, website: args.website };
 
 const candidateName = normalizeCompanyName(candidate.name);
 const candidateDomain = normalizeDomain(candidate.website);

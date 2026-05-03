@@ -27,9 +27,8 @@ Resolve these inputs before running any chapter skill:
 Before writing artifacts:
 
 - Read `schemaPath` and `yamlSyntaxPath`.
-- Read `.github/references/evidence-ledger.md` before writing local evidence or consolidating `100-evidence-ledger.yaml`.
-- For analysis stages `01`–`08`, follow `.github/references/analysis-skill-conventions.md`.
-- For each analysis stage, follow that stage's `startup-*` skill as the chapter generation contract: required chapter content, required tables, required figures, evidence acquisition, and domain-adaptive additions live in the owning skill.
+- For analysis stages `01`–`08`, follow `.github/references/analysis-rules.md`.
+- For each analysis stage, follow that stage's `startup-*` skill as the chapter requirements source: required chapter content, required tables, required figures, evidence acquisition, and domain-adaptive additions live in the owning skill.
 
 ## Required artifact set
 
@@ -115,7 +114,7 @@ Synchronization points:
 - Treat external prose-style due-diligence reports as depth/quality exemplars, not output format. Convert cover metrics, Mermaid-style diagrams, tables, appendices, bibliography, and citations into schema-native YAML artifacts, structured figures, `100` sources/claims, and `claimRefs`.
 - Do not centralize one-off prompt requirements or industry templates in repo-level files. The workflow must support any startup category, not just software/Internet companies.
 - If the user provides audience, investment lens, required metrics, required competitors/comparables, required figures, source constraints, or chapter-specific diligence questions, infer them from the prompt and route each requirement to the owning chapter skill.
-- Each `startup-*` chapter skill owns its chapter content contract. The skill must define universal chapter requirements, required tables, required structured figures, evidence collection strategy, and domain-adaptive additions.
+- Each `startup-*` chapter skill owns its chapter content requirements. The skill must define universal chapter requirements, required tables, required structured figures, evidence collection strategy, and domain-adaptive additions.
 - Domain-adaptive additions are inferred from the company domain, business model, value-chain position, buyer/user/payment structure, revenue mechanism, regulatory exposure, physical/scientific/data/financial dependencies, and operating model. Do not hard-code the report around a small set of sectors.
 - For normal report runs, pursue investor-grade research depth in every chapter: collect the useful official, independent, adverse, and freshness evidence that can change the chapter's sections, tables, figures, claims, or gaps. Stop adding sources only when new credible sources become duplicative or non-material.
 - Create or maintain diagnostic per-chapter research packs before artifact writing for visible companies, complex domains, or prompt-critical topics.
@@ -131,9 +130,9 @@ Synchronization points:
 
 ## Research and evidence standards
 
-Follow `.github/references/evidence-ledger.md` and `.github/references/analysis-skill-conventions.md` for detailed rules. Core expectations:
+Follow `.github/references/analysis-rules.md` for detailed analysis, evidence, and freshness rules. Core expectations:
 
-- Use `currentDate` for volatile facts; apply the freshness rubric in `.github/references/evidence-ledger.md`.
+- Use `currentDate` for volatile facts; apply the freshness rubric in `.github/references/analysis-rules.md`.
 - When generating search queries for volatile or current-status claims, include recency terms derived from `currentDate` (for example the current year, recent/updated language, or date-bounded operators when available) so stale sources do not dominate discovery.
 - Ask report-specific research questions, including adverse/disconfirming angles.
 - Use available search/discovery tools for both source discovery and cited Q&A against precise diligence questions; keep Q&A conclusions as hypotheses until supported by cited URLs or directly reviewed pages. Use `fetch-url` for direct page review of retained sources.
@@ -143,7 +142,7 @@ Follow `.github/references/evidence-ledger.md` and `.github/references/analysis-
 
 ## Artifact depth gates
 
-Schema validity is necessary but not sufficient. `scripts/report-manifest.mjs` is the machine source for analysis depth floors, and each owning chapter skill/contract defines chapter-specific required content. Additional gates:
+Schema validity is necessary but not sufficient. `scripts/report-manifest.mjs` is the machine source for analysis depth floors, and each owning chapter skill defines chapter-specific required content. Additional gates:
 
 - `100-evidence-ledger.yaml`: enough retained evidence for the final judgment; for visible companies, below roughly 50 sources or 90 claims is a red flag.
 - `101-report-document.yaml`: preserve the union of upstream tables/figures unless `reportMeta.coverageNotes` explicitly names omissions and reasons.
@@ -183,12 +182,6 @@ node scripts/check-company-dedup.mjs --company <companyName> [--website <company
 - Exit `0`: continue.
 - Exit `2`: duplicate risk; stop unless the user explicitly requested a refresh.
 - Any other non-zero exit: fix the input/path issue before continuing.
-
-The legacy snapshot-file mode remains available only for manual cross-checks after `01-company-snapshot.yaml` exists:
-
-```text
-node scripts/check-company-dedup.mjs <reportFolder>/01-company-snapshot.yaml
-```
 
 Final validation after `102-report-card.yaml`:
 

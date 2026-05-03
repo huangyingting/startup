@@ -12,7 +12,7 @@ Seventh analysis stage. This skill owns the risk and regulatory chapter. It must
 
 - `01-company-snapshot.yaml`
 - `05-product-technology.yaml`, `06-customer-retention.yaml`, and `04-financial-unit-economics.yaml` when product/security, customer concentration, or financial exposure shapes risk.
-- `.github/references/analysis-skill-conventions.md`
+- `.github/references/analysis-rules.md`
 
 ## Outputs
 

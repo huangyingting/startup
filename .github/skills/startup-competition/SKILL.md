@@ -12,7 +12,7 @@ Third analysis stage. This skill owns the competitive benchmarking chapter. It m
 
 - `01-company-snapshot.yaml`
 - `02-market-macro.yaml`
-- `.github/references/analysis-skill-conventions.md`
+- `.github/references/analysis-rules.md`
 
 ## Outputs
 

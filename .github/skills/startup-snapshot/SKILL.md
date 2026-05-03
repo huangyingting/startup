@@ -12,8 +12,7 @@ First analysis stage. This skill owns the company introduction and snapshot chap
 
 - `schemaPath`
 - `yamlSyntaxPath`
-- `.github/references/analysis-skill-conventions.md`
-- `.github/references/evidence-ledger.md`
+- `.github/references/analysis-rules.md`
 
 ## Outputs
 

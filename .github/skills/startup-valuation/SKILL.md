@@ -15,7 +15,7 @@ Eighth analysis stage. This skill owns the investment recommendation and valuati
 - `06-customer-retention.yaml`
 - `07-risk-regulatory.yaml`
 - `02-market-macro.yaml`, `03-competitive-benchmarking.yaml`, or `05-product-technology.yaml` when market, moat, or product differentiation materially affects valuation.
-- `.github/references/analysis-skill-conventions.md`
+- `.github/references/analysis-rules.md`
 
 ## Outputs
 

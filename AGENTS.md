@@ -27,7 +27,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `scripts/figure-registry.mjs` is canonical for supported native figure types and their data contracts.
 - `scripts/evidence-registry.mjs` is canonical for evidence enums such as claim types, topics, source types, freshness, reputation, and independence.
 - `scripts/report-registry.mjs` is canonical for report/card enums and report block/callout types.
-- Human-facing skill and reference docs should explain usage, but update the machine source first when changing an enum, figure type, artifact, or validation contract.
+- Human-facing skill and reference docs should explain usage, but update the machine source first when changing an enum, figure type, artifact, or validation rule.
 
 ## Important paths
 
@@ -37,7 +37,6 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
 - `.github/references/` — shared rules: YAML syntax, evidence ledger, and analysis conventions.
 - `.github/schemas/startup-diligence-report-v2.md` — canonical schema and rendering contract.
-- `scripts/report-manifest.mjs` — central manifest of artifacts, chapter order, loader keys, and depth floors; consumed by validation, consolidation, audit, and the website loader.
 - `scripts/figure-registry.mjs` — central native figure type/data contract; consumed by validators and the renderer.
 - `scripts/evidence-registry.mjs` — central evidence enums (claim types, topics, freshness, source types, reputation tiers, independence).
 - `scripts/` — report preparation, index, duplicate checks, evidence consolidation, and content checks.

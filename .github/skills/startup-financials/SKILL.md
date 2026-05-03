@@ -12,7 +12,7 @@ Fourth analysis stage. This skill owns the financial and unit-economics chapter.
 
 - `01-company-snapshot.yaml`
 - `02-market-macro.yaml` and `03-competitive-benchmarking.yaml` when market, pricing, GTM, or competitor context affects interpretation.
-- `.github/references/analysis-skill-conventions.md`
+- `.github/references/analysis-rules.md`
 
 ## Outputs
 
