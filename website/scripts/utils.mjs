@@ -73,7 +73,7 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
     title: chapter.title,
     loaderKey: chapter.loaderKey,
     gate: chapter.gate,
-    preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? chapter.preferredFigureTypes ?? [],
+    preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? [],
   }));
 }
 

@@ -63,7 +63,7 @@ function compactChapter(chapter) {
     contentRequirements: chapter.contentRequirements ?? [],
     requiredTables: chapter.requiredTables ?? [],
     requiredFigures: chapter.requiredFigures ?? [],
-    preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? chapter.preferredFigureTypes ?? [],
+    preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? [],
     evidenceStrategy: chapter.evidenceStrategy ?? [],
     qualityBar: chapter.qualityBar ?? [],
     gate: chapter.gate,

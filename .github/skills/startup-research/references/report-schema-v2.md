@@ -129,8 +129,8 @@ runDate: YYYY-MM-DD
 company:
   name: string
 reportMeta:
-  title: string
-  subtitle: string | null
+  title: string         # Must equal company.name; no decorations like " — Diligence Report" or run dates.
+  subtitle: string | null  # Optional qualifier (e.g. "Public-evidence diligence snapshot"); put any descriptor here, not in title.
   generatedAt: ISO-8601 string
   schemaVersion: report-v2
   recommendation: strong-buy | buy | track | research-more | avoid
@@ -190,8 +190,8 @@ slug: string
 runDate: YYYY-MM-DD
 company:
   name: string
-title: string
-subtitle: string | null
+title: string         # Must equal company.name; no decorations like " — Summary Card" or run dates.
+subtitle: string | null  # Optional qualifier (e.g. "Public-evidence diligence snapshot"); put any descriptor here, not in title.
 headline: string
 recommendation: strong-buy | buy | track | research-more | avoid
 confidence: high | medium | low

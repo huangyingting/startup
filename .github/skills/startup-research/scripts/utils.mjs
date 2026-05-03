@@ -172,9 +172,6 @@ function normalizeWorkflowConfig(config) {
     for (const type of chapter.gate?.preferredFigureTypes ?? []) {
       assertConfig(figureTypes.has(type), `${chapter.key}: unknown preferred figure type ${type}`);
     }
-    for (const type of chapter.preferredFigureTypes ?? []) {
-      assertConfig(figureTypes.has(type), `${chapter.key}: unknown preferred figure type ${type}`);
-    }
     for (const figure of chapter.requiredFigures ?? []) {
       for (const type of figure.types ?? []) {
         assertConfig(figureTypes.has(type), `${chapter.key}: required figure ${figure.name ?? '?'} references unknown type ${type}`);
@@ -203,7 +200,7 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
     title: chapter.title,
     loaderKey: chapter.loaderKey,
     gate: chapter.gate,
-    preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? chapter.preferredFigureTypes ?? [],
+    preferredFigureTypes: chapter.gate?.preferredFigureTypes ?? [],
   }));
 }
 
