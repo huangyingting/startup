@@ -66,7 +66,7 @@ Cover these universal topics:
 
 - **Revenue model bridge** — `type: flow` or `waterfall`; show how customer activity converts into revenue and gross profit.
 - **Unit economics bridge** — `type: bridge` when inputs exist; otherwise use qualitative nodes and explicit `approximationNotes`.
-- **Revenue / volume / margin trend** — `type: bars` or `scatter`; numeric values only and source-backed.
+- **Revenue / volume / margin trend** — `type: bars` or `scatter` when source-backed numeric values exist; otherwise replace with a revenue-quality or margin-driver `matrix`/`flow` and record the missing trend input.
 - **Financial estimate range** — `type: range` for revenue, burn, runway, margin, or valuation-input ranges with explicit source-backed bounds.
 - **Capital intensity / cash-flow map** — `type: flow`, `matrix`, or `waterfall` when capex, inventory, project finance, clinical burn, manufacturing scale-up, or credit exposure is material.
 

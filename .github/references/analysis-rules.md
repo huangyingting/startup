@@ -124,6 +124,7 @@ Minimum-depth gates defined by each owning chapter skill and enforced by automat
 - Use structured YAML figure objects rendered by the website.
 - Use only canonical figure data fields from `scripts/figure-registry.mjs`: `items`, `nodes`, `edges`, `points`, `columns`, `rows`, `series`, `layers`, `xAxis`, `yAxis`.
 - Do not introduce non-canonical primary fields such as `name`, `components`, `children`, `steps`, `cards`, or `groups`.
+- Do not fabricate numeric chart values, coordinates, or time series to satisfy a requested figure type. If public evidence cannot support a numeric figure, use a schema-supported qualitative alternative such as `matrix`, `flow`, `logic-chain`, `scorecard`, or `dependency-map`, and record the missing numeric input as a note or `evidenceGaps[]` item.
 - Numeric chart values must be numbers, not strings.
 - Numeric chart values should match the corresponding table value or claim-supported numeric assumption. If a chart uses transformed or estimated values, explain the transformation in `approximationNotes`.
 - Visible cards/layers/nodes need a `label` plus renderable content.

@@ -8,7 +8,7 @@ user-invocable: false
 
 ## Role and ownership
 
-Analysis artifact `08`. This skill owns the investment recommendation and valuation chapter. It must convert evidence from the analysis artifacts into a price-sensitive investment view. It does not gather new facts for other chapters; if a missing or stale fact is chapter-owned elsewhere, route it back through the orchestrator.
+Analysis artifact `08`. This skill owns the investment recommendation and valuation chapter. It must convert available evidence and any already completed coordination artifacts into a price-sensitive investment view. It does not gather facts solely for other chapters; if a missing or stale fact is chapter-owned elsewhere, route it back through the orchestrator.
 
 ## Inputs and dependencies
 
@@ -75,7 +75,7 @@ Cover these universal topics:
 
 Use search to test thesis, anti-thesis, comps, and downside; use `fetch-url` on sources behind recommendation-critical claims.
 
-- Pull from upstream artifacts first; do not introduce new facts unless necessary and then route them to the owning chapter when they belong there.
+- Use completed coordination artifacts first when already available; otherwise gather recommendation-critical evidence directly and route any chapter-owned facts back through the orchestrator.
 - Valuation/financing: latest rounds, valuation marks, cap table/preference clues, investor syndicate, debt/project finance, public comps, private comps, M&A transactions, secondary marks.
 - Scenario drivers: revenue/growth, margin, retention, unit economics, volume/utilization, approvals, clinical milestones, manufacturing scale, loss rates, commodity prices, market multiples, exit window.
 - Adverse/downside: overvaluation, down-round risk, multiple compression, regulatory/legal blockers, customer concentration, failed commercialization, cost overruns, safety/quality events, liquidity constraints.
@@ -100,7 +100,7 @@ Select the valuation method from the business model and stage.
 ## Quality bar
 
 - Make the recommendation price-sensitive and evidence-sensitive; do not convert company quality into a generic buy/track label.
-- Tie thesis, anti-thesis, risk rating, confidence, and valuation stance to upstream evidence and explicit missing inputs.
+- Tie thesis, anti-thesis, risk rating, confidence, and valuation stance to available evidence, completed coordination artifacts when present, and explicit missing inputs.
 - Use valuation methods that match the business model and stage; record when public evidence is insufficient for numeric precision.
 - Show what diligence or price change would move the recommendation.
 

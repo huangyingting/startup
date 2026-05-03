@@ -61,7 +61,7 @@ Cover these universal topics:
 
 ## Required figures
 
-- **Competitive positioning map** — `type: positioning-map` or `quadrant`; use evidence-backed numeric axes and labeled points.
+- **Competitive positioning map** — `type: positioning-map` or `quadrant`; use numeric axes only when source-backed, otherwise use evidence-backed ordinal 0–10 scoring with rationale and labeled points.
 - **Feature breadth / capability map** — `type: matrix`; show capability coverage and strength by competitor.
 - **Price-value or performance map** — `type: scatter` or `quadrant` when pricing/performance materially affects buying.
 - **Moat / readiness scorecard** — `type: scorecard` when a compact multi-dimension score helps summarize competitive durability.
