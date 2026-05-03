@@ -6,7 +6,7 @@ user-invocable: true
 
 # Startup Research (workflow orchestrator)
 
-This is the single entry point for generating a complete `report-v2` report. It does not produce content itself; it sequences chapter skills and integration skills, enforces synchronization points, and runs the final validation gates.
+This is the single entry point for generating a complete `report-v2` report. It does not produce content itself; it orchestrates chapter skills and integration skills, enforces synchronization points, and runs the final validation gates.
 
 The final rendered report must include cover metrics, company introduction, executive recommendation, market sizing, competitive benchmarking, financial and unit economics, product and technology, customer retention, regulatory risk, valuation, appendices, bibliography, disclaimer, and structured native figures/charts.
 
@@ -33,7 +33,7 @@ Before writing artifacts:
 
 ## Required artifact set
 
-Every completed report folder must contain these artifacts. This workflow skill is the source of truth for the required set and order.
+Every completed report folder must contain these artifacts. This workflow skill is the source of truth for the required set and artifact numbering/order.
 
 ```text
 01-company-overview.yaml
@@ -83,7 +83,7 @@ Execution order: after setup and identity resolution, `01`–`08` analysis skill
 - Chapter skills (`startup-*`) may use already available peer artifacts when helpful for their chapter logic.
 - Peer `01`–`08` artifacts are optional coordination context during parallel analysis, not hard prerequisites; reconcile cross-chapter inconsistencies before `startup-evidence`.
 - A chapter or finalization skill may inspect another artifact's gaps, tables, or figures, but must not directly edit another skill's owned artifact.
-- If reconciliation or finalization uncovers a supportable fact owned by another chapter, return to the owning skill, update its local evidence/artifact, then reconsolidate and continue.
+- If reconciliation or finalization uncovers a supportable fact owned by another chapter, return to the owning skill, update its local evidence/artifact, then rerun consolidation if `90-evidence.yaml` already exists and continue.
 - Consolidation/finalization skills (`startup-evidence`, `startup-full-report`, `startup-summary-card`) do not gather new facts.
 
 ## Concurrency model
@@ -115,7 +115,7 @@ Synchronization points:
 
 ## Prompt routing and diagnostic packs
 
-- Treat external prose-style due-diligence reports as input requirements or quality examples, not output format; convert useful content into schema-native YAML artifacts, structured figures, ledger claims, and `claimRefs`.
+- Treat external prose-style due-diligence reports as input requirements or quality examples, not output format; convert useful content into schema-native YAML artifacts, structured figures, evidence claims, and `claimRefs`.
 - Route prompt-derived audiences, investment lenses, required metrics, competitors/comparables, figures, source constraints, and diligence questions to the owning `startup-*` chapter skill.
 - Do not centralize one-off prompt requirements or industry templates in repo-level files. Chapter content, evidence strategy, and domain-adaptive additions belong to the owning chapter skill and `.github/references/analysis-rules.md`.
 

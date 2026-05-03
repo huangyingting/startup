@@ -4,7 +4,7 @@ Shared rules for the eight `startup-*` analysis skills. Each chapter skill docum
 
 ## Ownership boundary
 
-Chapter-specific expectations live in the owning `SKILL.md`. Workflow inputs, prompt routing, artifact order, concurrency, and stage handoffs live in `startup-research/SKILL.md`.
+Chapter-specific expectations live in the owning `SKILL.md`. Workflow inputs, prompt routing, artifact mapping, concurrency, synchronization points, and artifact handoffs live in `startup-research/SKILL.md`.
 
 ## Domain reflection and sufficiency gate
 
@@ -103,7 +103,7 @@ Avoid:
 - reused section titles such as `Evidence base`, `Investor interpretation`, `Contradictions and uncertainty`, or `Private diligence path` across all artifacts;
 - floor-only output when evidence supports more depth.
 
-Depth floors defined by each owning chapter skill and enforced by automated checks are minimums, not targets.
+Minimum-depth gates defined by each owning chapter skill and enforced by automated checks are minimums, not targets.
 
 ## Figure rules
 

@@ -23,7 +23,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 ## Canonical sources and machine mirrors
 
-- `.github/skills/startup-research/SKILL.md` is canonical for the end-to-end workflow, required artifact set, artifact order, skill sequence, synchronization points, and report-run gates.
+- `.github/skills/startup-research/SKILL.md` is canonical for the end-to-end workflow, required artifact set, artifact mapping, execution order, concurrency model, synchronization points, and report-run gates.
 - `.github/skills/startup-*/SKILL.md` files are canonical for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
 - `scripts/figure-registry.mjs` is canonical for supported native figure types and their data contracts.
 - `scripts/evidence-registry.mjs` is canonical for evidence enums such as claim types, topics, source types, freshness, reputation, and independence.
@@ -32,7 +32,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 ## Important paths
 
-- `.github/skills/startup-research/SKILL.md` — single workflow entry point that sequences chapter and integration skills end-to-end.
+- `.github/skills/startup-research/SKILL.md` — single workflow entry point that orchestrates chapter and integration skills end-to-end.
 - `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (overview, market analysis, competitors, financials, product tech, customers, risks, valuation, evidence, full report, summary card). The analysis skills are the single source for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
 - `.github/references/` — shared YAML syntax, analysis rules, and report schema reference.
@@ -64,9 +64,9 @@ Producing a complete report — including all `01`–`08` analysis artifacts, th
 
 - the invocation contract;
 - required artifact set;
-- skill sequence and dependency rules;
-- concurrency model and synchronization points;
-- depth floors, readiness audit, and final validation gates;
+- artifact mapping, execution order, concurrency model, and dependency rules;
+- synchronization points;
+- cross-artifact readiness audit and final validation gates;
 - final response format.
 
 Do not duplicate that workflow here. When working on a report, follow `startup-research` end-to-end and the per-chapter skills it delegates to.

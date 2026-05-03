@@ -80,4 +80,3 @@ Infer the company domain and operating model; add relevant snapshot rows/section
 - Timeline has enough dated entries or the gaps explain why not.
 - Unsupported cover metrics use `null` plus a concrete diligence path.
 - Handoff includes identity confidence, selected domain-adaptive additions, and any post-snapshot identity ambiguity.
-- Do not wait until this skill to perform the first duplicate check; the startup-research orchestrator runs `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before stage 1 starts.
