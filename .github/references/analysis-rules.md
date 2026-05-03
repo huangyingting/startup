@@ -56,9 +56,22 @@ Deduplicate by canonical URL and underlying event/date. Cluster press-release or
 
 Label `sourceType`, `reputationTier`, and `independence` honestly. Use only enum values from `scripts/evidence-registry.mjs`; update the registry first when adding or changing evidence enums.
 
+## Research tool usage
+
+Use two complementary research tracks:
+
+1. **Verified answer / discovery track** — use search/discovery tools, including `web_search` when available, to answer targeted diligence questions, surface current facts, triangulate source families, find cited URLs, and test confirming, disconfirming, and adverse hypotheses. Treat cited/verified answer text as research guidance and contradiction detection, not as a substitute for claim-level provenance.
+2. **Direct source review track** — use direct URL review for retained sources so material claims trace back to source pages, filings, regulator records, official pages, customer/partner pages, competitor pages, docs, or adverse articles.
+
+Use the repository `fetch-url` workflow for every retained direct URL, including official pages, cited search results, filings, regulator pages, customer/partner pages, competitor pages, docs, and adverse articles. In this repository, direct page review means following `.github/skills/fetch-url/SKILL.md` and using `node scripts/fetch-url.mjs ...` rather than native page-fetch tools unless higher-priority runtime instructions require otherwise.
+
+For each retained source, the artifact should reflect what was actually reviewed: URL, title/source identity, publication or access date when available, source type, reputation/independence labels, and claim-level support. Do not retain a URL only because it appeared in search results.
+
+Use direct URL review without search when the URL is already known, provided by the user, discovered from an official sitemap/navigation path, or cited by a reviewed source. Use search again when direct pages are thin, stale, contradictory, or insufficient for a decision-relevant claim.
+
 ## Search/discovery packet handling
 
-Use search/discovery for source discovery and cited Q&A, but treat answer text as research aid, not final evidence. Retain only reviewed/cited URLs that support the exact atomic claim. Use citation spans when valid; if spans are missing or malformed, associate the citation with the closest topical paragraph and set `keyQuote: null`. Keep search queries only as diagnostic provenance; never retain search-result pages in `sources[]`.
+Use search/discovery for both cited Q&A and source discovery. When `web_search` or another discovery tool returns a verified answer with citations, use the answer to shape research questions, identify likely facts, and detect contradictions; then retain the cited/reviewed URLs that support the exact atomic claim. Use citation spans when valid; if spans are missing or malformed, associate the citation with the closest topical paragraph and set `keyQuote: null`. Keep search queries only as diagnostic provenance; never retain generic search-result pages in `sources[]`.
 
 After each targeted search/discovery call, record this run-log line in the chat/workflow transcript, terminal stdout, CI artifact, diagnostic research pack, or handoff note. Do not write it into YAML artifacts.
 

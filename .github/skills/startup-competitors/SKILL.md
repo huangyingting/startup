@@ -32,7 +32,7 @@ Inputs from `startup-research`:
 
 ## Skill workflow
 
-- Follow the common chapter workflow in `.github/references/analysis-rules.md`.
+- Follow the common chapter workflow from the required analysis rules reference.
 - Apply that workflow to this skill's mission, required content specification, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, quality bar, and completion check.
 - Use optional coordination context only when already available; never block this chapter on peer artifacts.
 - Write only `03-competitors.yaml`; route facts owned by other chapters back through `startup-research`.
@@ -69,7 +69,7 @@ Cover these universal topics:
 
 ## Evidence acquisition strategy
 
-Use search to identify competitor classes and `fetch-url` to verify retained pages.
+Apply the shared research tool usage rules. Prioritize these chapter-specific source families:
 
 - Competitor official surfaces: product, pricing, docs, case studies, security/compliance, support, integrations, channel pages, and changelogs.
 - Independent proof: benchmarks, reviews, public filings, funding/valuation coverage, market reports, customer references, procurement pages, and adverse reporting.

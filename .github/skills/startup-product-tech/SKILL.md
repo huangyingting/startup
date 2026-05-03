@@ -32,7 +32,7 @@ Inputs from `startup-research`:
 
 ## Skill workflow
 
-- Follow the common chapter workflow in `.github/references/analysis-rules.md`.
+- Follow the common chapter workflow from the required analysis rules reference.
 - Apply that workflow to this skill's mission, required content specification, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, quality bar, and completion check.
 - Use optional coordination context only when already available; never block this chapter on peer artifacts.
 - Write only `05-product-tech.yaml`; route facts owned by other chapters back through `startup-research`.
@@ -72,7 +72,7 @@ Cover these universal topics:
 
 ## Evidence acquisition strategy
 
-Official-surface mining is mandatory when a company URL exists. Use `fetch-url` on retained direct pages.
+Apply the shared research tool usage rules. Official-surface mining is mandatory when a company URL exists. Prioritize these chapter-specific source families:
 
 - Official pages: homepage, sitemap, product/service pages, docs/developer portals, catalogs, API references, release notes, changelog, integrations, pricing, trust/security, status, privacy, terms, certifications, customer stories, and product blog/news.
 - Technical proof: patents, papers, clinical/trial records, certifications, regulatory databases, manufacturing/quality documentation, benchmarks, performance tests, uptime/status, implementation guides.

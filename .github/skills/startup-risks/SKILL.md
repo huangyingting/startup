@@ -32,7 +32,7 @@ Inputs from `startup-research`:
 
 ## Skill workflow
 
-- Follow the common chapter workflow in `.github/references/analysis-rules.md`.
+- Follow the common chapter workflow from the required analysis rules reference.
 - Apply that workflow to this skill's mission, required content specification, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, quality bar, and completion check.
 - Use optional coordination context only when already available; never block this chapter on peer artifacts.
 - Write only `07-risks.yaml`; route facts owned by other chapters back through `startup-research`.
@@ -71,7 +71,7 @@ Cover these universal topics:
 
 ## Evidence acquisition strategy
 
-Adverse/disconfirming research is mandatory. Use `fetch-url` for retained primary or independent pages.
+Apply the shared research tool usage rules. Adverse/disconfirming research is mandatory. Prioritize these chapter-specific source families:
 
 - Official risk/control evidence: trust/security/privacy/terms/DPA/compliance/status/incident/responsible-use/legal/subprocessor pages, quality policies, certifications, recall notices, safety pages, insurance/permit disclosures.
 - Primary sources: regulators, court records, clinical/regulatory databases, patent/IP offices, environmental/safety agencies, filings, procurement documents, sanctions/export-control sources, recall databases.

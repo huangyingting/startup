@@ -32,7 +32,7 @@ Inputs from `startup-research`:
 
 ## Skill workflow
 
-- Follow the common chapter workflow in `.github/references/analysis-rules.md`.
+- Follow the common chapter workflow from the required analysis rules reference.
 - Apply that workflow to this skill's mission, required content specification, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, quality bar, and completion check.
 - Use optional coordination context only when already available; never block this chapter on peer artifacts.
 - Write only `04-financials.yaml`; route facts owned by other chapters back through `startup-research`.
@@ -74,7 +74,7 @@ Cover these universal topics:
 
 ## Evidence acquisition strategy
 
-Use search for public metrics/conflicts and `fetch-url` for retained source pages.
+Apply the shared research tool usage rules. Prioritize these chapter-specific source families:
 
 - Revenue/pricing: official pricing, customer contracts/examples, filings, interviews, investor announcements, credible estimates, app/store/channel data, tender/project disclosures.
 - Funding/valuation: company/investor announcements, filings, tier-one coverage, debt/project finance sources, secondary/tender reports.

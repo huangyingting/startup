@@ -32,7 +32,7 @@ Inputs from `startup-research`:
 
 ## Skill workflow
 
-- Follow the common chapter workflow in `.github/references/analysis-rules.md`.
+- Follow the common chapter workflow from the required analysis rules reference.
 - Apply that workflow to this skill's mission, required content specification, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, quality bar, and completion check.
 - Use optional coordination context only when already available; never block this chapter on peer artifacts.
 - Write only `08-valuation.yaml`; route facts owned by other chapters back through `startup-research`.
@@ -74,7 +74,7 @@ Cover these universal topics:
 
 ## Evidence acquisition strategy
 
-Use search to test thesis, anti-thesis, comps, and downside; use `fetch-url` on sources behind recommendation-critical claims.
+Apply the shared research tool usage rules. Test thesis, anti-thesis, comps, and downside. Prioritize these chapter-specific source families:
 
 - Use completed coordination artifacts first when already available; otherwise gather recommendation-critical evidence directly and route any chapter-owned facts back through the orchestrator.
 - Valuation/financing: latest rounds, valuation marks, cap table/preference clues, investor syndicate, debt/project finance, public comps, private comps, M&A transactions, secondary marks.

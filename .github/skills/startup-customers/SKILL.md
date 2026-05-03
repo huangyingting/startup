@@ -32,7 +32,7 @@ Inputs from `startup-research`:
 
 ## Skill workflow
 
-- Follow the common chapter workflow in `.github/references/analysis-rules.md`.
+- Follow the common chapter workflow from the required analysis rules reference.
 - Apply that workflow to this skill's mission, required content specification, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, quality bar, and completion check.
 - Use optional coordination context only when already available; never block this chapter on peer artifacts.
 - Write only `06-customers.yaml`; route facts owned by other chapters back through `startup-research`.
@@ -71,7 +71,7 @@ Cover these universal topics:
 
 ## Evidence acquisition strategy
 
-Use search to discover customer proof/adverse signals and `fetch-url` to verify retained source pages.
+Apply the shared research tool usage rules. Prioritize these chapter-specific source families:
 
 - Official customer evidence: customer pages, case studies, testimonials, webinars, press releases, partner stories, industry/solution pages, customer blogs, marketplaces, and logos only when tied to use.
 - Independent customer evidence: procurement/tender records, reviews, app-marketplace ratings, community/forum reports, public customer announcements, filings, usage datasets, analyst reports, and media.
