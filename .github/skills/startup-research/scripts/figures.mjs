@@ -2,7 +2,6 @@ export const FIGURE_TYPES = [
   'timeline',
   'flow',
   'quadrant',
-  'positioning-map',
   'bar',
   'waterfall',
   'matrix',
@@ -12,7 +11,7 @@ export const FIGURE_TYPES = [
   'funnel',
   'cohort',
   'range',
-  'scorecard',
+  'kpi',
   'dag',
   'other',
 ];
@@ -35,7 +34,6 @@ export const FIGURE_CONTRACTS = {
   flow: [['nodes']],
   dag: [['nodes'], ['edges']],
   quadrant: [['points']],
-  'positioning-map': [['points']],
   bar: [['items', 'series']],
   funnel: [['items', 'series']],
   waterfall: [['items']],
@@ -45,7 +43,7 @@ export const FIGURE_CONTRACTS = {
   stack: [['layers', 'items']],
   pyramid: [['nodes', 'items']],
   'journey-map': [['nodes', 'items']],
-  scorecard: [['items', 'nodes']],
+  kpi: [['items', 'nodes']],
 };
 
 export const FIGURE_ALLOWED_POPULATED_FIELDS = {
@@ -53,7 +51,6 @@ export const FIGURE_ALLOWED_POPULATED_FIELDS = {
   flow: ['nodes', 'edges'],
   dag: ['nodes', 'edges'],
   quadrant: ['points'],
-  'positioning-map': ['points'],
   bar: ['items', 'series'],
   funnel: ['items', 'series'],
   waterfall: ['items'],
@@ -63,7 +60,7 @@ export const FIGURE_ALLOWED_POPULATED_FIELDS = {
   stack: ['layers', 'items'],
   pyramid: ['nodes', 'items'],
   'journey-map': ['nodes', 'items'],
-  scorecard: ['items', 'nodes'],
+  kpi: ['items', 'nodes'],
   other: [],
 };
 

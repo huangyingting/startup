@@ -786,7 +786,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
   };
 
-  const renderScorecard = (element, payload) => {
+  const renderKpi = (element, payload) => {
     const items = normalizedItems({ items: payload.data.items ?? payload.data.nodes });
     const columns = Math.min(3, Math.max(1, items.length));
     const margin = { top: 24, right: 28, bottom: 30, left: 28 };
@@ -1194,8 +1194,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
 
   const renderQuadrant = (element, payload) => {
     const points = arr(payload.data.points);
-    const xAxisLabel = payload.data.xAxis ?? payload.data.xLabel ?? payload.data.x ?? (payload.type === 'positioning-map' ? 'Distribution leverage' : 'X');
-    const yAxisLabel = payload.data.yAxis ?? payload.data.yLabel ?? payload.data.y ?? (payload.type === 'positioning-map' ? 'Workflow depth' : 'Y');
+    const xAxisLabel = payload.data.xAxis ?? payload.data.xLabel ?? payload.data.x ?? 'X';
+    const yAxisLabel = payload.data.yAxis ?? payload.data.yLabel ?? payload.data.y ?? 'Y';
     const xs = points.map((p) => Number(p.x)).filter(Number.isFinite);
     const ys = points.map((p) => Number(p.y)).filter(Number.isFinite);
     const allValues = [...xs, ...ys];
@@ -1402,117 +1402,13 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     withTooltip(g, (d) => tooltipHtml(`${d.row} × ${d.column}`, [d.cell.label ?? d.cell.displayValue ?? d.value, d.cell.detail]));
   };
 
-  const renderPositioningMap = (element, payload) => {
-    const points = arr(payload.data.points);
-    const xAxisLabel = payload.data.xAxis ?? payload.data.xLabel ?? payload.data.x ?? 'Market leverage';
-    const yAxisLabel = payload.data.yAxis ?? payload.data.yLabel ?? payload.data.y ?? 'Offering depth';
-    const xs = points.map((point) => Number(point.x)).filter(Number.isFinite);
-    const ys = points.map((point) => Number(point.y)).filter(Number.isFinite);
-    const allValues = [...xs, ...ys];
-    const finiteMin = allValues.length ? Math.min(...allValues) : 0;
-    const finiteMax = allValues.length ? Math.max(...allValues) : 10;
-    const isUnitScore = finiteMin >= 0 && finiteMax <= 1;
-    const isTenPointScore = !isUnitScore && finiteMin >= 0 && finiteMax <= 10;
-    const domain = isUnitScore ? [0, 1] : isTenPointScore ? [0, 10] : [0, 100];
-    const ticks = isUnitScore ? [0, 0.5, 1] : isTenPointScore ? [0, 5, 10] : [0, 50, 100];
-    const tickFormat = isUnitScore ? d3.format('.1f') : d3.format('~g');
-    const containerWidth = element.getBoundingClientRect().width || 760;
-    const compact = containerWidth < 640;
-    const { svg, width, height } = svgBase(element, compact ? 500 : 420);
-    const margin = compact ? { top: 42, right: 30, bottom: 104, left: 54 } : { top: 42, right: 34, bottom: 86, left: 66 };
-    const plotW = width - margin.left - margin.right;
-    const plotH = height - margin.top - margin.bottom;
-    const x = d3.scaleLinear().domain(domain).range([margin.left, width - margin.right]);
-    const y = d3.scaleLinear().domain(domain).range([height - margin.bottom, margin.top]);
-    const defs = svg.append('defs');
-    const gradient = defs.append('linearGradient').attr('id', `${payload.id}-positioning-gradient`).attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '0%');
-    gradient.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(180,35,24,0.06)');
-    gradient.append('stop').attr('offset', '54%').attr('stop-color', 'rgba(242,216,160,0.10)');
-    gradient.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(15,118,110,0.10)');
-    const shadow = defs.append('filter').attr('id', `${payload.id}-positioning-shadow`).attr('x', '-20%').attr('y', '-24%').attr('width', '140%').attr('height', '152%');
-    shadow.append('feDropShadow').attr('dx', 0).attr('dy', 4).attr('stdDeviation', 4).attr('flood-color', 'rgba(51,48,46,0.15)');
-    const panel = svg.append('g');
-    panel.append('rect')
-      .attr('x', margin.left)
-      .attr('y', margin.top)
-      .attr('width', plotW)
-      .attr('height', plotH)
-      .attr('rx', 20)
-      .attr('fill', `url(#${payload.id}-positioning-gradient)`)
-      .attr('stroke', palette.border);
-    const gridValues = ticks.slice(1, -1);
-    panel.selectAll('line.positioning-grid-x').data(gridValues).join('line')
-      .attr('class', 'positioning-grid-x')
-      .attr('x1', (d) => x(d)).attr('x2', (d) => x(d))
-      .attr('y1', margin.top + 10).attr('y2', height - margin.bottom - 10)
-      .attr('stroke', palette.border).attr('stroke-width', 1.2).attr('stroke-dasharray', '3 7').attr('opacity', 0.8);
-    panel.selectAll('line.positioning-grid-y').data(gridValues).join('line')
-      .attr('class', 'positioning-grid-y')
-      .attr('x1', margin.left + 10).attr('x2', width - margin.right - 10)
-      .attr('y1', (d) => y(d)).attr('y2', (d) => y(d))
-      .attr('stroke', palette.border).attr('stroke-width', 1.2).attr('stroke-dasharray', '3 7').attr('opacity', 0.8);
-    panel.append('path')
-      .attr('d', `M ${margin.left + 16} ${height - margin.bottom - 16} C ${margin.left + plotW * 0.34} ${margin.top + plotH * 0.72}, ${margin.left + plotW * 0.58} ${margin.top + plotH * 0.35}, ${width - margin.right - 18} ${margin.top + 18}`)
-      .attr('fill', 'none')
-      .attr('stroke', palette.claret)
-      .attr('stroke-width', 2)
-      .attr('stroke-linecap', 'round')
-      .attr('stroke-dasharray', '7 8')
-      .attr('opacity', 0.32);
-    panel.append('text').attr('x', margin.left + 16).attr('y', height - margin.bottom - 18).attr('fill', palette.muted).attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('label')).text('Point solution');
-    panel.append('text').attr('x', width - margin.right - 16).attr('y', margin.top + 28).attr('text-anchor', 'end').attr('fill', palette.muted).attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('label')).text('Platform position');
-    svg.append('g')
-      .attr('transform', `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x).tickValues(ticks).tickFormat(tickFormat).tickSizeOuter(0))
-      .call((axis) => axis.select('.domain').attr('stroke', palette.border))
-      .call((axis) => axis.selectAll('line').attr('stroke', palette.border))
-      .call((axis) => axis.selectAll('text').attr('fill', palette.muted).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')));
-    svg.append('g')
-      .attr('transform', `translate(${margin.left},0)`)
-      .call(d3.axisLeft(y).tickValues(ticks).tickFormat(tickFormat).tickSizeOuter(0))
-      .call((axis) => axis.select('.domain').attr('stroke', palette.border))
-      .call((axis) => axis.selectAll('line').attr('stroke', palette.border))
-      .call((axis) => axis.selectAll('text').attr('fill', palette.muted).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')));
-    svg.append('text').attr('x', margin.left + plotW / 2).attr('y', height - margin.bottom + 42).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('label')).text(xAxisLabel);
-    svg.append('text').attr('transform', `translate(${compact ? 18 : 24},${margin.top + plotH / 2}) rotate(-90)`).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('label')).text(yAxisLabel);
-    const plotted = points.map((point, index) => {
-      const targetX = x(numberValue(point.x));
-      const targetY = y(numberValue(point.y));
-      return { ...point, _index: index, _valueX: point.x, _valueY: point.y, _targetX: targetX, _targetY: targetY, x: targetX, y: targetY };
-    });
-    d3.forceSimulation(plotted)
-      .force('x', d3.forceX((d) => d._targetX).strength(0.34))
-      .force('y', d3.forceY((d) => d._targetY).strength(0.34))
-      .force('collide', d3.forceCollide(compact ? 20 : 22))
-      .stop()
-      .tick(90);
-    plotted.forEach((point) => {
-      point.x = Math.max(margin.left + 18, Math.min(width - margin.right - 18, point.x));
-      point.y = Math.max(margin.top + 18, Math.min(height - margin.bottom - 18, point.y));
-    });
-    const competitors = svg.append('g').selectAll('g.positioning-point').data(plotted).join('g')
-      .attr('class', 'positioning-point')
-      .attr('transform', (d) => `translate(${d.x},${d.y})`);
-    competitors.append('circle').attr('r', compact ? 8 : 9).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 2.5);
-    competitors.append('text')
-      .attr('x', (d) => d.x > margin.left + plotW * 0.68 ? -14 : 14)
-      .attr('y', 4)
-      .attr('text-anchor', (d) => d.x > margin.left + plotW * 0.68 ? 'end' : 'start')
-      .attr('fill', palette.ink)
-      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
-      .attr('font-weight', fontWeight('label'))
-      .text((d) => labelText(d.label, compact ? 22 : 24));
-    competitors.each(function(d) { addTitle(d3.select(this), `${d.label}: ${xAxisLabel} ${d._valueX}; ${yAxisLabel} ${d._valueY}`); });
-    withTooltip(competitors, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d._valueX}`, `${yAxisLabel}: ${d._valueY}`, d.detail]));
-  };
-
   const RENDERERS = {
     timeline: renderTimeline,
     flow: renderFlow,
     stack: renderStack,
     pyramid: renderPyramid,
     'journey-map': renderJourneyMap,
-    scorecard: renderScorecard,
+    kpi: renderKpi,
     waterfall: renderWaterfall,
     funnel: renderFunnel,
     range: renderRange,
@@ -1520,7 +1416,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     matrix: renderHeatmap,
     cohort: renderCohort,
     quadrant: renderQuadrant,
-    'positioning-map': renderPositioningMap,
     dag: renderDag,
   };
 
