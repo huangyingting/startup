@@ -1,0 +1,285 @@
+schemaVersion: startup-diligence-report-v2
+artifact: financial-unit-economics
+slug: openai
+runDate: '2026-05-03'
+company:
+  name: OpenAI
+chapter:
+  number: 4
+  title: 财务与单位经济
+  summary: OpenAI 已跨入超大规模收入区间，但公开材料仍无法充分支撑利润率、席位经济与多云算力扩张资本强度的严谨承销。
+callouts:
+- type: key-insight
+  title: 收入质量强于多数私营 AI 同业
+  body: OpenAI 已不再是 pre-revenue 或试验性平台。其同时拥有消费者订阅、企业席位与按量计费 API，形成多元变现路径。
+  claimRefs:
+  - C033
+  - C034
+  - C035
+- type: risk-alert
+  title: 资本强度与估值可能跑在经济性前面
+  body: 即便月收入已达 20 亿美元，OpenAI 仍是高度依赖算力投入的业务，而盈利能力、营运资本与融资条款在公开资料中依然不透明。
+  claimRefs:
+  - C034
+  - C036
+  - C039
+tables:
+- id: T401
+  title: 收入流表
+  columns:
+  - revenue stream
+  - public evidence
+  - pricing / monetization
+  - quality assessment
+  - key diligence gap
+  rows:
+  - - Consumer subscriptions
+    - ChatGPT 定价页面列出了 Free、Go、Plus、Pro 和相关计划权益
+    - Recurring consumer subscription
+    - High demand signal but potentially promotional / usage-sensitive
+    - 需要按计划划分的计划组合、流失率和贡献边际
+  - - Business seats
+    - ChatGPT 定价和业务页面显示每个用户每月销售的业务工作区
+    - 基于席位的企业/中小企业定价
+    - 如果管理控制增加粘性，则可能持久
+    - 需要实现ASP和席位扩展数据
+  - - Enterprise contracts
+    - 企业页面显示自定义定价以及安全、驻留、分析和顾问支持
+    - 定制年度/多年期企业合同
+    - 比消费者计划价值更高且可能更具粘性
+    - 需要 ACV、续订、浓度和折扣数据
+  - - Developer APIs
+    - API 定价页面公开了旗舰和多式联运模型中的明确代币定价
+    - 基于使用情况的基础设施定价
+    - 高度可扩展且透明的货币化通道
+    - 需要渠道分割、毛利率和 Azure 重叠
+  - - Emerging surfaces
+    - OpenAI 称广告试点在六周内突破了 1 亿美元的 ARR
+    - Early-stage monetization experiment
+    - Interesting optionality but too early to underwrite
+    - 需要可持续性和利润状况
+  notes: null
+  claimRefs:
+  - C033
+  - C034
+  - C035
+- id: T402
+  title: 定价 / 财务锚点表
+  columns:
+  - metric
+  - value
+  - date or period
+  - confidence
+  - interpretation
+  rows:
+  - - Committed capital
+    - $122B
+    - '2026-03-31'
+    - high
+    - Funding access remains a strategic moat
+  - - 投后估值
+    - $852B
+    - '2026-03-31'
+    - high
+    - Entry multiple is likely stretched for private investors
+  - - Revenue
+    - $13.1B
+    - FY2025
+    - medium
+    - Commercial scale is real, but audited statements are unavailable
+  - - Revenue run rate
+    - $2B per month
+    - Mar-2026
+    - medium
+    - 增长仍然出色，但可能会产生促销效应
+  - - Enterprise revenue share
+    - 40%+
+    - 2026 company claim
+    - medium
+    - B2B mix is already material
+  - - API throughput
+    - 15B+ tokens per minute
+    - 2026 company claim
+    - medium
+    - 建议基础设施规模的使用超越基于席位的货币化
+  notes: null
+  claimRefs:
+  - C034
+  - C035
+- id: T403
+  title: 融资 / 资本需求表
+  columns:
+  - date
+  - event
+  - amount
+  - valuation
+  - notes
+  rows:
+  - - '2019-01-01'
+    - For-profit subsidiary created
+    - n/a
+    - n/a
+    - 适应计算密集型扩展的资本结构
+  - - '2025-10-28'
+    - Foundation / Group PBC recapitalization
+    - n/a
+    - n/a
+    - 在更新的治理下支持未来的筹款
+  - - '2026-03-31'
+    - Latest financing closed
+    - $122B
+    - $852B post-money
+    - Anchored by Amazon, NVIDIA, SoftBank; Microsoft continued participation
+  - - '2026-03-31'
+    - Retail participation channel added
+    - $3B+
+    - Included in latest round
+    - Raises expectations for eventual liquidity
+  - - '2026-03-31'
+    - Revolving credit facility expanded
+    - $4.7B
+    - n/a
+    - Facility remains undrawn at close
+  - - '2026-04-27'
+    - Microsoft economics amended
+    - n/a
+    - n/a
+    - Azure 仍然是主要云，但 OpenAI 获得了更广泛的上市灵活性
+  notes: null
+  claimRefs:
+  - C034
+  - C036
+- id: T404
+  title: 单位经济表
+  columns:
+  - metric
+  - public value
+  - confidence
+  - why it matters
+  - 具体尽职调查要求
+  rows:
+  - - Gross margin
+    - 'null'
+    - low
+    - 模型经济学决定收入规模是否会复合为现金产生
+    - 按消费者、企业和 API 表面请求毛利率
+  - - Consumer subscription churn
+    - 'null'
+    - low
+    - 消费者保留会影响已安装基础的耐用性
+    - 请求计划级别的流失、升级和群组收入曲线
+  - - Enterprise seat expansion
+    - 'null'
+    - low
+    - B2B 复利取决于续订和席位增长
+    - Request NRR/GRR by Business and Enterprise cohorts
+  - - API gross contribution
+    - 'null'
+    - low
+    - API 货币化可能很强，但在结构上会受到计算成本的限制
+    - 请求混合推理成本曲线和渠道组合
+  - - Compute leverage
+    - 声称定向改进，无公众号
+    - medium
+    - 经营杠杆是长期争论的核心
+    - 请求数据中心承诺、单位成本趋势和模型效率增量
+  - - 营运资金/消耗
+    - Company says it is not yet profitable
+    - medium
+    - 估值和下行敏感性取决于燃烧路径
+    - 请求现金消耗、资本支出义务和契约包
+  notes: null
+  claimRefs:
+  - C034
+  - C036
+  - C039
+figures:
+- id: F401
+  title: 收入模型桥接图
+  type: bridge
+  layout: wide
+  summary: OpenAI 用同一套模型与算力底座，同时变现消费者、企业与开发者三条收入通道。
+  data:
+    nodes:
+    - label: 模型和计算基础
+      detail: 前沿模型和推理能力是共同的成本层。
+      tone: neutral
+    - label: Consumer plans
+      detail: ChatGPT subscriptions monetize direct end-user demand.
+      tone: positive
+    - label: Business / Enterprise seats
+      detail: 受监管的工作区和管理功能可通过工作区采用货币化。
+      tone: positive
+    - label: Developer API
+      detail: 基于代币的货币化随着应用程序的使用而扩展。
+      tone: positive
+    - label: Cash generation potential
+      detail: 结果取决于计算效率的提高是否快于需求强度的增长。
+      tone: neutral
+  approximationNotes: null
+  claimRefs:
+  - C033
+  - C035
+  - C036
+- id: F402
+  title: 财务估值区间图
+  type: range
+  layout: standard
+  summary: 公开证据对估值与收入规模支撑较强，但对利润率与现金创造能力支撑较弱。
+  data:
+    items:
+    - label: 估值（事后估值）
+      low: 852000
+      high: 852000
+      mid: 852000
+      displayValue: $852B
+      tone: neutral
+    - label: Revenue run rate (USD m)
+      low: 24000
+      high: 24000
+      mid: 24000
+      displayValue: $24B annualized
+      tone: positive
+    - label: FY2025 revenue (USD m)
+      low: 13100
+      high: 13100
+      mid: 13100
+      displayValue: $13.1B
+      tone: positive
+    - label: 毛利率可见性
+      low: 0
+      high: 0
+      displayValue: Not disclosed
+      tone: risk
+  approximationNotes: Range uses public point estimates where available and explicit gaps where not disclosed.
+  claimRefs:
+  - C034
+  - C035
+  - C039
+sections:
+- number: '4.1'
+  title: 收入模型与变现质量
+  body: 以私营公司标准看，OpenAI 的收入结构已经相当多元。消费者订阅带来直接变现与品牌渗透，Business/Enterprise 席位把工作场景使用转成经常性合同，API 则提供使用量驱动的基础设施经济性。这种组合降低了单一销售路径的依赖，但公开记录仍不足以说明哪条收入线利润最高、也不足以说明哪条收入线最耐久。
+  claimRefs:
+  - C033
+  - C034
+- number: '4.2'
+  title: 资本强度与融资姿态
+  body: 其融资画像即使放在超晚期公司中也极为特殊。已审阅的 2026 年 3 月融资为 OpenAI 带来 1,220 亿美元承诺资本与更大的循环授信额度。这笔钱不仅是增长资金，更是算力、云灵活性、芯片合作与产品广度的战略弹药。反过来看，在模型效率明显快于需求增速之前，这门生意都可能维持高资本强度。
+  claimRefs:
+  - C034
+  - C036
+- number: '4.3'
+  title: 单位经济可见性与盲区
+  body: 公开资料足以说明 OpenAI 已形成真实变现并且企业收入占比不低，但仍不足以让投资者有把握地承销单位经济。已审阅材料没有披露毛利率、获客回收期、合同留存或席位扩张。OpenAI 自身叙事强调效率改善与规模杠杆，但投资人仍需要内部数据来区分“真实经营杠杆”和“资本堆出来的规模”。
+  claimRefs:
+  - C035
+  - C037
+- number: '4.4'
+  title: 财务结论
+  body: 相较多数前沿 AI 私营公司，OpenAI 的财务姿态明显更强，因为收入、资本获取能力与定价体系都已经真实存在。但在 8,520 亿美元估值下，剩余的不确定性更重要。如果企业收入占比继续提升、留存强、推理成本持续下降，商业模式可能逐步呈现基础设施级质量；如果算力强度、
+    bundling 压力或价格压缩占上风，则估值重定价风险也会非常直接。
+  claimRefs:
+  - C034
+  - C038
+  - C039

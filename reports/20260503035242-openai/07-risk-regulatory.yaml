@@ -1,0 +1,335 @@
+schemaVersion: startup-diligence-report-v2
+artifact: risk-regulatory
+slug: openai
+runDate: '2026-05-03'
+company:
+  name: OpenAI
+chapter:
+  number: 7
+  title: Risk & Regulatory
+  summary: >-
+    OpenAI's core downside case is not lack of demand but the interaction between litigation, privacy, governance, model
+    misuse, and compute dependence. Those risks transmit directly into enterprise adoption, cost structure, and
+    valuation.
+callouts:
+  - type: risk-alert
+    title: Copyright and privacy disputes remain first-order risks
+    body: >-
+      The New York Times litigation and related copyright debates create legal, product, and trust consequences at the
+      same time. Even if OpenAI prevails on major claims, the process itself can shape retention, data policy, and
+      regulator attention.
+    claimRefs:
+      - C067
+      - C068
+      - C069
+  - type: key-insight
+    title: Mitigation maturity is improving, not complete
+    body: >-
+      OpenAI has visibly strengthened governance structure, safety processes, and security/compliance posture, but those
+      mitigants reduce rather than eliminate risk.
+    claimRefs:
+      - C070
+      - C071
+      - C072
+tables:
+  - id: T701
+    title: Severity-ranked risk register
+    columns:
+      - risk
+      - category
+      - evidence
+      - likelihood
+      - impact
+      - mitigation
+      - diligence ask
+    rows:
+      - - Copyright and data-rights litigation
+        - legal
+        - NYT lawsuit pages and Copyright Office materials
+        - high
+        - high
+        - Aggressive legal defense, licensing partnerships, privacy controls
+        - Need scenario analysis for adverse judgments or licensing cost
+      - - Privacy and data-retention conflict
+        - privacy
+        - OpenAI privacy-response pages show forced retention disputes
+        - medium
+        - high
+        - 30-day deletion defaults, ZDR endpoints, legal hold segregation
+        - Need regulator and customer reaction data
+      - - Governance complexity
+        - governance
+        - Foundation/PBC structure and 2025 recapitalization
+        - medium
+        - high
+        - Board reset, explicit foundation control rights, SSC oversight
+        - Need board process detail and investor-protection terms
+      - - Compute concentration / capital intensity
+        - operational
+        - Funding post and Microsoft amendment show compute as strategic dependency
+        - high
+        - high
+        - Multi-cloud, silicon diversification, huge capital access
+        - Need contracted capacity and cost/downside scenarios
+      - - Competitive share erosion
+        - market
+        - Menlo enterprise-share data
+        - medium
+        - medium
+        - Rapid shipping across product surfaces
+        - Need workflow-by-workflow win/loss and pricing elasticity
+    notes: null
+    claimRefs:
+      - C067
+      - C068
+      - C070
+      - C073
+  - id: T702
+    title: Regulatory / legal risk table
+    columns:
+      - risk area
+      - evidence
+      - why it matters
+      - mitigation evidence
+      - diligence ask
+    rows:
+      - - Copyright training-data exposure
+        - Copyright Office AI initiative and active publisher/author suits
+        - Could increase cost of content access or constrain model training/distribution
+        - OpenAI continues legal defense and partnership/licensing narrative
+        - Need reserve analysis and settlement/licensing scenarios
+      - - User privacy and discovery orders
+        - OpenAI says NYT sought retention or production of very large volumes of user data
+        - Can undermine trust and trigger regulator/customer concern
+        - >-
+          OpenAI says data was de-identified, access tightly controlled, and standard retention resumed after order
+          ended
+        - Need independent privacy counsel review
+      - - Model safety / misuse
+        - Safety page lists system cards, preparedness evals, committees, and misuse categories
+        - Safety incident could slow launches or increase regulation
+        - Structured safety documentation and governance exist
+        - Need incident history and escalation metrics
+      - - Compliance / enterprise controls
+        - Security page lists SOC 2, ISO, HIPAA support, GDPR/CCPA support
+        - Enterprise growth depends on trust controls staying credible
+        - OpenAI documents certifications and business-data defaults
+        - Need scope boundaries, exclusions, and customer audit findings
+      - - Governance / attorney-general scrutiny
+        - Structure page says recapitalization followed dialogue with California and Delaware AG offices
+        - Unusual structure can remain a source of regulatory and investor attention
+        - Foundation retains explicit mission governance and board control
+        - Need ongoing oversight commitments and future recap options
+    notes: null
+    claimRefs:
+      - C067
+      - C069
+      - C070
+      - C071
+  - id: T703
+    title: Partner / dependency risk table
+    columns:
+      - dependency
+      - evidence
+      - risk transmission
+      - mitigation / offset
+      - diligence ask
+    rows:
+      - - Microsoft / Azure relationship
+        - Amended partnership still names Microsoft primary cloud partner
+        - Commercial or technical friction could disrupt capacity, economics, or customer routing
+        - Non-exclusive IP license and broader cloud flexibility
+        - Need exact volume commitments and termination terms
+      - - Broader compute partners and silicon suppliers
+        - Funding post lists Oracle, AWS, CoreWeave, Google Cloud, NVIDIA, AMD, Broadcom, Cerebras
+        - Shortfalls or cost spikes could hit margin and launch cadence
+        - Diversified multi-cloud and multi-chip strategy
+        - Need weighted capacity and cost exposure
+      - - Enterprise trust controls
+        - Business growth increasingly depends on admin/privacy features
+        - Weak trust posture would reduce enterprise conversion and expansion
+        - Visible controls, certifications, residency, and ZDR options
+        - Need conversion data for regulated buyers
+      - - Foundation governance model
+        - Mission-first control remains core to structure
+        - Could create future friction with capital markets or strategic M&A
+        - Current recapitalization clarifies board rights
+        - Need investor-rights package and governance escalation process
+      - - Legal precedent environment
+        - Copyright Office and court outcomes affect the entire model-training ecosystem
+        - Adverse precedent could reprice model economics industry-wide
+        - OpenAI has partnerships plus legal defense strategy
+        - Need downside cases for licensing and content costs
+    notes: null
+    claimRefs:
+      - C068
+      - C069
+      - C070
+      - C072
+  - id: T704
+    title: Mitigation and stop-loss criteria table
+    columns:
+      - risk area
+      - mitigation
+      - owner/evidence
+      - residual risk
+      - diligence path
+    rows:
+      - - Copyright / litigation
+        - Legal defense, licensing deals, privacy controls
+        - OpenAI lawsuit pages and company statements
+        - significant
+        - Track major court rulings, reserve needs, and settlement structure
+      - - Privacy / retention
+        - 30-day deletion defaults, ZDR API, segregated legal hold
+        - OpenAI privacy response page
+        - significant
+        - Test whether enterprise buyers view controls as sufficient
+      - - Compute dependency
+        - Capital raise plus multi-cloud diversification
+        - Funding post and Microsoft amendment
+        - significant
+        - Model downside under capacity delays or inference-cost inflation
+      - - Governance
+        - Foundation control, independent directors, SSC
+        - Structure page
+        - moderate
+        - Review board minutes, investor consents, and fiduciary protections
+      - - Model misuse / safety
+        - System cards, preparedness, safety committees
+        - Safety page
+        - moderate
+        - Request incident log, response SLAs, and release-gating policy
+    notes: null
+    claimRefs:
+      - C069
+      - C070
+      - C071
+      - C072
+figures:
+  - id: F701
+    title: Risk heatmap
+    type: heatmap
+    layout: standard
+    summary: >-
+      OpenAI's top risks are both high-impact and multi-channel, with legal/privacy and compute dependence standing out
+      most.
+    data:
+      columns:
+        - Likelihood
+        - Impact
+        - Mitigation maturity
+      rows:
+        - label: Copyright litigation
+          values:
+            - 5
+            - 5
+            - 2
+        - label: Privacy / retention conflict
+          values:
+            - 4
+            - 4
+            - 3
+        - label: Compute dependence
+          values:
+            - 4
+            - 5
+            - 3
+        - label: Governance complexity
+          values:
+            - 3
+            - 4
+            - 3
+        - label: Competitive erosion
+          values:
+            - 3
+            - 3
+            - 3
+    approximationNotes: null
+    claimRefs:
+      - C067
+      - C068
+      - C070
+  - id: F702
+    title: Risk transmission map
+    type: causal-map
+    layout: standard
+    summary: The key risks transmit into OpenAI through customer trust, cost structure, launch cadence, and valuation.
+    data:
+      nodes:
+        - id: legal
+          label: Copyright / privacy disputes
+        - id: trust
+          label: Customer trust
+        - id: sales
+          label: Enterprise conversion
+        - id: compute
+          label: Compute cost / capacity
+        - id: margin
+          label: Margin and burn
+        - id: valuation
+          label: Valuation multiple
+      edges:
+        - from: legal
+          to: trust
+        - from: trust
+          to: sales
+        - from: compute
+          to: margin
+        - from: sales
+          to: valuation
+        - from: margin
+          to: valuation
+        - from: legal
+          to: valuation
+    approximationNotes: null
+    claimRefs:
+      - C067
+      - C068
+      - C072
+      - C073
+sections:
+  - number: '7.1'
+    title: Risk overview and underwriting view
+    body: >-
+      OpenAI's principal risks are unusual because they sit at the intersection of law, governance, infrastructure, and
+      public trust. The downside case is not demand collapse; it is that litigation, privacy conflict, compute
+      dependence, or governance friction could slow enterprise adoption, raise cost structure, or force valuation
+      compression. That is why underwriting OpenAI requires looking at risk transmission across product, legal, and
+      infrastructure channels rather than treating each issue as isolated.
+    claimRefs:
+      - C067
+      - C068
+  - number: '7.2'
+    title: Regulatory, legal, security, and privacy exposure
+    body: >-
+      The most visible legal risk is the copyright and publisher-author litigation complex around training data and
+      model outputs. Closely related is the privacy dimension, where the NYT discovery fight pushed OpenAI into public
+      explanations of retention, deletion, and legal holds. The Copyright Office's AI initiative reinforces that the
+      broader policy environment is still moving, meaning OpenAI faces both case-by-case and systemic legal uncertainty.
+    claimRefs:
+      - C067
+      - C068
+      - C069
+  - number: '7.3'
+    title: Operational and dependency risk
+    body: >-
+      Operationally, OpenAI is tied to a financed compute build-out. The funding post and Microsoft amendment make clear
+      that cloud, chips, and data-center partners are not just vendors; they are central to delivery economics and
+      launch cadence. The company has responded by broadening its infrastructure portfolio, but scale dependence remains
+      intrinsic to the model.
+    claimRefs:
+      - C070
+      - C072
+  - number: '7.4'
+    title: Mitigations, stop-loss signals, and risk verdict
+    body: >-
+      Mitigations are meaningful: stronger board structure, a foundation-controlled governance model, safety committees,
+      system cards, security certifications, and explicit business-data controls. But the residual risk remains
+      significant because each top risk has system-wide consequences. A thesis-break would likely come from adverse
+      copyright/privacy precedent, a major safety/trust event, or evidence that compute intensity is outrunning
+      monetization gains. Put differently, if any one of the four main lines—legal, privacy, trust, or
+      compute—deteriorates materially, the investment posture can worsen quickly.
+    claimRefs:
+      - C071
+      - C073

@@ -1,0 +1,307 @@
+schemaVersion: startup-diligence-report-v2
+artifact: risk-regulatory
+slug: openai
+runDate: '2026-05-03'
+company:
+  name: OpenAI
+chapter:
+  number: 7
+  title: 风险与监管
+  summary: OpenAI 的核心 downside case 不是需求不足，而是诉讼、隐私、治理、模型滥用与算力依赖之间的相互作用。这些风险会直接传导至企业采用、成本结构与估值。
+callouts:
+- type: risk-alert
+  title: 版权与隐私争议仍是一阶风险
+  body: 纽约时报诉讼及相关版权争议同时带来法律、产品与信任后果。即便 OpenAI 在关键诉点上胜诉，过程本身也会影响留存、数据政策与监管关注。
+  claimRefs:
+  - C067
+  - C068
+  - C069
+- type: key-insight
+  title: 缓释能力在提升，但并未消除风险
+  body: OpenAI 确实加强了治理结构、安全流程与安全/合规姿态，但这些缓释措施只能降低风险，而不能消除风险。
+  claimRefs:
+  - C070
+  - C071
+  - C072
+tables:
+- id: T701
+  title: 风险登记表
+  columns:
+  - risk
+  - category
+  - evidence
+  - likelihood
+  - impact
+  - mitigation
+  - diligence ask
+  rows:
+  - - 版权和数据权诉讼
+    - legal
+    - 纽约时报诉讼页面和版权局材料
+    - high
+    - high
+    - 积极的法律辩护、许可合作伙伴关系、隐私控制
+    - 需要针对不利判断或许可成本进行情景分析
+  - - 隐私和数据保留冲突
+    - privacy
+    - OpenAI 隐私响应页面显示强制保留争议
+    - medium
+    - high
+    - 30-day deletion defaults, ZDR endpoints, legal hold segregation
+    - 需要监管机构和客户反应数据
+  - - Governance complexity
+    - governance
+    - 基金会/PBC 结构和 2025 年资本重组
+    - medium
+    - high
+    - Board reset, explicit foundation control rights, SSC oversight
+    - 需要董事会流程细节和投资者保护条款
+  - - 计算集中度/资本密集度
+    - operational
+    - 资助帖子和微软修正案表明计算是战略依赖
+    - high
+    - high
+    - 多云、芯片多元化、巨大的资本准入
+    - 需要合同容量和成本/下行场景
+  - - 竞争性份额侵蚀
+    - market
+    - Menlo企业共享数据
+    - medium
+    - medium
+    - 在产品表面快速运输
+    - 需要逐个工作流程的赢/输和定价弹性
+  notes: null
+  claimRefs:
+  - C067
+  - C068
+  - C070
+  - C073
+- id: T702
+  title: 监管 / 法律风险表
+  columns:
+  - risk area
+  - evidence
+  - why it matters
+  - mitigation evidence
+  - diligence ask
+  rows:
+  - - Copyright training-data exposure
+    - 版权局人工智能计划和积极的出版商/作者诉讼
+    - Could increase cost of content access or constrain model training/distribution
+    - OpenAI 继续进行法律辩护和合作/许可叙述
+    - 需求储备分析和结算/许可场景
+  - - 用户隐私和发现命令
+    - OpenAI 称《纽约时报》寻求保留或生成大量用户数据
+    - 可能会破坏信任并引发监管机构/客户的担忧
+    - OpenAI 表示数据已去识别化，访问受到严格控制，订单结束后恢复标准保留
+    - 需要独立隐私顾问审查
+  - - Model safety / misuse
+    - 安全页面列出了系统卡、准备评估、委员会和误用类别
+    - Safety incident could slow launches or increase regulation
+    - 存在结构化安全文档和治理
+    - 需要事件历史记录和升级指标
+  - - Compliance / enterprise controls
+    - Security page lists SOC 2, ISO, HIPAA support, GDPR/CCPA support
+    - 企业的成长取决于信任控制的可信度
+    - OpenAI 记录认证和业务数据默认值
+    - 需要范围边界、排除和客户审核结果
+  - - 治理/总检察长审查
+    - 结构页面称，资本重组是在与加州和特拉华州股份公司办事处对话后进行的
+    - 不寻常的结构仍然会引起监管和投资者的关注
+    - 基金会保留明确的任务治理和董事会控制
+    - 需要持续的监督承诺和未来的回顾选项
+  notes: null
+  claimRefs:
+  - C067
+  - C069
+  - C070
+  - C071
+- id: T703
+  title: 伙伴 / 依赖风险表
+  columns:
+  - dependency
+  - evidence
+  - risk transmission
+  - mitigation / offset
+  - diligence ask
+  rows:
+  - - Microsoft / Azure relationship
+    - Amended partnership still names Microsoft primary cloud partner
+    - 商业或技术摩擦可能会破坏容量、经济性或客户路由
+    - 非独家 IP 许可和更广泛的云灵活性
+    - 需要准确的数量承诺和终止条款
+  - - 更广泛的计算合作伙伴和芯片供应商
+    - Funding post lists Oracle, AWS, CoreWeave, Google Cloud, NVIDIA, AMD, Broadcom, Cerebras
+    - 短缺或成本飙升可能会影响利润率和发布节奏
+    - 多元化的多云、多芯片策略
+    - 需要加权容量和成本风险
+  - - Enterprise trust controls
+    - 业务增长越来越依赖于管理/隐私功能
+    - 薄弱的信任态势将减少企业转型和扩张
+    - 可见的控制、认证、驻留和 ZDR 选项
+    - 需要受监管买家的转化数据
+  - - 基金会治理模式
+    - Mission-first control remains core to structure
+    - 未来可能会与资本市场或战略并购产生摩擦
+    - Current recapitalization clarifies board rights
+    - 需要投资者权利包和治理升级流程
+  - - Legal precedent environment
+    - 版权局和法庭结果影响整个模型训练生态系统
+    - Adverse precedent could reprice model economics industry-wide
+    - OpenAI 拥有合作伙伴关系和法律辩护策略
+    - 需要许可和内容成本的不利案例
+  notes: null
+  claimRefs:
+  - C068
+  - C069
+  - C070
+  - C072
+- id: T704
+  title: 缓释与止损标准表
+  columns:
+  - risk area
+  - mitigation
+  - owner/evidence
+  - residual risk
+  - diligence path
+  rows:
+  - - Copyright / litigation
+    - 法律辩护、许可交易、隐私控制
+    - OpenAI 诉讼页面和公司声明
+    - significant
+    - 跟踪主要法院裁决、准备金需求和和解结构
+  - - Privacy / retention
+    - 30-day deletion defaults, ZDR API, segregated legal hold
+    - OpenAI 隐私响应页面
+    - significant
+    - 测试企业买家是否认为控制措施足够
+  - - Compute dependency
+    - 融资加上多云多元化
+    - 资助职位和微软修正案
+    - significant
+    - Model downside under capacity delays or inference-cost inflation
+  - - Governance
+    - Foundation control, independent directors, SSC
+    - Structure page
+    - moderate
+    - 审查董事会会议记录、投资者同意和信托保护
+  - - Model misuse / safety
+    - System cards, preparedness, safety committees
+    - Safety page
+    - moderate
+    - 请求事件日志、响应 SLA​​ 和发布控制策略
+  notes: null
+  claimRefs:
+  - C069
+  - C070
+  - C071
+  - C072
+figures:
+- id: F701
+  title: 风险热力图
+  type: heatmap
+  layout: standard
+  summary: OpenAI 的核心风险兼具高影响与多路径传导特征，其中法律/隐私与算力依赖最突出。
+  data:
+    columns:
+    - Likelihood
+    - Impact
+    - Mitigation maturity
+    rows:
+    - label: Copyright litigation
+      values:
+      - 5
+      - 5
+      - 2
+    - label: 隐私/保留冲突
+      values:
+      - 4
+      - 4
+      - 3
+    - label: Compute dependence
+      values:
+      - 4
+      - 5
+      - 3
+    - label: Governance complexity
+      values:
+      - 3
+      - 4
+      - 3
+    - label: Competitive erosion
+      values:
+      - 3
+      - 3
+      - 3
+  approximationNotes: null
+  claimRefs:
+  - C067
+  - C068
+  - C070
+- id: F702
+  title: 风险传导图
+  type: causal-map
+  layout: standard
+  summary: 关键风险会通过客户信任、成本结构、发布节奏与估值传导到 OpenAI。
+  data:
+    nodes:
+    - id: legal
+      label: Copyright / privacy disputes
+    - id: trust
+      label: Customer trust
+    - id: sales
+      label: Enterprise conversion
+    - id: compute
+      label: 计算成本/容量
+    - id: margin
+      label: Margin and burn
+    - id: valuation
+      label: Valuation multiple
+    edges:
+    - from: legal
+      to: trust
+    - from: trust
+      to: sales
+    - from: compute
+      to: margin
+    - from: sales
+      to: valuation
+    - from: margin
+      to: valuation
+    - from: legal
+      to: valuation
+  approximationNotes: null
+  claimRefs:
+  - C067
+  - C068
+  - C072
+  - C073
+sections:
+- number: '7.1'
+  title: 风险总览与承销视角
+  body: OpenAI 的主要风险之所以特殊，是因为它们同时位于法律、治理、基础设施与公众信任的交叉点。其 downside case 不是需求突然消失，而是诉讼、隐私冲突、算力依赖或治理摩擦拖慢企业采用、抬升成本结构，或迫使估值压缩。
+    这也是为什么 OpenAI 的风控不能只看单点事件，而必须看风险如何跨越产品、法律与基础设施三条链路同时传导。
+  claimRefs:
+  - C067
+  - C068
+- number: '7.2'
+  title: 监管、法律、安全与隐私敞口
+  body: 当前最显性的法律风险是围绕训练数据与模型输出展开的版权诉讼及出版商/作者诉讼群。与之紧密相连的是隐私维度：NYT 取证争议迫使 OpenAI 公开解释 retention、deletion
+    与 legal hold。美国版权局的 AI 工作也表明，更广泛的政策环境仍在演化，因此 OpenAI 面临的不仅是个案风险，也是制度性不确定性。
+  claimRefs:
+  - C067
+  - C068
+  - C069
+- number: '7.3'
+  title: 运营与依赖风险
+  body: 在运营层面，OpenAI 与融资驱动的算力扩张深度绑定。融资文章与微软协议修订都表明，云、芯片与数据中心伙伴不只是供应商，而是交付经济性与产品发布节奏的核心变量。公司已通过扩大基础设施组合来缓释这一风险，但规模依赖仍是其商业模式的内生特征。
+  claimRefs:
+  - C070
+  - C072
+- number: '7.4'
+  title: 缓释、止损信号与风险结论
+  body: 缓释措施是有意义的：更清晰的董事会结构、基金会控制的治理模式、安全委员会、system cards、安全认证，以及明确的企业数据控制。但剩余风险仍属 significant，因为每个顶级风险都具有系统级后果。投资论点被打破更可能来自不利版权/隐私先例、重大安全/信任事件，或算力强度明显跑赢变现改善。
+    换言之，只要法律、隐私、信任与算力四条主线中任意一条明显失稳，投资结论就可能迅速恶化。
+  claimRefs:
+  - C071
+  - C073

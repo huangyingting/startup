@@ -1,0 +1,282 @@
+schemaVersion: startup-diligence-report-v2
+artifact: customer-retention
+slug: openai
+runDate: '2026-05-03'
+company:
+  name: OpenAI
+chapter:
+  number: 6
+  title: 客户与留存
+  summary: OpenAI 的用户覆盖面压倒性强，企业客户证明也具备可信度，但公开证据对“采用广度”的支撑明显强于对“留存质量”与“集中度风险”的支撑。
+callouts:
+- type: key-insight
+  title: 客户证明是真实且广泛的，不只是 logo 堆砌
+  body: OpenAI 现在在消费者、SMB、企业与开发者四个表面都展示出有意义的客户证据，企业页面与 business stories 中也给出了具体案例。
+  claimRefs:
+  - C055
+  - C056
+  - C058
+- type: risk-alert
+  title: 留存质量的公开可见性明显落后于采用可见性
+  body: 公开材料更清楚地展示了使用和案例，却很少展示续约、流失、NRR 或客户集中度。一旦估值开始依赖“可持续性”而非“新鲜感”，这个缺口就很关键。
+  claimRefs:
+  - C057
+  - C059
+  - C061
+tables:
+- id: T601
+  title: 客户增长 / 采用轨迹表
+  columns:
+  - metric
+  - value
+  - date context
+  - interpretation
+  - caveat
+  rows:
+  - - 每周活跃用户数
+    - 900M+
+    - Mar-2026 company claim
+    - 广泛的消费者影响力和品牌熟悉度
+    - 与付费客户不同
+  - - Subscribers
+    - 50M+
+    - Mar-2026 company claim
+    - Large direct-paying installed base
+    - No plan mix disclosed
+  - - Business users
+    - 5M+
+    - Enterprise page current
+    - Shows non-trivial workplace penetration
+    - 不隔离付费座位数
+  - - Enterprise revenue share
+    - 40%+
+    - 2026 company claim
+    - B2B monetization is already material
+    - 未披露客户集中度
+  - - Codex weekly users
+    - 2M+
+    - 2026 company claim
+    - Developer adoption is meaningful, not just experimental
+    - 需要队列和货币化深度
+  - - Reference examples
+    - Choco, CyberAgent, Gradient Labs, Harvey
+    - 2026 pages
+    - 证明跨越多个企业工作流程
+    - 大部分是官方/客户选择的示例
+  notes: null
+  claimRefs:
+  - C055
+  - C056
+  - C058
+- id: T602
+  title: 客户细分表
+  columns:
+  - segment
+  - buyer/user
+  - use case
+  - evidence
+  - diligence ask
+  rows:
+  - - Consumers
+    - Individual subscriber
+    - Search, drafting, learning, ideation, coding
+    - 主页+定价+融资帖子
+    - 需要按计划付费转换和流失
+  - - Startups / SMB teams
+    - Founder, operator, developer
+    - 共享工作空间生产力和编码
+    - 业务页面和定价页面
+    - 需要扩容及ARPU趋势
+  - - Large enterprises
+    - CIO, function heads, legal/finance/engineering teams
+    - 受控的 AI 生产力和工作流程集成
+    - 企业页面及案例
+    - 需要 ACV、部署深度和续订
+  - - 开发者/产品团队
+    - 工程领导者和建设者
+    - API integration, coding, multimodal features
+    - API定价和业务页面
+    - 需要花费集中和渠道分割
+  - - Regulated organizations
+    - 管理员和合规发起人
+    - 通过保留/隐私控制进行受控部署
+    - 安全/隐私和企业页面
+    - 需要垂直合规转换
+  notes: null
+  claimRefs:
+  - C055
+  - C056
+  - C059
+- id: T603
+  title: 具名客户证明表
+  columns:
+  - 客户/证明点
+  - segment
+  - outcome
+  - source/date
+  - limitation
+  rows:
+  - - Choco
+    - Enterprise / supply chain
+    - Official story says AI agents automate food distribution workflows
+    - OpenAI 主页/商业页面，2026 年
+    - 结果是公司策划的，缺乏合同细节
+  - - CyberAgent
+    - Enterprise / media-tech
+    - 官方报道称 ChatGPT Enterprise 和 Codex 帮助团队更快地行动
+    - OpenAI homepage, 2026
+    - 没有保留或支出披露
+  - - Gradient Labs
+    - Startup / fintech infrastructure
+    - 官方说法称每个银行客户都可以找到一位人工智能客户经理
+    - OpenAI homepage, 2026
+    - Partner-style proof point, not end-buyer economics
+  - - Harvey quote
+    - 法律科技/企业建设者
+    - 联合创始人的引言强调了对与 OpenAI 的定制训练模型合作伙伴关系的信任
+    - 当前业务页面
+    - 参考是支持性的，但不是客户投资回报率数据集
+  - - 5M+ business users
+    - Cross-industry proof
+    - 企业页面标志着广泛的工作场所渗透
+    - Enterprise page current
+    - 总使用量与耐用座位收入不同
+  notes: null
+  claimRefs:
+  - C056
+  - C058
+- id: T604
+  title: 留存 / 集中度风险表
+  columns:
+  - risk
+  - evidence
+  - impact
+  - diligence path
+  rows:
+  - - Public NRR/GRR absent
+    - 没有经过审查的来源披露企业保留指标
+    - High
+    - 请求商业/企业队列保留和席位扩展
+  - - Consumer churn absent
+    - 定价页面显示计划设计，但不显示保留率
+    - Medium
+    - 请求付费用户群组和降级/升级流程
+  - - 客户集中度不明确
+    - 企业组合超过收入的 40%，但没有公开的顶级客户数据
+    - High
+    - 请求前 20 名客户份额和合同集中度
+  - - 案例研究由公司策划
+    - Official references are useful but selective
+    - Medium
+    - 获取独立的客户参考和失败的部署示例
+  - - 受监管的客户耐久性尚不清楚
+    - 控制措施已上市，但敏感行业的更新未披露
+    - Medium
+    - 请求法律、金融、医疗保健和公共部门保留
+  notes: null
+  claimRefs:
+  - C057
+  - C059
+  - C061
+figures:
+- id: F601
+  title: 客户旅程图
+  type: journey-map
+  layout: standard
+  summary: OpenAI 往往先以个人效用切入，再通过团队使用扩散，最后在治理控制完备后进入企业预算。
+  data:
+    nodes:
+    - label: Individual discovery
+      detail: Consumer or employee finds value in chat, search, or coding tasks
+      tone: positive
+    - label: Team reuse
+      detail: Usage spreads inside a team or startup through shared workflows
+      tone: positive
+    - label: Admin review
+      detail: 安全性、保留和身份控制成为限制因素
+      tone: neutral
+    - label: Business / Enterprise purchase
+      detail: 席位预算或企业合同正式支出
+      tone: positive
+    - label: Workflow expansion
+      detail: 集成、代理和编码用例加深了帐户价值
+      tone: opportunity
+  approximationNotes: null
+  claimRefs:
+  - C055
+  - C059
+- id: F602
+  title: 客户证明矩阵
+  type: matrix
+  layout: standard
+  summary: 公开证据在采用广度与具名客户方面较强，但在留存与集中度透明度方面较弱。
+  data:
+    columns:
+    - Adoption breadth
+    - Named proof
+    - Retention visibility
+    - Concentration visibility
+    rows:
+    - label: Consumers
+      values:
+      - 5
+      - 2
+      - 1
+      - 0
+    - label: SMB teams
+      values:
+      - 4
+      - 2
+      - 1
+      - 1
+    - label: Large enterprises
+      values:
+      - 4
+      - 4
+      - 1
+      - 1
+    - label: Developers
+      values:
+      - 4
+      - 2
+      - 1
+      - 1
+    - label: Regulated buyers
+      values:
+      - 2
+      - 1
+      - 1
+      - 0
+  approximationNotes: null
+  claimRefs:
+  - C055
+  - C057
+  - C061
+sections:
+- number: '6.1'
+  title: 客户质量与采用锚点
+  body: 对一家私营软件公司而言，OpenAI 的采用广度极不寻常。已审阅材料支持其拥有庞大的消费者触达、可观的订阅用户、超过 500 万的 business users，以及一组可见的企业案例。因此，“采用”本身不是问题。真正的问题在于，这些用户中有多少能够转化为持久、可扩张、且高毛利的客户关系。
+  claimRefs:
+  - C055
+  - C056
+- number: '6.2'
+  title: 具名证明、工作流与引用质量
+  body: 企业页面与主页展示了 Choco、CyberAgent 等客户案例，也包括 Gradient Labs、Harvey 这类更偏合作伙伴或平台构建者的证明。这些案例说明 OpenAI 已在软件工程、运营与面向客户的场景中支持真实工作流。但它们都是公司主动挑选的引用，因此更适合作为“已进入生产”的证据，而不是独立的
+    ROI 或续约证明。
+  claimRefs:
+  - C056
+  - C058
+- number: '6.3'
+  title: 留存与扩张的可见性
+  body: 公开材料对留存的可见性明显弱于对采用的可见性。已审阅来源没有披露 NRR、GRR、续约率，或按 cohort 拆分的席位扩张数据。因此，当前证据足以支持“客户质量不错”的论点，但不足以在
+    8,520 亿美元估值下，以应有置信度承销企业留存的耐久性。消费者流失与付费转化结构也存在同样问题。
+  claimRefs:
+  - C057
+  - C059
+- number: '6.4'
+  title: 客户结论与集中度风险
+  body: 综合来看，OpenAI 在客户采用质量与广度上较强，在参考案例深度上中等，在公开留存透明度上偏弱。客户集中度可能温和，也可能重要；公开记录无法回答这个问题。因此，本章结论是“条件性正面”：客户需求毋庸置疑，但最关键的尽调问题已转向留存、扩张与合同集中度，而不是
+    logo 数量。
+  claimRefs:
+  - C060
+  - C061

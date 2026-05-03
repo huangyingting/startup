@@ -1,0 +1,311 @@
+schemaVersion: startup-diligence-report-v2
+artifact: financial-unit-economics
+slug: openai
+runDate: '2026-05-03'
+company:
+  name: OpenAI
+chapter:
+  number: 4
+  title: Financial & Unit Economics
+  summary: >-
+    OpenAI has already crossed into hyperscale revenue territory, but public underwriting is still constrained by opaque
+    margins, unclear seat economics, and the capital intensity of a multi-cloud compute build-out.
+callouts:
+  - type: key-insight
+    title: Revenue quality is stronger than typical private AI peers
+    body: >-
+      OpenAI is no longer a pre-revenue or experimental platform. It combines consumer subscriptions, enterprise seats,
+      and usage-based API pricing, giving it multiple monetization vectors.
+    claimRefs:
+      - C033
+      - C034
+      - C035
+  - type: risk-alert
+    title: Capital intensity and valuation can outrun economics
+    body: >-
+      Even with $2B of monthly revenue, OpenAI remains a compute-heavy business whose profitability, working capital,
+      and financing terms remain largely opaque in public sources.
+    claimRefs:
+      - C034
+      - C036
+      - C039
+tables:
+  - id: T401
+    title: Revenue streams table
+    columns:
+      - revenue stream
+      - public evidence
+      - pricing / monetization
+      - quality assessment
+      - key diligence gap
+    rows:
+      - - Consumer subscriptions
+        - ChatGPT pricing page lists Free, Go, Plus, Pro and related plan benefits
+        - Recurring consumer subscription
+        - High demand signal but potentially promotional / usage-sensitive
+        - Need plan mix, churn, and contribution margin by plan
+      - - Business seats
+        - ChatGPT pricing and business pages show Business workspace sold per user per month
+        - Seat-based enterprise/SMB pricing
+        - Potentially durable if admin controls increase stickiness
+        - Need realized ASP and seat expansion data
+      - - Enterprise contracts
+        - Enterprise page shows custom pricing with security, residency, analytics, and advisor support
+        - Custom annual / multi-year enterprise contracts
+        - Higher-value and likely stickier than consumer plans
+        - Need ACV, renewal, concentration, and discount data
+      - - Developer APIs
+        - API pricing page exposes explicit token pricing across flagship and multimodal models
+        - Usage-based infrastructure pricing
+        - Highly scalable and transparent monetization lane
+        - Need channel split, gross margin, and Azure overlap
+      - - Emerging surfaces
+        - OpenAI says ads pilot exceeded $100M ARR in under six weeks
+        - Early-stage monetization experiment
+        - Interesting optionality but too early to underwrite
+        - Need sustainability and margin profile
+    notes: null
+    claimRefs:
+      - C033
+      - C034
+      - C035
+  - id: T402
+    title: Pricing / financial anchors table
+    columns:
+      - metric
+      - value
+      - date or period
+      - confidence
+      - interpretation
+    rows:
+      - - Committed capital
+        - $122B
+        - '2026-03-31'
+        - high
+        - Funding access remains a strategic moat
+      - - Post-money valuation
+        - $852B
+        - '2026-03-31'
+        - high
+        - Entry multiple is likely stretched for private investors
+      - - Revenue
+        - $13.1B
+        - FY2025
+        - medium
+        - Commercial scale is real, but audited statements are unavailable
+      - - Revenue run rate
+        - $2B per month
+        - Mar-2026
+        - medium
+        - Growth remains exceptional but could embed promotional effects
+      - - Enterprise revenue share
+        - 40%+
+        - 2026 company claim
+        - medium
+        - B2B mix is already material
+      - - API throughput
+        - 15B+ tokens per minute
+        - 2026 company claim
+        - medium
+        - Suggests infrastructure-scale usage beyond seat-based monetization
+    notes: null
+    claimRefs:
+      - C034
+      - C035
+  - id: T403
+    title: Funding / capital needs table
+    columns:
+      - date
+      - event
+      - amount
+      - valuation
+      - notes
+    rows:
+      - - '2019-01-01'
+        - For-profit subsidiary created
+        - n/a
+        - n/a
+        - Capital structure adapted for compute-heavy scaling
+      - - '2025-10-28'
+        - Foundation / Group PBC recapitalization
+        - n/a
+        - n/a
+        - Supports future fundraising under updated governance
+      - - '2026-03-31'
+        - Latest financing closed
+        - $122B
+        - $852B post-money
+        - Anchored by Amazon, NVIDIA, SoftBank; Microsoft continued participation
+      - - '2026-03-31'
+        - Retail participation channel added
+        - $3B+
+        - Included in latest round
+        - Raises expectations for eventual liquidity
+      - - '2026-03-31'
+        - Revolving credit facility expanded
+        - $4.7B
+        - n/a
+        - Facility remains undrawn at close
+      - - '2026-04-27'
+        - Microsoft economics amended
+        - n/a
+        - n/a
+        - Azure remains primary cloud, but OpenAI gains broader go-to-market flexibility
+    notes: null
+    claimRefs:
+      - C034
+      - C036
+  - id: T404
+    title: Unit economics table
+    columns:
+      - metric
+      - public value
+      - confidence
+      - why it matters
+      - specific diligence request
+    rows:
+      - - Gross margin
+        - 'null'
+        - low
+        - Model economics determine whether revenue scale compounds into cash generation
+        - Request gross margin by consumer, enterprise, and API surfaces
+      - - Consumer subscription churn
+        - 'null'
+        - low
+        - Consumer retention affects the durability of the installed base
+        - Request plan-level churn, upgrades, and cohort revenue curves
+      - - Enterprise seat expansion
+        - 'null'
+        - low
+        - B2B compounding depends on renewals and seat growth
+        - Request NRR/GRR by Business and Enterprise cohorts
+      - - API gross contribution
+        - 'null'
+        - low
+        - API monetization can be strong or structurally constrained by compute costs
+        - Request blended inference cost curve and channel mix
+      - - Compute leverage
+        - Directional improvement claimed, no public numbers
+        - medium
+        - Operating leverage is the core long-term debate
+        - Request datacenter commitments, unit-cost trend, and model efficiency deltas
+      - - Working capital / burn
+        - Company says it is not yet profitable
+        - medium
+        - Valuation and downside sensitivity depend on burn path
+        - Request cash burn, capex obligations, and covenant package
+    notes: null
+    claimRefs:
+      - C034
+      - C036
+      - C039
+figures:
+  - id: F401
+    title: Revenue model bridge
+    type: bridge
+    layout: wide
+    summary: >-
+      OpenAI monetizes the same capability base through consumer, enterprise, and developer lanes, all funded by the
+      same underlying model and compute stack.
+    data:
+      nodes:
+        - label: Model and compute base
+          detail: Frontier models and inference capacity are the common cost layer.
+          tone: neutral
+        - label: Consumer plans
+          detail: ChatGPT subscriptions monetize direct end-user demand.
+          tone: positive
+        - label: Business / Enterprise seats
+          detail: Governed workspace and admin features monetize workplace adoption.
+          tone: positive
+        - label: Developer API
+          detail: Token-based monetization scales with application usage.
+          tone: positive
+        - label: Cash generation potential
+          detail: Outcome depends on whether compute efficiency improves faster than demand intensity rises.
+          tone: neutral
+    approximationNotes: null
+    claimRefs:
+      - C033
+      - C035
+      - C036
+  - id: F402
+    title: Financial estimate range
+    type: range
+    layout: standard
+    summary: Public evidence is strong on valuation and run-rate scale, but weak on margins and cash generation.
+    data:
+      items:
+        - label: Valuation (post-money)
+          low: 852000
+          high: 852000
+          mid: 852000
+          displayValue: $852B
+          tone: neutral
+        - label: Revenue run rate (USD m)
+          low: 24000
+          high: 24000
+          mid: 24000
+          displayValue: $24B annualized
+          tone: positive
+        - label: FY2025 revenue (USD m)
+          low: 13100
+          high: 13100
+          mid: 13100
+          displayValue: $13.1B
+          tone: positive
+        - label: Gross margin visibility
+          low: 0
+          high: 0
+          displayValue: Not disclosed
+          tone: risk
+    approximationNotes: Range uses public point estimates where available and explicit gaps where not disclosed.
+    claimRefs:
+      - C034
+      - C035
+      - C039
+sections:
+  - number: '4.1'
+    title: Revenue model and monetization quality
+    body: >-
+      OpenAI now has a diversified revenue model by private-company standards. Consumer subscriptions create direct
+      monetization and brand reach, Business and Enterprise seats convert workplace usage into recurring contracts, and
+      the API provides usage-based infrastructure economics. This mix is important because it reduces dependence on any
+      one go-to-market motion, but the public record is still thin on which lane is most profitable or most durable.
+    claimRefs:
+      - C033
+      - C034
+  - number: '4.2'
+    title: Capital intensity and financing posture
+    body: >-
+      The company's financing profile is extraordinary even by late-stage standards. The reviewed March 2026 financing
+      brought in $122B of committed capital at an $852B valuation, alongside an expanded revolving credit facility. That
+      capital is not just growth fuel; it is strategic ammunition for compute, cloud flexibility, silicon partnerships,
+      and product breadth. The flip side is that the business appears structurally capital intensive until model
+      efficiency meaningfully outruns demand growth.
+    claimRefs:
+      - C034
+      - C036
+  - number: '4.3'
+    title: Unit-economics visibility and blind spots
+    body: >-
+      Public sources provide enough evidence to say OpenAI has real monetization and enterprise mix, but not enough to
+      underwrite unit economics confidently. There is no reviewed public disclosure for gross margin, customer
+      acquisition payback, contract retention, or seat expansion. OpenAI's own narrative points to improving efficiency
+      and scale leverage, but investors still need internal reporting to separate real operating leverage from scale
+      purchased with capital.
+    claimRefs:
+      - C035
+      - C037
+  - number: '4.4'
+    title: Financial verdict
+    body: >-
+      OpenAI's financial posture is much stronger than the average frontier-AI private company because revenue, capital
+      access, and pricing sophistication are all already real. However, at an $852B valuation, the remaining uncertainty
+      matters more than usual. If enterprise mix rises, retention is strong, and inference costs keep falling, the model
+      can justify infrastructure-like quality. If compute intensity, bundling pressure, or pricing compression dominate,
+      public-market style re-rating risk is obvious.
+    claimRefs:
+      - C034
+      - C038
+      - C039

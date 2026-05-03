@@ -1,0 +1,324 @@
+schemaVersion: startup-diligence-report-v2
+artifact: market-macro
+slug: openai
+runDate: '2026-05-03'
+company:
+  name: OpenAI
+chapter:
+  number: 2
+  title: 市场规模与宏观分析
+  summary: OpenAI 所处的是软件史上扩张速度最快的品类之一，但其真实可触达机会仍小于 headline AI TAM，因为企业预算、治理与工作流成熟度仍决定可变现需求。
+callouts:
+- type: key-insight
+  title: 即使不假设 AGI 级别上行，市场也已经足够大
+  body: 已审阅市场资料显示，企业生成式 AI 支出在 2025 年已进入有意义的商业规模；OpenAI 同时覆盖消费者订阅、横向 copilots、开发者 API 与部门级自动化。
+  claimRefs:
+  - C013
+  - C014
+  - C016
+- type: risk-alert
+  title: OpenAI 并不会拿走全部 AI 预算池
+  body: OpenAI 受益于品类扩张，但企业 LLM 支出已经分散到 Anthropic、Google、Microsoft、coding 工具与开源模型。采购与治理摩擦仍会拖慢转化。
+  claimRefs:
+  - C016
+  - C019
+  - C022
+tables:
+- id: T201
+  title: 市场定义表
+  columns:
+  - segment/category
+  - included spend
+  - excluded spend
+  - buyer/payer
+  - relevance
+  rows:
+  - - 消费者 AI 订阅
+    - 付费 ChatGPT 计划与相邻个人生产力支出
+    - 广义数字广告与普通互联网服务
+    - 个人用户 / 家庭
+    - 形成习惯与品牌信任
+  - - 横向企业 copilots
+    - 知识工作自动化、内容生成、内部助手
+    - 未被 AI 替代的核心 ERP/CRM 许可
+    - CIO、职能负责人、业务预算
+    - ChatGPT Business/Enterprise 的核心变现通道
+  - - 基础模型 API
+    - 文本、图像、音频与智能体应用的按量调用支出
+    - 完全自建训练预算
+    - CTO / 工程副总裁 / 产品团队
+    - 高毛利的基础设施型收入面
+  - - 部门级 AI 软件
+    - 编程、销售、客服、营销、法务、财务 copilots
+    - 不含自动化能力的传统软件
+    - 部门负责人 / IT / 职能预算
+    - OpenAI 直接竞争或为合作伙伴提供底层模型
+  - - 训练与算力基础设施
+    - 上游 GPU、云与数据中心支出
+    - 主要由 hyperscalers 与芯片商获取
+    - 基础设施 / 平台团队
+    - 战略重要，但并非全部由 OpenAI 变现
+  notes: null
+  claimRefs:
+  - C013
+  - C014
+- id: T202
+  title: 规模测算视角表
+  columns:
+  - source
+  - year
+  - geography
+  - value
+  - cagr
+  - methodology
+  - confidence
+  - limitation
+  rows:
+  - - Menlo Ventures 企业 GenAI 支出
+    - '2025'
+    - U.S. enterprise market
+    - $37B
+    - 3.2x YoY vs 2024
+    - Survey plus bottoms-up category model
+    - medium
+    - 跟踪企业支出，而不是全球人工智能总量
+  - - Menlo Ventures application layer
+    - '2025'
+    - U.S. enterprise market
+    - $19B
+    - n/a
+    - 企业 GenAI 支出的应用层子集
+    - medium
+    - 不是 OpenAI 特定的收入池
+  - - Menlo Ventures foundation model APIs
+    - '2025'
+    - U.S. enterprise market
+    - $12.5B
+    - n/a
+    - 企业 GenAI 支出的基础设施部分
+    - medium
+    - U.S.-centric estimate
+  - - IDC worldwide AI market
+    - '2024'
+    - Global
+    - $235B
+    - 27% to 2028
+    - IDC spending guide
+    - medium
+    - Covers all AI, not only GenAI
+  - - IDC全球人工智能市场预测
+    - '2028'
+    - Global
+    - $631B
+    - 27%
+    - IDC spending guide forecast
+    - medium
+    - Forecast includes broader AI stack
+  - - OpenAI 内部秤信号
+    - '2026'
+    - Global
+    - $2B/month revenue
+    - n/a
+    - 公司报告的运行率货币化
+    - medium
+    - 公司声明，而非外部市场规模
+  notes: null
+  claimRefs:
+  - C013
+  - C014
+  - C015
+- id: T203
+  title: 细分 / 买方地图
+  columns:
+  - segment
+  - buyer
+  - user
+  - payer
+  - workflow/job-to-be-done
+  - budget owner
+  - adoption trigger
+  rows:
+  - - Consumers
+    - Individual subscriber
+    - Individual subscriber
+    - Individual subscriber
+    - Search, drafting, tutoring, coding, creative tasks
+    - Personal discretionary spend
+    - 日常实用性和习惯养成
+  - - SMB teams
+    - Founder or department lead
+    - Knowledge worker / developer
+    - 公司卡或部门预算
+    - 内容、销售运营、分析、轻量级自动化
+    - Operations or department leader
+    - 立即提高生产力，降低 IT 负担
+  - - 大型企业知识团队
+    - CIO/业务部门负责人
+    - Analyst, lawyer, marketer, PM, engineer
+    - 中央 IT 加业务线预算
+    - 企业搜索、研究、起草、编码、工作流程编排
+    - CIO or function budget owner
+    - 安全/隐私控制以及明显的生产力提升
+  - - Developers / AI builders
+    - 首席技术官/工程副总裁/产品负责人
+    - 开发人员和产品团队
+    - 工程/产品预算
+    - Embed text/image/audio/reasoning into products
+    - Engineering budget owner
+    - 上市速度与内部构建模型的比较
+  - - Regulated buyers
+    - Compliance-minded executive
+    - Knowledge worker under policy constraints
+    - Enterprise budget
+    - 通过保留、驻留和管理控制进行受控部署
+    - CIO / compliance sponsor
+    - 治理、隐私和可审计性需求
+  notes: null
+  claimRefs:
+  - C013
+  - C016
+  - C017
+- id: T204
+  title: 增长驱动与约束表
+  columns:
+  - driver/constraint
+  - direction
+  - evidence
+  - timing
+  - implication
+  - diligence ask
+  rows:
+  - - 企业人工智能支出从 2024 年的 $11.5B 扩大到 2025 年的 $37B
+    - positive
+    - Menlo Ventures
+    - current
+    - 品类扩张仍支持多个获奖者
+    - 检查 2026 年的增长是否仍然集中在编码和副驾驶方面
+  - - Application-layer spend is already $19B
+    - positive
+    - Menlo Ventures
+    - current
+    - 支持 OpenAI 业务席位和座席工作流程货币化
+    - 需要 OpenAI 特定功能的胜率
+  - - Foundation-model API spend reached $12.5B
+    - positive
+    - Menlo Ventures
+    - current
+    - API lane is large enough to matter independently of ChatGPT seats
+    - 需要直接 API 和 Azure 渠道之间的客户组合
+  - - IDC projects AI spending from $235B in 2024 to $631B by 2028
+    - positive
+    - IDC
+    - medium-term
+    - Macro tailwind remains powerful
+    - Separate GenAI-accessible spend from broader infrastructure
+  - - 76% 的企业人工智能用例现在是购买的，而不是构建的
+    - positive
+    - Menlo Ventures
+    - current
+    - 帮助 OpenAI 等供应商实现盈利，而不仅仅是实现内部构建
+    - 需要知道 OpenAI 输给套件供应商的地方
+  - - 企业LLM份额正在分散； Menlo 预计 2025 年 OpenAI 将占企业 LLM 支出的 27%
+    - negative
+    - Menlo Ventures
+    - current
+    - 市场增长本身并不能保证份额的保留
+    - 需要更新2026企业API份额
+  - - 治理、隐私和数据保留问题导致受监管用户采用缓慢
+    - negative
+    - OpenAI 隐私/安全页面和诉讼页面
+    - current
+    - 控制现在是一个门控功能，而不仅仅是一个信任附加组件
+    - 需要严格监管的垂直行业的赢/输数据
+  notes: null
+  claimRefs:
+  - C013
+  - C014
+  - C015
+  - C016
+  - C018
+  - C019
+figures:
+- id: F201
+  title: OpenAI 机会分层
+  type: layered-lens
+  layout: wide
+  summary: 从广义 AI 支出到 OpenAI 可实际获取的软件、API 与工作流预算，机会会快速收窄。
+  data:
+    nodes:
+    - label: Global AI spend
+      detail: IDC estimates nearly $235B in 2024, rising toward $631B by 2028.
+      tone: positive
+    - label: Enterprise GenAI spend
+      detail: Menlo 估计 2025 年企业生成人工智能支出为 37B 美元。
+      tone: positive
+    - label: Application layer
+      detail: 2025 年面向用户的软件和工作流程层将达到 19B 美元。
+      tone: positive
+    - label: Foundation model APIs
+      detail: $12.5B API layer powering applications in 2025.
+      tone: positive
+    - label: OpenAI 可达到的收入池
+      detail: OpenAI 仅在其模型、席位和开发工具赢得份额的领域实现货币化。
+      tone: neutral
+  approximationNotes: null
+  claimRefs:
+  - C013
+  - C014
+  - C015
+- id: F202
+  title: 买方采用路径
+  type: journey-map
+  layout: standard
+  summary: OpenAI 的采用通常从个人或团队使用开始，若隐私、管理与集成能力足够强，才会进入企业级预算。
+  data:
+    nodes:
+    - label: Individual experimentation
+      detail: 消费者和员工证明了 ChatGPT 或编码工具的有用性。
+      tone: positive
+    - label: Team-level pull
+      detail: Bottom-up demand emerges inside SMBs or functions.
+      tone: positive
+    - label: Security / privacy review
+      detail: 管理控制、保留、SSO 和合规性成为门控要求。
+      tone: neutral
+    - label: Enterprise contract
+      detail: 席位购买或 API 承诺将纳入中央预算。
+      tone: positive
+    - label: Expansion to workflows
+      detail: 代理、集成和编码自动化加深了钱包份额。
+      tone: opportunity
+  approximationNotes: null
+  claimRefs:
+  - C016
+  - C017
+  - C018
+sections:
+- number: '2.1'
+  title: 市场定义与预算边界
+  body: OpenAI 所对应的是多个重叠但不同的预算池：消费者 AI 订阅、横向企业 copilots、基础模型 API 调用，以及部门级自动化软件。因此，相关市场不是“全部 AI”，而是那些愿意为品牌助手或模型能力付费的知识工作、软件开发与工作流预算。
+  claimRefs:
+  - C013
+  - C014
+- number: '2.2'
+  title: 规模、增长与品类成熟度
+  body: 最强的第三方信号来自 Menlo Ventures：其估算 2025 年企业生成式 AI 支出达到 370 亿美元，高于 2024 年的 115 亿美元，其中 190 亿美元已位于应用层，125
+    亿美元位于基础模型 API。IDC 则提供更宏观的框架：2024 年全球 AI 支出接近 2,350 亿美元，到 2028 年有望超过 6,310 亿美元。对 OpenAI 而言，这意味着其所在品类已足以支撑超大规模私营公司收入。
+  claimRefs:
+  - C014
+  - C015
+- number: '2.3'
+  title: 买方、采用驱动与变现路径
+  body: OpenAI 最强的采用切入口仍是易用性：消费者能快速感知价值，开发者无需自建模型即可嵌入能力，企业则可把员工熟悉度转化为受治理约束的工作区部署。其业务页面之所以突出 admin controls、retention、SSO
+    与不使用企业数据训练，是因为当前商业化瓶颈已从“能力是否存在”转向“能否在受控环境下部署”。
+  claimRefs:
+  - C013
+  - C017
+- number: '2.4'
+  title: 约束与市场吸引力结论
+  body: 该市场依然极具吸引力，因为增长、买方紧迫性与工作流广度都是真实存在的。真正的约束不是品类需求，而是份额的可持续性。Menlo 已显示 OpenAI 在部分企业场景中的份额正被 Anthropic
+    与 Google 挤压，而隐私与法律争议也让受监管买家更谨慎。结论是：市场很大且仍在高速扩张，但 OpenAI 不能因为创造了初始需求就默认自己能吃下全部增量。
+  claimRefs:
+  - C016
+  - C018
+  - C019
