@@ -1,8 +1,9 @@
 # Manual startup research run.
 #
-# The default Copilot agent runs the AGENTS.md Startup Research workflow. CI
-# installs deps, invokes the CLI, rebuilds reports/_index.yaml, validates the
-# site, and commits completed YAML report artifacts.
+# The default Copilot agent runs the .github/skills/startup-research workflow
+# (see .github/skills/startup-research/SKILL.md). CI installs deps, invokes the
+# CLI, rebuilds reports/_index.yaml, validates the site, and commits completed
+# YAML report artifacts.
 #
 # Required secrets / setup:
 # - COPILOT_PAT — PAT for a Copilot-licensed account; passed to the Copilot CLI.
@@ -94,21 +95,21 @@ jobs:
           set -euo pipefail
           if [ "$MODE" = "recent-unicorns" ]; then
             PROMPT=$(cat <<EOF
-          Follow AGENTS.md and run recent-unicorn discovery.
+          Follow the .github/skills/startup-research skill (.github/skills/startup-research/SKILL.md) and run recent-unicorn discovery.
 
           Select at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a \$1B valuation, or became newly prominent in the last 12-24 months. Avoid companies already present in reports/_index.yaml unless a materially new report is justified.
 
-          For each selected company, run one complete Startup Research workflow using skills directly. Do not invoke another agent or delegate report stages. Use schemaVersion report-v2 and the references listed in AGENTS.md. Each company must produce the full required English YAML set under its own reports/<run>/ folder. Use web_search only as described by AGENTS.md and .github/skills/startup-research/SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
+          For each selected company, run one complete Startup Research workflow using the startup-research skill end-to-end. Do not invoke another agent or delegate report stages. Use schemaVersion report-v2 and the references listed in the skill. Each company must produce the full required English YAML set under its own reports/<run>/ folder. Use web_search and the fetch-url skill as described in the startup-research SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
           EOF
           )
           else
             PROMPT=$(cat <<EOF
-          Follow AGENTS.md and run one complete Startup Research workflow for this company.
+          Follow the .github/skills/startup-research skill (.github/skills/startup-research/SKILL.md) and run one complete Startup Research workflow for this company.
 
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-null}
 
-          Use schemaVersion report-v2 and the references listed in AGENTS.md. Run the required skills in order; do not invoke another agent or delegate report stages. Write the full required English YAML set under reports/<run>/. Use web_search only as described by AGENTS.md and .github/skills/startup-research/SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
+          Use schemaVersion report-v2 and the references listed in the skill. Run the skill end-to-end; do not invoke another agent or delegate report stages. Write the full required English YAML set under reports/<run>/. Use web_search and the fetch-url skill as described in the startup-research SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
           EOF
           )
           fi
