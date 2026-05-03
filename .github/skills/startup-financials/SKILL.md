@@ -10,9 +10,11 @@ Fourth analysis stage. This skill owns the financial and unit-economics chapter.
 
 ## Read first
 
-- `01-company-overview.yaml`
-- `02-market-analysis.yaml` and `03-competitors.yaml` when market, pricing, GTM, or competitor context affects interpretation.
 - `.github/references/analysis-rules.md`
+
+## Optional coordination context
+
+- `02-market-analysis.yaml` and `03-competitors.yaml`, when already available, for market, pricing, GTM, or competitor interpretation; do not block financial analysis on these artifacts.
 
 ## Outputs
 
@@ -75,6 +77,7 @@ Infer the economic model, not the industry label.
 
 ## Completion check
 
+- Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
 - Domain reflection is explicit: identify the revenue/economic archetype(s), add supportable domain-specific unit-economics tables or figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Official pricing is list pricing, not realized revenue or margin.
 - Every `null` unit-economics field needs a specific diligence request.

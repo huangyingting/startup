@@ -71,6 +71,8 @@ export const FRESHNESS = ['current', 'recent', 'historical', 'unknown'];
 
 export const CORROBORATION = ['single-source', 'multi-source', 'conflicting', 'none'];
 
+export const EVIDENCE_QUALITY = ['high', 'medium', 'low', 'unknown'];
+
 export const SOURCE_TYPES = [
   'official',
   'filing',

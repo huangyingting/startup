@@ -10,7 +10,6 @@ Second analysis stage. This skill owns the market sizing and macro chapter. It m
 
 ## Read first
 
-- `01-company-overview.yaml`
 - `.github/references/analysis-rules.md`
 
 ## Outputs
@@ -71,6 +70,7 @@ Infer the market mechanics instead of applying a fixed sector template.
 
 ## Completion check
 
+- Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
 - Domain reflection is explicit: identify the market archetype(s), add supportable domain-specific sizing/adoption tables or figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Do not rely on one generic TAM estimate or call the market “large” without boundary logic.
 - If SAM/SOM cannot be isolated, preserve failed sizing paths and diligence asks instead of inventing precision.

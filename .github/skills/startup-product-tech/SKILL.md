@@ -10,9 +10,11 @@ Fifth analysis stage. This skill owns the product and technology chapter. It mus
 
 ## Read first
 
-- `01-company-overview.yaml`
-- `02-market-analysis.yaml`, `03-competitors.yaml`, or `04-financials.yaml` only when positioning, feature, pricing, or monetization context matters.
 - `.github/references/analysis-rules.md`
+
+## Optional coordination context
+
+- `02-market-analysis.yaml`, `03-competitors.yaml`, or `04-financials.yaml`, when already available, for positioning, feature, pricing, or monetization context; do not block product/technology analysis on these artifacts.
 
 ## Outputs
 
@@ -74,6 +76,7 @@ Infer the product/operating dependency.
 
 ## Completion check
 
+- Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
 - Domain reflection is explicit: identify the product/technology or operating-model archetype(s), add supportable domain-specific architecture/maturity figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Each module row states maturity/status, evidence URL, buyer/user, differentiation, and diligence gap.
 - Unsupported architecture, certifications, integrations, performance, safety, or roadmap claims become gaps.

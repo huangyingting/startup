@@ -19,6 +19,17 @@ export const CALLOUT_TYPES = [
   'final-recommendation',
 ];
 
+// Analysis artifacts use lightweight callouts before final report assembly.
+// These are distinct from full-report block calloutType values above.
+export const ANALYSIS_CALLOUT_TYPES = [
+  'strength',
+  'watchout',
+  'gap',
+  'verdict',
+  'methodology',
+  'assumption',
+];
+
 export const CARD_ENUM_FIELDS = {
   recommendation: RECOMMENDATIONS,
   confidence: CONFIDENCE,

@@ -10,9 +10,11 @@ Third analysis stage. This skill owns the competitive benchmarking chapter. It m
 
 ## Read first
 
-- `01-company-overview.yaml`
-- `02-market-analysis.yaml`
 - `.github/references/analysis-rules.md`
+
+## Optional coordination context
+
+- `02-market-analysis.yaml`, when already available, for buyer/segment framing; do not block competitive analysis on this artifact.
 
 ## Outputs
 
@@ -71,6 +73,7 @@ Infer what customers actually compare.
 
 ## Completion check
 
+- Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
 - Domain reflection is explicit: identify what buyers compare in this domain, add supportable domain-specific competitor axes/tables/figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Query by competitor class; do not build the matrix from one generic comparison source.
 - Include adverse evidence on displacement, commoditization, switching, pricing compression, channel conflict, or incumbent response.

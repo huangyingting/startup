@@ -6,7 +6,17 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { asDateString, canonicalSourceUrl, compactText, readYaml, writeYaml } from './text-utils.mjs';
-import { ANALYSIS_FILES } from './report-manifest.mjs';
+
+const ANALYSIS_FILES = [
+  '01-company-overview.yaml',
+  '02-market-analysis.yaml',
+  '03-competitors.yaml',
+  '04-financials.yaml',
+  '05-product-tech.yaml',
+  '06-customers.yaml',
+  '07-risks.yaml',
+  '08-valuation.yaml',
+];
 
 function parseArgs(argv) {
   return {

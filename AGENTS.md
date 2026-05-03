@@ -21,19 +21,19 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - The canonical report schema reference is `.github/references/report-schema-v2.md`.
 - Reports are generated as English YAML artifacts.
 
-## Canonical machine sources
+## Canonical sources and machine mirrors
 
-- `scripts/report-manifest.mjs` is canonical for artifact order, loader keys, required files, and depth floors.
+- `.github/skills/startup-research/SKILL.md` is canonical for the end-to-end workflow, required artifact set, artifact order, skill sequence, synchronization points, and report-run gates.
+- `.github/skills/startup-*/SKILL.md` files are canonical for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
 - `scripts/figure-registry.mjs` is canonical for supported native figure types and their data contracts.
 - `scripts/evidence-registry.mjs` is canonical for evidence enums such as claim types, topics, source types, freshness, reputation, and independence.
-- `scripts/report-registry.mjs` is canonical for report/card enums and report block/callout types.
-- Human-facing skill and reference docs should explain usage, but update the machine source first when changing an enum, figure type, artifact, or validation rule.
+- `scripts/report-registry.mjs` is canonical for report/card enums, full-report block/callout types, and analysis artifact callout types.
+- For workflow/artifact changes, update the owning skill first, then sync validators, loaders, and scripts that need local machine constants. For enum, figure type, or rendering-contract changes, update the relevant registry first, then sync references and skills.
 
 ## Important paths
 
 - `.github/skills/startup-research/SKILL.md` — single workflow entry point that sequences chapter and integration skills end-to-end.
 - `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (overview, market analysis, competitors, financials, product tech, customers, risks, valuation, evidence, full report, summary card). The analysis skills are the single source for chapter-specific semantic requirements such as required section concepts, tables, figures, evidence strategy, and completion checks.
-- `scripts/report-manifest.mjs` — artifact identity, chapter order, loader keys, preferred figure types, and numeric depth floors. Integration checks live in `scripts/check-reports-content.mjs` and `website/scripts/check-reports.mjs`.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
 - `.github/references/` — shared YAML syntax, analysis rules, and report schema reference.
 - `.github/references/report-schema-v2.md` — canonical report schema and rendering contract.
@@ -75,9 +75,9 @@ Do not duplicate that workflow here. When working on a report, follow `startup-r
 
 When adding a new analysis chapter or changing chapter order:
 
-1. Add or update the artifact entry in `scripts/report-manifest.mjs` (file, skill, loader key, chapter number, depth floors, preferred figure types).
+1. Update `.github/skills/startup-research/SKILL.md` with the workflow order and required artifact set.
 2. Add or update the owning `.github/skills/startup-*/SKILL.md` guidance, including chapter purpose, required content, tables, figures, evidence strategy, and completion checks.
-3. Ensure consolidation, readiness audit, report assembly, and website loading consume the manifest rather than new hard-coded file lists.
+3. Sync consolidation, readiness audit, report assembly checks, website validation, and website loading code where they need local machine constants for the new artifacts.
 4. Run `npm run validate`.
 
 When adding a required table, figure, metric, or diligence question inside an existing chapter:
@@ -103,5 +103,5 @@ When adding a new evidence topic, source type, or other ledger enum:
 
 - Work inside `website/` for frontend changes.
 - Astro uses static output and TypeScript strict mode.
-- Reports are loaded from `../reports/` via `website/src/content/reports-loader.ts`, which derives stage files from `scripts/report-manifest.mjs`.
+- Reports are loaded from `../reports/` via `website/src/content/reports-loader.ts`.
 - English report artifacts are required for complete rendering.

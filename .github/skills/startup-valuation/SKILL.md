@@ -10,12 +10,11 @@ Eighth analysis stage. This skill owns the investment recommendation and valuati
 
 ## Read first
 
-- `01-company-overview.yaml`
-- `04-financials.yaml`
-- `06-customers.yaml`
-- `07-risks.yaml`
-- `02-market-analysis.yaml`, `03-competitors.yaml`, or `05-product-tech.yaml` when market, moat, or product differentiation materially affects valuation.
 - `.github/references/analysis-rules.md`
+
+## Optional coordination context
+
+- `02-market-analysis.yaml`, `03-competitors.yaml`, `04-financials.yaml`, `05-product-tech.yaml`, `06-customers.yaml`, and `07-risks.yaml`, when already available, for market, moat, product differentiation, financial, customer, and risk context; do not block valuation analysis on these artifacts.
 
 ## Outputs
 
@@ -83,6 +82,7 @@ Select the valuation method from the business model and stage.
 
 ## Completion check
 
+- Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
 - Domain reflection is explicit: identify the valuation archetype(s), add supportable domain-specific scenario, comparable, or sensitivity tables/figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Include adverse searches on overvaluation, down-round risk, governance, liquidity, multiple compression, commercialization failure, or model-specific downside.
 - Do not issue `buy` unless thesis and anti-thesis are both evidence-supported and valuation has sufficient support.

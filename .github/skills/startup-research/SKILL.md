@@ -22,7 +22,7 @@ Resolve these run inputs before setup:
 
 Before running any chapter skill:
 
-- Run `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before creating or writing the report folder. Exit `2` means duplicate risk; stop unless the user explicitly requested a refresh/update of an existing company.
+- Run `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before creating or writing the report folder. Exit `0` means continue; exit `2` means duplicate risk and you must stop unless the user explicitly requested a refresh/update of an existing company; any other non-zero exit means fix the input/path issue before continuing.
 - Create the report folder with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and use the printed absolute path as `reportFolder` for all artifacts.
 
 Before writing artifacts:
@@ -33,7 +33,7 @@ Before writing artifacts:
 
 ## Required artifact set
 
-Every completed report folder must contain the artifacts declared by `scripts/report-manifest.mjs`. That manifest is authoritative for artifact order, required files, loader keys, and depth floors; if prose below diverges, update the manifest first and then sync this workflow. Current v2 baseline:
+Every completed report folder must contain these artifacts. This workflow skill is the source of truth for the required set and order.
 
 ```text
 01-company-overview.yaml
@@ -57,9 +57,9 @@ Rules:
 - If a tool produces only a snippet or partial transcript, rewrite it as a complete YAML artifact under `reportFolder` before continuing.
 - Research packs and cached page snapshots are diagnostics/handoffs only; they are not part of the required final artifact set.
 
-## Skill sequence
+## Artifact mapping and execution order
 
-Run skills in the order declared by `scripts/report-manifest.mjs`. The current v2 baseline is:
+The report uses this artifact/skill mapping:
 
 1. `startup-overview` → `01-company-overview.yaml`.
 2. `startup-market-analysis` → `02-market-analysis.yaml`.
@@ -75,90 +75,66 @@ Run skills in the order declared by `scripts/report-manifest.mjs`. The current v
 
 The orchestrator does not delegate to a separate research agent and does not recursively rerun this workflow from inside itself.
 
+Execution order: after setup and identity resolution, `01`–`08` analysis skills may run in parallel because each writes a distinct owned artifact. Run `startup-evidence`, `startup-full-report`, and `startup-summary-card` only after all `01`–`08` artifacts are complete.
+
 ## Dependency rules
 
-- Every downstream analysis skill reads `01-company-overview.yaml` after it exists.
-- Domain skills read only the upstream artifacts needed for their context.
-- Later skills may inspect another artifact's gaps, tables, or figures, but must not directly edit another skill's owned artifact.
-- If later research uncovers a supportable fact owned by an earlier domain, return to that earlier skill, update its local evidence/artifact, then continue forward.
+- Use the resolved company identity, report-folder slug, and `runDate` as the shared identity anchor across artifacts.
+- Chapter skills (`startup-*`) may use already available peer artifacts when helpful for their chapter logic.
+- Peer `01`–`08` artifacts are optional coordination context during parallel analysis, not hard prerequisites; reconcile cross-chapter inconsistencies before `startup-evidence`.
+- A chapter or finalization skill may inspect another artifact's gaps, tables, or figures, but must not directly edit another skill's owned artifact.
+- If reconciliation or finalization uncovers a supportable fact owned by another chapter, return to the owning skill, update its local evidence/artifact, then reconsolidate and continue.
 - Consolidation/finalization skills (`startup-evidence`, `startup-full-report`, `startup-summary-card`) do not gather new facts.
 
 ## Concurrency model
 
-Default safe mode is serialized artifact writing. Use parallelism only where the work is read-only and cannot race on shared YAML files.
+Default safe mode is parallel analysis with serialized finalization. Use parallelism only when each worker writes a distinct owned file and cannot race on shared YAML files.
 
-Allowed after the pre-stage duplicate check passes, for chapters whose dependencies are already satisfied:
+Allowed after the pre-stage duplicate check passes and shared identity is resolved:
 
+- Parallel writes to distinct `01`–`08` analysis YAML artifacts, provided each chapter skill writes only its owned artifact.
 - Parallel source discovery, direct URL review, official-surface fetching, cached text snapshots, and chapter research notes.
 - Parallel preparation of diagnostic research packs, provided each pack is written to a unique path and no final artifact is modified.
 
-Not allowed without a dedicated orchestrator and locking/merge protocol:
+Always serialized:
 
-- Parallel writes to `01`–`08` YAML artifacts.
 - Parallel edits to `90-evidence.yaml`, `91-full-report.yaml`, `92-summary-card.yaml`, or `reports/_index.yaml`.
 - Running `startup-evidence` while any analysis artifact is still being edited.
 
-For automated or multi-agent runs, create one report-folder write lock before modifying final YAML artifacts and release it after the file parses. If the lock already exists, wait or stop; never merge concurrent writes by hand.
+For automated or multi-agent runs, lock the specific artifact being written. Distinct `01`–`08` artifact locks may coexist; use exclusive locks for `90-evidence.yaml`, `91-full-report.yaml`, `92-summary-card.yaml`, and `reports/_index.yaml`. If a needed lock already exists, wait or stop; never merge concurrent writes by hand.
 
 Synchronization points:
 
-1. Pre-stage duplicate check before report folder creation or stage 1 writing.
-2. `01-company-overview.yaml` identity gate after the company overview artifact exists.
+1. Pre-stage duplicate check before report folder creation or analysis artifact writing.
+2. Identity consistency gate before each artifact write: document headers must preserve the resolved `company.name`, `slug`, and `runDate`.
 3. Pre-ledger readiness audit after all `01`–`08` analysis artifacts exist.
 4. `startup-evidence` consolidation.
 5. `startup-full-report` assembly.
 6. `startup-summary-card` generation.
 7. Final index rebuild and `npm run validate`.
 
-## Section-owned prompt requirements and research packs
+## Prompt routing and diagnostic packs
 
-- Treat external prose-style due-diligence reports as depth/quality exemplars, not output format. Convert cover metrics, Mermaid-style diagrams, tables, appendices, bibliography, and citations into schema-native YAML artifacts, structured figures, canonical ledger sources/claims, and `claimRefs`.
-- Do not centralize one-off prompt requirements or industry templates in repo-level files. The workflow must support any startup category, not just software/Internet companies.
-- If the user provides audience, investment lens, required metrics, required competitors/comparables, required figures, source constraints, or chapter-specific diligence questions, infer them from the prompt and route each requirement to the owning chapter skill.
-- Each `startup-*` chapter skill owns its chapter content requirements. The skill must define universal chapter requirements, required tables, required structured figures, evidence collection strategy, and domain-adaptive additions.
-- Domain-adaptive additions are inferred from the company domain, business model, value-chain position, buyer/user/payment structure, revenue mechanism, regulatory exposure, physical/scientific/data/financial dependencies, and operating model. Do not hard-code the report around a small set of sectors.
-- For normal report runs, pursue investor-grade research depth in every chapter: collect the useful official, independent, adverse, and freshness evidence that can change the chapter's sections, tables, figures, claims, or gaps. Stop adding sources only when new credible sources become duplicative or non-material.
-- Create or maintain diagnostic per-chapter research packs before artifact writing for visible companies, complex domains, or prompt-critical topics.
-- For simple or obscure companies, a concise handoff note can replace a persisted pack only if it lists research questions, reviewed source classes, unresolved gaps, selected domain-adaptive additions, and why more sources were not material.
-- Persisted packs should list reviewed URLs, source type, independence, candidate claims, key quotes, freshness, conflicts, adverse findings, open gaps, and why additional sources were or were not material.
-- Cached fetched pages are for extraction speed only; cite the reviewed original URL in `localEvidence.sources[]`, not the cache path.
-- Every prompt-critical request must be either satisfied in the owning artifact or recorded as an explicit `evidenceGaps[]` item with a diligence path.
+- Treat external prose-style due-diligence reports as input requirements or quality examples, not output format; convert useful content into schema-native YAML artifacts, structured figures, ledger claims, and `claimRefs`.
+- Route prompt-derived audiences, investment lenses, required metrics, competitors/comparables, figures, source constraints, and diligence questions to the owning `startup-*` chapter skill.
+- Do not centralize one-off prompt requirements or industry templates in repo-level files. Chapter content, evidence strategy, and domain-adaptive additions belong to the owning chapter skill and `.github/references/analysis-rules.md`.
 
 ## Section numbering
 
 - Analysis artifacts number sections from their own chapter: `01` uses `1.x`, `02` uses `2.x`, ..., `08` uses `8.x`.
 - In `91-full-report.yaml`, artifacts become chapters `2`–`9`; mapping is `report chapter N ↔ artifact N-1`.
 
-## Research and evidence standards
+## Cross-artifact readiness gates
 
-Follow `.github/references/analysis-rules.md` for detailed analysis, evidence, and freshness rules. Core expectations:
+Schema validity is necessary but not sufficient. Each owning chapter skill defines its own `01`–`08` completion and minimum-depth gates; this workflow only coordinates cross-artifact readiness and finalization gates.
 
-- Use `currentDate` for volatile facts; apply the freshness rubric in `.github/references/analysis-rules.md`.
-- When generating search queries for volatile or current-status claims, include recency terms derived from `currentDate` (for example the current year, recent/updated language, or date-bounded operators when available) so stale sources do not dominate discovery.
-- Ask report-specific research questions, including adverse/disconfirming angles.
-- Use available search/discovery tools for both source discovery and cited Q&A against precise diligence questions; keep Q&A conclusions as hypotheses until supported by cited URLs or directly reviewed pages. Use `fetch-url` for direct page review of retained sources.
-- Mine official pages first when `companyUrl` exists, but label official claims as `company-claimed` or `observed`.
-- Corroborate valuation, financial, customer, legal, and regulatory claims independently when possible.
-- Put unsupported important facts in `evidenceGaps` with a concrete diligence path.
+Before `startup-evidence`, inspect sources, claims, tables, figures, sections, and gaps across all `01`–`08` artifacts. If the readiness audit fails or final review finds placeholders, unsupported synthesis, count-filler tables, or malformed figures, return to the owning chapter skill rather than fixing another skill's artifact in place.
 
-## Artifact depth gates
-
-Schema validity is necessary but not sufficient. `scripts/report-manifest.mjs` is the machine source for analysis depth floors, and each owning chapter skill defines chapter-specific required content. Additional gates:
+Finalization gates:
 
 - `90-evidence.yaml`: enough retained evidence for the final judgment; for visible companies, below roughly 50 sources or 90 claims is a red flag.
 - `91-full-report.yaml`: preserve the union of upstream tables/figures unless `reportMeta.coverageNotes` explicitly names omissions and reasons.
-
-Reject thin work even if YAML parses:
-
-- generic prose, placeholder content, unsupported synthesis;
-- repeated generic section titles or three-node figures;
-- count-filler tables or string-valued chart numbers.
-
-Do not stop because a chapter has reached the minimum floor. If credible evidence supports more rows, sections, figures, source diversity, or domain-specific treatment, expand the owning artifact before moving forward.
-
-Before accepting any `01`–`08` chapter, confirm the owning skill performed domain reflection: inferred the relevant domain archetype(s), added supportable domain-specific content beyond its universal requirements, and recorded evidence gaps where public evidence is insufficient.
-
-Before `startup-evidence`, inspect counts for sources, claims, tables, figures, sections, and gaps. If a stage misses the floor and the company is not genuinely obscure, return to that stage first.
+- `92-summary-card.yaml`: summary counts and recommendation fields must reflect the current `91-full-report.yaml` and `90-evidence.yaml`.
 
 Run the readiness audit before `startup-evidence` when a report folder has draft `01`–`08` artifacts:
 
@@ -172,17 +148,7 @@ Before `startup-summary-card`, compare `91` table/figure counts against the unio
 
 ## Validation gates
 
-After each stage, parse files and verify expected outputs, identity fields, claim refs, and figure contracts. Use the schema and references for exact checks.
-
-Before creating or writing a new report folder, run:
-
-```text
-node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]
-```
-
-- Exit `0`: continue.
-- Exit `2`: duplicate risk; stop unless the user explicitly requested a refresh.
-- Any other non-zero exit: fix the input/path issue before continuing.
+After each artifact write, parse the file and verify expected outputs, identity fields, claim refs, and figure contracts. Use the schema and references for exact checks.
 
 Final validation after `92-summary-card.yaml`:
 
@@ -190,13 +156,9 @@ Final validation after `92-summary-card.yaml`:
 - Run `npm run validate`.
 - Remove failed, duplicate, or incomplete partial report folders before commit.
 
-## Evidence and YAML conventions
+## Evidence consolidation convention
 
-- Keep reports YAML-first; no prose-only deliverables.
-- Trace factual claims through canonical `claimRefs` to `90-evidence.yaml`.
-- Use `null` plus explanation for unsupported private metrics; never invent values.
 - Canonical `S###` / `C###` IDs are reassigned by each `consolidate-evidence` run; never cache or hand-edit them outside the artifacts that script rewrites, and re-run `startup-full-report` and `startup-summary-card` after any reconsolidation.
-- Figures must use structured YAML specs supported by the website renderer.
 
 ## Updating an existing report
 
@@ -205,7 +167,7 @@ When fixing omissions, thin sections, or newly supportable data:
 1. Update the owning analysis artifact (`01`–`08`).
 2. Add or revise local evidence in that artifact.
 3. Rerun `startup-evidence` to reconsolidate `90` and claim IDs.
-4. Rerun affected downstream artifacts.
+4. Rerun affected analysis or downstream integration artifacts.
 5. If recommendation, confidence, risk rating, or valuation stance changes, rerun `startup-full-report` and `startup-summary-card`.
 6. Run `npm run validate`.
 

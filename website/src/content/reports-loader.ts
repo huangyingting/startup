@@ -3,9 +3,19 @@ import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import yaml from 'js-yaml';
 import type { Loader } from 'astro/loaders';
-import { ANALYSIS_ARTIFACTS, SCHEMA_VERSION } from '../../../scripts/report-manifest.mjs';
 
 const REPORTS_DIR = resolve(process.cwd(), '..', 'reports');
+const SCHEMA_VERSION = 'report-v2' as const;
+const ANALYSIS_STAGE_FILES = [
+  { file: '01-company-overview.yaml', loaderKey: 'companyOverview' },
+  { file: '02-market-analysis.yaml', loaderKey: 'marketAnalysis' },
+  { file: '03-competitors.yaml', loaderKey: 'competitors' },
+  { file: '04-financials.yaml', loaderKey: 'financials' },
+  { file: '05-product-tech.yaml', loaderKey: 'productTech' },
+  { file: '06-customers.yaml', loaderKey: 'customers' },
+  { file: '07-risks.yaml', loaderKey: 'risks' },
+  { file: '08-valuation.yaml', loaderKey: 'valuation' },
+] as const;
 
 interface ReportCardData extends Record<string, unknown> {
   schemaVersion: typeof SCHEMA_VERSION;
@@ -235,7 +245,7 @@ export function loadStageFiles(runId: string): Record<string, unknown> {
     fullReport: readStageYaml(folder, '91-full-report'),
     summaryCard: loadReportCard(runId),
   };
-  for (const artifact of ANALYSIS_ARTIFACTS as Array<{ loaderKey: string; file: string }>) {
+  for (const artifact of ANALYSIS_STAGE_FILES) {
     stages[artifact.loaderKey] = readStageYaml(folder, artifact.file.replace(/\.yaml$/, ''));
   }
   return stages;

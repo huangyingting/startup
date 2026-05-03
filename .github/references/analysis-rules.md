@@ -103,7 +103,7 @@ Avoid:
 - reused section titles such as `Evidence base`, `Investor interpretation`, `Contradictions and uncertainty`, or `Private diligence path` across all artifacts;
 - floor-only output when evidence supports more depth.
 
-Depth floors in `scripts/report-manifest.mjs` are minimums, not targets.
+Depth floors defined by each owning chapter skill and enforced by automated checks are minimums, not targets.
 
 ## Figure rules
 

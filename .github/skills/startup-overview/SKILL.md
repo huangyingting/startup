@@ -73,6 +73,7 @@ Infer the company domain and operating model; add relevant snapshot rows/section
 
 ## Completion check
 
+- Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
 - The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
 - Domain reflection is explicit: identify the company archetype(s), add supportable domain-specific snapshot fields beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Every `claimRefs` resolves to local evidence before consolidation.

@@ -4,17 +4,17 @@ Canonical report schema and rendering contract for `report-v2`.
 
 The schema supports investor-grade English startup diligence reports with claim-level evidence traceability.
 
-Machine-readable workflow and rendering registries live in:
+Workflow source and machine-readable rendering/validation mirrors live in:
 
-- `scripts/report-manifest.mjs` — artifact list, analysis chapter order, owner skills, depth floors, and preferred figure types.
+- `.github/skills/startup-research/SKILL.md` — source of truth for required artifacts, analysis chapter order, owner skills, workflow gates, and final validation.
 - `scripts/evidence-registry.mjs` — evidence enum values and extensible topic vocabulary used by ledger/source/claim validation.
 - `scripts/figure-registry.mjs` — supported figure types, allowed figure data fields, required populated fields, and renderer-facing data contracts.
 
-When this Markdown contract and a machine-readable registry disagree, update the registry first, then update this document and the relevant skill instructions.
+When this Markdown contract and an enum/figure registry disagree, update the registry first, then update this document and the relevant skill instructions. When workflow rules disagree, `.github/skills/startup-research/SKILL.md` is authoritative.
 
 ## Required artifacts
 
-Required artifacts:
+The authoritative required artifact set is defined in `.github/skills/startup-research/SKILL.md`. The current v2 artifact set is:
 
 ```text
 01-company-overview.yaml
@@ -37,7 +37,7 @@ Required artifacts:
 - `/tmp` and terminal-output files are diagnostics only, never artifacts or handoff inputs.
 - Agents must read this schema and `.github/references/yaml-rules.md` before writing YAML artifacts.
 - Skills that create local evidence must follow `.github/references/analysis-rules.md`.
-- Skills read the minimum required dependency set. Downstream analysis skills use `01-company-overview.yaml` for identity; they read other upstream artifacts only when chapter logic needs them.
+- Skills read the minimum required dependency set. Run inputs provide the shared identity anchor; chapter skills read peer or upstream artifacts only when chapter logic needs them.
 - Analysis skills record local evidence under `localEvidence`; `startup-evidence` runs `scripts/consolidate-evidence.mjs` to create canonical evidence and rewrite claim references.
 
 ## Artifact mapping
@@ -87,6 +87,7 @@ Use exactly one allowed token. Do not append qualifiers, combine values with `/`
 - `riskRating`: `low`, `moderate`, `significant`, `critical`, `unknown`
 - `valuationStance`: `attractive`, `fair`, `stretched`, `expensive`, `unknown`
 - `evidenceQuality`: `high`, `medium`, `low`, `unknown`
+- Analysis artifact `callouts[].type`: `strength`, `watchout`, `gap`, `verdict`, `methodology`, `assumption`
 - `claimType`: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`
 - `freshness`: `current`, `recent`, `historical`, `unknown`
 - `corroboration`: `single-source`, `multi-source`, `conflicting`, `none`
@@ -235,6 +236,7 @@ localEvidence:
 Notes:
 
 - Before consolidation, analysis artifacts may include `localEvidence`.
+- Analysis artifact `callouts[]` are optional lightweight chapter callouts; their `type` values are distinct from full-report block `calloutType` values.
 - Consolidation rewrites public `claimRefs` to canonical IDs and may remove `localEvidence`.
 - `data: {}` is a placeholder in the skeleton; actual figures must populate only the data fields required by their `type`.
 - Do not include empty figure data arrays that are not used by the figure type.
@@ -414,7 +416,7 @@ Renderer data contracts:
 ## Validation expectations
 
 - `schemaVersion` is `report-v2` everywhere.
-- Required artifact filenames match `scripts/report-manifest.mjs`.
+- Required artifact filenames match `.github/skills/startup-research/SKILL.md`.
 - Before consolidation, each analysis artifact's `claimRefs` point to its own `localEvidence.claims[]`.
 - After consolidation, all `claimRefs` point to `90-evidence.yaml` claims.
 - `91-full-report.yaml` preserves upstream table/figure IDs unless omissions are listed in `reportMeta.coverageNotes`.

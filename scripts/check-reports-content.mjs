@@ -4,8 +4,25 @@
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { canonicalSourceUrl, listDirs, readYaml, reportsDir, tryReadYaml } from './text-utils.mjs';
-import { ANALYSIS_ARTIFACTS, ANALYSIS_FILES } from './report-manifest.mjs';
 import { CLAIM_TYPES, CORROBORATION, FRESHNESS } from './evidence-registry.mjs';
+
+const STANDARD_DEPTH_FLOOR = {
+  minSectionBodyWords: 40,
+  minSectionWordsTotal: 250,
+  minTableRowsTotal: 20,
+  minFigureDataPointsTotal: 6,
+};
+const ANALYSIS_ARTIFACTS = [
+  { file: '01-company-overview.yaml', minSections: 4, minTables: 4, minFigures: 2, depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '02-market-analysis.yaml', minSections: 4, minTables: 4, minFigures: 2, depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '03-competitors.yaml', minSections: 4, minTables: 4, minFigures: 2, depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '04-financials.yaml', minSections: 4, minTables: 4, minFigures: 2, depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '05-product-tech.yaml', minSections: 4, minTables: 4, minFigures: 2, depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '06-customers.yaml', minSections: 4, minTables: 4, minFigures: 2, depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '07-risks.yaml', minSections: 4, minTables: 4, minFigures: 2, depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '08-valuation.yaml', minSections: 4, minTables: 4, minFigures: 2, depthFloor: STANDARD_DEPTH_FLOOR },
+];
+const ANALYSIS_FILES = ANALYSIS_ARTIFACTS.map((item) => item.file);
 
 const PUBLISHER_CONCENTRATION_LIMIT = 0.34;
 const INDEPENDENT_FLOOR = 0.15;

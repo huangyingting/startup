@@ -10,13 +10,9 @@ import {
   tryReadYaml,
 } from '../../scripts/text-utils.mjs';
 import {
-  ARTIFACT_BY_FILE,
-  REQUIRED_ENGLISH_FILES,
-  SCHEMA_VERSION,
-} from '../../scripts/report-manifest.mjs';
-import {
   CLAIM_TYPES,
   CORROBORATION,
+  EVIDENCE_QUALITY,
   EVIDENCE_TOPICS,
   FRESHNESS,
   INDEPENDENCE,
@@ -32,6 +28,7 @@ import {
   FIGURE_TYPES,
 } from '../../scripts/figure-registry.mjs';
 import {
+  ANALYSIS_CALLOUT_TYPES,
   BLOCK_TYPES,
   CALLOUT_TYPES,
   CONFIDENCE,
@@ -41,6 +38,26 @@ import {
 } from '../../scripts/report-registry.mjs';
 
 const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../reports');
+const SCHEMA_VERSION = 'report-v2';
+const ANALYSIS_ARTIFACTS = [
+  { file: '01-company-overview.yaml', artifact: 'company-overview', chapter: 1 },
+  { file: '02-market-analysis.yaml', artifact: 'market-analysis', chapter: 2 },
+  { file: '03-competitors.yaml', artifact: 'competitors', chapter: 3 },
+  { file: '04-financials.yaml', artifact: 'financials', chapter: 4 },
+  { file: '05-product-tech.yaml', artifact: 'product-tech', chapter: 5 },
+  { file: '06-customers.yaml', artifact: 'customers', chapter: 6 },
+  { file: '07-risks.yaml', artifact: 'risks', chapter: 7 },
+  { file: '08-valuation.yaml', artifact: 'valuation', chapter: 8 },
+];
+const CORE_ARTIFACTS = [
+  ...ANALYSIS_ARTIFACTS,
+  { file: '90-evidence.yaml', artifact: 'evidence' },
+  { file: '91-full-report.yaml', artifact: 'full-report' },
+  { file: '92-summary-card.yaml', artifact: 'summary-card' },
+];
+const ANALYSIS_FILES = ANALYSIS_ARTIFACTS.map((item) => item.file);
+const REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);
+const ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item]));
 
 const SET = {
   recommendations: new Set(RECOMMENDATIONS),
@@ -48,6 +65,7 @@ const SET = {
   riskRatings: new Set(RISK_RATINGS),
   valuationStances: new Set(VALUATION_STANCES),
   claimType: new Set(CLAIM_TYPES),
+  evidenceQuality: new Set(EVIDENCE_QUALITY),
   topic: new Set(EVIDENCE_TOPICS),
   freshness: new Set(FRESHNESS),
   corroboration: new Set(CORROBORATION),
@@ -56,6 +74,7 @@ const SET = {
   independence: new Set(INDEPENDENCE),
   blockType: new Set(BLOCK_TYPES),
   calloutType: new Set(CALLOUT_TYPES),
+  analysisCalloutType: new Set(ANALYSIS_CALLOUT_TYPES),
   figureType: new Set(FIGURE_TYPES),
   figureLayout: new Set(FIGURE_LAYOUTS),
   figureDataField: new Set(FIGURE_DATA_FIELDS),
@@ -163,6 +182,14 @@ function checkLedgerSources(run, sources) {
   }
 }
 
+function checkLedgerCoverage(run, coverage) {
+  const path = `${run}/90-evidence.yaml: coverage`;
+  for (const field of ['sourcesConsidered', 'sourcesRetained', 'claimsCreated', 'evidenceQuality']) {
+    if (coverage?.[field] === undefined) fail(`${path} missing ${field}`);
+  }
+  failEnum(path, 'evidenceQuality', coverage?.evidenceQuality, SET.evidenceQuality);
+}
+
 function checkLedgerClaims(run, claims) {
   for (const claim of claims) {
     const path = `${run}/90-evidence.yaml: claim ${claim?.id ?? '?'}`;
@@ -217,6 +244,19 @@ function checkReportBlocks(run, reportDoc) {
     }
     if (block.type === 'table' && !hasText(block.tableRef)) fail(`${path} table block requires tableRef`);
     if (block.type === 'figure' && !hasText(block.figureRef)) fail(`${path} figure block requires figureRef`);
+  }
+}
+
+function checkAnalysisCallouts(run, file, doc) {
+  if (!ANALYSIS_FILES.includes(file)) return;
+  for (const [index, callout] of (doc?.callouts ?? []).entries()) {
+    const path = `${run}/${file}: callout ${index + 1}`;
+    if (!SET.analysisCalloutType.has(callout?.type)) {
+      fail(`${path} invalid type ${callout?.type}`);
+    }
+    if (!hasText(callout?.title)) fail(`${path} requires title`);
+    if (!hasText(callout?.body)) fail(`${path} requires body`);
+    if (!Array.isArray(callout?.claimRefs)) fail(`${path} requires claimRefs array`);
   }
 }
 
@@ -492,6 +532,7 @@ function checkLedgerCrossReferences(run, ledger, parsed) {
   if (!ledger) return;
   const claimIds = new Set((ledger.claims ?? []).map((claim) => claim.id));
   const sourceIds = new Set((ledger.sources ?? []).map((source) => source.id));
+  checkLedgerCoverage(run, ledger.coverage ?? {});
   checkLedgerSources(run, ledger.sources ?? []);
   checkLedgerClaims(run, ledger.claims ?? []);
   checkUniqueIds(run, 'source', ledger.sources, /^S\d{3}$/);
@@ -582,6 +623,7 @@ function checkRun(run) {
   }
 
   for (const [file, doc] of parsed) checkTables(run, file, doc);
+  for (const [file, doc] of parsed) checkAnalysisCallouts(run, file, doc);
   for (const [file, doc] of parsed) {
     for (const figure of doc?.figures ?? []) checkFigure(`${run}/${file}`, figure);
   }

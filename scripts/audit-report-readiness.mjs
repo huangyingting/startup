@@ -1,13 +1,28 @@
 #!/usr/bin/env node
 // Pre-ledger / general readiness audit for analysis artifacts 01-08.
-// Produces deterministic counts and checks manifest-owned readiness floors.
+// Produces deterministic counts and checks skill-owned readiness floors.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { collectClaimRefs, tryReadYaml } from './text-utils.mjs';
-import { ANALYSIS_ARTIFACTS } from './report-manifest.mjs';
 
 const MIN_LOCAL_SOURCES = 50;
 const MIN_LOCAL_CLAIMS = 90;
+const STANDARD_DEPTH_FLOOR = {
+  minSectionBodyWords: 40,
+  minSectionWordsTotal: 250,
+  minTableRowsTotal: 20,
+  minFigureDataPointsTotal: 6,
+};
+const ANALYSIS_ARTIFACTS = [
+  { file: '01-company-overview.yaml', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['timeline'], depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '02-market-analysis.yaml', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['layered-lens', 'bars', 'range'], depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '03-competitors.yaml', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['quadrant', 'positioning-map', 'scorecard'], depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '04-financials.yaml', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['bridge', 'waterfall', 'bars', 'scatter', 'range'], depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '05-product-tech.yaml', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['stack', 'flow', 'dependency-map'], depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '06-customers.yaml', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['journey-map', 'bars', 'scatter', 'funnel', 'cohort'], depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '07-risks.yaml', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['heatmap', 'matrix', 'causal-map', 'dependency-map'], depthFloor: STANDARD_DEPTH_FLOOR },
+  { file: '08-valuation.yaml', minSections: 4, minTables: 4, minFigures: 2, requiredFigureTypes: ['logic-chain', 'sensitivity', 'scorecard', 'scenario-tree', 'range'], depthFloor: STANDARD_DEPTH_FLOOR },
+];
 
 function parseArgs(argv) {
   const positional = argv.filter((arg) => !arg.startsWith('-'));
