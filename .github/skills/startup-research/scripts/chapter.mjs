@@ -3,10 +3,8 @@
 // The CLI intentionally reads only chapters.yaml through utils so the
 // workflow has one machine-readable source of truth for chapter order, gates,
 // output files, and final artifact names.
-import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import yaml from 'js-yaml';
-import { loadWorkflowConfig, workflowConfigPath } from './utils.mjs';
+import { FINAL_ARTIFACTS, loadWorkflowConfig, tryReadYaml, workflowConfigPath } from './utils.mjs';
 
 function usage() {
   console.error(`Usage: node .github/skills/startup-research/scripts/chapter.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--include-workflow] [--include-context --report-folder <path>]
@@ -60,10 +58,7 @@ function compactChapter(chapter) {
     key: chapter.key,
     order: chapter.order,
     file: chapter.file,
-    artifact: chapter.artifact,
-    chapterNumber: chapter.chapterNumber,
-    reportChapterNumber: chapter.reportChapterNumber,
-    loaderKey: chapter.loaderKey,
+    artifact: chapter.key,
     title: chapter.title,
     mission: chapter.mission,
     optionalContext: chapter.optionalContext ?? [],
@@ -78,15 +73,12 @@ function compactChapter(chapter) {
 
 function compactContextChapter(reportFolder, contextFile) {
   const path = join(reportFolder, contextFile);
-  if (!existsSync(path)) {
-    return { file: contextFile, status: 'missing', sections: [], tables: [], figures: [] };
+  const result = tryReadYaml(path);
+  if (!result.ok) {
+    const status = result.error.startsWith('ENOENT') ? 'missing' : 'parseError';
+    return { file: contextFile, status, ...(status === 'parseError' ? { error: result.error } : {}), sections: [], tables: [], figures: [] };
   }
-  let doc;
-  try {
-    doc = yaml.load(readFileSync(path, 'utf8')) ?? {};
-  } catch (err) {
-    return { file: contextFile, status: 'parseError', error: String(err.message || err), sections: [], tables: [], figures: [] };
-  }
+  const doc = result.value;
   return {
     file: contextFile,
     status: 'loaded',
@@ -126,7 +118,7 @@ function buildPacket(config, chapter) {
         reportSchema: config.workflow?.reportSchema,
       },
       researchLoop: config.analysisDefaults?.researchLoop ?? {},
-      finalArtifacts: config.finalArtifacts ?? {},
+      finalArtifacts: FINAL_ARTIFACTS,
       totalChapters: chapters.length,
     },
     previousChapter: index > 0 ? compactChapter(chapters[index - 1]) : null,
@@ -154,7 +146,7 @@ function orderedList(config) {
         reportSchema: config.workflow?.reportSchema,
       },
       researchLoop: config.analysisDefaults?.researchLoop ?? {},
-      finalArtifacts: config.finalArtifacts ?? {},
+      finalArtifacts: FINAL_ARTIFACTS,
     },
     chapters: config.chapters.map(compactChapter),
   };
@@ -212,9 +204,6 @@ function printPacketMarkdown(packet) {
   console.log(`Config: \`${packet.generatedFrom}\``);
   console.log(`Output: \`${chapter.file}\``);
   console.log(`Artifact: \`${chapter.artifact}\``);
-  console.log(`Chapter number: ${chapter.chapterNumber}`);
-  console.log(`Report chapter number: ${chapter.reportChapterNumber}`);
-  console.log(`Loader key: \`${chapter.loaderKey}\``);
   console.log(`Previous: ${packet.previousChapter ? `\`${packet.previousChapter.file}\`` : 'none'}`);
   console.log(`Next: ${packet.nextChapter ? `\`${packet.nextChapter.file}\`` : 'none'}`);
   console.log('\n## Mission\n');

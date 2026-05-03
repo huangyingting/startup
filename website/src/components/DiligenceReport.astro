@@ -75,17 +75,10 @@ function blockRefs(value: any): string[] {
 }
 
 const coverMetrics = arr(doc?.coverMetrics);
-const documentIntro = doc?.startupIntroduction ?? null;
-const snapshotIntro = stages.companyOverview?.startupIntroduction ?? null;
-const startupIntroduction = documentIntro || snapshotIntro
+const startupIntroduction = doc?.startupIntroduction
   ? {
-      ...(snapshotIntro ?? {}),
-      ...(documentIntro ?? {}),
-      summary: documentIntro?.summary
-        ?? documentIntro?.body
-        ?? snapshotIntro?.summary
-        ?? snapshotIntro?.body
-        ?? null,
+      ...doc.startupIntroduction,
+      summary: doc.startupIntroduction.summary ?? doc.startupIntroduction.body ?? null,
     }
   : null;
 

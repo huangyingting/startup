@@ -136,46 +136,26 @@ function mergeGate(defaultGate, chapterGate) {
   };
 }
 
-// Each chapter is identified solely by `key` (kebab-case slug) and `order`.
-// Every other identifier is a deterministic function of those two so that
-// adding a chapter only requires touching one entry per source of truth.
-function kebabToCamel(value) {
-  return String(value).replace(/-([a-z0-9])/g, (_match, char) => char.toUpperCase());
-}
-
-function deriveChapterIdentity(chapter) {
-  const order = Number(chapter.order);
-  const key = String(chapter.key ?? '');
-  return {
-    key,
-    order,
-    artifact: key,
-    loaderKey: kebabToCamel(key),
-    file: `${String(order).padStart(2, '0')}-${key}.yaml`,
-    chapterNumber: order,
-    // The report's first chapter is the cover/intro; analysis chapters get bumped by 1.
-    reportChapterNumber: order + 1,
-  };
-}
-
 function normalizeWorkflowConfig(config) {
   assertConfig(config && typeof config === 'object', `${workflowConfigPath} must contain a YAML object`);
   assertConfig(config.schemaVersion === 'workflow-config-v1', `expected schemaVersion workflow-config-v1, got ${config.schemaVersion}`);
   assertConfig(config.workflow?.reportSchemaVersion === 'report-v2', 'workflow.reportSchemaVersion must be report-v2');
   assertConfig(Array.isArray(config.chapters) && config.chapters.length > 0, 'chapters[] must be a non-empty array');
-  assertConfig(config.finalArtifacts?.evidence?.file, 'finalArtifacts.evidence.file is required');
-  assertConfig(config.finalArtifacts?.fullReport?.file, 'finalArtifacts.fullReport.file is required');
-  assertConfig(config.finalArtifacts?.summaryCard?.file, 'finalArtifacts.summaryCard.file is required');
 
   const figureTypes = new Set(FIGURE_TYPES);
+  // Chapter identity is (key, order); the file name is derived as `<order:02>-<key>.yaml`.
   const chapters = config.chapters
     .map((chapter) => {
       assertConfig(chapter && typeof chapter === 'object', 'each chapter entry must be an object');
       assertConfig(chapter.key, 'chapter is missing key');
       assertConfig(/^[a-z][a-z0-9-]*$/.test(chapter.key), `${chapter.key}: key must be kebab-case (a-z, 0-9, -)`);
       assertConfig(Number.isInteger(Number(chapter.order)) && Number(chapter.order) > 0, `${chapter.key}: order must be a positive integer`);
+      const order = Number(chapter.order);
+      const key = String(chapter.key);
       return {
-        ...deriveChapterIdentity(chapter),
+        key,
+        order,
+        file: `${String(order).padStart(2, '0')}-${key}.yaml`,
         title: chapter.title,
         mission: chapter.mission,
         optionalContext: chapter.optionalContext ?? [],
@@ -187,7 +167,7 @@ function normalizeWorkflowConfig(config) {
         gate: mergeGate(config.analysisDefaults?.gate ?? {}, chapter.gate ?? {}),
       };
     })
-    .sort((a, b) => Number(a.order) - Number(b.order));
+    .sort((a, b) => a.order - b.order);
 
   assertUnique(chapters.map((chapter) => chapter.order), 'chapters[].order');
   assertUnique(chapters.map((chapter) => chapter.key), 'chapters[].key');
@@ -222,11 +202,9 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
     key: chapter.key,
     order: chapter.order,
     file: chapter.file,
-    artifact: chapter.artifact,
-    chapter: chapter.chapterNumber,
-    reportChapter: chapter.reportChapterNumber,
+    artifact: chapter.key,
+    chapter: chapter.order,
     title: chapter.title,
-    loaderKey: chapter.loaderKey,
     gate: chapter.gate,
     requiredTables: chapter.requiredTables ?? [],
     requiredFigures: chapter.requiredFigures ?? [],
@@ -235,11 +213,16 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
 
 export function getCoreArtifacts(config = loadWorkflowConfig()) {
   const analysis = getAnalysisArtifacts(config).map(({ file, artifact, chapter }) => ({ file, artifact, chapter }));
-  const finalArtifacts = config.finalArtifacts ?? {};
   return [
     ...analysis,
-    { file: finalArtifacts.evidence.file, artifact: finalArtifacts.evidence.artifact },
-    { file: finalArtifacts.fullReport.file, artifact: finalArtifacts.fullReport.artifact },
-    { file: finalArtifacts.summaryCard.file, artifact: finalArtifacts.summaryCard.artifact },
+    ...Object.values(FINAL_ARTIFACTS),
   ];
 }
+
+// Final-stage artifact filenames are fixed by report-schema-v2 ("Literal value; do not rename").
+// Keep this object shape — chapter packets and downstream tooling iterate by camelCase key.
+export const FINAL_ARTIFACTS = {
+  evidence: { file: 'evidence.yaml', artifact: 'evidence' },
+  fullReport: { file: 'full-report.yaml', artifact: 'full-report' },
+  summaryCard: { file: 'summary-card.yaml', artifact: 'summary-card' },
+};

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import {
   asDateString,
   collectClaimRefs,
+  FINAL_ARTIFACTS,
   getAnalysisArtifacts,
   getCoreArtifacts,
   loadWorkflowConfig,
@@ -28,9 +29,9 @@ const CORE_ARTIFACTS = getCoreArtifacts(WORKFLOW_CONFIG);
 const ANALYSIS_FILES = ANALYSIS_ARTIFACTS.map((item) => item.file);
 const REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);
 const ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item]));
-const EVIDENCE_FILE = WORKFLOW_CONFIG.finalArtifacts.evidence.file;
-const FULL_REPORT_FILE = WORKFLOW_CONFIG.finalArtifacts.fullReport.file;
-const SUMMARY_CARD_FILE = WORKFLOW_CONFIG.finalArtifacts.summaryCard.file;
+const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
+const FULL_REPORT_FILE = FINAL_ARTIFACTS.fullReport.file;
+const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 const SET = {
   figureType: new Set(FIGURE_TYPES),

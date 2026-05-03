@@ -51,40 +51,27 @@ function mergeGate(defaultGate, chapterGate) {
   };
 }
 
-// Each chapter is identified solely by `key` (kebab-case slug) and `order`.
-// All other identifiers are deterministic functions of those two.
-function kebabToCamel(value) {
-  return String(value).replace(/-([a-z0-9])/g, (_match, char) => char.toUpperCase());
-}
-
-function deriveChapterIdentity(chapter) {
-  const order = Number(chapter.order);
-  const key = String(chapter.key ?? '');
-  return {
-    key,
-    order,
-    artifact: key,
-    loaderKey: kebabToCamel(key),
-    file: `${String(order).padStart(2, '0')}-${key}.yaml`,
-    chapterNumber: order,
-    reportChapterNumber: order + 1,
-  };
-}
-
 export function loadWorkflowConfig() {
   if (!existsSync(workflowConfigPath)) {
     throw new Error(`[workflow-config] missing ${workflowConfigPath}`);
   }
   const config = readYaml(workflowConfigPath);
+  // Chapter identity is (key, order); the file name is derived as `<order:02>-<key>.yaml`.
   const chapters = (config.chapters ?? [])
-    .map((chapter) => ({
-      ...deriveChapterIdentity(chapter),
-      title: chapter.title,
-      requiredTables: chapter.requiredTables ?? [],
-      requiredFigures: chapter.requiredFigures ?? [],
-      gate: mergeGate(config.analysisDefaults?.gate ?? {}, chapter.gate ?? {}),
-    }))
-    .sort((a, b) => Number(a.order) - Number(b.order));
+    .map((chapter) => {
+      const order = Number(chapter.order);
+      const key = String(chapter.key ?? '');
+      return {
+        key,
+        order,
+        file: `${String(order).padStart(2, '0')}-${key}.yaml`,
+        title: chapter.title,
+        requiredTables: chapter.requiredTables ?? [],
+        requiredFigures: chapter.requiredFigures ?? [],
+        gate: mergeGate(config.analysisDefaults?.gate ?? {}, chapter.gate ?? {}),
+      };
+    })
+    .sort((a, b) => a.order - b.order);
   return { ...config, chapters };
 }
 
@@ -93,22 +80,21 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
     key: chapter.key,
     order: chapter.order,
     file: chapter.file,
-    artifact: chapter.artifact,
-    chapter: chapter.chapterNumber,
-    reportChapter: chapter.reportChapterNumber,
+    artifact: chapter.key,
+    chapter: chapter.order,
     title: chapter.title,
-    loaderKey: chapter.loaderKey,
     gate: chapter.gate,
   }));
 }
 
+// Final-stage artifact filenames are fixed by report-schema-v2 ("Literal value; do not rename").
+export const FINAL_ARTIFACTS = {
+  evidence: { file: 'evidence.yaml', artifact: 'evidence' },
+  fullReport: { file: 'full-report.yaml', artifact: 'full-report' },
+  summaryCard: { file: 'summary-card.yaml', artifact: 'summary-card' },
+};
+
 export function getCoreArtifacts(config = loadWorkflowConfig()) {
   const analysis = getAnalysisArtifacts(config).map(({ file, artifact, chapter }) => ({ file, artifact, chapter }));
-  const finalArtifacts = config.finalArtifacts ?? {};
-  return [
-    ...analysis,
-    { file: finalArtifacts.evidence.file, artifact: finalArtifacts.evidence.artifact },
-    { file: finalArtifacts.fullReport.file, artifact: finalArtifacts.fullReport.artifact },
-    { file: finalArtifacts.summaryCard.file, artifact: finalArtifacts.summaryCard.artifact },
-  ];
+  return [...analysis, ...Object.values(FINAL_ARTIFACTS)];
 }

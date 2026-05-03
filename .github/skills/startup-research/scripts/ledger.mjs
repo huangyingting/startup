@@ -5,12 +5,12 @@
 // analysis artifacts.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { asDateString, canonicalSourceUrl, compactText, getAnalysisArtifacts, loadWorkflowConfig, readYaml, writeYaml } from './utils.mjs';
+import { asDateString, canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, readYaml, writeYaml } from './utils.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
-const EVIDENCE_FILE = WORKFLOW_CONFIG.finalArtifacts.evidence.file;
-const DOWNSTREAM_FILES = [WORKFLOW_CONFIG.finalArtifacts.fullReport.file, WORKFLOW_CONFIG.finalArtifacts.summaryCard.file];
+const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
+const DOWNSTREAM_FILES = [FINAL_ARTIFACTS.fullReport.file, FINAL_ARTIFACTS.summaryCard.file];
 
 function parseArgs(argv) {
   return {

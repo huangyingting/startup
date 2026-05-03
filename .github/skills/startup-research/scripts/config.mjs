@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Validate the config-driven startup research workflow metadata.
-import { getAnalysisArtifacts, getCoreArtifacts, loadWorkflowConfig, workflowConfigPath } from './utils.mjs';
+import { FINAL_ARTIFACTS, getAnalysisArtifacts, getCoreArtifacts, loadWorkflowConfig, workflowConfigPath } from './utils.mjs';
 
 try {
   const config = loadWorkflowConfig();
   const analysis = getAnalysisArtifacts(config);
   const core = getCoreArtifacts(config);
-  const finalFiles = Object.values(config.finalArtifacts ?? {}).map((artifact) => artifact.file);
+  const finalFiles = Object.values(FINAL_ARTIFACTS).map((artifact) => artifact.file);
 
   if (analysis.length !== 8) {
     throw new Error(`expected 8 analysis chapters, found ${analysis.length}`);

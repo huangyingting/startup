@@ -9,7 +9,7 @@
 // truth for the consolidated artifacts so the agent never hand-edits them.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { getAnalysisArtifacts, loadWorkflowConfig, readYaml, tryReadYaml, writeYaml } from './utils.mjs';
+import { FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml, writeYaml } from './utils.mjs';
 
 const SCHEMA_VERSION = 'report-v2';
 const REPORT_META_FILE = 'report-meta.yaml';
@@ -38,15 +38,16 @@ if (!existsSync(reportFolder)) abort(`report folder not found: ${reportFolder}`)
 
 const config = loadWorkflowConfig();
 const chapters = getAnalysisArtifacts(config);
-const evidenceFile = config.finalArtifacts.evidence.file;
-const fullReportFile = config.finalArtifacts.fullReport.file;
-const summaryCardFile = config.finalArtifacts.summaryCard.file;
+const evidenceFile = FINAL_ARTIFACTS.evidence.file;
+const fullReportFile = FINAL_ARTIFACTS.fullReport.file;
+const summaryCardFile = FINAL_ARTIFACTS.summaryCard.file;
 
 function readRequiredYaml(file, label) {
   const path = join(reportFolder, file);
-  if (!existsSync(path)) abort(`missing ${label}: ${path}`);
   const result = tryReadYaml(path);
-  if (!result.ok) abort(`failed to parse ${label} (${file}): ${result.error}`);
+  if (!result.ok) {
+    abort(result.error.startsWith('ENOENT') ? `missing ${label}: ${path}` : `failed to parse ${label} (${file}): ${result.error}`);
+  }
   return result.value;
 }
 
@@ -140,7 +141,8 @@ function figureRefBlock(figure) {
 }
 
 function buildChapter({ spec, doc }) {
-  const reportChapterNumber = spec.reportChapter;
+  // Report chapter 1 is the cover; analysis chapters get bumped by 1.
+  const reportChapterNumber = spec.order + 1;
   const sections = (doc.sections ?? []).map((section, index) => ({
     number: `${reportChapterNumber}.${index + 1}`,
     title: section.title,

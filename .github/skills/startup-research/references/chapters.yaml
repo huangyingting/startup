@@ -26,22 +26,8 @@ analysisDefaults:
     retryScope: failed-gate-dimensions
     freshnessSweepRequired: true
     retainSuccessfulEvidenceUnlessContradicted: true
-finalArtifacts:
-  evidence:
-    file: evidence.yaml
-    artifact: evidence
-  fullReport:
-    file: full-report.yaml
-    artifact: full-report
-  summaryCard:
-    file: summary-card.yaml
-    artifact: summary-card
-# Chapter identity is the (key, order) pair only. The loader derives:
-#   file               = "<order:02>-<key>.yaml"
-#   artifact           = key
-#   loaderKey          = camelCase(key)
-#   chapterNumber      = order
-#   reportChapterNumber = order + 1   (analysis chapters follow the cover)
+# Chapter identity is the (key, order) pair. The loader derives the file name as
+#   "<order:02>-<key>.yaml"
 chapters:
   - key: company-overview
     order: 1

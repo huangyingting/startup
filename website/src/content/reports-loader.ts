@@ -5,14 +5,7 @@ import yaml from 'js-yaml';
 import type { Loader } from 'astro/loaders';
 
 const REPORTS_DIR = resolve(process.cwd(), '..', 'reports');
-const WORKFLOW_CONFIG_PATH = resolve(process.cwd(), '..', '.github', 'skills', 'startup-research', 'references', 'chapters.yaml');
 const SCHEMA_VERSION = 'report-v2' as const;
-
-interface AnalysisStageFile {
-  file: string;
-  loaderKey: string;
-  order: number;
-}
 
 interface ReportCardData extends Record<string, unknown> {
   schemaVersion: typeof SCHEMA_VERSION;
@@ -50,29 +43,6 @@ interface ReportCardData extends Record<string, unknown> {
 }
 
 const RUN_ID_RE = /^(\d{14})-(.+)$/;
-
-function loadAnalysisStageFiles(): AnalysisStageFile[] {
-  if (!existsSync(WORKFLOW_CONFIG_PATH)) {
-    throw new Error(`[reports-loader] Missing workflow config: ${WORKFLOW_CONFIG_PATH}`);
-  }
-  const config = yaml.load(readFileSync(WORKFLOW_CONFIG_PATH, 'utf8')) as Record<string, any> | null;
-  const chapters = Array.isArray(config?.chapters) ? config.chapters : [];
-  if (!chapters.length) throw new Error('[reports-loader] workflow config must define chapters[]');
-  return chapters
-    .map((chapter) => {
-      if (!chapter?.key || typeof chapter.order !== 'number') {
-        throw new Error('[reports-loader] each chapter config entry requires kebab-case key and numeric order');
-      }
-      const order: number = chapter.order;
-      const key: string = chapter.key;
-      const file = `${String(order).padStart(2, '0')}-${key}.yaml`;
-      const loaderKey = key.replace(/-([a-z0-9])/g, (_match, char) => char.toUpperCase());
-      return { file, loaderKey, order };
-    })
-    .sort((a, b) => a.order - b.order);
-}
-
-const ANALYSIS_STAGE_FILES = loadAnalysisStageFiles();
 
 // ---------------------------------------------------------------------------
 // run discovery
@@ -260,13 +230,9 @@ export function loadReportCard(runId: string): ReportCardData | null {
 
 export function loadStageFiles(runId: string): Record<string, unknown> {
   const folder = join(REPORTS_DIR, runId);
-  const stages: Record<string, unknown> = {
+  return {
     evidence: readStageYaml(folder, 'evidence'),
     fullReport: readStageYaml(folder, 'full-report'),
     summaryCard: loadReportCard(runId),
   };
-  for (const artifact of ANALYSIS_STAGE_FILES) {
-    stages[artifact.loaderKey] = readStageYaml(folder, artifact.file.replace(/\.yaml$/, ''));
-  }
-  return stages;
 }

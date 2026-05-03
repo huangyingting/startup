@@ -44,13 +44,13 @@ const chapters = getAnalysisArtifacts();
 const docs = [];
 for (const spec of chapters) {
   const path = join(reportFolder, spec.file);
-  if (!existsSync(path)) {
-    flag('fail', 'missingChapter', `${spec.file}: missing`);
-    continue;
-  }
   const result = tryReadYaml(path);
   if (!result.ok) {
-    flag('fail', 'yamlParse', `${spec.file}: ${result.error}`);
+    if (result.error.startsWith('ENOENT')) {
+      flag('fail', 'missingChapter', `${spec.file}: missing`);
+    } else {
+      flag('fail', 'yamlParse', `${spec.file}: ${result.error}`);
+    }
     continue;
   }
   docs.push({ spec, doc: result.value });
