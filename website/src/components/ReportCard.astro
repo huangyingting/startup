@@ -1,18 +1,13 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import type { Lang } from '../lib/i18n';
 import { displayLabel } from '../lib/display';
-import { loadLocalizedIndex } from '../content/reports-loader';
 
-interface Props { entry: CollectionEntry<'reports'>; lang?: Lang; }
-const { entry, lang = 'en' } = Astro.props;
-const localized = lang === 'zh' ? loadLocalizedIndex(entry.id, 'zh') : null;
-const data = localized ? { ...entry.data, ...localized } : entry.data;
+interface Props { entry: CollectionEntry<'reports'>; }
+const { entry } = Astro.props;
+const data = entry.data;
 const base = import.meta.env.BASE_URL;
-const href = lang === 'zh' ? `${base}zh/${entry.data.folderSlug}/` : `${base}${entry.data.folderSlug}/`;
-const labels = lang === 'zh'
-  ? { valuation: '估值', revenue: '收入 run-rate', arr: 'ARR', growth: '增长', nrr: 'NRR', risk: '风险', confidence: '置信度', sources: '来源', report: '报告', rating: '评分' }
-  : { valuation: 'Valuation', revenue: 'Revenue run-rate', arr: 'ARR', growth: 'Growth', nrr: 'NRR', risk: 'Risk', confidence: 'confidence', sources: 'sources', report: 'report', rating: 'Rating' };
+const href = `${base}${entry.data.folderSlug}/`;
+const labels = { valuation: 'Valuation', revenue: 'Revenue run-rate', arr: 'ARR', growth: 'Growth', nrr: 'NRR', risk: 'Risk', confidence: 'confidence', sources: 'sources', report: 'report', rating: 'Rating' };
 
 function metric(value: number | null | undefined, suffix = '') {
   if (value === null || value === undefined) return null;

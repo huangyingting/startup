@@ -7,12 +7,12 @@ Startup generates evidence-backed diligence reports for named startup companies.
 - Researches a user-provided startup company or official URL.
 - Produces evidence-backed report artifacts under `reports/`.
 - Renders reports as a fast static Astro website.
-- Generates required English and Simplified Chinese YAML reports.
+- Generates required English YAML reports.
 - Includes search, filters, scorecards, market sizing, financial scenarios, and risk visuals.
 
 ## Report artifact flow
 
-Each analysis skill writes both the English artifact and its Simplified Chinese sibling in the same pass. After all 8 analysis pairs exist, `startup-ledger` consolidates evidence, then `startup-report` synthesizes both `101-report-document.yaml` and `101-report-document.zh.yaml` (English assembly + Chinese assembly in one stage by reusing already-translated content from `01–08.zh.yaml`), and finally `startup-card` produces both `102-report-card.yaml` and `102-report-card.zh.yaml` in the same way.
+Each analysis skill writes one English artifact. After all 8 analysis artifacts exist, `startup-ledger` consolidates evidence, `startup-report` synthesizes `101-report-document.yaml`, and `startup-card` produces `102-report-card.yaml`.
 
 ```mermaid
 flowchart TD
@@ -21,30 +21,30 @@ flowchart TD
   PreDedup -- exit 0 --> Setup[prepare-report-folder.mjs<br/>create reports/&lt;ts&gt;-&lt;slug&gt;/]
   Setup --> Snapshot
 
-  subgraph Stage1[Stage 1 — Analysis artifacts 01-08 + zh siblings]
-    Snapshot[startup-snapshot<br/>writes 01.yaml + 01.zh.yaml]
+  subgraph Stage1[Stage 1 — Analysis artifacts 01-08]
+    Snapshot[startup-snapshot<br/>writes 01.yaml]
     Snapshot --> Market
 
-    Market[startup-market<br/>writes 02.yaml + 02.zh.yaml] --> Compete
-    Compete[startup-competition<br/>writes 03.yaml + 03.zh.yaml] --> Fin
-    Fin[startup-financials<br/>writes 04.yaml + 04.zh.yaml] --> Prod
-    Prod[startup-product<br/>writes 05.yaml + 05.zh.yaml<br/>official-site mining → handoff note] --> Cust
-    Cust[startup-customers<br/>writes 06.yaml + 06.zh.yaml] --> Risk
-    Risk[startup-risks<br/>writes 07.yaml + 07.zh.yaml] --> Val
-    Val[startup-valuation<br/>writes 08.yaml + 08.zh.yaml]
+    Market[startup-market<br/>writes 02.yaml] --> Compete
+    Compete[startup-competition<br/>writes 03.yaml] --> Fin
+    Fin[startup-financials<br/>writes 04.yaml] --> Prod
+    Prod[startup-product<br/>writes 05.yaml<br/>official-site mining → handoff note] --> Cust
+    Cust[startup-customers<br/>writes 06.yaml] --> Risk
+    Risk[startup-risks<br/>writes 07.yaml] --> Val
+    Val[startup-valuation<br/>writes 08.yaml]
   end
 
   Val --> Ledger
 
   subgraph Stage2[Stage 2 — Consolidate]
-    Ledger[startup-ledger<br/>scripts/consolidate-evidence.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 AND 01-08.zh claimRefs<br/>writes 100-evidence-ledger.yaml]
+    Ledger[startup-ledger<br/>scripts/consolidate-evidence.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 100-evidence-ledger.yaml]
   end
 
   Ledger --> Report
 
   subgraph Stage3[Stage 3 — Report assembly]
-    Report[startup-report<br/>writes 101-report-document.yaml + 101-report-document.zh.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events;<br/>Chinese assembly reuses chapters 2-9 from 01-08.zh]
-    Report --> Card[startup-card<br/>writes 102-report-card.yaml + 102-report-card.zh.yaml<br/>derives from 100 + 101]
+    Report[startup-report<br/>writes 101-report-document.yaml<br/>chapters 1-9 with ≤1 ref per table/figure;<br/>F102 milestone timeline ≥8 events]
+    Report --> Card[startup-card<br/>writes 102-report-card.yaml<br/>derives from 100 + 101]
   end
 
   Card --> FinalVal
@@ -77,7 +77,7 @@ flowchart TD
   Decision -- truly unsupported --> Gap[Document in evidenceGaps<br/>with diligencePath]
   Gap --> Register
 
-  Register --> Write[Write XX-name.yaml + XX-name.zh.yaml<br/>per .github/references/zh-translation.md<br/>residual-English sweep + structural parity]
+  Register --> Write[Write XX-name.yaml]
   Write --> Done([Hand off to next skill])
 ```
 
@@ -102,24 +102,23 @@ Lint coverage today:
 - `matrix` / `heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
 - each `tableRef` / `figureRef` is referenced from at most one chapter section or appendix block.
 - F102 company milestone timeline must have ≥8 events covering founding, every priced round, major launches, scale milestones, partnerships, and governance/legal events.
-- 8 `XX-name.zh.yaml` siblings exist with byte-identical IDs / table IDs / figure IDs / `runDate` / `slug` to their English source.
 - card `tableCount` / `figureCount` / `overallScore` match `101-report-document.yaml`.
 
 ### Required artifacts
 
 ```text
 reports/<timestamp>-<slug>/
-  ├─ 01-company-snapshot.yaml      ↔ 01-company-snapshot.zh.yaml
-  ├─ 02-market-macro.yaml          ↔ 02-market-macro.zh.yaml
-  ├─ 03-competitive-benchmarking.yaml      ↔ 03-...zh.yaml
-  ├─ 04-financial-unit-economics.yaml      ↔ 04-...zh.yaml
-  ├─ 05-product-technology.yaml            ↔ 05-...zh.yaml
-  ├─ 06-customer-retention.yaml            ↔ 06-...zh.yaml
-  ├─ 07-risk-regulatory.yaml               ↔ 07-...zh.yaml
-  ├─ 08-investment-valuation.yaml          ↔ 08-...zh.yaml
-  ├─ 100-evidence-ledger.yaml      (no zh sibling — citations rendered from sources[])
-  ├─ 101-report-document.yaml      ↔ 101-report-document.zh.yaml
-  └─ 102-report-card.yaml          ↔ 102-report-card.zh.yaml
+  ├─ 01-company-snapshot.yaml
+  ├─ 02-market-macro.yaml
+  ├─ 03-competitive-benchmarking.yaml
+  ├─ 04-financial-unit-economics.yaml
+  ├─ 05-product-technology.yaml
+  ├─ 06-customer-retention.yaml
+  ├─ 07-risk-regulatory.yaml
+  ├─ 08-investment-valuation.yaml
+  ├─ 100-evidence-ledger.yaml
+  ├─ 101-report-document.yaml
+  └─ 102-report-card.yaml
 ```
 
 ## Local development
@@ -144,7 +143,7 @@ npm run preview
 
 Ask the default Copilot agent to run the Startup Research workflow with a company name and optional URL, for example:
 
-> Research Perplexity AI — official site https://www.perplexity.ai — with Chinese translation.
+> Research Perplexity AI — official site https://www.perplexity.ai.
 
 The report should be written to `reports/<timestamp>-<company-slug>/` and will appear on the website after validation/build.
 
@@ -158,6 +157,6 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
 - `scripts/check-company-dedup.mjs` — pre-stage duplicate-risk check for matching company names or domains; also supports legacy snapshot-file checks.
 - `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `100-evidence-ledger.yaml`.
-- `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and EN↔ZH parity checks.
+- `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and content-depth checks.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure types, enums, refs).

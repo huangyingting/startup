@@ -1,6 +1,6 @@
 ---
 name: startup-snapshot
-description: "Use when: generating 01-company-snapshot.yaml and 01-company-snapshot.zh.yaml. Keywords: company identity, founders, HQ, funding, leadership, investors, snapshot, milestones, localEvidence."
+description: "Use when: generating 01-company-snapshot.yaml. Keywords: company identity, founders, HQ, funding, leadership, investors, snapshot, milestones, localEvidence."
 user-invocable: false
 ---
 
@@ -14,12 +14,10 @@ First analysis stage. This skill owns the company introduction and snapshot chap
 - `yamlSyntaxPath`
 - `.github/references/analysis-skill-conventions.md`
 - `.github/references/evidence-ledger.md`
-- `.github/references/zh-translation.md`
 
 ## Outputs
 
 - `01-company-snapshot.yaml`
-- `01-company-snapshot.zh.yaml`
 
 ## Chapter purpose
 
@@ -76,9 +74,8 @@ Infer the company domain and operating model; add relevant snapshot rows/section
 
 ## Completion check
 
-- Both English and Simplified Chinese files parse and share `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
-- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
-- Domain reflection is explicit: identify the company archetype(s), add supportable domain-specific snapshot fields beyond `contract.yaml`, and record gaps where public evidence is insufficient.
+- The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
+- Domain reflection is explicit: identify the company archetype(s), add supportable domain-specific snapshot fields beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Every `claimRefs` resolves to local evidence before consolidation.
 - Timeline has enough dated entries or the gaps explain why not.
 - Unsupported cover metrics use `null` plus a concrete diligence path.

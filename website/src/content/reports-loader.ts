@@ -3,12 +3,9 @@ import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import yaml from 'js-yaml';
 import type { Loader } from 'astro/loaders';
-import type { Lang } from '../lib/i18n';
 import { ANALYSIS_ARTIFACTS, SCHEMA_VERSION } from '../../../scripts/report-manifest.mjs';
 
 const REPORTS_DIR = resolve(process.cwd(), '..', 'reports');
-
-const REQUIRED_ZH_FILES = ['101-report-document.zh.yaml', '102-report-card.zh.yaml'];
 
 interface ReportCardData extends Record<string, unknown> {
   schemaVersion: typeof SCHEMA_VERSION;
@@ -184,24 +181,15 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
 // ---------------------------------------------------------------------------
 
 function isPublishableRun(folder: string): boolean {
-  if (!existsSync(join(folder, '102-report-card.yaml'))) return false;
-  return REQUIRED_ZH_FILES.every((file) => existsSync(join(folder, file)));
+  return existsSync(join(folder, '102-report-card.yaml'));
 }
 
-function reportCardPath(folder: string, lang: Lang): string | null {
+function reportCardPath(folder: string): string | null {
   if (!isPublishableRun(folder)) return null;
-  if (lang === 'zh') {
-    const localized = join(folder, '102-report-card.zh.yaml');
-    if (existsSync(localized)) return localized;
-  }
   return join(folder, '102-report-card.yaml');
 }
 
-function readLocalizedYaml(folder: string, basename: string, lang: Lang): unknown | null {
-  if (lang === 'zh') {
-    const localized = join(folder, `${basename}.zh.yaml`);
-    if (existsSync(localized)) return readYaml(localized);
-  }
+function readStageYaml(folder: string, basename: string): unknown | null {
   return readYaml(join(folder, `${basename}.yaml`));
 }
 
@@ -218,7 +206,7 @@ export function reportsLoader(): Loader {
       logger.info(`[reports-loader] Loading ${runs.length} report run(s) from ${REPORTS_DIR}`);
       for (const runId of runs) {
         const folder = join(REPORTS_DIR, runId);
-        const path = reportCardPath(folder, 'en');
+        const path = reportCardPath(folder);
         if (!path) continue;
         const raw = readYaml(path);
         if (!raw) {
@@ -232,23 +220,23 @@ export function reportsLoader(): Loader {
   };
 }
 
-export function loadLocalizedIndex(runId: string, lang: Lang = 'en'): ReportCardData | null {
+export function loadReportCard(runId: string): ReportCardData | null {
   const folder = join(REPORTS_DIR, runId);
-  const path = reportCardPath(folder, lang);
+  const path = reportCardPath(folder);
   if (!path) return null;
   const raw = readYaml(path);
   return raw ? normalizeReportCard(raw, runId) : null;
 }
 
-export function loadStageFiles(runId: string, lang: Lang = 'en'): Record<string, unknown> {
+export function loadStageFiles(runId: string): Record<string, unknown> {
   const folder = join(REPORTS_DIR, runId);
   const stages: Record<string, unknown> = {
-    evidenceLedger: readLocalizedYaml(folder, '100-evidence-ledger', lang),
-    reportDocument: readLocalizedYaml(folder, '101-report-document', lang),
-    reportCard: loadLocalizedIndex(runId, lang),
+    evidenceLedger: readStageYaml(folder, '100-evidence-ledger'),
+    reportDocument: readStageYaml(folder, '101-report-document'),
+    reportCard: loadReportCard(runId),
   };
   for (const artifact of ANALYSIS_ARTIFACTS as Array<{ loaderKey: string; file: string }>) {
-    stages[artifact.loaderKey] = readLocalizedYaml(folder, artifact.file.replace(/\.yaml$/, ''), lang);
+    stages[artifact.loaderKey] = readStageYaml(folder, artifact.file.replace(/\.yaml$/, ''));
   }
   return stages;
 }

@@ -1,6 +1,6 @@
 ---
 name: startup-competition
-description: "Use when: generating 03-competitive-benchmarking.yaml and 03-competitive-benchmarking.zh.yaml. Keywords: competitors, substitutes, feature matrix, pricing, packaging, moat, positioning."
+description: "Use when: generating 03-competitive-benchmarking.yaml. Keywords: competitors, substitutes, feature matrix, pricing, packaging, moat, positioning."
 user-invocable: false
 ---
 
@@ -13,12 +13,10 @@ Third analysis stage. This skill owns the competitive benchmarking chapter. It m
 - `01-company-snapshot.yaml`
 - `02-market-macro.yaml`
 - `.github/references/analysis-skill-conventions.md`
-- `.github/references/zh-translation.md`
 
 ## Outputs
 
 - `03-competitive-benchmarking.yaml`
-- `03-competitive-benchmarking.zh.yaml`
 
 ## Chapter purpose
 
@@ -73,8 +71,7 @@ Infer what customers actually compare.
 
 ## Completion check
 
-- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
-- Domain reflection is explicit: identify what buyers compare in this domain, add supportable domain-specific competitor axes/tables/figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
+- Domain reflection is explicit: identify what buyers compare in this domain, add supportable domain-specific competitor axes/tables/figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Query by competitor class; do not build the matrix from one generic comparison source.
 - Include adverse evidence on displacement, commoditization, switching, pricing compression, channel conflict, or incumbent response.
 - Unsupported matrix cells should be marked unknown or become evidence gaps, not guessed.

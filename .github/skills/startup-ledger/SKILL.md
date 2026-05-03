@@ -6,12 +6,12 @@ user-invocable: false
 
 # Startup Ledger
 
-Consolidation stage. Generate canonical sources/claims only after `01`–`08` and their `.zh.yaml` siblings exist, parse, and have sufficient local evidence.
+Consolidation stage. Generate canonical sources/claims only after `01`–`08` exist, parse, and have sufficient local evidence.
 
 ## Output
 
 - `100-evidence-ledger.yaml` via `node scripts/consolidate-evidence.mjs <reportFolder>`
-- The script also rewrites `claimRefs` and inline `[C###]` references inside `01`–`08` and their `.zh.yaml` siblings, and removes `localEvidence` unless `--keep-local` is passed.
+- The script also rewrites `claimRefs` and inline `[C###]` references inside `01`–`08`, and removes `localEvidence` unless `--keep-local` is passed.
 
 ## Do not
 
@@ -29,7 +29,7 @@ For each `01`–`08` artifact, verify:
 - Material sections, tables, figures, and callouts have local `claimRefs`.
 - Volatile critical facts are current/recent or explicitly listed as gaps.
 - Source diversity fits the domain skill.
-- The artifact shows domain reflection: selected domain-adaptive additions appear in sections, tables, figures, or evidence gaps rather than only satisfying the minimal `contract.yaml` shape.
+- The artifact shows domain reflection: selected domain-adaptive additions appear in sections, tables, figures, or evidence gaps rather than only satisfying the skill's universal requirements.
 
 If evidence is empty, placeholder-like, or just enough to pass schema shape, stop and route back to the owning skill.
 

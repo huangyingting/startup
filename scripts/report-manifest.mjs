@@ -1,12 +1,6 @@
 export const SCHEMA_VERSION = 'startup-diligence-report-v2';
 
 export const ANALYSIS_DEPTH_FLOORS = {
-  snapshot: {
-    minSectionBodyWords: 40,
-    minSectionWordsTotal: 300,
-    minTableRowsTotal: 12,
-    minFigureDataPointsTotal: 6,
-  },
   standard: {
     minSectionBodyWords: 40,
     minSectionWordsTotal: 250,
@@ -18,22 +12,20 @@ export const ANALYSIS_DEPTH_FLOORS = {
 export const ANALYSIS_ARTIFACTS = [
   {
     file: '01-company-snapshot.yaml',
-    zhFile: '01-company-snapshot.zh.yaml',
     artifact: 'company-snapshot',
     skill: 'startup-snapshot',
     loaderKey: 'companySnapshot',
     chapter: 1,
     chapterKey: '01',
     reportChapter: 2,
-    minSections: 5,
-    minTables: 3,
+    minSections: 4,
+    minTables: 4,
     minFigures: 2,
-    depthFloor: ANALYSIS_DEPTH_FLOORS.snapshot,
+    depthFloor: ANALYSIS_DEPTH_FLOORS.standard,
     requiredFigureTypes: ['timeline'],
   },
   {
     file: '02-market-macro.yaml',
-    zhFile: '02-market-macro.zh.yaml',
     artifact: 'market-macro',
     skill: 'startup-market',
     loaderKey: 'marketMacro',
@@ -48,7 +40,6 @@ export const ANALYSIS_ARTIFACTS = [
   },
   {
     file: '03-competitive-benchmarking.yaml',
-    zhFile: '03-competitive-benchmarking.zh.yaml',
     artifact: 'competitive-benchmarking',
     skill: 'startup-competition',
     loaderKey: 'competitiveBenchmarking',
@@ -63,7 +54,6 @@ export const ANALYSIS_ARTIFACTS = [
   },
   {
     file: '04-financial-unit-economics.yaml',
-    zhFile: '04-financial-unit-economics.zh.yaml',
     artifact: 'financial-unit-economics',
     skill: 'startup-financials',
     loaderKey: 'financialUnitEconomics',
@@ -78,7 +68,6 @@ export const ANALYSIS_ARTIFACTS = [
   },
   {
     file: '05-product-technology.yaml',
-    zhFile: '05-product-technology.zh.yaml',
     artifact: 'product-technology',
     skill: 'startup-product',
     loaderKey: 'productTechnology',
@@ -93,7 +82,6 @@ export const ANALYSIS_ARTIFACTS = [
   },
   {
     file: '06-customer-retention.yaml',
-    zhFile: '06-customer-retention.zh.yaml',
     artifact: 'customer-retention',
     skill: 'startup-customers',
     loaderKey: 'customerRetention',
@@ -108,7 +96,6 @@ export const ANALYSIS_ARTIFACTS = [
   },
   {
     file: '07-risk-regulatory.yaml',
-    zhFile: '07-risk-regulatory.zh.yaml',
     artifact: 'risk-regulatory',
     skill: 'startup-risks',
     loaderKey: 'riskRegulatory',
@@ -123,7 +110,6 @@ export const ANALYSIS_ARTIFACTS = [
   },
   {
     file: '08-investment-valuation.yaml',
-    zhFile: '08-investment-valuation.zh.yaml',
     artifact: 'investment-valuation',
     skill: 'startup-valuation',
     loaderKey: 'investmentValuation',
@@ -148,17 +134,5 @@ export const CORE_ARTIFACTS = [
 ];
 
 export const REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);
-
-export const REQUIRED_ZH_FILES = [
-  ...ANALYSIS_ARTIFACTS.map((item) => item.zhFile),
-  '101-report-document.zh.yaml',
-  '102-report-card.zh.yaml',
-];
-
-export const REQUIRED_LOCALIZED_PAIRS = [
-  ...ANALYSIS_ARTIFACTS.map((item) => [item.file, item.zhFile]),
-  ['101-report-document.yaml', '101-report-document.zh.yaml'],
-  ['102-report-card.yaml', '102-report-card.zh.yaml'],
-];
 
 export const ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item]));

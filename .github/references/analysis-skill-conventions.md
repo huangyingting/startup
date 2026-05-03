@@ -31,7 +31,6 @@ Before writing:
 - Read `schemaPath`.
 - Read `yamlSyntaxPath`.
 - Read `.github/references/evidence-ledger.md` before touching local evidence.
-- Read `.github/references/zh-translation.md` before writing any `.zh.yaml` sibling.
 - Read upstream artifacts only when the chapter or a discovered gap needs them.
 
 ## Section-owned chapter contracts
@@ -47,7 +46,7 @@ Each analysis skill is the authoritative generation contract for its report chap
 
 The shared rules below provide default research breadth expectations for every analysis skill. A chapter skill may add stricter chapter-specific source classes, questions, or depth expectations when its domain requires them.
 
-Each analysis skill also has a sibling `contract.yaml` for the machine-checkable minimum subset: artifact name, chapter number, section/table/figure floors, required table column alternatives, and required figure type alternatives. It is intentionally domain-neutral. Use the prose skill for domain-specific depth, and update `contract.yaml` only when the readiness audit should enforce a requirement.
+Each analysis skill is the single source for chapter-specific semantic requirements: required section concepts, required tables and columns, required figures, evidence strategy, and completion checks. Artifact identity, chapter order, numeric floors, loader keys, and preferred figure types come from `scripts/report-manifest.mjs`. Use the prose skill for domain-specific depth.
 
 Global instructions define workflow, evidence, YAML, localization, and validation rules only. Section-level content belongs in the section skill, not in a central industry-template file.
 
@@ -77,7 +76,7 @@ If evidence is unavailable, do not invent values. Use `null`, explanatory notes,
 
 ## Domain reflection and sufficiency gate
 
-Before drafting, each analysis skill must explicitly reflect on the company's domain and decide whether the neutral `contract.yaml` floor is enough. The contract is only a minimum readiness shape; it is not the chapter plan.
+Before drafting, each analysis skill must explicitly reflect on the company's domain and decide whether the universal requirements in the skill are enough. Those requirements are only a minimum readiness shape; they are not the full chapter plan.
 
 Use upstream artifacts, official pages, and source discovery to identify:
 
@@ -103,18 +102,17 @@ Before finalizing, run this sufficiency check:
 
 1. Which domain archetype(s) did this chapter infer, and why?
 2. Which extra domain-specific sections, tables, figures, source classes, and questions were added because of that inference?
-3. Is the chapter merely satisfying `contract.yaml`, or does it answer the domain-specific underwriting questions an investor would ask?
+3. Is the chapter merely satisfying the skill's universal requirements, or does it answer the domain-specific underwriting questions an investor would ask?
 4. If content is still thin, can more credible research change the answer? If yes, continue research and expand the artifact. If no, add explicit `evidenceGaps[]` and explain why public evidence is unavailable.
 5. If a requested or domain-critical table/figure cannot be supported, include the failed path and diligence ask rather than substituting a generic chart.
 
 ## Outputs
 
-Each analysis skill writes exactly two files:
+Each analysis skill writes exactly one file:
 
 - `XX-name.yaml`
-- `XX-name.zh.yaml`
 
-Both files must exist and parse before the next skill starts.
+The file must exist and parse before the next skill starts.
 
 Analysis skills never write `100-evidence-ledger.yaml`; that is `startup-ledger`'s job.
 
@@ -122,7 +120,7 @@ Research packs and cached text snapshots are diagnostics only; they are not fina
 
 ## Parallel research packs
 
-After the pre-stage duplicate check passes and `01-company-snapshot.yaml` is complete, research for `02`–`08` may be prepared in parallel as diagnostic packs. Parallel packs are read-only with respect to final artifacts.
+After the pre-stage duplicate check passes, research for any unblocked analysis chapter may be prepared in parallel as diagnostic packs. Parallel packs are read-only with respect to final artifacts.
 
 Recommended pack contents:
 
@@ -275,12 +273,6 @@ Depth floors in `scripts/report-manifest.mjs` and the `startup-diligence` workfl
   - `row.values.length === data.columns.length`.
   - Do not put the row identifier as the first column.
 
-## Simplified Chinese sibling
-
-Immediately after writing English, write the `.zh.yaml` sibling per `.github/references/zh-translation.md`.
-
-Do not create a Chinese sibling by copying the English file and only changing metadata. Preserve structure/IDs/enums/numbers exactly, translate every user-visible prose field, then run residual-English and structural-parity checks.
-
 ## Handoff note
 
 After writing, record a concise internal summary:
@@ -301,7 +293,6 @@ If a later skill discovers a supportable missing fact owned by an earlier chapte
 
 1. Return to the owning skill.
 2. Update its `localEvidence` and artifact.
-3. Regenerate its `.zh.yaml` sibling.
-4. Continue forward.
+3. Continue forward.
 
 Never edit another skill's owned artifact directly.

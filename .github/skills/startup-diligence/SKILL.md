@@ -28,7 +28,6 @@ Before writing artifacts:
 
 - Read `schemaPath` and `yamlSyntaxPath`.
 - Read `.github/references/evidence-ledger.md` before writing local evidence or consolidating `100-evidence-ledger.yaml`.
-- Read `.github/references/zh-translation.md` before writing any `.zh.yaml` artifact; Chinese siblings must translate user-visible prose, not merely mirror English content.
 - For analysis stages `01`–`08`, follow `.github/references/analysis-skill-conventions.md`.
 - For each analysis stage, follow that stage's `startup-*` skill as the chapter generation contract: required chapter content, required tables, required figures, evidence acquisition, and domain-adaptive additions live in the owning skill.
 
@@ -38,32 +37,21 @@ Every completed report folder must contain the artifacts declared by `scripts/re
 
 ```text
 01-company-snapshot.yaml
-01-company-snapshot.zh.yaml
 02-market-macro.yaml
-02-market-macro.zh.yaml
 03-competitive-benchmarking.yaml
-03-competitive-benchmarking.zh.yaml
 04-financial-unit-economics.yaml
-04-financial-unit-economics.zh.yaml
 05-product-technology.yaml
-05-product-technology.zh.yaml
 06-customer-retention.yaml
-06-customer-retention.zh.yaml
 07-risk-regulatory.yaml
-07-risk-regulatory.zh.yaml
 08-investment-valuation.yaml
-08-investment-valuation.zh.yaml
 100-evidence-ledger.yaml
 101-report-document.yaml
-101-report-document.zh.yaml
 102-report-card.yaml
-102-report-card.zh.yaml
 ```
 
 Rules:
 
 - Write all artifacts directly under `reportFolder`.
-- Each `01`–`08` English artifact must be paired with its `.zh.yaml` sibling before moving to the next stage.
 - Never hand-write `100-evidence-ledger.yaml`; generate it with `node scripts/consolidate-evidence.mjs <reportFolder>`.
 - Temporary files, terminal transcripts, and `/tmp` outputs are diagnostics only, not report artifacts or evidence sources.
 - If a tool produces only a snippet or partial transcript, rewrite it as a complete YAML artifact under `reportFolder` before continuing.
@@ -73,17 +61,17 @@ Rules:
 
 Run skills in the order declared by `scripts/report-manifest.mjs`. The current v2 baseline is:
 
-1. `startup-snapshot` → `01-company-snapshot.yaml` + `.zh.yaml`.
-2. `startup-market` → `02-market-macro.yaml` + `.zh.yaml`.
-3. `startup-competition` → `03-competitive-benchmarking.yaml` + `.zh.yaml`.
-4. `startup-financials` → `04-financial-unit-economics.yaml` + `.zh.yaml`.
-5. `startup-product` → `05-product-technology.yaml` + `.zh.yaml`.
-6. `startup-customers` → `06-customer-retention.yaml` + `.zh.yaml`.
-7. `startup-risks` → `07-risk-regulatory.yaml` + `.zh.yaml`.
-8. `startup-valuation` → `08-investment-valuation.yaml` + `.zh.yaml`.
+1. `startup-snapshot` → `01-company-snapshot.yaml`.
+2. `startup-market` → `02-market-macro.yaml`.
+3. `startup-competition` → `03-competitive-benchmarking.yaml`.
+4. `startup-financials` → `04-financial-unit-economics.yaml`.
+5. `startup-product` → `05-product-technology.yaml`.
+6. `startup-customers` → `06-customer-retention.yaml`.
+7. `startup-risks` → `07-risk-regulatory.yaml`.
+8. `startup-valuation` → `08-investment-valuation.yaml`.
 9. `startup-ledger` → `100-evidence-ledger.yaml` and rewrite `01`–`08` claim IDs.
-10. `startup-report` → `101-report-document.yaml` and `101-report-document.zh.yaml` (English assembly + Simplified Chinese assembly inside the same skill).
-11. `startup-card` → `102-report-card.yaml` and `102-report-card.zh.yaml` (English card + Simplified Chinese translation inside the same skill).
+10. `startup-report` → `101-report-document.yaml`.
+11. `startup-card` → `102-report-card.yaml`.
 
 The orchestrator does not delegate to a separate research agent and does not recursively rerun this workflow from inside itself.
 
@@ -99,15 +87,15 @@ The orchestrator does not delegate to a separate research agent and does not rec
 
 Default safe mode is serialized artifact writing. Use parallelism only where the work is read-only and cannot race on shared YAML files.
 
-Allowed after the pre-stage duplicate check passes and `01-company-snapshot.yaml` exists:
+Allowed after the pre-stage duplicate check passes, for chapters whose dependencies are already satisfied:
 
-- Parallel source discovery, direct URL review, official-surface fetching, cached text snapshots, and chapter research notes for `02`–`08`.
+- Parallel source discovery, direct URL review, official-surface fetching, cached text snapshots, and chapter research notes.
 - Parallel preparation of diagnostic research packs, provided each pack is written to a unique path and no final artifact is modified.
 
 Not allowed without a dedicated orchestrator and locking/merge protocol:
 
-- Parallel writes to `01`–`08` YAML artifacts or their `.zh.yaml` siblings.
-- Parallel edits to `100-evidence-ledger.yaml`, `101-report-document.yaml`, `101-report-document.zh.yaml`, `102-report-card.yaml`, `102-report-card.zh.yaml`, or `reports/_index.yaml`.
+- Parallel writes to `01`–`08` YAML artifacts.
+- Parallel edits to `100-evidence-ledger.yaml`, `101-report-document.yaml`, `102-report-card.yaml`, or `reports/_index.yaml`.
 - Running `startup-ledger` while any analysis artifact is still being edited.
 
 For automated or multi-agent runs, create one report-folder write lock before modifying final YAML artifacts and release it after the file parses. If the lock already exists, wait or stop; never merge concurrent writes by hand.
@@ -116,10 +104,10 @@ Synchronization points:
 
 1. Pre-stage duplicate check before report folder creation or stage 1 writing.
 2. `01-company-snapshot.yaml` identity gate after the snapshot artifact exists.
-3. Pre-ledger readiness audit after all `01`–`08` English/Chinese pairs exist.
+3. Pre-ledger readiness audit after all `01`–`08` analysis artifacts exist.
 4. `startup-ledger` consolidation.
-5. `startup-report` assembly (English + Simplified Chinese in one stage).
-6. `startup-card` generation (English + Simplified Chinese in one stage).
+5. `startup-report` assembly.
+6. `startup-card` generation.
 7. Final index rebuild and `npm run validate`.
 
 ## Section-owned prompt requirements and research packs
@@ -130,7 +118,7 @@ Synchronization points:
 - Each `startup-*` chapter skill owns its chapter content contract. The skill must define universal chapter requirements, required tables, required structured figures, evidence collection strategy, and domain-adaptive additions.
 - Domain-adaptive additions are inferred from the company domain, business model, value-chain position, buyer/user/payment structure, revenue mechanism, regulatory exposure, physical/scientific/data/financial dependencies, and operating model. Do not hard-code the report around a small set of sectors.
 - For normal report runs, pursue investor-grade research depth in every chapter: collect the useful official, independent, adverse, and freshness evidence that can change the chapter's sections, tables, figures, claims, or gaps. Stop adding sources only when new credible sources become duplicative or non-material.
-- Create or maintain diagnostic per-chapter research packs after `01` and before artifact writing for visible companies, complex domains, or prompt-critical topics.
+- Create or maintain diagnostic per-chapter research packs before artifact writing for visible companies, complex domains, or prompt-critical topics.
 - For simple or obscure companies, a concise handoff note can replace a persisted pack only if it lists research questions, reviewed source classes, unresolved gaps, selected domain-adaptive additions, and why more sources were not material.
 - Persisted packs should list reviewed URLs, source type, independence, candidate claims, key quotes, freshness, conflicts, adverse findings, open gaps, and why additional sources were or were not material.
 - Cached fetched pages are for extraction speed only; cite the reviewed original URL in `localEvidence.sources[]`, not the cache path.
@@ -140,7 +128,6 @@ Synchronization points:
 
 - Analysis artifacts number sections from their own chapter: `01` uses `1.x`, `02` uses `2.x`, ..., `08` uses `8.x`.
 - In `101-report-document.yaml`, artifacts become chapters `2`–`9`; mapping is `101 chapter N ↔ artifact N-1`.
-- The Simplified Chinese assembly inside `startup-report` must reverse this mapping when sourcing section titles/content from `XX.zh.yaml`; otherwise chapters `2` and `9` can retain English titles.
 
 ## Research and evidence standards
 
@@ -156,22 +143,20 @@ Follow `.github/references/evidence-ledger.md` and `.github/references/analysis-
 
 ## Artifact depth gates
 
-Schema validity is necessary but not sufficient. `scripts/report-manifest.mjs` is the machine source for depth floors; the bullets below are a human-readable baseline for normal public or late-stage private companies:
+Schema validity is necessary but not sufficient. `scripts/report-manifest.mjs` is the machine source for analysis depth floors, and each owning chapter skill/contract defines chapter-specific required content. Additional gates:
 
-- `01-company-snapshot.yaml`: at least 5 substantive sections, 3 tables, 2 figures, and a milestone timeline with at least 8 entries.
-- Each of `02`–`08`: at least 4 substantive sections, 4 tables, and 2 figures; `07` and `08` should usually exceed the floor.
 - `100-evidence-ledger.yaml`: enough retained evidence for the final judgment; for visible companies, below roughly 50 sources or 90 claims is a red flag.
 - `101-report-document.yaml`: preserve the union of upstream tables/figures unless `reportMeta.coverageNotes` explicitly names omissions and reasons.
 
 Reject thin work even if YAML parses:
 
-- generic prose, placeholder translation, unsupported synthesis;
+- generic prose, placeholder content, unsupported synthesis;
 - repeated generic section titles or three-node figures;
 - count-filler tables or string-valued chart numbers.
 
 Do not stop because a chapter has reached the minimum floor. If credible evidence supports more rows, sections, figures, source diversity, or domain-specific treatment, expand the owning artifact before moving forward.
 
-Before accepting any `01`–`08` chapter, confirm the owning skill performed domain reflection: inferred the relevant domain archetype(s), added supportable domain-specific content beyond `contract.yaml`, and recorded evidence gaps where public evidence is insufficient.
+Before accepting any `01`–`08` chapter, confirm the owning skill performed domain reflection: inferred the relevant domain archetype(s), added supportable domain-specific content beyond its universal requirements, and recorded evidence gaps where public evidence is insufficient.
 
 Before `startup-ledger`, inspect counts for sources, claims, tables, figures, sections, and gaps. If a stage misses the floor and the company is not genuinely obscure, return to that stage first.
 
@@ -187,7 +172,7 @@ Before `startup-card`, compare `101` table/figure counts against the union of `0
 
 ## Validation gates
 
-After each stage, parse files and verify expected outputs, identity fields, claim refs, figure contracts, and Chinese parity. Use the schema and references for exact checks.
+After each stage, parse files and verify expected outputs, identity fields, claim refs, and figure contracts. Use the schema and references for exact checks.
 
 Before creating or writing a new report folder, run:
 
@@ -205,7 +190,7 @@ The legacy snapshot-file mode remains available only for manual cross-checks aft
 node scripts/check-company-dedup.mjs <reportFolder>/01-company-snapshot.yaml
 ```
 
-Final validation after `102-report-card.zh.yaml`:
+Final validation after `102-report-card.yaml`:
 
 - Rebuild `reports/_index.yaml` with `node scripts/build-reports-index.mjs --strict`.
 - Run `npm run validate`.
@@ -223,11 +208,11 @@ Final validation after `102-report-card.zh.yaml`:
 
 When fixing omissions, thin sections, or newly supportable data:
 
-1. Update the owning analysis artifact (`01`–`08`) and its `.zh.yaml` sibling.
+1. Update the owning analysis artifact (`01`–`08`).
 2. Add or revise local evidence in that artifact.
 3. Rerun `startup-ledger` to reconsolidate `100` and claim IDs.
 4. Rerun affected downstream artifacts.
-5. If recommendation, confidence, risk rating, or valuation stance changes, rerun `startup-report` and `startup-card` (each handles English + Simplified Chinese in the same stage).
+5. If recommendation, confidence, risk rating, or valuation stance changes, rerun `startup-report` and `startup-card`.
 6. Run `npm run validate`.
 
 Do not commit or leave a partially updated report folder.
@@ -237,7 +222,7 @@ Do not commit or leave a partially updated report folder.
 Summarize only:
 
 - Report folder.
-- Generated YAML files, English and Simplified Chinese.
+- Generated YAML files.
 - Source count and claim count.
 - Recommendation, confidence, risk rating, valuation stance.
 - Structured figure count and table count.

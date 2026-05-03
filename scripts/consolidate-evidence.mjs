@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Consolidate localEvidence from analysis artifacts 01-08 into a single
 // 100-evidence-ledger.yaml, deduplicating sources by canonical URL and claims
-// by statement+topic+sourceRefs. Rewrites claimRefs in-place across both the
-// English and Simplified Chinese siblings.
+// by statement+topic+sourceRefs. Rewrites claimRefs in-place across English
+// analysis artifacts.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { asDateString, canonicalSourceUrl, compactText, readYaml, writeYaml } from './text-utils.mjs';
@@ -27,7 +27,7 @@ if (!docs.size) {
   console.error(`[consolidate-evidence] no report artifacts found in ${reportFolder}`);
   process.exit(1);
 }
-for (const downstream of ['101-report-document.yaml', '101-report-document.zh.yaml', '102-report-card.yaml', '102-report-card.zh.yaml']) {
+for (const downstream of ['101-report-document.yaml', '102-report-card.yaml']) {
   if (existsSync(join(reportFolder, downstream))) {
     console.warn(`[consolidate-evidence] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run startup-report and startup-card after consolidation.`);
     break;
@@ -41,12 +41,8 @@ writeYaml(join(reportFolder, '100-evidence-ledger.yaml'), ledger);
 for (const [file, doc] of docs) {
   writeYaml(join(reportFolder, file), rewrite(doc, file, claimIds));
 }
-const zhCount = rewriteChineseSiblings(reportFolder, claimIds);
 
 console.log(`[consolidate-evidence] wrote ${join(reportFolder, '100-evidence-ledger.yaml')} (${sources.length} sources, ${claims.length} claims)`);
-if (zhCount) {
-  console.log(`[consolidate-evidence] rewrote claimRefs in ${zhCount} Simplified Chinese sibling artifact(s).`);
-}
 
 // ---------------------------------------------------------------------------
 
@@ -204,13 +200,3 @@ function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
   };
 }
 
-function rewriteChineseSiblings(folder, claimIds) {
-  let count = 0;
-  for (const file of ANALYSIS_FILES) {
-    const path = join(folder, file.replace(/\.yaml$/, '.zh.yaml'));
-    if (!existsSync(path)) continue;
-    writeYaml(path, rewrite(readYaml(path), file, claimIds));
-    count += 1;
-  }
-  return count;
-}

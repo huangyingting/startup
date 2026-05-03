@@ -1,6 +1,6 @@
 ---
 name: startup-market
-description: "Use when: generating 02-market-macro.yaml and 02-market-macro.zh.yaml. Keywords: market sizing, TAM, SAM, SOM, segments, buyers, geography, adoption, budget pools."
+description: "Use when: generating 02-market-macro.yaml. Keywords: market sizing, TAM, SAM, SOM, segments, buyers, geography, adoption, budget pools."
 user-invocable: false
 ---
 
@@ -12,12 +12,10 @@ Second analysis stage. This skill owns the market sizing and macro chapter. It m
 
 - `01-company-snapshot.yaml`
 - `.github/references/analysis-skill-conventions.md`
-- `.github/references/zh-translation.md`
 
 ## Outputs
 
 - `02-market-macro.yaml`
-- `02-market-macro.zh.yaml`
 
 ## Chapter purpose
 
@@ -73,8 +71,7 @@ Infer the market mechanics instead of applying a fixed sector template.
 
 ## Completion check
 
-- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
-- Domain reflection is explicit: identify the market archetype(s), add supportable domain-specific sizing/adoption tables or figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
+- Domain reflection is explicit: identify the market archetype(s), add supportable domain-specific sizing/adoption tables or figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Do not rely on one generic TAM estimate or call the market “large” without boundary logic.
 - If SAM/SOM cannot be isolated, preserve failed sizing paths and diligence asks instead of inventing precision.
 - Every major chart number must match a source-backed table number or state its transformation in `approximationNotes`.

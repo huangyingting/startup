@@ -1,6 +1,6 @@
 ---
 name: startup-customers
-description: "Use when: generating 06-customer-retention.yaml and 06-customer-retention.zh.yaml. Keywords: customers, retention, NRR, churn, case studies, segmentation, satisfaction, concentration."
+description: "Use when: generating 06-customer-retention.yaml. Keywords: customers, retention, NRR, churn, case studies, segmentation, satisfaction, concentration."
 user-invocable: false
 ---
 
@@ -13,12 +13,10 @@ Sixth analysis stage. This skill owns the customer quality and retention chapter
 - `01-company-snapshot.yaml`
 - `04-financial-unit-economics.yaml` and `05-product-technology.yaml` when pricing, modules, or implementation claims affect customer analysis.
 - `.github/references/analysis-skill-conventions.md`
-- `.github/references/zh-translation.md`
 
 ## Outputs
 
 - `06-customer-retention.yaml`
-- `06-customer-retention.zh.yaml`
 
 ## Chapter purpose
 
@@ -74,8 +72,7 @@ Infer the customer relationship and retention mechanism.
 
 ## Completion check
 
-- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
-- Domain reflection is explicit: identify the customer/adoption archetype(s), add supportable domain-specific retention or customer-quality tables/figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
+- Domain reflection is explicit: identify the customer/adoption archetype(s), add supportable domain-specific retention or customer-quality tables/figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Include adverse searches for churn, complaints, blocked deployments, concentration, failed pilots, reviews, or procurement objections.
 - Unsupported customer count, retention, churn, NRR, satisfaction, repeat purchase, or concentration becomes `null` plus exact diligence asks.
 - Logos alone do not prove retention or production deployment.

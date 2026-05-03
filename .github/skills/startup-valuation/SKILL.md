@@ -1,6 +1,6 @@
 ---
 name: startup-valuation
-description: "Use when: generating 08-investment-valuation.yaml and 08-investment-valuation.zh.yaml. Keywords: investment thesis, valuation, comparables, IPO readiness, scenarios, recommendation."
+description: "Use when: generating 08-investment-valuation.yaml. Keywords: investment thesis, valuation, comparables, IPO readiness, scenarios, recommendation."
 user-invocable: false
 ---
 
@@ -16,12 +16,10 @@ Eighth analysis stage. This skill owns the investment recommendation and valuati
 - `07-risk-regulatory.yaml`
 - `02-market-macro.yaml`, `03-competitive-benchmarking.yaml`, or `05-product-technology.yaml` when market, moat, or product differentiation materially affects valuation.
 - `.github/references/analysis-skill-conventions.md`
-- `.github/references/zh-translation.md`
 
 ## Outputs
 
 - `08-investment-valuation.yaml`
-- `08-investment-valuation.zh.yaml`
 
 ## Chapter purpose
 
@@ -85,8 +83,7 @@ Select the valuation method from the business model and stage.
 
 ## Completion check
 
-- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
-- Domain reflection is explicit: identify the valuation archetype(s), add supportable domain-specific scenario, comparable, or sensitivity tables/figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
+- Domain reflection is explicit: identify the valuation archetype(s), add supportable domain-specific scenario, comparable, or sensitivity tables/figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Include adverse searches on overvaluation, down-round risk, governance, liquidity, multiple compression, commercialization failure, or model-specific downside.
 - Do not issue `buy` unless thesis and anti-thesis are both evidence-supported and valuation has sufficient support.
 - If valuation inputs are missing, prefer `research-more` or `track` over false precision.

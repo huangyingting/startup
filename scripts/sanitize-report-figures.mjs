@@ -6,7 +6,7 @@ import { basename, join, resolve } from 'node:path';
 import { readYaml, writeYaml } from './text-utils.mjs';
 import { FIGURE_ARRAY_FIELDS } from './figure-registry.mjs';
 
-const REPORT_FILES = ['101-report-document.yaml', '101-report-document.zh.yaml'];
+const REPORT_FILES = ['101-report-document.yaml'];
 
 function parseArgs(argv) {
   const checkOnly = argv.includes('--check');

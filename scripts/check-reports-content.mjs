@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-// Content-quality and translation-parity checks across all completed reports.
+// Content-quality checks across all completed English reports.
 // Schema and renderer-contract checks live in website/scripts/check-reports.mjs.
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { asDateString, canonicalSourceUrl, listDirs, readYaml, reportsDir, tryReadYaml } from './text-utils.mjs';
-import { ANALYSIS_ARTIFACTS, ANALYSIS_FILES, REQUIRED_LOCALIZED_PAIRS, SCHEMA_VERSION } from './report-manifest.mjs';
+import { canonicalSourceUrl, listDirs, readYaml, reportsDir, tryReadYaml } from './text-utils.mjs';
+import { ANALYSIS_ARTIFACTS, ANALYSIS_FILES } from './report-manifest.mjs';
 import { CLAIM_TYPES, CORROBORATION, FRESHNESS } from './evidence-registry.mjs';
-import { CARD_ENUM_FIELDS } from './report-registry.mjs';
 
 const PUBLISHER_CONCENTRATION_LIMIT = 0.34;
 const INDEPENDENT_FLOOR = 0.15;
@@ -24,32 +23,6 @@ const VOLATILE_EVIDENCE_TOPICS = new Set([
   'customer', 'customers', 'financials', 'funding', 'pricing', 'legal', 'regulatory',
   'regulation', 'compliance', 'governance', 'risk', 'valuation', 'traction', 'trust',
 ]);
-
-// Fields that legitimately contain prose and therefore must be translated for
-// the Simplified Chinese sibling.
-const TRANSLATABLE_KEYS = new Set([
-  'background', 'body', 'businessModel', 'customerFocus', 'detail', 'diligencePath',
-  'disclaimer', 'fundingStatus', 'gap', 'headline', 'headquarters', 'label', 'notes',
-  'productSummary', 'role', 'sector', 'shortDescription', 'stage', 'subtitle', 'summary',
-  'title', 'unit',
-]);
-
-// Domain proper nouns and acronyms that legitimately appear in Chinese text.
-const ALLOWED_ASCII_TOKENS = new Set([
-  'AI', 'API', 'APIs', 'ARR', 'AWS', 'Azure', 'Bedrock', 'Bloomberg', 'CAC', 'ChatGPT',
-  'CNBC', 'Codex', 'DALL', 'DPA', 'Forbes', 'GPT', 'GRR', 'Llama', 'LTV', 'Meta',
-  'Microsoft', 'NRR', 'Nvidia', 'OpenAI', 'PBC', 'SOC', 'SoftBank', 'Sora', 'TAM', 'USD',
-  'Vertex', 'Anthropic', 'Google', 'Amazon', 'Claude', 'Code', 'Cowork', 'Free', 'Pro',
-  'Max', 'Team', 'Enterprise', 'Coherent', 'Market', 'Insights', 'Mordor', 'Artificial',
-  'Analysis', 'Opus', 'Sonnet', 'Gemini', 'Preview', 'Compliance', 'HIPAA', 'SCIM', 'SSO',
-  'Messages', 'Managed', 'Agents', 'Web', 'Search', 'GitHub', 'Copilot', 'token', 'SaaS',
-  'IPO',
-]);
-
-const CHINESE_TRANSLATION_MARKER = /中文(?:摘要)?[：:]/;
-const CJK_RANGE = /[\u3400-\u9fff]/;
-const ENGLISH_PROSE_HINT = /\b(the|and|with|because|should|requires?|reported|public|customer|revenue|valuation|risk|market|product|evidence|diligence|summary|analysis|recommendation|company|business|enterprise)\b/i;
-const ASCII_WORD = /[A-Za-z]{4,}/g;
 
 const GENERIC_TITLES = new Set([
   'Evidence base', 'Investor interpretation', 'Contradictions and uncertainty',
@@ -119,92 +92,6 @@ function checkRenderableData(run, file, doc) {
         fail(`${run}/${file}: timeline figure ${figure.id} item ${itemIndex + 1}.${key} is ${kind}; use a scalar value`);
       }
     }
-  }
-}
-
-// ---------------------------------------------------------------------------
-// translation completeness
-// ---------------------------------------------------------------------------
-
-function isSkippableForTranslation(value) {
-  const text = String(value ?? '').trim();
-  if (!text) return true;
-  if (/^https?:\/\//i.test(text)) return true;
-  if (/^[A-Z]\d{3}$/.test(text)) return true;
-  if (/^[$€¥]?[0-9,.]+[A-Za-z%+.-]*$/.test(text)) return true;
-  if (/^\d{4}(-\d{2}){0,2}$/.test(text)) return true;
-  if (/^[a-z]+(?:-[a-z]+)*$/.test(text) && text.length < 24) return true;
-  return false;
-}
-
-function looksLikeUntranslatedEnglish(value) {
-  const text = String(value ?? '').trim();
-  if (isSkippableForTranslation(text)) return false;
-  const words = (text.match(ASCII_WORD) ?? []).filter((word) => !ALLOWED_ASCII_TOKENS.has(word));
-  if (words.length < 6) return false;
-  return CJK_RANGE.test(text) ? ENGLISH_PROSE_HINT.test(words.join(' ')) : ENGLISH_PROSE_HINT.test(text);
-}
-
-function looksLikeCopiedEnglish(value) {
-  const text = String(value ?? '').trim();
-  if (isSkippableForTranslation(text) || CJK_RANGE.test(text)) return false;
-  const words = (text.match(ASCII_WORD) ?? []).filter((word) => !ALLOWED_ASCII_TOKENS.has(word));
-  if (!words.length) return false;
-  return ENGLISH_PROSE_HINT.test(text) || words.length >= 4;
-}
-
-function isTranslatableLocation(path) {
-  const key = path.at(-1) ?? '';
-  if (TRANSLATABLE_KEYS.has(key)) return true;
-  if (path.includes('tables') && (path.includes('rows') || path.includes('columns') || ['notes', 'title'].includes(key))) return true;
-  if (path.includes('figures') && TRANSLATABLE_KEYS.has(key)) return true;
-  if (['topStrengths', 'topRisks', 'unresolvedGaps'].some((name) => path.includes(name))) return true;
-  return false;
-}
-
-function walkChineseDocument(run, file, value, path = []) {
-  if (Array.isArray(value)) {
-    value.forEach((item, index) => walkChineseDocument(run, file, item, [...path, String(index)]));
-    return;
-  }
-  if (value && typeof value === 'object') {
-    for (const [key, child] of Object.entries(value)) {
-      if (['statement', 'keyQuote', 'url'].includes(key)) continue;
-      walkChineseDocument(run, file, child, [...path, key]);
-    }
-    return;
-  }
-  if (typeof value !== 'string') return;
-  if (!isTranslatableLocation(path)) return;
-  if (CHINESE_TRANSLATION_MARKER.test(value)) {
-    fail(`${run}/${file}: placeholder translation marker at ${path.join('.')}`);
-    return;
-  }
-  if (looksLikeUntranslatedEnglish(value)) {
-    fail(`${run}/${file}: likely untranslated English text at ${path.join('.')}: "${value.slice(0, 120)}"`);
-  }
-}
-
-function walkTranslationParity(run, file, enValue, zhValue, path = []) {
-  if (Array.isArray(enValue) && Array.isArray(zhValue)) {
-    const length = Math.min(enValue.length, zhValue.length);
-    for (let index = 0; index < length; index += 1) {
-      walkTranslationParity(run, file, enValue[index], zhValue[index], [...path, String(index)]);
-    }
-    return;
-  }
-  if (enValue && zhValue && typeof enValue === 'object' && typeof zhValue === 'object') {
-    for (const key of Object.keys(enValue)) {
-      if (['statement', 'keyQuote', 'url'].includes(key)) continue;
-      walkTranslationParity(run, file, enValue[key], zhValue[key], [...path, key]);
-    }
-    return;
-  }
-  if (typeof enValue !== 'string' || typeof zhValue !== 'string') return;
-  if (!isTranslatableLocation(path)) return;
-  if (enValue.trim() !== zhValue.trim()) return;
-  if (looksLikeCopiedEnglish(zhValue)) {
-    fail(`${run}/${file}: translatable field appears copied from English at ${path.join('.')}: "${zhValue.slice(0, 120)}"`);
   }
 }
 
@@ -300,79 +187,6 @@ function checkLedger(run, ledger) {
 }
 
 // ---------------------------------------------------------------------------
-// English/Chinese sibling parity
-// ---------------------------------------------------------------------------
-
-function parsePair(run, dir, enFile, zhFile) {
-  const enPath = join(dir, enFile);
-  const zhPath = join(dir, zhFile);
-  if (!existsSync(enPath)) return null;
-  if (!existsSync(zhPath)) {
-    fail(`${run}/${zhFile}: required Simplified Chinese localization is missing`);
-    return null;
-  }
-  const enResult = tryReadYaml(enPath);
-  if (!enResult.ok) {
-    fail(`${run}/${enFile}: YAML parse failed: ${enResult.error}`);
-    return null;
-  }
-  const zhResult = tryReadYaml(zhPath);
-  if (!zhResult.ok) {
-    fail(`${run}/${zhFile}: YAML parse failed: ${zhResult.error}`);
-    return null;
-  }
-  return { en: enResult.value, zh: zhResult.value, zhPath };
-}
-
-function checkCardEnumParity(run, zhFile, en, zh) {
-  for (const [field, allowed] of Object.entries(CARD_ENUM_FIELDS)) {
-    if (zh[field] !== en[field]) {
-      fail(`${run}/${zhFile}: ${field} must equal English (translator must preserve enums)`);
-    }
-    if (zh[field] !== undefined && !allowed.includes(zh[field])) {
-      fail(`${run}/${zhFile}: invalid ${field} ${zh[field]}`);
-    }
-  }
-  for (const field of ['figureCount', 'tableCount', 'overallScore']) {
-    if (zh[field] !== en[field]) fail(`${run}/${zhFile}: ${field} must equal English`);
-  }
-}
-
-function checkPair(run, dir, enFile, zhFile) {
-  const parsed = parsePair(run, dir, enFile, zhFile);
-  if (!parsed) return;
-  const { en, zh, zhPath } = parsed;
-
-  checkRenderableData(run, enFile, en);
-  checkRenderableData(run, zhFile, zh);
-
-  if (CHINESE_TRANSLATION_MARKER.test(readFileSync(zhPath, 'utf8'))) {
-    fail(`${run}/${zhFile}: contains placeholder translation marker "中文:" or "中文摘要:"`);
-  }
-  walkChineseDocument(run, zhFile, zh);
-  walkTranslationParity(run, zhFile, en, zh);
-
-  if (zh.schemaVersion !== SCHEMA_VERSION) {
-    fail(`${run}/${zhFile}: expected schemaVersion ${SCHEMA_VERSION}, got ${zh.schemaVersion}`);
-  }
-  if (zh.artifact !== en.artifact) fail(`${run}/${zhFile}: artifact must equal ${en.artifact}`);
-  if (zh.slug !== en.slug) fail(`${run}/${zhFile}: slug must equal ${en.slug}`);
-  if (asDateString(zh.runDate) !== asDateString(en.runDate)) {
-    fail(`${run}/${zhFile}: runDate must equal English version`);
-  }
-  if (Array.isArray(en.tables) && tableIdSignature(en) !== tableIdSignature(zh)) {
-    fail(`${run}/${zhFile}: table IDs must match English`);
-  }
-  if (Array.isArray(en.figures) && figureIdSignature(en) !== figureIdSignature(zh)) {
-    fail(`${run}/${zhFile}: figure IDs must match English`);
-  }
-  if (Array.isArray(en.sections) && Array.isArray(zh.sections) && en.sections.length !== zh.sections.length) {
-    fail(`${run}/${zhFile}: sections count ${zh.sections.length} must equal English ${en.sections.length}`);
-  }
-  if (zhFile === '102-report-card.zh.yaml') checkCardEnumParity(run, zhFile, en, zh);
-}
-
-// ---------------------------------------------------------------------------
 // depth and template-risk checks
 // ---------------------------------------------------------------------------
 
@@ -429,8 +243,12 @@ function checkDetailFloor(run, doc, file) {
 }
 
 function checkAnalysisFloors(run, doc, file) {
-  const isSnapshot = file === '01-company-snapshot.yaml';
-  const floors = { tables: isSnapshot ? 3 : 4, figures: 2, sections: isSnapshot ? 5 : 4 };
+  const spec = ANALYSIS_ARTIFACTS.find((item) => item.file === file);
+  const floors = {
+    tables: spec?.minTables ?? 4,
+    figures: spec?.minFigures ?? 2,
+    sections: spec?.minSections ?? 4,
+  };
   const counts = {
     tables: doc.tables?.length ?? 0,
     figures: doc.figures?.length ?? 0,
@@ -440,11 +258,11 @@ function checkAnalysisFloors(run, doc, file) {
     if (counts[key] < min) fail(`${run}/${file}: thin analysis (${counts[key]} ${key.slice(0, -1)}(s)); expected at least ${min}`);
   }
   checkDetailFloor(run, doc, file);
-  return { isSnapshot, counts };
+  return { floors, counts };
 }
 
-function checkAnalysisTemplateRisks(run, doc, file, isSnapshot, counts) {
-  const hitsFloorExactly = !isSnapshot && counts.tables === 4 && counts.figures === 2 && counts.sections === 4;
+function checkAnalysisTemplateRisks(run, doc, file, floors, counts) {
+  const hitsFloorExactly = counts.tables === floors.tables && counts.figures === floors.figures && counts.sections === floors.sections;
   const sections = doc.sections ?? [];
   const genericTitles = sections.filter((section) => GENERIC_TITLES.has(section?.title)).length;
   const bodies = sections.map((section) => String(section?.body ?? '').trim()).filter(Boolean);
@@ -504,13 +322,13 @@ function checkDepth(run, dir, ledger, report, card) {
   let floorHits = 0;
   let templateRisks = 0;
   for (const [file, doc] of docs) {
-    const { isSnapshot, counts } = checkAnalysisFloors(run, doc, file);
-    const { hitsFloorExactly, templateRisk } = checkAnalysisTemplateRisks(run, doc, file, isSnapshot, counts);
+    const { floors, counts } = checkAnalysisFloors(run, doc, file);
+    const { hitsFloorExactly, templateRisk } = checkAnalysisTemplateRisks(run, doc, file, floors, counts);
     if (hitsFloorExactly) floorHits += 1;
     if (templateRisk) templateRisks += 1;
   }
 
-  if (floorHits >= 5) warn(`${run}: ${floorHits}/7 domain artifacts hit the minimum 4-section/4-table/2-figure floor exactly; investigate floor-targeted generation`);
+  if (floorHits >= 5) warn(`${run}: ${floorHits}/8 analysis artifacts hit their minimum section/table/figure floor exactly; investigate floor-targeted generation`);
   if (templateRisks >= 5) warn(`${run}: ${templateRisks} analysis artifacts show template-risk patterns; report may be schema-valid but not investor-grade`);
 
   checkHighProfileEvidence(run, ledger, card);
@@ -541,9 +359,13 @@ function checkRun(run) {
     return false;
   }
   const { ledger, report, card } = loadCoreArtifacts(run, dir);
+  for (const file of ANALYSIS_FILES) {
+    const doc = loadYaml(join(dir, file));
+    if (doc) checkRenderableData(run, file, doc);
+  }
+  if (report) checkRenderableData(run, '101-report-document.yaml', report);
   if (ledger) checkLedger(run, ledger);
   if (ledger && report && card) checkDepth(run, dir, ledger, report, card);
-  for (const [enFile, zhFile] of REQUIRED_LOCALIZED_PAIRS) checkPair(run, dir, enFile, zhFile);
   return true;
 }
 

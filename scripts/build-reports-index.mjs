@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Build reports/_index.yaml by walking every report folder that has a
-// 102-report-card.yaml plus required Simplified Chinese siblings.
+// complete English report card.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import yaml from 'js-yaml';
@@ -13,7 +13,7 @@ import {
   writeYaml,
 } from './text-utils.mjs';
 
-const REQUIRED_FILES = ['102-report-card.yaml', '101-report-document.zh.yaml', '102-report-card.zh.yaml'];
+const REQUIRED_FILES = ['102-report-card.yaml'];
 const OUTPUT_PATH = join(reportsDir, '_index.yaml');
 const args = new Set(process.argv.slice(2));
 

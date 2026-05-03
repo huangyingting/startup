@@ -33,7 +33,7 @@ Shared YAML rules for all report artifacts.
 
 - Numeric KPI fields are numbers or `null`, not strings.
 - Figure specs are structured YAML objects, not Mermaid, SVG, Markdown, prose, or diagram-language strings.
-- Preserve claim IDs, source IDs, figure IDs, table IDs, URLs, dates, enum values, and numeric values exactly across translations.
+- Preserve claim IDs, source IDs, figure IDs, table IDs, URLs, dates, enum values, and numeric values exactly.
 
 ## Completion check
 

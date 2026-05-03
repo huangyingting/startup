@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Pre-ledger / general readiness audit for analysis artifacts 01-08.
-// Produces deterministic counts and runs each chapter's machine contract.
+// Produces deterministic counts and checks manifest-owned readiness floors.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { collectClaimRefs, repoRoot, tryReadYaml } from './text-utils.mjs';
+import { collectClaimRefs, tryReadYaml } from './text-utils.mjs';
 import { ANALYSIS_ARTIFACTS } from './report-manifest.mjs';
 
 const MIN_LOCAL_SOURCES = 50;
@@ -44,29 +44,8 @@ function loadYamlFile(file, { required = true } = {}) {
   return result.value;
 }
 
-function loadContract(skill) {
-  const path = join(repoRoot, '.github', 'skills', skill, 'contract.yaml');
-  if (!existsSync(path)) return null;
-  const result = tryReadYaml(path);
-  if (!result.ok) {
-    fail(`${skill}/contract.yaml: parse failed: ${result.error}`);
-    return null;
-  }
-  return result.value;
-}
-
 function figureTypeSet(doc) {
   return new Set((doc?.figures ?? []).map((figure) => figure?.type).filter(Boolean));
-}
-
-function textHaystack(doc) {
-  return JSON.stringify({
-    sections: doc?.sections ?? [],
-    tables: doc?.tables ?? [],
-    figures: doc?.figures ?? [],
-    callouts: doc?.callouts ?? [],
-    evidenceGaps: doc?.localEvidence?.evidenceGaps ?? [],
-  }).toLowerCase();
 }
 
 function wordCount(value) {
@@ -116,64 +95,6 @@ function checkDepthFloor(file, doc, floor) {
   }
 }
 
-function normalizeColumn(value) {
-  return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
-}
-
-function tableHasColumns(doc, requiredColumns) {
-  if (!requiredColumns?.length) return true;
-  const required = requiredColumns.map(normalizeColumn);
-  return (doc?.tables ?? []).some((table) => {
-    const columns = (table?.columns ?? []).map(normalizeColumn);
-    return required.every((column) => columns.includes(column));
-  });
-}
-
-function tableSatisfiesAnyColumnSet(doc, requiredColumnsAny) {
-  if (!requiredColumnsAny?.length) return true;
-  return requiredColumnsAny.some((columns) => tableHasColumns(doc, columns));
-}
-
-function reportContractIssue(message) {
-  if (args.preLedger || args.strict) fail(message);
-  else warn(message);
-}
-
-function checkContract(file, doc, contract, types) {
-  if (!contract) return;
-  if (contract.artifact && contract.artifact !== doc.artifact) {
-    reportContractIssue(`${file}: skill contract artifact ${contract.artifact} does not match document artifact ${doc.artifact}`);
-  }
-  if (contract.chapter && contract.chapter !== doc.chapter?.number) {
-    reportContractIssue(`${file}: skill contract chapter ${contract.chapter} does not match document chapter ${doc.chapter?.number}`);
-  }
-  const haystack = textHaystack(doc);
-  for (const sectionReq of contract.requiredSections ?? []) {
-    if (!sectionRequirementSatisfied(haystack, sectionReq.keywordsAny ?? [])) {
-      reportContractIssue(`${file}: required section concept not satisfied (${sectionReq.key ?? sectionReq.purpose ?? 'unnamed'}); expected one of: ${JSON.stringify(sectionReq.keywordsAny ?? [])}`);
-    }
-  }
-  for (const tableReq of contract.requiredTables ?? []) {
-    if (!tableSatisfiesAnyColumnSet(doc, tableReq.requiredColumnsAny)) {
-      reportContractIssue(`${file}: required table contract not satisfied (${tableReq.key ?? tableReq.purpose ?? 'unnamed'}); expected one of column sets: ${JSON.stringify(tableReq.requiredColumnsAny ?? [])}`);
-    }
-  }
-  for (const figureReq of contract.requiredFigures ?? []) {
-    const allowed = figureReq.allowedTypes ?? [];
-    if (allowed.length && !allowed.some((type) => types.has(type))) {
-      reportContractIssue(`${file}: required figure contract not satisfied (${figureReq.key ?? figureReq.purpose ?? 'unnamed'}); expected one of: ${allowed.join(', ')}`);
-    }
-  }
-}
-
-function sectionRequirementSatisfied(haystack, alternatives) {
-  if (!alternatives.length) return true;
-  return alternatives.some((alternative) => {
-    const keywords = Array.isArray(alternative) ? alternative : [alternative];
-    return keywords.every((keyword) => haystack.includes(String(keyword).toLowerCase()));
-  });
-}
-
 function checkPreLedgerEvidence(file, doc, counts) {
   if (!doc.localEvidence) {
     fail(`${file}: missing localEvidence before ledger consolidation`);
@@ -189,21 +110,12 @@ function checkPreLedgerEvidence(file, doc, counts) {
   }
 }
 
-function checkChineseSibling(zhFile, en, zh) {
-  if (zh.artifact !== en.artifact) fail(`${zhFile}: artifact does not match English`);
-  if (zh.slug !== en.slug) fail(`${zhFile}: slug does not match English`);
-  if (zh.company?.name !== en.company?.name) fail(`${zhFile}: company.name does not match English`);
-}
-
 const totals = { sources: 0, claims: 0, gaps: 0 };
 const rows = [];
 
 for (const spec of ANALYSIS_ARTIFACTS) {
   const doc = loadYamlFile(spec.file);
   if (!doc) continue;
-  const zhFile = spec.zhFile;
-  const zh = loadYamlFile(zhFile, { required: false });
-  const contract = loadContract(spec.skill);
 
   const counts = {
     sections: doc.sections?.length ?? 0,
@@ -228,9 +140,7 @@ for (const spec of ANALYSIS_ARTIFACTS) {
     warn(`${spec.file}: no preferred figure type found (${spec.requiredFigureTypes.join(' or ')})`);
   }
 
-  checkContract(spec.file, doc, contract, types);
   if (args.preLedger) checkPreLedgerEvidence(spec.file, doc, counts);
-  if (zh) checkChineseSibling(zhFile, doc, zh);
 }
 
 if (args.preLedger) {

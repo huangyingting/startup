@@ -1,29 +1,24 @@
 ---
 import '../styles/tokens.css';
-import type { Lang } from '../lib/i18n';
 import { t } from '../lib/i18n';
 
 interface Props {
   title: string;
   description?: string;
-  lang?: Lang;
-  alternateHref?: string;
 }
-const { title, description = t('deck', 'en'), lang = 'en', alternateHref } = Astro.props;
+const { title, description = t('deck') } = Astro.props;
 const base = import.meta.env.BASE_URL;
-const homeHref = lang === 'zh' ? `${base}zh/` : base;
-const archiveHref = lang === 'zh' ? `${base}zh/archive/` : `${base}archive/`;
-const sectorsHref = lang === 'zh' ? `${base}zh/sectors/` : `${base}sectors/`;
-const topRatedHref = lang === 'zh' ? `${base}zh/top-rated/` : `${base}top-rated/`;
-const searchHref = lang === 'zh' ? `${base}zh/search/` : `${base}search/`;
-const rssHref = lang === 'zh' ? `${base}zh/rss.xml` : `${base}rss.xml`;
-const altHref = alternateHref ?? (lang === 'zh' ? base : `${base}zh/`);
-const altLabel = lang === 'zh' ? 'EN' : '中文';
-const brandLabel = t('title', lang);
-const footerDisclaimer = lang === 'zh' ? '由 Agent 生成的创投研究。做出投资决策前请自行验证来源。' : 'Agent-generated venture research. Validate sources before making investment decisions.';
+const homeHref = base;
+const archiveHref = `${base}archive/`;
+const sectorsHref = `${base}sectors/`;
+const topRatedHref = `${base}top-rated/`;
+const searchHref = `${base}search/`;
+const rssHref = `${base}rss.xml`;
+const brandLabel = t('title');
+const footerDisclaimer = 'Agent-generated venture research. Validate sources before making investment decisions.';
 ---
 <!doctype html>
-<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -45,15 +40,14 @@ const footerDisclaimer = lang === 'zh' ? '由 Agent 生成的创投研究。做�
           <span>{brandLabel}</span>
         </a>
         <nav class="bz-utility__nav" aria-label="Sections">
-          <a href={homeHref}>{t('latest', lang)}</a>
-          <a href={archiveHref}>{t('archive', lang)}</a>
-          <a href={sectorsHref}>{t('sectors', lang)}</a>
-          <a href={topRatedHref}>{t('topRated', lang)}</a>
-          <a href={searchHref}>{t('search', lang)}</a>
+          <a href={homeHref}>{t('latest')}</a>
+          <a href={archiveHref}>{t('archive')}</a>
+          <a href={sectorsHref}>{t('sectors')}</a>
+          <a href={topRatedHref}>{t('topRated')}</a>
+          <a href={searchHref}>{t('search')}</a>
         </nav>
         <div class="bz-utility__right">
           <a class="bz-utility__link bz-mono" href={rssHref} aria-label="RSS">RSS</a>
-          <a class="bz-lang-toggle bz-mono" href={altHref}>{altLabel}</a>
         </div>
       </div>
     </header>
@@ -63,7 +57,7 @@ const footerDisclaimer = lang === 'zh' ? '由 Agent 生成的创投研究。做�
         <div class="bz-footer__left">
           <span class="bz-footer__brand">{brandLabel}</span>
           <span class="bz-footer__dot" aria-hidden="true"></span>
-          <span class="bz-footer__tag">{t('deck', lang)}</span>
+          <span class="bz-footer__tag">{t('deck')}</span>
         </div>
         <span class="bz-footer__copyright bz-mono">{footerDisclaimer}</span>
       </div>
@@ -166,16 +160,6 @@ const footerDisclaimer = lang === 'zh' ? '由 Agent 生成的创投研究。做�
         line-height: 1;
       }
       .bz-utility__link:hover { color: var(--ink-page); }
-      .bz-lang-toggle {
-        text-decoration: none;
-        color: var(--ink-page);
-        border: var(--report-rule);
-        background: var(--paper);
-        padding: var(--space-2) var(--space-3);
-        line-height: 1;
-      }
-      .bz-lang-toggle:hover { color: var(--claret); }
-
       .bz-footer {
         background: var(--ink-black);
         color: var(--paper);

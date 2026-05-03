@@ -1,6 +1,6 @@
 ---
 name: startup-product
-description: "Use when: generating 05-product-technology.yaml and 05-product-technology.zh.yaml. Keywords: product, platform, modules, architecture, AI, integrations, roadmap, security, compliance, docs, sitemap."
+description: "Use when: generating 05-product-technology.yaml. Keywords: product, platform, modules, architecture, AI, integrations, roadmap, security, compliance, docs, sitemap."
 user-invocable: false
 ---
 
@@ -13,12 +13,10 @@ Fifth analysis stage. This skill owns the product and technology chapter. It mus
 - `01-company-snapshot.yaml`
 - `02-market-macro.yaml`, `03-competitive-benchmarking.yaml`, or `04-financial-unit-economics.yaml` only when positioning, feature, pricing, or monetization context matters.
 - `.github/references/analysis-skill-conventions.md`
-- `.github/references/zh-translation.md`
 
 ## Outputs
 
 - `05-product-technology.yaml`
-- `05-product-technology.zh.yaml`
 
 ## Chapter purpose
 
@@ -76,8 +74,7 @@ Infer the product/operating dependency.
 
 ## Completion check
 
-- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
-- Domain reflection is explicit: identify the product/technology or operating-model archetype(s), add supportable domain-specific architecture/maturity figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
+- Domain reflection is explicit: identify the product/technology or operating-model archetype(s), add supportable domain-specific architecture/maturity figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Each module row states maturity/status, evidence URL, buyer/user, differentiation, and diligence gap.
 - Unsupported architecture, certifications, integrations, performance, safety, or roadmap claims become gaps.
 - Figures use structured YAML fields, not Mermaid or prose diagrams.

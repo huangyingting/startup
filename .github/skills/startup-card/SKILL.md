@@ -1,26 +1,23 @@
 ---
 name: startup-card
-description: "Use when: generating 102-report-card.yaml and 102-report-card.zh.yaml from 101-report-document.yaml and 100-evidence-ledger.yaml. Keywords: report card, score, recommendation, key metrics, website index card, Simplified Chinese translation."
+description: "Use when: generating 102-report-card.yaml from 101-report-document.yaml and 100-evidence-ledger.yaml. Keywords: report card, score, recommendation, key metrics, website index card."
 user-invocable: false
 ---
 
 # Startup Card
 
-Final card stage. This skill produces both the English `102-report-card.yaml` and the Simplified Chinese `102-report-card.zh.yaml` in a single pass: build the English card, then translate it into Simplified Chinese while preserving structure exactly.
+Final card stage. This skill produces the English `102-report-card.yaml` from the report document and evidence ledger.
 
 ## Read first
 
 - `101-report-document.yaml`
-- `101-report-document.zh.yaml`
 - `100-evidence-ledger.yaml`
 - Completed `01`–`08` artifacts for sanity checks
 - `schemaPath`
-- `.github/references/zh-translation.md`
 
 ## Output
 
 - `102-report-card.yaml`
-- `102-report-card.zh.yaml`
 
 ## Do not
 
@@ -46,36 +43,3 @@ Final card stage. This skill produces both the English `102-report-card.yaml` an
 - If any key metric is `null`, stale, company-claimed only, or valuation-critical, surface that limitation in `unresolvedGaps[]` or the headline/risk framing.
 - Output summary includes path, recommendation, score, confidence, risk rating, valuation stance, figure count, and table count.
 
-## Simplified Chinese translation
-
-After `102-report-card.yaml` is complete, translate it into `102-report-card.zh.yaml` while preserving structure exactly.
-
-### Translate
-
-- `company.sector`, `company.stage`, `company.headquarters`, `company.shortDescription`.
-- `title`, `subtitle`, `headline`.
-- Every item in `topStrengths[]`, `topRisks[]`, and `unresolvedGaps[]`.
-
-### Preserve exactly
-
-- Schema keys, list order, nested object shape.
-- IDs, URLs, dates, numeric values, booleans, nulls.
-- Enum values: `recommendation`, `confidence`, `riskRating`, `valuationStance`.
-- `reportFiles.*`, every `keyMetrics.*` key and value.
-- Company, product, person, and investor proper names.
-
-### Do not (Chinese stage)
-
-- Do not search, add facts, or change claims.
-- Do not translate enum values, metric keys, IDs, or report file paths.
-
-### Completion check (Chinese)
-
-- Residual-English sweep on translated fields.
-- Structural parity with English `102`.
-- Numeric metrics, enums, and `reportFiles.*` byte-identical.
-- YAML parses and starts with `schemaVersion: startup-diligence-report-v2`.
-
-### Handoff
-
-Record output paths and `artifactsTranslated: [102-report-card]`.

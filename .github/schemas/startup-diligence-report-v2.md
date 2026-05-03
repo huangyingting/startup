@@ -2,7 +2,7 @@
 
 Canonical schema and rendering contract for `startup-diligence-report-v2`.
 
-The schema supports investor-grade startup diligence reports with claim-level evidence traceability and bilingual English / Simplified Chinese rendering.
+The schema supports investor-grade English startup diligence reports with claim-level evidence traceability.
 
 Machine-readable workflow and rendering registries live in:
 
@@ -14,7 +14,7 @@ When this Markdown contract and a machine-readable registry disagree, update the
 
 ## Required artifacts
 
-English artifacts:
+Required artifacts:
 
 ```text
 01-company-snapshot.yaml
@@ -29,28 +29,6 @@ English artifacts:
 101-report-document.yaml
 102-report-card.yaml
 ```
-
-Required Simplified Chinese artifacts:
-
-```text
-01-company-snapshot.zh.yaml
-02-market-macro.zh.yaml
-03-competitive-benchmarking.zh.yaml
-04-financial-unit-economics.zh.yaml
-05-product-technology.zh.yaml
-06-customer-retention.zh.yaml
-07-risk-regulatory.zh.yaml
-08-investment-valuation.zh.yaml
-101-report-document.zh.yaml
-102-report-card.zh.yaml
-```
-
-Notes:
-
-- `100-evidence-ledger.yaml` has no Chinese sibling.
-- Each analysis skill writes its English artifact and `.zh.yaml` sibling in one stage.
-- `101-report-document.zh.yaml` is assembled by `startup-report` (Simplified Chinese stage) from `101` plus `01`–`08.zh.yaml`.
-- `102-report-card.zh.yaml` is translated by `startup-card` (Simplified Chinese stage) from `102-report-card.yaml`.
 
 ## Execution contract
 
@@ -76,9 +54,7 @@ Notes:
 | `08-investment-valuation.yaml` | `investment-valuation` | `startup-valuation` | 8 — Investment & Valuation |
 | `100-evidence-ledger.yaml` | `evidence-ledger` | `startup-ledger` / consolidation script | n/a |
 | `101-report-document.yaml` | `report-document` | `startup-report` | final rendered report |
-| `101-report-document.zh.yaml` | `report-document` | `startup-report` | Simplified Chinese report |
 | `102-report-card.yaml` | `report-card` | `startup-card` | website index card |
-| `102-report-card.zh.yaml` | `report-card` | `startup-card` | Simplified Chinese index card |
 
 ## Shared conventions
 
@@ -509,7 +485,7 @@ A complete report run must satisfy all checks below.
 
 ## File presence and identity
 
-- All required English and Simplified Chinese artifacts exist.
+- All required artifacts exist.
 - Each file parses as YAML.
 - Each file's `artifact` value matches the artifact mapping.
 - `schemaVersion` is `startup-diligence-report-v2` everywhere.
@@ -541,10 +517,3 @@ A complete report run must satisfy all checks below.
 - `figureCount` and `tableCount` equal counts in `101-report-document.yaml`.
 - Enum fields use exactly one allowed token.
 
-## Simplified Chinese artifacts
-
-- Each `.zh.yaml` preserves English `schemaVersion`, `artifact`, `slug`, `runDate`, IDs, enum values, numeric values, and array shape.
-- Only prose is translated.
-- `claim.statement` and `source.keyQuote` are preserved.
-- Residual-English sweep passes for translatable fields.
-- A report folder is complete only when all required English and Chinese artifacts exist.

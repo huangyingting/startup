@@ -19,7 +19,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - This repo generates startup diligence reports as structured YAML and renders them with an Astro static site.
 - Reports live in `reports/<YYYYMMDDHHmmss>-<company-slug>/` and are indexed by `reports/_index.yaml`.
 - The canonical report schema is `.github/schemas/startup-diligence-report-v2.md`.
-- English and Simplified Chinese artifacts are both required for complete reports.
+- Reports are generated as English YAML artifacts.
 
 ## Canonical machine sources
 
@@ -33,9 +33,9 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 - `.github/skills/startup-diligence/SKILL.md` — single workflow entry point that sequences chapter and integration skills end-to-end.
 - `.github/skills/startup-*/SKILL.md` — per-chapter and integration skills (snapshot, market, competition, financials, product, customers, risks, valuation, ledger, report, card).
-- `.github/skills/startup-{snapshot,market,competition,financials,product,customers,risks,valuation}/contract.yaml` — machine-readable per-chapter validation contracts for required section concepts, tables, and figures (consumed by `scripts/audit-report-readiness.mjs`). Integration skills (`startup-diligence`, `startup-ledger`, `startup-report`, `startup-card`) do not have contracts; their checks live in `scripts/check-reports-content.mjs` and `website/scripts/check-reports.mjs`. Numeric depth floors live in `scripts/report-manifest.mjs`.
+- `.github/skills/startup-{snapshot,market,competition,financials,product,customers,risks,valuation}/contract.yaml` — machine-readable per-chapter semantic validation contracts for required section concepts, table column alternatives, and figure type alternatives (consumed by `scripts/audit-report-readiness.mjs`). Integration skills (`startup-diligence`, `startup-ledger`, `startup-report`, `startup-card`) do not have contracts; their checks live in `scripts/check-reports-content.mjs` and `website/scripts/check-reports.mjs`. Artifact identity, chapter order, loader keys, preferred figure types, and numeric depth floors live in `scripts/report-manifest.mjs`.
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
-- `.github/references/` — shared rules: YAML syntax, evidence ledger, analysis conventions, Simplified Chinese translation.
+- `.github/references/` — shared rules: YAML syntax, evidence ledger, and analysis conventions.
 - `.github/schemas/startup-diligence-report-v2.md` — canonical schema and rendering contract.
 - `scripts/report-manifest.mjs` — central manifest of artifacts, chapter order, loader keys, and depth floors; consumed by validation, consolidation, audit, and the website loader.
 - `scripts/figure-registry.mjs` — central native figure type/data contract; consumed by validators and the renderer.
@@ -61,7 +61,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 ## Generating or updating reports
 
-Producing a complete report — including all `01`–`08` analysis artifacts, the evidence ledger, the report document, the report card, and their Simplified Chinese siblings — is governed by the [`startup-diligence`](.github/skills/startup-diligence/SKILL.md) skill. That skill defines:
+Producing a complete report — including all `01`–`08` analysis artifacts, the evidence ledger, the report document, and the report card — is governed by the [`startup-diligence`](.github/skills/startup-diligence/SKILL.md) skill. That skill defines:
 
 - the invocation contract;
 - required artifact set;
@@ -106,4 +106,4 @@ When adding a new evidence topic, source type, or other ledger enum:
 - Work inside `website/` for frontend changes.
 - Astro uses static output and TypeScript strict mode.
 - Reports are loaded from `../reports/` via `website/src/content/reports-loader.ts`, which derives stage files from `scripts/report-manifest.mjs`.
-- English and Simplified Chinese report artifacts are both required for complete rendering.
+- English report artifacts are required for complete rendering.

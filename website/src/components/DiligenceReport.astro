@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import type { Lang } from '../lib/i18n';
 import ClaimRefs from './ClaimRefs.astro';
 import ReportBlock from './ReportBlock.astro';
 import { displayLabel } from '../lib/display';
@@ -9,10 +8,9 @@ interface Props {
   entry: CollectionEntry<'reports'>;
   data: any;
   stages: any;
-  lang?: Lang;
 }
 
-const { data, stages, lang = 'en' } = Astro.props;
+const { data, stages } = Astro.props;
 
 const doc = stages.reportDocument ?? null;
 const ledger = stages.evidenceLedger ?? {};
@@ -21,29 +19,18 @@ const sources: any[] = Array.isArray(ledger.sources) ? ledger.sources : [];
 const figures = new Map<string, any>((doc?.figures ?? []).map((figure: any) => [figure.id, figure]));
 const tables = new Map<string, any>((doc?.tables ?? []).map((table: any) => [table.id, table]));
 
-const labels = lang === 'zh'
-  ? {
-      recommendation: '建议', confidence: '置信度', riskRating: '风险评级', valuationStance: '估值判断',
-      score: '评分', sources: '来源', claims: '声明', figures: '图表', tables: '表格',
-      coverMetrics: '封面指标', startupIntro: '创业公司基本介绍',
-      founded: '创立时间', founders: '创始人', foundingLocation: '创立地点', headquarters: '总部',
-      product: '产品', customers: '客户', businessModel: '商业模式', stage: '阶段', fundingStatus: '融资状态',
-      strengths: '核心亮点', risks: '核心风险', gaps: '未解问题',
-      contents: '目录', appendix: '附录', disclaimer: '免责声明',
-      evidence: '证据索引', showRefs: '显示引用', hideRefs: '隐藏引用',
-    }
-  : {
-      recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating',
-      valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims',
-      figures: 'figures', tables: 'tables',
-      coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction',
-      founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location',
-      headquarters: 'Headquarters', product: 'Product', customers: 'Customers',
-      businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status',
-      strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps',
-      contents: 'Contents', appendix: 'Appendix', disclaimer: 'Disclaimer',
-      evidence: 'Evidence index', showRefs: 'Show refs', hideRefs: 'Hide refs',
-    };
+const labels = {
+  recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating',
+  valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims',
+  figures: 'figures', tables: 'tables',
+  coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction',
+  founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location',
+  headquarters: 'Headquarters', product: 'Product', customers: 'Customers',
+  businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status',
+  strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps',
+  contents: 'Contents', appendix: 'Appendix', disclaimer: 'Disclaimer',
+  evidence: 'Evidence index', showRefs: 'Show refs', hideRefs: 'Hide refs',
+};
 
 function arr<T = unknown>(value: T[] | undefined | null): T[] {
   return Array.isArray(value) ? value : [];
