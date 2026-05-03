@@ -91,7 +91,7 @@ After all analysis chapters pass:
 2. Write `report-meta.yaml` in the report folder with the judgment fields the analysis chapters do not encode (recommendation, confidence, risk rating, valuation stance, cover metrics, startup introduction, top strengths/risks, unresolved gaps, overall score, headline, summary-card company facts). See `references/report-meta-schema.md` for the exact shape.
 3. Assemble the consolidated artifacts:
    `node .github/skills/startup-research/scripts/assemble.mjs <reportFolder>`
-   This deterministically stitches `01-08`-chapter YAMLs + `90-evidence.yaml` + `report-meta.yaml` into `91-full-report.yaml` and `92-summary-card.yaml`. Re-run after editing any chapter or `report-meta.yaml`.
+   This deterministically stitches the analysis chapter YAMLs + `evidence.yaml` + `report-meta.yaml` into `full-report.yaml` and `summary-card.yaml`. Re-run after editing any chapter or `report-meta.yaml`.
 4. Run the cross-chapter consistency check:
    `node .github/skills/startup-research/scripts/cross-chapter.mjs <reportFolder>`
    Resolve any drift it reports (mismatched valuations, founding dates, customer counts, ARR figures referenced from multiple chapters) before validating.
@@ -102,7 +102,7 @@ After all analysis chapters pass:
 
 ## Hard rules
 
-- Do not hand-write `90-evidence.yaml`, `91-full-report.yaml`, or `92-summary-card.yaml`; let the scripts assemble them. Edit the source chapter YAMLs or `report-meta.yaml` instead.
+- Do not hand-write `evidence.yaml`, `full-report.yaml`, or `summary-card.yaml`; let the scripts assemble them. Edit the source chapter YAMLs or `report-meta.yaml` instead.
 - Do not edit another chapter's artifact while working on the current chapter.
 - Do not invent facts, metrics, customers, funding, valuation, or dates.
 - Use structured YAML figures only; no Mermaid/SVG/prose diagrams.

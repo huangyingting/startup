@@ -3,15 +3,18 @@
 // The CLI intentionally reads only chapters.yaml through utils so the
 // workflow has one machine-readable source of truth for chapter order, gates,
 // output files, and final artifact names.
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import yaml from 'js-yaml';
 import { loadWorkflowConfig, workflowConfigPath } from './utils.mjs';
 
 function usage() {
-  console.error(`Usage: node .github/skills/startup-research/scripts/chapter.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--include-workflow]
+  console.error(`Usage: node .github/skills/startup-research/scripts/chapter.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--include-workflow] [--include-context --report-folder <path>]
 
 Examples:
     node .github/skills/startup-research/scripts/chapter.mjs --list --format markdown
     node .github/skills/startup-research/scripts/chapter.mjs --order 1 --format json
-    node .github/skills/startup-research/scripts/chapter.mjs --order 5 --format markdown`);
+    node .github/skills/startup-research/scripts/chapter.mjs --order 4 --include-context --report-folder reports/20260503145959-openai`);
   process.exit(1);
 }
 
@@ -24,6 +27,8 @@ function parseArgs(argv) {
     all: false,
     format: 'json',
     includeWorkflow: false,
+    includeContext: false,
+    reportFolder: null,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -36,6 +41,8 @@ function parseArgs(argv) {
     else if (arg === '--all') args.all = true;
     else if (arg === '--format') args.format = argv[++i] ?? 'json';
     else if (arg === '--include-workflow') args.includeWorkflow = true;
+    else if (arg === '--include-context') args.includeContext = true;
+    else if (arg === '--report-folder') args.reportFolder = argv[++i] ?? null;
     else usage();
   }
 
@@ -66,6 +73,42 @@ function compactChapter(chapter) {
     evidenceStrategy: chapter.evidenceStrategy ?? [],
     qualityBar: chapter.qualityBar ?? [],
     gate: chapter.gate,
+  };
+}
+
+function compactContextChapter(reportFolder, contextFile) {
+  const path = join(reportFolder, contextFile);
+  if (!existsSync(path)) {
+    return { file: contextFile, status: 'missing', sections: [], tables: [], figures: [] };
+  }
+  let doc;
+  try {
+    doc = yaml.load(readFileSync(path, 'utf8')) ?? {};
+  } catch (err) {
+    return { file: contextFile, status: 'parseError', error: String(err.message || err), sections: [], tables: [], figures: [] };
+  }
+  return {
+    file: contextFile,
+    status: 'loaded',
+    artifact: doc.artifact ?? null,
+    title: doc.chapter?.title ?? null,
+    summary: doc.chapter?.summary ?? null,
+    sections: (doc.sections ?? []).map((section) => ({
+      id: section.id,
+      title: section.title,
+      claimRefs: section.claimRefs ?? [],
+    })),
+    tables: (doc.tables ?? []).map((table) => ({
+      id: table.id,
+      title: table.title,
+      claimRefs: table.claimRefs ?? [],
+    })),
+    figures: (doc.figures ?? []).map((figure) => ({
+      id: figure.id,
+      title: figure.title,
+      type: figure.type,
+      claimRefs: figure.claimRefs ?? [],
+    })),
   };
 }
 
@@ -221,6 +264,13 @@ function main() {
     process.exit(1);
   }
   const packet = buildPacket(config, chapter);
+  if (args.includeContext) {
+    if (!args.reportFolder) {
+      console.error('[chapter] --include-context requires --report-folder <path>');
+      process.exit(1);
+    }
+    packet.contextChapters = (chapter.optionalContext ?? []).map((file) => compactContextChapter(args.reportFolder, file));
+  }
   const output = args.includeWorkflow ? packet : packet.chapter;
   if (args.format === 'json') printJson(output);
   else printPacketMarkdown(packet);

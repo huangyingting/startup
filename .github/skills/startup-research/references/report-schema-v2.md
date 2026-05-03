@@ -97,7 +97,7 @@ localEvidence:
 
 ## Evidence artifact schema
 
-Applies to `90-evidence.yaml`.
+Applies to `evidence.yaml`.
 
 ```yaml
 schemaVersion: report-v2
@@ -122,7 +122,7 @@ evidenceGaps: [evidenceGap]
 
 ## Full report schema
 
-Applies to `91-full-report.yaml`.
+Applies to `full-report.yaml`.
 
 ```yaml
 schemaVersion: report-v2
@@ -184,7 +184,7 @@ disclaimer: string                  # Required; non-empty.
 
 ## Summary card schema
 
-Applies to `92-summary-card.yaml`.
+Applies to `summary-card.yaml`.
 
 ```yaml
 schemaVersion: report-v2
@@ -204,8 +204,8 @@ overallScore: number              # 0–10 ordinal score, one decimal place (e.g
 sourceStats:
   sourcesRetained: number
   claimsReviewed: number          # Must not exceed evidence ledger claims count.
-figureCount: number               # Must equal the number of figures in 91-full-report.yaml.
-tableCount: number                # Must equal the number of tables in 91-full-report.yaml.
+figureCount: number               # Must equal the number of figures in full-report.yaml.
+tableCount: number                # Must equal the number of tables in full-report.yaml.
 keyMetrics:
   valuationUsdM: number | null
   revenueRunRateUsdM: number | null
@@ -220,8 +220,8 @@ topStrengths: [string]
 topRisks: [string]
 unresolvedGaps: [string]
 reportFiles:
-  fullReport: 91-full-report.yaml   # Literal value; do not rename.
-  summaryCard: 92-summary-card.yaml # Literal value; do not rename.
+  fullReport: full-report.yaml   # Literal value; do not rename.
+  summaryCard: summary-card.yaml # Literal value; do not rename.
 ```
 
 ## Reusable objects

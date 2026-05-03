@@ -13,14 +13,14 @@ import {
   writeYaml,
 } from './utils.mjs';
 
-const REQUIRED_FILES = ['92-summary-card.yaml'];
+const REQUIRED_FILES = ['summary-card.yaml'];
 const OUTPUT_PATH = join(reportsDir, '_index.yaml');
 const args = new Set(process.argv.slice(2));
 
 function completeCardPath(runId) {
   const dir = join(reportsDir, runId);
   return REQUIRED_FILES.every((file) => existsSync(join(dir, file)))
-    ? join(dir, '92-summary-card.yaml')
+    ? join(dir, 'summary-card.yaml')
     : null;
 }
 
@@ -47,7 +47,7 @@ function indexEntry(runId, card) {
     tableCount: card.tableCount ?? null,
     valuationUsdM: metrics.valuationUsdM ?? null,
     revenueRunRateUsdM: metrics.revenueRunRateUsdM ?? null,
-    path: `reports/${runId}/92-summary-card.yaml`,
+    path: `reports/${runId}/summary-card.yaml`,
   };
 }
 

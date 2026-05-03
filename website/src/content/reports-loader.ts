@@ -211,12 +211,12 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
 // ---------------------------------------------------------------------------
 
 function isPublishableRun(folder: string): boolean {
-  return existsSync(join(folder, '92-summary-card.yaml'));
+  return existsSync(join(folder, 'summary-card.yaml'));
 }
 
 function reportCardPath(folder: string): string | null {
   if (!isPublishableRun(folder)) return null;
-  return join(folder, '92-summary-card.yaml');
+  return join(folder, 'summary-card.yaml');
 }
 
 function readStageYaml(folder: string, basename: string): unknown | null {
@@ -261,8 +261,8 @@ export function loadReportCard(runId: string): ReportCardData | null {
 export function loadStageFiles(runId: string): Record<string, unknown> {
   const folder = join(REPORTS_DIR, runId);
   const stages: Record<string, unknown> = {
-    evidence: readStageYaml(folder, '90-evidence'),
-    fullReport: readStageYaml(folder, '91-full-report'),
+    evidence: readStageYaml(folder, 'evidence'),
+    fullReport: readStageYaml(folder, 'full-report'),
     summaryCard: loadReportCard(runId),
   };
   for (const artifact of ANALYSIS_STAGE_FILES) {

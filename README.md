@@ -71,9 +71,9 @@ A complete report run contains:
 06-customers.yaml
 07-risks.yaml
 08-valuation.yaml
-90-evidence.yaml
-91-full-report.yaml
-92-summary-card.yaml
+evidence.yaml
+full-report.yaml
+summary-card.yaml
 ```
 
 After generation, run:

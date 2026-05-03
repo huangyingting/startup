@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Consolidate localEvidence from analysis artifacts 01-08 into a single
-// 90-evidence.yaml, deduplicating sources by canonical URL and claims
+// evidence.yaml, deduplicating sources by canonical URL and claims
 // by statement+topic+sourceRefs. Rewrites claimRefs in-place across English
 // analysis artifacts.
 import { existsSync } from 'node:fs';
