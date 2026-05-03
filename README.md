@@ -158,5 +158,7 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `.github/skills/startup-research/scripts/new.mjs` — duplicate-risk check plus report folder creation.
 - `.github/skills/startup-research/scripts/ledger.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
 - `.github/skills/startup-research/scripts/gate.mjs` — chapter-scoped evidence, depth, table, and figure readiness check for `01`–`08` artifacts.
+- `website/src/lib/figures.mjs` — website-owned figure rendering and validation contract.
+- `website/scripts/utils.mjs` — website-owned report validation helpers.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure contracts, refs, and card/report consistency).

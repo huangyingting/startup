@@ -25,7 +25,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 
 - `.github/skills/startup-research/SKILL.md` is the single startup workflow skill and is canonical for the end-to-end workflow, chapter iteration loop, execution order, concurrency model, synchronization points, finalization, and report-run gates.
 - `.github/skills/startup-research/references/chapters.yaml` is canonical for required artifact set, artifact mapping, chapter order/numbering, loader keys, chapter-specific semantic requirements, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, and completion gates.
-- `.github/skills/startup-research/scripts/figures.mjs` is canonical for supported native figure types and their data contracts.
+- `.github/skills/startup-research/scripts/figures.mjs` is canonical for startup-research skill figure validation; `website/src/lib/figures.mjs` is the website mirror used by rendering and website validation.
 - `.github/skills/startup-research/references/report-schema-v2.md` is canonical for report/card enums, full-report block/callout types, analysis artifact callout types, and evidence field vocabulary.
 - For workflow-process changes, update `startup-research` first. For artifact/chapter changes, update `.github/skills/startup-research/references/chapters.yaml` first; validators, loaders, and scripts consume that config. For figure type or rendering-contract changes, update the figure registry first, then sync startup-research references and chapter config. For schema vocabulary, update `.github/skills/startup-research/references/report-schema-v2.md` first.
 
@@ -36,10 +36,11 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `.github/skills/fetch-url/` — required skill for direct URL/link/page fetches.
 - `.github/skills/startup-research/references/` — private startup-research YAML syntax, chapter config, and report schema references.
 - `.github/skills/startup-research/references/report-schema-v2.md` — canonical report schema and rendering contract.
-- `.github/skills/startup-research/scripts/figures.mjs` — central native figure type/data contract; consumed by validators and the renderer.
-- `.github/skills/startup-research/scripts/` — report preparation, index, evidence consolidation, figure contracts, workflow config validation, and chapter readiness checks.
+- `.github/skills/startup-research/scripts/figures.mjs` — startup-research skill figure type/data contract.
+- `website/src/lib/figures.mjs` — website figure type/data contract used by the renderer and website report validator.
+- `.github/skills/startup-research/scripts/` — skill-owned report preparation, index, evidence consolidation, figure contracts, workflow config validation, and chapter readiness checks.
 - `.github/skills/fetch-url/scripts/` — direct URL fetch helper script used by the `fetch-url` skill.
-- `website/` — Astro renderer, content loader, UI components, and website validation.
+- `website/` — website-owned Astro renderer, content loader, UI components, website figure contracts, and website validation.
 
 ## Setup and validation commands
 
@@ -81,13 +82,13 @@ When adding a new analysis chapter or changing chapter order:
 When adding a required table, figure, metric, or diligence question inside an existing chapter:
 
 1. Update that chapter entry in `.github/skills/startup-research/references/chapters.yaml` with the required content, table, figure, metric, source, or diligence requirement.
-2. Keep table column requirements schema-compatible and figure types limited to `.github/skills/startup-research/scripts/figures.mjs`.
+2. Keep table column requirements schema-compatible and figure types limited to both `.github/skills/startup-research/scripts/figures.mjs` and `website/src/lib/figures.mjs`.
 3. Run the chapter readiness check for affected draft artifacts and then `npm run validate` for final artifacts.
 
 When adding a new native figure/chart type:
 
 1. Add the type, required data fields, allowed populated fields, and data-shape constraints to `.github/skills/startup-research/scripts/figures.mjs`.
-2. Implement or route the renderer in `website/src/components/FigureRenderer.astro`.
+2. Mirror the figure contract in `website/src/lib/figures.mjs` and implement or route the renderer in `website/src/components/FigureRenderer.astro`.
 3. Reference the type from the relevant chapter entry in `.github/skills/startup-research/references/chapters.yaml` only after the renderer and validator support it.
 4. Rebuild `reports/_index.yaml` and run `npm run validate`.
 
