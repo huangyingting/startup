@@ -83,7 +83,7 @@ Apply the shared research tool usage rules. Test thesis, anti-thesis, comps, and
 
 ## Domain-adaptive additions
 
-Select the valuation method from the business model and stage.
+Select the valuation method from the business model and stage. Selected additions should become visible scenario, comparable, sensitivity, exit-readiness, or financing-structure outputs, not just background reasoning.
 
 - If the company has recurring or visible revenue, use revenue, gross margin, growth, retention, cash efficiency, and comparable multiples.
 - If it is pre-revenue or milestone-driven, use milestone-based valuation, technical/regulatory de-risking, capital needs, and probability-weighted paths.

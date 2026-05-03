@@ -83,7 +83,7 @@ Apply the shared research tool usage rules. Prioritize these chapter-specific so
 
 ## Domain-adaptive additions
 
-Infer the economic model, not the industry label.
+Infer the economic model, not the industry label. Selected additions should become visible economics sections, unit tables, bridges, or capital/cash-flow figures, not just background reasoning.
 
 - If subscription/recurring revenue drives economics, add ARR/MRR quality, contract duration, churn, NRR/GRR, expansion, CAC payback, and discounting.
 - If transaction/take-rate revenue drives economics, add GMV/TPV/volume, take rate, refunds, fraud, payment/network costs, transaction frequency, and concentration.

@@ -81,7 +81,7 @@ Apply the shared research tool usage rules. Adverse/disconfirming research is ma
 
 ## Domain-adaptive additions
 
-Infer the company's real failure modes.
+Infer the company's real failure modes. Selected additions should become visible risk sections, registers, heatmaps, transmission maps, approval pathways, or dependency figures, not just background reasoning.
 
 - If approvals/licenses/permits matter, add loss/denial/delay risk, compliance cost, regulator scrutiny, renewal timing, and jurisdiction map.
 - If manufacturing or physical products matter, add quality, yield, recalls, warranty, certification, supplier concentration, safety, and field failure risk.

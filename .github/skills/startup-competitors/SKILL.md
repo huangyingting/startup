@@ -78,7 +78,7 @@ Apply the shared research tool usage rules. Prioritize these chapter-specific so
 
 ## Domain-adaptive additions
 
-Infer what customers actually compare.
+Infer what customers actually compare. Selected additions should become visible comparison sections, matrices, positioning axes, or displacement figures, not just background reasoning.
 
 - If the customer can choose “do nothing,” include manual/status-quo workflow as a competitor.
 - If incumbents control distribution, add incumbent channel power, switching cost, contract lock-in, trust, compliance, and installed-base analysis.

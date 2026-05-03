@@ -76,7 +76,7 @@ Apply the shared research tool usage rules. Prioritize these chapter-specific so
 
 ## Domain-adaptive additions
 
-Infer the company domain and operating model; add relevant snapshot rows/sections without forcing a fixed sector template.
+Infer the company domain and operating model; add relevant snapshot sections, rows, and figures without forcing a fixed sector template. Selected additions should become visible chapter outputs, not just background reasoning.
 
 - If the company needs approvals, licenses, certifications, permits, reimbursement, or government concessions, add approval/licensing status and regulator map.
 - If it depends on scientific, clinical, or technical validation, add development stage, validation evidence, IP/patents, and maturity level.

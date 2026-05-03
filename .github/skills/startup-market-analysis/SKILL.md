@@ -75,7 +75,7 @@ Apply the shared research tool usage rules. Prioritize these chapter-specific so
 
 ## Domain-adaptive additions
 
-Infer the market mechanics instead of applying a fixed sector template.
+Infer the market mechanics instead of applying a fixed sector template. Selected additions should become visible chapter sections, sizing/adoption tables, or figures, not just background reasoning.
 
 - If demand is consumer-driven, add category growth, purchase frequency, channel mix, price sensitivity, brand discovery, and repeat/retention dynamics.
 - If demand is enterprise/government-driven, add procurement owner, budget cycle, approval path, implementation burden, and replacement vs new-budget logic.

@@ -80,7 +80,7 @@ Apply the shared research tool usage rules. Prioritize these chapter-specific so
 
 ## Domain-adaptive additions
 
-Infer the customer relationship and retention mechanism.
+Infer the customer relationship and retention mechanism. Selected additions should become visible customer-quality sections, segmentation/retention tables, journey maps, funnels, or proof matrices, not just background reasoning.
 
 - If enterprise/government sales drive adoption, add ACV/contract size, sales cycle, implementation time, renewal, expansion, procurement/security blockers, and referenceability.
 - If consumer demand drives adoption, add repeat purchase, purchase frequency, reviews, cohort retention, channel CAC, community/brand engagement, and returns/refunds.

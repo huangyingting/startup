@@ -12,21 +12,21 @@ Every `01`–`08` analysis chapter skill follows this execution loop, then appli
 
 1. Confirm shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and the owning output filename.
 2. Pull in prompt-derived requirements routed to the chapter; do not create repo-level templates from one-off user requirements.
-3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes.
-4. Build chapter-specific research questions from the owning skill's required content, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, optional coordination context, and prompt requirements.
+3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes; select the domain-adaptive additions that should become chapter outputs.
+4. Build chapter-specific research questions from the owning skill's required content, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, optional coordination context, and prompt requirements; include questions intended to support domain-specific sections, tables, and figures.
 5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
 6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
-7. Draft schema-native sections, tables, callouts, and structured figures for the chapter; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
-8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, domain-adaptive additions are visible, and the owning skill's completion check passes.
+7. Draft schema-native sections, tables, callouts, and structured figures for the chapter; make selected domain-adaptive additions visible in the artifact rather than only in notes; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, selected domain-adaptive additions appear in sections and at least one table or figure where supportable, and the owning skill's completion check passes.
 9. Write only the owning skill's artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
 
 ## Domain reflection and sufficiency gate
 
-Before drafting, identify the company's domain archetype, value-chain position, buyer/user/payer/regulator distinctions, revenue mechanism, operating dependencies, adoption motion, and failure modes. Then apply the domain-adaptive additions defined in the owning chapter skill.
+Before drafting, identify the company's domain archetype, value-chain position, buyer/user/payer/regulator distinctions, revenue mechanism, operating dependencies, adoption motion, and failure modes. Then apply the domain-adaptive additions defined in the owning chapter skill as first-class research targets.
 
 Do not assume the company is an IT, Internet, software, SaaS, or AI startup. If the domain is unclear, record the ambiguity and add a diligence path rather than forcing a template.
 
-Before finalizing, confirm the chapter answers domain-specific underwriting questions, not just the skill's universal checklist. If supportable domain-critical content is missing, add it; if public evidence is unavailable, record an explicit `evidenceGaps[]` item with the failed path and diligence ask.
+Before finalizing, confirm the chapter answers domain-specific underwriting questions, not just the skill's universal checklist. Each chapter should include at least one domain-specific section and at least one domain-specific table or structured figure when evidence supports it. If public evidence is unavailable, record an explicit `evidenceGaps[]` item with the failed path, diligence ask, and the table/figure/section that could not be completed.
 
 ## Local evidence model
 

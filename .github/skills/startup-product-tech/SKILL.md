@@ -81,7 +81,7 @@ Apply the shared research tool usage rules. Official-surface mining is mandatory
 
 ## Domain-adaptive additions
 
-Infer the product/operating dependency.
+Infer the product/operating dependency. Selected additions should become visible architecture, maturity, workflow, dependency, roadmap, or trust/safety outputs, not just background reasoning.
 
 - If it is software or data-driven, add APIs, integrations, data flows, security/privacy controls, deployment model, reliability, and workflow depth.
 - If it is hardware or robotics, add BOM/critical components, manufacturing process, certification, field reliability, maintenance, safety, and supply chain.
