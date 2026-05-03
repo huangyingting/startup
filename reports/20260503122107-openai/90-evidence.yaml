@@ -5,9 +5,9 @@ runDate: '2026-05-03'
 company:
   name: OpenAI
 coverage:
-  sourcesConsidered: 114
-  sourcesRetained: 29
-  claimsCreated: 76
+  sourcesConsidered: 115
+  sourcesRetained: 30
+  claimsCreated: 79
   evidenceQuality: medium
   sourceDiversityNotes: null
   deduplicationNotes: Consolidated from 8 artifacts; sources deduplicated by canonical URL or publisher/title/date fallback.
@@ -428,6 +428,20 @@ sources:
       - api
       - finance
     keyQuote: Most deployments start with over 50% resolution rates on day one.
+  - id: S030
+    accessDate: '2026-05-03'
+    publisher: Bloomberg LP (Bloomberg Intelligence)
+    title: Generative AI to Become a $1.3 Trillion Market by 2032, Research Finds
+    url: https://www.bloomberg.com/company/press/generative-ai-to-become-a-1-3-trillion-market-by-2032-research-finds/
+    date: '2023-06-01'
+    sourceType: analyst-market-data
+    reputationTier: high
+    independence: independent
+    topics:
+      - market sizing
+      - generative ai
+      - forecast
+    keyQuote: "the generative AI market is poised to explode, growing to $1.3 trillion over the next 10 years from a market size of just $40 billion in 2022"
 claims:
   - id: C001
     statement: OpenAI was founded in 2015 as a nonprofit.
@@ -1222,6 +1236,37 @@ claims:
     confidence: medium
     freshness: current
     corroboration: multi-source
+  - id: C077
+    statement: >-
+      Bloomberg Intelligence forecast in June 2023 that the generative AI market would grow from $40 billion in 2022 to
+      $1.3 trillion by 2032, a 42% CAGR.
+    claimType: third-party-reported
+    topic: market-sizing
+    sourceRefs:
+      - S030
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+  - id: C078
+    statement: >-
+      Bloomberg Intelligence projected $247 billion of generative AI infrastructure-as-a-service revenue by 2032.
+    claimType: third-party-reported
+    topic: market-sizing
+    sourceRefs:
+      - S030
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
+  - id: C079
+    statement: >-
+      Bloomberg Intelligence projected $89 billion of specialized generative AI assistant software revenue by 2032.
+    claimType: third-party-reported
+    topic: market-sizing
+    sourceRefs:
+      - S030
+    confidence: medium
+    freshness: recent
+    corroboration: single-source
 evidenceGaps:
   - topic: capital raised and preference stack
     missingEvidence: >-

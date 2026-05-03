@@ -2062,14 +2062,17 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('fill', palette.muted)
       .attr('font-size', compact ? chartFont.size.micro : chartFont.size.tiny)
       .attr('font-weight', fontWeight('strong'))
-      .text((d) => `mid ${d.mid ?? d.value ?? ''}`);
+      .text((d) => `mid ${d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2)}`);
     groups.each(function(d) {
       const low = numberValue(d.low ?? d.min);
       const mid = numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2));
       const high = numberValue(d.high ?? d.max ?? d.value);
       addTitle(d3.select(this), `${d.label}: low ${low}, mid ${mid}, high ${high}`);
     });
-    withTooltip(groups, (d) => tooltipHtml(d.label, [`Low: ${d.low ?? d.min}`, `Mid: ${d.mid ?? d.value ?? ''}`, `High: ${d.high ?? d.max ?? d.value}`, d.detail]));
+    withTooltip(groups, (d) => {
+      const mid = d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2);
+      return tooltipHtml(d.label, [`Low: ${d.low ?? d.min}`, `Mid: ${mid}`, `High: ${d.high ?? d.max ?? d.value}`, d.detail]);
+    });
   };
 
   const renderQuadrant = (element, payload) => {
