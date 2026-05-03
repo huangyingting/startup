@@ -73,7 +73,6 @@ Fix coverage gaps before saving. Do not proceed to `startup-summary-card` if fin
 
 ## Completion check (English)
 
-- Run `node scripts/sanitize-report-figures.mjs <reportFolder> --check`; if it fails, run without `--check`, review the diff, then rerun validation.
 - `91-full-report.yaml` parses and validates against canonical claim IDs.
 - Output summary includes path, recommendation, table count, figure count, and website readiness.
 

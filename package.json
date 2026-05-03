@@ -5,12 +5,10 @@
   "scripts": {
     "build:reports-index": "node scripts/build-reports-index.mjs",
     "consolidate:evidence": "node scripts/consolidate-evidence.mjs",
-    "sanitize:report-figures": "node scripts/sanitize-report-figures.mjs",
-    "audit:readiness": "node scripts/audit-report-readiness.mjs",
+    "audit:chapter": "node scripts/audit-chapter-readiness.mjs",
     "check:reports-index": "node scripts/build-reports-index.mjs --strict --check",
-    "check:reports-content": "node scripts/check-reports-content.mjs",
     "check:reports": "npm --prefix website run check:reports",
-    "validate": "npm run check:reports-index && npm run check:reports-content && npm run check:reports && npm --prefix website run build"
+    "validate": "npm run check:reports-index && npm run check:reports && npm --prefix website run build"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

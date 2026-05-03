@@ -13,12 +13,12 @@ Every `01`–`08` analysis chapter skill follows this execution loop, then appli
 1. Confirm shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and the owning output filename.
 2. Pull in prompt-derived requirements routed to the chapter; do not create repo-level templates from one-off user requirements.
 3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes; select the domain-adaptive additions that should become chapter outputs.
-4. Build chapter-specific research questions from the owning skill's required content, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, optional coordination context, and prompt requirements; include questions intended to support domain-specific sections, tables, and figures.
-5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
-6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
+4. Build a chapter-specific research-question backlog from the owning skill's required content, required tables, required figures, evidence acquisition strategy, domain-adaptive additions, optional coordination context, and prompt requirements; include questions intended to support every material section, table, figure, and gap.
+5. Work the question backlog iteratively: use verified answer/search discovery to refine questions and candidate sources, then review retained direct URLs with `fetch-url`; keep asking follow-up questions around missing data until the chapter's evidence-depth gate passes or public-evidence limits are documented.
+6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths; derive content from the claims rather than writing claims after the prose.
 7. Draft schema-native sections, tables, callouts, and structured figures for the chapter; make selected domain-adaptive additions visible in the artifact rather than only in notes; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
-8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, selected domain-adaptive additions appear in sections and at least one table or figure where supportable, and the owning skill's completion check passes.
-9. Write only the owning skill's artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive and non-duplicative, claim refs resolve locally, selected domain-adaptive additions appear in sections and at least one table or figure where supportable, evidence depth is adequate, and the owning skill's completion check passes.
+9. Write only the owning skill's artifact, then run `node scripts/audit-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger` so failures route directly back to this chapter. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
 
 ## Domain reflection and sufficiency gate
 
@@ -37,6 +37,29 @@ Every `01`–`08` analysis artifact owns local evidence before consolidation:
 - Local `S###` and `C###` IDs are scoped to one artifact and may repeat across skills.
 - Cite local claims through `claimRefs` from sections, tables, figures, callouts, and notes.
 - Analysis skills never hand-write `90-evidence.yaml`; `startup-evidence` consolidates local evidence, rewrites claim IDs, and removes `localEvidence` unless debugging with `--keep-local`.
+
+## Question-driven research loop
+
+Do not start by drafting prose. Start each chapter with a research-question backlog, then use evidence to answer those questions and only then draft the artifact.
+
+- For every chapter, create at least 50 targeted research questions before drafting. Questions should be complete diligence questions, not keyword fragments, and should be grouped by the intended section, table, figure, source family, domain-adaptive addition, or evidence gap they support.
+- Across a complete `01`–`08` report, the combined backlog should therefore reach at least 400 targeted questions before finalization. High-profile, complex, heavily funded, regulated, or controversial companies may need more than 50 questions per chapter when public evidence is abundant or contradictory.
+- Every required section, table, figure, domain-adaptive addition, and major evidence gap should map to at least one research question.
+- Work questions in loops: ask via `web_search`/search, inspect cited answers and contradictions, fetch retained URLs, update `localEvidence`, identify missing variables, then ask narrower follow-up questions.
+- Stop expanding only when the chapter has enough retained sources, atomic claims, source-family coverage, and explicit gaps to support its output. Do not stop because a table has enough rows or a section has enough words.
+- Keep the question backlog in diagnostic notes, terminal/chat transcript, or a research pack; do not write it as a YAML report artifact unless the user asks for audit diagnostics.
+
+## Evidence-depth gate
+
+Each `01`–`08` chapter should be evidence-rich enough to stand as an investor-grade research record before consolidation:
+
+- Default floor for every chapter: at least 50 retained, reviewed chapter-relevant sources and at least 75 reusable atomic claims. Claims intentionally exceed sources because one reviewed source should usually support multiple atomic, decision-relevant facts.
+- Across a complete `01`–`08` report, expect at least 400 retained sources before cross-chapter deduplication and roughly 600 reusable atomic claims before finalization. If final deduplication reduces canonical source count below 400, the report must still demonstrate that each chapter met its 50-source local research floor or explicitly explain public-evidence limits.
+- High-profile, complex, heavily funded, regulated, or controversial companies may require more than 50 retained sources and 75 claims per chapter when evidence is abundant, contradictory, or decision-critical.
+- Cover at least three chapter-relevant source families where available, such as official/company-authored, independent reporting, filings/regulators, customer/partner proof, technical docs, reviews, competitor/comparable sources, analyst/market data, and adverse/disconfirming sources.
+- Include at least one official or primary source and at least one independent, customer/partner, regulator/filing, or adverse/disconfirming source when available. Company-authored sources alone should not pass the gate for non-stealth companies.
+- Claims must be atomic and reusable. Do not inflate claim count by splitting one sentence into trivial fragments, and do not count paragraph summaries as claims.
+- If a chapter cannot meet the source or claim floor, it must explain why in `evidenceGaps[]`, list attempted source families, and state which sections/tables/figures are affected.
 
 ## Source provenance
 
@@ -87,6 +110,14 @@ After each targeted search/discovery call, record this run-log line in the chat/
 - Retain source breadth, not bibliography volume: official/company-authored, independent corroboration, adverse/disconfirming, and freshness-check sources should be represented or explicitly gapped.
 - Label official/company-authored claims as `company-claimed` or `observed`; corroborate volatile or judgment-critical claims independently when possible.
 
+## Date precision
+
+- Preserve the precision supported by the source. Do not convert a year-only fact such as `founded in 2015` into `2015-01-01`, and do not convert month-only facts into the first day of the month unless the source states that exact date.
+- Use exact `YYYY-MM-DD` dates only when the retained source supports the exact day. Otherwise use `YYYY`, `YYYY-MM`, `null`, or a clearly labeled status string in narrative tables/figures, depending on what the schema field allows.
+- For schema fields that require `YYYY-MM-DD|null` and only a year or month is known, use `null` for the exact-date field and carry the partial date in the adjacent year/status/note field when available.
+- For timeline or chronology items with only partial date support, display the supported partial date such as `2015` or `2019` rather than inventing January 1.
+- If conflicting sources provide different exact dates, record the conflict and confidence rather than silently choosing one.
+
 Freshness rubric anchored to `currentDate`:
 
 - `current`: reviewed within ~90 days, or the latest official/current-status source available for a volatile fact.
@@ -106,7 +137,7 @@ Every new external fact needs an atomic, reusable local `claims[]` entry before 
 
 Before writing, confirm that retained sources cover the chapter's required source classes. If a required source class has no usable evidence, add `evidenceGaps[]` rather than silently omitting it. Never invent values, capabilities, certifications, customers, multiples, outcomes, or metrics.
 
-Before consolidation, ensure every retained URL satisfies source provenance rules, material sections/tables/figures/callouts cite local claims, and `localEvidence.coverage.sourcesConsidered` is updated. Ledger coverage and source-diversity thresholds are enforced by `scripts/check-reports-content.mjs`.
+Before consolidation, ensure every retained URL satisfies source provenance rules, material sections/tables/figures/callouts cite local claims, and `localEvidence.coverage.sourcesConsidered` is updated. Chapter evidence coverage, depth, table, and figure thresholds are enforced by `scripts/audit-chapter-readiness.mjs` before the ledger is built.
 
 Reflection questions: Would a source change each major table cell, figure node, or conclusion if it were wrong? What investor decision does each major table/figure support? Does each important gap affect recommendation, confidence, risk, valuation stance, or only follow-up diligence? Resolve source contradictions as freshness, scope, definition, or true-conflict issues.
 
@@ -117,6 +148,8 @@ Artifacts `01`–`08` are the research record, not thin handoffs. They must reta
 Tables should include company-specific values, dated evidence, confidence, implication, and diligence asks. Count-filler tables are not substantive.
 
 Prefer richer artifacts when evidence supports them; do not compress useful research just to match a minimal template.
+
+Use tables and figures as alternative expressions for a specific analysis, not duplicate containers for the same content. If a diligence question is best answered by exact rows, comparisons, evidence dates, confidence, and diligence asks, use a table. If it is best answered by structure, flow, positioning, causality, scenario shape, or sensitivity, use a figure. Do not create both a table and a figure that repeat the same title, claim set, rows/nodes, or conclusion; choose the stronger representation and use narrative cross-reference for any complementary interpretation.
 
 When a skill specifies required table columns, preserve those columns unless a better schema-compatible table design covers the same information. At minimum, diligence tables should expose the fact/metric, value or status, evidence date/source, confidence, implication, and diligence ask.
 

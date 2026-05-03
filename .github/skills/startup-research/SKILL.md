@@ -22,8 +22,7 @@ Resolve these run inputs before setup:
 
 Before running any chapter skill:
 
-- Run `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before creating or writing the report folder. Exit `0` means continue; exit `2` means duplicate risk and you must stop unless the user explicitly requested a refresh/update of an existing company; any other non-zero exit means fix the input/path issue before continuing.
-- Create the report folder with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and use the printed absolute path as `reportFolder` for all artifacts.
+- Create the report folder with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName> [--website <companyUrl>]` and use the printed absolute path as `reportFolder` for all artifacts. This command checks duplicate risk before creating the folder; exit `2` means duplicate risk and you must stop unless the user explicitly requested a refresh/update, in which case rerun with `--allow-duplicate`.
 
 Before writing artifacts:
 
@@ -107,8 +106,8 @@ Synchronization points:
 
 1. Pre-stage duplicate check before report folder creation or analysis artifact writing.
 2. Identity consistency gate before each artifact write: document headers must preserve the resolved `company.name`, `slug`, and `runDate`.
-3. Pre-ledger readiness audit after all `01`–`08` analysis artifacts exist.
-4. `startup-evidence` consolidation.
+3. Chapter-level readiness audit immediately after each `01`–`08` artifact write, scoped to the owning artifact so failures return directly to that chapter skill.
+4. `startup-evidence` consolidation after all `01`–`08` artifacts have passed their own chapter audit.
 5. `startup-full-report` assembly.
 6. `startup-summary-card` generation.
 7. Final index rebuild and `npm run validate`.
@@ -128,27 +127,27 @@ Synchronization points:
 
 Schema validity is necessary but not sufficient. Each owning chapter skill defines its own `01`–`08` completion and minimum-depth gates; this workflow only coordinates cross-artifact readiness and finalization gates.
 
-Before `startup-evidence`, inspect sources, claims, tables, figures, sections, and gaps across all `01`–`08` artifacts. If the readiness audit fails or final review finds placeholders, unsupported synthesis, count-filler tables, or malformed figures, return to the owning chapter skill rather than fixing another skill's artifact in place.
+After each `01`–`08` artifact write, inspect that chapter's sources, claims, tables, figures, sections, and gaps with a chapter-scoped readiness audit. If it fails or warns on placeholders, unsupported synthesis, count-filler tables, duplicate table/figure content, malformed figures, missing claim refs, or thin depth, return directly to the owning chapter skill before moving on. Chapter-owned problems must be fixed at chapter time.
 
 Finalization gates:
 
-- `90-evidence.yaml`: enough retained evidence for the final judgment; for visible companies, below roughly 50 sources or 90 claims is a red flag.
+- `90-evidence.yaml`: enough retained evidence for the final judgment; each `01`–`08` chapter should have at least 50 retained local sources and 75 reusable local claims before consolidation, so a complete report should show roughly 400 retained chapter-level source reviews and 600 reusable atomic claims before finalization. If canonical deduplication reduces final source count below 400, the report must still preserve enough provenance to show each chapter met its local 50-source floor or document evidence limits.
 - `91-full-report.yaml`: preserve the union of upstream tables/figures unless `reportMeta.coverageNotes` explicitly names omissions and reasons.
 - `92-summary-card.yaml`: summary counts and recommendation fields must reflect the current `91-full-report.yaml` and `90-evidence.yaml`.
 
-Run the readiness audit before `startup-evidence` when a report folder has draft `01`–`08` artifacts:
+Run the chapter-level readiness audit immediately after each analysis artifact is written:
 
 ```text
-node scripts/audit-report-readiness.mjs <reportFolder> --pre-ledger
+node scripts/audit-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger
 ```
 
-Fix failures before consolidation. Warnings are acceptable only when the report explicitly documents why evidence is unavailable.
+Fix failures before consolidation. Warnings are acceptable only when the chapter explicitly documents why evidence is unavailable or why the flagged structure is intentional.
 
 Before `startup-summary-card`, compare `91` table/figure counts against the union of `01`–`08`; unexpectedly low counts mean `startup-full-report` dropped analysis and must be rerun.
 
 ## Validation gates
 
-After each artifact write, parse the file and verify expected outputs, identity fields, claim refs, and figure contracts. Use the schema and references for exact checks.
+After each analysis artifact write, parse only that artifact and run the chapter-scoped readiness audit so failures can be routed back to the owning chapter skill immediately. Verify expected outputs, identity fields, claim refs, table/figure non-duplication, and figure contracts. Use the schema and references for exact checks.
 
 Final validation after `92-summary-card.yaml`:
 

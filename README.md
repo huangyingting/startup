@@ -16,10 +16,9 @@ Each analysis skill writes one English artifact. After all 8 analysis artifacts 
 
 ```mermaid
 flowchart TD
-  Start([User: research company X]) --> PreDedup{check-company-dedup.mjs<br/>--company / --website}
-  PreDedup -- exit 2: duplicate --> Stop([STOP unless refresh requested])
-  PreDedup -- exit 0 --> Setup[prepare-report-folder.mjs<br/>create reports/&lt;ts&gt;-&lt;slug&gt;/]
-  Setup --> Snapshot
+  Start([User: research company X]) --> Setup{prepare-report-folder.mjs<br/>dedupe + create reports/&lt;ts&gt;-&lt;slug&gt;/}
+  Setup -- exit 2: duplicate --> Stop([STOP unless refresh requested])
+  Setup -- created --> Snapshot
 
   subgraph Stage1[Stage 1 — Analysis artifacts 01-08]
     Snapshot[startup-overview<br/>writes 01.yaml]
@@ -50,7 +49,7 @@ flowchart TD
   Card --> FinalVal
 
   subgraph Stage4[Stage 4 — Final validation]
-    FinalVal[build-reports-index.mjs<br/>+ check-reports-content.mjs<br/>+ website check-reports.mjs<br/>+ astro build]
+    FinalVal[build-reports-index.mjs<br/>+ website check-reports.mjs<br/>+ astro build]
   end
 
   FinalVal --> End([Done])
@@ -88,7 +87,7 @@ Every artifact is constrained by skill requirements, central schema rules, and b
 ```mermaid
 flowchart LR
   A[Skill requirements<br/>.github/skills/*.md] --> B[Schema rules<br/>.github/references/<br/>report-schema-v2.md]
-  B --> C[Build-time lints<br/>scripts/check-reports-content.mjs<br/>website/scripts/check-reports.mjs]
+  B --> C[Chapter readiness audit<br/>scripts/audit-chapter-readiness.mjs<br/>+ website/scripts/check-reports.mjs]
   C --> D{Pass?}
   D -- yes --> Ship([Astro build OK])
   D -- no --> Fix[Reject artifact<br/>fix at source<br/>then rerun ledger + report]
@@ -155,8 +154,8 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `.github/references/report-schema-v2.md` — canonical YAML schema and rendering contract.
 - `.github/references/` — shared YAML syntax and analysis rules.
 - `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
-- `scripts/check-company-dedup.mjs` — pre-stage duplicate-risk check for matching company names or domains.
+- `scripts/prepare-report-folder.mjs` — duplicate-risk check plus report folder creation.
 - `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
-- `scripts/check-reports-content.mjs` — evidence coverage, source diversity, and content-depth checks.
+- `scripts/audit-chapter-readiness.mjs` — chapter-scoped evidence, depth, table, and figure readiness audit for `01`–`08` artifacts.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure types, enums, refs).

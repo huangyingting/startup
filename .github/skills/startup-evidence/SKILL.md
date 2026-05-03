@@ -21,10 +21,17 @@ Consolidation stage. Generate canonical sources/claims only after `01`–`08` ex
 
 ## Pre-consolidation audit
 
-For each `01`–`08` artifact, verify:
+Before consolidation, each `01`–`08` artifact must already have passed its own chapter-scoped audit:
+
+```text
+node scripts/audit-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger
+```
+
+For each artifact, verify:
 
 - `localEvidence.sources[]` contains retained, reviewed URLs or cited search annotations.
 - `localEvidence.claims[]` contains atomic claims, not paragraph summaries.
+- Each artifact passes the shared evidence-depth gate, or has explicit `evidenceGaps[]` explaining why public evidence cannot support the expected source/claim depth.
 - Claims pass reflection: each one is necessary for a section/table/figure/gap, exactly supported by its `sourceRefs`, honestly typed, fresh enough for its topic, and not a bundled multi-fact summary.
 - Material sections, tables, figures, and callouts have local `claimRefs`.
 - Volatile critical facts are current/recent or explicitly listed as gaps.

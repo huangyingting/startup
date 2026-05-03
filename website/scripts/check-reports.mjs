@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Schema and renderer-contract checks for report YAML.
-// Run before `astro build`. Content quality checks live in scripts/check-reports-content.mjs.
+// Run before `astro build`. Chapter content readiness is checked by scripts/audit-chapter-readiness.mjs.
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';

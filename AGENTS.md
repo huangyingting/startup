@@ -39,7 +39,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - `.github/references/report-schema-v2.md` — canonical report schema and rendering contract.
 - `scripts/figure-registry.mjs` — central native figure type/data contract; consumed by validators and the renderer.
 - `scripts/evidence-registry.mjs` — central evidence enums (claim types, topics, freshness, source types, reputation tiers, independence).
-- `scripts/` — report preparation, index, duplicate checks, evidence consolidation, and content checks.
+- `scripts/` — report preparation, index, evidence consolidation, registries, and chapter readiness checks.
 - `website/` — Astro renderer, content loader, UI components, and website validation.
 
 ## Setup and validation commands
@@ -66,7 +66,7 @@ Producing a complete report — including all `01`–`08` analysis artifacts, th
 - required artifact set;
 - artifact mapping, execution order, concurrency model, and dependency rules;
 - synchronization points;
-- cross-artifact readiness audit and final validation gates;
+- chapter-level readiness audits and final validation gates;
 - final response format.
 
 Do not duplicate that workflow here. When working on a report, follow `startup-research` end-to-end and the per-chapter skills it delegates to.
@@ -77,14 +77,14 @@ When adding a new analysis chapter or changing chapter order:
 
 1. Update `.github/skills/startup-research/SKILL.md` with the workflow order and required artifact set.
 2. Add or update the owning `.github/skills/startup-*/SKILL.md` guidance, including chapter mission, required content, tables, figures, evidence acquisition strategy, and completion checks.
-3. Sync consolidation, readiness audit, report assembly checks, website validation, and website loading code where they need local machine constants for the new artifacts.
+3. Sync consolidation, chapter readiness audit, report assembly checks, website validation, and website loading code where they need local machine constants for the new artifacts.
 4. Run `npm run validate`.
 
 When adding a required table, figure, metric, or diligence question inside an existing chapter:
 
 1. Update that chapter's `SKILL.md` with the required content, table, figure, metric, source, or diligence requirement.
 2. Keep table column requirements schema-compatible and figure types limited to `scripts/figure-registry.mjs`.
-3. Run the readiness audit for a draft report folder and then `npm run validate` for final artifacts.
+3. Run the chapter readiness audit for affected draft artifacts and then `npm run validate` for final artifacts.
 
 When adding a new native figure/chart type:
 

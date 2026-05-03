@@ -103,9 +103,11 @@ Infer the economic model, not the industry label. Selected additions should beco
 
 ## Completion check
 
-- Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
+- Minimum depth gate: target range of 3–8 sections, 4–8 tables, and 3–6 structured figures; minimum prose/data floor of 100 words per section body, 900 total section words, 36 total table rows, and 18 total figure data points.
+- Evidence-depth gate from the shared analysis rules passes for this chapter: at least 50 targeted research questions, 50 retained reviewed sources, and 75 reusable atomic claims, with explicit evidence gaps for missing public evidence.
 - The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
 - Every material section, table, figure, and callout cites local `claimRefs` that resolve before consolidation.
+- Tables and figures are non-duplicative: a specific analysis appears as either a table or a figure, not both with the same title, claim set, rows/nodes, or conclusion.
 - Domain reflection is explicit: identify the revenue/economic archetype(s), add supportable domain-specific unit-economics tables or figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Official pricing is list pricing, not realized revenue or margin.
 - Every `null` unit-economics field needs a specific diligence request.
