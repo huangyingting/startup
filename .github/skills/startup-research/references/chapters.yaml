@@ -58,12 +58,10 @@ chapters:
         requirement: metric, value/status, date, evidence, confidence, gap.
       - name: Leadership and founder table
         requirement: person, role, background, founder-market fit or functional coverage, key-person dependency, evidence.
-      - name: Funding and governance chronology
-        requirement: date, event, amount/valuation/status, participants, implication, evidence.
       - name: Stakeholder or investor map
         requirement: stakeholder, role, control or economic importance, evidence, diligence ask.
       - name: Milestone table
-        requirement: at least 8 dated entries when public evidence supports them; include positive and adverse events.
+        requirement: at least 8 dated entries when public evidence supports them; columns date, event, type (founding|financing|product|scale|regulatory|partnership|governance|adverse), amount/valuation/status, participants/source, implication, evidence; covers funding rounds, governance changes, and adverse events as the single chronology of record.
     requiredFigures:
       - name: Company milestone timeline
         types: [timeline]
@@ -362,16 +360,14 @@ chapters:
       - Financial/model risk — burn, capital intensity, credit/loss exposure, fraud, working capital, margin compression.
       - Mitigations, monitoring indicators, thesis-break triggers, and diligence asks.
     requiredTables:
-      - name: Severity-ranked risk register
-        requirement: risk, evidence date/source, likelihood, severity, mitigation, residual exposure, investment impact.
-      - name: Regulatory / legal risk table
-        requirement: rule/license/case, jurisdiction, status, evidence, exposure, diligence path.
-      - name: Operational / quality / security risk table
-        requirement: failure mode, evidence, likelihood, impact, controls, unresolved gap.
-      - name: Partner / dependency risk table
-        requirement: dependency, counterparty, role, concentration, failure scenario, mitigation.
-      - name: People / execution risk table
-        requirement: role/function, dependency or gap, evidence, impact, mitigation, diligence path.
+      - name: Regulatory / legal risk register
+        requirement: rule/license/case, jurisdiction, status, evidence date/source, likelihood, severity, mitigation, residual exposure, diligence path; rows ordered by severity.
+      - name: Operational / quality / security risk register
+        requirement: failure mode, evidence date/source, likelihood, severity, mitigation maturity, residual exposure, unresolved gap; rows ordered by severity.
+      - name: Partner / dependency risk register
+        requirement: dependency, counterparty, role, concentration, failure scenario, severity, mitigation, residual exposure; rows ordered by severity.
+      - name: People / execution risk register
+        requirement: role/function, dependency or gap, evidence, likelihood, severity, mitigation, diligence path; rows ordered by severity.
       - name: Mitigation and kill criteria table
         requirement: risk, monitorable trigger, threshold/event, action implication.
     requiredFigures:
