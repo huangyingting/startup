@@ -1344,11 +1344,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     groups.each(function(entry) { addTitle(d3.select(this), `${entry.item.label}${entry.item.detail ? ` — ${entry.item.detail}` : ''}`); });
   };
 
-  const renderBridge = (element, payload) => {
-    const items = normalizedItems(payload.data);
-    renderFlow(element, { ...payload, data: { nodes: items, edges: items.slice(0, -1).map((item, index) => ({ from: item.label, to: items[index + 1].label, label: index === 0 ? 'bridge' : 'constraint' })) } });
-  };
-
   const renderJourneyMap = (element, payload) => {
     const items = normalizedItems(payload.data);
     const margin = { top: 34, right: 34, bottom: 46, left: 34 };
@@ -1363,11 +1358,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     groups.append('rect').attr('x', -72).attr('y', (_d, index) => index % 2 === 0 ? -92 : 34).attr('width', 144).attr('height', 52).attr('rx', 9).attr('fill', '#fff7ef').attr('stroke', palette.border);
     groups.append('text').attr('x', 0).attr('y', (_d, index) => index % 2 === 0 ? -68 : 57).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', fontWeight('strong')).each(function(d) { renderWrappedText(d3.select(this), d.label, { maxChars: 18, maxLines: 2, lineHeight: chartFont.lineHeight.tight }); });
     groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
-  };
-
-  const renderLogicChain = (element, payload) => {
-    const items = normalizedItems(payload.data);
-    renderFlow(element, { ...payload, data: { nodes: items, edges: items.slice(0, -1).map((item, index) => ({ from: item.label, to: items[index + 1].label, label: index === items.length - 2 ? 'decision' : 'therefore' })) } });
   };
 
   const renderCausalMap = (element, payload) => {
@@ -2389,36 +2379,23 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     withTooltip(competitors, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d._valueX}`, `${yAxisLabel}: ${d._valueY}`, d.detail]));
   };
 
-  const renderSensitivity = (element, payload) => {
-    const series = arr(payload.data.series)[0] ?? {};
-    renderBars(element, { ...payload, data: { items: arr(series.points) } });
-  };
-
-  const renderScatter = (element, payload) => {
-    const points = arr(payload.data.points).length ? arr(payload.data.points) : arr(arr(payload.data.series)[0]?.points);
-    const mapped = points.map((point) => ({ ...point, x: numberValue(point.x ?? point.value?.[0]), y: numberValue(point.y ?? point.value?.[1]) }));
-    renderQuadrant(element, { ...payload, data: { ...payload.data, points: mapped } });
-  };
-
   const GRAPH_TYPES = new Set(['decision-map', 'evidence-map', 'scenario-tree', 'dependency-map']);
-  const HEATMAP_TYPES = new Set(['matrix', 'heatmap']);
   const RENDERERS = {
     timeline: renderTimeline,
     flow: renderFlow,
     stack: renderStack,
     'layered-lens': renderLayeredLens,
-    bridge: renderBridge,
     'journey-map': renderJourneyMap,
-    'logic-chain': renderLogicChain,
     'causal-map': renderCausalMap,
     scorecard: renderScorecard,
     waterfall: renderWaterfall,
     funnel: renderFunnel,
     range: renderRange,
     bars: renderBars,
+    matrix: renderHeatmap,
     cohort: renderCohort,
-    scatter: renderScatter,
-    sensitivity: renderSensitivity,
+    quadrant: renderQuadrant,
+    'positioning-map': renderPositioningMap,
   };
 
   const normalizeRenderedTypography = (element) => {
@@ -2441,9 +2418,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     else if (payload.type === 'scenario-tree') result = renderScenarioTree(element, payload);
     else if (payload.type === 'dependency-map') result = renderDependencyMap(element, payload);
     else if (GRAPH_TYPES.has(payload.type)) result = renderGraph(element, payload);
-    else if (payload.type === 'quadrant') result = renderQuadrant(element, payload);
-    else if (payload.type === 'positioning-map') result = renderPositioningMap(element, payload);
-    else if (HEATMAP_TYPES.has(payload.type)) result = renderHeatmap(element, payload);
     else result = RENDERERS[payload.type]?.(element, payload);
     normalizeRenderedTypography(element);
     normalizeRenderedFlatStyle(element);
@@ -2488,7 +2462,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
   :global(.d3-chart-tooltip strong) { display: block; margin-bottom: 0.05rem; font-family: var(--font-display); font-size: calc(var(--tooltip-font) * 1.08); line-height: 1.18; color: var(--claret); }
   :global(.d3-chart-tooltip span) { display: block; color: var(--caption-gray); }
   :global(.d3-chart-tooltip span + span) { padding-top: 0.12rem; border-top: 1px solid color-mix(in srgb, var(--rule) 62%, transparent); }
-  .chart-bars, .chart-sensitivity, .chart-quadrant, .chart-heatmap { min-height: 0; }
+  .chart-bars, .chart-quadrant, .chart-matrix { min-height: 0; }
   .figure-fallback { border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); padding: var(--space-4); }
   .figure-fallback strong { display: block; margin-bottom: var(--space-2); font-family: var(--font-display); font-size: var(--chart-fs-body); font-weight: var(--chart-fw-strong); }
   .figure-fallback p { margin: 0; color: var(--caption-gray); font-size: var(--chart-fs-body); line-height: var(--chart-leading-body); }

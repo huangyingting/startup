@@ -290,7 +290,7 @@ block:
 ## Figure types
 
 ```yaml
-figureType: timeline | flow | decision-map | evidence-map | quadrant | positioning-map | bars | waterfall | heatmap | matrix | stack | layered-lens | bridge | journey-map | logic-chain | causal-map | sensitivity | scatter | funnel | cohort | range | scorecard | scenario-tree | dependency-map | other
+figureType: timeline | flow | decision-map | evidence-map | quadrant | positioning-map | bars | waterfall | matrix | stack | layered-lens | journey-map | causal-map | funnel | cohort | range | scorecard | scenario-tree | dependency-map | other
 figure.data fields: items | nodes | edges | points | columns | rows | series | layers | xAxis | yAxis
 ```
 
@@ -309,21 +309,16 @@ Universal rules:
 | `scenario-tree` | Branching scenarios from one root. | `nodes[]` (+ `edges[]` recommended) | Edges define scenario branches. |
 | `dependency-map` | Inputs → core dependency → impact. | `nodes[]` and `edges[]` (required) | Renderer stages by topological depth; without edges it collapses to one column. |
 | `causal-map` | Cause → mechanism → outcome chains. | `nodes[]` and `edges[]` (required) | Renderer stages by topological depth; without edges it collapses to one column. |
-| `quadrant` | Two-axis positioning of items. | `points[]` | Numeric `x`, `y`. |
+| `quadrant` | Two-axis positioning of items (also covers scatter / distribution use cases). | `points[]` | Numeric `x`, `y`. |
 | `positioning-map` | Competitive / market positioning. | `points[]` | Numeric `x`, `y`. Use ordinal 0–10 scoring when source-backed numbers don't exist. |
-| `scatter` | Distribution of items across two metrics. | `points[]` or `series[]` | Numeric `x`, `y` per point. |
-| `bars` | Compare quantities across categories. | `items[]` or `series[]` | Numeric `value` per item / series point. |
+| `bars` | Compare quantities across categories (also covers single-driver sensitivity rankings). | `items[]` or `series[]` | Numeric `value` per item / series point. |
 | `funnel` | Stage-by-stage conversion drop-off. | `items[]` or `series[]` | Order = stage order. |
 | `waterfall` | Bridge from start to end via deltas. | `items[]` | Numeric `value`; mark totals via `kind: total`. |
 | `range` | Low/base/high estimate per item. | `items[]` | Numeric `low`/`min` and `high`/`max`; optional `mid`/`value` numeric. |
-| `sensitivity` | One driver shifting one outcome. | `series[]` | Numeric `value` per series point. |
-| `heatmap` | Two-dim categorical grid colored by intensity. | `columns[]` + `rows[]` | `row.values.length === columns.length`; row label in `row.label`. |
-| `matrix` | Two-dim grid with cell labels (capability, evidence quality, ordinal scoring). | `columns[]` + `rows[]` | Same row/column shape as heatmap. |
+| `matrix` | Two-dim grid with cell labels (capability, evidence quality, risk heatmap, ordinal scoring). | `columns[]` + `rows[]` | `row.values.length === columns.length`; row label in `row.label`. Cell `tone` drives discrete color. |
 | `cohort` | Time-series retention only. | `columns[]` + `rows[]` | `columns[]` are time buckets (e.g. `month-1`, `month-3`, `year-1`); cells are retention percentages 0–100. Use `matrix` for ordinal scoring. |
 | `stack` | Layered stack (tech stack, opportunity layers). | `layers[]` or `items[]` | Use `layers[]` when each layer has modules/outputs. |
 | `layered-lens` | Sizing or segmentation viewed at multiple lenses. | `nodes[]` or `items[]` | One lens per layer (TAM/SAM/SOM, segment, geography). |
-| `bridge` | Two-end connection through intermediate steps. | `nodes[]` or `items[]` | Provide ordered nodes; renderer reuses `flow`. |
 | `journey-map` | Customer / user journey across surfaces. | `nodes[]` or `items[]` | Order = journey sequence. |
-| `logic-chain` | Inference chain (premise → premise → conclusion). | `nodes[]` | Renderer chains nodes in declared order. |
 | `scorecard` | Compact KPI / score grid. | `items[]` or `nodes[]` | Each entry has a `value` or `score` (use 0–10 ordinal scoring unless source-backed numbers exist). |
 | `other` | Last resort. | none | Avoid; prefer a real type. |

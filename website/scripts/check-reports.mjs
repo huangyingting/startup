@@ -42,9 +42,9 @@ const FIGURE_CONTRACT_MAP = new Map(Object.entries(FIGURE_CONTRACTS));
 const FIGURE_ALLOWED_POPULATED_MAP = new Map(
   Object.entries(FIGURE_ALLOWED_POPULATED_FIELDS).map(([type, fields]) => [type, new Set(fields)])
 );
-const COORDINATE_FIGURE_TYPES = new Set(['quadrant', 'positioning-map', 'scatter']);
+const COORDINATE_FIGURE_TYPES = new Set(['quadrant', 'positioning-map']);
 const NUMERIC_VALUE_FIGURE_TYPES = new Set(['bars', 'waterfall', 'funnel']);
-const MATRIX_FIGURE_TYPES = new Set(['matrix', 'heatmap', 'cohort']);
+const MATRIX_FIGURE_TYPES = new Set(['matrix', 'cohort']);
 
 const failures = [];
 const fail = (message) => failures.push(message);
@@ -335,31 +335,6 @@ function checkCoordinateFigure(path, figure) {
       fail(`${path}: figure ${figure.id} point ${index + 1} requires numeric x and y`);
     }
   }
-  if (figure.type !== 'scatter') return;
-  for (const [seriesIndex, series] of (figure.data.series ?? []).entries()) {
-    for (const [pointIndex, point] of (series.points ?? []).entries()) {
-      if (!hasText(point?.label)) {
-        fail(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires label`);
-      }
-      if (!isFiniteNumber(point?.x) || !isFiniteNumber(point?.y)) {
-        fail(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires numeric x and y`);
-      }
-    }
-  }
-}
-
-function checkSensitivityFigure(path, figure) {
-  if (figure.type !== 'sensitivity') return;
-  for (const [seriesIndex, series] of (figure.data.series ?? []).entries()) {
-    for (const [pointIndex, point] of (series.points ?? []).entries()) {
-      if (!hasText(point?.label)) {
-        fail(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires label`);
-      }
-      if (!isFiniteNumber(point?.value)) {
-        fail(`${path}: figure ${figure.id} series ${seriesIndex + 1} point ${pointIndex + 1} requires numeric value`);
-      }
-    }
-  }
 }
 
 function checkFigure(path, figure) {
@@ -371,7 +346,6 @@ function checkFigure(path, figure) {
   checkNumericValueFigure(path, figure);
   checkRangeFigure(path, figure);
   checkCoordinateFigure(path, figure);
-  checkSensitivityFigure(path, figure);
 }
 
 // ---------------------------------------------------------------------------
