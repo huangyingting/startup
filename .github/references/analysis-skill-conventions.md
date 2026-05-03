@@ -15,7 +15,7 @@ Each skill documents chapter-specific work. This file defines rules that apply t
 
 ## Inputs
 
-Each analysis skill receives the invocation contract from `AGENTS.md`:
+Each analysis skill receives the invocation context resolved by the `startup-diligence` workflow:
 
 - `companyName`
 - optional `companyUrl`
@@ -41,9 +41,10 @@ Each analysis skill is the authoritative generation contract for its report chap
 - required tables, with intended columns and evidence expectations;
 - required structured figures, with preferred renderer types and required data shape;
 - evidence collection strategy and source classes;
-- research breadth expectations: exhaust decision-relevant official, independent, adverse, and freshness sources until additional credible sources no longer change the chapter's facts, tables, figures, or gaps;
 - domain-adaptive additions inferred from the company, business model, and operating dependencies;
 - completion checklist and handoff fields.
+
+The shared rules below provide default research breadth expectations for every analysis skill. A chapter skill may add stricter chapter-specific source classes, questions, or depth expectations when its domain requires them.
 
 Each analysis skill also has a sibling `contract.yaml` that mirrors the machine-checkable subset of the chapter contract: artifact name, chapter number, minimum section/table/figure floors, required table column alternatives, and required figure type alternatives. `scripts/audit-report-readiness.mjs` reads these files, so update `contract.yaml` whenever a required table or figure changes.
 
@@ -97,7 +98,7 @@ Both files must exist and parse before the next skill starts.
 
 Analysis skills never write `100-evidence-ledger.yaml`; that is `startup-ledger`'s job.
 
-Diagnostic research packs or cached text snapshots may be created during research, but they are not final artifacts and must not be cited as sources of truth.
+Research packs and cached text snapshots are diagnostics only; they are not final artifacts and must not be cited as sources of truth. For visible companies, complex domains, or prompt-critical topics, maintain a research pack unless the chapter's research is small enough to summarize completely in the handoff note.
 
 ## Parallel research packs
 
@@ -120,6 +121,7 @@ Rules:
 - Write each pack to a unique diagnostic path if persisted.
 - Do not write or rewrite final `XX-name.yaml` files from parallel workers.
 - When serializing the final artifact, convert retained evidence into `localEvidence.sources[]` and `localEvidence.claims[]`; never cite the pack file itself.
+- If no pack is persisted, the handoff note must say why and must still list the research questions, reviewed source classes, unresolved gaps, and selected domain-adaptive additions.
 
 ## Local evidence
 
@@ -220,7 +222,7 @@ Avoid:
 - reused section titles such as `Evidence base`, `Investor interpretation`, `Contradictions and uncertainty`, or `Private diligence path` across all artifacts;
 - floor-only output when evidence supports more depth.
 
-Depth floors in `AGENTS.md` are minimums, not targets.
+Depth floors in `scripts/report-manifest.mjs` and the `startup-diligence` workflow are minimums, not targets.
 
 ## Figure rules
 

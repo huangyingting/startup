@@ -1,6 +1,6 @@
 ---
 name: startup-diligence
-description: "Use when: producing a complete startup diligence report (English + Simplified Chinese) for a company. Keywords: full diligence workflow, end-to-end report, startup-diligence-report-v2 orchestration."
+description: "Use when: producing a startup research report, company research report, startup diligence report, investment diligence report, or full end-to-end research on a named company. Trigger phrases include: research X company, research company X, analyze X startup, generate a report for X, startup research, company diligence, investment research, due diligence, full diligence workflow, startup-diligence-report-v2."
 user-invocable: true
 ---
 
@@ -127,7 +127,9 @@ Synchronization points:
 - Each `startup-*` chapter skill owns its chapter content contract. The skill must define universal chapter requirements, required tables, required structured figures, evidence collection strategy, and domain-adaptive additions.
 - Domain-adaptive additions are inferred from the company domain, business model, value-chain position, buyer/user/payment structure, revenue mechanism, regulatory exposure, physical/scientific/data/financial dependencies, and operating model. Do not hard-code the report around a small set of sectors.
 - For normal report runs, pursue investor-grade research depth in every chapter: collect the useful official, independent, adverse, and freshness evidence that can change the chapter's sections, tables, figures, claims, or gaps. Stop adding sources only when new credible sources become duplicative or non-material.
-- Create or maintain diagnostic per-chapter research packs after `01` and before artifact writing whenever research is broad enough to need a handoff. Each pack should list reviewed URLs, source type, independence, candidate claims, key quotes, freshness, conflicts, adverse findings, open gaps, and why additional sources were or were not material.
+- Create or maintain diagnostic per-chapter research packs after `01` and before artifact writing for visible companies, complex domains, or prompt-critical topics.
+- For simple or obscure companies, a concise handoff note can replace a persisted pack only if it lists research questions, reviewed source classes, unresolved gaps, selected domain-adaptive additions, and why more sources were not material.
+- Persisted packs should list reviewed URLs, source type, independence, candidate claims, key quotes, freshness, conflicts, adverse findings, open gaps, and why additional sources were or were not material.
 - Cached fetched pages are for extraction speed only; cite the reviewed original URL in `localEvidence.sources[]`, not the cache path.
 - Every prompt-critical request must be either satisfied in the owning artifact or recorded as an explicit `evidenceGaps[]` item with a diligence path.
 
@@ -150,7 +152,7 @@ Follow `.github/references/evidence-ledger.md` and `.github/references/analysis-
 
 ## Artifact depth gates
 
-Schema validity is necessary but not sufficient. For normal public or late-stage private companies, use these floors:
+Schema validity is necessary but not sufficient. `scripts/report-manifest.mjs` is the machine source for depth floors; for normal public or late-stage private companies, the prose baseline is:
 
 - `01-company-snapshot.yaml`: at least 5 substantive sections, 3 tables, 2 figures, and a milestone timeline with at least 8 entries.
 - Each of `02`–`08`: at least 4 substantive sections, 4 tables, and 2 figures; `07` and `08` should usually exceed the floor.
