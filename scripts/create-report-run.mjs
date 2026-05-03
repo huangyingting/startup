@@ -4,10 +4,10 @@
 // Adds a numeric suffix when the slug already exists.
 import { existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { normalizeCompanyName, normalizeDomain, readYaml, reportsDir, slugify } from './text-utils.mjs';
+import { normalizeCompanyName, normalizeDomain, readYaml, reportsDir, slugify } from './report-utils.mjs';
 
 function usage() {
-  console.error('Usage: node scripts/prepare-report-folder.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--allow-duplicate] [--index reports/_index.yaml]');
+  console.error('Usage: node scripts/create-report-run.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--allow-duplicate] [--index reports/_index.yaml]');
   process.exit(1);
 }
 
@@ -41,11 +41,11 @@ function checkDuplicateRisk({ companyName, website, indexPath, allowDuplicate })
   });
   if (!matches.length) return;
 
-  console.error('[prepare-report-folder] duplicate-risk: high');
+  console.error('[create-report-run] duplicate-risk: high');
   for (const match of matches) {
     console.error(`  - ${match.companyName ?? match.slug} (${match.path})`);
   }
-  console.error('[prepare-report-folder] stop unless this is an intentional refresh/update; pass --allow-duplicate to override.');
+  console.error('[create-report-run] stop unless this is an intentional refresh/update; pass --allow-duplicate to override.');
   process.exit(2);
 }
 

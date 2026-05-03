@@ -11,7 +11,7 @@ import {
   readYaml,
   reportsDir,
   writeYaml,
-} from './text-utils.mjs';
+} from './report-utils.mjs';
 
 const REQUIRED_FILES = ['92-summary-card.yaml'];
 const OUTPUT_PATH = join(reportsDir, '_index.yaml');
@@ -68,7 +68,7 @@ function collectReports() {
 
 const { reports, failures } = collectReports();
 if (failures.length && args.has('--strict')) {
-  console.error('[build:reports-index] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
+  console.error('[build:report-index] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
   process.exit(1);
 }
 
@@ -78,11 +78,11 @@ const serialized = yaml.dump(document, { lineWidth: 120, noRefs: true, sortKeys:
 if (args.has('--check')) {
   const onDisk = existsSync(OUTPUT_PATH) ? readFileSync(OUTPUT_PATH, 'utf8') : '';
   if (onDisk !== serialized) {
-    console.error('[build:reports-index] reports/_index.yaml is out of date. Run npm run build:reports-index.');
+    console.error('[build:report-index] reports/_index.yaml is out of date. Run npm run build:report-index.');
     process.exit(1);
   }
-  console.log(`[build:reports-index] ✓ reports/_index.yaml is current (${reports.length} report(s)).`);
+  console.log(`[build:report-index] ✓ reports/_index.yaml is current (${reports.length} report(s)).`);
 } else {
   writeYaml(OUTPUT_PATH, document);
-  console.log(`[build:reports-index] ✓ wrote ${OUTPUT_PATH} (${reports.length} report(s)).`);
+  console.log(`[build:report-index] ✓ wrote ${OUTPUT_PATH} (${reports.length} report(s)).`);
 }

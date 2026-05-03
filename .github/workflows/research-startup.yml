@@ -115,7 +115,7 @@ jobs:
           copilot --yolo --no-ask-user -p "$PROMPT"
 
       - name: Rebuild reports/_index.yaml
-        run: node scripts/build-reports-index.mjs --strict
+        run: node scripts/build-report-index.mjs --strict
 
       - name: Validate generated report and website
         run: npm run validate
@@ -149,7 +149,7 @@ jobs:
           git config user.email "startup-research-bot@users.noreply.github.com"
           git fetch origin "${{ github.ref_name }}"
           git rebase --autostash "origin/${{ github.ref_name }}"
-          node scripts/build-reports-index.mjs --strict
+          node scripts/build-report-index.mjs --strict
           git add reports/
           if git diff --cached --quiet; then
             echo "No new or updated startup reports."

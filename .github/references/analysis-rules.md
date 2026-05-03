@@ -18,7 +18,7 @@ Every `01`–`08` analysis chapter skill follows this execution loop, then appli
 6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths; derive content from the claims rather than writing claims after the prose.
 7. Draft schema-native sections, tables, callouts, and structured figures for the chapter; make selected domain-adaptive additions visible in the artifact rather than only in notes; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
 8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive and non-duplicative, claim refs resolve locally, selected domain-adaptive additions appear in sections and at least one table or figure where supportable, evidence depth is adequate, and the owning skill's completion check passes.
-9. Write only the owning skill's artifact, then run `node scripts/audit-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger` so failures route directly back to this chapter. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+9. Write only the owning skill's artifact, then run `node scripts/check-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger` so failures route directly back to this chapter. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
 
 ## Domain reflection and sufficiency gate
 
@@ -77,7 +77,7 @@ Never retain:
 
 Deduplicate by canonical URL and underlying event/date. Cluster press-release or wire-copy repeats as one event. Prefer fit-for-purpose sources: official pages, filings/regulators, tier-one news, analyst/market data, customer proof, technical docs, reviews, and disconfirming evidence.
 
-Label `sourceType`, `reputationTier`, and `independence` honestly. Use only enum values from `scripts/evidence-registry.mjs`; update the registry first when adding or changing evidence enums.
+Label `sourceType`, `reputationTier`, and `independence` honestly using the closed enum values in `.github/references/report-schema-v2.md`.
 
 ## Research tool usage
 
@@ -137,7 +137,7 @@ Every new external fact needs an atomic, reusable local `claims[]` entry before 
 
 Before writing, confirm that retained sources cover the chapter's required source classes. If a required source class has no usable evidence, add `evidenceGaps[]` rather than silently omitting it. Never invent values, capabilities, certifications, customers, multiples, outcomes, or metrics.
 
-Before consolidation, ensure every retained URL satisfies source provenance rules, material sections/tables/figures/callouts cite local claims, and `localEvidence.coverage.sourcesConsidered` is updated. Chapter evidence coverage, depth, table, and figure thresholds are enforced by `scripts/audit-chapter-readiness.mjs` before the ledger is built.
+Before consolidation, ensure every retained URL satisfies source provenance rules, material sections/tables/figures/callouts cite local claims, and `localEvidence.coverage.sourcesConsidered` is updated. Chapter evidence coverage, depth, table, and figure thresholds are enforced by `scripts/check-chapter-readiness.mjs` before the ledger is built.
 
 Reflection questions: Would a source change each major table cell, figure node, or conclusion if it were wrong? What investor decision does each major table/figure support? Does each important gap affect recommendation, confidence, risk, valuation stance, or only follow-up diligence? Resolve source contradictions as freshness, scope, definition, or true-conflict issues.
 

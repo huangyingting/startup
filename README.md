@@ -16,7 +16,7 @@ Each analysis skill writes one English artifact. After all 8 analysis artifacts 
 
 ```mermaid
 flowchart TD
-  Start([User: research company X]) --> Setup{prepare-report-folder.mjs<br/>dedupe + create reports/&lt;ts&gt;-&lt;slug&gt;/}
+  Start([User: research company X]) --> Setup{create-report-run.mjs<br/>dedupe + create reports/&lt;ts&gt;-&lt;slug&gt;/}
   Setup -- exit 2: duplicate --> Stop([STOP unless refresh requested])
   Setup -- created --> Snapshot
 
@@ -36,7 +36,7 @@ flowchart TD
   Val --> Ledger
 
   subgraph Stage2[Stage 2 — Consolidate]
-    Ledger[startup-evidence<br/>scripts/consolidate-evidence.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 90-evidence.yaml]
+    Ledger[startup-evidence<br/>scripts/build-evidence-ledger.mjs<br/>dedupes sources/claims → S### / C###<br/>rewrites 01-08 claimRefs<br/>writes 90-evidence.yaml]
   end
 
   Ledger --> Report
@@ -49,7 +49,7 @@ flowchart TD
   Card --> FinalVal
 
   subgraph Stage4[Stage 4 — Final validation]
-    FinalVal[build-reports-index.mjs<br/>+ website check-reports.mjs<br/>+ astro build]
+    FinalVal[build-report-index.mjs<br/>+ website check-reports.mjs<br/>+ astro build]
   end
 
   FinalVal --> End([Done])
@@ -87,7 +87,7 @@ Every artifact is constrained by skill requirements, central schema rules, and b
 ```mermaid
 flowchart LR
   A[Skill requirements<br/>.github/skills/*.md] --> B[Schema rules<br/>.github/references/<br/>report-schema-v2.md]
-  B --> C[Chapter readiness audit<br/>scripts/audit-chapter-readiness.mjs<br/>+ website/scripts/check-reports.mjs]
+  B --> C[Chapter readiness check<br/>scripts/check-chapter-readiness.mjs<br/>+ website/scripts/check-reports.mjs]
   C --> D{Pass?}
   D -- yes --> Ship([Astro build OK])
   D -- no --> Fix[Reject artifact<br/>fix at source<br/>then rerun ledger + report]
@@ -96,7 +96,7 @@ flowchart LR
 
 Lint coverage today:
 
-- enum fields restricted to schema-defined values (`recommendation`, `confidence`, `riskRating`, `valuationStance`, `claimType`, `freshness`, `corroboration`, `sourceType`, `reputationTier`, `independence`).
+- report/card enum fields restricted to schema-defined values (`recommendation`, `confidence`, `riskRating`, `valuationStance`); evidence vocabulary is governed by `.github/references/report-schema-v2.md` and chapter review rather than a separate registry file.
 - every table row has exactly `columns.length` cells.
 - `matrix` / `heatmap` figures: each `row.values.length === data.columns.length` (row label lives in `row.label`, not in `columns[]`).
 - each `tableRef` / `figureRef` is referenced from at most one chapter section or appendix block.
@@ -153,9 +153,9 @@ The report should be written to `reports/<timestamp>-<company-slug>/` and will a
 - `.github/skills/` — stage skills used by the workflow.
 - `.github/references/report-schema-v2.md` — canonical YAML schema and rendering contract.
 - `.github/references/` — shared YAML syntax and analysis rules.
-- `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
-- `scripts/prepare-report-folder.mjs` — duplicate-risk check plus report folder creation.
-- `scripts/consolidate-evidence.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
-- `scripts/audit-chapter-readiness.mjs` — chapter-scoped evidence, depth, table, and figure readiness audit for `01`–`08` artifacts.
+- `scripts/build-report-index.mjs` — rebuilds `reports/_index.yaml`.
+- `scripts/create-report-run.mjs` — duplicate-risk check plus report folder creation.
+- `scripts/build-evidence-ledger.mjs` — dedupes per-artifact `localEvidence` into final `90-evidence.yaml`.
+- `scripts/check-chapter-readiness.mjs` — chapter-scoped evidence, depth, table, and figure readiness check for `01`–`08` artifacts.
 - `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
 - `website/scripts/check-reports.mjs` — rendering-contract validator (schema heads, figure types, enums, refs).

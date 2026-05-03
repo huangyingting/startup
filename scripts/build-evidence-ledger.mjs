@@ -5,7 +5,7 @@
 // analysis artifacts.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { asDateString, canonicalSourceUrl, compactText, readYaml, writeYaml } from './text-utils.mjs';
+import { asDateString, canonicalSourceUrl, compactText, readYaml, writeYaml } from './report-utils.mjs';
 
 const ANALYSIS_FILES = [
   '01-company-overview.yaml',
@@ -27,19 +27,19 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
-  console.error('Usage: node scripts/consolidate-evidence.mjs <report-folder> [--keep-local]');
+  console.error('Usage: node scripts/build-evidence-ledger.mjs <report-folder> [--keep-local]');
   process.exit(1);
 }
 
 const reportFolder = resolve(args.folder);
 const docs = loadAnalysisDocs(reportFolder);
 if (!docs.size) {
-  console.error(`[consolidate-evidence] no report artifacts found in ${reportFolder}`);
+  console.error(`[build-evidence-ledger] no report artifacts found in ${reportFolder}`);
   process.exit(1);
 }
 for (const downstream of ['91-full-report.yaml', '92-summary-card.yaml']) {
   if (existsSync(join(reportFolder, downstream))) {
-    console.warn(`[consolidate-evidence] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run startup-full-report and startup-summary-card after consolidation.`);
+    console.warn(`[build-evidence-ledger] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run startup-full-report and startup-summary-card after ledger rebuild.`);
     break;
   }
 }
@@ -52,7 +52,7 @@ for (const [file, doc] of docs) {
   writeYaml(join(reportFolder, file), rewrite(doc, file, claimIds));
 }
 
-console.log(`[consolidate-evidence] wrote ${join(reportFolder, '90-evidence.yaml')} (${sources.length} sources, ${claims.length} claims)`);
+console.log(`[build-evidence-ledger] wrote ${join(reportFolder, '90-evidence.yaml')} (${sources.length} sources, ${claims.length} claims)`);
 
 // ---------------------------------------------------------------------------
 

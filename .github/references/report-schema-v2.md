@@ -7,10 +7,9 @@ The schema supports investor-grade English startup diligence reports with claim-
 Workflow source and machine-readable rendering/validation mirrors live in:
 
 - `.github/skills/startup-research/SKILL.md` — source of truth for required artifacts, artifact mapping/numbering, owner skills, workflow gates, and final validation.
-- `scripts/evidence-registry.mjs` — evidence enum values and extensible topic vocabulary used by ledger/source/claim validation.
 - `scripts/figure-registry.mjs` — supported figure types, allowed figure data fields, required populated fields, and renderer-facing data contracts.
 
-When this Markdown contract and an enum/figure registry disagree, update the registry first, then update this document and the relevant skill instructions. When workflow rules disagree, `.github/skills/startup-research/SKILL.md` is authoritative.
+When this Markdown contract and a figure registry disagree, update the figure registry first, then update this document and the relevant skill instructions. When workflow rules disagree, `.github/skills/startup-research/SKILL.md` is authoritative.
 
 ## Required artifacts
 
@@ -38,7 +37,7 @@ The authoritative required artifact set is defined in `.github/skills/startup-re
 - Agents must read this schema and `.github/references/yaml-rules.md` before writing YAML artifacts.
 - Skills that create local evidence must follow `.github/references/analysis-rules.md`.
 - Run inputs provide the shared identity anchor. Analysis chapter skills may use already available peer artifacts as optional coordination context, but peer artifacts are not hard prerequisites during parallel `01`–`08` analysis.
-- Analysis skills record local evidence under `localEvidence`; `startup-evidence` runs `scripts/consolidate-evidence.mjs` to create canonical evidence and rewrite claim references.
+- Analysis skills record local evidence under `localEvidence`; `startup-evidence` runs `scripts/build-evidence-ledger.mjs` to create canonical evidence and rewrite claim references.
 
 ## Artifact mapping
 
@@ -96,7 +95,7 @@ Use exactly one allowed token. Do not append qualifiers, combine values with `/`
 - `sourceType`: `official`, `filing`, `regulatory`, `tier-one-news`, `trade-press`, `analyst-market-data`, `technical-docs`, `customer-proof`, `partner-proof`, `developer-signal`, `review`, `legal`, `other`
 - `reputationTier`: `high`, `medium`, `low`
 - `independence`: `company`, `partner`, `customer`, `competitor`, `independent`, `unknown`
-- `topic` / source `topics[]`: use the machine-readable vocabulary in `scripts/evidence-registry.mjs`; add domain-specific values there before using them in artifacts.
+- `topic` / source `topics[]`: use a concise, machine-readable topic token from the chapter's evidence context; prefer the vocabulary already used in this schema and existing reports, and add domain-specific values only when they are materially useful.
 
 ---
 
@@ -104,7 +103,7 @@ Use exactly one allowed token. Do not append qualifiers, combine values with `/`
 
 ## `90-evidence.yaml`
 
-Generate only via `node scripts/consolidate-evidence.mjs <reportFolder>` after `01`–`08` exist.
+Generate only via `node scripts/build-evidence-ledger.mjs <reportFolder>` after `01`–`08` exist.
 
 Quality requirements:
 

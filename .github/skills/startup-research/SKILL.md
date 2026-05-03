@@ -22,7 +22,7 @@ Resolve these run inputs before setup:
 
 Before running any chapter skill:
 
-- Create the report folder with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName> [--website <companyUrl>]` and use the printed absolute path as `reportFolder` for all artifacts. This command checks duplicate risk before creating the folder; exit `2` means duplicate risk and you must stop unless the user explicitly requested a refresh/update, in which case rerun with `--allow-duplicate`.
+- Create the report folder with `node scripts/create-report-run.mjs <runTimestamp> <companyName> [--website <companyUrl>]` and use the printed absolute path as `reportFolder` for all artifacts. This command checks duplicate risk before creating the folder; exit `2` means duplicate risk and you must stop unless the user explicitly requested a refresh/update, in which case rerun with `--allow-duplicate`.
 
 Before writing artifacts:
 
@@ -51,7 +51,7 @@ Every completed report folder must contain these artifacts. This workflow skill 
 Rules:
 
 - Write all artifacts directly under `reportFolder`.
-- Never hand-write `90-evidence.yaml`; generate it with `node scripts/consolidate-evidence.mjs <reportFolder>`.
+- Never hand-write `90-evidence.yaml`; generate it with `node scripts/build-evidence-ledger.mjs <reportFolder>`.
 - Temporary files, terminal transcripts, and `/tmp` outputs are diagnostics only, not report artifacts or evidence sources.
 - If a tool produces only a snippet or partial transcript, rewrite it as a complete YAML artifact under `reportFolder` before continuing.
 - Research packs and cached page snapshots are diagnostics/handoffs only; they are not part of the required final artifact set.
@@ -138,7 +138,7 @@ Finalization gates:
 Run the chapter-level readiness audit immediately after each analysis artifact is written:
 
 ```text
-node scripts/audit-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger
+node scripts/check-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger
 ```
 
 Fix failures before consolidation. Warnings are acceptable only when the chapter explicitly documents why evidence is unavailable or why the flagged structure is intentional.
@@ -151,13 +151,13 @@ After each analysis artifact write, parse only that artifact and run the chapter
 
 Final validation after `92-summary-card.yaml`:
 
-- Rebuild `reports/_index.yaml` with `node scripts/build-reports-index.mjs --strict`.
+- Rebuild `reports/_index.yaml` with `node scripts/build-report-index.mjs --strict`.
 - Run `npm run validate`.
 - Remove failed, duplicate, or incomplete partial report folders before commit.
 
 ## Evidence consolidation convention
 
-- Canonical `S###` / `C###` IDs are reassigned by each `consolidate-evidence` run; never cache or hand-edit them outside the artifacts that script rewrites, and re-run `startup-full-report` and `startup-summary-card` after any reconsolidation.
+- Canonical `S###` / `C###` IDs are reassigned by each evidence-ledger rebuild; never cache or hand-edit them outside the artifacts that script rewrites, and re-run `startup-full-report` and `startup-summary-card` after any ledger rebuild.
 
 ## Updating an existing report
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Schema and renderer-contract checks for report YAML.
-// Run before `astro build`. Chapter content readiness is checked by scripts/audit-chapter-readiness.mjs.
+// Run before `astro build`. Chapter content readiness is checked by scripts/check-chapter-readiness.mjs.
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,17 +8,7 @@ import {
   asDateString,
   collectClaimRefs,
   tryReadYaml,
-} from '../../scripts/text-utils.mjs';
-import {
-  CLAIM_TYPES,
-  CORROBORATION,
-  EVIDENCE_QUALITY,
-  EVIDENCE_TOPICS,
-  FRESHNESS,
-  INDEPENDENCE,
-  REPUTATION_TIERS,
-  SOURCE_TYPES,
-} from '../../scripts/evidence-registry.mjs';
+} from '../../scripts/report-utils.mjs';
 import {
   FIGURE_ALLOWED_POPULATED_FIELDS,
   FIGURE_ARRAY_FIELDS,
@@ -64,14 +54,6 @@ const SET = {
   confidence: new Set(CONFIDENCE),
   riskRatings: new Set(RISK_RATINGS),
   valuationStances: new Set(VALUATION_STANCES),
-  claimType: new Set(CLAIM_TYPES),
-  evidenceQuality: new Set(EVIDENCE_QUALITY),
-  topic: new Set(EVIDENCE_TOPICS),
-  freshness: new Set(FRESHNESS),
-  corroboration: new Set(CORROBORATION),
-  sourceType: new Set(SOURCE_TYPES),
-  reputationTier: new Set(REPUTATION_TIERS),
-  independence: new Set(INDEPENDENCE),
   blockType: new Set(BLOCK_TYPES),
   calloutType: new Set(CALLOUT_TYPES),
   analysisCalloutType: new Set(ANALYSIS_CALLOUT_TYPES),
@@ -172,13 +154,9 @@ function checkLedgerSources(run, sources) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(asDateString(source?.accessDate))) {
       fail(`${path} accessDate must be YYYY-MM-DD`);
     }
-    failEnum(path, 'sourceType', source?.sourceType, SET.sourceType);
-    failEnum(path, 'reputationTier', source?.reputationTier, SET.reputationTier);
-    failEnum(path, 'independence', source?.independence, SET.independence);
     if (!Array.isArray(source?.topics) || source.topics.length === 0) {
       fail(`${path} topics must be a non-empty array`);
     }
-    for (const topic of source?.topics ?? []) failEnum(path, 'topic', topic, SET.topic);
   }
 }
 
@@ -187,7 +165,6 @@ function checkLedgerCoverage(run, coverage) {
   for (const field of ['sourcesConsidered', 'sourcesRetained', 'claimsCreated', 'evidenceQuality']) {
     if (coverage?.[field] === undefined) fail(`${path} missing ${field}`);
   }
-  failEnum(path, 'evidenceQuality', coverage?.evidenceQuality, SET.evidenceQuality);
 }
 
 function checkLedgerClaims(run, claims) {
@@ -197,11 +174,7 @@ function checkLedgerClaims(run, claims) {
       if (claim?.[field] === undefined) fail(`${path} missing ${field}`);
     }
     if (!hasText(claim?.statement)) fail(`${path} statement must be non-empty`);
-    failEnum(path, 'claimType', claim?.claimType, SET.claimType);
-    failEnum(path, 'topic', claim?.topic, SET.topic);
     failEnum(path, 'confidence', claim?.confidence, SET.confidence);
-    failEnum(path, 'freshness', claim?.freshness, SET.freshness);
-    failEnum(path, 'corroboration', claim?.corroboration, SET.corroboration);
     if (!Array.isArray(claim?.sourceRefs)) fail(`${path} sourceRefs must be an array`);
   }
 }

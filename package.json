@@ -3,12 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:reports-index": "node scripts/build-reports-index.mjs",
-    "consolidate:evidence": "node scripts/consolidate-evidence.mjs",
-    "audit:chapter": "node scripts/audit-chapter-readiness.mjs",
-    "check:reports-index": "node scripts/build-reports-index.mjs --strict --check",
+    "build:report-index": "node scripts/build-report-index.mjs",
+    "build:evidence-ledger": "node scripts/build-evidence-ledger.mjs",
+    "check:chapter": "node scripts/check-chapter-readiness.mjs",
+    "check:report-index": "node scripts/build-report-index.mjs --strict --check",
     "check:reports": "npm --prefix website run check:reports",
-    "validate": "npm run check:reports-index && npm run check:reports && npm --prefix website run build"
+    "validate": "npm run check:report-index && npm run check:reports && npm --prefix website run build"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

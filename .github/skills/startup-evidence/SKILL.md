@@ -10,7 +10,7 @@ Consolidation stage. Generate canonical sources/claims only after `01`–`08` ex
 
 ## Output
 
-- `90-evidence.yaml` via `node scripts/consolidate-evidence.mjs <reportFolder>`
+- `90-evidence.yaml` via `node scripts/build-evidence-ledger.mjs <reportFolder>`
 - The script also rewrites `claimRefs` and inline `[C###]` references inside `01`–`08`, and removes `localEvidence` unless `--keep-local` is passed.
 
 ## Do not
@@ -24,7 +24,7 @@ Consolidation stage. Generate canonical sources/claims only after `01`–`08` ex
 Before consolidation, each `01`–`08` artifact must already have passed its own chapter-scoped audit:
 
 ```text
-node scripts/audit-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger
+node scripts/check-chapter-readiness.mjs <reportFolder> <01-08-artifact.yaml> --pre-ledger
 ```
 
 For each artifact, verify:
@@ -52,7 +52,7 @@ The script must:
 
 ## Enum normalization
 
-Canonical evidence enum values live in `scripts/evidence-registry.mjs`. Do not duplicate enum lists here; if an enum changes, update the registry first, then validators and human-facing docs.
+Evidence field vocabulary should follow `.github/references/report-schema-v2.md`. Do not introduce new source types, claim types, freshness labels, corroboration labels, or evidence-quality labels unless the schema reference is updated first.
 
 ## Completion check
 

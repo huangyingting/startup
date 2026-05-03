@@ -3,7 +3,7 @@
 // Feedback is intentionally scoped to the owning chapter skill.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { collectClaimRefs, tryReadYaml } from './text-utils.mjs';
+import { collectClaimRefs, tryReadYaml } from './report-utils.mjs';
 
 const MIN_LOCAL_SOURCES_PER_CHAPTER = 50;
 const MIN_LOCAL_CLAIMS_PER_CHAPTER = 75;
@@ -36,7 +36,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
-  console.error('Usage: node scripts/audit-chapter-readiness.mjs <report-folder> <01-08-artifact.yaml> [--pre-ledger] [--strict]');
+  console.error('Usage: node scripts/check-chapter-readiness.mjs <report-folder> <01-08-artifact.yaml> [--pre-ledger] [--strict]');
   process.exit(1);
 }
 
@@ -225,17 +225,17 @@ if (doc) {
 
   if (args.preLedger) checkPreLedgerEvidence(spec.file, doc, counts);
 
-  console.log(`[audit:chapter] reportFolder=${reportFolder}`);
-  console.log(`[audit:chapter] artifact=${spec.file} mode=${args.preLedger ? 'pre-ledger' : 'general'} strict=${args.strict ? 'yes' : 'no'}`);
-  console.log(`[audit:chapter] sections=${counts.sections} tables=${counts.tables} figures=${counts.figures} localSources=${counts.sources} localClaims=${counts.claims} gaps=${counts.gaps}`);
+  console.log(`[check:chapter] reportFolder=${reportFolder}`);
+  console.log(`[check:chapter] artifact=${spec.file} mode=${args.preLedger ? 'pre-ledger' : 'general'} strict=${args.strict ? 'yes' : 'no'}`);
+  console.log(`[check:chapter] sections=${counts.sections} tables=${counts.tables} figures=${counts.figures} localSources=${counts.sources} localClaims=${counts.claims} gaps=${counts.gaps}`);
 }
 
 if (warnings.length) {
-  console.warn('[audit:chapter] warnings:\n' + warnings.map((message) => `  - ${message}`).join('\n'));
+  console.warn('[check:chapter] warnings:\n' + warnings.map((message) => `  - ${message}`).join('\n'));
 }
 if (failures.length) {
-  console.error('[audit:chapter] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
+  console.error('[check:chapter] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
   process.exit(1);
 }
 if (args.strict && warnings.length) process.exit(1);
-console.log('[audit:chapter] ✓ chapter ready for next workflow stage.');
+console.log('[check:chapter] ✓ chapter ready for next workflow stage.');
