@@ -829,15 +829,44 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const byKey = new Map(nodes.map((node) => [node._key, node]));
     const incoming = d3.group(edges, (edge) => edge.to);
     const outgoing = d3.group(edges, (edge) => edge.from);
+    // BFS topological depth from roots. Hub-and-spoke graphs (many inputs, one
+    // sink) collapse to 2 layers; deeper chains keep their natural layer count
+    // instead of being forced into a fixed 3-stage Inputs/Core/Impact layout.
     const roots = nodes.filter((node) => !incoming.has(node._key));
-    const leaves = nodes.filter((node) => !outgoing.has(node._key));
-    const coreNodes = nodes.filter((node) => !roots.includes(node) && !leaves.includes(node));
-    const fallbackCore = nodes.find((node) => /model|core|layer|gate|platform/i.test(`${node.id ?? ''} ${node.label ?? ''}`));
-    const stages = [
-      roots.length ? roots : nodes.slice(0, 1),
-      coreNodes.length ? coreNodes : fallbackCore ? [fallbackCore] : nodes.slice(1, 2),
-      leaves.length ? leaves : nodes.slice(-1),
-    ].map((stage, stageIndex, allStages) => stage.filter((node, index, stageNodes) => node && stageNodes.findIndex((item) => item._key === node._key) === index && !allStages.slice(0, stageIndex).flat().some((item) => item._key === node._key)));
+    const depthByKey = new Map();
+    const queue = (roots.length ? roots : [nodes[0]]).map((node) => {
+      depthByKey.set(node._key, 0);
+      return node;
+    });
+    while (queue.length) {
+      const current = queue.shift();
+      const currentDepth = depthByKey.get(current._key) ?? 0;
+      for (const edge of arr(outgoing.get(current._key))) {
+        const target = byKey.get(edge.to);
+        if (!target) continue;
+        const nextDepth = currentDepth + 1;
+        if (!depthByKey.has(target._key) || depthByKey.get(target._key) < nextDepth) {
+          depthByKey.set(target._key, nextDepth);
+          queue.push(target);
+        }
+      }
+    }
+    for (const node of nodes) if (!depthByKey.has(node._key)) depthByKey.set(node._key, 0);
+    const maxDepth = Math.max(0, ...depthByKey.values());
+    const stages = Array.from({ length: maxDepth + 1 }, () => []);
+    nodes.forEach((node) => stages[depthByKey.get(node._key) ?? 0].push(node));
+    const stageNames = stages.length === 1
+      ? ['Dependencies']
+      : stages.length === 2
+        ? ['Inputs', 'Impact']
+        : stages.length === 3
+          ? ['Inputs', 'Core dependency', 'Impact']
+          : stages.map((_stage, index) => `Stage ${index + 1}`);
+    const stageRole = (index) => index === 0
+      ? 'input'
+      : index === stages.length - 1
+        ? 'impact'
+        : 'core';
     const containerWidth = element.getBoundingClientRect().width || 760;
     const compact = containerWidth < 640;
     const maxRows = Math.max(...stages.map((stage) => stage.length), 1);
@@ -850,7 +879,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const cardW = compact ? Math.min(252, innerW - 18) : Math.min(190, Math.max(140, stageW - 30));
     const cardH = compact ? 66 : 74;
     const stageLabels = [];
-    const stageNames = ['Inputs', 'Core dependency', 'Impact'];
     const positions = [];
     if (compact) {
       let y = margin.top;
@@ -858,7 +886,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
         stageLabels.push({ label: stageNames[stageIndex], x: width / 2, y: y + 2 });
         y += 34;
         stage.forEach((node, index) => {
-          positions.push({ ...node, _stage: stageIndex, x: width / 2, y: y + cardH / 2 + index * (cardH + 16) });
+          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: width / 2, y: y + cardH / 2 + index * (cardH + 16) });
         });
         y += stage.length * cardH + Math.max(0, stage.length - 1) * 16 + 36;
       });
@@ -867,7 +895,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
         stageLabels.push({ label: stageNames[stageIndex], x: margin.left + stageW * stageIndex + stageW / 2, y: 24 });
         const gap = innerH / Math.max(stage.length, 1);
         stage.forEach((node, index) => {
-          positions.push({ ...node, _stage: stageIndex, x: margin.left + stageW * stageIndex + stageW / 2, y: margin.top + gap * index + gap / 2 });
+          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: margin.left + stageW * stageIndex + stageW / 2, y: margin.top + gap * index + gap / 2 });
         });
       });
     }
@@ -943,16 +971,16 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const glyphs = cards.append('g').attr('transform', `translate(${-cardW / 2 + 24},${-cardH / 2 + 35})`);
     glyphs.append('circle')
       .attr('r', 6)
-      .attr('fill', (node) => node._stage === 1 ? colorForTone(node.tone) : 'none')
+      .attr('fill', (node) => node._role === 'core' ? colorForTone(node.tone) : 'none')
       .attr('stroke', (node) => colorForTone(node.tone))
       .attr('stroke-width', 2)
       .attr('opacity', 0.88);
-    glyphs.filter((node) => node._stage === 1).append('path')
+    glyphs.filter((node) => node._role === 'core').append('path')
       .attr('d', 'M-5,0 H5 M0,-5 V5')
       .attr('stroke', '#fff7ef')
       .attr('stroke-width', 1.7)
       .attr('stroke-linecap', 'round');
-    glyphs.filter((node) => node._stage === 2).append('path')
+    glyphs.filter((node) => node._role === 'impact').append('path')
       .attr('d', 'M-5,-5 L5,0 L-5,5')
       .attr('fill', 'none')
       .attr('stroke', (node) => colorForTone(node.tone))
@@ -963,7 +991,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(12, Math.floor((cardW - 54) / 8)), maxLines: 2, lineHeight: chartFont.lineHeight.small });
     });
     cards.each(function(node) { addTitle(d3.select(this), `${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
-    withTooltip(cards, (node) => tooltipHtml(node.label, [node.detail, node._stage === 0 ? 'Input dependency' : node._stage === 1 ? 'Core dependency' : 'Downstream impact']));
+    withTooltip(cards, (node) => tooltipHtml(node.label, [node.detail, node._role === 'input' ? 'Input dependency' : node._role === 'impact' ? 'Downstream impact' : 'Core dependency']));
   };
 
   const renderFlow = (element, payload) => {
@@ -1261,18 +1289,59 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
 
   const renderLayeredLens = (element, payload) => {
     const items = normalizedItems(payload.data);
+    // Probe container width up front so we can compute per-layer text wrapping
+    // before allocating the SVG canvas. We need final card heights to set
+    // svgBase height correctly.
+    const containerWidth = Math.floor(element.getBoundingClientRect().width || 760);
+    const internalWidth = Math.max(containerWidth < 420 ? 420 : 520, containerWidth);
     const margin = { top: 28, right: 34, bottom: 34, left: 34 };
-    const layerH = 86;
-    const { svg, width, height } = svgBase(element, Math.max(300, margin.top + margin.bottom + items.length * layerH));
-    const maxW = width - margin.left - margin.right;
-    const groups = svg.append('g').selectAll('g').data(items).join('g').attr('transform', (_d, index) => {
+    const maxW = internalWidth - margin.left - margin.right;
+    const padX = 22;
+    const labelLineH = 22;
+    const detailLineH = 16;
+    const padTop = 12;
+    const padBottom = 12;
+    const gapBetweenLabelDetail = 8;
+    const gapBetweenLayers = 10;
+    const labelFont = chartFont.size.large;
+    const detailFont = chartFont.small;
+    // Estimate characters that fit in a layer of width `w` for given font
+    // size; `0.55em` is a conservative average glyph width.
+    const charsPerLine = (w, fontSize) => Math.max(8, Math.floor((w - padX * 2) / (fontSize * 0.55)));
+    const wrap = (text, maxChars) => wrapWords(text, maxChars, 99);
+    const layout = items.map((item, index) => {
       const w = maxW * (1 - index * 0.1);
-      return `translate(${(width - w) / 2},${margin.top + index * layerH})`;
+      const labelLines = wrap(item.label, charsPerLine(w, labelFont));
+      const detailLines = item.detail ? wrap(item.detail, charsPerLine(w, detailFont)) : [];
+      const cardH = Math.max(
+        66,
+        padTop + labelLines.length * labelLineH + (detailLines.length ? gapBetweenLabelDetail + detailLines.length * detailLineH : 0) + padBottom,
+      );
+      return { item, index, w, labelLines, detailLines, cardH };
     });
-    groups.append('rect').attr('width', (_d, index) => maxW * (1 - index * 0.1)).attr('height', 66).attr('rx', 14).attr('fill', (_d, index) => d3.interpolateRgb('#fff7ef', '#ead8cf')(index / Math.max(1, items.length - 1))).attr('stroke', (d) => colorForTone(d.tone)).attr('stroke-width', 1.7);
-    groups.append('text').attr('x', 22).attr('y', 27).attr('fill', palette.claret).attr('font-size', chartFont.size.large).attr('font-weight', fontWeight('emphasis')).text((d) => labelText(d.label, 18));
-    groups.append('text').attr('x', 22).attr('y', 50).attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', fontWeight('medium')).text((d) => labelText(d.detail, 74));
-    groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
+    let cursorY = margin.top;
+    for (const entry of layout) { entry.y = cursorY; cursorY += entry.cardH + gapBetweenLayers; }
+    const svgHeight = Math.max(300, cursorY - gapBetweenLayers + margin.bottom);
+    const { svg, width } = svgBase(element, svgHeight);
+    const groups = svg.append('g').selectAll('g').data(layout).join('g').attr('transform', (entry) => `translate(${(width - entry.w) / 2},${entry.y})`);
+    groups.append('rect').attr('width', (entry) => entry.w).attr('height', (entry) => entry.cardH).attr('rx', 14).attr('fill', (_entry, index) => d3.interpolateRgb('#fff7ef', '#ead8cf')(index / Math.max(1, layout.length - 1))).attr('stroke', (entry) => colorForTone(entry.item.tone)).attr('stroke-width', 1.7);
+    groups.append('text')
+      .attr('x', padX)
+      .attr('y', padTop + labelFont)
+      .attr('fill', palette.claret)
+      .attr('font-size', labelFont)
+      .attr('font-weight', fontWeight('emphasis'))
+      .each(function(entry) { renderLineBlock(d3.select(this), entry.labelLines, { x: padX, y: padTop + labelFont, lineHeight: labelLineH }); });
+    groups.filter((entry) => entry.detailLines.length > 0).append('text')
+      .attr('x', padX)
+      .attr('fill', palette.ink)
+      .attr('font-size', detailFont)
+      .attr('font-weight', fontWeight('medium'))
+      .each(function(entry) {
+        const startY = padTop + entry.labelLines.length * labelLineH + gapBetweenLabelDetail + detailFont;
+        renderLineBlock(d3.select(this), entry.detailLines, { x: padX, y: startY, lineHeight: detailLineH });
+      });
+    groups.each(function(entry) { addTitle(d3.select(this), `${entry.item.label}${entry.item.detail ? ` — ${entry.item.detail}` : ''}`); });
   };
 
   const renderBridge = (element, payload) => {
@@ -2137,7 +2206,24 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const margin = { top: 58, right: 24, bottom: 26, left: 156 };
     const x = d3.scaleBand().domain(columns).range([margin.left, width - margin.right]).padding(0.08);
     const y = d3.scaleBand().domain(rows.map((row) => row.label)).range([margin.top, height - margin.bottom]).padding(0.08);
-    const color = d3.scaleLinear().domain([0, 50, 100]).range(['#f4c7bd', '#f2d8a0', '#0f766e']);
+    // Adaptive color scale. Default to retention percentages 0–100 (the
+    // canonical cohort use case) but fall back to the observed numeric range
+    // so misuses with ordinal scoring (e.g. 0–3) still produce visible
+    // contrast instead of a single flat color.
+    const numericValues = [];
+    for (const row of rows) for (const cell of arr(row.values)) {
+      const value = Number(cell?.value ?? String(cell?.label ?? '').replace(/[^0-9.-]/g, ''));
+      if (Number.isFinite(value)) numericValues.push(value);
+    }
+    const dataMin = numericValues.length ? Math.min(...numericValues) : 0;
+    const dataMax = numericValues.length ? Math.max(...numericValues) : 100;
+    const fitsPercent = dataMin >= 0 && dataMax <= 100 && dataMax > 10;
+    const colorDomain = fitsPercent
+      ? [0, 50, 100]
+      : dataMax === dataMin
+        ? [dataMin, dataMin, dataMax + 1]
+        : [dataMin, (dataMin + dataMax) / 2, dataMax];
+    const color = d3.scaleLinear().domain(colorDomain).range(['#f4c7bd', '#f2d8a0', '#0f766e']);
     svg.append('g').selectAll('text').data(columns).join('text').attr('x', (d) => x(d) + x.bandwidth() / 2).attr('y', margin.top - 16).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')).text((d) => labelText(d, 14));
     svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')).each(function(d) {
       renderWrappedText(d3.select(this), d.label, { maxChars: 20, maxLines: 2, lineHeight: chartFont.lineHeight.tight });

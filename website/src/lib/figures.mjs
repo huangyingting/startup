@@ -38,7 +38,7 @@ export const FIGURE_CONTRACTS = {
   'decision-map': [['nodes']],
   'evidence-map': [['nodes']],
   'scenario-tree': [['nodes']],
-  'dependency-map': [['nodes']],
+  'dependency-map': [['nodes'], ['edges']],
   quadrant: [['points']],
   'positioning-map': [['points']],
   bars: [['items', 'series']],

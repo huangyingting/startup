@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import ClaimRefs from './ClaimRefs.astro';
 import ReportBlock from './ReportBlock.astro';
+import DataTable from './DataTable.astro';
 import { displayLabel } from '../lib/display';
 
 interface Props {
@@ -273,46 +274,34 @@ const fallbackMetrics = [
     <section class="report-section evidence-index">
       <h2>{labels.evidence}</h2>
       {claims.length > 0 && (
-        <div class="table-frame">
-          <table>
-            <caption>Claims</caption>
-            <thead><tr><th>ID</th><th>Statement</th><th>Confidence</th><th>Sources</th></tr></thead>
-            <tbody>
-              {claims.map((claim: any) => (
-                <tr id={`claim-${claim.id}`}>
-                  <td><a class="evidence-id" href={`#claim-${claim.id}`}>{claim.id}</a></td>
-                  <td>{claim.statement}</td>
-                  <td>{displayLabel(claim.confidence)}</td>
-                  <td>
-                    {(claim.sourceRefs ?? []).map((ref: string, index: number, list: string[]) => (
-                      <>
-                        <a href={`#source-${ref}`}>{ref}</a>{index < list.length - 1 ? ', ' : ''}
-                      </>
-                    ))}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable title="Claims" columns={['ID', 'Statement', 'Confidence', 'Sources']}>
+          {claims.map((claim: any) => (
+            <tr id={`claim-${claim.id}`}>
+              <td><a class="evidence-id" href={`#claim-${claim.id}`}>{claim.id}</a></td>
+              <td>{claim.statement}</td>
+              <td>{displayLabel(claim.confidence)}</td>
+              <td>
+                {(claim.sourceRefs ?? []).map((ref: string, index: number, list: string[]) => (
+                  <>
+                    <a href={`#source-${ref}`}>{ref}</a>{index < list.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </td>
+            </tr>
+          ))}
+        </DataTable>
       )}
       {sources.length > 0 && (
-        <div class="table-frame">
-          <table>
-            <caption>Sources</caption>
-            <thead><tr><th>ID</th><th>Publisher</th><th>Title</th><th>Quote</th></tr></thead>
-            <tbody>
-              {sources.map((source: any) => (
-                <tr id={`source-${source.id}`}>
-                  <td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td>
-                  <td>{source.publisher}</td>
-                  <td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td>
-                  <td>{source.keyQuote}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable title="Sources" columns={['ID', 'Publisher', 'Title', 'Quote']}>
+          {sources.map((source: any) => (
+            <tr id={`source-${source.id}`}>
+              <td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td>
+              <td>{source.publisher}</td>
+              <td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td>
+              <td>{source.keyQuote}</td>
+            </tr>
+          ))}
+        </DataTable>
       )}
     </section>
   )}
@@ -435,16 +424,6 @@ const fallbackMetrics = [
   .report-callout h4 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--report-fs-subhead); }
   .callout-opportunity { border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
   .callout-risk-alert { border-left-color: #b42318; background: color-mix(in srgb, #b42318 7%, transparent); }
-  .table-frame { width: 100%; max-width: 100%; overflow-x: auto; margin: var(--space-5) 0; border: var(--report-rule); border-top: 3px solid var(--claret); background: var(--surface-paper); }
-  table { width: 100%; min-width: 780px; border-collapse: separate; border-spacing: 0; background: transparent; font-family: var(--font-sans); }
-  caption { caption-side: top; text-align: left; padding: var(--space-3) var(--space-4); border-bottom: var(--report-rule); background: color-mix(in srgb, var(--claret) 6%, transparent); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  th, td { border-bottom: var(--report-rule); padding: var(--space-3) var(--space-4); text-align: left; vertical-align: top; font-size: var(--report-fs-table); line-height: 1.55; }
-  th { background: color-mix(in srgb, var(--paper) 78%, white); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: color-mix(in srgb, var(--claret) 88%, var(--ink-page)); white-space: nowrap; }
-  tbody tr:nth-child(2n) { background: color-mix(in srgb, var(--surface-paper) 68%, transparent); }
-  tbody tr:hover { background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); }
-  tbody tr:last-child td { border-bottom: 0; }
-  td:first-child { font-weight: 650; }
-  .table-note { margin: 0; border-top: var(--report-rule); padding: var(--space-3) var(--space-4); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--report-fs-table); line-height: 1.55; }
   .equation { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
   .three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
   .three-col article { border-top: var(--report-rule); padding-top: var(--space-3); }
@@ -457,8 +436,6 @@ const fallbackMetrics = [
   .report-shell.refs-visible :global(.claim-ref) { display: inline; }
   .report-shell :global(.claim-ref a) { color: var(--claret); text-decoration: none; }
   .report-shell :global(.claim-ref a:hover), .report-shell :global(.claim-ref a:focus-visible) { text-decoration: underline; }
-  .table-frame :global(.claim-ref) { font-size: var(--report-fs-caption); white-space: nowrap; }
-  .table-frame > :global(.claim-ref) { display: block; margin: 0; border-top: var(--report-rule); padding: var(--space-3) var(--space-4); }
-  .report-shell.refs-visible .table-frame > :global(.claim-ref) { display: block; }
+  .report-shell.refs-visible :global(.table-frame > .claim-ref) { display: block; }
   @media (max-width: 900px) { .report-cover, .metric-grid, .intro-grid, .three-col { grid-template-columns: 1fr; } .toc ol { columns: 1; } }
 </style>

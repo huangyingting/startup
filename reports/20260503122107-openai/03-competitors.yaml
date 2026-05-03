@@ -1,0 +1,380 @@
+schemaVersion: report-v2
+artifact: competitors
+slug: openai
+runDate: '2026-05-03'
+company:
+  name: OpenAI
+chapter:
+  number: 3
+  title: Competitors
+  summary: >-
+    OpenAI competes across several classes at once: direct frontier-assistant rivals, neutral model marketplaces, and
+    internal-build substitutes that can reduce lock-in.
+sections:
+  - id: S301
+    title: Landscape and substitute set
+    body: >-
+      OpenAI’s competitive landscape is unusually broad because the company monetizes across multiple surfaces. A buyer
+      can choose OpenAI as a secure chat workspace, as an API provider, or as a platform for model-backed agents
+      connected to enterprise tools. That means the direct rivals are not just other model labs. They also include
+      neutral infrastructure platforms such as AWS Bedrock, which are attractive to buyers that prefer optionality
+      across many model providers, and internal-build approaches that prioritize cloud control over a tightly integrated
+      application experience.
+
+
+      Anthropic is the clearest direct peer in the reviewed source set because it competes on enterprise assistant
+      workflows, knowledge integration, developer use cases, and enterprise controls. AWS Bedrock is the clearest
+      incumbent-platform competitor because it offers access to many models, agent tooling, and enterprise controls
+      while letting buyers reduce dependence on a single application vendor. The status-quo substitute is still internal
+      build or partial adoption across fragmented assistants, especially when large enterprises want to avoid vendor
+      concentration or preserve procurement leverage.
+
+
+      This matters because OpenAI’s strongest advantage is also its main exposure. The full-stack offering can create a
+      better user experience and faster adoption, but it also gives buyers more reasons to compare the platform against
+      tool-agnostic alternatives or to hold back until they understand switching costs and data-portability
+      implications.
+    claimRefs:
+      - C024
+      - C029
+      - C028
+  - id: S302
+    title: Capability and security comparison
+    body: >-
+      OpenAI’s application-led differentiation is visible in the breadth of business features around ChatGPT and Codex.
+      The company advertises more than 60 app integrations plus shared projects, custom workspace GPTs, record mode,
+      data analysis, and specialized agents. That package is compelling for companies that want quick employee adoption
+      and a single front door for intelligence across knowledge work, coding, and task execution. OpenAI Enterprise also
+      adds SCIM, enterprise key management, user analytics, domain verification, and role-based controls, which helps
+      close the gap between consumer familiarity and enterprise governance.
+
+
+      Anthropic is highly comparable on the trust-and-control dimension. Claude Enterprise explicitly markets SSO, SCIM,
+      audit logs, custom retention controls, role-based permissions, and GitHub-native workflows. The enterprise plan is
+      also legible to procurement because Anthropic publishes a self-serve enterprise price of $20 per seat per month
+      before usage charges, whereas OpenAI’s enterprise plan remains custom priced. That pricing transparency can help
+      Anthropic in budget-controlled pilots or side-by-side evaluations.
+
+
+      AWS Bedrock competes differently. Its core promise is model choice, platform neutrality, and enterprise-grade
+      governance inside existing AWS infrastructure. Bedrock now even highlights OpenAI models as part of that choice
+      set. For some buyers that is a reason to use Bedrock rather than OpenAI directly: the customer can standardize
+      governance, routing, and cost controls across multiple labs without committing to one workspace vendor. OpenAI’s
+      counter is deeper application integration and a more native end-user experience.
+    claimRefs:
+      - C025
+      - C026
+      - C027
+      - C028
+      - C029
+  - id: S303
+    title: Pricing pressure, lock-in, and moat durability
+    body: >-
+      The reviewed sources suggest OpenAI’s moat is real but not secure enough to ignore commoditization. On the API
+      side, OpenAI publishes concrete pricing for flagship models, including GPT-5.5 at $5 per million input tokens and
+      $30 per million output tokens. AWS Bedrock, however, makes cost optimization and routing part of the product
+      promise, including a claimed 50% batch discount for select models and tooling that can shift workloads toward the
+      lowest-cost acceptable model. That creates a natural pressure toward platform abstraction for cost-sensitive
+      buyers.
+
+
+      Anthropic’s enterprise offer also narrows differentiation in the knowledge-work layer. It has enterprise controls,
+      connectors, and a seat-based bundle that buyers can understand quickly. In other words, OpenAI cannot rely only on
+      “enterprise-grade trust” as a moat because credible peers now market similar features. The more durable moat
+      appears to be the combination of model quality, user familiarity, ecosystem momentum, and breadth across consumer,
+      enterprise, and developer surfaces.
+
+
+      Lock-in therefore cuts both ways. OpenAI benefits when customers embed custom GPTs, connectors, workflows, and
+      API-based agents into everyday operations. But buyers with strong procurement leverage may actively seek neutral
+      routing layers, internal abstractions, or multi-vendor setups to prevent dependency on a single lab. The result is
+      a durable but contestable position: OpenAI looks strongest where speed of adoption and end-user experience matter
+      most, and weaker where model optionality and platform neutrality are the primary buying criteria.
+    claimRefs:
+      - C032
+      - C031
+      - C027
+      - C024
+tables:
+  - id: T301
+    title: Competitor profile table
+    columns:
+      - Competitor
+      - Category
+      - Scale / commercial model
+      - Target segment
+      - Differentiation
+      - Evidence
+      - Limitation
+    rows:
+      - - OpenAI
+        - Direct frontier platform
+        - Custom enterprise pricing plus API usage and workspace plans
+        - Consumer, enterprise, developer
+        - Full-stack chat + API + agents + integrations
+        - OpenAI business and pricing pages
+        - Enterprise price not public
+      - - Anthropic Claude
+        - Direct enterprise assistant rival
+        - $20 self-serve enterprise seat price + usage
+        - Cross-functional enterprise teams
+        - Published enterprise controls and GitHub integration
+        - Claude Enterprise page
+        - Self-reported competitor marketing
+      - - AWS Bedrock
+        - Neutral model marketplace / platform
+        - Usage pricing plus routing and batch discounts
+        - Builders wanting provider optionality
+        - Hundreds of FMs, guardrails, AWS-native governance
+        - Bedrock site and pricing page
+        - End-user assistant UX less native than ChatGPT
+      - - Internal build / multi-vendor stack
+        - Status-quo substitute
+        - Depends on cloud, engineering, and governance spend
+        - Large regulated enterprises
+        - Maximum control and routing optionality
+        - Implied by Bedrock and enterprise-control demand
+        - Public evidence on TCO is limited in reviewed sources
+    notes: The table mixes product rivals and realistic substitute paths because buyers compare all of them for the same job.
+    claimRefs:
+      - C024
+      - C027
+      - C029
+  - id: T302
+    title: Feature / capability matrix
+    columns:
+      - Buying criterion
+      - OpenAI
+      - Anthropic Claude
+      - AWS Bedrock
+      - Evidence notes
+    rows:
+      - - End-user workspace for broad employee rollout
+        - 'Yes'
+        - 'Yes'
+        - No / indirect
+        - OpenAI and Anthropic sell assistant workspaces; Bedrock is infrastructure-led
+      - - Model marketplace / provider optionality
+        - Partial
+        - 'No'
+        - 'Yes'
+        - Bedrock explicitly offers many model providers
+      - - GitHub-connected workflow support
+        - 'Yes'
+        - 'Yes'
+        - Unknown
+        - OpenAI cites GitHub integrations; Anthropic cites GitHub integration
+      - - SCIM / SSO / audit controls
+        - 'Yes'
+        - 'Yes'
+        - 'Yes'
+        - All three market enterprise controls, but surfaces differ
+      - - Published direct enterprise seat price
+        - 'No'
+        - 'Yes'
+        - 'No'
+        - Anthropic publishes $20 self-serve enterprise seat pricing
+    notes: Unsupported cells are marked as partial or unknown rather than inferred.
+    claimRefs:
+      - C025
+      - C026
+      - C027
+      - C028
+      - C029
+  - id: T303
+    title: Pricing / packaging comparison
+    columns:
+      - Vendor
+      - Price / unit / contract model
+      - Included capabilities
+      - Discount / unknowns
+      - Implication
+    rows:
+      - - OpenAI API
+        - $5 / 1M input tokens and $30 / 1M output tokens for GPT-5.5
+        - Flagship model access, batch and residency options
+        - Realized enterprise pricing not public
+        - Strong for premium workloads; may face routing pressure
+      - - OpenAI Enterprise
+        - Custom pricing
+        - Expanded context, SCIM, EKM, data residency, AI advisors
+        - Enterprise quote required
+        - High-value but lower procurement transparency
+      - - Anthropic Claude Enterprise
+        - $20 / seat / month billed annually + API usage
+        - Chat, Claude Code, connectors, SSO, SCIM, audit logs
+        - Annual commitment and seat minimums
+        - Simple pilot entry point for teams evaluating alternatives
+      - - AWS Bedrock
+        - Usage pricing with batch discounts up to 50% vs on-demand for select models
+        - Model marketplace, guardrails, routing, agent tooling
+        - Effective price depends on model mix and routing
+        - Appeals to cost-sensitive and multi-vendor buyers
+    notes: >-
+      Packaging comparability is imperfect because Bedrock is infrastructure-led while OpenAI and Anthropic also sell
+      end-user workspaces.
+    claimRefs:
+      - C032
+      - C027
+      - C031
+  - id: T304
+    title: Moat durability / competitive risk register
+    columns:
+      - Moat claim
+      - Evidence
+      - Threat
+      - Severity
+      - Mitigation / diligence ask
+    rows:
+      - - Consumer familiarity accelerates enterprise rollout
+        - OpenAI cites 800M to 900M weekly users and lower rollout friction
+        - Commodity assistant alternatives narrow UX lead
+        - significant
+        - Measure activation and retention versus competing copilots
+      - - Full-stack product breadth
+        - OpenAI markets chat, codex, agents, apps, and APIs in one stack
+        - Neutral platforms reduce lock-in by routing across many models
+        - significant
+        - Assess how much revenue depends on unique application layer vs model access
+      - - Enterprise trust posture
+        - OpenAI markets SCIM, EKM, residency, and no-training defaults
+        - Anthropic markets similar controls; cloud platforms add governance wrappers
+        - moderate
+        - Benchmark buyer win rates where trust features are table stakes
+      - - Premium model economics
+        - OpenAI publishes flagship token pricing
+        - Marketplace routing and batch discounts pressure realized pricing
+        - significant
+        - Request gross margin and discounting by product line
+    notes: Severity reflects transmission to pricing power, switching costs, and distribution leverage.
+    claimRefs:
+      - C024
+      - C025
+      - C026
+      - C031
+figures:
+  - id: F301
+    title: Competitive positioning map
+    type: positioning-map
+    layout: wide
+    summary: OpenAI is strongest on end-user breadth; Bedrock is strongest on model optionality.
+    data:
+      points:
+        - label: OpenAI
+          x: 9
+          'y': 7
+          detail: High application breadth and strong model depth
+        - label: Anthropic
+          x: 7
+          'y': 6
+          detail: Strong enterprise assistant with transparent bundle
+        - label: AWS Bedrock
+          x: 5
+          'y': 9
+          detail: Lower end-user breadth, highest provider optionality
+        - label: Internal build
+          x: 3
+          'y': 10
+          detail: Maximum control but lowest deployment speed
+    approximationNotes: X-axis is end-user product breadth; Y-axis is provider optionality. Scores are ordinal analytical estimates.
+    claimRefs:
+      - C024
+      - C028
+      - C029
+  - id: F302
+    title: Feature breadth / capability map
+    type: matrix
+    layout: wide
+    summary: The core competition is between integrated enterprise assistants and neutral model platforms.
+    data:
+      columns:
+        - Workspace UX
+        - Connectors
+        - Enterprise controls
+        - Model optionality
+        - Cost-routing tools
+      rows:
+        - label: OpenAI
+          values:
+            - 3
+            - 3
+            - 3
+            - 1
+            - 1
+        - label: Anthropic
+          values:
+            - 3
+            - 2
+            - 3
+            - 1
+            - 1
+        - label: AWS Bedrock
+          values:
+            - 1
+            - 2
+            - 3
+            - 3
+            - 3
+        - label: Internal build
+          values:
+            - 1
+            - 1
+            - 2
+            - 3
+            - 2
+    approximationNotes: Matrix uses ordinal analytical scoring from 1 to 3 based on reviewed official surfaces.
+    claimRefs:
+      - C025
+      - C028
+      - C029
+      - C031
+  - id: F303
+    title: Moat / readiness scorecard
+    type: scorecard
+    layout: standard
+    summary: >-
+      OpenAI’s edge comes from breadth and distribution, while pricing transparency and neutral routing remain attack
+      surfaces.
+    data:
+      items:
+        - label: Distribution advantage
+          value: 9
+          detail: Large consumer and business installed base
+        - label: Enterprise control parity
+          value: 7
+          detail: Strong controls but not uniquely differentiated
+        - label: Pricing transparency
+          value: 5
+          detail: Enterprise pricing less visible than Anthropic’s
+        - label: Optionality defense
+          value: 4
+          detail: Neutral platforms like Bedrock weaken lock-in
+        - label: Platform breadth
+          value: 8
+          detail: Chat, API, Codex, agents, and integrations in one stack
+    approximationNotes: Scores are analytical judgments, not vendor-reported metrics.
+    claimRefs:
+      - C027
+      - C029
+      - C024
+callouts:
+  - type: strength
+    title: OpenAI wins when adoption speed matters
+    body: >-
+      The company’s application breadth and consumer familiarity are strongest where the buyer wants a fast, governed
+      rollout rather than maximum model optionality.
+    claimRefs:
+      - C024
+      - C025
+  - type: watchout
+    title: Neutral routing is a real substitute
+    body: Bedrock and internal abstractions give procurement teams a way to reduce dependency on one model lab.
+    claimRefs:
+      - C029
+      - C031
+  - type: gap
+    title: Public enterprise win-rate data is missing
+    body: The reviewed sources describe features and packages, but not head-to-head conversion data by segment.
+    claimRefs:
+      - C026
+      - C028

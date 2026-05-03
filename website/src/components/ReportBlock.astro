@@ -2,6 +2,7 @@
 // Renders a single block from a chapter section or appendix.
 // Block shapes: paragraph | list | equation | callout | table | figure.
 import ClaimRefs from './ClaimRefs.astro';
+import DataTable from './DataTable.astro';
 import FigureRenderer from './FigureRenderer.astro';
 
 interface Props {
@@ -91,35 +92,27 @@ const figure = block.type === 'figure' && block.figureRef ? figures.get(block.fi
 )}
 
 {block.type === 'table' && table && (
-  <div class="table-frame">
-    <table>
-      <caption>{table.title}</caption>
-      <thead>
-        <tr>{arr(table.columns).map((column) => <th>{column}</th>)}</tr>
-      </thead>
-      <tbody>
-        {arr(table.rows).map((row: any[]) => (
-          <tr>
-            {arr(row).map((cell) => (
-              <td>
-                {splitClaimRefsText(cell).map((part) => part.ref
-                  ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
-                  : part.text)}
-              </td>
-            ))}
-          </tr>
+  <DataTable title={table.title} columns={arr(table.columns)}>
+    {arr(table.rows).map((row: any[]) => (
+      <tr>
+        {arr(row).map((cell) => (
+          <td>
+            {splitClaimRefsText(cell).map((part) => part.ref
+              ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+              : part.text)}
+          </td>
         ))}
-      </tbody>
-    </table>
+      </tr>
+    ))}
     {table.notes && (
-      <p class="table-note">
+      <Fragment slot="notes">
         {splitClaimRefsText(table.notes).map((part) => part.ref
           ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
           : part.text)}
-      </p>
+      </Fragment>
     )}
-    <ClaimRefs refs={blockRefs(table)} claims={claims} sources={sources} />
-  </div>
+    <ClaimRefs slot="footer" refs={blockRefs(table)} claims={claims} sources={sources} />
+  </DataTable>
 )}
 
 {block.type === 'figure' && figure && (

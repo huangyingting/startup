@@ -21,6 +21,8 @@ Conventions:
 - Numeric fields are numbers or `null`, not formatted strings.
 - IDs use `S001`, `C001`, `T001`, `F001`, and appendix IDs `A`, `B`, `C`.
 - `claimRefs` reference local `C###` IDs before evidence consolidation and canonical `C###` IDs after consolidation.
+- Inline `[C###]` markers inside a `body` / cell / item string are treated as claim refs by the renderer; use the same canonical IDs.
+- Each `tableRef` / `figureRef` may appear in at most one chapter section or appendix block (renderer enforces single-home).
 
 ## Enums
 
@@ -254,22 +256,22 @@ evidenceGap:
   diligencePath: string
 
 table:
-  id: T001
+  id: T001                                       # Sequential per chapter family (T101, T201, ...).
   title: string
-  columns: [string]
+  columns: [string]                              # Header labels; defines row width.
   rows:
-    - [string | number | null]
+    - [string | number | null]                   # Each row must have exactly columns.length cells.
   notes: string | null
   claimRefs: [C001]
 
 figure:
-  id: F001
+  id: F001                                       # Sequential per chapter family (F101, F201, ...).
   title: string
-  type: figureType
+  type: figureType                               # See "Figure types and data fields" for required data shape.
   layout: compact | standard | wide
   summary: string
-  data: {}
-  approximationNotes: string | null
+  data: {}                                       # Structured object only; never Mermaid/SVG/prose/JSON-string.
+  approximationNotes: string | null              # Required when figure values are derived/estimated.
   claimRefs: [C001]
 
 block:
@@ -288,33 +290,43 @@ block:
 
 ```yaml
 figureType: timeline | flow | decision-map | evidence-map | quadrant | positioning-map | bars | waterfall | heatmap | matrix | stack | layered-lens | bridge | journey-map | logic-chain | causal-map | sensitivity | scatter | funnel | cohort | range | scorecard | scenario-tree | dependency-map | other
-figure.data fields: items | nodes | edges | points | columns | rows | series | layers | xAxis | yAxis
+figure.data fields: items | nodes | edges | points | columns | rows | series | layers | xAxis | yAxis  # Use only the fields the type requires; never include empty placeholder arrays for unused fields.
 ```
 
-| Type | Required data |
-|---|---|
-| `timeline` | `items[]` |
-| `flow` | `nodes[]` |
-| `decision-map` | `nodes[]` |
-| `evidence-map` | `nodes[]` |
-| `scenario-tree` | `nodes[]` |
-| `dependency-map` | `nodes[]` |
-| `quadrant` | `points[]` |
-| `positioning-map` | `points[]` |
-| `scatter` | `points[]` or `series[]` |
-| `bars` | `items[]` or `series[]` |
-| `funnel` | `items[]` or `series[]` |
-| `waterfall` | `items[]` |
-| `range` | `items[]` |
-| `sensitivity` | `series[]` |
-| `heatmap` | `columns[]` and `rows[]` |
-| `matrix` | `columns[]` and `rows[]` |
-| `cohort` | `columns[]` and `rows[]` |
-| `stack` | `layers[]` or `items[]` |
-| `layered-lens` | `nodes[]` or `items[]` |
-| `bridge` | `nodes[]` or `items[]` |
-| `journey-map` | `nodes[]` or `items[]` |
-| `logic-chain` | `nodes[]` |
-| `causal-map` | `nodes[]` |
-| `scorecard` | `items[]` or `nodes[]` |
-| `other` | none |
+Notes that apply to every figure:
+
+- `data` must be a structured YAML object — never Mermaid, SVG, prose diagrams, or stringified JSON.
+- For matrix/heatmap/cohort: `data.columns[]` are the X-axis labels, each `data.rows[i].values[]` must have `length === columns.length`, and the row label lives in `data.rows[i].label`.
+- For coordinate types (`quadrant`, `positioning-map`, `scatter`): every point needs numeric `x` and `y`.
+- For numeric-value types (`bars`, `waterfall`, `funnel`): every item needs a numeric `value`.
+- For relationship types (`flow`, `decision-map`, `evidence-map`, `scenario-tree`, `dependency-map`, `causal-map`): provide `edges[]` whenever a relationship exists; `dependency-map` requires edges (without them the renderer cannot stage Inputs / Core / Impact).
+- `range` items need numeric `low`/`min` and `high`/`max`; optional `mid`/`value` must also be numeric when present.
+- F102 — the Company Overview milestone timeline — must contain at least 8 dated `items[]`.
+
+| Type | Required data | Notes |
+|---|---|---|
+| `timeline` | `items[]` | Each item should carry a date plus label/detail. |
+| `flow` | `nodes[]` | Add `edges[]` to show direction. |
+| `decision-map` | `nodes[]` | Add `edges[]` to show option → outcome paths. |
+| `evidence-map` | `nodes[]` | Add `edges[]` for source → claim links. |
+| `scenario-tree` | `nodes[]` | Add `edges[]` for branching scenarios. |
+| `dependency-map` | `nodes[]` and `edges[]` | Edges are required so the renderer can stage Inputs / Core / Impact. |
+| `quadrant` | `points[]` | Every point needs numeric `x` / `y`. |
+| `positioning-map` | `points[]` | Numeric axes only when source-backed; otherwise use ordinal scoring. |
+| `scatter` | `points[]` or `series[]` | Each point needs numeric `x` / `y`. |
+| `bars` | `items[]` or `series[]` | Each item/series point needs numeric `value`. |
+| `funnel` | `items[]` or `series[]` | Order matters; rows are stages. |
+| `waterfall` | `items[]` | Numeric `value`; mark totals via `kind: total`. |
+| `range` | `items[]` | Each item needs numeric `low`/`min` and `high`/`max`. |
+| `sensitivity` | `series[]` | Each series point needs numeric `value`. |
+| `heatmap` | `columns[]` and `rows[]` | `row.values.length === columns.length`. |
+| `matrix` | `columns[]` and `rows[]` | Same shape rule as heatmap. |
+| `cohort` | `columns[]` and `rows[]` | Time-series retention only — `columns[]` must be time buckets (e.g. `month-1`, `month-3`, `year-1`) and cells are retention percentages 0–100. For ordinal scoring across customers/segments, use `matrix` instead. |
+| `stack` | `layers[]` or `items[]` | Use `layers[]` when modules/outputs differ per layer. |
+| `layered-lens` | `nodes[]` or `items[]` | Each layer is one sizing/segmentation lens. |
+| `bridge` | `nodes[]` or `items[]` | Renderer reuses `flow`; provide ordered nodes. |
+| `journey-map` | `nodes[]` or `items[]` | Order represents the customer/journey sequence. |
+| `logic-chain` | `nodes[]` | Renderer chains nodes in declared order. |
+| `causal-map` | `nodes[]` | Add `edges[]` for cause → effect direction. |
+| `scorecard` | `items[]` or `nodes[]` | Each entry should have a `value` or `score`. |
+| `other` | none | Last-resort opaque container; prefer a real type. |
