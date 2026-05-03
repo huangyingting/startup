@@ -42,7 +42,7 @@ For each chapter `order` from the loader:
 6. Generate the chapter YAML at `reportFolder/<chapter.file>` according to the packet's output requirements and the report schema.
 7. Run the packet gate:
    `node .github/skills/startup-research/scripts/gate.mjs <reportFolder> <chapter.file> --pre-ledger`
-8. If the gate exits nonzero, start the chapter loop again for the failed dimensions: generate narrower queries, search/fetch more evidence, update the YAML, and rerun the gate. Retry up to `packet.workflow.researchLoop.maxGateIterations`; advance only when the gate exits `0`. Warnings are acceptable when evidence gaps clearly explain public-data limits.
+8. If the gate exits nonzero, start the chapter loop again for the failed dimensions: generate narrower queries, search/fetch more evidence, update the YAML, and rerun the gate. Retry up to `packet.workflow.researchLoop.maxGateIterations`; advance only when the gate exits `0`.
 9. Advance with `packet.nextChapter`; if it is `null`, move to finalization.
 
 ## Research and evidence rules

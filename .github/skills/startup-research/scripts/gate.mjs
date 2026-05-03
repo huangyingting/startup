@@ -156,23 +156,17 @@ function checkTableFigureOverlap(file, doc) {
 }
 
 function checkPreLedgerEvidence(file, doc, counts) {
-  const minLocalSources = spec.gate.minLocalSources;
-  const minLocalClaims = spec.gate.minLocalClaims;
-  const minResearchQuestions = spec.gate.minResearchQuestions;
   if (!doc.localEvidence) {
     fail(`${file}: missing localEvidence before ledger consolidation`);
     return;
   }
-  if (!counts.sources) fail(`${file}: localEvidence.sources is empty`);
-  if (!counts.claims) fail(`${file}: localEvidence.claims is empty`);
-  if (counts.sources < minLocalSources) {
-    fail(`${file}: only ${counts.sources} retained local sources; expected at least ${minLocalSources} (evidenceGaps[] documents missing public data, but does not waive the minimum)`);
-  }
-  if (counts.claims < minLocalClaims) {
-    fail(`${file}: only ${counts.claims} local claims; expected at least ${minLocalClaims} (evidenceGaps[] documents missing public data, but does not waive the minimum)`);
-  }
-  if (counts.researchQuestions < minResearchQuestions) {
-    fail(`${file}: only ${counts.researchQuestions} research questions in localEvidence.researchQuestions[]; expected at least ${minResearchQuestions}`);
+  const minimums = [
+    ['researchQuestions', 'localEvidence.researchQuestions[]', spec.gate.minResearchQuestions],
+    ['sources', 'localEvidence.sources[]', spec.gate.minLocalSources],
+    ['claims', 'localEvidence.claims[]', spec.gate.minLocalClaims],
+  ];
+  for (const [key, path, min] of minimums) {
+    if (counts[key] < min) fail(`${file}: ${path} has ${counts[key]}, expected at least ${min}`);
   }
   const localClaimIds = new Set((doc.localEvidence.claims ?? []).map((claim) => claim?.id));
   for (const ref of collectClaimRefs(doc)) {
