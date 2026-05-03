@@ -6,23 +6,43 @@ user-invocable: false
 
 # Startup Overview
 
-First analysis stage. This skill owns the company introduction and snapshot chapter. It must make the company legible before any downstream market, financial, product, customer, risk, or valuation work begins.
+## Role and ownership
 
-## Read first
+Analysis artifact `01`. This skill owns the company introduction and snapshot chapter. It must make the company identity, scale, and milestone record legible for the full report. It does not own market sizing, financial underwriting, product deep dives, customer retention, risk scoring, or valuation.
+
+## Inputs and dependencies
+
+Required references:
 
 - `.github/references/report-schema-v2.md`
 - `.github/references/yaml-rules.md`
 - `.github/references/analysis-rules.md`
 
-## Outputs
+Inputs from `startup-research`:
+
+- Resolved `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and any prompt-derived requirements routed to this chapter.
+
+## Output
 
 - `01-company-overview.yaml`
 
-## Chapter purpose
+## Agent workflow
+
+1. Confirm the shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, and the owning output filename.
+2. Pull in prompt-derived requirements routed to this chapter; do not create repo-level templates from one-off user requirements.
+3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes.
+4. Build chapter-specific research questions from the required content, required tables, required figures, evidence strategy, domain-adaptive additions, and prompt requirements.
+5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
+6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
+7. Draft schema-native sections, tables, callouts, and structured figures for this chapter; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, domain-adaptive additions are visible, and the completion check below passes.
+9. Write only this skill's owned artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+
+## Chapter mission
 
 Answer: What is this company, what does it do, who controls it, how far along is it, what evidence anchors its current scale, and what should every later chapter treat as identity ground truth?
 
-## Required chapter content
+## Required content specification
 
 Cover these universal topics:
 
@@ -49,7 +69,7 @@ Cover these universal topics:
 - **Snapshot scorecard** — `type: scorecard` when cover-metric evidence quality, maturity, risk, traction, or investability can be summarized compactly.
 - **Governance / stakeholder map** — `type: flow` or `matrix` when control, strategic partners, investors, regulators, facilities, or ecosystem dependencies are material.
 
-## Evidence collection strategy
+## Evidence acquisition strategy
 
 Use search for discovery and the `fetch-url` workflow for retained direct URLs.
 
@@ -71,12 +91,19 @@ Infer the company domain and operating model; add relevant snapshot rows/section
 - If it is project/infrastructure based, add project pipeline, contracted backlog, financing structure, permits, and commissioning milestones.
 - If it is financial-risk bearing, add licenses, capital/funding partners, risk exposure, compliance posture, and counterparty dependencies.
 
+## Quality bar
+
+- Establish identity and scale ground truth that other chapters can safely reuse without guessing.
+- Separate verified facts, company-claimed facts, conflicting reports, and unavailable private metrics.
+- Make milestones decision-relevant: include financing, product, customer, regulatory, governance, and adverse events when supportable.
+- Show why the selected domain-adaptive additions matter for underwriting, not just that they were considered.
+
 ## Completion check
 
 - Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
 - The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
 - Domain reflection is explicit: identify the company archetype(s), add supportable domain-specific snapshot fields beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
-- Every `claimRefs` resolves to local evidence before consolidation.
+- Every material section, table, figure, and callout cites local `claimRefs` that resolve before consolidation.
 - Timeline has enough dated entries or the gaps explain why not.
 - Unsupported cover metrics use `null` plus a concrete diligence path.
 - Handoff includes identity confidence, selected domain-adaptive additions, and any post-snapshot identity ambiguity.

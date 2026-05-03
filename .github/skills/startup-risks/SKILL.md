@@ -6,25 +6,47 @@ user-invocable: false
 
 # Startup Risks
 
-Seventh analysis stage. This skill owns the risk and regulatory chapter. It must identify what can break the thesis and how each risk transmits into customers, margins, financing, operations, or valuation.
+## Role and ownership
 
-## Read first
+Analysis artifact `07`. This skill owns the risk and regulatory chapter. It must identify what can break the thesis and how each risk transmits into customers, margins, financing, operations, or valuation. It does not own final recommendation or valuation method selection.
 
+## Inputs and dependencies
+
+Required references:
+
+- `.github/references/report-schema-v2.md`
+- `.github/references/yaml-rules.md`
 - `.github/references/analysis-rules.md`
 
-## Optional coordination context
+Optional coordination context:
 
 - `05-product-tech.yaml`, `06-customers.yaml`, and `04-financials.yaml`, when already available, for product/security, customer concentration, or financial exposure context; do not block risk analysis on these artifacts.
 
-## Outputs
+Inputs from `startup-research`:
+
+- Resolved `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and any prompt-derived requirements routed to this chapter.
+
+## Output
 
 - `07-risks.yaml`
 
-## Chapter purpose
+## Agent workflow
+
+1. Confirm the shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, and the owning output filename.
+2. Pull in prompt-derived requirements routed to this chapter; optional coordination artifacts may be used only when already available and must not block this chapter.
+3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes.
+4. Build chapter-specific research questions from the required content, required tables, required figures, evidence strategy, domain-adaptive additions, optional coordination context, and prompt requirements.
+5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
+6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
+7. Draft schema-native sections, tables, callouts, and structured figures for this chapter; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, domain-adaptive additions are visible, and the completion check below passes.
+9. Write only this skill's owned artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+
+## Chapter mission
 
 Answer: What legal, regulatory, operational, technical, financial, partner, customer, safety, or execution risks could impair the company, how severe are they, what mitigates them, and what kill criteria should investors monitor?
 
-## Required chapter content
+## Required content specification
 
 Cover these universal topics:
 
@@ -50,7 +72,7 @@ Cover these universal topics:
 - **Regulatory / approval pathway map** — `type: flow` when approvals, licenses, permits, clinical/regulatory steps, or government procurement matter.
 - **Dependency map** — `type: dependency-map`, `matrix`, or `flow`; show critical partners, suppliers, platforms, regulators, facilities, or financing dependencies.
 
-## Evidence collection strategy
+## Evidence acquisition strategy
 
 Adverse/disconfirming research is mandatory. Use `fetch-url` for retained primary or independent pages.
 
@@ -72,9 +94,18 @@ Infer the company's real failure modes.
 - If consumer/brand/physical channel matters, add product liability, reputation, channel conflict, returns, quality, labor, and demand cyclicality.
 - If geopolitical supply chain matters, add tariffs, export controls, sanctions, country concentration, shipping disruption, and critical-material access.
 
+## Quality bar
+
+- Rank risks by thesis impact, not by generic category coverage; explain how each top risk transmits into customers, margins, financing, operations, or valuation.
+- Pair severity evidence with mitigation/control evidence before assigning residual exposure.
+- Include adverse, regulatory, legal, security, quality, safety, customer, and dependency searches appropriate to the domain.
+- Define monitorable kill criteria or diligence paths for risks that cannot be resolved from public evidence.
+
 ## Completion check
 
 - Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
+- The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
+- Every material section, table, figure, and callout cites local `claimRefs` that resolve before consolidation.
 - Domain reflection is explicit: identify the risk/regulatory archetype(s), add supportable domain-specific risk registers or transmission figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Do not assign severity from intuition; cite evidence and mitigation for each top risk.
 - Where active litigation, regulatory posture, certifications, incidents, safety, or concentration cannot be confirmed, record the exact diligence path.

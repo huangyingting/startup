@@ -6,25 +6,47 @@ user-invocable: false
 
 # Startup Customers
 
-Sixth analysis stage. This skill owns the customer quality and retention chapter. It must distinguish customer adoption signal from durable customer proof.
+## Role and ownership
 
-## Read first
+Analysis artifact `06`. This skill owns the customer quality and retention chapter. It must distinguish customer adoption signals from durable customer proof, retention, expansion, and concentration risk. It does not own product architecture, pricing mechanics, or final valuation stance.
 
+## Inputs and dependencies
+
+Required references:
+
+- `.github/references/report-schema-v2.md`
+- `.github/references/yaml-rules.md`
 - `.github/references/analysis-rules.md`
 
-## Optional coordination context
+Optional coordination context:
 
 - `04-financials.yaml` and `05-product-tech.yaml`, when already available, for pricing, module, or implementation context; do not block customer analysis on these artifacts.
 
-## Outputs
+Inputs from `startup-research`:
+
+- Resolved `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and any prompt-derived requirements routed to this chapter.
+
+## Output
 
 - `06-customers.yaml`
 
-## Chapter purpose
+## Agent workflow
+
+1. Confirm the shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, and the owning output filename.
+2. Pull in prompt-derived requirements routed to this chapter; optional coordination artifacts may be used only when already available and must not block this chapter.
+3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes.
+4. Build chapter-specific research questions from the required content, required tables, required figures, evidence strategy, domain-adaptive additions, optional coordination context, and prompt requirements.
+5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
+6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
+7. Draft schema-native sections, tables, callouts, and structured figures for this chapter; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, domain-adaptive additions are visible, and the completion check below passes.
+9. Write only this skill's owned artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+
+## Chapter mission
 
 Answer: Who uses or pays for the company’s product/service, what proof shows real adoption, how durable is usage/revenue, what expands, and where are customer concentration or retention risks hidden?
 
-## Required chapter content
+## Required content specification
 
 Cover these universal topics:
 
@@ -51,7 +73,7 @@ Cover these universal topics:
 - **Retention / repeat cohort** — `type: cohort` when renewal, repeat usage, NRR/GRR, repeat purchase, or churn cohorts are available.
 - **Customer proof matrix** — `type: matrix`; compare evidence quality, outcome specificity, retention visibility, or production maturity.
 
-## Evidence collection strategy
+## Evidence acquisition strategy
 
 Use search to discover customer proof/adverse signals and `fetch-url` to verify retained source pages.
 
@@ -72,9 +94,18 @@ Infer the customer relationship and retention mechanism.
 - If physical locations/assets matter, add location-level performance, utilization, same-site/store metrics, occupancy, seasonality, and geography maturity.
 - If project/service delivery matters, add backlog, repeat contracts, customer references, delivery quality, SLA, utilization, and renewal/rebid behavior.
 
+## Quality bar
+
+- Distinguish customer logos, named deployments, active use, outcomes, retention, and expansion; do not treat them as interchangeable proof.
+- Tie customer evidence to buyer/user/payer segments and the revenue or strategic value of each segment.
+- Surface churn, complaints, failed deployments, concentration, weak references, or procurement friction when evidence exists.
+- Convert unsupported retention, NRR/GRR, customer count, satisfaction, or concentration claims into explicit diligence gaps.
+
 ## Completion check
 
 - Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
+- The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
+- Every material section, table, figure, and callout cites local `claimRefs` that resolve before consolidation.
 - Domain reflection is explicit: identify the customer/adoption archetype(s), add supportable domain-specific retention or customer-quality tables/figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Include adverse searches for churn, complaints, blocked deployments, concentration, failed pilots, reviews, or procurement objections.
 - Unsupported customer count, retention, churn, NRR, satisfaction, repeat purchase, or concentration becomes `null` plus exact diligence asks.

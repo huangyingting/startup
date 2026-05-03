@@ -6,21 +6,43 @@ user-invocable: false
 
 # Startup Market Analysis
 
-Second analysis stage. This skill owns the market sizing and macro chapter. It must define the market boundary, quantify the opportunity as far as evidence allows, and show why adoption should or should not happen.
+## Role and ownership
 
-## Read first
+Analysis artifact `02`. This skill owns the market sizing and macro chapter. It must define the market boundary, quantify the reachable opportunity as far as evidence allows, and explain adoption drivers and blockers. It does not own competitive feature benchmarking, unit economics, customer retention proof, or final valuation.
 
+## Inputs and dependencies
+
+Required references:
+
+- `.github/references/report-schema-v2.md`
+- `.github/references/yaml-rules.md`
 - `.github/references/analysis-rules.md`
 
-## Outputs
+Inputs from `startup-research`:
+
+- Resolved `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and any prompt-derived requirements routed to this chapter.
+
+## Output
 
 - `02-market-analysis.yaml`
 
-## Chapter purpose
+## Agent workflow
+
+1. Confirm the shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, and the owning output filename.
+2. Pull in prompt-derived requirements routed to this chapter; do not create repo-level templates from one-off user requirements.
+3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes.
+4. Build chapter-specific research questions from the required content, required tables, required figures, evidence strategy, domain-adaptive additions, and prompt requirements.
+5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
+6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
+7. Draft schema-native sections, tables, callouts, and structured figures for this chapter; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, domain-adaptive additions are visible, and the completion check below passes.
+9. Write only this skill's owned artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+
+## Chapter mission
 
 Answer: What market is this company actually competing for, who pays, how large is the reachable opportunity, what drives adoption, what blocks adoption, and what market facts matter for valuation?
 
-## Required chapter content
+## Required content specification
 
 Cover these universal topics:
 
@@ -48,7 +70,7 @@ Cover these universal topics:
 - **Buyer / segment map** — `type: matrix`, `journey-map`, or `flow`; show buyer-user-payer relationships and adoption path.
 - **Adoption funnel or value-chain market map** — `type: funnel` or `flow` when purchase/deployment requires multiple steps or value-chain actors.
 
-## Evidence collection strategy
+## Evidence acquisition strategy
 
 Use search for discovery and `fetch-url` for retained direct URLs.
 
@@ -68,9 +90,18 @@ Infer the market mechanics instead of applying a fixed sector template.
 - If marketplace/network effects matter, add supply/demand liquidity, density thresholds, multi-homing, disintermediation, and take-rate pool.
 - If hardware/deeptech adoption matters, add replacement cycle, pilot-to-production conversion, certification, manufacturing capacity, and buyer risk tolerance.
 
+## Quality bar
+
+- Define the market boundary before sizing it: included spend, excluded spend, buyer, payer, geography, and use case must be explicit.
+- Use multiple sizing/adoption lenses when evidence permits; do not rely on one broad TAM headline.
+- Tie growth drivers and constraints to adoption timing, budget ownership, and valuation relevance.
+- Preserve contradictory estimates or failed sizing paths as diligence gaps instead of inventing precision.
+
 ## Completion check
 
 - Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
+- The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
+- Every material section, table, figure, and callout cites local `claimRefs` that resolve before consolidation.
 - Domain reflection is explicit: identify the market archetype(s), add supportable domain-specific sizing/adoption tables or figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Do not rely on one generic TAM estimate or call the market “large” without boundary logic.
 - If SAM/SOM cannot be isolated, preserve failed sizing paths and diligence asks instead of inventing precision.

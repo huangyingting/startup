@@ -6,25 +6,47 @@ user-invocable: false
 
 # Startup Product Tech
 
-Fifth analysis stage. This skill owns the product and technology chapter. It must explain what the company delivers, how it works, how mature it is, and what product/technical evidence supports or weakens the moat.
+## Role and ownership
 
-## Read first
+Analysis artifact `05`. This skill owns the product and technology chapter. It must explain what the company delivers, how it works, how mature it is, and what product or technical evidence supports or weakens the moat. It does not own customer retention proof, financial underwriting, or final investment recommendation.
 
+## Inputs and dependencies
+
+Required references:
+
+- `.github/references/report-schema-v2.md`
+- `.github/references/yaml-rules.md`
 - `.github/references/analysis-rules.md`
 
-## Optional coordination context
+Optional coordination context:
 
 - `02-market-analysis.yaml`, `03-competitors.yaml`, or `04-financials.yaml`, when already available, for positioning, feature, pricing, or monetization context; do not block product/technology analysis on these artifacts.
 
-## Outputs
+Inputs from `startup-research`:
+
+- Resolved `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and any prompt-derived requirements routed to this chapter.
+
+## Output
 
 - `05-product-tech.yaml`
 
-## Chapter purpose
+## Agent workflow
+
+1. Confirm the shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, and the owning output filename.
+2. Pull in prompt-derived requirements routed to this chapter; optional coordination artifacts may be used only when already available and must not block this chapter.
+3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes.
+4. Build chapter-specific research questions from the required content, required tables, required figures, evidence strategy, domain-adaptive additions, optional coordination context, and prompt requirements.
+5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
+6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
+7. Draft schema-native sections, tables, callouts, and structured figures for this chapter; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, domain-adaptive additions are visible, and the completion check below passes.
+9. Write only this skill's owned artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+
+## Chapter mission
 
 Answer: What product/service is being sold, how does the customer use it, what capabilities or assets make it differentiated, what is the maturity level, and what technical/product risks remain?
 
-## Required chapter content
+## Required content specification
 
 Cover these universal topics:
 
@@ -53,7 +75,7 @@ Cover these universal topics:
 - **Critical dependency map** — `type: dependency-map` when the product depends on suppliers, platforms, data rights, regulators, facilities, scientific proof, or key partners.
 - **Roadmap or development timeline** — `type: timeline` when milestones, releases, trials, certifications, facilities, or launches matter.
 
-## Evidence collection strategy
+## Evidence acquisition strategy
 
 Official-surface mining is mandatory when a company URL exists. Use `fetch-url` on retained direct pages.
 
@@ -74,9 +96,18 @@ Infer the product/operating dependency.
 - If it is industrial, energy, infrastructure, or deeptech, add technical readiness level, pilot results, uptime, deployment constraints, permitting/certification, and scaling bottlenecks.
 - If it is service/operations-heavy, add service workflow, labor model, training, quality assurance, utilization, SLA, and repeatability.
 
+## Quality bar
+
+- Explain what is actually delivered, how users/customers interact with it, and what operating or technical dependencies make it work.
+- Distinguish product maturity, roadmap claims, integrations, certifications, and technical performance that are verified from those that are only marketed.
+- Make architecture and workflow figures specific to the product or operating model, not generic boxes.
+- Surface product, security, reliability, regulatory, supply, or implementation gaps that could weaken the moat.
+
 ## Completion check
 
 - Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
+- The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
+- Every material section, table, figure, and callout cites local `claimRefs` that resolve before consolidation.
 - Domain reflection is explicit: identify the product/technology or operating-model archetype(s), add supportable domain-specific architecture/maturity figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Each module row states maturity/status, evidence URL, buyer/user, differentiation, and diligence gap.
 - Unsupported architecture, certifications, integrations, performance, safety, or roadmap claims become gaps.

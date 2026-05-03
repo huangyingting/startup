@@ -6,25 +6,47 @@ user-invocable: false
 
 # Startup Valuation
 
-Eighth analysis stage. This skill owns the investment recommendation and valuation chapter. It must convert evidence from prior chapters into a price-sensitive investment view.
+## Role and ownership
 
-## Read first
+Analysis artifact `08`. This skill owns the investment recommendation and valuation chapter. It must convert evidence from the analysis artifacts into a price-sensitive investment view. It does not gather new facts for other chapters; if a missing or stale fact is chapter-owned elsewhere, route it back through the orchestrator.
 
+## Inputs and dependencies
+
+Required references:
+
+- `.github/references/report-schema-v2.md`
+- `.github/references/yaml-rules.md`
 - `.github/references/analysis-rules.md`
 
-## Optional coordination context
+Optional coordination context:
 
 - `02-market-analysis.yaml`, `03-competitors.yaml`, `04-financials.yaml`, `05-product-tech.yaml`, `06-customers.yaml`, and `07-risks.yaml`, when already available, for market, moat, product differentiation, financial, customer, and risk context; do not block valuation analysis on these artifacts.
 
-## Outputs
+Inputs from `startup-research`:
+
+- Resolved `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and any prompt-derived requirements routed to this chapter.
+
+## Output
 
 - `08-valuation.yaml`
 
-## Chapter purpose
+## Agent workflow
+
+1. Confirm the shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, and the owning output filename.
+2. Pull in prompt-derived requirements routed to this chapter; optional coordination artifacts may be used only when already available and must not block this chapter.
+3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes.
+4. Build chapter-specific research questions from the required content, required tables, required figures, evidence strategy, domain-adaptive additions, optional coordination context, and prompt requirements.
+5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
+6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
+7. Draft schema-native sections, tables, callouts, and structured figures for this chapter; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, domain-adaptive additions are visible, and the completion check below passes.
+9. Write only this skill's owned artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+
+## Chapter mission
 
 Answer: Given the evidence, what is the investment recommendation, how confident are we, what valuation stance is appropriate, what scenarios matter, and what diligence would change the decision?
 
-## Required chapter content
+## Required content specification
 
 Cover these universal topics:
 
@@ -54,7 +76,7 @@ Cover these universal topics:
 - **Investment scorecard** — `type: scorecard` for IC-ready scoring across market, proof, moat, economics, risk, valuation, and evidence quality.
 - **Exit readiness map** — `type: matrix` when IPO/M&A/commercialization/project readiness needs scoring.
 
-## Evidence collection strategy
+## Evidence acquisition strategy
 
 Use search to test thesis, anti-thesis, comps, and downside; use `fetch-url` on sources behind recommendation-critical claims.
 
@@ -80,9 +102,18 @@ Select the valuation method from the business model and stage.
 
 `recommendation`, `confidence`, `riskRating`, and `valuationStance` are closed schema enums. Use exactly one allowed token; place nuance in prose, callouts, or scenario tables.
 
+## Quality bar
+
+- Make the recommendation price-sensitive and evidence-sensitive; do not convert company quality into a generic buy/track label.
+- Tie thesis, anti-thesis, risk rating, confidence, and valuation stance to upstream evidence and explicit missing inputs.
+- Use valuation methods that match the business model and stage; record when public evidence is insufficient for numeric precision.
+- Show what diligence or price change would move the recommendation.
+
 ## Completion check
 
 - Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
+- The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
+- Every material section, table, figure, and callout cites local `claimRefs` that resolve before consolidation.
 - Domain reflection is explicit: identify the valuation archetype(s), add supportable domain-specific scenario, comparable, or sensitivity tables/figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Include adverse searches on overvaluation, down-round risk, governance, liquidity, multiple compression, commercialization failure, or model-specific downside.
 - Do not issue `buy` unless thesis and anti-thesis are both evidence-supported and valuation has sufficient support.

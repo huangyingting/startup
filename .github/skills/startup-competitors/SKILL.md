@@ -6,25 +6,47 @@ user-invocable: false
 
 # Startup Competitors
 
-Third analysis stage. This skill owns the competitive benchmarking chapter. It must explain who can take the same customer budget, why the startup wins or loses, and what would erode the moat.
+## Role and ownership
 
-## Read first
+Analysis artifact `03`. This skill owns the competitive benchmarking chapter. It must explain who can take the same customer budget, why the startup wins or loses, and what could erode the moat. It does not own market sizing, company identity, financial projections, or final recommendation.
 
+## Inputs and dependencies
+
+Required references:
+
+- `.github/references/report-schema-v2.md`
+- `.github/references/yaml-rules.md`
 - `.github/references/analysis-rules.md`
 
-## Optional coordination context
+Optional coordination context:
 
 - `02-market-analysis.yaml`, when already available, for buyer/segment framing; do not block competitive analysis on this artifact.
 
-## Outputs
+Inputs from `startup-research`:
+
+- Resolved `company.name`, `slug`, `runDate`, `companyUrl` when provided, `reportFolder`, and any prompt-derived requirements routed to this chapter.
+
+## Output
 
 - `03-competitors.yaml`
 
-## Chapter purpose
+## Agent workflow
+
+1. Confirm the shared identity inputs from `startup-research`: `company.name`, `slug`, `runDate`, `companyUrl` when provided, and the owning output filename.
+2. Pull in prompt-derived requirements routed to this chapter; optional coordination artifacts may be used only when already available and must not block this chapter.
+3. Perform domain reflection before research: identify the relevant archetype(s), operating model, buyer/user/payer/regulator distinctions, revenue mechanism, dependencies, and failure modes.
+4. Build chapter-specific research questions from the required content, required tables, required figures, evidence strategy, domain-adaptive additions, optional coordination context, and prompt requirements.
+5. Discover sources, review retained direct URLs with `fetch-url`, and include confirming, independent, freshness, and adverse/disconfirming evidence where material.
+6. Convert reviewed evidence into `localEvidence.sources[]` and atomic `localEvidence.claims[]`; unsupported important facts become explicit `evidenceGaps[]` with diligence paths.
+7. Draft schema-native sections, tables, callouts, and structured figures for this chapter; cite material claims with local `claimRefs` and use `null` plus explanation for unavailable private metrics.
+8. Self-audit before saving: identity fields match the run, YAML parses, required tables/figures are substantive, claim refs resolve locally, domain-adaptive additions are visible, and the completion check below passes.
+9. Write only this skill's owned artifact. If research uncovers a supportable fact owned by another chapter, hand it back through the orchestrator instead of editing another artifact directly.
+
+## Chapter mission
 
 Answer: Who are the direct, incumbent, adjacent, substitute, and status-quo competitors; how does the company compare on the buying criteria that matter; and how durable is its differentiation?
 
-## Required chapter content
+## Required content specification
 
 Cover these universal topics:
 
@@ -50,7 +72,7 @@ Cover these universal topics:
 - **Moat / readiness scorecard** — `type: scorecard` when a compact multi-dimension score helps summarize competitive durability.
 - **Incumbent displacement map** — `type: flow` when the key competition is status quo, legacy process, internal build, or channel lock-in.
 
-## Evidence collection strategy
+## Evidence acquisition strategy
 
 Use search to identify competitor classes and `fetch-url` to verify retained pages.
 
@@ -71,9 +93,18 @@ Infer what customers actually compare.
 - If regulated access matters, add licenses, approvals, reimbursement, compliance maturity, and regulator trust.
 - If network effects matter, add liquidity, multi-homing, supply exclusivity, disintermediation, and take-rate defensibility.
 
+## Quality bar
+
+- Compare the company against every material way the buyer can solve the same job, including status quo and internal build.
+- Choose comparison axes that affect buying decisions, switching, pricing, or moat durability.
+- Mark unsupported matrix cells as unknown or gaps; do not infer competitor capability from category labels.
+- Include adverse or disconfirming evidence on displacement risk, commoditization, channel power, or incumbent response.
+
 ## Completion check
 
 - Minimum depth gate: at least 4 sections, 4 tables, 2 structured figures, 40 words per section body, 250 total section words, 20 total table rows, and 6 total figure data points.
+- The artifact parses and has the expected `schemaVersion`, `artifact`, `slug`, `runDate`, and `company.name`.
+- Every material section, table, figure, and callout cites local `claimRefs` that resolve before consolidation.
 - Domain reflection is explicit: identify what buyers compare in this domain, add supportable domain-specific competitor axes/tables/figures beyond this skill's universal requirements, and record gaps where public evidence is insufficient.
 - Query by competitor class; do not build the matrix from one generic comparison source.
 - Include adverse evidence on displacement, commoditization, switching, pricing compression, channel conflict, or incumbent response.
