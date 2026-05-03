@@ -131,13 +131,15 @@ Rules:
 - Parse search/discovery packets and emit run-log lines per `.github/references/evidence-ledger.md`.
 - Keep provenance strict: cited search URLs or directly reviewed pages only.
 
-## Research and freshness
+## Time, research, and freshness
 
-- Treat `currentDate` as the freshness anchor.
+- Treat `currentDate` as a research input, not just metadata. It anchors search recency, evidence freshness, volatile-fact review, and the report's default `runDate`.
+- Build search queries against `currentDate` so discovery surfaces the latest material news: for volatile facts, include the current year or explicit recent/updated/date-bounded terms when the search surface supports them.
 - Default to investor-grade research depth, not minimum viable output. Each chapter should collect as much decision-relevant, non-duplicative, evidence-backed material as practical before drafting; stop only when additional credible sources are repetitive, low quality, or no longer change the analysis.
 - Retain breadth across source classes rather than volume for its own sake: official/company-authored sources, independent corroboration, adverse/disconfirming sources, and recent/freshness checks should all be represented or explicitly gapped.
 - Refresh volatile chapter-relevant facts: funding, valuation, revenue, pricing, product launches, customers, partnerships, lawsuits, regulatory posture, leadership, and similar facts.
 - Ask complete-sentence research questions tied to the intended paragraph, table, figure, or gap.
+- Use search/discovery in both modes when useful: source discovery for candidate URLs and cited Q&A for precise diligence questions. Treat Q&A answers as hypotheses until the cited URLs or directly reviewed pages support the exact claim.
 - Avoid keyword-only queries.
 - Query confirming, disconfirming, and adverse angles. Every chapter needs at least one adverse-evidence question.
 - If results are thin or stale, rewrite the question before recording a gap.

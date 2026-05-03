@@ -5,6 +5,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { asDateString, canonicalSourceUrl, listDirs, readYaml, reportsDir, tryReadYaml } from './text-utils.mjs';
 import { ANALYSIS_ARTIFACTS, ANALYSIS_FILES, REQUIRED_LOCALIZED_PAIRS, SCHEMA_VERSION } from './report-manifest.mjs';
+import { FRESHNESS } from './evidence-registry.mjs';
 import { CARD_ENUM_FIELDS } from './report-registry.mjs';
 
 const PUBLISHER_CONCENTRATION_LIMIT = 0.34;
@@ -14,6 +15,13 @@ const HIGH_PROFILE_REVENUE_USD_M = 10_000;
 const MIN_HIGH_PROFILE_SOURCES = 50;
 const MIN_HIGH_PROFILE_CLAIMS = 90;
 const REPORT_COVERAGE_FLOOR = 0.8;
+const args = new Set(process.argv.slice(2));
+const STRICT_FRESHNESS = args.has('--strict-freshness');
+const ALLOWED_FRESHNESS = new Set(FRESHNESS);
+const VOLATILE_EVIDENCE_TOPICS = new Set([
+  'customer', 'customers', 'financials', 'funding', 'pricing', 'legal', 'regulatory',
+  'regulation', 'compliance', 'governance', 'risk', 'valuation', 'traction', 'trust',
+]);
 
 // Fields that legitimately contain prose and therefore must be translated for
 // the Simplified Chinese sibling.
@@ -183,6 +191,9 @@ function checkLedger(run, ledger) {
   if (Number(coverage.claimsCreated) !== claims.length) {
     fail(`${file}: coverage.claimsCreated ${coverage.claimsCreated} must equal claims.length ${claims.length}`);
   }
+  if (!coverage.recencyNotes) {
+    warn(`${file}: coverage.recencyNotes is empty; summarize source/claim freshness against runDate/currentDate`);
+  }
 
   const seenUrls = new Map();
   for (const source of sources) {
@@ -199,6 +210,19 @@ function checkLedger(run, ledger) {
   const uncitedCount = sources.filter((source) => !cited.has(source.id)).length;
   if (sources.length && uncitedCount / sources.length > 0.5) {
     warn(`${file}: ${uncitedCount}/${sources.length} retained sources are not cited by claims; consider pruning irrelevant sources or creating missing claims`);
+  }
+
+  for (const claim of claims) {
+    const freshness = claim?.freshness ?? 'unknown';
+    if (!ALLOWED_FRESHNESS.has(freshness)) {
+      fail(`${file}: claim ${claim?.id ?? '(missing id)'} has invalid freshness ${freshness}`);
+      continue;
+    }
+    if (VOLATILE_EVIDENCE_TOPICS.has(claim?.topic) && ['historical', 'unknown'].includes(freshness)) {
+      const message = `${file}: volatile claim ${claim.id} (${claim.topic}) has ${freshness} freshness; refresh against currentDate or document a gap`;
+      if (STRICT_FRESHNESS) fail(message);
+      else warn(message);
+    }
   }
 
   if (sources.length < 20) return;

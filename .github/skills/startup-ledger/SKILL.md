@@ -42,6 +42,8 @@ The script must:
 
 ## Enum normalization
 
+Canonical evidence enum values live in `scripts/evidence-registry.mjs`; use the list below only as a human-readable quick reference.
+
 - `claimType`: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`.
 - `freshness`: `current`, `recent`, `historical`, `unknown`.
 - `corroboration`: `single-source`, `multi-source`, `conflicting`, `none`.

@@ -5,7 +5,7 @@
 // English and Simplified Chinese siblings.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { canonicalSourceUrl, compactText, readYaml, writeYaml } from './text-utils.mjs';
+import { asDateString, canonicalSourceUrl, compactText, readYaml, writeYaml } from './text-utils.mjs';
 import { ANALYSIS_FILES } from './report-manifest.mjs';
 
 function parseArgs(argv) {
@@ -115,6 +115,36 @@ function consolidateClaims(docs, sourceIds) {
   return { claims, claimIds, evidenceGaps };
 }
 
+function parseDate(value) {
+  const text = asDateString(value);
+  if (!text) return null;
+  const date = new Date(`${text}T00:00:00Z`);
+  return Number.isNaN(date.valueOf()) ? null : date;
+}
+
+function monthDelta(from, to) {
+  return (to.getUTCFullYear() - from.getUTCFullYear()) * 12 + (to.getUTCMonth() - from.getUTCMonth());
+}
+
+function sourceFreshness(source, anchorDate) {
+  const date = parseDate(source?.date ?? source?.accessDate);
+  if (!date || !anchorDate) return 'unknown';
+  const months = monthDelta(date, anchorDate);
+  if (months < 0) return 'current';
+  if (months <= 24) return 'current';
+  if (months <= 60) return 'recent';
+  return 'historical';
+}
+
+function summarizeRecency(runDate, sources, claims) {
+  const anchorDate = parseDate(runDate);
+  const sourceCounts = { current: 0, recent: 0, historical: 0, unknown: 0 };
+  for (const source of sources) sourceCounts[sourceFreshness(source, anchorDate)] += 1;
+  const claimCounts = { current: 0, recent: 0, historical: 0, unknown: 0 };
+  for (const claim of claims) claimCounts[claim?.freshness || 'unknown'] = (claimCounts[claim?.freshness || 'unknown'] ?? 0) + 1;
+  return `Anchor date ${runDate}; source dates current/recent/historical/unknown = ${sourceCounts.current}/${sourceCounts.recent}/${sourceCounts.historical}/${sourceCounts.unknown}; claim freshness current/recent/historical/unknown = ${claimCounts.current}/${claimCounts.recent}/${claimCounts.historical}/${claimCounts.unknown}.`;
+}
+
 function consolidate(docs) {
   const { sources, sourceIds, sourcesConsidered } = consolidateSources(docs);
   const { claims, claimIds, evidenceGaps } = consolidateClaims(docs, sourceIds);
@@ -146,6 +176,7 @@ function rewrite(value, file, claimIds) {
 
 function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
   const first = docs.values().next().value;
+  const recencyNotes = summarizeRecency(first.runDate, sources, claims);
   return {
     schemaVersion: first.schemaVersion,
     artifact: 'evidence-ledger',
@@ -158,7 +189,7 @@ function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
       claimsCreated: claims.length,
       sourceDiversityNotes: null,
       deduplicationNotes: `Consolidated from ${docs.size} artifacts; sources deduplicated by canonical URL or publisher/title/date fallback.`,
-      recencyNotes: null,
+      recencyNotes,
       coverageGaps: [],
     },
     sources,

@@ -17,7 +17,7 @@ Resolve these inputs before running any chapter skill:
 - `companyName`: required.
 - `companyUrl`: optional identity anchor, never proof by itself.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
-- `currentDate`: actual session date in `YYYY-MM-DD`; use as the evidence freshness anchor and default `runDate` unless the user requests a historical report.
+- `currentDate`: actual session date in `YYYY-MM-DD`; use as the evidence freshness anchor, search-query recency anchor, and default `runDate` unless the user requests a historical report.
 - `duplicateCheck`: run `node scripts/check-company-dedup.mjs --company <companyName> [--website <companyUrl>]` before creating or writing the report folder. Exit `2` means duplicate risk; stop unless the user explicitly requested a refresh/update of an existing company.
 - `reportFolder`: create with `node scripts/prepare-report-folder.mjs <runTimestamp> <companyName>` and capture the printed absolute path.
 - `schemaPath`: absolute path to `.github/schemas/startup-diligence-report-v2.md`.
@@ -144,8 +144,9 @@ Synchronization points:
 Follow `.github/references/evidence-ledger.md` and `.github/references/analysis-skill-conventions.md` for detailed rules. Core expectations:
 
 - Use `currentDate` for volatile facts; prefer sources from the last 24 months.
+- When generating search queries for volatile or current-status claims, include recency terms derived from `currentDate` (for example the current year, recent/updated language, or date-bounded operators when available) so stale sources do not dominate discovery.
 - Ask report-specific research questions, including adverse/disconfirming angles.
-- Use available search/discovery tools for source discovery and `fetch-url` for direct page review of retained sources.
+- Use available search/discovery tools for both source discovery and cited Q&A against precise diligence questions; keep Q&A conclusions as hypotheses until supported by cited URLs or directly reviewed pages. Use `fetch-url` for direct page review of retained sources.
 - Mine official pages first when `companyUrl` exists, but label official claims as `company-claimed` or `observed`.
 - Corroborate valuation, financial, customer, legal, and regulatory claims independently when possible.
 - Put unsupported important facts in `evidenceGaps` with a concrete diligence path.

@@ -12,6 +12,7 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - Keep going when the next useful action is clear; ask only when blocked or when a choice materially changes the result.
 - Report progress at meaningful milestones, not after every small step.
 - Final replies should include the outcome, key files changed, validation status, and important follow-ups or blockers.
+- Time matters for research: use the actual session date as the freshness anchor for search queries, evidence review, volatile facts, and report dates so reports capture the latest material news rather than stale company snapshots.
 
 ## Repository overview
 
@@ -19,6 +20,14 @@ This file holds repo-wide operating rules, paths, validation commands, and exten
 - Reports live in `reports/<YYYYMMDDHHmmss>-<company-slug>/` and are indexed by `reports/_index.yaml`.
 - The canonical report schema is `.github/schemas/startup-diligence-report-v2.md`.
 - English and Simplified Chinese artifacts are both required for complete reports.
+
+## Canonical machine sources
+
+- `scripts/report-manifest.mjs` is canonical for artifact order, loader keys, required files, and depth floors.
+- `scripts/figure-registry.mjs` is canonical for supported native figure types and their data contracts.
+- `scripts/evidence-registry.mjs` is canonical for evidence enums such as claim types, topics, source types, freshness, reputation, and independence.
+- `scripts/report-registry.mjs` is canonical for report/card enums and report block/callout types.
+- Human-facing skill and reference docs should explain usage, but update the machine source first when changing an enum, figure type, artifact, or validation contract.
 
 ## Important paths
 

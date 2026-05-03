@@ -32,7 +32,12 @@ Never retain:
 
 ## Search/discovery packet handling
 
-For each targeted search/discovery response that includes cited URL annotations:
+Search/discovery tools have two valid roles:
+
+- source discovery: finding candidate URLs and source classes to review; and
+- cited question answering: asking a precise diligence question and using the answer to identify supported facts, counter-facts, open questions, and follow-up searches.
+
+In both roles, the answer text is a research aid, not final evidence. For each targeted search/discovery response that includes cited URL annotations:
 
 1. Treat `output_text.text.value` as candidate narrative, not source truth.
 2. Treat `output_text.text.annotations[].url_citation.url` as source candidates.
@@ -40,7 +45,8 @@ For each targeted search/discovery response that includes cited URL annotations:
 4. If spans are missing, malformed, empty, or garbled, associate the citation with the closest topical paragraph and set `keyQuote: null`.
 5. Split narrative into atomic claims: one fact per claim.
 6. Attach only URLs that support that exact claim.
-7. Use `bing_searches[]` only as query provenance in notes; never retain Bing/search-result URLs in `sources[]`.
+7. Preserve useful Q&A conclusions as hypotheses, draft claims, or evidence gaps only after checking whether the cited URLs actually support them.
+8. Use `bing_searches[]` only as query provenance in notes; never retain Bing/search-result URLs in `sources[]`.
 
 Immediately after each search/discovery call, emit this visible run-log line in chat/workflow transcript. Do not write it into YAML artifacts.
 
@@ -93,7 +99,7 @@ Final ledger quality checks:
 
 ## Enum values
 
-Use only schema-allowed values.
+Use only schema-allowed values. The canonical machine source is `scripts/evidence-registry.mjs`; update that file first when adding or changing evidence enums, then sync this human-readable list.
 
 - `claimType`: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`
 - `freshness`: `current`, `recent`, `historical`, `unknown`
