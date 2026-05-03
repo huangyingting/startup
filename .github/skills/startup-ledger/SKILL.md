@@ -25,6 +25,7 @@ For each `01`–`08` artifact, verify:
 
 - `localEvidence.sources[]` contains retained, reviewed URLs or cited search annotations.
 - `localEvidence.claims[]` contains atomic claims, not paragraph summaries.
+- Claims pass reflection: each one is necessary for a section/table/figure/gap, exactly supported by its `sourceRefs`, honestly typed, fresh enough for its topic, and not a bundled multi-fact summary.
 - Material sections, tables, figures, and callouts have local `claimRefs`.
 - Volatile critical facts are current/recent or explicitly listed as gaps.
 - Source diversity fits the domain skill.
@@ -44,15 +45,7 @@ The script must:
 
 ## Enum normalization
 
-Canonical evidence enum values live in `scripts/evidence-registry.mjs`; use the list below only as a human-readable quick reference.
-
-- `claimType`: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`.
-- `freshness`: `current`, `recent`, `historical`, `unknown`.
-- `corroboration`: `single-source`, `multi-source`, `conflicting`, `none`.
-- `sourceType`: `official`, `filing`, `regulatory`, `tier-one-news`, `trade-press`, `analyst-market-data`, `technical-docs`, `customer-proof`, `partner-proof`, `developer-signal`, `review`, `legal`, `other`.
-- `reputationTier`: `high`, `medium`, `low`.
-- `independence`: `company`, `partner`, `customer`, `competitor`, `independent`, `unknown`.
-- `confidence`: `high`, `medium`, `low`.
+Canonical evidence enum values live in `scripts/evidence-registry.mjs`. Do not duplicate enum lists here; if an enum changes, update the registry first, then validators and human-facing docs.
 
 ## Completion check
 

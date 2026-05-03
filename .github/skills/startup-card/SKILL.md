@@ -42,6 +42,8 @@ Final card stage. This skill produces both the English `102-report-card.yaml` an
 
 - Sanity-check `101` against upstream tables/figures before writing.
 - Stop and rerun `startup-report` if `101` dropped most upstream analysis or is only floor-compliant.
+- Run card reflection: make sure the score, recommendation, top strengths, top risks, unresolved gaps, and key metrics summarize `101` faithfully instead of marketing the company or hiding uncertainty.
+- If any key metric is `null`, stale, company-claimed only, or valuation-critical, surface that limitation in `unresolvedGaps[]` or the headline/risk framing.
 - Output summary includes path, recommendation, score, confidence, risk rating, valuation stance, figure count, and table count.
 
 ## Simplified Chinese translation

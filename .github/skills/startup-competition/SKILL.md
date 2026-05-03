@@ -73,7 +73,7 @@ Infer what customers actually compare.
 
 ## Completion check
 
-- The Simplified Chinese sibling translates every user-visible prose field per `.github/references/zh-translation.md`; it is not an English copy with only metadata preserved.
+- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
 - Domain reflection is explicit: identify what buyers compare in this domain, add supportable domain-specific competitor axes/tables/figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
 - Query by competitor class; do not build the matrix from one generic comparison source.
 - Include adverse evidence on displacement, commoditization, switching, pricing compression, channel conflict, or incumbent response.

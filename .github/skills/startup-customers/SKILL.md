@@ -74,7 +74,7 @@ Infer the customer relationship and retention mechanism.
 
 ## Completion check
 
-- The Simplified Chinese sibling translates every user-visible prose field per `.github/references/zh-translation.md`; it is not an English copy with only metadata preserved.
+- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
 - Domain reflection is explicit: identify the customer/adoption archetype(s), add supportable domain-specific retention or customer-quality tables/figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
 - Include adverse searches for churn, complaints, blocked deployments, concentration, failed pilots, reviews, or procurement objections.
 - Unsupported customer count, retention, churn, NRR, satisfaction, repeat purchase, or concentration becomes `null` plus exact diligence asks.

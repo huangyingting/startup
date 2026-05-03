@@ -47,7 +47,7 @@ Each analysis skill is the authoritative generation contract for its report chap
 
 The shared rules below provide default research breadth expectations for every analysis skill. A chapter skill may add stricter chapter-specific source classes, questions, or depth expectations when its domain requires them.
 
-Each analysis skill also has a sibling `contract.yaml` that mirrors the machine-checkable subset of the chapter contract: artifact name, chapter number, minimum section/table/figure floors, required table column alternatives, and required figure type alternatives. `scripts/audit-report-readiness.mjs` reads these files, so update `contract.yaml` whenever a required table or figure changes.
+Each analysis skill also has a sibling `contract.yaml` for the machine-checkable minimum subset: artifact name, chapter number, section/table/figure floors, required table column alternatives, and required figure type alternatives. It is intentionally domain-neutral. Use the prose skill for domain-specific depth, and update `contract.yaml` only when the readiness audit should enforce a requirement.
 
 Global instructions define workflow, evidence, YAML, localization, and validation rules only. Section-level content belongs in the section skill, not in a central industry-template file.
 
@@ -148,7 +148,9 @@ Rules:
 - Register every retained external source in `localEvidence.sources[]`.
 - Register every reusable atomic fact in `localEvidence.claims[]`.
 - Cite claims through local `claimRefs` from sections, tables, figures, callouts, and notes.
-- Parse search/discovery packets and emit run-log lines per `.github/references/evidence-ledger.md`.
+- Run the claim reflection gate in `.github/references/evidence-ledger.md`: every claim must be necessary, atomic, exactly supported by its sourceRefs, honestly typed, fresh enough for its volatility, and sufficient for the chapter's domain-specific conclusions.
+- If a section, table, or figure would need a claim that cannot be supported, add an explicit `evidenceGaps[]` entry rather than leaving the assertion implicit.
+- Parse search/discovery packets and record query provenance per `.github/references/evidence-ledger.md`.
 - Keep provenance strict: cited search URLs or directly reviewed pages only.
 
 ## Time, research, and freshness
@@ -185,6 +187,7 @@ Use official pages for observed/company-claimed facts, then use independent or p
 Before writing an artifact:
 
 - Confirm `localEvidence` covers the chapter's required source classes.
+- Reflect on source mix bias: if the chapter relies mostly on company-authored, partner-authored, or vendor-authored material, add independent/adverse sources where available or record why they are unavailable.
 - Prefer multi-source corroboration for volatile or judgment-critical facts.
 - If only one credible source exists, record the limitation in claim `corroboration` and `evidenceGaps`.
 - If a fact is unsupported, write `null` plus a precise diligence ask.
@@ -198,9 +201,17 @@ Before finalizing each analysis artifact, verify that the research record includ
 - Official surface: company pages, docs, pricing, newsroom/blog, trust/status, customer/partner pages, sitemap-linked pages.
 - Independent corroboration: tier-one news, filings/regulators, analyst or market data, credible trade press, customer/partner proof, or comparable public-company evidence.
 - Adverse/disconfirming evidence: lawsuits, regulatory scrutiny, outages, churn/reviews, leadership departures, pricing pressure, customer pushback, competitor attacks, or contrary estimates.
-- Freshness check: current facts within roughly 24 months, and volatile facts refreshed against `currentDate`.
+- Freshness check: current facts follow the rubric in `.github/references/evidence-ledger.md`, and volatile facts are refreshed against `currentDate`.
 
 For every major table or figure, ask: “Which source would change this cell/node if it were wrong?” If the answer is “none,” either source it, remove it, or mark it as a diligence gap.
+
+For every major table or figure, ask: “What decision does this help an investor make?” If the answer is only “it satisfies the required count,” replace it with a decision-useful table/figure or remove it.
+
+For every major conclusion, ask: “Which atomic claim carries this?” If the answer is “none,” create a supported claim, soften the conclusion, or record an evidence gap.
+
+For every important evidence gap, ask: “Does this block the recommendation, change confidence, change risk rating, change valuation stance, or only define follow-up diligence?” Reflect the answer in the chapter conclusion and handoff note.
+
+For every apparent contradiction between sources or chapters, ask: “Is this a real conflict, a date/freshness issue, a scope mismatch, or a definition mismatch?” Resolve it in prose, create `claimType: conflicting`, or add an evidence gap.
 
 For every prompt-derived run requirement, ask: “Where is this addressed?” If the answer is “nowhere,” add the missing analysis or record an evidence gap before moving on.
 
@@ -268,19 +279,7 @@ Depth floors in `scripts/report-manifest.mjs` and the `startup-diligence` workfl
 
 Immediately after writing English, write the `.zh.yaml` sibling per `.github/references/zh-translation.md`.
 
-Do not create a Chinese sibling by copying the English file and only changing metadata. Start from the English structure, then translate every user-visible prose field before saving.
-
-Preserve exactly:
-
-- schema keys;
-- IDs;
-- claim/source IDs;
-- numeric values;
-- enum values;
-- array order;
-- YAML serialization style.
-
-Translate every user-visible prose field. Run residual-English and structural-parity checks before moving on.
+Do not create a Chinese sibling by copying the English file and only changing metadata. Preserve structure/IDs/enums/numbers exactly, translate every user-visible prose field, then run residual-English and structural-parity checks.
 
 ## Handoff note
 

@@ -5,7 +5,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { asDateString, canonicalSourceUrl, listDirs, readYaml, reportsDir, tryReadYaml } from './text-utils.mjs';
 import { ANALYSIS_ARTIFACTS, ANALYSIS_FILES, REQUIRED_LOCALIZED_PAIRS, SCHEMA_VERSION } from './report-manifest.mjs';
-import { FRESHNESS } from './evidence-registry.mjs';
+import { CLAIM_TYPES, CORROBORATION, FRESHNESS } from './evidence-registry.mjs';
 import { CARD_ENUM_FIELDS } from './report-registry.mjs';
 
 const PUBLISHER_CONCENTRATION_LIMIT = 0.34;
@@ -17,6 +17,8 @@ const MIN_HIGH_PROFILE_CLAIMS = 90;
 const REPORT_COVERAGE_FLOOR = 0.8;
 const args = new Set(process.argv.slice(2));
 const STRICT_FRESHNESS = args.has('--strict-freshness');
+const ALLOWED_CLAIM_TYPES = new Set(CLAIM_TYPES);
+const ALLOWED_CORROBORATION = new Set(CORROBORATION);
 const ALLOWED_FRESHNESS = new Set(FRESHNESS);
 const VOLATILE_EVIDENCE_TOPICS = new Set([
   'customer', 'customers', 'financials', 'funding', 'pricing', 'legal', 'regulatory',
@@ -238,12 +240,36 @@ function checkLedger(run, ledger) {
   }
 
   const cited = new Set(claims.flatMap((claim) => claim.sourceRefs ?? []));
+  const sourceIds = idSet(sources);
   const uncitedCount = sources.filter((source) => !cited.has(source.id)).length;
   if (sources.length && uncitedCount / sources.length > 0.5) {
     warn(`${file}: ${uncitedCount}/${sources.length} retained sources are not cited by claims; consider pruning irrelevant sources or creating missing claims`);
   }
 
   for (const claim of claims) {
+    if (!claim?.statement || String(claim.statement).trim().length < 12) {
+      fail(`${file}: claim ${claim?.id ?? '(missing id)'} has a missing or too-short statement`);
+    }
+    if (!ALLOWED_CLAIM_TYPES.has(claim?.claimType)) {
+      fail(`${file}: claim ${claim?.id ?? '(missing id)'} has invalid claimType ${claim?.claimType}`);
+    }
+    if (!ALLOWED_CORROBORATION.has(claim?.corroboration)) {
+      fail(`${file}: claim ${claim?.id ?? '(missing id)'} has invalid corroboration ${claim?.corroboration}`);
+    }
+    const refs = claim?.sourceRefs ?? [];
+    if (claim?.claimType === 'open-question') {
+      if (refs.length || claim?.corroboration !== 'none') {
+        fail(`${file}: open-question claim ${claim.id} must use sourceRefs: [] and corroboration: none`);
+      }
+    } else if (!refs.length) {
+      fail(`${file}: claim ${claim?.id ?? '(missing id)'} must cite at least one sourceRef`);
+    }
+    for (const ref of refs) {
+      if (!sourceIds.has(ref)) fail(`${file}: claim ${claim.id} references missing source ${ref}`);
+    }
+    if (claim?.corroboration === 'multi-source' && new Set(refs).size < 2) {
+      fail(`${file}: claim ${claim.id} is marked multi-source but cites fewer than two distinct sources`);
+    }
     const freshness = claim?.freshness ?? 'unknown';
     if (!ALLOWED_FRESHNESS.has(freshness)) {
       fail(`${file}: claim ${claim?.id ?? '(missing id)'} has invalid freshness ${freshness}`);

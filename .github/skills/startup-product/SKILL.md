@@ -76,7 +76,7 @@ Infer the product/operating dependency.
 
 ## Completion check
 
-- The Simplified Chinese sibling translates every user-visible prose field per `.github/references/zh-translation.md`; it is not an English copy with only metadata preserved.
+- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
 - Domain reflection is explicit: identify the product/technology or operating-model archetype(s), add supportable domain-specific architecture/maturity figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
 - Each module row states maturity/status, evidence URL, buyer/user, differentiation, and diligence gap.
 - Unsupported architecture, certifications, integrations, performance, safety, or roadmap claims become gaps.

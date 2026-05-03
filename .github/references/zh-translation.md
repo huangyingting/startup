@@ -60,13 +60,12 @@ Never translate, reword, or reorder:
 
 ## YAML style parity
 
-The Chinese file should diff cleanly against the English source.
+The Chinese file should preserve structure exactly; cosmetic YAML style should be stable enough to review without becoming a false blocker.
 
-- Match flow vs block style for every collection.
-- Match indentation, key order, scalar quoting, and `null` usage.
+- Preserve key order, array order, nested object shape, and `null` usage.
 - Keep array ordering and nested object ordering identical.
-- Do not let a serializer reformat the document into a different style.
-- Keep line count within roughly ±10% of the English source. Larger drift usually means content was added/dropped or style changed.
+- Avoid serializer churn that rewrites unrelated quoting or collection style.
+- Do not use line count as a hard rule; use structural parity and copied-English checks instead.
 
 ## Native Chinese style
 
@@ -184,6 +183,5 @@ Before saving, fix all failures:
 1. Residual-English sweep: search translatable fields for ASCII letter runs of 4+ characters. Allowed: proper names, product names, ticker symbols, IDs, URLs, enum values, currency shorthand, percentages, and standard abbreviations.
 2. Structural parity: counts of chapters, sections, blocks, tables, rows, columns, figures, appendices, cover metrics, founders, and all other arrays equal the English source.
 3. ID/reference parity: all `claimRefs`, `sourceRefs`, `tableRef`, `figureRef`, `S###`, `C###`, `T###`, and `F###` values are byte-identical.
-4. Style parity: line count is roughly within ±10% of English.
-5. YAML parse: file parses and starts with `schemaVersion: startup-diligence-report-v2`.
-6. Native-speaker review: rewrite any sentence that sounds word-for-word translated, uses inconsistent glossary terms, mixes punctuation styles, leaves avoidable English, or uses translationese markers.
+4. YAML parse: file parses and starts with `schemaVersion: startup-diligence-report-v2`.
+5. Native-speaker review: rewrite any sentence that sounds word-for-word translated, uses inconsistent glossary terms, mixes punctuation styles, leaves avoidable English, or uses translationese markers.

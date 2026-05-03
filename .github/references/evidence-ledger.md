@@ -48,7 +48,7 @@ In both roles, the answer text is a research aid, not final evidence. For each t
 7. Preserve useful Q&A conclusions as hypotheses, draft claims, or evidence gaps only after checking whether the cited URLs actually support them.
 8. Use `bing_searches[]` only as query provenance in notes; never retain Bing/search-result URLs in `sources[]`.
 
-Immediately after each search/discovery call, emit this visible run-log line in chat/workflow transcript. Do not write it into YAML artifacts.
+After each targeted search/discovery call, record this run-log line in the chat/workflow transcript, terminal stdout, or CI artifact. Do not write it into YAML artifacts. If the run is fully automated and debug output is disabled, keep equivalent query provenance in the diagnostic research pack or handoff note.
 
 ```text
 [search debug] skill=<skill-name> call=<n> query="<query>" citedUrls=<count> retainedSources=<count> outcome="<used|gap>"
@@ -61,7 +61,18 @@ Immediately after each search/discovery call, emit this visible run-log line in 
 - Prefer fit-for-purpose sources: official pages, filings/regulators, tier-one news, analyst/market data, customer proof, technical docs, reviews, and disconfirming evidence.
 - Label `sourceType`, `reputationTier`, and `independence` honestly.
 - Use recent sources for current status, funding, valuation, customers, metrics, product packaging, pricing, and regulatory posture.
-- Use `freshness: historical` for durable older facts.
+- Use the freshness rubric below; when in doubt, choose the more conservative value and explain the gap.
+
+## Freshness rubric
+
+Anchor all freshness judgments to `currentDate` unless the user requested a historical report.
+
+- `current`: reviewed within ~90 days, or the latest official/current-status source available for a volatile fact.
+- `recent`: reviewed within ~24 months and still likely relevant for the claim.
+- `historical`: older than ~24 months but still useful for durable facts such as founding, prior round timing, or old milestones.
+- `unknown`: source date or continued validity cannot be established.
+
+Volatile claims require `current` or `recent` evidence, or an explicit evidence gap explaining why fresher evidence is unavailable.
 
 ## Claim rules
 
@@ -69,6 +80,18 @@ Immediately after each search/discovery call, emit this visible run-log line in 
 - Every claim needs `sourceRefs` unless it is explicitly `claimType: open-question` and `corroboration: none`.
 - Claims are atomic, reusable facts, not paragraph summaries.
 - Unsupported important facts go in `evidenceGaps` with impact and diligence path.
+
+## Claim reflection gate
+
+Before finalizing each analysis artifact, reflect on the claim set rather than treating claims as bibliography bookkeeping:
+
+1. **Necessity** — Which section, table cell, figure node, callout, or gap needs this claim? Remove claims that do not support a decision-relevant artifact element.
+2. **Atomicity** — Does the claim state exactly one factual assertion? Split bundled claims that combine metrics, dates, causality, and implications.
+3. **Support fit** — Do the cited `sourceRefs` support the exact statement, not just the broad topic? If not, revise the claim or move it to `evidenceGaps`.
+4. **Claim type honesty** — Label company statements as `company-claimed`, independently reported facts as `third-party-reported`, analyst/math outputs as `estimated`, reasoning outputs as `inferred`, and unresolved asks as `open-question`.
+5. **Freshness and volatility** — For funding, valuation, revenue, customers, legal/regulatory posture, pricing, partnerships, leadership, and product packaging, refresh against `currentDate` or explicitly mark the stale/unknown evidence gap.
+6. **Corroboration** — Judgment-critical claims should be multi-source or have a note explaining why only one credible source is available. Conflicting evidence should produce `claimType: conflicting` or an explicit gap.
+7. **Completeness** — Ask what claims a domain expert would expect to see for this chapter. If a critical claim cannot be supported, create a precise `evidenceGaps[]` entry instead of omitting the issue.
 
 ## Coverage fields
 
@@ -99,12 +122,4 @@ Final ledger quality checks:
 
 ## Enum values
 
-Use only schema-allowed values. The canonical machine source is `scripts/evidence-registry.mjs`; update that file first when adding or changing evidence enums, then sync this human-readable list.
-
-- `claimType`: `observed`, `company-claimed`, `third-party-reported`, `estimated`, `inferred`, `open-question`, `conflicting`
-- `freshness`: `current`, `recent`, `historical`, `unknown`
-- `corroboration`: `single-source`, `multi-source`, `conflicting`, `none`
-- `sourceType`: `official`, `filing`, `regulatory`, `tier-one-news`, `trade-press`, `analyst-market-data`, `technical-docs`, `customer-proof`, `partner-proof`, `developer-signal`, `review`, `legal`, `other`
-- `reputationTier`: `high`, `medium`, `low`
-- `independence`: `company`, `partner`, `customer`, `competitor`, `independent`, `unknown`
-- `confidence`: `high`, `medium`, `low`
+Use only schema-allowed values from `scripts/evidence-registry.mjs`. That file is canonical; update it first when adding or changing evidence enums, then update prose and validators as needed.

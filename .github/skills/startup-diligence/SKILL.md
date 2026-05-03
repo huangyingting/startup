@@ -34,7 +34,7 @@ Before writing artifacts:
 
 ## Required artifact set
 
-Every completed report folder must contain all workflow artifacts declared by `scripts/report-manifest.mjs`. For the current v2 baseline:
+Every completed report folder must contain the artifacts declared by `scripts/report-manifest.mjs`. That manifest is authoritative for artifact order, required files, loader keys, and depth floors; if prose below diverges, update the manifest first and then sync this workflow. Current v2 baseline:
 
 ```text
 01-company-snapshot.yaml
@@ -110,6 +110,8 @@ Not allowed without a dedicated orchestrator and locking/merge protocol:
 - Parallel edits to `100-evidence-ledger.yaml`, `101-report-document.yaml`, `101-report-document.zh.yaml`, `102-report-card.yaml`, `102-report-card.zh.yaml`, or `reports/_index.yaml`.
 - Running `startup-ledger` while any analysis artifact is still being edited.
 
+For automated or multi-agent runs, create one report-folder write lock before modifying final YAML artifacts and release it after the file parses. If the lock already exists, wait or stop; never merge concurrent writes by hand.
+
 Synchronization points:
 
 1. Pre-stage duplicate check before report folder creation or stage 1 writing.
@@ -144,7 +146,7 @@ Synchronization points:
 
 Follow `.github/references/evidence-ledger.md` and `.github/references/analysis-skill-conventions.md` for detailed rules. Core expectations:
 
-- Use `currentDate` for volatile facts; prefer sources from the last 24 months.
+- Use `currentDate` for volatile facts; apply the freshness rubric in `.github/references/evidence-ledger.md`.
 - When generating search queries for volatile or current-status claims, include recency terms derived from `currentDate` (for example the current year, recent/updated language, or date-bounded operators when available) so stale sources do not dominate discovery.
 - Ask report-specific research questions, including adverse/disconfirming angles.
 - Use available search/discovery tools for both source discovery and cited Q&A against precise diligence questions; keep Q&A conclusions as hypotheses until supported by cited URLs or directly reviewed pages. Use `fetch-url` for direct page review of retained sources.
@@ -154,7 +156,7 @@ Follow `.github/references/evidence-ledger.md` and `.github/references/analysis-
 
 ## Artifact depth gates
 
-Schema validity is necessary but not sufficient. `scripts/report-manifest.mjs` is the machine source for depth floors; for normal public or late-stage private companies, the prose baseline is:
+Schema validity is necessary but not sufficient. `scripts/report-manifest.mjs` is the machine source for depth floors; the bullets below are a human-readable baseline for normal public or late-stage private companies:
 
 - `01-company-snapshot.yaml`: at least 5 substantive sections, 3 tables, 2 figures, and a milestone timeline with at least 8 entries.
 - Each of `02`–`08`: at least 4 substantive sections, 4 tables, and 2 figures; `07` and `08` should usually exceed the floor.

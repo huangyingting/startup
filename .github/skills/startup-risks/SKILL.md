@@ -74,7 +74,7 @@ Infer the company's real failure modes.
 
 ## Completion check
 
-- The Simplified Chinese sibling translates every user-visible prose field per `.github/references/zh-translation.md`; it is not an English copy with only metadata preserved.
+- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
 - Domain reflection is explicit: identify the risk/regulatory archetype(s), add supportable domain-specific risk registers or transmission figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
 - Do not assign severity from intuition; cite evidence and mitigation for each top risk.
 - Where active litigation, regulatory posture, certifications, incidents, safety, or concentration cannot be confirmed, record the exact diligence path.

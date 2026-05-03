@@ -85,7 +85,7 @@ Select the valuation method from the business model and stage.
 
 ## Completion check
 
-- The Simplified Chinese sibling translates every user-visible prose field per `.github/references/zh-translation.md`; it is not an English copy with only metadata preserved.
+- The `.zh.yaml` sibling passes `.github/references/zh-translation.md` checks; it is not an English copy with only metadata preserved.
 - Domain reflection is explicit: identify the valuation archetype(s), add supportable domain-specific scenario, comparable, or sensitivity tables/figures beyond `contract.yaml`, and record gaps where public evidence is insufficient.
 - Include adverse searches on overvaluation, down-round risk, governance, liquidity, multiple compression, commercialization failure, or model-specific downside.
 - Do not issue `buy` unless thesis and anti-thesis are both evidence-supported and valuation has sufficient support.

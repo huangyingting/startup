@@ -65,6 +65,13 @@ Internally compute:
 - Ledger claim count vs report-referenced claim count.
 - Chapter coverage for chapters `2`–`9`.
 
+Run a synthesis reflection pass:
+
+- Check whether the executive summary, recommendation logic, risk rating, valuation stance, and appendix gaps faithfully reflect the strongest and weakest upstream evidence.
+- Check for contradictions across chapters; resolve date/scope/definition mismatches or carry unresolved conflicts into the report.
+- Check whether every top risk, strength, and unresolved gap is backed by canonical claimRefs or explicitly framed as a diligence gap.
+- Check whether the report over-polishes thin upstream work; if so, route back to the owning analysis skill rather than smoothing it in `101`.
+
 Fix coverage gaps before saving. Do not proceed to `startup-card` if final table/figure counts are unexpectedly low.
 
 ## Completion check (English)
