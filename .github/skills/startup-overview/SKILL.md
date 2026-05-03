@@ -41,7 +41,7 @@ Answer: What is this company, what does it do, who controls it, how far along is
 Cover these universal topics:
 
 - Company identity: legal/common name, website, headquarters, founding date/year, founding location, current stage, and category language used by the company and independent sources.
-- Founders, leadership, board/governance, key executives, leadership changes, and relevant backgrounds.
+- Founders, leadership, board/governance, key executives, leadership changes, relevant backgrounds, founder-market fit, key-person dependence, and organization/talent capacity where supportable.
 - Product/service one-line definition, customer focus, business model, and value proposition.
 - Funding status: priced rounds, valuation, total funding when supportable, investors, strategic partners, secondaries, tender events, debt/credit facilities, and conflicting reports.
 - Cover metrics where supportable: valuation, total raised, revenue/run-rate/ARR, transaction volume, customer count, usage, headcount, locations/facilities, product units, approvals, or other company-specific KPIs.
@@ -51,7 +51,7 @@ Cover these universal topics:
 ## Required tables
 
 - **Snapshot KPI table** — metric, value/status, date, evidence/source, confidence, benchmark/interpretation, diligence gap.
-- **Leadership and founder table** — person, role, current/past status, background, evidence, diligence note.
+- **Leadership and founder table** — person, role, current/past status, background, founder-market fit or functional coverage, key-person dependency, evidence, diligence note.
 - **Funding / governance chronology** — date, event, amount/valuation/status, participants, implication, evidence.
 - **Stakeholder / investor map** — stakeholder, role, relationship, control/economic importance, evidence, diligence ask.
 - **Milestone table** — at least 8 dated entries when public evidence supports them; include positive and adverse/governance milestones.
@@ -70,6 +70,7 @@ Use search for discovery and the `fetch-url` workflow for retained direct URLs.
 - Official identity: homepage, about, leadership, newsroom, blog, investor, careers, product, trust, filings, and legal pages.
 - Funding/valuation: company announcements, investor announcements, tier-one finance/tech reporting, filings, press releases, and credible databases only when directly reviewable.
 - Leadership/governance: company pages, public bios only when necessary, board announcements, filings, official biographies, reputable reporting.
+- Organization/talent: careers pages, headcount disclosures, LinkedIn-style public signals only when necessary, executive hiring/departure announcements, layoffs, technical/operational hiring mix, and leadership concentration signals.
 - Cover metrics: official claims first, independent corroboration for volatile numbers, and explicit source limits for private metrics.
 - Adverse checks: duplicate identity, lawsuits, leadership churn, sanctions/regulatory issues, failed products, shutdowns, recalls, safety issues, layoffs, stale claims, and conflicting scale numbers.
 

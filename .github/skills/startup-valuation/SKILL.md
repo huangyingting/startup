@@ -47,7 +47,7 @@ Cover these universal topics:
 
 - Investment thesis and anti-thesis tied to market, product, customers, financials, competition, and risks.
 - Recommendation, confidence, risk rating, valuation stance, target return/hold period/exit route/position sizing where supportable.
-- Current financing/valuation context, entry discipline, and whether public evidence supports the price.
+- Current financing/valuation context, entry discipline, cap-table or preference overhang where supportable, dilution/option-pool/debt implications, and whether public evidence supports the price.
 - Bull/base/bear cases with explicit assumptions, valuation ranges or qualitative bands, probability signals, and downside triggers.
 - Comparable set: public companies, private rounds, M&A, milestone/asset comparables, project comps, brand/channel comps, or other model-appropriate references.
 - Exit readiness: IPO, strategic M&A, secondary/private liquidity, licensing/partnership, project sale, commercialization milestone, or other realistic routes.
@@ -59,6 +59,7 @@ Cover these universal topics:
 - **Thesis / anti-thesis table** — argument, evidence, what would change the view, claim refs.
 - **Bull / base / bear scenario table** — assumptions, valuation/return logic, key risks, probability signal.
 - **Comparable valuation table** — comparable, metric, multiple/valuation/status, relevance, limitation.
+- **Financing structure / dilution table** — round or instrument, valuation/amount/status, preference/debt/secondary clues, dilution or overhang implication, evidence, diligence ask.
 - **Exit readiness table** — exit route, readiness dimension, current evidence, score/status, diligence ask.
 - **Position sizing / thesis-break / final diligence table** — stance, trigger, evidence needed, action implication.
 

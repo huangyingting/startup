@@ -48,6 +48,7 @@ Cover these universal topics:
 - Severity-ranked risk overview with likelihood, impact, mitigation maturity, residual exposure, and investment implication.
 - Regulatory/legal risk: licenses, permits, approvals, litigation, enforcement, policy changes, contracts, IP, privacy/data, labor, consumer protection, environmental/safety, or industry-specific obligations.
 - Operational risk: supply chain, manufacturing, service delivery, logistics, reliability, incidents, outages, quality, recalls, safety, facilities, labor, utilization, insurance, and business continuity.
+- People/execution risk: founder/key-person dependence, leadership churn, hiring gaps, incentive misalignment, culture/reputation issues, workforce constraints, and whether the team fits the operating complexity.
 - Partner/dependency risk: supplier, distributor, cloud/platform, bank/capital provider, channel, data/model provider, regulator, contractor, payer, project finance, or key customer concentration.
 - Financial/model risk: burn, capital intensity, credit/default/loss exposure, commodity/input cost, fraud, working capital, reimbursement/pricing cuts, or margin compression.
 - Mitigations, monitoring indicators, thesis-break triggers, and diligence asks.
@@ -58,6 +59,7 @@ Cover these universal topics:
 - **Regulatory / legal risk table** — rule/license/case/approval, jurisdiction, status, evidence, exposure, diligence path.
 - **Operational / quality / security risk table** — failure mode, evidence, likelihood, impact, controls, unresolved gap.
 - **Partner / dependency risk table** — dependency, counterparty, role, concentration, failure scenario, mitigation.
+- **People / execution risk table** — role/function, dependency or gap, evidence, impact, mitigation, diligence path.
 - **Mitigation and kill criteria table** — risk, monitorable trigger, threshold/event, action implication.
 
 ## Required figures
@@ -74,6 +76,7 @@ Adverse/disconfirming research is mandatory. Use `fetch-url` for retained primar
 - Official risk/control evidence: trust/security/privacy/terms/DPA/compliance/status/incident/responsible-use/legal/subprocessor pages, quality policies, certifications, recall notices, safety pages, insurance/permit disclosures.
 - Primary sources: regulators, court records, clinical/regulatory databases, patent/IP offices, environmental/safety agencies, filings, procurement documents, sanctions/export-control sources, recall databases.
 - Independent sources: reputable adverse reporting, security incident coverage, customer complaints, analyst risk notes, industry publications, public-company comparable risk factors.
+- People/execution sources: leadership pages, executive departures, hiring patterns, layoffs, employee litigation, safety/labor records, credible employee/recruiting signals, and public founder/operator track record.
 - For each top risk, find both severity evidence and mitigation/control evidence before assigning final severity.
 
 ## Domain-adaptive additions

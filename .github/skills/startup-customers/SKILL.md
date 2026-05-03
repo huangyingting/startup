@@ -48,7 +48,7 @@ Cover these universal topics:
 - Customer base overview and segmentation by buyer/user/payer, geography, vertical, size, channel, use case, ACV/revenue band, or deployment type.
 - Customer growth, active usage, repeat purchase, deployment, account, transaction, location, patient/provider, supplier/buyer, or utilization trajectory where supportable.
 - Named customer proof: active use, case studies, outcomes, reference quality, evidence freshness, and whether logos are merely promotional.
-- Retention and durability: NRR/GRR/churn, renewal, repeat purchase, cohort retention, frequency, utilization, expansion, satisfaction, complaints, reviews, support, or explicit gaps.
+- Retention and durability: NRR/GRR/churn, renewal, contract duration, termination rights when public, repeat purchase, cohort retention, frequency, utilization, expansion, satisfaction, complaints, reviews, support, or explicit gaps.
 - Expansion and concentration: land-and-expand paths, cross-sell, geographic/segment expansion, top-customer risk, channel/partner dependence, procurement or implementation friction.
 - Customer verdict and exact customer diligence asks.
 
@@ -56,8 +56,9 @@ Cover these universal topics:
 
 - **Customer segmentation table** — segment, buyer/user/payer, use case, scale, revenue/strategic value, evidence, gap.
 - **Customer growth / adoption trajectory table** — metric, value, date, source, confidence, implication, missing denominator.
-- **Named customer proof table** — customer, segment, deployment/use case, outcome, evidence quality, limitation.
+- **Named customer proof table** — customer, segment, deployment/use case, production vs pilot status, outcome, evidence quality, limitation.
 - **Retention / repeat usage / satisfaction table** — metric, value/null, segment, evidence, confidence, diligence ask.
+- **Contract / renewal quality table** — segment/customer type, contract term or renewal signal, expansion surface, termination/procurement friction, evidence, diligence ask.
 - **Expansion and concentration risk table** — expansion driver, evidence, concentration risk, impact, diligence path.
 
 ## Required figures

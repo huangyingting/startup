@@ -46,6 +46,7 @@ Answer: What is the revenue model, what are the cost and margin drivers, what un
 Cover these universal topics:
 
 - Revenue streams, pricing model, revenue recognition issues, and revenue mix where supportable.
+- GTM motion and sales efficiency: sales cycle, pipeline quality, channel economics, CAC/payback or proxy signals, sales productivity, partner/channel dependency, and explicit gaps where private metrics are unavailable.
 - Cost structure, gross margin drivers, contribution margin logic, working capital, capex, inventory, partner/channel costs, or service-delivery costs.
 - Public traction: revenue, ARR/run-rate, GMV/volume, units, backlog, bookings, locations, utilization, active users, or other business-model-specific financial proxies.
 - Funding, valuation, debt/credit/project finance, burn/runway, cash needs, and financing dependency.
@@ -57,6 +58,7 @@ Cover these universal topics:
 
 - **Revenue streams table** — stream, mechanism, unit, current value/status, evidence, quality note, diligence request.
 - **Pricing / monetization table** — price/unit/contract terms, list vs realized pricing, discounts/unknowns, source.
+- **GTM / sales efficiency table** — motion/channel, sales cycle or conversion proxy, CAC/payback/proxy, channel cost, evidence, limitation, diligence request.
 - **Unit economics table** — metric, value/null, confidence, why it matters, evidence or diligence ask.
 - **Funding / capital needs table** — round/debt/facility/project capital, amount, date, participants, use of funds, runway/capex implication.
 - **Margin / cost-driver bridge table** — cost driver, direction, evidence, sensitivity, margin implication.
