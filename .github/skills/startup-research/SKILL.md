@@ -17,7 +17,7 @@ Resolve these run inputs before setup:
 - `companyName`: required.
 - `companyUrl`: optional identity anchor, never proof by itself.
 - `runTimestamp`: UTC `YYYYMMDDHHmmss`.
-- `currentDate`: actual session date in `YYYY-MM-DD`; use as the evidence freshness anchor, search-query recency anchor, and default `runDate` unless the user requests a historical report.
+- `currentDate`: actual session date in `YYYY-MM-DD`, taken from the runtime/session context at the start of the report run. If no reliable session date is provided, run `date -u +%F` once before setup and use that value. Do not infer `currentDate` from model training knowledge, old report folders, source publication dates, or the company timeline. Use `currentDate` as the evidence freshness anchor, search-query recency anchor, and default `runDate` unless the user requests a historical report.
 - Prompt-derived run requirements: infer any audience, investment lens, required topics, metrics, competitors/comparables, figures, source constraints, or diligence questions from the user's prompt. These requirements are run-local and section-owned; satisfy them in the relevant artifacts or record an evidence gap.
 
 Before running any chapter skill:
@@ -107,7 +107,7 @@ Synchronization points:
 1. Pre-stage duplicate check before report folder creation or analysis artifact writing.
 2. Identity consistency gate before each artifact write: document headers must preserve the resolved `company.name`, `slug`, and `runDate`.
 3. Chapter-level readiness check immediately after each `01`–`08` artifact write, scoped to the owning artifact so failures return directly to that chapter skill.
-4. `startup-evidence` consolidation after all `01`–`08` artifacts have passed their own chapter audit.
+4. `startup-evidence` consolidation after all `01`–`08` artifacts have passed their own chapter readiness check.
 5. `startup-full-report` assembly.
 6. `startup-summary-card` generation.
 7. Final index rebuild and `npm run validate`.

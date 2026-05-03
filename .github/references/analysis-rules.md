@@ -77,7 +77,7 @@ Never retain:
 
 Deduplicate by canonical URL and underlying event/date. Cluster press-release or wire-copy repeats as one event. Prefer fit-for-purpose sources: official pages, filings/regulators, tier-one news, analyst/market data, customer proof, technical docs, reviews, and disconfirming evidence.
 
-Label `sourceType`, `reputationTier`, and `independence` honestly using the closed enum values in `.github/references/report-schema-v2.md`.
+Label `sourceType`, `reputationTier`, and `independence` honestly using the vocabulary documented in `.github/references/report-schema-v2.md`. These are semantic authoring rules; do not rely on build-time enum validation to catch business-vocabulary mistakes.
 
 ## Research tool usage
 
@@ -86,7 +86,7 @@ Use two complementary research tracks:
 1. **Verified answer / discovery track** — use search/discovery tools, including `web_search` when available, to answer targeted diligence questions, surface current facts, triangulate source families, find cited URLs, and test confirming, disconfirming, and adverse hypotheses. Treat cited/verified answer text as research guidance and contradiction detection, not as a substitute for claim-level provenance.
 2. **Direct source review track** — use direct URL review for retained sources so material claims trace back to source pages, filings, regulator records, official pages, customer/partner pages, competitor pages, docs, or adverse articles.
 
-Use the repository `fetch-url` workflow for every retained direct URL, including official pages, cited search results, filings, regulator pages, customer/partner pages, competitor pages, docs, and adverse articles. In this repository, direct page review means following `.github/skills/fetch-url/SKILL.md` and using `node scripts/fetch-url.mjs ...` rather than native page-fetch tools unless higher-priority runtime instructions require otherwise.
+Use the repository `fetch-url` workflow for every retained direct URL, including official pages, cited search results, filings, regulator pages, customer/partner pages, competitor pages, docs, and adverse articles. In this repository, direct page review means following `.github/skills/fetch-url/SKILL.md` and using `node scripts/fetch-url.mjs ...` rather than native page-fetch tools unless higher-priority runtime instructions require otherwise; when such an instruction requires a platform fetch first, still apply this repository's source-provenance and claim-level citation rules to any retained source.
 
 For each retained source, the artifact should reflect what was actually reviewed: URL, title/source identity, publication or access date when available, source type, reputation/independence labels, and claim-level support. Do not retain a URL only because it appeared in search results.
 
@@ -104,7 +104,9 @@ After each targeted search/discovery call, record this run-log line in the chat/
 
 ## Time, research, and freshness
 
-- Treat `currentDate` as the anchor for recency, volatile-fact review, search-query freshness, and default `runDate`.
+- Treat `currentDate` as the anchor for recency, volatile-fact review, search-query freshness, and default `runDate`. `currentDate` is resolved once by `startup-research` from the runtime/session date, or from `date -u +%F` if the session does not provide a reliable date; chapter skills inherit it and must not recompute it from stale reports, model knowledge, source dates, or company events.
+- Build search/discovery questions with the actual `currentDate` context in mind. For volatile facts, include freshness cues such as the current year, "latest", "recent", "as of <currentDate>", funding/status/product/pricing/security/legal terms, or a bounded date window instead of relying on evergreen company-profile queries.
+- For each chapter, run a final freshness sweep before drafting or finalizing: re-query the most decision-critical volatile facts using current-year/latest phrasing, compare against retained sources, and update claims or record an explicit freshness gap when fresher corroboration is unavailable.
 - Ask complete-sentence research questions tied to the intended paragraph, table, figure, or gap; avoid keyword-only queries.
 - Include confirming, disconfirming, and adverse angles. If results are thin or stale, rewrite the question before recording a gap.
 - Retain source breadth, not bibliography volume: official/company-authored, independent corroboration, adverse/disconfirming, and freshness-check sources should be represented or explicitly gapped.
