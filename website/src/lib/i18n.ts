@@ -1,5 +1,3 @@
-export type Lang = 'en' | 'zh';
-
 const strings = {
   en: {
     title: 'Startup',
@@ -11,34 +9,13 @@ const strings = {
     topRated: 'Top rated',
     latest: 'Latest',
     noReports: 'No reports yet.',
-    sourceCount: 'sources',
     confidence: 'confidence',
     market: 'Market',
     financials: 'Financials',
     risks: 'Top risks',
   },
-  zh: {
-    title: '创业公司研究',
-    deck: '由专业研究 Agent 生成的、基于证据的创业公司深度报告。',
-    reports: '报告',
-    search: '搜索',
-    archive: '全部报告',
-    sectors: '赛道',
-    topRated: '高分报告',
-    latest: '最新',
-    noReports: '暂无报告。',
-    sourceCount: '来源',
-    confidence: '置信度',
-    market: '市场',
-    financials: '财务',
-    risks: '主要风险',
-  },
 } as const;
 
-export function t(key: keyof typeof strings.en, lang: Lang = 'en'): string {
-  return strings[lang][key] ?? strings.en[key];
-}
-
-export function prefixFor(lang: Lang): string {
-  return lang === 'zh' ? '/zh' : '';
+export function t(key: keyof typeof strings.en): string {
+  return strings.en[key];
 }

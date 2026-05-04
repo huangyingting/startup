@@ -1,5 +1,6 @@
 export function displayLabel(value: unknown): string {
   if (value === null || value === undefined || value === '') return '';
+  if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
   if (typeof value === 'boolean') return value ? 'Yes' : 'No';
   if (typeof value !== 'string') return String(value);
 

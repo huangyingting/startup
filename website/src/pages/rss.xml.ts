@@ -7,7 +7,7 @@ export async function GET(context) {
   return rss({
     title: 'Startup Research',
     description: 'Evidence-backed startup company reports.',
-    site: context.site ?? 'https://example.com',
+    site: context.site ?? 'https://startup.genisisiq.com',
     items: reports.map((entry) => ({
       title: entry.data.company.name,
       description: entry.data.headline,

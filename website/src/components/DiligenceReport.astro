@@ -1,561 +1,441 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import type { Lang } from '../lib/i18n';
 import ClaimRefs from './ClaimRefs.astro';
+import ReportBlock from './ReportBlock.astro';
 import DataTable from './DataTable.astro';
-import RatingBlock from './RatingBlock.astro';
 import { displayLabel } from '../lib/display';
 
 interface Props {
   entry: CollectionEntry<'reports'>;
   data: any;
   stages: any;
-  lang?: Lang;
 }
 
-const { data, stages, lang = 'en' } = Astro.props;
-const ledger = stages.sourceLedger ?? {};
-const market = stages.marketCustomers ?? {};
-const product = stages.productTechnology ?? {};
-const traction = stages.tractionGtm ?? {};
-const competition = stages.competitionPositioning ?? {};
-const business = stages.businessFinancials ?? {};
-const risk = stages.riskGovernance ?? {};
-const memo = stages.investmentMemo ?? {};
-const team = stages.teamPeople ?? {};
-const valuation = stages.comparablesValuation ?? {};
-const milestones = stages.milestonesCatalysts ?? {};
+const { data, stages } = Astro.props;
 
-const labels = lang === 'zh'
-  ? {
-      officialWebsite: '官网', recommendation: '建议', confidence: '置信度', sources: '来源', claims: '声明', rating: '评分',
-      atAGlance: '一眼看懂', valuationStance: '估值判断', risk: '风险', evidence: '证据',
-      quickRead: '5 分钟读懂', decisionQuestions: '核心判断问题', evidenceMix: '来源结构', scoreBars: '评分概览',
-      executiveView: '投资委员会摘要', metrics: '关键指标', memo: '投资备忘录', scorecard: '评分卡', investmentDecision: '投资决策框架', conviction: '确信度', underwritingBets: '核心承销假设', mustBelieve: '必须相信', dealBreakers: '否决条件', flagSummary: '红黄绿灯', greenFlags: '绿灯', yellowFlags: '黄灯', redFlags: '红灯', thesis: '投资论点', positives: '正面因素', concerns: '主要顾虑',
-      marketProduct: '市场与产品', whyNow: '为什么是现在', marketSizing: '市场规模', customerSegments: '客户分层', productTechnology: '产品与技术', security: '安全与合规', roadmap: '路线图',
-      tractionGtm: '牵引力与 GTM', tractionSignals: '牵引力信号', customerCases: '客户案例', pricing: '定价与包装', retention: '留存/扩张信号',
-      teamGovernance: '团队与治理', teamSnapshot: '团队快照', founders: '创始人与领导层', leadershipCards: '核心人员卡片', keyHires: '关键招聘', governance: '治理',
-      financialsValuation: '财务与估值', businessModel: '商业模式', revenueQuality: '收入质量', revenueMix: '收入结构', retention: '留存质量', customerConcentration: '客户集中度', contractProfile: '合同画像', unitEconomics: '单位经济', capitalEfficiency: '资本效率', scenarioModel: '财务情景模型', valuationFramework: '估值框架', valuationBridge: '估值桥', ownershipSensitivity: '持股敏感性', exitPath: '退出路径', publicMarketReadiness: '公开市场就绪度', comps: '可比公司/交易', returns: '回报情景',
-      risksMilestones: '风险、Pre-mortem 与里程碑', topRisks: '核心风险', riskMap: '风险优先级', preMortem: '失败预演', mindChangers: '改变判断的证据', diligenceWorkplan: '后续尽调工作计划', dataRoomRequests: 'Data-room 请求', expertCalls: '专家访谈', managementQuestions: '管理层访谈问题', milestones: '里程碑', killCriteria: '否决条件',
-      competition: '竞争格局', evidenceQuality: '证据质量', sourceCoverage: '来源覆盖', openGaps: '未解问题', notDisclosed: '未披露', unknown: '未知', current: '在任', former: '已离任', noPhoto: '暂无可靠照片',
-      arr: 'ARR', growth: '增长', grossMargin: '毛利率', ruleOf40: 'Rule of 40', burnMultiple: 'Burn multiple', valuation: '估值', headcount: '员工数',
-      market: '市场', product: '产品', traction: '牵引力', economics: '经济性', baseCase: '基础情景', bullCase: '乐观情景', bearCase: '悲观情景', signal: '信号', marketVerdict: '市场判断',
-      scope: '范围', value: '数值', approach: '方法', methodology: '方法论', customer: '客户', industry: '行业', outcome: '结果', verified: '已验证', type: '类型', status: '状态', strength: '强度', independent: '独立验证',
-      segment: '分层', buyer: '买方', budgetOwner: '预算负责人', urgency: '紧迫度', wtpEvidence: '付费意愿证据', item: '事项', timeframe: '时间范围', source: '来源',
-      name: '名称', role: '角色', domainFit: '领域匹配', background: '背景', function: '职能', from: '来自', significance: '重要性', teamVerdict: '团队判断', keyPersonRisk: '关键人风险',
-      financialVerdict: '财务判断', funding: '融资', totalRaised: '累计融资', latestRound: '最新轮次', postMoney: '投后估值', payback: '回收期', low: '低位', mid: '中位', high: '高位',
-      tickerEvent: '代码/事件', rationale: '依据', revenueMultiple: '收入倍数', scenario: '情景', revenueRange: '收入区间', marginDirection: '利润率方向', capitalNeed: '资本需求', exitValue: '退出价值', year: '年份', assumptions: '假设', fairValueRange: '公允价值区间', bridgeStep: '桥接步骤', interpretation: '解读', checkSize: '支票规模', ownership: '持股比例', requiredExit: '3x 所需退出价值', earliestYear: '最早年份', blockers: '阻碍因素',
-      category: '类别', severity: '严重性', likelihood: '可能性', mitigation: '缓释措施', criterion: '条件', detection: '识别方式', moat: '护城河', positioning: '定位', directCompetitors: '直接竞争者', substitutes: '替代方案', strengths: '优势', weaknesses: '劣势', whyItMatters: '重要性', coverageGaps: '覆盖缺口', claimIndex: '声明索引', sourceLedger: '来源台账', publisher: '发布方', title: '标题', statement: '声明', topic: '主题', claimType: '类型', linkedSources: '关联来源', independence: '独立性', quote: '引文', stream: '收入流', qualitySignal: '质量信号', notes: '备注', disclosureLevel: '披露程度', evidenceQuality: '证据质量', diligenceNeed: '尽调需求', question: '问题', relatedEvidence: '相关证据'
-    }
-  : {
-      officialWebsite: 'Official website', recommendation: 'Recommendation', confidence: 'Confidence', sources: 'sources', claims: 'claims', rating: 'Rating',
-      atAGlance: 'At a glance', valuationStance: 'Valuation stance', risk: 'Risk', evidence: 'Evidence',
-      quickRead: '5-minute read', decisionQuestions: 'Key decision questions', evidenceMix: 'Source mix', scoreBars: 'Score overview',
-      executiveView: 'Investment committee view', metrics: 'Key metrics', memo: 'Investment memo', scorecard: 'Scorecard', investmentDecision: 'Investment decision framework', conviction: 'Conviction', underwritingBets: 'Key underwriting bets', mustBelieve: 'Must believe', dealBreakers: 'Deal breakers', flagSummary: 'Flag summary', greenFlags: 'Green flags', yellowFlags: 'Yellow flags', redFlags: 'Red flags', thesis: 'Thesis', positives: 'Positives', concerns: 'Concerns',
-      marketProduct: 'Market and product', whyNow: 'Why now', marketSizing: 'Market sizing', customerSegments: 'Customer segments', productTechnology: 'Product and technology', security: 'Security and compliance', roadmap: 'Roadmap',
-      tractionGtm: 'Traction and GTM', tractionSignals: 'Traction signals', customerCases: 'Customer case studies', pricing: 'Pricing and packaging', retention: 'Retention / expansion',
-      teamGovernance: 'Team and governance', teamSnapshot: 'Team snapshot', founders: 'Founders and leadership', leadershipCards: 'Key people cards', keyHires: 'Key hires', governance: 'Governance',
-      financialsValuation: 'Financials and valuation', businessModel: 'Business model', revenueQuality: 'Revenue quality', revenueMix: 'Revenue mix', retention: 'Retention quality', customerConcentration: 'Customer concentration', contractProfile: 'Contract profile', unitEconomics: 'Unit economics', capitalEfficiency: 'Capital efficiency', scenarioModel: 'Financial scenario model', valuationFramework: 'Valuation framework', valuationBridge: 'Valuation bridge', ownershipSensitivity: 'Ownership sensitivity', exitPath: 'Exit path', publicMarketReadiness: 'Public-market readiness', comps: 'Comparables', returns: 'Expected returns',
-      risksMilestones: 'Risks, pre-mortem and milestones', topRisks: 'Top risks', riskMap: 'Risk priority map', preMortem: 'Pre-mortem', mindChangers: 'Mind-changers', diligenceWorkplan: 'Diligence workplan', dataRoomRequests: 'Data-room requests', expertCalls: 'Expert calls', managementQuestions: 'Management questions', milestones: 'Milestones', killCriteria: 'Kill criteria',
-      competition: 'Competitive landscape', evidenceQuality: 'Evidence quality', sourceCoverage: 'Source coverage', openGaps: 'Open gaps', notDisclosed: 'Not disclosed', unknown: 'Unknown', current: 'Current', former: 'Former', noPhoto: 'No verified photo',
-      arr: 'ARR', growth: 'Growth', grossMargin: 'Gross margin', ruleOf40: 'Rule of 40', burnMultiple: 'Burn multiple', valuation: 'Valuation', headcount: 'Headcount',
-      market: 'Market', product: 'Product', traction: 'Traction', economics: 'Economics', baseCase: 'Base case', bullCase: 'Bull case', bearCase: 'Bear case', signal: 'Signal', marketVerdict: 'Market verdict',
-      scope: 'Scope', value: 'Value', approach: 'Approach', methodology: 'Methodology', customer: 'Customer', industry: 'Industry', outcome: 'Outcome', verified: 'Verified', type: 'Type', status: 'Status', strength: 'Strength', independent: 'Independent',
-      segment: 'Segment', buyer: 'Buyer', budgetOwner: 'Budget owner', urgency: 'Urgency', wtpEvidence: 'WTP evidence', item: 'Item', timeframe: 'Timeframe', source: 'Source',
-      name: 'Name', role: 'Role', domainFit: 'Domain fit', background: 'Background', function: 'Function', from: 'From', significance: 'Significance', teamVerdict: 'Team verdict', keyPersonRisk: 'Key-person risk',
-      financialVerdict: 'Financial verdict', funding: 'Funding', totalRaised: 'Total raised', latestRound: 'Latest round', postMoney: 'Post-money', payback: 'Payback', low: 'Low', mid: 'Mid', high: 'High',
-      tickerEvent: 'Ticker/Event', rationale: 'Rationale', revenueMultiple: 'Revenue multiple', scenario: 'Scenario', revenueRange: 'Revenue range', marginDirection: 'Margin direction', capitalNeed: 'Capital need', exitValue: 'Exit value', year: 'Year', assumptions: 'Assumptions', fairValueRange: 'Fair value range', bridgeStep: 'Bridge step', interpretation: 'Interpretation', checkSize: 'Check size', ownership: 'Ownership', requiredExit: 'Required exit for 3x', earliestYear: 'Earliest year', blockers: 'Blockers',
-      category: 'Category', severity: 'Severity', likelihood: 'Likelihood', mitigation: 'Mitigation', criterion: 'Criterion', detection: 'Detection', moat: 'Moat', positioning: 'Positioning', directCompetitors: 'Direct competitors', substitutes: 'Substitutes', strengths: 'Strengths', weaknesses: 'Weaknesses', whyItMatters: 'Why it matters', coverageGaps: 'Coverage gaps', claimIndex: 'Claim index', sourceLedger: 'Source ledger', publisher: 'Publisher', title: 'Title', statement: 'Statement', topic: 'Topic', claimType: 'Type', linkedSources: 'Linked sources', independence: 'Independence', quote: 'Quote', stream: 'Stream', qualitySignal: 'Quality signal', notes: 'Notes', disclosureLevel: 'Disclosure level', evidenceQuality: 'Evidence quality', diligenceNeed: 'Diligence need', question: 'Question', relatedEvidence: 'Related evidence'
-    };
+const doc = stages.fullReport ?? null;
+const ledger = stages.evidence ?? {};
+const claims: any[] = Array.isArray(ledger.claims) ? ledger.claims : [];
+const sources: any[] = Array.isArray(ledger.sources) ? ledger.sources : [];
+const figures = new Map<string, any>((doc?.figures ?? []).map((figure: any) => [figure.id, figure]));
+const tables = new Map<string, any>((doc?.tables ?? []).map((table: any) => [table.id, table]));
 
-const zhDisplayMap: Record<string, string> = {
-  'Research More': '继续研究', 'Medium': '中等', 'High': '高', 'Low': '低', 'Critical': '关键', 'Stretched': '偏高',
-  'Positive': '正面', 'Negative': '负面', 'Neutral': '中性', 'Mixed': '混合', 'Strong': '强', 'Moderate': '中等', 'Weak': '弱',
-  'Yes': '是', 'No': '否', 'Public': '公开', 'Independent': '独立', 'Company': '公司', 'Third Party': '第三方', 'Customer': '客户',
-  'Partially Proven': '部分验证', 'Unproven': '未验证', 'Limited Public': '公开有限', 'Mixed Unknown': '混合/未知', 'High Potential': '高潜力', 'Emerging': '早期显现', 'Insufficient': '不足', 'Improving': '改善', 'Deteriorating': '恶化', 'Ipo': 'IPO', 'Strategic Acquisition': '战略收购', 'Secondary Liquidity': '二级流动性'
+const labels = {
+  recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating',
+  valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims',
+  figures: 'figures', tables: 'tables',
+  coverMetrics: 'Cover facts', startupIntro: 'Company profile',
+  founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location',
+  headquarters: 'Headquarters', product: 'Product', customers: 'Customers',
+  businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status',
+  strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps',
+  contents: 'Contents', appendix: 'Appendix', disclaimer: 'Disclaimer',
+  evidence: 'Evidence index', showRefs: 'Show refs', hideRefs: 'Hide refs',
 };
-function labelValue(value: unknown) {
-  const rendered = displayLabel(value);
-  return lang === 'zh' ? (zhDisplayMap[rendered] ?? rendered) : rendered;
+
+function arr<T = unknown>(value: T[] | undefined | null): T[] {
+  return Array.isArray(value) ? value : [];
 }
 
-function titleCase(value: unknown) {
-  if (!value) return labels.unknown;
-  return labelValue(value);
-}
-function metric(value: unknown, suffix = '') {
-  if (value === null || value === undefined || value === '') return labels.notDisclosed;
+function metric(value: unknown, suffix = ''): string {
+  if (value === null || value === undefined || value === '') return '—';
   if (typeof value === 'number') return `${value.toLocaleString()}${suffix}`;
-  return labelValue(value);
+  return String(value);
 }
-function moneyM(value: unknown) {
-  if (value === null || value === undefined || value === '') return labels.notDisclosed;
+
+function moneyM(value: unknown): string {
+  if (value === null || value === undefined || value === '') return '—';
   if (typeof value !== 'number') return String(value);
-  if (Math.abs(value) >= 1000) return `$${(value / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
+  if (Math.abs(value) >= 1000) {
+    return `$${(value / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
+  }
   return `$${value.toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
 }
-function pct(value: unknown) { return metric(value, '%'); }
-function arr<T = any>(value: T[] | undefined | null): T[] { return Array.isArray(value) ? value : []; }
-function claimRefs(value: any) { return arr<string>(value?.claimRefs).slice(0, 4); }
-function sourceRefs(value: any) { return arr<string>(value?.sourceRefs); }
-function initials(name: unknown) {
-  return String(name ?? '?').split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || '?';
-}
-function barWidth(value: unknown, max = 5) {
-  return typeof value === 'number' ? Math.max(4, Math.min(100, (value / max) * 100)) : 4;
+
+function cleanHeadline(value: unknown): string {
+  return String(value ?? '').replace(/(?:\s*\[C\d{3}\])+\.?$/g, '.').trim();
 }
 
-const keyMetrics = data.keyMetrics ?? traction.kpiSnapshot ?? {};
-const metricCards = [
-  [labels.arr, moneyM(keyMetrics.arrUsdM)],
-  [labels.growth, pct(keyMetrics.revenueGrowthYoYPct)],
-  [labels.grossMargin, pct(keyMetrics.grossMarginPct)],
-  ['NRR', pct(keyMetrics.nrrPct)],
-  [labels.ruleOf40, metric(keyMetrics.ruleOf40)],
-  [labels.burnMultiple, metric(keyMetrics.burnMultiple)],
-  [labels.valuation, moneyM(keyMetrics.postMoneyValuationUsdM ?? business.funding?.postMoneyValuationUsdM)],
-  [labels.headcount, metric(keyMetrics.headcount ?? team.teamSnapshot?.headcount)],
-];
-const horizons = [
-  ['6M', arr(milestones.horizons?.next6Months)],
-  ['12M', arr(milestones.horizons?.next12Months)],
-  ['24M', arr(milestones.horizons?.next24Months)],
-];
-const sourceMix = arr(ledger.sources).reduce((acc: Record<string, number>, source: any) => {
-  const key = source.independence ?? 'unknown';
-  acc[key] = (acc[key] ?? 0) + 1;
-  return acc;
-}, {});
-const claims = arr(ledger.claims);
-const sources = arr(ledger.sources);
-const scoreBars = Object.entries(memo.scorecard ?? {}).map(([key, value]: [string, any]) => ({
-  label: titleCase(key),
-  score: typeof value?.score === 'number' ? value.score : null,
-}));
-const decisionQuestions = [
-  { label: labels.market, question: market.marketVerdict?.rationale },
-  { label: labels.product, question: product.productVerdict?.rationale },
-  { label: labels.traction, question: traction.tractionSummary?.rationale },
-  { label: labels.economics, question: business.financialVerdict?.rationale },
-].filter((item) => item.question);
-const focusItems = [
-  { label: labels.recommendation, value: labelValue(data.recommendation), note: memo?.memo?.oneLine ?? data.headline },
-  { label: labels.valuation, value: labelValue(valuation.valuationVerdict?.stance ?? labels.unknown), note: valuation.valuationFramework?.rationale },
-  { label: labels.risk, value: labelValue(risk.riskVerdict?.overallRisk ?? labels.unknown), note: risk.riskVerdict?.rationale },
-  { label: labels.evidenceQuality, value: labelValue(data.confidence), note: arr(ledger.openEvidenceGaps)[0]?.gap ?? arr(data.unresolvedGaps)[0] },
-];
-const leadershipPeople = [...arr(team.founders), ...arr(team.keyHires)].slice(0, 8);
-const investmentDecision = memo.investmentDecision ?? {};
-const revenueQuality = business.revenueQuality ?? {};
-const valuationBridge = valuation.valuationBridge ?? {};
-const exitPathAnalysis = valuation.exitPathAnalysis ?? {};
-const riskRank: Record<string, number> = { low: 1, medium: 2, high: 3, critical: 4 };
-const riskCards = arr(risk.riskRegister).slice(0, 6).map((item) => ({ ...item, severityScore: riskRank[item.severity] ?? 1, likelihoodScore: riskRank[item.likelihood] ?? 1 }));
-const maxSourceCount = Math.max(1, ...Object.values(sourceMix).map((value) => Number(value)));
-const navItems = [labels.quickRead, labels.tractionGtm, labels.marketProduct, labels.teamGovernance, labels.financialsValuation, labels.risksMilestones, labels.competition, labels.evidenceQuality];
+function splitClaimRefsText(value: unknown): Array<{ text?: string; ref?: string }> {
+  const text = String(value ?? '');
+  const parts: Array<{ text?: string; ref?: string }> = [];
+  const pattern = /\[(C\d{3})\]/g;
+  let lastIndex = 0;
+  for (const match of text.matchAll(pattern)) {
+    if (match.index > lastIndex) parts.push({ text: text.slice(lastIndex, match.index) });
+    parts.push({ ref: match[1] });
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) parts.push({ text: text.slice(lastIndex) });
+  return parts.length ? parts : [{ text }];
+}
+
+function blockRefs(value: any): string[] {
+  return arr<string>(value?.claimRefs).slice(0, 6);
+}
+
+const coverFacts = arr(doc?.coverFacts);
+const companyProfile = doc?.companyProfile
+  ? {
+      ...doc.companyProfile,
+      summary: doc.companyProfile.summary ?? doc.companyProfile.body ?? null,
+    }
+  : null;
+
+const chapters = arr<any>(doc?.chapters);
+const appendices = arr<any>(doc?.appendices);
+const reportFigures = arr(doc?.figures);
+const reportTables = arr(doc?.tables);
+const figureCount = reportFigures.length;
+const tableCount = reportTables.length;
+
+const claimLinkMap = Object.fromEntries(
+  claims.map((claim: any) => [claim.id, { href: `#claim-${claim.id}`, title: claim.statement ?? claim.id }])
+);
+
+const keyMetrics = data.keyMetrics ?? {};
+const fallbackMetrics = [
+  ['Valuation', moneyM(keyMetrics.valuationUsdM)],
+  ['Revenue run rate', moneyM(keyMetrics.revenueRunRateUsdM)],
+  ['ARR', moneyM(keyMetrics.arrUsdM)],
+  ['Growth', metric(keyMetrics.revenueGrowthYoYPct, '%')],
+  ['NRR', metric(keyMetrics.nrrPct, '%')],
+  ['Total raised', moneyM(keyMetrics.totalRaisedUsdM)],
+  ['Customers', metric(keyMetrics.customerCount)],
+  ['Headcount', metric(keyMetrics.headcount)],
+].filter(([, value]) => value !== '—');
 ---
-<section class="sr-container sr-hero report-hero">
-  <div class="hero-grid">
-    <div class="hero-copy">
-      <div class="sr-eyebrow">{data.company.name} · {data.company.sector ?? labels.unknown} · {data.runDate}</div>
-      <h1>{data.headline}</h1>
-      <p class="sr-deck">{memo?.memo?.oneLine ?? data.headline}</p>
-      <div class="sr-meta">
-        {data.company.website && <a class="sr-pill" href={data.company.website}>{labels.officialWebsite}</a>}
-        <span class="sr-pill">{data.sourceStats.sourcesRetained} {labels.sources} · {data.sourceStats.claimsReviewed} {labels.claims}</span>
-        <span class="sr-pill">{String(data.schemaVersion).replace('startup-diligence-', '')}</span>
+<section class="report-shell sr-container">
+  <header class="report-cover">
+    <div>
+      <h1>{doc?.company?.name ?? data.company?.name ?? data.slug}</h1>
+      {(doc?.subtitle ?? null) && <p class="report-subtitle">{doc?.subtitle}</p>}
+      <p class="report-headline">{cleanHeadline(data.headline)}</p>
+      <div class="report-meta-line">
+        <span>{data.runDate}</span>
+        <span>{data.sourceStats.sourcesRetained} {labels.sources}</span>
+        <span>{data.sourceStats.claimsReviewed} {labels.claims}</span>
+        {data.sourceStats?.domainCount != null && (<span>{data.sourceStats.domainCount} domains</span>)}
+        {data.sourceStats?.adverseSourceCount != null && (<span>{data.sourceStats.adverseSourceCount} adverse</span>)}
+        {data.sourceStats?.unresolvedQuestionCount != null && data.sourceStats.unresolvedQuestionCount > 0 && (
+          <span>{data.sourceStats.unresolvedQuestionCount} open Qs</span>
+        )}
+        <span>{figureCount} {labels.figures}</span>
+        <span>{tableCount} {labels.tables}</span>
+        <button
+          type="button"
+          class="evidence-toggle"
+          aria-pressed="false"
+          data-show-label={labels.showRefs}
+          data-hide-label={labels.hideRefs}
+        >{labels.showRefs}</button>
       </div>
     </div>
-    <aside class="hero-summary-card" aria-label={labels.atAGlance}>
-      <div class="sr-kicker">{labels.atAGlance}</div>
+    <aside class="decision-card">
       <dl>
-        <div><dt>{labels.recommendation}</dt><dd>{labelValue(data.recommendation)}</dd></div>
-        <div><dt>{labels.rating}</dt><dd>{data.overallScore.toFixed(1)}</dd></div>
-        <div><dt>{labels.valuationStance}</dt><dd>{labelValue(valuation.valuationVerdict?.stance ?? labels.unknown)}</dd></div>
-        <div><dt>{labels.risk}</dt><dd>{labelValue(risk.riskVerdict?.overallRisk ?? labels.unknown)}</dd></div>
-        <div><dt>{labels.confidence}</dt><dd>{labelValue(data.confidence)}</dd></div>
+        <div><dt>{labels.recommendation}</dt><dd>{displayLabel(data.recommendation)}</dd></div>
+        <div><dt>{labels.confidence}</dt><dd>{displayLabel(data.confidence)}</dd></div>
+        <div><dt>{labels.riskRating}</dt><dd>{displayLabel(data.riskRating)}</dd></div>
+        <div><dt>{labels.valuationStance}</dt><dd>{displayLabel(data.valuationStance)}</dd></div>
+        <div><dt>{labels.score}</dt><dd>{data.overallScore.toFixed(1)}</dd></div>
       </dl>
     </aside>
-  </div>
-</section>
+  </header>
 
-<nav class="sr-container report-nav" aria-label="Report sections">
-  {navItems.map((item, index) => <a href={`#section-${index + 1}`}>{item}</a>)}
-</nav>
+  <section class="report-section cover-metrics">
+    <h2>{labels.coverMetrics}</h2>
+    <div class="metric-grid">
+      {coverFacts.length
+        ? coverFacts.map((item: any, index: number) => (
+            <article>
+              <div class="metric-topline">
+                <span class="metric-label">{item.label}</span>
+                <em>{String(index + 1).padStart(2, '0')}</em>
+              </div>
+              <strong>{item.value == null ? '—' : `${item.value}${item.unit ? ` ${item.unit}` : ''}`}</strong>
+              <ClaimRefs refs={blockRefs(item)} claims={claims} sources={sources} />
+            </article>
+          ))
+        : fallbackMetrics.map(([label, value], index) => (
+            <article>
+              <div class="metric-topline">
+                <span class="metric-label">{label}</span>
+                <em>{String(index + 1).padStart(2, '0')}</em>
+              </div>
+              <strong>{value}</strong>
+            </article>
+          ))}
+    </div>
+  </section>
 
-<section class="sr-container sr-section">
-  <h2 id="section-1" data-section="01">{labels.quickRead}</h2>
-  <div class="focus-grid">
-    {focusItems.map((item) => (
-      <article class="focus-card">
-        <div class="sr-kicker">{item.label}</div>
-        <h3>{item.value}</h3>
-        <p>{item.note}</p>
-      </article>
-    ))}
-  </div>
-  <div class="narrative-grid">
-    <article class="report-panel">
-      <div class="sr-kicker">{labels.decisionQuestions}</div>
-      {decisionQuestions.map((item) => <p><strong>{item.label}:</strong> {item.question}</p>)}
-    </article>
-    <article class="report-panel">
-      <div class="sr-kicker">{labels.scoreBars}</div>
-      <div class="score-bars">
-        {scoreBars.map((row) => (
-          <div class="score-row">
-            <span>{row.label}</span>
-            <div class="score-track"><i style={`width:${barWidth(row.score)}%`}></i></div>
-            <strong>{row.score ?? labels.notDisclosed}</strong>
-          </div>
+  {companyProfile && (
+    <section class="report-section startup-intro">
+      <h2>{labels.startupIntro}</h2>
+      {companyProfile.heading && <p class="intro-heading"><strong>{companyProfile.heading}</strong></p>}
+      {companyProfile.summary && (
+        <p>
+          {splitClaimRefsText(companyProfile.summary).map((part) => part.ref
+            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+            : part.text)}
+        </p>
+      )}
+      <dl class="intro-grid">
+        {companyProfile.foundedDate && (
+          <div><dt>{labels.founded}</dt><dd>{companyProfile.foundedDate}</dd></div>
+        )}
+        {arr(companyProfile.founders).length > 0 && (
+          <div><dt>{labels.founders}</dt><dd>{arr(companyProfile.founders).map((founder: any) => founder.name).join(', ')}</dd></div>
+        )}
+        {companyProfile.foundingLocation && <div><dt>{labels.foundingLocation}</dt><dd>{companyProfile.foundingLocation}</dd></div>}
+        {companyProfile.headquarters && <div><dt>{labels.headquarters}</dt><dd>{companyProfile.headquarters}</dd></div>}
+        {companyProfile.productSummary && <div><dt>{labels.product}</dt><dd>{companyProfile.productSummary}</dd></div>}
+        {companyProfile.customerFocus && <div><dt>{labels.customers}</dt><dd>{companyProfile.customerFocus}</dd></div>}
+        {companyProfile.businessModel && <div><dt>{labels.businessModel}</dt><dd>{companyProfile.businessModel}</dd></div>}
+        {companyProfile.stage && <div><dt>{labels.stage}</dt><dd>{companyProfile.stage}</dd></div>}
+        {companyProfile.fundingStatus && <div><dt>{labels.fundingStatus}</dt><dd>{companyProfile.fundingStatus}</dd></div>}
+      </dl>
+      <ClaimRefs refs={(companyProfile.claimRefs ?? []).slice(0, 8)} claims={claims} sources={sources} />
+    </section>
+  )}
+
+  {chapters.length > 0 && (
+    <nav class="report-section toc" aria-label={labels.contents}>
+      <h2>{labels.contents}</h2>
+      <ol>
+        {chapters.map((chapter: any) => (
+          <li><a href={`#chapter-${chapter.number}`}>{chapter.title}</a></li>
         ))}
-      </div>
-    </article>
-    <article class="report-panel evidence-visual">
-      <div class="sr-kicker">{labels.evidenceMix}</div>
-      {Object.entries(sourceMix).map(([key, count]) => (
-        <div class="source-row">
-          <span>{titleCase(key)}</span>
-          <div class="source-track"><i style={`width:${Math.max(6, (Number(count) / maxSourceCount) * 100)}%`}></i></div>
-          <strong>{count}</strong>
-        </div>
+        {appendices.map((appendix: any) => (
+          <li><a href={`#appendix-${appendix.id}`}>{labels.appendix} {appendix.id}: {appendix.title}</a></li>
+        ))}
+      </ol>
+    </nav>
+  )}
+
+  {chapters.map((chapter: any) => (
+    <article class="report-chapter" id={`chapter-${chapter.number}`}>
+      <h2><span>{chapter.number}</span>{chapter.title}</h2>
+      {arr(chapter.sections).map((section: any) => (
+        <section class="chapter-section">
+          <h3>{section.number} {section.title}</h3>
+          {arr(section.blocks).map((block: any) => (
+            <ReportBlock block={block} tables={tables} figures={figures} claims={claims} sources={sources} />
+          ))}
+        </section>
       ))}
     </article>
-  </div>
-</section>
+  ))}
 
-<section class="sr-container sr-section executive-dashboard">
-  <div>
-    <h2 data-section="02">{labels.executiveView}</h2>
-    <div class="memo-grid">
-      <article class="report-panel">
-        <div class="sr-kicker">{labels.thesis}</div>
-        <h3>{labels.baseCase}</h3><p>{memo?.thesis?.baseCase}</p>
-        <h3>{labels.bullCase}</h3><p>{memo?.thesis?.bullCase}</p>
-        <h3>{labels.bearCase}</h3><p>{memo?.thesis?.bearCase}</p>
+  {(data.topStrengths.length > 0 || data.topRisks.length > 0 || data.unresolvedGaps.length > 0) && (
+    <section class="report-section three-col">
+      <article>
+        <h2>{labels.strengths}</h2>
+        {arr(data.topStrengths).map((item) => (
+          <p>{splitClaimRefsText(item).map((part) => part.ref
+            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+            : part.text)}</p>
+        ))}
       </article>
-      <article class="report-panel">
-        <div class="sr-kicker">{labels.metrics}</div>
-        <dl class="metric-grid">{metricCards.map(([name, value]) => <><dt>{name}</dt><dd>{value}</dd></>)}</dl>
+      <article>
+        <h2>{labels.risks}</h2>
+        {arr(data.topRisks).map((item) => (
+          <p>{splitClaimRefsText(item).map((part) => part.ref
+            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+            : part.text)}</p>
+        ))}
       </article>
-    </div>
-  </div>
-</section>
-
-<section class="sr-container sr-section"><h2 data-section="03">{labels.scorecard}</h2><RatingBlock dimensions={memo?.scorecard ?? {}} overall={data.overallScore} lang={lang} /></section>
-
-<section class="sr-container sr-section">
-  <h2 data-section="04">{labels.investmentDecision}</h2>
-  <div class="two-col">
-    <article class="report-panel decision-box">
-      <div class="sr-kicker">{labels.recommendation} · {labels.conviction}</div>
-      <h3>{labelValue(investmentDecision.recommendation ?? data.recommendation)} / {labelValue(investmentDecision.convictionLevel ?? data.confidence)}</h3>
-      <p>{investmentDecision.decisionRationale}</p>
-    </article>
-    <article class="report-panel">
-      <div class="sr-kicker">{labels.flagSummary}</div>
-      <div class="flag-grid">
-        <div><h3>{labels.greenFlags}</h3>{arr(memo.flagSummary?.greenFlags).map((item) => <p>{item}</p>)}</div>
-        <div><h3>{labels.yellowFlags}</h3>{arr(memo.flagSummary?.yellowFlags).map((item) => <p>{item}</p>)}</div>
-        <div><h3>{labels.redFlags}</h3>{arr(memo.flagSummary?.redFlags).map((item) => <p>{item}</p>)}</div>
-      </div>
-    </article>
-  </div>
-  <DataTable title={labels.underwritingBets} rows={arr(investmentDecision.keyUnderwritingBets)} columns={[{ heading: labels.thesis, key: 'bet' }, { heading: labels.whyItMatters, key: 'whyItMatters' }, { heading: labels.status, key: 'status' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <div class="two-col">
-    <article class="report-panel"><div class="sr-kicker">{labels.mustBelieve}</div>{arr(investmentDecision.mustBelieve).map((item) => <p>{item}</p>)}</article>
-    <article class="report-panel"><div class="sr-kicker">{labels.dealBreakers}</div>{arr(investmentDecision.dealBreakers).map((item) => <p>{item}</p>)}</article>
-  </div>
-</section>
-
-<section class="sr-container sr-section two-col">
-  <article class="report-panel"><h2>{labels.positives}</h2>{arr(memo.decisionDrivers?.positives).map((item) => <p><strong>{titleCase(item.importance)}:</strong> {item.point} <ClaimRefs refs={claimRefs(item)} /></p>)}</article>
-  <article class="report-panel"><h2>{labels.concerns}</h2>{arr(memo.decisionDrivers?.concerns).map((item) => <p><strong>{titleCase(item.importance)}:</strong> {item.point} <ClaimRefs refs={claimRefs(item)} /></p>)}</article>
-</section>
-
-<section class="sr-container sr-section">
-  <h2 id="section-2" data-section="05">{labels.tractionGtm}</h2>
-  <div class="sr-grid">
-    <article class="sr-card"><div class="sr-kicker">{labels.signal}</div><h3>{labelValue(traction.tractionSummary?.overallSignal ?? labels.unknown)}</h3><p>{traction.tractionSummary?.rationale}</p></article>
-    <article class="sr-card"><div class="sr-kicker">{labels.pricing}</div><p>{traction.pricingAndPackaging?.observedPricing}</p><p class="sr-muted">{traction.pricingAndPackaging?.packagingNotes}</p></article>
-    <article class="sr-card"><div class="sr-kicker">{labels.retention}</div>{arr(traction.retentionExpansionSignals?.evidence).slice(0, 4).map((item) => <p>{item}</p>)}</article>
-  </div>
-  <DataTable title={labels.tractionSignals} rows={arr(traction.tractionSignals)} columns={[{ heading: labels.type, key: 'signalType' }, { heading: labels.signal, key: 'signal' }, { heading: labels.strength, key: 'strength' }, { heading: labels.independent, key: 'independentValidation' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <DataTable title={labels.customerCases} rows={arr(traction.customerCaseStudies)} columns={[{ heading: labels.customer, key: 'customer' }, { heading: labels.industry, key: 'industry' }, { heading: labels.scope, key: 'deploymentScope' }, { heading: labels.outcome, key: 'quantifiedOutcome' }, { heading: labels.verified, key: 'independentlyVerified' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-</section>
-
-<section class="sr-container sr-section">
-  <h2 id="section-3" data-section="06">{labels.marketProduct}</h2>
-  <div class="two-col">
-    <article class="report-panel"><div class="sr-kicker">{labels.whyNow}</div><p>{market.whyNow?.timingRationale}</p>{arr(market.whyNow?.inflectionDrivers).map((driver) => <p><strong>{titleCase(driver.driverType)}:</strong> {driver.driver}</p>)}</article>
-    <article class="report-panel"><div class="sr-kicker">{labels.marketVerdict}</div><h3>{labelValue(market.marketVerdict?.attractiveness ?? labels.unknown)}</h3><p>{market.marketVerdict?.rationale}</p></article>
-  </div>
-  <div class="report-table-frame">
-    <table class="sr-table report-table">
-      <caption>{labels.marketSizing}</caption>
-      <thead><tr><th>{labels.scope}</th><th>{labels.value}</th><th>USD M</th><th>{labels.approach}</th><th>{labels.methodology}</th><th>{labels.confidence}</th></tr></thead>
-      <tbody>{['tam', 'sam', 'som'].map((key) => { const row = market.marketSizing?.[key] ?? {}; return <tr><td>{key.toUpperCase()}</td><td>{row.value ?? labels.notDisclosed}</td><td>{metric(row.valueUsdM)}</td><td>{labelValue(row.approach ?? labels.unknown)}</td><td>{row.methodology}</td><td>{labelValue(row.confidence)}</td></tr>; })}</tbody>
-    </table>
-  </div>
-  <DataTable title={labels.customerSegments} rows={arr(market.customerSegments)} columns={[{ heading: labels.segment, key: 'segment' }, { heading: labels.buyer, key: 'buyer' }, { heading: labels.budgetOwner, key: 'budgetOwner' }, { heading: labels.urgency, key: 'urgency' }, { heading: labels.wtpEvidence, key: 'willingnessToPayEvidence' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <div class="two-col">
-    <article class="report-panel"><div class="sr-kicker">{labels.productTechnology}</div><h3>{labelValue(product.productVerdict?.assessment ?? labels.unknown)}</h3><p>{product.productVerdict?.rationale}</p><p class="sr-muted">{product.technologyStack?.architectureNotes}</p></article>
-    <article class="report-panel"><div class="sr-kicker">{labels.security}</div>{arr(product.securityCompliance?.certifications).map((item) => <span class="sr-pill inline-pill">{item}</span>)}<p>{product.securityCompliance?.postureNotes}</p></article>
-  </div>
-  <DataTable title={labels.roadmap} rows={arr(product.productRoadmap?.publiclyDisclosedItems)} columns={[{ heading: labels.item, key: 'item' }, { heading: labels.timeframe, key: 'timeframe' }, { heading: labels.source, key: 'sourceType' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-</section>
-
-<section class="sr-container sr-section">
-  <h2 id="section-4" data-section="07">{labels.teamGovernance}</h2>
-  <div class="sr-grid">
-    <article class="sr-card"><div class="sr-kicker">{labels.teamSnapshot}</div><dl class="metric-grid"><dt>{labels.headcount}</dt><dd>{metric(team.teamSnapshot?.headcount)}</dd><dt>90d {labels.growth}</dt><dd>{pct(team.teamSnapshot?.headcountGrowth90dPct)}</dd><dt>{labels.keyPersonRisk}</dt><dd>{labelValue(team.keyPersonRisk?.level ?? risk.governance?.keyPersonRisk ?? labels.unknown)}</dd></dl><p>{team.teamSnapshot?.notes}</p></article>
-    <article class="sr-card"><div class="sr-kicker">{labels.teamVerdict}</div><h3>{labelValue(team.teamVerdict?.assessment ?? labels.unknown)}</h3><p>{team.teamVerdict?.rationale}</p></article>
-    <article class="sr-card"><div class="sr-kicker">{labels.governance}</div><p>{risk.governance?.controlStructure}</p><p class="sr-muted">{risk.governance?.investorAlignment}</p></article>
-  </div>
-  <div class="people-grid" aria-label={labels.leadershipCards}>
-    {leadershipPeople.map((person) => (
-      <article class="person-card">
-        {person.photoUrl || person.headshotUrl ? <img src={person.photoUrl ?? person.headshotUrl} alt={person.name} loading="lazy" /> : <div class="person-avatar" aria-label={labels.noPhoto}>{initials(person.name)}</div>}
-        <div>
-          <div class="person-name">{person.name}</div>
-          <p class="person-role">{person.role}</p>
-          <span class={person.current === false ? 'person-status former' : 'person-status'}>{person.current === false ? labels.former : labels.current}</span>
-          <p>{person.background ?? person.fromCompany ?? person.function}</p>
-        </div>
+      <article>
+        <h2>{labels.gaps}</h2>
+        {arr(data.unresolvedGaps).map((item) => (
+          <p>{splitClaimRefsText(item).map((part) => part.ref
+            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+            : part.text)}</p>
+        ))}
       </article>
-    ))}
-  </div>
-  <DataTable title={labels.founders} rows={arr(team.founders)} columns={[{ heading: labels.name, key: 'name' }, { heading: labels.role, key: 'role' }, { heading: labels.current, key: 'current' }, { heading: labels.domainFit, key: 'domainFit' }, { heading: labels.background, key: 'background' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <DataTable title={labels.keyHires} rows={arr(team.keyHires)} columns={[{ heading: labels.name, key: 'name' }, { heading: labels.role, key: 'role' }, { heading: labels.function, key: 'function' }, { heading: labels.from, key: 'fromCompany' }, { heading: labels.significance, key: 'significance' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-</section>
+    </section>
+  )}
 
-<section class="sr-container sr-section">
-  <h2 id="section-5" data-section="08">{labels.financialsValuation}</h2>
-  <div class="two-col">
-    <article class="report-panel"><div class="sr-kicker">{labels.businessModel}</div><p>{business.businessModel?.model}</p><p>{business.businessModel?.marginProfileHypothesis}</p></article>
-    <article class="report-panel"><div class="sr-kicker">{labels.financialVerdict}</div><h3>{labelValue(business.financialVerdict?.assessment ?? labels.unknown)}</h3><p>{business.financialVerdict?.rationale}</p></article>
-  </div>
-  <div class="sr-grid">
-    <article class="sr-card"><div class="sr-kicker">{labels.funding}</div><dl class="metric-grid"><dt>{labels.totalRaised}</dt><dd>{moneyM(business.funding?.totalRaisedUsdM)}</dd><dt>{labels.latestRound}</dt><dd>{moneyM(business.funding?.latestRoundAmountUsdM)}</dd><dt>{labels.postMoney}</dt><dd>{moneyM(business.funding?.postMoneyValuationUsdM)}</dd></dl></article>
-    <article class="sr-card"><div class="sr-kicker">{labels.unitEconomics}</div><dl class="metric-grid"><dt>ACV/ARPA</dt><dd>{moneyM(business.unitEconomicsQuant?.arpaOrAcvUsd)}</dd><dt>NRR</dt><dd>{pct(business.unitEconomicsQuant?.netRetentionPct)}</dd><dt>{labels.payback}</dt><dd>{metric(business.unitEconomicsQuant?.cacPaybackMonths, lang === 'zh' ? ' 个月' : ' mo')}</dd></dl><p>{business.unitEconomicsQuant?.estimateBasis}</p></article>
-    <article class="sr-card"><div class="sr-kicker">{labels.capitalEfficiency}</div><dl class="metric-grid"><dt>{labels.burnMultiple}</dt><dd>{metric(business.capitalEfficiency?.burnMultiple)}</dd><dt>Magic number</dt><dd>{metric(business.capitalEfficiency?.magicNumber)}</dd><dt>{labels.ruleOf40}</dt><dd>{metric(business.capitalEfficiency?.ruleOf40)}</dd></dl><p>{business.capitalEfficiency?.estimateBasis}</p></article>
-  </div>
-  <article class="report-panel"><div class="sr-kicker">{labels.revenueQuality} · {labelValue(revenueQuality.disclosureLevel ?? labels.unknown)}</div><h3>{labelValue(revenueQuality.qualityVerdict ?? labels.unknown)}</h3><p>{revenueQuality.rationale}</p></article>
-  <DataTable title={labels.revenueMix} rows={arr(revenueQuality.revenueMix)} columns={[{ heading: labels.stream, key: 'stream' }, { heading: labels.qualitySignal, key: 'qualitySignal' }, { heading: labels.notes, key: 'notes' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <div class="sr-grid diligence-cards">
-    {[['retention', labels.retention], ['customerConcentration', labels.customerConcentration], ['contractProfile', labels.contractProfile]].map(([key, title]) => {
-      const item = revenueQuality[key] ?? {};
-      return <article class="sr-card"><div class="sr-kicker">{title}</div><h3>{labelValue(item.evidenceQuality ?? labels.unknown)}</h3><p>{item.diligenceNeed}</p><ClaimRefs refs={claimRefs(item)} /></article>;
-    })}
-  </div>
-  <DataTable title={labels.scenarioModel} rows={arr(business.scenarioModel?.scenarios)} columns={[{ heading: labels.scenario, key: 'name' }, { heading: labels.revenueRange, key: 'revenueRangeYear3' }, { heading: labels.marginDirection, key: 'marginDirection' }, { heading: labels.capitalNeed, key: 'capitalNeed' }, { heading: labels.assumptions, render: (row: any) => arr(row.keyAssumptions).join(' · ') }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <article class="report-panel"><div class="sr-kicker">{labels.valuationFramework}</div><h3>{labelValue(valuation.valuationVerdict?.stance ?? labels.unknown)}</h3><p>{valuation.valuationFramework?.rationale}</p><dl class="metric-grid wide"><dt>{labels.low}</dt><dd>{moneyM(valuation.valuationFramework?.impliedValueLowUsdM)}</dd><dt>{labels.mid}</dt><dd>{moneyM(valuation.valuationFramework?.impliedValueMidUsdM)}</dd><dt>{labels.high}</dt><dd>{moneyM(valuation.valuationFramework?.impliedValueHighUsdM)}</dd><dt>{labels.confidence}</dt><dd>{labelValue(valuation.valuationFramework?.confidence ?? labels.unknown)}</dd></dl></article>
-  <article class="report-panel"><div class="sr-kicker">{labels.valuationBridge}</div><dl class="metric-grid wide"><dt>{labels.valuation}</dt><dd>{moneyM(valuationBridge.currentValuationUsdM)}</dd><dt>{labels.revenueMultiple}</dt><dd>{metric(valuationBridge.impliedRevenueMultiple, 'x')}</dd><dt>{labels.fairValueRange}</dt><dd>{moneyM(valuationBridge.fairValueRangeUsdM?.low)} – {moneyM(valuationBridge.fairValueRangeUsdM?.high)}</dd><dt>{labels.confidence}</dt><dd>{labelValue(valuation.valuationFramework?.confidence ?? labels.unknown)}</dd></dl><p>{valuationBridge.conclusion}</p></article>
-  <DataTable title={labels.valuationBridge} rows={arr(valuationBridge.bridgeSteps)} columns={[{ heading: labels.bridgeStep, key: 'step' }, { heading: labels.value, key: 'value' }, { heading: labels.interpretation, key: 'interpretation' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <DataTable title={labels.comps} rows={[...arr(valuation.publicComparables), ...arr(valuation.privateOrTransactionComparables)]} columns={[{ heading: 'ID', key: 'compId' }, { heading: labels.name, key: 'company' }, { heading: labels.tickerEvent, render: (row: any) => row.ticker ?? row.transaction ?? row.category }, { heading: labels.rationale, key: 'relevance' }, { heading: labels.revenueMultiple, render: (row: any) => metric(row.revenueMultiple ?? row.impliedRevenueMultiple, 'x') }, { heading: labels.valuation, render: (row: any) => moneyM(row.valuationUsdM ?? row.postMoneyValuationUsdM) }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <DataTable title={labels.returns} rows={arr(valuation.expectedReturns?.exitScenarios)} columns={[{ heading: labels.scenario, key: 'name' }, { heading: labels.exitValue, render: (row: any) => moneyM(row.exitValueUsdM) }, { heading: labels.year, key: 'exitYear' }, { heading: labels.type, key: 'exitType' }, { heading: 'MoM', render: (row: any) => metric(row.grossMoM) }, { heading: 'IRR', render: (row: any) => pct(row.grossIrrPct) }, { heading: labels.assumptions, key: 'assumptions' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <DataTable title={labels.ownershipSensitivity} rows={arr(valuation.ownershipSensitivity)} columns={[{ heading: labels.valuation, render: (row: any) => moneyM(row.entryValuationUsdM) }, { heading: labels.checkSize, render: (row: any) => moneyM(row.checkSizeUsdM) }, { heading: labels.ownership, render: (row: any) => pct(row.impliedOwnershipPct) }, { heading: labels.requiredExit, render: (row: any) => moneyM(row.requiredExitUsdMFor3x) }, { heading: labels.interpretation, key: 'interpretation' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <div class="two-col"><article class="report-panel"><div class="sr-kicker">{labels.exitPath}</div>{arr(exitPathAnalysis.likelyExitPaths).map((path) => <p><strong>{labelValue(path.path)} / {labelValue(path.likelihood)}:</strong> {labels.earliestYear} {metric(path.earliestYear)}<br /><span class="sr-muted">{arr(path.blockers).join(' · ')}</span> <ClaimRefs refs={claimRefs(path)} /></p>)}</article><article class="report-panel"><div class="sr-kicker">{labels.publicMarketReadiness}</div><dl class="metric-grid">{Object.entries(exitPathAnalysis.publicMarketReadiness ?? {}).map(([key, value]) => <><dt>{titleCase(key)}</dt><dd>{labelValue(value)}</dd></>)}</dl><p>{exitPathAnalysis.verdict}</p></article></div>
-</section>
+  {appendices.map((appendix: any) => (
+    <section class="report-section appendix" id={`appendix-${appendix.id}`}>
+      <h2>{labels.appendix} {appendix.id}: {appendix.title}</h2>
+      {arr(appendix.blocks).map((block: any) => (
+        <ReportBlock block={block} tables={tables} figures={figures} claims={claims} sources={sources} />
+      ))}
+    </section>
+  ))}
 
-<section class="sr-container sr-section">
-  <h2 id="section-6" data-section="09">{labels.risksMilestones}</h2>
-  <div class="risk-map" aria-label={labels.riskMap}>
-    {riskCards.map((item) => (
-      <article class={`risk-chip severity-${item.severityScore}`}>
-        <div class="sr-kicker">{item.id} · {titleCase(item.category)}</div>
-        <h3>{titleCase(item.severity)} / {titleCase(item.likelihood)}</h3>
-        <p>{item.risk}</p>
-      </article>
-    ))}
-  </div>
-  <DataTable title={labels.topRisks} rows={arr(risk.riskRegister)} columns={[{ heading: 'ID', key: 'id' }, { heading: labels.category, key: 'category' }, { heading: labels.risk, key: 'risk' }, { heading: labels.severity, key: 'severity' }, { heading: labels.likelihood, key: 'likelihood' }, { heading: labels.mitigation, key: 'mitigation' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <div class="two-col">
-    <article class="report-panel"><div class="sr-kicker">{labels.preMortem}</div>{arr(memo.preMortem?.topFailureModes).map((item) => <p><strong>{titleCase(item.probability)}:</strong> {item.failureMode}<br /><span class="sr-muted">{arr(item.earlySignals).join(' · ')}</span></p>)}</article>
-    <article class="report-panel"><div class="sr-kicker">{labels.mindChangers}</div>{arr(memo.mindChangers).map((item) => <p><strong>{titleCase(item.direction)} / {titleCase(item.impact)}:</strong> {item.evidence}</p>)}</article>
-  </div>
-  <div class="two-col">
-    <article class="report-panel"><div class="sr-kicker">{labels.dataRoomRequests}</div>{arr(memo.nextDiligence?.dataRoomRequests).map((item) => <p>{item}</p>)}</article>
-    <article class="report-panel"><div class="sr-kicker">{labels.expertCalls}</div>{arr(memo.nextDiligence?.expertCalls).map((item) => <p>{item}</p>)}</article>
-  </div>
-  <DataTable title={labels.managementQuestions} rows={arr(memo.managementQuestions).map((item) => ({ ...item, claimRefs: item.relatedClaims }))} columns={[{ heading: labels.question, key: 'question' }, { heading: labels.whyItMatters, key: 'whyItMatters' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <div class="milestone-grid">{horizons.map(([label, rows]) => <article class="report-panel"><div class="sr-kicker">{label}</div>{arr(rows).map((m) => <p><strong>{m.id}:</strong> {m.milestone}<br /><span class="sr-muted">↑ {m.bullishIfAchieved} · ↓ {m.bearishIfMissed}</span></p>)}</article>)}</div>
-  <DataTable title={labels.killCriteria} rows={arr(milestones.killCriteria)} columns={[{ heading: labels.criterion, key: 'criterion' }, { heading: labels.severity, key: 'severity' }, { heading: labels.detection, key: 'detectionMethod' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-</section>
+  {doc?.disclaimer && (
+    <section class="report-section disclaimer"><h2>{labels.disclaimer}</h2><p>{doc.disclaimer}</p></section>
+  )}
 
-<section class="sr-container sr-section">
-  <h2 id="section-7" data-section="10">{labels.competition}</h2>
-  <div class="two-col"><article class="report-panel"><div class="sr-kicker">{labels.moat}</div><h3>{labelValue(competition.moatAssessment?.durability ?? labels.unknown)}</h3><p>{competition.moatAssessment?.currentMoat}</p><p>{competition.moatAssessment?.potentialMoat}</p></article><article class="report-panel"><div class="sr-kicker">{labels.positioning}</div><h3>{labelValue(competition.positioningVerdict?.assessment ?? labels.unknown)}</h3><p>{competition.positioningVerdict?.rationale}</p></article></div>
-  <DataTable title={labels.directCompetitors} rows={arr(competition.competitiveSet?.directCompetitors)} columns={[{ heading: labels.name, key: 'name' }, { heading: labels.category, key: 'category' }, { heading: labels.positioning, key: 'positioning' }, { heading: labels.strengths, render: (row: any) => arr(row.relativeStrengths).join(' · ') }, { heading: labels.weaknesses, render: (row: any) => arr(row.relativeWeaknesses).join(' · ') }]} emptyLabel={labels.notDisclosed} lang={lang} />
-  <DataTable title={labels.substitutes} rows={arr(competition.competitiveSet?.substitutes)} columns={[{ heading: labels.name, key: 'name' }, { heading: labels.type, key: 'substituteType' }, { heading: labels.whyItMatters, key: 'whyItMatters' }]} emptyLabel={labels.notDisclosed} lang={lang} />
-</section>
-
-<section class="sr-container sr-section">
-  <h2 id="section-8" data-section="11">{labels.evidenceQuality}</h2>
-  <div class="sr-grid">
-    <article class="sr-card"><div class="sr-kicker">{labels.sourceCoverage}</div><dl class="metric-grid">{Object.entries(sourceMix).map(([key, count]) => <><dt>{titleCase(key)}</dt><dd>{count}</dd></>)}</dl></article>
-    <article class="sr-card"><div class="sr-kicker">{labels.coverageGaps}</div>{arr(ledger.coverage?.coverageGaps).map((gap) => <p>{gap}</p>)}</article>
-    <article class="sr-card"><div class="sr-kicker">{labels.openGaps}</div>{arr(ledger.openEvidenceGaps).map((gap) => <p><strong>{titleCase(gap.impact)}:</strong> {gap.gap}</p>)}</article>
-  </div>
-  {claims.length > 0 && (
-    <div class="report-table-frame evidence-index">
-      <table class="sr-table report-table">
-        <caption>{labels.claimIndex}</caption>
-        <thead><tr><th>ID</th><th>{labels.statement}</th><th>{labels.topic}</th><th>{labels.claimType}</th><th>{labels.confidence}</th><th>{labels.linkedSources}</th></tr></thead>
-        <tbody>
-          {claims.map((claim) => (
+  {(claims.length > 0 || sources.length > 0) && (
+    <section class="report-section evidence-index">
+      <h2>{labels.evidence}</h2>
+      {claims.length > 0 && (
+        <DataTable title="Claims" columns={['ID', 'Statement', 'Confidence', 'Sources']}>
+          {claims.map((claim: any) => (
             <tr id={`claim-${claim.id}`}>
-              <td><a class="ref-anchor" href={`#claim-${claim.id}`}>{claim.id}</a></td>
+              <td><a class="evidence-id" href={`#claim-${claim.id}`}>{claim.id}</a></td>
               <td>{claim.statement}</td>
-              <td>{labelValue(claim.topic)}</td>
-              <td>{labelValue(claim.claimType)}</td>
-              <td>{labelValue(claim.confidence)}</td>
-              <td class="ref-list">{sourceRefs(claim).map((ref, index) => <><a class="source-ref" href={`#source-${ref}`}>{ref}</a>{index < sourceRefs(claim).length - 1 ? ' ' : ''}</>)}</td>
+              <td>{displayLabel(claim.confidence)}</td>
+              <td>
+                {(claim.sourceRefs ?? []).map((ref: string, index: number, list: string[]) => (
+                  <>
+                    <a href={`#source-${ref}`}>{ref}</a>{index < list.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </td>
             </tr>
           ))}
-        </tbody>
-      </table>
-    </div>
-  )}
-  {sources.length > 0 && (
-    <div class="report-table-frame evidence-index">
-      <table class="sr-table report-table">
-        <caption>{labels.sourceLedger}</caption>
-        <thead><tr><th>ID</th><th>{labels.publisher}</th><th>{labels.title}</th><th>{labels.independence}</th><th>{labels.quote}</th></tr></thead>
-        <tbody>
-          {sources.map((source) => (
+        </DataTable>
+      )}
+      {sources.length > 0 && (
+        <DataTable title="Sources" columns={['ID', 'Publisher', 'Title', 'Quote']}>
+          {sources.map((source: any) => (
             <tr id={`source-${source.id}`}>
-              <td><a class="ref-anchor" href={`#source-${source.id}`}>{source.id}</a></td>
+              <td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td>
               <td>{source.publisher}</td>
-              <td>{source.url ? <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a> : source.title}</td>
-              <td>{labelValue(source.independence)}</td>
+              <td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td>
               <td>{source.keyQuote}</td>
             </tr>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </DataTable>
+      )}
+    </section>
   )}
 </section>
 
+<script type="application/json" id="claim-link-map" set:html={JSON.stringify(claimLinkMap)}></script>
+<script type="module" is:inline>
+  // Replace inline `[C123]` markers in body text with linked spans, and wire
+  // the evidence toggle to show/hide the markers throughout the report.
+  const claimLinkMapElement = document.getElementById('claim-link-map');
+  const claimLinkMap = claimLinkMapElement
+    ? JSON.parse(claimLinkMapElement.textContent || '{}')
+    : {};
+
+  const makeClaimRef = (ref) => {
+    const link = claimLinkMap[ref] || { href: `#claim-${ref}`, title: ref };
+    const span = document.createElement('span');
+    span.className = 'claim-ref';
+    span.append('[');
+    const anchor = document.createElement('a');
+    anchor.href = link.href;
+    anchor.textContent = ref;
+    anchor.title = link.title || ref;
+    span.append(anchor, ']');
+    return span;
+  };
+
+  const reportShell = document.querySelector('.report-shell');
+  if (reportShell) {
+    const walker = document.createTreeWalker(reportShell, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent || parent.closest('script, style, pre, a, .claim-ref')) return NodeFilter.FILTER_REJECT;
+        return /\[C\d{3}\]/.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      },
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const node of nodes) {
+      const fragment = document.createDocumentFragment();
+      const text = node.nodeValue || '';
+      let lastIndex = 0;
+      for (const match of text.matchAll(/\[(C\d{3})\]/g)) {
+        if (match.index > lastIndex) fragment.append(text.slice(lastIndex, match.index));
+        fragment.append(makeClaimRef(match[1]));
+        lastIndex = match.index + match[0].length;
+      }
+      if (lastIndex < text.length) fragment.append(text.slice(lastIndex));
+      node.parentNode?.replaceChild(fragment, node);
+    }
+  }
+
+  const evidenceToggle = document.querySelector('.evidence-toggle');
+  if (reportShell && evidenceToggle) {
+    const showLabel = evidenceToggle.dataset.showLabel || 'Show refs';
+    const hideLabel = evidenceToggle.dataset.hideLabel || 'Hide refs';
+    const setRefsVisible = (visible) => {
+      reportShell.classList.toggle('refs-visible', visible);
+      evidenceToggle.setAttribute('aria-pressed', String(visible));
+      evidenceToggle.textContent = visible ? hideLabel : showLabel;
+    };
+    evidenceToggle.addEventListener('click', () => {
+      setRefsVisible(!reportShell.classList.contains('refs-visible'));
+    });
+    setRefsVisible(false);
+  }
+</script>
+
 <style>
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: var(--space-7); align-items: start; }
-  .report-hero h1 { max-width: 34ch; }
-  .hero-summary-card { border: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); margin-top: var(--space-2); }
-  .hero-summary-card dl { display: grid; gap: var(--space-3); margin: var(--space-3) 0 0; }
-  .hero-summary-card div { display: grid; grid-template-columns: minmax(110px, 1fr) auto; gap: var(--space-3); align-items: baseline; padding-bottom: var(--space-2); border-bottom: var(--report-rule); }
-  .hero-summary-card div:last-child { border-bottom: 0; padding-bottom: 0; }
-  .hero-summary-card dt { font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); text-transform: uppercase; }
-  .hero-summary-card dd { margin: 0; font-family: var(--font-display); font-size: var(--fs-md); font-weight: 800; line-height: 1.05; color: var(--ink-page); text-align: right; }
-  .sr-section > h2,
-  .executive-dashboard > div > h2 {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-3);
-    align-items: baseline;
-    width: fit-content;
-    max-width: 100%;
-    margin: 0 0 var(--space-3);
-    font-family: var(--font-display);
-    font-variant-caps: normal;
-    font-size: clamp(1.55rem, 2.25vw, 2.6rem);
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    line-height: .95;
-    color: var(--ink-page);
-    text-transform: uppercase;
+  .report-shell {
+    --report-fs-kicker: clamp(0.82rem, 0.12vw + 0.78rem, 0.9rem);
+    --report-fs-caption: clamp(0.88rem, 0.14vw + 0.82rem, 0.98rem);
+    --report-fs-body: clamp(1.02rem, 0.18vw + 0.96rem, 1.12rem);
+    --report-fs-table: clamp(0.94rem, 0.14vw + 0.88rem, 1.02rem);
+    --report-fs-note: var(--report-fs-body);
+    --report-fs-subhead: clamp(1.35rem, 0.6vw + 1.05rem, 1.7rem);
+    --report-fs-section: clamp(1.75rem, 1.1vw + 1.15rem, 2.2rem);
+    padding-block: var(--space-6) 0;
+    overflow-x: clip;
+    font-size: var(--report-fs-body);
   }
-  .sr-section > h2::before,
-  .executive-dashboard > div > h2::before {
-    content: attr(data-section);
-    transform: translateY(.12em);
-    font-family: var(--font-sans);
-    font-size: var(--fs-sm);
-    font-weight: 800;
-    letter-spacing: var(--tracking-eyebrow);
-    color: var(--claret);
-  }
-  .sr-section > h2::after,
-  .executive-dashboard > div > h2::after {
-    content: '';
-    grid-column: 2;
-    width: 72px;
-    height: 5px;
-    margin-top: var(--space-1);
-    background: var(--report-rule-accent);
-  }
-  .two-col > .report-panel > h2 {
-    font-size: var(--fs-xl);
-  }
-  .report-nav { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block: 0 var(--space-4); border-bottom: var(--report-rule); padding-block: var(--space-3) var(--space-2); background: color-mix(in srgb, var(--paper) 95%, white); backdrop-filter: blur(10px); }
-  .report-nav a { display: inline-flex; align-items: center; padding: 0 0 5px; border-bottom: 2px solid transparent; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 800; line-height: 1.15; letter-spacing: .012em; text-transform: uppercase; text-decoration: none; color: var(--caption-gray); transition: border-color 140ms ease, color 140ms ease; }
-  .report-nav a:hover,
-  .report-nav a:focus-visible { color: var(--claret); border-bottom-color: var(--claret); outline: none; }
-  .focus-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-4); }
-  .focus-card { border: var(--report-rule); padding: var(--space-4); background: var(--surface-paper); }
-  .focus-card h3 { margin: var(--space-2) 0; font-size: var(--fs-xl); }
-  .focus-card p { font-size: var(--fs-sm); color: var(--caption-gray); }
-  .narrative-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: var(--space-6); margin-top: var(--space-6); align-items: start; }
-  .score-bars, .evidence-visual { display: grid; gap: var(--space-3); }
-  .score-row, .source-row { display: grid; grid-template-columns: minmax(120px, 1fr) 1.3fr 44px; gap: var(--space-3); align-items: center; font-family: var(--font-sans); font-size: var(--fs-sm); }
-  .score-track, .source-track { height: 10px; border-radius: 999px; background: color-mix(in srgb, var(--hairline) 70%, transparent); overflow: hidden; }
-  .score-track i, .source-track i { display: block; height: 100%; border-radius: inherit; background: var(--claret); }
-  .memo-grid, .two-col, .milestone-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
-  .milestone-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .report-panel { border-top: var(--report-rule); padding-block: var(--space-4) var(--space-5); }
-  .sr-card { border-top: var(--report-rule); }
-  .report-panel h3,
-  .sr-card h3,
-  .focus-card h3,
-  .risk-chip h3 {
-    font-size: var(--fs-lg);
-    line-height: 1.08;
-  }
-  .report-panel h3 { margin-top: var(--space-2); }
-  .metric-grid { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(110px, auto); gap: var(--space-2) var(--space-4); margin: var(--space-3) 0 0; font-family: var(--font-sans); }
-  .metric-grid.wide { grid-template-columns: repeat(4, minmax(80px, 1fr)); }
-  .metric-grid dt { color: var(--caption-gray); }
-  .metric-grid dd { margin: 0; font-weight: 700; color: var(--ink-page); }
-  .inline-pill { margin: 0 var(--space-2) var(--space-2) 0; }
-  .people-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-5); }
-  .person-card { display: grid; grid-template-columns: 56px 1fr; gap: var(--space-3); border: var(--report-rule); padding: var(--space-3); background: var(--surface-paper); }
-  .person-card img, .person-avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
-  .person-avatar { display: grid; place-items: center; background: linear-gradient(135deg, var(--claret), var(--accent)); color: white; font-family: var(--font-sans); font-weight: 800; letter-spacing: .04em; }
-  .person-name { font-family: var(--font-serif); font-size: var(--fs-base); font-weight: 700; color: var(--ink-page); }
-  .person-role { margin: 0 0 var(--space-1); color: var(--caption-gray); font-size: var(--fs-sm); }
-  .person-card p { font-size: var(--fs-sm); line-height: 1.45; margin-bottom: var(--space-2); }
-  .person-status { display: inline-flex; margin-bottom: var(--space-1); border: var(--report-rule); border-radius: 999px; padding: 1px 6px; font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--claret); }
-  .person-status.former { color: var(--caption-gray); }
-  .risk-map { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); margin-bottom: var(--space-5); }
-  .risk-chip { border-left: 5px solid var(--gold); padding: var(--space-4); background: var(--surface-paper); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hairline) 65%, transparent); }
-  .risk-chip.severity-3, .risk-chip.severity-4 { border-left-color: var(--claret); }
-  .risk-chip h3 { margin: var(--space-2) 0; }
-  .risk-chip p { font-size: var(--fs-sm); }
-  .report-table-frame { overflow-x: auto; margin-top: var(--space-5); border: var(--report-rule); border-radius: 12px; background: color-mix(in srgb, var(--surface-paper) 92%, white); box-shadow: 0 1px 0 color-mix(in srgb, var(--hairline) 45%, transparent); }
-  .report-table { min-width: 720px; border: 0; border-collapse: separate; border-spacing: 0; background: transparent; }
-  .report-table caption { text-align: left; caption-side: top; padding: var(--space-3) var(--space-4); border-bottom: var(--report-rule); background: color-mix(in srgb, var(--claret) 6%, transparent); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  .report-table th, .report-table td { border-bottom: var(--report-rule); padding: var(--space-3) var(--space-4); vertical-align: top; }
-  .report-table th { background: color-mix(in srgb, var(--paper) 80%, white); color: color-mix(in srgb, var(--claret) 88%, var(--ink-page)); white-space: nowrap; }
-  .report-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--paper) 72%, white); }
-  .report-table tbody tr:hover { background: color-mix(in srgb, var(--claret) 5%, transparent); }
-  .report-table tbody tr:last-child td { border-bottom: 0; }
-  .report-table td { max-width: 420px; color: var(--ink-page); line-height: 1.48; }
-  .evidence-index .report-table td { max-width: 560px; }
-  .evidence-index tr:target { background: color-mix(in srgb, var(--claret) 8%, var(--surface-paper)); box-shadow: inset 4px 0 0 var(--claret); }
-  .ref-anchor,
-  .source-ref {
-    font-family: var(--font-mono);
-    font-weight: 800;
-    color: var(--claret);
-    text-decoration: none;
-  }
-  .ref-anchor:hover,
-  .ref-anchor:focus-visible,
-  .source-ref:hover,
-  .source-ref:focus-visible { text-decoration: underline; }
-  .ref-list { min-width: 160px; }
-  @media (max-width: 900px) {
-    .hero-grid, .focus-grid, .narrative-grid, .memo-grid, .two-col, .milestone-grid, .people-grid, .risk-map { grid-template-columns: 1fr; }
-    .metric-grid.wide { grid-template-columns: minmax(120px, 1fr) minmax(110px, auto); }
-  }
+  .report-cover { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); gap: var(--space-7); align-items: start; padding-block: 0 var(--space-6); }
+  .report-cover h1 { margin: 0 0 var(--space-4); max-width: 28ch; font-family: var(--font-display); font-size: var(--fs-3xl); font-weight: 700; letter-spacing: var(--tracking-display-tight); line-height: var(--lh-display-hero); }
+  .report-subtitle, .report-headline { width: 100%; color: var(--ink-page); font-family: var(--font-sans); line-height: 1.55; }
+  .report-subtitle { font-size: var(--report-fs-body); color: var(--caption-gray); }
+  .report-meta-line { display: flex; flex-wrap: wrap; column-gap: var(--space-4); row-gap: var(--space-2); margin-top: var(--space-4); font-family: var(--font-sans); font-size: var(--report-fs-caption); }
+  .report-meta-line span { color: var(--caption-gray); }
+  .evidence-toggle { appearance: none; border: var(--report-rule); background: transparent; color: var(--claret); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 2px var(--space-2); }
+  .evidence-toggle:hover, .evidence-toggle:focus-visible, .evidence-toggle[aria-pressed="true"] { border-color: var(--claret); background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); outline: none; }
+  .decision-card { align-self: start; border-top: 2px solid var(--claret); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
+  .decision-card dl { margin: 0; display: grid; gap: var(--space-3); }
+  .decision-card div { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); }
+  .decision-card dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  .decision-card dd { margin: 0; font-family: var(--font-display); font-size: var(--report-fs-body); font-weight: 700; color: var(--ink-page); text-align: right; }
+  .report-section, .report-chapter { padding-block: var(--space-6); }
+  .report-chapter { border-top: var(--report-rule); }
+  .report-section h2, .report-chapter > h2 { margin: 0 0 var(--space-4); }
+  .report-section h2 { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); font-size: var(--report-fs-kicker); line-height: 1.2; }
+  .report-chapter > h2 { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); font-family: var(--font-display); font-size: var(--report-fs-section); font-weight: 700; letter-spacing: var(--tracking-display-snug); line-height: var(--lh-display-block); }
+  .report-chapter > h2 span { color: var(--claret); }
+  .chapter-section { margin-top: var(--space-6); }
+  .chapter-section h3 { margin-bottom: var(--space-3); font-size: var(--report-fs-subhead); font-weight: 700; letter-spacing: var(--tracking-display-snug); }
+  .chapter-section p, .chapter-section li, .report-section p { width: 100%; max-width: none; font-size: var(--report-fs-body); line-height: 1.65; }
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
+  .metric-grid article { position: relative; display: grid; align-content: space-between; min-height: 10.5rem; border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); }
+  .metric-grid article::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: color-mix(in srgb, var(--claret) 70%, var(--surface-paper)); }
+  .metric-grid article:hover { background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); }
+  .metric-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); padding-left: var(--space-2); }
+  .metric-label { display: block; max-width: 18ch; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; color: var(--claret); }
+  .metric-topline em { flex: 0 0 auto; font-family: var(--font-mono); font-size: var(--report-fs-caption); font-style: normal; font-weight: 600; color: color-mix(in srgb, var(--caption-gray) 74%, transparent); }
+  .metric-grid strong { display: block; align-self: end; padding-left: var(--space-2); font-family: var(--font-display); font-size: clamp(1.55rem, 1.25vw + 1.05rem, 2.2rem); font-weight: 800; letter-spacing: -0.035em; line-height: 0.98; color: var(--ink-page); overflow-wrap: anywhere; }
+  .metric-grid article > :global(.claim-ref) { align-self: end; margin-top: var(--space-3); padding-left: var(--space-2); }
+  .intro-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-4); }
+  .intro-grid div { background: color-mix(in srgb, var(--surface-paper) 42%, transparent); padding: var(--space-3); }
+  .intro-grid dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  .intro-grid dd { margin: var(--space-1) 0 0; }
+  .toc ol { columns: 2; }
+  .toc a { color: var(--ink-page); text-decoration-color: var(--claret); }
+  .report-callout { margin: var(--space-5) 0; border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 5%, transparent); padding: var(--space-4); }
+  .report-callout h4 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--report-fs-subhead); }
+  .callout-strength { border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
+  .callout-risk { border-left-color: #b42318; background: color-mix(in srgb, #b42318 7%, transparent); }
+  .callout-recommendation { border-left-color: var(--claret); background: color-mix(in srgb, var(--claret) 8%, transparent); }
+  .callout-assumption { border-left-color: var(--caption-gray); background: color-mix(in srgb, var(--caption-gray) 8%, transparent); }
+  .equation { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
+  .three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
+  .three-col article { border-top: var(--report-rule); padding-top: var(--space-3); }
+  .disclaimer p { font-size: var(--report-fs-note); color: var(--caption-gray); }
+  .evidence-index tr:target { background: color-mix(in srgb, var(--claret) 9%, transparent); scroll-margin-top: var(--space-6); }
+  .evidence-id { font-family: var(--font-mono); color: var(--claret); text-decoration: none; }
+  .evidence-id:hover, .evidence-id:focus-visible { text-decoration: underline; }
+  .report-shell :global(.claim-ref) { color: var(--caption-gray); font-family: var(--font-mono); font-size: var(--report-fs-caption); display: inline; margin-left: 0.25em; vertical-align: baseline; overflow-wrap: anywhere; }
+  .report-shell:not(.refs-visible) :global(.claim-ref) { display: none !important; }
+  .report-shell.refs-visible :global(.claim-ref) { display: inline; }
+  .report-shell :global(.claim-ref a) { color: var(--claret); text-decoration: none; }
+  .report-shell :global(.claim-ref a:hover), .report-shell :global(.claim-ref a:focus-visible) { text-decoration: underline; }
+  .report-shell.refs-visible :global(.table-frame > .claim-ref) { display: block; }
+  @media (max-width: 900px) { .report-cover, .metric-grid, .intro-grid, .three-col { grid-template-columns: 1fr; } .toc ol { columns: 1; } }
 </style>

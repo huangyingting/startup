@@ -1,0 +1,1501 @@
+---
+import ClaimRefs from './ClaimRefs.astro';
+import { RENDERED_FIGURE_TYPES } from '../lib/figures.mjs';
+
+interface Props {
+  figure: any;
+  claims?: any[];
+  sources?: any[];
+}
+
+const { figure, claims = [], sources = [] } = Astro.props;
+const type = figure?.type ?? 'flow';
+const layout = figure?.layout ?? 'standard';
+const data = figure?.data ?? {};
+const chartTypes = new Set(RENDERED_FIGURE_TYPES);
+const usesD3Chart = chartTypes.has(type);
+const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
+const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
+const blockRefs = (block: any) => arr<string>(block?.claimRefs).slice(0, 6);
+const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, data } : null;
+---
+
+<figure class:list={['native-figure', `figure-${type}`, `layout-${layout}`]}>
+  <figcaption>{figure.id}: {figure.title}</figcaption>
+
+  {figure.summary && <p class="figure-summary">{figure.summary}</p>}
+
+  {usesD3Chart && <div id={chartId} class:list={['d3-figure', `chart-${type}`]} data-chart-type={type}></div>}
+
+  {type === 'other' && (
+    <div class="figure-fallback" role="note">
+      <strong>Generic figure</strong>
+      <p>Fallback renderer for generic figures.</p>
+    </div>
+  )}
+
+  {figure.approximationNotes && <p class="figure-note">{figure.approximationNotes}</p>}
+  <ClaimRefs refs={blockRefs(figure)} claims={claims} sources={sources} />
+  {chartPayload && <script type="application/json" class="figure-chart-data" set:html={JSON.stringify(chartPayload)}></script>}
+</figure>
+
+<script>
+  import * as d3 from 'd3';
+
+  const palette = {
+    claret: '#990f3d',
+    ink: '#33302e',
+    muted: '#6b625c',
+    border: '#d8ccc2',
+    paper: '#fff7ef',
+    positive: '#0f766e',
+    risk: '#b42318',
+    opportunity: '#b8860b',
+    neutral: '#990f3d',
+  };
+
+  const arr = (value) => Array.isArray(value) ? value : [];
+  const colorForTone = (tone) => {
+    if (tone === 'positive' || tone === 'low') return palette.positive;
+    if (tone === 'risk' || tone === 'critical' || tone === 'high') return palette.risk;
+    if (tone === 'opportunity') return palette.opportunity;
+    return palette.neutral;
+  };
+  const riskValue = (tone) => {
+    if (tone === 'high' || tone === 'critical' || tone === 'risk') return 3;
+    if (tone === 'medium' || tone === 'neutral') return 2;
+    return 1;
+  };
+  const labelText = (text, max = 24) => String(text ?? '').length > max ? `${String(text).slice(0, max - 1)}…` : String(text ?? '');
+  const numberValue = (value) => Number(value) || 0;
+  const valueLabel = (item) => item?.displayValue ?? item?.value ?? '';
+  const fullValueLabel = (item) => item?.displayValue ?? item?.value ?? item?.score ?? item?.label ?? '';
+
+  const chartFont = {
+    family: 'var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif)',
+    size: {
+      micro: 8,
+      tiny: 9.5,
+      caption: 10.5,
+      small: 12,
+      axis: 13,
+      label: 14,
+      title: 16,
+      value: 18,
+      large: 20,
+      arrow: 24,
+      metric: 26,
+    },
+    weight: {
+      regular: 650,
+      body: 700,
+      medium: 750,
+      strong: 800,
+      label: 900,
+      emphasis: 950,
+    },
+    tracking: {
+      subtle: '0.04em',
+      caps: '0.08em',
+    },
+    lineHeight: {
+      compact: 12,
+      tight: 13,
+      small: 15,
+      label: 16,
+      title: 18,
+    },
+    cssVar: {
+      kicker: 'var(--chart-fs-kicker)',
+      caption: 'var(--chart-fs-caption)',
+      body: 'var(--chart-fs-body)',
+      note: 'var(--chart-fs-note)',
+    },
+  };
+  chartFont.axis = chartFont.size.axis;
+  chartFont.label = chartFont.size.label;
+  chartFont.small = chartFont.size.small;
+  const fontSize = (name) => chartFont.size[name] ?? name;
+  const fontWeight = (name) => chartFont.weight[name] ?? name;
+  const tooltip = (() => {
+    const node = d3.select('body').selectAll('.d3-chart-tooltip').data([null]).join('div').attr('class', 'd3-chart-tooltip').attr('role', 'tooltip');
+    const move = (event) => {
+      const gap = window.innerWidth < 520 ? 10 : 14;
+      const pad = window.innerWidth < 520 ? 10 : 14;
+      const tooltipNode = node.node();
+      const box = tooltipNode?.getBoundingClientRect?.() ?? { width: 0, height: 0 };
+      const spaceRight = window.innerWidth - event.clientX;
+      const spaceBottom = window.innerHeight - event.clientY;
+      const placeLeft = spaceRight < box.width + gap + pad && event.clientX > box.width + gap + pad;
+      const placeTop = spaceBottom < box.height + gap + pad && event.clientY > box.height + gap + pad;
+      const rawLeft = placeLeft ? event.clientX - box.width - gap : event.clientX + gap;
+      const rawTop = placeTop ? event.clientY - box.height - gap : event.clientY + gap;
+      const left = Math.max(pad, Math.min(window.innerWidth - box.width - pad, rawLeft));
+      const top = Math.max(pad, Math.min(window.innerHeight - box.height - pad, rawTop));
+      const pointerX = Math.max(18, Math.min(box.width - 18, event.clientX - left));
+      const tooltipFont = window.innerWidth < 520 ? chartFont.size.small : window.innerWidth < 760 ? chartFont.axis : 13.8;
+      node
+        .attr('data-placement-x', placeLeft ? 'left' : 'right')
+        .attr('data-placement-y', placeTop ? 'top' : 'bottom')
+        .style('left', `${left}px`)
+        .style('top', `${top}px`)
+        .style('--tooltip-pointer-x', `${pointerX}px`)
+        .style('--tooltip-font', `${tooltipFont}px`);
+    };
+    return {
+      show(event, html) {
+        node.html(html).classed('is-visible', true);
+        move(event);
+      },
+      move,
+      hide() {
+        node.classed('is-visible', false);
+      },
+    };
+  })();
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+  const tooltipHtml = (title, lines = []) => `<strong>${escapeHtml(title)}</strong>${lines.filter(Boolean).map((line) => `<span>${escapeHtml(line)}</span>`).join('')}`;
+  const shouldShowTooltip = () => true;
+  document.addEventListener('pointerdown', (event) => {
+    if (event.target?.closest?.('.d3-figure')) return;
+    tooltip.hide();
+  });
+  const withTooltip = (selection, htmlForDatum) => selection
+    .style('cursor', 'default')
+    .on('pointerenter', function(event, datum) {
+      d3.select(this).classed('is-hovered', true);
+      if (!shouldShowTooltip()) return;
+      const html = typeof htmlForDatum === 'function' ? htmlForDatum(datum) : htmlForDatum;
+      tooltip.show(event, html);
+    })
+    .on('pointerdown', function(event, datum) {
+      event.stopPropagation();
+      d3.select(this).classed('is-hovered', true);
+      const html = typeof htmlForDatum === 'function' ? htmlForDatum(datum) : htmlForDatum;
+      tooltip.show(event, html);
+    })
+    .on('pointermove', (event) => {
+      if (shouldShowTooltip()) tooltip.move(event);
+    })
+    .on('pointerleave', function() {
+      d3.select(this).classed('is-hovered', false);
+      tooltip.hide();
+    });
+  const wrapWords = (text, maxChars = 18, maxLines = 2) => {
+    const words = String(text ?? '').split(/\s+/).filter(Boolean);
+    if (!words.length) return [''];
+    const lines = [];
+    let line = '';
+    words.forEach((word) => {
+      const next = line ? `${line} ${word}` : word;
+      if (next.length > maxChars && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = next;
+      }
+    });
+    if (line) lines.push(line);
+    const clipped = lines.slice(0, maxLines);
+    if (lines.length > maxLines) clipped[clipped.length - 1] = labelText(clipped[clipped.length - 1], Math.max(4, maxChars - 1));
+    return clipped;
+  };
+  const renderWrappedText = (selection, text, { maxChars = 18, maxLines = 2, lineHeight = chartFont.lineHeight.small, dy = 0 } = {}) => {
+    const x = selection.attr('x') ?? 0;
+    selection.text(null);
+    const lines = wrapWords(text, maxChars, maxLines);
+    const offset = dy - ((lines.length - 1) * lineHeight) / 2;
+    lines.forEach((line, index) => {
+      selection.append('tspan').attr('x', x).attr('dy', index === 0 ? offset : lineHeight).text(line);
+    });
+  };
+  const renderLineBlock = (selection, lines, { x = 0, y = 0, lineHeight = chartFont.lineHeight.small } = {}) => {
+    selection.text(null).attr('x', x).attr('y', y);
+    lines.forEach((line, index) => {
+      selection.append('tspan').attr('x', x).attr('dy', index === 0 ? 0 : lineHeight).text(line);
+    });
+  };
+  const svgBase = (element, height = 340) => {
+    const containerWidth = Math.floor(element.getBoundingClientRect().width || 760);
+    const minInternalWidth = containerWidth < 420 ? 420 : 520;
+    const width = Math.max(minInternalWidth, containerWidth);
+    const displayHeight = Math.ceil(height * Math.min(1, containerWidth / width));
+    d3.select(element).selectAll('*').remove();
+    const svg = d3.select(element)
+      .append('svg')
+      .attr('viewBox', `0 0 ${width} ${height}`)
+      .attr('role', 'img')
+      .attr('width', '100%')
+      .attr('height', displayHeight)
+      .style('font-family', chartFont.family)
+      .style('display', 'block');
+    return { svg, width, height };
+  };
+  const addTitle = (selection, text) => selection.attr('aria-label', String(text ?? ''));
+  const axisBottom = (g, scale, y, ticks = 4) => g.append('g')
+    .attr('transform', `translate(0,${y})`)
+    .call(d3.axisBottom(scale).ticks(ticks).tickSizeOuter(0))
+    .call((axis) => axis.select('.domain').attr('stroke', palette.border))
+    .call((axis) => axis.selectAll('line').attr('stroke', palette.border))
+    .call((axis) => axis.selectAll('text').attr('fill', palette.muted).attr('font-size', chartFont.axis));
+  const axisLeft = (g, scale, x) => g.append('g')
+    .attr('transform', `translate(${x},0)`)
+    .call(d3.axisLeft(scale).tickSizeOuter(0))
+    .call((axis) => axis.select('.domain').remove())
+    .call((axis) => axis.selectAll('line').remove())
+    .call((axis) => axis.selectAll('text').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('body')).each(function(d) {
+      const text = d3.select(this);
+      renderWrappedText(text, d, { maxChars: 19, maxLines: 2, lineHeight: chartFont.lineHeight.tight });
+    }));
+
+  const renderDag = (element, payload) => {
+    const nodes = arr(payload.data.nodes).map((node, index) => ({ ...node, _key: node.id ?? node.label ?? String(index + 1), _index: index }));
+    const edges = arr(payload.data.edges).map((edge, index) => ({ ...edge, _edgeIndex: index, from: edge.from ?? edge.source, to: edge.to ?? edge.target }));
+    if (!nodes.length) return;
+    const byKey = new Map(nodes.map((node) => [node._key, node]));
+    const incoming = d3.group(edges, (edge) => edge.to);
+    const outgoing = d3.group(edges, (edge) => edge.from);
+    // BFS topological depth from roots. Hub-and-spoke graphs (many inputs, one
+    // sink) collapse to 2 layers; deeper chains keep their natural layer count
+    // instead of being forced into a fixed 3-stage Inputs/Core/Impact layout.
+    const roots = nodes.filter((node) => !incoming.has(node._key));
+    const depthByKey = new Map();
+    const queue = (roots.length ? roots : [nodes[0]]).map((node) => {
+      depthByKey.set(node._key, 0);
+      return node;
+    });
+    while (queue.length) {
+      const current = queue.shift();
+      const currentDepth = depthByKey.get(current._key) ?? 0;
+      for (const edge of arr(outgoing.get(current._key))) {
+        const target = byKey.get(edge.to);
+        if (!target) continue;
+        const nextDepth = currentDepth + 1;
+        if (!depthByKey.has(target._key) || depthByKey.get(target._key) < nextDepth) {
+          depthByKey.set(target._key, nextDepth);
+          queue.push(target);
+        }
+      }
+    }
+    for (const node of nodes) if (!depthByKey.has(node._key)) depthByKey.set(node._key, 0);
+    const maxDepth = Math.max(0, ...depthByKey.values());
+    const stages = Array.from({ length: maxDepth + 1 }, () => []);
+    nodes.forEach((node) => stages[depthByKey.get(node._key) ?? 0].push(node));
+    const stageNames = stages.length === 1
+      ? ['Dependencies']
+      : stages.length === 2
+        ? ['Inputs', 'Impact']
+        : stages.length === 3
+          ? ['Inputs', 'Core dependency', 'Impact']
+          : stages.map((_stage, index) => `Stage ${index + 1}`);
+    const stageRole = (index) => index === 0
+      ? 'input'
+      : index === stages.length - 1
+        ? 'impact'
+        : 'core';
+    const containerWidth = element.getBoundingClientRect().width || 760;
+    const compact = containerWidth < 640;
+    const maxRows = Math.max(...stages.map((stage) => stage.length), 1);
+    const compactHeight = 74 + stages.reduce((sum, stage) => sum + 30 + stage.length * 76 + Math.max(0, stage.length - 1) * 16 + 36, 0);
+    const { svg, width, height } = svgBase(element, compact ? Math.max(520, compactHeight) : Math.max(350, 118 + maxRows * 108));
+    const margin = compact ? { top: 36, right: 24, bottom: 34, left: 24 } : { top: 42, right: 34, bottom: 40, left: 34 };
+    const innerW = width - margin.left - margin.right;
+    const innerH = height - margin.top - margin.bottom;
+    const stageW = innerW / Math.max(stages.length, 1);
+    const cardW = compact ? Math.min(252, innerW - 18) : Math.min(190, Math.max(140, stageW - 30));
+    const cardH = compact ? 66 : 74;
+    const stageLabels = [];
+    const positions = [];
+    if (compact) {
+      let y = margin.top;
+      stages.forEach((stage, stageIndex) => {
+        stageLabels.push({ label: stageNames[stageIndex], x: width / 2, y: y + 2 });
+        y += 34;
+        stage.forEach((node, index) => {
+          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: width / 2, y: y + cardH / 2 + index * (cardH + 16) });
+        });
+        y += stage.length * cardH + Math.max(0, stage.length - 1) * 16 + 36;
+      });
+    } else {
+      stages.forEach((stage, stageIndex) => {
+        stageLabels.push({ label: stageNames[stageIndex], x: margin.left + stageW * stageIndex + stageW / 2, y: 24 });
+        const gap = innerH / Math.max(stage.length, 1);
+        stage.forEach((node, index) => {
+          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: margin.left + stageW * stageIndex + stageW / 2, y: margin.top + gap * index + gap / 2 });
+        });
+      });
+    }
+    const positionedByKey = new Map(positions.map((node) => [node._key, node]));
+    const routedEdges = edges.map((edge, index) => ({ ...edge, _edgeIndex: index, source: positionedByKey.get(edge.from), target: positionedByKey.get(edge.to) })).filter((edge) => edge.source && edge.target);
+    const defs = svg.append('defs');
+    defs.append('marker').attr('id', `${payload.id}-dependency-arrow`).attr('viewBox', '0 -5 10 10').attr('refX', 8.2).attr('refY', 0).attr('markerWidth', 5.8).attr('markerHeight', 5.8).attr('orient', 'auto')
+      .append('path').attr('d', 'M0,-4L9,0L0,4').attr('fill', palette.claret);
+    const shadow = defs.append('filter').attr('id', `${payload.id}-dependency-shadow`).attr('x', '-16%').attr('y', '-22%').attr('width', '132%').attr('height', '150%');
+    shadow.append('feDropShadow').attr('dx', 0).attr('dy', 4).attr('stdDeviation', 4).attr('flood-color', 'rgba(51,48,46,0.13)');
+    svg.append('g').selectAll('text').data(stageLabels).join('text')
+      .attr('x', (label) => label.x)
+      .attr('y', (label) => label.y)
+      .attr('text-anchor', 'middle')
+      .attr('fill', palette.claret)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('emphasis'))
+      .attr('letter-spacing', chartFont.tracking.caps)
+      .text((label) => label.label);
+    const edgePath = (edge) => {
+      if (compact) {
+        const sx = edge.source.x + cardW / 2 + 8;
+        const sy = edge.source.y;
+        const laneOffset = (edge._edgeIndex - (Math.max(routedEdges.length, 1) - 1) / 2) * 16;
+        const tx = edge.target.x + Math.max(-cardW / 2 + 26, Math.min(cardW / 2 - 26, laneOffset));
+        const ty = edge.target.y - cardH / 2 - 8;
+        const busX = Math.min(width - margin.right - 10, sx + 68 + edge._edgeIndex * 8);
+        return `M${sx},${sy} C${busX},${sy} ${busX},${ty - 34} ${tx},${ty}`;
+      }
+      const sx = edge.source.x + cardW / 2 + 10;
+      const tx = edge.target.x - cardW / 2 - 12;
+      const midX = (sx + tx) / 2;
+      return `M${sx},${edge.source.y} C${midX},${edge.source.y} ${midX},${edge.target.y} ${tx},${edge.target.y}`;
+    };
+    const edgeLayer = svg.append('g');
+    edgeLayer.selectAll('path.visible-dependency-edge').data(routedEdges).join('path')
+      .attr('class', 'visible-dependency-edge')
+      .attr('d', edgePath)
+      .attr('fill', 'none')
+      .attr('stroke', (edge) => colorForTone(edge.source.tone ?? edge.target.tone))
+      .attr('stroke-width', 1.8)
+      .attr('opacity', 0.68)
+      .attr('marker-end', `url(#${payload.id}-dependency-arrow)`);
+    const hitEdges = edgeLayer.selectAll('path.dependency-edge-hit').data(routedEdges).join('path')
+      .attr('class', 'dependency-edge-hit')
+      .attr('d', edgePath)
+      .attr('fill', 'none')
+      .attr('stroke', 'transparent')
+      .attr('stroke-width', 16);
+    hitEdges.each(function(edge) { addTitle(d3.select(this), `${edge.source.label} → ${edge.target.label}${edge.label ? ` — ${edge.label}` : ''}`); });
+    withTooltip(hitEdges, (edge) => tooltipHtml(`${edge.source.label} → ${edge.target.label}`, [edge.label ? `Dependency: ${edge.label}` : null, edge.source.detail, edge.target.detail]));
+    const cards = svg.append('g').selectAll('g.dependency-card').data(positions).join('g')
+      .attr('class', 'dependency-card')
+      .attr('transform', (node) => `translate(${node.x},${node.y})`);
+    cards.append('rect')
+      .attr('x', -cardW / 2)
+      .attr('y', -cardH / 2)
+      .attr('width', cardW)
+      .attr('height', cardH)
+      .attr('rx', 18)
+      .attr('fill', '#fffaf5')
+      .attr('stroke', (node) => colorForTone(node.tone))
+      .attr('stroke-opacity', 0.42)
+      .attr('stroke-width', 1.2);
+    cards.append('rect')
+      .attr('x', -cardW / 2 + 14)
+      .attr('y', -cardH / 2 + 11)
+      .attr('width', cardW - 28)
+      .attr('height', 3)
+      .attr('rx', 2)
+      .attr('fill', (node) => colorForTone(node.tone))
+      .attr('opacity', 0.78);
+    const glyphs = cards.append('g').attr('transform', `translate(${-cardW / 2 + 24},${-cardH / 2 + 35})`);
+    glyphs.append('circle')
+      .attr('r', 6)
+      .attr('fill', (node) => node._role === 'core' ? colorForTone(node.tone) : 'none')
+      .attr('stroke', (node) => colorForTone(node.tone))
+      .attr('stroke-width', 2)
+      .attr('opacity', 0.88);
+    glyphs.filter((node) => node._role === 'core').append('path')
+      .attr('d', 'M-5,0 H5 M0,-5 V5')
+      .attr('stroke', '#fff7ef')
+      .attr('stroke-width', 1.7)
+      .attr('stroke-linecap', 'round');
+    glyphs.filter((node) => node._role === 'impact').append('path')
+      .attr('d', 'M-5,-5 L5,0 L-5,5')
+      .attr('fill', 'none')
+      .attr('stroke', (node) => colorForTone(node.tone))
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'round')
+      .attr('stroke-linejoin', 'round');
+    cards.append('text').attr('x', -cardW / 2 + 42).attr('y', compact ? 4 : 5).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', fontWeight('label')).each(function(node) {
+      renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(12, Math.floor((cardW - 54) / 8)), maxLines: 2, lineHeight: chartFont.lineHeight.small });
+    });
+    cards.each(function(node) { addTitle(d3.select(this), `${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
+    withTooltip(cards, (node) => tooltipHtml(node.label, [node.detail, node._role === 'input' ? 'Input dependency' : node._role === 'impact' ? 'Downstream impact' : 'Core dependency']));
+  };
+
+  const renderFlow = (element, payload) => {
+    const nodes = arr(payload.data.nodes).map((node, index) => ({ ...node, _index: index, _key: node.id ?? node.label ?? String(index + 1) }));
+    const edges = arr(payload.data.edges);
+    const edgeBetween = (source, target) => edges.find((edge) => {
+      const from = edge.from ?? edge.source;
+      const to = edge.to ?? edge.target;
+      return (from === source._key || from === source.id || from === source.label) && (to === target._key || to === target.id || to === target.label);
+    });
+    const containerWidth = element.getBoundingClientRect().width || 760;
+    const compact = containerWidth < 520;
+    const cardH = compact ? 96 : 118;
+    const gap = compact ? 18 : 34;
+    const margin = compact ? { top: 14, right: 18, bottom: 18, left: 16 } : { top: 24, right: 34, bottom: 30, left: 30 };
+    const { svg, width, height } = svgBase(element, Math.max(260, margin.top + margin.bottom + nodes.length * cardH + Math.max(0, nodes.length - 1) * gap));
+    const railX = margin.left + (compact ? 24 : 34);
+    const cardX = margin.left + (compact ? 64 : 96);
+    const cardW = width - cardX - margin.right;
+    const defs = svg.append('defs');
+    const gradient = defs.append('linearGradient').attr('id', `${payload.id}-flow-card-bg`).attr('x1', '0%').attr('x2', '100%');
+    gradient.append('stop').attr('offset', '0%').attr('stop-color', '#fff7ef');
+    gradient.append('stop').attr('offset', '100%').attr('stop-color', '#fbf0e8');
+    const stepY = (index) => margin.top + index * (cardH + gap);
+    const connectorData = nodes.slice(0, -1).map((node, index) => ({ source: node, target: nodes[index + 1], edge: edgeBetween(node, nodes[index + 1]), index }));
+    const railRadius = compact ? 17 : 22;
+    const connectorStartY = (index) => stepY(index) + cardH / 2 + railRadius + 3;
+    const connectorArrowBaseY = (index) => stepY(index + 1) + cardH / 2 - railRadius - (compact ? 9 : 10);
+    const connectorArrowTipY = (index) => stepY(index + 1) + cardH / 2 - railRadius - 3;
+    const visibleEdgeLabel = (edge) => {
+      const label = String(edge?.label ?? '').trim();
+      if (!label || ['therefore', 'decision', 'next'].includes(label.toLowerCase())) return null;
+      return label;
+    };
+    svg.append('g')
+      .attr('class', 'flow-connector-lines')
+      .selectAll('line.flow-connector-line')
+      .data(connectorData)
+      .join('line')
+      .attr('class', 'flow-connector-line')
+      .attr('x1', railX)
+      .attr('x2', railX)
+      .attr('y1', (d) => connectorStartY(d.index))
+      .attr('y2', (d) => connectorArrowBaseY(d.index))
+      .attr('stroke', (d) => colorForTone(d.source.tone))
+      .attr('stroke-width', compact ? 1.8 : 2)
+      .attr('stroke-linecap', 'round')
+      .attr('stroke-opacity', 0.38);
+    svg.select('.flow-connector-lines')
+      .selectAll('path.flow-connector-arrow')
+      .data(connectorData)
+      .join('path')
+      .attr('class', 'flow-connector-arrow')
+      .attr('d', (d) => {
+        const baseY = connectorArrowBaseY(d.index);
+        const tipY = connectorArrowTipY(d.index);
+        const halfW = compact ? 4.6 : 5.2;
+        return `M${railX - halfW},${baseY} L${railX},${tipY} L${railX + halfW},${baseY} Z`;
+      })
+      .attr('fill', (d) => colorForTone(d.source.tone))
+      .attr('opacity', 0.42);
+    const connectorLabels = svg.append('g').selectAll('g').data(connectorData.filter((d) => visibleEdgeLabel(d.edge))).join('g');
+    connectorLabels.append('rect')
+      .attr('x', railX - 42)
+      .attr('y', (d) => (stepY(d.index) + stepY(d.index + 1) + cardH) / 2 - 12)
+      .attr('width', 84)
+      .attr('height', 24)
+      .attr('rx', 12)
+      .attr('fill', palette.paper)
+      .attr('stroke', palette.border);
+    connectorLabels.append('text')
+      .attr('x', railX)
+      .attr('y', (d) => (stepY(d.index) + stepY(d.index + 1) + cardH) / 2 + 4)
+      .attr('text-anchor', 'middle')
+      .attr('fill', palette.claret)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('label'))
+      .text((d) => labelText(visibleEdgeLabel(d.edge), 12));
+    const railNodes = svg.append('g').selectAll('g').data(nodes).join('g').attr('transform', (_node, index) => `translate(${railX},${stepY(index) + cardH / 2})`);
+    railNodes.append('circle').attr('r', compact ? 17 : 22).attr('fill', '#fff7ef').attr('stroke', (node) => colorForTone(node.tone)).attr('stroke-width', compact ? 2.4 : 3);
+    railNodes.append('circle').attr('r', compact ? 12 : 16).attr('fill', (node) => colorForTone(node.tone));
+    railNodes.append('text').attr('y', compact ? 4 : 5).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('emphasis')).text((node) => node._index + 1);
+    const cards = svg.append('g').selectAll('g').data(nodes).join('g').attr('transform', (_node, index) => `translate(${cardX},${stepY(index)})`);
+    cards.append('rect')
+      .attr('width', cardW)
+      .attr('height', cardH)
+      .attr('rx', 12)
+      .attr('fill', (_node, index) => index === 0 ? 'rgba(15, 118, 110, 0.08)' : index === nodes.length - 1 ? 'rgba(153, 15, 61, 0.08)' : `url(#${payload.id}-flow-card-bg)`)
+      .attr('stroke', (node) => colorForTone(node.tone))
+      .attr('stroke-width', 1.9);
+    const textX = compact ? 18 : 24;
+    cards.append('text').attr('x', textX).attr('y', compact ? 18 : 26).attr('fill', palette.claret).attr('font-size', compact ? chartFont.size.tiny : chartFont.size.caption).attr('font-weight', fontWeight('label')).attr('letter-spacing', chartFont.tracking.caps).text((node) => node._index === nodes.length - 1 ? 'DECISION' : node.tone === 'risk' || node.tone === 'critical' || node.tone === 'high' ? 'CONSTRAINT' : 'EVIDENCE');
+    cards.append('text').attr('x', textX).attr('y', compact ? 40 : 52).attr('fill', palette.ink).attr('font-size', compact ? chartFont.label : chartFont.size.title).attr('font-weight', fontWeight('emphasis')).each(function(node) {
+      renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(compact ? 22 : 24, Math.floor((cardW - textX * 2) / (compact ? 7.8 : 8.4))), maxLines: 2, lineHeight: compact ? chartFont.lineHeight.small : chartFont.lineHeight.title });
+    });
+    cards.append('text').attr('x', textX).attr('y', compact ? 66 : 84).attr('fill', palette.muted).attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('regular')).each(function(node) {
+      renderWrappedText(d3.select(this), node.detail, { maxChars: Math.max(compact ? 34 : 40, Math.floor((cardW - textX * 2) / (compact ? 6.2 : 6.5))), maxLines: compact ? 2 : 3, lineHeight: compact ? chartFont.lineHeight.compact : chartFont.lineHeight.small });
+    });
+    cards.each(function(node) { addTitle(d3.select(this), `${node._index + 1}. ${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
+  };
+
+  const firstNonEmpty = (...values) => values.find((value) => Array.isArray(value) && value.length > 0) ?? [];
+  const normalizedItems = (data) => firstNonEmpty(data.items, data.nodes, data.layers, arr(data.series)[0]?.points, data.points).map((item, index) => ({ ...item, _index: index, label: item.label ?? item.name ?? item.id ?? `Item ${index + 1}`, detail: item.detail ?? item.description ?? item.summary }));
+
+  const renderTimeline = (element, payload) => {
+    const items = normalizedItems(payload.data);
+    const margin = { top: 26, right: 34, bottom: 32, left: 34 };
+    const containerWidth = Math.floor(element.getBoundingClientRect().width || 760);
+    const width = Math.max(containerWidth < 420 ? 420 : 520, containerWidth);
+    const { svg } = svgBase(element, 260);
+    const railX = margin.left + 20;
+    const cardX = railX + 26;
+    const cardW = width - railX - margin.right - 26;
+    const textX = railX + 44;
+    const textW = Math.max(80, cardW - 36);
+    const measureText = svg.append('text').attr('visibility', 'hidden').attr('x', -9999).attr('y', -9999);
+    const measuredWidth = (value) => {
+      measureText.text(String(value ?? ''));
+      return measureText.node()?.getComputedTextLength?.() ?? String(value ?? '').length * 8;
+    };
+    const splitTokenBySvgWidth = (token) => {
+      const chunks = [];
+      let chunk = '';
+      Array.from(String(token ?? '')).forEach((char) => {
+        const next = `${chunk}${char}`;
+        if (chunk && measuredWidth(next) > textW) {
+          chunks.push(chunk);
+          chunk = char;
+        } else {
+          chunk = next;
+        }
+      });
+      if (chunk) chunks.push(chunk);
+      return chunks;
+    };
+    const wrapWithSvgMeasure = (text, { fontSize, fontWeight }) => {
+      measureText.attr('font-size', fontSize).attr('font-weight', fontWeight).attr('font-family', chartFont.family);
+      const tokens = String(text ?? '').split(/\s+/).filter(Boolean);
+      if (!tokens.length) return [''];
+      const lines = [];
+      let line = '';
+      tokens.flatMap((token) => measuredWidth(token) > textW ? splitTokenBySvgWidth(token) : token).forEach((token) => {
+        const next = line ? `${line} ${token}` : token;
+        if (line && measuredWidth(next) > textW) {
+          lines.push(line);
+          line = token;
+        } else {
+          line = next;
+        }
+      });
+      if (line) lines.push(line);
+      return lines;
+    };
+    const rowGap = 24;
+    let cursorY = margin.top;
+    const rowsData = items.map((item) => {
+      const dateLines = wrapWithSvgMeasure(item.date ?? item.period ?? item.year ?? item.label, { fontSize: chartFont.small, fontWeight: 900 });
+      const labelLines = wrapWithSvgMeasure(item.label, { fontSize: chartFont.label, fontWeight: 900 });
+      const detailLines = wrapWithSvgMeasure(item.detail, { fontSize: chartFont.small, fontWeight: 400 });
+      const cardH = Math.max(78, 18 + dateLines.length * 15 + 8 + labelLines.length * 18 + 8 + detailLines.length * 15 + 16);
+      const row = { ...item, dateLines, labelLines, detailLines, cardH, y: cursorY };
+      cursorY += cardH + rowGap;
+      return row;
+    });
+    const totalHeight = Math.max(260, cursorY - rowGap + margin.bottom);
+    const displayHeight = Math.ceil(totalHeight * Math.min(1, containerWidth / width));
+    svg.attr('viewBox', `0 0 ${width} ${totalHeight}`).attr('height', displayHeight);
+    measureText.remove();
+    svg.append('line').attr('x1', railX).attr('x2', railX).attr('y1', margin.top + 8).attr('y2', totalHeight - margin.bottom - 8).attr('stroke', palette.claret).attr('stroke-width', 2.4).attr('opacity', 0.8);
+    const rows = svg.append('g').selectAll('g').data(rowsData).join('g').attr('transform', (d) => `translate(0,${d.y})`);
+    rows.append('circle').attr('cx', railX).attr('cy', (d) => Math.min(32, d.cardH / 2)).attr('r', 9).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 3);
+    rows.append('rect').attr('x', cardX).attr('y', 0).attr('width', cardW).attr('height', (d) => d.cardH).attr('rx', 10).attr('fill', (d, index) => index % 2 === 0 ? 'rgba(153, 15, 61, 0.055)' : '#fff7ef').attr('stroke', palette.border);
+    rows.append('text').attr('fill', palette.claret).attr('font-size', chartFont.small).attr('font-weight', fontWeight('label')).each(function(d) {
+      renderLineBlock(d3.select(this), d.dateLines, { x: textX, y: 20, lineHeight: chartFont.lineHeight.small });
+    });
+    rows.append('text').attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', fontWeight('label')).each(function(d) {
+      renderLineBlock(d3.select(this), d.labelLines, { x: textX, y: 20 + d.dateLines.length * chartFont.lineHeight.small + 10, lineHeight: chartFont.lineHeight.title });
+    });
+    rows.append('text').attr('fill', palette.muted).attr('font-size', chartFont.small).each(function(d) {
+      renderLineBlock(d3.select(this), d.detailLines, { x: textX, y: 20 + d.dateLines.length * chartFont.lineHeight.small + 10 + d.labelLines.length * chartFont.lineHeight.title + 10, lineHeight: chartFont.lineHeight.small });
+    });
+    rows.each(function(d) { addTitle(d3.select(this), `${d.date ?? ''} ${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
+  };
+
+  const renderStack = (element, payload) => {
+    const layers = normalizedItems({ layers: payload.data.layers ?? payload.data.items ?? payload.data.nodes });
+    const containerWidth = element.getBoundingClientRect().width || 760;
+    const compact = containerWidth < 640;
+    const margin = compact ? { top: 54, right: 24, bottom: 32, left: 24 } : { top: 58, right: 38, bottom: 36, left: 44 };
+    const layerH = compact ? 76 : 80;
+    const layerGap = compact ? 0 : 2;
+    const { svg, width, height } = svgBase(element, Math.max(compact ? 430 : 470, margin.top + margin.bottom + layers.length * (layerH + layerGap) + 22));
+    const maxW = width - margin.left - margin.right;
+    const stackInset = compact ? 18 : 24;
+    svg.append('text')
+      .attr('x', margin.left)
+      .attr('y', margin.top - 24)
+      .attr('fill', palette.muted)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('label'))
+      .attr('letter-spacing', chartFont.tracking.subtle)
+      .text('Layered stack');
+    svg.append('text')
+      .attr('x', width - margin.right)
+      .attr('y', margin.top - 24)
+      .attr('text-anchor', 'end')
+      .attr('fill', palette.muted)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('strong'))
+      .text('Experience → Governance');
+    const groups = svg.append('g').selectAll('g.stack-layer').data(layers).join('g')
+      .attr('class', 'stack-layer')
+      .attr('transform', (_d, index) => {
+        const inset = index * stackInset;
+        const xOffset = margin.left + inset;
+        const yOffset = margin.top + index * (layerH + layerGap);
+        return `translate(${xOffset},${yOffset})`;
+      });
+    groups.append('rect')
+      .attr('class', 'stack-layer-lip')
+      .attr('x', compact ? 8 : 12)
+      .attr('y', layerH - 8)
+      .attr('width', (_d, index) => Math.max(100, maxW - index * stackInset * 2 - (compact ? 16 : 24)))
+      .attr('height', 20)
+      .attr('rx', 9)
+      .attr('fill', (d) => colorForTone(d.tone))
+      .attr('opacity', 0.24);
+    groups.append('rect')
+      .attr('class', 'stack-layer-card')
+      .attr('width', (_d, index) => Math.max(120, maxW - index * stackInset * 2))
+      .attr('height', layerH)
+      .attr('rx', 18)
+      .attr('fill', (_d, index) => d3.interpolateRgb('#fffaf5', '#efe0d6')(index / Math.max(1, layers.length - 1)))
+      .attr('stroke', (d) => colorForTone(d.tone))
+      .attr('stroke-width', 2);
+    groups.append('text')
+      .attr('x', 24)
+      .attr('y', compact ? 23 : 25)
+      .attr('fill', palette.ink)
+      .attr('font-size', chartFont.label)
+      .attr('font-weight', fontWeight('emphasis'))
+      .text((d) => labelText(d.label, compact ? 24 : 32));
+    groups.append('text')
+      .attr('x', 24)
+      .attr('y', compact ? 42 : 47)
+      .attr('fill', palette.muted)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('medium'))
+      .text((d) => labelText(d.detail, compact ? 40 : 56));
+    groups.append('text')
+      .attr('x', (d, index) => Math.max(104, maxW - index * stackInset * 2 - 18))
+      .attr('y', 28)
+      .attr('text-anchor', 'end')
+      .attr('fill', palette.claret)
+      .attr('font-size', chartFont.size.value)
+      .attr('font-weight', fontWeight('emphasis'))
+      .text((_d, index) => `L${index + 1}`);
+    const moduleRows = groups.append('g').attr('class', 'stack-modules').attr('transform', `translate(24,${compact ? 52 : 56})`);
+    moduleRows.each(function(d, layerIndex) {
+      const layerWidth = Math.max(120, maxW - layerIndex * stackInset * 2);
+      const modules = arr(d.modules).slice(0, compact ? 1 : 2);
+      const output = arr(d.outputs)[0];
+      const pills = [...modules.map((label) => ({ label, tone: d.tone })), ...(output ? [{ label: `→ ${output}`, tone: 'neutral' }] : [])];
+      let xCursor = 0;
+      const row = d3.select(this);
+      pills.forEach((pill) => {
+        const text = labelText(pill.label, compact ? 12 : 16);
+        const pillW = Math.min(compact ? 90 : 118, Math.max(52, text.length * 7 + 18));
+        if (xCursor + pillW > layerWidth - 54) return;
+        const pillGroup = row.append('g').attr('transform', `translate(${xCursor},0)`);
+        pillGroup.append('rect')
+          .attr('width', pillW)
+          .attr('height', compact ? 16 : 18)
+          .attr('rx', compact ? 8 : 9)
+          .attr('fill', pill.label.startsWith('→') ? 'rgba(153,15,61,0.08)' : 'rgba(255,250,245,0.78)')
+          .attr('stroke', pill.label.startsWith('→') ? 'rgba(153,15,61,0.22)' : 'rgba(212,196,184,0.72)');
+        pillGroup.append('text')
+          .attr('x', pillW / 2)
+          .attr('y', compact ? 11.5 : 12.5)
+          .attr('text-anchor', 'middle')
+          .attr('fill', pill.label.startsWith('→') ? palette.claret : palette.ink)
+          .attr('font-size', chartFont.size.tiny)
+          .attr('font-weight', fontWeight('strong'))
+          .text(text);
+        xCursor += pillW + 7;
+      });
+    });
+    groups.each(function(d) {
+      const modules = arr(d.modules).join(', ');
+      const outputs = arr(d.outputs).join(', ');
+      addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}${modules ? `; modules: ${modules}` : ''}${outputs ? `; outputs: ${outputs}` : ''}`);
+    });
+    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail, arr(d.modules).length ? `Modules: ${arr(d.modules).join(', ')}` : '', arr(d.outputs).length ? `Outputs: ${arr(d.outputs).join(', ')}` : '']));
+  };
+
+  const renderPyramid = (element, payload) => {
+    const items = normalizedItems(payload.data);
+    // Probe container width up front so we can compute per-layer text wrapping
+    // before allocating the SVG canvas. We need final card heights to set
+    // svgBase height correctly.
+    const containerWidth = Math.floor(element.getBoundingClientRect().width || 760);
+    const internalWidth = Math.max(containerWidth < 420 ? 420 : 520, containerWidth);
+    const margin = { top: 28, right: 34, bottom: 34, left: 34 };
+    const maxW = internalWidth - margin.left - margin.right;
+    const padX = 22;
+    const labelLineH = 22;
+    const detailLineH = 16;
+    const padTop = 12;
+    const padBottom = 12;
+    const gapBetweenLabelDetail = 8;
+    const gapBetweenLayers = 10;
+    const labelFont = chartFont.size.large;
+    const detailFont = chartFont.small;
+    // Estimate characters that fit in a layer of width `w` for given font
+    // size; `0.55em` is a conservative average glyph width.
+    const charsPerLine = (w, fontSize) => Math.max(8, Math.floor((w - padX * 2) / (fontSize * 0.55)));
+    const wrap = (text, maxChars) => wrapWords(text, maxChars, 99);
+    const layout = items.map((item, index) => {
+      const w = maxW * (1 - index * 0.1);
+      const labelLines = wrap(item.label, charsPerLine(w, labelFont));
+      const detailLines = item.detail ? wrap(item.detail, charsPerLine(w, detailFont)) : [];
+      const cardH = Math.max(
+        66,
+        padTop + labelLines.length * labelLineH + (detailLines.length ? gapBetweenLabelDetail + detailLines.length * detailLineH : 0) + padBottom,
+      );
+      return { item, index, w, labelLines, detailLines, cardH };
+    });
+    let cursorY = margin.top;
+    for (const entry of layout) { entry.y = cursorY; cursorY += entry.cardH + gapBetweenLayers; }
+    const svgHeight = Math.max(300, cursorY - gapBetweenLayers + margin.bottom);
+    const { svg, width } = svgBase(element, svgHeight);
+    const groups = svg.append('g').selectAll('g').data(layout).join('g').attr('transform', (entry) => `translate(${(width - entry.w) / 2},${entry.y})`);
+    groups.append('rect').attr('width', (entry) => entry.w).attr('height', (entry) => entry.cardH).attr('rx', 14).attr('fill', (_entry, index) => d3.interpolateRgb('#fff7ef', '#ead8cf')(index / Math.max(1, layout.length - 1))).attr('stroke', (entry) => colorForTone(entry.item.tone)).attr('stroke-width', 1.7);
+    groups.append('text')
+      .attr('x', padX)
+      .attr('y', padTop + labelFont)
+      .attr('fill', palette.claret)
+      .attr('font-size', labelFont)
+      .attr('font-weight', fontWeight('emphasis'))
+      .each(function(entry) { renderLineBlock(d3.select(this), entry.labelLines, { x: padX, y: padTop + labelFont, lineHeight: labelLineH }); });
+    groups.filter((entry) => entry.detailLines.length > 0).append('text')
+      .attr('x', padX)
+      .attr('fill', palette.ink)
+      .attr('font-size', detailFont)
+      .attr('font-weight', fontWeight('medium'))
+      .each(function(entry) {
+        const startY = padTop + entry.labelLines.length * labelLineH + gapBetweenLabelDetail + detailFont;
+        renderLineBlock(d3.select(this), entry.detailLines, { x: padX, y: startY, lineHeight: detailLineH });
+      });
+    groups.each(function(entry) { addTitle(d3.select(this), `${entry.item.label}${entry.item.detail ? ` — ${entry.item.detail}` : ''}`); });
+  };
+
+  const renderJourneyMap = (element, payload) => {
+    const items = normalizedItems(payload.data);
+    const margin = { top: 34, right: 34, bottom: 46, left: 34 };
+    const { svg, width, height } = svgBase(element, 360);
+    const x = d3.scalePoint().domain(items.map((d) => d.label)).range([margin.left + 22, width - margin.right - 22]).padding(0.5);
+    const yMid = height / 2;
+    const line = d3.line().curve(d3.curveCatmullRom.alpha(0.6)).x((d) => x(d.label)).y((d, index) => yMid + (index % 2 === 0 ? -28 : 28));
+    svg.append('path').attr('d', line(items)).attr('fill', 'none').attr('stroke', palette.claret).attr('stroke-width', 3).attr('opacity', 0.8);
+    const groups = svg.append('g').selectAll('g').data(items).join('g').attr('transform', (d, index) => `translate(${x(d.label)},${yMid + (index % 2 === 0 ? -28 : 28)})`);
+    groups.append('circle').attr('r', 18).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 3);
+    groups.append('text').attr('text-anchor', 'middle').attr('y', 4).attr('fill', '#fff7ef').attr('font-size', chartFont.small).attr('font-weight', fontWeight('label')).text((d) => d._index + 1);
+    groups.append('rect').attr('x', -72).attr('y', (_d, index) => index % 2 === 0 ? -92 : 34).attr('width', 144).attr('height', 52).attr('rx', 9).attr('fill', '#fff7ef').attr('stroke', palette.border);
+    groups.append('text').attr('x', 0).attr('y', (_d, index) => index % 2 === 0 ? -68 : 57).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', fontWeight('strong')).each(function(d) { renderWrappedText(d3.select(this), d.label, { maxChars: 18, maxLines: 2, lineHeight: chartFont.lineHeight.tight }); });
+    groups.each(function(d) { addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}`); });
+  };
+
+  const renderKpi = (element, payload) => {
+    const items = normalizedItems({ items: payload.data.items ?? payload.data.nodes });
+    const columns = Math.min(3, Math.max(1, items.length));
+    const margin = { top: 24, right: 28, bottom: 30, left: 28 };
+    const cardH = 128;
+    const rows = Math.ceil(items.length / columns);
+    const { svg, width } = svgBase(element, Math.max(260, margin.top + margin.bottom + rows * (cardH + 18)));
+    const cardW = (width - margin.left - margin.right - (columns - 1) * 16) / columns;
+    const groups = svg.append('g').selectAll('g').data(items).join('g').attr('transform', (_d, index) => `translate(${margin.left + (index % columns) * (cardW + 16)},${margin.top + Math.floor(index / columns) * (cardH + 18)})`);
+    groups.append('rect').attr('width', cardW).attr('height', cardH).attr('rx', 14).attr('fill', '#fff7ef').attr('stroke', (d) => colorForTone(d.tone)).attr('stroke-width', 1.7);
+    groups.append('circle').attr('cx', 18).attr('cy', 25).attr('r', 4.6).attr('fill', (d) => colorForTone(d.tone)).attr('opacity', 0.9);
+    groups.append('text').attr('x', 30).attr('y', 30).attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', fontWeight('label')).each(function(d) { renderWrappedText(d3.select(this), d.label, { maxChars: Math.max(14, Math.floor((cardW - 44) / 8)), maxLines: 2, lineHeight: chartFont.lineHeight.tight }); });
+    groups.append('text').attr('x', 16).attr('y', 78).attr('fill', palette.claret).attr('font-size', chartFont.size.metric).attr('font-weight', fontWeight('emphasis')).text((d) => labelText(fullValueLabel(d), 12));
+    groups.append('text').attr('x', 16).attr('y', 106).attr('fill', palette.muted).attr('font-size', chartFont.size.caption).text((d) => labelText(d.detail, Math.max(18, Math.floor(cardW / 7))));
+    groups.each(function(d) { addTitle(d3.select(this), `${d.label}: ${fullValueLabel(d)}${d.detail ? ` — ${d.detail}` : ''}`); });
+  };
+
+  const renderBar = (element, payload) => {
+    const items = arr(payload.data.items).length ? arr(payload.data.items) : arr(arr(payload.data.series)[0]?.points);
+    const { svg, width, height } = svgBase(element, Math.max(260, items.length * 42 + 78));
+    const margin = { top: 18, right: 112, bottom: 38, left: Math.min(220, Math.max(152, Math.max(...items.map((item) => String(item.label ?? '').length), 8) * 7.5)) };
+    const x = d3.scaleLinear().domain([0, d3.max(items, (d) => numberValue(d.value)) || 1]).nice().range([margin.left, width - margin.right]);
+    const y = d3.scaleBand().domain(items.map((d) => d.label)).range([margin.top, height - margin.bottom]).padding(0.26);
+    axisBottom(svg, x, height - margin.bottom);
+    axisLeft(svg, y, margin.left);
+    const bars = svg.append('g').selectAll('rect').data(items).join('rect')
+      .attr('x', x(0)).attr('y', (d) => y(d.label)).attr('width', (d) => Math.max(2, x(numberValue(d.value)) - x(0))).attr('height', y.bandwidth())
+      .attr('rx', 4).attr('fill', (d) => colorForTone(d.tone));
+    bars.each(function(d) { addTitle(d3.select(this), `${d.label}: ${valueLabel(d)}`); });
+    svg.append('g').selectAll('text').data(items).join('text')
+      .attr('x', (d) => Math.min(width - margin.right + 6, x(numberValue(d.value)) + 8)).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4)
+      .attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', fontWeight('strong')).text((d) => labelText(valueLabel(d), 16));
+  };
+
+  const renderWaterfall = (element, payload) => {
+    const items = arr(payload.data.items);
+    const totalLike = (item, index) => index === 0 || index === items.length - 1 || ['total', 'subtotal'].includes(String(item.kind ?? item.role ?? '').toLowerCase());
+    let running = 0;
+    const points = items.map((item, index) => {
+      const value = numberValue(item.value);
+      const isTotal = totalLike(item, index);
+      const from = isTotal ? 0 : running;
+      const to = isTotal ? value : running + value;
+      if (index === 0) running = value;
+      else if (!isTotal) running = to;
+      else running = value;
+      return { ...item, index, value, isTotal, from, to, low: Math.min(from, to), high: Math.max(from, to), cumulative: to };
+    });
+    const containerWidth = element.getBoundingClientRect().width || 760;
+    const compact = containerWidth < 640;
+    const { svg, width, height } = svgBase(element, compact ? 380 : 360);
+    const margin = compact ? { top: 54, right: 24, bottom: 104, left: 50 } : { top: 54, right: 38, bottom: 86, left: 62 };
+    const yMin = Math.min(0, d3.min(points, (d) => d.low) || 0);
+    const yMax = Math.max(1, d3.max(points, (d) => d.high) || 0);
+    const x = d3.scaleBand().domain(items.map((d) => d.label)).range([margin.left, width - margin.right]).padding(compact ? 0.26 : 0.32);
+    const y = d3.scaleLinear().domain([yMin, yMax]).nice().range([height - margin.bottom, margin.top]);
+    const defs = svg.append('defs');
+    const shadow = defs.append('filter').attr('id', `${payload.id}-waterfall-shadow`).attr('x', '-18%').attr('y', '-28%').attr('width', '136%').attr('height', '156%');
+    shadow.append('feDropShadow').attr('dx', 0).attr('dy', 4).attr('stdDeviation', 4).attr('flood-color', 'rgba(51,48,46,0.14)');
+    svg.append('rect')
+      .attr('x', margin.left)
+      .attr('y', margin.top)
+      .attr('width', width - margin.left - margin.right)
+      .attr('height', height - margin.top - margin.bottom)
+      .attr('rx', 18)
+      .attr('fill', 'rgba(255,250,245,0.55)')
+      .attr('stroke', 'none');
+    svg.append('line')
+      .attr('x1', margin.left + 8)
+      .attr('x2', width - margin.right - 8)
+      .attr('y1', y(0))
+      .attr('y2', y(0))
+      .attr('stroke', palette.border)
+      .attr('stroke-width', 1.4)
+      .attr('stroke-dasharray', '4 5');
+    svg.append('text')
+      .attr('x', margin.left + 10)
+      .attr('y', margin.top - 18)
+      .attr('fill', palette.muted)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('label'))
+      .attr('letter-spacing', chartFont.tracking.subtle)
+      .text('Waterfall bridge');
+    svg.append('text')
+      .attr('x', width - margin.right - 10)
+      .attr('y', margin.top - 18)
+      .attr('text-anchor', 'end')
+      .attr('fill', palette.muted)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('strong'))
+      .text(`${labelText(points[0]?.label ?? 'Start', 14)} → ${labelText(points.at(-1)?.label ?? 'End', 14)}`);
+    axisLeft(svg, y, margin.left);
+    svg.selectAll('.tick text').attr('font-size', chartFont.small);
+    const connectors = points.slice(0, -1).map((point, index) => ({ from: point, to: points[index + 1] }));
+    svg.append('g').selectAll('line.waterfall-connector').data(connectors).join('line')
+      .attr('class', 'waterfall-connector')
+      .attr('x1', (d) => x(d.from.label) + x.bandwidth())
+      .attr('x2', (d) => x(d.to.label))
+      .attr('y1', (d) => y(d.from.to))
+      .attr('y2', (d) => y(d.from.to))
+      .attr('stroke', palette.muted)
+      .attr('stroke-width', 1.4)
+      .attr('stroke-dasharray', '5 5')
+      .attr('opacity', 0.7);
+    const bars = svg.append('g').selectAll('g.waterfall-step').data(points).join('g')
+      .attr('class', 'waterfall-step');
+    bars.append('rect')
+      .attr('class', (d) => `waterfall-bar ${d.isTotal ? 'waterfall-total' : d.value < 0 ? 'waterfall-negative' : 'waterfall-positive'}`)
+      .attr('x', (d) => x(d.label))
+      .attr('width', x.bandwidth())
+      .attr('y', (d) => y(d.high))
+      .attr('height', (d) => Math.max(4, y(d.low) - y(d.high)))
+      .attr('fill', (d) => d.isTotal ? palette.claret : d.value < 0 ? palette.risk : colorForTone(d.tone ?? 'positive'))
+      .attr('stroke', '#fff7ef')
+      .attr('stroke-width', 2.5)
+      .attr('rx', 8);
+    bars.append('text')
+      .attr('x', (d) => x(d.label) + x.bandwidth() / 2)
+      .attr('y', (d) => {
+        const barTop = y(d.high);
+        const barBottom = y(d.low);
+        const inside = barBottom - barTop > 28;
+        if (inside) return barTop + (barBottom - barTop) / 2 + 5;
+        return d.value < 0 ? barBottom + 14 : barTop - 8;
+      })
+      .attr('text-anchor', 'middle')
+      .attr('fill', (d) => y(d.low) - y(d.high) > 28 ? '#fff7ef' : palette.ink)
+      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
+      .attr('font-weight', fontWeight('emphasis'))
+      .text((d) => labelText(valueLabel(d) || d.value, 9));
+    bars.append('text')
+      .attr('x', (d) => x(d.label) + x.bandwidth() / 2)
+      .attr('y', height - margin.bottom + 24)
+      .attr('text-anchor', 'middle')
+      .attr('fill', palette.ink)
+      .attr('font-size', compact ? chartFont.size.tiny : chartFont.small)
+      .attr('font-weight', fontWeight('strong'))
+      .each(function(d) {
+        renderWrappedText(d3.select(this), d.label, { maxChars: compact ? 8 : 10, maxLines: 2, lineHeight: chartFont.lineHeight.compact });
+      });
+    bars.append('text')
+      .attr('x', (d) => x(d.label) + x.bandwidth() / 2)
+      .attr('y', height - margin.bottom + (compact ? 54 : 50))
+      .attr('text-anchor', 'middle')
+      .attr('fill', palette.muted)
+      .attr('font-size', compact ? chartFont.size.micro : chartFont.size.tiny)
+      .attr('font-weight', fontWeight('strong'))
+      .text((d) => d.isTotal ? 'total' : d.value < 0 ? 'drag' : 'lift');
+    bars.each(function(d) { addTitle(d3.select(this), `${d.label}: ${valueLabel(d) || d.value}; cumulative ${d.to}`); });
+    withTooltip(bars, (d) => tooltipHtml(d.label, [d.isTotal ? `Total: ${valueLabel(d) || d.value}` : `Change: ${valueLabel(d) || d.value}`, `Cumulative: ${d.to}`]));
+  };
+
+  const renderFunnel = (element, payload) => {
+    const items = arr(payload.data.items).length ? arr(payload.data.items) : arr(arr(payload.data.series)[0]?.points);
+    const containerWidth = element.getBoundingClientRect().width || 760;
+    const compact = containerWidth < 640;
+    const { svg, width, height } = svgBase(element, Math.max(compact ? 360 : 330, items.length * (compact ? 58 : 54) + 90));
+    const margin = compact ? { top: 48, right: 72, bottom: 28, left: 106 } : { top: 50, right: 124, bottom: 30, left: 134 };
+    const max = Math.max(...items.map((d) => numberValue(d.value)), 1);
+    const stageGap = compact ? 8 : 9;
+    const stageH = Math.min(compact ? 46 : 44, (height - margin.top - margin.bottom) / Math.max(items.length, 1) - stageGap);
+    const top = margin.top;
+    const barLeft = margin.left;
+    const barRight = width - margin.right;
+    const barMaxW = barRight - barLeft;
+    const minW = Math.max(34, barMaxW * 0.12);
+    const widthScale = d3.scaleLinear().domain([0, max]).range([minW, barMaxW]);
+    const cx = barLeft + barMaxW / 2;
+    const defs = svg.append('defs');
+    const shadow = defs.append('filter').attr('id', `${payload.id}-funnel-shadow`).attr('x', '-10%').attr('y', '-35%').attr('width', '120%').attr('height', '170%');
+    shadow.append('feDropShadow').attr('dx', 0).attr('dy', 4).attr('stdDeviation', 4).attr('flood-color', 'rgba(51,48,46,0.14)');
+    const funnelColors = ['#a81749', '#b42351', '#c2415a', '#d1942f', '#0f766e'];
+    const colorAt = (index) => funnelColors[Math.min(index, funnelColors.length - 1)] ?? colorForTone(index === items.length - 1 ? 'positive' : 'neutral');
+    const rows = items.map((item, index) => {
+      const y = top + index * (stageH + stageGap);
+      const value = numberValue(item.value);
+      const previous = index > 0 ? numberValue(items[index - 1]?.value) : value;
+      const conversion = index === 0 || previous === 0 ? null : value / previous;
+      const share = max === 0 ? 0 : value / max;
+      const w = widthScale(value);
+      return { item, index, y, w, value, conversion, share };
+    });
+    svg.append('rect')
+      .attr('x', margin.left - (compact ? 88 : 112))
+      .attr('y', margin.top - 30)
+      .attr('width', width - margin.left - margin.right + (compact ? 178 : 236))
+      .attr('height', height - margin.top - margin.bottom + 52)
+      .attr('rx', 22)
+      .attr('fill', 'rgba(255,250,245,0.58)')
+      .attr('stroke', 'none');
+    svg.append('text')
+      .attr('x', cx)
+      .attr('y', margin.top - 18)
+      .attr('text-anchor', 'middle')
+      .attr('fill', palette.muted)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('label'))
+      .attr('letter-spacing', chartFont.tracking.subtle)
+      .text('Conversion levels');
+    const stages = svg.append('g').selectAll('g.funnel-stage').data(rows).join('g')
+      .attr('class', 'funnel-stage');
+    stages.append('rect')
+      .attr('class', 'funnel-level-track')
+      .attr('x', barLeft)
+      .attr('y', (d) => d.y)
+      .attr('width', barMaxW)
+      .attr('height', stageH)
+      .attr('rx', 12)
+      .attr('fill', 'rgba(212,196,184,0.14)')
+      .attr('stroke', 'rgba(212,196,184,0.38)');
+    stages.append('rect')
+      .attr('class', 'funnel-level-rect')
+      .attr('x', (d) => cx - d.w / 2)
+      .attr('y', (d) => d.y)
+      .attr('width', (d) => d.w)
+      .attr('height', stageH)
+      .attr('rx', 12)
+      .attr('fill', (d) => colorAt(d.index));
+    stages.append('text')
+      .attr('x', cx)
+      .attr('y', (d) => d.y + stageH / 2 + 5)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#fff7ef')
+      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
+      .attr('font-weight', fontWeight('emphasis'))
+      .text((d) => compact ? `${d3.format('.0%')(d.share)}` : `${d.index + 1} · ${d3.format('.0%')(d.share)}`);
+    stages.append('text')
+      .attr('x', margin.left - 14)
+      .attr('y', (d) => d.y + stageH / 2 + 5)
+      .attr('text-anchor', 'end')
+      .attr('fill', palette.ink)
+      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
+      .attr('font-weight', fontWeight('label'))
+      .text((d) => labelText(d.item.label, compact ? 18 : 16));
+    stages.append('text')
+      .attr('x', width - margin.right + 14)
+      .attr('y', (d) => d.y + stageH / 2 + (compact ? 5 : -3))
+      .attr('text-anchor', 'start')
+      .attr('fill', palette.muted)
+      .attr('font-size', compact ? chartFont.size.tiny : chartFont.small)
+      .attr('font-weight', fontWeight('strong'))
+      .text((d) => valueLabel(d.item));
+    if (!compact) {
+      stages.append('text')
+        .attr('x', width - margin.right + 14)
+        .attr('y', (d) => d.y + stageH / 2 + 15)
+        .attr('fill', palette.muted)
+        .attr('font-size', chartFont.small)
+        .attr('font-weight', fontWeight('medium'))
+        .text((d) => d.conversion == null ? 'entry' : `${d3.format('.0%')(d.conversion)} prior`);
+    }
+    stages.each(function(d) { addTitle(d3.select(this), `${d.item.label}: ${valueLabel(d.item)}${d.conversion == null ? '' : `; ${d3.format('.0%')(d.conversion)} from prior`}`); });
+    withTooltip(stages, (d) => tooltipHtml(d.item.label, [valueLabel(d.item), d.conversion == null ? 'Entry stage' : `${d3.format('.0%')(d.conversion)} from prior`, d.item.detail]));
+  };
+
+  const renderRange = (element, payload) => {
+    const items = arr(payload.data.items);
+    const lows = items.map((item) => numberValue(item.low ?? item.min));
+    const highs = items.map((item) => numberValue(item.high ?? item.max ?? item.value));
+    const mids = items.map((item) => numberValue(item.mid ?? item.value ?? ((numberValue(item.low ?? item.min) + numberValue(item.high ?? item.max ?? item.value)) / 2)));
+    const min = Math.min(...lows, ...mids, 0);
+    const max = Math.max(...highs, ...mids, 1);
+    const containerWidth = element.getBoundingClientRect().width || 760;
+    const compact = containerWidth < 640;
+    const { svg, width, height } = svgBase(element, Math.max(compact ? 330 : 300, items.length * (compact ? 64 : 58) + 88));
+    const margin = compact ? { top: 54, right: 70, bottom: 48, left: 132 } : { top: 54, right: 112, bottom: 48, left: Math.min(206, Math.max(150, Math.max(...items.map((item) => String(item.label ?? '').length), 8) * 8.8)) };
+    const x = d3.scaleLinear().domain([min, max]).nice().range([margin.left, width - margin.right]);
+    const y = d3.scaleBand().domain(items.map((d) => d.label)).range([margin.top, height - margin.bottom]).padding(compact ? 0.28 : 0.24);
+    const plotW = width - margin.left - margin.right;
+    const defs = svg.append('defs');
+    const shadow = defs.append('filter').attr('id', `${payload.id}-range-shadow`).attr('x', '-14%').attr('y', '-34%').attr('width', '128%').attr('height', '168%');
+    shadow.append('feDropShadow').attr('dx', 0).attr('dy', 3).attr('stdDeviation', 3).attr('flood-color', 'rgba(51,48,46,0.13)');
+    const rangeColor = (item) => {
+      const label = String(item.label ?? '').toLowerCase();
+      if (item.tone === 'risk' || label.includes('stress') || label.includes('bear')) return palette.risk;
+      if (item.tone === 'positive' || label.includes('bull')) return palette.positive;
+      if (item.tone === 'opportunity') return palette.opportunity;
+      if (label.includes('base')) return palette.claret;
+      return colorForTone(item.tone);
+    };
+    svg.append('rect')
+      .attr('x', compact ? margin.left - 108 : margin.left - 16)
+      .attr('y', margin.top - 34)
+      .attr('width', plotW + (compact ? 178 : 128))
+      .attr('height', height - margin.top - margin.bottom + 72)
+      .attr('rx', 22)
+      .attr('fill', 'rgba(255,250,245,0.58)')
+      .attr('stroke', 'none');
+    svg.append('text')
+      .attr('x', compact ? margin.left - 112 : margin.left - 16)
+      .attr('y', margin.top - 20)
+      .attr('text-anchor', compact ? 'start' : 'end')
+      .attr('fill', palette.muted)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('label'))
+      .attr('letter-spacing', chartFont.tracking.subtle)
+      .text('Scenario');
+    svg.append('text')
+      .attr('x', width - margin.right)
+      .attr('y', margin.top - 20)
+      .attr('text-anchor', 'end')
+      .attr('fill', palette.muted)
+      .attr('font-size', chartFont.small)
+      .attr('font-weight', fontWeight('strong'))
+      .text('Low · Mid · High');
+    axisBottom(svg, x, height - margin.bottom);
+    svg.selectAll('.tick text').attr('font-size', chartFont.small).attr('font-weight', fontWeight('medium'));
+    const groups = svg.append('g').selectAll('g.range-row').data(items).join('g').attr('class', 'range-row');
+    groups.append('rect')
+      .attr('class', 'range-row-card')
+      .attr('x', margin.left)
+      .attr('y', (d) => y(d.label))
+      .attr('width', plotW)
+      .attr('height', y.bandwidth())
+      .attr('rx', 16)
+      .attr('fill', 'rgba(255,250,245,0.62)')
+      .attr('stroke', 'rgba(212,196,184,0.45)');
+    groups.append('line')
+      .attr('class', 'range-track')
+      .attr('x1', margin.left + 18)
+      .attr('x2', width - margin.right - 18)
+      .attr('y1', (d) => y(d.label) + y.bandwidth() / 2)
+      .attr('y2', (d) => y(d.label) + y.bandwidth() / 2)
+      .attr('stroke', 'rgba(212,196,184,0.66)')
+      .attr('stroke-width', compact ? 8 : 10)
+      .attr('stroke-linecap', 'round');
+    groups.append('rect')
+      .attr('class', 'range-band')
+      .attr('x', (d) => x(numberValue(d.low ?? d.min)))
+      .attr('y', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 9 : 10))
+      .attr('width', (d) => Math.max(8, x(numberValue(d.high ?? d.max ?? d.value)) - x(numberValue(d.low ?? d.min))))
+      .attr('height', compact ? 18 : 20)
+      .attr('rx', compact ? 9 : 10)
+      .attr('fill', (d) => rangeColor(d))
+      .attr('opacity', 0.88);
+    groups.append('line')
+      .attr('class', 'range-low-tick')
+      .attr('x1', (d) => x(numberValue(d.low ?? d.min)))
+      .attr('x2', (d) => x(numberValue(d.low ?? d.min)))
+      .attr('y1', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 16 : 18))
+      .attr('y2', (d) => y(d.label) + y.bandwidth() / 2 + (compact ? 16 : 18))
+      .attr('stroke', '#fff7ef')
+      .attr('stroke-width', 2.5)
+      .attr('stroke-linecap', 'round');
+    groups.append('line')
+      .attr('class', 'range-high-tick')
+      .attr('x1', (d) => x(numberValue(d.high ?? d.max ?? d.value)))
+      .attr('x2', (d) => x(numberValue(d.high ?? d.max ?? d.value)))
+      .attr('y1', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 16 : 18))
+      .attr('y2', (d) => y(d.label) + y.bandwidth() / 2 + (compact ? 16 : 18))
+      .attr('stroke', '#fff7ef')
+      .attr('stroke-width', 2.5)
+      .attr('stroke-linecap', 'round');
+    groups.append('line')
+      .attr('class', 'range-midpoint')
+      .attr('x1', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2))))
+      .attr('x2', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2))))
+      .attr('y1', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 15 : 17))
+      .attr('y2', (d) => y(d.label) + y.bandwidth() / 2 + (compact ? 15 : 17))
+      .attr('stroke', palette.ink)
+      .attr('stroke-width', 2.2)
+      .attr('stroke-linecap', 'round');
+    groups.append('circle')
+      .attr('class', 'range-midpoint-dot')
+      .attr('cx', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2))))
+      .attr('cy', (d) => y(d.label) + y.bandwidth() / 2)
+      .attr('r', compact ? 5.5 : 6)
+      .attr('fill', '#fff7ef')
+      .attr('stroke', palette.ink)
+      .attr('stroke-width', 2.2);
+    groups.append('text')
+      .attr('x', margin.left - 22)
+      .attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 5)
+      .attr('text-anchor', 'end')
+      .attr('fill', palette.ink)
+      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
+      .attr('font-weight', fontWeight('label'))
+      .text((d) => labelText(d.label, compact ? 18 : 20));
+    groups.append('text')
+      .attr('x', width - margin.right + 14)
+      .attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 5)
+      .attr('text-anchor', 'start')
+      .attr('fill', palette.ink)
+      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
+      .attr('font-weight', fontWeight('label'))
+      .text((d) => labelText(d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`, compact ? 14 : 16));
+    groups.append('text')
+      .attr('x', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2))))
+      .attr('y', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 18 : 20))
+      .attr('text-anchor', 'middle')
+      .attr('fill', palette.muted)
+      .attr('font-size', compact ? chartFont.size.micro : chartFont.size.tiny)
+      .attr('font-weight', fontWeight('strong'))
+      .text((d) => `mid ${d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2)}`);
+    groups.each(function(d) {
+      const low = numberValue(d.low ?? d.min);
+      const mid = numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2));
+      const high = numberValue(d.high ?? d.max ?? d.value);
+      addTitle(d3.select(this), `${d.label}: low ${low}, mid ${mid}, high ${high}`);
+    });
+    withTooltip(groups, (d) => {
+      const mid = d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2);
+      return tooltipHtml(d.label, [`Low: ${d.low ?? d.min}`, `Mid: ${mid}`, `High: ${d.high ?? d.max ?? d.value}`, d.detail]);
+    });
+  };
+
+  const renderQuadrant = (element, payload) => {
+    const points = arr(payload.data.points);
+    const axisLabel = (raw, fallback) => {
+      if (raw == null) return fallback;
+      if (typeof raw === 'string' || typeof raw === 'number') return String(raw);
+      if (typeof raw === 'object' && typeof raw.label === 'string') return raw.label;
+      return fallback;
+    };
+    const xAxisLabel = axisLabel(payload.data.xAxis ?? payload.data.xLabel ?? payload.data.x, 'X');
+    const yAxisLabel = axisLabel(payload.data.yAxis ?? payload.data.yLabel ?? payload.data.y, 'Y');
+    const xs = points.map((p) => Number(p.x)).filter(Number.isFinite);
+    const ys = points.map((p) => Number(p.y)).filter(Number.isFinite);
+    const allValues = [...xs, ...ys];
+    const finiteMin = allValues.length ? Math.min(...allValues) : 0;
+    const finiteMax = allValues.length ? Math.max(...allValues) : 100;
+    const isTenPointScore = finiteMin >= 0 && finiteMax <= 10;
+    const isUnitScore = finiteMin >= 0 && finiteMax <= 1;
+    const isPercentScore = !isTenPointScore && !isUnitScore && finiteMin >= 0 && finiteMax <= 100;
+    const referenceValue = isTenPointScore ? 5 : isUnitScore ? 0.5 : 50;
+    const safeRange = (vals) => {
+      if (vals.length === 0) return isTenPointScore ? { min: 0, max: 10 } : isUnitScore ? { min: 0, max: 1 } : { min: 0, max: 100 };
+      if (isTenPointScore) return { min: 0, max: 10 };
+      if (isUnitScore) return { min: 0, max: 1 };
+      if (isPercentScore) return { min: 0, max: 100 };
+      const lo = Math.min(...vals);
+      const hi = Math.max(...vals);
+      const distance = Math.max(Math.abs(lo - referenceValue), Math.abs(hi - referenceValue), 10);
+      const roundedDistance = Math.ceil(distance / 5) * 5;
+      return { min: referenceValue - roundedDistance, max: referenceValue + roundedDistance };
+    };
+    const xRange = safeRange(xs);
+    const yRange = safeRange(ys);
+    const containerWidth = element.getBoundingClientRect().width || 760;
+    const compact = containerWidth < 640;
+    const { svg, width, height } = svgBase(element, compact ? 520 : 440);
+    const margin = compact ? { top: 52, right: 34, bottom: 118, left: 52 } : { top: 54, right: 42, bottom: 104, left: 70 };
+    const plotW = width - margin.left - margin.right;
+    const plotH = height - margin.top - margin.bottom;
+    const x = d3.scaleLinear().domain([xRange.min, xRange.max]).range([margin.left, width - margin.right]);
+    const y = d3.scaleLinear().domain([yRange.min, yRange.max]).range([height - margin.bottom, margin.top]);
+    const refX = Math.max(margin.left, Math.min(width - margin.right, x(referenceValue)));
+    const refY = Math.max(margin.top, Math.min(height - margin.bottom, y(referenceValue)));
+    const defs = svg.append('defs');
+    const shadow = defs.append('filter').attr('id', `${payload.id}-quadrant-shadow`).attr('x', '-20%').attr('y', '-24%').attr('width', '140%').attr('height', '152%');
+    shadow.append('feDropShadow').attr('dx', 0).attr('dy', 5).attr('stdDeviation', 5).attr('flood-color', 'rgba(51,48,46,0.16)');
+    const panel = svg.append('g');
+    const quadrants = [
+      { label: 'Specialist depth', x: margin.left, y: margin.top, w: refX - margin.left, h: refY - margin.top, fill: 'rgba(15,118,110,0.07)' },
+      { label: 'Leader zone', x: refX, y: margin.top, w: width - margin.right - refX, h: refY - margin.top, fill: 'rgba(153,15,61,0.07)' },
+      { label: 'Watchlist', x: margin.left, y: refY, w: refX - margin.left, h: height - margin.bottom - refY, fill: 'rgba(180,35,24,0.055)' },
+      { label: 'Scale path', x: refX, y: refY, w: width - margin.right - refX, h: height - margin.bottom - refY, fill: 'rgba(184,134,11,0.075)' },
+    ].filter((q) => q.w > 2 && q.h > 2);
+    panel.append('rect')
+      .attr('x', margin.left)
+      .attr('y', margin.top)
+      .attr('width', plotW)
+      .attr('height', plotH)
+      .attr('rx', 18)
+      .attr('fill', '#fffaf5')
+      .attr('stroke', palette.border);
+    panel.selectAll('rect.quadrant-zone').data(quadrants).join('rect')
+      .attr('class', 'quadrant-zone')
+      .attr('x', (q) => q.x)
+      .attr('y', (q) => q.y)
+      .attr('width', (q) => q.w)
+      .attr('height', (q) => q.h)
+      .attr('fill', (q) => q.fill)
+      .attr('clip-path', null);
+    panel.append('line').attr('x1', refX).attr('x2', refX).attr('y1', margin.top + 10).attr('y2', height - margin.bottom - 10).attr('stroke', palette.claret).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 6').attr('opacity', 0.58);
+    panel.append('line').attr('x1', margin.left + 10).attr('x2', width - margin.right - 10).attr('y1', refY).attr('y2', refY).attr('stroke', palette.claret).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 6').attr('opacity', 0.58);
+    panel.append('circle').attr('cx', refX).attr('cy', refY).attr('r', 5).attr('fill', '#fffaf5').attr('stroke', palette.claret).attr('stroke-width', 2).attr('opacity', 0.85);
+    panel.selectAll('text.quadrant-label').data(quadrants).join('text')
+      .attr('class', 'quadrant-label')
+      .attr('x', (q) => q.x + (q.x < refX ? 12 : q.w - 12))
+      .attr('y', (q) => q.y + (q.y < refY ? 20 : q.h - 12))
+      .attr('text-anchor', (q) => q.x < refX ? 'start' : 'end')
+      .attr('fill', palette.muted)
+      .attr('font-size', compact ? chartFont.size.tiny : chartFont.size.caption)
+      .attr('font-weight', fontWeight('label'))
+      .attr('letter-spacing', chartFont.tracking.subtle)
+      .text((q) => q.label);
+    const tickValues = (range) => Array.from(new Set([range.min, referenceValue, range.max]));
+    const tickFormat = isUnitScore ? d3.format('.1f') : d3.format('~g');
+    svg.append('g')
+      .attr('transform', `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(x).tickValues(tickValues(xRange)).tickFormat(tickFormat).tickSizeOuter(0))
+      .call((axis) => axis.select('.domain').attr('stroke', palette.border))
+      .call((axis) => axis.selectAll('line').attr('stroke', palette.border).attr('opacity', 0.65))
+      .call((axis) => axis.selectAll('text').attr('fill', palette.muted).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')));
+    svg.append('g')
+      .attr('transform', `translate(${margin.left},0)`)
+      .call(d3.axisLeft(y).tickValues(tickValues(yRange)).tickFormat(tickFormat).tickSizeOuter(0))
+      .call((axis) => axis.select('.domain').attr('stroke', palette.border))
+      .call((axis) => axis.selectAll('line').attr('stroke', palette.border).attr('opacity', 0.65))
+      .call((axis) => axis.selectAll('text').attr('fill', palette.muted).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')));
+    svg.selectAll('.domain').attr('stroke', palette.border);
+    svg.selectAll('.tick line').attr('stroke', palette.border).attr('opacity', 0.65);
+    svg.append('text').attr('x', margin.left + plotW / 2).attr('y', height - margin.bottom + 42).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('label')).text(xAxisLabel);
+    svg.append('text').attr('transform', `translate(${compact ? 18 : 24},${margin.top + plotH / 2}) rotate(-90)`).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('label')).text(yAxisLabel);
+    const plotPoints = points.map((point, index) => {
+      const targetX = x(numberValue(point.x));
+      const targetY = y(numberValue(point.y));
+      return { ...point, _index: index, _valueX: point.x, _valueY: point.y, _targetX: targetX, _targetY: targetY, x: targetX, y: targetY };
+    });
+    d3.forceSimulation(plotPoints)
+      .force('x', d3.forceX((d) => d._targetX).strength(0.28))
+      .force('y', d3.forceY((d) => d._targetY).strength(0.28))
+      .force('collide', d3.forceCollide(compact ? 18 : 20))
+      .stop()
+      .tick(90);
+    plotPoints.forEach((point) => {
+      point.x = Math.max(margin.left + 18, Math.min(width - margin.right - 18, point.x));
+      point.y = Math.max(margin.top + 18, Math.min(height - margin.bottom - 18, point.y));
+    });
+    const dots = svg.append('g').selectAll('g.quadrant-point').data(plotPoints).join('g').attr('class', 'quadrant-point').attr('transform', (d) => `translate(${d.x},${d.y})`);
+    dots.append('circle').attr('r', compact ? 15 : 17).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 3).attr('opacity', 0.96);
+    dots.append('circle').attr('r', compact ? 7 : 8).attr('fill', '#fff7ef').attr('opacity', 0.18);
+    dots.append('text').attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('fill', '#fff7ef').attr('font-size', compact ? chartFont.size.caption : chartFont.size.caption).attr('font-weight', fontWeight('emphasis')).text((d) => d._index + 1);
+    const labelAnchor = (d) => d.x > refX ? 'end' : 'start';
+    dots.append('text')
+      .attr('x', (d) => d.x > refX ? -(compact ? 20 : 23) : compact ? 20 : 23)
+      .attr('y', 4)
+      .attr('text-anchor', labelAnchor)
+      .attr('fill', palette.ink)
+      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
+      .attr('font-weight', fontWeight('label'))
+      .text((d) => labelText(d.label, compact ? 12 : 18));
+    dots.each(function(d) { addTitle(d3.select(this), `${d.label}: ${xAxisLabel} ${d._valueX}; ${yAxisLabel} ${d._valueY}`); });
+    withTooltip(dots, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d._valueX}`, `${yAxisLabel}: ${d._valueY}`, d.detail]));
+    const legend = svg.append('g').attr('transform', `translate(${margin.left},${height - margin.bottom + 64})`);
+    const legendRows = legend.selectAll('g').data(points.map((point, index) => ({ ...point, _index: index }))).join('g').attr('transform', (_d, index) => {
+      const col = compact ? index % 2 : index;
+      const row = compact ? Math.floor(index / 2) : 0;
+      return `translate(${col * (compact ? plotW / 2 : Math.min(132, plotW / Math.max(points.length, 1)))},${row * 22})`;
+    });
+    legendRows.append('circle').attr('cx', 7).attr('cy', -4).attr('r', 7).attr('fill', (d) => colorForTone(d.tone));
+    legendRows.append('text').attr('x', 7).attr('y', 0).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', chartFont.size.micro).attr('font-weight', fontWeight('label')).text((d) => d._index + 1);
+    legendRows.append('text').attr('x', 20).attr('y', 0).attr('fill', palette.ink).attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('strong')).text((d) => labelText(d.label, compact ? 16 : 14));
+    withTooltip(legendRows, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d.x}`, `${yAxisLabel}: ${d.y}`, d.detail]));
+  };
+
+  const renderHeatmap = (element, payload) => {
+    const columns = arr(payload.data.columns);
+    const rows = arr(payload.data.rows);
+    const heatColors = {
+      1: '#dcebe7',
+      2: '#f2d8a0',
+      3: '#c94f43',
+    };
+    const heatTextColors = {
+      1: palette.ink,
+      2: palette.ink,
+      3: '#fff7ef',
+    };
+    const { svg, width, height } = svgBase(element, Math.max(340, rows.length * 68 + 96));
+    const margin = { top: 58, right: 24, bottom: 26, left: Math.min(220, Math.max(136, Math.max(...rows.map((row) => String(row.label ?? '').length), 8) * 8)) };
+    const x = d3.scaleBand().domain(columns).range([margin.left, width - margin.right]).padding(0.08);
+    const y = d3.scaleBand().domain(rows.map((row) => row.label)).range([margin.top, height - margin.bottom]).padding(0.08);
+    svg.append('g').selectAll('text').data(columns).join('text').attr('x', (d) => x(d) + x.bandwidth() / 2).attr('y', margin.top - 16).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')).text((d) => labelText(d, 14));
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')).each(function(d) {
+      renderWrappedText(d3.select(this), d.label, { maxChars: 22, maxLines: 2, lineHeight: chartFont.lineHeight.tight });
+    });
+    const cells = [];
+    rows.forEach((row) => arr(row.values).forEach((cell, colIndex) => cells.push({ row: row.label, column: columns[colIndex], cell, value: riskValue(cell.tone) })));
+    const g = svg.append('g').selectAll('g').data(cells).join('g');
+    g.append('rect').attr('x', (d) => x(d.column)).attr('y', (d) => y(d.row)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 7).attr('fill', (d) => heatColors[d.value]).attr('stroke', '#fff7ef').attr('stroke-width', 3);
+    g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('fill', (d) => heatTextColors[d.value]).attr('font-size', chartFont.small).attr('font-weight', fontWeight('strong')).each(function(d) {
+      renderWrappedText(d3.select(this), d.cell.label ?? d.cell, { maxChars: Math.max(8, Math.floor(x.bandwidth() / 7)), maxLines: Math.max(1, Math.floor(y.bandwidth() / 16)), lineHeight: chartFont.lineHeight.tight });
+    });
+    g.each(function(d) { addTitle(d3.select(this), `${d.row} × ${d.column}: ${d.cell.label ?? d.cell}`); });
+    withTooltip(g, (d) => tooltipHtml(`${d.row} × ${d.column}`, [d.cell.label ?? d.cell, d.cell.detail]));
+  };
+
+  const renderCohort = (element, payload) => {
+    const columns = arr(payload.data.columns);
+    const rows = arr(payload.data.rows);
+    const { svg, width, height } = svgBase(element, Math.max(340, rows.length * 58 + 92));
+    const margin = { top: 58, right: 24, bottom: 26, left: 156 };
+    const x = d3.scaleBand().domain(columns).range([margin.left, width - margin.right]).padding(0.08);
+    const y = d3.scaleBand().domain(rows.map((row) => row.label)).range([margin.top, height - margin.bottom]).padding(0.08);
+    // Adaptive color scale. Default to retention percentages 0–100 (the
+    // canonical cohort use case) but fall back to the observed numeric range
+    // so misuses with ordinal scoring (e.g. 0–3) still produce visible
+    // contrast instead of a single flat color.
+    const numericValues = [];
+    for (const row of rows) for (const cell of arr(row.values)) {
+      const value = Number(cell?.value ?? String(cell?.label ?? '').replace(/[^0-9.-]/g, ''));
+      if (Number.isFinite(value)) numericValues.push(value);
+    }
+    const dataMin = numericValues.length ? Math.min(...numericValues) : 0;
+    const dataMax = numericValues.length ? Math.max(...numericValues) : 100;
+    const fitsPercent = dataMin >= 0 && dataMax <= 100 && dataMax > 10;
+    const colorDomain = fitsPercent
+      ? [0, 50, 100]
+      : dataMax === dataMin
+        ? [dataMin, dataMin, dataMax + 1]
+        : [dataMin, (dataMin + dataMax) / 2, dataMax];
+    const color = d3.scaleLinear().domain(colorDomain).range(['#f4c7bd', '#f2d8a0', '#0f766e']);
+    svg.append('g').selectAll('text').data(columns).join('text').attr('x', (d) => x(d) + x.bandwidth() / 2).attr('y', margin.top - 16).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')).text((d) => labelText(d, 14));
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')).each(function(d) {
+      renderWrappedText(d3.select(this), d.label, { maxChars: 20, maxLines: 2, lineHeight: chartFont.lineHeight.tight });
+    });
+    const cells = [];
+    rows.forEach((row) => arr(row.values).forEach((cell, colIndex) => {
+      const value = Number(cell?.value ?? String(cell?.label ?? '').replace(/[^0-9.-]/g, ''));
+      cells.push({ row: row.label, column: columns[colIndex], cell, value: Number.isFinite(value) ? value : 0 });
+    }));
+    const g = svg.append('g').selectAll('g').data(cells).join('g');
+    g.append('rect').attr('x', (d) => x(d.column)).attr('y', (d) => y(d.row)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 7).attr('fill', (d) => color(d.value)).attr('stroke', '#fff7ef').attr('stroke-width', 3);
+    g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', fontWeight('strong')).each(function(d) {
+      renderWrappedText(d3.select(this), d.cell.label ?? d.cell.displayValue ?? d.value, { maxChars: Math.max(7, Math.floor(x.bandwidth() / 7)), maxLines: Math.max(1, Math.floor(y.bandwidth() / 16)), lineHeight: chartFont.lineHeight.tight });
+    });
+    g.each(function(d) { addTitle(d3.select(this), `${d.row} × ${d.column}: ${d.cell.label ?? d.cell.displayValue ?? d.value}`); });
+    withTooltip(g, (d) => tooltipHtml(`${d.row} × ${d.column}`, [d.cell.label ?? d.cell.displayValue ?? d.value, d.cell.detail]));
+  };
+
+  const RENDERERS = {
+    timeline: renderTimeline,
+    flow: renderFlow,
+    stack: renderStack,
+    pyramid: renderPyramid,
+    'journey-map': renderJourneyMap,
+    kpi: renderKpi,
+    waterfall: renderWaterfall,
+    funnel: renderFunnel,
+    range: renderRange,
+    bar: renderBar,
+    matrix: renderHeatmap,
+    cohort: renderCohort,
+    quadrant: renderQuadrant,
+    dag: renderDag,
+  };
+
+  const normalizeRenderedTypography = (element) => {
+    d3.select(element)
+      .selectAll('svg text')
+      .attr('font-family', chartFont.family);
+  };
+
+  const normalizeRenderedFlatStyle = (element) => {
+    const svg = d3.select(element).select('svg');
+    svg.selectAll('filter').remove();
+    svg.selectAll('[filter]').attr('filter', null);
+    svg.selectAll('[style*="drop-shadow"], [style*="box-shadow"]').style('filter', null).style('box-shadow', null);
+  };
+
+  const renderD3 = (element, payload) => {
+    let result;
+    result = RENDERERS[payload.type]?.(element, payload);
+    normalizeRenderedTypography(element);
+    normalizeRenderedFlatStyle(element);
+    return result;
+  };
+
+  const renderCharts = () => {
+    document.querySelectorAll('script.figure-chart-data').forEach((script) => {
+      if (script.dataset.rendered === 'true') return;
+      const payload = JSON.parse(script.textContent || '{}');
+      const element = document.getElementById(payload.id);
+      if (!element) return;
+      renderD3(element, payload);
+      script.dataset.rendered = 'true';
+    });
+  };
+  renderCharts();
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('script.figure-chart-data').forEach((script) => {
+      script.dataset.rendered = 'false';
+    });
+    renderCharts();
+  });
+</script>
+
+<style>
+  .native-figure { --figure-width: 760px; --chart-fs-kicker: clamp(0.76rem, 0.1vw + 0.72rem, 0.84rem); --chart-fs-caption: clamp(0.8rem, 0.12vw + 0.76rem, 0.9rem); --chart-fs-body: clamp(0.94rem, 0.14vw + 0.88rem, 1.02rem); --chart-fs-note: clamp(0.9rem, 0.12vw + 0.86rem, 0.98rem); --chart-fw-body: 650; --chart-fw-strong: 800; --chart-fw-label: 900; --chart-tracking-subtle: 0.04em; --chart-leading-caption: 1.35; --chart-leading-body: 1.55; width: min(100%, var(--figure-width)); margin: var(--space-6) auto var(--space-6) 0; padding: var(--space-4); background: var(--surface-paper); border: var(--report-rule); border-top: 2px solid var(--claret); }
+  .layout-compact { --figure-width: 560px; }
+  .layout-standard { --figure-width: 760px; }
+  .layout-wide { --figure-width: 980px; }
+  figcaption { margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--chart-fs-kicker); font-weight: var(--chart-fw-body); letter-spacing: var(--chart-tracking-subtle); line-height: var(--chart-leading-caption); color: var(--claret); }
+  .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--chart-fs-note); line-height: var(--chart-leading-body); }
+  .figure-note { margin-top: var(--space-3); }
+  .d3-figure { position: relative; width: 100%; min-height: 0; margin: var(--space-3) 0; overflow: visible; }
+  .d3-figure svg text { pointer-events: none; user-select: none; }
+  .d3-figure .is-hovered rect, .d3-figure .is-hovered circle, .d3-figure .is-hovered polygon, .d3-figure rect.is-hovered, .d3-figure circle.is-hovered, .d3-figure polygon.is-hovered { filter: none; stroke-width: 2.4px; }
+  :global(.d3-chart-tooltip) { --tooltip-font: var(--chart-fs-caption, clamp(0.76rem, 0.25vw + 0.72rem, 0.9rem)); --tooltip-pointer-x: 1.4rem; position: fixed; z-index: 1000; display: grid; gap: 0.34rem; width: max-content; max-width: min(24rem, calc(100vw - 1.5rem)); border: 1px solid color-mix(in srgb, var(--claret) 18%, var(--rule)); border-radius: 0.82rem; background: color-mix(in srgb, var(--surface-paper) 94%, white); color: var(--ink-page); padding: 0.72rem 0.82rem; font-family: var(--font-sans); font-size: var(--tooltip-font); line-height: var(--chart-leading-caption, 1.36); box-shadow: none; opacity: 0; pointer-events: none; transform: translate3d(0, 0.35rem, 0) scale(0.98); transform-origin: var(--tooltip-pointer-x) top; transition: opacity 120ms ease, transform 120ms ease; }
+  :global(.d3-chart-tooltip::before) { content: ''; position: absolute; left: var(--tooltip-pointer-x); width: 0.72rem; height: 0.72rem; background: inherit; border: inherit; transform: translateX(-50%) rotate(45deg); z-index: 0; }
+  :global(.d3-chart-tooltip[data-placement-y='bottom']::before) { top: -0.39rem; border-right: 0; border-bottom: 0; }
+  :global(.d3-chart-tooltip[data-placement-y='top']::before) { bottom: -0.39rem; border-left: 0; border-top: 0; }
+  :global(.d3-chart-tooltip.is-visible) { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  :global(.d3-chart-tooltip strong) { display: block; margin-bottom: 0.05rem; font-family: var(--font-display); font-size: calc(var(--tooltip-font) * 1.08); line-height: 1.18; color: var(--claret); }
+  :global(.d3-chart-tooltip span) { display: block; color: var(--caption-gray); }
+  :global(.d3-chart-tooltip span + span) { padding-top: 0.12rem; border-top: 1px solid color-mix(in srgb, var(--rule) 62%, transparent); }
+  .chart-bar, .chart-quadrant, .chart-matrix { min-height: 0; }
+  .figure-fallback { border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); padding: var(--space-4); }
+  .figure-fallback strong { display: block; margin-bottom: var(--space-2); font-family: var(--font-display); font-size: var(--chart-fs-body); font-weight: var(--chart-fw-strong); }
+  .figure-fallback p { margin: 0; color: var(--caption-gray); font-size: var(--chart-fs-body); line-height: var(--chart-leading-body); }
+  .figure-fallback code { font-family: var(--font-mono); color: var(--claret); }
+  @media (max-width: 699px) {
+    .native-figure { padding: var(--space-3); margin-block: var(--space-4); }
+    .native-figure { --chart-fs-note: var(--chart-fs-kicker); --chart-leading-body: var(--chart-leading-caption); }
+    .figure-summary, .figure-note { margin-bottom: var(--space-2); }
+    .figure-note { display: none; }
+    .figure-fallback { padding: var(--space-3); }
+    .figure-fallback strong { font-size: var(--chart-fs-body); }
+    .figure-fallback p { font-size: var(--chart-fs-note); line-height: var(--chart-leading-caption); }
+  }
+</style>

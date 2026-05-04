@@ -1,10 +1,9 @@
 # Manual startup research run.
 #
-# This workflow mirrors the Copilot CLI pattern used by ../bizidea. The
-# `Startup Research` agent owns orchestration across identity, evidence,
-# product, business, memo, and Chinese localization stages. CI installs deps,
-# invokes the orchestrator, normalizes YAML, rebuilds reports/_index.yaml,
-# validates the site, and commits completed reports.
+# The default Copilot agent runs the .github/skills/startup-research workflow
+# (see .github/skills/startup-research/SKILL.md). CI installs deps, invokes the
+# CLI, rebuilds reports/_index.yaml, validates the site, and commits completed
+# YAML report artifacts.
 #
 # Required secrets / setup:
 # - COPILOT_PAT — PAT for a Copilot-licensed account; passed to the Copilot CLI.
@@ -16,41 +15,20 @@ on:
   workflow_dispatch:
     inputs:
       companyName:
-        description: "Company name to research"
-        required: true
-        type: string
-      companyUrl:
-        description: "Optional official website or profile URL"
+        description: "Company name to research; leave blank to auto-select recent unicorns"
         required: false
         default: ""
         type: string
-      focus:
-        description: "Optional diligence focus"
+      companyUrl:
+        description: "Optional official website or profile URL; leave blank for auto-select mode"
         required: false
-        default: "full company diligence"
+        default: ""
         type: string
-      depth:
-        description: "Research depth"
-        required: false
-        default: "standard"
-        type: choice
-        options:
-          - standard
-          - deep
-      includeZh:
-        description: "Generate Simplified Chinese localized YAML"
-        required: false
-        default: "true"
-        type: choice
-        options:
-          - "true"
-          - "false"
-
 permissions:
   contents: write
 
 concurrency:
-  group: startup-research-${{ github.event.inputs.companyName }}
+  group: startup-research-${{ github.event.inputs.companyName || 'recent-unicorns' }}
   cancel-in-progress: false
 
 jobs:
@@ -86,67 +64,82 @@ jobs:
         env:
           RAW_COMPANY: ${{ github.event.inputs.companyName }}
           RAW_URL: ${{ github.event.inputs.companyUrl }}
-          RAW_FOCUS: ${{ github.event.inputs.focus }}
-          RAW_DEPTH: ${{ github.event.inputs.depth }}
-          RAW_INCLUDE_ZH: ${{ github.event.inputs.includeZh }}
         run: |
           set -euo pipefail
-          COMPANY="${RAW_COMPANY//$'\n'/ }"
-          URL="${RAW_URL//$'\n'/ }"
-          FOCUS="${RAW_FOCUS//$'\n'/ }"
-          DEPTH="${RAW_DEPTH:-standard}"
-          INCLUDE_ZH="${RAW_INCLUDE_ZH:-true}"
-          if [ -z "$COMPANY" ]; then
-            echo "companyName is required" >&2
-            exit 1
+          COMPANY="$(printf '%s' "${RAW_COMPANY//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+          URL="$(printf '%s' "${RAW_URL//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+          MODE="single-company"
+          if [ -z "$COMPANY" ] && [ -z "$URL" ]; then
+            MODE="recent-unicorns"
+            COMPANY="recent-unicorns"
+          elif [ -z "$COMPANY" ]; then
+            COMPANY="$URL"
           fi
           {
+            echo "mode=$MODE"
             echo "company<<EOF"
             echo "$COMPANY"
             echo "EOF"
             echo "url<<EOF"
             echo "$URL"
             echo "EOF"
-            echo "focus<<EOF"
-            echo "$FOCUS"
-            echo "EOF"
-            echo "depth=$DEPTH"
-            echo "includeZh=$INCLUDE_ZH"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Run Startup Research orchestrator
+      - name: Run Startup Research workflow
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
+          MODE: ${{ steps.inputs.outputs.mode }}
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
-          FOCUS: ${{ steps.inputs.outputs.focus }}
-          DEPTH: ${{ steps.inputs.outputs.depth }}
-          INCLUDE_ZH: ${{ steps.inputs.outputs.includeZh }}
         run: |
           set -euo pipefail
-          PROMPT=$(cat <<EOF
-          Run the full Startup Research pipeline for this company.
+          if [ "$MODE" = "recent-unicorns" ]; then
+            PROMPT=$(cat <<EOF
+          Follow the .github/skills/startup-research skill (.github/skills/startup-research/SKILL.md) and run recent-unicorn discovery.
+
+          Select at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a \$1B valuation, or became newly prominent in the last 12-24 months. Avoid companies already present in reports/_index.yaml unless a materially new report is justified.
+
+          For each selected company, run one complete Startup Research workflow using the startup-research skill end-to-end. Do not invoke another agent or delegate report stages. Use schemaVersion report-v2 and the references listed in the skill. Each company must produce the full required English YAML set under its own reports/<run>/ folder. Use web_search and the fetch-url skill as described in the startup-research SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
+          EOF
+          )
+          else
+            PROMPT=$(cat <<EOF
+          Follow the .github/skills/startup-research skill (.github/skills/startup-research/SKILL.md) and run one complete Startup Research workflow for this company.
 
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-null}
-          Focus: $FOCUS
-          Depth: $DEPTH
-          Include Simplified Chinese localization: $INCLUDE_ZH
 
-          Use only schemaVersion startup-diligence-v1. Orchestrate all stages yourself using the configured specialist agents: identity -> evidence -> product -> business -> memo -> ZH translator when requested. Generate the complete professional diligence artifact set under reports/, including 00-10 and extended 11-team-people.yaml, 12-comparables-valuation.yaml, and 13-milestones-catalysts.yaml whenever evidence supports them. Keep all factual claims linked through 02-source-ledger.yaml claimRefs/sourceRefs. Preserve unsupported metrics as null with explanation. Delete duplicate or failed partial report folders before final validation. Do not invoke Startup Research recursively. Do not run git add or git commit.
+          Use schemaVersion report-v2 and the references listed in the skill. Run the skill end-to-end; do not invoke another agent or delegate report stages. Write the full required English YAML set under reports/<run>/. Use web_search and the fetch-url skill as described in the startup-research SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
           EOF
           )
-          copilot --yolo --no-ask-user --agent "Startup Research" -p "$PROMPT"
-
-      - name: Normalize generated YAML
-        working-directory: website
-        run: npm run repair:yaml
+          fi
+          copilot --yolo --no-ask-user -p "$PROMPT"
 
       - name: Rebuild reports/_index.yaml
-        run: node scripts/build-reports-index.mjs --strict
+        run: node .github/skills/startup-research/scripts/index.mjs --strict
 
       - name: Validate generated report and website
         run: npm run validate
+
+      - name: Reject partial report folders
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          partials=()
+          for dir in reports/*/; do
+            if compgen -G "${dir}*.yaml" > /dev/null; then
+              for required in summary-card.yaml; do
+                if [ ! -f "${dir}${required}" ]; then
+                  partials+=("${dir%/} (missing ${required})")
+                fi
+              done
+            fi
+          done
+          if [ "${#partials[@]}" -gt 0 ]; then
+            printf 'Partial report folder(s) found; refusing to commit:\n' >&2
+            printf ' - %s\n' "${partials[@]}" >&2
+            exit 1
+          fi
 
       - name: Commit and push new report
         env:
@@ -157,7 +150,7 @@ jobs:
           git config user.email "startup-research-bot@users.noreply.github.com"
           git fetch origin "${{ github.ref_name }}"
           git rebase --autostash "origin/${{ github.ref_name }}"
-          node scripts/build-reports-index.mjs --strict
+          node .github/skills/startup-research/scripts/index.mjs --strict
           git add reports/
           if git diff --cached --quiet; then
             echo "No new or updated startup reports."

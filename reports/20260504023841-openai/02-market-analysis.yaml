@@ -1,0 +1,696 @@
+schemaVersion: report-v2
+artifact: market-analysis
+slug: openai
+runDate: '2026-05-04'
+company:
+  name: OpenAI
+acknowledgedWarnings:
+  - dimension: duplicateAnalysis
+    reason: >-
+      The paired tables preserve auditability and exact values, while the figures intentionally give executives a faster
+      visual summary of the same evidence from a different angle.
+chapter:
+  number: 2
+  title: Market Analysis
+  summary: >-
+    OpenAI is exposed to a very large generative AI opportunity, but the market that matters for underwriting is
+    narrower than headline TAM figures suggest. Public evidence shows budgets moving from experimentation toward
+    recurring enterprise, developer, and education deployments, while regulation, governance, trust, and ROI proof
+    remain the main constraints on full-scale adoption.
+sections:
+  - id: section-1
+    title: Market boundary and sizing lenses
+    body: >-
+      OpenAI’s relevant market is not the entire AI stack. Public product pages show the company selling across three
+      direct monetization surfaces: workforce-oriented ChatGPT Business and Enterprise plans, token-priced API usage for
+      developers and software teams, and a separate education offering for universities. That boundary matters because
+      Gartner’s 2025 $644 billion generative AI forecast is a broad top-down spend lens that includes categories such as
+      devices, servers, software, and services, while Menlo’s $13.8 billion enterprise spend and $4.6 billion
+      application-layer spend are much closer to the budgets that actually flow into foundation-model applications and
+      copilots. For underwriting, the practical market boundary should therefore include seat-based enterprise
+      assistants, developer and agent workflows priced on usage, and institutional deployments such as higher education;
+      it should exclude generic hardware refresh, hyperscaler infrastructure capex, and non-GenAI software modules that
+      do not directly monetize a model or assistant.
+
+
+      McKinsey’s value-pool work is still useful, but as an outer envelope rather than a direct revenue pool. Its $2.6
+      trillion to $4.4 trillion annual estimate shows why the category receives premium valuations, yet realized
+      spending is still far below that ceiling and heavily mediated by organizational change, integration, and
+      governance. The key implication for OpenAI is that the company benefits from a genuinely large demand backdrop,
+      but direct SAM should be framed through enterprise application budgets and model-usage budgets rather than the
+      whole headline AI economy.
+    claimRefs:
+      - C040
+      - C041
+      - C043
+      - C049
+      - C055
+      - C063
+      - C068
+      - C105
+      - C107
+  - id: section-2
+    title: Buyer segmentation, budgets, and adoption path
+    body: >-
+      The public evidence shows OpenAI selling into several buyer maps at once. The first is the broad knowledge-work
+      market: OpenAI explicitly markets Business and Enterprise plans as workforce tools, while Microsoft’s 2025 Work
+      Trend Index shows leaders prioritizing customer service, marketing, and product development and expecting digital
+      labor to expand their workforce. The second is the developer market, where OpenAI’s API and development-focused
+      pricing line up with Menlo’s finding that code copilots are the most adopted enterprise use case at 51%. The third
+      is institutional education, where OpenAI’s ChatGPT Edu materials target students, faculty, researchers, and campus
+      operations under a centralized university purchasing motion.
+
+
+      Budget ownership is equally important. Menlo’s data suggests enterprise demand is no longer confined to sandboxed
+      innovation teams: 60% of spend still comes from innovation budgets, but 40% already comes from permanent budgets
+      and more than half of that recurring spend is being redirected from existing allocations. Departmentally, spending
+      is concentrated in IT, product and engineering, and data science, but meaningful dollars also sit with support,
+      sales, marketing, HR, finance, and legal. That pattern fits OpenAI’s go-to-market surface: the company can sell
+      horizontally through central IT and vertically through functional ROI cases. The adoption path still tends to move
+      from experimentation to a function-specific pilot, then to security and data integration, and only then to
+      recurring budget and broad deployment.
+    claimRefs:
+      - C041
+      - C042
+      - C055
+      - C056
+      - C059
+      - C061
+      - C065
+      - C066
+      - C067
+      - C069
+      - C080
+      - C081
+      - C082
+      - C083
+      - C084
+      - C085
+      - C090
+      - C095
+      - C097
+  - id: section-3
+    title: Growth drivers, adoption constraints, and valuation relevance
+    body: >-
+      Demand-side drivers are strong. Microsoft reports that 82% of leaders see 2025 as a pivotal strategy year and 82%
+      expect to add digital labor in the next 12 to 18 months. PwC’s 2025 Jobs Barometer reinforces that signal with
+      measurable labor-market evidence: AI-skilled workers command a 56% wage premium, AI-exposed roles continued to
+      grow, and the most AI-exposed industries saw much faster revenue-per-employee growth than less exposed industries.
+      McKinsey adds a functional map for where value is most likely to be realized, with roughly 75% of the economic
+      upside concentrated in customer operations, marketing and sales, software engineering, and R&D. Those are exactly
+      the kinds of workflows where OpenAI’s assistants, APIs, and agent patterns can win budget.
+
+
+      The braking forces are just as material. Deloitte shows that most organizations still expect only a small share of
+      experiments to be fully scaled in the near term, even though ROI on the most advanced projects is often positive.
+      Regulatory compliance became Deloitte’s top reported barrier, governance programs are slow to complete, and
+      Menlo’s failed-pilot data shows implementation cost, data privacy, ROI disappointment, and hallucinations as
+      persistent failure modes. That is why OpenAI’s privacy guarantees matter commercially: trust, retention control,
+      and enterprise identity features are not cosmetic benefits but prerequisites for moving budget from pilot to
+      production. The European Union’s AI Act, OECD accountability framing, and NIST risk-management guidance all
+      reinforce the same conclusion: OpenAI operates in a market with real, expanding demand, but valuation should
+      discount for slower scaling in regulated or high-consequence workflows until governance and proof-of-value are
+      demonstrated customer by customer.
+    claimRefs:
+      - C046
+      - C048
+      - C058
+      - C059
+      - C060
+      - C061
+      - C062
+      - C076
+      - C077
+      - C078
+      - C079
+      - C098
+      - C099
+      - C101
+      - C102
+      - C107
+      - C108
+      - C112
+      - C113
+      - C114
+      - C115
+      - C117
+      - C118
+      - C119
+      - C121
+tables:
+  - id: T201
+    title: Market definition table
+    columns:
+      - segment/category
+      - included spend
+      - excluded spend
+      - buyer/payer
+      - relevance
+    rows:
+      - - Enterprise workforce assistants
+        - Seat-based subscriptions for ChatGPT Business and Enterprise, plus workflow agents and knowledge work copilots
+        - Generic office SaaS, device refresh, and non-GenAI productivity suites
+        - CIO, COO, central IT, and line-of-business leaders buying for employees
+        - Core direct market for OpenAI’s enterprise assistant surfaces
+      - - Developer and API platform
+        - Token-priced inference, coding copilots, agent workflows, and application-layer model calls
+        - Hyperscaler server capex, storage, and unrelated developer tooling
+        - CTO, VP Engineering, platform teams, and software budgets
+        - Core direct market for OpenAI’s API and coding products
+      - - Higher education deployment
+        - Campus-wide AI access for students, faculty, researchers, and operations via ChatGPT Edu
+        - General LMS spend, campus hardware, and non-AI software contracts
+        - Provost, CIO, procurement, and university administration
+        - Distinct institutional budget line beyond commercial enterprise sales
+      - - Vertical workflow applications
+        - Application-layer spend in support, search, data extraction, summarization, and regulated workflows
+        - Legacy enterprise software modules without model-driven functionality
+        - Functional leaders plus IT and procurement
+        - Indirect but important demand channel because many apps sit on model providers
+      - - Consumer and prosumer subscriptions
+        - Individual subscriptions and self-serve usage that seed familiarity and workflow habits
+        - Ad-funded search, social media, and generic consumer internet categories
+        - Individual professionals and very small teams
+        - Useful wedge for awareness, but less durable than managed enterprise budgets
+      - - Broad AI infrastructure adjacency
+        - Global genAI devices, servers, services, and software counted in broad market reports
+        - Direct OpenAI product revenue when infrastructure spend does not flow through OpenAI
+        - Device OEMs, hyperscalers, infrastructure and services buyers
+        - Important TAM context but mostly outside OpenAI’s direct SAM
+    notes: >-
+      The underwriting boundary should track monetization surfaces that can flow to OpenAI directly or through
+      foundation-model application demand, not every dollar in the broader AI hardware and services stack.
+    claimRefs:
+      - C040
+      - C041
+      - C042
+      - C043
+      - C044
+      - C049
+      - C055
+      - C056
+      - C105
+  - id: T202
+    title: TAM/SAM/SOM or sizing lens table
+    columns:
+      - source
+      - year
+      - geography
+      - value
+      - CAGR
+      - methodology
+      - confidence
+      - limitation
+    rows:
+      - - Gartner
+        - 2025
+        - Worldwide
+        - 644
+        - null
+        - Top-down forecast of worldwide generative AI spending
+        - medium
+        - >-
+          Broad market lens that includes devices, servers, software, and services rather than OpenAI-only revenue
+          pools.
+      - - VentureBeat summary of Gartner
+        - 2025
+        - Worldwide
+        - 76.4
+        - null
+        - Secondary summary of Gartner year-over-year growth for worldwide GenAI spending
+        - medium
+        - Growth rate is secondary reporting and still reflects the broad Gartner definition.
+      - - McKinsey value pool
+        - 2023
+        - Global
+        - 2600-4400
+        - null
+        - Annual economic value estimate across 63 use cases
+        - medium
+        - Value pool is not equal to monetized software spend.
+      - - Menlo enterprise spend
+        - 2024
+        - U.S. enterprise sample
+        - 13.8
+        - null
+        - Observed enterprise spending from surveyed U.S. leaders
+        - medium
+        - Survey-based and U.S.-enterprise only.
+      - - Menlo application layer spend
+        - 2024
+        - U.S. enterprise sample
+        - 4.6
+        - null
+        - Observed application-layer spending within enterprise GenAI budgets
+        - medium
+        - Closer to OpenAI’s revenue surface but still sample-based and U.S.-centric.
+      - - McKinsey banking value
+        - 2023
+        - Global banking
+        - 200-340
+        - null
+        - Annual economic value range if use cases are fully implemented
+        - medium
+        - Sector value ceiling, not current spend.
+      - - McKinsey retail/consumer value
+        - 2023
+        - Global retail/CPG
+        - 400-660
+        - null
+        - Annual economic value range if use cases are fully implemented
+        - medium
+        - Sector value ceiling, not current spend.
+      - - IDC public summary attempt
+        - 2025
+        - Worldwide
+        - null
+        - null
+        - Reviewed public URL returned unavailable article response on access date
+        - low
+        - Could not be used for triangulation without working public access or a licensed report.
+    notes: >-
+      Broad forecasts, observed enterprise budgets, and value-pool estimates are all useful, but they measure different
+      layers of the market. The chapter therefore treats them as lenses rather than as interchangeable TAM numbers.
+    claimRefs:
+      - C063
+      - C068
+      - C086
+      - C087
+      - C088
+      - C105
+      - C106
+      - C107
+      - C109
+      - C110
+      - C122
+  - id: T203
+    title: Segment / buyer map
+    columns:
+      - segment
+      - buyer
+      - user
+      - payer/workflow
+      - budget owner
+      - adoption trigger
+    rows:
+      - - Enterprise workforce
+        - CIO, COO, or transformation leader
+        - General knowledge workers and managers
+        - Company-funded seat deployment for productivity, search, and cross-functional assistance
+        - Central IT plus shared transformation budgets
+        - Need to close the capacity gap while preserving security and governance
+      - - Developers and engineering
+        - CTO, VP Engineering, platform leader
+        - Software engineers, DevOps, and technical program teams
+        - Engineering-funded copilots, agent workflows, and token-priced APIs
+        - Product + Engineering and platform budgets
+        - High ROI from code copilots and automation in core technical workflows
+      - - Customer support
+        - Support operations or CX leader
+        - Contact-center agents and customer-service managers
+        - Support automation, retrieval, and chatbot workflows
+        - Support and operations budgets with IT partnership
+        - Need for 24/7 responsiveness and cost-per-contact improvement
+      - - Sales and marketing
+        - CRO, CMO, or rev-ops leader
+        - Sellers, marketers, and campaign teams
+        - Content generation, prospecting, and pipeline workflows
+        - Sales and marketing budgets
+        - Pressure for faster content and more productive frontline teams
+      - - Higher education
+        - Provost, CIO, procurement leader
+        - Students, faculty, researchers, and administrators
+        - Institution-wide AI deployment for teaching, research, and campus operations
+        - Central university administration and IT
+        - Affordable secure access plus academic and administrative productivity
+      - - Regulated specialist functions
+        - General counsel, CFO, compliance, or clinical/financial operations leader
+        - Lawyers, finance staff, clinicians, and specialist operators
+        - Document-heavy or judgment-heavy workflows in legal, finance, and healthcare
+        - Functional budgets with governance oversight
+        - Strong ROI potential but heavier privacy, accuracy, and regulatory review before scale
+    notes: >-
+      OpenAI’s practical buyer map spans centralized IT, functional leaders, and institutional buyers; the adoption
+      motion usually starts in one workflow and expands only after governance and ROI proof.
+    claimRefs:
+      - C041
+      - C042
+      - C055
+      - C056
+      - C059
+      - C061
+      - C065
+      - C066
+      - C067
+      - C069
+      - C070
+      - C071
+      - C072
+      - C073
+      - C080
+      - C081
+      - C082
+      - C083
+      - C084
+      - C085
+  - id: T204
+    title: Growth drivers and constraints table
+    columns:
+      - driver/constraint
+      - direction
+      - timing
+      - implication
+      - diligence ask
+    rows:
+      - - Digital labor demand
+        - up
+        - near term
+        - Supports budget expansion for assistants and agents
+        - Request OpenAI pipeline split between seat expansion and agentic workflow deployments.
+      - - Productivity and wage signals
+        - up
+        - near term
+        - Strengthens willingness to fund high-value AI tooling
+        - Request customer ROI cases with labor substitution or revenue uplift evidence.
+      - - Budget permanence
+        - up
+        - 12-24 months
+        - Suggests AI spend is moving into recurring operating budgets
+        - Request evidence that OpenAI contracts are replacing existing software or services spend.
+      - - Code-copilot adoption
+        - up
+        - current
+        - Favors developer APIs, coding agents, and technical-seat growth
+        - Request OpenAI share of engineering and coding workloads versus competitors.
+      - - Regulatory compliance
+        - down
+        - current and rising
+        - Slows deployment in regulated sectors and high-consequence workflows
+        - Request product compliance roadmap, region-by-region gating, and customer audit requirements.
+      - - Governance build-out
+        - down
+        - 12+ months
+        - Delays full-scale deployment even when pilots show ROI
+        - Request implementation services burden, governance templates, and security review cycle times.
+      - - Privacy and trust
+        - down
+        - current
+        - Trust features are prerequisites for expansion from pilot to production
+        - Request customer proof on privacy controls, retention settings, and data-boundary exceptions.
+      - - Implementation cost and hallucinations
+        - down
+        - current
+        - Raises services burden and narrows which use cases justify scale
+        - Request deployment cost curves, human-review rates, and production error metrics.
+      - - Multi-model switching
+        - mixed
+        - current
+        - Keeps buyer power high and weakens single-vendor lock-in
+        - Request retention, win-rate, and interoperability data by workload and segment.
+    notes: >-
+      The valuation-relevant question is not whether demand exists, but whether OpenAI can convert experimentation into
+      repeatable, trusted, and retained production spend faster than governance and competition erode buyer momentum.
+    claimRefs:
+      - C046
+      - C048
+      - C059
+      - C063
+      - C065
+      - C066
+      - C067
+      - C069
+      - C076
+      - C077
+      - C079
+      - C090
+      - C092
+      - C093
+      - C094
+      - C098
+      - C101
+      - C102
+      - C112
+      - C114
+      - C119
+      - C121
+figures:
+  - id: F201
+    title: Market sizing lens
+    type: pyramid
+    layout: standard
+    summary: >-
+      The broad economic value pool is far larger than the realized enterprise budgets that currently reach model
+      providers and application vendors.
+    data:
+      nodes:
+        - label: 'Annual economic value pool: $2.6T-$4.4T'
+          detail: McKinsey value ceiling across 63 use cases; useful upper bound, not direct spend.
+          tone: positive
+        - label: 'Worldwide generative AI spend forecast: $644B in 2025'
+          detail: Gartner broad market lens including devices, servers, software, and services.
+          tone: neutral
+        - label: 'Observed enterprise generative AI spend: $13.8B in 2024'
+          detail: Menlo U.S. enterprise spending lens showing the move from pilots toward execution.
+          tone: positive
+        - label: 'Observed application-layer spend: $4.6B in 2024'
+          detail: Closest public lens to direct app and model monetization, but still U.S.-enterprise only.
+          tone: positive
+    approximationNotes: >-
+      This figure is a lens stack rather than a strict TAM-SAM-SOM cascade because the underlying sources measure
+      different layers of value and spend.
+    claimRefs:
+      - C063
+      - C068
+      - C105
+      - C107
+  - id: F202
+    title: Market estimate range
+    type: range
+    layout: wide
+    summary: >-
+      Public value-pool estimates support a large ceiling for OpenAI-relevant workflows, but vertical ranges differ
+      materially by sector.
+    data:
+      items:
+        - label: Global annual value pool
+          low: 2600
+          mid: 3500
+          high: 4400
+          displayValue: $2.6T-$4.4T
+          detail: McKinsey estimate across 63 use cases; USD billions.
+          tone: positive
+        - label: Banking annual value pool
+          low: 200
+          mid: 270
+          high: 340
+          displayValue: $200B-$340B
+          detail: McKinsey sector value range; USD billions.
+          tone: positive
+        - label: Retail/consumer annual value pool
+          low: 400
+          mid: 530
+          high: 660
+          displayValue: $400B-$660B
+          detail: McKinsey sector value range; USD billions.
+          tone: positive
+    approximationNotes: >-
+      Midpoints are arithmetic centers of the published low/high ranges and are shown only to make the comparison
+      legible.
+    claimRefs:
+      - C107
+      - C109
+      - C110
+  - id: F203
+    title: Budget-owner readiness heatmap
+    type: matrix
+    layout: wide
+    summary: >-
+      OpenAI’s best near-term segments pair high ROI visibility with manageable governance load; regulated specialist
+      functions remain slower to scale.
+    data:
+      columns:
+        - Budget permanence
+        - ROI visibility
+        - Data sensitivity
+        - Governance load
+      rows:
+        - label: Developers
+          values:
+            - label: High
+              tone: positive
+              detail: Engineering budgets are already material and often recurring.
+            - label: High
+              tone: positive
+              detail: Code copilots are the most adopted enterprise use case.
+            - label: Medium
+              tone: neutral
+              detail: Code and repo data still require security review.
+            - label: Medium
+              tone: neutral
+              detail: Governance is meaningful but usually lighter than regulated workflows.
+        - label: Customer support
+          values:
+            - label: Medium
+              tone: neutral
+              detail: Support budgets are real but often need shared IT sponsorship.
+            - label: High
+              tone: positive
+              detail: Chatbots and retrieval use cases have clear cost and service metrics.
+            - label: Medium
+              tone: neutral
+              detail: Customer data and policy content need controls.
+            - label: Medium
+              tone: neutral
+              detail: Operational guardrails still matter before external deployment.
+        - label: Sales & marketing
+          values:
+            - label: Medium
+              tone: neutral
+              detail: Budgets exist but may stay function-specific at first.
+            - label: High
+              tone: positive
+              detail: Content and productivity gains are visible quickly.
+            - label: Medium
+              tone: neutral
+              detail: Brand and customer-data controls are still important.
+            - label: Medium
+              tone: neutral
+              detail: Governance is manageable relative to legal or healthcare.
+        - label: Higher education
+          values:
+            - label: Medium
+              tone: neutral
+              detail: Institutional budgets can be centralized but move slowly.
+            - label: Medium
+              tone: neutral
+              detail: Value spans teaching, research, and operations, but not always one KPI.
+            - label: High
+              tone: warning
+              detail: Student and research data demand strong privacy controls.
+            - label: High
+              tone: warning
+              detail: Procurement and policy review can slow campus-wide rollout.
+        - label: Regulated specialist functions
+          values:
+            - label: Medium
+              tone: neutral
+              detail: Budgets can be meaningful once approved.
+            - label: High
+              tone: positive
+              detail: Domain workflows can offer strong labor and quality ROI.
+            - label: High
+              tone: warning
+              detail: Legal, finance, and healthcare data are highly sensitive.
+            - label: High
+              tone: warning
+              detail: Compliance, accountability, and model-risk reviews are heaviest here.
+    approximationNotes: null
+    claimRefs:
+      - C055
+      - C059
+      - C061
+      - C069
+      - C070
+      - C080
+      - C081
+      - C083
+      - C084
+      - C101
+      - C102
+  - id: F204
+    title: Adoption funnel from pilot to production
+    type: flow
+    layout: wide
+    summary: >-
+      The public evidence points to a repeatable pattern: exploratory budgets create pilots, but production only follows
+      once data integration, governance, and ROI proof are in place.
+    data:
+      nodes:
+        - id: n1
+          label: Innovation-budget exploration
+          detail: Most spend still starts in innovation budgets.
+          tone: neutral
+        - id: n2
+          label: Function-specific pilot
+          detail: Developers, support, and content teams are common early users.
+          tone: positive
+        - id: n3
+          label: Data and privacy controls
+          detail: Identity, retention, and no-training defaults become gating issues.
+          tone: warning
+        - id: n4
+          label: Governance and compliance review
+          detail: Regulatory and governance work often stretches beyond a year.
+          tone: warning
+        - id: n5
+          label: ROI proof and permanent budget
+          detail: Recurring budget requires measurable value, not just experimentation.
+          tone: neutral
+        - id: n6
+          label: Production rollout and multi-model optimization
+          detail: Scaled deployment still coexists with multi-model and switching behavior.
+          tone: positive
+      edges:
+        - from: n1
+          to: n2
+        - from: n2
+          to: n3
+        - from: n3
+          to: n4
+        - from: n4
+          to: n5
+        - from: n5
+          to: n6
+    approximationNotes: null
+    claimRefs:
+      - C046
+      - C048
+      - C060
+      - C065
+      - C066
+      - C076
+      - C077
+      - C098
+      - C099
+      - C101
+      - C102
+      - C090
+callouts:
+  - calloutType: insight
+    title: OpenAI’s real market is narrower than headline TAM
+    body: >-
+      The company benefits from a massive generative AI backdrop, but the most relevant spend pool is enterprise
+      application and model-usage budget rather than the entire hardware-plus-services AI stack.
+    claimRefs:
+      - C063
+      - C068
+      - C105
+      - C107
+  - calloutType: strength
+    title: Budget ownership is broadening
+    body: >-
+      Public evidence shows budgets already spreading beyond pure innovation teams into IT, product and engineering,
+      support, sales, marketing, finance, and education buyers, which expands OpenAI’s pathways to adoption.
+    claimRefs:
+      - C055
+      - C065
+      - C066
+      - C080
+      - C081
+      - C083
+      - C084
+      - C085
+  - calloutType: risk
+    title: Scaling friction remains the main underwriting issue
+    body: >-
+      Governance, compliance, privacy, implementation cost, and model-quality concerns still slow the move from pilot to
+      durable production even when ROI potential is clear.
+    claimRefs:
+      - C076
+      - C077
+      - C079
+      - C098
+      - C101
+      - C102
+      - C119
+      - C121

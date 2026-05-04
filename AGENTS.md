@@ -1,33 +1,39 @@
 # AGENTS.md
 
-## Working approach
-- Keep reports evidence-first: every external factual claim should trace through `claimRefs` to fetched sources in `02-source-ledger.yaml`.
-- Make surgical changes: preserve schemas and avoid unrelated redesigns.
-- Validate YAML after every report-generation run.
-- Prefer simple static artifacts over databases until the project clearly needs mutable app state.
+This repository generates startup diligence reports as structured YAML and renders them with an Astro static website.
 
-## Repository map
-- `reports/` contains generated startup research artifacts. Each report lives in a dated folder named `<YYYYMMDDHHmmss>-<company-slug>/`.
-- `reports/_index.yaml` is the aggregated report catalog, rebuilt by `scripts/build-reports-index.mjs`.
-- `website/` contains the Astro site that renders reports.
-- `.github/agents/` contains the multi-agent workflow definitions.
-- `scripts/` holds repo-level Node scripts for report folder creation, dedupe checks, and catalog generation.
+## Project map
 
-## Report workflow
-- Use the `Startup Research` agent for a full named-company report.
-- The pipeline is: `Startup Identity Investigator → Startup Evidence Researcher → Startup Product Strategist → Startup Business Analyst → Startup Memo Writer → ZH Research Translator`.
-- The only supported research schema is `startup-diligence-v1`, a claims-based professional diligence schema with quantitative KPI, comparables/valuation, team/people, and milestones extensions. Do not create or preserve compatibility branches for older schema versions.
-- Downstream stages must not run until upstream YAML exists, parses, and all `claimRefs` / `sourceRefs` are valid.
-- Failed or duplicate partial report folders should not remain directly under `reports/`.
+- `reports/` — generated report runs and `reports/_index.yaml`.
+- `.github/skills/startup-research/` — end-to-end report-generation skill, including private references and skill-owned scripts.
+- `.github/skills/fetch-url/` — direct URL fetch helper skill.
+- `website/` — Astro site, report loader, renderer, and website-owned validation helpers.
 
-## Website workflow
-- Work inside `website/` for frontend changes.
-- After changing schemas, loader logic, or report files, validate with `npm run validate` from the repo root when dependencies are installed.
+## Setup commands
 
-## YAML schema conventions
-- All generated artifacts are YAML files: `00-research-plan.yaml`, `01-company-identity.yaml`, `02-source-ledger.yaml`, `03-market-customers.yaml`, `04-product-technology.yaml`, `05-traction-gtm.yaml`, `06-competition-positioning.yaml`, `07-business-financials.yaml`, `08-risk-governance.yaml`, `09-investment-memo.yaml`, `10-summary-card.yaml`, plus optional extended artifacts `11-team-people.yaml`, `12-comparables-valuation.yaml`, `13-milestones-catalysts.yaml`, plus optional matching `*.zh.yaml` translations.
-- `02-source-ledger.yaml` is the evidence backbone. Later artifacts cite `claimRefs`; claims cite fetched `sourceRefs`. Sources may include `accessDate` and a verbatim `keyQuote` (≤ 240 chars).
-- Source IDs use `S001`, `S002`, etc. Claim IDs use `C001`, `C002`, etc. Risk IDs use `R001`. Milestone IDs use `M001`. Comparable IDs use `K001`.
-- Use descriptive camelCase field names.
-- Include units in numeric field names where useful, such as `revenueUsdM`, `arrUsdM`, `grossMarginPct`, `nrrPct`, `burnMultiple`, `cacPaybackMonths`, `runwayMonths`. Numeric KPI fields must be numbers, not strings.
-- Use 2-space indentation. Quote strings containing `: `.
+- Install root dependencies: `npm install`
+- Install website dependencies: `npm --prefix website install`
+- Run full validation: `npm run validate`
+- Run website locally: `npm --prefix website run dev`
+
+## Testing instructions
+
+- Before finishing code, schema, report, loader, renderer, or script changes, run `npm run validate` unless the user asked for a narrower edit.
+- For website/report rendering checks only, run `npm run check:reports`.
+- For workflow config/index checks only, run `npm run check:workflow-config` and `npm run check:report-index`.
+
+## Working conventions
+
+- Keep skill-owned scripts under `.github/skills/*/scripts/`; keep website-owned helpers under `website/`.
+- Use `node .github/skills/.../scripts/*.mjs` directly for skill workflow scripts; do not add npm aliases for skill internals.
+- Use the actual session date as the freshness anchor for startup research and volatile market/company facts.
+- Reports are English YAML artifacts under `reports/<YYYYMMDDHHmmss>-<company-slug>/`.
+- Do not duplicate the startup research workflow here; when generating or updating a report, follow `.github/skills/startup-research/SKILL.md`.
+
+## Important references
+
+- `.github/skills/startup-research/SKILL.md` — canonical report workflow.
+- `.github/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
+- `.github/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
+- `.github/skills/startup-research/scripts/figures.mjs` — skill figure validation contract.
+- `website/src/lib/figures.mjs` — website figure rendering/validation contract.

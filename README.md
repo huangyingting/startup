@@ -1,53 +1,108 @@
 # Startup
 
-Startup is an agent-driven research website for detailed reports on named startup companies. It uses the same core pattern as Bizidea: specialist agents produce structured YAML artifacts, validation scripts verify them, and an Astro static site renders the reports.
+Startup is a diligence report generator for startup companies. It produces evidence-backed YAML report artifacts and renders them as a static Astro website.
 
 ## What it does
 
-- Researches a user-provided startup company or official URL.
-- Produces evidence-backed report artifacts under `reports/`.
-- Renders reports as a fast static Astro website.
-- Supports English and Simplified Chinese YAML reports.
-- Includes search, filters, scorecards, market sizing, financial scenarios, and risk visuals.
+- Researches a named startup company, optionally starting from an official URL.
+- Generates structured report artifacts under `reports/`.
+- Consolidates evidence and claim references into a final evidence ledger.
+- Renders complete reports, summary cards, search pages, filters, scorecards, tables, and native figures through the Astro website.
 
-## Report artifact flow
+## Repository layout
 
 ```text
-Company Profiler → Startup Market Researcher → Company Analyst → Startup Financial Modeler → Startup Reporter → ZH Translator
-company.yaml     → research.yaml             → analysis.yaml  → financial-model.yaml        → index.yaml       → *.zh.yaml
+.github/skills/startup-research/  # report-generation workflow skill
+.github/skills/fetch-url/         # direct URL fetch helper skill
+reports/                          # generated report runs and _index.yaml
+website/                          # Astro static site and website-owned validation
 ```
 
-## Local development
+Important files:
 
-From the repo root:
+- `.github/skills/startup-research/SKILL.md` — canonical end-to-end report workflow.
+- `.github/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
+- `.github/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
+- `.github/skills/startup-research/scripts/` — skill-owned workflow scripts.
+- `website/scripts/` and `website/src/lib/` — website-owned validation helpers and rendering contracts.
+- `reports/_index.yaml` — catalog of generated report runs.
+
+## Quick start
+
+Install dependencies from the repository root:
 
 ```bash
 npm install
 npm --prefix website install
+```
+
+Run all validation and build checks:
+
+```bash
+npm run validate
+```
+
+Start the website locally:
+
+```bash
+npm --prefix website run dev
+```
+
+## Generate a report
+
+Ask the coding agent to run the Startup Research workflow with a company name and optional official URL, for example:
+
+> Research Perplexity AI — official site https://www.perplexity.ai.
+
+The workflow writes a new run under:
+
+```text
+reports/<YYYYMMDDHHmmss>-<company-slug>/
+```
+
+A complete report run contains:
+
+```text
+01-company-overview.yaml
+02-market-analysis.yaml
+03-competitors.yaml
+04-financials.yaml
+05-product-tech.yaml
+06-customers.yaml
+07-risks.yaml
+08-valuation.yaml
+evidence.yaml
+full-report.yaml
+summary-card.yaml
+```
+
+After generation, run:
+
+```bash
+npm run validate
+```
+
+## Validation commands
+
+From the repository root:
+
+```bash
+npm run check:workflow-config
+npm run check:report-index
+npm run check:reports
 npm run validate
 ```
 
 From `website/`:
 
 ```bash
-npm run dev
 npm run build
 npm run preview
 ```
 
-## Generate a report
+## Ownership boundaries
 
-Invoke the `Startup Research` agent with a named startup and optional URL, for example:
-
-> Research Perplexity AI — official site https://www.perplexity.ai — deep report with Chinese translation.
-
-The report should be written to `reports/<timestamp>-<company-slug>/` and will appear on the website after validation/build.
-
-## Core files
-
-- `reports/` — generated report folders and `_index.yaml` catalog.
-- `.github/agents/research.agent.md` — main orchestrator.
-- `scripts/build-reports-index.mjs` — rebuilds `reports/_index.yaml`.
-- `scripts/check-company-dedup.mjs` — warns/skips duplicate company reports.
-- `website/src/content/reports-loader.ts` — Astro content loader for report YAML.
-- `website/scripts/check-reports.mjs` — report artifact validator.
+- Skill workflow scripts live under `.github/skills/*/scripts/` and are called directly with `node` by the skills.
+- Website code and website validators live under `website/`.
+- The root `package.json` only exposes repository-level checks; it does not alias skill-internal workflow steps.
+- Report workflow details belong in `.github/skills/startup-research/SKILL.md`, not in this README.

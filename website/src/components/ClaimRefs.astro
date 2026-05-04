@@ -1,24 +1,30 @@
 ---
-interface Props { refs?: string[]; }
-const { refs = [] } = Astro.props;
+interface Props { refs?: string[]; claims?: any[]; sources?: any[]; }
+const { refs = [], claims = [] } = Astro.props;
+const claimById = new Map(claims.map((claim: any) => [claim.id, claim]));
+function linkFor(ref: string) {
+  const claim = claimById.get(ref) as any;
+  return {
+    href: `#claim-${ref}`,
+    title: claim?.statement ?? ref,
+  };
+}
 ---
 {refs.length > 0 && (
-  <span class="claim-ref" aria-label="Claim references">
-    [
-    {refs.map((ref, index) => (
-      <>
-        <a href={`#claim-${ref}`}>{ref}</a>{index < refs.length - 1 ? ', ' : ''}
-      </>
-    ))}
-    ]
-  </span>
+  <span class="claim-ref" aria-label="Claim references">[{refs.map((ref, index) => {
+    const link = linkFor(ref);
+    return <><a href={link.href} title={link.title}>{ref}</a>{index < refs.length - 1 ? ', ' : ''}</>;
+  })}]</span>
 )}
 <style>
   .claim-ref {
     color: var(--caption-gray);
     font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-    white-space: nowrap;
+    font-size: var(--report-fs-caption, var(--fs-xs));
+    display: inline;
+    margin-left: 0.25em;
+    vertical-align: baseline;
+    overflow-wrap: anywhere;
   }
   .claim-ref a {
     color: var(--claret);

@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:reports-index": "node scripts/build-reports-index.mjs",
-    "check:reports-index": "node scripts/build-reports-index.mjs --strict --check",
+    "check:workflow-config": "node .github/skills/startup-research/scripts/config.mjs",
+    "check:report-index": "node .github/skills/startup-research/scripts/index.mjs --strict --check",
     "check:reports": "npm --prefix website run check:reports",
-    "validate": "npm run check:reports-index && npm run check:reports && npm --prefix website run build"
+    "validate": "npm run check:workflow-config && npm run check:report-index && npm run check:reports && npm --prefix website run build"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

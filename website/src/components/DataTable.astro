@@ -1,105 +1,47 @@
 ---
-import { displayLabel } from '../lib/display';
-import type { Lang } from '../lib/i18n';
-import ClaimRefs from './ClaimRefs.astro';
+// Shared table component used by report blocks and the evidence index.
+// Owns the .table-frame markup and all table styling so callers only need to
+// supply <tr>/<td> rows via the default slot. Optional `notes` and `footer`
+// slots add the table note paragraph and trailing claim refs respectively.
+//
+// Scoped style note: `<tr>`/`<td>` inside <tbody> are rendered in the caller
+// component, so they carry the caller's `data-astro-cid-*`, not DataTable's.
+// We therefore use `.table-frame :global(...)` for every selector that needs
+// to match slotted descendants. The wrapper element itself owns DataTable's
+// cid, so styles do not leak outside `.table-frame`.
 
-interface Column {
-  heading: string;
-  key?: string;
-  render?: (row: any) => unknown;
-}
 interface Props {
-  title: string;
-  rows?: any[];
-  columns: Column[];
-  emptyLabel?: string;
-  lang?: Lang;
+  title?: string | null;
+  columns: any[];
 }
-const { title, rows = [], columns, emptyLabel = 'Not disclosed', lang = 'en' } = Astro.props;
-const evidenceHeading = lang === 'zh' ? '证据' : 'Evidence';
-const hasClaimRefs = rows.some((row) => Array.isArray(row?.claimRefs) && row.claimRefs.length > 0);
-const zhDisplayMap: Record<string, string> = {
-  'Yes': '是', 'No': '否', 'Medium': '中等', 'High': '高', 'Low': '低', 'Critical': '关键',
-  'Strong': '强', 'Moderate': '中等', 'Weak': '弱', 'Public': '公开', 'Independent': '独立', 'Company': '公司', 'Third Party': '第三方'
-};
-function formatCell(value: unknown) {
-  if (value === null || value === undefined || value === '') return emptyLabel;
-  const rendered = displayLabel(value);
-  return lang === 'zh' ? (zhDisplayMap[rendered] ?? rendered) : rendered;
-}
+
+const { title = null, columns } = Astro.props;
+const hasNotes = Astro.slots.has('notes');
+const hasFooter = Astro.slots.has('footer');
 ---
-{rows.length > 0 && (
-  <div class="table-wrap">
-    <table class="sr-table report-table">
-      <caption>{title}</caption>
-      <thead>
-        <tr>{columns.map((column) => <th>{column.heading}</th>)}{hasClaimRefs && <th>{evidenceHeading}</th>}</tr>
-      </thead>
-      <tbody>
-        {rows.map((row) => (
-          <tr>
-            {columns.map((column) => <td>{formatCell(column.render ? column.render(row) : column.key ? row?.[column.key] : undefined)}</td>)}
-            {hasClaimRefs && <td class="refs-cell"><ClaimRefs refs={row?.claimRefs ?? []} /></td>}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
+<div class="table-frame">
+  <table>
+    {title && <caption>{title}</caption>}
+    <thead><tr>{(columns ?? []).map((column) => <th>{column}</th>)}</tr></thead>
+    <tbody><slot /></tbody>
+  </table>
+  {hasNotes && <p class="table-note"><slot name="notes" /></p>}
+  {hasFooter && <slot name="footer" />}
+</div>
+
 <style>
-  .table-wrap {
-    overflow-x: auto;
-    margin-top: var(--space-5);
-    border: var(--report-rule);
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--surface-paper) 92%, white);
-    box-shadow: 0 1px 0 color-mix(in srgb, var(--hairline) 45%, transparent);
-  }
-  .report-table {
-    min-width: 720px;
-    border: 0;
-    border-collapse: separate;
-    border-spacing: 0;
-    background: transparent;
-  }
-  .report-table caption {
-    text-align: left;
-    padding: var(--space-3) var(--space-4);
-    border-bottom: var(--report-rule);
-    background: color-mix(in srgb, var(--claret) 6%, transparent);
-    font-family: var(--font-sans);
-    font-variant-caps: all-small-caps;
-    font-weight: 800;
-    letter-spacing: var(--tracking-eyebrow);
-    color: var(--claret);
-    caption-side: top;
-  }
-  .report-table th,
-  .report-table td {
-    border-bottom: var(--report-rule);
-    padding: var(--space-3) var(--space-4);
-    vertical-align: top;
-  }
-  .report-table th {
-    background: color-mix(in srgb, var(--paper) 80%, white);
-    color: color-mix(in srgb, var(--claret) 88%, var(--ink-page));
-    white-space: nowrap;
-  }
-  .report-table tbody tr:nth-child(even) {
-    background: color-mix(in srgb, var(--paper) 72%, white);
-  }
-  .report-table tbody tr:hover {
-    background: color-mix(in srgb, var(--claret) 5%, transparent);
-  }
-  .report-table tbody tr:last-child td {
-    border-bottom: 0;
-  }
-  .report-table td {
-    max-width: 420px;
-    color: var(--ink-page);
-    line-height: 1.48;
-  }
-  .refs-cell {
-    min-width: 120px;
-  }
+  .table-frame { width: 100%; max-width: 100%; overflow-x: auto; margin: var(--space-5) 0; border: var(--report-rule); border-top: 3px solid var(--claret); background: var(--surface-paper); }
+  .table-frame :global(table) { width: 100%; min-width: 780px; border-collapse: separate; border-spacing: 0; background: transparent; font-family: var(--font-sans); }
+  .table-frame :global(caption) { caption-side: top; text-align: left; padding: var(--space-3) var(--space-4); border-bottom: var(--report-rule); background: color-mix(in srgb, var(--claret) 6%, transparent); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
+  .table-frame :global(th),
+  .table-frame :global(td) { border-bottom: var(--report-rule); padding: var(--space-3) var(--space-4); text-align: left; vertical-align: top; font-size: var(--report-fs-table); line-height: 1.55; }
+  .table-frame :global(th) { background: color-mix(in srgb, var(--paper) 78%, white); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: color-mix(in srgb, var(--claret) 88%, var(--ink-page)); white-space: nowrap; }
+  .table-frame :global(tbody tr:nth-child(2n)) { background: color-mix(in srgb, var(--surface-paper) 68%, transparent); }
+  .table-frame :global(tbody tr:hover) { background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); }
+  .table-frame :global(tbody tr:last-child td) { border-bottom: 0; }
+  .table-frame :global(td:first-child) { font-weight: 650; }
+  .table-frame :global(.table-note),
+  .table-note { margin: 0; border-top: var(--report-rule); padding: var(--space-3) var(--space-4); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--report-fs-table); line-height: 1.55; }
+  .table-frame :global(.claim-ref) { font-size: var(--report-fs-caption); white-space: nowrap; }
+  .table-frame > :global(.claim-ref) { display: block; margin: 0; border-top: var(--report-rule); padding: var(--space-3) var(--space-4); }
 </style>
