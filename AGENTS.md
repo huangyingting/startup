@@ -26,14 +26,15 @@ This repository generates startup diligence reports as structured YAML and rende
 
 - Keep skill-owned scripts under `.agents/skills/*/scripts/`; keep website-owned helpers under `website/`.
 - Use `node .agents/skills/.../scripts/*.mjs` directly for skill workflow scripts; do not add npm aliases for skill internals.
-- Use the actual session date as the freshness anchor for startup research and volatile market/company facts.
-- Reports are English YAML artifacts under `reports/<YYYYMMDDHHmmss>-<company-slug>/`.
-- Do not duplicate the startup research workflow here; when generating or updating a report, follow `.agents/skills/startup-research/SKILL.md`.
 
-## Important references
+## Core philosophy
 
-- `.agents/skills/startup-research/SKILL.md` — canonical report workflow.
-- `.agents/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
-- `.agents/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
-- `.agents/skills/startup-research/scripts/figures.mjs` — skill figure validation contract.
-- `website/src/lib/figures.mjs` — website figure rendering/validation contract.
+> ⚠️ **These rules govern repo development only — they have NO bearing on report generation.**
+>
+> - **Applies to:** code, schemas, scripts, workflows, docs.
+> - **Does NOT apply to:** anything under `reports/`. Diligence reports are produced by skill orchestration (driven end-to-end by `.agents/skills/startup-research/`, with `.agents/skills/fetch-url/` as a helper). That pipeline owns its own rules and prioritizes thoroughness and source coverage.
+
+- **Think before acting.** State assumptions explicitly. If something is unclear or has multiple reasonable interpretations, ask instead of guessing. Push back when a simpler approach exists.
+- **Simplicity first.** Do the minimum that solves the problem. No speculative scope, extra options, or handling for situations that won't happen.
+- **Surgical changes.** Touch only what the request requires. Don't reformat or "improve" adjacent content. Match existing style. Mention unrelated issues you notice rather than silently fixing them.
+- **Goal-driven execution.** Turn each task into a verifiable success criterion (e.g. specific files written, a check now passing, a question answered). For multi-step work, state a brief plan with a verification step per item before executing.
