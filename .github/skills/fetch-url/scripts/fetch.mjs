@@ -847,6 +847,12 @@ async function main() {
   if (opts.file) {
     await writeFile(opts.file, output, 'utf8');
     console.log(`Wrote ${opts.textOnly ? 'text' : 'body'} to ${opts.file}`);
+  } else if (!process.stdout.isTTY) {
+    // Redirected/piped (e.g. `> file.txt`): emit the full body so callers do
+    // not silently capture only the preview window. Interactive TTYs still
+    // get the truncated preview below to protect terminal/agent context.
+    if (opts.textOnly) console.log(`Text:\n${output}`);
+    else console.log(`Body:\n${output}`);
   } else {
     const limit = opts.textOnly ? 1000 : 500;
     const preview = opts.textOnly

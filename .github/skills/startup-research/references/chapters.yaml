@@ -1,7 +1,10 @@
 schemaVersion: workflow-config-v1
 reportSchemaVersion: report-v2
 # Tables cite their backing claims via the table-level `claimRefs` field, never
-# as a column whose cells hold raw `Cxxx` ids. 
+# as a column whose cells hold raw `Cxxx` ids. Avoid columns whose only purpose
+# is citation (`evidence`, `evidence quality`, `claim refs`, etc.). Columns
+# named `source` / `publisher` / `attribution` are reserved for the *origin
+# institution or document* (e.g. "Gartner", "SEC 10-K"), not for claim ids.
 defaultGate:
   minSections: 3
   maxSections: 8
@@ -64,7 +67,7 @@ chapters:
       - name: Milestone table
         enumeration: true
         expectedMinRows: 8
-        requirement: dated entries covering founding, financing, product, scale, regulatory, partnership, governance, and adverse events; columns date, event, type (founding|financing|product|scale|regulatory|partnership|governance|adverse), amount/valuation/status, participants/source, implication; this is the single chronology of record.
+        requirement: dated entries covering founding, financing, product, scale, regulatory, partnership, governance, and adverse events; columns date, event, type (founding|financing|product|scale|regulatory|partnership|governance|adverse), amount/valuation/status, participants, implication; this is the single chronology of record.
     plannedFigures:
       - name: Company milestone timeline
         acceptedTypes: [timeline]
@@ -99,7 +102,7 @@ chapters:
       - name: Market definition table
         requirement: segment/category, included spend, excluded spend, buyer/payer, relevance.
       - name: TAM/SAM/SOM or sizing lens table
-        requirement: source, year, geography, value, CAGR, methodology, confidence, limitation.
+        requirement: publisher, year, geography, value, CAGR, methodology, confidence, limitation.
       - name: Segment / buyer map
         requirement: segment, buyer, user, payer, workflow, budget owner, adoption trigger.
       - name: Growth drivers and constraints table
