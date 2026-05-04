@@ -231,7 +231,7 @@ function buildCoverageMatrix(docs, sources, claims) {
     const key = source?.sourceType ?? 'unknown';
     byType[key] = (byType[key] ?? 0) + 1;
   }
-  const byStance = { confirming: 0, adverse: 0, neutral: 0, unknown: 0 };
+  const byStance = {};
   for (const source of sources) {
     const key = source?.stance ?? 'unknown';
     byStance[key] = (byStance[key] ?? 0) + 1;
@@ -243,7 +243,7 @@ function buildCoverageMatrix(docs, sources, claims) {
   }
   const byClaimType = {};
   for (const claim of claims) {
-    const key = claim?.claimType ?? 'unknown';
+    const key = claim?.type ?? 'unknown';
     byClaimType[key] = (byClaimType[key] ?? 0) + 1;
   }
   const distinctDomains = new Set(sources.map((s) => normalizedDomain(s?.url)).filter(Boolean));

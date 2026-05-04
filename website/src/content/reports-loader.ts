@@ -120,7 +120,8 @@ function readYaml(path: string): Record<string, any> | null {
 function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCardData {
   const { runTimestamp, folderSlug } = parseRunId(runId);
   const company = raw.company ?? {};
-  const metrics = raw.keyMetrics ?? {};
+  const summary = raw.summary ?? {};
+  const metrics = summary.keyMetrics ?? {};
   return {
     schemaVersion: SCHEMA_VERSION,
     artifact: 'summary-card',
@@ -134,12 +135,12 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
       headquarters: company.headquarters ?? null,
       shortDescription: company.shortDescription ?? null,
     },
-    headline: raw.headline ?? `${company.name ?? 'Startup'} diligence report`,
-    recommendation: typeof raw.recommendation === 'string' ? raw.recommendation : 'research-more',
-    confidence: raw.confidence ?? 'low',
-    riskRating: raw.riskRating ?? 'unknown',
-    valuationStance: raw.valuationStance ?? 'unknown',
-    overallScore: typeof raw.overallScore === 'number' ? raw.overallScore : 0,
+    headline: summary.headline ?? `${company.name ?? 'Startup'} diligence report`,
+    recommendation: typeof summary.recommendation === 'string' ? summary.recommendation : 'research-more',
+    confidence: summary.confidence ?? 'low',
+    riskRating: summary.riskRating ?? 'unknown',
+    valuationStance: summary.valuationStance ?? 'unknown',
+    overallScore: typeof summary.overallScore === 'number' ? summary.overallScore : 0,
     sourceStats: {
       sourcesRetained: raw.sourceStats?.sourcesRetained ?? 0,
       claimsReviewed: raw.sourceStats?.claimsReviewed ?? 0,
@@ -155,9 +156,9 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
       customerCount: metrics.customerCount ?? null,
       headcount: metrics.headcount ?? null,
     },
-    topStrengths: Array.isArray(raw.topStrengths) ? raw.topStrengths : [],
-    topRisks: Array.isArray(raw.topRisks) ? raw.topRisks : [],
-    unresolvedGaps: Array.isArray(raw.unresolvedGaps) ? raw.unresolvedGaps : [],
+    topStrengths: Array.isArray(summary.topStrengths) ? summary.topStrengths : [],
+    topRisks: Array.isArray(summary.topRisks) ? summary.topRisks : [],
+    unresolvedGaps: Array.isArray(summary.unresolvedGaps) ? summary.unresolvedGaps : [],
     runId,
     runTimestamp,
     folderSlug,

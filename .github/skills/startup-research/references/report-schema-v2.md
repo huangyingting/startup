@@ -28,15 +28,20 @@ Conventions:
 ```yaml
 recommendation: strong-buy | buy | track | research-more | avoid
 confidence: high | medium | low
-riskRating: low | moderate | significant | critical | unknown
+riskRating: low | medium | high | critical | unknown
 valuationStance: attractive | fair | stretched | expensive | unknown
 evidenceQuality: high | medium | low | unknown
 calloutType: strength | risk | recommendation | insight | assumption    # shared vocabulary for chapter callouts and report callout blocks
-claimType: observed | company-claimed | third-party-reported | estimated | inferred | open-question | conflicting
+claim.type: observed | company-claimed | third-party-reported | estimated | inferred | open-question | conflicting
 freshness: current | recent | historical | unknown
-sourceType: official | filing | regulatory | tier-one-news | trade-press | analyst-market-data | technical-docs | customer-proof | partner-proof | developer-signal | review | legal | other
+sourceType: official | filing | regulatory | news | analyst-market-data | technical-docs | customer-proof | partner-proof | developer-signal | review | legal | other
 reputationTier: high | medium | low
 independence: company | partner | customer | competitor | independent | unknown
+stance: confirming | adverse | neutral | unknown
+accessStatus: ok | paywall | js-only | broken | rate-limited
+evidenceGap.type: missing-source | conflicting-data | private-evidence-only | enumeration-incomplete | stale | access-blocked
+severity: blocking | material | minor
+tone: positive | neutral | warning | negative
 figure.layout: compact | standard | wide
 block.type: paragraph | callout | table | figure | list | equation
 ```
@@ -119,9 +124,9 @@ coverageMatrix:
       unresolvedQuestions: number
       distinctDomains: number
   byType: { <sourceType>: number }
-  byStance: { confirming: number, adverse: number, neutral: number, unknown: number }
+  byStance: { <stance>: number }
   byAccessStatus: { <accessStatus>: number }
-  byClaimType: { <claimType>: number }
+  byClaimType: { <claim.type>: number }
 sources: [source]
 claims: [claim]
 evidenceGaps: [evidenceGap]
@@ -140,28 +145,8 @@ company:
   name: string
 subtitle: string | null            # Optional descriptor; the canonical display title is `company.name`.
 coverageNotes: string | null
-coverMetrics:
-  - label: string
-    value: string
-    numericValue: number | null
-    unit: string | null
-    claimRefs: [C001]
-startupIntroduction:
-  summary: string
-  foundedDate: YYYY-MM-DD | null
-  founders:
-    - name: string
-      role: string | null
-      background: string | null
-      claimRefs: [C001]
-  foundingLocation: string | null
-  headquarters: string | null
-  productSummary: string
-  customerFocus: string | null
-  businessModel: string | null
-  stage: string | null
-  fundingStatus: string | null
-  claimRefs: [C001]
+coverFacts: [coverFact]
+companyProfile: companyProfile
 chapters:
   - number: number
     title: string
@@ -171,10 +156,7 @@ chapters:
         blocks: [block]
 tables: [table]
 figures: [figure]
-appendices:
-  - id: A
-    title: string
-    blocks: [block]
+appendices: [appendix]
 bibliography:
   sourceRefs: [S001]
 disclaimer: string                  # Non-empty.
@@ -182,7 +164,7 @@ disclaimer: string                  # Non-empty.
 
 ## Summary card schema
 
-Applies to `summary-card.yaml`. Holds the headline judgment fields (`recommendation`, `confidence`, `riskRating`, `valuationStance`) so they are not duplicated on `full-report.yaml`.
+Applies to `summary-card.yaml`. Holds the headline judgment (`summary.recommendation`, `summary.confidence`, `summary.riskRating`, `summary.valuationStance`) so they are not duplicated on `full-report.yaml`.
 
 ```yaml
 schemaVersion: report-v2
@@ -196,12 +178,17 @@ company:
   stage: string | null
   headquarters: string | null
   shortDescription: string | null
-headline: string
-recommendation: strong-buy | buy | track | research-more | avoid
-confidence: high | medium | low
-riskRating: low | moderate | significant | critical | unknown
-valuationStance: attractive | fair | stretched | expensive | unknown
-overallScore: number              # 0–10 ordinal score, one decimal place (e.g. 7.4).
+summary:
+  headline: string
+  overallScore: number              # 0–10 ordinal score, one decimal place (e.g. 7.4).
+  recommendation: strong-buy | buy | track | research-more | avoid
+  confidence: high | medium | low
+  riskRating: low | medium | high | critical | unknown
+  valuationStance: attractive | fair | stretched | expensive | unknown
+  keyMetrics: keyMetrics
+  topStrengths: [string]
+  topRisks: [string]
+  unresolvedGaps: [string]
 sourceStats:
   sourcesRetained: number
   claimsReviewed: number          # ≤ evidence ledger claims count.
@@ -209,19 +196,39 @@ sourceStats:
   adverseSourceCount: number      # Count of sources with stance=adverse.
   unresolvedQuestionCount: number # Count of researchQuestions with status != answered across all chapters.
   averageSourceAgeDays: number | null  # Mean (runDate - source.date) in days; null when no dated sources.
-keyMetrics:
-  valuationUsdM: number | null
-  revenueRunRateUsdM: number | null
-  arrUsdM: number | null
-  revenueGrowthYoYPct: number | null
-  grossMarginPct: number | null
-  nrrPct: number | null
-  totalRaisedUsdM: number | null
-  customerCount: number | null
-  headcount: number | null
-topStrengths: [string]
-topRisks: [string]
-unresolvedGaps: [string]
+```
+
+## Report meta schema
+
+Applies to `report-meta.yaml` — the hand-authored input that `assemble.mjs` consumes to build `full-report.yaml` and `summary-card.yaml`. It carries the judgment fields the analysis chapters do not encode.
+
+```yaml
+slug: string
+runDate: YYYY-MM-DD
+company:
+  name: string
+  website: string | null
+  sector: string | null
+  stage: string | null
+  headquarters: string | null
+  shortDescription: string | null
+subtitle: string | null
+coverageNotes: string | null
+coverFacts: [coverFact] | null
+companyProfile: companyProfile
+summary:
+  headline: string
+  overallScore: number              # 0–10, one decimal.
+  recommendation: strong-buy | buy | track | research-more | avoid
+  confidence: high | medium | low
+  riskRating: low | medium | high | critical | unknown
+  valuationStance: attractive | fair | stretched | expensive | unknown
+  keyMetrics: keyMetrics
+  topStrengths: [string]
+  topRisks: [string]
+  unresolvedGaps: [string]
+appendices: [appendix] | null
+disclaimer: string | null           # Overrides default when set.
 ```
 
 ## Reusable objects
@@ -235,7 +242,7 @@ source:
   date: YYYY-MM-DD | null                          # null only when no publish/document date exists.
   accessDate: YYYY-MM-DD                           # Required; never null.
   accessStatus: ok | paywall | js-only | broken | rate-limited
-  stance: confirming | adverse | neutral
+  stance: confirming | adverse | neutral | unknown
   sourceType: sourceType
   reputationTier: high | medium | low
   independence: company | partner | customer | competitor | independent | unknown
@@ -245,13 +252,13 @@ source:
 claim:
   id: C001
   statement: string                                # Non-empty; one atomic fact per claim.
-  claimType: claimType
+  type: claim.type
   topic: string
-  sourceRefs: [S001]                               # May be empty only when claimType is open-question.
+  sourceRefs: [S001]                               # May be empty only when type is `open-question`.
   confidence: high | medium | low
   freshness: current | recent | historical | unknown
   answersQuestionRefs: [RQ001]                     # Optional; researchQuestion ids this claim answers.
-  contradictsClaimRefs: [C012]                     # Optional; required when claimType is `conflicting`.
+  contradictsClaimRefs: [C012]                     # Optional; required when type is `conflicting`.
 
 researchQuestion:
   id: RQ001
@@ -267,13 +274,13 @@ searchQuery:
   retainedSourceRefs: [S001]                       # Local source ids retained from this query.
 
 evidenceGap:
-  type: missing-source | conflicting-data | private-only | enumeration-incomplete | stale | unanswered-question | access-blocked
+  type: missing-source | conflicting-data | private-evidence-only | enumeration-incomplete | stale | access-blocked
   severity: blocking | material | minor
   topic: string
   missingEvidence: string
   whyItMatters: string
   diligencePath: string
-  relatedQuestionRefs: [RQ001]                   # Optional.
+  relatedQuestionRefs: [RQ001]                   # Optional; cite when this gap closes an unresolved/partial researchQuestion.
   relatedTableRefs: [T001]                       # Optional.
 
 table:
@@ -308,6 +315,45 @@ block:
   items: [string]                  # Required (non-empty) when type is list.
   equation: string | null          # Required (non-empty) when type is equation.
   claimRefs: [C001]
+
+coverFact:
+  label: string
+  value: number | string | null     # Numeric when sortable/chartable; string for textual values like "Series A".
+  unit: string | null               # e.g. `USD M`, `%`, `employees`. Omit for textual values.
+  claimRefs: [C001]
+
+companyProfile:
+  summary: string                  # Non-empty.
+  foundedDate: YYYY-MM-DD | null
+  founders:
+    - name: string
+      role: string | null
+      background: string | null
+      claimRefs: [C001]
+  foundingLocation: string | null
+  headquarters: string | null
+  productSummary: string           # Non-empty.
+  customerFocus: string | null
+  businessModel: string | null
+  stage: string | null
+  fundingStatus: string | null
+  claimRefs: [C001]
+
+keyMetrics:
+  valuationUsdM: number | null
+  revenueRunRateUsdM: number | null
+  arrUsdM: number | null
+  revenueGrowthYoYPct: number | null
+  grossMarginPct: number | null
+  nrrPct: number | null
+  totalRaisedUsdM: number | null
+  customerCount: number | null
+  headcount: number | null
+
+appendix:
+  id: A | B | C | ...
+  title: string
+  blocks: [block]
 ```
 
 ## Figure types
@@ -333,7 +379,7 @@ Universal rules:
 | `funnel` | Stage-by-stage conversion drop-off. | `items[]` or `series[]` | Order = stage order. |
 | `waterfall` | Bridge from start to end via deltas. | `items[]` | Numeric `value`; mark totals via `kind: total`. |
 | `range` | Low/base/high estimate per item. | `items[]` | Numeric `low`/`min` and `high`/`max`; optional `mid`/`value` numeric. |
-| `matrix` | Two-dim grid with cell labels (capability, evidence quality, risk heatmap, ordinal scoring). | `columns[]` + `rows[]` | `row.values.length === columns.length`; row label in `row.label`. Cell `tone` drives discrete color. |
+| `matrix` | Two-dim grid with cell labels (capability, evidence quality, risk heatmap, ordinal scoring). | `columns[]` + `rows[]` | `row.values.length === columns.length`; row label in `row.label`. Cell `tone` (`positive | neutral | warning | negative`) drives discrete color. |
 | `cohort` | Time-series retention only. | `columns[]` + `rows[]` | `columns[]` are time buckets (e.g. `month-1`, `month-3`, `year-1`); cells are retention percentages 0–100. Use `matrix` for ordinal scoring. |
 | `stack` | Layered stack (tech stack, opportunity layers). | `layers[]` or `items[]` | Use `layers[]` when each layer has modules/outputs. |
 | `pyramid` | Nested narrowing levels for sizing or segmentation (TAM/SAM/SOM, segment, geography). | `nodes[]` or `items[]` | One level per layer; declared order is top-to-bottom. |

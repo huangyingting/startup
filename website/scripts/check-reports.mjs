@@ -118,7 +118,7 @@ function checkDocumentHead(run, file, doc) {
 
 function checkLedgerSources(run, sources) {
   const ACCESS_STATUSES = new Set(['ok', 'paywall', 'js-only', 'broken', 'rate-limited']);
-  const STANCES = new Set(['confirming', 'adverse', 'neutral']);
+  const STANCES = new Set(['confirming', 'adverse', 'neutral', 'unknown']);
   for (const source of sources) {
     const path = `${run}/${EVIDENCE_FILE}: source ${source?.id ?? '?'}`;
     for (const field of ['publisher', 'title', 'accessDate', 'url', 'sourceType', 'reputationTier', 'independence', 'topics', 'accessStatus', 'stance']) {
@@ -150,11 +150,14 @@ function checkLedgerCoverage(run, coverage) {
 function checkLedgerClaims(run, claims) {
   for (const claim of claims) {
     const path = `${run}/${EVIDENCE_FILE}: claim ${claim?.id ?? '?'}`;
-    for (const field of ['statement', 'claimType', 'topic', 'sourceRefs', 'confidence', 'freshness']) {
+    for (const field of ['statement', 'type', 'topic', 'sourceRefs', 'confidence', 'freshness']) {
       if (claim?.[field] === undefined) fail(`${path} missing ${field}`);
     }
     if (!hasText(claim?.statement)) fail(`${path} statement must be non-empty`);
     if (!Array.isArray(claim?.sourceRefs)) fail(`${path} sourceRefs must be an array`);
+    if (claim?.claimType !== undefined) {
+      fail(`${path} uses obsolete field 'claimType'; rename to 'type'`);
+    }
     if (claim?.corroboration !== undefined) {
       fail(`${path} must not store corroboration; it is derived from sourceRefs.length and contradictsClaimRefs`);
     }
@@ -164,8 +167,8 @@ function checkLedgerClaims(run, claims) {
     if (claim?.contradictsClaimRefs !== undefined && !Array.isArray(claim.contradictsClaimRefs)) {
       fail(`${path} contradictsClaimRefs must be an array when present`);
     }
-    if (claim?.claimType === 'conflicting' && !(claim.contradictsClaimRefs ?? []).length) {
-      fail(`${path} claimType=conflicting requires non-empty contradictsClaimRefs`);
+    if (claim?.type === 'conflicting' && !(claim.contradictsClaimRefs ?? []).length) {
+      fail(`${path} type=conflicting requires non-empty contradictsClaimRefs`);
     }
   }
 }
@@ -530,8 +533,28 @@ function checkReportLevelDiversity(run, ledger) {
 
 function checkCardConsistency(run, card, reportDoc, ledger) {
   const cardPath = `${run}/${SUMMARY_CARD_FILE}`;
-  if (typeof card?.overallScore !== 'number' || card.overallScore < 0 || card.overallScore > 10) {
-    fail(`${cardPath}: overallScore must be a number between 0 and 10`);
+  const RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 'avoid']);
+  const CONFIDENCES = new Set(['high', 'medium', 'low']);
+  const RISK_RATINGS = new Set(['low', 'medium', 'high', 'critical', 'unknown']);
+  const VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
+  const summary = card?.summary;
+  if (!summary || typeof summary !== 'object') {
+    fail(`${cardPath}: summary block is required`);
+  } else {
+    if (typeof summary.overallScore !== 'number' || summary.overallScore < 0 || summary.overallScore > 10) {
+      fail(`${cardPath}: summary.overallScore must be a number between 0 and 10`);
+    }
+    if (!hasText(summary.headline)) fail(`${cardPath}: summary.headline is required`);
+    if (!RECOMMENDATIONS.has(summary.recommendation)) fail(`${cardPath}: summary.recommendation must be one of ${[...RECOMMENDATIONS].join('|')}`);
+    if (!CONFIDENCES.has(summary.confidence)) fail(`${cardPath}: summary.confidence must be one of ${[...CONFIDENCES].join('|')}`);
+    if (!RISK_RATINGS.has(summary.riskRating)) fail(`${cardPath}: summary.riskRating must be one of ${[...RISK_RATINGS].join('|')}`);
+    if (!VALUATION_STANCES.has(summary.valuationStance)) fail(`${cardPath}: summary.valuationStance must be one of ${[...VALUATION_STANCES].join('|')}`);
+    for (const field of ['topStrengths', 'topRisks', 'unresolvedGaps']) {
+      if (!Array.isArray(summary[field])) fail(`${cardPath}: summary.${field} must be an array`);
+    }
+  }
+  for (const field of ['headline', 'recommendation', 'confidence', 'riskRating', 'valuationStance', 'overallScore', 'keyMetrics', 'topStrengths', 'topRisks', 'unresolvedGaps']) {
+    if (card?.[field] !== undefined) fail(`${cardPath}: top-level field '${field}' is obsolete; nest under 'summary'`);
   }
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
     fail(`${cardPath}: claimsReviewed exceeds ledger claims`);
@@ -549,10 +572,16 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
 
 function checkReportConsistency(run, reportDoc) {
   const reportPath = `${run}/${FULL_REPORT_FILE}`;
-  if (!reportDoc?.startupIntroduction || typeof reportDoc.startupIntroduction !== 'object') {
-    fail(`${reportPath}: missing startupIntroduction object`);
-  } else if (typeof reportDoc.startupIntroduction.summary !== 'string' || !reportDoc.startupIntroduction.summary.trim()) {
-    fail(`${reportPath}: startupIntroduction.summary is required`);
+  if (reportDoc?.startupIntroduction !== undefined) {
+    fail(`${reportPath}: uses obsolete field 'startupIntroduction'; rename to 'companyProfile'`);
+  }
+  if (reportDoc?.coverMetrics !== undefined) {
+    fail(`${reportPath}: uses obsolete field 'coverMetrics'; rename to 'coverFacts'`);
+  }
+  if (!reportDoc?.companyProfile || typeof reportDoc.companyProfile !== 'object') {
+    fail(`${reportPath}: missing companyProfile object`);
+  } else if (typeof reportDoc.companyProfile.summary !== 'string' || !reportDoc.companyProfile.summary.trim()) {
+    fail(`${reportPath}: companyProfile.summary is required`);
   }
 }
 

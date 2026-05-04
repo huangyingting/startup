@@ -463,8 +463,8 @@ function checkClaimAnswerRefs(file, doc) {
         fail('claimContradictRefs', `${file}: claim ${claim.id} contradictsClaimRefs references unknown local claim ${ref}`, { claimId: claim.id, ref });
       }
     }
-    if (claim?.claimType === 'conflicting' && (!Array.isArray(claim.contradictsClaimRefs) || claim.contradictsClaimRefs.length === 0)) {
-      fail('claimContradictRefs', `${file}: claim ${claim.id} has claimType=conflicting but no contradictsClaimRefs`, { claimId: claim.id });
+    if (claim?.type === 'conflicting' && (!Array.isArray(claim.contradictsClaimRefs) || claim.contradictsClaimRefs.length === 0)) {
+      fail('claimContradictRefs', `${file}: claim ${claim.id} has type=conflicting but no contradictsClaimRefs`, { claimId: claim.id });
     }
   }
 }

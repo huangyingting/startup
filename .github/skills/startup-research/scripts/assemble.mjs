@@ -80,12 +80,12 @@ function requireField(obj, path) {
 const slug = requireField(meta, 'slug');
 const runDate = requireField(meta, 'runDate');
 const companyName = requireField(meta, 'company.name');
-const recommendation = requireField(meta, 'summary.recommendation');
-const confidence = requireField(meta, 'summary.confidence');
-const riskRating = requireField(meta, 'summary.riskRating');
-const valuationStance = requireField(meta, 'summary.valuationStance');
-requireField(meta, 'startupIntroduction.summary');
-requireField(meta, 'startupIntroduction.productSummary');
+requireField(meta, 'summary.recommendation');
+requireField(meta, 'summary.confidence');
+requireField(meta, 'summary.riskRating');
+requireField(meta, 'summary.valuationStance');
+requireField(meta, 'companyProfile.summary');
+requireField(meta, 'companyProfile.productSummary');
 requireField(meta, 'summary.headline');
 requireField(meta, 'summary.overallScore');
 requireField(meta, 'summary.topStrengths');
@@ -198,8 +198,8 @@ const fullReport = {
   company: { name: companyName },
   subtitle: meta.subtitle ?? null,
   coverageNotes: meta.coverageNotes ?? null,
-  coverMetrics: meta.coverMetrics ?? [],
-  startupIntroduction: meta.startupIntroduction,
+  coverFacts: meta.coverFacts ?? [],
+  companyProfile: meta.companyProfile,
   chapters: chapterDocs.map(buildChapter),
   tables,
   figures,
@@ -231,12 +231,18 @@ const summaryCard = {
     ...summaryDefaults,
     ...(meta.company ?? {}),
   },
-  headline: meta.summary.headline,
-  recommendation,
-  confidence,
-  riskRating,
-  valuationStance,
-  overallScore: meta.summary.overallScore,
+  summary: {
+    headline: meta.summary.headline,
+    overallScore: meta.summary.overallScore,
+    recommendation: meta.summary.recommendation,
+    confidence: meta.summary.confidence,
+    riskRating: meta.summary.riskRating,
+    valuationStance: meta.summary.valuationStance,
+    keyMetrics: meta.summary.keyMetrics ?? {},
+    topStrengths: meta.summary.topStrengths,
+    topRisks: meta.summary.topRisks,
+    unresolvedGaps: meta.summary.unresolvedGaps,
+  },
   sourceStats: {
     sourcesRetained: sourceRefs.length,
     claimsReviewed: (evidence.claims ?? []).length,
@@ -245,10 +251,6 @@ const summaryCard = {
     unresolvedQuestionCount: sourceStats.unresolvedQuestionCount,
     averageSourceAgeDays: sourceStats.averageSourceAgeDays,
   },
-  keyMetrics: meta.summary.keyMetrics ?? {},
-  topStrengths: meta.summary.topStrengths,
-  topRisks: meta.summary.topRisks,
-  unresolvedGaps: meta.summary.unresolvedGaps,
 };
 
 // ---------------------------------------------------------------------------

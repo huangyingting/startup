@@ -24,7 +24,7 @@ const labels = {
   recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating',
   valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims',
   figures: 'figures', tables: 'tables',
-  coverMetrics: 'Cover metrics', startupIntro: 'Startup introduction',
+  coverMetrics: 'Cover facts', startupIntro: 'Company profile',
   founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location',
   headquarters: 'Headquarters', product: 'Product', customers: 'Customers',
   businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status',
@@ -74,11 +74,11 @@ function blockRefs(value: any): string[] {
   return arr<string>(value?.claimRefs).slice(0, 6);
 }
 
-const coverMetrics = arr(doc?.coverMetrics);
-const startupIntroduction = doc?.startupIntroduction
+const coverFacts = arr(doc?.coverFacts);
+const companyProfile = doc?.companyProfile
   ? {
-      ...doc.startupIntroduction,
-      summary: doc.startupIntroduction.summary ?? doc.startupIntroduction.body ?? null,
+      ...doc.companyProfile,
+      summary: doc.companyProfile.summary ?? doc.companyProfile.body ?? null,
     }
   : null;
 
@@ -145,14 +145,14 @@ const fallbackMetrics = [
   <section class="report-section cover-metrics">
     <h2>{labels.coverMetrics}</h2>
     <div class="metric-grid">
-      {coverMetrics.length
-        ? coverMetrics.map((item: any, index: number) => (
+      {coverFacts.length
+        ? coverFacts.map((item: any, index: number) => (
             <article>
               <div class="metric-topline">
                 <span class="metric-label">{item.label}</span>
                 <em>{String(index + 1).padStart(2, '0')}</em>
               </div>
-              <strong>{item.value}</strong>
+              <strong>{item.value == null ? '—' : `${item.value}${item.unit ? ` ${item.unit}` : ''}`}</strong>
               <ClaimRefs refs={blockRefs(item)} claims={claims} sources={sources} />
             </article>
           ))
@@ -168,33 +168,33 @@ const fallbackMetrics = [
     </div>
   </section>
 
-  {startupIntroduction && (
+  {companyProfile && (
     <section class="report-section startup-intro">
       <h2>{labels.startupIntro}</h2>
-      {startupIntroduction.heading && <p class="intro-heading"><strong>{startupIntroduction.heading}</strong></p>}
-      {startupIntroduction.summary && (
+      {companyProfile.heading && <p class="intro-heading"><strong>{companyProfile.heading}</strong></p>}
+      {companyProfile.summary && (
         <p>
-          {splitClaimRefsText(startupIntroduction.summary).map((part) => part.ref
+          {splitClaimRefsText(companyProfile.summary).map((part) => part.ref
             ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
             : part.text)}
         </p>
       )}
       <dl class="intro-grid">
-        {startupIntroduction.foundedDate && (
-          <div><dt>{labels.founded}</dt><dd>{startupIntroduction.foundedDate}</dd></div>
+        {companyProfile.foundedDate && (
+          <div><dt>{labels.founded}</dt><dd>{companyProfile.foundedDate}</dd></div>
         )}
-        {arr(startupIntroduction.founders).length > 0 && (
-          <div><dt>{labels.founders}</dt><dd>{arr(startupIntroduction.founders).map((founder: any) => founder.name).join(', ')}</dd></div>
+        {arr(companyProfile.founders).length > 0 && (
+          <div><dt>{labels.founders}</dt><dd>{arr(companyProfile.founders).map((founder: any) => founder.name).join(', ')}</dd></div>
         )}
-        {startupIntroduction.foundingLocation && <div><dt>{labels.foundingLocation}</dt><dd>{startupIntroduction.foundingLocation}</dd></div>}
-        {startupIntroduction.headquarters && <div><dt>{labels.headquarters}</dt><dd>{startupIntroduction.headquarters}</dd></div>}
-        {startupIntroduction.productSummary && <div><dt>{labels.product}</dt><dd>{startupIntroduction.productSummary}</dd></div>}
-        {startupIntroduction.customerFocus && <div><dt>{labels.customers}</dt><dd>{startupIntroduction.customerFocus}</dd></div>}
-        {startupIntroduction.businessModel && <div><dt>{labels.businessModel}</dt><dd>{startupIntroduction.businessModel}</dd></div>}
-        {startupIntroduction.stage && <div><dt>{labels.stage}</dt><dd>{startupIntroduction.stage}</dd></div>}
-        {startupIntroduction.fundingStatus && <div><dt>{labels.fundingStatus}</dt><dd>{startupIntroduction.fundingStatus}</dd></div>}
+        {companyProfile.foundingLocation && <div><dt>{labels.foundingLocation}</dt><dd>{companyProfile.foundingLocation}</dd></div>}
+        {companyProfile.headquarters && <div><dt>{labels.headquarters}</dt><dd>{companyProfile.headquarters}</dd></div>}
+        {companyProfile.productSummary && <div><dt>{labels.product}</dt><dd>{companyProfile.productSummary}</dd></div>}
+        {companyProfile.customerFocus && <div><dt>{labels.customers}</dt><dd>{companyProfile.customerFocus}</dd></div>}
+        {companyProfile.businessModel && <div><dt>{labels.businessModel}</dt><dd>{companyProfile.businessModel}</dd></div>}
+        {companyProfile.stage && <div><dt>{labels.stage}</dt><dd>{companyProfile.stage}</dd></div>}
+        {companyProfile.fundingStatus && <div><dt>{labels.fundingStatus}</dt><dd>{companyProfile.fundingStatus}</dd></div>}
       </dl>
-      <ClaimRefs refs={(startupIntroduction.claimRefs ?? []).slice(0, 8)} claims={claims} sources={sources} />
+      <ClaimRefs refs={(companyProfile.claimRefs ?? []).slice(0, 8)} claims={claims} sources={sources} />
     </section>
   )}
 

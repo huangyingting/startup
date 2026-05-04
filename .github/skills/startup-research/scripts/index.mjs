@@ -26,7 +26,8 @@ function completeCardPath(runId) {
 
 function indexEntry(runId, card) {
   const company = card.company ?? {};
-  const metrics = card.keyMetrics ?? {};
+  const summary = card.summary ?? {};
+  const metrics = summary.keyMetrics ?? {};
   return {
     runId,
     slug: card.slug ?? runId,
@@ -38,10 +39,10 @@ function indexEntry(runId, card) {
     domain: normalizeDomain(company.website),
     sector: company.sector ?? null,
     stage: company.stage ?? null,
-    recommendation: card.recommendation ?? null,
-    riskRating: card.riskRating ?? null,
-    valuationStance: card.valuationStance ?? null,
-    rating: card.overallScore ?? null,
+    recommendation: summary.recommendation ?? null,
+    riskRating: summary.riskRating ?? null,
+    valuationStance: summary.valuationStance ?? null,
+    rating: summary.overallScore ?? null,
     sourcesRetained: card.sourceStats?.sourcesRetained ?? null,
     domainCount: card.sourceStats?.domainCount ?? null,
     adverseSourceCount: card.sourceStats?.adverseSourceCount ?? null,

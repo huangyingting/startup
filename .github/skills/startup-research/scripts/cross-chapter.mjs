@@ -119,7 +119,7 @@ for (const { spec, doc } of docs) {
     }
   }
 
-  // (b) coverMetrics live in the report-meta file but they may also appear in
+  // (b) coverFacts live in the report-meta file but they may also appear in
   // a chapter's snapshot KPI table; catch numeric/value pairs there too.
   for (const table of doc.tables ?? []) {
     const headers = (table.columns ?? []).map((column) => normalizeMetricKey(column));

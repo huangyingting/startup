@@ -36,25 +36,17 @@ For each chapter `order` from the loader:
    `node .github/skills/startup-research/scripts/chapter.mjs --order <n> --format json --include-workflow`
    Optionally append `--include-context` to inline the sections, tables, figures, and consolidated claimRefs of every file listed in `optionalContext` so the chapter brief carries reusable ground truth from earlier chapters.
 2. Use only `packet.chapter` as the chapter brief: `file`, `artifact`, `title`, `mission`, `optionalContext`, `contentRequirements`, `plannedTables`, `plannedFigures`, `evidenceStrategy`, `qualityBar`, and `gate`.
-3. **Plan typed research questions first.** Generate at least `gate.minResearchQuestions` items into `localEvidence.researchQuestions[]`. Each question is an object:
-   ```yaml
-   - id: RQ001
-     question: "List every confirmed cofounder of <Company> and their current role."   # >= 20 chars; specific (include company / product / year / numeric anchor)
-     type: enumeration | quantification | verification | adverse | freshness | comparison | mechanism
-     targets: [contentRequirements/3, plannedTables/leadership-and-founder-table]      # non-empty; each target maps to a contentRequirement index or a planned table/figure slug
-     status: answered | partial | unresolved                                            # initial state is `unresolved`; flip to `answered` once a claim cites the answer
-   ```
-   Distribute the types so that `gate.minQuestionTypeSpread` distinct types are covered, including at least `gate.minAdverseQuestions` of `type: adverse`. Cover at least `gate.minContentRequirementCoverage` (default 80%) of the chapter's `contentRequirements[]` via `targets[]`.
+3. **Plan typed research questions first.** Generate at least `gate.minResearchQuestions` items into `localEvidence.researchQuestions[]`; each item follows the `researchQuestion` shape in `references/report-schema-v2.md`. Start every question with `status: unresolved` and flip to `answered` only when a claim cites it via `claim.answersQuestionRefs`. Each `question` string must be at least 20 characters and include a specific anchor (company / product / year / numeric). Distribute the types so that `gate.minQuestionTypeSpread` distinct types are covered, including at least `gate.minAdverseQuestions` of `type: adverse`. Cover at least `gate.minContentRequirementCoverage` (default 80%) of the chapter's `contentRequirements[]` via `targets[]`.
 4. **Search and fetch under audit.** Use `web_search` (or equivalent) to find URLs, then review each kept URL with `fetch-url`:
    `node .github/skills/fetch-url/scripts/fetch.mjs <url> --text-only`
    Record the actual queries you ran in `localEvidence.searchQueries[]` (`{query, engine, hits, retainedSourceRefs}`); leaving this empty when `researchQuestions` is non-empty is a gate failure.
-5. **Build evidence with full source metadata.** Convert reviewed URLs into `localEvidence.sources[]` with required fields `publisher, title, url, accessDate, sourceType, reputationTier, independence, topics, accessStatus (ok|paywall|js-only|broken|rate-limited), stance (confirming|adverse|neutral)`. Then write `localEvidence.claims[]` (atomic facts, with `sourceRefs` and optional `answersQuestionRefs: [RQ###]` to close the loop on questions). Surface every unresolved/partial question as a typed `evidenceGap` (see step 9).
+5. **Build evidence with full source metadata.** Convert reviewed URLs into `localEvidence.sources[]` (see `source` in the schema for required fields). Then write `localEvidence.claims[]` (atomic facts) using the schema's `claim` shape; set `answersQuestionRefs: [RQ###]` to close the loop on questions. Surface every unresolved/partial question as a typed `evidenceGap` (see step 9).
    - **Diversity is per-chapter, not just report-wide.** Each chapter must hit `gate.minSourceDomains` distinct registrable domains, `gate.minSourceTypeSpread` distinct sourceTypes, every `gate.requiredSourceTypes[]` value, and at least `gate.minNetNewSources` URLs that did not appear in any earlier-order chapter. Don't just reuse the global pool — pull fresh sources for the current chapter's `evidenceStrategy`.
    - **High-confidence claims demand corroboration.** When you set `claim.confidence: high`, supply at least `gate.minHighConfidenceCorroboration` `sourceRefs` and at least one of them must be a primary tier source (`sourceType: filing | regulatory | legal | official` or `reputationTier: high`).
 6. **Honour planned figures, but substitute when data is wrong-shaped.** For each entry in `plannedFigures`, check the figure type's data contract (e.g. `dag` needs `edges`, `cohort` needs time-bucket retention 0–100, `range` needs comparable units across rows). If the data fits, write the figure. If not, **substitute** for an extra table covering the same content and document the swap in `evidenceGaps` with `type: enumeration-incomplete` or in the table's `notes`.
 7. **Mark enumeration tables.** When a `plannedTable` has `enumeration: true`, the matching `tables[]` entry must include `enumerationScope: { coverage: exhaustive|partial|sample, basis: "..." }`. `partial`/`sample` requires either an `evidenceGap` entry whose `topic` mentions the table or a gap entry whose `relatedTableRefs[]` includes the table id. The table must also be backed by claims pointing to at least `gate.minSourcesPerEnumerationRow` distinct registrable domains.
 8. Generate the chapter YAML at `reportFolder/<chapter.file>` per the report schema.
-9. **Type your evidenceGaps.** Every `evidenceGap` is `{type: missing-source|conflicting-data|private-only|enumeration-incomplete|stale|unanswered-question|access-blocked, severity: blocking|material|minor, topic, missingEvidence, whyItMatters, diligencePath}`. Optional fields `relatedQuestionRefs: [RQ###]` and `relatedTableRefs: [T###]` close the loop with research questions and enumeration tables.
+9. **Type your evidenceGaps.** Every `evidenceGap` follows the schema's `evidenceGap` shape. Use `relatedQuestionRefs[]` to close out an unresolved/partial researchQuestion and `relatedTableRefs[]` to flag an enumeration-incomplete table.
 10. Run the gate with structured output:
     `node .github/skills/startup-research/scripts/gate.mjs <reportFolder> <chapter.file> --format json`
     Exit `0` means the chapter is ready. On nonzero exit, parse `failedDimensions[]` and `retryOrder[]` (root-cause sorted) from the JSON to scope the retry — see "Retry scope" below.
@@ -103,8 +95,8 @@ Retry up to 3 times per chapter, scoping each retry strictly to the dimensions i
 - Cite material sections, tables, figures, and callouts with local `claimRefs`.
 - Local `S###`, `C###`, `T###`, `F###`, `RQ###` IDs are scoped to one artifact.
 - Claims must be atomic; do not bundle several facts into one claim.
-- Every factual claim needs `sourceRefs`, except `claimType: open-question`.
-- Use honest labels for `claimType`, `confidence`, and `freshness`. Set `claim.contradictsClaimRefs` whenever `claimType: conflicting`. (`corroboration` is *derived* from `sourceRefs.length` and `contradictsClaimRefs`; do not write it.)
+- Every factual claim needs `sourceRefs`, except `claim.type: open-question`.
+- Use honest labels for `claim.type`, `claim.confidence`, and `claim.freshness`. Set `claim.contradictsClaimRefs` whenever `claim.type: conflicting`.
 - Reuse identity facts. The `company-overview` chapter is the canonical home for founders, founding date, headquarters, total raised, latest valuation, headcount, and customer count. When a later chapter restates one of these facts, cite the same canonical claim id (post-ledger) — do not invent a parallel local claim. `cross-chapter.mjs` flags `keyFactDrift` when this is violated.
 - Source `accessStatus` matters. Sources flagged `paywall`, `js-only`, `broken`, or `rate-limited` cannot be the sole `sourceRef` of a high-confidence claim, and the report-level gate fails when more than 30 % of sources fall in those buckets.
 - Use `currentDate` from the report run as the freshness anchor and preserve source date precision.
@@ -119,35 +111,7 @@ After all analysis chapters pass:
 
 1. Build evidence:
    `node .github/skills/startup-research/scripts/ledger.mjs <reportFolder>`
-2. Write `report-meta.yaml` in the report folder with the judgment fields the analysis chapters do not encode. Required shape:
-   ```yaml
-   slug: <slug>
-   runDate: YYYY-MM-DD
-   company:
-     name: <Company>
-     website: <url> | null
-     sector: <sector> | null
-     stage: <stage> | null
-     headquarters: <city> | null
-     shortDescription: <one-line> | null
-   subtitle: <optional qualifier> | null    # e.g. "Public-evidence diligence snapshot"
-   coverageNotes: <optional> | null
-   coverMetrics: [...]                        # optional cover-grid items
-   startupIntroduction: { summary, foundedDate, founders, foundingLocation, headquarters, productSummary, customerFocus, businessModel, stage, fundingStatus, claimRefs }
-   summary:
-     headline: <one-sentence>
-     overallScore: <0-10, one decimal>
-     recommendation: strong-buy | buy | track | research-more | avoid
-     confidence: high | medium | low
-     riskRating: low | moderate | significant | critical | unknown
-     valuationStance: attractive | fair | stretched | expensive | unknown
-     keyMetrics: { valuationUsdM, revenueRunRateUsdM, arrUsdM, revenueGrowthYoYPct, grossMarginPct, nrrPct, totalRaisedUsdM, customerCount, headcount }
-     topStrengths: [string]
-     topRisks: [string]
-     unresolvedGaps: [string]
-   appendices: [...]                          # optional
-   disclaimer: <override default> | null
-   ```
+2. Author `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md`. It carries the judgment fields the analysis chapters do not encode (recommendation, confidence, risk rating, valuation stance, headline, overall score, top strengths/risks, unresolved gaps, cover metrics, startup introduction, optional appendices and disclaimer override).
 3. Assemble the consolidated artifacts:
    `node .github/skills/startup-research/scripts/assemble.mjs <reportFolder>`
    This deterministically stitches the analysis chapter YAMLs + `evidence.yaml` + `report-meta.yaml` into `full-report.yaml` and `summary-card.yaml`. Re-run after editing any chapter or `report-meta.yaml`.
