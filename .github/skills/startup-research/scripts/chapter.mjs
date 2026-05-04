@@ -63,8 +63,8 @@ function compactChapter(chapter) {
     mission: chapter.mission,
     optionalContext: chapter.optionalContext ?? [],
     contentRequirements: chapter.contentRequirements ?? [],
-    requiredTables: chapter.requiredTables ?? [],
-    requiredFigures: chapter.requiredFigures ?? [],
+    plannedTables: chapter.plannedTables ?? [],
+    plannedFigures: chapter.plannedFigures ?? [],
     evidenceStrategy: chapter.evidenceStrategy ?? [],
     qualityBar: chapter.qualityBar ?? [],
     gate: chapter.gate,
@@ -111,13 +111,7 @@ function buildPacket(config, chapter) {
     schemaVersion: 'chapter-packet-v1',
     generatedFrom: workflowConfigPath,
     workflow: {
-      skill: config.workflow?.skill,
-      reportSchemaVersion: config.workflow?.reportSchemaVersion,
-      references: {
-        yamlRules: config.workflow?.yamlRules,
-        reportSchema: config.workflow?.reportSchema,
-      },
-      researchLoop: config.analysisDefaults?.researchLoop ?? {},
+      reportSchemaVersion: config.reportSchemaVersion,
       finalArtifacts: FINAL_ARTIFACTS,
       totalChapters: chapters.length,
     },
@@ -139,13 +133,7 @@ function orderedList(config) {
     schemaVersion: 'chapter-list-v1',
     generatedFrom: workflowConfigPath,
     workflow: {
-      skill: config.workflow?.skill,
-      reportSchemaVersion: config.workflow?.reportSchemaVersion,
-      references: {
-        yamlRules: config.workflow?.yamlRules,
-        reportSchema: config.workflow?.reportSchema,
-      },
-      researchLoop: config.analysisDefaults?.researchLoop ?? {},
+      reportSchemaVersion: config.reportSchemaVersion,
       finalArtifacts: FINAL_ARTIFACTS,
     },
     chapters: config.chapters.map(compactChapter),
@@ -163,20 +151,26 @@ function listItems(values) {
 
 function tableItems(values) {
   if (!values?.length) return '- None';
-  return values.map((item) => `- ${item.name}: ${item.requirement}`).join('\n');
+  return values.map((item) => {
+    const tags = [];
+    if (item.enumeration === true) tags.push(`enumeration: true (expectedMinRows=${item.expectedMinRows ?? '?'})`);
+    const tagText = tags.length ? ` [${tags.join('; ')}]` : '';
+    return `- ${item.name}${tagText}: ${item.requirement}`;
+  }).join('\n');
 }
 
 function figureItems(values) {
   if (!values?.length) return '- None';
-  return values.map((item) => `- ${item.name} (${(item.types ?? []).join(' | ')}): ${item.requirement}`).join('\n');
+  return values.map((item) => `- ${item.name} (${(item.acceptedTypes ?? []).join(' | ')}): ${item.requirement}`).join('\n');
 }
 
 function gateMarkdown(gate) {
   const floor = gate?.depthFloor ?? {};
   return [
     `- Sections: ${gate?.minSections}-${gate?.maxSections}`,
-    `- Tables: ${gate?.minTables}-${gate?.maxTables}`,
-    `- Figures: ${gate?.minFigures}-${gate?.maxFigures}`,
+    `- Artifacts (tables + figures): >= ${gate?.minArtifacts}`,
+    `- Tables ceiling: ${gate?.maxTables}`,
+    `- Figures ceiling: ${gate?.maxFigures}`,
     `- Research questions: >= ${gate?.minResearchQuestions}`,
     `- Local sources: >= ${gate?.minLocalSources}`,
     `- Local claims: >= ${gate?.minLocalClaims}`,
@@ -187,7 +181,7 @@ function gateMarkdown(gate) {
 function printListMarkdown(value) {
   console.log(`# Startup research chapter order\n`);
   console.log(`Config: \`${value.generatedFrom}\``);
-  console.log(`Workflow: \`${value.workflow.skill}\` / \`${value.workflow.reportSchemaVersion}\``);
+  console.log(`Report schema: \`${value.workflow.reportSchemaVersion}\``);
   console.log('');
   for (const chapter of value.chapters) {
     console.log(`${chapter.order}. \`${chapter.file}\` — ${chapter.title} (key: \`${chapter.key}\`)`);
@@ -212,20 +206,16 @@ function printPacketMarkdown(packet) {
   console.log(listItems(chapter.optionalContext));
   console.log('\n## Content requirements\n');
   console.log(listItems(chapter.contentRequirements));
-  console.log('\n## Required tables\n');
-  console.log(tableItems(chapter.requiredTables));
-  console.log('\n## Required figures\n');
-  console.log(figureItems(chapter.requiredFigures));
+  console.log('\n## Planned tables\n');
+  console.log(tableItems(chapter.plannedTables));
+  console.log('\n## Planned figures\n');
+  console.log(figureItems(chapter.plannedFigures));
   console.log('\n## Evidence strategy\n');
   console.log(listItems(chapter.evidenceStrategy));
   console.log('\n## Quality bar\n');
   console.log(listItems(chapter.qualityBar));
   console.log('\n## Gate\n');
   console.log(gateMarkdown(chapter.gate));
-  console.log('\n## Workflow iteration\n');
-  console.log(`- Max gate iterations: ${packet.workflow.researchLoop?.maxGateIterations ?? 'unspecified'}`);
-  console.log(`- Retry scope: ${packet.workflow.researchLoop?.retryScope ?? 'unspecified'}`);
-  console.log(`- Freshness sweep required: ${packet.workflow.researchLoop?.freshnessSweepRequired ? 'yes' : 'no'}`);
 }
 
 function main() {
@@ -258,7 +248,12 @@ function main() {
       console.error('[chapter] --include-context requires --report-folder <path>');
       process.exit(1);
     }
-    packet.contextChapters = (chapter.optionalContext ?? []).map((file) => compactContextChapter(args.reportFolder, file));
+    const fileByKey = new Map(config.chapters.map((item) => [item.key, item.file]));
+    packet.contextChapters = (chapter.optionalContext ?? []).map((key) => {
+      const file = fileByKey.get(key);
+      if (!file) return { key, status: 'unknownKey', sections: [], tables: [], figures: [] };
+      return { key, ...compactContextChapter(args.reportFolder, file) };
+    });
   }
   const output = args.includeWorkflow ? packet : packet.chapter;
   if (args.format === 'json') printJson(output);

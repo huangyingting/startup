@@ -117,9 +117,11 @@ function checkDocumentHead(run, file, doc) {
 // ---------------------------------------------------------------------------
 
 function checkLedgerSources(run, sources) {
+  const ACCESS_STATUSES = new Set(['ok', 'paywall', 'js-only', 'broken', 'rate-limited']);
+  const STANCES = new Set(['confirming', 'adverse', 'neutral']);
   for (const source of sources) {
     const path = `${run}/${EVIDENCE_FILE}: source ${source?.id ?? '?'}`;
-    for (const field of ['publisher', 'title', 'accessDate', 'url', 'sourceType', 'reputationTier', 'independence', 'topics']) {
+    for (const field of ['publisher', 'title', 'accessDate', 'url', 'sourceType', 'reputationTier', 'independence', 'topics', 'accessStatus', 'stance']) {
       if (source?.[field] === undefined) fail(`${path} missing ${field}`);
     }
     if (source?.date != null && !/^\d{4}-\d{2}-\d{2}$/.test(asDateString(source.date))) {
@@ -130,6 +132,12 @@ function checkLedgerSources(run, sources) {
     }
     if (!Array.isArray(source?.topics) || source.topics.length === 0) {
       fail(`${path} topics must be a non-empty array`);
+    }
+    if (source?.accessStatus && !ACCESS_STATUSES.has(source.accessStatus)) {
+      fail(`${path} accessStatus must be one of ${[...ACCESS_STATUSES].join('|')}`);
+    }
+    if (source?.stance && !STANCES.has(source.stance)) {
+      fail(`${path} stance must be one of ${[...STANCES].join('|')}`);
     }
   }
 }
@@ -149,6 +157,15 @@ function checkLedgerClaims(run, claims) {
     }
     if (!hasText(claim?.statement)) fail(`${path} statement must be non-empty`);
     if (!Array.isArray(claim?.sourceRefs)) fail(`${path} sourceRefs must be an array`);
+    if (claim?.answersQuestionRefs !== undefined && !Array.isArray(claim.answersQuestionRefs)) {
+      fail(`${path} answersQuestionRefs must be an array when present`);
+    }
+    if (claim?.contradictsClaimRefs !== undefined && !Array.isArray(claim.contradictsClaimRefs)) {
+      fail(`${path} contradictsClaimRefs must be an array when present`);
+    }
+    if (claim?.claimType === 'conflicting' && !(claim.contradictsClaimRefs ?? []).length) {
+      fail(`${path} claimType=conflicting requires non-empty contradictsClaimRefs`);
+    }
   }
 }
 
@@ -354,6 +371,7 @@ function checkFigure(path, figure) {
 // ---------------------------------------------------------------------------
 
 function checkTables(run, file, doc) {
+  const ENUM_COVERAGE = new Set(['exhaustive', 'partial', 'sample']);
   for (const table of doc?.tables ?? []) {
     if (!Array.isArray(table?.columns) || table.columns.length === 0) {
       fail(`${run}/${file}: table ${table?.id ?? '?'} requires non-empty data.columns`);
@@ -367,6 +385,15 @@ function checkTables(run, file, doc) {
       }
       if (row.length !== expectedCols) {
         fail(`${run}/${file}: table ${table.id} row ${index + 1} has ${row.length} cells but columns declares ${expectedCols}`);
+      }
+    }
+    if (table.enumerationScope !== undefined) {
+      const scope = table.enumerationScope;
+      if (!scope || typeof scope !== 'object') {
+        fail(`${run}/${file}: table ${table.id} enumerationScope must be an object`);
+      } else {
+        if (!ENUM_COVERAGE.has(scope.coverage)) fail(`${run}/${file}: table ${table.id} enumerationScope.coverage must be one of ${[...ENUM_COVERAGE].join('|')}`);
+        if (typeof scope.basis !== 'string' || scope.basis.trim().length < 20) fail(`${run}/${file}: table ${table.id} enumerationScope.basis must be a non-empty string (>=20 chars)`);
       }
     }
   }
@@ -464,6 +491,32 @@ function checkLedgerCrossReferences(run, ledger, parsed) {
       if (!claimIds.has(ref)) fail(`${run}/${file}: missing claimRef ${ref}`);
     }
   }
+  checkReportLevelDiversity(run, ledger);
+}
+
+function checkReportLevelDiversity(run, ledger) {
+  const matrix = ledger.coverageMatrix;
+  if (!matrix) {
+    fail(`${run}/${EVIDENCE_FILE}: coverageMatrix missing — re-run ledger.mjs`);
+    return;
+  }
+  // Report-wide floors: at least 30 distinct domains across the full report;
+  // at least one adverse-stance source; not more than 30% paywall/broken sources.
+  const REPORT_MIN_DOMAINS = 30;
+  if ((matrix.totalDistinctDomains ?? 0) < REPORT_MIN_DOMAINS) {
+    fail(`${run}/${EVIDENCE_FILE}: report-wide totalDistinctDomains=${matrix.totalDistinctDomains ?? 0}, expected at least ${REPORT_MIN_DOMAINS}`);
+  }
+  const adverseTotal = matrix.byStance?.adverse ?? 0;
+  if (adverseTotal === 0) {
+    fail(`${run}/${EVIDENCE_FILE}: no adverse-stance sources across the entire report (risks chapter must contribute at least one)`);
+  }
+  const totalSources = (ledger.sources ?? []).length;
+  if (totalSources > 0) {
+    const blockedTotal = (matrix.byAccessStatus?.broken ?? 0) + (matrix.byAccessStatus?.paywall ?? 0) + (matrix.byAccessStatus?.['rate-limited'] ?? 0);
+    if (blockedTotal / totalSources > 0.3) {
+      fail(`${run}/${EVIDENCE_FILE}: ${blockedTotal}/${totalSources} sources are paywall/broken/rate-limited (>30%); replace blocked sources with accessible alternatives`);
+    }
+  }
 }
 
 function checkCardConsistency(run, card, reportDoc, ledger) {
@@ -483,6 +536,15 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
   }
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
     fail(`${cardPath}: claimsReviewed exceeds ledger claims`);
+  }
+  for (const field of ['domainCount', 'adverseSourceCount', 'unresolvedQuestionCount']) {
+    if (typeof card?.sourceStats?.[field] !== 'number') fail(`${cardPath}: sourceStats.${field} is required and must be a number`);
+  }
+  if (card?.sourceStats && card.sourceStats.averageSourceAgeDays != null && typeof card.sourceStats.averageSourceAgeDays !== 'number') {
+    fail(`${cardPath}: sourceStats.averageSourceAgeDays must be a number or null`);
+  }
+  if (card?.sourceStats?.sourceTypeDistribution && (typeof card.sourceStats.sourceTypeDistribution !== 'object' || Array.isArray(card.sourceStats.sourceTypeDistribution))) {
+    fail(`${cardPath}: sourceStats.sourceTypeDistribution must be an object map`);
   }
 }
 

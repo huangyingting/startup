@@ -204,6 +204,58 @@ for (const [id, owners] of claimOwners) {
 }
 
 // ---------------------------------------------------------------------------
+// Key-facts registry: company-overview is the canonical source for identity
+// facts (founded, founders, headquarters, total raised, latest valuation,
+// headcount, customer count). When later chapters restate these facts, they
+// must do so by referencing claim IDs from company-overview rather than
+// inventing parallel local claims.
+// ---------------------------------------------------------------------------
+const KEY_FACT_TOPICS = [
+  /founded|founding date|incorporation/,
+  /founder|cofounder|co-founder/,
+  /headquarter|hq location|principal office/,
+  /total raised|cumulative funding|capital raised/,
+  /latest valuation|post-money valuation|secondary valuation/,
+  /headcount|employees|fte|full[- ]?time/,
+  /customer count|paid customers|paying users/,
+];
+
+const overview = docs.find((d) => d.spec.key === 'company-overview');
+if (overview) {
+  const overviewClaimStatements = new Map();
+  for (const claim of overview.doc.localEvidence?.claims ?? []) {
+    const norm = String(claim?.statement ?? '').toLowerCase();
+    overviewClaimStatements.set(norm, claim.id);
+  }
+  for (const { spec, doc } of docs) {
+    if (spec.key === 'company-overview') continue;
+    for (const claim of doc.localEvidence?.claims ?? []) {
+      const stmt = String(claim?.statement ?? '');
+      const norm = stmt.toLowerCase();
+      const matchesKey = KEY_FACT_TOPICS.some((re) => re.test(norm));
+      if (!matchesKey) continue;
+      // Look for a near-match in overview claims (>=70% token overlap)
+      for (const [overviewNorm, overviewId] of overviewClaimStatements) {
+        const overlap = jaccardTokens(norm, overviewNorm);
+        if (overlap >= 0.7 && claim.id !== overviewId) {
+          flag('fail', 'keyFactDrift', `${spec.file}: claim ${claim.id} restates a key fact ("${stmt.slice(0, 80)}") that already exists in company-overview as ${overviewId}; reference the canonical claim instead of creating a parallel local claim`, { chapter: spec.file, claimId: claim.id, canonicalId: overviewId });
+          break;
+        }
+      }
+    }
+  }
+}
+
+function jaccardTokens(a, b) {
+  const tokA = new Set(a.split(/[^a-z0-9]+/).filter((t) => t.length >= 4));
+  const tokB = new Set(b.split(/[^a-z0-9]+/).filter((t) => t.length >= 4));
+  if (!tokA.size || !tokB.size) return 0;
+  const inter = [...tokA].filter((t) => tokB.has(t)).length;
+  const union = new Set([...tokA, ...tokB]).size;
+  return inter / union;
+}
+
+// ---------------------------------------------------------------------------
 // emit
 // ---------------------------------------------------------------------------
 const ok = conflicts.length === 0 && (!args.strict || warnings.length === 0);

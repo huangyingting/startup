@@ -183,6 +183,7 @@ function rewrite(value, file, claimIds) {
 function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
   const first = docs.values().next().value;
   const recencyNotes = summarizeRecency(first.runDate, sources, claims);
+  const coverageMatrix = buildCoverageMatrix(docs, sources, claims);
   return {
     schemaVersion: first.schemaVersion,
     artifact: 'evidence',
@@ -199,10 +200,79 @@ function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
       recencyNotes,
       coverageGaps: [],
     },
+    coverageMatrix,
     sources,
     claims,
     evidenceGaps,
   };
+}
+
+function buildCoverageMatrix(docs, sources, claims) {
+  const byChapter = {};
+  for (const [file, doc] of docs) {
+    const localSources = doc.localEvidence?.sources ?? [];
+    const localClaims = doc.localEvidence?.claims ?? [];
+    const localQuestions = doc.localEvidence?.researchQuestions ?? [];
+    const adverseQuestions = localQuestions.filter((q) => q?.type === 'adverse').length;
+    const unresolvedQuestions = localQuestions.filter((q) => q?.status && q.status !== 'answered').length;
+    const distinctDomains = new Set(
+      localSources
+        .map((s) => normalizedDomain(s?.url))
+        .filter(Boolean),
+    );
+    byChapter[file] = {
+      sources: localSources.length,
+      claims: localClaims.length,
+      researchQuestions: localQuestions.length,
+      adverseQuestions,
+      unresolvedQuestions,
+      distinctDomains: distinctDomains.size,
+    };
+  }
+  const byType = {};
+  for (const source of sources) {
+    const key = source?.sourceType ?? 'unknown';
+    byType[key] = (byType[key] ?? 0) + 1;
+  }
+  const byStance = { confirming: 0, adverse: 0, neutral: 0, unknown: 0 };
+  for (const source of sources) {
+    const key = source?.stance ?? 'unknown';
+    byStance[key] = (byStance[key] ?? 0) + 1;
+  }
+  const byAccessStatus = {};
+  for (const source of sources) {
+    const key = source?.accessStatus ?? 'unknown';
+    byAccessStatus[key] = (byAccessStatus[key] ?? 0) + 1;
+  }
+  const byClaimType = {};
+  for (const claim of claims) {
+    const key = claim?.claimType ?? 'unknown';
+    byClaimType[key] = (byClaimType[key] ?? 0) + 1;
+  }
+  const distinctDomains = new Set(sources.map((s) => normalizedDomain(s?.url)).filter(Boolean));
+  return {
+    totalDistinctDomains: distinctDomains.size,
+    byChapter,
+    byType,
+    byStance,
+    byAccessStatus,
+    byClaimType,
+  };
+}
+
+function normalizedDomain(value) {
+  try {
+    const raw = String(value ?? '').trim();
+    if (!raw) return '';
+    const host = new URL(raw.startsWith('http') ? raw : `https://${raw}`).hostname.replace(/^www\./, '').toLowerCase();
+    const parts = host.split('.');
+    if (parts.length <= 2) return host;
+    const multiPart = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
+    const lastTwo = parts.slice(-2).join('.');
+    return multiPart.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
+  } catch {
+    return '';
+  }
 }
 
 function inferEvidenceQuality(sources, claims) {

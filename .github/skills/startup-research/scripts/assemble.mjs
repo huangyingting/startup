@@ -242,6 +242,7 @@ const summaryDefaults = {
 
 const claimsReviewed = evidence.coverage?.claimsCreated ?? (evidence.claims ?? []).length;
 const sourcesRetained = evidence.coverage?.sourcesRetained ?? sourceRefs.length;
+const sourceStats = computeSourceStats(evidence, chapterDocs, runDate);
 
 const summaryCard = {
   schemaVersion: SCHEMA_VERSION,
@@ -264,6 +265,11 @@ const summaryCard = {
   sourceStats: {
     sourcesRetained,
     claimsReviewed,
+    domainCount: sourceStats.domainCount,
+    adverseSourceCount: sourceStats.adverseSourceCount,
+    unresolvedQuestionCount: sourceStats.unresolvedQuestionCount,
+    averageSourceAgeDays: sourceStats.averageSourceAgeDays,
+    sourceTypeDistribution: sourceStats.sourceTypeDistribution,
   },
   figureCount: figures.length,
   tableCount: tables.length,
@@ -293,3 +299,38 @@ if (args.dryRun) {
 writeYaml(fullReportPath, fullReport);
 writeYaml(summaryCardPath, summaryCard);
 console.log(`[assemble] ✓ wrote ${fullReportFile} (${tables.length} tables, ${figures.length} figures) and ${summaryCardFile}`);
+
+function computeSourceStats(evidenceLedger, chapters, runDateStr) {
+  const sources = evidenceLedger.sources ?? [];
+  const matrix = evidenceLedger.coverageMatrix ?? {};
+  const domainCount = matrix.totalDistinctDomains ?? 0;
+  const adverseSourceCount = matrix.byStance?.adverse ?? sources.filter((s) => s?.stance === 'adverse').length;
+  const sourceTypeDistribution = matrix.byType ?? sources.reduce((acc, s) => {
+    const key = s?.sourceType ?? 'unknown';
+    acc[key] = (acc[key] ?? 0) + 1;
+    return acc;
+  }, {});
+  let unresolvedQuestionCount = 0;
+  for (const { doc } of chapters) {
+    for (const q of doc.localEvidence?.researchQuestions ?? []) {
+      if (q?.status && q.status !== 'answered') unresolvedQuestionCount += 1;
+    }
+  }
+  const anchor = parseDate(runDateStr);
+  const ages = [];
+  for (const s of sources) {
+    const d = parseDate(s?.date);
+    if (anchor && d) {
+      const days = Math.max(0, Math.round((anchor.valueOf() - d.valueOf()) / 86400000));
+      ages.push(days);
+    }
+  }
+  const averageSourceAgeDays = ages.length ? Math.round(ages.reduce((sum, n) => sum + n, 0) / ages.length) : null;
+  return { domainCount, adverseSourceCount, sourceTypeDistribution, unresolvedQuestionCount, averageSourceAgeDays };
+}
+
+function parseDate(value) {
+  if (!value) return null;
+  const d = new Date(`${String(value)}T00:00:00Z`);
+  return Number.isNaN(d.valueOf()) ? null : d;
+}

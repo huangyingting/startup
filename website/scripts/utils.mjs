@@ -66,9 +66,7 @@ export function loadWorkflowConfig() {
         order,
         file: `${String(order).padStart(2, '0')}-${key}.yaml`,
         title: chapter.title,
-        requiredTables: chapter.requiredTables ?? [],
-        requiredFigures: chapter.requiredFigures ?? [],
-        gate: mergeGate(config.analysisDefaults?.gate ?? {}, chapter.gate ?? {}),
+        gate: mergeGate(config.defaultGate ?? {}, chapter.gate ?? {}),
       };
     })
     .sort((a, b) => a.order - b.order);

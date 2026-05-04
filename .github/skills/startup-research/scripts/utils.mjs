@@ -139,7 +139,8 @@ function mergeGate(defaultGate, chapterGate) {
 function normalizeWorkflowConfig(config) {
   assertConfig(config && typeof config === 'object', `${workflowConfigPath} must contain a YAML object`);
   assertConfig(config.schemaVersion === 'workflow-config-v1', `expected schemaVersion workflow-config-v1, got ${config.schemaVersion}`);
-  assertConfig(config.workflow?.reportSchemaVersion === 'report-v2', 'workflow.reportSchemaVersion must be report-v2');
+  assertConfig(config.reportSchemaVersion === 'report-v2', 'reportSchemaVersion must be report-v2');
+  assertConfig(config.defaultGate && typeof config.defaultGate === 'object', 'defaultGate must be an object');
   assertConfig(Array.isArray(config.chapters) && config.chapters.length > 0, 'chapters[] must be a non-empty array');
 
   const figureTypes = new Set(FIGURE_TYPES);
@@ -160,11 +161,11 @@ function normalizeWorkflowConfig(config) {
         mission: chapter.mission,
         optionalContext: chapter.optionalContext ?? [],
         contentRequirements: chapter.contentRequirements ?? [],
-        requiredTables: chapter.requiredTables ?? [],
-        requiredFigures: chapter.requiredFigures ?? [],
+        plannedTables: chapter.plannedTables ?? [],
+        plannedFigures: chapter.plannedFigures ?? [],
         evidenceStrategy: chapter.evidenceStrategy ?? [],
         qualityBar: chapter.qualityBar ?? [],
-        gate: mergeGate(config.analysisDefaults?.gate ?? {}, chapter.gate ?? {}),
+        gate: mergeGate(config.defaultGate, chapter.gate ?? {}),
       };
     })
     .sort((a, b) => a.order - b.order);
@@ -172,17 +173,31 @@ function normalizeWorkflowConfig(config) {
   assertUnique(chapters.map((chapter) => chapter.order), 'chapters[].order');
   assertUnique(chapters.map((chapter) => chapter.key), 'chapters[].key');
 
+  const knownKeys = new Set(chapters.map((chapter) => chapter.key));
   for (const chapter of chapters) {
     assertConfig(chapter.title, `${chapter.key}: title is required`);
-    for (const field of ['minSections', 'maxSections', 'minTables', 'maxTables', 'minFigures', 'maxFigures', 'minResearchQuestions', 'minLocalSources', 'minLocalClaims']) {
+    for (const ref of chapter.optionalContext) {
+      assertConfig(knownKeys.has(ref), `${chapter.key}: optionalContext references unknown chapter key "${ref}"`);
+    }
+    for (const field of ['minSections', 'maxSections', 'minArtifacts', 'maxTables', 'maxFigures', 'minResearchQuestions', 'minLocalSources', 'minLocalClaims', 'minQuestionTypeSpread', 'minAdverseQuestions', 'minSourceDomains', 'minNetNewSources', 'minSourceTypeSpread', 'minHighConfidenceCorroboration', 'minSourcesPerEnumerationRow']) {
       assertConfig(Number.isFinite(chapter.gate?.[field]), `${chapter.key}: gate.${field} must be a number`);
+    }
+    for (const field of ['minQuestionAnswerRate', 'minContentRequirementCoverage']) {
+      const value = chapter.gate?.[field];
+      assertConfig(Number.isFinite(value) && value >= 0 && value <= 1, `${chapter.key}: gate.${field} must be a number between 0 and 1`);
+    }
+    assertConfig(Array.isArray(chapter.gate?.requiredSourceTypes), `${chapter.key}: gate.requiredSourceTypes must be an array (use [] for none)`);
+    for (const planned of chapter.plannedTables ?? []) {
+      if (planned.enumeration === true) {
+        assertConfig(Number.isInteger(planned.expectedMinRows) && planned.expectedMinRows > 0, `${chapter.key}: plannedTables[${planned.name}] enumeration:true requires positive integer expectedMinRows`);
+      }
     }
     for (const field of ['minSectionBodyWords', 'minSectionWordsTotal', 'minTableRowsTotal', 'minFigureDataPointsTotal']) {
       assertConfig(Number.isFinite(chapter.gate?.depthFloor?.[field]), `${chapter.key}: gate.depthFloor.${field} must be a number`);
     }
-    for (const figure of chapter.requiredFigures ?? []) {
-      for (const type of figure.types ?? []) {
-        assertConfig(figureTypes.has(type), `${chapter.key}: required figure ${figure.name ?? '?'} references unknown type ${type}`);
+    for (const figure of chapter.plannedFigures ?? []) {
+      for (const type of figure.acceptedTypes ?? []) {
+        assertConfig(figureTypes.has(type), `${chapter.key}: planned figure ${figure.name ?? '?'} references unknown type ${type}`);
       }
     }
   }
@@ -206,8 +221,9 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
     chapter: chapter.order,
     title: chapter.title,
     gate: chapter.gate,
-    requiredTables: chapter.requiredTables ?? [],
-    requiredFigures: chapter.requiredFigures ?? [],
+    contentRequirements: chapter.contentRequirements ?? [],
+    plannedTables: chapter.plannedTables ?? [],
+    plannedFigures: chapter.plannedFigures ?? [],
   }));
 }
 
