@@ -13,6 +13,71 @@ const DEFAULT_CACHE_DIR = env.FETCH_URL_CACHE_DIR
   ? resolve(env.FETCH_URL_CACHE_DIR)
   : resolve(process.cwd(), '.fetch-cache');
 const DEFAULT_CACHE_TTL_HOURS = 24 * 7;
+const DEFAULT_PROFILE = 'bingbot';
+const DEFAULT_THROTTLE_MS = 750;
+
+const SEARCH_ENGINE_PROFILES = {
+  googlebot: {
+    userAgent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+    impersonate: 'chrome110', // Googlebot uses a Chrome-based renderer
+    headers: {
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+    },
+  },
+  bingbot: {
+    userAgent: 'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
+    impersonate: 'edge110', // Bingbot uses an Edge-based renderer
+    headers: {
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+    },
+  },
+};
+
+const BROWSER_PROFILES = {
+  'desktop-chrome': {
+    userAgent: DEFAULT_USER_AGENT,
+    impersonate: 'chrome120',
+    headers: {
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Sec-Fetch-Dest': 'document',
+      'Sec-Fetch-Mode': 'navigate',
+      'Sec-Fetch-Site': 'none',
+      'Upgrade-Insecure-Requests': '1',
+    },
+  },
+  'desktop-firefox': {
+    userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0',
+    impersonate: 'firefox120',
+    headers: {
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Upgrade-Insecure-Requests': '1',
+    },
+  },
+  'desktop-safari': {
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
+    impersonate: 'safari17_2',
+    headers: {
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+    },
+  },
+  'mobile-safari': {
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1',
+    impersonate: 'safari17_2',
+    headers: {
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+    },
+  },
+};
+
+const ALL_PROFILES = { ...BROWSER_PROFILES, ...SEARCH_ENGINE_PROFILES };
+const PROFILE_ORDER = Object.keys(BROWSER_PROFILES);
+const ALL_PROFILE_NAMES = Object.keys(ALL_PROFILES);
 
 const BLOCK_TAGS = 'p|div|section|article|header|footer|nav|aside|main|ul|ol|li|tr|td|th|h[1-6]|blockquote|pre|figure|figcaption|table';
 const BLOCK_TAG_RE = new RegExp(`<\\/?(${BLOCK_TAGS})(?:\\s[^>]*)?>`, 'gi');
@@ -32,6 +97,13 @@ function parseArgs(args) {
     userAgent: DEFAULT_USER_AGENT,
     viaWayback: false,
     noWayback: false,
+    viaReader: false,
+    noReader: false,
+    profile: DEFAULT_PROFILE,
+    retryProfiles: true,
+    userAgentOverride: false,
+    throttleMs: DEFAULT_THROTTLE_MS,
+    checkRobots: false,
     help: false,
     cacheDir: DEFAULT_CACHE_DIR,
     cacheTtlHours: DEFAULT_CACHE_TTL_HOURS,
@@ -43,9 +115,19 @@ function parseArgs(args) {
     if (arg === '--help' || arg === '-h') opts.help = true;
     else if (arg === '--text-only' || arg === '-t') opts.textOnly = true;
     else if (arg === '--out' || arg === '-o') opts.file = args[++i];
-    else if (arg === '--user-agent') opts.userAgent = args[++i] ?? opts.userAgent;
+    else if (arg === '--user-agent') {
+      opts.userAgent = args[++i] ?? opts.userAgent;
+      opts.userAgentOverride = true;
+    }
+    else if (arg === '--profile') opts.profile = args[++i] ?? opts.profile;
+    else if (arg === '--no-retry-profiles') opts.retryProfiles = false;
     else if (arg === '--via-wayback') opts.viaWayback = true;
     else if (arg === '--no-wayback') opts.noWayback = true;
+    else if (arg === '--via-reader') opts.viaReader = true;
+    else if (arg === '--no-reader') opts.noReader = true;
+    else if (arg === '--throttle-ms') opts.throttleMs = Number(args[++i] ?? opts.throttleMs);
+    else if (arg === '--no-throttle') opts.throttleMs = 0;
+    else if (arg === '--check-robots') opts.checkRobots = true;
     else if (arg === '--cache-dir') opts.cacheDir = resolve(args[++i] ?? opts.cacheDir);
     else if (arg === '--cache-ttl-hours') opts.cacheTtlHours = Number(args[++i] ?? opts.cacheTtlHours);
     else if (arg === '--no-cache') opts.noCache = true;
@@ -56,28 +138,111 @@ function parseArgs(args) {
 }
 
 function help() {
-  console.log(`Usage: node .github/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache]
+  console.log(`Usage: node .github/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>] [--profile <name>] [--via-reader | --no-reader] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache]
 
 Default URL: ${DEFAULT_URL}
+
+Profiles: ${ALL_PROFILE_NAMES.join(', ')}. Browser profiles use curl-impersonate for TLS/JA3 fingerprinting. Search engine profiles use standard fetch.
+
+Fallbacks: origin fetch uses browser-like headers and, by default, retries other ordinary browser profiles on bot-challenge responses. If still blocked, it tries r.jina.ai reader text, then Wayback Machine snapshots. Use --no-retry-profiles, --no-reader, or --no-wayback to narrow the chain. Use --via-reader or --via-wayback to force a fallback path.
+
+Robots: --check-robots fetches /robots.txt and exits before fetching the target if User-agent: * disallows the URL path.
+
+Throttling: network attempts wait ${DEFAULT_THROTTLE_MS}ms by default to avoid hammering a host. Use --throttle-ms <n> or --no-throttle.
 
 Caching: enabled by default at ${DEFAULT_CACHE_DIR} (override with --cache-dir or FETCH_URL_CACHE_DIR env). Cached responses younger than ${DEFAULT_CACHE_TTL_HOURS}h are reused. Use --refresh-cache to bypass the read but still write, --no-cache to disable read+write entirely.
 
 Wayback fallback: bot-protected sites (DataDome/Cloudflare challenge, 401/403/451/503) automatically retry through web.archive.org. Use --via-wayback to force, --no-wayback to disable.`);
 }
 
-export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent = DEFAULT_USER_AGENT } = {}) {
+function wait(ms) {
+  if (!Number.isFinite(ms) || ms <= 0) return Promise.resolve();
+  return new Promise((resolveDelay) => setTimeout(resolveDelay, ms));
+}
+
+function buildHeaders(profileName, userAgentOverride = null) {
+  const profile = ALL_PROFILES[profileName] ?? ALL_PROFILES[DEFAULT_PROFILE];
+  return {
+    ...profile.headers,
+    'User-Agent': userAgentOverride ?? profile.userAgent,
+  };
+}
+
+function profileSequence(opts) {
+  if (opts.userAgentOverride) return [{ name: 'custom', headers: buildHeaders(opts.profile, opts.userAgent) }];
+  const first = ALL_PROFILES[opts.profile] ? opts.profile : DEFAULT_PROFILE;
+  const names = opts.retryProfiles
+    ? [first, ...PROFILE_ORDER.filter((name) => name !== first)]
+    : [first];
+  return names.map((name) => ({ name, headers: buildHeaders(name) }));
+}
+
+export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent = null, profile = DEFAULT_PROFILE, headers = null, throttleMs = 0 } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const started = Date.now();
+  const profileData = ALL_PROFILES[profile] ?? ALL_PROFILES[DEFAULT_PROFILE];
+
   try {
+    await wait(throttleMs);
+
+    // Use curl-impersonate for browser profiles, standard fetch for bots
+    if (profileData.impersonate && !SEARCH_ENGINE_PROFILES[profile]) {
+      const { spawn } = await import('node:child_process');
+      return new Promise((resolvePromise, rejectPromise) => {
+        const requestHeaders = headers ?? buildHeaders(profile, userAgent);
+        const headerArgs = Object.entries(requestHeaders).flatMap(([key, value]) => ['-H', `${key}: ${value}`]);
+        const args = [
+          profileData.impersonate,
+          '-s', '-L', '-D', '-',
+          '--connect-timeout', String(Math.round(timeoutMs / 1000)),
+          ...headerArgs,
+          url,
+        ];
+
+        const child = spawn('curl-impersonate', args, { encoding: 'utf8' });
+        let stdout = '';
+        let stderr = '';
+        child.stdout.on('data', (chunk) => { stdout += chunk; });
+        child.stderr.on('data', (chunk) => { stderr += chunk; });
+
+        child.on('close', (code) => {
+          if (code !== 0) {
+            return rejectPromise(new Error(`curl-impersonate exited with code ${code}: ${stderr}`));
+          }
+
+          const [headerBlock, ...bodyParts] = stdout.split('\r\n\r\n');
+          const body = bodyParts.join('\r\n\r\n');
+          const headerLines = headerBlock.split('\r\n');
+          const statusLine = headerLines.find(l => l.startsWith('HTTP/'));
+          const status = statusLine ? Number(statusLine.split(' ')[1]) : 500;
+          const contentTypeLine = headerLines.find(l => l.toLowerCase().startsWith('content-type:'));
+          const contentType = contentTypeLine ? contentTypeLine.split(':')[1].trim() : null;
+
+          resolvePromise({
+            url,
+            finalUrl: url, // curl-impersonate does not easily expose final URL after redirects
+            status,
+            ok: status >= 200 && status < 300,
+            contentType,
+            contentLength: Buffer.byteLength(body, 'utf8'),
+            elapsedMs: Date.now() - started,
+            profile,
+            body,
+          });
+        });
+
+        child.on('error', (err) => {
+          rejectPromise(new Error(`Failed to start curl-impersonate. Is it installed and in your PATH? Error: ${err.message}`));
+        });
+      });
+    }
+
+    // Fallback to standard fetch for search engine bots or if no impersonation is defined
     const response = await fetch(url, {
       redirect: 'follow',
       signal: controller.signal,
-      headers: {
-        'User-Agent': userAgent,
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9',
-      },
+      headers: headers ?? buildHeaders(profile, userAgent),
     });
     const body = await response.text();
     return {
@@ -88,6 +253,7 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
       contentType: response.headers.get('content-type'),
       contentLength: body.length,
       elapsedMs: Date.now() - started,
+      profile,
       body,
     };
   } finally {
@@ -96,7 +262,9 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
 }
 
 export function extractTitle(html) {
-  return html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.replace(/\s+/g, ' ').trim() ?? null;
+  return html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.replace(/\s+/g, ' ').trim()
+    ?? html.match(/^Title:\s*(.+)$/im)?.[1]?.replace(/\s+/g, ' ').trim()
+    ?? null;
 }
 
 function decodeEntities(text) {
@@ -127,14 +295,77 @@ export function waybackUrl(url, year = new Date().getUTCFullYear()) {
   return `https://web.archive.org/web/${year}/${url}`;
 }
 
+export function readerUrl(url) {
+  return `https://r.jina.ai/http://${url}`;
+}
+
+function robotsTxtUrl(url) {
+  const u = new URL(url);
+  return `${u.protocol}//${u.host}/robots.txt`;
+}
+
+export function robotsAllows(robotsText, url) {
+  const targetPath = new URL(url).pathname || '/';
+  const lines = String(robotsText ?? '').split(/\r?\n/);
+  let applies = false;
+  let sawGroup = false;
+  const disallows = [];
+  const allows = [];
+
+  for (const rawLine of lines) {
+    const line = rawLine.replace(/#.*/, '').trim();
+    if (!line) continue;
+    const [rawKey, ...rawValue] = line.split(':');
+    const key = rawKey.trim().toLowerCase();
+    const value = rawValue.join(':').trim();
+    if (key === 'user-agent') {
+      if (sawGroup && applies) break;
+      sawGroup = true;
+      applies = value === '*';
+    } else if (applies && key === 'disallow') {
+      if (value) disallows.push(value);
+    } else if (applies && key === 'allow') {
+      if (value) allows.push(value);
+    }
+  }
+
+  const longestAllow = allows.filter((rule) => targetPath.startsWith(rule)).sort((a, b) => b.length - a.length)[0] ?? '';
+  const longestDisallow = disallows.filter((rule) => targetPath.startsWith(rule)).sort((a, b) => b.length - a.length)[0] ?? '';
+  if (!longestDisallow) return true;
+  return longestAllow.length >= longestDisallow.length;
+}
+
+async function assertRobotsAllows(url, opts) {
+  const robotsUrl = robotsTxtUrl(url);
+  try {
+    const result = await fetchUrl(robotsUrl, {
+      profile: opts.profile,
+      userAgent: opts.userAgentOverride ? opts.userAgent : null,
+      throttleMs: opts.throttleMs,
+    });
+    if (result.status === 404) return;
+    if (result.ok && !robotsAllows(result.body, url)) {
+      console.error(`[fetch-url] robots.txt disallows this path for User-agent: * (${robotsUrl}).`);
+      exit(3);
+    }
+  } catch (err) {
+    console.error(`[fetch-url] robots.txt check failed (${err.message}); continuing because --check-robots is advisory when robots.txt is unreachable.`);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // On-disk cache (default ON). Avoids repeat bandwidth and rate-limit hits
 // when the same URL is fetched across chapters in a startup-research run.
-// Cache key is a SHA-256 of the canonicalized URL plus a `:wayback` suffix
-// when the wayback path was forced, so origin and snapshot fetches do not
-// collide.
+// Cache key is a SHA-256 of the canonicalized URL plus a source variant
+// suffix (`:origin`, `:reader`, `:wayback`) so fallback fetches never collide.
 // ---------------------------------------------------------------------------
-export function canonicalCacheKey(url, viaWayback = false) {
+function cacheVariantName(variant = 'origin') {
+  if (variant === true) return 'wayback';
+  if (variant === false || variant == null) return 'origin';
+  return String(variant);
+}
+
+export function canonicalCacheKey(url, variant = 'origin') {
   let canonical = url;
   try {
     const u = new URL(url);
@@ -149,16 +380,16 @@ export function canonicalCacheKey(url, viaWayback = false) {
   } catch {
     canonical = String(url);
   }
-  const suffix = viaWayback ? ':wayback' : '';
+  const suffix = `:${cacheVariantName(variant)}`;
   return createHash('sha256').update(canonical + suffix).digest('hex').slice(0, 32);
 }
 
-function cachePath(dir, url, viaWayback) {
-  return join(dir, `${canonicalCacheKey(url, viaWayback)}.json`);
+function cachePath(dir, url, variant) {
+  return join(dir, `${canonicalCacheKey(url, variant)}.json`);
 }
 
-function readCache(dir, url, viaWayback, ttlHours) {
-  const path = cachePath(dir, url, viaWayback);
+function readCache(dir, url, variant, ttlHours) {
+  const path = cachePath(dir, url, variant);
   if (!existsSync(path)) return null;
   try {
     const raw = JSON.parse(readFileSync(path, 'utf8'));
@@ -172,7 +403,7 @@ function readCache(dir, url, viaWayback, ttlHours) {
   }
 }
 
-function writeCache(dir, url, viaWayback, result) {
+function writeCache(dir, url, variant, result) {
   try {
     mkdirSync(dir, { recursive: true });
     const payload = {
@@ -183,17 +414,19 @@ function writeCache(dir, url, viaWayback, result) {
       contentType: result.contentType,
       contentLength: result.contentLength,
       elapsedMs: result.elapsedMs,
+      profile: result.profile,
       body: result.body,
-      viaWayback,
+      source: cacheVariantName(variant),
+      viaWayback: cacheVariantName(variant) === 'wayback',
       fetchedAt: new Date().toISOString(),
     };
-    writeFileSync(cachePath(dir, url, viaWayback), JSON.stringify(payload), 'utf8');
+    writeFileSync(cachePath(dir, url, variant), JSON.stringify(payload), 'utf8');
   } catch (err) {
     console.error(`[fetch-url] cache write failed: ${err.message}`);
   }
 }
 
-const BOT_CHALLENGE_STATUSES = new Set([401, 403, 451, 503]);
+const BOT_CHALLENGE_STATUSES = new Set([401, 403, 429, 451, 503]);
 const BOT_CHALLENGE_MARKERS = [
   'datadome',
   'please enable js',
@@ -201,6 +434,14 @@ const BOT_CHALLENGE_MARKERS = [
   'just a moment...',
   'access denied',
   'attention required! | cloudflare',
+  'checking your browser before accessing',
+  'enable cookies',
+  'bot detection',
+  'captcha',
+  'perimeterx',
+  'px-captcha',
+  'incapsula',
+  'imperva',
 ];
 
 export function looksLikeBotChallenge(result) {
@@ -233,17 +474,35 @@ async function main() {
     console.error(`Invalid URL: ${opts.url}`);
     exit(2);
   }
+  if (!ALL_PROFILES[opts.profile]) {
+    console.error(`Unknown profile: ${opts.profile}. Expected one of: ${ALL_PROFILE_NAMES.join(', ')}`);
+    exit(2);
+  }
+  if (opts.viaReader && opts.viaWayback) {
+    console.error('Choose only one forced fallback: --via-reader or --via-wayback.');
+    exit(2);
+  }
+  if (!Number.isFinite(opts.cacheTtlHours) || opts.cacheTtlHours < 0) {
+    console.error(`Invalid --cache-ttl-hours: ${opts.cacheTtlHours}`);
+    exit(2);
+  }
+  if (!Number.isFinite(opts.throttleMs) || opts.throttleMs < 0) {
+    console.error(`Invalid --throttle-ms: ${opts.throttleMs}`);
+    exit(2);
+  }
+
+  if (opts.checkRobots) await assertRobotsAllows(opts.url, opts);
 
   let result;
-  let viaWayback = false;
+  let source = opts.viaReader ? 'reader' : opts.viaWayback ? 'wayback' : 'origin';
   let cacheHit = false;
   let cacheAgeMinutes = null;
   const useCacheRead = !opts.noCache && !opts.refreshCache;
   const useCacheWrite = !opts.noCache;
-  const targetUrl = opts.viaWayback ? waybackUrl(opts.url) : opts.url;
+  const targetUrl = opts.viaReader ? readerUrl(opts.url) : opts.viaWayback ? waybackUrl(opts.url) : opts.url;
 
   if (useCacheRead) {
-    const cached = readCache(opts.cacheDir, opts.url, opts.viaWayback, opts.cacheTtlHours);
+    const cached = readCache(opts.cacheDir, opts.url, source, opts.cacheTtlHours);
     if (cached) {
       result = {
         url: cached.requestedUrl,
@@ -253,9 +512,10 @@ async function main() {
         contentType: cached.contentType,
         contentLength: cached.contentLength,
         elapsedMs: cached.elapsedMs,
+        profile: cached.profile,
         body: cached.body,
       };
-      viaWayback = cached.viaWayback;
+      source = cached.source ?? (cached.viaWayback ? 'wayback' : 'origin');
       cacheHit = true;
       cacheAgeMinutes = Math.round(cached._ageMs / 60_000);
     }
@@ -263,41 +523,96 @@ async function main() {
 
   if (!cacheHit) {
     try {
-      result = await fetchUrl(targetUrl, { userAgent: opts.userAgent });
-      viaWayback = opts.viaWayback;
+      if (opts.viaReader || opts.viaWayback) {
+        result = await fetchUrl(targetUrl, {
+          profile: opts.profile,
+          userAgent: opts.userAgentOverride ? opts.userAgent : null,
+          throttleMs: opts.throttleMs,
+        });
+      } else {
+        for (const profileAttempt of profileSequence(opts)) {
+          result = await fetchUrl(opts.url, {
+            profile: opts.profile,
+            headers: profileAttempt.headers,
+            throttleMs: opts.throttleMs,
+          });
+          result = { ...result, profile: profileAttempt.name };
+          if (!looksLikeBotChallenge(result)) break;
+          console.error(`[fetch-url] origin via ${profileAttempt.name} returned ${result.status} or bot-challenge body.`);
+        }
+      }
     } catch (err) {
       console.error(`Fetch failed: ${err.message}`);
       exit(1);
     }
 
-    if (!opts.viaWayback && !opts.noWayback && looksLikeBotChallenge(result)) {
-      console.error(`[fetch-url] origin returned ${result.status} or bot-challenge body; retrying via Wayback Machine.`);
+    if (!opts.viaReader && !opts.viaWayback && !opts.noReader && looksLikeBotChallenge(result)) {
+      console.error('[fetch-url] origin still looks blocked; retrying via r.jina.ai reader text.');
       try {
-        const fallback = await fetchUrl(waybackUrl(opts.url), { userAgent: opts.userAgent });
+        const cachedReader = useCacheRead ? readCache(opts.cacheDir, opts.url, 'reader', opts.cacheTtlHours) : null;
+        const fallback = cachedReader
+          ? { ...cachedReader, url: opts.url, body: cachedReader.body }
+          : await fetchUrl(readerUrl(opts.url), {
+              profile: opts.profile,
+              userAgent: opts.userAgentOverride ? opts.userAgent : null,
+              throttleMs: opts.throttleMs,
+            });
         if (fallback.ok && !looksLikeBotChallenge(fallback)) {
           result = fallback;
-          viaWayback = true;
+          source = 'reader';
+          cacheHit = Boolean(cachedReader);
+          cacheAgeMinutes = cachedReader ? Math.round(cachedReader._ageMs / 60_000) : null;
         } else {
-          console.error(`[fetch-url] Wayback fallback also blocked (status ${fallback.status}); keeping origin response.`);
+          console.error(`[fetch-url] Reader fallback also blocked or failed (status ${fallback.status}); trying archive if enabled.`);
         }
       } catch (err) {
-        console.error(`[fetch-url] Wayback fallback failed: ${err.message}; keeping origin response.`);
+        console.error(`[fetch-url] Reader fallback failed: ${err.message}; trying archive if enabled.`);
       }
     }
 
-    if (viaWayback) result = { ...result, body: stripWaybackToolbar(result.body), contentLength: stripWaybackToolbar(result.body).length };
+    if (!opts.viaWayback && !opts.noWayback && looksLikeBotChallenge(result)) {
+      console.error('[fetch-url] retrying via Wayback Machine.');
+      try {
+        const cachedWayback = useCacheRead ? readCache(opts.cacheDir, opts.url, 'wayback', opts.cacheTtlHours) : null;
+        const fallback = cachedWayback
+          ? { ...cachedWayback, url: opts.url, body: cachedWayback.body }
+          : await fetchUrl(waybackUrl(opts.url), {
+              profile: opts.profile,
+              userAgent: opts.userAgentOverride ? opts.userAgent : null,
+              throttleMs: opts.throttleMs,
+            });
+        if (fallback.ok && !looksLikeBotChallenge(fallback)) {
+          result = fallback;
+          source = 'wayback';
+          cacheHit = Boolean(cachedWayback);
+          cacheAgeMinutes = cachedWayback ? Math.round(cachedWayback._ageMs / 60_000) : null;
+        } else {
+          console.error(`[fetch-url] Wayback fallback also blocked (status ${fallback.status}); keeping previous response.`);
+        }
+      } catch (err) {
+        console.error(`[fetch-url] Wayback fallback failed: ${err.message}; keeping previous response.`);
+      }
+    }
 
-    if (useCacheWrite && result.ok) {
-      writeCache(opts.cacheDir, opts.url, viaWayback, result);
+    if (source === 'wayback') {
+      const stripped = stripWaybackToolbar(result.body);
+      result = { ...result, body: stripped, contentLength: stripped.length };
+    }
+
+    if (useCacheWrite && !cacheHit && result.ok) {
+      writeCache(opts.cacheDir, opts.url, source, result);
     }
   }
 
   const output = opts.textOnly ? htmlToText(result.body) : result.body;
   console.log(`Status:        ${result.status} ${result.ok ? 'OK' : 'FAIL'}`);
   console.log(`Final URL:     ${result.finalUrl}`);
-  if (cacheHit) console.log(`Source:        cache (age ${cacheAgeMinutes}m, ttl ${opts.cacheTtlHours}h${viaWayback ? ', via wayback' : ''})`);
-  else if (viaWayback) console.log(`Source:        wayback (web.archive.org snapshot)`);
+  if (cacheHit) console.log(`Source:        cache (age ${cacheAgeMinutes}m, ttl ${opts.cacheTtlHours}h, ${source})`);
+  else if (source === 'reader') console.log('Source:        reader (r.jina.ai text view)');
+  else if (source === 'wayback') console.log('Source:        wayback (web.archive.org snapshot)');
+  else console.log('Source:        origin');
   console.log(`Content-Type:  ${result.contentType ?? '(none)'}`);
+  console.log(`Profile:       ${result.profile ?? (opts.userAgentOverride ? 'custom' : opts.profile)}`);
   console.log(`Bytes:         ${result.contentLength}`);
   console.log(`Elapsed:       ${result.elapsedMs} ms${cacheHit ? ' (original)' : ''}`);
   console.log(`<title>:       ${extractTitle(result.body) ?? '(not found)'}`);
