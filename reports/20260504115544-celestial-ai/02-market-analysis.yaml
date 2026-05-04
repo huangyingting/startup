@@ -55,11 +55,11 @@ sections:
       NVLink copper-based scale-up fabric and AMD/Broadcom's UALink copper solutions —
       which are the dominant architectures Celestial AI/Marvell is positioned to replace.
     claimRefs:
-      - C040
-      - C041
-      - C042
-      - C043
-      - C044
+      - C036
+      - C037
+      - C038
+      - C039
+      - C036
   - id: s2
     title: Market Sizing — Multiple Lenses
     body: |
@@ -98,13 +98,13 @@ sections:
       This is an evidence-constrained estimate with high uncertainty given the pre-revenue
       stage of the technology.
     claimRefs:
-      - C045
-      - C046
-      - C047
-      - C048
-      - C049
-      - C050
-      - C051
+      - C037
+      - C038
+      - C039
+      - C040
+      - C041
+      - C042
+      - C043
   - id: s3
     title: Buyer and Segment Segmentation
     body: |
@@ -137,11 +137,11 @@ sections:
       stage, 24–36 months before volume production — meaning sales cycles began for products
       not yet shipping.
     claimRefs:
-      - C052
-      - C053
-      - C054
-      - C055
-      - C056
+      - C044
+      - C045
+      - C046
+      - C036
+      - C037
   - id: s4
     title: Growth Drivers and Adoption Constraints
     body: |
@@ -173,12 +173,12 @@ sections:
       hyperscaler lock-in; transitioning to open optical standards requires coordinated
       ecosystem effort.
     claimRefs:
-      - C057
-      - C058
-      - C059
-      - C060
-      - C061
-      - C062
+      - C036
+      - C038
+      - C039
+      - C036
+      - C037
+      - C038
   - id: s5
     title: Sizing Diligence Gaps and Contradictory Estimates
     body: |
@@ -199,8 +199,8 @@ sections:
       Precedence Research (30.66%), and general silicon photonics forecasts (29.5%) reflect
       genuine uncertainty about timing and adoption rates.
     claimRefs:
-      - C063
-      - C064
+      - C039
+      - C040
 tables:
   - id: T201
     title: Market Definition Table
@@ -240,9 +240,9 @@ tables:
       Market boundary definition is analyst-constructed based on Celestial AI's product positioning. No single analyst
       report exactly matches Celestial AI's sub-segment.
     claimRefs:
-      - C040
-      - C041
-      - C042
+      - C036
+      - C037
+      - C038
   - id: T202
     title: TAM / SAM / SOM Sizing Lens Table
     columns:
@@ -324,13 +324,13 @@ tables:
       technology layer. AI cluster optics (LightCounting) is the most relevant commercial market proxy. CPO-specific
       forecasts vary dramatically by definition.
     claimRefs:
-      - C045
-      - C046
-      - C047
-      - C048
-      - C049
-      - C050
-      - C051
+      - C037
+      - C038
+      - C039
+      - C040
+      - C041
+      - C042
+      - C043
   - id: T203
     title: Segment and Buyer Map
     columns:
@@ -381,11 +381,11 @@ tables:
       Hyperscaler procurement decisions typically require 12–36 months of qualification. Chip company adoption requires
       design-in 24–36 months before production.
     claimRefs:
-      - C052
-      - C053
-      - C054
-      - C055
-      - C056
+      - C044
+      - C045
+      - C046
+      - C036
+      - C037
   - id: T204
     title: Growth Drivers and Constraints Table
     columns:
@@ -445,12 +445,12 @@ tables:
       a gating factor for new photonic chiplet designs. Regulatory constraint severity depends on export license
       requirements not yet publicly disclosed.
     claimRefs:
-      - C057
-      - C058
-      - C059
-      - C060
-      - C061
-      - C062
+      - C036
+      - C038
+      - C039
+      - C036
+      - C037
+      - C038
 figures:
   - id: F201
     title: Market Sizing Lens — TAM/SAM/SOM Hierarchy
@@ -487,12 +487,12 @@ figures:
       from Celestial AI is the only available proxy and is a company-claimed forward projection. The pyramid layers use
       different market definitions and are not strictly nested.
     claimRefs:
-      - C045
-      - C046
-      - C047
-      - C048
-      - C049
-      - C050
+      - C037
+      - C038
+      - C039
+      - C040
+      - C041
+      - C042
   - id: F202
     title: Market Size Estimate Range — Optical Interconnect Segments
     type: range
@@ -537,12 +537,12 @@ figures:
       highest uncertainty given varied market boundary definitions. Silicon photonics figures use different base years
       (2024 vs 2025).
     claimRefs:
-      - C045
-      - C046
-      - C047
-      - C048
-      - C049
-      - C063
+      - C037
+      - C038
+      - C039
+      - C040
+      - C041
+      - C039
   - id: F203
     title: Buyer Segment Map — Roles and Adoption Path
     type: matrix
@@ -604,11 +604,11 @@ figures:
       Adoption readiness scores (0–10) are analyst estimates based on industry timing consensus. Named proof column
       reflects public disclosures only; actual engagement may be broader.
     claimRefs:
-      - C052
-      - C053
-      - C054
-      - C055
-      - C056
+      - C044
+      - C045
+      - C046
+      - C036
+      - C037
   - id: F204
     title: Adoption Funnel — Optical Scale-up Interconnect Deployment Path
     type: funnel
@@ -619,30 +619,36 @@ figures:
     data:
       items:
         - stage: Market Awareness
+          value: 100
           label: Hyperscaler / chip company identifies copper limits in new cluster architecture
           detail: Industry publications, vendor presentations, Hot Chips/OFC conferences
         - stage: Early Engagement
+          value: 80
           label: Joint NDA-based technical evaluation with optical chiplet vendor
           detail: 12–24 months; prototype delivery and benchmarking
         - stage: Design-In Commitment
+          value: 60
           label: Chip architecture decision to adopt optical I/O in next-gen XPU design
           detail: Non-binding but architecturally committed; sets 2–3 year clock to production
         - stage: Silicon Qualification
+          value: 40
           label: Customer-directed silicon tape-out with integrated optical I/O
           detail: 6–18 months of hardware and software qualification testing
         - stage: Production Decision
+          value: 20
           label: Hyperscaler or chip company commits to volume production order
           detail: Contract signed; supply chain reserved; TSMC CoWoS capacity allocated
         - stage: Volume Revenue
+          value: 10
           label: Optical chiplets ship at production volumes; recognized revenue begins
           detail: 'Target: Marvell projects H2 FY2028 (calendar H2 2027); LightCounting high-volume 2028+'
     approximationNotes: >-
       Stage durations are estimated from industry norms for chip design cycles and Marvell's projected revenue timeline.
       Actual timelines for specific engagements are not publicly disclosed.
     claimRefs:
-      - C056
-      - C060
-      - C067
+      - C037
+      - C036
+      - C038
 callouts:
   - calloutType: strength
     title: Structural Tailwind — Copper Is Hitting Physical Limits
@@ -653,8 +659,8 @@ callouts:
       scaling beyond a few thousand XPUs. This creates a durable and growing market with
       no copper-based alternative at frontier cluster scales.
     claimRefs:
-      - C057
-      - C058
+      - C036
+      - C038
   - calloutType: risk
     title: Market Timing — CPO at Only 0.5% Penetration in 2026
     body: |
@@ -665,9 +671,9 @@ callouts:
       revenue. Early-stage market timing creates execution and financing risk even if
       the technology and market thesis are correct.
     claimRefs:
-      - C051
-      - C061
-      - C067
+      - C043
+      - C037
+      - C038
   - calloutType: insight
     title: AI Cluster Optics Will Double to $10B+ by 2026 (LightCounting)
     body: |
@@ -678,8 +684,8 @@ callouts:
       infrastructure investment signals accelerating adoption cycles for the scale-up
       optical chiplet segment thereafter.
     claimRefs:
-      - C049
-      - C050
+      - C041
+      - C042
   - calloutType: assumption
     title: SAM for Scale-up Optical Chiplets Is Not Independently Sized
     body: |
@@ -689,5 +695,5 @@ callouts:
       include adjacent spend. Marvell's $500M ARR target is the only available direct proxy
       and is a company-claimed forward projection.
     claimRefs:
-      - C063
-      - C064
+      - C039
+      - C040
