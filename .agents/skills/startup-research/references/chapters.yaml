@@ -225,7 +225,7 @@ chapters:
     mission: Explain what is delivered, how it works, maturity, dependencies, and product/technical risks.
     optionalContext: [market-analysis, competitors, financials]
     gate:
-      requiredSourceTypes: [official, technical-docs]
+      requiredSourceTypes: [official, technical-docs, developer-signal]
     contentRequirements:
       - Product/service definition in customer workflow terms.
       - Module, SKU, asset, pipeline, facility, or product-line map.
@@ -261,6 +261,7 @@ chapters:
       - Official-surface mining is mandatory when a company URL exists — homepage, sitemap, product/docs/API, changelog, integrations, pricing, trust/security, status, certifications, customer stories.
       - Technical proof from patents, papers, clinical/trial records, certifications, regulatory databases, benchmarks, status pages.
       - External proof from reviews, customer deployments, partner announcements, regulator filings, recalls/incidents.
+      - Developer-signal (sourceType `developer-signal`) is required — GitHub repo activity (stars, releases, contributors), Hacker News threads, Stack Overflow tag traffic, public Discord/Slack metrics, package registry downloads, npm/PyPI/HuggingFace hub stats, API forums.
       - Do not infer architecture, approvals, certifications, throughput, or safety from vague marketing copy.
     qualityBar:
       - Distinguish verified maturity, roadmap claims, integrations, and certifications from marketing.
@@ -274,6 +275,8 @@ chapters:
     title: Customers
     mission: Identify who pays/uses the product, the proof of real adoption, durability, expansion, and concentration risks.
     optionalContext: [financials, product-tech]
+    gate:
+      requiredSourceTypes: [customer-proof]
     contentRequirements:
       - Customer base segmentation by buyer/user/payer, geography, vertical, size, channel, use case, or revenue band.
       - Adoption trajectory (active usage, repeat purchase, deployment, accounts, locations, utilization) where supportable.
@@ -310,6 +313,7 @@ chapters:
       - Official customer evidence — customer pages, case studies, testimonials, partner stories, marketplaces; logos only when tied to use.
       - Independent evidence — procurement/tender records, reviews, marketplace ratings, public customer announcements, filings, analyst reports.
       - Adverse evidence — churn/complaints, poor reviews, failed deployments, outages, procurement blockers, lawsuits, concentration warnings.
+      - Customer-proof (sourceType `customer-proof`) is required — G2/Capterra/Gartner Peer Insights reviews, named case studies, customer-quoted press releases, LinkedIn testimonials, conference talks by named users, government procurement records.
       - Separate broad customer-count claims from named deployments and retention proof.
     qualityBar:
       - Distinguish logos, named deployments, active use, outcomes, retention, and expansion.

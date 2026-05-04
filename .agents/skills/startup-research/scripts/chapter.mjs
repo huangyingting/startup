@@ -6,6 +6,8 @@
 import { join } from 'node:path';
 import { FINAL_ARTIFACTS, loadWorkflowConfig, tryReadYaml, workflowConfigPath } from './utils.mjs';
 
+const RESTRICTED_ACCESS = new Set(['paywall', 'js-only', 'broken', 'rate-limited']);
+
 function usage() {
   console.error(`Usage: node .agents/skills/startup-research/scripts/chapter.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--no-workflow] [--include-context --report-folder <path>]
 
@@ -102,6 +104,44 @@ function compactContextChapter(reportFolder, contextFile) {
       type: figure.type,
       claimRefs: figure.claimRefs ?? [],
     })),
+  };
+}
+
+// Aggregates cumulative diligence signal from chapters that come BEFORE the
+// chapter currently being authored. Surfaces (advisory only) two metrics:
+//   - cumulativeUnresolvedQuestions: sum of researchQuestions whose status is
+//     not `answered` across earlier chapters.
+//   - cumulativeRestrictedAccessPct: share of localEvidence.sources whose
+//     accessStatus is paywall|js-only|broken|rate-limited across earlier
+//     chapters.
+// Returned as a packet field; never gates anything.
+function cumulativeContext(reportFolder, currentOrder, allChapters) {
+  let unanswered = 0;
+  let totalSources = 0;
+  let restricted = 0;
+  const seen = [];
+  for (const ch of allChapters) {
+    if (ch.order >= currentOrder) continue;
+    const result = tryReadYaml(join(reportFolder, ch.file));
+    if (!result.ok) {
+      seen.push({ file: ch.file, status: 'missing' });
+      continue;
+    }
+    const doc = result.value ?? {};
+    const sources = doc.localEvidence?.sources ?? [];
+    const questions = doc.localEvidence?.researchQuestions ?? [];
+    const chUnanswered = questions.filter((q) => q?.status !== 'answered').length;
+    const chRestricted = sources.filter((s) => RESTRICTED_ACCESS.has(s?.accessStatus)).length;
+    unanswered += chUnanswered;
+    totalSources += sources.length;
+    restricted += chRestricted;
+    seen.push({ file: ch.file, status: 'loaded', unanswered: chUnanswered, sources: sources.length, restricted: chRestricted });
+  }
+  return {
+    note: 'Advisory metrics aggregated from earlier chapters; does not gate this chapter.',
+    cumulativeUnresolvedQuestions: unanswered,
+    cumulativeRestrictedAccessPct: totalSources ? +(restricted / totalSources).toFixed(3) : 0,
+    earlierChapters: seen,
   };
 }
 
@@ -255,6 +295,7 @@ function main() {
       if (!file) return { key, status: 'unknownKey', sections: [], tables: [], figures: [] };
       return { key, ...compactContextChapter(args.reportFolder, file) };
     });
+    packet.cumulativeContext = cumulativeContext(args.reportFolder, chapter.order, config.chapters);
   }
   const output = args.includeWorkflow ? packet : packet.chapter;
   if (args.format === 'json') printJson(output);

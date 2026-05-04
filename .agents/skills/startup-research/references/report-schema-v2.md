@@ -337,6 +337,11 @@ companyProfile:
   businessModel: string | null
   stage: string | null
   fundingStatus: string | null
+  disclosureProfile: public | private-disclosed | private-undisclosed | stealth | null
+  # Optional. Pre-revenue stealth labs and undisclosed-financials private companies
+  # rarely have public ARR/revenue/headcount; record the profile so chapter 04
+  # (financials) can pre-populate canonical evidenceGaps for those metrics rather
+  # than rediscovering they are unavailable. Default null = unspecified.
   claimRefs: [C001]
 
 keyMetrics:

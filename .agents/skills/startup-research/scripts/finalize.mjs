@@ -37,6 +37,9 @@ if (!existsSync(`${reportFolder}/report-meta.yaml`)) {
 }
 
 const steps = [
+  // postmortem runs FIRST so it can read per-chapter localEvidence (sources,
+  // claims, researchQuestions) before ledger consolidates and removes it.
+  { name: 'postmortem', script: 'postmortem.mjs', argv: [reportFolder] },
   { name: 'ledger', script: 'ledger.mjs', argv: [reportFolder] },
   { name: 'cross-chapter', script: 'cross-chapter.mjs', argv: [reportFolder] },
   { name: 'assemble', script: 'assemble.mjs', argv: [reportFolder] },

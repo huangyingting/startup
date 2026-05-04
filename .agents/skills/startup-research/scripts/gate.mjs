@@ -233,11 +233,14 @@ function checkSources(file, doc, gate, earlierUrls) {
   const types = new Set();
   let netNew = 0;
   let adverseCount = 0;
+  let restrictedCount = 0;
   for (const source of sources) {
     const path = `${file}: source ${source?.id ?? '?'}`;
     if (!ACCESS_STATUSES.has(source?.accessStatus)) {
       fail('sourceShape', `${path} accessStatus must be one of ${[...ACCESS_STATUSES].join('|')}`, { id: source?.id });
       shapeFails += 1;
+    } else if (source.accessStatus !== 'ok') {
+      restrictedCount += 1;
     }
     if (!STANCES.has(source?.stance)) {
       fail('sourceShape', `${path} stance must be one of ${[...STANCES].join('|')}`, { id: source?.id });
@@ -267,6 +270,14 @@ function checkSources(file, doc, gate, earlierUrls) {
   }
   if (netNew < gate.minNetNewSources) {
     fail('netNewSources', `${file}: only ${netNew} sources are new vs earlier chapters, expected at least ${gate.minNetNewSources} (per-chapter research must add fresh sources, not reuse the global pool)`, { actual: netNew, required: gate.minNetNewSources });
+  }
+  // Soft early-warning: if a single chapter's restricted-access share exceeds
+  // 25 %, the report-level 30 % paywall ceiling becomes hard to clear without
+  // swapping sources. Advisory only — does not fail unless --strict is set
+  // and the dimension is not in acknowledgedWarnings.
+  const restrictedPct = restrictedCount / sources.length;
+  if (restrictedPct > 0.25) {
+    warn('paywallRisk', `${file}: ${restrictedCount}/${sources.length} sources have restricted accessStatus (paywall|js-only|broken|rate-limited) = ${(restrictedPct * 100).toFixed(0)}% (>25%). Risk of breaching the report-level 30% ceiling once chapters aggregate; swap restricted sources for ok ones where possible.`, { actual: +restrictedPct.toFixed(3), ceiling: 0.25 });
   }
   // adverse-source bookkeeping is informational; the binding constraint is on adverse questions (P1) and on risks chapter sourceType requirements above.
 }
@@ -581,6 +592,7 @@ const RETRY_PRECEDENCE = [
   'researchQuestionShape', 'researchQuestionTargets', 'researchQuestionTypeMix', 'researchQuestionAdverse',
   'searchQueriesMissing',
   'sourceShape', 'sourceDomains', 'sourceTypeSpread', 'requiredSourceTypes', 'netNewSources',
+  'paywallRisk',
   'researchQuestions', 'sources', 'claims',
   'highConfidenceCorroboration',
   'researchQuestionAnswerCoverage', 'researchQuestionClosure',
