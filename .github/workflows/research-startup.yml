@@ -31,8 +31,16 @@ on:
       unicornCount:
         description: "How many recent unicorn startups to research when companyName is blank."
         required: false
-        default: "5"
+        default: "3"
         type: string
+      model:
+        description: "Copilot CLI model to use."
+        required: false
+        default: "gpt-5.4"
+        type: choice
+        options:
+          - gpt-5.4
+          - claude-sonnet-4.6
 
 permissions:
   contents: write
@@ -69,21 +77,49 @@ jobs:
       - name: Install GitHub Copilot CLI
         run: npm install -g @github/copilot
 
+      - name: Install curl-impersonate
+        env:
+          CURL_IMPERSONATE_VERSION: "1.5.6"
+          CURL_IMPERSONATE_TARBALL: "curl-impersonate-v1.5.6.x86_64-linux-gnu.tar.gz"
+          CURL_IMPERSONATE_SHA256: "b60344f63b9ed8806f0e9f7fd357d9f6c9a82aca279ed1e9e257d544885dcbde"
+        run: |
+          set -euo pipefail
+          INSTALL_DIR="$HOME/.local/share/curl-impersonate"
+          mkdir -p "$INSTALL_DIR"
+          cd "$INSTALL_DIR"
+          URL="https://github.com/lexiforest/curl-impersonate/releases/download/v${CURL_IMPERSONATE_VERSION}/${CURL_IMPERSONATE_TARBALL}"
+          curl -sSL --retry 3 --retry-delay 5 -o "$CURL_IMPERSONATE_TARBALL" "$URL"
+          echo "${CURL_IMPERSONATE_SHA256}  ${CURL_IMPERSONATE_TARBALL}" | sha256sum -c -
+          tar -xzf "$CURL_IMPERSONATE_TARBALL"
+          rm -f "$CURL_IMPERSONATE_TARBALL"
+          ./curl_chrome120 -s -o /dev/null -w 'curl-impersonate smoke test: %{http_code}\n' https://example.com
+          echo "CURL_IMPERSONATE_DIR=$INSTALL_DIR" >> "$GITHUB_ENV"
+
       - name: Resolve run inputs
         id: inputs
         env:
           RAW_COMPANY: ${{ github.event.inputs.companyName }}
           RAW_URL: ${{ github.event.inputs.companyUrl }}
           RAW_COUNT: ${{ github.event.inputs.unicornCount }}
+          RAW_MODEL: ${{ github.event.inputs.model }}
         run: |
           set -euo pipefail
           trim() { printf '%s' "${1//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//'; }
           COMPANY="$(trim "$RAW_COMPANY")"
           URL="$(trim "$RAW_URL")"
           COUNT="$(trim "$RAW_COUNT")"
+          MODEL="$(trim "$RAW_MODEL")"
           if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
-            COUNT=5
+            COUNT=3
           fi
+          case "$MODEL" in
+            claude-sonnet-4.6|gpt-5.4) ;;
+            "") MODEL="gpt-5.4" ;;
+            *)
+              echo "Unsupported model: $MODEL (allowed: claude-sonnet-4.6, gpt-5.4)" >&2
+              exit 1
+              ;;
+          esac
           if [ -z "$COMPANY" ]; then
             MODE="recent-unicorns"
             LABEL="recent-unicorns"
@@ -95,6 +131,7 @@ jobs:
             echo "mode=$MODE"
             echo "count=$COUNT"
             echo "label=$LABEL"
+            echo "model=$MODEL"
             echo "company<<EOF"
             echo "$COMPANY"
             echo "EOF"
@@ -110,6 +147,7 @@ jobs:
           COUNT: ${{ steps.inputs.outputs.count }}
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
+          MODEL: ${{ steps.inputs.outputs.model }}
         run: |
           set -euo pipefail
           if [ "$MODE" = "recent-unicorns" ]; then
@@ -135,7 +173,7 @@ jobs:
           EOF
           )
           fi
-          copilot --yolo --no-ask-user -p "$PROMPT"
+          copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT"
 
       - name: Rebuild reports/_index.yaml
         run: npm run build:report-index
