@@ -35,7 +35,7 @@ If `curl-impersonate` is absent, the script still runs: browser profiles fall th
 ## Run
 
 ```sh
-node .github/skills/fetch-url/scripts/fetch.mjs <url>
+node .agents/skills/fetch-url/scripts/fetch.mjs <url>
 ```
 
 Options:
@@ -110,13 +110,13 @@ Re-run the probe when:
 
 ```sh
 # Probe only new hosts (cheap; skips ones already in the map):
-node .github/skills/fetch-url/scripts/probe-strategies.mjs
+node .agents/skills/fetch-url/scripts/probe-strategies.mjs
 
 # Re-test specific hosts after their protection seems to have changed:
-node .github/skills/fetch-url/scripts/probe-strategies.mjs --refresh --hosts www.reuters.com,www.wsj.com
+node .agents/skills/fetch-url/scripts/probe-strategies.mjs --refresh --hosts www.reuters.com,www.wsj.com
 
 # Full refresh with parallel workers (default concurrency=6):
-node .github/skills/fetch-url/scripts/probe-strategies.mjs --refresh --concurrency 8
+node .agents/skills/fetch-url/scripts/probe-strategies.mjs --refresh --concurrency 8
 ```
 
 The probe walks each strategy in cost order (`bingbot` -> `desktop-chrome` -> `desktop-firefox` -> `desktop-safari` -> `mobile-safari` -> `googlebot` -> `reader` -> `wayback`) and records the first one that returns a 200, non-bot-challenge body of at least 500 bytes. Each per-attempt timeout is 8 s (vs. 15 s for production fetches) so a fully-blocked host fails fast (~1 min worst case). Output is prefixed with `[N/total]` so progress is visible.

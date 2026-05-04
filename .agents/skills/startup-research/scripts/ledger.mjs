@@ -21,7 +21,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
-  console.error('Usage: node .github/skills/startup-research/scripts/ledger.mjs <report-folder> [--keep-local]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder> [--keep-local]');
   process.exit(1);
 }
 

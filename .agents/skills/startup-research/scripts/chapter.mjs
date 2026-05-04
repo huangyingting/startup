@@ -7,12 +7,12 @@ import { join } from 'node:path';
 import { FINAL_ARTIFACTS, loadWorkflowConfig, tryReadYaml, workflowConfigPath } from './utils.mjs';
 
 function usage() {
-  console.error(`Usage: node .github/skills/startup-research/scripts/chapter.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--no-workflow] [--include-context --report-folder <path>]
+  console.error(`Usage: node .agents/skills/startup-research/scripts/chapter.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--no-workflow] [--include-context --report-folder <path>]
 
 Examples:
-    node .github/skills/startup-research/scripts/chapter.mjs --list --format markdown
-    node .github/skills/startup-research/scripts/chapter.mjs --order 1 --format json
-    node .github/skills/startup-research/scripts/chapter.mjs --order 4 --include-context --report-folder reports/20260503145959-openai`);
+    node .agents/skills/startup-research/scripts/chapter.mjs --list --format markdown
+    node .agents/skills/startup-research/scripts/chapter.mjs --order 1 --format json
+    node .agents/skills/startup-research/scripts/chapter.mjs --order 4 --include-context --report-folder reports/20260503145959-openai`);
   process.exit(1);
 }
 

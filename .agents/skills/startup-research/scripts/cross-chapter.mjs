@@ -20,7 +20,7 @@ const args = (() => {
 })();
 
 if (!args.folder) {
-  console.error('Usage: node .github/skills/startup-research/scripts/cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
   process.exit(1);
 }
 if (!['text', 'json'].includes(args.format)) {

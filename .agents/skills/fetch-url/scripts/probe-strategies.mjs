@@ -4,9 +4,9 @@
 // fetch.mjs as a fast-path map; entries also serve as documentation.
 //
 // Usage:
-//   node .github/skills/fetch-url/scripts/probe-strategies.mjs            # full run
-//   node .github/skills/fetch-url/scripts/probe-strategies.mjs --hosts reuters.com,sec.gov
-//   node .github/skills/fetch-url/scripts/probe-strategies.mjs --refresh  # re-test even known hosts
+//   node .agents/skills/fetch-url/scripts/probe-strategies.mjs            # full run
+//   node .agents/skills/fetch-url/scripts/probe-strategies.mjs --hosts reuters.com,sec.gov
+//   node .agents/skills/fetch-url/scripts/probe-strategies.mjs --refresh  # re-test even known hosts
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';

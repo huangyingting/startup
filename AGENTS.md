@@ -5,8 +5,8 @@ This repository generates startup diligence reports as structured YAML and rende
 ## Project map
 
 - `reports/` — generated report runs and `reports/_index.yaml`.
-- `.github/skills/startup-research/` — end-to-end report-generation skill, including private references and skill-owned scripts.
-- `.github/skills/fetch-url/` — direct URL fetch helper skill.
+- `.agents/skills/startup-research/` — end-to-end report-generation skill, including private references and skill-owned scripts.
+- `.agents/skills/fetch-url/` — direct URL fetch helper skill.
 - `website/` — Astro site, report loader, renderer, and website-owned validation helpers.
 
 ## Setup commands
@@ -24,16 +24,16 @@ This repository generates startup diligence reports as structured YAML and rende
 
 ## Working conventions
 
-- Keep skill-owned scripts under `.github/skills/*/scripts/`; keep website-owned helpers under `website/`.
-- Use `node .github/skills/.../scripts/*.mjs` directly for skill workflow scripts; do not add npm aliases for skill internals.
+- Keep skill-owned scripts under `.agents/skills/*/scripts/`; keep website-owned helpers under `website/`.
+- Use `node .agents/skills/.../scripts/*.mjs` directly for skill workflow scripts; do not add npm aliases for skill internals.
 - Use the actual session date as the freshness anchor for startup research and volatile market/company facts.
 - Reports are English YAML artifacts under `reports/<YYYYMMDDHHmmss>-<company-slug>/`.
-- Do not duplicate the startup research workflow here; when generating or updating a report, follow `.github/skills/startup-research/SKILL.md`.
+- Do not duplicate the startup research workflow here; when generating or updating a report, follow `.agents/skills/startup-research/SKILL.md`.
 
 ## Important references
 
-- `.github/skills/startup-research/SKILL.md` — canonical report workflow.
-- `.github/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
-- `.github/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
-- `.github/skills/startup-research/scripts/figures.mjs` — skill figure validation contract.
+- `.agents/skills/startup-research/SKILL.md` — canonical report workflow.
+- `.agents/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
+- `.agents/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
+- `.agents/skills/startup-research/scripts/figures.mjs` — skill figure validation contract.
 - `website/src/lib/figures.mjs` — website figure rendering/validation contract.
