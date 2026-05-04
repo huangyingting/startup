@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { FINAL_ARTIFACTS, loadWorkflowConfig, tryReadYaml, workflowConfigPath } from './utils.mjs';
 
 function usage() {
-  console.error(`Usage: node .github/skills/startup-research/scripts/chapter.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--include-workflow] [--include-context --report-folder <path>]
+  console.error(`Usage: node .github/skills/startup-research/scripts/chapter.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--no-workflow] [--include-context --report-folder <path>]
 
 Examples:
     node .github/skills/startup-research/scripts/chapter.mjs --list --format markdown
@@ -24,7 +24,7 @@ function parseArgs(argv) {
     list: false,
     all: false,
     format: 'json',
-    includeWorkflow: false,
+    includeWorkflow: true,
     includeContext: false,
     reportFolder: null,
   };
@@ -39,6 +39,7 @@ function parseArgs(argv) {
     else if (arg === '--all') args.all = true;
     else if (arg === '--format') args.format = argv[++i] ?? 'json';
     else if (arg === '--include-workflow') args.includeWorkflow = true;
+    else if (arg === '--no-workflow') args.includeWorkflow = false;
     else if (arg === '--include-context') args.includeContext = true;
     else if (arg === '--report-folder') args.reportFolder = argv[++i] ?? null;
     else usage();

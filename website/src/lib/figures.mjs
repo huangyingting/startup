@@ -58,3 +58,57 @@ export const FIGURE_ALLOWED_POPULATED_FIELDS = {
 };
 
 export const RENDERED_FIGURE_TYPES = FIGURE_TYPES.filter((type) => type !== 'other');
+
+const FIGURE_TYPE_SET = new Set(FIGURE_TYPES);
+const FIGURE_DATA_FIELD_SET = new Set(FIGURE_DATA_FIELDS);
+
+function hasPopulatedField(data, key) {
+  const value = data?.[key];
+  if (Array.isArray(value)) return value.length > 0;
+  return value != null && value !== '';
+}
+
+// Lightweight figure shape validator shared between skill (gate.mjs) and
+// website (check-reports.mjs). Returns { errors: string[] } where each error
+// is a short human-readable reason. Renderer-specific deep checks (numeric
+// cohort cells, matrix column/row width, etc.) stay in check-reports.mjs.
+export function validateFigureShape(figure) {
+  const errors = [];
+  const id = figure?.id ?? '?';
+  if (!figure || typeof figure !== 'object') {
+    return { errors: [`figure ${id} is not an object`] };
+  }
+  if (!figure.type || !FIGURE_TYPE_SET.has(figure.type)) {
+    errors.push(`figure ${id} has invalid type "${figure.type ?? ''}" (allowed: ${FIGURE_TYPES.join(', ')})`);
+    return { errors };
+  }
+  if (!figure.data || typeof figure.data !== 'object' || Array.isArray(figure.data)) {
+    errors.push(`figure ${id} (${figure.type}) requires a structured data object`);
+    return { errors };
+  }
+  for (const field of Object.keys(figure.data)) {
+    if (!FIGURE_DATA_FIELD_SET.has(field)) {
+      errors.push(`figure ${id} (${figure.type}) uses unsupported data.${field}`);
+    }
+    if (FIGURE_ARRAY_FIELDS.includes(field) && Array.isArray(figure.data[field]) && figure.data[field].length === 0) {
+      errors.push(`figure ${id} (${figure.type}) has empty data.${field}; omit unused arrays`);
+    }
+  }
+  const contract = FIGURE_CONTRACTS[figure.type] ?? [];
+  for (const alternatives of contract) {
+    const populated = alternatives.filter((key) => hasPopulatedField(figure.data, key));
+    if (populated.length === 0) {
+      errors.push(`figure ${id} (${figure.type}) requires data.${alternatives.join(' or data.')}`);
+    } else if (populated.length > 1) {
+      errors.push(`figure ${id} (${figure.type}) must use exactly one of data.${alternatives.join(' or data.')} (found ${populated.map((k) => `data.${k}`).join(' and ')})`);
+    }
+  }
+  const allowed = new Set(FIGURE_ALLOWED_POPULATED_FIELDS[figure.type] ?? []);
+  for (const field of FIGURE_ARRAY_FIELDS) {
+    if (hasPopulatedField(figure.data, field) && !allowed.has(field)) {
+      errors.push(`figure ${id} (${figure.type}) must not populate data.${field}`);
+    }
+  }
+  return { errors };
+}
+

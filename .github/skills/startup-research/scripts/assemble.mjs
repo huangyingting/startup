@@ -92,6 +92,25 @@ requireField(meta, 'summary.topStrengths');
 requireField(meta, 'summary.topRisks');
 requireField(meta, 'summary.unresolvedGaps');
 
+// Enum gates: catch typos in judgment fields here so the agent fixes
+// report-meta.yaml before bad values land in summary-card.yaml.
+const SUMMARY_ENUMS = {
+  recommendation: ['strong-buy', 'buy', 'track', 'research-more', 'avoid'],
+  confidence: ['high', 'medium', 'low'],
+  riskRating: ['low', 'medium', 'high', 'critical', 'unknown'],
+  valuationStance: ['attractive', 'fair', 'stretched', 'expensive', 'unknown'],
+};
+for (const [field, allowed] of Object.entries(SUMMARY_ENUMS)) {
+  const value = meta.summary?.[field];
+  if (!allowed.includes(value)) {
+    abort(`${REPORT_META_FILE} summary.${field}="${value}" is not one of ${allowed.join('|')}`);
+  }
+}
+const overallScore = meta.summary.overallScore;
+if (typeof overallScore !== 'number' || overallScore < 0 || overallScore > 10) {
+  abort(`${REPORT_META_FILE} summary.overallScore must be a number between 0 and 10 (got ${overallScore})`);
+}
+
 // ---------------------------------------------------------------------------
 // chapter → 91 chapter object
 // ---------------------------------------------------------------------------

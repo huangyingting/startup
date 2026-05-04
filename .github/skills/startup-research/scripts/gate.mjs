@@ -9,6 +9,7 @@
 import { existsSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, getAnalysisArtifacts, normalizeDomain, tryReadYaml } from './utils.mjs';
+import { validateFigureShape } from './figures.mjs';
 
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
 
@@ -48,6 +49,7 @@ const warnings = [];
 //   missingArtifact | yamlParse | sectionsMin | sectionsMax | artifactsMin
 //   | tablesMax | figuresMax | depthSection | depthSectionTotal
 //   | depthTableRows | depthFigureData | duplicateAnalysis | figureType
+//   | figureShape
 //   | localEvidenceMissing | researchQuestions | sources | claims | claimRefs
 function fail(dimension, message, extra = {}) {
   failures.push({ dimension, file: spec.file, message, ...extra });
@@ -536,6 +538,13 @@ if (doc) {
   const plannedTypes = new Set((spec.plannedFigures ?? []).flatMap((figure) => figure.acceptedTypes ?? []));
   if (counts.figures > 0 && plannedTypes.size && ![...plannedTypes].some((type) => types.has(type))) {
     warn('figureType', `${spec.file}: no planned figure type rendered (planned: ${[...plannedTypes].join(', ')}); confirm the substitution is intentional`, { rendered: [...types], planned: [...plannedTypes] });
+  }
+
+  for (const figure of doc.figures ?? []) {
+    const { errors } = validateFigureShape(figure);
+    for (const message of errors) {
+      fail('figureShape', `${spec.file}: ${message}`, { figureId: figure?.id ?? null });
+    }
   }
 
   checkLocalEvidence(spec.file, doc, counts);

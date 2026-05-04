@@ -33,8 +33,8 @@ If folder creation exits `2`, stop unless this is an intentional refresh; then r
 For each chapter `order` from the loader:
 
 1. Load the chapter packet:
-   `node .github/skills/startup-research/scripts/chapter.mjs --order <n> --format json --include-workflow`
-   Optionally append `--include-context` to inline the sections, tables, figures, and consolidated claimRefs of every file listed in `optionalContext` so the chapter brief carries reusable ground truth from earlier chapters.
+   `node .github/skills/startup-research/scripts/chapter.mjs --order <n> --format json`
+   Workflow context (`previousChapter` / `nextChapter`) ships by default; pass `--no-workflow` only if you need the raw chapter spec. Append `--include-context --report-folder <path>` to inline the sections, tables, figures, and consolidated claimRefs of every file listed in `optionalContext` so the chapter brief carries reusable ground truth from earlier chapters.
 2. Use only `packet.chapter` as the chapter brief: `file`, `artifact`, `title`, `mission`, `optionalContext`, `contentRequirements`, `plannedTables`, `plannedFigures`, `evidenceStrategy`, `qualityBar`, and `gate`.
 3. **Plan typed research questions first.** Generate at least `gate.minResearchQuestions` items into `localEvidence.researchQuestions[]`; each item follows the `researchQuestion` shape in `references/report-schema-v2.md`. Start every question with `status: unresolved` and flip to `answered` only when a claim cites it via `claim.answersQuestionRefs`. Each `question` string must be at least 20 characters and include a specific anchor (company / product / year / numeric). Distribute the types so that `gate.minQuestionTypeSpread` distinct types are covered, including at least `gate.minAdverseQuestions` of `type: adverse`. Cover at least `gate.minContentRequirementCoverage` (default 80%) of the chapter's `contentRequirements[]` via `targets[]`.
 4. **Search and fetch under audit.** Use `web_search` (or equivalent) to find URLs, then review each kept URL with `fetch-url`:
@@ -80,6 +80,7 @@ The gate emits a `failedDimensions[]` enum with stable keys plus a `retryOrder[]
 | `sectionsMin` / `artifactsMin` | Add the missing section, table, or figure (or substitute per step 6). |
 | `depthSection` / `depthSectionTotal` | Expand the prose of the shortest section(s) only; leave the others untouched. |
 | `depthTableRows` / `depthFigureData` | Add rows/data points to existing tables/figures. |
+| `figureShape` | Fix the figure's `data` to satisfy its type contract (e.g. `dag` needs `edges`, `range` needs numeric `low`/`high`, `matrix` needs `columns` and `rows`). Caught at chapter gate. |
 | `contentRequirementCoverage` | Add researchQuestions whose `targets[]` cover the un-targeted `contentRequirements`. |
 | `duplicateAnalysis` (warning) | Merge the redundant table/figure pair or sharpen one to answer a distinct question. |
 | `figureType` (warning) | Either add a planned figure type or document the substitution in evidenceGaps. |
@@ -109,18 +110,11 @@ Retry up to 3 times per chapter, scoping each retry strictly to the dimensions i
 
 After all analysis chapters pass:
 
-1. Build evidence:
-   `node .github/skills/startup-research/scripts/ledger.mjs <reportFolder>`
-2. Author `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md`. It carries the judgment fields the analysis chapters do not encode (recommendation, confidence, risk rating, valuation stance, headline, overall score, top strengths/risks, unresolved gaps, cover metrics, startup introduction, optional appendices and disclaimer override).
-3. Assemble the consolidated artifacts:
-   `node .github/skills/startup-research/scripts/assemble.mjs <reportFolder>`
-   This deterministically stitches the analysis chapter YAMLs + `evidence.yaml` + `report-meta.yaml` into `full-report.yaml` and `summary-card.yaml`. Re-run after editing any chapter or `report-meta.yaml`.
-4. Run the cross-chapter consistency check:
-   `node .github/skills/startup-research/scripts/cross-chapter.mjs <reportFolder>`
-   Resolve any drift it reports (mismatched valuations, founding dates, customer counts, ARR figures referenced from multiple chapters) before validating.
-5. Rebuild index:
-   `node .github/skills/startup-research/scripts/index.mjs --strict`
-6. Validate:
+1. Author `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md`. It carries the judgment fields the analysis chapters do not encode (recommendation, confidence, risk rating, valuation stance, headline, overall score, top strengths/risks, unresolved gaps, cover metrics, startup introduction, optional appendices and disclaimer override).
+2. Run the finalization pipeline:
+   `node .github/skills/startup-research/scripts/finalize.mjs <reportFolder>`
+   This runs ledger → cross-chapter → assemble → index in order. It stops at the first failing step so you can fix `report-meta.yaml` (or the offending chapter) and re-run. Pass `--skip-index` if you only want the per-report artifacts.
+3. Validate:
    `npm run validate`
 
 ## Hard rules
