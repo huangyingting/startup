@@ -22,7 +22,7 @@ const folderArg = args.find((arg) => !arg.startsWith('-'));
 const skipIndex = args.includes('--skip-index');
 
 if (!folderArg) {
-  console.error('Usage: node .github/skills/startup-research/scripts/finalize.mjs <report-folder> [--skip-index]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/finalize.mjs <report-folder> [--skip-index]');
   process.exit(1);
 }
 

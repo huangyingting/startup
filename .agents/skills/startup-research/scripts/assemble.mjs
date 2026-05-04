@@ -30,7 +30,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
-  abort('Usage: node .github/skills/startup-research/scripts/assemble.mjs <report-folder> [--dry-run]');
+  abort('Usage: node .agents/skills/startup-research/scripts/assemble.mjs <report-folder> [--dry-run]');
 }
 
 const reportFolder = resolve(args.folder);

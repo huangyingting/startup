@@ -1,7 +1,7 @@
 # Manual startup research run.
 #
-# The default Copilot agent runs the .github/skills/startup-research workflow
-# (see .github/skills/startup-research/SKILL.md). CI installs deps, invokes the
+# The default Copilot agent runs the .agents/skills/startup-research workflow
+# (see .agents/skills/startup-research/SKILL.md). CI installs deps, invokes the
 # CLI, rebuilds reports/_index.yaml, validates the site, and commits completed
 # YAML report artifacts.
 #
@@ -95,7 +95,7 @@ jobs:
           set -euo pipefail
           if [ "$MODE" = "recent-unicorns" ]; then
             PROMPT=$(cat <<EOF
-          Follow the .github/skills/startup-research skill (.github/skills/startup-research/SKILL.md) and run recent-unicorn discovery.
+          Follow the .agents/skills/startup-research skill (.agents/skills/startup-research/SKILL.md) and run recent-unicorn discovery.
 
           Select at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a \$1B valuation, or became newly prominent in the last 12-24 months. Avoid companies already present in reports/_index.yaml unless a materially new report is justified.
 
@@ -104,7 +104,7 @@ jobs:
           )
           else
             PROMPT=$(cat <<EOF
-          Follow the .github/skills/startup-research skill (.github/skills/startup-research/SKILL.md) and run one complete Startup Research workflow for this company.
+          Follow the .agents/skills/startup-research skill (.agents/skills/startup-research/SKILL.md) and run one complete Startup Research workflow for this company.
 
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-null}
@@ -116,7 +116,7 @@ jobs:
           copilot --yolo --no-ask-user -p "$PROMPT"
 
       - name: Rebuild reports/_index.yaml
-        run: node .github/skills/startup-research/scripts/index.mjs --strict
+        run: node .agents/skills/startup-research/scripts/index.mjs --strict
 
       - name: Validate generated report and website
         run: npm run validate
@@ -150,7 +150,7 @@ jobs:
           git config user.email "startup-research-bot@users.noreply.github.com"
           git fetch origin "${{ github.ref_name }}"
           git rebase --autostash "origin/${{ github.ref_name }}"
-          node .github/skills/startup-research/scripts/index.mjs --strict
+          node .agents/skills/startup-research/scripts/index.mjs --strict
           git add reports/
           if git diff --cached --quiet; then
             echo "No new or updated startup reports."

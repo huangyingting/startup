@@ -26,7 +26,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
-  console.error('Usage: node .github/skills/startup-research/scripts/gate.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/gate.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
   process.exit(1);
 }
 if (!['text', 'json'].includes(args.format)) {

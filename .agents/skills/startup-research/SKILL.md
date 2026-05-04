@@ -22,9 +22,9 @@ Keep the workflow simple: load the ordered chapter config, generate each chapter
 
 1. Read `./references/report-schema-v2.md` and `./references/yaml-rules.md`.
 2. Load chapter order:
-   `node .github/skills/startup-research/scripts/chapter.mjs --list --format json`
+   `node .agents/skills/startup-research/scripts/chapter.mjs --list --format json`
 3. Create the report folder:
-   `node .github/skills/startup-research/scripts/new.mjs <runTimestamp> <companyName> [--website <companyUrl>]`
+   `node .agents/skills/startup-research/scripts/new.mjs <runTimestamp> <companyName> [--website <companyUrl>]`
 
 If folder creation exits `2`, stop unless this is an intentional refresh; then rerun with `--allow-duplicate`.
 
@@ -33,12 +33,12 @@ If folder creation exits `2`, stop unless this is an intentional refresh; then r
 For each chapter `order` from the loader:
 
 1. Load the chapter packet:
-   `node .github/skills/startup-research/scripts/chapter.mjs --order <n> --format json`
+   `node .agents/skills/startup-research/scripts/chapter.mjs --order <n> --format json`
    Workflow context (`previousChapter` / `nextChapter`) ships by default; pass `--no-workflow` only if you need the raw chapter spec. Append `--include-context --report-folder <path>` to inline the sections, tables, figures, and consolidated claimRefs of every file listed in `optionalContext` so the chapter brief carries reusable ground truth from earlier chapters.
 2. Use only `packet.chapter` as the chapter brief: `file`, `artifact`, `title`, `mission`, `optionalContext`, `contentRequirements`, `plannedTables`, `plannedFigures`, `evidenceStrategy`, `qualityBar`, and `gate`.
 3. **Plan typed research questions first.** Generate at least `gate.minResearchQuestions` items into `localEvidence.researchQuestions[]`; each item follows the `researchQuestion` shape in `references/report-schema-v2.md`. Start every question with `status: unresolved` and flip to `answered` only when a claim cites it via `claim.answersQuestionRefs`. Each `question` string must be at least 20 characters and include a specific anchor (company / product / year / numeric). Distribute the types so that `gate.minQuestionTypeSpread` distinct types are covered, including at least `gate.minAdverseQuestions` of `type: adverse`. Cover at least `gate.minContentRequirementCoverage` (default 80%) of the chapter's `contentRequirements[]` via `targets[]`.
 4. **Search and fetch under audit.** Use `web_search` (or equivalent) to find URLs, then review each kept URL with `fetch-url`:
-   `node .github/skills/fetch-url/scripts/fetch.mjs <url> --text-only`
+   `node .agents/skills/fetch-url/scripts/fetch.mjs <url> --text-only`
    Record the actual queries you ran in `localEvidence.searchQueries[]` (`{query, engine, hits, retainedSourceRefs}`); leaving this empty when `researchQuestions` is non-empty is a gate failure.
 5. **Build evidence with full source metadata.** Convert reviewed URLs into `localEvidence.sources[]` (see `source` in the schema for required fields). Then write `localEvidence.claims[]` (atomic facts) using the schema's `claim` shape; set `answersQuestionRefs: [RQ###]` to close the loop on questions. Surface every unresolved/partial question as a typed `evidenceGap` (see step 9).
    - **Diversity is per-chapter, not just report-wide.** Each chapter must hit `gate.minSourceDomains` distinct registrable domains, `gate.minSourceTypeSpread` distinct sourceTypes, every `gate.requiredSourceTypes[]` value, and at least `gate.minNetNewSources` URLs that did not appear in any earlier-order chapter. Don't just reuse the global pool — pull fresh sources for the current chapter's `evidenceStrategy`.
@@ -48,7 +48,7 @@ For each chapter `order` from the loader:
 8. Generate the chapter YAML at `reportFolder/<chapter.file>` per the report schema.
 9. **Type your evidenceGaps.** Every `evidenceGap` follows the schema's `evidenceGap` shape. Use `relatedQuestionRefs[]` to close out an unresolved/partial researchQuestion and `relatedTableRefs[]` to flag an enumeration-incomplete table.
 10. Run the gate with structured output:
-    `node .github/skills/startup-research/scripts/gate.mjs <reportFolder> <chapter.file> --format json`
+    `node .agents/skills/startup-research/scripts/gate.mjs <reportFolder> <chapter.file> --format json`
     Exit `0` means the chapter is ready. On nonzero exit, parse `failedDimensions[]` and `retryOrder[]` (root-cause sorted) from the JSON to scope the retry — see "Retry scope" below.
 11. Advance with `packet.nextChapter`; if it is `null`, move to finalization.
 
@@ -113,7 +113,7 @@ After all analysis chapters pass:
 
 1. Author `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md`. It carries the judgment fields the analysis chapters do not encode (recommendation, confidence, risk rating, valuation stance, headline, overall score, top strengths/risks, unresolved gaps, cover metrics, startup introduction, optional appendices and disclaimer override).
 2. Run the finalization pipeline:
-   `node .github/skills/startup-research/scripts/finalize.mjs <reportFolder>`
+   `node .agents/skills/startup-research/scripts/finalize.mjs <reportFolder>`
    This runs ledger → cross-chapter → assemble → index in order. It stops at the first failing step so you can fix `report-meta.yaml` (or the offending chapter) and re-run. Pass `--skip-index` if you only want the per-report artifacts.
 3. Validate:
    `npm run validate`

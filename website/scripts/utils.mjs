@@ -5,7 +5,7 @@ import yaml from 'js-yaml';
 
 export const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const reportsDir = join(repoRoot, 'reports');
-export const workflowConfigPath = join(repoRoot, '.github', 'skills', 'startup-research', 'references', 'chapters.yaml');
+export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-research', 'references', 'chapters.yaml');
 
 export function readYaml(path) {
   return yaml.load(readFileSync(path, 'utf8')) ?? {};

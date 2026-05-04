@@ -12,18 +12,18 @@ Startup is a diligence report generator for startup companies. It produces evide
 ## Repository layout
 
 ```text
-.github/skills/startup-research/  # report-generation workflow skill
-.github/skills/fetch-url/         # direct URL fetch helper skill
+.agents/skills/startup-research/  # report-generation workflow skill
+.agents/skills/fetch-url/         # direct URL fetch helper skill
 reports/                          # generated report runs and _index.yaml
 website/                          # Astro static site and website-owned validation
 ```
 
 Important files:
 
-- `.github/skills/startup-research/SKILL.md` — canonical end-to-end report workflow.
-- `.github/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
-- `.github/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
-- `.github/skills/startup-research/scripts/` — skill-owned workflow scripts.
+- `.agents/skills/startup-research/SKILL.md` — canonical end-to-end report workflow.
+- `.agents/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
+- `.agents/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
+- `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts.
 - `website/scripts/` and `website/src/lib/` — website-owned validation helpers and rendering contracts.
 - `reports/_index.yaml` — catalog of generated report runs.
 
@@ -102,7 +102,7 @@ npm run preview
 
 ## Ownership boundaries
 
-- Skill workflow scripts live under `.github/skills/*/scripts/` and are called directly with `node` by the skills.
+- Skill workflow scripts live under `.agents/skills/*/scripts/` and are called directly with `node` by the skills.
 - Website code and website validators live under `website/`.
 - The root `package.json` only exposes repository-level checks; it does not alias skill-internal workflow steps.
-- Report workflow details belong in `.github/skills/startup-research/SKILL.md`, not in this README.
+- Report workflow details belong in `.agents/skills/startup-research/SKILL.md`, not in this README.
