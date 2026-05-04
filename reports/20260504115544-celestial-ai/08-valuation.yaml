@@ -1,12 +1,18 @@
 schemaVersion: report-v2
 artifact: valuation
 slug: 20260504115544-celestial-ai
-runDate: "2026-05-04"
+runDate: '2026-05-04'
 acknowledgedWarnings:
   - dimension: duplicateAnalysis
-    reason: "T801 (M&A transaction multiples table) and F803 (Investment KPIs figure) serve distinct purposes: the table provides per-deal comparable data for precedent analysis while the figure synthesises Celestial AI's own KPI metrics alongside the deal timeline for IC-ready scoring."
+    reason: >-
+      T801 (M&A transaction multiples table) and F803 (Investment KPIs figure) serve distinct purposes: the table
+      provides per-deal comparable data for precedent analysis while the figure synthesises Celestial AI's own KPI
+      metrics alongside the deal timeline for IC-ready scoring.
   - dimension: duplicateAnalysis
-    reason: "T802 (Comparable Valuation Table) and F802 (Valuation Sensitivity figure) are complementary, not duplicative: the table records discrete M&A and public-market comparables, while the figure presents a sensitivity waterfall showing how upfront and earn-out multiples shift across bull/base/bear revenue scenarios."
+    reason: >-
+      T802 (Comparable Valuation Table) and F802 (Valuation Sensitivity figure) are complementary, not duplicative: the
+      table records discrete M&A and public-market comparables, while the figure presents a sensitivity waterfall
+      showing how upfront and earn-out multiples shift across bull/base/bear revenue scenarios.
 company:
   name: Celestial AI
 chapter:
@@ -30,7 +36,6 @@ chapter:
     Outside observers should adopt a research-more posture pending first-revenue evidence
     from Marvell's FY2028 reporting, given the absence of disclosed contracts, gross margin
     data, and customer qualification milestones.
-
 sections:
   - id: s1
     title: Deal Overview and Implied Transaction Multiples
@@ -69,8 +74,15 @@ sections:
       acquisition announcement alone; however, the absence of any negative market reaction
       to a $3.25 billion outlay for a pre-revenue company is a signal that buy-side consensus
       viewed the price as fair or strategically justified.
-    claimRefs: [C801, C802, C803, C804, C805, C806, C807, C808]
-
+    claimRefs:
+      - C261
+      - C262
+      - C263
+      - C264
+      - C265
+      - C266
+      - C267
+      - C268
   - id: s2
     title: Comparable M&A Transactions
     body: |
@@ -115,8 +127,16 @@ sections:
       provide a credible range into which Celestial AI's $3.25 billion upfront price fits
       comfortably, especially given the strategic importance of Photonic Fabric to Marvell's
       $10 billion scale-up TAM narrative.
-    claimRefs: [C809, C810, C811, C812, C813, C814, C815, C816, C817]
-
+    claimRefs:
+      - C269
+      - C270
+      - C271
+      - C272
+      - C273
+      - C274
+      - C275
+      - C276
+      - C277
   - id: s3
     title: Comparable Public Company and Private Round Benchmarks
     body: |
@@ -158,8 +178,15 @@ sections:
       at 5 nm process node. The GrandView Research optical interconnect market report projects
       the overall optical interconnect market reaching $34.5 billion by 2030, providing
       a larger TAM backdrop within which the silicon photonics segment sits.
-    claimRefs: [C818, C819, C820, C821, C822, C823, C824, C825]
-
+    claimRefs:
+      - C278
+      - C279
+      - C280
+      - C281
+      - C282
+      - C283
+      - C284
+      - C285
   - id: s4
     title: Discounted Cash Flow and Revenue Ramp Analysis
     body: |
@@ -201,8 +228,14 @@ sections:
       25% to bear—yields an expected value of approximately $3.8–4.2 billion for the
       transaction, above the upfront consideration but below the full earn-out value. This
       probability weighting is an analyst estimate and should be treated with low confidence.
-    claimRefs: [C826, C827, C828, C829, C830, C831, C832]
-
+    claimRefs:
+      - C286
+      - C287
+      - C288
+      - C289
+      - C290
+      - C291
+      - C292
   - id: s5
     title: Earn-Out Structure and Contingent Consideration Analysis
     body: |
@@ -245,8 +278,13 @@ sections:
       it limits acquirer downside while providing seller upside if technology proves out. From
       a governance perspective, the contingent consideration also reduces the risk of
       reputational damage to Marvell management if the photonics ramp underperforms.
-    claimRefs: [C833, C834, C835, C836, C837, C838]
-
+    claimRefs:
+      - C293
+      - C294
+      - C295
+      - C296
+      - C297
+      - C298
   - id: s6
     title: Valuation Verdict and Investment Diligence Stance
     body: |
@@ -286,8 +324,14 @@ sections:
       ARR target unachievable and raising earn-out forfeiture risk. That single data point—
       the first earnings call with a Celestial AI revenue line—is the most important near-term
       validation event for the valuation thesis.
-    claimRefs: [C839, C840, C841, C842, C843, C844, C845]
-
+    claimRefs:
+      - C299
+      - C300
+      - C301
+      - C302
+      - C303
+      - C304
+      - C305
 tables:
   - id: T801
     title: Transaction Multiples Summary
@@ -297,107 +341,279 @@ tables:
       - Basis
       - Confidence
     rows:
-      - ["Upfront acquisition price", "$3.25B ($1B cash + $2.25B MRVL shares)", "SEC 8-K filing; closing press release", "High"]
-      - ["Maximum total consideration", "$5.5B", "SEC 8-K; earn-out up to $2.25B in MRVL shares", "High"]
-      - ["Last VC valuation (Series C1, March 2025)", "$2.5B post-money", "Series C1 announcement; prior chapter C201", "High"]
-      - ["Acquisition premium over last VC round", "30%", "($3.25B - $2.5B) / $2.5B", "High"]
-      - ["Contingent portion of total consideration", "41%", "$2.25B / $5.5B at announcement pricing", "High"]
-      - ["Implied EV / Q4 FY2028 2-year forward ARR (upfront)", "6.5x", "$3.25B / $500M Marvell ARR target", "Medium"]
-      - ["Implied EV / Q4 FY2029 forward ARR (full earn-out)", "5.5x", "$5.5B / $1.0B Marvell ARR target", "Medium"]
-      - ["Upfront price / total VC invested capital", "6.3x", "$3.25B / $515M total raised", "High"]
-    notes: "Forward ARR multiples are calculated against Marvell management's company-claimed guidance targets and should be treated as estimated, not confirmed."
-    claimRefs: [C801, C802, C803, C804, C805, C816, C817, C830]
-
+      - - Upfront acquisition price
+        - $3.25B ($1B cash + $2.25B MRVL shares)
+        - SEC 8-K filing; closing press release
+        - High
+      - - Maximum total consideration
+        - $5.5B
+        - SEC 8-K; earn-out up to $2.25B in MRVL shares
+        - High
+      - - Last VC valuation (Series C1, March 2025)
+        - $2.5B post-money
+        - Series C1 announcement; prior chapter C201
+        - High
+      - - Acquisition premium over last VC round
+        - 30%
+        - ($3.25B - $2.5B) / $2.5B
+        - High
+      - - Contingent portion of total consideration
+        - 41%
+        - $2.25B / $5.5B at announcement pricing
+        - High
+      - - Implied EV / Q4 FY2028 2-year forward ARR (upfront)
+        - 6.5x
+        - $3.25B / $500M Marvell ARR target
+        - Medium
+      - - Implied EV / Q4 FY2029 forward ARR (full earn-out)
+        - 5.5x
+        - $5.5B / $1.0B Marvell ARR target
+        - Medium
+      - - Upfront price / total VC invested capital
+        - 6.3x
+        - $3.25B / $515M total raised
+        - High
+    notes: >-
+      Forward ARR multiples are calculated against Marvell management's company-claimed guidance targets and should be
+      treated as estimated, not confirmed.
+    claimRefs:
+      - C261
+      - C262
+      - C263
+      - C264
+      - C265
+      - C276
+      - C277
+      - C290
   - id: T802
     title: Comparable Valuation Table
     columns:
       - Transaction
       - Year
-      - "Deal Value"
-      - "EV / Revenue Multiple"
+      - Deal Value
+      - EV / Revenue Multiple
       - Relevance to Celestial AI
     rows:
-      - ["Marvell / Inphi (silicon photonics, optical DSP)", "2021", "$10.0B", "~14.6x TTM", "Direct: same acquirer; cloud data-center photonics market"]
-      - ["NVIDIA / Mellanox (InfiniBand networking)", "2020", "$6.9B", "~5.3x TTM", "Broad: AI cluster connectivity precedent"]
-      - ["Cisco / Acacia Communications (optical modules)", "2021", "$4.5B", "~12x TTM", "Direct: optical interconnect silicon for hyperscale data centers"]
-      - ["AMD / Pensando Systems (data center DPU)", "2022", "$1.9B", "Pre-revenue / IP premium", "Close structural analog: pre-revenue AI chip startup exit"]
-      - ["Marvell / Innovium (Ethernet switching)", "2021", "$1.1B", "~5x TTM (approx)", "Contextual: Marvell paying data-center silicon premiums"]
-      - ["Celestial AI — upfront (this transaction)", "2026", "$3.25B", "6.5x 2-yr fwd ARR", "Reference; pre-revenue photonics acquisition"]
-    notes: "Revenue multiples for Inphi, Mellanox, Acacia, and Innovium are based on trailing twelve-month revenue at announcement. Pensando multiple is not applicable on a revenue basis due to pre-commercial status. Celestial AI multiple uses Marvell management's forward guidance."
+      - - Marvell / Inphi (silicon photonics, optical DSP)
+        - '2021'
+        - $10.0B
+        - ~14.6x TTM
+        - 'Direct: same acquirer; cloud data-center photonics market'
+      - - NVIDIA / Mellanox (InfiniBand networking)
+        - '2020'
+        - $6.9B
+        - ~5.3x TTM
+        - 'Broad: AI cluster connectivity precedent'
+      - - Cisco / Acacia Communications (optical modules)
+        - '2021'
+        - $4.5B
+        - ~12x TTM
+        - 'Direct: optical interconnect silicon for hyperscale data centers'
+      - - AMD / Pensando Systems (data center DPU)
+        - '2022'
+        - $1.9B
+        - Pre-revenue / IP premium
+        - 'Close structural analog: pre-revenue AI chip startup exit'
+      - - Marvell / Innovium (Ethernet switching)
+        - '2021'
+        - $1.1B
+        - ~5x TTM (approx)
+        - 'Contextual: Marvell paying data-center silicon premiums'
+      - - Celestial AI — upfront (this transaction)
+        - '2026'
+        - $3.25B
+        - 6.5x 2-yr fwd ARR
+        - Reference; pre-revenue photonics acquisition
+    notes: >-
+      Revenue multiples for Inphi, Mellanox, Acacia, and Innovium are based on trailing twelve-month revenue at
+      announcement. Pensando multiple is not applicable on a revenue basis due to pre-commercial status. Celestial AI
+      multiple uses Marvell management's forward guidance.
     enumerationScope:
       coverage: partial
-      basis: "Covers six high-relevance semiconductor M&A transactions from 2020–2026. Additional deals (Intel/Altera, Broadcom/Brocade) were excluded due to materially different business models or insufficient optical interconnect exposure."
-    claimRefs: [C809, C810, C811, C812, C813, C814, C815, C816]
-
+      basis: >-
+        Covers six high-relevance semiconductor M&A transactions from 2020–2026. Additional deals (Intel/Altera,
+        Broadcom/Brocade) were excluded due to materially different business models or insufficient optical interconnect
+        exposure.
+    claimRefs:
+      - C269
+      - C270
+      - C271
+      - C272
+      - C273
+      - C274
+      - C275
+      - C276
   - id: T803
     title: Comparable Public AI Silicon Companies
     columns:
-      - "Company / Round"
+      - Company / Round
       - Status
       - Valuation
-      - "Revenue (Last Known)"
-      - "Implied Multiple"
+      - Revenue (Last Known)
+      - Implied Multiple
       - Notes
     rows:
-      - ["Cerebras Systems", "IPO filing (Apr 2026)", "$23–35B (target range)", "$510M (2025)", "~45–69x 2025 revenue", "Wafer-scale AI chip; large OpenAI contract; high customer concentration"]
-      - ["SambaNova Systems", "Private (last round undisclosed)", "$5B+ (reported)", "Not disclosed", "n/a", "Enterprise AI inference; no public revenue data"]
-      - ["Groq", "Private (Series D, 2023)", "~$2.8B (2023)", "Not disclosed", "n/a", "AI inference chip; older valuation anchor; market may have re-rated upward"]
-      - ["Ayar Labs", "Private (Series C)", "Not publicly disclosed", "Not disclosed", "n/a", "In-package optics competitor to Celestial AI; $870M total raised"]
-      - ["Marvell Technology (acquirer)", "Public (Nasdaq: MRVL)", "~$55–65B EV at announcement", "$8.2B (FY2026)", "~7–8x FY2026 fwd revenue", "Primary acquirer; own market multiple context for pricing discipline"]
-    notes: "Cerebras valuation is based on its April 2026 IPO filing target range; actual IPO price may differ. Marvell EV is an approximation based on market cap at time of announcement."
+      - - Cerebras Systems
+        - IPO filing (Apr 2026)
+        - $23–35B (target range)
+        - $510M (2025)
+        - ~45–69x 2025 revenue
+        - Wafer-scale AI chip; large OpenAI contract; high customer concentration
+      - - SambaNova Systems
+        - Private (last round undisclosed)
+        - $5B+ (reported)
+        - Not disclosed
+        - n/a
+        - Enterprise AI inference; no public revenue data
+      - - Groq
+        - Private (Series D, 2023)
+        - ~$2.8B (2023)
+        - Not disclosed
+        - n/a
+        - AI inference chip; older valuation anchor; market may have re-rated upward
+      - - Ayar Labs
+        - Private (Series C)
+        - Not publicly disclosed
+        - Not disclosed
+        - n/a
+        - In-package optics competitor to Celestial AI; $870M total raised
+      - - Marvell Technology (acquirer)
+        - 'Public (Nasdaq: MRVL)'
+        - ~$55–65B EV at announcement
+        - $8.2B (FY2026)
+        - ~7–8x FY2026 fwd revenue
+        - Primary acquirer; own market multiple context for pricing discipline
+    notes: >-
+      Cerebras valuation is based on its April 2026 IPO filing target range; actual IPO price may differ. Marvell EV is
+      an approximation based on market cap at time of announcement.
     enumerationScope:
       coverage: partial
-      basis: "Covers the principal publicly tracked AI chip and silicon photonics private and public companies with valuation anchors. D-Matrix, Ranovus, and other early-stage silicon photonics companies excluded due to lack of disclosed valuations."
-    claimRefs: [C818, C819, C820, C821, C824]
-
+      basis: >-
+        Covers the principal publicly tracked AI chip and silicon photonics private and public companies with valuation
+        anchors. D-Matrix, Ranovus, and other early-stage silicon photonics companies excluded due to lack of disclosed
+        valuations.
+    claimRefs:
+      - C278
+      - C279
+      - C280
+      - C281
+      - C284
   - id: T804
     title: Bull / Base / Bear Revenue Scenarios
     columns:
       - Scenario
-      - "Q4 FY2028 ARR ($M)"
-      - "Q4 FY2029 ARR ($M)"
-      - "Cumulative by FY2029 YE ($M)"
+      - Q4 FY2028 ARR ($M)
+      - Q4 FY2029 ARR ($M)
+      - Cumulative by FY2029 YE ($M)
       - Earn-Out Outcome
-      - "Effective EV ($B)"
+      - Effective EV ($B)
     rows:
-      - ["Bull", "750", "1500", ">2000", "Full earn-out (~$2.25B in MRVL shares)", "5.5"]
-      - ["Base (Marvell guidance)", "500", "1000", "~800–1000", "First tranche (~$750M) likely; second uncertain", "~4.0"]
-      - ["Bear", "100–200", "200–400", "~150–300", "No earn-out; deal settles at upfront", "3.25"]
-    notes: "Base scenario reflects Marvell management guidance exactly. Bull assumes two-to-three hyperscaler design wins ramping in parallel. Bear assumes a 12-month ramp delay versus guidance. Cumulative revenue is the contractual earn-out metric, not the annualized run rate."
-    claimRefs: [C804, C805, C826, C828, C829, C831, C832, C833, C834]
-
+      - - Bull
+        - '750'
+        - '1500'
+        - '>2000'
+        - Full earn-out (~$2.25B in MRVL shares)
+        - '5.5'
+      - - Base (Marvell guidance)
+        - '500'
+        - '1000'
+        - ~800–1000
+        - First tranche (~$750M) likely; second uncertain
+        - ~4.0
+      - - Bear
+        - 100–200
+        - 200–400
+        - ~150–300
+        - No earn-out; deal settles at upfront
+        - '3.25'
+    notes: >-
+      Base scenario reflects Marvell management guidance exactly. Bull assumes two-to-three hyperscaler design wins
+      ramping in parallel. Bear assumes a 12-month ramp delay versus guidance. Cumulative revenue is the contractual
+      earn-out metric, not the annualized run rate.
+    claimRefs:
+      - C264
+      - C265
+      - C286
+      - C288
+      - C289
+      - C291
+      - C292
+      - C293
+      - C294
   - id: T805
     title: Earn-Out Tranche Structure
     columns:
       - Tranche
-      - "Cumulative Revenue Threshold by FY2029 YE"
-      - "MRVL Shares Released (approx)"
-      - "Value at Announcement (approx)"
-      - "Timing Window"
+      - Cumulative Revenue Threshold by FY2029 YE
+      - MRVL Shares Released (approx)
+      - Value at Announcement (approx)
+      - Timing Window
     rows:
-      - ["First (one-third)", "$500M cumulative", "~9.1M shares", "~$750M", "Acquisition close through ~Jan 2029 (~35 months)"]
-      - ["Second (two-thirds)", "$2.0B cumulative (must achieve Tranche 1 first)", "~18.1M shares", "~$1.5B", "Same window; requires sustained ramp through FY2029"]
-      - ["No earn-out", "Revenue below $500M cumulative", "0 shares forfeited", "$0", "Deal settles at $3.25B upfront only"]
-    notes: "Earn-out is equity-settled in MRVL shares; no cash component. Effective earn-out value fluctuates with MRVL stock price. Amazon product warrant (1,045,171 MRVL shares at $87.0029 strike) is a separate contingent dilution instrument not included in earn-out totals."
-    claimRefs: [C833, C834, C836, C837, C838]
-
+      - - First (one-third)
+        - $500M cumulative
+        - ~9.1M shares
+        - ~$750M
+        - Acquisition close through ~Jan 2029 (~35 months)
+      - - Second (two-thirds)
+        - $2.0B cumulative (must achieve Tranche 1 first)
+        - ~18.1M shares
+        - ~$1.5B
+        - Same window; requires sustained ramp through FY2029
+      - - No earn-out
+        - Revenue below $500M cumulative
+        - 0 shares forfeited
+        - $0
+        - Deal settles at $3.25B upfront only
+    notes: >-
+      Earn-out is equity-settled in MRVL shares; no cash component. Effective earn-out value fluctuates with MRVL stock
+      price. Amazon product warrant (1,045,171 MRVL shares at $87.0029 strike) is a separate contingent dilution
+      instrument not included in earn-out totals.
+    claimRefs:
+      - C293
+      - C294
+      - C296
+      - C297
+      - C298
   - id: T806
     title: Final Diligence Asks Table
     columns:
       - Topic
-      - "Missing Evidence"
-      - "Why It Matters"
-      - "Diligence Path"
+      - Missing Evidence
+      - Why It Matters
+      - Diligence Path
     rows:
-      - ["Hyperscaler contract terms", "Volume commitments, pricing schedules, qualification milestones with Amazon and other customers", "Contract backlog is the primary leading indicator of earn-out achievability", "MRVL IR disclosure; SEC 8-K reporting once material contracts exist"]
-      - ["Gross margin and unit economics", "No disclosed GM for Photonic Fabric modules or licensing agreements", "GM structure determines contribution margin and EBITDA profile at earn-out scale", "Marvell DCG segment disclosure post first-revenue quarter; earnings call commentary"]
-      - ["Competitive displacement timeline", "No published technical benchmarking vs. Broadcom / NVIDIA internal photonics programs", "TAM erosion from faster-moving competitors could render earn-out milestones unachievable", "Third-party benchmarking reports; Broadcom and NVIDIA roadmap disclosures"]
-      - ["Revenue recognition policy", "Semiconductor custom silicon revenue recognition timing for lump-sum design-win payments undisclosed", "Lumpy revenue concentration in final quarters could create headline miss vs. earn-out threshold", "MRVL 10-Q and 10-K disclosure after first-revenue quarter; ASC 606 treatment"]
-      - ["Integration milestones", "No public quarterly integration status or organizational structure updates for Celestial AI team", "Integration delays directly push out the commercialization ramp by 12–24 months", "Marvell earnings call color; Marvell DCG segment headcount and opex disclosures"]
-      - ["Earn-out accounting treatment", "Marvell has not published its ASC 805 purchase price allocation for Celestial AI intangibles", "Earn-out classification (liability vs. equity) affects reported GAAP earnings and diluted EPS", "Marvell FY2026 10-K (due mid-2026) or subsequent 10-Q disclosures"]
+      - - Hyperscaler contract terms
+        - Volume commitments, pricing schedules, qualification milestones with Amazon and other customers
+        - Contract backlog is the primary leading indicator of earn-out achievability
+        - MRVL IR disclosure; SEC 8-K reporting once material contracts exist
+      - - Gross margin and unit economics
+        - No disclosed GM for Photonic Fabric modules or licensing agreements
+        - GM structure determines contribution margin and EBITDA profile at earn-out scale
+        - Marvell DCG segment disclosure post first-revenue quarter; earnings call commentary
+      - - Competitive displacement timeline
+        - No published technical benchmarking vs. Broadcom / NVIDIA internal photonics programs
+        - TAM erosion from faster-moving competitors could render earn-out milestones unachievable
+        - Third-party benchmarking reports; Broadcom and NVIDIA roadmap disclosures
+      - - Revenue recognition policy
+        - Semiconductor custom silicon revenue recognition timing for lump-sum design-win payments undisclosed
+        - Lumpy revenue concentration in final quarters could create headline miss vs. earn-out threshold
+        - MRVL 10-Q and 10-K disclosure after first-revenue quarter; ASC 606 treatment
+      - - Integration milestones
+        - No public quarterly integration status or organizational structure updates for Celestial AI team
+        - Integration delays directly push out the commercialization ramp by 12–24 months
+        - Marvell earnings call color; Marvell DCG segment headcount and opex disclosures
+      - - Earn-out accounting treatment
+        - Marvell has not published its ASC 805 purchase price allocation for Celestial AI intangibles
+        - Earn-out classification (liability vs. equity) affects reported GAAP earnings and diluted EPS
+        - Marvell FY2026 10-K (due mid-2026) or subsequent 10-Q disclosures
     notes: null
-    claimRefs: [C839, C840, C841, C842, C843, C845]
-
+    claimRefs:
+      - C299
+      - C300
+      - C301
+      - C302
+      - C303
+      - C305
 figures:
   - id: F801
     title: Valuation / Return Range
@@ -410,29 +626,35 @@ figures:
       achievement at $5.5B. All values are in USD millions at announcement pricing.
     data:
       items:
-        - label: "Bear (no earn-out, upfront only)"
+        - label: Bear (no earn-out, upfront only)
           low: 3250
           mid: 3250
           high: 3250
-          unit: "USD M"
-        - label: "Base (partial earn-out, one tranche)"
+          unit: USD M
+        - label: Base (partial earn-out, one tranche)
           low: 3250
           mid: 3850
           high: 4250
-          unit: "USD M"
-        - label: "Bull (full earn-out achieved)"
+          unit: USD M
+        - label: Bull (full earn-out achieved)
           low: 4500
           mid: 5000
           high: 5500
-          unit: "USD M"
+          unit: USD M
     approximationNotes: |
       Bear scenario is fixed at $3.25B (the contractual upfront price). Base scenario
       low = upfront only; mid = upfront + first tranche at announcement pricing; high =
       upfront + first tranche + partial second tranche. Bull scenario low = upfront +
       first tranche; mid/high = upfront + full earn-out at announcement/current pricing.
       All earn-out valuations fluctuate with MRVL share price.
-    claimRefs: [C801, C803, C826, C828, C829, C831, C832]
-
+    claimRefs:
+      - C261
+      - C263
+      - C286
+      - C288
+      - C289
+      - C291
+      - C292
   - id: F802
     title: Valuation Sensitivity
     type: bar
@@ -444,17 +666,17 @@ figures:
       making them forward multiples (labeled). All values are approximate.
     data:
       items:
-        - label: "Marvell/Inphi 2021 (14.6x TTM)"
+        - label: Marvell/Inphi 2021 (14.6x TTM)
           value: 14.6
-        - label: "Cisco/Acacia 2021 (~12x TTM)"
-          value: 12.0
-        - label: "Celestial AI full earn-out / FY2029 ARR (5.5x fwd)"
+        - label: Cisco/Acacia 2021 (~12x TTM)
+          value: 12
+        - label: Celestial AI full earn-out / FY2029 ARR (5.5x fwd)
           value: 5.5
-        - label: "NVIDIA/Mellanox 2020 (~5.3x TTM)"
+        - label: NVIDIA/Mellanox 2020 (~5.3x TTM)
           value: 5.3
-        - label: "Marvell/Innovium 2021 (~5x TTM)"
-          value: 5.0
-        - label: "Celestial AI upfront / 2-yr fwd ARR (6.5x fwd)"
+        - label: Marvell/Innovium 2021 (~5x TTM)
+          value: 5
+        - label: Celestial AI upfront / 2-yr fwd ARR (6.5x fwd)
           value: 6.5
     approximationNotes: |
       Inphi and Acacia multiples derived from reported TTM revenue at announcement date
@@ -462,8 +684,15 @@ figures:
       annual revenue near announcement. Celestial AI multiples are estimated using
       Marvell's own forward guidance targets. AMD/Pensando excluded as revenue multiple
       is not applicable for pre-revenue asset.
-    claimRefs: [C809, C810, C812, C813, C814, C815, C816, C817]
-
+    claimRefs:
+      - C269
+      - C270
+      - C272
+      - C273
+      - C274
+      - C275
+      - C276
+      - C277
   - id: F803
     title: Investment KPIs
     type: kpi
@@ -474,44 +703,51 @@ figures:
       Marvell management guidance, and market data reports.
     data:
       items:
-        - label: "Upfront acquisition price"
+        - label: Upfront acquisition price
           value: 3250
-          unit: "USD M"
-          note: "$1B cash + ~$2.25B in MRVL stock (27.2M shares)"
-        - label: "Maximum earn-out consideration"
+          unit: USD M
+          note: $1B cash + ~$2.25B in MRVL stock (27.2M shares)
+        - label: Maximum earn-out consideration
           value: 2250
-          unit: "USD M"
-          note: "Contingent on $2.0B cumulative revenue by FY2029 YE"
-        - label: "Acquisition premium over Series C1"
+          unit: USD M
+          note: Contingent on $2.0B cumulative revenue by FY2029 YE
+        - label: Acquisition premium over Series C1
           value: 30
-          unit: "%"
-          note: "($3.25B - $2.5B) / $2.5B"
-        - label: "Implied EV / 2-yr forward ARR (upfront)"
+          unit: '%'
+          note: ($3.25B - $2.5B) / $2.5B
+        - label: Implied EV / 2-yr forward ARR (upfront)
           value: 6.5
-          unit: "x"
-          note: "$3.25B / $500M Q4 FY2028 ARR target"
-        - label: "Q4 FY2028 ARR target"
+          unit: x
+          note: $3.25B / $500M Q4 FY2028 ARR target
+        - label: Q4 FY2028 ARR target
           value: 500
-          unit: "USD M annualized"
-          note: "Marvell management guidance; company-claimed"
-        - label: "Q4 FY2029 ARR target"
+          unit: USD M annualized
+          note: Marvell management guidance; company-claimed
+        - label: Q4 FY2029 ARR target
           value: 1000
-          unit: "USD M annualized"
-          note: "Marvell management guidance; company-claimed"
-        - label: "Silicon photonics market CAGR 2025–2030"
+          unit: USD M annualized
+          note: Marvell management guidance; company-claimed
+        - label: Silicon photonics market CAGR 2025–2030
           value: 28
-          unit: "% CAGR"
-          note: "MarketsAndMarkets / ResearchAndMarkets consensus midpoint"
-        - label: "Upfront / total VC raised ratio"
+          unit: '% CAGR'
+          note: MarketsAndMarkets / ResearchAndMarkets consensus midpoint
+        - label: Upfront / total VC raised ratio
           value: 6.3
-          unit: "x"
-          note: "$3.25B upfront / $515M total raised across five rounds"
+          unit: x
+          note: $3.25B upfront / $515M total raised across five rounds
     approximationNotes: |
       Market CAGR uses midpoint of 27–30% range from MarketsAndMarkets and ResearchAndMarkets
       reports. Earn-out value is at announcement-date MRVL stock pricing. Upfront/raised ratio
       uses $515M total raised across five rounds (Seed through Series C1).
-    claimRefs: [C801, C803, C804, C805, C816, C822, C823, C830]
-
+    claimRefs:
+      - C261
+      - C263
+      - C264
+      - C265
+      - C276
+      - C282
+      - C283
+      - C290
   - id: F804
     title: Recommendation Logic
     type: flow
@@ -524,65 +760,79 @@ figures:
     data:
       nodes:
         - id: deal-terms
-          label: "Deal Terms"
-          detail: "$3.25B upfront; $5.5B max; 41% contingent"
+          label: Deal Terms
+          detail: $3.25B upfront; $5.5B max; 41% contingent
         - id: ma-comps
-          label: "M&A Comparables"
-          detail: "6.5x fwd ARR vs. 5–15x TTM range for photonics M&A"
+          label: M&A Comparables
+          detail: 6.5x fwd ARR vs. 5–15x TTM range for photonics M&A
         - id: strength-signals
-          label: "Strength Signals"
-          detail: "NVIDIA $2B NVLink Fusion; Amazon warrant; Marvell own valuation discipline"
+          label: Strength Signals
+          detail: NVIDIA $2B NVLink Fusion; Amazon warrant; Marvell own valuation discipline
         - id: risk-signals
-          label: "Risk Signals"
-          detail: "Pre-revenue; competitive photonics programs; customer concentration"
+          label: Risk Signals
+          detail: Pre-revenue; competitive photonics programs; customer concentration
         - id: earnout-design
-          label: "Earn-Out Design"
-          detail: "Limits downside to $3.25B; aligns founders with milestones"
+          label: Earn-Out Design
+          detail: Limits downside to $3.25B; aligns founders with milestones
         - id: market-sizing
-          label: "Market Context"
-          detail: "Silicon photonics 27–30% CAGR; $500M ARR = ~15–24% market share"
+          label: Market Context
+          detail: Silicon photonics 27–30% CAGR; $500M ARR = ~15–24% market share
         - id: valuation-verdict
-          label: "Valuation Verdict"
-          detail: "Fair (upfront); Attractive (if full earn-out achieved)"
+          label: Valuation Verdict
+          detail: Fair (upfront); Attractive (if full earn-out achieved)
         - id: diligence-stance
-          label: "Diligence Stance"
-          detail: "Research-more: await FY2028 first-revenue evidence"
+          label: Diligence Stance
+          detail: 'Research-more: await FY2028 first-revenue evidence'
     approximationNotes: null
-    claimRefs: [C816, C817, C822, C825, C839, C840, C841, C845]
-
+    claimRefs:
+      - C276
+      - C277
+      - C282
+      - C285
+      - C299
+      - C300
+      - C301
+      - C305
 callouts:
   - calloutType: strength
-    title: "Earn-Out Structure Materially Limits Marvell's Downside"
+    title: Earn-Out Structure Materially Limits Marvell's Downside
     body: |
       Approximately 41% of total potential consideration ($2.25B of $5.5B) is contingent
       on cumulative revenue milestones. In the bear case, the transaction settles at
       $3.25B upfront regardless of earn-out non-achievement. This structure is a
       best-practice design for pre-commercial technology acquisitions: it limits acquirer
       downside while aligning founder and acquiree management with commercial execution.
-    claimRefs: [C830, C832, C833, C834]
-
+    claimRefs:
+      - C290
+      - C292
+      - C293
+      - C294
   - calloutType: risk
-    title: "Zero Disclosed Revenue at Acquisition Creates Material Execution Risk"
+    title: Zero Disclosed Revenue at Acquisition Creates Material Execution Risk
     body: |
       Celestial AI had de minimis revenue at close and no disclosed hyperscaler volume
       purchase commitments. Marvell's $500M ARR target requires 18 months of successful
       commercial ramp beginning from a standing start. Gross margin, pricing structure,
       and customer qualification timelines have not been disclosed, making independent
       earn-out achievability assessment impossible without additional diligence.
-    claimRefs: [C842, C826, C840]
-
+    claimRefs:
+      - C302
+      - C286
+      - C300
   - calloutType: recommendation
-    title: "Valuation Stance: Fair (Upfront); Research-More for Outside Observers"
+    title: 'Valuation Stance: Fair (Upfront); Research-More for Outside Observers'
     body: |
       The $3.25B upfront price is fair relative to photonics M&A precedents and Marvell's
       own acquisition discipline. The full earn-out scenario at $5.5B would be attractive.
       For outside observers, a research-more stance is appropriate until Marvell's FY2028
       earnings demonstrate first Celestial AI revenue. That single data point transforms
       the valuation case from speculative to evidence-supported.
-    claimRefs: [C839, C843, C845]
-
+    claimRefs:
+      - C299
+      - C303
+      - C305
   - calloutType: insight
-    title: "NVIDIA's $2B NVLink Fusion Commitment Is the Strongest External Validation Signal"
+    title: NVIDIA's $2B NVLink Fusion Commitment Is the Strongest External Validation Signal
     body: |
       NVIDIA's March 2026 $2 billion investment in the Marvell relationship—explicitly citing
       silicon photonics and NVLink Fusion integration—constitutes the most credible
@@ -590,1176 +840,18 @@ callouts:
       dominant AI infrastructure platform. This commitment post-dates the acquisition close
       and was not factored into the original deal pricing, meaning it represents incremental
       upside validation for the valuation thesis.
-    claimRefs: [C825, C836]
-
+    claimRefs:
+      - C285
+      - C296
   - calloutType: assumption
-    title: "Base Case Assumes Hyperscaler Qualification Completed in 18 Months from Close"
+    title: Base Case Assumes Hyperscaler Qualification Completed in 18 Months from Close
     body: |
       Marvell's $500M ARR target for Q4 FY2028 implies that hyperscaler customer
       qualification cycles for Photonic Fabric complete within approximately 18 months of
       the February 2026 close. Semiconductor optical component qualification typically
       requires 12–24 months. The base case assumption is at the optimistic end of
       historical qualification timelines and should be stress-tested against potential delays.
-    claimRefs: [C804, C826, C827]
-
-localEvidence:
-  searchQueries:
-    - query: "Marvell Technology acquires Celestial AI $3.25 billion acquisition terms earn-out 2026"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S801, S802, S803, S804, S805]
-    - query: "Marvell Technology MRVL 8-K SEC filing Celestial AI acquisition December 2025"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S801, S803, S804]
-    - query: "Marvell Celestial AI acquisition analyst reaction valuation premium silicon photonics AI 2025 2026"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S806, S807, S808, S809, S810]
-    - query: "AI chip semiconductor M&A comparable transactions valuation multiples 2024 2025 pre-revenue acquisition"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S817, S818, S819, S824, S825]
-    - query: "Marvell Technology AI silicon revenue FY2025 FY2026 custom silicon business unit growth"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S813, S814, S832]
-    - query: "silicon photonics market size CAGR 2025 2030 AI data center optical interconnect market forecast"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S811, S812, S830, S831]
-    - query: "Marvell NVIDIA NVLink Fusion partnership Celestial AI optical interconnect $2 billion commitment"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S815, S816, S820, S827, S828]
-    - query: "Cerebras IPO valuation AMD Pensando acquisition Cisco Acacia AI semiconductor comparable 2022 2023"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S826, S821, S829]
-    - query: "Marvell Inphi acquisition 2021 $10 billion silicon photonics valuation multiple revenue"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S822, S823]
-    - query: "Marvell Technology Celestial AI overvalued concerns pre-revenue risks earn-out structure analysis"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S810, S809, S807]
-
-  researchQuestions:
-    - id: RQ801
-      question: "What are the precise financial terms of the Marvell acquisition of Celestial AI per the SEC 8-K filing?"
-      type: verification
-      targets: [contentRequirements/2, plannedTables/recommendation-summary-table]
-      status: answered
-
-    - id: RQ802
-      question: "What is the implied EV/forward ARR multiple for the upfront and full earn-out price against Marvell's $500M and $1B ARR targets?"
-      type: quantification
-      targets: [contentRequirements/2, plannedTables/comparable-valuation-table]
-      status: answered
-
-    - id: RQ803
-      question: "How does the Celestial AI deal compare to Marvell's own acquisition of Inphi in terms of deal size and implied revenue multiple?"
-      type: comparison
-      targets: [contentRequirements/4, plannedTables/comparable-valuation-table]
-      status: answered
-
-    - id: RQ804
-      question: "What is the precedent for earn-out structures in semiconductor M&A, and how does the 41% contingent component compare?"
-      type: comparison
-      targets: [contentRequirements/2, plannedTables/comparable-valuation-table]
-      status: answered
-
-    - id: RQ805
-      question: "What are the exact cumulative revenue thresholds and share release schedules for each earn-out tranche?"
-      type: mechanism
-      targets: [contentRequirements/2, contentRequirements/3]
-      status: answered
-
-    - id: RQ806
-      question: "What is the total capital raised by Celestial AI across all rounds, and what is the investor return multiple at upfront and full earn-out price?"
-      type: quantification
-      targets: [contentRequirements/2, plannedTables/recommendation-summary-table]
-      status: answered
-
-    - id: RQ807
-      question: "What comparable M&A transactions exist for silicon photonics, optical interconnect, and AI chip acquisitions between 2019 and 2025?"
-      type: enumeration
-      targets: [contentRequirements/4, plannedTables/comparable-valuation-table]
-      status: answered
-
-    - id: RQ808
-      question: "How does the Amazon warrant structure relate to the Photonic Fabric revenue earn-out milestones?"
-      type: mechanism
-      targets: [contentRequirements/2]
-      status: answered
-
-    - id: RQ809
-      question: "What is the most recent Marvell guidance on Celestial AI revenue contribution for FY2028 and FY2029?"
-      type: freshness
-      targets: [contentRequirements/3]
-      status: answered
-
-    - id: RQ810
-      question: "What is the silicon photonics market CAGR and size forecast for 2025–2030 according to market research firms?"
-      type: quantification
-      targets: [contentRequirements/0, plannedFigures/investment-kpis]
-      status: answered
-
-    - id: RQ811
-      question: "What are all announced comparable AI chip and silicon photonics M&A transactions from 2019 to 2025 with disclosed deal values?"
-      type: enumeration
-      targets: [contentRequirements/4, plannedTables/comparable-valuation-table]
-      status: answered
-
-    - id: RQ812
-      question: "Did NVIDIA's March 2026 $2B NVLink Fusion investment commitment specifically reference Celestial AI photonics capabilities?"
-      type: verification
-      targets: [contentRequirements/0, contentRequirements/1]
-      status: answered
-
-    - id: RQ813
-      question: "How does the earn-out equity-settlement structure reduce Marvell's effective downside compared to an all-cash equivalent deal?"
-      type: mechanism
-      targets: [contentRequirements/2, contentRequirements/3]
-      status: answered
-
-    - id: RQ814
-      question: "What implied return do Series C1 investors (Fidelity, BlackRock at $2.5B post-money) realize at the upfront and full earn-out prices?"
-      type: quantification
-      targets: [contentRequirements/2]
-      status: answered
-
-    - id: RQ815
-      question: "How does Celestial AI's $3.25B upfront price compare to Cerebras Systems' IPO valuation and SambaNova's private round valuations?"
-      type: comparison
-      targets: [contentRequirements/4, plannedTables/comparable-valuation-table]
-      status: answered
-
-    - id: RQ816
-      question: "What is the exact timeline between the Series C1 valuation ($2.5B, March 2025) and the acquisition announcement (December 2025)?"
-      type: verification
-      targets: [contentRequirements/2]
-      status: answered
-
-    - id: RQ817
-      question: "What revenue ramp mechanism—design wins, qualification cycles, hyperscaler deployments—must execute for Celestial AI to reach $500M ARR by Q4 FY2028?"
-      type: mechanism
-      targets: [contentRequirements/3, contentRequirements/0]
-      status: partial
-
-    - id: RQ818
-      question: "What is the NPV of Marvell's $500M–$1B ARR target discounted at a 15–20% risk-adjusted rate?"
-      type: quantification
-      targets: [contentRequirements/3, plannedFigures/valuation-return-range]
-      status: answered
-
-    - id: RQ819
-      question: "What distinct risk factors could cause earn-out forfeiture, and what is their relative probability?"
-      type: enumeration
-      targets: [contentRequirements/3, contentRequirements/5, plannedTables/thesis-break-and-kill-triggers-table]
-      status: answered
-
-    - id: RQ820
-      question: "How does Celestial AI's implied forward revenue multiple compare to public AI silicon companies' NTM EV/revenue ratios?"
-      type: comparison
-      targets: [contentRequirements/4, plannedTables/comparable-valuation-table]
-      status: answered
-
-    - id: RQ821
-      question: "Has Marvell provided any Celestial AI-specific revenue guidance updates since the February 2026 acquisition close?"
-      type: freshness
-      targets: [contentRequirements/3]
-      status: partial
-
-    - id: RQ822
-      question: "What is the mechanism by which Marvell's customer concentration risk transmits to Celestial AI earn-out achievability?"
-      type: mechanism
-      targets: [contentRequirements/0, contentRequirements/3]
-      status: answered
-
-    - id: RQ823
-      question: "Is there analyst or institutional investor evidence that the $3.25B upfront price is excessive or unjustified for a pre-revenue asset?"
-      type: adverse
-      targets: [contentRequirements/0, contentRequirements/1]
-      status: answered
-
-    - id: RQ824
-      question: "Is there evidence that the earn-out revenue milestones ($500M and $2B cumulative by FY2029) are commercially unrealistic given adoption timelines for silicon photonics?"
-      type: adverse
-      targets: [contentRequirements/3, contentRequirements/5]
-      status: partial
-
-    - id: RQ825
-      question: "What evidence exists for competitive threats from Broadcom, NVIDIA, and Intel photonics programs that could erode Celestial AI's addressable market before earn-out vesting?"
-      type: adverse
-      targets: [contentRequirements/0, contentRequirements/5]
-      status: answered
-
-    - id: RQ826
-      question: "What financial advisors were used and does their involvement indicate a competitive arm's-length process rather than a bilateral quick sale?"
-      type: verification
-      targets: [contentRequirements/2]
-      status: answered
-
-    - id: RQ827
-      question: "What is Marvell's total AI silicon revenue for FY2026 and what fraction of its forward TAM does Celestial AI represent?"
-      type: quantification
-      targets: [contentRequirements/0, plannedFigures/investment-kpis]
-      status: answered
-
-    - id: RQ828
-      question: "How does Marvell's custom silicon go-to-market model and hyperscaler design-win cycles affect Celestial AI revenue recognition timing?"
-      type: mechanism
-      targets: [contentRequirements/3, contentRequirements/5]
-      status: partial
-
-    - id: RQ829
-      question: "What are the specific diligence gaps that remain open and would most change the valuation verdict if resolved?"
-      type: enumeration
-      targets: [contentRequirements/5, plannedTables/final-diligence-asks-table]
-      status: answered
-
-    - id: RQ830
-      question: "How does the earn-out 41% contingent split compare to other major semiconductor acquisitions in terms of deal risk distribution?"
-      type: comparison
-      targets: [contentRequirements/2, contentRequirements/4]
-      status: answered
-
-    - id: RQ831
-      question: "Did Marvell's Q4 FY2026 earnings call (March 2026) disclose any Celestial AI-specific metrics, milestones, or updated revenue guidance?"
-      type: freshness
-      targets: [contentRequirements/3]
-      status: partial
-
-    - id: RQ832
-      question: "Are there institutional investor or analyst concerns about MRVL dilution from the 27.2M upfront shares plus up to 27.2M earn-out shares, and does this affect valuation discipline?"
-      type: adverse
-      targets: [contentRequirements/1, contentRequirements/2]
-      status: answered
-
-  sources:
-    - id: S801
-      publisher: "U.S. Securities and Exchange Commission (EDGAR)"
-      title: "Marvell Technology Inc. Form 8-K — Material Event Report (Celestial AI Acquisition Agreement)"
-      url: "https://www.sec.gov/Archives/edgar/data/1835632/000119312525305271/d81371d8k.htm"
-      date: "2025-12-02"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: filing
-      reputationTier: high
-      independence: company
-      topics: [acquisition terms, earn-out structure, Amazon warrant, deal consideration, SEC disclosure]
-      keyQuote: "Pursuant to the Merger Agreement, at the Effective Time, each issued and outstanding share of Celestial AI common stock will be converted into the right to receive merger consideration."
-
-    - id: S802
-      publisher: Marvell Technology
-      title: "Marvell Completes Acquisition of Celestial AI"
-      url: "https://www.marvell.com/company/newsroom/marvell-completes-acquisition-of-celestial-ai.html"
-      date: "2026-02-02"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics: [acquisition close, $500M ARR target, $1B ARR target, earn-out structure, deal terms]
-      keyQuote: "Marvell expects Celestial AI to begin contributing meaningful revenue in the second half of fiscal 2028, targeting a $500 million annualized run rate by Q4 FY2028."
-
-    - id: S803
-      publisher: BusinessWire
-      title: "Marvell Technology to Acquire Celestial AI"
-      url: "https://www.businesswire.com/news/home/20251202136726/en/Marvell-Technology-to-Acquire-Celestial-AI"
-      date: "2025-12-02"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics: [acquisition announcement, deal structure, upfront consideration, earn-out terms, advisors]
-      keyQuote: "Marvell Technology, Inc. today announced it has entered into a definitive agreement to acquire Celestial AI, Inc. for approximately $3.25 billion in upfront consideration."
-
-    - id: S804
-      publisher: CNBC
-      title: "Marvell (MRVL) Earnings Report Q3 2026 — Acquires Celestial AI"
-      url: "https://www.cnbc.com/2025/12/02/mrvl-earnings-q3-2026-acquires-celestial-ai.html"
-      date: "2025-12-02"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics: [acquisition announcement, revenue targets, stock reaction, Q3 earnings, analyst reaction]
-      keyQuote: "Marvell shares rose on the announcement, with investors reacting positively to both the quarterly results and the strategic acquisition."
-
-    - id: S805
-      publisher: "Yahoo Finance / Reuters"
-      title: "Marvell to Buy Chip Startup Celestial AI for $3.25 Billion, Bullish on AI Data Center"
-      url: "https://finance.yahoo.com/news/marvell-buy-chip-startup-celestial-210837707.html"
-      date: "2025-12-02"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics: [acquisition announcement, deal rationale, revenue targets, AI data center strategy]
-      keyQuote: null
-
-    - id: S806
-      publisher: TechStartups
-      title: "Marvell Acquires Celestial AI for $3.25B as Photonics Becomes the Next Big Frontier in AI Chip Design"
-      url: "https://techstartups.com/2025/12/03/marvell-acquires-celestial-ai-for-3-25b-as-photonics-becomes-the-next-big-frontier-in-ai-chip-design/"
-      date: "2025-12-03"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [acquisition rationale, photonics strategy, silicon photonics market, AI data center]
-      keyQuote: null
-
-    - id: S807
-      publisher: MarketScreener
-      title: "Marvell Technology Inc. Completed the Acquisition of Celestial AI Inc."
-      url: "https://www.marketscreener.com/news/marvell-technology-inc-completed-the-acquisition-of-celestial-ai-inc-ce7e5bd2d88cfe2d"
-      date: "2026-02-02"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [acquisition close, deal completion, Marvell subsidiary]
-      keyQuote: null
-
-    - id: S808
-      publisher: Photonics.com
-      title: "Marvell to Acquire Celestial AI for $3.3B"
-      url: "https://www.photonics.com/Articles/Marvell-to-Acquire-Celestial-AI-for-33B/a71734"
-      date: "2026-02-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [photonics industry context, acquisition terms, Photonic Fabric technology]
-      keyQuote: null
-
-    - id: S809
-      publisher: "NAND Research"
-      title: "Research Note: Marvell to Acquire Silicon Photonics Player Celestial AI"
-      url: "https://nand-research.com/research-note-marvell-to-acquire-silicon-photonics-player-celestial-ai/"
-      date: "2025-12-03"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics: [valuation analysis, silicon photonics market, competitive context, Marvell strategy]
-      keyQuote: null
-
-    - id: S810
-      publisher: "Runchey Research"
-      title: "Marvell: 73% Revenue From One Bet, a $5.5B Pre-Revenue Acquisition, and the AI Silicon Paradox"
-      url: "https://www.runcheyresearch.com/blog/mrvl-ai-silicon-paradox-deep-dive"
-      date: "2025-12-25"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: adverse
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics: [customer concentration risk, pre-revenue risk, earn-out uncertainty, valuation concerns]
-      keyQuote: "Paying $3.25 billion upfront for a pre-revenue asset embeds considerable execution and market risk."
-
-    - id: S811
-      publisher: "MarketsAndMarkets"
-      title: "Silicon Photonics Market Report 2025–2030"
-      url: "https://www.marketsandmarkets.com/Market-Reports/silicon-photonics-116.html"
-      date: "2025-01-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics: [silicon photonics market size, CAGR, AI data center growth, market forecast]
-      keyQuote: null
-
-    - id: S812
-      publisher: "Research and Markets"
-      title: "Silicon Photonics Market — Share Analysis, Industry Trends and Statistics"
-      url: "https://www.researchandmarkets.com/reports/4856104/silicon-photonics-market-share-analysis"
-      date: "2024-06-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics: [silicon photonics market size, CAGR 2025-2030, data center optical interconnect]
-      keyQuote: null
-
-    - id: S813
-      publisher: "Marvell Technology / PR Newswire"
-      title: "Marvell Technology Inc. Reports Fourth Quarter and Fiscal Year 2025 Financial Results"
-      url: "https://www.prnewswire.com/news-releases/marvell-technology-inc-reports-fourth-quarter-and-fiscal-year-2025-financial-results-302393619.html"
-      date: "2025-03-05"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics: [Marvell AI revenue FY2025, data center segment growth, custom silicon revenue, Q4 results]
-      keyQuote: null
-
-    - id: S814
-      publisher: SiliconAngle
-      title: "Investors Marvel at Marvell's Solid Earnings and Revenue Beat on AI Chip Demand"
-      url: "https://siliconangle.com/2026/03/05/investors-marvel-marvells-solid-earnings-revenue-beat-ai-chip-demand/"
-      date: "2026-03-05"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [Marvell FY2026 earnings, $8.2B revenue, AI silicon growth, data center segment]
-      keyQuote: null
-
-    - id: S815
-      publisher: "Marvell Technology"
-      title: "NVIDIA AI Ecosystem Expands as Marvell Joins Forces Through NVLink Fusion"
-      url: "https://www.marvell.com/company/newsroom/nvidia-ai-ecosystem-expands-marvell-joins-forces-through-nvlink-fusion.html"
-      date: "2026-03-31"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics: [NVIDIA $2B investment, NVLink Fusion partnership, silicon photonics, optical interconnect]
-      keyQuote: "NVIDIA's investment in Marvell's optical interconnect and silicon photonics capabilities underpins the next generation of AI data center infrastructure."
-
-    - id: S816
-      publisher: TrendForce
-      title: "Insights: NVIDIA's US$2B Marvell Deal — Strategic Significance for CPO and AI Interconnects"
-      url: "https://www.trendforce.com/news/2026/04/15/insights-nvidias-us2b-marvell-deal-whats-the-strategic-significance-for-cpo-and-ai-interconnects/"
-      date: "2026-04-15"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics: [CPO co-packaged optics, NVLink Fusion, Celestial AI valuation signal, silicon photonics roadmap]
-      keyQuote: null
-
-    - id: S817
-      publisher: "Finro Financial Consulting"
-      title: "M&A in AI: 2025 Valuation Multiples and Key Trends"
-      url: "https://www.finrofca.com/news/ai-mna-valuation-2025"
-      date: "2025-01-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics: [AI M&A multiples 2025, revenue multiples, pre-revenue deals, semiconductor transactions]
-      keyQuote: "AI M&A average revenue multiple was 25.8x across 90+ AI transactions analyzed for 2024–25."
-
-    - id: S818
-      publisher: "Aventis Advisors"
-      title: "AI Valuation Multiples in 2025"
-      url: "https://aventis-advisors.com/ai-valuation-multiples/"
-      date: "2025-01-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics: [AI valuation multiples, revenue multiples, SaaS vs. hardware comparisons]
-      keyQuote: null
-
-    - id: S819
-      publisher: Microcap.co
-      title: "Semiconductor Valuation Multiples (2024)"
-      url: "https://microcap.co/semiconductor-valuation-multiples-2024/"
-      date: "2024-01-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics: [semiconductor sector valuation multiples, median EV/revenue, EV/EBITDA benchmarks]
-      keyQuote: null
-
-    - id: S820
-      publisher: SDxCentral
-      title: "NVIDIA Marks Marvell for AI-RAN, Silicon Photonics Work — with a $2B Kicker"
-      url: "https://www.sdxcentral.com/news/nvidia-marks-marvell-for-ai-ran-silicon-photonics-work-with-a-2b-kicker/"
-      date: "2026-03-31"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [NVIDIA Marvell partnership, $2B investment, AI-RAN, silicon photonics]
-      keyQuote: null
-
-    - id: S821
-      publisher: ConvergeDigest
-      title: "Marvell Bets Big on Optical Scale-Up, Acquires Celestial AI for Photonic Fabric"
-      url: "https://convergedigest.com/marvell-bets-big-on-optical-scale-up-acquires-celestial-ai-for-photonic-fabric/"
-      date: "2025-12-03"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [photonic fabric, optical scale-up, acquisition rationale, Cisco Acacia comparable]
-      keyQuote: null
-
-    - id: S822
-      publisher: SiliconAngle
-      title: "Marvell to Pay $10B for Network Chipmaker Inphi"
-      url: "https://siliconangle.com/2020/10/29/marvell-pay-10b-network-chipmaker-inphi/"
-      date: "2020-10-29"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [Marvell Inphi acquisition, $10B deal, silicon photonics precedent, TTM revenue multiple]
-      keyQuote: null
-
-    - id: S823
-      publisher: "Moor Insights and Strategy"
-      title: "It's Official — Marvell Acquiring Inphi for $10B That Boosts Its Cloud and 5G Opportunities"
-      url: "https://moorinsightsstrategy.com/its-official-marvell-acquiring-inphi-for-10b-that-boosts-its-cloud-and-5g-opportunities/"
-      date: "2020-10-29"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics: [Inphi acquisition analysis, 14.6x multiple, cloud 5G strategy, silicon photonics M&A]
-      keyQuote: "The $10B deal values Inphi at roughly 14.6x trailing revenue, reflecting both strategic importance and explosive growth prospects."
-
-    - id: S824
-      publisher: "ARC Group"
-      title: "Tech M&A Outlook 2025: AI, Chips, and Hardware"
-      url: "https://arc-group.com/tech-ma-outlook-2025/"
-      date: "2025-01-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics: [tech M&A 2025, semiconductor acquisitions, AI hardware consolidation, deal multiples]
-      keyQuote: null
-
-    - id: S825
-      publisher: AInvest
-      title: "Semiconductor Industry Consolidation: Strategic Positioning and Market Reactions in the AI Era"
-      url: "https://www.ainvest.com/news/semiconductor-industry-consolidation-strategic-positioning-market-reactions-ai-era-2509/"
-      date: "2025-09-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [semiconductor M&A, AI chip consolidation, AMD acquisitions, market cap growth]
-      keyQuote: null
-
-    - id: S826
-      publisher: "Tech-Insider"
-      title: "Cerebras IPO Filing: $510M Revenue, $10B OpenAI Deal, $23B Valuation (2026)"
-      url: "https://tech-insider.org/cerebras-ipo-filing-510m-revenue-openai-deal-23b-valuation-2026/"
-      date: "2026-04-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [Cerebras IPO, $23B valuation, $510M revenue, AI chip comparables]
-      keyQuote: null
-
-    - id: S827
-      publisher: TechFundingNews
-      title: "NVIDIA Invests $2B in Marvell: NVLink Fusion Transforms a Chip Partnership Into an AI Ecosystem"
-      url: "https://techfundingnews.com/nvidia-2-billion-marvell-nvlink-fusion-ai-ecosystem/"
-      date: "2026-04-08"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [NVIDIA $2B investment, NVLink Fusion, optical interconnect, Celestial AI integration]
-      keyQuote: null
-
-    - id: S828
-      publisher: "Financial Content"
-      title: "The Optical Revolution: Marvell's $3.25B Celestial AI Acquisition and TSMC's CouPE Bridge the AI Interconnect Gap"
-      url: "https://www.financialcontent.com/article/tokenring-2025-12-25-the-optical-revolution-marvells-325b-celestial-ai-acquisition-and-tsmcs-coupe-bridge-the-ai-interconnect-gap"
-      date: "2025-12-25"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [optical revolution, Photonic Fabric, acquisition rationale, TSMC partnership]
-      keyQuote: null
-
-    - id: S829
-      publisher: EquitySwarm
-      title: "Marvell's $3.25B Celestial AI Deal Spurs CPO Leads"
-      url: "https://equityswarm.com/stocks/company/mrvl/marvells-3-25b-celestial-ai-deal-spurs-cpo-leads/"
-      date: "2025-12-03"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [CPO co-packaged optics, M&A deal analysis, valuation multiples, photonics market]
-      keyQuote: null
-
-    - id: S830
-      publisher: "Grand View Research"
-      title: "Optical Interconnect Market Size and Industry Report, 2030"
-      url: "https://www.grandviewresearch.com/industry-analysis/optical-interconnect-market-report"
-      date: "2024-01-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics: [optical interconnect market, $34.5B by 2030, 14.1% CAGR, data center growth]
-      keyQuote: null
-
-    - id: S831
-      publisher: "Yole Group"
-      title: "Silicon Photonics and Co-Packaged Optics at the Heart of Next-Generation AI-Driven Data Infrastructure"
-      url: "https://www.yolegroup.com/press-release/silicon-photonics-and-co-packaged-optics-at-the-heart-of-next-generation-ai-driven-data-infrastructure/"
-      date: "2025-06-01"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: confirming
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics: [co-packaged optics, silicon photonics, AI data center, CPO adoption timeline 2026-2030]
-      keyQuote: null
-
-    - id: S832
-      publisher: Panabee
-      title: "Marvell Earnings Q4 2025 — Report"
-      url: "https://www.panabee.com/news/marvell-earnings-q4-2025-report"
-      date: "2025-03-05"
-      accessDate: "2026-05-04"
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: [Marvell Q4 FY2025 earnings, customer concentration, data center segment, inventory risk]
-      keyQuote: null
-
-  claims:
-    - id: C801
-      statement: "Marvell Technology acquired Celestial AI for approximately $3.25 billion upfront consideration, comprising $1 billion in cash and approximately 27.2 million MRVL shares valued at approximately $2.25 billion."
-      type: observed
-      topic: deal terms
-      sourceRefs: [S801, S802, S803]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ801]
-
-    - id: C802
-      statement: "Marvell completed the acquisition of Celestial AI on February 2, 2026, approximately two months after the definitive agreement was announced on December 2, 2025."
-      type: observed
-      topic: deal terms
-      sourceRefs: [S801, S802]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ801, RQ816]
-
-    - id: C803
-      statement: "The earn-out consideration is up to approximately 27.2 million additional MRVL shares (~$2.25 billion at announcement pricing), bringing total potential consideration to $5.5 billion."
-      type: observed
-      topic: earn-out structure
-      sourceRefs: [S801, S802, S803]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ805, RQ813]
-
-    - id: C804
-      statement: "Marvell projects Celestial AI to achieve a $500 million annualized revenue run rate by Q4 FY2028 (H2 calendar 2027, approximately 18 months post-acquisition close)."
-      type: company-claimed
-      topic: revenue guidance
-      sourceRefs: [S802, S804, S805]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ809, RQ817]
-
-    - id: C805
-      statement: "Marvell projects Celestial AI revenue to reach a $1 billion annualized run rate by Q4 FY2029, double the Q4 FY2028 target."
-      type: company-claimed
-      topic: revenue guidance
-      sourceRefs: [S802, S804]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ809]
-
-    - id: C806
-      statement: "MRVL shares rose approximately 9–13% on the acquisition announcement day (December 2, 2025), alongside strong Q3 FY2026 earnings results and raised guidance."
-      type: observed
-      topic: market reaction
-      sourceRefs: [S804, S805]
-      confidence: medium
-      freshness: recent
-
-    - id: C807
-      statement: "Celestial AI was advised by Morgan Stanley (financial) and Latham & Watkins (legal); Marvell was advised by Citigroup (financial) and Wilson Sonsini Goodrich & Rosati (legal)."
-      type: observed
-      topic: deal advisors
-      sourceRefs: [S801, S803]
-      confidence: high
-      freshness: recent
-      answersQuestionRefs: [RQ826]
-
-    - id: C808
-      statement: "Marvell issued Amazon a warrant to purchase approximately 1,045,171 MRVL shares at $87.0029 per share, vesting based on Amazon's cumulative purchases of Photonic Fabric products through December 2030."
-      type: observed
-      topic: Amazon warrant
-      sourceRefs: [S801, S802]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ808]
-
-    - id: C809
-      statement: "Marvell acquired Inphi Corporation for approximately $10 billion in 2020 (announced October 2020, closed April 2021), establishing a precedent for Marvell paying premium multiples for optical connectivity leadership."
-      type: observed
-      topic: comparable M&A
-      sourceRefs: [S822, S823]
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs: [RQ803, RQ807]
-
-    - id: C810
-      statement: "Inphi had approximately $683 million in trailing twelve-month revenue at the Marvell acquisition announcement, implying a deal multiple of approximately 14.6× TTM revenue."
-      type: third-party-reported
-      topic: comparable M&A multiple
-      sourceRefs: [S822, S823]
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs: [RQ803, RQ820]
-
-    - id: C811
-      statement: "AMD acquired Pensando Systems for $1.9 billion in April 2022; Pensando was a data-center DPU startup with limited revenue at exit, acquired primarily for IP and engineering talent."
-      type: observed
-      topic: comparable M&A
-      sourceRefs: [S817, S824]
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs: [RQ807, RQ830]
-
-    - id: C812
-      statement: "Cisco acquired Acacia Communications for $4.5 billion in 2021 (originally announced at $2.6 billion in 2019 and repriced following antitrust review), providing an optical networking silicon M&A benchmark."
-      type: observed
-      topic: comparable M&A
-      sourceRefs: [S821, S829]
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs: [RQ807]
-
-    - id: C813
-      statement: "NVIDIA acquired Mellanox Technologies for $6.9 billion in 2020, validating the strategic importance of high-speed connectivity silicon to AI cluster performance."
-      type: observed
-      topic: comparable M&A
-      sourceRefs: [S817, S824]
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs: [RQ807]
-
-    - id: C814
-      statement: "Mellanox had approximately $1.3 billion in annual revenue at the time of NVIDIA's acquisition, implying a deal multiple of approximately 5.3× TTM revenue."
-      type: estimated
-      topic: comparable M&A multiple
-      sourceRefs: [S817, S825]
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs: [RQ820]
-
-    - id: C815
-      statement: "Marvell acquired Innovium (Ethernet switching silicon) for approximately $1.1 billion in 2021, part of a pattern of Marvell paying data-center connectivity silicon premiums."
-      type: observed
-      topic: comparable M&A
-      sourceRefs: [S820, S821]
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs: [RQ807]
-
-    - id: C816
-      statement: "The implied EV/2-year-forward ARR multiple on the $3.25 billion upfront price, using Marvell's $500 million Q4 FY2028 ARR target, is approximately 6.5×."
-      type: estimated
-      topic: transaction multiple
-      sourceRefs: [S802, S804]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ802, RQ820]
-
-    - id: C817
-      statement: "At full earn-out of $5.5 billion and Marvell's $1 billion FY2029 ARR target, the implied forward revenue multiple is approximately 5.5×; at the $500 million ARR target, the full earn-out implies approximately 11.0×."
-      type: estimated
-      topic: transaction multiple
-      sourceRefs: [S802, S804]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ802]
-
-    - id: C818
-      statement: "Cerebras Systems filed for a Nasdaq IPO in April 2026, targeting a valuation in the range of $23–35 billion, representing the high-end benchmark for AI chip company valuations."
-      type: third-party-reported
-      topic: comparable company valuation
-      sourceRefs: [S826, S825]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ815]
-
-    - id: C819
-      statement: "Cerebras reported approximately $510 million in 2025 revenue, implying a filing-range valuation multiple of roughly 45–69× trailing revenue—substantially higher than Celestial AI's implied forward multiple."
-      type: third-party-reported
-      topic: comparable company multiple
-      sourceRefs: [S826, S814]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ815, RQ820]
-
-    - id: C820
-      statement: "SambaNova Systems has been valued at above $5 billion in its most recent private funding round, though revenue has not been publicly disclosed."
-      type: third-party-reported
-      topic: comparable company valuation
-      sourceRefs: [S809, S818]
-      confidence: low
-      freshness: recent
-
-    - id: C821
-      statement: "Ayar Labs, a co-packaged optics competitor to Celestial AI, has raised approximately $870 million in total funding through its Series C stage but has not disclosed a post-money valuation."
-      type: third-party-reported
-      topic: comparable company valuation
-      sourceRefs: [S816, S809]
-      confidence: low
-      freshness: recent
-
-    - id: C822
-      statement: "The global silicon photonics market is projected to grow at a CAGR of approximately 27–30% from 2025 to 2030, driven primarily by AI data center demand for high-bandwidth, energy-efficient optical interconnects."
-      type: third-party-reported
-      topic: market sizing
-      sourceRefs: [S811, S812]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ810]
-
-    - id: C823
-      statement: "The silicon photonics market is estimated at approximately $2.1–3.1 billion in 2025 and is forecast to reach $9.6–11.8 billion by 2030 per MarketsAndMarkets and ResearchAndMarkets research."
-      type: third-party-reported
-      topic: market sizing
-      sourceRefs: [S811, S812]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ810]
-
-    - id: C824
-      statement: "Marvell's data center segment revenue grew approximately 78% in FY2025, with AI-driven and custom silicon contributing the majority of that growth; total FY2025 revenue was approximately $5.77 billion."
-      type: observed
-      topic: Marvell financial context
-      sourceRefs: [S813, S814]
-      confidence: high
-      freshness: recent
-      answersQuestionRefs: [RQ827]
-
-    - id: C825
-      statement: "On March 31, 2026, NVIDIA announced a $2 billion investment commitment to Marvell specifically citing silicon photonics and the NVLink Fusion optical interconnect ecosystem, post-dating the acquisition close."
-      type: observed
-      topic: strategic validation
-      sourceRefs: [S815, S827]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ812]
-
-    - id: C826
-      statement: "A simplified DCF using Marvell's $500M–$1B ARR targets, a 50–60% gross margin assumption, and a 15–20% discount rate yields a present value range of approximately $2.5–4.0 billion for the Celestial AI revenue stream."
-      type: estimated
-      topic: DCF analysis
-      sourceRefs: [S802, S804]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ818]
-
-    - id: C827
-      statement: "A 50–60% gross margin assumption for Celestial AI's Photonic Fabric is based on fabless semiconductor design company norms for custom silicon and module licensing, not on any disclosed Celestial AI financial data."
-      type: estimated
-      topic: gross margin assumption
-      sourceRefs: [S809, S819]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [RQ818]
-
-    - id: C828
-      statement: "The bull-case scenario requires Celestial AI to accumulate over $2 billion in cumulative revenue by FY2029 year-end, implying approximately $300–400 million per year across FY2028 and FY2029 from a standing start at close."
-      type: estimated
-      topic: bull case scenario
-      sourceRefs: [S802, S832]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ819]
-
-    - id: C829
-      statement: "In the bear case, cumulative FY2029 revenue remains below $500 million, no earn-out vests, and the effective acquisition price of $3.25 billion represents a write-down risk of $1–2 billion against acquisition goodwill."
-      type: estimated
-      topic: bear case scenario
-      sourceRefs: [S810, S809]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [RQ819]
-
-    - id: C830
-      statement: "Approximately 41% of the total potential $5.5 billion consideration is contingent earn-out ($2.25B / $5.5B), structuring 41% of peak deal value as performance-based, not guaranteed."
-      type: observed
-      topic: earn-out structure
-      sourceRefs: [S801, S802]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ804, RQ830]
-
-    - id: C831
-      statement: "Probability-weighting bull/base/bear scenarios at approximately 30%/45%/25% respectively yields an expected transaction value of approximately $3.8–4.2 billion — above upfront consideration but below full earn-out value."
-      type: estimated
-      topic: expected value analysis
-      sourceRefs: [S809, S810]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [RQ818]
-
-    - id: C832
-      statement: "The earn-out structure defers $2.25 billion of total consideration as contingent equity, limiting Marvell's minimum financial exposure to the $3.25 billion upfront price regardless of Celestial AI revenue outcomes."
-      type: observed
-      topic: earn-out structure
-      sourceRefs: [S801, S802]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ813]
-
-    - id: C833
-      statement: "The first earn-out tranche (approximately one-third, ~9.1 million MRVL shares, ~$750 million) vests when cumulative Celestial AI revenue reaches at least $500 million by Marvell's FY2029 year-end."
-      type: observed
-      topic: earn-out tranche detail
-      sourceRefs: [S801, S802]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ805]
-
-    - id: C834
-      statement: "The full earn-out of approximately $2.25 billion (~27.2 million MRVL shares) vests only if cumulative Celestial AI revenue exceeds $2.0 billion by Marvell's FY2029 year-end—approximately January 2029."
-      type: observed
-      topic: earn-out tranche detail
-      sourceRefs: [S801, S802]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ805]
-
-    - id: C835
-      statement: "Celestial AI CEO Dave Lazovsky, COO Preet Virk, and CTO Phil Winterbottom joined Marvell as employees following the acquisition close, with their compensation directly linked to commercial execution."
-      type: observed
-      topic: management continuity
-      sourceRefs: [S802, S804]
-      confidence: medium
-      freshness: current
-
-    - id: C836
-      statement: "The Amazon product warrant (1,045,171 MRVL shares at $87.0029 strike) vests based on Amazon's cumulative purchases of Photonic Fabric products through December 2030, acting as an indirect demand anchor for earn-out achievability."
-      type: observed
-      topic: Amazon warrant
-      sourceRefs: [S801, S802]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ808]
-
-    - id: C837
-      statement: "The earn-out is equity-settled entirely in MRVL shares—not cash—meaning it creates no cash drain on Marvell's balance sheet but does create proportional dilution risk for existing MRVL shareholders if milestones are achieved."
-      type: observed
-      topic: earn-out mechanics
-      sourceRefs: [S801, S802]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ832]
-
-    - id: C838
-      statement: "At upfront close, Marvell issued approximately 27.2 million new MRVL shares as stock consideration, increasing the diluted share count by that amount immediately upon acquisition completion."
-      type: observed
-      topic: share dilution
-      sourceRefs: [S801, S802]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ832]
-
-    - id: C839
-      statement: "At 6.5× two-year forward ARR on the upfront price and with the earn-out structure limiting downside, the $3.25 billion acquisition price is assessed as fair relative to comparable photonics and AI silicon M&A precedents."
-      type: inferred
-      topic: valuation verdict
-      sourceRefs: [S809, S810]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [RQ823]
-
-    - id: C840
-      statement: "Competitive silicon photonics programs from Broadcom, NVIDIA, and Intel (OCI) represent material market risk that could compress Celestial AI's addressable share before earn-out milestones are achieved."
-      type: third-party-reported
-      topic: competitive risk
-      sourceRefs: [S809, S810]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ825]
-
-    - id: C841
-      statement: "Marvell's customer concentration — approximately 73% of total revenue from data center customers and over 50% estimated from two hyperscalers — means hyperscaler CapEx deceleration would simultaneously compress core revenue and Celestial AI's earn-out ramp."
-      type: third-party-reported
-      topic: customer concentration risk
-      sourceRefs: [S810, S832]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ822]
-
-    - id: C842
-      statement: "Celestial AI had no disclosed revenue, gross margin, operating cost structure, or customer contract terms at acquisition close; all financial case analysis relies on Marvell's forward guidance, not historical operating data."
-      type: observed
-      topic: financial disclosure gap
-      sourceRefs: [S801, S804]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ823, RQ824]
-
-    - id: C843
-      statement: "AI M&A average revenue multiple across 90+ analyzed transactions in 2024–25 was approximately 25.8×, per Finro Financial Consulting, well above Celestial AI's implied 6.5× forward ARR multiple on the upfront price."
-      type: third-party-reported
-      topic: M&A multiple benchmark
-      sourceRefs: [S817, S818]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ820]
-
-    - id: C844
-      statement: "Marvell reported total FY2026 revenue of approximately $8.2 billion, up 42% year-over-year, with the data center segment representing approximately 74–75% of total revenue driven by custom AI silicon and networking products."
-      type: observed
-      topic: Marvell financial context
-      sourceRefs: [S813, S814]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [RQ827]
-
-    - id: C845
-      statement: "The single most important near-term valuation validation event is whether Marvell's FY2028 earnings (reporting in early calendar 2028) disclose any Celestial AI revenue contribution; absence of disclosed revenue would signal earn-out forfeiture risk."
-      type: inferred
-      topic: thesis-break trigger
-      sourceRefs: [S809, S810]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [RQ829]
-
-  evidenceGaps:
-    - type: private-evidence-only
-      severity: material
-      topic: "Hyperscaler contract terms and volume commitments"
-      missingEvidence: |
-        No hyperscaler volume purchase agreements, pricing schedules, or qualification milestone
-        timelines have been publicly disclosed for Celestial AI Photonic Fabric. Amazon's warrant
-        vesting implies some level of commitment but does not constitute a disclosed revenue contract.
-      whyItMatters: |
-        Hyperscaler purchase commitments are the primary leading indicator for earn-out achievability.
-        Without disclosed contracts, the $500M ARR target for Q4 FY2028 cannot be independently
-        validated and represents purely forward-looking guidance with no contractual foundation.
-      diligencePath: "Request MRVL IR disclosure; monitor SEC 8-K and 10-Q filings for material customer contract announcements; track Amazon warrant exercise activity as a proxy signal."
-      relatedQuestionRefs: [RQ817, RQ824, RQ828]
-
-    - type: enumeration-incomplete
-      severity: material
-      topic: "Comparable valuation table coverage — additional silicon photonics M&A comparables"
-      missingEvidence: |
-        The comparable valuation table (T802) covers only six transactions. Several additional relevant
-        deals — including Intel's acquisition of Altera ($16.7B, 2015) and potential unreported
-        photonics-adjacent deals — have not been fully analyzed. Private-round comparable data for
-        d-Matrix, Ranovus, and other silicon photonics startups is unavailable.
-      whyItMatters: |
-        A broader comparable set would narrow the valuation range and test whether the 6.5×
-        forward ARR multiple is at the conservative, mid, or aggressive end of the full transaction
-        universe. The current six-deal set may be biased toward larger-scale deals.
-      diligencePath: "Expand M&A database search; engage investment bank semiconductor M&A desk for broader deal comps; access PitchBook or Refinitiv for private comparable valuations."
-      relatedQuestionRefs: [RQ807, RQ811]
-      relatedTableRefs: [T802]
-
-    - type: private-evidence-only
-      severity: material
-      topic: "Celestial AI gross margin and unit economics"
-      missingEvidence: |
-        No gross margin, bill-of-materials cost structure, or unit economics have been disclosed
-        for Photonic Fabric modules or licensing agreements. The 50–60% GM assumption used in
-        the DCF analysis is based on fabless semiconductor sector norms, not company-specific data.
-      whyItMatters: |
-        Gross margin is the most critical driver of earn-out EBITDA contribution at scale.
-        A 40% GM profile versus a 60% GM profile changes the present value of the revenue
-        stream by 50%, potentially shifting the deal from fair to expensive.
-      diligencePath: "Request Marvell DCG segment margin disclosure post first-revenue quarter; model sensitivity across 35–65% GM range; seek technical cost analysis from photonics packaging experts."
-      relatedQuestionRefs: [RQ827, RQ828]
-
-    - type: access-blocked
-      severity: material
-      topic: "Institutional sell-side analyst valuation models for MRVL Celestial AI acquisition"
-      missingEvidence: |
-        Detailed sell-side analyst models (Morgan Stanley, Goldman Sachs, Jefferies semiconductor
-        coverage) that value Celestial AI's contribution to Marvell's forward earnings are behind
-        paywalls or restricted to institutional clients. Public summaries reference $500M ARR
-        guidance without independent modeling of probability-weighted earn-out scenarios.
-      whyItMatters: |
-        Institutional analyst models would provide independently constructed probability-weighted
-        earn-out scenarios and sensitivity analyses that could validate or challenge the
-        valuation verdicts in this chapter.
-      diligencePath: "Access through Bloomberg Intelligence or FactSet institutional research; request MRVL-covering analyst commentary through broker channels."
-      relatedQuestionRefs: [RQ821, RQ823, RQ831]
-
-    - type: missing-source
-      severity: minor
-      topic: "Marvell ASC 805 purchase price allocation for Celestial AI"
-      missingEvidence: |
-        Marvell has not yet published its complete ASC 805 purchase price allocation (PPA)
-        for the Celestial AI acquisition, which would break out acquisition goodwill, identified
-        intangibles (IP, technology, customer relationships), and contingent earn-out fair value
-        treatment. This would typically appear in Marvell's FY2026 10-K filing.
-      whyItMatters: |
-        The PPA would indicate how Marvell's auditors valued the core IP portfolio separately
-        from goodwill and would reveal the accounting treatment of the earn-out (liability vs.
-        equity), materially affecting GAAP EPS guidance credibility.
-      diligencePath: "Monitor Marvell FY2026 10-K filing (expected mid-2026) and subsequent 10-Q for ASC 805 footnote disclosures."
-      relatedQuestionRefs: [RQ829]
+    claimRefs:
+      - C264
+      - C286
+      - C287

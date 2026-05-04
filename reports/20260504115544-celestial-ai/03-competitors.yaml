@@ -1,0 +1,729 @@
+schemaVersion: report-v2
+artifact: competitors
+slug: 20260504115544-celestial-ai
+runDate: '2026-05-04'
+company:
+  name: Celestial AI
+chapter:
+  number: 3
+  title: Competitors
+  summary: |
+    The AI scale-up optical interconnect competitive landscape is dominated by four layers:
+    direct optical chiplet peers (Ayar Labs, Ranovus), platform incumbents with internal
+    silicon photonics programs (Intel, Broadcom, NVIDIA), established optical component
+    suppliers expanding into CPO (Coherent Corp), and adjacent photonic computing startups
+    (LightMatter). Celestial AI — now a Marvell subsidiary — competes most directly with
+    Ayar Labs, which has raised $870M total including a $500M Series E in early 2026 and
+    counts NVIDIA, AMD, and Intel Capital as investors. NVIDIA's copper NVLink fabric
+    remains the dominant status-quo scale-up interconnect; the open UALink standard
+    (Broadcom, AMD, Intel, Google, et al.) published its 1.0 specification in April 2025
+    but hardware is not expected until late 2026. Celestial AI/Marvell's EAM-based 3D
+    integration, 200+ patent portfolio (reinforced by the Rockley Photonics IP acquisition
+    in October 2024), and Marvell's NVLink Fusion partnership with NVIDIA provide genuine
+    differentiation, but Ayar Labs' larger funding base, broader strategic investor network,
+    and apparent manufacturing maturity represent the primary competitive risks.
+sections:
+  - id: s1
+    title: Competitive Landscape Overview
+    body: |
+      The AI data center optical interconnect competitive landscape contains four distinct
+      tiers relevant to Celestial AI's Photonic Fabric platform. The first tier consists
+      of direct optical chiplet peers — companies pursuing in-package or co-packaged
+      silicon photonics chiplets for XPU-to-XPU and XPU-to-memory scale-up links — most
+      importantly Ayar Labs and, to a lesser degree, Ranovus. The second tier comprises
+      platform incumbents that have launched or are actively developing silicon photonics
+      optical chiplets from a position of existing semiconductor or systems dominance:
+      Intel Silicon Photonics, Broadcom (CPO), and NVIDIA (NVLink ecosystem). The third
+      tier includes established optical component manufacturers — primarily Coherent Corp
+      — that compete in adjacent CPO/LPO product lines at scale. The fourth tier features
+      LightMatter, a photonic computing and interconnect startup whose Passage photonic
+      interposer overlaps with Celestial AI's interconnect use case despite a different
+      architectural approach.
+
+      The status-quo technology that the entire optical chiplet category must displace is
+      NVIDIA's copper-based NVLink scale-up fabric, which in its fifth generation
+      (Blackwell) supports 1.8 TB/s total bandwidth per GPU and enables pods of up to
+      576 GPUs. The UALink consortium — spanning Broadcom, AMD, Intel, Google, Microsoft,
+      Cisco, and Meta — published the open-standard UALink 1.0 specification in April 2025
+      targeting up to 1,024 accelerators per AI pod, but hardware is expected no earlier
+      than late 2026, leaving NVLink as the sole shipping high-bandwidth scale-up fabric
+      at the report date.
+
+      Competitor funding has accelerated sharply: Ayar Labs raised $500M in a Series E in
+      early 2026 (total $870M), LightMatter raised $400M in October 2024 (total $850M,
+      valuation $4.4B), and Ranovus committed $100M+ to Ottawa manufacturing in August
+      2025. The competitive intensity is high and differentiators on manufacturing
+      readiness, ecosystem access, and architectural specificity will determine design wins.
+    claimRefs:
+      - C075
+      - C076
+      - C077
+      - C081
+      - C082
+      - C085
+      - C088
+      - C089
+      - C096
+      - C102
+      - C103
+  - id: s2
+    title: Direct Optical Chiplet Competitors
+    body: |
+      Ayar Labs is Celestial AI's most direct competitor. Founded in 2015 as a UC Berkeley
+      spin-out, Ayar Labs has built the TeraPHY optical I/O chiplet, which uses micro-ring
+      modulators (MRMs) and the UCIe chiplet interconnect standard for integration into AI
+      accelerator packages. TeraPHY achieves up to 8 Tbps bandwidth per chiplet; the
+      companion SuperNova multi-wavelength light source supports 16 wavelengths as an
+      external laser input. Ayar Labs targets approximately 5 pJ/bit energy efficiency with
+      a roadmap to under 1 pJ/bit. The company raised $155M in a Series D in December 2024
+      — with AMD Ventures, Intel Capital, and NVIDIA as investors alongside Advent Global
+      Opportunities — and followed with a $500M Series E in early 2026 led by Neuberger
+      Berman with AMD, NVIDIA, MediaTek, and Alchip participating, bringing total raised
+      to $870M and valuation to $3.75–3.8B.
+
+      The key architectural contrast: Celestial AI uses electro-absorption modulators (EAMs)
+      and 3D EIC-on-PIC stacking, while Ayar Labs uses MRMs and co-packaging within
+      existing CMOS process flows. EAMs offer advantages in thermal tolerance, bandwidth
+      density, and extinction ratio; MRMs offer lower insertion loss but require tighter
+      temperature management. Celestial AI's 3D stacking architecture uniquely targets
+      disaggregated memory access at scale — a use case Ayar Labs does not explicitly
+      address — potentially giving Celestial AI a differentiated niche.
+
+      NVIDIA's simultaneous direct investment in Ayar Labs (both Series D and Series E)
+      while partnering with Marvell on NVLink Fusion represents a structural conflict of
+      interest that requires monitoring. If NVIDIA ultimately favors Ayar Labs'
+      TeraPHY-based approach within its platforms, Marvell/Celestial AI's access to
+      NVIDIA's scale-up ecosystem could be compromised.
+
+      Ranovus (Ottawa, founded 2012) is a secondary direct competitor. Its Odin
+      direct-drive CPO 3.0 platform supports 100 Gbps per optical channel and targets
+      AI/ML ASIC integration. In March 2024 Ranovus announced a 6.4 Tbps co-packaged
+      optics solution jointly developed with MediaTek. Ranovus received $36M from Canada's
+      Strategic Innovation Fund in 2023 and announced a $100M+ manufacturing expansion in
+      Ottawa in August 2025. While Ranovus is active in the CPO space, it lacks the deep
+      hyperscaler investor backing and broad ecosystem relationships of Ayar Labs.
+    claimRefs:
+      - C078
+      - C079
+      - C080
+      - C093
+      - C094
+      - C095
+      - C104
+      - C105
+      - C106
+      - C110
+  - id: s3
+    title: Platform and Incumbent Competitors
+    body: |
+      Intel Silicon Photonics has the longest institutional history in commercial silicon
+      photonics, having operated a transceiver business since 2012. Intel's Optical
+      Connectivity for AI (OCI) initiative represents its optical I/O chiplet program. At
+      OFC 2024, Intel demonstrated the first fully integrated bidirectional OCI optical
+      I/O chiplet co-packaged with an Intel CPU. The OCI chiplet supports 64 channels at
+      32 Gbps each way (4 Tbps bidirectional), achieves less than 3–5 pJ/bit power
+      efficiency, and supports reach up to 100 meters over standard fiber. Intel's
+      advantage lies in vertical integration: internal silicon photonics R&D, packaging,
+      and foundry capabilities. Intel has acqui-hired optical teams including from Glofast
+      to bolster the program. The competitive risk from Intel is primarily on Intel CPU
+      platform customers, where Intel may prefer an internal optical chiplet, narrowing
+      Celestial AI/Marvell's addressable market among Intel-platform AI deployments.
+
+      Broadcom's CPO program focuses on scale-out Ethernet switching rather than the
+      scale-up XPU-to-XPU interconnect domain where Celestial AI competes. In March 2024
+      Broadcom launched Bailly, the industry's first 51.2 Tbps CPO Ethernet switch,
+      integrating eight 6.4 Tbps silicon photonics optical engines with its Tomahawk5
+      chip — achieving a 70% power reduction versus pluggable transceivers — with field
+      validation at Meta. The roadmap extends to Davisson at 102.4 Tbps. Broadcom also
+      supplies NVLink Switch chips to NVIDIA and is a foundational member of the UALink
+      consortium. At Hot Chips 2024, Broadcom presented early work on AI compute ASICs
+      with optical attach, signaling potential expansion into scale-up adjacency. If
+      Broadcom pivots CPO into the XPU scale-up space, it would represent the highest-
+      resource competitive threat given Broadcom's hyperscaler relationships and
+      manufacturing scale.
+
+      NVIDIA controls the scale-up ecosystem through NVLink. NVLink v5 (Blackwell)
+      achieves 1.8 TB/s per GPU; NVSwitch enables up to 576 GPU pods. At Computex 2025,
+      NVIDIA unveiled NVLink Fusion — a chiplet interface enabling custom XPU silicon,
+      including from Marvell, to natively connect to NVIDIA's NVLink ecosystem. Marvell
+      partnered with NVIDIA on NVLink Fusion supporting up to 1.8 TB/s chiplet
+      bidirectional bandwidth. NVLink Fusion creates a cooperative channel but also
+      ensures NVIDIA controls optical adoption timing within its ecosystem.
+    claimRefs:
+      - C081
+      - C082
+      - C083
+      - C084
+      - C085
+      - C086
+      - C087
+      - C088
+      - C089
+      - C090
+      - C108
+      - C109
+  - id: s4
+    title: Adjacent Optical Ecosystem Competitors
+    body: |
+      Coherent Corp (NYSE: COHR), formerly II-VI Incorporated, is the world's largest
+      optical transceiver supplier. Coherent reported FY2025 revenue of $5.81B, up 23%
+      year-over-year, with AI datacenter segment revenue growing 61% in the same period.
+      Coherent is primarily a transceiver and optical component supplier, not a direct
+      chiplet competitor, but its expanding CPO and LPO (linear-drive pluggable optics)
+      portfolio puts it in buyers' decision sets when hyperscalers and switch ASIC vendors
+      evaluate optical integration options. Coherent has deepened partnerships with NVIDIA
+      for CPO integration in NVIDIA's next-generation networking platforms. The competitive
+      risk from Coherent is indirect: if hyperscalers prefer Coherent's module-based CPO
+      over a chiplet approach, Celestial AI/Marvell's addressable integration tier shrinks.
+      Coherent's $5.81B revenue and public company status represent formidable ecosystem
+      scale.
+
+      LightMatter is a photonic computing and interconnect startup that raised $400M in a
+      Series D in October 2024 (total $850M, valuation $4.4B). LightMatter's Passage
+      photonic interposer uses light to connect multiple chips placed on a single photonic
+      substrate. The Passage M1000, announced March 2025, delivers over 114 Tbps total
+      optical bandwidth. Manufacturing partnerships with GlobalFoundries and Amkor provide
+      supply chain backing. LightMatter's architectural approach requires all co-located
+      chips to share the same photonic substrate, limiting deployment flexibility compared
+      to Celestial AI's discrete chiplet approach; however, LightMatter's higher valuation
+      ($4.4B) and funding track record signal strong market confidence. LightMatter
+      competes for the same hyperscaler attention and custom AI cluster design wins.
+
+      Rockley Photonics filed for Chapter 11 bankruptcy in early 2023 and emerged from
+      restructuring later that year. Celestial AI acquired Rockley's entire silicon
+      photonics IP portfolio for $20M in October 2024, covering optoelectronic systems-
+      in-package, electro-absorption modulators, and optical switch technology, bringing
+      Celestial AI's total patent count to 200+. Rockley's trajectory illustrates the
+      capital intensity and execution risk in silicon photonics commercialization; the
+      acquisition converted a potential IP liability into a competitive asset for Celestial
+      AI's EAM technology position.
+    claimRefs:
+      - C091
+      - C092
+      - C093
+      - C094
+      - C095
+      - C096
+      - C097
+      - C098
+      - C099
+      - C100
+      - C101
+      - C107
+  - id: s5
+    title: Competitive Moat, Positioning, and Risk Assessment
+    body: |
+      Celestial AI/Marvell's competitive positioning rests on five pillars: (1) TSMC 5/4nm-
+      qualified electro-optical integrated circuit (EIC) process with multiple tape-outs
+      completed; (2) EAM modulator technology offering thermal tolerance and bandwidth
+      density advantages over MRM-based competitors such as Ayar Labs; (3) 3D EIC-on-PIC
+      stacking architecture uniquely enabling disaggregated memory access — a use case not
+      addressed by Ayar Labs TeraPHY or Broadcom CPO; (4) a 200+ patent portfolio
+      reinforced by the Rockley Photonics IP acquisition; and (5) Marvell's hyperscaler
+      custom silicon distribution relationships and NVLink Fusion partnership with NVIDIA.
+
+      The primary competitive risks are: (A) Ayar Labs enters 2026 better-funded ($870M
+      raised vs Celestial AI's ~$515M pre-acquisition) with a broader strategic investor
+      base spanning NVIDIA, AMD, and Intel Capital simultaneously — suggesting it may reach
+      production scale faster. (B) NVIDIA's direct investment in Ayar Labs while also
+      partnering with Marvell on NVLink Fusion creates a dual-track strategy where NVIDIA
+      may favor Ayar Labs within its ecosystem. (C) Broadcom, with $350B+ market cap and
+      all major hyperscaler relationships, could pivot its CPO capabilities toward the
+      scale-up adjacency — representing the highest-resource potential entrant. (D) Intel's
+      vertically integrated OCI program could produce a preferred internal chiplet for
+      Intel-platform AI deployments, narrowing Celestial AI's addressable market on
+      Intel's installed base.
+
+      The UALink consortium's April 2025 specification publication signals a future
+      open-standard scale-up fabric that could reduce NVIDIA's NVLink lock-in and
+      create a more level playing field. UALink hardware not shipping until late 2026
+      leaves near-term design wins concentrated in the NVLink ecosystem, where Celestial
+      AI/Marvell's NVLink Fusion partnership is a tactical advantage. The memory
+      disaggregation architectural differentiation remains the most defensible long-term
+      niche for Celestial AI/Marvell if it can demonstrate customer validation at scale.
+    claimRefs:
+      - C102
+      - C103
+      - C104
+      - C105
+      - C106
+      - C108
+      - C109
+tables:
+  - id: T301
+    title: Competitor Profile Table
+    columns:
+      - Company
+      - Category
+      - Scale / Funding
+      - Target Segment
+      - Key Differentiation
+      - Key Limitation
+    rows:
+      - - Ayar Labs
+        - Direct chiplet peer
+        - $870M raised; $3.75B valuation (2026)
+        - XPU scale-up; AI cluster interconnect
+        - TeraPHY MRM chiplet; UCIe standard; NVIDIA/AMD/Intel backing
+        - NVIDIA investor conflict; MRM thermal sensitivity
+      - - Intel Silicon Photonics
+        - Platform incumbent
+        - Internal (Intel Corp)
+        - Intel CPU/AI platform; HPC
+        - OCI chiplet; vertically integrated foundry; IP depth
+        - Captive to Intel platform; Gaudi underperformance limits internal demand
+      - - Broadcom
+        - Platform incumbent
+        - Public; $350B+ market cap
+        - Scale-out Ethernet switching; AI networking
+        - 51.2T CPO switch; hyperscaler relationships; UALink member
+        - Scale-out focus not scale-up; potential pivot only
+      - - NVIDIA
+        - Ecosystem incumbent
+        - Public; $2T+ market cap
+        - GPU scale-up fabric; AI systems
+        - NVLink dominance; CUDA lock-in; NVSwitch pods to 576 GPUs
+        - Copper-first; optical timeline controlled by NVIDIA
+      - - Coherent Corp
+        - Adjacent optical supplier
+        - Public; $5.81B revenue FY2025
+        - Datacenter transceivers; CPO modules; LPO
+        - Scale, customer relationships, CPO/LPO capability
+        - Not a chiplet vendor; module-level not package-level integration
+      - - Ranovus
+        - Direct CPO peer
+        - Series C + $100M+ manufacturing (2025)
+        - AI ASIC CPO; Ethernet optical packaging
+        - Odin CPO 3.0; MediaTek partnership; Canadian manufacturing
+        - Limited hyperscaler VC backing; smaller ecosystem
+      - - LightMatter
+        - Adjacent photonic interconnect
+        - $850M raised; $4.4B valuation (2024)
+        - AI cluster interconnect; photonic supercomputing
+        - Passage M1000 114+ Tbps; GlobalFoundries/Amkor manufacturing
+        - Interposer requires all chips on same substrate; less flexible
+      - - Rockley Photonics
+        - Defunct — IP acquired
+        - Bankrupt 2023; IP sold to Celestial AI 2024
+        - Originally wearables/biosensors; silicon photonics IP
+        - EAM and optical switch IP (acquired by Celestial AI)
+        - Company defunct; no longer a competitor
+    notes: >-
+      Funding reflects most recently reported public data as of the report date. Rockley is included for competitive
+      context given Celestial AI's IP acquisition.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Coverage includes eight primary competitors identified through systematic web research across official
+        announcements, analyst sources, and industry press; smaller pure-play optical startups and Asian CPO firms were
+        not systematically reviewed due to limited public data.
+    claimRefs:
+      - C075
+      - C077
+      - C079
+      - C081
+      - C084
+      - C085
+      - C093
+      - C094
+      - C096
+      - C099
+      - C100
+      - C101
+  - id: T302
+    title: Feature / Capability Matrix
+    columns:
+      - Dimension
+      - Celestial AI / Marvell
+      - Ayar Labs
+      - Intel Silicon Photonics
+      - Broadcom CPO
+      - NVIDIA NVLink
+    rows:
+      - - Primary use case
+        - XPU scale-up; memory disaggregation
+        - XPU scale-up; in-package interconnect
+        - CPU/XPU co-packaged optical I/O
+        - Scale-out Ethernet switching (expanding)
+        - GPU scale-up copper fabric
+      - - Chiplet / integration type
+        - 3D EIC-on-PIC interposer chiplet
+        - UCIe-compatible in-package chiplet
+        - Integrated bidirectional OCI chiplet
+        - Co-packaged optics for switch ASICs
+        - Copper SerDes NVSwitch ASIC
+      - - Modulator technology
+        - Electro-absorption modulator (EAM)
+        - Micro-ring modulator (MRM)
+        - Not publicly disclosed
+        - Silicon photonics (type undisclosed)
+        - N/A (electrical)
+      - - Bandwidth per link
+        - Not publicly specified at chiplet level
+        - Up to 8 Tbps per TeraPHY chiplet
+        - 4 Tbps bidirectional (64 ch × 32 Gbps)
+        - 6.4 Tbps per optical engine (switch)
+        - 1.8 TB/s per GPU (NVLink v5)
+      - - Power efficiency
+        - ~10 pJ/bit target (company-claimed)
+        - ~5 pJ/bit; roadmap <1 pJ/bit
+        - <3–5 pJ/bit (demonstrated)
+        - 70% reduction vs pluggable (claimed)
+        - '>60 pJ/bit for equivalent reach'
+      - - Manufacturing readiness
+        - TSMC 5/4nm qualified; 5+ tape-outs
+        - TSMC manufacturing; pilot production
+        - OFC 2024 demo; customer trials
+        - 51.2T switch in production (Meta)
+        - Full production (Blackwell shipping)
+      - - Ecosystem / strategic backing
+        - Marvell; NVLink Fusion partnership
+        - NVIDIA, AMD, Intel Capital, MediaTek
+        - Intel internal (captive)
+        - Broadcom hyperscaler relationships
+        - NVIDIA CUDA/NCCL ecosystem
+    notes: >-
+      Bandwidth and efficiency figures are company-claimed unless otherwise noted. Empty or unknown cells reflect
+      genuinely undisclosed specifications.
+    claimRefs:
+      - C078
+      - C082
+      - C083
+      - C088
+      - C093
+      - C105
+      - C106
+      - C110
+  - id: T303
+    title: Pricing / Packaging Comparison
+    columns:
+      - Vendor
+      - Product
+      - Pricing Model (Known)
+      - Contract / Licensing Structure
+      - Key Unknowns
+    rows:
+      - - Celestial AI / Marvell
+        - Photonic Fabric chiplet
+        - Not publicly disclosed
+        - Custom silicon licensing via Marvell; NDA required
+        - Per-chiplet ASP, volume tiers, royalty vs non-royalty split
+      - - Ayar Labs
+        - TeraPHY + SuperNova
+        - Not publicly disclosed
+        - Per-chiplet licensing; NDA required for terms
+        - Pricing at volume scale; OEM vs direct customer model
+      - - Intel Silicon Photonics
+        - OCI optical I/O chiplet
+        - Internal to Intel platform; not merchant
+        - Integrated into Intel CPU/SoC pricing
+        - Whether OCI will be licensed externally to non-Intel customers
+      - - Broadcom
+        - Bailly 51.2T CPO switch
+        - Commercial switch ASIC/system pricing
+        - Standard merchant silicon; per-port or per-switch
+        - CPO scale-up chiplet pricing if Broadcom expands adjacency
+      - - LightMatter
+        - Passage M1000 interposer
+        - Not publicly disclosed
+        - Custom interposer engagement; NDA required
+        - Per-wafer pricing; foundry cost share; licensing model
+      - - Ranovus
+        - Odin CPO 3.0
+        - Not publicly disclosed
+        - Per-chiplet volume licensing (claimed cost advantage)
+        - Volume ASP; whether pricing advantage is verifiable
+    notes: >-
+      No optical chiplet vendor publicly discloses pricing. All values represent inferred or company-positioned models;
+      investor diligence should obtain NDA pricing from each vendor.
+    claimRefs:
+      - C080
+      - C087
+      - C108
+  - id: T304
+    title: Moat Durability / Competitive Risk Register
+    columns:
+      - Moat Claim
+      - Competitive Threat
+      - Severity
+      - Mitigation / Diligence Ask
+    rows:
+      - - TSMC 5/4nm EIC process qualification (5+ tape-outs)
+        - Ayar Labs also TSMC-qualified; Intel has own foundry
+        - medium
+        - Verify tape-out velocity and yield data vs Ayar Labs; confirm TSMC relationship depth
+      - - EAM modulator IP (200+ patents post-Rockley)
+        - MRM alternative (Ayar Labs) may be adequate for near-term customer needs
+        - medium
+        - Map EAM patent claims vs Ayar Labs TeraPHY; assess whether EAM advantages are customer-decisive
+      - - 3D EIC-on-PIC memory disaggregation architecture
+        - No current competitor explicitly targets this use case
+        - low
+        - Validate that hyperscaler customers are actually designing for memory disaggregation at chiplet scale
+      - - Marvell hyperscaler distribution relationships
+        - Ayar Labs investor base (NVIDIA, AMD) provides alternative ecosystem access
+        - high
+        - Assess whether Marvell's custom silicon wins provide captive Photonic Fabric demand or optional upgrades
+      - - NVLink Fusion partnership with NVIDIA
+        - NVIDIA also invested in Ayar Labs; may favor TeraPHY within its ecosystem
+        - high
+        - Request evidence of Marvell exclusivity or preferential status in NVIDIA's optical chiplet roadmap
+      - - Rockley IP acquisition blocking EAM freedom-to-operate issues for competitors
+        - Competitors may design around patents; patent enforcement is costly
+        - low
+        - Obtain FTO opinion on key EAM claims; assess whether Ayar Labs' MRM approach sidesteps EAM portfolio
+    notes: null
+    claimRefs:
+      - C101
+      - C102
+      - C103
+      - C104
+      - C105
+      - C109
+figures:
+  - id: F301
+    title: Competitive Positioning Map
+    type: quadrant
+    layout: wide
+    summary: |
+      Ordinal 0–10 scoring on two axes: (x) Integration Model — how tightly the vendor's
+      product integrates into the AI accelerator package (0 = external pluggable module,
+      10 = in-package chiplet); (y) Silicon Photonics Capability and IP Depth
+      (0 = limited/nascent, 10 = deep IP and process qualification). Scoring is
+      evidence-backed from public sources and analyst synthesis; not source-backed
+      absolute measurements.
+    data:
+      xAxis: Integration Model (0=external/pluggable, 10=in-package chiplet)
+      yAxis: Silicon Photonics Capability and IP Depth (0=limited, 10=deep)
+      points:
+        - label: Celestial AI / Marvell
+          x: 9
+          'y': 9
+        - label: Ayar Labs
+          x: 8
+          'y': 8
+        - label: Intel Silicon Photonics
+          x: 7
+          'y': 8
+        - label: Broadcom CPO
+          x: 4
+          'y': 7
+        - label: NVIDIA NVLink
+          x: 3
+          'y': 5
+        - label: Ranovus
+          x: 7
+          'y': 6
+        - label: LightMatter
+          x: 8
+          'y': 7
+        - label: Coherent Corp
+          x: 2
+          'y': 7
+    approximationNotes: >-
+      Axis scores are analyst-derived ordinal estimates (0–10) based on publicly reported product integration depth and
+      known IP/process portfolios; no independently verified numeric benchmarks exist for these dimensions.
+    claimRefs:
+      - C076
+      - C078
+      - C080
+      - C083
+      - C088
+      - C089
+      - C090
+      - C105
+      - C106
+  - id: F302
+    title: Feature Breadth / Capability Map
+    type: matrix
+    layout: wide
+    summary: |
+      Capability coverage matrix across six competitors on seven dimensions relevant to
+      AI scale-up interconnect design wins. Tone indicates relative competitive position:
+      positive = strong/leading, neutral = adequate/comparable, warning = partial/
+      developing, negative = absent or disadvantaged.
+    data:
+      columns:
+        - Celestial AI / Marvell
+        - Ayar Labs
+        - Intel Silicon Photonics
+        - Broadcom CPO
+        - NVIDIA NVLink
+        - LightMatter
+      rows:
+        - label: Scale-up XPU chiplet focus
+          values:
+            - tone: positive
+              label: Primary use case
+            - tone: positive
+              label: Primary use case
+            - tone: warning
+              label: Expanding from CPU CPO
+            - tone: neutral
+              label: Switch; potential expansion
+            - tone: negative
+              label: Copper incumbent
+            - tone: neutral
+              label: Interposer approach
+        - label: Disaggregated memory access
+          values:
+            - tone: positive
+              label: Core architectural target
+            - tone: negative
+              label: Not targeted
+            - tone: warning
+              label: Not publicly addressed
+            - tone: negative
+              label: Not targeted
+            - tone: negative
+              label: Not targeted
+            - tone: warning
+              label: Potentially via interposer
+        - label: Hyperscaler ecosystem access
+          values:
+            - tone: positive
+              label: Marvell relationships + NVLink Fusion
+            - tone: positive
+              label: NVIDIA, AMD, Intel Capital backing
+            - tone: warning
+              label: Intel platform only
+            - tone: positive
+              label: All major hyperscalers
+            - tone: positive
+              label: Controls CUDA/NVLink ecosystem
+            - tone: warning
+              label: Emerging; $4.4B valuation
+        - label: Manufacturing process qualification
+          values:
+            - tone: positive
+              label: TSMC 5/4nm; 5+ tape-outs
+            - tone: positive
+              label: TSMC qualified; pilot ramp
+            - tone: positive
+              label: Intel Foundry integrated
+            - tone: positive
+              label: 51.2T switch in production
+            - tone: positive
+              label: Full production (Blackwell)
+            - tone: warning
+              label: GlobalFoundries / Amkor
+        - label: IP / patent depth
+          values:
+            - tone: positive
+              label: 200+ patents (post-Rockley)
+            - tone: warning
+              label: Not publicly quantified
+            - tone: positive
+              label: Extensive (internal)
+            - tone: positive
+              label: Extensive (internal)
+            - tone: positive
+              label: Extensive (NVLink IP)
+            - tone: warning
+              label: Not publicly quantified
+        - label: UCIe / open standard compatibility
+          values:
+            - tone: warning
+              label: Proprietary architecture
+            - tone: positive
+              label: UCIe-compatible TeraPHY
+            - tone: warning
+              label: Not confirmed
+            - tone: warning
+              label: Proprietary CPO design
+            - tone: negative
+              label: Proprietary NVLink
+            - tone: warning
+              label: Custom interposer
+        - label: CPO / LPO revenue at scale
+          values:
+            - tone: warning
+              label: Pre-production (Marvell integration)
+            - tone: warning
+              label: Pre-production
+            - tone: warning
+              label: Prototype / trials
+            - tone: positive
+              label: 51.2T switch validated at Meta
+            - tone: positive
+              label: Shipping Blackwell NVSwitch
+            - tone: warning
+              label: Pre-production
+    approximationNotes: null
+    claimRefs:
+      - C081
+      - C084
+      - C085
+      - C086
+      - C087
+      - C089
+      - C090
+      - C108
+      - C109
+  - id: F303
+    title: Moat / Readiness KPIs
+    type: kpi
+    layout: standard
+    summary: |
+      Ordinal 0–10 competitive readiness and moat scores for Celestial AI/Marvell across
+      six dimensions relevant to investment durability. Scores are evidence-backed
+      assessments derived from public sources; higher is stronger.
+    data:
+      items:
+        - label: IP Portfolio Depth
+          score: 9
+          note: 200+ patents post-Rockley; EAM and optical switch coverage
+        - label: Manufacturing Process Readiness
+          score: 7
+          note: TSMC 5/4nm qualified; 5+ tape-outs; not yet in volume production
+        - label: Hyperscaler Distribution (Marvell)
+          score: 8
+          note: Marvell custom silicon relationships at all major hyperscalers
+        - label: Technical Differentiation vs Ayar Labs
+          score: 7
+          note: EAM advantage + memory disaggregation; Ayar Labs UCIe standard threat
+        - label: NVLink Ecosystem Access
+          score: 6
+          note: NVLink Fusion partnership; NVIDIA also invested in Ayar Labs
+        - label: Competitive Field Intensity
+          score: 4
+          note: Multiple well-funded rivals; Ayar Labs $870M; LightMatter $4.4B valuation
+    approximationNotes: >-
+      Scores are analyst-derived ordinal assessments (0–10) based on publicly available evidence; not independently
+      audited.
+    claimRefs:
+      - C076
+      - C078
+      - C086
+      - C089
+      - C090
+      - C096
+callouts:
+  - calloutType: strength
+    title: Marvell Acquisition Resolves Distribution Moat Gap
+    body: |
+      Celestial AI's pre-acquisition weakness was go-to-market: a startup competing for
+      hyperscaler design wins against Ayar Labs' NVIDIA/AMD investor relationships. The
+      Marvell acquisition provides immediate access to Marvell's existing custom silicon
+      engagements at all major hyperscalers and the strategic NVLink Fusion partnership
+      with NVIDIA — a distribution moat that Ayar Labs cannot replicate via investor
+      relationships alone.
+    claimRefs:
+      - C089
+      - C090
+      - C101
+      - C106
+  - calloutType: risk
+    title: Ayar Labs Funding Lead and NVIDIA Dual Investment Create Structural Risk
+    body: |
+      Ayar Labs entered 2026 with $870M raised (vs Celestial AI's ~$515M pre-acquisition),
+      a $3.75B valuation, and NVIDIA as a direct investor across both its Series D and E.
+      NVIDIA's simultaneous investment in Ayar Labs while partnering with Marvell on
+      NVLink Fusion is a structural conflict of interest. If NVIDIA ultimately certifies
+      TeraPHY as the preferred optical chiplet within its NVLink ecosystem, Celestial
+      AI/Marvell's optical scale-up revenue path faces a material headwind.
+    claimRefs:
+      - C076
+      - C104
+      - C108
+      - C109

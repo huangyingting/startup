@@ -1,0 +1,805 @@
+schemaVersion: report-v2
+artifact: risks
+slug: 20260504115543-abridge
+runDate: '2026-05-04'
+company:
+  name: Abridge
+chapter:
+  number: 7
+  title: Risks
+  summary: |
+    Abridge faces a multi-vector risk landscape whose severity is elevated by the sensitive nature of
+    healthcare data, the speed of enterprise deployment, and the emergence of well-resourced competitors.
+    The most acute near-term risk is legal: a December 2025 class-action lawsuit in California alleges
+    that Sharp Healthcare, an Abridge customer, recorded more than 100,000 patient encounters without
+    adequate consent, violating the California Invasion of Privacy Act (CIPA) and the Confidentiality
+    of Medical Information Act (CMIA). The case names Abridge as a vendor and sets a precedent that
+    could propagate to all 150+ health-system customers operating across the 12+ U.S. states with
+    all-party consent requirements. Regulatory risk is compounded by unresolved FDA software-as-a-
+    medical-device (SaMD) classification questions and evolving HIPAA Security Rule requirements for
+    AI vendors. Technical risk centers on AI hallucination and omission rates in clinical notes, which
+    can propagate errors into patient records with potential malpractice exposure. Competitively, Epic
+    launched a native ambient AI scribe in 2025 that threatens to commoditize the core offering at the
+    distribution layer; Microsoft Nuance DAX Copilot maintains enterprise incumbency. Financial risk is
+    moderate given $757M raised and $117M ARR, but the company carries an unverified burn rate and its
+    ~45x ARR valuation multiple leaves no margin for execution missteps. Key-person concentration in
+    CEO Shiv Rao and customer concentration in a small set of large health systems represent additional
+    thesis-break vectors. Ethical exposure from recording bias, clinician over-reliance, and patient
+    autonomy concerns is rising as regulators and the public scrutinize ambient AI.
+sections:
+  - id: regulatory-legal
+    title: Regulatory and Legal Risks
+    body: |
+      Abridge's most immediate risk vector is legal. The December 2025 class-action lawsuit filed in
+      San Diego Superior Court names both Sharp Healthcare and Abridge as defendants, alleging that
+      more than 100,000 patient encounters were recorded without adequate consent in violation of
+      California's Invasion of Privacy Act (CIPA) and the Confidentiality of Medical Information
+      Act (CMIA). CIPA Section 637.2 permits civil penalties of $5,000 per violation, creating
+      a theoretical aggregate exposure exceeding $500M. The case is not isolated: parallel suits
+      naming Sutter Health, Memorial Healthcare, and their ambient AI vendors indicate a systemic
+      pattern of consent failures across the industry. Abridge's exposure extends beyond California
+      because at least 12 U.S. states have all-party consent statutes, and Abridge's 150+ health
+      system customers operate across all of them. Health systems are actively negotiating BAA
+      indemnification clauses that shift ambient AI liability directly to vendors.
+
+      Regulatory exposure compounds legal risk. The FDA's risk-based SaMD framework could apply
+      to ambient documentation tools that influence clinical decisions; Abridge has not disclosed
+      an FDA premarket submission and its exempt-CDS position has not been tested by the agency.
+      The proposed HIPAA Security Rule updates (24-hour incident notification, mandatory MFA,
+      asset inventories) will impose new compliance obligations on Abridge as a HIPAA business
+      associate. The FTC's Operation AI Comply (September 2024) placed healthcare AI under
+      heightened scrutiny for substantiation of efficacy claims. California AB 3030 (effective
+      January 2025) requires disclosure of AI involvement in patient communications. Pending
+      federal legislation could supersede HIPAA BAA frameworks entirely. The cumulative
+      regulatory burden is rising faster than Abridge's documented compliance infrastructure,
+      and the cost of non-compliance is disproportionate given the PHI-sensitive nature of
+      the product. CMS is separately evaluating whether AI-generated notes require additional
+      attestation for reimbursement eligibility, adding a payer-side enforcement vector.
+    claimRefs:
+      - C233
+      - C234
+      - C235
+      - C236
+      - C237
+      - C238
+      - C239
+      - C240
+      - C241
+      - C242
+      - C243
+      - C244
+      - C245
+      - C246
+      - C247
+  - id: technical-operational
+    title: Technical and Operational Risks
+    body: |
+      Abridge's core technical risks center on AI accuracy and system reliability in high-stakes
+      clinical environments. A 2025 npj Digital Medicine study found a 1.47% hallucination rate
+      and a 3.45% omission rate in ambient AI clinical notes across 1,200 encounters; JAMA Internal
+      Medicine found clinically significant discrepancies in 4.8% of encounters, with medication
+      dosage and allergy errors representing the majority of high-severity incidents. These error
+      rates are comparable to human transcription rates but cluster differently: AI hallucinations
+      introduce factually incorrect content rather than typographical errors, and as AI-generated
+      notes propagate errors into structured EHR data fields (medications, problem lists, allergies)
+      the downstream malpractice exposure accumulates.
+
+      Bias risk is documented but inadequately characterized for all protected classes. Studies
+      show higher omission rates for non-English-speaking patients and certain racial subgroups
+      in ambient AI systems broadly; Abridge's model cards describe bias evaluations but
+      independent third-party audits have not been publicly confirmed. Data security risk is
+      substantial: raw audio recordings containing voice are not de-identified under HIPAA's
+      Safe Harbor method without additional processing, creating a persistent PHI exposure
+      that exceeds standard text-based health records. Abridge's cloud infrastructure
+      architecture (likely a primary Google Cloud deployment) and its business continuity
+      plan for cloud outages are not publicly documented. Integration with EHR systems via
+      FHIR APIs introduces additional attack surfaces; misconfigured OAuth token handling is
+      a known vulnerability class in healthcare EHR integrations. Rapid model iteration
+      required to stay competitive creates tension with FDA PCCP regulatory change-control
+      requirements if Abridge's products ever cross the SaMD classification threshold.
+    claimRefs:
+      - C248
+      - C249
+      - C250
+      - C251
+      - C252
+      - C266
+      - C267
+      - C271
+      - C272
+      - C273
+  - id: competitive-business
+    title: Competitive and Business Model Risks
+    body: |
+      Epic's June 2025 launch of a native ambient AI scribe represents the single most material
+      strategic threat to Abridge's business model. Multiple health system CIOs described the
+      launch as a watershed moment for the industry. Epic's native offering benefits from zero
+      marginal integration cost, richer EHR data context, and Epic's existing relationships with
+      550+ health systems. The Abridge Inside partnership currently grants access to approximately
+      40% of the Epic network, but Epic retains the contractual right to develop competing native
+      functionality without restriction. The partnership creates a strategic dependency on a
+      potential competitor that Abridge cannot easily exit without losing its primary distribution
+      channel.
+
+      Microsoft Nuance DAX Copilot compounds the competitive pressure: 550+ deployed health systems,
+      full EHR platform coverage, and Microsoft Azure enterprise relationships provide advantages
+      that Abridge's research pedigree cannot fully offset. KLAS Research confirms Abridge leads
+      on clinical accuracy among independent vendors, but Epic's native offering is closing the
+      accuracy gap. Price compression is likely as Epic and Microsoft compete for the same health
+      system budgets, potentially forcing Abridge to discount to retain contracts and compressing
+      gross margins below sustainable thresholds. The company's $5.3B valuation (~45x ARR)
+      provides no margin for execution missteps: a growth disappointment or major contract
+      loss could trigger significant multiple compression at exit. Burn rate and profitability
+      timeline are undisclosed, creating uncertainty about the runway to navigate competitive
+      headwinds. Customer concentration risk also applies: the loss of one or two anchor health
+      systems would materially impair revenue, and health systems under financial pressure may
+      defer or cancel ambient AI expansion contracts.
+    claimRefs:
+      - C253
+      - C254
+      - C255
+      - C256
+      - C257
+      - C258
+      - C259
+      - C260
+      - C261
+      - C268
+      - C269
+      - C274
+      - C275
+  - id: ethical-reputational
+    title: Ethical and Reputational Risks
+    body: |
+      Ambient AI documentation raises fundamental ethical questions about patient autonomy,
+      informed consent, and the role of automated systems in healthcare. The Sharp/Abridge
+      lawsuit's most alarming allegation — that consent notes in EHRs were falsely marked
+      as obtained — if proven, would represent a systemic integrity failure with ramifications
+      far beyond legal liability. Public trust in ambient AI documentation is nascent and
+      fragile: media coverage of consent failures amplifies patient anxiety about recording,
+      and health systems facing reputational pressure may reduce ambient AI deployment even
+      without legal compulsion.
+
+      Clinician over-reliance risk is rising. As ambient AI notes become the default documentation
+      modality, clinicians may reduce their verification of AI-generated content, allowing errors
+      to propagate into patient records without correction. Regulatory and professional bodies
+      including the White House AI Bill of Rights framework identify this dynamic as a high-impact
+      risk in healthcare settings. Bias in AI documentation — producing shorter, less complete
+      notes for non-English-speaking and underrepresented patient populations — raises equity
+      concerns that could trigger civil rights enforcement under OCR's Section 1557 authority
+      in addition to reputational damage. The company's ability to maintain clinical credibility
+      while growing at enterprise scale will depend on its commitment to independent bias auditing
+      and transparent error reporting.
+    claimRefs:
+      - C262
+      - C263
+      - C264
+      - C265
+      - C250
+      - C239
+  - id: mitigation-kill-criteria
+    title: Mitigation Measures and Thesis-Break Criteria
+    body: |
+      Abridge's existing risk mitigations include SOC 2 Type II certification, HIPAA BAA
+      infrastructure with all health system customers, encryption of audio in transit and at
+      rest, model card publication with bias evaluation disclosures, and a regulatory affairs
+      function monitoring FDA SaMD developments. The company's academic foundation and CEO
+      Shiv Rao's clinical credentials provide reputational credibility that partially offsets
+      legal exposure. However, several critical mitigation gaps exist: no independent consent
+      workflow audit has been conducted or disclosed; FDA SaMD classification exposure is
+      unresolved; cloud infrastructure resilience is undocumented; and the financial cushion
+      against protracted litigation is unknown.
+
+      The thesis-break framework identifies five event types that would materially impair the
+      investment thesis: an adverse court judgment exceeding $100M in consent litigation; an
+      FDA SaMD classification requiring premarket review for the core product; Epic terminating
+      the Abridge Inside partnership; ARR growth falling below 50% year-over-year; or CEO
+      Shiv Rao departing without a named clinical-technical successor. Each of these events
+      would require a fundamental re-evaluation of the investment premise. Investors should
+      establish monitoring protocols for early warning signals: litigation docket updates,
+      FDA guidance publications on ambient AI classification, Epic product announcements,
+      quarterly ARR disclosures, and leadership changes. Cybersecurity incidents targeting
+      healthcare AI vendors are increasing in frequency and sophistication, and Abridge's
+      posture against nation-state or sophisticated ransomware threats is not publicly documented.
+    claimRefs:
+      - C252
+      - C258
+      - C260
+      - C264
+      - C272
+tables:
+  - id: T701
+    title: Regulatory / legal risk register
+    columns:
+      - Risk
+      - Jurisdiction
+      - Type
+      - Likelihood
+      - Severity
+      - Horizon
+      - Mitigation
+      - Residual Exposure
+      - Diligence Path
+    rows:
+      - - Sharp/Abridge CIPA & CMIA class action (100k+ patients)
+        - California
+        - Legal
+        - High
+        - Critical
+        - Near (0–12 mo)
+        - HIPAA BAA; in-app consent capture
+        - $500M+ theoretical; settlement likely lower
+        - Monitor San Diego Superior Court docket; obtain indemnification clause details
+      - - Multi-state all-party consent exposure (12+ states)
+        - Multi-state
+        - Legal
+        - High
+        - High
+        - Near (0–12 mo)
+        - State-specific consent disclosure workflows
+        - Additional class actions in IL, WA, FL, PA, MD
+        - Audit consent capture workflow for each state
+      - - HIPAA OCR enforcement (BAA/breach)
+        - Federal
+        - Regulatory
+        - Medium
+        - High
+        - Near (0–24 mo)
+        - SOC 2 Type II; BAA with all customers
+        - Civil monetary penalties up to $1.9M/category/yr
+        - Request OCR correspondence history; audit BAA terms
+      - - FDA SaMD classification (ambient CDS boundary)
+        - Federal
+        - Regulatory
+        - Medium
+        - Critical
+        - Medium (12–36 mo)
+        - CDS exempt positioning; regulatory monitoring
+        - Product redesign or market withdrawal required
+        - Request FDA pre-Sub Q&A session on CDS exemption
+      - - HIPAA Security Rule update (24-hr notification)
+        - Federal
+        - Regulatory
+        - High
+        - Medium
+        - Medium (12–24 mo)
+        - SOC 2 covers some requirements
+        - New 24-hr notification workflow required
+        - Map current incident response SLA to proposed rule
+      - - FTC Operation AI Comply (substantiation)
+        - Federal
+        - Regulatory
+        - Low
+        - Medium
+        - Ongoing
+        - Evidence-based efficacy claims; legal review
+        - Civil penalty if unsubstantiated claims made
+        - Review all marketing materials for FTC substantiation
+      - - California AB 3030 (AI disclosure)
+        - California
+        - Regulatory
+        - High
+        - Low
+        - Active (Jan 2025+)
+        - In-app AI disclosure feature needed
+        - Enforcement by CA AG; customer contracts at risk
+        - Audit California customer disclosure workflows
+      - - Vendor malpractice liability (AI clinical error)
+        - Multi-jurisdiction
+        - Legal
+        - Low
+        - High
+        - Medium (12–36 mo)
+        - Clinician attestation workflow
+        - Shared negligence exposure per court precedent
+        - Review E&O insurance coverage limits
+      - - CMS AI documentation attestation requirements
+        - Federal
+        - Regulatory
+        - Medium
+        - Medium
+        - Medium (12–24 mo)
+        - Audit trail in AI-generated notes
+        - Reimbursement eligibility at risk
+        - Monitor CMS AI documentation guidance publications
+      - - Pending federal health data privacy legislation
+        - Federal
+        - Regulatory
+        - Low
+        - High
+        - Long (36+ mo)
+        - Legislative monitoring; adaptable BAA structure
+        - Full BAA framework restructuring required
+        - Track Health Data Use and Privacy Commission Act
+    notes: >-
+      Risks ordered by combined severity. Horizon reflects estimated time to regulatory action or legal outcome.
+      Likelihood and severity are analyst assessments based on available evidence.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Risks compiled from publicly available litigation records, federal and state regulatory publications, and
+        healthcare IT legal commentary. Private regulatory correspondence, sealed court documents, and unreported
+        enforcement matters are not included. Additional state-level consent statutes may exist beyond the 12
+        identified.
+    claimRefs:
+      - C233
+      - C234
+      - C235
+      - C238
+      - C239
+      - C240
+      - C242
+      - C243
+      - C244
+      - C246
+      - C247
+  - id: T702
+    title: Operational / quality / security risk register
+    columns:
+      - Failure Mode
+      - Likelihood
+      - Severity
+      - Mitigation Maturity
+      - Residual Exposure
+      - Unresolved Gap
+    rows:
+      - - AI hallucination in clinical notes (1.47% rate)
+        - High
+        - High
+        - Partial
+        - Errors propagate into structured EHR fields
+        - No auto-correction; human review rates not monitored
+      - - AI omission of clinical content (3.45% rate)
+        - High
+        - High
+        - Partial
+        - Medication and diagnosis information missed
+        - Model monitoring in place; omission not eliminated
+      - - Clinically significant note discrepancies (4.8% encounter-level)
+        - High
+        - High
+        - Partial
+        - Malpractice exposure accumulates in EHR record
+        - Clinician attestation workflow; verification rates unknown
+      - - Bias against non-English-speaking and minority patients
+        - Medium
+        - High
+        - Partial
+        - Equity violation; OCR Section 1557 exposure
+        - No independent bias audit publicly confirmed
+      - - PHI exposure in raw audio (non-deidentified under HIPAA Safe Harbor)
+        - Medium
+        - High
+        - Partial
+        - Audio retention is persistent PHI exposure
+        - Retention period not publicly disclosed
+      - - Cloud infrastructure concentration (single provider)
+        - Medium
+        - Medium
+        - Unknown
+        - Platform outage suspends all documentation
+        - BCP and multi-cloud posture not documented
+      - - EHR API integration attack surface (FHIR/OAuth)
+        - Medium
+        - Medium
+        - Partial
+        - PHI exfiltration via misconfigured API endpoint
+        - FHIR hardening practices not publicly disclosed
+      - - LLM provider dependency (model deprecation/cost inflation)
+        - Low
+        - Medium
+        - Unknown
+        - Service disruption or cost increase
+        - Provider diversification strategy not disclosed
+      - - Model versioning and production rollback failures
+        - Low
+        - Medium
+        - Unknown
+        - Degraded accuracy for all customers on new model
+        - Rollback protocol not publicly documented
+      - - Cybersecurity incident (ransomware/nation-state)
+        - Low
+        - Critical
+        - Partial
+        - Mass PHI breach; operational shutdown
+        - Advanced threat posture not publicly verified
+    notes: >-
+      Likelihood and severity are analyst assessments. Mitigation maturity is rated: Full = mitigated; Partial =
+      partially mitigated; Unknown = no public evidence.
+    claimRefs:
+      - C248
+      - C249
+      - C250
+      - C251
+      - C252
+      - C266
+      - C267
+      - C271
+      - C272
+  - id: T703
+    title: Partner / dependency risk register
+    columns:
+      - Dependency
+      - Counterparty
+      - Role
+      - Concentration
+      - Failure Scenario
+      - Severity
+      - Mitigation
+      - Residual Exposure
+    rows:
+      - - Abridge Inside partnership
+        - Epic Systems
+        - Primary distribution (~40% Epic network)
+        - Critical
+        - Epic terminates partnership or deprioritizes Abridge Inside for native scribe
+        - Critical
+        - ~40% Epic network access; existing clinical validation
+        - Revenue growth decelerates; new customer acquisition collapses
+      - - Microsoft Nuance DAX Copilot (competitor)
+        - Microsoft/Nuance
+        - Competitive threat (550+ health systems)
+        - High
+        - Nuance bundles DAX at zero marginal cost via Microsoft Enterprise Agreements
+        - High
+        - Abridge clinical accuracy advantage; KLAS ranking
+        - Price compression forces margin sacrifice to retain contracts
+      - - Google Cloud / AI infrastructure
+        - Google
+        - Likely primary AI inference and cloud provider
+        - High
+        - Cloud outage or pricing change
+        - Medium
+        - SOC 2 Type II; assumed SLA
+        - Availability risk; cost inflation
+      - - LLM foundation model providers
+        - Multiple (Google, OpenAI, Anthropic)
+        - Core AI inference
+        - Medium
+        - Model deprecation or quality regression after update
+        - Medium
+        - Fine-tuning on clinical data adds proprietary layer
+        - Documentation quality degradation
+      - - Health system anchor customers (top 5 systems)
+        - 150+ health systems
+        - Revenue source
+        - High
+        - Loss of 1–2 anchor customers due to lawsuit, competition, or Epic switch
+        - High
+        - Multi-year enterprise contracts expected
+        - Disproportionate ARR loss; valuation compression
+    notes: >-
+      Concentration is rated on impact to Abridge if the dependency fails. Severity reflects the business impact of the
+      failure scenario.
+    claimRefs:
+      - C253
+      - C254
+      - C255
+      - C256
+      - C257
+      - C258
+      - C259
+      - C261
+      - C269
+  - id: T704
+    title: People / execution risk register
+    columns:
+      - Role / Function
+      - Dependency or Gap
+      - Likelihood
+      - Severity
+      - Mitigation
+      - Diligence Path
+    rows:
+      - - CEO Shiv Rao (clinician co-founder)
+        - Dual MD/CEO role; no public succession plan; primary embodiment of clinical credibility
+        - Low
+        - Critical
+        - Board support; active media presence
+        - Confirm succession plan; assess board composition
+      - - Clinical NLP engineering team
+        - Google, Microsoft, Apple recruiting healthcare AI talent aggressively
+        - Medium
+        - High
+        - Pre-IPO equity compensation
+        - Assess attrition rate; review equity vesting schedule
+      - - Customer success / implementation
+        - 150+ health system deployments requiring complex EHR integrations
+        - Medium
+        - Medium
+        - Enterprise CS team scaling with revenue
+        - Review CS headcount per deployment ratio
+      - - Clinical accuracy research team (CTO Zack Lipton)
+        - CMU-lineage research team; key to model quality differentiation
+        - Low
+        - High
+        - Academic-industry dual affiliation model
+        - Assess retention of core research staff
+      - - Board composition and governance maturity
+        - 'Post-Series E governance: independent directors, audit committee'
+        - Low
+        - Medium
+        - Investor board seats filled; governance evolving
+        - Request board charter and committee composition
+    notes: >-
+      Key-person risk is highest for CEO Shiv Rao. Clinical NLP talent retention is a market-wide challenge amplified by
+      Big Tech competition.
+    claimRefs:
+      - C260
+      - C275
+  - id: T705
+    title: Mitigation and kill criteria table
+    columns:
+      - Risk Category
+      - Existing Mitigation
+      - Key Gap
+      - Monitorable Trigger
+      - Threshold / Event
+      - Action Implication
+    rows:
+      - - Legal (consent litigation)
+        - HIPAA BAA; in-app consent capture
+        - No independent consent audit; indemnification exposure unclear
+        - Court docket for Sharp case; new lawsuits filed against Abridge
+        - Adverse judgment exceeding $100M or nationwide injunction against Abridge
+        - Immediate investment review; position reduction
+      - - Regulatory (FDA SaMD)
+        - CDS exempt positioning; regulatory monitoring
+        - No FDA pre-submission meeting disclosed; classification boundary unsettled
+        - FDA ambient AI guidance publications; enforcement letters targeting AI scribes
+        - FDA classification requiring premarket review for core product
+        - Immediate investment review; engagement with regulatory counsel
+      - - Technical (AI accuracy)
+        - Model cards; clinician attestation workflow; SOC 2 Type II
+        - No independent clinical accuracy audit; rollback protocols undisclosed
+        - Published accuracy benchmarks; adverse event reports linked to Abridge
+        - Documented patient harm event attributable to Abridge hallucination
+        - Investment review; require independent audit as condition of continued position
+      - - Competitive (Epic / Nuance)
+        - Abridge Inside partnership; clinical accuracy leadership
+        - Non-exclusive Epic partnership; Epic native scribe gaining accuracy ground
+        - Epic product announcements; KLAS accuracy rankings; Abridge churn rates
+        - Epic terminates Abridge Inside or ARR growth drops below 50% YoY
+        - Investment review; valuation reset; hold vs exit decision
+      - - Financial (valuation / runway)
+        - $757M raised; $117M ARR; multi-year enterprise contracts
+        - Burn rate undisclosed; 45x ARR multiple; no profitability timeline
+        - Quarterly ARR disclosures; down-round indicators; layoff announcements
+        - Down-round at greater than 30% discount or cash runway below 12 months
+        - Exit position; trigger protective provisions if available
+      - - Key-person (CEO Shiv Rao)
+        - Active CEO; board support; physician community recognition
+        - No public succession plan; dual MD/CEO workload creates execution risk
+        - Leadership announcements; CEO absence from major conferences
+        - Shiv Rao departure without named clinical-technical successor within 90 days
+        - Investment review; assess successor qualifications; monitor customer retention
+    notes: >-
+      Thresholds are defined as investment-relevant events requiring immediate re-evaluation of the thesis. Monitoring
+      is recommended quarterly for financial triggers and continuously for legal and regulatory events.
+    claimRefs:
+      - C233
+      - C240
+      - C248
+      - C253
+      - C258
+      - C260
+figures:
+  - id: F701
+    title: Risk heatmap
+    type: matrix
+    layout: wide
+    summary: >-
+      Three-by-three probability versus severity heatmap showing Abridge's primary risks at each intersection, from
+      near-certain low-severity items to low-probability critical-severity scenarios.
+    data:
+      columns:
+        - Low Severity
+        - Medium Severity
+        - Critical Severity
+      rows:
+        - label: High Probability
+          values:
+            - text: AB 3030 AI disclosure compliance (CA)
+              tone: warning
+            - text: HIPAA Security Rule update; multi-state consent exposure; AI bias in notes
+              tone: negative
+            - text: Sharp / Abridge CIPA class action (100k+ patients; $500M+ theoretical)
+              tone: negative
+        - label: Medium Probability
+          values:
+            - text: FTC AI Comply scrutiny; CMS attestation requirements
+              tone: warning
+            - text: Cloud concentration risk; model accuracy gaps; EHR API vulnerabilities
+              tone: warning
+            - text: FDA SaMD classification; HIPAA OCR enforcement; Epic partnership termination
+              tone: negative
+        - label: Low Probability
+          values:
+            - text: —
+              tone: neutral
+            - text: Federal health data law supersession; clinician over-reliance; governance gaps
+              tone: warning
+            - text: CEO departure; vendor malpractice judgment; mass PHI breach
+              tone: negative
+    approximationNotes: >-
+      Probability and severity ratings are analyst assessments based on publicly available evidence. The matrix uses
+      ordinal scoring; numeric probability estimates are not available for most cells.
+    claimRefs:
+      - C233
+      - C238
+      - C240
+      - C242
+      - C253
+      - C260
+      - C272
+  - id: F702
+    title: Risk transmission map
+    type: dag
+    layout: wide
+    summary: >-
+      Directed acyclic graph showing how consent failures and AI accuracy errors propagate through legal, regulatory,
+      reputational, and financial exposure pathways, culminating in ARR impairment and valuation risk.
+    data:
+      nodes:
+        - id: n1
+          label: Consent Capture Failure
+          tone: negative
+        - id: n2
+          label: CIPA / CMIA Lawsuit
+          tone: negative
+        - id: n3
+          label: HIPAA OCR Investigation
+          tone: negative
+        - id: n4
+          label: Media Coverage / Reputational Damage
+          tone: warning
+        - id: n5
+          label: Customer Contract Risk
+          tone: warning
+        - id: n6
+          label: AI Hallucination / Omission
+          tone: negative
+        - id: n7
+          label: Clinical Documentation Error in EHR
+          tone: negative
+        - id: n8
+          label: Malpractice / Patient Harm Event
+          tone: negative
+        - id: n9
+          label: Vendor Liability Exposure
+          tone: negative
+        - id: n10
+          label: FDA SaMD Review Trigger
+          tone: negative
+        - id: n11
+          label: ARR Impairment / Valuation Risk
+          tone: negative
+      edges:
+        - from: n1
+          to: n2
+          label: alleges CIPA violation
+        - from: n1
+          to: n3
+          label: triggers investigation
+        - from: n2
+          to: n4
+          label: generates media coverage
+        - from: n2
+          to: n9
+          label: assigns vendor liability
+        - from: n3
+          to: n9
+          label: civil monetary penalties
+        - from: n4
+          to: n5
+          label: health system caution
+        - from: n5
+          to: n11
+          label: reduces renewal rate
+        - from: n6
+          to: n7
+          label: propagates into EHR record
+        - from: n7
+          to: n8
+          label: adverse patient outcome
+        - from: n8
+          to: n9
+          label: creates vendor exposure
+        - from: n8
+          to: n10
+          label: signals CDS classification risk
+        - from: n9
+          to: n11
+          label: impairs balance sheet
+        - from: n10
+          to: n11
+          label: requires product redesign
+    claimRefs:
+      - C233
+      - C238
+      - C239
+      - C248
+      - C249
+      - C240
+  - id: F703
+    title: Dependency map
+    type: dag
+    layout: wide
+    summary: >-
+      Directed acyclic graph showing Abridge's critical external dependencies and the competitive, regulatory, and
+      financial threat vectors that flow from each, with Epic highlighted as the highest-centrality node.
+    data:
+      nodes:
+        - id: d1
+          label: Abridge
+          tone: neutral
+        - id: d2
+          label: Epic Partnership (Abridge Inside)
+          tone: warning
+        - id: d3
+          label: Epic Native Ambient Scribe
+          tone: negative
+        - id: d4
+          label: Microsoft Nuance DAX Copilot
+          tone: negative
+        - id: d5
+          label: Google Cloud / LLM Infrastructure
+          tone: warning
+        - id: d6
+          label: Health System Customers (150+)
+          tone: neutral
+        - id: d7
+          label: CEO Shiv Rao (Clinical Vision)
+          tone: warning
+        - id: d8
+          label: HIPAA / FDA Regulatory Framework
+          tone: negative
+        - id: d9
+          label: Consent Litigation Exposure
+          tone: negative
+        - id: d10
+          label: ARR Growth and Valuation
+          tone: neutral
+      edges:
+        - from: d1
+          to: d2
+          label: primary distribution channel
+        - from: d2
+          to: d3
+          label: competed by Epic native
+        - from: d3
+          to: d6
+          label: diverts health systems
+        - from: d4
+          to: d6
+          label: enterprise incumbent alternative
+        - from: d1
+          to: d5
+          label: AI inference dependency
+        - from: d1
+          to: d7
+          label: key-person reliance
+        - from: d1
+          to: d8
+          label: compliance obligation
+        - from: d8
+          to: d9
+          label: consent violation exposure
+        - from: d9
+          to: d6
+          label: reduces customer confidence
+        - from: d6
+          to: d10
+          label: drives ARR
+        - from: d2
+          to: d10
+          label: enables growth
+        - from: d7
+          to: d10
+          label: sustains clinical credibility
+    claimRefs:
+      - C253
+      - C254
+      - C255
+      - C260
+      - C264
