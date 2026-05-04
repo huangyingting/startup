@@ -1,0 +1,887 @@
+schemaVersion: report-v2
+artifact: risks
+slug: 20260504115544-celestial-ai
+runDate: '2026-05-04'
+company:
+  name: Celestial AI
+acknowledgedWarnings:
+  - dimension: duplicateAnalysis
+    reason: >-
+      T701 (Comprehensive Risk Register) and F701 (Risk Heatmap) serve distinct purposes: T701 is a tabular enumeration
+      of risks with mitigation and open flags; F701 is a two-dimensional likelihood×impact heat map for visual severity
+      prioritization. T701 and F702 (Risk Transmission Map) serve distinct purposes: T701 enumerates discrete risks;
+      F702 is a causal DAG showing how root risks propagate to terminal outcomes. T701 and F703 (Risk Severity
+      Distribution) serve distinct purposes: T701 is a line-item risk register; F703 is a bar chart aggregating severity
+      by category for high-level stakeholder communication.
+chapter:
+  number: 7
+  title: Risks
+  summary: |
+    Celestial AI — now wholly owned by Marvell Technology as of February 2, 2026 — carries a
+    layered risk profile that spans technology execution, market timing, competitive displacement,
+    post-acquisition integration, financial engineering, regulatory exposure, and personnel
+    concentration. The $3.25B upfront acquisition of a pre-revenue startup means Marvell bears
+    the full cost before a single production shipment is recognized. Seven interlocking risk
+    categories define the chapter. Technology execution risk is led by TSMC CoWoS capacity
+    allocation (NVIDIA holds 60–70% of CoWoS-L) and the limited public yield data for EAM-based
+    silicon photonics chiplets at volume scale. Market timing risk turns on whether hyperscaler
+    CPO adoption commences in earnest in 2026 or slips to 2027 per LightCounting's caution.
+    Competitive risk is principally Ayar Labs (NVIDIA-backed, 8 Tbps TeraPHY UCIe chiplet,
+    mass production targeted mid-2026) and Intel OCI. Post-acquisition integration risk is
+    aggravated by a $2.25B earn-out structure whose milestone terms are not publicly disclosed,
+    and by the difficulty of retaining a 141–152-person specialist team inside a large public
+    company. Regulatory and legal risks include US export controls (EAR ECCN 3A090.a/4A090.a),
+    CFIUS obligations for any future foreign transactions touching Celestial AI IP, potential
+    title defects in the Rockley Photonics bankruptcy patent portfolio acquired in October 2024,
+    and the Taiwan geopolitical concentration risk that makes any TSMC disruption scenario
+    catastrophic. The aggregate risk rating is high. No thesis-break event has occurred, but
+    earn-out milestone ambiguity, Ayar Labs competitive momentum, and TSMC capacity allocation
+    are the three nearest-term monitoring priorities.
+sections:
+  - id: s701
+    title: Technology Execution Risks
+    body: |
+      Celestial AI's Photonic Fabric is a silicon photonics optical chiplet using electro-absorption
+      modulators (EAMs) manufactured on TSMC's advanced process nodes and co-packaged using CoWoS
+      advanced packaging. Four interlocking technology risks could impair the revenue ramp.
+
+      Manufacturing yield and capacity. Silicon photonics yield for EAM-based chiplets at high
+      volumes has not been publicly disclosed. Celestial AI has reported at least four successful
+      tapeouts and a pre-FEC bit error rate below 1e-8 at -10 dBm OMA input, which is consistent
+      with manufacturing-ready photonic yields, but production-volume yield curves remain private.
+      The more acute near-term constraint is TSMC CoWoS advanced packaging capacity: TSMC's
+      CoWoS lines are sold out through 2026, with NVIDIA reserving an estimated 60–70% of
+      CoWoS-L capacity for its Blackwell and Rubin GPU programs. Even as TSMC targets expanding
+      from approximately 70,000 to 130,000 CoWoS wafers per month by late 2026, independent
+      analysts project demand will continue to outpace supply. This creates reservation-timeline
+      risk for Marvell: any delay in securing a CoWoS slot will directly delay the Photonic Fabric
+      volume ramp and the $500M ARR target. TrendForce reported in April 2026 that CoWoS advanced
+      packaging wafer ASP is reportedly approaching 7nm wafer levels, significantly adding to unit
+      cost pressure.
+
+      Thermal management. Co-packaged optics place the optical engine in close physical proximity
+      to hot XPU die, creating a thermal co-management challenge that is non-trivial at scale.
+      EAMs offer a notable advantage here: Celestial AI's CTO Phil Winterbottom demonstrated at
+      Hot Chips 2025 that EAMs tolerate temperature excursions of up to 200°C per second and
+      operate over swings exceeding 85°C without degrading signal integrity — a direct advantage
+      versus ring modulators, which require fine thermal control. However, managing the combined
+      thermal envelope of XPU die and the laser pump source in the same advanced package remains
+      an active engineering problem.
+
+      Integration software and technology obsolescence. The firmware and software stack for
+      managing optical I/O across multi-rack AI clusters is immature industry-wide. Configuration
+      management, fault isolation, and dynamic reconfiguration of optical links add complexity
+      compared to copper. In addition, alternative photonics platforms — lithium niobate-on-insulator
+      (LNOI), indium phosphide (InP), and III-V compound semiconductors — continue to advance, with
+      LNOI particularly attracting research interest for its ultra-low insertion loss and high
+      bandwidth density. Should any alternative platform achieve CMOS-compatible volume manufacturing
+      at competitive cost, EAM silicon photonics could face technology obsolescence risk within a
+      5–7 year horizon.
+    claimRefs:
+      - C235
+      - C236
+      - C237
+      - C237
+      - C225
+      - C233
+      - C215
+      - C216
+      - C217
+      - C218
+  - id: s702
+    title: Market Timing and Adoption Risks
+    body: |
+      Marvell's earn-out structure — with $500M ARR targeted by fiscal year 2028 and $2B ARR for
+      the maximum payout — is tightly coupled to the pace of hyperscaler CPO adoption. Three
+      factors introduce meaningful timing risk.
+
+      CPO adoption timeline. LightCounting's July 2025 analysis of the first virtual CPO conference
+      characterized initial large-scale CPO deployments as beginning in 2026, but high-volume
+      rollout as more likely in 2027. This is consistent with the typical 24–36 month design-in
+      to production cycle for custom silicon at hyperscale, and with Marvell's own guidance for
+      de minimis Celestial AI revenue through fiscal year 2027. Any further slippage — hyperscaler
+      program delays, integration challenges, or procurement re-prioritization — would push
+      first material revenue toward FY2028, compressing the earn-out window.
+
+      Copper infrastructure longevity. Copper-based NVLink, InfiniBand, and Ethernet interconnect
+      systems have demonstrated reliability at 400G and are being upgraded to 800G. If hyperscalers
+      conclude that copper solutions are adequate for AI systems through the late 2020s — or if
+      AI cluster scaling plateaus below the level that requires optical-only interconnects —
+      the total addressable opportunity for Photonic Fabric could be materially smaller or arrive
+      later than Marvell's internal models assume.
+
+      AI capex concentration risk. Marvell's $500M ARR target implies that two to three hyperscaler
+      customers will account for the vast majority of early revenue. Any slowdown in AI infrastructure
+      capex by the leading hyperscalers — driven by macroeconomic pressures, capex discipline
+      cycles, or shift in AI workload characteristics — would directly reduce Photonic Fabric
+      demand. The concentration means that a single hyperscaler's production schedule delay
+      is effectively the company's revenue delay.
+    claimRefs:
+      - C219
+      - C234
+      - C235
+      - C235
+      - C220
+      - C233
+  - id: s703
+    title: Competitive and Strategic Risks
+    body: |
+      The optical chiplet market is nascent but rapidly contested. Marvell/Celestial AI faces
+      three credible competitive threats and one structural strategic risk from the NVIDIA
+      relationship.
+
+      Ayar Labs. Ayar Labs in March 2025 announced the TeraPHY, described as the industry's
+      first UCIe optical interconnect chiplet, achieving 8 Tbps bandwidth using a 16-wavelength
+      SuperNova light source. NVIDIA, AMD, and Intel have all invested in Ayar Labs. Critically,
+      NVIDIA's investment alignment means Ayar Labs has the potential to become the preferred
+      optical chiplet supplier for NVIDIA-ecosystem deployments. Ayar's collab with Global Unichip
+      Corp (GUC) — a key TSMC-ecosystem ASIC design services firm — targets hyperscale customers
+      and is designed to embed TeraPHY into reference AI designs. Ayar Labs targeted mass
+      production by mid-2026 with volumes scaling toward hundreds of millions of chiplets by 2028.
+      If Ayar Labs achieves this ramp, Marvell/Celestial AI could face competition at scale
+      earlier than the earn-out milestones require.
+
+      Intel OCI and Broadcom CPO. Intel's own optical connectivity (OCI) silicon photonics platform
+      serves Intel Gaudi customers, creating a captive competitive alternative. Broadcom's Tomahawk
+      6 switch with integrated CPO represents a competitive product at the AI switching layer.
+      Neither Intel OCI nor Broadcom CPO currently targets the same scale-up interconnect position
+      as Photonic Fabric, but the competitive pressure at adjacent layers constrains Marvell's
+      pricing power and ecosystem footprint.
+
+      NVLink Fusion strategic dependency. NVIDIA's $2B investment in Marvell (announced April 2026)
+      and the NVLink Fusion partnership simultaneously validates the optical interconnect thesis
+      and creates strategic dependency. If NVIDIA shifts its partnership terms, acquires an
+      alternative optical chiplet supplier, or advances its in-house photonics program, Marvell's
+      NVLink Fusion channel would be at risk. The partnership's commercial terms are not publicly
+      disclosed, creating opacity around exclusivity, pricing, and termination provisions.
+    claimRefs:
+      - C225
+      - C221
+      - C221
+      - C216
+      - C222
+      - C233
+  - id: s704
+    title: Post-Acquisition Integration Risks
+    body: |
+      Marvell completed the Celestial AI acquisition on February 2, 2026 after receiving FTC
+      early termination. The integration introduces four distinct risk vectors.
+
+      Earn-out milestone ambiguity. The acquisition included up to $2.25B in earn-out payments,
+      but the specific milestone structure — whether $500M ARR alone triggers full payout,
+      whether partial ARR triggers proportional payment, and what constitutes qualifying revenue —
+      has not been publicly disclosed. This ambiguity creates an information asymmetry between
+      Marvell and former Celestial AI shareholders and employees who hold earn-out interests.
+      Under California employment law, earn-out and vesting terms must be clearly defined, and
+      amendments require employee consent. Disputes over milestone measurement methodology or
+      revenue classification could generate litigation, increasing integration costs and management
+      distraction.
+
+      Talent retention. The Celestial AI team of 141–152 silicon photonics specialists was
+      assembled over several years in a talent market where fewer than 3,000 researchers globally
+      have deep EAM-based silicon photonics expertise. Post-acquisition equity conversions typically
+      accelerate vesting, reducing the forward retention incentive for key engineers. Marvell's
+      compensation structure, engineering culture, and product prioritization may differ
+      materially from the startup environment that attracted Celestial AI's founders and senior
+      technical staff.
+
+      R&D pace and organizational complexity. Integrating a 141-person team into Marvell's Data
+      Center Group means Celestial AI's roadmap must compete for engineering resources, budget
+      cycles, and executive attention within a larger organization. Marvell's prior acquisitions —
+      Inphi (2021), Innovium (2021), Avera (2019) — each absorbed significant integration effort.
+      The Inphi integration is widely cited as successful, but the pace of innovation in optical
+      chiplets is faster than in the Inphi-era DSP business, and any slowdown in the Photonic
+      Fabric roadmap could cede ground to Ayar Labs.
+
+      Competing priorities. Marvell's portfolio spans custom XPU programs (for Amazon, Microsoft,
+      Google), AsteraLabs-style interconnect products, storage controllers, carrier Ethernet,
+      and now Photonic Fabric. Resource allocation decisions could deprioritize Celestial AI
+      programs if near-term revenue opportunities elsewhere appear more certain.
+    claimRefs:
+      - C223
+      - C224
+      - C235
+      - C218
+      - C225
+      - C226
+  - id: s705
+    title: Financial and Investment Risks
+    body: |
+      Marvell paid $3.25 billion in upfront consideration — $1B cash plus 27.2 million shares at
+      $2.25B value — for a pre-revenue company with no production customers at the time of close.
+      The acquisition was priced at an estimated 6.5x–10x Celestial AI's last post-money valuation,
+      reflecting a substantial control premium. Financial risks cluster around three themes.
+
+      Return threshold. Breaking even on the $3.25B upfront investment likely requires Photonic
+      Fabric to contribute sustained ARR well above $500M with strong gross margins over a 3–5
+      year horizon. No pre-revenue optical chiplet company has previously generated this level
+      of ARR within the implied timeframe, making the investment dependent on scenarios with no
+      direct comparable precedent. If the technology adoption timeline slips by even 12–18 months,
+      Marvell would need to carry the goodwill on its balance sheet through an extended period
+      of de minimis revenue.
+
+      Earn-out opacity. The earn-out milestone terms are not publicly disclosed. It is unclear
+      whether the $500M cumulative ARR threshold triggers the full $2.25B earn-out, whether
+      it triggers a proportional tranche, or what the measurement period is. This opacity makes
+      it difficult for Marvell's shareholders — or former Celestial AI stakeholders — to model
+      expected total acquisition cost. The AWS warrant (1,045,171 MRVL shares vesting on Photonic
+      Fabric cumulative purchases through December 2030) adds a further variable cost if Amazon
+      becomes a major customer.
+
+      Goodwill impairment risk. If AI capex contracts broadly — due to macroeconomic pressures,
+      hyperscaler capex discipline cycles, or a slowdown in frontier model training demand —
+      Marvell could be required to recognize a material goodwill impairment on the $3.25B
+      purchase price. Given Celestial AI was pre-revenue at acquisition, even modest adverse
+      changes in the CPO market outlook could trigger an impairment review under ASC 350.
+      Marvell's own 10-K risk factors explicitly cite integration, achieve-expected-benefits,
+      and market-timing risks for acquisitions.
+    claimRefs:
+      - C227
+      - C227
+      - C228
+      - C219
+      - C233
+      - C229
+  - id: s706
+    title: Regulatory and Legal Risks
+    body: |
+      Regulatory and legal risk for Marvell/Celestial AI spans four distinct areas: US export
+      controls, foreign investment review, intellectual property title, and Taiwan geopolitical
+      concentration.
+
+      US export controls (EAR). The US Bureau of Industry and Security maintains Export
+      Administration Regulations (EAR) covering advanced computing integrated circuits under
+      ECCNs 3A090.a and 4A090.a. The Biden Administration's January 2025 AI Diffusion Rule —
+      which would have imposed worldwide license requirements on exports of advanced computing
+      ICs — was rescinded by the Trump Administration in May 2025 before taking effect, but
+      BIS indicated it would strengthen targeted chip controls. As of May 2026, preexisting EAR
+      controls remain in force for exports to China and Macau, and the regulatory framework
+      continues to evolve. Marvell, as the acquirer of Celestial AI, must maintain a robust
+      export compliance program to ensure Photonic Fabric chiplets and associated technology are
+      not transferred to restricted end-users or nations without appropriate licenses. Legal
+      analysis by Blank Rome LLP (January 2026) documents four key BIS updates on advanced
+      computing and AI export controls that apply to this technology sector. Failure to comply
+      could result in fines, loss of export privileges, or reputational damage.
+
+      CFIUS. The Committee on Foreign Investment in the United States reviews transactions that
+      could result in foreign control of or certain non-controlling investments in TID US businesses
+      (Technology, Infrastructure, Data). Celestial AI's silicon photonics IP qualifies as a
+      critical technology. Any future secondary transaction — such as a partial asset sale,
+      licensing arrangement with a foreign entity, or change of control of Marvell itself —
+      that involves the Celestial AI IP portfolio would likely require CFIUS filing or notice.
+      The US Treasury CFIUS FAQ confirms that mandatory filings apply when a foreign government
+      holds substantial interest in the acquiring party and the target is a critical-technology
+      business. Outbound investment rules effective January 2, 2025, add an additional layer:
+      US persons investing in Chinese entities working in semiconductors or AI are subject to
+      notification or prohibition requirements.
+
+      IP title risk (Rockley Photonics). In October 2024, Celestial AI acquired Rockley Photonics'
+      silicon photonics patent portfolio — approximately 200 global patents covering EAM technology,
+      optoelectronic systems-in-package, and optical switches — for $20 million in a distressed
+      sale from Rockley's post-Chapter 11 restructuring. Distressed IP acquisitions from bankruptcy
+      carry a risk that pre-existing licenses granted to third parties by the debtor may have
+      survived the bankruptcy sale and encumber the acquired patents. Additionally, competing
+      patent claims from other silicon photonics players (Intel, Broadcom, II-VI / Coherent,
+      Lumentum) could generate interference or invalidity proceedings.
+
+      Taiwan geopolitical concentration. TSMC manufactures both the Photonic Fabric silicon
+      photonics die and performs CoWoS advanced packaging. Over 90% of the world's most advanced
+      semiconductor capacity is in Taiwan, and any military, political, or natural-disaster
+      scenario disrupting TSMC's operations would immediately halt Photonic Fabric production
+      with no short-term alternative. TSMC's Arizona fab is not expected to have advanced packaging
+      capacity at meaningful scale before 2028. US-China tensions have escalated, and the
+      combination of export control retaliation (China's gallium and germanium restrictions),
+      military rhetoric, and the absence of a viable alternative foundry for Celestial AI's
+      EAM silicon photonics process node make this risk systemic and unmitigatable in the near
+      term.
+    claimRefs:
+      - C218
+      - C235
+      - C230
+      - C226
+      - C231
+  - id: s707
+    title: Personnel and Organizational Risks
+    body: |
+      Celestial AI's competitive position rests disproportionately on a small, highly specialized
+      team. Three personnel risk dimensions are material.
+
+      Key-person concentration. Dave Lazovsky (CEO, co-founder) is the primary external face
+      and strategic architect of the Photonic Fabric program. Phil Winterbottom (CTO, co-founder)
+      is the principal technical architect; his Hot Chips 2025 presentation detailing in-die
+      optical I/O design choices demonstrated technical depth that would take years to replace.
+      The departure of either co-founder within the first 12–24 months post-acquisition would
+      represent a severe organizational disruption: loss of customer relationships, technology
+      vision continuity, and the institutional knowledge embedded in the EAM architecture choices.
+      Marvell's standard retention mechanisms (RSU refreshes, performance bonuses) are typically
+      less compelling for co-founders who have already achieved a significant liquidity event.
+
+      Team depth and replicability. The Celestial AI team of 141–152 specialists spans EAM
+      process engineering, silicon photonics design, advanced packaging co-design, optical I/O
+      firmware, and system integration. This represents a substantial fraction of the global
+      talent pool in this specialty; recruiting even 10–15 senior replacements in silicon photonics
+      would take 18–24 months. If post-acquisition attrition exceeds normal levels — driven by
+      earn-out frustration, cultural friction, or competitor recruiting (particularly by Ayar Labs,
+      which is aggressively hiring) — the technology execution timeline would slip.
+
+      Historical M&A precedent. Marvell's acquisition of Inphi (completed April 2021, $10B) is
+      the closest comparable integration. Marvell retains Inphi's Dr. Ford Tamer on its board,
+      and the Inphi DSP products are a significant revenue contributor. However, post-acquisition
+      attrition rates from the Inphi integration were not publicly disclosed, leaving a key
+      diligence gap for assessing Marvell's ability to retain a smaller, more technically
+      concentrated team in a faster-moving technology category.
+    claimRefs:
+      - C218
+      - C232
+      - C233
+tables:
+  - id: T701
+    title: Comprehensive Risk Register
+    columns:
+      - Risk ID
+      - Category
+      - Risk Statement
+      - Likelihood
+      - Impact
+      - Mitigation
+      - Open Flag
+    rows:
+      - - R01
+        - Technology
+        - TSMC CoWoS capacity allocation delays Photonic Fabric volume ramp
+        - H
+        - H
+        - TSMC VentureTech Alliance investment; NVIDIA NVLink Fusion priority
+        - OPEN
+      - - R02
+        - Technology
+        - EAM silicon photonics yield at production volume not yet demonstrated publicly
+        - M
+        - H
+        - 4 successful tapeouts; BER <1e-8 demonstrated
+        - OPEN
+      - - R03
+        - Market/Adoption
+        - CPO hyperscaler adoption slips from 2026 to 2027 or beyond
+        - M
+        - H
+        - Amazon warrant; multi-hyperscaler design-in activity
+        - OPEN
+      - - R04
+        - Competitive
+        - Ayar Labs TeraPHY achieves mass production and displaces Marvell in NVIDIA ecosystem
+        - M
+        - H
+        - NVLink Fusion partnership; differentiated EAM thermal advantage
+        - OPEN
+      - - R05
+        - Integration
+        - Earn-out milestone ambiguity triggers litigation with former shareholders
+        - L
+        - M
+        - Legal counsel; clear earn-out documentation
+        - OPEN
+      - - R06
+        - Financial
+        - AI capex pullback forces Marvell goodwill impairment on $3.25B purchase
+        - L
+        - H
+        - Diversified hyperscaler customer pipeline; AWS warrant
+        - OPEN
+      - - R07
+        - Regulatory
+        - US export control violation due to Photonic Fabric shipment to restricted entity
+        - L
+        - H
+        - BIS export compliance program; Marvell established compliance procedures
+        - OPEN
+      - - R08
+        - Personnel
+        - Co-founder departure (Lazovsky, Winterbottom) within 18 months post-acquisition
+        - M
+        - H
+        - Retention equity; board roles; earn-out incentive alignment
+        - OPEN
+    notes: >-
+      Likelihood and Impact use H/M/L ordinal scale. Open Flag indicates no confirmed mitigation has been validated at
+      production scale. Risk register is partial; additional operational and supply-chain risks are enumerated in
+      T702–T704.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Risk register covers top-severity risks across all seven categories based on public evidence. Operational
+        sub-risks, supplier-specific risks, and confidential milestone terms are not enumerable from public sources
+        alone.
+    claimRefs:
+      - C236
+      - C219
+      - C225
+      - C216
+      - C223
+      - C227
+      - C218
+      - C218
+  - id: T702
+    title: Regulatory / Legal Risk Register
+    columns:
+      - Rule / Law / Case
+      - Jurisdiction
+      - Risk Statement
+      - Likelihood
+      - Severity
+      - Mitigation
+      - Residual Exposure
+      - Diligence Path
+    rows:
+      - - EAR ECCN 3A090.a / 4A090.a
+        - United States
+        - Unlicensed export of Photonic Fabric chiplets or technology to restricted entities
+        - M
+        - Critical
+        - BIS export compliance program; customer screening
+        - Evolving regulatory landscape; policy shifts expected
+        - Obtain full BIS export compliance review of Celestial AI IP and product classification post-acquisition
+      - - FIRRMA / CFIUS 31 CFR Part 800
+        - United States
+        - Future foreign investment in Marvell touching Celestial AI IP requires CFIUS notice or filing
+        - L
+        - High
+        - Marvell CFIUS compliance procedures; deal counsel review
+        - Any secondary transaction with non-US parties
+        - Conduct mandatory filing assessment for any future licensing or asset transaction involving Celestial AI IP
+      - - Rockley Photonics Ch.11 patent sale
+        - United States
+        - Pre-existing licenses survived bankruptcy; third-party enforcement rights encumber acquired patents
+        - M
+        - High
+        - Legal due diligence on Rockley IP title at acquisition
+        - Title completeness not publicly confirmed
+        - Obtain independent IP title opinion covering all 200+ Rockley patents; identify surviving licenses
+      - - US Outbound Investment Rule (Jan 2025)
+        - United States
+        - US investors including Marvell and its VCs restricted from investing in Chinese AI semiconductor entities
+        - L
+        - Medium
+        - Davis Polk outbound investment analysis; compliance screening
+        - Ongoing monitoring required as rules are enforced
+        - Monitor Treasury/OFAC guidance; maintain outbound investment screening procedures
+      - - California Employment Law (Labor Code)
+        - California, USA
+        - Earn-out terms disputed; amendments to vesting without consent expose Marvell to wage claims
+        - M
+        - Medium
+        - Clear acquisition documentation; employee consent procedures
+        - Milestone ambiguity creates dispute surface
+        - Obtain legal opinion on earn-out enforceability under California Labor Code; formalize milestone definitions
+    notes: >-
+      Severity uses Critical/High/Medium/Low ordinal scale for this table. Rows are ordered by severity (Critical
+      first). All risks are assessed as of run date 2026-05-04.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Table enumerates primary regulatory and legal risks based on public BIS/CFIUS/Treasury regulatory publications,
+        law firm analyses, and court records. Private contractual terms and undisclosed licensing arrangements cannot be
+        enumerated from public sources.
+    claimRefs:
+      - C218
+      - C235
+      - C230
+      - C226
+      - C231
+      - C225
+  - id: T703
+    title: Competitive Risk Register
+    columns:
+      - Competitor
+      - Technology Approach
+      - Customer Overlap
+      - Threat Vector
+      - Likelihood
+      - Impact
+      - Mitigation
+    rows:
+      - - Ayar Labs
+        - UCIe TeraPHY optical chiplet, silicon photonics, 16-wavelength SuperNova source
+        - NVIDIA-ecosystem hyperscalers; Google; AMD XPU
+        - Displaces Marvell/Celestial AI as preferred NVIDIA ecosystem optical chiplet supplier
+        - H
+        - H
+        - >-
+          NVLink Fusion partnership; EAM thermal differentiation; Amazon and Microsoft channel lock-in via Marvell
+          custom XPU
+      - - Intel OCI
+        - Intel silicon photonics (monolithic); Gaudi integration
+        - Intel Gaudi customers; Microsoft (Azure Maia alternative)
+        - Captive optical solution for Intel Gaudi cluster designs; reduces Marvell addressable market
+        - M
+        - M
+        - Photonic Fabric targets non-Intel XPU architectures; Marvell custom silicon channel
+      - - Broadcom CPO
+        - Tomahawk 6 with co-packaged optics; switching layer
+        - Hyperscaler AI switching fabric (Amazon, Google, Meta)
+        - Competes at AI switch layer; limits Photonic Fabric addressable scale-up opportunity
+        - M
+        - M
+        - >-
+          Photonic Fabric targets scale-up (chiplet-to-chiplet); Broadcom CPO targets scale-out (switch); differentiated
+          layers
+      - - Lumentum / Coherent
+        - Laser modules, indium phosphide components, pluggable optics
+        - Hyperscaler datacenter networking
+        - Rival laser supply ecosystem could enable alternative CPO designs not dependent on Marvell/Celestial AI
+        - L
+        - M
+        - Marvell has component supply agreements; laser source is a separate supplier not directly competing
+    notes: >-
+      Likelihood and Impact use H/M/L ordinal scale. Competitive threat assessment is based on publicly disclosed
+      products, partnerships, and funding as of 2026-05-04.
+    claimRefs:
+      - C225
+      - C221
+      - C221
+      - C216
+      - C222
+      - C233
+  - id: T704
+    title: Technology Risk Deep-Dive
+    columns:
+      - Component / Process
+      - Risk Description
+      - Root Cause
+      - Likelihood
+      - Impact
+      - Mitigation Gap
+    rows:
+      - - EAM silicon photonics manufacturing yield
+        - >-
+          Production-volume yield curves not publicly disclosed; yield loss at chiplet bonding could affect unit
+          economics
+        - Novel process; EAM fabrication requires tight epi-layer control and low-defect silicon photonics process
+        - M
+        - H
+        - No independent third-party yield audit available; diligence dependent on Marvell internal data
+      - - TSMC CoWoS capacity allocation
+        - >-
+          NVIDIA holds majority of CoWoS-L capacity through 2026; Marvell must reserve slots in advance or face ramp
+          delays
+        - Structural capacity constraint from AI chip demand surge; TSMC expanding but demand exceeds supply
+        - H
+        - H
+        - TSMC VentureTech investment signals preferential access, but no public capacity reservation confirmed
+      - - Thermal co-management in CPO
+        - Optical engine co-located with 500W+ XPU die; laser pump source adds additional heat in constrained package
+        - Physical proximity of optical and electronic components at high power densities
+        - M
+        - M
+        - EAM tolerance advantage (>85°C range) vs ring modulators; detailed thermal solution not publicly disclosed
+      - - Optical I/O firmware and software integration
+        - >-
+          No standard management framework for optical I/O in AI clusters; configuration, fault isolation, and telemetry
+          require custom stack
+        - Industry-wide immaturity; no IEEE or OCP standard for in-package optical I/O management as of 2026
+        - H
+        - M
+        - No publicly disclosed software framework; magnitude of integration complexity unknown
+      - - Alternative platform obsolescence
+        - >-
+          Lithium niobate-on-insulator (LNOI) and InP platforms advancing rapidly; could challenge EAM at 400G+ per
+          chiplet
+        - LNOI offers lower insertion loss and wider bandwidth; InP has higher modulation efficiency
+        - L
+        - M
+        - Celestial AI's 200+ patent portfolio creates IP moat; timeline for LNOI at CMOS-compatible volumes is 5+ years
+    notes: >-
+      Technical risk assessment based on publicly disclosed tapeout data (Hot Chips 2025), TSMC capacity reporting
+      (TrendForce, CNBC, April 2026), and photonics industry analysis. Internal Marvell yield and thermal validation
+      data are not available for public review.
+    claimRefs:
+      - C235
+      - C236
+      - C237
+      - C237
+      - C225
+      - C233
+      - C215
+      - C216
+      - C217
+      - C218
+  - id: T705
+    title: Key Person Dependency Register
+    columns:
+      - Person
+      - Role
+      - Organizational Dependencies
+      - Departure Impact
+      - Mitigation
+      - Status
+    rows:
+      - - Dave Lazovsky
+        - CEO, Co-Founder
+        - >-
+          Hyperscaler customer relationships; M&A process leadership; Marvell DCG strategy alignment; earn-out milestone
+          advocacy
+        - >-
+          Severe — loss of primary customer relationship owner and strategic vision holder; would require 12–18 months
+          to stabilize
+        - Retention equity; board or advisory role at Marvell; earn-out incentive aligned to multi-year milestones
+        - Active; retention terms not publicly disclosed
+      - - Phil Winterbottom
+        - CTO, Co-Founder
+        - >-
+          EAM architecture design decisions; TSMC co-development partnership; Hot Chips and OFC technical presentations;
+          patents
+        - >-
+          Severe — irreplaceable technical depth in EAM silicon photonics process and co-packaging architecture; 3–5
+          year replacement timeline
+        - Retention equity; technical fellow role; continued conference presence signals retention
+        - Active; retention terms not publicly disclosed
+      - - Silicon Photonics Engineering Team
+        - 141–152 specialists
+        - EAM fabrication, co-packaging, optical link design, firmware integration, systems characterization
+        - >-
+          High — loss of >15% of the team would materially impair R&D velocity; global silicon photonics talent pool is
+          small
+        - Standard Marvell RSU refresh; competitive compensation; mission-driven culture retention
+        - Partially mitigated — individual engineer retention not publicly tracked
+      - - TSMC Process Co-Development Team
+        - TSMC internal (external dependency)
+        - EAM process node co-development; CoWoS advanced packaging design rules; yield improvement cycles
+        - >-
+          High — process co-development requires ongoing TSMC collaboration; cannot be replicated at another foundry on
+          short notice
+        - >-
+          TSMC VentureTech Alliance investment signals deep partnership; but Marvell does not control TSMC resource
+          allocation
+        - External dependency; not under Marvell direct control
+    notes: >-
+      Retention terms for named individuals are not publicly disclosed. Severity assessments are qualitative based on
+      role criticality and public evidence of depth and reach.
+    claimRefs:
+      - C218
+      - C232
+      - C233
+figures:
+  - id: F701
+    title: Risk Heatmap
+    type: matrix
+    layout: wide
+    summary: |
+      Two-dimensional risk heatmap mapping likelihood (rows) against impact (columns) for the
+      principal Celestial AI / Marvell risk factors identified in Chapter 7. Cell text identifies
+      the primary risk; tone encodes residual severity after available mitigations are applied.
+      Critical cells (negative tone, high likelihood × high/critical impact) are the most
+      immediate monitoring priorities.
+    data:
+      columns:
+        - Low Impact
+        - Medium Impact
+        - High Impact
+        - Critical Impact
+      rows:
+        - label: High Likelihood
+          values:
+            - null
+            - CPO firmware/software integration complexity
+            - CoWoS capacity allocation (NVIDIA priority)
+            - null
+        - label: Medium Likelihood
+          values:
+            - null
+            - Earn-out milestone dispute; AI capex pullback
+            - Ayar Labs competitive displacement; co-founder departure; EAM yield at volume
+            - Taiwan geopolitical contingency (TSMC disruption)
+        - label: Low Likelihood
+          values:
+            - null
+            - Broadcom CPO competition; Intel OCI overlap
+            - Goodwill impairment; BIS export control violation
+            - CFIUS block on Marvell transaction; IP title defect (Rockley)
+        - label: Very Low Likelihood
+          values:
+            - null
+            - California wage claim (earn-out dispute)
+            - Technology obsolescence (LNOI/InP)
+            - null
+    approximationNotes: >-
+      Likelihood and impact are qualitative ordinal assessments derived from public evidence. No actuarial or
+      quantitative probability model underlies the placements.
+    claimRefs:
+      - C236
+      - C237
+      - C219
+      - C225
+      - C216
+      - C223
+      - C227
+      - C218
+      - C226
+      - C218
+  - id: F702
+    title: Risk Transmission Map
+    type: dag
+    layout: wide
+    summary: |
+      Directed acyclic graph showing how primary risk factors propagate through operational
+      and financial pathways into terminal adverse outcomes for Marvell's Celestial AI thesis.
+      Each node represents a risk factor or outcome; directed edges indicate the causal
+      transmission path. Multiple converging paths to revenue-delay and goodwill-impairment
+      confirm those as the highest-priority monitoring outcomes.
+    data:
+      nodes:
+        - id: tsmc-capacity
+          label: TSMC CoWoS Capacity Crunch
+          category: risk
+        - id: tech-delay
+          label: Photonic Fabric Volume Ramp Delay
+          category: risk
+        - id: cpo-adoption-slow
+          label: CPO Adoption Slower Than Forecast
+          category: risk
+        - id: ayar-displacement
+          label: Ayar Labs Competitive Displacement
+          category: risk
+        - id: key-person-loss
+          label: Co-Founder / Key Engineer Departure
+          category: risk
+        - id: export-violation
+          label: BIS Export Control Violation
+          category: risk
+        - id: taiwan-contingency
+          label: Taiwan Geopolitical Disruption
+          category: risk
+        - id: revenue-delay
+          label: Celestial AI Revenue Ramp Delayed
+          category: intermediate
+        - id: hyperscaler-loss
+          label: Hyperscaler Customer Loss
+          category: intermediate
+        - id: earnout-miss
+          label: Earn-Out Milestone Miss
+          category: outcome
+        - id: goodwill-impairment
+          label: Marvell Goodwill Impairment ($3.25B)
+          category: outcome
+        - id: regulatory-penalty
+          label: Regulatory Penalty / Export Ban
+          category: outcome
+      edges:
+        - from: tsmc-capacity
+          to: tech-delay
+        - from: taiwan-contingency
+          to: tech-delay
+        - from: key-person-loss
+          to: tech-delay
+        - from: tech-delay
+          to: revenue-delay
+        - from: cpo-adoption-slow
+          to: revenue-delay
+        - from: ayar-displacement
+          to: hyperscaler-loss
+        - from: hyperscaler-loss
+          to: revenue-delay
+        - from: revenue-delay
+          to: earnout-miss
+        - from: revenue-delay
+          to: goodwill-impairment
+        - from: export-violation
+          to: regulatory-penalty
+    approximationNotes: >-
+      Edge weights are qualitative. All causal paths are based on logical inference from published evidence; no
+      quantitative probability is implied by the DAG structure.
+    claimRefs:
+      - C236
+      - C219
+      - C225
+      - C233
+      - C226
+      - C227
+      - C228
+      - C218
+      - C226
+      - C218
+  - id: F703
+    title: Risk Severity Distribution by Category
+    type: bar
+    layout: standard
+    summary: |
+      Composite risk severity score (0–10 ordinal scale) for each of the seven risk categories
+      covered in Chapter 7. Scores reflect the combination of likelihood, impact, and mitigation
+      maturity assessed from public evidence. Personnel/organizational and financial/investment
+      risks score highest due to key-person concentration and the asymmetric $3.25B upfront
+      commitment against a pre-revenue baseline. Technology execution and competitive risks
+      score high due to TSMC capacity constraints and Ayar Labs momentum.
+    data:
+      items:
+        - label: Technology Execution
+          value: 7
+        - label: Market / Adoption Timing
+          value: 6
+        - label: Competitive / Strategic
+          value: 7
+        - label: Post-Acquisition Integration
+          value: 6
+        - label: Financial / Investment
+          value: 8
+        - label: Regulatory / Legal
+          value: 6
+        - label: Personnel / Organizational
+          value: 8
+    approximationNotes: >-
+      Scores are qualitative ordinal estimates (0–10) based on public evidence synthesis. No actuarial model or
+      quantitative risk weighting underlies these values.
+    claimRefs:
+      - C236
+      - C219
+      - C225
+      - C223
+      - C227
+      - C218
+      - C218
+callouts:
+  - calloutType: risk
+    title: Earn-Out Opacity Is a Governance Gap
+    body: >-
+      The $2.25B earn-out milestone structure has not been publicly disclosed in sufficient detail to determine whether
+      the widely cited $500M ARR target by FY2028 actually triggers full payment. This opacity creates information
+      asymmetry between Marvell shareholders, former Celestial AI investors, and retained employees — all of whom have
+      different economic stakes in milestone achievement. Marvell should provide clearer milestone disclosure in its
+      FY2026 10-K.
+    claimRefs:
+      - C223
+      - C219
+  - calloutType: risk
+    title: TSMC Sole-Foundry Concentration Is Unmitigatable Near-Term
+    body: >-
+      Celestial AI's EAM silicon photonics process is manufacturable only at TSMC today, and TSMC's CoWoS advanced
+      packaging capacity is heavily allocated to NVIDIA. No credible alternative foundry can replicate the required
+      combination of advanced node silicon photonics plus CoWoS-class packaging before 2028 at the earliest. This makes
+      TSMC a single-point-of-failure for the entire Photonic Fabric program. Taiwan geopolitical risk — while low
+      probability — is catastrophic-magnitude if realized.
+    claimRefs:
+      - C236
+      - C216
+      - C226
+  - calloutType: recommendation
+    title: Prioritize Earn-Out Milestone Clarification and Retention Contracts
+    body: >-
+      The two most actionable near-term risk mitigations are: (1) Marvell should publicly clarify the earn-out milestone
+      structure in its next 10-K or investor day materials to reduce governance opacity; (2) Marvell should confirm
+      retention contract terms for Dave Lazovsky and Phil Winterbottom with multi-year performance equity tied to
+      technical milestones, not just Marvell MRVL stock price. Without confirmed retention, key-person departure risk is
+      effectively open.
+    claimRefs:
+      - C223
+      - C218
+      - C232
+  - calloutType: insight
+    title: Ayar Labs Is the Nearest-Term Competitive Monitoring Signal
+    body: >-
+      Ayar Labs' mid-2026 mass production target and GUC design collab make it the highest- priority competitive
+      monitoring signal. If Ayar Labs achieves CoWoS integration and NVIDIA confirms TeraPHY as the NVLink
+      Fusion-compatible optical chiplet, Marvell's Celestial AI differentiation thesis weakens materially. The NVIDIA
+      NVLink Fusion partnership does not guarantee exclusivity and its commercial terms are not public.
+    claimRefs:
+      - C225
+      - C221
+      - C216
+      - C233

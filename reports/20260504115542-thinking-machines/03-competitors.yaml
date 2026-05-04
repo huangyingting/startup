@@ -1,0 +1,650 @@
+schemaVersion: report-v2
+artifact: competitors
+slug: 20260504115542-thinking-machines
+runDate: '2026-05-04'
+company:
+  name: Thinking Machines Lab
+chapter:
+  number: 3
+  title: Competitors
+  summary: |
+    Thinking Machines Lab's Tinker competes in a crowded fine-tuning and AI customization
+    landscape that spans frontier model labs (OpenAI, Anthropic, Google DeepMind),
+    open-source ecosystems (Hugging Face, Meta Llama), developer-focused infrastructure
+    providers (Together AI, Replicate), and enterprise fine-tuning specialists (Predibase,
+    MosaicML/Databricks). Cloud incumbents (AWS SageMaker, Google Vertex AI, Azure ML) hold
+    enterprise distribution advantages. TML's differentiation is its access to very large open-
+    weight models (235B+ MoE), low-level API primitives that preserve algorithmic control, and a
+    research-community go-to-market. Key competitive risks include: (1) cloud incumbents expanding
+    large-model fine-tuning support, (2) Hugging Face's extensive open-source tooling (free),
+    (3) Together AI's aggressive open-source pricing ($0.48/M tokens), and (4) the trivially low
+    switching cost of LoRA adapter portability. TML's most defensible moat in the near term is
+    model access (Qwen-235B-A22B) and founder credibility with research institutions.
+sections:
+  - id: s301
+    title: Competitive Landscape Overview
+    body: |
+      The LLM fine-tuning competitive landscape can be organized in five layers. At the top are
+      frontier model lab competitors — OpenAI, Anthropic, and Google DeepMind — that offer both
+      foundation models and fine-tuning APIs as part of broader AI platform strategies. Beneath
+      them is the open-source ecosystem layer, dominated by Hugging Face (model hub, PEFT
+      library, AutoTrain) and Meta (Llama model releases with community fine-tuning support).
+      The third layer is developer-focused infrastructure: Together AI, Replicate, and Modal
+      that offer GPU-as-a-service or fine-tuning APIs on open-weight models. The fourth layer
+      is enterprise-specialized fine-tuning: Predibase (LoRA-first, enterprise) and
+      MosaicML/Databricks (full pretraining and fine-tuning pipelines for enterprises). Cloud
+      incumbent fine-tuning (AWS SageMaker, Google Vertex AI, Azure ML) forms a fifth category
+      with massive distribution power but less specialized fine-tuning depth.
+
+      The status quo — self-hosted fine-tuning using open-source frameworks (Axolotl,
+      LLaMA-Factory, Unsloth, Transformers PEFT) on self-managed GPU clusters — is TML's
+      most important indirect competitor. A significant fraction of the research market TML
+      is targeting already fine-tunes models using these tools without any managed service.
+      The question is whether TML's infrastructure abstraction (removing scheduling,
+      resource allocation, and failure recovery) is worth the transition from free self-hosted
+      to paid managed service, especially given that pricing has not been announced.
+
+      Safe Superintelligence (SSI, founded by Ilya Sutskever) is not a direct competitor in
+      the near term: it has no commercial product and focuses on a long-horizon safety research
+      mission incompatible with managed fine-tuning services.
+    claimRefs:
+      - C067
+      - C067
+      - C078
+      - C079
+      - C080
+      - C086
+      - C087
+      - C088
+  - id: s302
+    title: Frontier Model Lab Competitors
+    body: |
+      OpenAI holds the most formidable competitive position by scale. Its $500 billion valuation,
+      $12-20 billion revenue in 2025, and 700 million weekly ChatGPT users give it distribution
+      and brand advantages that no new entrant can quickly replicate. OpenAI's fine-tuning API
+      supports GPT-4o and GPT-4o-mini, with training costs of $25 and $3 per million tokens
+      respectively, and inference at a premium above base-model rates. The key limitation is that
+      OpenAI's fine-tuning is restricted to its proprietary models — users cannot fine-tune
+      open-weight models like Qwen-235B through OpenAI's infrastructure, which is TML's most
+      direct differentiation.
+
+      Anthropic's trajectory is equally striking: it reached a $380 billion valuation by February
+      2026 after a Series G, with a revenue run-rate of $30+ billion by March 2026. Anthropic has
+      over 300,000 business customers and eight of the Fortune 10 as clients. Critically, Anthropic
+      does not currently offer a public fine-tuning API for Claude models, meaning it is not a
+      direct Tinker competitor in the fine-tuning infrastructure market. It competes for the
+      broader "where do organizations run AI experiments" wallet share.
+
+      Google DeepMind's Gemini models are available through Vertex AI, which provides fine-tuning
+      capabilities integrated with Google Cloud's enterprise IAM, security, and compliance
+      infrastructure. This is a material competitive threat for enterprise buyers already committed
+      to GCP infrastructure stacks, but is less relevant for TML's current research-user go-to-market.
+    claimRefs:
+      - C067
+      - C067
+      - C068
+      - C068
+      - C069
+      - C070
+      - C071
+      - C081
+      - C082
+      - C090
+  - id: s303
+    title: Open-Source Ecosystem and Developer Infrastructure
+    body: |
+      Hugging Face is TML's most underappreciated competitor. With a $7-8.5 billion valuation,
+      13 million users, and $221 million in estimated 2025 revenue, Hugging Face has built the
+      de facto standard for open-source model hosting and fine-tuning. Its PEFT library provides
+      free LoRA, QLoRA, and adapter implementations widely used in the research community. Hugging
+      Face AutoTrain provides a no-code/low-code interface for fine-tuning. Nvidia invested $500
+      million in Hugging Face in January 2026, strengthening its compute access. The key
+      limitation is that Hugging Face does not provide managed GPU scheduling and failure recovery
+      at the scale TML targets — it is primarily a tooling and hosting layer, not a distributed
+      training orchestrator for very large models.
+
+      Together AI ($3.3 billion valuation, $120 million projected 2025 revenue) is the most direct
+      pricing competitor: it charges $0.48 per million tokens for Llama 3.1 8B fine-tuning and
+      offers a full API-first experience for open-source model fine-tuning. Together AI's pricing
+      is approximately 50x lower than OpenAI GPT-4o fine-tuning on a per-token basis. Predibase
+      offers enterprise LoRA fine-tuning at $0.5-8 per million tokens with per-seat enterprise
+      subscription options; its architecture is technically similar to Tinker's LoRA-based approach,
+      making it the closest functional competitor on the commercial side. The key differentiator
+      is that neither Together AI nor Predibase currently supports very large MoE models in the
+      235B parameter range that TML's infrastructure is designed for.
+    claimRefs:
+      - C072
+      - C073
+      - C074
+      - C075
+      - C076
+      - C077
+      - C073
+      - C072
+      - C076
+      - C093
+  - id: s304
+    title: Cloud Incumbents and Self-Hosted Alternatives
+    body: |
+      AWS SageMaker, Google Vertex AI, and Azure ML represent TML's most formidable long-term
+      competitive threats due to their existing enterprise procurement relationships. These
+      platforms offer fine-tuning for open-source models as features within broader MLOps
+      platforms, bundled with compliance certifications (SOC2, HIPAA, FedRAMP), data residency
+      controls, and enterprise support SLAs that TML cannot match at its current stage.
+      Enterprise buyers who have already committed to GCP, AWS, or Azure infrastructure face
+      high switching costs to adopt a new vendor. The risk is not that these incumbents are better
+      at fine-tuning today, but that they will expand their fine-tuning support to cover very
+      large models over time, eliminating TML's technical differentiation.
+
+      Meta's open-source strategy is the most structurally important indirect competitive force.
+      By releasing Llama models as open-weight with permissive licensing, Meta creates a
+      sustainable supply of customizable foundation models that reduces buyer dependency on any
+      single fine-tuning API vendor. This benefits TML (it needs open models to serve) but also
+      benefits every competitor equally. Meta's AI studio and fine-tuning offerings remain
+      rudimentary; its strategic goal is ecosystem dominance via open-source adoption rather than
+      managed service revenue. MosaicML (acquired by Databricks for $1.3 billion in 2023)
+      provides enterprise-grade LLM pretraining and fine-tuning, but targets organizations with
+      pretraining-scale compute budgets rather than TML's research fine-tuning customer.
+    claimRefs:
+      - C078
+      - C079
+      - C080
+      - C084
+      - C086
+      - C088
+      - C089
+      - C070
+      - C091
+      - C079
+  - id: s305
+    title: Moat Assessment and Competitive Risk
+    body: |
+      TML's sustainable competitive advantages are real but narrow and potentially fragile.
+      Access to very large open-weight models (Qwen-235B-A22B, DeepSeek V3.1, Kimi K2) for
+      managed fine-tuning is a current differentiator — none of the major competitors support
+      235B+ MoE fine-tuning through a managed API today. This advantage is time-limited: as
+      GPU supply expands and cloud providers extend their fine-tuning services, the model-scale
+      advantage will erode. The Tinker Cookbook open-source release and the forward_backward/
+      sample primitive API create some switching cost through researcher familiarity, but LoRA
+      adapter portability means trained weights can be migrated to any inference provider.
+      The relationship-based distribution with elite research institutions (Princeton, Stanford,
+      Berkeley) provides a reputational moat that could generate organic expansion into enterprise
+      via publication-to-procurement pathways — but this pathway is slow and uncertain.
+
+      The key adverse competitive dynamics are: (1) Hugging Face's free tooling and Nvidia
+      investment could extend its compute capabilities to match TML's managed infrastructure;
+      (2) Together AI's pricing is aggressive enough to attract budget-conscious research groups
+      away from Tinker; (3) large-model compute partnerships (Nvidia 1GW, Google Cloud) benefit
+      TML but also benefit Google Vertex AI and potentially others. The absence of published
+      pricing from TML means it cannot be included in rational buy-vs.-build analyses by enterprise
+      procurement, which limits sales-cycle initiation.
+    claimRefs:
+      - C082
+      - C083
+      - C088
+      - C068
+      - C073
+      - C089
+      - C068
+      - C092
+      - C079
+      - C093
+tables:
+  - id: T301
+    title: Competitor Profile Table
+    columns:
+      - Competitor
+      - Category
+      - Scale / Funding
+      - Target Segment
+      - Differentiation
+      - Limitation vs TML
+    rows:
+      - - OpenAI
+        - Frontier model lab
+        - $500B valuation; $12-20B revenue 2025
+        - Enterprise, consumer
+        - Largest user base; GPT-4o fine-tuning
+        - Proprietary models only; no large open-weight fine-tuning
+      - - Anthropic
+        - Frontier model lab
+        - $380B valuation (Feb 2026); $30B+ ARR
+        - Enterprise, B2B API
+        - Safety-first; enterprise penetration; 8 of Fortune 10
+        - No public fine-tuning API for Claude
+      - - Google Vertex AI
+        - Cloud incumbent
+        - Alphabet ($2T+ market cap); GCP revenue $43B+ 2025
+        - Enterprise GCP customers
+        - GCP integration; Gemini fine-tuning; enterprise compliance
+        - Tied to GCP; less open-weight model breadth
+      - - Hugging Face
+        - Open-source ecosystem
+        - $7-8.5B valuation; $221M revenue 2025; $500M Nvidia investment
+        - Developers, researchers
+        - Largest open-source AI community; free PEFT library; 13M users
+        - No managed large-scale distributed fine-tuning
+      - - Together AI
+        - Developer infrastructure
+        - $3.3B valuation; $120M projected 2025 revenue
+        - Developers, cost-sensitive researchers
+        - Lowest-cost open-source fine-tuning ($0.48/M tokens for Llama)
+        - Smaller model breadth; no 235B+ MoE support
+      - - Predibase
+        - Enterprise fine-tuning
+        - VC-backed; series A/B stage
+        - Enterprise ML teams
+        - LoRA-first; enterprise subscription; similar tech to Tinker
+        - Enterprise-only focus; no large MoE models
+      - - MosaicML/Databricks
+        - Enterprise AI platform
+        - Acquired for $1.3B (2023); Databricks ~$62B valuation
+        - Enterprise data platform customers
+        - Full pretraining + fine-tuning; Databricks integration
+        - Targets large capex enterprises, not research fine-tuning
+      - - AWS SageMaker
+        - Cloud incumbent
+        - Amazon AWS ($107B+ revenue 2025)
+        - Enterprise AWS customers
+        - AWS integration; SOC2/HIPAA; broad model support
+        - Tied to AWS ecosystem; less specialized fine-tuning depth
+      - - Self-hosted (Axolotl / LLaMA-Factory)
+        - Status quo / substitute
+        - Free open-source; no funding
+        - Research teams with own GPU clusters
+        - Free; full control; no vendor dependency
+        - Requires infrastructure management TML eliminates
+      - - Safe Superintelligence
+        - Long-horizon research lab
+        - $32B valuation (2025); $1B+ raised; no product
+        - Long-term safety research, not commercial
+        - Ilya Sutskever's reputation; safety-first mission
+        - Not a direct competitor; no commercial fine-tuning product
+    notes: >-
+      Anthropic valuation and revenue as of February-March 2026; OpenAI revenue as of 2025 estimates; all other data as
+      of closest available date to run date.
+    claimRefs:
+      - C067
+      - C067
+      - C068
+      - C068
+      - C069
+      - C070
+      - C071
+      - C072
+      - C073
+      - C074
+      - C075
+      - C077
+      - C086
+      - C087
+  - id: T302
+    title: Feature / Capability Matrix
+    columns:
+      - Capability
+      - TML Tinker
+      - OpenAI
+      - Google Vertex AI
+      - Hugging Face
+      - Together AI
+    rows:
+      - - Large open-weight models (235B+)
+        - 'Yes'
+        - 'No'
+        - Limited
+        - Yes (hub)
+        - 'No'
+      - - LoRA / parameter-efficient fine-tuning
+        - Yes (managed)
+        - No (full FT only)
+        - 'Yes'
+        - Yes (PEFT lib, free)
+        - 'Yes'
+      - - Low-level API primitives (forward_backward)
+        - 'Yes'
+        - 'No'
+        - 'No'
+        - 'No'
+        - 'No'
+      - - Managed distributed training
+        - 'Yes'
+        - 'Yes'
+        - 'Yes'
+        - Partial
+        - 'Yes'
+      - - Published pricing
+        - No (beta)
+        - 'Yes'
+        - 'Yes'
+        - Freemium
+        - 'Yes'
+      - - Enterprise compliance (SOC2/HIPAA)
+        - Unknown
+        - 'Yes'
+        - 'Yes'
+        - Partial
+        - Unknown
+      - - Open-source ecosystem / community
+        - Partial (Cookbook)
+        - 'No'
+        - 'No'
+        - Yes (leader)
+        - 'No'
+      - - On-premises or private deployment
+        - 'No'
+        - 'No'
+        - Yes (GCP)
+        - 'Yes'
+        - 'No'
+      - - Multi-model switching (single API)
+        - 'Yes'
+        - 'No'
+        - Partial
+        - 'Yes'
+        - 'Yes'
+      - - Inference hosting post fine-tuning
+        - Unknown
+        - 'Yes'
+        - 'Yes'
+        - 'Yes'
+        - 'Yes'
+    notes: >-
+      Matrix reflects publicly available product capabilities as of May 2026. Cells marked Unknown require direct vendor
+      confirmation.
+    claimRefs:
+      - C068
+      - C078
+      - C079
+      - C080
+      - C082
+      - C083
+      - C088
+      - C088
+      - C073
+      - C089
+      - C092
+  - id: T303
+    title: Pricing / Packaging Comparison
+    columns:
+      - Provider
+      - Pricing Model
+      - Training Cost ($/M tokens)
+      - Inference Post Fine-Tuning
+      - Included Capabilities
+      - Implication
+    rows:
+      - - TML Tinker
+        - Usage-based (TBA)
+        - Not published
+        - Unknown
+        - Managed infra, large models, LoRA, API primitives
+        - Cannot enter enterprise pipeline without pricing; unknown unit economics
+      - - OpenAI GPT-4o FT
+        - Usage-based
+        - $25.00
+        - $3.75 in / $15.00 out per M
+        - Proprietary model only; hosted inference
+        - Expensive but proven; enterprise-safe
+      - - OpenAI GPT-4o-mini FT
+        - Usage-based
+        - $3.00
+        - $0.30 in / $1.20 out per M
+        - Small proprietary model; lower cost
+        - Budget entry point for OpenAI ecosystem
+      - - Together AI Llama 3.1 8B FT
+        - Usage-based
+        - $0.48
+        - $0.18 in/out per M
+        - Open-source model; hosted inference
+        - Cheapest managed option; large developer adoption
+      - - Predibase
+        - Per-seat subscription
+        - $0.50-8.00 (est.)
+        - Included in subscription
+        - LoRA-first; enterprise features
+        - Predictable cost for enterprise; less flexible for researchers
+      - - Google Vertex AI FT
+        - Usage-based
+        - $3.00 (Gemini Flash est.)
+        - $0.15 in / $0.60 out per M
+        - GCP integration; enterprise compliance
+        - Cost-competitive; GCP lock-in
+    notes: >-
+      TML Tinker pricing is not published as of May 2026. Competitor pricing from pricepertoken.com and aicostcheck.com
+      (January 2026 data).
+    claimRefs:
+      - C068
+      - C076
+      - C077
+      - C080
+      - C068
+  - id: T304
+    title: Moat Durability / Competitive Risk Register
+    columns:
+      - Moat Claim
+      - Threat
+      - Severity
+      - Mitigation / Diligence Ask
+    rows:
+      - - Access to 235B+ MoE models via managed API
+        - Cloud incumbents expand large-model fine-tuning support
+        - High
+        - Track Google, AWS roadmap for large-model fine-tuning support; TML time-to-market window is ~12-24 months
+      - - Low-level API primitives (forward_backward, sample)
+        - No competitor has copied this approach yet; open-source frameworks (Axolotl) offer similar control for free
+        - Medium
+        - Verify that research users value the API design over free alternatives; measure conversion vs. self-hosted
+      - - Mira Murati / John Schulman research credibility
+        - Key-person dependency; departure of either would damage institutional relationships
+        - Critical
+        - Assess founder commitment and retention incentives; track academic partnership depth
+      - - Tinker Cookbook open-source ecosystem
+        - Hugging Face community is 100x larger; PEFT library is industry standard
+        - High
+        - Measure Tinker Cookbook stars, contributors, usage; compare vs HuggingFace PEFT adoption
+      - - Managed infrastructure (scheduling, failure recovery)
+        - Self-hosted tools (Axolotl) remain free; research budgets prefer free tools
+        - Medium
+        - Quantify value-add vs self-hosted; pricing must reflect managed-service premium accurately
+      - - Nvidia 1GW partnership / GPU access priority
+        - Nvidia supplies all competitors; partnership does not guarantee exclusive capacity
+        - Medium
+        - Verify if TML has priority allocation or pricing advantages under Nvidia partnership terms
+    notes: null
+    claimRefs:
+      - C082
+      - C083
+      - C088
+      - C073
+      - C089
+      - C068
+      - C092
+      - C079
+      - C093
+figures:
+  - id: F301
+    title: Competitive Positioning Map — Product Maturity vs Fine-Tuning Capability
+    type: quadrant
+    layout: wide
+    summary: |
+      Positioning map with x-axis representing product maturity (enterprise readiness, pricing
+      publication, compliance certifications) and y-axis representing fine-tuning capability
+      (model breadth, algorithmic control, infrastructure scale). TML Tinker is positioned in
+      the high-capability / low-maturity quadrant. Cloud incumbents are high-maturity / medium-
+      capability. Hugging Face is medium-maturity / high-capability. OpenAI is high-maturity /
+      medium-capability.
+    data:
+      xAxis: Product Maturity (1=pre-alpha, 5=enterprise-ready)
+      yAxis: Fine-Tuning Capability (1=none, 5=purpose-built)
+      points:
+        - label: TML Tinker
+          x: 2
+          'y': 4.5
+        - label: OpenAI
+          x: 5
+          'y': 3.5
+        - label: Anthropic
+          x: 4.5
+          'y': 1.5
+        - label: Google Vertex AI
+          x: 5
+          'y': 3.5
+        - label: Hugging Face
+          x: 4
+          'y': 4.5
+        - label: Together AI
+          x: 3.5
+          'y': 4
+        - label: Predibase
+          x: 3
+          'y': 4
+        - label: Self-hosted (status quo)
+          x: 2.5
+          'y': 3.5
+    approximationNotes: >-
+      Scores are ordinal assessments based on public product information, not formal benchmarks. Product maturity
+      reflects pricing, compliance, and distribution; fine-tuning capability reflects model breadth, API control depth,
+      and infrastructure scale.
+    claimRefs:
+      - C068
+      - C072
+      - C077
+      - C081
+      - C088
+      - C089
+  - id: F302
+    title: Feature Breadth / Capability Map by Competitor
+    type: matrix
+    layout: wide
+    summary: |
+      Binary and ordinal capability matrix showing which fine-tuning features each major
+      competitor offers. TML Tinker's distinct advantage is large open-weight model access
+      and low-level API primitives. Its gaps are published pricing, enterprise compliance,
+      and inference hosting. Hugging Face leads on open-source ecosystem breadth.
+    data:
+      columns:
+        - label: TML Tinker
+        - label: OpenAI
+        - label: Vertex AI
+        - label: Hugging Face
+        - label: Together AI
+      rows:
+        - label: 235B+ model support
+          values:
+            - 'Yes'
+            - 'No'
+            - Partial
+            - Via hub
+            - 'No'
+        - label: LoRA / PEFT
+          values:
+            - Yes (managed)
+            - 'No'
+            - 'Yes'
+            - Yes (free)
+            - 'Yes'
+        - label: Low-level API primitives
+          values:
+            - Yes (unique)
+            - 'No'
+            - 'No'
+            - 'No'
+            - 'No'
+        - label: Published pricing
+          values:
+            - 'No'
+            - 'Yes'
+            - 'Yes'
+            - Freemium
+            - 'Yes'
+        - label: SOC2 / HIPAA compliance
+          values:
+            - Unknown
+            - 'Yes'
+            - 'Yes'
+            - Partial
+            - Unknown
+        - label: Open-source community
+          values:
+            - Partial
+            - 'No'
+            - 'No'
+            - Yes (leader)
+            - 'No'
+        - label: Inference hosting
+          values:
+            - Unknown
+            - 'Yes'
+            - 'Yes'
+            - 'Yes'
+            - 'Yes'
+    approximationNotes: null
+    claimRefs:
+      - C068
+      - C082
+      - C083
+      - C088
+      - C073
+      - C089
+  - id: F303
+    title: Moat / Readiness KPIs — TML Tinker Competitive Scorecard
+    type: kpi
+    layout: standard
+    summary: |
+      Compact KPI scorecard rating TML Tinker's competitive durability across five dimensions:
+      model access, technical differentiation, distribution, pricing maturity, and compliance.
+      Shows that while model access and technical differentiation are strong, pricing maturity
+      and compliance readiness are critical gaps that must close before TML can convert enterprise
+      opportunities.
+    data:
+      items:
+        - label: Model Access (235B+ MoE)
+          value: Strong
+          description: Unique managed access to Qwen-235B; no competitor matches today
+        - label: API Technical Differentiation
+          value: Strong
+          description: forward_backward / sample primitives; no-code competitors cannot match
+        - label: Research Distribution (Princeton, Stanford, Berkeley)
+          value: Moderate
+          description: Named early adopters; unclear depth of adoption and conversion pipeline
+        - label: Pricing Maturity
+          value: Weak
+          description: No public pricing 7 months post-launch; prevents enterprise pipeline
+        - label: Enterprise Compliance (SOC2 / HIPAA)
+          value: Unknown
+          description: No public compliance certifications; limits enterprise deals
+        - label: Open-Source Community
+          value: Early
+          description: Tinker Cookbook launched; small community vs. HuggingFace PEFT
+    approximationNotes: >-
+      Ratings are qualitative (Strong / Moderate / Weak / Unknown / Early) based on public information. Formal due
+      diligence would require vendor questionnaire.
+    claimRefs:
+      - C083
+      - C088
+      - C089
+      - C068
+      - C092
+      - C093
+callouts:
+  - calloutType: risk
+    title: TML's model-scale advantage has a short shelf life
+    body: |
+      Tinker's clearest differentiation today is managed fine-tuning of 235B+ MoE models that
+      competitors do not yet support. However, this window is likely 12-24 months: Google Vertex AI,
+      AWS SageMaker, and Together AI all have roadmaps for expanding large-model support. When that
+      support arrives, TML's technical moat narrows to its API design and open-source ecosystem —
+      both of which face strong free-software competition from Hugging Face.
+    claimRefs:
+      - C089
+      - C079
+  - calloutType: strength
+    title: Anthropic's absence from fine-tuning clears the highest-credibility competitor
+    body: |
+      Anthropic's decision not to offer a public Claude fine-tuning API removes the most credible
+      safety-first, research-focused competitor from TML's immediate competitive set. OpenAI's fine-
+      tuning is proprietary-model-only. This leaves TML with clear differentiation for researchers
+      needing to fine-tune very large open-weight models in a managed environment.
+    claimRefs:
+      - C081
+      - C082
