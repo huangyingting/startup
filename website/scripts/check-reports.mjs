@@ -119,6 +119,9 @@ function checkDocumentHead(run, file, doc) {
 function checkLedgerSources(run, sources) {
   const ACCESS_STATUSES = new Set(['ok', 'paywall', 'js-only', 'broken', 'rate-limited']);
   const STANCES = new Set(['confirming', 'adverse', 'neutral', 'unknown']);
+  const SOURCE_TYPES = new Set(['official', 'filing', 'regulatory', 'news', 'analyst-market-data', 'technical-docs', 'customer-proof', 'partner-proof', 'developer-signal', 'review', 'legal', 'other']);
+  const REPUTATION_TIERS = new Set(['high', 'medium', 'low']);
+  const INDEPENDENCE = new Set(['company', 'partner', 'customer', 'competitor', 'independent', 'unknown']);
   for (const source of sources) {
     const path = `${run}/${EVIDENCE_FILE}: source ${source?.id ?? '?'}`;
     for (const field of ['publisher', 'title', 'accessDate', 'url', 'sourceType', 'reputationTier', 'independence', 'topics', 'accessStatus', 'stance']) {
@@ -139,6 +142,15 @@ function checkLedgerSources(run, sources) {
     if (source?.stance && !STANCES.has(source.stance)) {
       fail(`${path} stance must be one of ${[...STANCES].join('|')}`);
     }
+    if (source?.sourceType && !SOURCE_TYPES.has(source.sourceType)) {
+      fail(`${path} sourceType must be one of ${[...SOURCE_TYPES].join('|')}`);
+    }
+    if (source?.reputationTier && !REPUTATION_TIERS.has(source.reputationTier)) {
+      fail(`${path} reputationTier must be one of ${[...REPUTATION_TIERS].join('|')}`);
+    }
+    if (source?.independence && !INDEPENDENCE.has(source.independence)) {
+      fail(`${path} independence must be one of ${[...INDEPENDENCE].join('|')}`);
+    }
   }
 }
 
@@ -148,6 +160,9 @@ function checkLedgerCoverage(run, coverage) {
 }
 
 function checkLedgerClaims(run, claims) {
+  const CLAIM_TYPES = new Set(['observed', 'company-claimed', 'third-party-reported', 'estimated', 'inferred', 'open-question', 'conflicting']);
+  const CONFIDENCES = new Set(['high', 'medium', 'low']);
+  const FRESHNESS = new Set(['current', 'recent', 'historical', 'unknown']);
   for (const claim of claims) {
     const path = `${run}/${EVIDENCE_FILE}: claim ${claim?.id ?? '?'}`;
     for (const field of ['statement', 'type', 'topic', 'sourceRefs', 'confidence', 'freshness']) {
@@ -169,6 +184,18 @@ function checkLedgerClaims(run, claims) {
     }
     if (claim?.type === 'conflicting' && !(claim.contradictsClaimRefs ?? []).length) {
       fail(`${path} type=conflicting requires non-empty contradictsClaimRefs`);
+    }
+    if (claim?.type && !CLAIM_TYPES.has(claim.type)) {
+      fail(`${path} type must be one of ${[...CLAIM_TYPES].join('|')}`);
+    }
+    if (claim?.confidence && !CONFIDENCES.has(claim.confidence)) {
+      fail(`${path} confidence must be one of ${[...CONFIDENCES].join('|')}`);
+    }
+    if (claim?.freshness && !FRESHNESS.has(claim.freshness)) {
+      fail(`${path} freshness must be one of ${[...FRESHNESS].join('|')}`);
+    }
+    if (claim?.type !== 'open-question' && Array.isArray(claim?.sourceRefs) && claim.sourceRefs.length === 0) {
+      fail(`${path} sourceRefs must be non-empty unless type is open-question`);
     }
   }
 }
