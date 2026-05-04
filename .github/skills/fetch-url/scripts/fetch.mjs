@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 // Fetch a URL with optional readable-text extraction. Used by the fetch-url skill.
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
-import { argv, exit } from 'node:process';
+import { createHash } from 'node:crypto';
+import { join, resolve } from 'node:path';
+import { argv, env, exit } from 'node:process';
 
 const DEFAULT_URL = 'https://openai.com';
 const DEFAULT_TIMEOUT_MS = 15_000;
 const DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+const DEFAULT_CACHE_DIR = env.FETCH_URL_CACHE_DIR
+  ? resolve(env.FETCH_URL_CACHE_DIR)
+  : resolve(process.cwd(), '.fetch-cache');
+const DEFAULT_CACHE_TTL_HOURS = 24 * 7;
 
 const BLOCK_TAGS = 'p|div|section|article|header|footer|nav|aside|main|ul|ol|li|tr|td|th|h[1-6]|blockquote|pre|figure|figcaption|table';
 const BLOCK_TAG_RE = new RegExp(`<\\/?(${BLOCK_TAGS})(?:\\s[^>]*)?>`, 'gi');
@@ -26,6 +33,10 @@ function parseArgs(args) {
     viaWayback: false,
     noWayback: false,
     help: false,
+    cacheDir: DEFAULT_CACHE_DIR,
+    cacheTtlHours: DEFAULT_CACHE_TTL_HOURS,
+    noCache: false,
+    refreshCache: false,
   };
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
@@ -35,13 +46,23 @@ function parseArgs(args) {
     else if (arg === '--user-agent') opts.userAgent = args[++i] ?? opts.userAgent;
     else if (arg === '--via-wayback') opts.viaWayback = true;
     else if (arg === '--no-wayback') opts.noWayback = true;
+    else if (arg === '--cache-dir') opts.cacheDir = resolve(args[++i] ?? opts.cacheDir);
+    else if (arg === '--cache-ttl-hours') opts.cacheTtlHours = Number(args[++i] ?? opts.cacheTtlHours);
+    else if (arg === '--no-cache') opts.noCache = true;
+    else if (arg === '--refresh-cache') opts.refreshCache = true;
     else opts.url = arg;
   }
   return opts;
 }
 
 function help() {
-  console.log(`Usage: node .github/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>] [--via-wayback | --no-wayback]\n\nDefault URL: ${DEFAULT_URL}\n\nWayback fallback: bot-protected sites (DataDome/Cloudflare challenge, 401/403/451/503) automatically retry through web.archive.org. Use --via-wayback to force, --no-wayback to disable.`);
+  console.log(`Usage: node .github/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache]
+
+Default URL: ${DEFAULT_URL}
+
+Caching: enabled by default at ${DEFAULT_CACHE_DIR} (override with --cache-dir or FETCH_URL_CACHE_DIR env). Cached responses younger than ${DEFAULT_CACHE_TTL_HOURS}h are reused. Use --refresh-cache to bypass the read but still write, --no-cache to disable read+write entirely.
+
+Wayback fallback: bot-protected sites (DataDome/Cloudflare challenge, 401/403/451/503) automatically retry through web.archive.org. Use --via-wayback to force, --no-wayback to disable.`);
 }
 
 export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent = DEFAULT_USER_AGENT } = {}) {
@@ -106,6 +127,72 @@ export function waybackUrl(url, year = new Date().getUTCFullYear()) {
   return `https://web.archive.org/web/${year}/${url}`;
 }
 
+// ---------------------------------------------------------------------------
+// On-disk cache (default ON). Avoids repeat bandwidth and rate-limit hits
+// when the same URL is fetched across chapters in a startup-research run.
+// Cache key is a SHA-256 of the canonicalized URL plus a `:wayback` suffix
+// when the wayback path was forced, so origin and snapshot fetches do not
+// collide.
+// ---------------------------------------------------------------------------
+export function canonicalCacheKey(url, viaWayback = false) {
+  let canonical = url;
+  try {
+    const u = new URL(url);
+    u.hash = '';
+    if (u.searchParams && [...u.searchParams.keys()].length > 0) {
+      const params = [...u.searchParams.entries()].sort(([a], [b]) => a.localeCompare(b));
+      u.search = '';
+      for (const [k, v] of params) u.searchParams.append(k, v);
+    }
+    u.hostname = u.hostname.toLowerCase();
+    canonical = u.toString();
+  } catch {
+    canonical = String(url);
+  }
+  const suffix = viaWayback ? ':wayback' : '';
+  return createHash('sha256').update(canonical + suffix).digest('hex').slice(0, 32);
+}
+
+function cachePath(dir, url, viaWayback) {
+  return join(dir, `${canonicalCacheKey(url, viaWayback)}.json`);
+}
+
+function readCache(dir, url, viaWayback, ttlHours) {
+  const path = cachePath(dir, url, viaWayback);
+  if (!existsSync(path)) return null;
+  try {
+    const raw = JSON.parse(readFileSync(path, 'utf8'));
+    if (!raw?.fetchedAt) return null;
+    const ageMs = Date.now() - new Date(raw.fetchedAt).valueOf();
+    if (!Number.isFinite(ageMs) || ageMs < 0) return null;
+    if (ttlHours > 0 && ageMs > ttlHours * 3_600_000) return null;
+    return { ...raw, _cachePath: path, _ageMs: ageMs };
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(dir, url, viaWayback, result) {
+  try {
+    mkdirSync(dir, { recursive: true });
+    const payload = {
+      requestedUrl: url,
+      finalUrl: result.finalUrl,
+      status: result.status,
+      ok: result.ok,
+      contentType: result.contentType,
+      contentLength: result.contentLength,
+      elapsedMs: result.elapsedMs,
+      body: result.body,
+      viaWayback,
+      fetchedAt: new Date().toISOString(),
+    };
+    writeFileSync(cachePath(dir, url, viaWayback), JSON.stringify(payload), 'utf8');
+  } catch (err) {
+    console.error(`[fetch-url] cache write failed: ${err.message}`);
+  }
+}
+
 const BOT_CHALLENGE_STATUSES = new Set([401, 403, 451, 503]);
 const BOT_CHALLENGE_MARKERS = [
   'datadome',
@@ -149,39 +236,70 @@ async function main() {
 
   let result;
   let viaWayback = false;
+  let cacheHit = false;
+  let cacheAgeMinutes = null;
+  const useCacheRead = !opts.noCache && !opts.refreshCache;
+  const useCacheWrite = !opts.noCache;
   const targetUrl = opts.viaWayback ? waybackUrl(opts.url) : opts.url;
-  try {
-    result = await fetchUrl(targetUrl, { userAgent: opts.userAgent });
-    viaWayback = opts.viaWayback;
-  } catch (err) {
-    console.error(`Fetch failed: ${err.message}`);
-    exit(1);
-  }
 
-  if (!opts.viaWayback && !opts.noWayback && looksLikeBotChallenge(result)) {
-    console.error(`[fetch-url] origin returned ${result.status} or bot-challenge body; retrying via Wayback Machine.`);
-    try {
-      const fallback = await fetchUrl(waybackUrl(opts.url), { userAgent: opts.userAgent });
-      if (fallback.ok && !looksLikeBotChallenge(fallback)) {
-        result = fallback;
-        viaWayback = true;
-      } else {
-        console.error(`[fetch-url] Wayback fallback also blocked (status ${fallback.status}); keeping origin response.`);
-      }
-    } catch (err) {
-      console.error(`[fetch-url] Wayback fallback failed: ${err.message}; keeping origin response.`);
+  if (useCacheRead) {
+    const cached = readCache(opts.cacheDir, opts.url, opts.viaWayback, opts.cacheTtlHours);
+    if (cached) {
+      result = {
+        url: cached.requestedUrl,
+        finalUrl: cached.finalUrl,
+        status: cached.status,
+        ok: cached.ok,
+        contentType: cached.contentType,
+        contentLength: cached.contentLength,
+        elapsedMs: cached.elapsedMs,
+        body: cached.body,
+      };
+      viaWayback = cached.viaWayback;
+      cacheHit = true;
+      cacheAgeMinutes = Math.round(cached._ageMs / 60_000);
     }
   }
 
-  if (viaWayback) result = { ...result, body: stripWaybackToolbar(result.body), contentLength: stripWaybackToolbar(result.body).length };
+  if (!cacheHit) {
+    try {
+      result = await fetchUrl(targetUrl, { userAgent: opts.userAgent });
+      viaWayback = opts.viaWayback;
+    } catch (err) {
+      console.error(`Fetch failed: ${err.message}`);
+      exit(1);
+    }
+
+    if (!opts.viaWayback && !opts.noWayback && looksLikeBotChallenge(result)) {
+      console.error(`[fetch-url] origin returned ${result.status} or bot-challenge body; retrying via Wayback Machine.`);
+      try {
+        const fallback = await fetchUrl(waybackUrl(opts.url), { userAgent: opts.userAgent });
+        if (fallback.ok && !looksLikeBotChallenge(fallback)) {
+          result = fallback;
+          viaWayback = true;
+        } else {
+          console.error(`[fetch-url] Wayback fallback also blocked (status ${fallback.status}); keeping origin response.`);
+        }
+      } catch (err) {
+        console.error(`[fetch-url] Wayback fallback failed: ${err.message}; keeping origin response.`);
+      }
+    }
+
+    if (viaWayback) result = { ...result, body: stripWaybackToolbar(result.body), contentLength: stripWaybackToolbar(result.body).length };
+
+    if (useCacheWrite && result.ok) {
+      writeCache(opts.cacheDir, opts.url, viaWayback, result);
+    }
+  }
 
   const output = opts.textOnly ? htmlToText(result.body) : result.body;
   console.log(`Status:        ${result.status} ${result.ok ? 'OK' : 'FAIL'}`);
   console.log(`Final URL:     ${result.finalUrl}`);
-  if (viaWayback) console.log(`Source:        wayback (web.archive.org snapshot)`);
+  if (cacheHit) console.log(`Source:        cache (age ${cacheAgeMinutes}m, ttl ${opts.cacheTtlHours}h${viaWayback ? ', via wayback' : ''})`);
+  else if (viaWayback) console.log(`Source:        wayback (web.archive.org snapshot)`);
   console.log(`Content-Type:  ${result.contentType ?? '(none)'}`);
   console.log(`Bytes:         ${result.contentLength}`);
-  console.log(`Elapsed:       ${result.elapsedMs} ms`);
+  console.log(`Elapsed:       ${result.elapsedMs} ms${cacheHit ? ' (original)' : ''}`);
   console.log(`<title>:       ${extractTitle(result.body) ?? '(not found)'}`);
   if (opts.textOnly) console.log(`Text bytes:    ${output.length}`);
 

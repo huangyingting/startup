@@ -21,7 +21,20 @@ Options:
 - `--user-agent <ua>`: override the default desktop Chrome UA.
 - `--via-wayback`: rewrite the URL through `web.archive.org` before fetching (force snapshot).
 - `--no-wayback`: disable the automatic Wayback retry.
+- `--cache-dir <path>`: override the on-disk cache directory (default `./.fetch-cache/` or `$FETCH_URL_CACHE_DIR`).
+- `--cache-ttl-hours <n>`: how long cached responses stay valid (default `168` = 7 days).
+- `--no-cache`: disable cache reads and writes for this call.
+- `--refresh-cache`: bypass the cache read but still write the new response.
 - `--help`: print CLI usage.
+
+## Caching (default ON)
+
+The script writes successful responses to `./.fetch-cache/<sha256>.json` (relative to the current working directory) and reuses them on subsequent calls when they are younger than `--cache-ttl-hours` (default 7 days). This keeps repeat fetches across chapters in a startup-research run free and avoids tripping rate limiters.
+
+- Cache key is the canonicalized URL (sorted query params, lowercase host, no fragment) plus a `:wayback` suffix when the wayback path was forced; origin and snapshot fetches never collide.
+- Failed responses (non-2xx) are not cached. The Wayback fallback caches under the wayback key so retries find the snapshot directly.
+- Set `FETCH_URL_CACHE_DIR=/path/to/cache` to point all calls at a shared cache (e.g. one per report run).
+- Use `--refresh-cache` to force a re-fetch when you suspect the page changed; use `--no-cache` for ad-hoc checks where you want network truth every time.
 
 ## Bot-protected sites (Reuters, etc.)
 
