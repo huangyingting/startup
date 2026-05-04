@@ -3,7 +3,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-import { join, resolve } from 'node:path';
+import { delimiter, join, resolve } from 'node:path';
 import { argv, env, exit } from 'node:process';
 
 const DEFAULT_URL = 'https://openai.com';
@@ -16,10 +16,18 @@ const DEFAULT_CACHE_TTL_HOURS = 24 * 7;
 const DEFAULT_PROFILE = 'bingbot';
 const DEFAULT_THROTTLE_MS = 750;
 
+// curl-impersonate is shipped as a single binary `curl-impersonate` plus a
+// family of wrapper shell scripts (`curl_chrome120`, `curl_firefox133`, ...)
+// that pass the right --ciphers / --curves / --http2-settings / -H combination
+// to reproduce a given browser's TLS+HTTP fingerprint. We invoke the wrappers
+// directly. See SKILL.md for installation instructions.
+const DEFAULT_CURL_IMPERSONATE_DIR = env.CURL_IMPERSONATE_DIR
+  ? resolve(env.CURL_IMPERSONATE_DIR)
+  : resolve(env.HOME ?? '', '.local', 'share', 'curl-impersonate');
+
 const SEARCH_ENGINE_PROFILES = {
   googlebot: {
     userAgent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-    impersonate: 'chrome110', // Googlebot uses a Chrome-based renderer
     headers: {
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.9',
@@ -27,7 +35,6 @@ const SEARCH_ENGINE_PROFILES = {
   },
   bingbot: {
     userAgent: 'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
-    impersonate: 'edge110', // Bingbot uses an Edge-based renderer
     headers: {
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.9',
@@ -35,10 +42,15 @@ const SEARCH_ENGINE_PROFILES = {
   },
 };
 
+// Browser profiles delegate to a curl-impersonate wrapper for TLS/JA3 +
+// HTTP/2 fingerprint. The wrapper already sets a complete fingerprint-matched
+// header set (User-Agent, Accept, Accept-Language, Sec-Fetch-*, etc.); we do
+// NOT layer our own headers on top of it. The `userAgent` field below is only
+// used when curl-impersonate is unavailable and we fall back to plain fetch().
 const BROWSER_PROFILES = {
   'desktop-chrome': {
+    wrapper: 'curl_chrome120',
     userAgent: DEFAULT_USER_AGENT,
-    impersonate: 'chrome120',
     headers: {
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.9',
@@ -49,8 +61,8 @@ const BROWSER_PROFILES = {
     },
   },
   'desktop-firefox': {
-    userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0',
-    impersonate: 'firefox120',
+    wrapper: 'curl_firefox133',
+    userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0',
     headers: {
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.9',
@@ -58,16 +70,16 @@ const BROWSER_PROFILES = {
     },
   },
   'desktop-safari': {
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
-    impersonate: 'safari17_2',
+    wrapper: 'curl_safari180',
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15',
     headers: {
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.9',
     },
   },
   'mobile-safari': {
-    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1',
-    impersonate: 'safari17_2',
+    wrapper: 'curl_safari180_ios',
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1',
     headers: {
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.9',
@@ -78,6 +90,23 @@ const BROWSER_PROFILES = {
 const ALL_PROFILES = { ...BROWSER_PROFILES, ...SEARCH_ENGINE_PROFILES };
 const PROFILE_ORDER = Object.keys(BROWSER_PROFILES);
 const ALL_PROFILE_NAMES = Object.keys(ALL_PROFILES);
+
+// Cache the resolved absolute path for each wrapper so we only stat() once.
+const WRAPPER_PATH_CACHE = new Map();
+function resolveWrapperPath(wrapper) {
+  if (!wrapper) return null;
+  if (WRAPPER_PATH_CACHE.has(wrapper)) return WRAPPER_PATH_CACHE.get(wrapper);
+  const candidates = [
+    join(DEFAULT_CURL_IMPERSONATE_DIR, wrapper),
+    ...((env.PATH ?? '').split(delimiter).filter(Boolean).map((p) => join(p, wrapper))),
+  ];
+  let resolved = null;
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) { resolved = candidate; break; }
+  }
+  WRAPPER_PATH_CACHE.set(wrapper, resolved);
+  return resolved;
+}
 
 const BLOCK_TAGS = 'p|div|section|article|header|footer|nav|aside|main|ul|ol|li|tr|td|th|h[1-6]|blockquote|pre|figure|figcaption|table';
 const BLOCK_TAG_RE = new RegExp(`<\\/?(${BLOCK_TAGS})(?:\\s[^>]*)?>`, 'gi');
@@ -197,26 +226,29 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
   try {
     await wait(throttleMs);
 
-    // Use curl-impersonate for browser profiles, standard fetch for bots
-    if (profileData.impersonate && !SEARCH_ENGINE_PROFILES[profile]) {
+    // Use a curl-impersonate wrapper for browser profiles. The wrapper script
+    // already sets the full TLS+HTTP fingerprint headers (User-Agent, Accept,
+    // Accept-Language, Sec-Fetch-*, etc.); we deliberately do NOT pass our own
+    // -H values on top of it, otherwise the fingerprint stops matching the UA.
+    // We only forward `-A <ua>` when the user supplied an explicit override.
+    const wrapperPath = profileData.wrapper && !SEARCH_ENGINE_PROFILES[profile]
+      ? resolveWrapperPath(profileData.wrapper)
+      : null;
+    if (wrapperPath) {
       const { spawn } = await import('node:child_process');
       return new Promise((resolvePromise, rejectPromise) => {
-        const requestHeaders = headers ?? buildHeaders(profile, userAgent);
-        const headerArgs = Object.entries(requestHeaders).flatMap(([key, value]) => ['-H', `${key}: ${value}`]);
         // Sentinel that curl appends after the body via -w; lets us recover the
         // final URL after redirects without parsing every header block.
         const META_SEPARATOR = '__CURL_IMPERSONATE_META_5e8f1a__';
         const args = [
-          profileData.impersonate,
           '-s', '-L', '-D', '-',
-          '--compressed',
           '--connect-timeout', String(Math.round(timeoutMs / 1000)),
           '-w', `\n${META_SEPARATOR}\n%{url_effective}`,
-          ...headerArgs,
-          url,
         ];
+        if (userAgent) args.push('-A', userAgent);
+        args.push(url);
 
-        const child = spawn('curl-impersonate', args);
+        const child = spawn(wrapperPath, args);
         child.stdout.setEncoding('utf8');
         child.stderr.setEncoding('utf8');
         let stdout = '';
@@ -233,7 +265,7 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
         child.on('close', (code) => {
           controller.signal.removeEventListener('abort', onAbort);
           if (code !== 0) {
-            return rejectPromise(new Error(`curl-impersonate exited with code ${code}: ${stderr}`));
+            return rejectPromise(new Error(`curl-impersonate (${profileData.wrapper}) exited with code ${code}: ${stderr}`));
           }
 
           // Recover the post-redirect final URL from the -w sentinel.
@@ -280,7 +312,7 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
 
         child.on('error', (err) => {
           controller.signal.removeEventListener('abort', onAbort);
-          rejectPromise(new Error(`Failed to start curl-impersonate. Is it installed and in your PATH? Error: ${err.message}`));
+          rejectPromise(new Error(`Failed to start curl-impersonate wrapper at ${wrapperPath}: ${err.message}`));
         });
       });
     }

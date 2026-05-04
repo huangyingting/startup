@@ -8,6 +8,30 @@ argument-hint: "<url> [--out <file>] [--text-only]"
 
 Fetch the raw HTML or readable text of a single URL. Wraps `./scripts/fetch.mjs` and replaces native `web_fetch`-style tools.
 
+## Install (one-time, optional but recommended)
+
+`curl-impersonate` is required for the `desktop-chrome` / `desktop-firefox` / `desktop-safari` / `mobile-safari` profiles to defeat TLS/JA3 fingerprint–based bot walls (DataDome, Cloudflare, PerimeterX, etc.). Without it, those profiles silently fall back to plain `fetch()`, which fails on protected sites such as Reuters, WSJ, FT, Bloomberg.
+
+Linux x86_64 (the project's target environment):
+
+```sh
+INSTALL_DIR="$HOME/.local/share/curl-impersonate"
+TARBALL="curl-impersonate-v1.5.6.x86_64-linux-gnu.tar.gz"
+URL="https://github.com/lexiforest/curl-impersonate/releases/download/v1.5.6/$TARBALL"
+SHA256="b60344f63b9ed8806f0e9f7fd357d9f6c9a82aca279ed1e9e257d544885dcbde"
+
+mkdir -p "$INSTALL_DIR"
+cd "$INSTALL_DIR"
+curl -sSL -o "$TARBALL" "$URL"
+echo "$SHA256  $TARBALL" | sha256sum -c -
+tar -xzf "$TARBALL"
+./curl_chrome120 -s -o /dev/null -w '%{http_code}\n' https://example.com   # expect 200
+```
+
+`fetch.mjs` looks for the wrappers at `$CURL_IMPERSONATE_DIR/<wrapper>` (default `~/.local/share/curl-impersonate/`), then falls back to `$PATH`. Override the location with `CURL_IMPERSONATE_DIR=/path/to/dir` if you installed elsewhere. Other architectures (arm64, macOS, musl, Windows) have matching tarballs on the same release page — pick the one for your platform.
+
+If `curl-impersonate` is absent, the script still runs: browser profiles fall through to plain `fetch()`, the `googlebot` / `bingbot` profiles work unchanged, and the reader / Wayback fallbacks remain available.
+
 ## Run
 
 ```sh
