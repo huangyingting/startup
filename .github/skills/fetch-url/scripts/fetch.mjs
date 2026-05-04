@@ -169,12 +169,23 @@ function buildHeaders(profileName, userAgentOverride = null) {
 }
 
 function profileSequence(opts) {
-  if (opts.userAgentOverride) return [{ name: 'custom', headers: buildHeaders(opts.profile, opts.userAgent) }];
+  // When the caller forces a custom UA we keep the requested profile (so its
+  // TLS/JA3 fingerprint via curl-impersonate is preserved) and only swap the
+  // headers in.
+  if (opts.userAgentOverride) {
+    return [{
+      name: 'custom',
+      profile: opts.profile,
+      headers: buildHeaders(opts.profile, opts.userAgent),
+    }];
+  }
   const first = ALL_PROFILES[opts.profile] ? opts.profile : DEFAULT_PROFILE;
   const names = opts.retryProfiles
     ? [first, ...PROFILE_ORDER.filter((name) => name !== first)]
     : [first];
-  return names.map((name) => ({ name, headers: buildHeaders(name) }));
+  // Each retry uses its profile end-to-end so both headers AND JA3 fingerprint
+  // change. Letting fetchUrl build headers from `profile` keeps that in sync.
+  return names.map((name) => ({ name, profile: name, headers: null }));
 }
 
 export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent = null, profile = DEFAULT_PROFILE, headers = null, throttleMs = 0 } = {}) {
@@ -192,27 +203,62 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
       return new Promise((resolvePromise, rejectPromise) => {
         const requestHeaders = headers ?? buildHeaders(profile, userAgent);
         const headerArgs = Object.entries(requestHeaders).flatMap(([key, value]) => ['-H', `${key}: ${value}`]);
+        // Sentinel that curl appends after the body via -w; lets us recover the
+        // final URL after redirects without parsing every header block.
+        const META_SEPARATOR = '__CURL_IMPERSONATE_META_5e8f1a__';
         const args = [
           profileData.impersonate,
           '-s', '-L', '-D', '-',
+          '--compressed',
           '--connect-timeout', String(Math.round(timeoutMs / 1000)),
+          '-w', `\n${META_SEPARATOR}\n%{url_effective}`,
           ...headerArgs,
           url,
         ];
 
-        const child = spawn('curl-impersonate', args, { encoding: 'utf8' });
+        const child = spawn('curl-impersonate', args);
+        child.stdout.setEncoding('utf8');
+        child.stderr.setEncoding('utf8');
         let stdout = '';
         let stderr = '';
         child.stdout.on('data', (chunk) => { stdout += chunk; });
         child.stderr.on('data', (chunk) => { stderr += chunk; });
 
+        // Wire the AbortController (driven by the outer timeoutMs timer) to
+        // actually kill the curl subprocess; --connect-timeout alone only
+        // covers TCP handshake, so a slow body would otherwise hang forever.
+        const onAbort = () => { try { child.kill('SIGKILL'); } catch { /* noop */ } };
+        controller.signal.addEventListener('abort', onAbort, { once: true });
+
         child.on('close', (code) => {
+          controller.signal.removeEventListener('abort', onAbort);
           if (code !== 0) {
             return rejectPromise(new Error(`curl-impersonate exited with code ${code}: ${stderr}`));
           }
 
-          const [headerBlock, ...bodyParts] = stdout.split('\r\n\r\n');
-          const body = bodyParts.join('\r\n\r\n');
+          // Recover the post-redirect final URL from the -w sentinel.
+          let payload = stdout;
+          let finalUrl = url;
+          const metaMarker = `\n${META_SEPARATOR}\n`;
+          const metaIdx = stdout.lastIndexOf(metaMarker);
+          if (metaIdx >= 0) {
+            payload = stdout.slice(0, metaIdx);
+            finalUrl = stdout.slice(metaIdx + metaMarker.length).trim() || url;
+          }
+
+          // With -L curl emits one header block per hop separated by \r\n\r\n.
+          // The actual response body follows the LAST `HTTP/...` block; earlier
+          // blocks are 30x redirect responses that must NOT be glued into the body.
+          const blocks = payload.split('\r\n\r\n');
+          let lastHttpIdx = -1;
+          for (let i = 0; i < blocks.length; i += 1) {
+            if (/^HTTP\/\d/.test(blocks[i])) lastHttpIdx = i;
+          }
+          const headerBlock = lastHttpIdx >= 0 ? blocks[lastHttpIdx] : '';
+          const body = lastHttpIdx >= 0
+            ? blocks.slice(lastHttpIdx + 1).join('\r\n\r\n')
+            : payload;
+
           const headerLines = headerBlock.split('\r\n');
           const statusLine = headerLines.find(l => l.startsWith('HTTP/'));
           const status = statusLine ? Number(statusLine.split(' ')[1]) : 500;
@@ -221,7 +267,7 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
 
           resolvePromise({
             url,
-            finalUrl: url, // curl-impersonate does not easily expose final URL after redirects
+            finalUrl,
             status,
             ok: status >= 200 && status < 300,
             contentType,
@@ -233,6 +279,7 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
         });
 
         child.on('error', (err) => {
+          controller.signal.removeEventListener('abort', onAbort);
           rejectPromise(new Error(`Failed to start curl-impersonate. Is it installed and in your PATH? Error: ${err.message}`));
         });
       });
@@ -337,10 +384,14 @@ export function robotsAllows(robotsText, url) {
 
 async function assertRobotsAllows(url, opts) {
   const robotsUrl = robotsTxtUrl(url);
+  // robotsAllows() only parses the `User-agent: *` group, so fetch robots.txt
+  // with a stable browser UA (not opts.profile, which may be a search-engine
+  // bot or a custom UA whose specific rules we are NOT consulting). This keeps
+  // the rule we evaluate consistent with the rule we fetch under.
+  const robotsProfile = ALL_PROFILES['desktop-chrome'] ? 'desktop-chrome' : DEFAULT_PROFILE;
   try {
     const result = await fetchUrl(robotsUrl, {
-      profile: opts.profile,
-      userAgent: opts.userAgentOverride ? opts.userAgent : null,
+      profile: robotsProfile,
       throttleMs: opts.throttleMs,
     });
     if (result.status === 404) return;
@@ -531,8 +582,11 @@ async function main() {
         });
       } else {
         for (const profileAttempt of profileSequence(opts)) {
+          // Pass profile + headers from the attempt so both UA AND JA3
+          // fingerprint actually rotate between retries (previously only the
+          // headers rotated while curl-impersonate kept the original profile).
           result = await fetchUrl(opts.url, {
-            profile: opts.profile,
+            profile: profileAttempt.profile,
             headers: profileAttempt.headers,
             throttleMs: opts.throttleMs,
           });
@@ -599,7 +653,7 @@ async function main() {
       result = { ...result, body: stripped, contentLength: stripped.length };
     }
 
-    if (useCacheWrite && !cacheHit && result.ok) {
+    if (useCacheWrite && !cacheHit && result.ok && !looksLikeBotChallenge(result)) {
       writeCache(opts.cacheDir, opts.url, source, result);
     }
   }
