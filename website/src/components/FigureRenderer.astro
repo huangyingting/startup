@@ -1194,8 +1194,14 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
 
   const renderQuadrant = (element, payload) => {
     const points = arr(payload.data.points);
-    const xAxisLabel = payload.data.xAxis ?? payload.data.xLabel ?? payload.data.x ?? 'X';
-    const yAxisLabel = payload.data.yAxis ?? payload.data.yLabel ?? payload.data.y ?? 'Y';
+    const axisLabel = (raw, fallback) => {
+      if (raw == null) return fallback;
+      if (typeof raw === 'string' || typeof raw === 'number') return String(raw);
+      if (typeof raw === 'object' && typeof raw.label === 'string') return raw.label;
+      return fallback;
+    };
+    const xAxisLabel = axisLabel(payload.data.xAxis ?? payload.data.xLabel ?? payload.data.x, 'X');
+    const yAxisLabel = axisLabel(payload.data.yAxis ?? payload.data.yLabel ?? payload.data.y, 'Y');
     const xs = points.map((p) => Number(p.x)).filter(Number.isFinite);
     const ys = points.map((p) => Number(p.y)).filter(Number.isFinite);
     const allValues = [...xs, ...ys];

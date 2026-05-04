@@ -103,6 +103,7 @@ Retry up to 3 times per chapter, scoping each retry strictly to the dimensions i
 - Use `currentDate` from the report run as the freshness anchor and preserve source date precision.
 - Re-check volatile facts such as funding, valuation, headcount, customers, pricing, legal issues, outages, and regulatory status.
 - Tables should contain evidence-backed values or explicit gaps. Enumeration tables additionally need `enumerationScope` (see chapter-loop step 7).
+- Cite a table's supporting claims via the table-level `claimRefs` field. Do **not** add an `evidence` (or `claim refs`) column that holds raw `C###` ids; the renderer surfaces footer refs automatically.
 - Figures must be structured YAML objects using schema-supported fields only; do not use Mermaid, SVG, prose diagrams, JSON strings, or fabricated chart data.
 - `evidenceGaps[]` documents missing public data; it does not waive the per-chapter `gate` floors. Each gap is typed (`type` + `severity`) and may close a question via `relatedQuestionRefs[]` or a table via `relatedTableRefs[]`.
 

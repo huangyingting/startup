@@ -1,5 +1,7 @@
 schemaVersion: workflow-config-v1
 reportSchemaVersion: report-v2
+# Tables cite their backing claims via the table-level `claimRefs` field, never
+# as a column whose cells hold raw `Cxxx` ids. 
 defaultGate:
   minSections: 3
   maxSections: 8
@@ -50,19 +52,19 @@ chapters:
       - Milestones across founding, financing, product, scale, regulatory, partnerships, and adverse events.
     plannedTables:
       - name: Snapshot KPI table
-        requirement: metric, value/status, date, evidence, confidence, gap.
+        requirement: metric, value/status, date, confidence, gap.
       - name: Leadership and founder table
         enumeration: true
         expectedMinRows: 2
-        requirement: person, role, background, founder-market fit or functional coverage, key-person dependency, evidence.
+        requirement: person, role, background, founder-market fit or functional coverage, key-person dependency.
       - name: Stakeholder or investor map
         enumeration: true
         expectedMinRows: 5
-        requirement: stakeholder, role, control or economic importance, evidence, diligence ask.
+        requirement: stakeholder, role, control or economic importance, diligence ask.
       - name: Milestone table
         enumeration: true
         expectedMinRows: 8
-        requirement: dated entries covering founding, financing, product, scale, regulatory, partnership, governance, and adverse events; columns date, event, type (founding|financing|product|scale|regulatory|partnership|governance|adverse), amount/valuation/status, participants/source, implication, evidence; this is the single chronology of record.
+        requirement: dated entries covering founding, financing, product, scale, regulatory, partnership, governance, and adverse events; columns date, event, type (founding|financing|product|scale|regulatory|partnership|governance|adverse), amount/valuation/status, participants/source, implication; this is the single chronology of record.
     plannedFigures:
       - name: Company milestone timeline
         acceptedTypes: [timeline]
@@ -101,7 +103,7 @@ chapters:
       - name: Segment / buyer map
         requirement: segment, buyer, user, payer, workflow, budget owner, adoption trigger.
       - name: Growth drivers and constraints table
-        requirement: driver/constraint, direction, evidence, timing, implication, diligence ask.
+        requirement: driver/constraint, direction, timing, implication, diligence ask.
     plannedFigures:
       - name: Market sizing lens
         acceptedTypes: [pyramid]
@@ -138,13 +140,13 @@ chapters:
       - Moat durability, commoditization or displacement risk, and adverse competitor evidence.
     plannedTables:
       - name: Competitor profile table
-        requirement: competitor, category, scale/funding, target segment, differentiation, evidence, limitation.
+        requirement: competitor, category, scale/funding, target segment, differentiation, limitation.
       - name: Feature / capability matrix
-        requirement: buying criteria, company, competitors, evidence notes, unsupported cells marked clearly.
+        requirement: buying criteria, company, competitors, unsupported cells marked clearly.
       - name: Pricing / packaging comparison
         requirement: price/unit/contract model, included capabilities, discount or unknowns, implication.
       - name: Moat durability / competitive risk register
-        requirement: moat claim, evidence, threat, severity, mitigation/diligence ask.
+        requirement: moat claim, threat, severity, mitigation/diligence ask.
     plannedFigures:
       - name: Competitive positioning map
         acceptedTypes: [quadrant]
@@ -180,11 +182,11 @@ chapters:
       - Financial verdict on revenue quality, margin path, capital intensity, and diligence blockers.
     plannedTables:
       - name: Revenue streams table
-        requirement: stream, mechanism, unit, current value/status, evidence, quality, diligence ask.
+        requirement: stream, mechanism, unit, current value/status, quality, diligence ask.
       - name: Pricing / monetization table
         requirement: price/unit/contract, list vs realized pricing, discounts/unknowns, source.
       - name: Unit economics table
-        requirement: metric, value/null, confidence, why it matters, evidence or diligence ask.
+        requirement: metric, value/null, confidence, why it matters, diligence ask.
       - name: Capital adequacy table
         requirement: cash on hand, monthly burn, runway months, planned use of funds, next-round trigger, debt/project-finance obligations; reference Company Overview funding chronology via claimRefs instead of restating round history.
       - name: Public financial gaps table
@@ -230,13 +232,13 @@ chapters:
       - Trust, safety, security, privacy, compliance, and quality controls.
     plannedTables:
       - name: Product module / asset matrix
-        requirement: module/asset/product line, user, status/maturity, evidence, differentiation, diligence gap.
+        requirement: module/asset/product line, user, status/maturity, differentiation, diligence gap.
       - name: Workflow / use-case table
-        requirement: user job, current workflow, company solution, measurable benefit, evidence, limitation.
+        requirement: user job, current workflow, company solution, measurable benefit, limitation.
       - name: Technology / operating architecture table
-        requirement: layer/process/component, role, evidence, dependency, risk.
+        requirement: layer/process/component, role, dependency, risk.
       - name: Trust / quality / compliance table
-        requirement: control/certification/quality metric, status, scope, evidence, gap.
+        requirement: control/certification/quality metric, status, scope, gap.
       - name: Roadmap / release / development-stage table
         requirement: date/stage, feature/milestone, status, implication, source.
     plannedFigures:
@@ -261,7 +263,7 @@ chapters:
       - Distinguish verified maturity, roadmap claims, integrations, and certifications from marketing.
       - Make architecture and workflow figures specific, not generic boxes.
       - Surface product, security, reliability, regulatory, supply, or implementation gaps.
-      - Each module row states maturity/status, evidence URL, buyer/user, differentiation, and diligence gap.
+      - Each module row states maturity/status, buyer/user, differentiation, and diligence gap.
       - Unsupported architecture, certifications, integrations, performance, or roadmap claims become evidenceGaps.
       - Figures use structured YAML fields, not Mermaid or prose diagrams.
   - key: customers
@@ -277,17 +279,17 @@ chapters:
       - Expansion and concentration — land-and-expand, top-customer risk, channel/partner dependence, procurement friction.
     plannedTables:
       - name: Customer segmentation table
-        requirement: segment, buyer/user/payer, use case, scale, revenue/strategic value, evidence, gap.
+        requirement: segment, buyer/user/payer, use case, scale, revenue/strategic value, gap.
       - name: Customer growth / adoption trajectory table
         requirement: metric, value, date, source, confidence, implication, missing denominator.
       - name: Named customer proof table
         enumeration: true
         expectedMinRows: 3
-        requirement: customer, segment, deployment/use case, production vs pilot, outcome, evidence quality, limitation.
+        requirement: customer, segment, deployment/use case, production vs pilot, outcome, limitation.
       - name: Retention / repeat usage / satisfaction table
-        requirement: metric, value/null, segment, evidence, confidence, diligence ask.
+        requirement: metric, value/null, segment, confidence, diligence ask.
       - name: Expansion and concentration risk table
-        requirement: expansion driver, evidence, concentration risk, impact, diligence path.
+        requirement: expansion driver, concentration risk, impact, diligence path.
     plannedFigures:
       - name: Customer journey map
         acceptedTypes: [journey-map]
@@ -335,13 +337,13 @@ chapters:
       - name: Regulatory / legal risk register
         enumeration: true
         expectedMinRows: 3
-        requirement: rule/license/case, jurisdiction, status, evidence date/source, likelihood, severity, mitigation, residual exposure, diligence path; rows ordered by severity.
+        requirement: rule/license/case, jurisdiction, status, likelihood, severity, mitigation, residual exposure, diligence path; rows ordered by severity.
       - name: Operational / quality / security risk register
-        requirement: failure mode, evidence date/source, likelihood, severity, mitigation maturity, residual exposure, unresolved gap; rows ordered by severity.
+        requirement: failure mode, likelihood, severity, mitigation maturity, residual exposure, unresolved gap; rows ordered by severity.
       - name: Partner / dependency risk register
         requirement: dependency, counterparty, role, concentration, failure scenario, severity, mitigation, residual exposure; rows ordered by severity.
       - name: People / execution risk register
-        requirement: role/function, dependency or gap, evidence, likelihood, severity, mitigation, diligence path; rows ordered by severity.
+        requirement: role/function, dependency or gap, likelihood, severity, mitigation, diligence path; rows ordered by severity.
       - name: Mitigation and kill criteria table
         requirement: risk, monitorable trigger, threshold/event, action implication.
     plannedFigures:
@@ -385,9 +387,9 @@ chapters:
       - Exit readiness and final diligence asks plus thesis-break triggers.
     plannedTables:
       - name: Recommendation summary table
-        requirement: recommendation, confidence, risk rating, valuation stance, evidence, decision implication.
+        requirement: recommendation, confidence, risk rating, valuation stance, decision implication.
       - name: Thesis / anti-thesis table
-        requirement: argument, evidence, what would change the view, claim refs.
+        requirement: argument, what would change the view.
       - name: Bull / base / bear scenario table
         requirement: assumptions, valuation/return logic, key risks, probability signal.
       - name: Comparable valuation table
@@ -395,7 +397,7 @@ chapters:
         expectedMinRows: 4
         requirement: comparable, metric, multiple/valuation/status, relevance, limitation.
       - name: Thesis-break and kill triggers table
-        requirement: trigger, evidence/threshold, transmission to thesis, action implication.
+        requirement: trigger, threshold, transmission to thesis, action implication.
       - name: Final diligence asks table
         requirement: topic, missing evidence, why it matters, owner or diligence path.
     plannedFigures:
