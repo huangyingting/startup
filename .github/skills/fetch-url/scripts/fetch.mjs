@@ -134,13 +134,63 @@ function loadHostStrategies() {
   }
   return HOST_STRATEGIES_CACHE;
 }
+
+// Multi-level public suffixes that appear in our host map. Listed explicitly
+// so we don't pull in a full PSL dependency. Add entries here when adding
+// hosts under a ccTLD-style suffix that isn't already covered.
+const MULTI_LEVEL_TLDS = new Set([
+  'co.uk', 'org.uk', 'gov.uk', 'ac.uk', 'plc.uk',
+  'co.jp', 'or.jp', 'ne.jp', 'ac.jp', 'go.jp',
+  'com.au', 'org.au', 'gov.au', 'edu.au', 'net.au',
+  'co.in', 'org.in', 'gov.in', 'ac.in', 'net.in',
+  'com.cn', 'org.cn', 'gov.cn', 'edu.cn', 'net.cn',
+  'com.hk', 'org.hk', 'gov.hk',
+  'com.sg', 'org.sg',
+  'com.br', 'gov.br',
+  'co.kr', 'or.kr', 'go.kr',
+  'co.nz', 'govt.nz', 'org.nz',
+]);
+
+// Best-effort registrable-domain extractor (eTLD+1). Used as the third lookup
+// fallback so a bare 'sec.gov' entry can match 'data.sec.gov'/'efts.sec.gov'
+// without pulling in the full Public Suffix List.
+export function registrableDomain(host) {
+  if (!host) return null;
+  const lower = String(host).toLowerCase();
+  const parts = lower.split('.').filter(Boolean);
+  if (parts.length < 2) return null;
+  const last2 = parts.slice(-2).join('.');
+  if (parts.length >= 3 && MULTI_LEVEL_TLDS.has(last2)) {
+    return parts.slice(-3).join('.');
+  }
+  return last2;
+}
+
+// Three-layer lookup, in cost order:
+//   1. exact host match           (www.reuters.com -> www.reuters.com)
+//   2. www. alias swap            (openai.com -> www.openai.com, or vice versa)
+//   3. registrable-domain match   (data.sec.gov -> sec.gov, only if 'sec.gov'
+//      is *explicitly* in the map; we never auto-coerce to avoid wrongly
+//      collapsing peers like en.wikipedia.org / www.wikipedia.org which can
+//      have different working strategies).
+// Returns the matched entry (including null-strategy entries for known
+// failures) annotated with `_matchedKey`, or null if nothing matched.
 export function lookupHostStrategy(url) {
   let host;
-  try { host = new URL(url).host; } catch { return null; }
+  try { host = new URL(url).host.toLowerCase(); } catch { return null; }
   const map = loadHostStrategies();
-  const entry = map[host];
-  if (!entry || !entry.strategy) return null;
-  return entry; // { strategy, kind, status, bytes, sample_url, tested_at }
+  const has = (k) => k && Object.prototype.hasOwnProperty.call(map, k);
+  const wrap = (k) => ({ ...map[k], _matchedKey: k });
+
+  if (has(host)) return wrap(host);
+
+  const aliased = host.startsWith('www.') ? host.slice(4) : `www.${host}`;
+  if (aliased !== host && has(aliased)) return wrap(aliased);
+
+  const reg = registrableDomain(host);
+  if (reg && reg !== host && reg !== aliased && has(reg)) return wrap(reg);
+
+  return null;
 }
 
 const BLOCK_TAGS = 'p|div|section|article|header|footer|nav|aside|main|ul|ol|li|tr|td|th|h[1-6]|blockquote|pre|figure|figcaption|table';
@@ -175,6 +225,7 @@ function parseArgs(args) {
     noCache: false,
     refreshCache: false,
     noHostMap: false,
+    ignoreHostMapFailures: false,
   };
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
@@ -199,6 +250,7 @@ function parseArgs(args) {
     else if (arg === '--no-cache') opts.noCache = true;
     else if (arg === '--refresh-cache') opts.refreshCache = true;
     else if (arg === '--no-host-map') opts.noHostMap = true;
+    else if (arg === '--ignore-host-map-failures') opts.ignoreHostMapFailures = true;
     else opts.url = arg;
   }
   return opts;
@@ -620,18 +672,44 @@ async function main() {
     const entry = lookupHostStrategy(opts.url);
     if (entry) {
       const host = new URL(opts.url).host;
-      if (entry.kind === 'reader') {
+      const matchedVia = entry._matchedKey === host
+        ? ''
+        : ` via ${entry._matchedKey}`;
+      // Surface stale entries so the user knows when to consider --refresh.
+      const STALE_DAYS = 90;
+      let staleSuffix = '';
+      if (entry.tested_at) {
+        const ageMs = Date.now() - new Date(entry.tested_at).valueOf();
+        const ageDays = Number.isFinite(ageMs) && ageMs >= 0 ? Math.floor(ageMs / 86_400_000) : null;
+        if (ageDays !== null && ageDays > STALE_DAYS) {
+          staleSuffix = ` STALE: ${ageDays}d old, consider re-running probe-strategies.mjs --refresh`;
+        }
+      }
+
+      // Known-failure hosts (probe couldn't find any working strategy) short-
+      // circuit instead of paying ~30-60s to fail through the full chain again.
+      // The user can still force the attempt with --ignore-host-map-failures.
+      if (entry.strategy === null) {
+        if (opts.ignoreHostMapFailures) {
+          console.error(`[fetch-url] host-map: ${host}${matchedVia} is known-failure (tested ${entry.tested_at ?? 'unknown'}); ignoring per --ignore-host-map-failures.`);
+        } else {
+          const note = entry.note ? ` (${entry.note})` : '';
+          console.error(`[fetch-url] host-map: ${host}${matchedVia} is known to block all strategies (tested ${entry.tested_at ?? 'unknown'})${note}.${staleSuffix}`);
+          console.error('[fetch-url] Use the official API or a real headless browser. Pass --ignore-host-map-failures to attempt anyway.');
+          exit(4);
+        }
+      } else if (entry.kind === 'reader') {
         opts.viaReader = true;
-        console.error(`[fetch-url] host-map: ${host} -> reader (tested ${entry.tested_at}).`);
+        console.error(`[fetch-url] host-map: ${host}${matchedVia} -> reader (tested ${entry.tested_at}).${staleSuffix}`);
       } else if (entry.kind === 'wayback') {
         opts.viaWayback = true;
-        console.error(`[fetch-url] host-map: ${host} -> wayback (tested ${entry.tested_at}).`);
+        console.error(`[fetch-url] host-map: ${host}${matchedVia} -> wayback (tested ${entry.tested_at}).${staleSuffix}`);
       } else if (ALL_PROFILES[entry.strategy]) {
         opts.profile = entry.strategy;
         // Skip the multi-profile retry loop — the map already says which one
         // works. If it now fails, we still drop into the reader/wayback chain.
         opts.retryProfiles = false;
-        console.error(`[fetch-url] host-map: ${host} -> ${entry.strategy} (tested ${entry.tested_at}).`);
+        console.error(`[fetch-url] host-map: ${host}${matchedVia} -> ${entry.strategy} (tested ${entry.tested_at}).${staleSuffix}`);
       }
     }
   }

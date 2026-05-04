@@ -438,13 +438,19 @@ const URL_SET = [
 ];
 
 const MIN_BYTES = 500; // tiny bodies usually mean redirect/empty/challenge stub
+const PROBE_TIMEOUT_MS = 8_000; // per-attempt cap; production fetches use 15s
+const DEFAULT_CONCURRENCY = 6;
 
 function parseArgs(args) {
-  const opts = { hosts: null, refresh: false };
+  const opts = { hosts: null, refresh: false, concurrency: DEFAULT_CONCURRENCY };
   for (let i = 0; i < args.length; i += 1) {
     const a = args[i];
     if (a === '--refresh') opts.refresh = true;
     else if (a === '--hosts') opts.hosts = (args[++i] ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+    else if (a === '--concurrency') {
+      const n = Number(args[++i]);
+      if (Number.isFinite(n) && n >= 1) opts.concurrency = Math.floor(n);
+    }
   }
   return opts;
 }
@@ -457,7 +463,7 @@ async function probe(url) {
     const profile = s.profile ?? 'desktop-chrome';
     let result;
     try {
-      result = await fetchUrl(target, { profile, throttleMs: 250, timeoutMs: 20_000 });
+      result = await fetchUrl(target, { profile, throttleMs: 250, timeoutMs: PROBE_TIMEOUT_MS });
     } catch (err) {
       // network / spawn failure for this strategy; try next
       continue;
@@ -500,46 +506,76 @@ async function main() {
     if (!byHost.has(host)) byHost.set(host, u);
   }
 
-  let probed = 0;
-  let failed = 0;
+  // Decide what to probe vs skip up-front so the progress prefix is accurate.
+  // Treat *any* existing entry (including known-failures, strategy:null) as
+  // "already probed" — forcing a re-probe requires --refresh.
+  const todo = [];
   for (const [host, url] of byHost) {
-    if (!opts.refresh && existing[host]?.strategy) {
-      console.log(`[skip] ${host} -> ${existing[host].strategy} (use --refresh to retest)`);
+    if (!opts.refresh && Object.prototype.hasOwnProperty.call(existing, host)) {
+      const strat = existing[host]?.strategy ?? 'null';
+      console.log(`[skip] ${host} -> ${strat} (use --refresh to retest)`);
       continue;
     }
-    process.stdout.write(`[probe] ${host} ... `);
-    const result = await probe(url);
-    probed += 1;
-    if (result) {
-      map[host] = {
-        strategy: result.strategy,
-        kind: result.kind,
-        status: result.status,
-        bytes: result.bytes,
-        sample_url: url,
-        tested_at: new Date().toISOString().split('T')[0],
-      };
-      console.log(`${result.strategy} (${result.status}, ${result.bytes} bytes)`);
-    } else {
-      failed += 1;
-      map[host] = {
-        strategy: null,
-        kind: null,
-        status: null,
-        bytes: null,
-        sample_url: url,
-        tested_at: new Date().toISOString().split('T')[0],
-        note: 'all strategies failed or were blocked',
-      };
-      console.log('FAILED (no working strategy)');
+    todo.push([host, url]);
+  }
+
+  const total = todo.length;
+  if (total === 0) {
+    console.log('\nNothing to probe.');
+  } else {
+    const concurrency = Math.min(opts.concurrency, total);
+    console.log(`\nProbing ${total} hosts with concurrency=${concurrency} (per-attempt timeout ${PROBE_TIMEOUT_MS / 1000}s)...\n`);
+  }
+
+  let probed = 0;
+  let failed = 0;
+  let completed = 0;
+  const startedAt = Date.now();
+  const queue = todo.slice();
+  const today = new Date().toISOString().split('T')[0];
+
+  async function worker() {
+    while (queue.length) {
+      const [host, url] = queue.shift();
+      const result = await probe(url);
+      completed += 1;
+      probed += 1;
+      const tag = `[${String(completed).padStart(3, ' ')}/${total}]`;
+      if (result) {
+        map[host] = {
+          strategy: result.strategy,
+          kind: result.kind,
+          status: result.status,
+          bytes: result.bytes,
+          sample_url: url,
+          tested_at: today,
+        };
+        console.log(`${tag} ${host} -> ${result.strategy} (${result.status}, ${result.bytes} bytes)`);
+      } else {
+        failed += 1;
+        map[host] = {
+          strategy: null,
+          kind: null,
+          status: null,
+          bytes: null,
+          sample_url: url,
+          tested_at: today,
+          note: 'all strategies failed or were blocked',
+        };
+        console.log(`${tag} ${host} -> FAILED (no working strategy)`);
+      }
     }
   }
+
+  const concurrency = Math.max(1, Math.min(opts.concurrency, total || 1));
+  await Promise.all(Array.from({ length: concurrency }, () => worker()));
 
   mkdirSync(dirname(OUT_PATH), { recursive: true });
   // Stable key order on disk for git-friendly diffs.
   const sorted = Object.fromEntries(Object.entries(map).sort(([a], [b]) => a.localeCompare(b)));
   writeFileSync(OUT_PATH, JSON.stringify(sorted, null, 2) + '\n', 'utf8');
-  console.log(`\nWrote ${Object.keys(sorted).length} hosts to ${OUT_PATH} (probed ${probed} this run, ${failed} failed)`);
+  const elapsedSec = ((Date.now() - startedAt) / 1000).toFixed(1);
+  console.log(`\nWrote ${Object.keys(sorted).length} hosts to ${OUT_PATH} (probed ${probed} this run in ${elapsedSec}s, ${failed} failed)`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });
