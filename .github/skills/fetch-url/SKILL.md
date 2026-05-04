@@ -56,6 +56,7 @@ Options:
 - `--cache-ttl-hours <n>`: how long cached responses stay valid (default `168` = 7 days).
 - `--no-cache`: disable cache reads and writes for this call.
 - `--refresh-cache`: bypass the cache read but still write the new response.
+- `--no-host-map`: ignore the pre-computed host -> strategy map and run the standard origin/reader/wayback chain.
 - `--help`: print CLI usage.
 
 ## Caching (default ON)
@@ -66,6 +67,43 @@ The script writes successful responses to `./.fetch-cache/<sha256>.json` (relati
 - Failed responses (non-2xx) and bot-challenge bodies are not cached. Reader and Wayback fallbacks cache under their own keys so retries can reuse the best successful retrieval path directly.
 - Set `FETCH_URL_CACHE_DIR=/path/to/cache` to point all calls at a shared cache directory.
 - Use `--refresh-cache` to force a re-fetch when you suspect the page changed; use `--no-cache` for ad-hoc checks where you want network truth every time.
+
+## Host strategy map (fast-path)
+
+`references/host-strategies.json` maps known hosts to the cheapest strategy that empirically succeeded for them. The bundled map covers ~290 hosts across AI/ML, SaaS, dev tools, fintech, biotech, climate, news, regulators, patents, funding databases, code/package registries, and more. When a fetched URL's host is in the map, the script jumps straight to that strategy and skips the full origin -> retry-other-browsers -> reader -> wayback chain.
+
+Distribution in the bundled map (296 hosts):
+
+- `bingbot` (cheapest, no curl-impersonate spawn): ~55% — most company sites, AWS/GCP, NYT, GitHub, Stripe, OpenAI, arxiv, search engines.
+- `desktop-chrome`: ~27% — Anthropic, Notion, Bloomberg, SEC, Crunchbase, FTC/FCC/Treasury, Salesforce, Snowflake.
+- `reader` (r.jina.ai): ~11% — Stack Overflow, HuggingFace, Economist, LinkedIn, Quora, Klarna, Hims, Stack Overflow.
+- `wayback`: ~3% — WSJ, IMDB, Capterra, Trustpilot, OECD, Britannica.
+- `desktop-firefox`: ~2% — Reuters, FT, Gartner, investing.com (Chrome JA3 blocked, Firefox passes).
+- `desktop-safari` / `mobile-safari` / `googlebot`: rare specialists (McKinsey, G2, japantimes).
+- 4 hosts have no working strategy and are flagged `strategy: null` (Reddit, Glassdoor, signalnfx, espacenet — these need their official APIs or a real headless browser).
+
+If the chosen strategy now fails (site changed protection), the standard reader/wayback fallback chain still runs — the map only chooses the *first* attempt, never disables fallbacks. Pass `--no-host-map` to skip the map for one call. Pass `--profile <name>` or `--via-reader` / `--via-wayback` to override it explicitly (those flags also bypass the map).
+
+### Refresh the map
+
+Re-run the probe when:
+
+- a host that used to work now fails (`--refresh --hosts host1.com,host2.com` for a targeted re-test);
+- you add new hosts to the URL set in `scripts/probe-strategies.mjs`;
+- it's been a few months and you want to revalidate everything (`--refresh` for a full re-test).
+
+```sh
+# Probe only new hosts (cheap; skips ones already in the map):
+node .github/skills/fetch-url/scripts/probe-strategies.mjs
+
+# Re-test specific hosts after their protection seems to have changed:
+node .github/skills/fetch-url/scripts/probe-strategies.mjs --refresh --hosts www.reuters.com,www.wsj.com
+
+# Full refresh (slow):
+node .github/skills/fetch-url/scripts/probe-strategies.mjs --refresh
+```
+
+The probe walks each strategy in cost order (`bingbot` -> `desktop-chrome` -> `desktop-firefox` -> `desktop-safari` -> `mobile-safari` -> `googlebot` -> `reader` -> `wayback`) and records the first one that returns a 200, non-bot-challenge body of at least 500 bytes.
 
 ## Bot-protected sites
 

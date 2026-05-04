@@ -3,7 +3,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-import { delimiter, join, resolve } from 'node:path';
+import { delimiter, dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { argv, env, exit } from 'node:process';
 
 const DEFAULT_URL = 'https://openai.com';
@@ -108,6 +109,40 @@ function resolveWrapperPath(wrapper) {
   return resolved;
 }
 
+// Per-host strategy fast-path. Pre-computed by `probe-strategies.mjs` and
+// stored at references/host-strategies.json. When a URL's host has a known
+// winning strategy (e.g. reuters.com -> desktop-firefox, wsj.com -> wayback),
+// we skip the full origin->reader->wayback fallback chain and try that
+// strategy first; if it fails we still drop back to the standard chain.
+const HOST_STRATEGIES_PATH = (() => {
+  try {
+    const here = dirname(fileURLToPath(import.meta.url));
+    return resolve(here, '..', 'references', 'host-strategies.json');
+  } catch {
+    return null;
+  }
+})();
+let HOST_STRATEGIES_CACHE = null;
+function loadHostStrategies() {
+  if (HOST_STRATEGIES_CACHE !== null) return HOST_STRATEGIES_CACHE;
+  HOST_STRATEGIES_CACHE = {};
+  if (!HOST_STRATEGIES_PATH || !existsSync(HOST_STRATEGIES_PATH)) return HOST_STRATEGIES_CACHE;
+  try {
+    HOST_STRATEGIES_CACHE = JSON.parse(readFileSync(HOST_STRATEGIES_PATH, 'utf8'));
+  } catch {
+    HOST_STRATEGIES_CACHE = {};
+  }
+  return HOST_STRATEGIES_CACHE;
+}
+export function lookupHostStrategy(url) {
+  let host;
+  try { host = new URL(url).host; } catch { return null; }
+  const map = loadHostStrategies();
+  const entry = map[host];
+  if (!entry || !entry.strategy) return null;
+  return entry; // { strategy, kind, status, bytes, sample_url, tested_at }
+}
+
 const BLOCK_TAGS = 'p|div|section|article|header|footer|nav|aside|main|ul|ol|li|tr|td|th|h[1-6]|blockquote|pre|figure|figcaption|table';
 const BLOCK_TAG_RE = new RegExp(`<\\/?(${BLOCK_TAGS})(?:\\s[^>]*)?>`, 'gi');
 
@@ -129,6 +164,7 @@ function parseArgs(args) {
     viaReader: false,
     noReader: false,
     profile: DEFAULT_PROFILE,
+    profileOverride: false,
     retryProfiles: true,
     userAgentOverride: false,
     throttleMs: DEFAULT_THROTTLE_MS,
@@ -138,6 +174,7 @@ function parseArgs(args) {
     cacheTtlHours: DEFAULT_CACHE_TTL_HOURS,
     noCache: false,
     refreshCache: false,
+    noHostMap: false,
   };
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
@@ -148,7 +185,7 @@ function parseArgs(args) {
       opts.userAgent = args[++i] ?? opts.userAgent;
       opts.userAgentOverride = true;
     }
-    else if (arg === '--profile') opts.profile = args[++i] ?? opts.profile;
+    else if (arg === '--profile') { opts.profile = args[++i] ?? opts.profile; opts.profileOverride = true; }
     else if (arg === '--no-retry-profiles') opts.retryProfiles = false;
     else if (arg === '--via-wayback') opts.viaWayback = true;
     else if (arg === '--no-wayback') opts.noWayback = true;
@@ -161,6 +198,7 @@ function parseArgs(args) {
     else if (arg === '--cache-ttl-hours') opts.cacheTtlHours = Number(args[++i] ?? opts.cacheTtlHours);
     else if (arg === '--no-cache') opts.noCache = true;
     else if (arg === '--refresh-cache') opts.refreshCache = true;
+    else if (arg === '--no-host-map') opts.noHostMap = true;
     else opts.url = arg;
   }
   return opts;
@@ -572,6 +610,30 @@ async function main() {
   if (!Number.isFinite(opts.throttleMs) || opts.throttleMs < 0) {
     console.error(`Invalid --throttle-ms: ${opts.throttleMs}`);
     exit(2);
+  }
+
+  // Fast-path: when the user did not force a profile or fallback, consult the
+  // pre-computed host -> winning-strategy map. Hosts where origin/desktop-*
+  // historically fail (e.g. wsj.com, www.capterra.com) jump straight to
+  // reader/wayback instead of paying ~3-5s to retry the full chain.
+  if (!opts.noHostMap && !opts.profileOverride && !opts.viaReader && !opts.viaWayback) {
+    const entry = lookupHostStrategy(opts.url);
+    if (entry) {
+      const host = new URL(opts.url).host;
+      if (entry.kind === 'reader') {
+        opts.viaReader = true;
+        console.error(`[fetch-url] host-map: ${host} -> reader (tested ${entry.tested_at}).`);
+      } else if (entry.kind === 'wayback') {
+        opts.viaWayback = true;
+        console.error(`[fetch-url] host-map: ${host} -> wayback (tested ${entry.tested_at}).`);
+      } else if (ALL_PROFILES[entry.strategy]) {
+        opts.profile = entry.strategy;
+        // Skip the multi-profile retry loop — the map already says which one
+        // works. If it now fails, we still drop into the reader/wayback chain.
+        opts.retryProfiles = false;
+        console.error(`[fetch-url] host-map: ${host} -> ${entry.strategy} (tested ${entry.tested_at}).`);
+      }
+    }
   }
 
   if (opts.checkRobots) await assertRobotsAllows(opts.url, opts);
