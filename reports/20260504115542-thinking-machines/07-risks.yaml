@@ -1,0 +1,675 @@
+schemaVersion: report-v2
+artifact: risks
+slug: 20260504115542-thinking-machines
+runDate: '2026-05-04'
+company:
+  name: Thinking Machines Lab
+chapter:
+  number: 7
+  title: Risks
+  summary: |
+    Thinking Machines Lab faces a concentrated risk profile across five domains. Regulatory
+    risk is elevated and growing: the EU AI Act classifies Tinker as a general-purpose AI
+    system (GPAI) provider, imposing transparency and documentation obligations beginning in
+    August 2025. US copyright litigation (training data) and model license restrictions
+    (Meta Llama, Alibaba Qwen commercial terms) create legal exposure that could constrain
+    the model library. Operationally, the shared LoRA pool architecture creates multi-tenant
+    isolation risk and infrastructure concentration around Nvidia Blackwell hardware; supply
+    chain disruption (US-China chip restrictions, Nvidia production constraints) would
+    directly affect service availability. Partner dependency on Nvidia and Google Cloud for
+    compute is existential at TML's current scale. People risk is unusually high: three
+    co-founders departed within the first year (Tulloch, Zoph, Metz), leaving Mira Murati
+    as the dominant decision-maker — a key-person risk concentration that rivals any startup
+    in AI. Financial risk centers on compute capex obligations (potentially $1-2B+ in Nvidia
+    and Google Cloud commitments) that could compress runway faster than public disclosures
+    suggest. None of these risks is necessarily fatal, but their combination at a pre-revenue
+    stage with a $12B valuation makes this one of the more risk-concentrated investment
+    positions in AI. Key thesis-break triggers include: Nvidia/Google Cloud compute
+    disruption, a major GPAI Act enforcement action in the EU, departure of John Schulman
+    or Mira Murati, or failure to publish pricing and achieve positive NRR within 12 months
+    of GA.
+sections:
+  - id: s701
+    title: Regulatory and Legal Risk
+    body: |
+      TML faces material regulatory risk from multiple overlapping frameworks, the most
+      consequential being the EU AI Act (Regulation 2024/1689, entered into force August 2024,
+      GPAI obligations applicable from August 2025). Under the EU AI Act, providers of
+      general-purpose AI models (GPAI models) with systemic risk must comply with model
+      evaluation, incident reporting, and adversarial testing obligations. Tinker is not
+      itself a GPAI model — it is a fine-tuning platform — but TML's maintenance of base
+      model weights (Qwen-235B-A22B, DeepSeek V3.1, Llama 3.x) on its managed clusters
+      may constitute "making available" those GPAI models within the scope of the Act.
+      TML's European legal exposure is uncertain but material: any enterprise customer in the
+      EU will require TML to demonstrate EU AI Act compliance before contracting.
+
+      US copyright risk is the most immediate legal risk. The output of fine-tuning (the LoRA
+      adapter plus base model weights) may incorporate copyrighted training data in ways that
+      courts have not yet definitively resolved. Active litigation (Getty Images v. Stability
+      AI, Andersen v. Stability AI, New York Times v. Microsoft/OpenAI) is establishing
+      precedent that could constrain AI training methodologies. TML's use of open-weight
+      base models does not fully insulate it: the training data used to create those base
+      models may be challenged, and fine-tuning on proprietary data could create secondary
+      liability if training data is mishandled.
+
+      Meta's Llama Community License restricts commercial use by entities with >700M monthly
+      active users and imposes conditions on derivative model distribution. TML's service
+      commercially distributes LoRA adapters trained on Llama models; the license terms apply
+      to TML's commercial use of Llama model weights. If Meta restricts commercial fine-tuning
+      access (as it has done for some regions), TML would need to remove Llama from its
+      supported model list — a meaningful reduction in product breadth.
+
+      Data privacy regulation (GDPR in the EU, CCPA in California, emerging US state laws)
+      imposes obligations on entities processing personal data in AI training. TML's claim
+      that customer training data is not retained does not fully address the question of
+      whether base model inference or fine-tuning on data containing personal information
+      requires data subject consent under GDPR Article 22.
+    claimRefs:
+      - C176
+      - C177
+      - C178
+      - C179
+      - C180
+      - C181
+      - C182
+      - C183
+      - C184
+      - C185
+  - id: s702
+    title: Operational and Infrastructure Risk
+    body: |
+      TML's operational risks center on its proprietary managed infrastructure model. Unlike
+      competitors that run on public cloud infrastructure with hyperscaler reliability
+      guarantees, TML operates its own GPU clusters with no disclosed SLA, uptime guarantee,
+      or disaster recovery plan. The shared LoRA pool architecture creates a specific risk:
+      if the base model weights are corrupted, the cluster suffers an outage, or a scheduling
+      bug causes job failures, all concurrent users of that base model are affected
+      simultaneously. Multi-tenant infrastructure failures could expose customer training
+      data to adjacent tenants or cause catastrophic data loss of fine-tuning checkpoints.
+
+      Infrastructure concentration risk is high: the Blackwell cluster dependency means that
+      any disruption in Nvidia GPU supply (US-China export controls, manufacturing delays,
+      or supply allocation to larger customers) could directly reduce TML's service capacity.
+      The announced migration to Vera Rubin chips in 2027 introduces a transition risk:
+      TML's TileLang kernels are optimized for Blackwell; architectural changes in Vera Rubin
+      will require non-trivial kernel rewriting.
+
+      Cybersecurity risk is undercharacterized by public disclosure. A platform handling
+      sensitive AI training workloads — potentially including proprietary company data,
+      classified research data, or personally identifiable information — is a high-value
+      target for cybersecurity threats. No disclosed penetration testing results, security
+      audits, or bug bounty programs have been published for TML's infrastructure. This gap
+      is material for any enterprise customer evaluating Tinker.
+
+      Model training reliability for large MoE models (Qwen-235B, DeepSeek V3.1) is
+      technically challenging. MoE fine-tuning has known instability risks including expert
+      collapse, routing degradation, and gradient explosion. Without published convergence
+      guarantees or job success rate data, users cannot assess TML's reliability for
+      production-scale workflows.
+    claimRefs:
+      - C186
+      - C184
+      - C187
+      - C187
+      - C188
+      - C189
+  - id: s703
+    title: Partner, Dependency, and People Risk
+    body: |
+      TML's partner dependencies create significant concentration risk. The Google Cloud deal
+      (April 2026) and Nvidia 1GW partnership (March 2026) together constitute TML's entire
+      compute infrastructure strategy. If Google Cloud terminates or renegotiates the deal
+      (e.g., if TML fails to meet minimum commitment thresholds), TML would face immediate
+      compute capacity constraints that could halt service delivery. The Nvidia Vera Rubin
+      commitment is forward-looking (2027+) but its financial terms create capex obligations
+      that could constrain financial flexibility.
+
+      The investor-partner configuration (Nvidia, ServiceNow, Cisco as strategic investors
+      and partners) creates a dual risk: these relationships are valuable for distribution
+      and compute access, but they also create principal-agent conflicts if TML's commercial
+      interests diverge from investor interests. Cisco and ServiceNow may prefer TML to
+      integrate with their platforms in ways that limit TML's independence or ability to work
+      with competing enterprise software providers.
+
+      People risk is the most acute risk in TML's profile. Three of the five original co-
+      founders have departed: Andrew Tulloch (→Meta, October 2025), Barret Zoph (original
+      CTO, →OpenAI, January 2026), and Luke Metz (→OpenAI, January 2026). Zoph's departure
+      as CTO required replacement by Soumith Chintala, who has strong credentials but joined
+      only in November 2025. The departures of Zoph and Metz to OpenAI — TML's most direct
+      competitor — raise questions about competitive intelligence, IP ownership of early work,
+      and morale among remaining team members. Mira Murati now carries extraordinary key-
+      person risk: she is the founder, CEO, and only remaining publicly identified senior
+      leader from the founding team (alongside Chintala and Schulman, both of whom joined
+      after TML's founding).
+    claimRefs:
+      - C188
+      - C190
+      - C185
+      - C191
+      - C192
+      - C193
+      - C186
+  - id: s704
+    title: Financial and Market Structural Risks
+    body: |
+      Financial risk is dominated by the uncertain scope of TML's compute capex obligations.
+      The Google Cloud multi-billion dollar deal and Nvidia 1GW partnership may represent
+      $1-3B in total capex commitments from a $2B seed raise, potentially compressing runway
+      from the 10-25 year estimate to 2-5 years if commitments are deployed quickly. At $12B
+      valuation and current pre-revenue stage, TML has no financial buffer against capex
+      acceleration except additional fundraising.
+
+      Market structural risk is material. Fine-tuning as a service faces three convergent
+      commoditization forces: (1) open-source tooling (PyTorch FSDP, DeepSpeed, Unsloth)
+      continues to improve, reducing the infrastructure burden that drives demand for managed
+      platforms; (2) hyperscalers (Google Vertex AI, Azure ML, AWS SageMaker) are expanding
+      their fine-tuning capabilities and can offer compliance, reliability, and pricing
+      advantages that TML cannot match at its current scale; (3) new entrants with similar
+      positioning (research-grade fine-tuning APIs) could erode TML's differentiation before
+      TML achieves scale advantages.
+
+      A general AI investment correction would disproportionately affect TML given its
+      extreme pre-revenue valuation ($12B with zero revenue) relative to companies with
+      comparable valuations but established revenue. If the next fundraise falls below the
+      $50B target (due to market conditions or competitive developments), TML would face a
+      down-round that dilutes existing investors and potentially undermines team morale and
+      recruitment.
+
+      The competitive risk from Meta specifically is underappreciated: Meta has deep
+      financial resources, the Llama model family, and direct interest in fine-tuning tool
+      ecosystems (Meta's fine-tuning infrastructure is built internally). A Meta decision to
+      create a public Llama fine-tuning API would eliminate one of TML's most distinctive
+      use cases immediately.
+    claimRefs:
+      - C194
+      - C195
+      - C196
+      - C197
+      - C186
+  - id: s705
+    title: Mitigations and Thesis-Break Triggers
+    body: |
+      TML's mitigations are nascent and mostly structural (investor relationships, founder
+      reputation, compute partnerships) rather than operational (disclosed security controls,
+      compliance certifications, retention metrics). The strongest mitigations are:
+      (1) Mira Murati's personal credibility as a candidate for key enterprise conversations;
+      (2) the breadth of the cap table (Nvidia, Cisco, ServiceNow) providing infrastructure
+      and distribution hedges; (3) the $2B seed capital providing financial resilience if
+      managed conservatively; and (4) the PBC structure signaling mission-alignment that
+      matters to safety-conscious customers.
+
+      Thesis-break triggers — signals that TML's investment thesis is failing — include:
+      (1) Pricing not published within 3 months of GA, suggesting inability to validate
+      commercial viability; (2) departure of John Schulman or Mira Murati, which would
+      fundamentally alter TML's research credibility and leadership; (3) EU AI Act enforcement
+      action against TML or material EU regulatory barrier to GPAI compliance; (4) Meta
+      Llama license restriction eliminating Llama from TML's supported models; (5) Google
+      Cloud or Nvidia compute disruption that reduces service capacity by >50%; (6) a down-
+      round at valuation below $12B, which would signal investor loss of confidence.
+
+      Monitoring indicators (the signals to watch before triggers are hit) include: GitHub
+      Cookbook activity, academic paper citations of Tinker, EU AI Act enforcement actions
+      against comparable GPAI providers, Nvidia/AMD supply chain reports, Meta Llama
+      commercial policy changes, and TML job postings indicating enterprise sales investment.
+    claimRefs:
+      - C198
+      - C199
+      - C200
+      - C201
+tables:
+  - id: T701
+    title: Regulatory / Legal Risk Register
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Regulatory landscape is rapidly evolving; only publicly available frameworks are included; TML may face
+        additional jurisdiction-specific requirements not captured here.
+    columns:
+      - Rule / License / Case
+      - Jurisdiction
+      - Status
+      - Likelihood
+      - Severity
+      - Mitigation
+      - Residual Exposure
+      - Diligence Path
+    rows:
+      - - EU AI Act (Regulation 2024/1689) — GPAI obligations
+        - EU
+        - In force; GPAI obligations applicable Aug 2025
+        - High
+        - High
+        - Legal review of GPAI provider status; compliance documentation
+        - EU market access blocked without GPAI compliance; may delay EU enterprise sales
+        - Request TML's EU AI Act compliance analysis from legal counsel
+      - - US copyright risk — AI training data
+        - United States
+        - Active litigation (Getty v. Stability AI; NYT v. OpenAI)
+        - Medium
+        - High
+        - Use of open-weight models trained by third parties shifts liability upstream
+        - Adverse ruling in NYT v. OpenAI could set precedent affecting all fine-tuning platforms
+        - Request TML's legal opinion on training data copyright exposure
+      - - Meta Llama Community License restrictions
+        - Global
+        - Active — license terms enforce commercial use conditions
+        - Medium
+        - Medium
+        - Contractual review of license terms; alternative open-weight models as fallback
+        - Llama is TML's most popular open-weight option; restriction would narrow model catalog
+        - Request TML's license compliance review for each supported model
+      - - GDPR / CCPA — training data personal information
+        - EU / California
+        - GDPR in force; CCPA active; US federal privacy bill pending
+        - Medium
+        - Medium
+        - Data isolation claim; no-retention policy (unverified); DPA not published
+        - Enterprise EU customers cannot contract without DPA; California customers require CCPA compliance
+        - Request data processing agreement and GDPR legal basis documentation
+      - - Model misuse liability — harmful fine-tuning outputs
+        - Global
+        - No specific regulation; FTC AI guidelines applicable
+        - Low-Medium
+        - Medium
+        - Acceptable use policy (unpublished); PBC mission statement
+        - Reputational and FTC enforcement risk if Tinker enables harmful applications
+        - Request TML's acceptable use policy and enforcement process
+    claimRefs:
+      - C176
+      - C177
+      - C180
+      - C182
+      - C183
+      - C185
+      - C184
+  - id: T702
+    title: Operational / Quality / Security Risk Register
+    columns:
+      - Failure Mode
+      - Likelihood
+      - Severity
+      - Mitigation Maturity
+      - Residual Exposure
+      - Unresolved Gap
+    rows:
+      - - Shared LoRA pool cluster outage affecting all concurrent users
+        - Medium
+        - High
+        - Low (no published SLA or DR plan)
+        - All active fine-tuning jobs fail simultaneously; data loss possible
+        - No disclosed redundancy architecture or disaster recovery plan
+      - - Multi-tenant training data exposure between customers
+        - Low-Medium
+        - High
+        - Low (no published isolation audit)
+        - Customer training data exposed to adjacent tenants
+        - No third-party security audit or penetration test published
+      - - MoE model training instability (expert collapse, gradient explosion)
+        - Medium
+        - Medium
+        - Medium (TileLang kernels address batch invariance)
+        - Training jobs on Qwen-235B or DeepSeek fail silently or produce suboptimal adapters
+        - No published job success rate or convergence guarantee
+      - - Nvidia Blackwell supply disruption (US-China export controls)
+        - Medium
+        - High
+        - Low (no disclosed backup hardware source)
+        - Service capacity reduction forces waitlist growth and customer attrition
+        - TML relies entirely on Blackwell for current compute; no AMD or custom silicon alternative disclosed
+      - - TileLang kernel incompatibility with Vera Rubin architecture (2027+)
+        - Medium
+        - Medium
+        - Low (1+ year horizon; can be planned)
+        - Kernel rewrite required before Vera Rubin cluster comes online in 2027
+        - Transition engineering risk not publicly acknowledged; Soumith Chintala's PyTorch background mitigates
+    notes: null
+    claimRefs:
+      - C186
+      - C187
+      - C187
+      - C188
+      - C189
+  - id: T703
+    title: Partner / Dependency Risk Register
+    columns:
+      - Dependency
+      - Counterparty
+      - Role
+      - Concentration
+      - Failure Scenario
+      - Severity
+      - Mitigation
+      - Residual Exposure
+    rows:
+      - - Compute infrastructure
+        - Google Cloud / Nvidia
+        - Provides Blackwell GPU cluster for all Tinker workloads
+        - Single-source; critical path
+        - Service unavailable if GCP deal suspended or Nvidia supply disrupted
+        - High
+        - Nvidia investor relationship; 1GW Vera Rubin as backup (2027)
+        - 6-12 month compute gap if GCP deal falls through before Vera Rubin delivery
+      - - Open-weight base models
+        - Meta, Alibaba, Moonshot, DeepSeek, OpenAI
+        - Provides base model weights for fine-tuning
+        - High (6 models; no TML-owned base model)
+        - License revocation or commercial use restriction removes a model from catalog
+        - Medium
+        - Multi-model support hedges single-source risk; can add models if one is restricted
+        - >-
+          Llama restriction most impactful given developer mindshare; Qwen-235B restriction would affect flagship
+          offering
+      - - Enterprise distribution channels
+        - ServiceNow, Cisco (investors)
+        - Potential channel partners for enterprise sales
+        - No disclosed agreement; speculative
+        - No enterprise pipeline if investor-partners do not activate as distribution channels
+        - Medium
+        - Strategic investment terms may include distribution commitments (undisclosed)
+        - Without investor channel activation, TML must build independent enterprise sales from zero
+      - - Research user pipeline
+        - Princeton, Stanford, Berkeley, Redwood (beta users)
+        - Social proof; community flywheel triggers
+        - High (only 4 disclosed accounts)
+        - If research cohort disengages, TML loses primary credibility signal for enterprise sales
+        - Medium
+        - Tinker Cookbook community building; academic conference presence
+        - Unknown whether beta users publish Tinker-specific papers or endorse the platform publicly
+      - - Financial backing / syndicate
+        - a16z, Nvidia, Accel, ServiceNow, Cisco
+        - Provides capital; signals quality to market
+        - Moderate (diversified syndicate)
+        - Down-round or investor departure signals loss of confidence
+        - Medium
+        - Diverse investor base; no single investor controls outcome
+        - Public perception risk if any major investor exits or TML down-rounds
+    notes: null
+    claimRefs:
+      - C188
+      - C190
+      - C185
+      - C191
+  - id: T704
+    title: People / Execution Risk Register
+    columns:
+      - Role / Function
+      - Dependency or Gap
+      - Likelihood
+      - Severity
+      - Mitigation
+      - Diligence Path
+    rows:
+      - - CEO / Founder (Mira Murati)
+        - Single highest-profile person; all external relationships; investor confidence anchored to her
+        - Low (no departure signal)
+        - Critical
+        - Investor rights agreement likely includes departure provisions; track record deters
+        - Request board succession plan and investor protection provisions
+      - - Chief Scientist (John Schulman)
+        - Creator of PPO/RLHF; primary academic credibility for research product; deep RL expertise
+        - Low-Medium (left OpenAI for TML; OpenAI competitor)
+        - High
+        - Soumith Chintala provides adjacent technical credibility on infra side
+        - Confirm Schulman's vesting schedule and non-compete; assess role conflict with OpenAI in market
+      - - CTO (Soumith Chintala, joined Nov 2025)
+        - Replaced Barret Zoph; deep PyTorch expertise; critical for kernel and infra quality
+        - Low-Medium (joined recently; integration risk)
+        - High
+        - Chintala's open-source community standing creates departure cost; co-opted via equity
+        - Confirm Chintala's vesting schedule; assess retention risk given Meta offer likelihood
+      - - Co-founder departures (Tulloch, Zoph, Metz)
+        - Three co-founders left in first year; Zoph and Metz departed to OpenAI competitor
+        - Completed
+        - Medium (IP risk, morale impact, signaling)
+        - Soumith Chintala hire partially addresses CTO gap; remaining team continuity
+        - Request IP assignment status and departure agreements for Tulloch, Zoph, Metz
+    notes: null
+    claimRefs:
+      - C192
+      - C193
+      - C186
+      - C194
+  - id: T705
+    title: Mitigation and Kill Criteria Table
+    columns:
+      - Risk
+      - Monitorable Trigger
+      - Threshold / Event
+      - Action Implication
+    rows:
+      - - EU AI Act GPAI compliance
+        - TML legal team publishes EU compliance documentation
+        - If no documentation by Q4 2026, European enterprise sales are blocked
+        - 'Escalate: require CEO briefing on EU market strategy before Series A'
+      - - Co-founder / key-person departure
+        - Leadership team departures announcements
+        - Departure of Murati, Schulman, or Chintala
+        - 'Trigger: immediately reassess thesis; value at significant discount'
+      - - Pricing not published post-GA
+        - TML pricing page goes live
+        - GA shipped but no pricing within 60 days
+        - 'Yellow flag: investigate whether pricing delay signals margin concerns'
+      - - Compute dependency failure
+        - GCP service metrics, Nvidia supply reports
+        - GCP deal suspended or >30 day compute outage
+        - 'Trigger: assess alternative compute timeline; model runway without GCP'
+      - - Meta Llama license restriction
+        - Meta Llama licensing policy changes
+        - Meta restricts TML commercial fine-tuning use
+        - 'Flag: quantify Llama revenue share; assess product breadth impact'
+    notes: null
+    claimRefs:
+      - C198
+      - C199
+      - C200
+      - C201
+figures:
+  - id: F701
+    title: Risk Heatmap — TML Risk Portfolio by Likelihood and Impact
+    type: matrix
+    layout: wide
+    summary: |
+      Heat map showing TML's material risks plotted across five likelihood levels
+      (columns) and five impact categories (rows). Higher-right risks are the most
+      critical; lower-left risks are monitoring items. All assessments are analyst
+      judgments based on public evidence.
+    data:
+      columns:
+        - label: Very Low
+        - label: Low
+        - label: Medium
+        - label: High
+        - label: Very High
+      rows:
+        - label: Catastrophic impact
+          values:
+            - ''
+            - ''
+            - Compute disruption (Nvidia/GCP)
+            - Key-person departure (Murati)
+            - ''
+        - label: High impact
+          values:
+            - ''
+            - Meta Llama restriction
+            - EU AI Act enforcement
+            - Co-founder departures (Zoph, Metz)
+            - ''
+        - label: Medium impact
+          values:
+            - ''
+            - ''
+            - Copyright litigation precedent
+            - Capex runway compression
+            - Fine-tuning commoditization
+        - label: Low impact
+          values:
+            - ''
+            - Model misuse liability
+            - GDPR enforcement action
+            - Competitor feature parity
+            - ''
+        - label: Monitoring only
+          values:
+            - FedRAMP timeline
+            - ''
+            - PBC governance complexity
+            - ''
+            - ''
+    approximationNotes: >-
+      Risk likelihood and impact ratings are qualitative analyst assessments. No actuarial data is available for
+      pre-revenue AI startups at TML's stage.
+    claimRefs:
+      - C176
+      - C186
+      - C188
+      - C192
+      - C194
+      - C197
+  - id: F702
+    title: Risk Transmission Map — How TML Risks Flow Into Investment Outcomes
+    type: dag
+    layout: wide
+    summary: |
+      DAG showing how primary risks cascade into downstream effects on revenue, customer
+      acquisition, capital adequacy, and valuation. The most critical transmission paths
+      are: Nvidia/GCP disruption → compute loss → service unavailability → customer churn →
+      revenue loss → down-round; and key-person departure → credibility collapse → enterprise
+      sales difficulty → revenue miss → down-round.
+    data:
+      nodes:
+        - id: rt1
+          label: Compute disruption (Nvidia/GCP)
+        - id: rt2
+          label: Service unavailability / capacity reduction
+        - id: rt3
+          label: Customer churn (research and enterprise)
+        - id: rt4
+          label: Revenue miss vs. investor expectations
+        - id: rt5
+          label: Down-round / valuation compression
+        - id: rt6
+          label: Key-person departure (Murati/Schulman)
+        - id: rt7
+          label: Credibility loss with research community
+        - id: rt8
+          label: Enterprise sales pipeline stalls
+        - id: rt9
+          label: EU AI Act enforcement / GPAI block
+        - id: rt10
+          label: EU market access denied
+      edges:
+        - from: rt1
+          to: rt2
+          label: directly causes
+        - from: rt2
+          to: rt3
+          label: drives
+        - from: rt3
+          to: rt4
+          label: reduces revenue
+        - from: rt4
+          to: rt5
+          label: triggers
+        - from: rt6
+          to: rt7
+          label: undermines
+        - from: rt7
+          to: rt8
+          label: blocks
+        - from: rt8
+          to: rt4
+          label: compounds
+        - from: rt9
+          to: rt10
+          label: enforces
+        - from: rt10
+          to: rt4
+          label: limits revenue
+    claimRefs:
+      - C188
+      - C195
+      - C196
+      - C197
+      - C186
+  - id: F703
+    title: Dependency Map — TML's Critical External Dependencies
+    type: dag
+    layout: wide
+    summary: |
+      DAG showing the critical external parties and systems that TML depends on for
+      operational continuity. The compute chain (Nvidia → GCP → TML cluster) is the
+      single most critical dependency path; model license chain (Meta, Alibaba, etc.)
+      is the second most critical.
+    data:
+      nodes:
+        - id: dep1
+          label: Nvidia (GPU hardware + 1GW partnership)
+        - id: dep2
+          label: Google Cloud (Blackwell cluster hosting)
+        - id: dep3
+          label: TML Internal Cluster
+        - id: dep4
+          label: Meta (Llama model weights + license)
+        - id: dep5
+          label: Alibaba / Moonshot / DeepSeek (model weights)
+        - id: dep6
+          label: TML Tinker Service
+        - id: dep7
+          label: Customer Fine-Tuning Workloads
+        - id: dep8
+          label: a16z / Investor Syndicate (financial backing)
+      edges:
+        - from: dep1
+          to: dep2
+          label: chip supply
+        - from: dep1
+          to: dep3
+          label: direct hardware (Vera Rubin, 2027)
+        - from: dep2
+          to: dep3
+          label: cloud infrastructure
+        - from: dep3
+          to: dep6
+          label: compute substrate
+        - from: dep4
+          to: dep6
+          label: model weights + license
+        - from: dep5
+          to: dep6
+          label: model weights + license
+        - from: dep6
+          to: dep7
+          label: service delivery
+        - from: dep8
+          to: dep3
+          label: capital for infrastructure
+    claimRefs:
+      - C188
+      - C190
+      - C185
+      - C191
+callouts:
+  - calloutType: risk
+    title: Three co-founder departures in Year 1 is a material diligence red flag
+    body: |
+      Andrew Tulloch, Barret Zoph, and Luke Metz all departed TML within its first year of
+      operation. Zoph and Metz left for OpenAI — TML's primary competitor. While Soumith
+      Chintala's hire partially mitigates the CTO gap, the pattern of founder departures
+      raises legitimate questions about internal culture, leadership alignment, and IP
+      ownership of early work. Investors should require IP assignment confirmations and
+      departure agreement summaries before committing capital.
+    claimRefs:
+      - C192
+      - C193
+  - calloutType: risk
+    title: EU AI Act GPAI obligations are already in force and TML has not disclosed compliance
+    body: |
+      GPAI obligations under the EU AI Act became applicable to providers in August 2025.
+      TML may qualify as a GPAI model provider given its management of frontier model weights.
+      No compliance documentation has been published. Without EU AI Act compliance evidence,
+      TML cannot credibly target European enterprise customers — a material constraint on
+      total addressable market.
+    claimRefs:
+      - C176
+      - C178
