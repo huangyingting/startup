@@ -1,0 +1,666 @@
+schemaVersion: report-v2
+artifact: competitors
+slug: openai
+runDate: '2026-05-04'
+company:
+  name: OpenAI
+acknowledgedWarnings:
+  - dimension: duplicateAnalysis
+    reason: >-
+      The tables retain row-level auditability and evidence limits, while the figures provide faster ordinal summaries
+      of positioning, capability breadth, and headline market-share risk for executive readers.
+chapter:
+  number: 3
+  title: Competitors
+  summary: >-
+    OpenAI still competes from a strong product and distribution base, but its moat is less singular than the market
+    narrative implies. Anthropic has overtaken OpenAI in enterprise model share, hyperscalers bundle AI into existing
+    budgets, and open-weight plus multi-model infrastructure make multi-homing easier than in classic SaaS.
+sections:
+  - id: section-1
+    title: 'Landscape: direct labs, bundled incumbents, infrastructure aggregators, and build-it-yourself substitutes'
+    body: >-
+      OpenAI does not compete only with one or two frontier-model labs. The public landscape now spans direct frontier
+      peers such as Anthropic, bundled incumbents such as Google and Microsoft, multi-model infrastructure aggregators
+      such as Amazon Bedrock, and substitutes built around open-weight models like Llama or privacy-oriented vendors
+      like Mistral. Menlo’s 2025 enterprise report is especially important because it shows the buyer’s alternative set
+      broadening in practice rather than in theory: 76% of enterprise AI use cases are now purchased rather than built
+      internally, horizontal copilots already account for $8.4 billion of spend, and foundation-model share has
+      redistributed materially across Anthropic, OpenAI, and Google.
+
+
+      That changes what “competitor” means for OpenAI. The direct peer set still includes Anthropic in the API and
+      coding markets, but the practical deal set also includes Google Workspace and Microsoft 365 budgets, Amazon’s
+      multi-model routing layer, and internal builds that combine open-weight models with cloud tooling. OpenAI’s core
+      advantage remains the combination of a flagship consumer product, a widely used API, and enterprise trust
+      controls. The weakness is that multiple rival paths now solve the same jobs: buyers can buy a bundled assistant,
+      route traffic across several providers, or build on open models when control matters more than frontier quality.
+    claimRefs:
+      - C152
+      - C153
+      - C154
+      - C155
+      - C158
+      - C159
+      - C160
+      - C162
+  - id: section-2
+    title: 'Profile by competitor class: where OpenAI is strongest and where rivals are sharper'
+    body: >-
+      Anthropic is the clearest direct product threat. Official Anthropic materials show Claude sold across commercial
+      and enterprise surfaces and distributed through both Amazon Bedrock and Google Cloud Vertex AI, while independent
+      coverage shows Claude winning the enterprise coding narrative and taking enterprise usage share from OpenAI.
+      Google competes differently: Gemini is not only a model API, but also part of a larger Workspace and Google Cloud
+      procurement surface that already carries compliance, security, and endpoint-management features. Microsoft’s
+      threat is even more distribution-heavy. Its Copilot surface sits inside Microsoft 365 and Teams, with Azure OpenAI
+      providing a parallel developer and enterprise route. Amazon’s posture is less about a single flagship assistant
+      and more about optionality: Bedrock lets buyers choose among Anthropic, Meta, Mistral, and Amazon models, while
+      Amazon Q offers an explicit seat-based assistant for internal knowledge work.
+
+
+      Meta Llama and Mistral matter even when they do not dominate closed-model share. Llama gives enterprises and
+      builders an open-weight fallback with long-context multimodal capability, while Mistral sells a privacy and
+      data-sovereignty story that is stronger in Europe than many U.S. rivals can easily match. Together, those
+      alternatives keep a ceiling on how much proprietary labs can rely on pure model exclusivity as a moat.
+    claimRefs:
+      - C129
+      - C132
+      - C133
+      - C134
+      - C135
+      - C136
+      - C138
+      - C139
+      - C140
+      - C141
+      - C143
+      - C144
+      - C146
+      - C147
+      - C149
+      - C151
+  - id: section-3
+    title: Switching cost, lock-in, multi-homing, and moat durability
+    body: >-
+      OpenAI still has real competitive durability, but the durability is conditional rather than automatic. The company
+      benefits from ChatGPT familiarity, API breadth, and enterprise privacy commitments such as no training on business
+      data by default, which help it land both developer and knowledge-worker budgets. However, the same public evidence
+      also shows why commoditization risk is now a core diligence item. Anthropic has already overtaken OpenAI in
+      enterprise LLM spend and coding share in Menlo’s 2025 data; Google and Microsoft can hide AI procurement inside
+      broader suite renewals; and Amazon Bedrock makes multi-model routing a first-class operating model instead of a
+      bespoke engineering project.
+
+
+      The result is a market with lower structural lock-in than classic SaaS. Buyers can multi-home models, hold seat
+      budgets with incumbents, or shift sensitive workloads toward open-weight or sovereignty-oriented alternatives.
+      Menlo’s finding that only 16% of enterprise deployments qualify as true agents also matters: many real-world
+      systems are still simple enough to port across providers if price, governance, or reliability change. For OpenAI,
+      the moat therefore depends less on being the only credible model lab and more on staying meaningfully ahead on
+      quality, developer ergonomics, trust, and distribution at the same time.
+    claimRefs:
+      - C124
+      - C125
+      - C126
+      - C145
+      - C155
+      - C156
+      - C157
+      - C158
+      - C159
+      - C160
+      - C161
+      - C162
+      - C163
+tables:
+  - id: T301
+    title: Competitor profile table
+    columns:
+      - competitor
+      - category
+      - scale/funding
+      - target segment
+      - differentiation
+      - evidence
+      - limitation
+    rows:
+      - - OpenAI
+        - Direct frontier lab + platform
+        - Public leader with broad consumer/API reach; 27% of enterprise LLM spend in Menlo 2025
+        - Developers, enterprises, education, prosumers
+        - ChatGPT + API breadth + privacy controls
+        - C301/C303/C305/C333/C338
+        - Enterprise share is under pressure from Anthropic and Google; realized pricing is not fully public
+      - - Anthropic
+        - Direct frontier lab
+        - CNBC reported $61.5B valuation in March 2025; 40% enterprise LLM spend in Menlo 2025
+        - Enterprise buyers and coding-heavy teams
+        - Coding strength, safety brand, multi-cloud distribution via Bedrock and Vertex
+        - C307/C310/C311/C333/C334
+        - Enterprise contract pricing is still mostly opaque publicly
+      - - Google Gemini
+        - Incumbent suite vendor + hyperscaler
+        - 21% enterprise LLM spend in Menlo 2025 and embedded Workspace/Cloud distribution
+        - Workspace accounts, developers, IT-led deployments
+        - Bundle power, compliance posture, Google infrastructure
+        - C312/C313/C314/C316
+        - Exact enterprise Gemini contract pricing is still custom/contact-sales
+      - - Microsoft Copilot / Azure OpenAI
+        - Incumbent suite vendor + OpenAI channel
+        - Top horizontal-copilot cohort inside Microsoft 365 budgets
+        - Microsoft-standardized enterprises and Azure developers
+        - Copilot in work apps, agent builder, Azure OpenAI route
+        - C317/C318/C319/C320
+        - Reviewed business page did not expose a complete public price card
+      - - Amazon Bedrock / Amazon Q
+        - Infrastructure aggregator + assistant
+        - Bedrock is multi-model and Amazon Q has explicit user-seat pricing
+        - AWS-centric builders and internal knowledge-work teams
+        - Model choice, lower batch pricing, governance guardrails
+        - C321/C322/C323
+        - Assistant brand is weaker than ChatGPT or Copilot in broad end-user mindshare
+      - - Meta Llama
+        - Open-weight substitute
+        - Enterprise open-source leader by adoption, but open-source share is still only 11%
+        - Builders seeking control, self-hosting, or lower dependency
+        - Open-weight deployment, multimodal long context, cost-efficiency
+        - C324/C325/C326
+        - Closed-model enterprise adoption still outpaces open-weight use
+      - - Mistral
+        - Privacy- and sovereignty-oriented alternative
+        - CNBC reported $14B valuation in September 2025
+        - Europe-focused, privacy-sensitive enterprises and builders
+        - Enterprise privacy, data ownership, deployment flexibility
+        - C327/C328/C329
+        - Public adoption-share and exact rate-card detail are thinner than for larger rivals
+      - - Internal build on open models + cloud tools
+        - Status quo / substitute
+        - 76% of use cases are still bought, but internal build remains viable for control-heavy workflows
+        - Teams with strong internal AI engineering and data constraints
+        - Maximum control and provider optionality
+        - C330/C335/C340
+        - Longer time to value and higher integration burden than buying a finished product
+    notes: >-
+      Rows cover the main direct, incumbent, adjacent, substitute, and internal-build alternatives that a serious OpenAI
+      buyer can choose in 2026.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        This table covers the most material competitor classes visible in public evidence for OpenAI buyers in 2026, but
+        it does not enumerate every departmental or vertical AI application vendor.
+    claimRefs:
+      - C123
+      - C125
+      - C127
+      - C129
+      - C132
+      - C133
+      - C134
+      - C135
+      - C136
+      - C138
+      - C139
+      - C140
+      - C141
+      - C142
+      - C143
+      - C144
+      - C145
+      - C146
+      - C147
+      - C148
+      - C149
+      - C150
+      - C151
+      - C152
+      - C155
+      - C156
+      - C160
+      - C162
+  - id: T302
+    title: Feature / capability matrix
+    columns:
+      - buying criterion
+      - OpenAI
+      - Anthropic
+      - Google
+      - Microsoft
+      - Amazon
+      - Open-weight / sovereignty stack
+    rows:
+      - - Frontier general-model depth
+        - strong
+        - strong
+        - strong
+        - medium
+        - medium
+        - medium
+      - - Coding specialization
+        - strong
+        - strong+
+        - medium
+        - medium
+        - unknown
+        - medium
+      - - Enterprise admin / privacy posture
+        - strong
+        - medium
+        - strong
+        - strong
+        - medium
+        - variable
+      - - Multi-model optionality
+        - low
+        - medium
+        - medium
+        - low
+        - strong
+        - strong
+      - - Native productivity-suite distribution
+        - medium
+        - low
+        - strong
+        - strong
+        - medium
+        - low
+      - - Open deployment / self-hosting flexibility
+        - low
+        - low
+        - medium
+        - medium
+        - strong
+        - strong
+    notes: >-
+      Ordinal labels summarize reviewed public evidence rather than hidden product telemetry. Cells are marked unknown
+      or variable when the reviewed source set did not support a firmer judgment.
+    enumerationScope:
+      coverage: sample
+      basis: >-
+        The matrix covers the criteria that recur most often in public enterprise AI buying decisions: model quality,
+        coding strength, privacy controls, bundle power, optionality, and deployment flexibility.
+    claimRefs:
+      - C124
+      - C125
+      - C129
+      - C133
+      - C134
+      - C135
+      - C139
+      - C141
+      - C144
+      - C145
+      - C146
+      - C147
+      - C149
+      - C155
+      - C156
+      - C158
+      - C159
+      - C162
+  - id: T303
+    title: Pricing / packaging comparison
+    columns:
+      - vendor
+      - public package
+      - price/unit/contract model
+      - included capabilities
+      - discount or unknowns
+      - implication
+    rows:
+      - - OpenAI
+        - GPT API + ChatGPT Business/Codex
+        - >-
+          GPT-5.5 API at $5 input / $30 output per 1M tokens; Business packaging changed in April 2026; Codex seats are
+          usage-priced
+        - Frontier API, cached-input discounting, business admin/privacy controls
+        - Exact current self-serve seat card is not fully exposed on reviewed pricing pages; enterprise terms custom
+        - OpenAI is transparent on API economics but less transparent on large-enterprise realized pricing
+      - - Anthropic
+        - Claude plans + enterprise contracts
+        - >-
+          claude.ai lists plan tiers, but enterprise pricing remains custom and model-specific in reviewed public
+          materials
+        - Claude surfaces plus distribution via Bedrock and Vertex
+        - List pricing for enterprise seats and discounts not public in retained sources
+        - Strong adoption despite lower public pricing transparency
+      - - Google
+        - Gemini API + Workspace Enterprise
+        - Token-priced Gemini API with model-specific tiers; Workspace Enterprise is contact-sales/custom
+        - Gemini API plus enterprise suite controls and endpoint/compliance features
+        - Marginal AI cost can be buried inside broader Workspace contracts
+        - Google can compete on both direct model economics and suite bundling
+      - - Microsoft
+        - Copilot for Microsoft 365 + Azure OpenAI
+        - Add-on and license-path dependent; reviewed public business page did not expose a complete price card
+        - Copilot in Microsoft apps, agents for work, Azure OpenAI route
+        - Regional licensing and bundle discounts are not visible in retained sources
+        - Microsoft can win even when its AI unit price is hard to isolate
+      - - Amazon
+        - Amazon Q Business + Bedrock
+        - >-
+          Q Business Lite $3/user/month; Pro $20/user/month; Bedrock batch inference is 50% below on-demand across
+          supported models
+        - Seat-based assistant plus multi-model model-serving layer
+        - Underlying Bedrock model economics vary by provider and usage pattern
+        - Amazon pairs explicit assistant pricing with infrastructure optionality
+      - - Meta / open weights
+        - Llama 4 and hosted/open deployments
+        - null
+        - Open-weight control, long context, self-hosting or third-party hosting paths
+        - Total cost depends on infra, optimization, and operations rather than a single vendor list price
+        - Open weights cap buyer dependence on a single proprietary API
+      - - Mistral
+        - Studio + API / enterprise deployment
+        - >-
+          Model-specific usage pricing and enterprise contracts exist, but exact rates were not fully extractable from
+          the reviewed official docs
+        - Privacy-focused platform and enterprise deployments
+        - Public rate-card detail is thinner than for OpenAI or AWS Q
+        - Mistral competes more on sovereignty and deployment flexibility than on the clearest public list pricing
+    notes: Unsupported or opaque cells are intentionally left null or described as custom rather than guessed.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        The table covers the main pricing surfaces buyers are likely to compare directly, but it cannot capture private
+        discounts, reserved-capacity deals, or bundled suite concessions that are not public.
+    claimRefs:
+      - C123
+      - C127
+      - C128
+      - C143
+      - C144
+      - C163
+      - C158
+      - C159
+      - C161
+  - id: T304
+    title: Moat durability / competitive risk register
+    columns:
+      - moat claim
+      - evidence
+      - threat
+      - severity
+      - mitigation/diligence ask
+    rows:
+      - - OpenAI’s consumer-plus-API wedge creates durable mindshare and distribution
+        - C301/C305/C338
+        - Anthropic and Google are taking enterprise share, so awareness does not guarantee enterprise retention
+        - high
+        - Ask for enterprise net retention, win/loss reasons, and split between consumer-originated and CIO-led landings
+      - - Enterprise trust controls help OpenAI clear regulated buyers
+        - C302/C303/C304
+        - Google, Microsoft, AWS, and Anthropic all advertise competing trust or compliance controls
+        - medium
+        - Compare audit artifacts, retention controls, and procurement-close rates by regulated vertical
+      - - Frontier model quality is a defensible moat
+        - C305/C306/C338
+        - Bedrock-style multi-model routing and fast model substitution commoditize the base-model layer
+        - high
+        - Test how much workload is routed on performance versus cost, reliability, and governance
+      - - OpenAI can out-distribute smaller labs
+        - C338
+        - Microsoft and Google can sell AI inside renewal motions buyers already budget for
+        - high
+        - Inspect bundle attach rates and how often OpenAI is displaced by incumbent suite consolidation
+      - - Switching costs will rise as agents spread
+        - C335/C336
+        - Only 16% of enterprise deployments qualify as true agents today, so many systems remain portable
+        - medium
+        - Review contract duration, data-export tooling, prompt portability, and model-routing abstractions
+      - - Open-weight substitutes are still secondary
+        - C324/C325/C326/C340
+        - Llama and internal build paths keep improving and can matter where control beats maximum frontier quality
+        - medium
+        - >-
+          Segment buyer base by willingness to self-host or adopt open-weight models, especially in Europe and regulated
+          sectors
+    notes: >-
+      The register focuses on durability questions most likely to change underwriting assumptions, not every tactical
+      product battle.
+    claimRefs:
+      - C124
+      - C125
+      - C126
+      - C127
+      - C128
+      - C146
+      - C147
+      - C148
+      - C157
+      - C158
+      - C159
+      - C160
+      - C161
+      - C162
+figures:
+  - id: F301
+    title: Competitive positioning map
+    type: quadrant
+    layout: wide
+    summary: >-
+      OpenAI sits near the frontier on both distribution and model capability, but bundled incumbents pull further right
+      on distribution while Amazon and open-weight stacks pull higher on buyer flexibility.
+    data:
+      xAxis:
+        label: Distribution leverage (0-10 ordinal)
+      yAxis:
+        label: Deployment flexibility / buyer optionality (0-10 ordinal)
+      points:
+        - label: OpenAI
+          x: 8
+          'y': 4
+          detail: Strong API and ChatGPT reach, but comparatively single-vendor stack.
+          tone: positive
+        - label: Anthropic
+          x: 6
+          'y': 5
+          detail: Fast enterprise and coding gains, with Bedrock and Vertex distribution.
+          tone: positive
+        - label: Google
+          x: 9
+          'y': 6
+          detail: Workspace and Cloud bundle plus enterprise compliance posture.
+          tone: positive
+        - label: Microsoft
+          x: 10
+          'y': 4
+          detail: Deepest suite bundle and Azure route, but less provider optionality.
+          tone: positive
+        - label: Amazon
+          x: 7
+          'y': 9
+          detail: Bedrock multi-model choice and explicit assistant pricing.
+          tone: neutral
+        - label: Meta / open weights
+          x: 4
+          'y': 10
+          detail: Highest control and self-hosting flexibility, weaker turnkey enterprise adoption.
+          tone: neutral
+        - label: Mistral
+          x: 4
+          'y': 8
+          detail: Sovereignty and privacy pitch, smaller distribution base than hyperscalers.
+          tone: neutral
+    approximationNotes: >-
+      Scores are evidence-backed ordinal judgments derived from public product surfaces, market-share shifts, and
+      bundle/distribution evidence rather than directly reported vendor metrics.
+    claimRefs:
+      - C129
+      - C134
+      - C139
+      - C143
+      - C146
+      - C149
+      - C155
+      - C158
+      - C159
+      - C160
+      - C162
+  - id: F302
+    title: Feature breadth / capability map
+    type: matrix
+    layout: wide
+    summary: >-
+      OpenAI and Anthropic lead on core model depth, incumbents lead on suite distribution, and Amazon/open-weight
+      stacks lead on buyer optionality.
+    data:
+      columns:
+        - Model depth
+        - Coding
+        - Admin/privacy
+        - Bundle power
+        - Multi-model/open deployment
+      rows:
+        - label: OpenAI
+          values:
+            - label: strong
+              tone: positive
+            - label: strong
+              tone: positive
+            - label: strong
+              tone: positive
+            - label: medium
+              tone: neutral
+            - label: low
+              tone: warning
+        - label: Anthropic
+          values:
+            - label: strong
+              tone: positive
+            - label: strong+
+              tone: positive
+            - label: medium
+              tone: neutral
+            - label: low
+              tone: warning
+            - label: medium
+              tone: neutral
+        - label: Google
+          values:
+            - label: strong
+              tone: positive
+            - label: medium
+              tone: neutral
+            - label: strong
+              tone: positive
+            - label: strong
+              tone: positive
+            - label: medium
+              tone: neutral
+        - label: Microsoft
+          values:
+            - label: medium
+              tone: neutral
+            - label: medium
+              tone: neutral
+            - label: strong
+              tone: positive
+            - label: strong
+              tone: positive
+            - label: low
+              tone: warning
+        - label: Amazon
+          values:
+            - label: medium
+              tone: neutral
+            - label: unknown
+              tone: warning
+            - label: medium
+              tone: neutral
+            - label: medium
+              tone: neutral
+            - label: strong
+              tone: positive
+        - label: Open-weight / sovereignty stack
+          values:
+            - label: medium
+              tone: neutral
+            - label: medium
+              tone: neutral
+            - label: variable
+              tone: warning
+            - label: low
+              tone: warning
+            - label: strong
+              tone: positive
+    approximationNotes: >-
+      Cells are ordinal summaries of reviewed evidence and intentionally preserve unknown or variable cells where public
+      source coverage is incomplete.
+    claimRefs:
+      - C124
+      - C125
+      - C129
+      - C133
+      - C134
+      - C139
+      - C141
+      - C144
+      - C145
+      - C146
+      - C147
+      - C149
+      - C158
+      - C159
+      - C162
+  - id: F303
+    title: Moat / readiness KPIs
+    type: kpi
+    layout: standard
+    summary: >-
+      Independent 2025 market data shows OpenAI is still a top-tier competitor, but not the uncontested enterprise
+      leader.
+    data:
+      items:
+        - label: Anthropic enterprise LLM spend share
+          value: 40%
+          detail: Menlo 2025 estimate.
+          tone: warning
+        - label: OpenAI enterprise LLM spend share
+          value: 27%
+          detail: Menlo 2025 estimate.
+          tone: neutral
+        - label: Google enterprise LLM spend share
+          value: 21%
+          detail: Menlo 2025 estimate.
+          tone: neutral
+        - label: Use cases bought, not built
+          value: 76%
+          detail: Enterprises prefer purchasing ready-made AI in Menlo 2025.
+          tone: neutral
+        - label: Open-source enterprise share
+          value: 11%
+          detail: Closed models still dominate enterprise usage.
+          tone: neutral
+    approximationNotes: null
+    claimRefs:
+      - C152
+      - C155
+      - C162
+callouts:
+  - calloutType: insight
+    title: Anthropic is now the direct enterprise-share benchmark, not a distant challenger
+    body: >-
+      Independent 2025 evidence no longer supports treating OpenAI as the unchallenged enterprise model leader.
+      Anthropic has already passed it in both broad enterprise LLM spend and coding-heavy share in Menlo’s data.
+    claimRefs:
+      - C155
+      - C156
+  - calloutType: strength
+    title: OpenAI still combines developer reach, product familiarity, and trust controls unusually well
+    body: >-
+      OpenAI remains one of the few vendors with broad consumer usage, explicit business-data controls, and transparent
+      flagship API pricing on the public web.
+    claimRefs:
+      - C123
+      - C125
+      - C126
+      - C127
+  - calloutType: risk
+    title: Bundle power and multi-model infrastructure reduce classic SaaS-style lock-in
+    body: >-
+      Google, Microsoft, and Amazon can all win AI budget without beating OpenAI on every model benchmark because they
+      control adjacent procurement surfaces or multi-model routing layers.
+    claimRefs:
+      - C144
+      - C158
+      - C159
+      - C161

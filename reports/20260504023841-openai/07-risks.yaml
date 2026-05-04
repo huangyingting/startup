@@ -1,0 +1,747 @@
+schemaVersion: report-v2
+artifact: risks
+slug: openai
+runDate: '2026-05-04'
+company:
+  name: OpenAI
+acknowledgedWarnings:
+  - dimension: duplicateAnalysis
+    reason: >-
+      T703 is the auditable row-level dependency register used for diligence asks, while F703 is a causal dependency map
+      showing how those same counterparties connect to capacity, distribution, and economics; they serve different
+      reading tasks.
+chapter:
+  number: 7
+  title: Risks
+  summary: >-
+    OpenAI’s highest residual risks are legal/regulatory exposure, partner concentration, and capital-intensive
+    operating dependencies. Public mitigations are meaningful, but litigation, cloud economics, reliability, and
+    governance concentration still require explicit kill criteria and private diligence before underwriting downside
+    with confidence.
+sections:
+  - id: section-1
+    title: Legal and regulatory risk remains the highest-severity stack
+    body: >-
+      OpenAI's top risk bucket is still legal and regulatory rather than pure product competition. The New York Times
+      litigation matters because it has already pulled the company into discovery and retention questions that directly
+      touch user privacy commitments. OpenAI said the extraordinary retention order affecting consumer ChatGPT and API
+      content ended in September 2025 and that standard deletion practices resumed, which is a real mitigation. But the
+      company's own litigation page also shows the case is still active enough to warrant a dedicated defense site,
+      while CourtListener confirms the underlying federal docket remains live. That means the privacy burden can shrink
+      without the litigation burden disappearing.
+
+
+      The second legal stack is governance. Musk v. Altman keeps nonprofit-mission and control questions in court even
+      after OpenAI's March 2024 board reset. OpenAI's review materials are useful because they narrow one class of
+      concern: the 2023 rupture was framed as a trust breakdown, not a hidden safety or financing scandal. Even so, the
+      structure still concentrates board appointment power in the Foundation, and the public-benefit structure does not
+      remove the risk of future governance disputes. European scrutiny adds a third layer. The EDPB ChatGPT taskforce
+      report and the Commission's 2025 AI Act implementation push both imply that frontier-model providers should expect
+      a heavier compliance, documentation, and privacy posture in Europe than a normal software company.
+    claimRefs:
+      - C326
+      - C327
+      - C328
+      - C329
+      - C331
+      - C332
+      - C334
+      - C335
+      - C337
+      - C338
+      - C339
+      - C340
+      - C341
+      - C364
+      - C365
+  - id: section-2
+    title: Operational reliability and security risk are now platform risks, not edge cases
+    body: >-
+      OpenAI is no longer a novelty app whose outages are merely frustrating. The status history now shows repeated
+      incidents across ChatGPT, APIs, login, file handling, and model-specific services, and the 2026-05-04
+      connector-write incident is a good example of why reliability has become a core diligence variable. The published
+      uptime figures are directionally strong, but 99.83% ChatGPT uptime still leaves enough room for visible disruption
+      when OpenAI is embedded inside research, coding, support, and regulated workflows. A frontier-AI platform can
+      therefore be both broadly available and still operationally risky for buyers whose work stops when one connector
+      or one model route breaks.
+
+
+      Security risk has the same shape. SecurityWeek's reporting on memory and web-search feature exploits shows how
+      fast convenience features can expand attack surface. The OECD.AI incident record and OpenAI's own Axios compromise
+      response show that software-supply-chain issues are no longer hypothetical. OpenAI does have real mitigations in
+      public view: a security-and-privacy page, a vulnerability-reporting process, and a bug bounty program. But those
+      are control signals, not proof that public users and enterprise customers have seen enough postmortem detail,
+      red-team evidence, or contract-backed service commitments to underwrite residual risk confidently.
+    claimRefs:
+      - C342
+      - C343
+      - C344
+      - C345
+      - C346
+      - C347
+      - C348
+      - C349
+      - C350
+      - C351
+      - C371
+  - id: section-3
+    title: Dependency, capital intensity, and execution span create a transmission path into margin and valuation
+    body: >-
+      OpenAI's partner stack is simultaneously a moat and a concentration problem. Microsoft remains foundational from
+      the 2023 partnership onward, and the public record still treats Azure as structurally central to research, APIs,
+      and products. Oracle and Stargate are best read as partial diversification rather than independence: they add
+      capacity and financing options, but they also create a second layer of counterparties whose own capital plans now
+      explicitly cite OpenAI demand. CoreWeave adds a third concentrated node with an infrastructure agreement worth up
+      to $11.9 billion plus OpenAI equity participation. If any one of these relationships reprices, stalls, or
+      underdelivers, the damage can propagate into product availability, gross margin, and financing needs rather than
+      staying isolated inside procurement.
+
+
+      The financial-model risk is that public demand proxies are real while public durability and obligation data are
+      incomplete. OpenAI's 2025 enterprise report shows 8x enterprise-message growth and 320x growth in reasoning-token
+      consumption, which means outages, compliance limits, or channel shocks would now hit a much bigger installed
+      workflow base than a year earlier. But ChartMogul's warning about short opt-out AI contracts and revenue that
+      looks recurring before it is durable is a useful corrective. Leadership breadth is improving, particularly with
+      Fidji Simo taking the Applications role, yet the company still asks investors to trust a very wide execution span
+      across research, consumer, enterprise, API, and partner motions without publishing the succession, P&L, or
+      committed-spend detail that would close the loop.
+    claimRefs:
+      - C352
+      - C353
+      - C354
+      - C355
+      - C356
+      - C357
+      - C358
+      - C206
+      - C359
+      - C324
+      - C325
+      - C360
+      - C361
+      - C263
+      - C362
+      - C363
+      - C371
+  - id: section-4
+    title: Mitigations are visible, but the investment case still needs explicit kill criteria
+    body: >-
+      OpenAI does have more public mitigation scaffolding than many fast-growing AI companies. The 2026 DPA and Services
+      Agreement define the legal framework for business and developer customers. Enterprise privacy materials say
+      customers own and control data, that business data is not used for training by default, and that retention windows
+      can be controlled on key enterprise plans. Security reporting routes and a live bug bounty also show that the
+      company is not treating trust as a side issue. Governance has improved as well: the WilmerHale review, board
+      additions, and Fidji Simo's operating role all reduce the probability that every critical function sits with one
+      person or one improvised process.
+
+
+      Still, this is a chapter where mitigations lower risk; they do not remove it. The missing items are exactly the
+      items investors care about most: a consolidated committed-spend schedule, full customer contract terms, SLA and
+      indemnity exhibits, partner-sourced ARR, top-customer exposure, and succession materials. The right posture is
+      therefore conditional rather than fatalistic. If litigation expands, if availability deteriorates, if Microsoft or
+      Oracle economics move against OpenAI, or if leadership governance ruptures again, those are not ordinary execution
+      misses; they are thesis-break triggers. Conversely, if management can produce contract packs, concentration
+      schedules, and spend commitments that look cleaner than the public record suggests, residual risk could compress
+      materially.
+    claimRefs:
+      - C336
+      - C340
+      - C341
+      - C349
+      - C350
+      - C351
+      - C363
+      - C366
+      - C367
+      - C368
+      - C371
+tables:
+  - id: T701
+    title: Regulatory / legal risk register
+    columns:
+      - rule/license/case
+      - jurisdiction
+      - status
+      - evidence date/source
+      - likelihood
+      - severity
+      - mitigation
+      - residual exposure
+      - diligence path
+    rows:
+      - - New York Times copyright and discovery litigation
+        - United States
+        - Live litigation; extraordinary retention order ended 2025-09-26 but merits and discovery continue
+        - 2025-06 OpenAI; CourtListener; JD Supra/Loeb
+        - medium
+        - critical
+        - >-
+          Standard deletion resumed, limited legal/security access was disclosed, and business-customer privacy controls
+          remained in place
+        - high
+        - Obtain outside-counsel memo on remaining claims, preservation scope, and customer-notice obligations.
+      - - Musk v. Altman governance and mission-drift litigation
+        - United States
+        - Live federal litigation
+        - 2024-08 CourtListener; 2024-03 OpenAI review
+        - medium
+        - high
+        - >-
+          Board expansion, WilmerHale review, and subsequent structure update reduce but do not eliminate governance
+          exposure
+        - medium-high
+        - Review pleadings, requested remedies, regulator correspondence, and any nonprofit-law exposure analysis.
+      - - EU privacy and AI Act scrutiny
+        - European Union
+        - Active implementation and precedent-setting scrutiny
+        - 2024-05 EDPB; 2025-04 European Commission
+        - high
+        - high
+        - >-
+          DPA, enterprise retention controls, and documented privacy commitments lower customer-side risk but not
+          compliance burden
+        - medium-high
+        - Map GPAI compliance owner, training-data records, and jurisdiction-by-jurisdiction privacy posture.
+      - - Copyright / IP allocation under public terms
+        - US / EU / global
+        - Litigation plus contract-allocation risk
+        - 2025-06 Loeb/JD Supra; 2026-01 Services Agreement/DPA
+        - medium
+        - high
+        - >-
+          OpenAI publishes business terms and DPA, but public artifacts do not fully expose negotiated indemnity and SLA
+          schedules
+        - medium-high
+        - >-
+          Review indemnity carve-outs, customer restrictions, and provenance controls before underwriting regulated or
+          content-heavy use cases.
+    notes: >-
+      Rows are ordered by residual severity rather than chronology. Public evidence is strong enough to rank the major
+      litigation and compliance buckets, but not to claim a complete all-jurisdictions case inventory.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        This register covers the material public legal and regulatory stacks visible in reviewed sources, but not every
+        complaint, inquiry, or local enforcement thread worldwide.
+    claimRefs:
+      - C326
+      - C327
+      - C328
+      - C329
+      - C331
+      - C332
+      - C333
+      - C334
+      - C335
+      - C338
+      - C339
+      - C340
+      - C341
+  - id: T702
+    title: Operational / quality / security risk register
+    columns:
+      - failure mode
+      - evidence date/source
+      - likelihood
+      - severity
+      - mitigation maturity
+      - residual exposure
+      - unresolved gap
+    rows:
+      - - Recurring cross-product incidents and connector outages
+        - 2025-2026 OpenAI status history; 2026-05-04 connector incident
+        - high
+        - high
+        - medium
+        - medium-high
+        - Public uptime snapshots do not replace customer-level SLA, support, or incident-postmortem disclosure.
+      - - Feature attack surface in memories, browsing, and agent tools
+        - 2025 SecurityWeek exploit coverage
+        - medium
+        - high
+        - low-medium
+        - high
+        - Need red-team results and rollout controls for browsing, memory, connectors, and agent permissions.
+      - - Developer-tool or software supply-chain compromise
+        - 2026-04-11 OpenAI response and OECD incident record
+        - medium
+        - high
+        - medium
+        - medium-high
+        - Need software-signing, SBOM, and remediation-timeline evidence beyond public narrative.
+      - - Trust-package visibility lags buyer-grade diligence needs
+        - 2026 privacy/security pages, bug bounty, vuln-reporting docs
+        - high
+        - medium
+        - medium
+        - medium
+        - >-
+          Public controls are directionally strong, but full certifications, control mappings, and support commitments
+          remain partly gated or absent.
+    notes: >-
+      Operational risk is driven less by one catastrophic event than by a mix of recurring availability incidents,
+      rapidly expanding attack surface, and incomplete public trust artifacts.
+    claimRefs:
+      - C342
+      - C343
+      - C344
+      - C345
+      - C346
+      - C347
+      - C348
+      - C349
+      - C350
+      - C351
+      - C371
+  - id: T703
+    title: Partner / dependency risk register
+    columns:
+      - dependency
+      - counterparty
+      - role
+      - concentration
+      - failure scenario
+      - severity
+      - mitigation
+      - residual exposure
+    rows:
+      - - Core cloud and economic stack
+        - Microsoft
+        - Long-term cloud, distribution, and economic counterparty
+        - very high
+        - >-
+          Commercial repricing, relationship breakdown, or capacity friction hits availability, gross margin, and
+          bargaining leverage simultaneously
+        - critical
+        - Oracle/Stargate and other partners add some diversification, and the 2026 reset shows terms are renegotiable
+        - high
+      - - Large-scale buildout capacity
+        - Oracle / Stargate
+        - Expansion capacity and financing partner
+        - high
+        - Delayed data-center capacity or financing slows roadmap or forces more expensive compute sourcing
+        - high
+        - >-
+          Multiple sites and staged deployments broaden options, but Oracle itself is raising large financing against
+          demand
+        - medium-high
+      - - Specialized infrastructure contract
+        - CoreWeave
+        - Dedicated AI infrastructure provider
+        - high
+        - Provider execution, pricing, or concentration stress impairs OpenAI compute availability or cost structure
+        - high
+        - >-
+          Equity alignment and multi-provider strategy help, but the disclosed contract is still very large relative to
+          normal software outsourcing
+        - medium-high
+      - - Enterprise route to market
+        - Accenture and Azure-linked partners
+        - Partner-led implementation and customer acquisition channel
+        - medium
+        - OpenAI wins usage but loses direct customer ownership, renewal leverage, or gross-margin visibility
+        - medium-high
+        - Direct products and API sales reduce single-channel dependence, but public channel mix is still undisclosed
+        - medium
+    notes: >-
+      The dependency story is not one single point of failure; it is an interlocking compute, financing, and channel
+      stack whose economics are only partly public.
+    claimRefs:
+      - C352
+      - C353
+      - C354
+      - C355
+      - C356
+      - C357
+      - C358
+      - C206
+      - C359
+      - C324
+      - C325
+      - C369
+      - C370
+  - id: T704
+    title: People / execution risk register
+    columns:
+      - role/function
+      - dependency or gap
+      - evidence
+      - likelihood
+      - severity
+      - mitigation
+      - diligence path
+    rows:
+      - - CEO / strategic capital relationships
+        - Sam Altman remains central to governance trust, partner negotiation, financing, and public narrative
+        - 2024 review; 2025 Fidji Simo expansion; structure page
+        - medium
+        - critical
+        - Applications leadership and a broader board reduce concentration at the margin
+        - Request succession plan, delegated authorities, and key-person protections.
+      - - Board / mission governance
+        - Foundation control keeps board appointment power concentrated even after board refresh
+        - Structure page; March 2024 review; board additions
+        - medium
+        - high
+        - Independent directors and PBC framing improve process discipline
+        - Review reserved matters, regulator dialogue, and escalation paths between Foundation and Group.
+      - - Commercial operating span
+        - OpenAI is simultaneously running consumer, enterprise, API, partner, and infrastructure motions
+        - Fidji Simo appointment; partner-channel evidence
+        - high
+        - medium-high
+        - Dedicated applications leadership suggests role specialization is improving
+        - Test whether product, sales, support, and infra economics are managed with separate scorecards and owners.
+      - - Security and reliability ownership
+        - Fast feature releases widen operational surface faster than public controls are documented
+        - Status history; SecurityWeek; OECD incident record
+        - high
+        - high
+        - Bug bounty, vulnerability reporting, and public status disclosures are present
+        - Request named control owners, postmortems, and release-governance evidence for high-risk features.
+    notes: >-
+      Execution risk is less about whether OpenAI can ship and more about whether it can keep governance,
+      infrastructure, GTM, and security processes coherent at its current scale.
+    claimRefs:
+      - C334
+      - C336
+      - C337
+      - C342
+      - C346
+      - C347
+      - C349
+      - C350
+      - C363
+      - C364
+      - C365
+  - id: T705
+    title: Mitigation and kill criteria table
+    columns:
+      - risk
+      - monitorable trigger
+      - threshold/event
+      - action implication
+    rows:
+      - - Litigation / privacy
+        - Retention or discovery burden expands again
+        - New court order, regulator action, or customer-notice requirement that overrides stated deletion commitments
+        - Pause enterprise-confidence assumptions and increase compliance-cost haircut immediately.
+      - - Reliability / product quality
+        - Sustained service degradation
+        - Quarterly availability meaningfully below current published levels or repeated multi-day major incidents
+        - Reduce growth and margin assumptions; treat as product-infrastructure execution miss, not noise.
+      - - Platform concentration
+        - Counterparty economics worsen
+        - Adverse Microsoft reset, Oracle financing stress, or visible capacity delay on a critical program
+        - Raise required return, cap position size, and demand fuller contractual disclosure.
+      - - Capital intensity
+        - Partner-financed capacity outruns monetization
+        - Emergency fundraising, delayed buildout, or evidence that fixed commitments are outrunning usage conversion
+        - Move from trackable risk to thesis-break territory unless management provides a clean committed-spend bridge.
+      - - Governance / leadership
+        - Another leadership or board rupture
+        - Executive departure, board conflict, or material adverse ruling in mission-governance litigation
+        - Treat as a stop-and-reunderwrite event until governance stability is re-established.
+    notes: >-
+      These criteria are designed to be monitorable from public news, status pages, court developments, and management
+      diligence materials rather than from intuition.
+    claimRefs:
+      - C327
+      - C342
+      - C344
+      - C345
+      - C352
+      - C358
+      - C206
+      - C364
+      - C365
+      - C371
+figures:
+  - id: F701
+    title: Risk heatmap
+    type: matrix
+    layout: wide
+    summary: >-
+      OpenAI’s highest residual risks cluster around legal/regulatory exposure and partner concentration, with
+      operational and execution risks still material despite visible mitigations.
+    data:
+      columns:
+        - Likelihood
+        - Impact
+        - Mitigation maturity
+        - Residual severity
+      rows:
+        - label: NYT + copyright / privacy litigation
+          values:
+            - label: medium
+              tone: warning
+              detail: Live litigation remains active even after legal-hold relief.
+            - label: critical
+              tone: negative
+              detail: Can affect privacy posture, customer trust, and compliance cost.
+            - label: medium
+              tone: warning
+              detail: OpenAI has DPA, privacy controls, and a public defense posture.
+            - label: high
+              tone: negative
+              detail: Residual exposure remains high until claims and discovery narrow further.
+        - label: Microsoft / cloud concentration
+          values:
+            - label: high
+              tone: negative
+              detail: Core platform and economics still route through Microsoft.
+            - label: critical
+              tone: negative
+              detail: Availability, margin, and bargaining power all transmit through this node.
+            - label: medium
+              tone: warning
+              detail: Oracle/Stargate partially diversify but do not remove dependency.
+            - label: high
+              tone: negative
+              detail: A repricing or relationship shock would hit multiple layers at once.
+        - label: Reliability and security incidents
+          values:
+            - label: high
+              tone: negative
+              detail: Status history and recent incidents show recurrence.
+            - label: high
+              tone: warning
+              detail: Incidents now affect enterprise workflows, not just consumer sessions.
+            - label: medium
+              tone: warning
+              detail: Status, bug bounty, and reporting routes exist publicly.
+            - label: medium-high
+              tone: warning
+              detail: Residual risk stays elevated without full SLA and postmortem visibility.
+        - label: Capital intensity and partner-funded buildout
+          values:
+            - label: medium
+              tone: warning
+              detail: Huge capacity ambitions still depend on counterparties and financing markets.
+            - label: high
+              tone: negative
+              detail: Mismatch between commitments and monetization would pressure financing and valuation.
+            - label: low-medium
+              tone: warning
+              detail: Public mitigation is mostly counterparties raising money and building capacity.
+            - label: high
+              tone: negative
+              detail: Disclosure is still too thin to mark this down further.
+        - label: Leadership and governance concentration
+          values:
+            - label: medium
+              tone: warning
+              detail: Governance improvements exist, but concentration remains obvious.
+            - label: high
+              tone: warning
+              detail: A governance rupture could disrupt partners, financing, and execution together.
+            - label: medium
+              tone: warning
+              detail: Board additions and Fidji Simo reduce but do not eliminate exposure.
+            - label: medium-high
+              tone: warning
+              detail: Residual exposure remains above a normal software-company baseline.
+    approximationNotes: >-
+      This heatmap uses source-backed ordinal scoring rather than fabricated probabilities; the goal is ranking residual
+      exposure, not pretending to precision.
+    claimRefs:
+      - C327
+      - C334
+      - C342
+      - C346
+      - C352
+      - C354
+      - C356
+      - C358
+      - C206
+      - C363
+      - C364
+      - C371
+  - id: F702
+    title: Risk transmission map
+    type: dag
+    layout: wide
+    summary: >-
+      OpenAI’s main risks transmit through a small number of channels: legal and privacy burdens, platform
+      concentration, and reliability incidents all roll into customer trust, margin, financing needs, and valuation.
+    data:
+      nodes:
+        - id: legal
+          label: Legal / regulatory burden
+          detail: Copyright, privacy, and AI Act compliance can expand operating overhead and customer friction.
+          tone: warning
+        - id: ops
+          label: Reliability / security incidents
+          detail: Outages and exploits hit workflow trust and support burden.
+          tone: warning
+        - id: platform
+          label: Partner concentration
+          detail: Microsoft, Oracle, and CoreWeave shape capacity and economics.
+          tone: warning
+        - id: trust
+          label: Customer trust
+          detail: Enterprise willingness to deepen adoption depends on perceived privacy and uptime discipline.
+          tone: warning
+        - id: margin
+          label: Margin pressure
+          detail: Compute costs, revenue-share terms, and remediation costs compress economics.
+          tone: negative
+        - id: growth
+          label: Growth durability
+          detail: Expansion can slow if trust or capacity weakens.
+          tone: warning
+        - id: financing
+          label: Financing need
+          detail: Higher fixed commitments or weaker monetization raise funding dependence.
+          tone: negative
+        - id: valuation
+          label: Valuation risk
+          detail: Lower durability and higher risk compress downside support.
+          tone: negative
+      edges:
+        - from: legal
+          to: trust
+        - from: legal
+          to: margin
+        - from: ops
+          to: trust
+        - from: ops
+          to: margin
+        - from: platform
+          to: margin
+        - from: platform
+          to: growth
+        - from: trust
+          to: growth
+        - from: margin
+          to: financing
+        - from: growth
+          to: valuation
+        - from: financing
+          to: valuation
+    approximationNotes: 'The graph is qualitative and source-backed: it shows causal direction, not synthetic probability weights.'
+    claimRefs:
+      - C326
+      - C342
+      - C352
+      - C354
+      - C356
+      - C358
+      - C360
+      - C263
+      - C362
+      - C371
+  - id: F703
+    title: Dependency map
+    type: dag
+    layout: wide
+    summary: >-
+      OpenAI’s dependency web is now a multi-node stack across cloud, infrastructure, and channel partners rather than
+      one bilateral relationship, but the nodes are still concentrated enough to matter.
+    data:
+      nodes:
+        - id: microsoft
+          label: Microsoft
+          detail: Cloud, distribution, and economic counterparty since the multiyear partnership extension.
+          tone: warning
+        - id: oracle
+          label: Oracle / Stargate
+          detail: Expansion capacity and financing-linked cloud buildout.
+          tone: warning
+        - id: coreweave
+          label: CoreWeave
+          detail: Dedicated infrastructure contract and equity alignment.
+          tone: warning
+        - id: accenture
+          label: Accenture
+          detail: Implementation and channel leverage into enterprise transformations.
+          tone: neutral
+        - id: openai
+          label: OpenAI operating core
+          detail: Products, API, enterprise GTM, and governance center.
+          tone: positive
+        - id: capacity
+          label: Compute capacity
+          detail: Training and inference supply underpin product availability and cost.
+          tone: warning
+        - id: distribution
+          label: Customer distribution
+          detail: Azure and partner-led routes shape who owns the account relationship.
+          tone: warning
+        - id: economics
+          label: Margin / financing
+          detail: Revenue-share, contract value, and counterparty financing plans influence economics.
+          tone: negative
+      edges:
+        - from: microsoft
+          to: capacity
+        - from: microsoft
+          to: distribution
+        - from: oracle
+          to: capacity
+        - from: coreweave
+          to: capacity
+        - from: accenture
+          to: distribution
+        - from: capacity
+          to: openai
+        - from: distribution
+          to: openai
+        - from: microsoft
+          to: economics
+        - from: oracle
+          to: economics
+        - from: coreweave
+          to: economics
+        - from: openai
+          to: economics
+    approximationNotes: >-
+      The dependency map is directional rather than quantitative; it highlights where partner failure would transmit
+      into operations or economics.
+    claimRefs:
+      - C352
+      - C353
+      - C354
+      - C356
+      - C358
+      - C206
+      - C359
+      - C324
+      - C325
+      - C369
+      - C370
+callouts:
+  - calloutType: risk
+    title: Legal relief did not eliminate legal risk
+    body: >-
+      OpenAI’s September 2025 relief from the indefinite retention order reduced one privacy burden, but live copyright
+      and governance litigation still sit at the top of the risk stack.
+    claimRefs:
+      - C327
+      - C329
+      - C331
+      - C332
+  - calloutType: risk
+    title: The dependency stack is now multi-node, not low-concentration
+    body: >-
+      Microsoft, Oracle, CoreWeave, and partner-led channels each solve a different problem for OpenAI, but together
+      they create a tightly coupled compute, financing, and distribution system.
+    claimRefs:
+      - C352
+      - C354
+      - C356
+      - C358
+      - C359
+  - calloutType: insight
+    title: Mitigations are real but not yet investor-grade
+    body: >-
+      OpenAI’s DPA, enterprise privacy controls, security reporting routes, and governance upgrades are positive, yet
+      public evidence still stops short of full SLA, indemnity, and committed-spend disclosure.
+    claimRefs:
+      - C340
+      - C349
+      - C350
+      - C366
+      - C367
+      - C368
+      - C371

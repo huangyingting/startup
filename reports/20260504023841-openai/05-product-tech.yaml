@@ -1,0 +1,850 @@
+schemaVersion: report-v2
+artifact: product-tech
+slug: openai
+runDate: '2026-05-04'
+company:
+  name: OpenAI
+acknowledgedWarnings:
+  - dimension: duplicateAnalysis
+    reason: >-
+      Tables preserve auditable row-level evidence and diligence gaps, while the figures compress the same domain into
+      architecture, workflow, dependency, and maturity views for faster reading. They are intentionally complementary
+      rather than redundant.
+chapter:
+  number: 5
+  title: Product & Technology
+  summary: >-
+    OpenAI now operates as a layered product stack spanning ChatGPT workspaces, API building blocks, and native agents
+    such as Codex and deep research. The company’s main technology edge comes from packaging frontier models,
+    first-party tools, and developer surfaces into production workflows, but roadmap volatility, limited public SLA
+    detail, and partial trust-document access still matter.
+sections:
+  - id: section-1
+    title: Product surface in customer workflow terms
+    body: >-
+      OpenAI’s product surface is now a portfolio, not a single chatbot. The company’s public business pages describe
+      ChatGPT Business and Enterprise as workforce products with unlimited chats, access to advanced models,
+      shared-workspace administration, and specialized agents including Codex and workspace agents. Help-center
+      materials show that the Business offer changed materially on April 2, 2026: it now supports both standard ChatGPT
+      seats and usage-based Codex seats, indicating that OpenAI is monetizing distinct workflows rather than only
+      bundling one generic seat. The pricing surface reinforces that interpretation. ChatGPT’s public pricing page spans
+      Free, Go, Plus, Pro, Business, and Enterprise, while the API platform publishes separate token prices and
+      context-window limits for flagship models.
+
+
+      For buyers, the operational implication is that OpenAI has three primary delivery modes. First, ChatGPT acts as
+      the end-user workspace for broad knowledge-work tasks. Second, dedicated agents such as deep research and Codex
+      package higher-autonomy workflows for research and software development. Third, the API platform and Responses API
+      give developers a programmable route into the same model family. That mix expands OpenAI’s reachable budget
+      owners, but it also makes diligence more SKU-specific. A team evaluating ChatGPT Business should care about admin
+      controls and seat economics; a developer team evaluating the API should care about model pricing, context, and
+      tool access; a software team evaluating Codex should care about task autonomy and internet permissions.
+
+
+      The public roadmap also shows that OpenAI is willing to both expand and retire surfaces quickly. Deep research and
+      Codex moved from launch to broader entitlement quickly during 2025 and 2026, while Sora moved in the opposite
+      direction, with the consumer experience shut down in April 2026 and the API scheduled to sunset in September 2026.
+      That combination makes OpenAI’s product stack ambitious and commercially broad, but it also means product
+      permanence cannot be assumed from launch momentum alone.
+    claimRefs:
+      - C209
+      - C211
+      - C212
+      - C213
+      - C214
+      - C215
+      - C216
+      - C217
+      - C226
+      - C228
+      - C229
+      - C233
+      - C234
+      - C238
+  - id: section-2
+    title: Architecture, tooling, and differentiation
+    body: >-
+      OpenAI’s architecture is becoming more explicit in public materials. The company’s May 2025 launch post and
+      developer references position the Responses API as the core API primitive for agentic applications, with support
+      for remote MCP servers and built-in tools such as image generation, Code Interpreter, and file search. In
+      practical terms, that means OpenAI is not only selling model inference; it is selling an orchestration layer that
+      reduces how much tooling a builder must assemble independently. Above that layer sit end-user products such as
+      ChatGPT, deep research, and Codex. Below it sit frontier model families including GPT-5.5, GPT-5.4, GPT-4.1, o1,
+      and GPT-4o, each exposed through a combination of docs, pricing pages, and launch notes.
+
+
+      Differentiation comes from packaging as much as raw model quality. GPT-4.1 is publicly framed as improving coding,
+      instruction following, and long context relative to GPT-4o. Codex turns coding into a dedicated cloud-based
+      software engineering agent that can work on many tasks in parallel. Deep research turns web-backed synthesis into
+      a productized agent and, by February 2026, added trusted-site restriction, MCP or app connections, real-time
+      progress tracking, and interruption for follow-up refinement. Those are workflow primitives, not just model
+      benchmarks. They matter because they move OpenAI closer to owning recurring jobs-to-be-done in research, coding,
+      and agent-building instead of competing only on abstract model quality.
+
+
+      The best public technical proof is still partial. OpenAI maintains first-party Python and Node SDKs, and its
+      model/system-card record extends to GPT-4o and o1. NIST’s pre-deployment evaluation of o1 adds a rare
+      government-authored checkpoint. Even so, public sources do not fully disclose model routing logic, deprecation
+      policy, or the exact operational split between direct OpenAI delivery and partner channels such as Azure. The
+      technology story is therefore strong on surface breadth and tool integration, but still incomplete where an
+      enterprise underwriter would want deeper deployment evidence.
+    claimRefs:
+      - C210
+      - C212
+      - C223
+      - C224
+      - C225
+      - C226
+      - C227
+      - C228
+      - C229
+      - C230
+      - C231
+      - C232
+      - C241
+      - C242
+      - C243
+      - C251
+      - C252
+      - C253
+      - C254
+      - C255
+  - id: section-3
+    title: Reliability, trust controls, and roadmap risk
+    body: >-
+      Trust and operations are part of the product, not just back-office functions. OpenAI’s business-data page says
+      organizational data across ChatGPT Enterprise, ChatGPT Business, ChatGPT Edu, ChatGPT for Healthcare, ChatGPT for
+      Teachers, and the API platform remains customer-owned and is not used for model training by default. The
+      consumer-facing security page says users can choose whether data is used for training and model improvement, and
+      it highlights Advanced Account Security as an account-protection feature. Safety materials further describe
+      OpenAI’s operating loop as teach, test, and share. Together, these materials are directionally helpful for
+      diligence, but they still stop short of providing the full certification and control package many enterprise
+      buyers would request without separate trust-portal access.
+
+
+      Reliability is public enough to matter. On May 4, 2026, the status page showed an active incident affecting
+      ChatGPT workspace-connector write actions. The same page disclosed aggregate uptime snapshots of 99.99% for APIs,
+      99.83% for ChatGPT, 99.98% for Codex, and 99.93% for FedRAMP over the February-to-May 2026 period, while also
+      warning that individual customer availability may vary by tier and model. That is better disclosure than many AI
+      startups provide, but it still does not substitute for plan-specific SLA language or support-response commitments.
+
+
+      The downside context also comes from outside sources. SecurityWeek reported in late 2025 that researchers hacked
+      ChatGPT memory and web-search features, highlighting how quickly new convenience features can expand the attack
+      surface. The Verge documented how quickly Sora moved from launch excitement to closed applications, and OpenAI’s
+      own help page then formalized the discontinuation path. The result is a company with a fast-moving roadmap and
+      increasingly credible trust controls, but also one that can change plan design, product availability, and
+      operational assumptions within a few quarters.
+    claimRefs:
+      - C218
+      - C219
+      - C220
+      - C221
+      - C222
+      - C233
+      - C234
+      - C235
+      - C236
+      - C237
+      - C248
+      - C249
+tables:
+  - id: T501
+    title: Product module / asset matrix
+    columns:
+      - module/product line
+      - primary user
+      - status/maturity
+      - evidence-backed capability
+      - differentiation
+      - diligence gap
+    rows:
+      - - ChatGPT Business / Enterprise
+        - Knowledge workers and admins
+        - GA; business plan repriced and re-segmented in April 2026
+        - >-
+          Unlimited chats, advanced models and tools, shared workspace controls, and specialized agents including
+          Codex/workspace agents
+        - Bundles frontier models, admin controls, and agent surfaces inside a user workspace
+        - >-
+          Public sources do not disclose plan-specific SLA, support-response metrics, or realized enterprise
+          discounting.
+      - - API platform / Responses API
+        - Developers and ISVs
+        - GA; core agent-builder surface since May 2025
+        - >-
+          Frontier models, token pricing, 1.05M context on flagship models, remote MCP support, image generation, Code
+          Interpreter, and file search
+        - Combines model access with first-party orchestration and tool calling
+        - Public materials do not separate direct OpenAI delivery from partner-channel volume or economics.
+      - - Codex
+        - Software engineers and engineering managers
+        - Launched May 2025; broader access update in June 2025
+        - >-
+          Cloud-based codex-1 agent can work on many tasks in parallel; internet access can be enabled during task
+          execution
+        - Turns coding into a dedicated agent product instead of a generic chat workflow
+        - Independent productivity benchmarks and realized seat economics remain thin in public.
+      - - Deep research
+        - Analysts, researchers, and executives
+        - Launched February 2025; material controls update in February 2026
+        - >-
+          Multi-step research agent with MCP/app connections, trusted-site restriction, real-time progress tracking, and
+          interrupt/refine flow
+        - Moves research synthesis into a productized, source-aware agent workflow
+        - Public sources do not quantify accuracy, cost, or completion rates by plan or domain.
+      - - Sora
+        - Creators and media experimenters
+        - Sunsetting; app/web discontinued in April 2026 and API discontinuation announced for September 2026
+        - OpenAI still provides export and deletion guidance during wind-down
+        - Shows OpenAI can rapidly test adjacent modalities, but also retire them quickly
+        - Replacement video strategy and migration path are not publicly defined.
+    notes: >-
+      OpenAI’s portfolio is broad, but maturity is uneven. The most durable public surfaces are ChatGPT, the API
+      platform, and agentic developer tooling; Sora is the clearest sign that adjacent products can be deprioritized
+      quickly.
+    claimRefs:
+      - C211
+      - C212
+      - C213
+      - C214
+      - C215
+      - C216
+      - C217
+      - C223
+      - C224
+      - C225
+      - C226
+      - C227
+      - C228
+      - C229
+      - C230
+      - C233
+      - C234
+      - C238
+  - id: T502
+    title: Workflow / use-case table
+    columns:
+      - user job
+      - current workflow pain
+      - OpenAI solution
+      - measurable public benefit
+      - deployment evidence
+      - limitation
+    rows:
+      - - Team-wide knowledge work
+        - Drafting, analysis, and Q&A stay fragmented across consumer chat tools and siloed enterprise systems
+        - ChatGPT Business / Enterprise workspace with advanced models, tools, and admin controls
+        - >-
+          Unlimited chats and plan-tiered access to advanced models/tools are publicly disclosed; customer-story hub
+          says 1M businesses use OpenAI
+        - OpenAI business page, pricing page, and customer-stories hub
+        - >-
+          Public sources do not disclose enterprise retention settings, seat minimums, or support commitments in enough
+          detail for procurement.
+      - - Agent builders
+        - Developers otherwise assemble model calls, tool execution, and context plumbing separately
+        - Responses API with remote MCP support and built-in tools
+        - Flagship API models publish 1.05M context and Batch pricing at -50% versus standard processing
+        - OpenAI API platform, pricing page, and March 2025 Responses launch
+        - >-
+          Migration paths and realized production economics remain more public for list pricing than for large-volume
+          contracts.
+      - - Software development
+        - Manual code search, patching, and test iteration create high context-switch overhead
+        - Codex cloud agent inside ChatGPT plans
+        - >-
+          OpenAI says Codex can work on many tasks in parallel; Business FAQ now supports dedicated usage-based Codex
+          seats
+        - Codex launch plus ChatGPT Business help articles
+        - Public evidence on acceptance testing, merge success, and net engineer-time savings is still limited.
+      - - Research and synthesis
+        - Human analysts manually browse, compare sources, and produce first drafts
+        - Deep research agent in ChatGPT
+        - >-
+          By February 2026, OpenAI added trusted-site restriction, real-time progress tracking, and interrupt/refine
+          controls
+        - Official deep research post plus TechCrunch launch coverage
+        - Public evidence does not quantify completion quality by domain, source set, or plan tier.
+      - - Retail store information retrieval
+        - Store staff lose time locating procedures and operating information
+        - Azure OpenAI deployment by partner channel
+        - Microsoft says Worten saves 11,000 hours annually
+        - Microsoft customer story on Worten
+        - >-
+          This is partner-channel evidence, not a direct disclosure of OpenAI-native deployment economics or contract
+          terms.
+    notes: >-
+      The strongest workflow evidence is for knowledge work, developer tooling, and partner-channel production
+      deployments. Public ROI evidence is directionally positive but still thinner than the product breadth might
+      suggest.
+    claimRefs:
+      - C212
+      - C214
+      - C216
+      - C223
+      - C224
+      - C225
+      - C226
+      - C227
+      - C229
+      - C230
+      - C239
+      - C240
+  - id: T503
+    title: Technology / operating architecture table
+    columns:
+      - layer/component
+      - role
+      - evidence-backed implementation
+      - dependency
+      - public risk
+    rows:
+      - - Experience layer
+        - End-user workspace and entitlement surface
+        - >-
+          ChatGPT plans span consumer through Business and Enterprise tiers, with advanced tools and agent access
+          exposed through plan design
+        - Identity, admin controls, and plan entitlements
+        - Public plan pages are strong on features but weak on contract-level SLA detail.
+      - - Agent layer
+        - Turns recurring jobs into higher-autonomy products
+        - Codex and deep research package coding and research workflows as dedicated agents
+        - Model availability, tool permissions, and plan-specific access
+        - OpenAI expands agent capabilities quickly, which can change buyer assumptions quarter to quarter.
+      - - API orchestration layer
+        - Programmatic interface for agentic applications
+        - >-
+          Responses API is positioned as the core API primitive, with MCP and built-in tools for image generation, Code
+          Interpreter, and file search
+        - Tool availability, model catalog, and API compatibility
+        - Assistants-to-Responses migration details evolve faster than large enterprises typically like.
+      - - Model layer
+        - Reasoning, coding, multimodal, and long-context capability base
+        - Public model family includes GPT-5.5, GPT-5.4, GPT-4.1, GPT-4o, and o1-related system-card evidence
+        - Compute access, model routing, and safety gating
+        - Exact per-model routing, fallback, and retirement policy are not fully public.
+      - - SDK / developer tooling layer
+        - Reduces integration friction for application teams
+        - OpenAI maintains official Python and Node SDKs plus dedicated API references
+        - SDK release cadence and backward compatibility
+        - Production teams still need to monitor library changes and API lifecycle transitions closely.
+      - - Trust / operations layer
+        - Data handling, security, safety, and uptime disclosure
+        - Business-data, security/privacy, safety, and status pages create a visible control plane
+        - Internal control maturity and trust-portal artifacts
+        - Public trust disclosures are directionally useful, but many buyer-grade artifacts are still gated or absent.
+    notes: >-
+      OpenAI’s architecture is best understood as a layered operating stack: workspaces at the top, agents in the
+      middle, Responses/tooling as orchestration, models as the capability engine, and trust/operations as the control
+      layer underneath.
+    claimRefs:
+      - C209
+      - C210
+      - C214
+      - C215
+      - C218
+      - C222
+      - C223
+      - C224
+      - C225
+      - C226
+      - C229
+      - C231
+      - C232
+      - C242
+      - C243
+      - C253
+      - C254
+      - C255
+  - id: T504
+    title: Trust / quality / compliance table
+    columns:
+      - control or signal
+      - public status
+      - scope
+      - evidence
+      - gap
+    rows:
+      - - No-training-by-default for organization data
+        - Active commitment
+        - >-
+          ChatGPT Enterprise, ChatGPT Business, ChatGPT Edu, ChatGPT for Healthcare, ChatGPT for Teachers, and API
+          platform
+        - OpenAI business-data page
+        - Exact retention toggles, audit mappings, and contractual carve-outs are not fully public.
+      - - Customer ownership/confidentiality language
+        - Active commitment
+        - Same business product set plus API platform
+        - OpenAI business-data page
+        - >-
+          The public chapter sources do not replace a full DPA, trust-portal export, or customer-specific security
+          schedule.
+      - - User-controlled training setting
+        - Active control
+        - Consumer and logged-in user experience
+        - OpenAI security-and-privacy page
+        - Public materials do not fully reconcile consumer settings with every enterprise deployment pattern.
+      - - Advanced Account Security
+        - Active control
+        - Account protection and recovery
+        - OpenAI security-and-privacy page
+        - Enterprise identity-provider mapping and mandatory-policy detail remain limited publicly.
+      - - Teach / test / share safety process
+        - Publicly stated framework
+        - Model development and deployment lifecycle
+        - OpenAI safety page
+        - The public framework is high level relative to buyer diligence needs on red-team scope and exception handling.
+      - - Status-page uptime and incident disclosure
+        - Publicly observable
+        - APIs, ChatGPT, Codex, and FedRAMP components
+        - OpenAI status page
+        - Aggregate uptime is not the same as customer-specific SLA or support commitment.
+      - - Independent or government technical scrutiny
+        - Present but selective
+        - o1 evaluation and published system cards
+        - NIST evaluation and arXiv system cards
+        - Equivalent public evaluation depth does not exist for every current OpenAI surface.
+      - - Public adverse signal on memory/web-search attack surface
+        - Adverse external report
+        - ChatGPT memory and web search features
+        - SecurityWeek coverage
+        - Public remediation details remain less complete than the vulnerability narrative itself.
+    notes: >-
+      Public trust evidence is materially better than pure marketing, but still short of a fully downloadable diligence
+      package. Buyers should treat public pages as screening evidence, then request portal-backed artifacts and
+      contractual exhibits.
+    claimRefs:
+      - C218
+      - C219
+      - C220
+      - C221
+      - C222
+      - C235
+      - C236
+      - C237
+      - C241
+      - C249
+      - C251
+      - C252
+  - id: T505
+    title: Roadmap / release / development-stage table
+    columns:
+      - date
+      - feature or milestone
+      - status
+      - implication
+      - source
+    rows:
+      - - '2025-02-02'
+        - Deep research launched
+        - Launched
+        - ChatGPT expanded from conversational assistant to multi-step research agent.
+        - C021/C037
+      - - '2025-04-14'
+        - GPT-4.1 series launched in API
+        - Launched
+        - OpenAI emphasized coding, instruction following, and long-context gains as API differentiators.
+        - C023/C024
+      - - '2025-05-16'
+        - Codex launched
+        - Launched
+        - Coding became a dedicated cloud-agent workflow rather than only a chat feature.
+        - C018/C019
+      - - '2025-05-21'
+        - Responses API added MCP and more built-in tools
+        - Launched
+        - Agent builders got a more complete first-party orchestration layer.
+        - C015/C016/C017/C036
+      - - '2025-06-03'
+        - Codex expanded to Plus and enabled optional internet access
+        - Launch update
+        - Broader distribution and more autonomous coding workflows increased product reach and risk surface.
+        - C020
+      - - '2026-02-10'
+        - Deep research added trusted sites, MCP/app connections, real-time progress, and interruption
+        - Launch update
+        - Research workflow became more controllable for enterprise use cases.
+        - C022
+      - - '2026-04-02'
+        - ChatGPT Business introduced standard ChatGPT seats and usage-based Codex seats
+        - Commercial update
+        - OpenAI split workforce collaboration pricing from coding-agent usage.
+        - C008/C009
+      - - '2026-04-26'
+        - Sora web and app experiences discontinued
+        - Discontinued
+        - OpenAI signaled that not every adjacent modality would stay strategic.
+        - C025/C040
+      - - '2026-09-24'
+        - Sora API discontinuation scheduled
+        - Announced sunset
+        - Customers on Sora API need migration planning before the stated cutoff.
+        - C026
+    notes: >-
+      OpenAI’s 2025-2026 product record is best described as fast expansion with selective pruning. The releases
+      reinforce the agent strategy, while Sora shows that adjacent experiments can be retired quickly.
+    claimRefs:
+      - C216
+      - C217
+      - C223
+      - C224
+      - C225
+      - C226
+      - C227
+      - C228
+      - C229
+      - C230
+      - C231
+      - C232
+      - C233
+      - C234
+      - C244
+      - C245
+      - C248
+figures:
+  - id: F501
+    title: Product architecture map
+    type: stack
+    layout: wide
+    summary: >-
+      OpenAI’s product stack layers user workspaces, native agents, orchestration APIs, model families, developer
+      tooling, and trust controls into one operating system.
+    data:
+      layers:
+        - label: Experience
+          detail: End-user workspaces and plan entitlements
+          tone: positive
+          modules:
+            - ChatGPT Business
+            - Enterprise
+            - Pricing tiers
+          outputs:
+            - User workflow surface
+        - label: Agents
+          detail: Dedicated workflow products
+          tone: positive
+          modules:
+            - Deep research
+            - Codex
+            - Workspace agents
+          outputs:
+            - Task execution
+        - label: Orchestration
+          detail: Programmable agent builder surface
+          tone: positive
+          modules:
+            - Responses API
+            - Remote MCP
+            - File search
+          outputs:
+            - Tool calls
+        - label: Models
+          detail: Reasoning, coding, and multimodal base
+          tone: positive
+          modules:
+            - GPT-5.5
+            - GPT-4.1
+            - o1 / GPT-4o
+          outputs:
+            - Inference capability
+        - label: Developer tooling
+          detail: First-party integration path
+          tone: neutral
+          modules:
+            - Python SDK
+            - Node SDK
+          outputs:
+            - App integration
+        - label: Trust & ops
+          detail: Security, safety, and uptime control plane
+          tone: warning
+          modules:
+            - No-training defaults
+            - Status page
+            - Safety process
+          outputs:
+            - Governance signal
+    approximationNotes: null
+    claimRefs:
+      - C209
+      - C214
+      - C218
+      - C223
+      - C224
+      - C225
+      - C226
+      - C229
+      - C231
+      - C242
+      - C243
+  - id: F502
+    title: Customer workflow / operating flow
+    type: flow
+    layout: wide
+    summary: >-
+      The common OpenAI workflow starts with plan or API selection, then moves through model and tool choice into an
+      agent-led task with monitoring and control checkpoints.
+    data:
+      nodes:
+        - id: n1
+          label: Choose surface
+          detail: Buyer starts in ChatGPT plan or API entry point.
+          tone: neutral
+        - id: n2
+          label: Assign workflow
+          detail: Workspace, research, coding, or builder use case is selected.
+          tone: positive
+        - id: n3
+          label: Attach model and tools
+          detail: Responses API, MCP, file search, or Code Interpreter can be added.
+          tone: positive
+        - id: n4
+          label: Run agent task
+          detail: ChatGPT, Codex, or deep research performs multi-step work.
+          tone: positive
+        - id: n5
+          label: Review output and citations
+          detail: User checks completion quality, context use, and source quality.
+          tone: neutral
+        - id: n6
+          label: Monitor controls
+          detail: Status incidents, data-handling settings, and admin rules stay in scope.
+          tone: warning
+      edges:
+        - from: n1
+          to: n2
+        - from: n2
+          to: n3
+        - from: n3
+          to: n4
+        - from: n4
+          to: n5
+        - from: n5
+          to: n6
+    approximationNotes: null
+    claimRefs:
+      - C214
+      - C215
+      - C218
+      - C223
+      - C225
+      - C226
+      - C229
+      - C230
+      - C235
+  - id: F503
+    title: Critical dependency map
+    type: dag
+    layout: wide
+    summary: >-
+      OpenAI’s product experience depends on model availability, API/tool orchestration, SDK integration, and trust
+      controls; partner channels add deployment reach but also opacity.
+    data:
+      nodes:
+        - id: models
+          label: Model families
+          detail: GPT-5.x, GPT-4.1, o1, GPT-4o
+          tone: positive
+        - id: responses
+          label: Responses API
+          detail: Core API primitive for agentic applications
+          tone: positive
+        - id: agents
+          label: Native agents
+          detail: Codex and deep research
+          tone: positive
+        - id: chatgpt
+          label: ChatGPT plans
+          detail: Business and Enterprise workspace delivery
+          tone: positive
+        - id: sdks
+          label: SDKs
+          detail: Python and Node integration path
+          tone: neutral
+        - id: trust
+          label: Trust and ops
+          detail: No-training defaults, safety, status disclosures
+          tone: warning
+        - id: partners
+          label: Partner channels
+          detail: Azure-linked production deployments and customer proofs
+          tone: neutral
+      edges:
+        - from: models
+          to: responses
+        - from: responses
+          to: agents
+        - from: responses
+          to: chatgpt
+        - from: sdks
+          to: responses
+        - from: trust
+          to: responses
+        - from: trust
+          to: chatgpt
+        - from: partners
+          to: chatgpt
+    approximationNotes: null
+    claimRefs:
+      - C218
+      - C223
+      - C224
+      - C226
+      - C229
+      - C242
+      - C243
+      - C240
+      - C256
+  - id: F504
+    title: Product maturity / capability map
+    type: matrix
+    layout: wide
+    summary: >-
+      ChatGPT workspaces and the API are the most durable public surfaces today; Codex and deep research are rising
+      quickly, while Sora is clearly de-emphasized.
+    data:
+      columns:
+        - Availability
+        - Workflow depth
+        - Enterprise controls
+        - Developer surface
+        - Roadmap clarity
+      rows:
+        - label: ChatGPT Business / Enterprise
+          values:
+            - label: strong
+              tone: positive
+              detail: Public plan pages and help articles are current.
+            - label: strong
+              tone: positive
+              detail: Broad knowledge-work coverage and agent access.
+            - label: medium
+              tone: neutral
+              detail: Admin/privacy claims exist, but full trust docs are not public.
+            - label: low
+              tone: warning
+              detail: Primary surface is user workspace rather than direct developer integration.
+            - label: medium
+              tone: neutral
+              detail: Commercial changes are frequent, but direction is clear.
+        - label: Responses API
+          values:
+            - label: strong
+              tone: positive
+              detail: Core API primitive is published and priced.
+            - label: strong
+              tone: positive
+              detail: MCP plus built-in tools support deeper app workflows.
+            - label: medium
+              tone: neutral
+              detail: Business-data commitments exist, but buyer-grade artifacts are incomplete.
+            - label: strong
+              tone: positive
+              detail: Docs, references, and SDKs are first party.
+            - label: strong
+              tone: positive
+              detail: 2025 releases clearly favored Responses over older patterns.
+        - label: Codex
+          values:
+            - label: medium
+              tone: neutral
+              detail: Launched in 2025 and broadened quickly.
+            - label: strong
+              tone: positive
+              detail: Purpose-built coding workflow with parallel task execution.
+            - label: medium
+              tone: neutral
+              detail: Business entitlement exists, but enterprise control specifics are thin.
+            - label: medium
+              tone: neutral
+              detail: Developer relevance is high, but public benchmark depth is still limited.
+            - label: medium
+              tone: neutral
+              detail: Roadmap points up, but economics and guardrails are still evolving.
+        - label: Deep research
+          values:
+            - label: medium
+              tone: neutral
+              detail: Publicly launched and updated, but still newer than core ChatGPT.
+            - label: strong
+              tone: positive
+              detail: High-autonomy research workflow is productized.
+            - label: medium
+              tone: neutral
+              detail: Trusted-site restriction helps, but enterprise governance detail is incomplete.
+            - label: low
+              tone: warning
+              detail: More end-user centric than developer-extensible today.
+            - label: strong
+              tone: positive
+              detail: Update cadence clearly shows ongoing investment.
+        - label: Sora
+          values:
+            - label: low
+              tone: negative
+              detail: Consumer experience is already discontinued.
+            - label: low
+              tone: negative
+              detail: Workflow depth no longer matters if the surface is sunsetting.
+            - label: low
+              tone: warning
+              detail: Wind-down guidance exists, but forward-looking controls are moot.
+            - label: low
+              tone: negative
+              detail: Developer future is constrained by the announced API sunset.
+            - label: strong
+              tone: negative
+              detail: Roadmap clarity is high only because the sunset path is explicit.
+    approximationNotes: null
+    claimRefs:
+      - C214
+      - C223
+      - C226
+      - C228
+      - C229
+      - C230
+      - C233
+      - C234
+      - C238
+callouts:
+  - calloutType: strength
+    title: OpenAI now sells a converged stack, not only model access
+    body: >-
+      The strongest product signal is convergence: workspaces, agents, API tools, pricing, and first-party SDKs all
+      point at one shared stack instead of disconnected experiments.
+    claimRefs:
+      - C209
+      - C214
+      - C223
+      - C226
+      - C229
+      - C242
+      - C243
+  - calloutType: insight
+    title: Business monetization is splitting by workflow
+    body: >-
+      The April 2026 move to standard ChatGPT seats plus usage-based Codex seats suggests OpenAI is pricing
+      collaboration and coding autonomy as separate products.
+    claimRefs:
+      - C216
+      - C217
+      - C228
+  - calloutType: risk
+    title: Public reliability disclosure is useful but still incomplete
+    body: >-
+      Aggregate uptime figures and a live connector incident are visible, but buyers still lack public plan-specific SLA
+      and support commitments.
+    claimRefs:
+      - C235
+      - C236
+      - C237
+  - calloutType: risk
+    title: OpenAI can prune adjacent products quickly
+    body: >-
+      Sora’s discontinuation shows launch momentum does not guarantee long-term product permanence inside the OpenAI
+      portfolio.
+    claimRefs:
+      - C233
+      - C234
+      - C248
