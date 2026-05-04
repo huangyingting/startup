@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check:workflow-config": "node .github/skills/startup-research/scripts/config.mjs",
-    "check:report-index": "node .github/skills/startup-research/scripts/index.mjs --strict --check",
+    "check:workflow-config": "node .agents/skills/startup-research/scripts/config.mjs",
+    "check:report-index": "node .agents/skills/startup-research/scripts/index.mjs --strict --check",
+    "build:report-index": "node .agents/skills/startup-research/scripts/index.mjs --strict",
     "check:reports": "npm --prefix website run check:reports",
     "validate": "npm run check:workflow-config && npm run check:report-index && npm run check:reports && npm --prefix website run build"
   },

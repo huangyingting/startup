@@ -1,13 +1,17 @@
 # Manual startup research run.
 #
-# The default Copilot agent runs the .github/skills/startup-research workflow
-# (see .github/skills/startup-research/SKILL.md). CI installs deps, invokes the
-# CLI, rebuilds reports/_index.yaml, validates the site, and commits completed
-# YAML report artifacts.
+# Two modes:
+#   1. Research a single named company (provide companyName, optionally companyUrl).
+#   2. Discover and research recent unicorn startups (leave companyName blank;
+#      optionally set unicornCount).
 #
-# Required secrets / setup:
-# - COPILOT_PAT — PAT for a Copilot-licensed account; passed to the Copilot CLI.
-# - STARTUP_PAT — PAT with repo write access for checkout/push and downstream deploy triggers.
+# CI installs deps, drives the GitHub Copilot CLI to produce report YAML under
+# reports/<run>/, rebuilds reports/_index.yaml, validates the site, and commits
+# the new artifacts.
+#
+# Required secrets:
+# - COPILOT_PAT — PAT for a Copilot-licensed account; consumed by the Copilot CLI.
+# - STARTUP_PAT — PAT with repo write access for checkout/push.
 
 name: Research startup company
 
@@ -15,15 +19,21 @@ on:
   workflow_dispatch:
     inputs:
       companyName:
-        description: "Company name to research; leave blank to auto-select recent unicorns"
+        description: "Company name to research. Leave blank to auto-discover recent unicorns."
         required: false
         default: ""
         type: string
       companyUrl:
-        description: "Optional official website or profile URL; leave blank for auto-select mode"
+        description: "Optional official website or profile URL for the named company."
         required: false
         default: ""
         type: string
+      unicornCount:
+        description: "How many recent unicorn startups to research when companyName is blank."
+        required: false
+        default: "5"
+        type: string
+
 permissions:
   contents: write
 
@@ -64,19 +74,27 @@ jobs:
         env:
           RAW_COMPANY: ${{ github.event.inputs.companyName }}
           RAW_URL: ${{ github.event.inputs.companyUrl }}
+          RAW_COUNT: ${{ github.event.inputs.unicornCount }}
         run: |
           set -euo pipefail
-          COMPANY="$(printf '%s' "${RAW_COMPANY//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
-          URL="$(printf '%s' "${RAW_URL//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
-          MODE="single-company"
-          if [ -z "$COMPANY" ] && [ -z "$URL" ]; then
+          trim() { printf '%s' "${1//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//'; }
+          COMPANY="$(trim "$RAW_COMPANY")"
+          URL="$(trim "$RAW_URL")"
+          COUNT="$(trim "$RAW_COUNT")"
+          if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
+            COUNT=5
+          fi
+          if [ -z "$COMPANY" ]; then
             MODE="recent-unicorns"
-            COMPANY="recent-unicorns"
-          elif [ -z "$COMPANY" ]; then
-            COMPANY="$URL"
+            LABEL="recent-unicorns"
+          else
+            MODE="single-company"
+            LABEL="$COMPANY"
           fi
           {
             echo "mode=$MODE"
+            echo "count=$COUNT"
+            echo "label=$LABEL"
             echo "company<<EOF"
             echo "$COMPANY"
             echo "EOF"
@@ -85,40 +103,44 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Run Startup Research workflow
+      - name: Run startup research
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
           MODE: ${{ steps.inputs.outputs.mode }}
+          COUNT: ${{ steps.inputs.outputs.count }}
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
         run: |
           set -euo pipefail
           if [ "$MODE" = "recent-unicorns" ]; then
             PROMPT=$(cat <<EOF
-          Follow the .github/skills/startup-research skill (.github/skills/startup-research/SKILL.md) and run recent-unicorn discovery.
+          Produce full diligence reports for $COUNT recent private unicorn startups suitable for VC review.
 
-          Select at least 5 recent private unicorn startups suitable for VC diligence. Prefer companies that recently raised, crossed or were reported above a \$1B valuation, or became newly prominent in the last 12-24 months. Avoid companies already present in reports/_index.yaml unless a materially new report is justified.
+          Selection rules:
+          - Prefer companies that recently raised at, crossed, or were reported above a \$1B valuation, or became newly prominent in the last 12-24 months.
+          - Skip companies already present in reports/_index.yaml unless a materially new report is justified.
+          - Pick a diverse set across sectors when possible.
 
-          For each selected company, run one complete Startup Research workflow using the startup-research skill end-to-end. Do not invoke another agent or delegate report stages. Use schemaVersion report-v2 and the references listed in the skill. Each company must produce the full required English YAML set under its own reports/<run>/ folder. Use web_search and the fetch-url skill as described in the startup-research SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
+          For each selected company, run one complete startup diligence report end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under its own reports/<run>/ folder. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
           )
           else
             PROMPT=$(cat <<EOF
-          Follow the .github/skills/startup-research skill (.github/skills/startup-research/SKILL.md) and run one complete Startup Research workflow for this company.
+          Produce one complete startup diligence report for the company below.
 
           Company: $COMPANY
-          Company URL: ${COMPANY_URL:-null}
+          Company URL: ${COMPANY_URL:-unknown}
 
-          Use schemaVersion report-v2 and the references listed in the skill. Run the skill end-to-end; do not invoke another agent or delegate report stages. Write the full required English YAML set under reports/<run>/. Use web_search and the fetch-url skill as described in the startup-research SKILL.md. Delete duplicate, failed, or partial report folders before final validation. Do not run git add or git commit.
+          Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
           )
           fi
           copilot --yolo --no-ask-user -p "$PROMPT"
 
       - name: Rebuild reports/_index.yaml
-        run: node .github/skills/startup-research/scripts/index.mjs --strict
+        run: npm run build:report-index
 
-      - name: Validate generated report and website
+      - name: Validate generated reports and website
         run: npm run validate
 
       - name: Reject partial report folders
@@ -141,22 +163,22 @@ jobs:
             exit 1
           fi
 
-      - name: Commit and push new report
+      - name: Commit and push new reports
         env:
-          COMPANY: ${{ steps.inputs.outputs.company }}
+          LABEL: ${{ steps.inputs.outputs.label }}
         run: |
           set -euo pipefail
           git config user.name "startup-research-bot"
           git config user.email "startup-research-bot@users.noreply.github.com"
           git fetch origin "${{ github.ref_name }}"
           git rebase --autostash "origin/${{ github.ref_name }}"
-          node .github/skills/startup-research/scripts/index.mjs --strict
+          npm run build:report-index
           git add reports/
           if git diff --cached --quiet; then
             echo "No new or updated startup reports."
             exit 0
           fi
-          SAFE_COMPANY="$(printf '%s' "$COMPANY" | tr -c '[:alnum:]' '-' | tr '[:upper:]' '[:lower:]' | sed 's/-\+/-/g; s/^-//; s/-$//' | cut -c1-60)"
+          SAFE_LABEL="$(printf '%s' "$LABEL" | tr -c '[:alnum:]' '-' | tr '[:upper:]' '[:lower:]' | sed 's/-\+/-/g; s/^-//; s/-$//' | cut -c1-60)"
           STAMP="$(date -u +%F)"
-          git commit -m "chore(reports): research ${SAFE_COMPANY:-startup} $STAMP"
+          git commit -m "chore(reports): research ${SAFE_LABEL:-startup} $STAMP"
           git push origin HEAD:${{ github.ref_name }}
