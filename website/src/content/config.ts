@@ -23,12 +23,9 @@ const reports = defineCollection({
       website: z.string().nullable().optional(),
       sector: z.string().nullable().optional(),
       stage: z.string().nullable().optional(),
-      foundedYear: z.number().nullable().optional(),
       headquarters: z.string().nullable().optional(),
       shortDescription: z.string().nullable().optional(),
     }),
-    title: z.string(),
-    subtitle: z.string().nullable().optional(),
     headline: z.string(),
     recommendation: z.string(),
     confidence: z.string(),
@@ -39,8 +36,6 @@ const reports = defineCollection({
       sourcesRetained: z.number(),
       claimsReviewed: z.number(),
     }),
-    figureCount: z.number(),
-    tableCount: z.number(),
     keyMetrics: z.object({
       valuationUsdM: nullableMetric,
       revenueRunRateUsdM: nullableMetric,
@@ -55,7 +50,6 @@ const reports = defineCollection({
     topStrengths: z.array(z.string()),
     topRisks: z.array(z.string()),
     unresolvedGaps: z.array(z.string()),
-    reportFiles: z.record(z.string()),
   }),
 });
 

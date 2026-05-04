@@ -103,8 +103,8 @@ Retry up to 3 times per chapter, scoping each retry strictly to the dimensions i
 - Cite material sections, tables, figures, and callouts with local `claimRefs`.
 - Local `S###`, `C###`, `T###`, `F###`, `RQ###` IDs are scoped to one artifact.
 - Claims must be atomic; do not bundle several facts into one claim.
-- Every factual claim needs `sourceRefs`, except `claimType: open-question` with `corroboration: none`.
-- Use honest labels for `claimType`, `confidence`, `freshness`, and `corroboration`. Set `claim.contradictsClaimRefs` whenever `claimType: conflicting`.
+- Every factual claim needs `sourceRefs`, except `claimType: open-question`.
+- Use honest labels for `claimType`, `confidence`, and `freshness`. Set `claim.contradictsClaimRefs` whenever `claimType: conflicting`. (`corroboration` is *derived* from `sourceRefs.length` and `contradictsClaimRefs`; do not write it.)
 - Reuse identity facts. The `company-overview` chapter is the canonical home for founders, founding date, headquarters, total raised, latest valuation, headcount, and customer count. When a later chapter restates one of these facts, cite the same canonical claim id (post-ledger) — do not invent a parallel local claim. `cross-chapter.mjs` flags `keyFactDrift` when this is violated.
 - Source `accessStatus` matters. Sources flagged `paywall`, `js-only`, `broken`, or `rate-limited` cannot be the sole `sourceRef` of a high-confidence claim, and the report-level gate fails when more than 30 % of sources fall in those buckets.
 - Use `currentDate` from the report run as the freshness anchor and preserve source date precision.
@@ -119,7 +119,35 @@ After all analysis chapters pass:
 
 1. Build evidence:
    `node .github/skills/startup-research/scripts/ledger.mjs <reportFolder>`
-2. Write `report-meta.yaml` in the report folder with the judgment fields the analysis chapters do not encode (recommendation, confidence, risk rating, valuation stance, cover metrics, startup introduction, top strengths/risks, unresolved gaps, overall score, headline, summary-card company facts). See `references/report-meta-schema.md` for the exact shape.
+2. Write `report-meta.yaml` in the report folder with the judgment fields the analysis chapters do not encode. Required shape:
+   ```yaml
+   slug: <slug>
+   runDate: YYYY-MM-DD
+   company:
+     name: <Company>
+     website: <url> | null
+     sector: <sector> | null
+     stage: <stage> | null
+     headquarters: <city> | null
+     shortDescription: <one-line> | null
+   subtitle: <optional qualifier> | null    # e.g. "Public-evidence diligence snapshot"
+   coverageNotes: <optional> | null
+   coverMetrics: [...]                        # optional cover-grid items
+   startupIntroduction: { summary, foundedDate, founders, foundingLocation, headquarters, productSummary, customerFocus, businessModel, stage, fundingStatus, claimRefs }
+   summary:
+     headline: <one-sentence>
+     overallScore: <0-10, one decimal>
+     recommendation: strong-buy | buy | track | research-more | avoid
+     confidence: high | medium | low
+     riskRating: low | moderate | significant | critical | unknown
+     valuationStance: attractive | fair | stretched | expensive | unknown
+     keyMetrics: { valuationUsdM, revenueRunRateUsdM, arrUsdM, revenueGrowthYoYPct, grossMarginPct, nrrPct, totalRaisedUsdM, customerCount, headcount }
+     topStrengths: [string]
+     topRisks: [string]
+     unresolvedGaps: [string]
+   appendices: [...]                          # optional
+   disclaimer: <override default> | null
+   ```
 3. Assemble the consolidated artifacts:
    `node .github/skills/startup-research/scripts/assemble.mjs <reportFolder>`
    This deterministically stitches the analysis chapter YAMLs + `evidence.yaml` + `report-meta.yaml` into `full-report.yaml` and `summary-card.yaml`. Re-run after editing any chapter or `report-meta.yaml`.

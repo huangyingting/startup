@@ -80,10 +80,10 @@ function requireField(obj, path) {
 const slug = requireField(meta, 'slug');
 const runDate = requireField(meta, 'runDate');
 const companyName = requireField(meta, 'company.name');
-const recommendation = requireField(meta, 'reportMeta.recommendation');
-const confidence = requireField(meta, 'reportMeta.confidence');
-const riskRating = requireField(meta, 'reportMeta.riskRating');
-const valuationStance = requireField(meta, 'reportMeta.valuationStance');
+const recommendation = requireField(meta, 'summary.recommendation');
+const confidence = requireField(meta, 'summary.confidence');
+const riskRating = requireField(meta, 'summary.riskRating');
+const valuationStance = requireField(meta, 'summary.valuationStance');
 requireField(meta, 'startupIntroduction.summary');
 requireField(meta, 'startupIntroduction.productSummary');
 requireField(meta, 'summary.headline');
@@ -104,22 +104,13 @@ function paragraphBlock(section) {
 }
 
 function calloutBlock(callout) {
-  // Map analysis-callout types into report-block calloutType vocabulary.
-  // verdict-style callouts surface as the chapter's investment-recommendation
-  // marker; everything else falls back to key-insight or risk-alert by tone.
-  const calloutTypeMap = {
-    verdict: 'final-recommendation',
-    strength: 'opportunity',
-    watchout: 'risk-alert',
-    gap: 'risk-alert',
-    methodology: 'key-insight',
-    assumption: 'key-insight',
-  };
+  // Chapter callouts and report callout blocks share a single calloutType
+  // vocabulary: strength | risk | recommendation | insight | assumption.
   return {
     type: 'callout',
     title: callout.title,
     body: callout.body,
-    calloutType: calloutTypeMap[callout.type] ?? 'key-insight',
+    calloutType: callout.calloutType ?? 'insight',
     claimRefs: callout.claimRefs ?? [],
   };
 }
@@ -199,25 +190,14 @@ const sourceRefs = (evidence.sources ?? []).map((source) => source.id).filter(Bo
 // ---------------------------------------------------------------------------
 // build full-report.yaml
 // ---------------------------------------------------------------------------
-const generatedAt = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
-
 const fullReport = {
   schemaVersion: SCHEMA_VERSION,
   artifact: 'full-report',
   slug,
   runDate,
   company: { name: companyName },
-  reportMeta: {
-    title: companyName,
-    subtitle: meta.reportMeta.subtitle ?? null,
-    generatedAt,
-    schemaVersion: SCHEMA_VERSION,
-    recommendation,
-    confidence,
-    riskRating,
-    valuationStance,
-    coverageNotes: meta.reportMeta.coverageNotes ?? null,
-  },
+  subtitle: meta.subtitle ?? null,
+  coverageNotes: meta.coverageNotes ?? null,
   coverMetrics: meta.coverMetrics ?? [],
   startupIntroduction: meta.startupIntroduction,
   chapters: chapterDocs.map(buildChapter),
@@ -235,13 +215,10 @@ const summaryDefaults = {
   website: null,
   sector: null,
   stage: null,
-  foundedYear: null,
   headquarters: null,
   shortDescription: null,
 };
 
-const claimsReviewed = evidence.coverage?.claimsCreated ?? (evidence.claims ?? []).length;
-const sourcesRetained = evidence.coverage?.sourcesRetained ?? sourceRefs.length;
 const sourceStats = computeSourceStats(evidence, chapterDocs, runDate);
 
 const summaryCard = {
@@ -254,8 +231,6 @@ const summaryCard = {
     ...summaryDefaults,
     ...(meta.company ?? {}),
   },
-  title: companyName,
-  subtitle: meta.reportMeta.subtitle ?? null,
   headline: meta.summary.headline,
   recommendation,
   confidence,
@@ -263,24 +238,17 @@ const summaryCard = {
   valuationStance,
   overallScore: meta.summary.overallScore,
   sourceStats: {
-    sourcesRetained,
-    claimsReviewed,
+    sourcesRetained: sourceRefs.length,
+    claimsReviewed: (evidence.claims ?? []).length,
     domainCount: sourceStats.domainCount,
     adverseSourceCount: sourceStats.adverseSourceCount,
     unresolvedQuestionCount: sourceStats.unresolvedQuestionCount,
     averageSourceAgeDays: sourceStats.averageSourceAgeDays,
-    sourceTypeDistribution: sourceStats.sourceTypeDistribution,
   },
-  figureCount: figures.length,
-  tableCount: tables.length,
   keyMetrics: meta.summary.keyMetrics ?? {},
   topStrengths: meta.summary.topStrengths,
   topRisks: meta.summary.topRisks,
   unresolvedGaps: meta.summary.unresolvedGaps,
-  reportFiles: {
-    fullReport: fullReportFile,
-    summaryCard: summaryCardFile,
-  },
 };
 
 // ---------------------------------------------------------------------------
@@ -305,11 +273,6 @@ function computeSourceStats(evidenceLedger, chapters, runDateStr) {
   const matrix = evidenceLedger.coverageMatrix ?? {};
   const domainCount = matrix.totalDistinctDomains ?? 0;
   const adverseSourceCount = matrix.byStance?.adverse ?? sources.filter((s) => s?.stance === 'adverse').length;
-  const sourceTypeDistribution = matrix.byType ?? sources.reduce((acc, s) => {
-    const key = s?.sourceType ?? 'unknown';
-    acc[key] = (acc[key] ?? 0) + 1;
-    return acc;
-  }, {});
   let unresolvedQuestionCount = 0;
   for (const { doc } of chapters) {
     for (const q of doc.localEvidence?.researchQuestions ?? []) {
@@ -326,7 +289,7 @@ function computeSourceStats(evidenceLedger, chapters, runDateStr) {
     }
   }
   const averageSourceAgeDays = ages.length ? Math.round(ages.reduce((sum, n) => sum + n, 0) / ages.length) : null;
-  return { domainCount, adverseSourceCount, sourceTypeDistribution, unresolvedQuestionCount, averageSourceAgeDays };
+  return { domainCount, adverseSourceCount, unresolvedQuestionCount, averageSourceAgeDays };
 }
 
 function parseDate(value) {

@@ -17,12 +17,9 @@ interface ReportCardData extends Record<string, unknown> {
     website: string | null;
     sector: string | null;
     stage: string | null;
-    foundedYear: number | null;
     headquarters: string | null;
     shortDescription: string | null;
   };
-  title: string;
-  subtitle: string | null;
   headline: string;
   recommendation: string;
   confidence: string;
@@ -30,13 +27,10 @@ interface ReportCardData extends Record<string, unknown> {
   valuationStance: string;
   overallScore: number;
   sourceStats: { sourcesRetained: number; claimsReviewed: number };
-  figureCount: number;
-  tableCount: number;
   keyMetrics: Record<string, number | null>;
   topStrengths: string[];
   topRisks: string[];
   unresolvedGaps: string[];
-  reportFiles: Record<string, string>;
   runId: string;
   runTimestamp: string;
   folderSlug: string;
@@ -137,12 +131,9 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
       website: company.website ?? null,
       sector: company.sector ?? null,
       stage: company.stage ?? null,
-      foundedYear: company.foundedYear ?? null,
       headquarters: company.headquarters ?? null,
       shortDescription: company.shortDescription ?? null,
     },
-    title: raw.title ?? `${company.name ?? 'Startup'} — Due Diligence Report`,
-    subtitle: raw.subtitle ?? null,
     headline: raw.headline ?? `${company.name ?? 'Startup'} diligence report`,
     recommendation: typeof raw.recommendation === 'string' ? raw.recommendation : 'research-more',
     confidence: raw.confidence ?? 'low',
@@ -153,8 +144,6 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
       sourcesRetained: raw.sourceStats?.sourcesRetained ?? 0,
       claimsReviewed: raw.sourceStats?.claimsReviewed ?? 0,
     },
-    figureCount: raw.figureCount ?? 0,
-    tableCount: raw.tableCount ?? 0,
     keyMetrics: {
       valuationUsdM: metrics.valuationUsdM ?? null,
       revenueRunRateUsdM: metrics.revenueRunRateUsdM ?? null,
@@ -169,7 +158,6 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
     topStrengths: Array.isArray(raw.topStrengths) ? raw.topStrengths : [],
     topRisks: Array.isArray(raw.topRisks) ? raw.topRisks : [],
     unresolvedGaps: Array.isArray(raw.unresolvedGaps) ? raw.unresolvedGaps : [],
-    reportFiles: raw.reportFiles ?? {},
     runId,
     runTimestamp,
     folderSlug,

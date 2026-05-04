@@ -86,8 +86,8 @@ const chapters = arr<any>(doc?.chapters);
 const appendices = arr<any>(doc?.appendices);
 const reportFigures = arr(doc?.figures);
 const reportTables = arr(doc?.tables);
-const figureCount = reportFigures.length || data.figureCount || 0;
-const tableCount = reportTables.length || data.tableCount || 0;
+const figureCount = reportFigures.length;
+const tableCount = reportTables.length;
 
 const claimLinkMap = Object.fromEntries(
   claims.map((claim: any) => [claim.id, { href: `#claim-${claim.id}`, title: claim.statement ?? claim.id }])
@@ -108,8 +108,8 @@ const fallbackMetrics = [
 <section class="report-shell sr-container">
   <header class="report-cover">
     <div>
-      <h1>{doc?.reportMeta?.title ?? data.title}</h1>
-      {(doc?.company?.subtitle ?? data.subtitle) && <p class="report-subtitle">{doc?.company?.subtitle ?? data.subtitle}</p>}
+      <h1>{doc?.company?.name ?? data.company?.name ?? data.slug}</h1>
+      {(doc?.subtitle ?? null) && <p class="report-subtitle">{doc?.subtitle}</p>}
       <p class="report-headline">{cleanHeadline(data.headline)}</p>
       <div class="report-meta-line">
         <span>{data.runDate}</span>
@@ -180,8 +180,8 @@ const fallbackMetrics = [
         </p>
       )}
       <dl class="intro-grid">
-        {(startupIntroduction.foundedDate || startupIntroduction.foundedYear) && (
-          <div><dt>{labels.founded}</dt><dd>{startupIntroduction.foundedDate ?? startupIntroduction.foundedYear}</dd></div>
+        {startupIntroduction.foundedDate && (
+          <div><dt>{labels.founded}</dt><dd>{startupIntroduction.foundedDate}</dd></div>
         )}
         {arr(startupIntroduction.founders).length > 0 && (
           <div><dt>{labels.founders}</dt><dd>{arr(startupIntroduction.founders).map((founder: any) => founder.name).join(', ')}</dd></div>
@@ -420,8 +420,10 @@ const fallbackMetrics = [
   .toc a { color: var(--ink-page); text-decoration-color: var(--claret); }
   .report-callout { margin: var(--space-5) 0; border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 5%, transparent); padding: var(--space-4); }
   .report-callout h4 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--report-fs-subhead); }
-  .callout-opportunity { border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
-  .callout-risk-alert { border-left-color: #b42318; background: color-mix(in srgb, #b42318 7%, transparent); }
+  .callout-strength { border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
+  .callout-risk { border-left-color: #b42318; background: color-mix(in srgb, #b42318 7%, transparent); }
+  .callout-recommendation { border-left-color: var(--claret); background: color-mix(in srgb, var(--claret) 8%, transparent); }
+  .callout-assumption { border-left-color: var(--caption-gray); background: color-mix(in srgb, var(--caption-gray) 8%, transparent); }
   .equation { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
   .three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
   .three-col article { border-top: var(--report-rule); padding-top: var(--space-3); }

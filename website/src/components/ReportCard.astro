@@ -32,7 +32,7 @@ const metricRows = [
     <span>{data.company.name}</span>
     <span>{data.company.sector ?? 'other'}</span>
   </div>
-  <h3>{data.title}</h3>
+  <h3>{data.company.name}</h3>
   <p>{data.headline}</p>
   <div class="card-badges">
     <span>{displayLabel(data.recommendation)}</span>
@@ -49,8 +49,6 @@ const metricRows = [
     <span>{labels.rating}</span>
     <span>·</span>
     <span>{data.sourceStats.sourcesRetained} {labels.sources}</span>
-    <span>·</span>
-    <span>{data.figureCount} figs / {data.tableCount} tables</span>
   </div>
 </a>
 <style>

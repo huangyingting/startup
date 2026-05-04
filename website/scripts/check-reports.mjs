@@ -144,19 +144,20 @@ function checkLedgerSources(run, sources) {
 
 function checkLedgerCoverage(run, coverage) {
   const path = `${run}/${EVIDENCE_FILE}: coverage`;
-  for (const field of ['sourcesConsidered', 'sourcesRetained', 'claimsCreated', 'evidenceQuality']) {
-    if (coverage?.[field] === undefined) fail(`${path} missing ${field}`);
-  }
+  if (coverage?.evidenceQuality === undefined) fail(`${path} missing evidenceQuality`);
 }
 
 function checkLedgerClaims(run, claims) {
   for (const claim of claims) {
     const path = `${run}/${EVIDENCE_FILE}: claim ${claim?.id ?? '?'}`;
-    for (const field of ['statement', 'claimType', 'topic', 'sourceRefs', 'confidence', 'freshness', 'corroboration']) {
+    for (const field of ['statement', 'claimType', 'topic', 'sourceRefs', 'confidence', 'freshness']) {
       if (claim?.[field] === undefined) fail(`${path} missing ${field}`);
     }
     if (!hasText(claim?.statement)) fail(`${path} statement must be non-empty`);
     if (!Array.isArray(claim?.sourceRefs)) fail(`${path} sourceRefs must be an array`);
+    if (claim?.corroboration !== undefined) {
+      fail(`${path} must not store corroboration; it is derived from sourceRefs.length and contradictsClaimRefs`);
+    }
     if (claim?.answersQuestionRefs !== undefined && !Array.isArray(claim.answersQuestionRefs)) {
       fail(`${path} answersQuestionRefs must be an array when present`);
     }
@@ -187,6 +188,7 @@ function checkReportBlocks(run, reportDoc) {
   const blocks = [];
   collectBlocks(reportDoc?.chapters ?? [], 'chapters', blocks);
   collectBlocks(reportDoc?.appendices ?? [], 'appendices', blocks);
+  const CALLOUT_TYPES = new Set(['strength', 'risk', 'recommendation', 'insight', 'assumption']);
 
   for (const [location, block] of blocks) {
     const path = `${run}/${FULL_REPORT_FILE}:${location}`;
@@ -197,6 +199,9 @@ function checkReportBlocks(run, reportDoc) {
     if (block.type === 'equation' && !hasText(block.equation)) fail(`${path} equation block requires equation`);
     if (block.type === 'callout') {
       if (!hasText(block.body)) fail(`${path} callout block requires body`);
+      if (block.calloutType != null && !CALLOUT_TYPES.has(block.calloutType)) {
+        fail(`${path} callout block calloutType must be one of ${[...CALLOUT_TYPES].join('|')}`);
+      }
     }
     if (block.type === 'table' && !hasText(block.tableRef)) fail(`${path} table block requires tableRef`);
     if (block.type === 'figure' && !hasText(block.figureRef)) fail(`${path} figure block requires figureRef`);
@@ -205,11 +210,15 @@ function checkReportBlocks(run, reportDoc) {
 
 function checkAnalysisCallouts(run, file, doc) {
   if (!ANALYSIS_FILES.includes(file)) return;
+  const CALLOUT_TYPES = new Set(['strength', 'risk', 'recommendation', 'insight', 'assumption']);
   for (const [index, callout] of (doc?.callouts ?? []).entries()) {
     const path = `${run}/${file}: callout ${index + 1}`;
     if (!hasText(callout?.title)) fail(`${path} requires title`);
     if (!hasText(callout?.body)) fail(`${path} requires body`);
     if (!Array.isArray(callout?.claimRefs)) fail(`${path} requires claimRefs array`);
+    if (callout?.calloutType !== undefined && !CALLOUT_TYPES.has(callout.calloutType)) {
+      fail(`${path} calloutType must be one of ${[...CALLOUT_TYPES].join('|')}`);
+    }
   }
 }
 
@@ -521,31 +530,21 @@ function checkReportLevelDiversity(run, ledger) {
 
 function checkCardConsistency(run, card, reportDoc, ledger) {
   const cardPath = `${run}/${SUMMARY_CARD_FILE}`;
-  if (typeof card?.figureCount !== 'number') fail(`${cardPath}: figureCount is required and must be a number`);
-  else if (card.figureCount !== (reportDoc?.figures ?? []).length) fail(`${cardPath}: figureCount does not match report document`);
-  if (typeof card?.tableCount !== 'number') fail(`${cardPath}: tableCount is required and must be a number`);
-  else if (card.tableCount !== (reportDoc?.tables ?? []).length) fail(`${cardPath}: tableCount does not match report document`);
   if (typeof card?.overallScore !== 'number' || card.overallScore < 0 || card.overallScore > 10) {
     fail(`${cardPath}: overallScore must be a number between 0 and 10`);
-  }
-  if (card?.reportFiles?.fullReport !== FULL_REPORT_FILE) {
-    fail(`${cardPath}: reportFiles.fullReport must be ${FULL_REPORT_FILE}`);
-  }
-  if (card?.reportFiles?.summaryCard !== SUMMARY_CARD_FILE) {
-    fail(`${cardPath}: reportFiles.summaryCard must be ${SUMMARY_CARD_FILE}`);
   }
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
     fail(`${cardPath}: claimsReviewed exceeds ledger claims`);
   }
-  for (const field of ['domainCount', 'adverseSourceCount', 'unresolvedQuestionCount']) {
+  for (const field of ['sourcesRetained', 'claimsReviewed', 'domainCount', 'adverseSourceCount', 'unresolvedQuestionCount']) {
     if (typeof card?.sourceStats?.[field] !== 'number') fail(`${cardPath}: sourceStats.${field} is required and must be a number`);
   }
   if (card?.sourceStats && card.sourceStats.averageSourceAgeDays != null && typeof card.sourceStats.averageSourceAgeDays !== 'number') {
     fail(`${cardPath}: sourceStats.averageSourceAgeDays must be a number or null`);
   }
-  if (card?.sourceStats?.sourceTypeDistribution && (typeof card.sourceStats.sourceTypeDistribution !== 'object' || Array.isArray(card.sourceStats.sourceTypeDistribution))) {
-    fail(`${cardPath}: sourceStats.sourceTypeDistribution must be an object map`);
-  }
+  // The full-report figure/table arrays carry the authoritative counts; the
+  // card no longer mirrors them (cf. schema simplification).
+  void reportDoc;
 }
 
 function checkReportConsistency(run, reportDoc) {

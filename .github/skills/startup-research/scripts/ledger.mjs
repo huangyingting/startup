@@ -38,8 +38,8 @@ for (const downstream of DOWNSTREAM_FILES) {
   }
 }
 
-const { sources, claims, sourceIds, claimIds, evidenceGaps, sourcesConsidered } = consolidate(docs);
-const ledger = buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered);
+const { sources, claims, sourceIds, claimIds, evidenceGaps } = consolidate(docs);
+const ledger = buildLedger(docs, sources, claims, evidenceGaps);
 
 writeYaml(join(reportFolder, EVIDENCE_FILE), ledger);
 for (const [file, doc] of docs) {
@@ -80,10 +80,8 @@ function consolidateSources(docs) {
   const sourceIds = new Map();
   const sources = [];
   const seen = new Map();
-  let sourcesConsidered = 0;
   for (const [file, doc] of docs) {
     const localSources = doc.localEvidence?.sources ?? [];
-    sourcesConsidered += Number(doc.localEvidence?.coverage?.sourcesConsidered ?? localSources.length) || 0;
     for (const source of localSources) {
       const key = sourceKey(source);
       let finalId = seen.get(key);
@@ -95,7 +93,7 @@ function consolidateSources(docs) {
       if (source.id) sourceIds.set(`${file}:${source.id}`, finalId);
     }
   }
-  return { sources, sourceIds, sourcesConsidered };
+  return { sources, sourceIds };
 }
 
 function consolidateClaims(docs, sourceIds) {
@@ -113,7 +111,9 @@ function consolidateClaims(docs, sourceIds) {
       if (!finalId) {
         finalId = nextId('C', claims.length);
         seen.set(key, finalId);
-        claims.push({ ...claim, id: finalId, sourceRefs });
+        // `corroboration` is derived from sourceRefs at read time; do not persist it.
+        const { corroboration: _drop, ...rest } = claim;
+        claims.push({ ...rest, id: finalId, sourceRefs });
       }
       if (claim.id) claimIds.set(`${file}:${claim.id}`, finalId);
     }
@@ -152,9 +152,9 @@ function summarizeRecency(runDate, sources, claims) {
 }
 
 function consolidate(docs) {
-  const { sources, sourceIds, sourcesConsidered } = consolidateSources(docs);
+  const { sources, sourceIds } = consolidateSources(docs);
   const { claims, claimIds, evidenceGaps } = consolidateClaims(docs, sourceIds);
-  return { sources, claims, sourceIds, claimIds, evidenceGaps, sourcesConsidered };
+  return { sources, claims, sourceIds, claimIds, evidenceGaps };
 }
 
 function rewrite(value, file, claimIds) {
@@ -180,7 +180,7 @@ function rewrite(value, file, claimIds) {
   return value;
 }
 
-function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
+function buildLedger(docs, sources, claims, evidenceGaps) {
   const first = docs.values().next().value;
   const recencyNotes = summarizeRecency(first.runDate, sources, claims);
   const coverageMatrix = buildCoverageMatrix(docs, sources, claims);
@@ -191,9 +191,6 @@ function buildLedger(docs, sources, claims, evidenceGaps, sourcesConsidered) {
     runDate: first.runDate,
     company: first.company,
     coverage: {
-      sourcesConsidered: Math.max(sourcesConsidered, sources.length),
-      sourcesRetained: sources.length,
-      claimsCreated: claims.length,
       evidenceQuality: inferEvidenceQuality(sources, claims),
       sourceDiversityNotes: null,
       deduplicationNotes: `Consolidated from ${docs.size} artifacts; sources deduplicated by canonical URL or publisher/title/date fallback.`,
@@ -279,7 +276,8 @@ function inferEvidenceQuality(sources, claims) {
   if (!sources.length || !claims.length) return 'unknown';
   const independentCount = sources.filter((source) => source.independence === 'independent').length;
   const highReputationCount = sources.filter((source) => source.reputationTier === 'high').length;
-  const multiSourceClaims = claims.filter((claim) => claim.corroboration === 'multi-source').length;
+  // corroboration is derived from sourceRefs length (≥2 sources => multi-source).
+  const multiSourceClaims = claims.filter((claim) => (claim.sourceRefs ?? []).length >= 2).length;
   const independentShare = independentCount / sources.length;
   const highReputationShare = highReputationCount / sources.length;
   const multiSourceShare = multiSourceClaims / claims.length;
