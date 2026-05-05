@@ -2,9 +2,10 @@
 // Append a per-run postmortem record to reports/_postmortem.yaml so future
 // gate calibration is data-driven, not anecdote-driven.
 //
-// MUST run BEFORE ledger.mjs consolidates per-chapter localEvidence into
-// evidence.yaml — otherwise per-chapter source stance / accessStatus counts
-// are unrecoverable. finalize.mjs places this step first.
+// finalize.mjs runs this after the per-report publishability gate succeeds.
+// ledger.mjs preserves per-chapter localEvidence in the source chapter YAMLs,
+// so per-chapter source stance / accessStatus counts remain recoverable on
+// later finalize re-runs.
 //
 // Reads the report folder (chapters with intact localEvidence + report-meta.yaml)
 // and records, for each chapter:
