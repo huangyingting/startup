@@ -1,10 +1,9 @@
 schemaVersion: report-v2
 artifact: risks
 slug: 20260505120000-preply
-runDate: 2026-05-05
+runDate: {}
 company:
   name: Preply
-
 chapter:
   number: 7
   title: Risks
@@ -27,7 +26,6 @@ chapter:
     that positive EBITDA and the cash runway deployed from the $150M Series D are private.
     No evidence of a major data breach, active GDPR enforcement action, or criminal litigation
     was found; this is a meaningful gap-free period that narrows residual severity on those risks.
-
 sections:
   - id: S701
     title: Regulatory and Legal Risk
@@ -74,21 +72,20 @@ sections:
       Given that Preply relies on OpenAI (a US-based AI provider) for core product features,
       the adequacy and transparency of AI sub-processor disclosures is a latent GDPR risk.
     claimRefs:
-      - C701
-      - C702
-      - C703
-      - C704
-      - C705
-      - C706
-      - C707
-      - C708
-      - C709
-      - C729
-      - C736
-      - C737
-      - C739
-      - C740
-
+      - C248
+      - C249
+      - C250
+      - C251
+      - C252
+      - C253
+      - C254
+      - C255
+      - C256
+      - C276
+      - C283
+      - C284
+      - C286
+      - C287
   - id: S702
     title: Operational, Security, and Trust-and-Safety Risk
     body: |
@@ -121,16 +118,15 @@ sections:
       incident in which a third-party analytics provider suffered a breach affecting AI platform
       customers.
     claimRefs:
-      - C710
-      - C711
-      - C712
-      - C713
-      - C714
-      - C730
-      - C738
-      - C741
-      - C742
-
+      - C257
+      - C258
+      - C259
+      - C260
+      - C261
+      - C277
+      - C285
+      - C288
+      - C289
   - id: S703
     title: Technology and AI Concentration Risk
     body: |
@@ -161,12 +157,11 @@ sections:
       The infrastructure supporting video delivery (Preply Space) has its own reliability
       dependencies that are not publicly documented.
     claimRefs:
-      - C715
-      - C716
-      - C713
-      - C714
-      - C740
-
+      - C262
+      - C263
+      - C260
+      - C261
+      - C287
   - id: S704
     title: Geopolitical and Operational Continuity Risk
     body: |
@@ -198,11 +193,10 @@ sections:
       implemented psychological support, flexible remote-work options, and relocation assistance,
       but no quantified retention impact data is public.
     claimRefs:
-      - C717
-      - C718
-      - C744
-      - C745
-
+      - C264
+      - C265
+      - C291
+      - C292
   - id: S705
     title: People and Execution Risk
     body: |
@@ -234,12 +228,11 @@ sections:
       capabilities (ML platform engineering, AI safety compliance, regulatory affairs) that are
       not clearly evidenced in the public team composition.
     claimRefs:
-      - C731
-      - C732
-      - C733
-      - C735
-      - C728
-
+      - C278
+      - C279
+      - C280
+      - C282
+      - C275
   - id: S706
     title: Financial, Competitive, and Partner Risk
     body: |
@@ -271,18 +264,17 @@ sections:
       key jurisdictions could impose retroactive employment-benefit liabilities and force a
       fundamental business model redesign.
     claimRefs:
-      - C719
-      - C720
-      - C721
-      - C722
-      - C723
-      - C724
-      - C725
-      - C726
-      - C727
-      - C733
-      - C734
-
+      - C266
+      - C267
+      - C268
+      - C269
+      - C270
+      - C271
+      - C272
+      - C273
+      - C274
+      - C280
+      - C281
 tables:
   - id: T701
     title: Regulatory / Legal Risk Register
@@ -296,11 +288,46 @@ tables:
       - Residual Exposure
       - Diligence Path
     rows:
-      - ["EU AI Act (High-Risk AI)", "EU / EEA", "Compliance window open; deadline Aug 2026", "High", "Critical", "Privacy Policy updated Mar 2026; DPO appointed; gap assessment scope unknown", "Critical — no conformity assessment or gap analysis publicly disclosed", "Request EU AI Act readiness roadmap and gap analysis from Preply legal"]
-      - ["GDPR (Data Controller obligations, Art 5/6/7/17/28/44)", "EU / EEA / UK", "Active compliance; DPA/SCCs in use; no enforcement action found", "Medium", "High", "DPO appointed; EU and UK representatives designated; Privacy Policy updated Mar 2026", "Material — AI sub-processor chain (OpenAI) disclosure may be insufficient", "Review full sub-processor list; confirm SCC schedule covers OpenAI"]
-      - ["COPPA 2025 Rule Amendments (FTC Final Rule, eff. Apr 2026)", "United States", "Rule finalized Apr 2025; compliance deadline Apr 2026", "Medium", "High", "Terms of Service list 'Parents' user category; age-gate controls not confirmed", "High — biometric/voice data from lessons; parental consent re-design may be required", "Confirm age-gate implementation and parental consent mechanics pre-Apr 2026"]
-      - ["Tutor Worker Misclassification (AB5 / ABC Test)", "California, US; EU (Platform Work Directive)", "No active litigation found; sector under regulatory scrutiny", "Medium", "Critical", "Tutors classified as independent contractors; ToS includes contractor language", "Critical — no Prop 22 equivalent exemption; retroactive benefit liability if reclassified", "Engage employment counsel to audit tutor control-indicators vs. ABC test requirements"]
-      - ["Consumer Protection / Dark Patterns (FTC Act § 5; EU DSA Annex)", "US; EU", "Persistent BBB and PissedConsumer complaints; no formal FTC action found", "Medium", "High", "Community guidelines in place; refund policy disclosed", "High — auto-renewal and billing complaint pattern could attract FTC or EU DG COMP review", "Conduct independent audit of auto-renewal consent flows and refund dispute rates"]
+      - - EU AI Act (High-Risk AI)
+        - EU / EEA
+        - Compliance window open; deadline Aug 2026
+        - High
+        - Critical
+        - Privacy Policy updated Mar 2026; DPO appointed; gap assessment scope unknown
+        - Critical — no conformity assessment or gap analysis publicly disclosed
+        - Request EU AI Act readiness roadmap and gap analysis from Preply legal
+      - - GDPR (Data Controller obligations, Art 5/6/7/17/28/44)
+        - EU / EEA / UK
+        - Active compliance; DPA/SCCs in use; no enforcement action found
+        - Medium
+        - High
+        - DPO appointed; EU and UK representatives designated; Privacy Policy updated Mar 2026
+        - Material — AI sub-processor chain (OpenAI) disclosure may be insufficient
+        - Review full sub-processor list; confirm SCC schedule covers OpenAI
+      - - COPPA 2025 Rule Amendments (FTC Final Rule, eff. Apr 2026)
+        - United States
+        - Rule finalized Apr 2025; compliance deadline Apr 2026
+        - Medium
+        - High
+        - Terms of Service list 'Parents' user category; age-gate controls not confirmed
+        - High — biometric/voice data from lessons; parental consent re-design may be required
+        - Confirm age-gate implementation and parental consent mechanics pre-Apr 2026
+      - - Tutor Worker Misclassification (AB5 / ABC Test)
+        - California, US; EU (Platform Work Directive)
+        - No active litigation found; sector under regulatory scrutiny
+        - Medium
+        - Critical
+        - Tutors classified as independent contractors; ToS includes contractor language
+        - Critical — no Prop 22 equivalent exemption; retroactive benefit liability if reclassified
+        - Engage employment counsel to audit tutor control-indicators vs. ABC test requirements
+      - - Consumer Protection / Dark Patterns (FTC Act § 5; EU DSA Annex)
+        - US; EU
+        - Persistent BBB and PissedConsumer complaints; no formal FTC action found
+        - Medium
+        - High
+        - Community guidelines in place; refund policy disclosed
+        - High — auto-renewal and billing complaint pattern could attract FTC or EU DG COMP review
+        - Conduct independent audit of auto-renewal consent flows and refund dispute rates
     notes: |
       Ordered by severity. Preply's Terms of Service were last updated February 1, 2021 and pre-date all
       regulations listed except legacy GDPR. Row 4 represents the most underappreciated structural risk:
@@ -312,21 +339,20 @@ tables:
         Jurisdiction-specific laws beyond the US, EU, and UK have not been individually assessed.
         Row completeness cannot be confirmed without review of Preply's internal legal register.
     claimRefs:
-      - C704
-      - C705
-      - C706
-      - C707
-      - C708
-      - C709
-      - C725
-      - C726
-      - C727
-      - C729
-      - C730
-      - C736
-      - C737
-      - C739
-
+      - C251
+      - C252
+      - C253
+      - C254
+      - C255
+      - C256
+      - C272
+      - C273
+      - C274
+      - C276
+      - C277
+      - C283
+      - C284
+      - C286
   - id: T702
     title: Operational, Quality, and Security Risk Register
     columns:
@@ -337,25 +363,44 @@ tables:
       - Residual Exposure
       - Unresolved Gap
     rows:
-      - ["Platform outage during live lessons (video/infrastructure)", "High (6+ incidents in 2025-26)", "High", "Low — no public SLA; reactive incident resolution", "High — real-time lesson cancellations; refund obligations; B2B SLA breach risk", "No public SLA or enterprise uptime guarantee"]
-      - ["Tutor vetting failure (fraudulent identity, criminal conduct)", "Medium", "Critical", "Low — ID verification only; no criminal background check", "Critical — duty-of-care liability risk especially for minor learners", "No criminal background check or credential audit program disclosed"]
-      - ["Data breach / privacy incident via AI sub-processor chain", "Low-Medium (sector elevated)", "High", "Partial — Privacy Policy updated; GDPR SCCs in use", "Medium — OpenAI sub-processor chain and Mixpanel-style risk uncontrolled", "No SOC 2 / independent security audit publicly confirmed"]
-      - ["AI-generated harmful or inappropriate content in Scenario Practice", "Low-Medium", "High", "Low — prompt-level guardrails only; no independent audit", "High — liability under DSA and EU AI Act if student harmed by AI output", "No third-party AI safety audit disclosed"]
+      - - Platform outage during live lessons (video/infrastructure)
+        - High (6+ incidents in 2025-26)
+        - High
+        - Low — no public SLA; reactive incident resolution
+        - High — real-time lesson cancellations; refund obligations; B2B SLA breach risk
+        - No public SLA or enterprise uptime guarantee
+      - - Tutor vetting failure (fraudulent identity, criminal conduct)
+        - Medium
+        - Critical
+        - Low — ID verification only; no criminal background check
+        - Critical — duty-of-care liability risk especially for minor learners
+        - No criminal background check or credential audit program disclosed
+      - - Data breach / privacy incident via AI sub-processor chain
+        - Low-Medium (sector elevated)
+        - High
+        - Partial — Privacy Policy updated; GDPR SCCs in use
+        - Medium — OpenAI sub-processor chain and Mixpanel-style risk uncontrolled
+        - No SOC 2 / independent security audit publicly confirmed
+      - - AI-generated harmful or inappropriate content in Scenario Practice
+        - Low-Medium
+        - High
+        - Low — prompt-level guardrails only; no independent audit
+        - High — liability under DSA and EU AI Act if student harmed by AI output
+        - No third-party AI safety audit disclosed
     notes: |
       Ordered by severity. Tutor background check gap is the highest residual-severity item given the
       critical-use context (language learning including minors/parents as distinct user class).
     claimRefs:
-      - C710
-      - C711
-      - C712
-      - C713
-      - C714
-      - C716
-      - C730
-      - C738
-      - C741
-      - C742
-
+      - C257
+      - C258
+      - C259
+      - C260
+      - C261
+      - C263
+      - C277
+      - C285
+      - C288
+      - C289
   - id: T703
     title: Revenue and Geographic Concentration Risk Register
     columns:
@@ -366,22 +411,41 @@ tables:
       - Mitigation
       - Residual Severity
     rows:
-      - ["B2C vs. B2B revenue split", "~95% B2C, ~5% B2B (estimated)", "Sacra analyst estimate; management has not publicly disclosed segment breakdown", "Demand shock in consumer language learning (e.g., recession, AI substitution) hits 95% of revenue", "Growing Preply Business to rebalance; 2,000+ enterprise clients", "High — B2C revenue concentration is structural and slow to rebalance"]
-      - ["Geographic concentration (EU)", "EU is the largest single geography by learner count; exact share undisclosed", "Privacy Policy EU-representative structure; B2C marketing emphasis in EU languages", "EU regulatory action (GDPR, AI Act, DSA) could suspend EU market access", "EU DPO appointed; Privacy Policy updated Mar 2026", "High — EU regulatory risk is jurisdiction-specific with no offsetting geography"]
-      - ["AI product revenue dependency", "Entire AI product suite runs on OpenAI API; AI products drive retention and pricing power", "Company blog; LBB article; no alternative AI provider disclosed", "OpenAI API suspension or price increase > 30% impairs product-margin and retention", "No fallback disclosed; could rebuild on open-source models (months of lead time)", "Critical — revenue thesis for AI differentiation depends on single-vendor stack"]
-      - ["Enterprise client concentration", "2,000+ B2B clients; top-10 concentration not disclosed; Unilever, Datadog named", "Company statement; no customer revenue concentration breakdown provided", "Loss of top-10 B2B clients could materially impact ARR without public visibility", "Diversified client base (2,000+); multi-year contracts likely but not confirmed", "Medium — no HHI data available; diversification partially mitigates"]
+      - - B2C vs. B2B revenue split
+        - ~95% B2C, ~5% B2B (estimated)
+        - Sacra analyst estimate; management has not publicly disclosed segment breakdown
+        - Demand shock in consumer language learning (e.g., recession, AI substitution) hits 95% of revenue
+        - Growing Preply Business to rebalance; 2,000+ enterprise clients
+        - High — B2C revenue concentration is structural and slow to rebalance
+      - - Geographic concentration (EU)
+        - EU is the largest single geography by learner count; exact share undisclosed
+        - Privacy Policy EU-representative structure; B2C marketing emphasis in EU languages
+        - EU regulatory action (GDPR, AI Act, DSA) could suspend EU market access
+        - EU DPO appointed; Privacy Policy updated Mar 2026
+        - High — EU regulatory risk is jurisdiction-specific with no offsetting geography
+      - - AI product revenue dependency
+        - Entire AI product suite runs on OpenAI API; AI products drive retention and pricing power
+        - Company blog; LBB article; no alternative AI provider disclosed
+        - OpenAI API suspension or price increase > 30% impairs product-margin and retention
+        - No fallback disclosed; could rebuild on open-source models (months of lead time)
+        - Critical — revenue thesis for AI differentiation depends on single-vendor stack
+      - - Enterprise client concentration
+        - 2,000+ B2B clients; top-10 concentration not disclosed; Unilever, Datadog named
+        - Company statement; no customer revenue concentration breakdown provided
+        - Loss of top-10 B2B clients could materially impact ARR without public visibility
+        - Diversified client base (2,000+); multi-year contracts likely but not confirmed
+        - Medium — no HHI data available; diversification partially mitigates
     notes: |
       Revenue and geographic concentration data are largely estimated or inferred from public disclosures.
       Preply has not provided a segment breakdown of B2C/B2B revenue, a geographic P&L, or enterprise
       client concentration data. All figures marked 'estimated' require private-data validation.
     claimRefs:
-      - C715
-      - C719
-      - C721
-      - C722
-      - C723
-      - C724
-
+      - C262
+      - C266
+      - C268
+      - C269
+      - C270
+      - C271
   - id: T704
     title: People and Execution Risk Register
     columns:
@@ -392,22 +456,47 @@ tables:
       - Mitigation
       - Diligence Path
     rows:
-      - ["CEO — Kirill Bigai", "Primary strategic decision-maker, fundraising lead, public face; no named successor", "Low", "Critical", "Distributed C-suite (COO Pallain, CPO Crossick, CRO Kingkade); WestCap board oversight", "Request board-approved succession framework and documentation of strategic decision authority"]
-      - ["Kyiv engineering team (~150 FTEs)", "Geopolitical disruption from Russia-Ukraine war; conscription risk for male engineers", "High", "High", "Reported flexibility, psychological support, relocation assistance", "Request business continuity plan with Kyiv scenario analysis; confirm cloud-based code infrastructure"]
-      - ["AI/ML product team", "Rapid AI roadmap expansion requires ML platform engineering, AI safety compliance, regulatory affairs — capabilities not clearly evidenced in public team profiles", "Medium", "High", "Series D capital earmarked for product/engineering headcount expansion", "Review AI team headcount plan; confirm EU AI Act compliance lead has been hired"]
-      - ["Tutor supply quality", "No full-time employee relationship; tutors freely multi-home; experienced tutor loss risk at 800+ hour commission tier", "Medium", "Medium", "Commission tiers incentivize accumulation; low-commission rate at high end retains experienced tutors economically", "Review tutor retention cohort data; model impact of 15% supply attrition on GMV"]
+      - - CEO — Kirill Bigai
+        - Primary strategic decision-maker, fundraising lead, public face; no named successor
+        - Low
+        - Critical
+        - Distributed C-suite (COO Pallain, CPO Crossick, CRO Kingkade); WestCap board oversight
+        - Request board-approved succession framework and documentation of strategic decision authority
+      - - Kyiv engineering team (~150 FTEs)
+        - Geopolitical disruption from Russia-Ukraine war; conscription risk for male engineers
+        - High
+        - High
+        - Reported flexibility, psychological support, relocation assistance
+        - Request business continuity plan with Kyiv scenario analysis; confirm cloud-based code infrastructure
+      - - AI/ML product team
+        - >-
+          Rapid AI roadmap expansion requires ML platform engineering, AI safety compliance, regulatory affairs —
+          capabilities not clearly evidenced in public team profiles
+        - Medium
+        - High
+        - Series D capital earmarked for product/engineering headcount expansion
+        - Review AI team headcount plan; confirm EU AI Act compliance lead has been hired
+      - - Tutor supply quality
+        - >-
+          No full-time employee relationship; tutors freely multi-home; experienced tutor loss risk at 800+ hour
+          commission tier
+        - Medium
+        - Medium
+        - >-
+          Commission tiers incentivize accumulation; low-commission rate at high end retains experienced tutors
+          economically
+        - Review tutor retention cohort data; model impact of 15% supply attrition on GMV
     notes: |
       Ordered by severity. The Kyiv engineering concentration is the highest-probability, high-severity item.
       CEO key-person risk is low-probability but critical-severity and the most commonly cited investor concern.
     claimRefs:
-      - C717
-      - C718
-      - C728
-      - C731
-      - C735
-      - C744
-      - C745
-
+      - C264
+      - C265
+      - C275
+      - C278
+      - C282
+      - C291
+      - C292
   - id: T705
     title: Mitigation and Kill Criteria
     columns:
@@ -416,20 +505,34 @@ tables:
       - Threshold / Event
       - Action Implication
     rows:
-      - ["EU AI Act Non-Compliance", "Preply EU AI Act gap analysis completion", "No conformity assessment filed by Q4 2026 / regulatory warning received", "Immediate: engage EU regulatory counsel; consider EU market access suspension risk"]
-      - ["OpenAI Concentration", "AI feature availability on platform", "AI suite disabled for > 48 hours OR OpenAI announces pricing change > 30%", "Thesis-break: accelerate multi-vendor AI procurement; re-price product margin"]
-      - ["Tutor Misclassification Lawsuit", "Filing of class action or state AG inquiry re: tutor employee status", "Any named filing in California, EU member state, or UK", "Thesis-break review: model cost impact of reclassification; assess platform model viability"]
-      - ["Kyiv Office Disruption", "Sustained Kyiv engineering output reduction", "Engineering delivery slippage > 3 months attributed to Kyiv unavailability", "Escalate: demand formal BCP execution; evaluate partial relocation funding"]
-      - ["Valuation Compression at Next Round", "Market revenue multiples for edtech; Preply disclosed ARR", "Next fundraise at < $1.0B valuation OR IPO pricing below $1.2B", "Thesis-break: reassess exit timeline and return profile under compression scenario"]
+      - - EU AI Act Non-Compliance
+        - Preply EU AI Act gap analysis completion
+        - No conformity assessment filed by Q4 2026 / regulatory warning received
+        - 'Immediate: engage EU regulatory counsel; consider EU market access suspension risk'
+      - - OpenAI Concentration
+        - AI feature availability on platform
+        - AI suite disabled for > 48 hours OR OpenAI announces pricing change > 30%
+        - 'Thesis-break: accelerate multi-vendor AI procurement; re-price product margin'
+      - - Tutor Misclassification Lawsuit
+        - 'Filing of class action or state AG inquiry re: tutor employee status'
+        - Any named filing in California, EU member state, or UK
+        - 'Thesis-break review: model cost impact of reclassification; assess platform model viability'
+      - - Kyiv Office Disruption
+        - Sustained Kyiv engineering output reduction
+        - Engineering delivery slippage > 3 months attributed to Kyiv unavailability
+        - 'Escalate: demand formal BCP execution; evaluate partial relocation funding'
+      - - Valuation Compression at Next Round
+        - Market revenue multiples for edtech; Preply disclosed ARR
+        - Next fundraise at < $1.0B valuation OR IPO pricing below $1.2B
+        - 'Thesis-break: reassess exit timeline and return profile under compression scenario'
     notes: |
       Kill criteria are defined as events that would require a fundamental re-evaluation of the investment thesis,
       not necessarily immediate exit. Thresholds reflect known regulatory deadlines and observable market signals.
     claimRefs:
-      - C705
-      - C715
-      - C721
-      - C744
-
+      - C252
+      - C262
+      - C268
+      - C291
 figures:
   - id: F701
     title: Risk Heatmap — Likelihood × Impact × Mitigation Maturity
@@ -522,14 +625,13 @@ figures:
       Likelihood and mitigation maturity are qualitative judgments based on public evidence reviewed.
       No internal risk register has been disclosed by Preply.
     claimRefs:
-      - C705
-      - C706
-      - C715
-      - C717
-      - C725
-      - C730
-      - C736
-
+      - C252
+      - C253
+      - C262
+      - C264
+      - C272
+      - C277
+      - C283
   - id: F702
     title: Risk Transmission Map — How Risks Flow to Revenue, Margin, and Valuation
     type: dag
@@ -590,12 +692,11 @@ figures:
       loops (e.g., valuation compression → capital constraint → further disruption) are not shown
       to maintain DAG topology.
     claimRefs:
-      - C715
-      - C705
-      - C725
-      - C717
-      - C719
-
+      - C262
+      - C252
+      - C272
+      - C264
+      - C266
   - id: F703
     title: External Platform Architecture — Upstream Node and Regulatory Channel Map
     type: dag
@@ -610,21 +711,21 @@ figures:
     data:
       nodes:
         - id: openai
-          label: "OpenAI (AI API)"
+          label: OpenAI (AI API)
         - id: cloud
-          label: "Cloud Infrastructure (AWS/GCP)"
+          label: Cloud Infrastructure (AWS/GCP)
         - id: westcap
-          label: "WestCap (Capital / Board)"
+          label: WestCap (Capital / Board)
         - id: tutors
-          label: "100K+ Independent Tutors"
+          label: 100K+ Independent Tutors
         - id: eu-dpa
-          label: "EU DPA Network / AI Act Authority"
+          label: EU DPA Network / AI Act Authority
         - id: ftc
-          label: "FTC (COPPA / Consumer Protection)"
+          label: FTC (COPPA / Consumer Protection)
         - id: payment-rails
-          label: "Payment Rails (Stripe/Payoneer)"
+          label: Payment Rails (Stripe/Payoneer)
         - id: preply-platform
-          label: "Preply Core Platform"
+          label: Preply Core Platform
       edges:
         - from: openai
           to: preply-platform
@@ -644,13 +745,12 @@ figures:
       Cloud provider identity is inferred from industry norms; Preply has not publicly disclosed
       its cloud hosting vendor. Payment rail identity is inferred and not confirmed by Preply.
     claimRefs:
-      - C715
-      - C721
-      - C728
-
+      - C262
+      - C268
+      - C275
 callouts:
   - calloutType: risk
-    title: "EU AI Act August 2026 Deadline: No Gap Analysis Disclosed"
+    title: 'EU AI Act August 2026 Deadline: No Gap Analysis Disclosed'
     body: |
       Preply's tutor-matching algorithm and AI-driven learning assessments likely fall within
       EU AI Act Annex III high-risk categories. The compliance deadline is August 2, 2026 —
@@ -659,12 +759,11 @@ callouts:
       €35M or 7% of global annual turnover. This is the single most time-critical risk in this
       chapter.
     claimRefs:
-      - C705
-      - C706
-      - C740
-
+      - C252
+      - C253
+      - C287
   - calloutType: risk
-    title: "Tutor Misclassification: No Prop 22 Shield, $500M+ Sector Precedent"
+    title: 'Tutor Misclassification: No Prop 22 Shield, $500M+ Sector Precedent'
     body: |
       California's AB5 "ABC test" applies in full to online tutoring platforms — there is no
       Proposition 22 exemption equivalent for non-transportation gig workers. Uber and Lyft
@@ -674,12 +773,11 @@ callouts:
       business. Retroactive reclassification would impose benefit liabilities and could force a
       fundamental pricing model redesign.
     claimRefs:
-      - C725
-      - C726
-      - C727
-
+      - C272
+      - C273
+      - C274
   - calloutType: risk
-    title: "Valuation Integrity Risk: No Post-2021 ARR Disclosed"
+    title: 'Valuation Integrity Risk: No Post-2021 ARR Disclosed'
     body: |
       The $1.2B valuation is unverifiable against public revenue data. The last confirmed ARR
       was ~$50M in 2021. Even if 2024 ARR reaches $125-200M (2.5x growth compounding),
@@ -687,12 +785,11 @@ callouts:
       comps trade at materially compressed multiples. A down-round at the next liquidity event
       is a non-trivial scenario if public market conditions remain compressed.
     claimRefs:
-      - C719
-      - C724
-      - C734
-
+      - C266
+      - C271
+      - C281
   - calloutType: insight
-    title: "Positive Signal: No Public Breach or Regulatory Enforcement Found"
+    title: 'Positive Signal: No Public Breach or Regulatory Enforcement Found'
     body: |
       Despite searching for GDPR enforcement actions, data breaches, and active litigation
       involving Preply across 2024-2025, no confirmed incidents were found. The Privacy
@@ -700,12 +797,11 @@ callouts:
       designation are in place. This reduces — but does not eliminate — the residual severity
       of regulatory and data-breach risks.
     claimRefs:
-      - C701
-      - C702
-      - C703
-
+      - C248
+      - C249
+      - C250
   - calloutType: recommendation
-    title: "Top Diligence Asks Before Investment Commitment"
+    title: Top Diligence Asks Before Investment Commitment
     body: |
       1. EU AI Act gap analysis and August 2026 compliance roadmap.
       2. Independent employment counsel assessment of tutor classification under CA AB5 and
@@ -716,13 +812,12 @@ callouts:
       6. SOC 2 Type II certification or equivalent cybersecurity audit.
       7. Full sub-processor list and SCC schedule covering OpenAI.
     claimRefs:
-      - C705
-      - C709
-      - C724
-      - C731
-      - C744
-      - C742
-
+      - C252
+      - C256
+      - C271
+      - C278
+      - C291
+      - C289
 localEvidence:
   searchQueries:
     - query: Preply data privacy GDPR compliance regulatory risk 2024 2025
@@ -842,61 +937,56 @@ localEvidence:
       retainedSourceRefs:
         - S718
         - S716
-
     - query: EU AI Act compliance checklist high-risk AI systems education 2025 2026
       engine: web_search
       hits: null
       retainedSourceRefs:
         - S724
         - S731
-
     - query: COPPA 2025 2026 rule amendments children privacy biometric data FTC update
       engine: web_search
       hits: null
       retainedSourceRefs:
         - S725
-
     - query: platform dependency security risk OpenAI Mixpanel breach inherited risk
       engine: web_search
       hits: null
       retainedSourceRefs:
         - S726
-
     - query: Preply user code of conduct tutor obligations platform safety rules
       engine: web_search
       hits: null
       retainedSourceRefs:
         - S727
         - S728
-
     - query: Preply reviews 2025 2026 user experience tutor quality consumer trust
       engine: web_search
       hits: null
       retainedSourceRefs:
         - S729
-
     - query: Preply employee reviews company culture compensation 2025
       engine: web_search
       hits: null
       retainedSourceRefs:
         - S730
-
   researchQuestions:
     - id: RQ701
-      question: What specific billing and auto-renewal complaints have consumers filed against Preply and do they evidence regulatory dark-pattern risk?
+      question: >-
+        What specific billing and auto-renewal complaints have consumers filed against Preply and do they evidence
+        regulatory dark-pattern risk?
       type: adverse
       targets:
         - contentRequirements/0
         - contentRequirements/5
       status: answered
-
     - id: RQ702
-      question: Has Preply been subject to any GDPR enforcement actions or regulatory inquiries from EU Data Protection Authorities?
+      question: >-
+        Has Preply been subject to any GDPR enforcement actions or regulatory inquiries from EU Data Protection
+        Authorities?
       type: verification
       targets:
         - contentRequirements/1
       status: answered
-
     - id: RQ703
       question: Which jurisdictions impose the highest regulatory compliance burden on Preply's operations?
       type: enumeration
@@ -904,29 +994,27 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
-
     - id: RQ704
       question: What are the quantified financial penalties for GDPR non-compliance applicable to Preply?
       type: quantification
       targets:
         - contentRequirements/1
       status: answered
-
     - id: RQ705
-      question: Do Preply's AI tutoring and matching systems fall under the EU AI Act high-risk classification requiring conformity assessment?
+      question: >-
+        Do Preply's AI tutoring and matching systems fall under the EU AI Act high-risk classification requiring
+        conformity assessment?
       type: verification
       targets:
         - contentRequirements/1
         - contentRequirements/0
       status: answered
-
     - id: RQ706
       question: What are the penalty magnitudes for COPPA violations under the 2025 FTC rule amendments?
       type: quantification
       targets:
         - contentRequirements/1
       status: answered
-
     - id: RQ707
       question: Which countries are restricted from Preply tutor ID verification and why?
       type: enumeration
@@ -934,21 +1022,18 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/regulatory-legal-risk-register
       status: answered
-
     - id: RQ708
       question: What documented tutor complaints exist about platform vetting, dispute resolution, and earnings freezes?
       type: adverse
       targets:
         - contentRequirements/2
       status: answered
-
     - id: RQ709
       question: Has Preply suffered any publicly reported data breaches in 2024 or 2025?
       type: verification
       targets:
         - contentRequirements/2
       status: answered
-
     - id: RQ710
       question: How many platform outages did Preply experience in 2025 and what was their maximum duration?
       type: quantification
@@ -956,14 +1041,12 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/operational-quality-security-risk-register
       status: answered
-
     - id: RQ711
       question: Does Preply rely exclusively on OpenAI APIs for its core AI product features?
       type: verification
       targets:
         - contentRequirements/3
       status: answered
-
     - id: RQ712
       question: Through what mechanism would an OpenAI service disruption propagate into Preply's product and revenue?
       type: mechanism
@@ -971,7 +1054,6 @@ localEvidence:
         - contentRequirements/3
         - plannedFigures/risk-transmission-map
       status: answered
-
     - id: RQ713
       question: How many employees are based in Preply's Kyiv office as a share of total headcount?
       type: quantification
@@ -979,14 +1061,12 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/people-execution-risk-register
       status: answered
-
     - id: RQ714
       question: What documented operational risks from the Russia-Ukraine war affect Preply's Kyiv engineering hub?
       type: adverse
       targets:
         - contentRequirements/2
       status: answered
-
     - id: RQ715
       question: Are Preply tutors classified as independent contractors and is this classification legally defensible?
       type: verification
@@ -994,7 +1074,6 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
-
     - id: RQ716
       question: How would California AB5 or equivalent EU Platform Work Directive rules affect Preply's tutor model?
       type: mechanism
@@ -1002,14 +1081,14 @@ localEvidence:
         - contentRequirements/1
         - contentRequirements/4
       status: answered
-
     - id: RQ717
-      question: What have gig economy platforms paid in misclassification settlements, providing precedent for Preply's exposure?
+      question: >-
+        What have gig economy platforms paid in misclassification settlements, providing precedent for Preply's
+        exposure?
       type: quantification
       targets:
         - contentRequirements/1
       status: answered
-
     - id: RQ718
       question: When were Preply's Terms of Service last updated and are they current relative to post-2021 regulatory changes?
       type: freshness
@@ -1017,7 +1096,6 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
-
     - id: RQ719
       question: What are Preply's main technology platform dependencies beyond OpenAI?
       type: enumeration
@@ -1025,35 +1103,30 @@ localEvidence:
         - contentRequirements/3
         - plannedFigures/dependency-map
       status: answered
-
     - id: RQ720
       question: What is Preply's estimated cash runway from the $150M Series D given EBITDA-positive status?
       type: quantification
       targets:
         - contentRequirements/4
       status: partial
-
     - id: RQ721
       question: Is Preply EBITDA-positive as of the time of the Series D announcement?
       type: verification
       targets:
         - contentRequirements/4
       status: answered
-
     - id: RQ722
       question: How does Preply's $1.2B valuation compare to current edtech peer revenue multiples?
       type: comparison
       targets:
         - contentRequirements/4
       status: answered
-
     - id: RQ723
       question: What percentage of revenue comes from B2C commissions versus B2B enterprise contracts?
       type: quantification
       targets:
         - contentRequirements/4
       status: answered
-
     - id: RQ724
       question: Does Preply conduct criminal background checks on tutors and does this create duty-of-care exposure?
       type: verification
@@ -1061,7 +1134,6 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/operational-quality-security-risk-register
       status: answered
-
     - id: RQ725
       question: What thesis-break triggers or kill criteria should investors monitor for Preply?
       type: enumeration
@@ -1069,14 +1141,12 @@ localEvidence:
         - contentRequirements/5
         - plannedTables/mitigation-and-kill-criteria-table
       status: answered
-
     - id: RQ726
       question: What is Preply's disclosed revenue for 2022-2025?
       type: quantification
       targets:
         - contentRequirements/4
       status: unresolved
-
     - id: RQ727
       question: Through what mechanism does tutor multi-homing create supply-side risk for Preply's marketplace?
       type: mechanism
@@ -1084,49 +1154,43 @@ localEvidence:
         - contentRequirements/3
         - contentRequirements/2
       status: answered
-
     - id: RQ728
       question: Has Preply disclosed a multi-vendor AI strategy or dependency diversification plan beyond OpenAI?
       type: verification
       targets:
         - contentRequirements/3
       status: answered
-
     - id: RQ729
       question: How does Duolingo's AI-first strategy threaten Preply's core human-tutor value proposition?
       type: comparison
       targets:
         - contentRequirements/0
       status: answered
-
     - id: RQ730
       question: What financial covenants, board governance rights, or protective provisions exist in the Series D terms?
       type: enumeration
       targets:
         - contentRequirements/4
       status: unresolved
-
     - id: RQ731
       question: Has Preply updated its Terms of Service since February 2021 to reflect post-pandemic regulatory developments?
       type: freshness
       targets:
         - contentRequirements/1
       status: answered
-
     - id: RQ732
       question: What is the risk of a valuation down-round or compression at Preply's next liquidity event?
       type: adverse
       targets:
         - contentRequirements/4
       status: answered
-
   sources:
     - id: S701
       publisher: Preply
       title: Preply Privacy Policy (Updated March 3, 2026)
       url: https://termsofuse.preply.com/terms_of_use/en_PrivacyPolicy.pdf
-      date: 2026-03-03
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
@@ -1138,14 +1202,15 @@ localEvidence:
         - DPO appointment
         - international data transfers
         - user rights
-      keyQuote: "Preply is committed to protecting your personal data. We tried to write this Privacy Policy in the most clear and plain language possible."
-
+      keyQuote: >-
+        Preply is committed to protecting your personal data. We tried to write this Privacy Policy in the most clear
+        and plain language possible.
     - id: S702
       publisher: Preply
       title: Preply Terms of Service (Updated February 1, 2021)
       url: https://preply.com/static/Preply-Terms-of-Service.pdf
-      date: 2021-02-01
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: legal
@@ -1157,14 +1222,15 @@ localEvidence:
         - class action waiver
         - independent contractor classification
         - consumer rights
-      keyQuote: "If you do not accept these Terms of Service, including the agreement to arbitrate on an individual basis any claims between you and Preply, please do not use the Website."
-
+      keyQuote: >-
+        If you do not accept these Terms of Service, including the agreement to arbitrate on an individual basis any
+        claims between you and Preply, please do not use the Website.
     - id: S703
       publisher: Legalithm
-      title: "AI Act for Education and EdTech Compliance"
+      title: AI Act for Education and EdTech Compliance
       url: https://www.legalithm.com/en/blog/ai-act-education-edtech-compliance-guide
-      date: 2026-04-05
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
@@ -1177,13 +1243,12 @@ localEvidence:
         - penalties
         - EdTech obligations
       keyQuote: null
-
     - id: S704
-      publisher: "Federal Trade Commission / U.S. Government"
-      title: "Children's Online Privacy Protection Rule — Final Rule Amendments (Federal Register Vol. 90, No. 76)"
+      publisher: Federal Trade Commission / U.S. Government
+      title: Children's Online Privacy Protection Rule — Final Rule Amendments (Federal Register Vol. 90, No. 76)
       url: https://www.govinfo.gov/content/pkg/FR-2025-04-22/pdf/2025-05904.pdf
-      date: 2025-04-22
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
@@ -1196,13 +1261,12 @@ localEvidence:
         - parental consent
         - FTC rule amendments
       keyQuote: null
-
     - id: S705
       publisher: Preply
       title: Preply Community Guidelines — Rules, Code of Conduct and Harassment Policy
       url: https://preply.com/en/community-guidelines
       date: null
-      accessDate: 2026-05-05
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: official
@@ -1213,14 +1277,13 @@ localEvidence:
         - content moderation
         - platform conduct rules
         - tutor vetting
-      keyQuote: "Any form of harassment, abuse, or offensive behavior is strictly prohibited."
-
+      keyQuote: Any form of harassment, abuse, or offensive behavior is strictly prohibited.
     - id: S706
       publisher: Preply Help Center
       title: Identity Verification Guidelines
       url: https://help.preply.com/en/articles/4175176-identity-verification-guidelines
-      date: 2024-12-11
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: official
@@ -1231,14 +1294,15 @@ localEvidence:
         - background check policy
         - restricted countries
         - earnings withdrawal
-      keyQuote: "Starting from October 5, 2020, all Preply tutors will need to verify their identity prior to withdrawing their earnings."
-
+      keyQuote: >-
+        Starting from October 5, 2020, all Preply tutors will need to verify their identity prior to withdrawing their
+        earnings.
     - id: S707
       publisher: Preply
       title: Preply Platform Status Page
       url: https://status.preply.com/
-      date: 2026-05-05
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: official
@@ -1250,13 +1314,12 @@ localEvidence:
         - service reliability
         - SLA
       keyQuote: null
-
     - id: S708
       publisher: PissedConsumer
-      title: "111 Preply Reviews — PissedConsumer"
+      title: 111 Preply Reviews — PissedConsumer
       url: https://preply.pissedconsumer.com/review.html
       date: null
-      accessDate: 2026-05-05
+      accessDate: {}
       accessStatus: ok
       stance: adverse
       sourceType: review
@@ -1269,13 +1332,13 @@ localEvidence:
         - frozen earnings
         - customer service
       keyQuote: null
-
     - id: S709
       publisher: LavX News
       title: Ukrainian EdTech Preply Joins Unicorn Club as $150M Series D Highlights Resilience Amid War
-      url: https://news.lavx.hu/article/ukrainian-edtech-preply-joins-unicorn-club-as-150m-series-d-highlights-resilience-amid-war
-      date: 2026-01-21
-      accessDate: 2026-05-05
+      url: >-
+        https://news.lavx.hu/article/ukrainian-edtech-preply-joins-unicorn-club-as-150m-series-d-highlights-resilience-amid-war
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: confirming
       sourceType: news
@@ -1287,14 +1350,13 @@ localEvidence:
         - Ukraine war
         - operational resilience
         - valuation
-      keyQuote: "Preply employs 150 people in its Kyiv office, a figure that represents nearly a quarter of its global workforce."
-
+      keyQuote: Preply employs 150 people in its Kyiv office, a figure that represents nearly a quarter of its global workforce.
     - id: S710
       publisher: Sifted
       title: Language learning app Preply hits unicorn valuation with $150m Series D
       url: https://sifted.eu/articles/preply-languages-app-raise-funding-round
-      date: 2026-01-21
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: confirming
       sourceType: news
@@ -1306,14 +1368,14 @@ localEvidence:
         - EBITDA positive
         - valuation
         - investor details
-      keyQuote: "Preply has been valued at $1.2bn after raising a $150m Series D round."
-
+      keyQuote: Preply has been valued at $1.2bn after raising a $150m Series D round.
     - id: S711
       publisher: TechCrunch
-      title: "Language learning marketplace Preply's unicorn status embodies Ukrainian resilience"
-      url: https://techcrunch.com/2026/01/21/language-learning-marketplace-preplys-unicorn-status-embodies-ukrainian-resilience/
-      date: 2026-01-21
-      accessDate: 2026-05-05
+      title: Language learning marketplace Preply's unicorn status embodies Ukrainian resilience
+      url: >-
+        https://techcrunch.com/2026/01/21/language-learning-marketplace-preplys-unicorn-status-embodies-ukrainian-resilience/
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: confirming
       sourceType: news
@@ -1325,13 +1387,13 @@ localEvidence:
         - Ukrainian tech ecosystem
         - key risks
       keyQuote: null
-
     - id: S712
       publisher: tech.eu
-      title: "Ukrainian-founded language learning edtech Preply hits $1.2B valuation with $150M Series D"
-      url: https://tech.eu/2026/01/21/ukrainian-founded-language-learning-edtech-preply-hits-12b-valuation-with-150m-series-d/
-      date: 2026-01-21
-      accessDate: 2026-05-05
+      title: Ukrainian-founded language learning edtech Preply hits $1.2B valuation with $150M Series D
+      url: >-
+        https://tech.eu/2026/01/21/ukrainian-founded-language-learning-edtech-preply-hits-12b-valuation-with-150m-series-d/
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: confirming
       sourceType: news
@@ -1343,13 +1405,12 @@ localEvidence:
         - Kyiv office
         - edtech market
       keyQuote: null
-
     - id: S713
       publisher: The Recursive
       title: How Preply's Human-Led AI Strategy Secured Unicorn Status
       url: https://therecursive.com/ukrainian-edtech-preply-unicorn-status-learnings/
-      date: 2026-01-21
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: confirming
       sourceType: news
@@ -1361,13 +1422,12 @@ localEvidence:
         - key person risk
         - unicorn
       keyQuote: null
-
     - id: S714
       publisher: LBBOnline
-      title: "Language Learning App Preply Centres Humans After Duolingo's Move Towards AI"
+      title: Language Learning App Preply Centres Humans After Duolingo's Move Towards AI
       url: https://lbbonline.com/news/Language-Learning-App-Preply-Centres-Humans-After-Duolingos-Move-Towards-AI
       date: null
-      accessDate: 2026-05-05
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: news
@@ -1379,13 +1439,12 @@ localEvidence:
         - human-tutor positioning
         - market differentiation
       keyQuote: null
-
     - id: S715
       publisher: Compens.ai
-      title: "Gig Worker Misclassification: Billion-Dollar Settlements and What Drivers Can Claim"
+      title: 'Gig Worker Misclassification: Billion-Dollar Settlements and What Drivers Can Claim'
       url: https://compens.ai/en/articles/gig-worker-misclassification-uber-lyft-settlements-2025
-      date: 2025-12-07
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: adverse
       sourceType: legal
@@ -1400,13 +1459,13 @@ localEvidence:
       keyQuote: |
         "New York recovered $328 million from Uber and Lyft in the largest wage theft case in state history.
         Massachusetts secured $175 million and landmark benefits."
-
     - id: S716
       publisher: PR Newswire / Preply
       title: Preply Raises $150 Million to Shape the Future of Education through Human-Led, AI-Enhanced Learning
-      url: https://www.prnewswire.com/news-releases/preply-raises-150-million-to-shape-the-future-of-education-through-human-led-ai-enhanced-learning-302665890.html
-      date: 2026-01-21
-      accessDate: 2026-05-05
+      url: >-
+        https://www.prnewswire.com/news-releases/preply-raises-150-million-to-shape-the-future-of-education-through-human-led-ai-enhanced-learning-302665890.html
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: confirming
       sourceType: official
@@ -1419,13 +1478,12 @@ localEvidence:
         - valuation
         - WestCap
       keyQuote: null
-
     - id: S717
       publisher: Preply
-      title: "A New Chapter for Preply and the Future of Learning"
+      title: A New Chapter for Preply and the Future of Learning
       url: https://preply.com/en/blog/a-new-chapter-for-preply-and-the-future-of-learning/
-      date: 2026-01-21
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: confirming
       sourceType: official
@@ -1437,13 +1495,12 @@ localEvidence:
         - OpenAI dependency
         - Series D use of funds
       keyQuote: null
-
     - id: S718
       publisher: Sacra
       title: Preply Revenue, Valuation and Funding
       url: https://sacra.com/c/preply/
       date: null
-      accessDate: 2026-05-05
+      accessDate: {}
       accessStatus: paywall
       stance: neutral
       sourceType: analyst-market-data
@@ -1455,13 +1512,12 @@ localEvidence:
         - valuation multiples
         - financial history
       keyQuote: null
-
     - id: S719
       publisher: Identity Theft Resource Center
-      title: "ITRC's 2024 Data Breach Report Saw Near-Record Number of Compromises"
+      title: ITRC's 2024 Data Breach Report Saw Near-Record Number of Compromises
       url: https://www.idtheftcenter.org/post/2024-annual-data-breach-report-near-record-compromises/
-      date: 2025-01-01
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -1473,13 +1529,12 @@ localEvidence:
         - cybersecurity trends
         - breach statistics
       keyQuote: null
-
     - id: S720
       publisher: Caldwell Global Law Firm
-      title: "GDPR in Transition: Key Developments in 2024-2025"
+      title: 'GDPR in Transition: Key Developments in 2024-2025'
       url: https://caldwelllaw.com/news/gdpr-developments-2024-2025/
       date: null
-      accessDate: 2026-05-05
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
@@ -1492,13 +1547,12 @@ localEvidence:
         - AI regulation
         - privacy trends
       keyQuote: null
-
     - id: S721
       publisher: Miller Shah LLP
       title: California Gig Worker Misclassification Back in Spotlight With New Legislation
       url: https://millershah.com/blog/california-gig-worker-misclassification/
-      date: 2025-01-01
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: adverse
       sourceType: legal
@@ -1511,13 +1565,12 @@ localEvidence:
         - California law
         - online platform risk
       keyQuote: null
-
     - id: S722
       publisher: Chauvel and Glatt LLP
       title: CA Supreme Court Rules in Favor of Uber and Lyft in AB5 Case
       url: https://chauvellaw.com/post/ca-supreme-court-rules-in-favor-of-uber-and-lyft-in-ab5-case/
       date: null
-      accessDate: 2026-05-05
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: legal
@@ -1530,13 +1583,12 @@ localEvidence:
         - gig economy
         - transportation vs. other sectors
       keyQuote: null
-
     - id: S723
       publisher: Indeed (via Wayback Machine)
       title: Working at Preply — Employee Reviews
       url: https://www.indeed.com/cmp/Preply/reviews
       date: null
-      accessDate: 2026-05-05
+      accessDate: {}
       accessStatus: ok
       stance: adverse
       sourceType: review
@@ -1549,13 +1601,12 @@ localEvidence:
         - compensation
         - job security
       keyQuote: null
-
     - id: S724
       publisher: Isit.dev
-      title: "EU AI Act 2025 Compliance Checklist: Deadlines and Steps"
+      title: 'EU AI Act 2025 Compliance Checklist: Deadlines and Steps'
       url: https://isitdev.com/eu-ai-act-2025-compliance-checklist-deadlines-steps/
-      date: 2025-01-01
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
@@ -1568,13 +1619,12 @@ localEvidence:
         - conformity assessment
         - education sector AI
       keyQuote: null
-
     - id: S725
       publisher: State of Surveillance
-      title: "COPPA Just Got Its First Real Update in 12 Years: What Changes for Your Kids"
+      title: 'COPPA Just Got Its First Real Update in 12 Years: What Changes for Your Kids'
       url: https://stateofsurveillance.org/news/coppa-2026-new-rules-children-privacy-biometric-data/
-      date: 2025-04-01
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: news
@@ -1587,13 +1637,12 @@ localEvidence:
         - parental consent
         - FTC enforcement
       keyQuote: null
-
     - id: S726
       publisher: Deepstar Strategic
-      title: "The Security Cost of Platform Dependency: What the OpenAI/Mixpanel Breach Reveals About Inherited Risk"
+      title: 'The Security Cost of Platform Dependency: What the OpenAI/Mixpanel Breach Reveals About Inherited Risk'
       url: https://www.deepstarstrategic.com/insights/the-security-cost-of-platform-dependency-openai-mixpanel-breach
-      date: 2024-06-01
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: news
@@ -1606,13 +1655,12 @@ localEvidence:
         - inherited cybersecurity risk
         - AI sub-processor chain
       keyQuote: null
-
     - id: S727
       publisher: Preply
-      title: "Preply User Code of Conduct (September 2025)"
+      title: Preply User Code of Conduct (September 2025)
       url: https://termsofuse.preply.com/terms_of_use/en_UserCodeOfConduct.pdf
-      date: 2025-09-22
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: legal
@@ -1625,13 +1673,12 @@ localEvidence:
         - prohibition on exploitation
         - compliance obligations
       keyQuote: null
-
     - id: S728
       publisher: Preply
-      title: "Corporate Language Training for Companies — Preply Business"
+      title: Corporate Language Training for Companies — Preply Business
       url: https://preply.com/en/business-language-training
       date: null
-      accessDate: 2026-05-05
+      accessDate: {}
       accessStatus: ok
       stance: confirming
       sourceType: official
@@ -1644,13 +1691,12 @@ localEvidence:
         - Preply Business pricing
         - enterprise use cases
       keyQuote: null
-
     - id: S729
       publisher: Brighterly
-      title: "Preply Reviews 2026: Is It Legit and Worth It?"
+      title: 'Preply Reviews 2026: Is It Legit and Worth It?'
       url: https://brighterly.com/blog/preply-reviews/
-      date: 2026-01-01
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: review
@@ -1663,13 +1709,12 @@ localEvidence:
         - platform trust
         - competitive comparison
       keyQuote: null
-
     - id: S730
       publisher: AmbitionBox
-      title: "Preply Employee Reviews"
+      title: Preply Employee Reviews
       url: https://www.ambitionbox.com/reviews/preply-reviews
       date: null
-      accessDate: 2026-05-05
+      accessDate: {}
       accessStatus: ok
       stance: adverse
       sourceType: review
@@ -1682,13 +1727,12 @@ localEvidence:
         - job security
         - leadership
       keyQuote: null
-
     - id: S731
       publisher: Responsible AI Labs
-      title: "EU AI Act Compliance 2025: What Businesses Need to Know"
+      title: 'EU AI Act Compliance 2025: What Businesses Need to Know'
       url: https://responsibleailabs.ai/knowledge-hub/articles/eu-ai-act-compliance-2025
-      date: 2025-01-01
-      accessDate: 2026-05-05
+      date: {}
+      accessDate: {}
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
@@ -1701,10 +1745,11 @@ localEvidence:
         - education sector AI regulation
         - conformity assessment requirements
       keyQuote: null
-
   claims:
     - id: C701
-      statement: Preply, Inc. is the data controller under GDPR; Preply Europe Services SL (Barcelona) is the EU representative and Preply UK Services Ltd (London) is the UK representative.
+      statement: >-
+        Preply, Inc. is the data controller under GDPR; Preply Europe Services SL (Barcelona) is the EU representative
+        and Preply UK Services Ltd (London) is the UK representative.
       type: observed
       topic: regulatory compliance
       sourceRefs:
@@ -1715,9 +1760,10 @@ localEvidence:
       answersQuestionRefs:
         - RQ702
         - RQ703
-
     - id: C702
-      statement: Preply's Privacy Policy was updated on March 3, 2026, indicating active compliance maintenance; the policy covers GDPR lawful bases, data subject rights, and international transfer mechanisms.
+      statement: >-
+        Preply's Privacy Policy was updated on March 3, 2026, indicating active compliance maintenance; the policy
+        covers GDPR lawful bases, data subject rights, and international transfer mechanisms.
       type: observed
       topic: regulatory compliance
       sourceRefs:
@@ -1726,9 +1772,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ702
-
     - id: C703
-      statement: Preply has appointed a Data Protection Officer (dpo@preply.com) and designated EU and UK representatives as required under GDPR Articles 27 and 37.
+      statement: >-
+        Preply has appointed a Data Protection Officer (dpo@preply.com) and designated EU and UK representatives as
+        required under GDPR Articles 27 and 37.
       type: observed
       topic: regulatory compliance
       sourceRefs:
@@ -1738,9 +1785,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ702
-
     - id: C704
-      statement: GDPR fines for Tier 2 violations (including failure to uphold data subject rights and insufficient technical safeguards) can reach up to €20M or 4% of global annual turnover, whichever is higher.
+      statement: >-
+        GDPR fines for Tier 2 violations (including failure to uphold data subject rights and insufficient technical
+        safeguards) can reach up to €20M or 4% of global annual turnover, whichever is higher.
       type: third-party-reported
       topic: regulatory compliance
       sourceRefs:
@@ -1749,9 +1797,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ704
-
     - id: C705
-      statement: The EU AI Act classifies AI systems used in educational settings for admissions, automated grading, learner placement, and exam proctoring as high-risk under Annex III; Preply's tutor-matching algorithm and AI learning assessments may fall within this perimeter.
+      statement: >-
+        The EU AI Act classifies AI systems used in educational settings for admissions, automated grading, learner
+        placement, and exam proctoring as high-risk under Annex III; Preply's tutor-matching algorithm and AI learning
+        assessments may fall within this perimeter.
       type: third-party-reported
       topic: AI regulation
       sourceRefs:
@@ -1761,9 +1811,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ705
-
     - id: C706
-      statement: EU AI Act penalties for deploying prohibited AI practices or non-conformant high-risk AI systems can reach up to €35M or 7% of global annual turnover for the most severe violations.
+      statement: >-
+        EU AI Act penalties for deploying prohibited AI practices or non-conformant high-risk AI systems can reach up to
+        €35M or 7% of global annual turnover for the most severe violations.
       type: third-party-reported
       topic: AI regulation
       sourceRefs:
@@ -1774,9 +1825,11 @@ localEvidence:
       answersQuestionRefs:
         - RQ704
         - RQ705
-
     - id: C707
-      statement: The FTC's updated COPPA Rule (final rule published April 22, 2025; effective April 2026) expands personal information coverage to biometric data and requires separate parental consent before sharing children's data with third parties for advertising or AI training.
+      statement: >-
+        The FTC's updated COPPA Rule (final rule published April 22, 2025; effective April 2026) expands personal
+        information coverage to biometric data and requires separate parental consent before sharing children's data
+        with third parties for advertising or AI training.
       type: observed
       topic: regulatory compliance
       sourceRefs:
@@ -1786,9 +1839,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ706
-
     - id: C708
-      statement: COPPA civil penalties under the 2025 FTC rule amendments reach up to $51,744 per violation per day; the previous maximum was also in this range but coverage is now expanded to new data types.
+      statement: >-
+        COPPA civil penalties under the 2025 FTC rule amendments reach up to $51,744 per violation per day; the previous
+        maximum was also in this range but coverage is now expanded to new data types.
       type: observed
       topic: regulatory compliance
       sourceRefs:
@@ -1798,9 +1852,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ706
-
     - id: C709
-      statement: Preply's Terms of Service (last updated February 1, 2021) contain a mandatory individual arbitration clause and class action waiver binding on US users; EU consumer protection law may render these clauses unenforceable for European users.
+      statement: >-
+        Preply's Terms of Service (last updated February 1, 2021) contain a mandatory individual arbitration clause and
+        class action waiver binding on US users; EU consumer protection law may render these clauses unenforceable for
+        European users.
       type: observed
       topic: legal risk
       sourceRefs:
@@ -1810,9 +1866,10 @@ localEvidence:
       answersQuestionRefs:
         - RQ718
         - RQ731
-
     - id: C710
-      statement: Preply does not conduct traditional criminal background checks on tutors; the only pre-earnings-withdrawal requirement is a live photo of a government-issued identity document.
+      statement: >-
+        Preply does not conduct traditional criminal background checks on tutors; the only pre-earnings-withdrawal
+        requirement is a live photo of a government-issued identity document.
       type: observed
       topic: tutor vetting
       sourceRefs:
@@ -1821,9 +1878,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ724
-
     - id: C711
-      statement: Preply identity verification was implemented on October 5, 2020, and is a prerequisite for tutors to withdraw earnings from the platform.
+      statement: >-
+        Preply identity verification was implemented on October 5, 2020, and is a prerequisite for tutors to withdraw
+        earnings from the platform.
       type: observed
       topic: tutor vetting
       sourceRefs:
@@ -1832,9 +1890,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ707
-
     - id: C712
-      statement: Preply does not verify tutors' IDs from Iran, Sudan, Cuba, Syria, North Korea, Crimea, Russia, and Belarus unless the tutor resides in a country not on this list.
+      statement: >-
+        Preply does not verify tutors' IDs from Iran, Sudan, Cuba, Syria, North Korea, Crimea, Russia, and Belarus
+        unless the tutor resides in a country not on this list.
       type: observed
       topic: tutor vetting
       sourceRefs:
@@ -1843,9 +1902,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ707
-
     - id: C713
-      statement: Preply's platform experienced at least six complete or partial outages between April 2025 and February 2026, including complete outages in April, August, October, and December 2025 and a 1-hour-31-minute partial outage in June 2025.
+      statement: >-
+        Preply's platform experienced at least six complete or partial outages between April 2025 and February 2026,
+        including complete outages in April, August, October, and December 2025 and a 1-hour-31-minute partial outage in
+        June 2025.
       type: third-party-reported
       topic: platform reliability
       sourceRefs:
@@ -1854,9 +1915,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ710
-
     - id: C714
-      statement: Preply does not publish a guaranteed public SLA for platform availability; enterprise B2B clients have no independently enforceable uptime guarantee visible in public documentation.
+      statement: >-
+        Preply does not publish a guaranteed public SLA for platform availability; enterprise B2B clients have no
+        independently enforceable uptime guarantee visible in public documentation.
       type: inferred
       topic: platform reliability
       sourceRefs:
@@ -1865,9 +1927,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ710
-
     - id: C715
-      statement: Preply's AI product suite — Lesson Insights, Daily Exercises, Scenario Practice, and AI Teaching Assistant — is built on OpenAI's GPT API; no alternative AI provider or fallback layer has been publicly disclosed.
+      statement: >-
+        Preply's AI product suite — Lesson Insights, Daily Exercises, Scenario Practice, and AI Teaching Assistant — is
+        built on OpenAI's GPT API; no alternative AI provider or fallback layer has been publicly disclosed.
       type: company-claimed
       topic: AI concentration
       sourceRefs:
@@ -1878,9 +1941,10 @@ localEvidence:
       answersQuestionRefs:
         - RQ711
         - RQ728
-
     - id: C716
-      statement: Preply's AI safety controls for Scenario Practice rely on prompt-level guardrails and a supervisor agent, with no independent third-party AI safety audit publicly disclosed.
+      statement: >-
+        Preply's AI safety controls for Scenario Practice rely on prompt-level guardrails and a supervisor agent, with
+        no independent third-party AI safety audit publicly disclosed.
       type: inferred
       topic: AI safety
       sourceRefs:
@@ -1889,9 +1953,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ711
-
     - id: C717
-      statement: Preply maintains approximately 150 employees in its Kyiv, Ukraine office, representing roughly 20% of its total global workforce of approximately 750.
+      statement: >-
+        Preply maintains approximately 150 employees in its Kyiv, Ukraine office, representing roughly 20% of its total
+        global workforce of approximately 750.
       type: company-claimed
       topic: geopolitical risk
       sourceRefs:
@@ -1901,9 +1966,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ713
-
     - id: C718
-      statement: The ongoing Russia-Ukraine war creates elevated operational continuity risk for Preply's Kyiv engineering hub through periodic missile/drone strikes, power grid disruptions, and telecom infrastructure outages.
+      statement: >-
+        The ongoing Russia-Ukraine war creates elevated operational continuity risk for Preply's Kyiv engineering hub
+        through periodic missile/drone strikes, power grid disruptions, and telecom infrastructure outages.
       type: third-party-reported
       topic: geopolitical risk
       sourceRefs:
@@ -1913,9 +1979,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ714
-
     - id: C719
-      statement: Preply reported revenue grew 2.5 times in 2024 (full-year, per Series D announcement) but no absolute revenue figure for 2024 or any year after 2021 has been disclosed publicly.
+      statement: >-
+        Preply reported revenue grew 2.5 times in 2024 (full-year, per Series D announcement) but no absolute revenue
+        figure for 2024 or any year after 2021 has been disclosed publicly.
       type: company-claimed
       topic: financial risk
       sourceRefs:
@@ -1925,9 +1992,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ726
-
     - id: C720
-      statement: Preply became EBITDA-positive in the twelve months preceding its January 2026 Series D announcement, per multiple independent news reports citing company statements.
+      statement: >-
+        Preply became EBITDA-positive in the twelve months preceding its January 2026 Series D announcement, per
+        multiple independent news reports citing company statements.
       type: company-claimed
       topic: financial risk
       sourceRefs:
@@ -1937,9 +2005,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ721
-
     - id: C721
-      statement: Preply's total funding through January 2026 is approximately $299M; the Series D was $150M led by WestCap Group at a $1.2B post-money valuation with Indico Capital Partners as co-investor.
+      statement: >-
+        Preply's total funding through January 2026 is approximately $299M; the Series D was $150M led by WestCap Group
+        at a $1.2B post-money valuation with Indico Capital Partners as co-investor.
       type: observed
       topic: financial risk
       sourceRefs:
@@ -1949,9 +2018,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ720
-
     - id: C722
-      statement: Preply serves 2,000+ B2B corporate clients globally through Preply Business; no single-client revenue concentration data or Herfindahl-Hirschman Index equivalent has been disclosed.
+      statement: >-
+        Preply serves 2,000+ B2B corporate clients globally through Preply Business; no single-client revenue
+        concentration data or Herfindahl-Hirschman Index equivalent has been disclosed.
       type: company-claimed
       topic: partner risk
       sourceRefs:
@@ -1960,9 +2030,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ723
-
     - id: C723
-      statement: Approximately 95% of Preply's revenue derives from B2C language course commissions; the remaining approximately 5% comes from B2B enterprise subscription revenue.
+      statement: >-
+        Approximately 95% of Preply's revenue derives from B2C language course commissions; the remaining approximately
+        5% comes from B2B enterprise subscription revenue.
       type: estimated
       topic: financial risk
       sourceRefs:
@@ -1971,9 +2042,10 @@ localEvidence:
       freshness: recent
       answersQuestionRefs:
         - RQ723
-
     - id: C724
-      statement: Post-2021 ARR or revenue figures for Preply are entirely private; the last publicly reported figure was approximately $50M ARR in 2021 per Sacra analysis.
+      statement: >-
+        Post-2021 ARR or revenue figures for Preply are entirely private; the last publicly reported figure was
+        approximately $50M ARR in 2021 per Sacra analysis.
       type: third-party-reported
       topic: financial risk
       sourceRefs:
@@ -1982,9 +2054,10 @@ localEvidence:
       freshness: historical
       answersQuestionRefs:
         - RQ726
-
     - id: C725
-      statement: Gig economy platforms including Uber and Lyft paid over $500M in worker misclassification settlements in New York ($328M), Massachusetts ($175M), and New Jersey ($19.4M) in recent years.
+      statement: >-
+        Gig economy platforms including Uber and Lyft paid over $500M in worker misclassification settlements in New
+        York ($328M), Massachusetts ($175M), and New Jersey ($19.4M) in recent years.
       type: third-party-reported
       topic: legal risk
       sourceRefs:
@@ -1994,9 +2067,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ717
-
     - id: C726
-      statement: "California's AB5 'ABC test' requires companies to prove: (A) worker is free from company control, (B) work is outside the usual course of the company's business, and (C) worker is in an independently established trade — all three prongs must be satisfied for independent contractor status."
+      statement: >-
+        California's AB5 'ABC test' requires companies to prove: (A) worker is free from company control, (B) work is
+        outside the usual course of the company's business, and (C) worker is in an independently established trade —
+        all three prongs must be satisfied for independent contractor status.
       type: third-party-reported
       topic: legal risk
       sourceRefs:
@@ -2007,9 +2082,10 @@ localEvidence:
       answersQuestionRefs:
         - RQ715
         - RQ716
-
     - id: C727
-      statement: Online tutoring platforms are not covered by California Proposition 22, which exempts only app-based transportation and delivery platforms; Preply remains fully subject to AB5 if it operates in California.
+      statement: >-
+        Online tutoring platforms are not covered by California Proposition 22, which exempts only app-based
+        transportation and delivery platforms; Preply remains fully subject to AB5 if it operates in California.
       type: third-party-reported
       topic: legal risk
       sourceRefs:
@@ -2020,9 +2096,10 @@ localEvidence:
       answersQuestionRefs:
         - RQ715
         - RQ716
-
     - id: C728
-      statement: Tutor multi-homing is documented across Preply, iTalki, Cambly, and Verbling; Preply has no exclusive supply agreements with its 100,000+ tutors, creating silent supply-erosion risk.
+      statement: >-
+        Tutor multi-homing is documented across Preply, iTalki, Cambly, and Verbling; Preply has no exclusive supply
+        agreements with its 100,000+ tutors, creating silent supply-erosion risk.
       type: inferred
       topic: partner risk
       sourceRefs:
@@ -2031,9 +2108,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ727
-
     - id: C729
-      statement: Preply's Terms of Service were last updated on February 1, 2021, predating the EU AI Act, the 2025 COPPA rule amendments, and the main wave of GDPR enforcement; this creates a material compliance freshness risk.
+      statement: >-
+        Preply's Terms of Service were last updated on February 1, 2021, predating the EU AI Act, the 2025 COPPA rule
+        amendments, and the main wave of GDPR enforcement; this creates a material compliance freshness risk.
       type: observed
       topic: legal risk
       sourceRefs:
@@ -2043,9 +2121,11 @@ localEvidence:
       answersQuestionRefs:
         - RQ718
         - RQ731
-
     - id: C730
-      statement: Consumer complaints on PissedConsumer (111 reviews) and BBB consistently cite unexpected auto-renewal charges, difficulty obtaining refunds for cancelled lessons, frozen tutor earnings at account deactivation, and unresponsive customer support.
+      statement: >-
+        Consumer complaints on PissedConsumer (111 reviews) and BBB consistently cite unexpected auto-renewal charges,
+        difficulty obtaining refunds for cancelled lessons, frozen tutor earnings at account deactivation, and
+        unresponsive customer support.
       type: third-party-reported
       topic: consumer risk
       sourceRefs:
@@ -2056,9 +2136,10 @@ localEvidence:
       answersQuestionRefs:
         - RQ701
         - RQ708
-
     - id: C731
-      statement: CEO Kirill Bigai is the primary strategic decision-maker, lead fundraiser, and public spokesperson for Preply; no formal succession plan has been publicly disclosed.
+      statement: >-
+        CEO Kirill Bigai is the primary strategic decision-maker, lead fundraiser, and public spokesperson for Preply;
+        no formal succession plan has been publicly disclosed.
       type: inferred
       topic: key-person risk
       sourceRefs:
@@ -2068,9 +2149,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ725
-
     - id: C732
-      statement: WestCap Group holds board representation through Allen Mask (former Airbnb executive) following the January 2026 Series D; single lead-investor board concentration creates governance-alignment risk at exit.
+      statement: >-
+        WestCap Group holds board representation through Allen Mask (former Airbnb executive) following the January 2026
+        Series D; single lead-investor board concentration creates governance-alignment risk at exit.
       type: observed
       topic: partner risk
       sourceRefs:
@@ -2080,9 +2162,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ730
-
     - id: C733
-      statement: Duolingo's declared "AI-first company" strategy and launch of Duolingo Max (GPT-4 powered) create direct competitive pressure on Preply's human-tutor value proposition for casual language learners.
+      statement: >-
+        Duolingo's declared "AI-first company" strategy and launch of Duolingo Max (GPT-4 powered) create direct
+        competitive pressure on Preply's human-tutor value proposition for casual language learners.
       type: third-party-reported
       topic: competitive risk
       sourceRefs:
@@ -2092,9 +2175,11 @@ localEvidence:
       answersQuestionRefs:
         - RQ729
         - RQ732
-
     - id: C734
-      statement: At a $1.2B valuation and estimated 2024 ARR of approximately $125-200M (based on disclosed 2.5x growth from a ~$50M 2021 base), the implied revenue multiple of 6-10x is not extreme for EBITDA-positive SaaS but carries down-round risk if edtech comps remain compressed.
+      statement: >-
+        At a $1.2B valuation and estimated 2024 ARR of approximately $125-200M (based on disclosed 2.5x growth from a
+        ~$50M 2021 base), the implied revenue multiple of 6-10x is not extreme for EBITDA-positive SaaS but carries
+        down-round risk if edtech comps remain compressed.
       type: estimated
       topic: financial risk
       sourceRefs:
@@ -2105,9 +2190,10 @@ localEvidence:
       answersQuestionRefs:
         - RQ722
         - RQ732
-
     - id: C735
-      statement: Preply Glassdoor and Indeed employee reviews show a 3.9/5 overall culture rating but a 2.7/5 rating for pay and benefits and 2.7/5 for job security/advancement, indicating moderate talent attrition risk.
+      statement: >-
+        Preply Glassdoor and Indeed employee reviews show a 3.9/5 overall culture rating but a 2.7/5 rating for pay and
+        benefits and 2.7/5 for job security/advancement, indicating moderate talent attrition risk.
       type: third-party-reported
       topic: people risk
       sourceRefs:
@@ -2116,9 +2202,11 @@ localEvidence:
       freshness: recent
       answersQuestionRefs:
         - RQ725
-
     - id: C736
-      statement: International data transfers from EU and UK users to Preply, Inc. (US) require Standard Contractual Clauses or another GDPR Article 46 mechanism; Preply's privacy policy acknowledges transfers but does not identify the specific SCC schedule covering AI sub-processors such as OpenAI.
+      statement: >-
+        International data transfers from EU and UK users to Preply, Inc. (US) require Standard Contractual Clauses or
+        another GDPR Article 46 mechanism; Preply's privacy policy acknowledges transfers but does not identify the
+        specific SCC schedule covering AI sub-processors such as OpenAI.
       type: inferred
       topic: regulatory compliance
       sourceRefs:
@@ -2128,9 +2216,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ703
-
     - id: C737
-      statement: The EU AI Act's prohibition on emotion recognition in educational contexts became enforceable in February 2025; Preply must confirm that no AI feature in Lesson Insights or Scenario Practice crosses this threshold.
+      statement: >-
+        The EU AI Act's prohibition on emotion recognition in educational contexts became enforceable in February 2025;
+        Preply must confirm that no AI feature in Lesson Insights or Scenario Practice crosses this threshold.
       type: third-party-reported
       topic: AI regulation
       sourceRefs:
@@ -2140,9 +2229,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ705
-
     - id: C738
-      statement: Preply's community guidelines prohibit misrepresentation and exploitation but are enforcement-only by reporting and do not mandate preventive criminal background checks; this creates duty-of-care liability risk particularly for minor learners.
+      statement: >-
+        Preply's community guidelines prohibit misrepresentation and exploitation but are enforcement-only by reporting
+        and do not mandate preventive criminal background checks; this creates duty-of-care liability risk particularly
+        for minor learners.
       type: inferred
       topic: tutor vetting
       sourceRefs:
@@ -2152,9 +2243,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ724
-
     - id: C739
-      statement: Preply's February 2021 Terms of Service pre-date the EU AI Act, the COPPA 2025 rule amendments, the EU Digital Services Act, and the main GDPR enforcement wave of 2022-2024, creating compliance freshness risk across multiple regulatory regimes.
+      statement: >-
+        Preply's February 2021 Terms of Service pre-date the EU AI Act, the COPPA 2025 rule amendments, the EU Digital
+        Services Act, and the main GDPR enforcement wave of 2022-2024, creating compliance freshness risk across
+        multiple regulatory regimes.
       type: inferred
       topic: legal risk
       sourceRefs:
@@ -2166,9 +2259,10 @@ localEvidence:
         - RQ718
         - RQ731
         - RQ703
-
     - id: C740
-      statement: Preply committed at its January 2026 Series D to expanding AI and data capabilities, directly increasing the scope of AI systems subject to EU AI Act high-risk conformity assessment obligations.
+      statement: >-
+        Preply committed at its January 2026 Series D to expanding AI and data capabilities, directly increasing the
+        scope of AI systems subject to EU AI Act high-risk conformity assessment obligations.
       type: inferred
       topic: AI regulation
       sourceRefs:
@@ -2178,9 +2272,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ705
-
     - id: C741
-      statement: The ITRC's 2024 Data Breach Report recorded near-record numbers of data compromises in the technology and SaaS sector, validating that the current absence of a Preply breach is not structural immunity.
+      statement: >-
+        The ITRC's 2024 Data Breach Report recorded near-record numbers of data compromises in the technology and SaaS
+        sector, validating that the current absence of a Preply breach is not structural immunity.
       type: third-party-reported
       topic: cybersecurity risk
       sourceRefs:
@@ -2189,9 +2284,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ709
-
     - id: C742
-      statement: No SOC 2 Type II certification, independent penetration-testing disclosure, or cyber insurance coverage has been publicly confirmed by Preply on its website, status page, or in investor materials reviewed.
+      statement: >-
+        No SOC 2 Type II certification, independent penetration-testing disclosure, or cyber insurance coverage has been
+        publicly confirmed by Preply on its website, status page, or in investor materials reviewed.
       type: open-question
       topic: cybersecurity risk
       sourceRefs: []
@@ -2199,9 +2295,11 @@ localEvidence:
       freshness: unknown
       answersQuestionRefs:
         - RQ709
-
     - id: C743
-      statement: EU AI Act penalties for the most severe violations (deploying prohibited AI) can reach up to 7% of global annual turnover; at a $1.2B valuation context, this could imply tens of millions of dollars in fines if Preply's revenue is in the $100M-200M range.
+      statement: >-
+        EU AI Act penalties for the most severe violations (deploying prohibited AI) can reach up to 7% of global annual
+        turnover; at a $1.2B valuation context, this could imply tens of millions of dollars in fines if Preply's
+        revenue is in the $100M-200M range.
       type: estimated
       topic: AI regulation
       sourceRefs:
@@ -2210,9 +2308,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ704
-
     - id: C744
-      statement: Preply's commitment to maintaining a 150-person Kyiv office creates an unhedged geopolitical concentration not present in principal competitors (iTalki, Cambly) that are headquartered in the United States.
+      statement: >-
+        Preply's commitment to maintaining a 150-person Kyiv office creates an unhedged geopolitical concentration not
+        present in principal competitors (iTalki, Cambly) that are headquartered in the United States.
       type: inferred
       topic: geopolitical risk
       sourceRefs:
@@ -2222,9 +2321,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - RQ714
-
     - id: C745
-      statement: No publicly available disaster recovery plan, Kyiv-specific business continuity scenario analysis, or engineering workload coverage protocol has been disclosed by Preply.
+      statement: >-
+        No publicly available disaster recovery plan, Kyiv-specific business continuity scenario analysis, or
+        engineering workload coverage protocol has been disclosed by Preply.
       type: open-question
       topic: geopolitical risk
       sourceRefs: []
@@ -2232,84 +2332,108 @@ localEvidence:
       freshness: unknown
       answersQuestionRefs:
         - RQ714
-
   evidenceGaps:
     - type: private-evidence-only
       severity: blocking
       topic: Post-2021 revenue and financial metrics
       missingEvidence: Preply ARR, gross margin, and revenue growth rate for 2022-2025
-      whyItMatters: The $1.2B valuation cannot be assessed against fundamental multiples without current revenue data; valuation compression risk is unquantifiable
+      whyItMatters: >-
+        The $1.2B valuation cannot be assessed against fundamental multiples without current revenue data; valuation
+        compression risk is unquantifiable
       diligencePath: Request audited or management-account revenue schedules for FY2022-FY2025 with gross margin and EBITDA bridge
       relatedQuestionRefs:
         - RQ726
         - RQ722
         - RQ720
-
     - type: private-evidence-only
       severity: blocking
       topic: EU AI Act compliance readiness
       missingEvidence: No EU AI Act gap analysis, conformity assessment roadmap, or high-risk AI inventory has been publicly disclosed
-      whyItMatters: August 2026 deadline is 3 months away; unresolved non-compliance carries up to €35M/7% of turnover in penalties and potential EU market access suspension
-      diligencePath: Request EU AI Act readiness roadmap, feature-level risk classification inventory, and legal counsel opinion on high-risk AI scope
+      whyItMatters: >-
+        August 2026 deadline is 3 months away; unresolved non-compliance carries up to €35M/7% of turnover in penalties
+        and potential EU market access suspension
+      diligencePath: >-
+        Request EU AI Act readiness roadmap, feature-level risk classification inventory, and legal counsel opinion on
+        high-risk AI scope
       relatedQuestionRefs:
         - RQ705
         - RQ728
-
     - type: missing-source
       severity: material
       topic: Tutor worker classification legal opinion
-      missingEvidence: No independent employment-counsel opinion on tutor AB5/ABC test exposure or EU Platform Work Directive compliance has been identified
+      missingEvidence: >-
+        No independent employment-counsel opinion on tutor AB5/ABC test exposure or EU Platform Work Directive
+        compliance has been identified
       whyItMatters: Retroactive misclassification liability has cost comparable platforms hundreds of millions in the US alone
-      diligencePath: Commission independent employment-law audit for CA, NY, UK, Spain (Barcelona HQ), and top 5 EU jurisdictions by tutor count
+      diligencePath: >-
+        Commission independent employment-law audit for CA, NY, UK, Spain (Barcelona HQ), and top 5 EU jurisdictions by
+        tutor count
       relatedQuestionRefs:
         - RQ715
         - RQ716
-
     - type: stale
       severity: material
       topic: Terms of Service currency
-      missingEvidence: The Terms of Service (Feb 2021) have not been publicly updated since; it is unclear whether GDPR, EU AI Act, COPPA 2025, and DSA obligations have been incorporated
-      whyItMatters: Regulators may deem the current ToS insufficient for post-2021 statutory requirements; EU consumer arbitration and class-action restrictions may be void
+      missingEvidence: >-
+        The Terms of Service (Feb 2021) have not been publicly updated since; it is unclear whether GDPR, EU AI Act,
+        COPPA 2025, and DSA obligations have been incorporated
+      whyItMatters: >-
+        Regulators may deem the current ToS insufficient for post-2021 statutory requirements; EU consumer arbitration
+        and class-action restrictions may be void
       diligencePath: Request current (unpublished) ToS draft and confirm regulatory review timeline with legal team
       relatedQuestionRefs:
         - RQ718
         - RQ731
-
     - type: missing-source
       severity: material
       topic: Cybersecurity certification and incident response
-      missingEvidence: No SOC 2 Type II, ISO 27001, or equivalent independent security certification has been confirmed; no published incident response policy exists
-      whyItMatters: Enterprise B2B clients (Unilever, Datadog) typically require vendor security certification; absence is a contractual and reputational risk
+      missingEvidence: >-
+        No SOC 2 Type II, ISO 27001, or equivalent independent security certification has been confirmed; no published
+        incident response policy exists
+      whyItMatters: >-
+        Enterprise B2B clients (Unilever, Datadog) typically require vendor security certification; absence is a
+        contractual and reputational risk
       diligencePath: Request SOC 2 Type II report or equivalent; review penetration-testing schedule and last report date
       relatedQuestionRefs:
         - RQ709
-
     - type: private-evidence-only
       severity: material
       topic: Series D governance terms and financial covenants
-      missingEvidence: Protective provisions, liquidation preferences, anti-dilution rights, and board composition details from the Series D term sheet are undisclosed
-      whyItMatters: Investor-protective terms can restrict management flexibility and affect return profiles for future acquirers or IPO investors
+      missingEvidence: >-
+        Protective provisions, liquidation preferences, anti-dilution rights, and board composition details from the
+        Series D term sheet are undisclosed
+      whyItMatters: >-
+        Investor-protective terms can restrict management flexibility and affect return profiles for future acquirers or
+        IPO investors
       diligencePath: Request Series D term sheet summary from company; review board minutes for governance matters post-January 2026
       relatedQuestionRefs:
         - RQ730
-
     - type: enumeration-incomplete
       severity: minor
       topic: Regulatory and legal risk register completeness
-      missingEvidence: The regulatory/legal risk register (T701) covers US and EU jurisdictions only; country-specific regulations for Latin America, Southeast Asia, Middle East, and other Preply markets have not been individually assessed
-      whyItMatters: Preply operates in 180 countries; jurisdiction-specific data localization laws, employment regulations, and consumer protection regimes create a long tail of regulatory exposure not captured in the five-row table
-      diligencePath: Commission a jurisdiction-by-jurisdiction regulatory map covering top 15 Preply markets by learner volume; prioritize Brazil (LGPD), India (PDPB), and China if any operations exist
+      missingEvidence: >-
+        The regulatory/legal risk register (T701) covers US and EU jurisdictions only; country-specific regulations for
+        Latin America, Southeast Asia, Middle East, and other Preply markets have not been individually assessed
+      whyItMatters: >-
+        Preply operates in 180 countries; jurisdiction-specific data localization laws, employment regulations, and
+        consumer protection regimes create a long tail of regulatory exposure not captured in the five-row table
+      diligencePath: >-
+        Commission a jurisdiction-by-jurisdiction regulatory map covering top 15 Preply markets by learner volume;
+        prioritize Brazil (LGPD), India (PDPB), and China if any operations exist
       relatedTableRefs:
         - T701
       relatedQuestionRefs:
         - RQ703
         - RQ704
-
     - type: enumeration-incomplete
       severity: minor
       topic: EU AI Act specific feature mapping
-      missingEvidence: It is not possible from public sources to determine exactly which Preply AI features cross the EU AI Act high-risk threshold versus limited- or minimal-risk classification
+      missingEvidence: >-
+        It is not possible from public sources to determine exactly which Preply AI features cross the EU AI Act
+        high-risk threshold versus limited- or minimal-risk classification
       whyItMatters: Compliance obligations, timelines, and penalties depend on the specific risk classification of each feature
-      diligencePath: Request internal EU AI Act feature inventory with legal counsel review; confirm whether tutor-matching algorithm uses automated placement decisions
+      diligencePath: >-
+        Request internal EU AI Act feature inventory with legal counsel review; confirm whether tutor-matching algorithm
+        uses automated placement decisions
       relatedQuestionRefs:
         - RQ705

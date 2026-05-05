@@ -346,6 +346,19 @@ const fallbackMetrics = [
       )}
     </section>
   )}
+
+  <button
+    type="button"
+    class="back-to-top"
+    data-back-to-top
+    aria-label="Back to top"
+    title="Back to top"
+    hidden
+  >
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" focusable="false">
+      <path d="M9 3.5 L9 14.5 M9 3.5 L4 8.5 M9 3.5 L14 8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
 </section>
 
 <script type="application/json" id="claim-link-map" set:html={JSON.stringify(claimLinkMap)}></script>
@@ -405,6 +418,23 @@ const fallbackMetrics = [
       };
       window.addEventListener('afterprint', restore);
       requestAnimationFrame(() => window.print());
+    });
+  }
+
+  // Back-to-top floating button: appears after the user scrolls past the
+  // cover (~600px), scrolls smoothly to the page top on click. Hidden in
+  // print via the @media print rules.
+  const backToTop = document.querySelector('[data-back-to-top]');
+  if (backToTop) {
+    const threshold = 600;
+    const sync = () => {
+      const visible = window.scrollY > threshold;
+      backToTop.toggleAttribute('hidden', !visible);
+    };
+    sync();
+    window.addEventListener('scroll', sync, { passive: true });
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
@@ -489,7 +519,7 @@ const fallbackMetrics = [
   .evidence-toggle { appearance: none; border: 1px solid var(--claret); background: transparent; color: var(--claret); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 4px var(--space-3); border-radius: 999px; margin-left: auto; }
   .evidence-toggle:hover, .evidence-toggle:focus-visible, .evidence-toggle[aria-pressed="true"] { background: var(--claret); color: #fff7ef; outline: none; }
   /* Decision card: hero panel with recommendation as the primary visual */
-  .decision-card { --decision-accent: var(--claret); --decision-accent-soft: color-mix(in srgb, var(--claret) 12%, transparent); display: flex; flex-direction: column; gap: var(--space-4); align-self: stretch; padding: var(--space-4) var(--space-4) var(--space-4); background: var(--surface-paper); border-top: 3px solid var(--decision-accent); border-radius: var(--radius-card); box-shadow: 0 1px 0 color-mix(in srgb, var(--ink-page) 6%, transparent); }
+  .decision-card { --decision-accent: var(--claret); --decision-accent-soft: color-mix(in srgb, var(--claret) 12%, transparent); display: flex; flex-direction: column; gap: var(--space-4); align-self: stretch; padding: var(--space-4) var(--space-4) var(--space-4); background: transparent; border: 0; border-top: 3px solid var(--decision-accent); border-radius: var(--radius-card); box-shadow: none; }
   .decision-buy, .decision-strong-buy, .decision-invest { --decision-accent: var(--gold); }
   .decision-pass, .decision-avoid, .decision-decline { --decision-accent: var(--risk-red); }
   .decision-research-more, .decision-track, .decision-monitor { --decision-accent: var(--claret); }
@@ -612,6 +642,35 @@ const fallbackMetrics = [
   .print-pdf { appearance: none; border: 1px solid var(--gold); background: transparent; color: var(--gold); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 4px var(--space-3); border-radius: 999px; }
   .print-pdf:hover, .print-pdf:focus-visible { background: var(--gold); color: var(--ink-page); outline: none; }
 
+  /* Floating "back to top" button. Anchored bottom-right, hidden until the
+   * user has scrolled past the cover. Hidden entirely in print. */
+  .back-to-top {
+    position: fixed;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    z-index: 60;
+    width: 44px;
+    height: 44px;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid var(--claret);
+    background: var(--surface-paper);
+    color: var(--claret);
+    cursor: pointer;
+    border-radius: 999px;
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--ink-page) 18%, transparent);
+    transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+  }
+  .back-to-top:hover, .back-to-top:focus-visible {
+    background: var(--claret);
+    color: #fff7ef;
+    outline: none;
+    transform: translateY(-2px);
+  }
+  .back-to-top[hidden] { display: none; }
+  @media (max-width: 700px) {
+    .back-to-top { right: var(--space-3); bottom: var(--space-3); width: 40px; height: 40px; }
+  }
   /* ---------------------------------------------------------------------
    * A4 print stylesheet — paginated rendering for "Download PDF".
    *
@@ -645,6 +704,7 @@ const fallbackMetrics = [
     :global(.bz-footer),
     .evidence-toggle,
     .print-pdf,
+    .back-to-top,
     .toc-sticky,
     .toc-heading-section {
       display: none !important;
@@ -681,7 +741,7 @@ const fallbackMetrics = [
     .report-subtitle, .report-headline { font-size: 11pt; max-width: none; }
 
     /* Decision card prints with explicit borders since color-mix may degrade. */
-    .decision-card { border: 1px solid #999; border-top: 3px solid #800020; padding: 4mm; box-shadow: none; }
+    .decision-card { background: transparent; border: 0; border-top: 3px solid #800020; padding: 4mm; box-shadow: none; }
     .decision-rec { background: #800020 !important; color: #fff !important; }
     .decision-score-value { font-size: 28pt; }
 
