@@ -151,8 +151,9 @@ function figureRefBlock(figure) {
 }
 
 function buildChapter({ spec, doc }) {
-  // Report chapter 1 is the cover; analysis chapters get bumped by 1.
-  const reportChapterNumber = spec.order + 1;
+  // Chapter numbering matches the source order: chapter 1 is the first
+  // analysis chapter (company overview), not a cover placeholder.
+  const reportChapterNumber = spec.order;
   const sections = (doc.sections ?? []).map((section, index) => ({
     number: `${reportChapterNumber}.${index + 1}`,
     title: section.title,
