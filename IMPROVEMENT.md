@@ -1,197 +1,387 @@
-# Improvement notes from concurrent unicorn report generation
-
-This note captures issues observed while generating three new reports concurrently:
-
-- `reports/20260505063138-cyberhaven`
-- `reports/20260505063139-linear`
-- `reports/20260505063140-gecko-robotics`
-
-## What broke in practice
-
-### 1. `finalize.mjs --skip-index` is not a strong enough completion gate
-
-Two report folders completed `finalize.mjs --skip-index` successfully but still failed the repository validator later.
-
-Observed failure classes:
-
-- invalid `runDate` format in chapter files
-- inconsistent `slug` values across artifacts in one folder
-- malformed `chapter` blocks / wrong `chapter.number`
-- invalid `sourceType`, `claim.type`, and `claim.freshness` enums in `evidence.yaml`
-- missing required source fields in `evidence.yaml`
-- figure `data` shapes that did not satisfy renderer/validator contracts
-
-**Improvement:** add a report-folder validation step after finalize, or make `finalize.mjs` fail when the folder does not pass the same schema/shape checks used by `website/scripts/check-reports.mjs`.
-
-## 2. Per-folder validation is missing from the authoring workflow
-
-The current workflow is good at chapter gates and cross-chapter assembly, but it still lets repo-level report validation errors escape until the very end.
-
-**Improvement:** introduce a script such as:
-
-```bash
-node .agents/skills/startup-research/scripts/validate-report.mjs <report-folder>
-```
-
-It should check exactly one folder for:
-
-- schema validity
-- enum validity
-- required-field completeness
-- chapter numbering / metadata consistency
-- figure/table shape compatibility
-
-That would make concurrent generation much safer, because each worker could fully validate its own folder before the shared index/website build step.
-
-## 3. Evidence assembly is too permissive
-
-Most of the cleanup work was in `evidence.yaml`, not in the prose sections.
-
-Observed issues:
-
-- malformed sources with missing `publisher`, `accessDate`, `topics`, `independence`, `reputationTier`
-- invalid enum values
-- claims with missing `statement` / `topic`
-- claims with empty `sourceRefs` even though they were not `open-question`
-
-**Improvement:** tighten validation in the evidence assembly pipeline (`ledger.mjs`, `assemble.mjs`, or an earlier normalization step) so malformed source/claim objects fail fast before final artifacts are emitted.
-
-## 4. Figure contracts are easy to violate and hard to detect early
-
-Several fixes were figure-only:
-
-- matrix rows had fewer values than declared columns
-- KPI/funnel/bar-style figures used non-numeric values where numbers were required
-- one invalid bar figure had to be converted to a range figure
-- one invalid cohort figure had to be replaced with a schema-valid structure
-
-**Improvement:** add figure-type-specific validation at chapter gate time, using the same rules enforced later by `check-reports`. Right now chapter generation can still produce figures that look plausible but are invalid for the website.
-
-## 5. Shared validation should not be the first full validator
-
-In a concurrent workflow, the first repo-wide `npm run validate` should confirm a clean batch, not discover basic folder-local problems.
-
-**Improvement:** require every report worker to pass a folder-local validator before marking the report complete. Then reserve:
-
-- `index.mjs --strict` for shared index refresh
-- `npm run validate` for final batch confirmation
-
-## 6. The workflow would benefit from clearer agent-facing guidance
-
-The generation agents produced good research, but some output drifted from schema conventions:
-
-- top-level `title` where a `chapter` object was expected
-- inconsistent metadata copied across chapter files
-- repaired values that should have been normalized automatically
-
-**Improvement:** update the startup-research skill instructions to say explicitly:
-
-- do not consider a report complete after `finalize --skip-index` alone
-- run the folder-local report validator before returning
-- fix schema/shape problems before handing control back to the parent agent
-
-## Recommended next changes
-
-1. Add a single-report validation script that reuses the website validator logic.
-2. Make `finalize.mjs` optionally call that validator, especially in `--skip-index` mode.
-3. Tighten `evidence.yaml` object validation before assembly writes final artifacts.
-4. Reuse website figure-shape validation rules during chapter gating.
-5. Update the startup-research skill docs so concurrent workers know the expected completion bar.
-
-## Additional improvements from the Stripe / Databricks / Rippling batch
-
-This second concurrent batch completed cleanly and produced:
-
-- `reports/20260505073001-stripe`
-- `reports/20260505073002-databricks`
-- `reports/20260505073003-rippling`
-
-Even though the batch succeeded, the execution exposed a few workflow mismatches worth fixing.
-
-### 7. "Green finalize" does not mean the same thing as "few unanswered questions"
-
-The batch finalized cleanly, but the published index still shows a large spread in unresolved-question counts:
-
-- Stripe: `unresolvedQuestionCount: 0`
-- Databricks: `unresolvedQuestionCount: 32`
-- Rippling: `unresolvedQuestionCount: 28`
-
-This creates an ambiguous completion bar. If questions that are closed out by `evidenceGaps` are considered acceptable, the published rollups should distinguish:
-
-- unresolved but documented
-- unresolved and blocking
-
-If they are not acceptable, then `check-report` should fail or warn harder once unanswered questions exceed a report-level threshold.
-
-**Improvement:** align the report gate, summary-card fields, and `_index.yaml` semantics so "green" does not hide large differences in question closure quality.
-
-### 8. Duplicate-analysis drift is still reaching final reports
-
-`reports/_postmortem.yaml` shows `acknowledgedDimensions: [duplicateAnalysis]` at the Databricks run level and across several Databricks chapters. That means duplication was known and tolerated rather than prevented.
-
-**Improvement:** move duplicate-analysis detection earlier in the authoring loop. Two good options:
-
-1. add a pre-finalize cross-chapter redundancy pass that flags overlapping tables/figures before `report-meta.yaml` authoring
-2. strengthen chapter prompts so adjacent chapters explicitly avoid re-covering the same comparison or sizing artifact unless the analytical question is different
-
-### 9. Adverse-source coverage is too easy to satisfy unevenly
-
-The Stripe report passed with very low adverse-source density outside the risk chapter:
-
-- run-level `adversePct: 0.033`
-- six chapters had `adverseSources: 0`
-
-That is not necessarily wrong for Stripe, but it suggests the current gates are better at forcing adverse *questions* than adverse *evidence* distribution.
-
-**Improvement:** add either:
-
-- a minimum adverse-source floor for a subset of non-risk chapters (`company-overview`, `financials`, `customers`, `valuation`), or
-- a report-level warning when adverse evidence is concentrated in only one or two chapters
-
-That would make adverse coverage feel less box-checking and more structurally embedded in the report.
-
-### 10. `npm run validate` is no longer a full report validator
-
-In this execution, `npm run validate` ran:
-
-- `npm run check:workflow-config`
-- `npm run check:report-index`
-- `npm --prefix website run build`
-
-It did **not** run a dedicated report-artifact validator such as `check:reports`.
-
-That means the command name now implies broader coverage than it actually provides.
-
-**Improvement:** either:
-
-- add `npm run check:reports` back into `npm run validate`, or
-- rename/document the command so contributors do not assume report YAML contracts are being checked when they are not
-
-### 11. Postmortem should expose deduped vs raw evidence counts together
-
-The final summaries and the postmortem use different evidence totals:
-
-- Stripe: summary-card `111` sources vs postmortem `210`
-- Databricks: summary-card `178` sources vs postmortem `217`
-- Rippling: summary-card `172` sources vs postmortem `217`
-
-The difference is probably raw chapter-local totals versus deduped ledger totals, but the files do not make that obvious.
-
-**Improvement:** make the postmortem explicitly publish both:
-
-- raw chapter-local source/claim totals
-- deduped report-level source/claim totals
-
-That would make execution review much easier and prevent false alarms when counts do not line up across artifacts.
-
-## Updated recommended next changes
-
-1. Add a single-report validation script that reuses the website validator logic.
-2. Make `finalize.mjs` optionally call that validator, especially in `--skip-index` mode.
-3. Tighten `evidence.yaml` object validation before assembly writes final artifacts.
-4. Reuse website figure-shape validation rules during chapter gating.
-5. Align unanswered-question semantics across `check-report`, `summary-card.yaml`, and `reports/_index.yaml`.
-6. Push duplicate-analysis detection earlier so redundancy is prevented, not merely acknowledged.
-7. Strengthen adverse-evidence distribution checks across chapters, not just adverse-question counts.
-8. Restore report-artifact validation to `npm run validate`, or rename the command to match its true scope.
-9. Publish raw and deduped evidence totals side by side in `_postmortem.yaml`.
+# IMPROVEMENT.md
+
+Suggestions for evolving the `startup-research` skill and surrounding repo.
+Grouped by theme, with rationale rooted in standard VC/PE diligence practice
+(commercial, financial, technical, legal, operational, ESG, IC memo) and gaps
+observed in the current `report-v2` pipeline.
+
+Each item is tagged:
+
+- **Effort:** S / M / L
+- **Type:** `skill` (workflow / schema / scripts), `report` (chapter content),
+  `website` (rendering), `infra` (repo / CI / tooling)
+- **Priority:** P0 (high leverage) / P1 / P2
+
+---
+
+## 1. Diligence content gaps vs. industry practice
+
+The eight existing chapters cover the core IC narrative well, but several
+buckets that institutional diligence memos always include are missing or only
+partially covered.
+
+### 1.1 Add a dedicated **Management & Team** chapter (or expand chapter 1)
+- **Why:** VC diligence weights founder/team risk as heavily as market and
+  product. Today, leadership lives as one table inside `company-overview` and
+  is not rated or stress-tested.
+- **What to add:** founder-market fit scoring, prior-venture outcomes,
+  reference-call surrogate signals (LinkedIn tenure, alumni networks, public
+  talks, GitHub/Scholar footprint), key-person risk matrix, board composition
+  and observer rights, equity split / option pool health, hiring velocity,
+  Glassdoor / levels.fyi attrition signals, DEI snapshot.
+- **Effort:** M · **Type:** skill+report · **Priority:** P1
+
+### 1.2 Add a dedicated **Legal, IP & Cap Table** chapter
+- **Why:** Currently split across `risks` (litigation), `company-overview`
+  (funding), and `financials` (capital adequacy). PE/VC LPs expect a
+  consolidated legal section: entity structure, jurisdiction, governance
+  rights, preferences/liquidation waterfall, IP ownership chain, open-source
+  license exposure, employment/IP assignment, export controls, sanctions, OFAC.
+- **What to add:** patent/trademark enumeration table, OSS license audit
+  (SPDX), litigation register with PACER / CourtListener IDs, cap table
+  reconstruction with preference stack, 409A vs. last preferred price.
+- **Effort:** L · **Type:** skill · **Priority:** P1
+
+### 1.3 Add **Go-to-Market / Sales motion** depth to chapter 4 or split it out
+- **Why:** "GTM motion" is one bullet under `financials.contentRequirements`.
+  Real diligence memos analyze pipeline coverage, win rate, sales cycle by
+  segment, channel mix, partner economics, ABM vs. PLG funnel, and quota
+  attainment.
+- **Effort:** M · **Type:** skill · **Priority:** P1
+
+### 1.4 Add **ESG / Responsible AI / Safety** chapter or callout block
+- **Why:** Required by most institutional LPs (UN PRI signatories) and
+  increasingly by corporate buyers. For AI companies, model safety, RAI
+  governance, eval results (HELM, MLCommons, NIST AI RMF), and red-team
+  posture are diligence items, not optional.
+- **What to add:** Scope-1/2/3 emissions where reportable, supply-chain
+  labor, hardware sourcing (conflict minerals), AI safety policies, model
+  cards, bias/eval coverage, copyright training-data posture.
+- **Effort:** M · **Type:** skill · **Priority:** P1
+
+### 1.5 Add **Cybersecurity & Data-protection posture**
+- **Why:** Buyers and acquirers run a cyber DD workstream (SOC2, ISO 27001,
+  HIPAA, PCI, FedRAMP, breach history, BitSight/SecurityScorecard ratings,
+  CVE exposure of public assets, bug bounty maturity). Today it lives only
+  as one row in `product-tech` "trust/quality/compliance".
+- **What to add:** breach/incident timeline, certification scope vs. claim,
+  pentest cadence, vulnerability disclosure policy, third-party risk.
+- **Effort:** M · **Type:** skill · **Priority:** P1
+
+### 1.6 Add an explicit **Scenario & Sensitivity** block to `valuation`
+- **Why:** Schema asks for "scenarios" in prose but does not enforce a
+  Bear/Base/Bull table with the *driver deltas* (e.g., NRR, CAC payback,
+  pricing) feeding each case. IC memos always carry this.
+- **What to add:** required `scenarioTable` figure type with rows
+  `[scenario, driver assumptions, revenue, valuation, multiple, probability]`.
+- **Effort:** S · **Type:** skill+website · **Priority:** P0
+
+### 1.7 Add **Comparables & Multiples** required artifact in `valuation`
+- **Why:** A new schema `comparablesTable` with columns
+  `[comp, stage, last round, post-money, ARR, EV/Rev, EV/Gross profit,
+   growth, source]` would make the valuation stance auditable instead of
+  narrative-only.
+- **Effort:** S · **Type:** skill+website · **Priority:** P0
+
+### 1.8 Add **Exit & Liquidity analysis**
+- **Why:** Standard in PE/VC IC memos: likely acquirers, IPO comparables,
+  secondary market activity (Forge / EquityZen pricing), tender offer
+  history, lock-up status. Maps to recommendation/confidence credibility.
+- **Effort:** M · **Type:** skill · **Priority:** P1
+
+### 1.9 **Reference-call surrogate** section
+- **Why:** Real diligence does 5–15 calls (customers, ex-employees,
+  competitors). The agent cannot. But it can systematize *public surrogates*:
+  Glassdoor verbatims, Blind threads, Reddit r/<company>, Twitter customer
+  complaints, podcast/conference quotes by named users. Promote this to a
+  required `evidenceStrategy` line on chapters 5/6/7.
+- **Effort:** S · **Type:** skill · **Priority:** P0
+
+### 1.10 **Diligence checklist / data-room request list**
+- **Why:** A standard IC artifact is the "what we'd ask in the data room"
+  list — converting `evidenceGaps[]` into actionable asks for the company.
+  Today gaps exist but are not consolidated into a buyer-facing ask list.
+- **What to add:** assemble script emits `data-room-asks.yaml` (and a
+  rendered page) grouping all `evidenceGap.diligencePath` by chapter and
+  severity, deduped.
+- **Effort:** S · **Type:** skill+website · **Priority:** P0
+
+---
+
+## 2. Schema & validator improvements
+
+### 2.1 First-class **claim provenance & quoting**
+- Add `claim.evidenceQuote: string | null` (verbatim ≤300 chars from the
+  source) and `claim.pageOrSelector: string | null` (page #, CSS selector,
+  PDF page). Today claims point to `S###` but the quote is lost. Auditors
+  cannot validate without re-fetching.
+- **Effort:** M · **Type:** skill · **Priority:** P0
+
+### 2.2 **Numeric facts** as structured objects, not free strings
+- Add a `metric` object: `{value, unit, asOfDate, basis, sourceRefs,
+  confidence}`. Use it in `coverFacts`, `keyMetrics`, snapshot KPI tables.
+  Enables unit-checking, cross-chapter consistency, and time-series charts.
+- **Effort:** L · **Type:** skill+website · **Priority:** P1
+
+### 2.3 **Currency & FX normalization**
+- Require `currency: ISO-4217` on every monetary value; ledger consolidates
+  to one report-level reporting currency with the FX rate and date used.
+- **Effort:** M · **Type:** skill · **Priority:** P1
+
+### 2.4 **Confidence calibration audit**
+- Add a postmortem check: for every `confidence: high` claim, sample N and
+  recompute whether `sourceRefs` actually meet the corroboration rule
+  *and* whether sources are independent (no two from the same parent
+  publisher). Today only count is enforced.
+- **Effort:** S · **Type:** skill · **Priority:** P1
+
+### 2.5 **Source independence graph**
+- Today `independence` is a per-source enum. Build a parent-publisher map
+  (e.g., TechCrunch + Engadget = Yahoo Inc.) and detect when "two
+  independent sources" share a corporate parent. Flag as
+  `pseudoCorroboration` warning.
+- **Effort:** M · **Type:** skill · **Priority:** P1
+
+### 2.6 **Stale-claim detector**
+- Compute `runDate − source.date` per claim and warn when high-confidence
+  volatile-topic claims (funding, valuation, headcount, leadership,
+  pricing) are older than a topic-specific TTL (e.g., funding 180d,
+  pricing 365d, leadership 365d).
+- **Effort:** S · **Type:** skill · **Priority:** P0
+
+### 2.7 **Cross-chapter consistency** beyond `keyFactDrift`
+- Today `cross-chapter.mjs` checks identity facts. Extend to:
+  - Market size cited in `market-analysis` ≥ revenue cited in `financials`.
+  - Customer count cited in `customers` consistent with `company-overview`.
+  - Risk severities cited in `valuation.topRisks` match the risk register.
+- **Effort:** M · **Type:** skill · **Priority:** P0
+
+### 2.8 **Conflict-of-interest disclosure** on sources
+- Add `source.conflictOfInterest: string | null`. E.g. analyst report
+  sponsored by the company, investor blog post by the lead VC. Enforce
+  that high-confidence claims cannot rely solely on COI sources.
+- **Effort:** S · **Type:** skill · **Priority:** P1
+
+### 2.9 **Adverse-evidence "balance" score** per chapter
+- Beyond `minAdverseQuestions` (questions) and adverseDistribution
+  (sources), compute the share of *claims* that are adverse and warn if
+  any chapter is < e.g. 10% adverse claims (suggests confirmation bias).
+- **Effort:** S · **Type:** skill · **Priority:** P1
+
+### 2.10 **Report-level ID space audit**
+- Verify after `assemble` that every `S###`/`C###`/`T###`/`F###` referenced
+  anywhere in the rendered `full-report.yaml` resolves, including inside
+  prose blocks (`[C012]` markdown-style refs are not currently scanned).
+- **Effort:** S · **Type:** skill · **Priority:** P0
+
+---
+
+## 3. Workflow & agent ergonomics
+
+### 3.1 **Parallel chapter execution** with explicit dependency DAG
+- `chapters.yaml` already encodes `optionalContext`. Expose a
+  `--parallelizable` flag on `load-chapter.mjs` so a driver can run chapters
+  with no dependencies concurrently (1+2+3, then 4+5+6, then 7, then 8).
+- **Effort:** M · **Type:** skill · **Priority:** P1
+
+### 3.2 **Pre-flight company-name disambiguation**
+- Add a `disambiguate.mjs` helper that surfaces homonym risks (e.g.
+  "Anthropic" pharma vs. AI; multiple "Linear" companies) and forces the
+  agent to capture `companyUrl` plus `legalEntity` before running chapters.
+- **Effort:** S · **Type:** skill · **Priority:** P0
+
+### 3.3 **Resumable runs**
+- The chapter loop already isolates per-chapter state. Add `--resume`
+  semantics to `new-report.mjs` / `finalize.mjs` so a partial run can be
+  re-entered without `--allow-duplicate`.
+- **Effort:** S · **Type:** skill · **Priority:** P1
+
+### 3.4 **Cost / token telemetry per run**
+- Capture per-chapter `searchQueries.length`, `fetch-url` calls, bytes
+  fetched, and (if available) LLM tokens into the postmortem. Enables
+  trend-watching and budget caps.
+- **Effort:** S · **Type:** skill+infra · **Priority:** P1
+
+### 3.5 **Rate-limit & retry policy** in `fetch-url`
+- Document and enforce per-host concurrency, exponential backoff, and
+  "don't refetch within N hours" cache TTL. Today behavior is not visible
+  in the skill SKILL.md.
+- **Effort:** S · **Type:** skill · **Priority:** P1
+
+### 3.6 **Snapshot archival** of fetched bodies
+- Cache hit content under `.research-cache/` is gitignored and ephemeral.
+  Optionally promote per-claim `evidenceQuote` plus a SHA-256 of the
+  fetched body into the report so reruns are auditable even after the
+  source page changes / disappears.
+- **Effort:** M · **Type:** skill · **Priority:** P1
+
+### 3.7 **Wayback / archive.org mirroring**
+- For every retained source, attempt to push to web.archive.org `Save
+  Page Now` and store the snapshot URL on `source.archiveUrl`. Standard
+  for legal/regulatory diligence so URLs remain citable.
+- **Effort:** S · **Type:** skill · **Priority:** P0
+
+### 3.8 **Adverse-search prompt templates**
+- Provide a built-in checklist of adverse query templates per chapter
+  (`{company} lawsuit`, `{company} layoffs`, `{company} outage`,
+  `{company} SEC investigation`, `{founder} fraud`, `{product} CVE`,
+  `{company} fired`, `{company} downround`). Currently each agent
+  re-derives them.
+- **Effort:** S · **Type:** skill · **Priority:** P0
+
+### 3.9 **Source-type playbooks** (per chapter)
+- Add tiny per-chapter playbooks under `references/playbooks/<chapter>.md`
+  enumerating the canonical primary sources (e.g. financials → SEC EDGAR,
+  Companies House UK, sayari, OpenCorporates, Crunchbase, PitchBook;
+  product-tech → GitHub API, npm, PyPI, Docker Hub, HuggingFace). The
+  generic "evidenceStrategy" bullets are too abstract.
+- **Effort:** M · **Type:** skill · **Priority:** P0
+
+### 3.10 **Multi-language / non-US source coverage**
+- Encode `source.language` and require ≥ 1 non-English source for
+  companies with material non-US revenue or HQ outside the Anglosphere.
+  Today the gate is implicitly English-biased.
+- **Effort:** S · **Type:** skill · **Priority:** P2
+
+---
+
+## 4. Website / consumption layer
+
+### 4.1 **Diff between two runs** of the same company
+- A `/[run]/diff/[priorRun]` route showing changed claims, new sources,
+  resolved gaps, recommendation drift. Critical for monitoring.
+- **Effort:** M · **Type:** website · **Priority:** P1
+
+### 4.2 **Per-claim hover citations** in rendered prose
+- Render `[C###]` inline tokens as hover-cards showing source title,
+  publisher, date, and key quote — Wikipedia/Perplexity style.
+- **Effort:** M · **Type:** website · **Priority:** P0
+
+### 4.3 **Filter / sort the report index** by sector, recommendation, risk
+- `_index.yaml` already has the data; the `index.astro` page does not
+  expose filters. Add facets and sortable columns.
+- **Effort:** S · **Type:** website · **Priority:** P1
+
+### 4.4 **Portfolio / watchlist mode**
+- Allow tagging a subset of reports as a "portfolio" via a YAML file and
+  render a portfolio dashboard (aggregate risk distribution, sector mix,
+  recommendation funnel, freshness heatmap of last refresh per holding).
+- **Effort:** M · **Type:** website · **Priority:** P1
+
+### 4.5 **Export to PDF / DOCX / IC memo template**
+- LPs and ICs consume PDF. Wire `@astrojs/print` or a Puppeteer-based
+  export that emits a paginated PDF with cover page, exec summary,
+  chapters, appendices, bibliography.
+- **Effort:** M · **Type:** website · **Priority:** P0
+
+### 4.6 **Source bibliography page with health checks**
+- For each source, show last-checked date and URL liveness (200/404/410).
+  Run a weekly scheduled task that re-pings URLs and updates
+  `accessStatus`.
+- **Effort:** M · **Type:** website+infra · **Priority:** P1
+
+### 4.7 **Search across all reports**
+- `search-index.json.ts` exists; expose a `/search` UI with claim-level
+  search (not just title) so users can find e.g. "all reports mentioning
+  H100" or "all reports with NRR > 130%".
+- **Effort:** M · **Type:** website · **Priority:** P1
+
+### 4.8 **Confidence / freshness visual encoding**
+- Color-code claims by `confidence` and render a freshness pill
+  (`current / recent / historical / unknown`). Today the schema captures
+  it; the renderer largely hides it.
+- **Effort:** S · **Type:** website · **Priority:** P0
+
+### 4.9 **Accessibility & i18n audit**
+- `i18n.ts` exists. Verify color-contrast, alt text on rendered figures
+  (YAML figures need a `summary` rendered as `aria-label`), and
+  keyboard navigation across the figure types.
+- **Effort:** S · **Type:** website · **Priority:** P1
+
+---
+
+## 5. Process, governance & quality
+
+### 5.1 **Golden reports & regression suite**
+- Pin two or three completed reports as "golden". `npm run validate` should
+  re-run `check-chapter` + `check-report` against them and fail when
+  validators get accidentally loosened.
+- **Effort:** S · **Type:** infra · **Priority:** P0
+
+### 5.2 **Schema migration tooling**
+- `report-v2` will need to evolve. Add a `migrations/` directory and a
+  `migrate.mjs` that takes a report folder from `vN` to `vN+1`. Today an
+  out-of-band schema bump silently breaks existing reports.
+- **Effort:** M · **Type:** skill · **Priority:** P1
+
+### 5.3 **Postmortem analytics dashboard**
+- `_postmortem.yaml` accumulates rich per-run stats. Add an Astro page
+  that visualizes acknowledged-warning frequency, source-type mix over
+  time, average sources/chapter, and adverse coverage trends. Drives
+  schema/gate tuning decisions with data.
+- **Effort:** S · **Type:** website · **Priority:** P1
+
+### 5.4 **Chapter author "style" linting**
+- Add a tiny prose linter (sentence length, hedging-word density,
+  marketing-adjective blacklist: "leading", "innovative", "best-in-class")
+  to keep the analytical voice consistent across runs.
+- **Effort:** S · **Type:** skill · **Priority:** P2
+
+### 5.5 **Claim → source bipartite check**
+- Detect "orphan" sources retained but never cited by any claim and flag
+  as wasted fetch budget. Detect "lonely" claims (single source, single
+  domain, single sourceType) and require either a corroborating source or
+  a downgrade to `confidence: low`.
+- **Effort:** S · **Type:** skill · **Priority:** P0
+
+### 5.6 **Conflict / contradiction surfacing**
+- The schema supports `claim.type: conflicting` with `contradictsClaimRefs`
+  but the report does not currently render a "Contradictions" appendix.
+  IC memos always feature a "what we don't agree on / what the data
+  disagrees on" section.
+- **Effort:** S · **Type:** skill+website · **Priority:** P0
+
+### 5.7 **Refresh cadence policy**
+- Define per-sector refresh TTL (e.g. AI labs 30d, biotech 90d, hardware
+  180d) and a monthly job that lists reports past TTL with stale
+  high-confidence claims as candidates for refresh.
+- **Effort:** S · **Type:** infra · **Priority:** P1
+
+### 5.8 **Disclaimer & methodology page**
+- Standardize a public methodology page documenting the gate values, the
+  source-type taxonomy, evidence rules, and the limits ("we do no
+  reference calls, no MNPI, no paid databases"). LPs will ask.
+- **Effort:** S · **Type:** website · **Priority:** P1
+
+---
+
+## 6. Quick wins (≤ 1 day each)
+
+1. Adverse-query template list shipped under
+   `references/adverse-prompts.md` and surfaced by `load-chapter.mjs`. (3.8)
+2. Stale-claim detector with default TTL table. (2.6)
+3. `data-room-asks.yaml` emitted by `assemble.mjs`. (1.10)
+4. Inline `[C###]` hover-card rendering. (4.2)
+5. Confidence + freshness pills on every claim-bearing block. (4.8)
+6. Wayback `Save Page Now` per retained source URL. (3.7)
+7. Lonely-claim warning in `check-chapter.mjs`. (5.5)
+8. Contradictions appendix auto-built from `type: conflicting`. (5.6)
+9. Comparables table required artifact in `valuation`. (1.7)
+10. Bear/Base/Bull scenario table required artifact in `valuation`. (1.6)
+
+---
+
+## 7. Open questions for the maintainer
+
+- Is this pipeline meant to remain English-only / US-centric, or should
+  multi-jurisdiction (EU AI Act, UK FCA, China NDRC, India MCA) coverage
+  be a first-class goal? Drives 1.2, 1.4, 3.10.
+- Is the target consumer an external LP / acquirer (PDF + COI disclosures
+  matter) or an internal scout (web UI + diff + watchlist matter)? Drives
+  4.x prioritization.
+- Should `report-meta.yaml` judgments be authored by the same agent, or
+  separated into a "second-opinion" model pass to reduce confirmation
+  bias? Drives 2.9 and 5.x.
+- Is there appetite to integrate paid databases (PitchBook, CB Insights,
+  Crunchbase Pro, S&P Capital IQ) behind a feature flag, or is the
+  free-public-source constraint a hard requirement?

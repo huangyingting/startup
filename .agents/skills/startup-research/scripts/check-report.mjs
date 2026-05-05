@@ -233,6 +233,41 @@ function checkReportLevelDiversity(run, ledger) {
   }
 }
 
+// Adverse-evidence distribution gate. Per-chapter gates already require
+// adverse *questions*; this checks that adverse *sources* are spread across
+// the report instead of concentrating in one chapter (typically risks).
+// Driven entirely by workflow-config.adverseDistribution; absent config = no
+// check. Reads each chapter's localEvidence.sources directly so the check
+// works whether or not coverageMatrix.byChapter exposes a stance breakdown.
+function checkAdverseDistribution(run, parsed) {
+  const config = WORKFLOW_CONFIG.adverseDistribution;
+  if (!config) return;
+  const chapterByFile = new Map(WORKFLOW_CONFIG.chapters.map((ch) => [ch.file, ch]));
+  const adverseByKey = new Map();
+  for (const [file, doc] of parsed) {
+    const chapter = chapterByFile.get(file);
+    if (!chapter) continue;
+    const sources = doc?.localEvidence?.sources ?? [];
+    const adverse = sources.filter((s) => s?.stance === 'adverse').length;
+    adverseByKey.set(chapter.key, adverse);
+  }
+  for (const requiredKey of config.requireAtLeastOneAdverseSource ?? []) {
+    if ((adverseByKey.get(requiredKey) ?? 0) < 1) {
+      fail(`${run}/${EVIDENCE_FILE}: chapter "${requiredKey}" has 0 adverse-stance sources; adverseDistribution.requireAtLeastOneAdverseSource requires at least one`);
+    }
+  }
+  const threshold = config.warnIfChaptersWithAdverseSourceAtMost;
+  if (Number.isInteger(threshold)) {
+    const chaptersWithAdverse = [...adverseByKey.values()].filter((n) => n > 0).length;
+    if (chaptersWithAdverse <= threshold) {
+      // Concentration is a fail, not a warn: reports that pass with adverse
+      // evidence in only 1-2 chapters look "green" but are structurally
+      // unbalanced. The threshold is operator-tunable in chapters.yaml.
+      fail(`${run}/${EVIDENCE_FILE}: adverse-stance sources appear in only ${chaptersWithAdverse} chapter(s) (<= ${threshold}); spread adverse evidence across more chapters`);
+    }
+  }
+}
+
 function checkCardConsistency(run, card, reportDoc, ledger) {
   const cardPath = `${run}/${SUMMARY_CARD_FILE}`;
   const RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 'avoid']);
@@ -261,8 +296,14 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
     fail(`${cardPath}: claimsReviewed exceeds ledger claims`);
   }
-  for (const field of ['sourcesRetained', 'claimsReviewed', 'domainCount', 'adverseSourceCount', 'unresolvedQuestionCount']) {
+  for (const field of ['sourcesRetained', 'claimsReviewed', 'domainCount', 'adverseSourceCount', 'unresolvedQuestionCount', 'openQuestionCount', 'documentedGapQuestionCount', 'blockingQuestionCount']) {
     if (typeof card?.sourceStats?.[field] !== 'number') fail(`${cardPath}: sourceStats.${field} is required and must be a number`);
+  }
+  // Invariant: every open question must be closed out by an evidenceGap
+  // (the chapter gate enforces this). A nonzero blockingQuestionCount means
+  // a chapter slipped through with an undocumented unanswered question.
+  if (typeof card?.sourceStats?.blockingQuestionCount === 'number' && card.sourceStats.blockingQuestionCount > 0) {
+    fail(`${cardPath}: sourceStats.blockingQuestionCount=${card.sourceStats.blockingQuestionCount} > 0; every open question must be referenced by some evidenceGap.relatedQuestionRefs`);
   }
   if (card?.sourceStats && card.sourceStats.averageSourceAgeDays != null && typeof card.sourceStats.averageSourceAgeDays !== 'number') {
     fail(`${cardPath}: sourceStats.averageSourceAgeDays must be a number or null`);
@@ -312,6 +353,7 @@ function checkRun(run) {
 
   checkCrossArtifactIdentity(run, parsed);
   checkLedgerCrossReferences(run, ledger, parsed);
+  checkAdverseDistribution(run, parsed);
 
   if (reportDoc) {
     checkReportBlocks(run, reportDoc);

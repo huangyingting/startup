@@ -249,7 +249,23 @@ function normalizeWorkflowConfig(config) {
     }
   }
 
-  return { ...config, chapters };
+  // Optional report-level adverse-evidence distribution gate. Default is no
+  // floor / no concentration warning; chapters.yaml opts in.
+  const adverseDistribution = config.adverseDistribution ?? null;
+  if (adverseDistribution) {
+    assertConfig(typeof adverseDistribution === 'object', 'adverseDistribution must be an object');
+    const required = adverseDistribution.requireAtLeastOneAdverseSource ?? [];
+    assertConfig(Array.isArray(required), 'adverseDistribution.requireAtLeastOneAdverseSource must be an array (use [] for none)');
+    for (const ref of required) {
+      assertConfig(knownKeys.has(ref), `adverseDistribution.requireAtLeastOneAdverseSource references unknown chapter key "${ref}"`);
+    }
+    if (adverseDistribution.warnIfChaptersWithAdverseSourceAtMost !== undefined) {
+      const value = adverseDistribution.warnIfChaptersWithAdverseSourceAtMost;
+      assertConfig(Number.isInteger(value) && value >= 0, 'adverseDistribution.warnIfChaptersWithAdverseSourceAtMost must be a non-negative integer');
+    }
+  }
+
+  return { ...config, chapters, adverseDistribution };
 }
 
 export function loadWorkflowConfig() {

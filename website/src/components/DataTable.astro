@@ -29,13 +29,39 @@ const hasFooter = Astro.slots.has('footer');
   {hasFooter && <slot name="footer" />}
 </div>
 
+<script>
+  // Mobile responsive enhancement:
+  //   1. Tag .table-frame with data-columns="N" so CSS can branch on
+  //      column count (card mode for ≤4 columns, sticky-first for ≥5).
+  //   2. Inject data-label="<column header>" on every <td> so the card
+  //      mode can render the header label inline via ::before.
+  // Runs once per table on page load. Idempotent — safe on re-execution.
+  for (const frame of document.querySelectorAll('.table-frame')) {
+    if (frame.dataset.responsive === 'ready') continue;
+    const headerCells = Array.from(frame.querySelectorAll('thead th'));
+    const labels = headerCells.map((th) => (th.textContent || '').trim());
+    if (!labels.length) continue;
+    frame.dataset.columns = String(labels.length);
+    for (const row of frame.querySelectorAll('tbody tr')) {
+      const cells = row.children;
+      for (let i = 0; i < cells.length; i++) {
+        const cell = cells[i];
+        if (cell.tagName === 'TD' && labels[i]) {
+          cell.setAttribute('data-label', labels[i]);
+        }
+      }
+    }
+    frame.dataset.responsive = 'ready';
+  }
+</script>
+
 <style>
-  .table-frame { width: 100%; max-width: 100%; overflow-x: auto; margin: var(--space-5) 0; border: var(--report-rule); border-top: 3px solid var(--claret); background: var(--surface-paper); }
-  .table-frame :global(table) { width: 100%; min-width: 780px; border-collapse: separate; border-spacing: 0; background: transparent; font-family: var(--font-sans); }
+  .table-frame { width: 100%; max-width: 100%; margin: var(--space-5) 0; border: var(--report-rule); border-top: 3px solid var(--claret); background: var(--surface-paper); }
+  .table-frame :global(table) { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0; background: transparent; font-family: var(--font-sans); }
   .table-frame :global(caption) { caption-side: top; text-align: left; padding: var(--space-3) var(--space-4); border-bottom: var(--report-rule); background: color-mix(in srgb, var(--claret) 6%, transparent); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
   .table-frame :global(th),
-  .table-frame :global(td) { border-bottom: var(--report-rule); padding: var(--space-3) var(--space-4); text-align: left; vertical-align: top; font-size: var(--report-fs-table); line-height: 1.55; }
-  .table-frame :global(th) { background: color-mix(in srgb, var(--paper) 78%, white); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: color-mix(in srgb, var(--claret) 88%, var(--ink-page)); white-space: nowrap; }
+  .table-frame :global(td) { border-bottom: var(--report-rule); padding: var(--space-3) var(--space-4); text-align: left; vertical-align: top; font-size: var(--report-fs-table); line-height: 1.55; word-break: break-word; overflow-wrap: anywhere; hyphens: auto; }
+  .table-frame :global(th) { background: color-mix(in srgb, var(--paper) 78%, white); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: color-mix(in srgb, var(--claret) 88%, var(--ink-page)); white-space: normal; }
   .table-frame :global(tbody tr:nth-child(2n)) { background: color-mix(in srgb, var(--surface-paper) 68%, transparent); }
   .table-frame :global(tbody tr:hover) { background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); }
   .table-frame :global(tbody tr:last-child td) { border-bottom: 0; }
@@ -44,4 +70,52 @@ const hasFooter = Astro.slots.has('footer');
   .table-note { margin: 0; border-top: var(--report-rule); padding: var(--space-3) var(--space-4); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--report-fs-table); line-height: 1.55; }
   .table-frame :global(.claim-ref) { font-size: var(--report-fs-caption); white-space: nowrap; }
   .table-frame > :global(.claim-ref) { display: block; margin: 0; border-top: var(--report-rule); padding: var(--space-3) var(--space-4); }
+
+  /* ------------------------------------------------------------------
+   * Mobile responsive layout: every table — regardless of column count —
+   * collapses to a stacked card list on narrow viewports. Each row is
+   * one card; each cell renders its column header inline via the
+   * data-label attribute injected by the hydration script above.
+   * ------------------------------------------------------------------ */
+  @media (max-width: 700px) {
+    .table-frame { overflow-x: hidden; }
+    .table-frame :global(table) { min-width: 0; display: block; }
+    .table-frame :global(thead) { display: none; }
+    .table-frame :global(tbody),
+    .table-frame :global(tbody tr),
+    .table-frame :global(tbody td) {
+      display: block;
+      width: 100%;
+    }
+    .table-frame :global(tbody tr) {
+      padding: var(--space-3) 0;
+      border-bottom: var(--report-rule);
+      background: transparent !important;
+    }
+    .table-frame :global(tbody tr:last-child) { border-bottom: 0; }
+    .table-frame :global(tbody td) {
+      display: grid;
+      grid-template-columns: minmax(7rem, 11ch) 1fr;
+      column-gap: var(--space-3);
+      align-items: baseline;
+      padding: var(--space-2) var(--space-4);
+      border-bottom: 0;
+      font-weight: 500;
+    }
+    .table-frame :global(tbody td:first-child) { font-weight: 700; }
+    .table-frame :global(tbody td::before) {
+      content: attr(data-label);
+      font-family: var(--font-sans);
+      font-variant-caps: all-small-caps;
+      font-size: var(--report-fs-kicker);
+      font-weight: 800;
+      letter-spacing: var(--tracking-eyebrow);
+      color: var(--claret);
+      line-height: 1.25;
+    }
+    .table-frame :global(tbody td:not([data-label])::before) {
+      content: '';
+      display: none;
+    }
+  }
 </style>

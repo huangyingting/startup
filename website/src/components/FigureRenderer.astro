@@ -17,7 +17,7 @@ const usesD3Chart = chartTypes.has(type);
 const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
 const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
 const blockRefs = (block: any) => arr<string>(block?.claimRefs).slice(0, 6);
-const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, data } : null;
+const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.title, data } : null;
 ---
 
 <figure class:list={['native-figure', `figure-${type}`, `layout-${layout}`]}>
@@ -36,7 +36,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
 
   {figure.approximationNotes && <p class="figure-note">{figure.approximationNotes}</p>}
   <ClaimRefs refs={blockRefs(figure)} claims={claims} sources={sources} />
-  {chartPayload && <script type="application/json" class="figure-chart-data" set:html={JSON.stringify(chartPayload)}></script>}
+  {chartPayload && <script type="application/json" class="figure-chart-data" data-chart-id={chartId} set:html={JSON.stringify(chartPayload)}></script>}
 </figure>
 
 <script>
@@ -113,8 +113,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       emphasis: 950,
     },
     tracking: {
-      subtle: '0.04em',
-      caps: '0.08em',
+      subtle: '0em',
+      caps: '0em',
     },
     lineHeight: {
       compact: 12,
@@ -233,10 +233,10 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       selection.append('tspan').attr('x', x).attr('dy', index === 0 ? 0 : lineHeight).text(line);
     });
   };
-  const svgBase = (element, height = 340) => {
+  const svgBase = (element, height = 340, minWidthOverride = null) => {
     const containerWidth = Math.floor(element.getBoundingClientRect().width || 760);
     const minInternalWidth = containerWidth < 420 ? 420 : 520;
-    const width = Math.max(minInternalWidth, containerWidth);
+    const width = Math.max(minInternalWidth, containerWidth, minWidthOverride ?? 0);
     const displayHeight = Math.ceil(height * Math.min(1, containerWidth / width));
     d3.select(element).selectAll('*').remove();
     const svg = d3.select(element)
@@ -299,38 +299,54 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const maxDepth = Math.max(0, ...depthByKey.values());
     const stages = Array.from({ length: maxDepth + 1 }, () => []);
     nodes.forEach((node) => stages[depthByKey.get(node._key) ?? 0].push(node));
-    const stageNames = stages.length === 1
-      ? ['Dependencies']
-      : stages.length === 2
-        ? ['Inputs', 'Impact']
-        : stages.length === 3
-          ? ['Inputs', 'Core dependency', 'Impact']
-          : stages.map((_stage, index) => `Stage ${index + 1}`);
+    /* Stage names: derive directly from the nodes that landed in each
+     * column. This is more informative than generic "Stage N" / "Tier N"
+     * labels because the reader sees the actual dependency name (e.g.
+     * "input / tts → express2 → renderer → cdn → api → lms") above each
+     * column. When a column has multiple nodes we join their ids with
+     * " / "; when an id is missing we fall back to the node label. */
+    const stageNodeLabel = (node) => {
+      const raw = node.id ?? node.label ?? '';
+      return String(raw).trim().toUpperCase();
+    };
+    const stageNames = stages.map((stage) => stage.map(stageNodeLabel).filter(Boolean).join(' / '));
     const stageRole = (index) => index === 0
       ? 'input'
       : index === stages.length - 1
         ? 'impact'
         : 'core';
     const containerWidth = element.getBoundingClientRect().width || 760;
-    const compact = containerWidth < 640;
+    const prefersWide = payload.layout === 'wide';
+    /* Keep explicitly-wide DAGs horizontal unless the viewport is truly
+     * phone-sized. Risk transmission maps are much more readable as
+     * left-to-right systems diagrams; deep standard DAGs still switch to
+     * vertical stacked mode. */
+    const compact = containerWidth < (prefersWide ? 520 : 640) || (!prefersWide && stages.length >= 5);
     const maxRows = Math.max(...stages.map((stage) => stage.length), 1);
     const compactHeight = 74 + stages.reduce((sum, stage) => sum + 30 + stage.length * 76 + Math.max(0, stage.length - 1) * 16 + 36, 0);
-    const { svg, width, height } = svgBase(element, compact ? Math.max(520, compactHeight) : Math.max(350, 118 + maxRows * 108));
+    const horizontalMinWidth = compact ? null : Math.max(containerWidth, prefersWide ? stages.length * 230 : stages.length * 210, 820);
+    const { svg, width, height } = svgBase(element, compact ? Math.max(520, compactHeight) : Math.max(350, 118 + maxRows * 108), horizontalMinWidth);
     const margin = compact ? { top: 36, right: 24, bottom: 34, left: 24 } : { top: 42, right: 34, bottom: 40, left: 34 };
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
     const stageW = innerW / Math.max(stages.length, 1);
-    const cardW = compact ? Math.min(252, innerW - 18) : Math.min(190, Math.max(140, stageW - 30));
-    const cardH = compact ? 66 : 74;
+    /* In compact (vertical) mode reserve horizontal gutter space around the
+     * centered cards. Edges alternate between left and right gutters by
+     * stage-pair so the chart does not collapse into one cable bundle. */
+    const compactGutter = compact ? 128 : 0;
+    const horizontalGutter = stages.length >= 4 ? 78 : 60;
+    const cardW = compact ? Math.min(360, innerW - 18 - compactGutter) : Math.max(112, Math.min(144, stageW - horizontalGutter));
+    const cardH = compact ? 66 : 68;
+    const compactCenterX = width / 2;
     const stageLabels = [];
     const positions = [];
     if (compact) {
       let y = margin.top;
       stages.forEach((stage, stageIndex) => {
-        stageLabels.push({ label: stageNames[stageIndex], x: width / 2, y: y + 2 });
+        stageLabels.push({ label: stageNames[stageIndex], x: compactCenterX, y: y + 2 });
         y += 34;
         stage.forEach((node, index) => {
-          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: width / 2, y: y + cardH / 2 + index * (cardH + 16) });
+          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: compactCenterX, y: y + cardH / 2 + index * (cardH + 16) });
         });
         y += stage.length * cardH + Math.max(0, stage.length - 1) * 16 + 36;
       });
@@ -345,8 +361,33 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     }
     const positionedByKey = new Map(positions.map((node) => [node._key, node]));
     const routedEdges = edges.map((edge, index) => ({ ...edge, _edgeIndex: index, source: positionedByKey.get(edge.from), target: positionedByKey.get(edge.to) })).filter((edge) => edge.source && edge.target);
+    /* Route edges through explicit ports rather than every line entering /
+     * leaving a card at its centre. This is the key to keeping DAGs readable:
+     * a node with three outgoing edges gets three different right-side exit
+     * points; a node with two incoming edges gets two different left-side
+     * entry points. Lanes are also allocated per stage-pair gutter instead of
+     * globally, so parallel edges only compete with neighbours in the same
+     * gutter. */
+    const portOffsetForSpan = (index, count, span) => {
+      if (count <= 1) return 0;
+      const usable = Math.max(18, span - 34);
+      const step = Math.min(26, Math.max(10, usable / Math.max(1, count - 1)));
+      return (index - (count - 1) / 2) * step;
+    };
+    const bySource = d3.group(routedEdges, (edge) => edge.source._key);
+    const byTarget = d3.group(routedEdges, (edge) => edge.target._key);
+    const byStagePair = d3.group(routedEdges, (edge) => `${edge.source._stage}->${edge.target._stage}`);
+    for (const group of bySource.values()) {
+      [...group].sort((a, b) => (a.target.y - b.target.y) || (a.target.x - b.target.x)).forEach((edge, index) => { edge._sourcePortIndex = index; edge._sourcePortCount = group.length; });
+    }
+    for (const group of byTarget.values()) {
+      [...group].sort((a, b) => (a.source.y - b.source.y) || (a.source.x - b.source.x)).forEach((edge, index) => { edge._targetPortIndex = index; edge._targetPortCount = group.length; });
+    }
+    for (const group of byStagePair.values()) {
+      [...group].sort((a, b) => (a.source.y - b.source.y) || (a.target.y - b.target.y)).forEach((edge, index) => { edge._laneIndex = index; edge._laneCount = group.length; });
+    }
     const defs = svg.append('defs');
-    defs.append('marker').attr('id', `${payload.id}-dependency-arrow`).attr('viewBox', '0 -5 10 10').attr('refX', 8.2).attr('refY', 0).attr('markerWidth', 5.8).attr('markerHeight', 5.8).attr('orient', 'auto')
+    defs.append('marker').attr('id', `${payload.id}-dependency-arrow`).attr('viewBox', '0 -5 10 10').attr('refX', 8.2).attr('refY', 0).attr('markerWidth', 5.5).attr('markerHeight', 5.5).attr('orient', 'auto')
       .append('path').attr('d', 'M0,-4L9,0L0,4').attr('fill', palette.claret);
     const shadow = defs.append('filter').attr('id', `${payload.id}-dependency-shadow`).attr('x', '-16%').attr('y', '-22%').attr('width', '132%').attr('height', '150%');
     shadow.append('feDropShadow').attr('dx', 0).attr('dy', 4).attr('stdDeviation', 4).attr('flood-color', 'rgba(51,48,46,0.13)');
@@ -359,29 +400,363 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('font-weight', fontWeight('emphasis'))
       .attr('letter-spacing', chartFont.tracking.caps)
       .text((label) => label.label);
-    const edgePath = (edge) => {
-      if (compact) {
-        const sx = edge.source.x + cardW / 2 + 8;
-        const sy = edge.source.y;
-        const laneOffset = (edge._edgeIndex - (Math.max(routedEdges.length, 1) - 1) / 2) * 16;
-        const tx = edge.target.x + Math.max(-cardW / 2 + 26, Math.min(cardW / 2 - 26, laneOffset));
-        const ty = edge.target.y - cardH / 2 - 8;
-        const busX = Math.min(width - margin.right - 10, sx + 68 + edge._edgeIndex * 8);
-        return `M${sx},${sy} C${busX},${sy} ${busX},${ty - 34} ${tx},${ty}`;
-      }
-      const sx = edge.source.x + cardW / 2 + 10;
-      const tx = edge.target.x - cardW / 2 - 12;
-      const midX = (sx + tx) / 2;
-      return `M${sx},${edge.source.y} C${midX},${edge.source.y} ${midX},${edge.target.y} ${tx},${edge.target.y}`;
+    const padRect = 10;
+    const routeGap = compact ? 18 : 22;
+    const stub = compact ? 14 : 16;
+    const norm = (value) => Math.round(value * 100) / 100;
+    const nodeRects = new Map(positions.map((node) => [node._key, {
+      key: node._key,
+      left: node.x - cardW / 2 - padRect,
+      right: node.x + cardW / 2 + padRect,
+      top: node.y - cardH / 2 - padRect,
+      bottom: node.y + cardH / 2 + padRect,
+    }]));
+    const within = (value, a, b) => value >= Math.min(a, b) - 0.001 && value <= Math.max(a, b) + 0.001;
+    const orient = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    const segmentsIntersect = (a, b, c, d) => {
+      const o1 = orient(a, b, c);
+      const o2 = orient(a, b, d);
+      const o3 = orient(c, d, a);
+      const o4 = orient(c, d, b);
+      if (Math.abs(o1) < 0.001 && within(c.x, a.x, b.x) && within(c.y, a.y, b.y)) return true;
+      if (Math.abs(o2) < 0.001 && within(d.x, a.x, b.x) && within(d.y, a.y, b.y)) return true;
+      if (Math.abs(o3) < 0.001 && within(a.x, c.x, d.x) && within(a.y, c.y, d.y)) return true;
+      if (Math.abs(o4) < 0.001 && within(b.x, c.x, d.x) && within(b.y, c.y, d.y)) return true;
+      return (o1 > 0) !== (o2 > 0) && (o3 > 0) !== (o4 > 0);
     };
+    const pointInRect = (p, rect) => p.x > rect.left && p.x < rect.right && p.y > rect.top && p.y < rect.bottom;
+    const segmentHitsRect = (a, b, rect) => {
+      if (pointInRect(a, rect) || pointInRect(b, rect)) return true;
+      const corners = [
+        { x: rect.left, y: rect.top }, { x: rect.right, y: rect.top },
+        { x: rect.right, y: rect.bottom }, { x: rect.left, y: rect.bottom },
+      ];
+      return segmentsIntersect(a, b, corners[0], corners[1])
+        || segmentsIntersect(a, b, corners[1], corners[2])
+        || segmentsIntersect(a, b, corners[2], corners[3])
+        || segmentsIntersect(a, b, corners[3], corners[0]);
+    };
+    const dedupePoints = (points) => points.filter((point, index) => {
+      if (index === 0) return true;
+      const prev = points[index - 1];
+      return Math.abs(point.x - prev.x) > 0.5 || Math.abs(point.y - prev.y) > 0.5;
+    });
+    const simplifyPath = (points) => {
+      const clean = dedupePoints(points);
+      const simplified = [...clean];
+      let changed = true;
+      while (changed) {
+        changed = false;
+        for (let i = 1; i < simplified.length - 1; i++) {
+          const prev = simplified[i - 1];
+          const current = simplified[i];
+          const next = simplified[i + 1];
+          const sameX = Math.abs(prev.x - current.x) < 0.5 && Math.abs(current.x - next.x) < 0.5;
+          const sameY = Math.abs(prev.y - current.y) < 0.5 && Math.abs(current.y - next.y) < 0.5;
+          if (sameX || sameY) {
+            simplified.splice(i, 1);
+            changed = true;
+            break;
+          }
+        }
+      }
+      return simplified;
+    };
+    const pathLength = (points) => {
+      const clean = simplifyPath(points);
+      return clean.slice(1).reduce((sum, p, index) => {
+        const prev = clean[index];
+        return sum + Math.hypot(p.x - prev.x, p.y - prev.y);
+      }, 0);
+    };
+    const pathBends = (points) => {
+      const clean = simplifyPath(points);
+      let bends = 0;
+      for (let i = 2; i < clean.length; i++) {
+        const a = clean[i - 2];
+        const b = clean[i - 1];
+        const c = clean[i];
+        const d1 = Math.abs(a.x - b.x) > Math.abs(a.y - b.y) ? 'h' : 'v';
+        const d2 = Math.abs(b.x - c.x) > Math.abs(b.y - c.y) ? 'h' : 'v';
+        if (d1 !== d2) bends += 1;
+      }
+      return bends;
+    };
+    const pathHits = (points, edge) => {
+      const clean = simplifyPath(points);
+      let hits = 0;
+      const ignore = new Set([edge.source._key, edge.target._key]);
+      for (let i = 1; i < clean.length; i++) {
+        for (const rect of nodeRects.values()) {
+          if (!ignore.has(rect.key) && segmentHitsRect(clean[i - 1], clean[i], rect)) hits += 1;
+        }
+      }
+      return hits;
+    };
+    const roundedPolylinePath = (rawPoints, radius = 8) => {
+      const points = simplifyPath(rawPoints);
+      if (points.length < 2) return '';
+      if (points.length === 2) return `M${points[0].x},${points[0].y} L${points[1].x},${points[1].y}`;
+      const parts = [`M${points[0].x},${points[0].y}`];
+      for (let i = 1; i < points.length - 1; i++) {
+        const prev = points[i - 1];
+        const current = points[i];
+        const next = points[i + 1];
+        const lenA = Math.hypot(current.x - prev.x, current.y - prev.y);
+        const lenB = Math.hypot(next.x - current.x, next.y - current.y);
+        if (lenA < 0.001 || lenB < 0.001) continue;
+        const r = Math.min(radius, lenA / 2, lenB / 2);
+        const p1 = { x: current.x - ((current.x - prev.x) / lenA) * r, y: current.y - ((current.y - prev.y) / lenA) * r };
+        const p2 = { x: current.x + ((next.x - current.x) / lenB) * r, y: current.y + ((next.y - current.y) / lenB) * r };
+        parts.push(`L${p1.x},${p1.y}`);
+        parts.push(`Q${current.x},${current.y} ${p2.x},${p2.y}`);
+      }
+      const last = points[points.length - 1];
+      parts.push(`L${last.x},${last.y}`);
+      return parts.join(' ');
+    };
+    const edgePorts = (node, edge, role) => {
+      const index = role === 'source' ? edge._sourcePortIndex ?? 0 : edge._targetPortIndex ?? 0;
+      const count = role === 'source' ? edge._sourcePortCount ?? 1 : edge._targetPortCount ?? 1;
+      const xOffset = portOffsetForSpan(index, count, cardW);
+      const yOffset = portOffsetForSpan(index, count, cardH);
+      return [
+        { side: 'top', x: node.x + xOffset, y: node.y - cardH / 2, outX: node.x + xOffset, outY: node.y - cardH / 2 - stub },
+        { side: 'right', x: node.x + cardW / 2, y: node.y + yOffset, outX: node.x + cardW / 2 + stub, outY: node.y + yOffset },
+        { side: 'bottom', x: node.x + xOffset, y: node.y + cardH / 2, outX: node.x + xOffset, outY: node.y + cardH / 2 + stub },
+        { side: 'left', x: node.x - cardW / 2, y: node.y + yOffset, outX: node.x - cardW / 2 - stub, outY: node.y + yOffset },
+      ];
+    };
+    const portPenalty = (edge, sourcePort, targetPort) => {
+      const stageDelta = edge.target._stage - edge.source._stage;
+      if (compact) {
+        if (stageDelta > 0) return (sourcePort.side === 'bottom' ? 0 : 1200) + (targetPort.side === 'top' ? 0 : 1200);
+        return (sourcePort.side === 'top' ? 0 : 1200) + (targetPort.side === 'bottom' ? 0 : 1200);
+      }
+      if (stageDelta > 0) {
+        return (sourcePort.side === 'right' ? 0 : sourcePort.side === 'top' || sourcePort.side === 'bottom' ? 1800 : 6000)
+          + (targetPort.side === 'left' ? 0 : targetPort.side === 'top' || targetPort.side === 'bottom' ? 1800 : 6000);
+      }
+      if (stageDelta < 0) {
+        return (sourcePort.side === 'left' ? 0 : 6000) + (targetPort.side === 'right' ? 0 : 6000);
+      }
+      const down = edge.target.y > edge.source.y;
+      return (sourcePort.side === (down ? 'bottom' : 'top') ? 0 : 1600)
+        + (targetPort.side === (down ? 'top' : 'bottom') ? 0 : 1600);
+    };
+    const segmentOverlapLength = (a, b) => {
+      if (a.dir !== b.dir) return 0;
+      if (a.dir === 'h') {
+        if (Math.abs(a.a.y - b.a.y) > 1.2) return 0;
+        const left = Math.max(Math.min(a.a.x, a.b.x), Math.min(b.a.x, b.b.x));
+        const right = Math.min(Math.max(a.a.x, a.b.x), Math.max(b.a.x, b.b.x));
+        return Math.max(0, right - left);
+      }
+      if (Math.abs(a.a.x - b.a.x) > 1.2) return 0;
+      const top = Math.max(Math.min(a.a.y, a.b.y), Math.min(b.a.y, b.b.y));
+      const bottom = Math.min(Math.max(a.a.y, a.b.y), Math.max(b.a.y, b.b.y));
+      return Math.max(0, bottom - top);
+    };
+    const routeGrid = (start, end, edge, usedSegments = []) => {
+      const ignore = new Set([edge.source._key, edge.target._key]);
+      const sourceRect = nodeRects.get(edge.source._key);
+      const targetRect = nodeRects.get(edge.target._key);
+      const stageMin = Math.min(edge.source._stage, edge.target._stage);
+      const stageMax = Math.max(edge.source._stage, edge.target._stage);
+      const xPad = compact ? 26 : 36;
+      const rawLeft = Math.min(start.x, end.x, sourceRect?.left ?? start.x, targetRect?.left ?? end.x) - xPad;
+      const rawRight = Math.max(start.x, end.x, sourceRect?.right ?? start.x, targetRect?.right ?? end.x) + xPad;
+      const xBounds = compact
+        ? { left: 12, right: width - 12 }
+        : { left: Math.max(12, rawLeft), right: Math.min(width - 12, rawRight) };
+      const corridorRects = Array.from(nodeRects.values()).filter((rect) => rect.right >= xBounds.left && rect.left <= xBounds.right);
+      const rawTop = Math.min(start.y, end.y, ...corridorRects.map((rect) => rect.top)) - routeGap * 2;
+      const rawBottom = Math.max(start.y, end.y, ...corridorRects.map((rect) => rect.bottom)) + routeGap * 2;
+      const bounds = compact
+        ? { left: xBounds.left, right: xBounds.right, top: 12, bottom: height - 12 }
+        : { left: xBounds.left, right: xBounds.right, top: Math.max(12, rawTop), bottom: Math.min(height - 12, rawBottom) };
+      const xs = new Set([norm(bounds.left), norm(bounds.right), norm(start.x), norm(end.x)]);
+      const ys = new Set([norm(bounds.top), norm(bounds.bottom), norm(start.y), norm(end.y)]);
+      if (!compact) {
+        const laneOffset = ((edge._laneIndex ?? 0) - ((edge._laneCount ?? 1) - 1) / 2) * 14;
+        for (let stageIndex = stageMin; stageIndex < stageMax; stageIndex++) {
+          const gutterX = margin.left + stageW * (stageIndex + 1) + laneOffset;
+          if (gutterX > bounds.left && gutterX < bounds.right) xs.add(norm(gutterX));
+        }
+      }
+      for (const rect of corridorRects) {
+        xs.add(norm(Math.max(bounds.left, rect.left - routeGap)));
+        xs.add(norm(Math.min(bounds.right, rect.right + routeGap)));
+        ys.add(norm(Math.max(bounds.top, rect.top - routeGap)));
+        ys.add(norm(Math.min(bounds.bottom, rect.bottom + routeGap)));
+      }
+      const parallelOffsets = compact ? [8, -8, 16, -16] : [9, -9, 18, -18];
+      for (const segment of usedSegments) {
+        const segLeft = Math.min(segment.a.x, segment.b.x);
+        const segRight = Math.max(segment.a.x, segment.b.x);
+        const segTop = Math.min(segment.a.y, segment.b.y);
+        const segBottom = Math.max(segment.a.y, segment.b.y);
+        if (segRight < bounds.left || segLeft > bounds.right || segBottom < bounds.top || segTop > bounds.bottom) continue;
+        if (segment.dir === 'h') {
+          xs.add(norm(Math.max(bounds.left, segLeft)));
+          xs.add(norm(Math.min(bounds.right, segRight)));
+          for (const offset of parallelOffsets) {
+            const laneY = segment.a.y + offset;
+            if (laneY > bounds.top && laneY < bounds.bottom) ys.add(norm(laneY));
+          }
+        } else {
+          ys.add(norm(Math.max(bounds.top, segTop)));
+          ys.add(norm(Math.min(bounds.bottom, segBottom)));
+          for (const offset of parallelOffsets) {
+            const laneX = segment.a.x + offset;
+            if (laneX > bounds.left && laneX < bounds.right) xs.add(norm(laneX));
+          }
+        }
+      }
+      const xList = Array.from(xs).sort((a, b) => a - b);
+      const yList = Array.from(ys).sort((a, b) => a - b);
+      const pointClear = (point) => {
+        if (point.x < bounds.left - 0.001 || point.x > bounds.right + 0.001 || point.y < bounds.top - 0.001 || point.y > bounds.bottom + 0.001) return false;
+        for (const rect of corridorRects) if (!ignore.has(rect.key) && pointInRect(point, rect)) return false;
+        return true;
+      };
+      const segmentClear = (a, b) => {
+        for (const rect of corridorRects) if (!ignore.has(rect.key) && segmentHitsRect(a, b, rect)) return false;
+        return true;
+      };
+      const points = [];
+      const indexByKey = new Map();
+      for (const x of xList) {
+        for (const y of yList) {
+          const point = { x, y };
+          if (!pointClear(point)) continue;
+          const key = `${x},${y}`;
+          indexByKey.set(key, points.length);
+          points.push(point);
+        }
+      }
+      const startKey = `${norm(start.x)},${norm(start.y)}`;
+      const endKey = `${norm(end.x)},${norm(end.y)}`;
+      if (!indexByKey.has(startKey) || !indexByKey.has(endKey)) return null;
+      const adj = Array.from({ length: points.length }, () => []);
+      const addEdge = (aKey, bKey, dir) => {
+        const aIndex = indexByKey.get(aKey);
+        const bIndex = indexByKey.get(bKey);
+        if (aIndex == null || bIndex == null) return;
+        const a = points[aIndex];
+        const b = points[bIndex];
+        if (!segmentClear(a, b)) return;
+        const len = Math.hypot(a.x - b.x, a.y - b.y);
+        const candidate = { dir, a, b };
+        let overlap = 0;
+        let shared = 0;
+        for (const used of usedSegments) {
+          const length = segmentOverlapLength(candidate, used);
+          if (length > 0.5) { overlap += length; shared += 1; }
+        }
+        const occupiedCost = overlap * 1200 + shared * 28000;
+        adj[aIndex].push({ to: bIndex, len, dir, occupiedCost });
+        adj[bIndex].push({ to: aIndex, len, dir, occupiedCost });
+      };
+      for (const y of yList) {
+        const row = xList.map((x) => `${x},${y}`).filter((key) => indexByKey.has(key));
+        for (let i = 1; i < row.length; i++) addEdge(row[i - 1], row[i], 'h');
+      }
+      for (const x of xList) {
+        const col = yList.map((y) => `${x},${y}`).filter((key) => indexByKey.has(key));
+        for (let i = 1; i < col.length; i++) addEdge(col[i - 1], col[i], 'v');
+      }
+      const startIndex = indexByKey.get(startKey);
+      const endIndex = indexByKey.get(endKey);
+      const dist = new Map();
+      const prev = new Map();
+      const open = [{ node: startIndex, dir: 'n', cost: 0, key: `${startIndex}|n` }];
+      dist.set(`${startIndex}|n`, 0);
+      let finalKey = null;
+      while (open.length) {
+        open.sort((a, b) => a.cost - b.cost);
+        const state = open.shift();
+        if (state.cost !== dist.get(state.key)) continue;
+        if (state.node === endIndex) { finalKey = state.key; break; }
+        for (const stepEdge of adj[state.node]) {
+          const nextKey = `${stepEdge.to}|${stepEdge.dir}`;
+          const bendCost = state.dir !== 'n' && state.dir !== stepEdge.dir ? 70 : 0;
+          const cost = state.cost + stepEdge.len + bendCost + stepEdge.occupiedCost;
+          if (cost < (dist.get(nextKey) ?? Infinity)) {
+            dist.set(nextKey, cost);
+            prev.set(nextKey, state.key);
+            open.push({ node: stepEdge.to, dir: stepEdge.dir, cost, key: nextKey });
+          }
+        }
+      }
+      if (!finalKey) return null;
+      const route = [];
+      let cursor = finalKey;
+      while (cursor) {
+        const nodeIndex = Number(cursor.split('|')[0]);
+        route.push(points[nodeIndex]);
+        cursor = prev.get(cursor);
+      }
+      return route.reverse();
+    };
+    const pathSegments = (points) => {
+      const clean = simplifyPath(points);
+      const segments = [];
+      for (let i = 1; i < clean.length; i++) {
+        const a = clean[i - 1];
+        const b = clean[i];
+        if (Math.hypot(a.x - b.x, a.y - b.y) < 0.5) continue;
+        const dir = Math.abs(a.x - b.x) >= Math.abs(a.y - b.y) ? 'h' : 'v';
+        segments.push({ dir, a, b });
+      }
+      return segments;
+    };
+    const pathOverlapPenalty = (points, usedSegments) => {
+      let overlap = 0;
+      let shared = 0;
+      for (const segment of pathSegments(points)) {
+        for (const used of usedSegments) {
+          const length = segmentOverlapLength(segment, used);
+          if (length > 0.5) { overlap += length; shared += 1; }
+        }
+      }
+      return overlap * 900 + shared * 18000;
+    };
+    const choosePath = (edge, usedSegments = []) => {
+      let best = null;
+      let bestScore = Infinity;
+      for (const sourcePort of edgePorts(edge.source, edge, 'source')) {
+        for (const targetPort of edgePorts(edge.target, edge, 'target')) {
+          const route = routeGrid({ x: sourcePort.outX, y: sourcePort.outY }, { x: targetPort.outX, y: targetPort.outY }, edge, usedSegments);
+          const path = route
+            ? simplifyPath([{ x: sourcePort.x, y: sourcePort.y }, ...route, { x: targetPort.x, y: targetPort.y }])
+            : simplifyPath([{ x: sourcePort.x, y: sourcePort.y }, { x: sourcePort.outX, y: sourcePort.outY }, { x: targetPort.outX, y: sourcePort.outY }, { x: targetPort.outX, y: targetPort.outY }, { x: targetPort.x, y: targetPort.y }]);
+          const hits = pathHits(path, edge);
+          const score = hits * 100000 + pathOverlapPenalty(path, usedSegments) + portPenalty(edge, sourcePort, targetPort) + pathBends(path) * 48 + pathLength(path);
+          if (score < bestScore) { bestScore = score; best = path; }
+        }
+      }
+      return best ?? [];
+    };
+    const routedPathByEdge = new Map();
+    const usedSegments = [];
+    const routeOrder = [...routedEdges].sort((a, b) => ((b.target._stage - b.source._stage) - (a.target._stage - a.source._stage)) || (a.source._stage - b.source._stage) || (a.source.y - b.source.y) || (a.target.y - b.target.y));
+    for (const edge of routeOrder) {
+      const path = choosePath(edge, usedSegments);
+      routedPathByEdge.set(edge._edgeIndex, path);
+      usedSegments.push(...pathSegments(path));
+    }
+    const edgePath = (edge) => roundedPolylinePath(routedPathByEdge.get(edge._edgeIndex) ?? [], compact ? 5 : 6);
     const edgeLayer = svg.append('g');
     edgeLayer.selectAll('path.visible-dependency-edge').data(routedEdges).join('path')
       .attr('class', 'visible-dependency-edge')
       .attr('d', edgePath)
       .attr('fill', 'none')
       .attr('stroke', (edge) => colorForTone(edge.source.tone ?? edge.target.tone))
-      .attr('stroke-width', 1.8)
-      .attr('opacity', 0.68)
+      .attr('stroke-width', 1.35)
+      .attr('opacity', 0.84)
+      .attr('stroke-linecap', 'round')
+      .attr('stroke-linejoin', 'round')
       .attr('marker-end', `url(#${payload.id}-dependency-arrow)`);
     const hitEdges = edgeLayer.selectAll('path.dependency-edge-hit').data(routedEdges).join('path')
       .attr('class', 'dependency-edge-hit')
@@ -624,12 +999,18 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const layers = normalizedItems({ layers: payload.data.layers ?? payload.data.items ?? payload.data.nodes });
     const containerWidth = element.getBoundingClientRect().width || 760;
     const compact = containerWidth < 640;
-    const margin = compact ? { top: 54, right: 24, bottom: 32, left: 24 } : { top: 58, right: 38, bottom: 36, left: 44 };
-    const layerH = compact ? 76 : 80;
-    const layerGap = compact ? 0 : 2;
-    const { svg, width, height } = svgBase(element, Math.max(compact ? 430 : 470, margin.top + margin.bottom + layers.length * (layerH + layerGap) + 22));
+    const margin = compact ? { top: 58, right: 24, bottom: 36, left: 24 } : { top: 62, right: 38, bottom: 40, left: 44 };
+    const layerH = compact ? 96 : 104;
+    const layerGap = compact ? 2 : 4;
+    const { svg, width, height } = svgBase(element, Math.max(compact ? 480 : 540, margin.top + margin.bottom + layers.length * (layerH + layerGap) + 22));
     const maxW = width - margin.left - margin.right;
     const stackInset = compact ? 18 : 24;
+    /* Typography for stack: bump one full step over the global chartFont
+     * defaults so layer titles read as headings rather than captions. */
+    const titleSize = compact ? chartFont.size.title : chartFont.size.large;       // 16 / 20
+    const detailSize = compact ? chartFont.size.axis : chartFont.size.label;       // 13 / 14
+    const pillSize = compact ? chartFont.size.caption : chartFont.size.small;      // 10.5 / 12
+    const badgeSize = compact ? chartFont.size.value : chartFont.size.metric;      // 18 / 26
     svg.append('text')
       .attr('x', margin.left)
       .attr('y', margin.top - 24)
@@ -673,27 +1054,27 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('stroke-width', 2);
     groups.append('text')
       .attr('x', 24)
-      .attr('y', compact ? 23 : 25)
+      .attr('y', compact ? 28 : 32)
       .attr('fill', palette.ink)
-      .attr('font-size', chartFont.label)
+      .attr('font-size', titleSize)
       .attr('font-weight', fontWeight('emphasis'))
-      .text((d) => labelText(d.label, compact ? 24 : 32));
+      .text((d) => labelText(d.label, compact ? 28 : 38));
     groups.append('text')
       .attr('x', 24)
-      .attr('y', compact ? 42 : 47)
+      .attr('y', compact ? 50 : 56)
       .attr('fill', palette.muted)
-      .attr('font-size', chartFont.small)
+      .attr('font-size', detailSize)
       .attr('font-weight', fontWeight('medium'))
-      .text((d) => labelText(d.detail, compact ? 40 : 56));
+      .text((d) => labelText(d.detail, compact ? 46 : 64));
     groups.append('text')
       .attr('x', (d, index) => Math.max(104, maxW - index * stackInset * 2 - 18))
-      .attr('y', 28)
+      .attr('y', compact ? 32 : 38)
       .attr('text-anchor', 'end')
       .attr('fill', palette.claret)
-      .attr('font-size', chartFont.size.value)
+      .attr('font-size', badgeSize)
       .attr('font-weight', fontWeight('emphasis'))
       .text((_d, index) => `L${index + 1}`);
-    const moduleRows = groups.append('g').attr('class', 'stack-modules').attr('transform', `translate(24,${compact ? 52 : 56})`);
+    const moduleRows = groups.append('g').attr('class', 'stack-modules').attr('transform', `translate(24,${compact ? 64 : 72})`);
     moduleRows.each(function(d, layerIndex) {
       const layerWidth = Math.max(120, maxW - layerIndex * stackInset * 2);
       const modules = arr(d.modules).slice(0, compact ? 1 : 2);
@@ -702,25 +1083,25 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       let xCursor = 0;
       const row = d3.select(this);
       pills.forEach((pill) => {
-        const text = labelText(pill.label, compact ? 12 : 16);
-        const pillW = Math.min(compact ? 90 : 118, Math.max(52, text.length * 7 + 18));
+        const text = labelText(pill.label, compact ? 14 : 20);
+        const pillW = Math.min(compact ? 110 : 150, Math.max(60, text.length * 8 + 22));
         if (xCursor + pillW > layerWidth - 54) return;
         const pillGroup = row.append('g').attr('transform', `translate(${xCursor},0)`);
         pillGroup.append('rect')
           .attr('width', pillW)
-          .attr('height', compact ? 16 : 18)
-          .attr('rx', compact ? 8 : 9)
+          .attr('height', compact ? 20 : 22)
+          .attr('rx', compact ? 10 : 11)
           .attr('fill', pill.label.startsWith('→') ? 'rgba(153,15,61,0.08)' : 'rgba(255,250,245,0.78)')
           .attr('stroke', pill.label.startsWith('→') ? 'rgba(153,15,61,0.22)' : 'rgba(212,196,184,0.72)');
         pillGroup.append('text')
           .attr('x', pillW / 2)
-          .attr('y', compact ? 11.5 : 12.5)
+          .attr('y', compact ? 14 : 15)
           .attr('text-anchor', 'middle')
           .attr('fill', pill.label.startsWith('→') ? palette.claret : palette.ink)
-          .attr('font-size', chartFont.size.tiny)
+          .attr('font-size', pillSize)
           .attr('font-weight', fontWeight('strong'))
           .text(text);
-        xCursor += pillW + 7;
+        xCursor += pillW + 8;
       });
     });
     groups.each(function(d) {
@@ -1398,6 +1779,22 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     return result;
   };
 
+  const chartResizeObserver = 'ResizeObserver' in window ? new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const element = entry.target;
+      const nextWidth = Math.round(entry.contentRect.width || 0);
+      const prevWidth = Number(element.dataset.renderWidth || 0);
+      if (!nextWidth || (prevWidth && Math.abs(nextWidth - prevWidth) < 18)) continue;
+      const script = Array.from(document.querySelectorAll('script.figure-chart-data'))
+        .find((candidate) => candidate.dataset.chartId === element.id);
+      if (!script) continue;
+      const payload = JSON.parse(script.textContent || '{}');
+      renderD3(element, payload);
+      script.dataset.rendered = 'true';
+      element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || nextWidth));
+    }
+  }) : null;
+
   const renderCharts = () => {
     document.querySelectorAll('script.figure-chart-data').forEach((script) => {
       if (script.dataset.rendered === 'true') return;
@@ -1405,6 +1802,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       const element = document.getElementById(payload.id);
       if (!element) return;
       renderD3(element, payload);
+      element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || 0));
+      if (chartResizeObserver && script.dataset.observed !== 'true') {
+        chartResizeObserver.observe(element);
+        script.dataset.observed = 'true';
+      }
       script.dataset.rendered = 'true';
     });
   };
@@ -1425,17 +1827,19 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
    * targeting d3-created DOM MUST be wrapped in :global(...) — see the
    * .chart-kpi rules below for the canonical pattern.
    */
-  .native-figure { --figure-width: 760px; --chart-fs-kicker: clamp(0.76rem, 0.1vw + 0.72rem, 0.84rem); --chart-fs-caption: clamp(0.8rem, 0.12vw + 0.76rem, 0.9rem); --chart-fs-body: clamp(0.94rem, 0.14vw + 0.88rem, 1.02rem); --chart-fs-note: clamp(0.9rem, 0.12vw + 0.86rem, 0.98rem); --chart-fw-body: 650; --chart-fw-strong: 800; --chart-fw-label: 900; --chart-tracking-subtle: 0.04em; --chart-leading-caption: 1.35; --chart-leading-body: 1.55; width: min(100%, var(--figure-width)); margin: var(--space-6) auto var(--space-6) 0; padding: var(--space-4); background: var(--surface-paper); border: var(--report-rule); border-top: 2px solid var(--claret); }
-  .layout-compact { --figure-width: 560px; }
-  .layout-standard { --figure-width: 760px; }
-  .layout-wide { --figure-width: 980px; }
-  /* Matrix figures fill more horizontal space than narrative figures: extra
-   * column width directly improves cell legibility. Bump standard/wide caps
-   * for matrix only, without affecting other layouts. */
-  .figure-matrix.layout-standard { --figure-width: 920px; }
-  .figure-matrix.layout-wide { --figure-width: 1120px; }
-  .figure-range.layout-standard { --figure-width: 880px; }
-  .figure-range.layout-wide { --figure-width: 1080px; }
+  .native-figure { --figure-width: 880px; --chart-fs-kicker: clamp(0.76rem, 0.1vw + 0.72rem, 0.84rem); --chart-fs-caption: clamp(0.8rem, 0.12vw + 0.76rem, 0.9rem); --chart-fs-body: clamp(0.94rem, 0.14vw + 0.88rem, 1.02rem); --chart-fs-note: clamp(0.9rem, 0.12vw + 0.86rem, 0.98rem); --chart-fw-body: 650; --chart-fw-strong: 800; --chart-fw-label: 900; --chart-tracking-subtle: 0.04em; --chart-leading-caption: 1.35; --chart-leading-body: 1.55; width: min(100%, var(--figure-width)); margin: var(--space-6) auto; padding: var(--space-4); background: var(--surface-paper); border: var(--report-rule); border-top: 2px solid var(--claret); }
+  /* All figures share one canonical width regardless of layout/type so the
+   * report has a consistent figure column. The legacy compact/standard/wide
+   * and matrix/range overrides are intentionally collapsed into a single
+   * width — keep the classes for any non-width styling that may rely on
+   * them, but neutralize their --figure-width overrides. */
+  .layout-compact,
+  .layout-standard,
+  .layout-wide,
+  .figure-matrix.layout-standard,
+  .figure-matrix.layout-wide,
+  .figure-range.layout-standard,
+  .figure-range.layout-wide { --figure-width: 880px; }
   figcaption { margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--chart-fs-kicker); font-weight: var(--chart-fw-body); letter-spacing: var(--chart-tracking-subtle); line-height: var(--chart-leading-caption); color: var(--claret); }
   .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--chart-fs-note); line-height: var(--chart-leading-body); }
   .figure-note { margin-top: var(--space-3); }

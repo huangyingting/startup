@@ -39,6 +39,18 @@ defaultGate:
     minSectionWordsTotal: 600
     minTableRowsTotal: 16
     minFigureDataPointsTotal: 12
+# Report-level adverse-evidence distribution. Per-chapter gates already enforce
+# adverse *questions*; this gate keeps adverse *sources* from collecting in
+# only one chapter (typically risks). Each listed chapter must contribute at
+# least one adverse-stance source. A warning fires when the number of chapters
+# carrying any adverse source falls at or below the threshold.
+adverseDistribution:
+  requireAtLeastOneAdverseSource:
+    - company-overview
+    - financials
+    - customers
+    - valuation
+  warnIfChaptersWithAdverseSourceAtMost: 2
 # Chapter identity is the (key, order) pair. The loader derives the file name
 # as "<order:02>-<key>.yaml". optionalContext entries are chapter keys.
 chapters:

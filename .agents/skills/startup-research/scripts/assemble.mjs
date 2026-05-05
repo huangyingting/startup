@@ -268,7 +268,18 @@ const summaryCard = {
     claimsReviewed: (evidence.claims ?? []).length,
     domainCount: sourceStats.domainCount,
     adverseSourceCount: sourceStats.adverseSourceCount,
-    unresolvedQuestionCount: sourceStats.unresolvedQuestionCount,
+    // Unanswered-question breakdown:
+    //  - openQuestionCount: every question whose status != answered
+    //  - documentedGapQuestionCount: open AND referenced by some
+    //    evidenceGap.relatedQuestionRefs (i.e. closed out as a known gap)
+    //  - blockingQuestionCount: open AND not referenced by any evidenceGap
+    //    (the chapter gate forbids this; should be 0 after a clean finalize)
+    // unresolvedQuestionCount is kept as an alias for openQuestionCount so
+    // existing readers (website, index) keep working without coordination.
+    openQuestionCount: sourceStats.openQuestionCount,
+    documentedGapQuestionCount: sourceStats.documentedGapQuestionCount,
+    blockingQuestionCount: sourceStats.blockingQuestionCount,
+    unresolvedQuestionCount: sourceStats.openQuestionCount,
     averageSourceAgeDays: sourceStats.averageSourceAgeDays,
   },
 };
@@ -295,10 +306,22 @@ function computeSourceStats(evidenceLedger, chapters, runDateStr) {
   const matrix = evidenceLedger.coverageMatrix ?? {};
   const domainCount = matrix.totalDistinctDomains ?? 0;
   const adverseSourceCount = matrix.byStance?.adverse ?? sources.filter((s) => s?.stance === 'adverse').length;
-  let unresolvedQuestionCount = 0;
+  let openQuestionCount = 0;
+  let documentedGapQuestionCount = 0;
+  let blockingQuestionCount = 0;
+  // evidenceGap.relatedQuestionRefs are RQ### ids local to the same chapter,
+  // so the open-vs-documented match is done per-chapter rather than globally.
   for (const { doc } of chapters) {
-    for (const q of doc.localEvidence?.researchQuestions ?? []) {
-      if (q?.status && q.status !== 'answered') unresolvedQuestionCount += 1;
+    const local = doc.localEvidence ?? {};
+    const gapRefs = new Set();
+    for (const gap of local.evidenceGaps ?? []) {
+      for (const ref of gap?.relatedQuestionRefs ?? []) gapRefs.add(ref);
+    }
+    for (const q of local.researchQuestions ?? []) {
+      if (!q?.status || q.status === 'answered') continue;
+      openQuestionCount += 1;
+      if (q.id && gapRefs.has(q.id)) documentedGapQuestionCount += 1;
+      else blockingQuestionCount += 1;
     }
   }
   const anchor = parseDate(runDateStr);
@@ -311,5 +334,12 @@ function computeSourceStats(evidenceLedger, chapters, runDateStr) {
     }
   }
   const averageSourceAgeDays = ages.length ? Math.round(ages.reduce((sum, n) => sum + n, 0) / ages.length) : null;
-  return { domainCount, adverseSourceCount, unresolvedQuestionCount, averageSourceAgeDays };
+  return {
+    domainCount,
+    adverseSourceCount,
+    openQuestionCount,
+    documentedGapQuestionCount,
+    blockingQuestionCount,
+    averageSourceAgeDays,
+  };
 }
