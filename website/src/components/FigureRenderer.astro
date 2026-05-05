@@ -17,7 +17,7 @@ const usesD3Chart = chartTypes.has(type);
 const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
 const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
 const blockRefs = (block: any) => arr<string>(block?.claimRefs).slice(0, 6);
-const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.title, data } : null;
+const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? { layout } : {}), data } : null;
 ---
 
 <figure class:list={['native-figure', `figure-${type}`, `layout-${layout}`]}>
@@ -25,7 +25,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
 
   {figure.summary && <p class="figure-summary">{figure.summary}</p>}
 
-  {usesD3Chart && <div id={chartId} class:list={['d3-figure', `chart-${type}`]} data-chart-type={type}></div>}
+  {usesD3Chart && <div id={chartId} class:list={['d3-figure', `chart-${type}`]}></div>}
 
   {type === 'other' && (
     <div class="figure-fallback" role="note">
@@ -36,7 +36,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
 
   {figure.approximationNotes && <p class="figure-note">{figure.approximationNotes}</p>}
   <ClaimRefs refs={blockRefs(figure)} claims={claims} sources={sources} />
-  {chartPayload && <script type="application/json" class="figure-chart-data" data-chart-id={chartId} set:html={JSON.stringify(chartPayload)}></script>}
+  {chartPayload && <script type="application/json" class="figure-chart-data" set:html={JSON.stringify(chartPayload)}></script>}
 </figure>
 
 <script>
