@@ -329,14 +329,13 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
     const stageW = innerW / Math.max(stages.length, 1);
-    /* In compact (vertical) mode reserve a fixed-width gutter on the
-     * right of every card so edges can be routed cleanly along it instead
-     * of crossing through cards. Each edge gets its own "lane" in the
-     * gutter so multiple incoming/outgoing edges don't overlap. */
-    const compactGutter = compact ? 64 : 0;
-    const cardW = compact ? Math.min(252, innerW - 18 - compactGutter) : Math.min(190, Math.max(140, stageW - 30));
+    /* In compact (vertical) mode reserve horizontal gutter space around the
+     * centered cards. Edges alternate between left and right gutters by
+     * stage-pair so the chart does not collapse into one cable bundle. */
+    const compactGutter = compact ? 128 : 0;
+    const cardW = compact ? Math.min(360, innerW - 18 - compactGutter) : Math.min(190, Math.max(140, stageW - 30));
     const cardH = compact ? 66 : 74;
-    const compactCenterX = margin.left + cardW / 2;
+    const compactCenterX = width / 2;
     const stageLabels = [];
     const positions = [];
     if (compact) {
@@ -398,63 +397,169 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('font-weight', fontWeight('emphasis'))
       .attr('letter-spacing', chartFont.tracking.caps)
       .text((label) => label.label);
-    const edgePath = (edge) => {
+    const padRect = 8;
+    const nodeRects = new Map(positions.map((node) => [node._key, {
+      key: node._key,
+      left: node.x - cardW / 2 - padRect,
+      right: node.x + cardW / 2 + padRect,
+      top: node.y - cardH / 2 - padRect,
+      bottom: node.y + cardH / 2 + padRect,
+    }]));
+    const within = (value, a, b) => value >= Math.min(a, b) - 0.001 && value <= Math.max(a, b) + 0.001;
+    const orient = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    const segmentsIntersect = (a, b, c, d) => {
+      const o1 = orient(a, b, c);
+      const o2 = orient(a, b, d);
+      const o3 = orient(c, d, a);
+      const o4 = orient(c, d, b);
+      if (Math.abs(o1) < 0.001 && within(c.x, a.x, b.x) && within(c.y, a.y, b.y)) return true;
+      if (Math.abs(o2) < 0.001 && within(d.x, a.x, b.x) && within(d.y, a.y, b.y)) return true;
+      if (Math.abs(o3) < 0.001 && within(a.x, c.x, d.x) && within(a.y, c.y, d.y)) return true;
+      if (Math.abs(o4) < 0.001 && within(b.x, c.x, d.x) && within(b.y, c.y, d.y)) return true;
+      return (o1 > 0) !== (o2 > 0) && (o3 > 0) !== (o4 > 0);
+    };
+    const pointInRect = (p, rect) => p.x > rect.left && p.x < rect.right && p.y > rect.top && p.y < rect.bottom;
+    const segmentHitsRect = (a, b, rect) => {
+      if (pointInRect(a, rect) || pointInRect(b, rect)) return true;
+      const corners = [
+        { x: rect.left, y: rect.top }, { x: rect.right, y: rect.top },
+        { x: rect.right, y: rect.bottom }, { x: rect.left, y: rect.bottom },
+      ];
+      return segmentsIntersect(a, b, corners[0], corners[1])
+        || segmentsIntersect(a, b, corners[1], corners[2])
+        || segmentsIntersect(a, b, corners[2], corners[3])
+        || segmentsIntersect(a, b, corners[3], corners[0]);
+    };
+    const pathLength = (points) => points.slice(1).reduce((sum, p, index) => {
+      const prev = points[index];
+      return sum + Math.hypot(p.x - prev.x, p.y - prev.y);
+    }, 0);
+    const pathHits = (points, edge) => {
+      let hits = 0;
+      const ignore = new Set([edge.source._key, edge.target._key]);
+      for (let i = 1; i < points.length; i++) {
+        for (const rect of nodeRects.values()) {
+          if (!ignore.has(rect.key) && segmentHitsRect(points[i - 1], points[i], rect)) hits += 1;
+        }
+      }
+      return hits;
+    };
+    const dedupePoints = (points) => points.filter((point, index) => {
+      if (index === 0) return true;
+      const prev = points[index - 1];
+      return Math.abs(point.x - prev.x) > 0.5 || Math.abs(point.y - prev.y) > 0.5;
+    });
+    const roundedPolylinePath = (rawPoints, radius = 8) => {
+      const points = dedupePoints(rawPoints);
+      if (points.length < 2) return '';
+      if (points.length === 2) return `M${points[0].x},${points[0].y} L${points[1].x},${points[1].y}`;
+      const parts = [`M${points[0].x},${points[0].y}`];
+      for (let i = 1; i < points.length - 1; i++) {
+        const prev = points[i - 1];
+        const current = points[i];
+        const next = points[i + 1];
+        const lenA = Math.hypot(current.x - prev.x, current.y - prev.y);
+        const lenB = Math.hypot(next.x - current.x, next.y - current.y);
+        const r = Math.min(radius, lenA / 2, lenB / 2);
+        const p1 = { x: current.x - ((current.x - prev.x) / lenA) * r, y: current.y - ((current.y - prev.y) / lenA) * r };
+        const p2 = { x: current.x + ((next.x - current.x) / lenB) * r, y: current.y + ((next.y - current.y) / lenB) * r };
+        parts.push(`L${p1.x},${p1.y}`);
+        parts.push(`Q${current.x},${current.y} ${p2.x},${p2.y}`);
+      }
+      const last = points[points.length - 1];
+      parts.push(`L${last.x},${last.y}`);
+      return parts.join(' ');
+    };
+    const sourcePorts = (edge) => {
+      const offset = portOffset(edge._sourcePortIndex, edge._sourcePortCount);
+      const node = edge.source;
       if (compact) {
-        /* Manhattan-style routing in the right gutter:
-         *   1. exit horizontally from the right edge of the source card
-         *   2. drop vertically along a per-edge lane in the gutter
-         *   3. re-enter horizontally into the right edge of the target
-         * Each edge gets its own busX so siblings stay parallel and no
-         * line ever crosses through a card body. */
-        const cardRight = edge.source.x + cardW / 2;
-        const sx = cardRight;
-        const sy = edge.source.y + portOffset(edge._sourcePortIndex, edge._sourcePortCount);
-        const tx = edge.target.x + cardW / 2;
-        const ty = edge.target.y + portOffset(edge._targetPortIndex, edge._targetPortCount);
-        const laneCount = Math.max(edge._laneCount ?? 1, 1);
-        const laneStep = Math.min(10, Math.max(6, (compactGutter - 18) / laneCount));
-        const busX = cardRight + 14 + (edge._laneIndex ?? 0) * laneStep;
-        const cornerR = 6;
-        const dir = ty > sy ? 1 : -1;
-        return [
-          `M${sx},${sy}`,
-          `L${busX - cornerR},${sy}`,
-          `Q${busX},${sy} ${busX},${sy + cornerR * dir}`,
-          `L${busX},${ty - cornerR * dir}`,
-          `Q${busX},${ty} ${busX - cornerR},${ty}`,
-          `L${tx + 4},${ty}`,
-        ].join(' ');
+        const side = edge.source._stage % 2 === 0 ? 'right' : 'left';
+        return [{ side, x: node.x + (side === 'right' ? cardW / 2 : -cardW / 2), y: node.y + offset }];
       }
-      /* Wide (horizontal) routing.
-       * Dense risk maps read best with direct links, not bus-style wiring.
-       * Cross-stage edges use a shallow cubic from source.right to target.left
-       * so the eye can follow one relationship at a time. Same-stage edges
-       * (e.g. Customer trust -> Margin pressure) use a compact U-turn routed
-       * in that stage's right-side gutter. */
-      const sourceOut = portOffset(edge._sourcePortIndex, edge._sourcePortCount);
-      const targetIn = portOffset(edge._targetPortIndex, edge._targetPortCount);
-      const sy = edge.source.y + sourceOut;
-      const ty = edge.target.y + targetIn;
       if (edge.source._stage === edge.target._stage) {
-        const side = edge.source.x + cardW / 2 + 18 + (edge._laneIndex ?? 0) * 8;
-        const sx = edge.source.x + cardW / 2 + 4;
-        const tx = edge.target.x + cardW / 2 + 4;
-        const r = 7;
-        const dir = ty > sy ? 1 : -1;
+        const down = edge.target.y > edge.source.y;
         return [
-          `M${sx},${sy}`,
-          `L${side - r},${sy}`,
-          `Q${side},${sy} ${side},${sy + r * dir}`,
-          `L${side},${ty - r * dir}`,
-          `Q${side},${ty} ${side - r},${ty}`,
-          `L${tx},${ty}`,
-        ].join(' ');
+          { side: down ? 'bottom' : 'top', x: node.x + offset, y: node.y + (down ? cardH / 2 : -cardH / 2) },
+          { side: 'right', x: node.x + cardW / 2, y: node.y + offset },
+        ];
       }
-      const sx = edge.source.x + cardW / 2 + 5;
-      const tx = edge.target.x - cardW / 2 - 10;
-      const dx = Math.max(40, tx - sx);
-      const curve = Math.min(90, Math.max(42, dx * 0.42));
-      return `M${sx},${sy} C${sx + curve},${sy} ${tx - curve},${ty} ${tx},${ty}`;
+      return [
+        { side: 'right', x: node.x + cardW / 2, y: node.y + offset },
+        { side: 'right-top', x: node.x + cardW / 2, y: node.y - cardH * 0.24 },
+        { side: 'right-bottom', x: node.x + cardW / 2, y: node.y + cardH * 0.24 },
+      ];
+    };
+    const targetPorts = (edge) => {
+      const offset = portOffset(edge._targetPortIndex, edge._targetPortCount);
+      const node = edge.target;
+      if (compact) {
+        const side = edge.source._stage % 2 === 0 ? 'right' : 'left';
+        return [{ side, x: node.x + (side === 'right' ? cardW / 2 : -cardW / 2), y: node.y + offset }];
+      }
+      if (edge.source._stage === edge.target._stage) {
+        const down = edge.target.y > edge.source.y;
+        return [
+          { side: down ? 'top' : 'bottom', x: node.x + offset, y: node.y + (down ? -cardH / 2 : cardH / 2) },
+          { side: 'right', x: node.x + cardW / 2, y: node.y + offset },
+        ];
+      }
+      return [
+        { side: 'left', x: node.x - cardW / 2, y: node.y + offset },
+        { side: 'left-top', x: node.x - cardW / 2, y: node.y - cardH * 0.24 },
+        { side: 'left-bottom', x: node.x - cardW / 2, y: node.y + cardH * 0.24 },
+      ];
+    };
+    const candidatePaths = (edge, s, t) => {
+      if (compact) {
+        const laneCount = Math.max(edge._laneCount ?? 1, 1);
+        const laneStep = Math.min(12, Math.max(7, (compactGutter / 2 - 18) / laneCount));
+        const lane = 14 + (edge._laneIndex ?? 0) * laneStep;
+        const busX = s.side === 'right' ? s.x + lane : s.x - lane;
+        return [[s, { x: busX, y: s.y }, { x: busX, y: t.y }, t]];
+      }
+      const paths = [];
+      const sameStage = edge.source._stage === edge.target._stage;
+      if (!sameStage) {
+        const midX = (s.x + t.x) / 2;
+        const topY = Math.max(margin.top + 12, Math.min(edge.source.y - cardH / 2, edge.target.y - cardH / 2) - 22 - (edge._laneIndex ?? 0) * 8);
+        const bottomY = Math.min(height - margin.bottom - 12, Math.max(edge.source.y + cardH / 2, edge.target.y + cardH / 2) + 22 + (edge._laneIndex ?? 0) * 8);
+        paths.push([s, t]);
+        paths.push([s, { x: midX, y: s.y }, { x: midX, y: t.y }, t]);
+        paths.push([s, { x: s.x + 18, y: s.y }, { x: s.x + 18, y: topY }, { x: t.x - 18, y: topY }, { x: t.x - 18, y: t.y }, t]);
+        paths.push([s, { x: s.x + 18, y: s.y }, { x: s.x + 18, y: bottomY }, { x: t.x - 18, y: bottomY }, { x: t.x - 18, y: t.y }, t]);
+      } else {
+        const rightX = edge.source.x + cardW / 2 + 20 + (edge._laneIndex ?? 0) * 10;
+        const leftX = edge.source.x - cardW / 2 - 20 - (edge._laneIndex ?? 0) * 10;
+        const midY = (s.y + t.y) / 2;
+        paths.push([s, t]);
+        paths.push([s, { x: s.x, y: midY }, { x: t.x, y: midY }, t]);
+        paths.push([s, { x: rightX, y: s.y }, { x: rightX, y: t.y }, t]);
+        paths.push([s, { x: leftX, y: s.y }, { x: leftX, y: t.y }, t]);
+      }
+      return paths;
+    };
+    const choosePath = (edge) => {
+      const candidates = [];
+      for (const s of sourcePorts(edge)) {
+        for (const t of targetPorts(edge)) {
+          for (const points of candidatePaths(edge, s, t)) candidates.push(dedupePoints(points));
+        }
+      }
+      let best = candidates[0] ?? [];
+      let bestScore = Infinity;
+      for (const points of candidates) {
+        const hits = pathHits(points, edge);
+        const bends = Math.max(0, points.length - 2);
+        const length = pathLength(points);
+        const backward = points.slice(1).some((point, index) => point.x < points[index].x - 2) ? 1 : 0;
+        const score = hits * 100000 + backward * 1200 + bends * 42 + length;
+        if (score < bestScore) { bestScore = score; best = points; }
+      }
+      return best;
+    };
+    const edgePath = (edge) => {
+      return roundedPolylinePath(choosePath(edge), compact ? 6 : 8);
     };
     const edgeLayer = svg.append('g');
     edgeLayer.selectAll('path.visible-dependency-edge').data(routedEdges).join('path')
