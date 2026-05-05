@@ -22,9 +22,9 @@ Keep the workflow simple: load the ordered chapter config, generate each chapter
 
 1. Read `./references/report-schema-v2.md` and `./references/yaml-rules.md`.
 2. Load chapter order:
-   `node .agents/skills/startup-research/scripts/chapter.mjs --list --format json`
+   `node .agents/skills/startup-research/scripts/load-chapter.mjs --list --format json`
 3. Create the report folder:
-   `node .agents/skills/startup-research/scripts/new.mjs <runTimestamp> <companyName> [--website <companyUrl>]`
+   `node .agents/skills/startup-research/scripts/new-report.mjs <runTimestamp> <companyName> [--website <companyUrl>]`
 
 If folder creation exits `2`, stop unless this is an intentional refresh; then rerun with `--allow-duplicate`.
 
@@ -33,7 +33,7 @@ If folder creation exits `2`, stop unless this is an intentional refresh; then r
 For each chapter `order` from the loader:
 
 1. Load the chapter packet:
-   `node .agents/skills/startup-research/scripts/chapter.mjs --order <n> --format json`
+   `node .agents/skills/startup-research/scripts/load-chapter.mjs --order <n> --format json`
    Workflow context (`previousChapter` / `nextChapter`) ships by default; pass `--no-workflow` only if you need the raw chapter spec. Append `--include-context --report-folder <path>` to inline the sections, tables, figures, and consolidated claimRefs of every file listed in `optionalContext` so the chapter brief carries reusable ground truth from earlier chapters.
 2. Use only `packet.chapter` as the chapter brief: `file`, `artifact`, `title`, `mission`, `optionalContext`, `contentRequirements`, `plannedTables`, `plannedFigures`, `evidenceStrategy`, `qualityBar`, and `gate`.
 3. **Plan typed research questions first.** Generate at least `gate.minResearchQuestions` items into `localEvidence.researchQuestions[]`; each item follows the `researchQuestion` shape in `references/report-schema-v2.md`. Start every question with `status: unresolved` and flip to `answered` only when a claim cites it via `claim.answersQuestionRefs`. Each `question` string must be at least 20 characters and include a specific anchor (company / product / year / numeric). Distribute the types so that `gate.minQuestionTypeSpread` distinct types are covered, including at least `gate.minAdverseQuestions` of `type: adverse`. Cover at least `gate.minContentRequirementCoverage` (default 80%) of the chapter's `contentRequirements[]` via `targets[]`.
@@ -47,9 +47,15 @@ For each chapter `order` from the loader:
 7. **Mark enumeration tables.** When a `plannedTable` has `enumeration: true`, the matching `tables[]` entry must include `enumerationScope: { coverage: exhaustive|partial|sample, basis: "..." }`. `partial`/`sample` requires either an `evidenceGap` entry whose `topic` mentions the table or a gap entry whose `relatedTableRefs[]` includes the table id. The table must also be backed by claims pointing to at least `gate.minSourcesPerEnumerationRow` distinct registrable domains.
 8. Generate the chapter YAML at `reportFolder/<chapter.file>` per the report schema.
 9. **Type your evidenceGaps.** Every `evidenceGap` follows the schema's `evidenceGap` shape. Use `relatedQuestionRefs[]` to close out an unresolved/partial researchQuestion and `relatedTableRefs[]` to flag an enumeration-incomplete table.
-10. Run the gate with structured output:
-    `node .agents/skills/startup-research/scripts/gate.mjs <reportFolder> <chapter.file> --format json`
-    Exit `0` means the chapter is ready. On nonzero exit, parse `failedDimensions[]` and `retryOrder[]` (root-cause sorted) from the JSON to scope the retry — see "Retry scope" below.
+10. Run the chapter check with structured output:
+    `node .agents/skills/startup-research/scripts/check-chapter.mjs <reportFolder> <chapter.file> --format json`
+    Exit `0` means the chapter is ready. On nonzero exit, parse the JSON for:
+    - `globalHints[]` — chapter-wide root causes (one dimension failing on ≥3 objects); fix these first.
+    - `objectFailures[]` — failures grouped by table/figure/claim/question id, each with the full `dimensions[]` and `fixes[]` for that object.
+    - `failures[]` — per-issue entries; each carries `dimension`, `message`, and a one-line `fix` action.
+    - `failedDimensions[]` and `retryOrder[]` (root-cause sorted) for the dimensions you must clear.
+    - `suppressedDimensions[]` — downstream checks skipped because an upstream failure (e.g. `localEvidenceMissing`) makes them trivially fail; they will re-evaluate after you fix the root cause.
+    See "Retry scope" below for the canonical dimension → action table (the same hints are inlined as `failure.fix`).
 11. Advance with `packet.nextChapter`; if it is `null`, move to finalization.
 
 ### Retry scope

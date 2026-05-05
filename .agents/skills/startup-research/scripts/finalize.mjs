@@ -3,7 +3,7 @@
 //   1. ledger.mjs       -> evidence.yaml
 //   2. cross-chapter.mjs -> drift checks against report-meta.yaml
 //   3. assemble.mjs     -> full-report.yaml + summary-card.yaml
-//   4. index.mjs --strict -> rebuild reports/_index.yaml
+//   4. build-index.mjs --strict -> rebuild reports/_index.yaml
 //
 // The agent must still hand-author report-meta.yaml before invoking this
 // script. cross-chapter runs BEFORE assemble so metric drift is caught while
@@ -70,7 +70,7 @@ if (localEvidenceFiles.length === 0 && hasExistingEvidence) {
   console.log('[finalize] no chapter localEvidence found; reusing existing evidence.yaml and skipping postmortem + ledger');
 }
 if (!skipIndex) {
-  steps.push({ name: 'index', script: 'index.mjs', argv: ['--strict'] });
+  steps.push({ name: 'build-index', script: 'build-index.mjs', argv: ['--strict'] });
 }
 // Always run the per-report schema/renderer-contract validator last. A green
 // finalize means the report is publishable.

@@ -68,11 +68,11 @@ function hasPopulatedField(data, key) {
   return value != null && value !== '';
 }
 
-// Lightweight figure shape validator shared between gate.mjs (chapter-time)
-// and check-report.mjs (post-finalize). Returns { errors: string[] } where
-// each error is a short human-readable reason. Renderer-specific deep checks
-// (numeric cohort cells, matrix column/row width, etc.) stay in
-// check-report.mjs.
+// Lightweight figure shape validator shared between check-chapter.mjs
+// (chapter-time) and check-report.mjs (post-finalize). Returns
+// { errors: string[] } where each error is a short human-readable reason.
+// Renderer-specific deep checks (numeric cohort cells, matrix column/row
+// width, etc.) stay in check-report.mjs.
 export function validateFigureShape(figure) {
   const errors = [];
   const id = figure?.id ?? '?';

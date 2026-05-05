@@ -82,7 +82,7 @@ const serialized = yaml.dump(document, { lineWidth: 120, noRefs: true, sortKeys:
 if (args.has('--check')) {
   const onDisk = existsSync(OUTPUT_PATH) ? readFileSync(OUTPUT_PATH, 'utf8') : '';
   if (onDisk !== serialized) {
-    console.error('[build:report-index] reports/_index.yaml is out of date. Run node .agents/skills/startup-research/scripts/index.mjs --strict.');
+    console.error('[build:report-index] reports/_index.yaml is out of date. Run node .agents/skills/startup-research/scripts/build-index.mjs --strict.');
     process.exit(1);
   }
   console.log(`[build:report-index] ✓ reports/_index.yaml is current (${reports.length} report(s)).`);

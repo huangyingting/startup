@@ -10,7 +10,7 @@ import { normalizeCompanyName, normalizeDomain, readYaml, reportsDir, slugify } 
 const DISCLOSURE_PROFILES = new Set(['public', 'private-disclosed', 'private-undisclosed', 'stealth']);
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/new.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--allow-duplicate] [--index reports/_index.yaml]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/new-report.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--allow-duplicate] [--index reports/_index.yaml]');
   process.exit(1);
 }
 
