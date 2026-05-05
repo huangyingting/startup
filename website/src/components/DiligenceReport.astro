@@ -209,36 +209,65 @@ const fallbackMetrics = [
     </section>
   )}
 
+  {(data.topStrengths.length > 0 || data.topRisks.length > 0 || data.unresolvedGaps.length > 0) && (
+    <section class="report-section executive-summary">
+      <h2>Executive summary</h2>
+      <div class="three-col">
+        <article class="summary-card summary-strengths">
+          <h2>{labels.strengths}</h2>
+          <ul>
+            {arr(data.topStrengths).map((item) => (
+              <li>{splitClaimRefsText(item).map((part) => part.ref
+                ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+                : part.text)}</li>
+            ))}
+          </ul>
+        </article>
+        <article class="summary-card summary-risks">
+          <h2>{labels.risks}</h2>
+          <ul>
+            {arr(data.topRisks).map((item) => (
+              <li>{splitClaimRefsText(item).map((part) => part.ref
+                ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+                : part.text)}</li>
+            ))}
+          </ul>
+        </article>
+        <article class="summary-card summary-gaps">
+          <h2>{labels.gaps}</h2>
+          <ul>
+            {arr(data.unresolvedGaps).map((item) => (
+              <li>{splitClaimRefsText(item).map((part) => part.ref
+                ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+                : part.text)}</li>
+            ))}
+          </ul>
+        </article>
+      </div>
+    </section>
+  )}
+
   {chapters.length > 0 && (
-    <nav class="report-section toc" aria-label={labels.contents}>
+    <section class="report-section toc-heading-section" id="contents">
       <h2>{labels.contents}</h2>
-      <ol class="toc-list">
-        {chapters.map((chapter: any) => {
-          const sectionCount = arr(chapter.sections).length;
-          return (
-            <li class="toc-item">
-              <a href={`#chapter-${chapter.number}`}>
-                <span class="toc-number">{String(chapter.number).padStart(2, '0')}</span>
-                <span class="toc-body">
-                  <span class="toc-title">{chapter.title}</span>
-                  {sectionCount > 0 && (
-                    <span class="toc-meta">{sectionCount} {sectionCount === 1 ? 'section' : 'sections'}</span>
-                  )}
-                </span>
-                <span class="toc-arrow" aria-hidden="true">→</span>
-              </a>
-            </li>
-          );
-        })}
+    </section>
+  )}
+  {chapters.length > 0 && (
+    <nav class="toc-sticky" aria-label={labels.contents} data-toc>
+      <ol class="toc-list" id="toc-list">
+        {chapters.map((chapter: any) => (
+          <li class="toc-item" data-toc-target={`chapter-${chapter.number}`}>
+            <a href={`#chapter-${chapter.number}`}>
+              <span class="toc-number">{String(chapter.number).padStart(2, '0')}</span>
+              <span class="toc-title">{chapter.title}</span>
+            </a>
+          </li>
+        ))}
         {appendices.map((appendix: any) => (
-          <li class="toc-item toc-appendix">
+          <li class="toc-item toc-appendix" data-toc-target={`appendix-${appendix.id}`}>
             <a href={`#appendix-${appendix.id}`}>
               <span class="toc-number">{appendix.id}</span>
-              <span class="toc-body">
-                <span class="toc-title">{appendix.title}</span>
-                <span class="toc-meta">{labels.appendix}</span>
-              </span>
-              <span class="toc-arrow" aria-hidden="true">→</span>
+              <span class="toc-title">{appendix.title}</span>
             </a>
           </li>
         ))}
@@ -262,41 +291,6 @@ const fallbackMetrics = [
       ))}
     </article>
   ))}
-
-  {(data.topStrengths.length > 0 || data.topRisks.length > 0 || data.unresolvedGaps.length > 0) && (
-    <section class="report-section three-col">
-      <article class="summary-card summary-strengths">
-        <h2>{labels.strengths}</h2>
-        <ul>
-          {arr(data.topStrengths).map((item) => (
-            <li>{splitClaimRefsText(item).map((part) => part.ref
-              ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
-              : part.text)}</li>
-          ))}
-        </ul>
-      </article>
-      <article class="summary-card summary-risks">
-        <h2>{labels.risks}</h2>
-        <ul>
-          {arr(data.topRisks).map((item) => (
-            <li>{splitClaimRefsText(item).map((part) => part.ref
-              ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
-              : part.text)}</li>
-          ))}
-        </ul>
-      </article>
-      <article class="summary-card summary-gaps">
-        <h2>{labels.gaps}</h2>
-        <ul>
-          {arr(data.unresolvedGaps).map((item) => (
-            <li>{splitClaimRefsText(item).map((part) => part.ref
-              ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
-              : part.text)}</li>
-          ))}
-        </ul>
-      </article>
-    </section>
-  )}
 
   {appendices.map((appendix: any) => (
     <section class="report-section appendix" id={`appendix-${appendix.id}`}>
@@ -409,6 +403,42 @@ const fallbackMetrics = [
     });
     setRefsVisible(false);
   }
+
+  // Sticky TOC: scroll-spy active state
+  const tocNav = document.querySelector('[data-toc]');
+  if (tocNav) {
+    const items = Array.from(tocNav.querySelectorAll('.toc-item'));
+    // Scroll-spy: highlight the toc-item whose target is currently most visible
+    const targets = items
+      .map((item) => {
+        const id = item.getAttribute('data-toc-target');
+        const el = id ? document.getElementById(id) : null;
+        return el ? { item, el } : null;
+      })
+      .filter(Boolean);
+    if (targets.length && 'IntersectionObserver' in window) {
+      const visible = new Map();
+      const setActive = (activeItem) => {
+        items.forEach((item) => item.classList.toggle('is-active', item === activeItem));
+      };
+      const observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.set(entry.target, entry.intersectionRatio);
+          else visible.delete(entry.target);
+        }
+        let bestEl = null;
+        let bestRatio = 0;
+        for (const [el, ratio] of visible) {
+          if (ratio > bestRatio) { bestRatio = ratio; bestEl = el; }
+        }
+        if (bestEl) {
+          const match = targets.find((t) => t.el === bestEl);
+          if (match) setActive(match.item);
+        }
+      }, { rootMargin: '-30% 0px -55% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] });
+      targets.forEach(({ el }) => observer.observe(el));
+    }
+  }
 </script>
 
 <style>
@@ -455,10 +485,9 @@ const fallbackMetrics = [
   .decision-grid dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
   .decision-grid dd { margin: 0; font-family: var(--font-sans); font-size: var(--report-fs-caption); font-weight: 700; color: var(--ink-page); text-align: right; }
   @media (max-width: 760px) { .report-cover { grid-template-columns: 1fr; padding: var(--space-5) var(--space-4); gap: var(--space-5); } .report-cover h1 { font-size: clamp(2rem, 6vw + 1rem, 2.8rem); } }
-  .report-section, .report-chapter { padding-block: var(--space-6); }
-  .report-chapter { border-top: 2px solid var(--claret); }
-  .report-section h2 { margin: 0 0 var(--space-4); }
-  .report-section h2 { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); font-size: var(--report-fs-kicker); line-height: 1.2; }
+  .report-section, .report-chapter { padding-block: var(--space-4); }
+  .report-chapter { padding-block: var(--space-5) var(--space-4); border-top: 2px solid var(--claret); }
+  .report-section h2 { position: relative; margin: 0 0 var(--space-4); padding: var(--space-2) 0 var(--space-2) var(--space-3); display: flex; align-items: center; gap: var(--space-2); border-left: 4px solid var(--claret); font-family: var(--font-sans); font-variant-caps: normal; font-weight: 800; letter-spacing: 0.01em; text-transform: uppercase; color: var(--claret); font-size: clamp(1.05rem, 0.4vw + 0.95rem, 1.25rem); line-height: 1.15; }
   .chapter-header { margin-bottom: var(--space-5); }
   .chapter-eyebrow { display: block; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); margin-bottom: var(--space-2); }
   .chapter-header h2 { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: var(--space-4); margin: 0; font-family: var(--font-display); font-size: var(--report-fs-section); font-weight: 700; letter-spacing: var(--tracking-display-snug); line-height: var(--lh-display-block); color: var(--ink-page); }
@@ -491,19 +520,34 @@ const fallbackMetrics = [
   .intro-grid dd { margin: var(--space-2) 0 0; font-family: var(--font-sans); font-size: var(--report-fs-caption); line-height: 1.5; color: var(--ink-page); overflow-wrap: anywhere; }
   .intro-heading { font-family: var(--font-display); font-size: var(--report-fs-subhead); font-weight: 700; line-height: 1.25; color: var(--ink-page); margin-bottom: var(--space-3); }
   .intro-heading strong { font-weight: 700; }
-  .toc-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); gap: 0; border-top: 2px solid var(--claret); border-left: var(--report-rule); }
+  /* Sticky table of contents: heading scrolls away, only the list strip stays pinned. */
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  .toc-heading-section { padding-block: var(--space-4) var(--space-2); }
+  .toc-sticky { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--paper) 94%, transparent); backdrop-filter: saturate(140%) blur(10px); -webkit-backdrop-filter: saturate(140%) blur(10px); margin-bottom: var(--space-5); }
+  /* Mobile: collapse cards to number-only badges in a single horizontal scrollable row. */
+  @media (max-width: 760px) {
+    .toc-sticky { margin-bottom: var(--space-4); }
+    .toc-list { grid-template-columns: none; display: flex; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: 0; border-left: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .toc-list::-webkit-scrollbar { display: none; }
+    .toc-item a { flex: 0 0 auto; padding: 0; border: 0; background: transparent; }
+    .toc-title { display: none; }
+    .toc-number { min-width: 2.2rem; height: 2.2rem; }
+  }
+  /* Anchor offset so chapter headers aren't hidden behind the sticky strip when navigated via TOC. */
+  .report-chapter, .report-section.appendix { scroll-margin-top: 4.5rem; }
+  .toc-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--claret); border-left: var(--report-rule); }
   .toc-item { margin: 0; }
-  .toc-item a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); color: var(--ink-page); text-decoration: none; transition: background-color 120ms ease, color 120ms ease; }
+  .toc-item a { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); color: var(--ink-page); text-decoration: none; transition: background-color 120ms ease, color 120ms ease; min-width: 0; }
   .toc-item a:hover, .toc-item a:focus-visible { background: color-mix(in srgb, var(--claret) 6%, var(--surface-paper)); outline: none; }
-  .toc-number { display: inline-grid; place-items: center; min-width: 2.4rem; height: 2.4rem; padding: 0 0.55rem; border-radius: 999px; background: color-mix(in srgb, var(--claret) 10%, transparent); color: var(--claret); font-family: var(--font-display); font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: -0.01em; line-height: 1; transition: background-color 120ms ease, color 120ms ease; }
+  .toc-number { display: inline-grid; place-items: center; flex: none; min-width: 1.9rem; height: 1.9rem; padding: 0 0.45rem; border-radius: 999px; background: color-mix(in srgb, var(--claret) 10%, transparent); color: var(--claret); font-family: var(--font-display); font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: -0.01em; line-height: 1; transition: background-color 120ms ease, color 120ms ease; }
   .toc-item a:hover .toc-number, .toc-item a:focus-visible .toc-number { background: var(--claret); color: #fff7ef; }
-  .toc-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .toc-title { font-family: var(--font-display); font-size: var(--report-fs-body); font-weight: 700; line-height: 1.25; color: var(--ink-page); overflow-wrap: anywhere; }
-  .toc-meta { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
-  .toc-arrow { font-family: var(--font-sans); color: color-mix(in srgb, var(--claret) 50%, transparent); transition: color 120ms ease, transform 160ms ease; }
-  .toc-item a:hover .toc-arrow, .toc-item a:focus-visible .toc-arrow { color: var(--claret); transform: translateX(2px); }
+  .toc-title { min-width: 0; font-family: var(--font-display); font-size: var(--report-fs-caption); font-weight: 700; line-height: 1.2; color: var(--ink-page); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .toc-appendix .toc-number { background: color-mix(in srgb, var(--gold) 18%, transparent); color: var(--gold); }
   .toc-appendix a:hover .toc-number, .toc-appendix a:focus-visible .toc-number { background: var(--gold); color: var(--ink-page); }
+  /* Active state: scroll-spy adds is-active to the toc-item matching the chapter currently in view */
+  .toc-item.is-active a { background: color-mix(in srgb, var(--claret) 8%, var(--surface-paper)); }
+  .toc-item.is-active .toc-number { background: var(--claret); color: #fff7ef; }
+  .toc-item.is-active.toc-appendix .toc-number { background: var(--gold); color: var(--ink-page); }
   .toc a { color: var(--ink-page); }
   /* Callouts: rendered by ReportBlock.astro (slotted children with no
    * data-astro-cid for this component), so all selectors must be :global. */
@@ -518,7 +562,7 @@ const fallbackMetrics = [
   :global(.equation) { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
   .three-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--space-4); }
   .summary-card { --summary-accent: var(--claret); --summary-tint: color-mix(in srgb, var(--summary-accent) 6%, var(--surface-paper)); position: relative; padding: var(--space-4); background: var(--summary-tint); border-radius: var(--radius-card); border-left: 4px solid var(--summary-accent); padding-top: var(--space-3); }
-  .summary-card h2 { margin: 0 0 var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--summary-accent); font-size: var(--report-fs-kicker); line-height: 1.2; }
+  .summary-card h2 { margin: 0 0 var(--space-3); display: block; padding: 0; border: 0; font-family: var(--font-sans); font-variant-caps: normal; text-transform: uppercase; font-weight: 900; letter-spacing: 0.02em; color: var(--summary-accent); font-size: clamp(1rem, 0.4vw + 0.9rem, 1.2rem); line-height: 1.15; }
   .summary-card ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
   .summary-card li { position: relative; padding-left: var(--space-4); font-family: var(--font-sans); font-size: var(--report-fs-caption); line-height: 1.5; color: var(--ink-page); }
   .summary-card li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.45rem; height: 0.45rem; border-radius: 999px; background: var(--summary-accent); }
