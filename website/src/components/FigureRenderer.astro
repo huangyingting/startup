@@ -1896,47 +1896,112 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     }
   };
 
+  const payloadByScript = new WeakMap();
+  const scriptByChartId = new Map();
+  const chartScripts = () => Array.from(document.querySelectorAll('script.figure-chart-data'));
+  const payloadForScript = (script) => {
+    if (!payloadByScript.has(script)) payloadByScript.set(script, JSON.parse(script.textContent || '{}'));
+    return payloadByScript.get(script);
+  };
+  const requestIdle = (callback, timeout = 900) => {
+    if ('requestIdleCallback' in window) return window.requestIdleCallback(callback, { timeout });
+    return window.setTimeout(callback, 0);
+  };
+  const cancelIdle = (handle) => {
+    if ('cancelIdleCallback' in window) window.cancelIdleCallback(handle);
+    else window.clearTimeout(handle);
+  };
+
   const chartResizeObserver = 'ResizeObserver' in window ? new ResizeObserver((entries) => {
     for (const entry of entries) {
       const element = entry.target;
       const nextWidth = Math.round(entry.contentRect.width || 0);
       const prevWidth = Number(element.dataset.renderWidth || 0);
       if (!nextWidth || (prevWidth && Math.abs(nextWidth - prevWidth) < 18)) continue;
-      const script = Array.from(document.querySelectorAll('script.figure-chart-data'))
-        .find((candidate) => candidate.dataset.chartId === element.id);
+      const script = scriptByChartId.get(element.id);
       if (!script) continue;
-      const payload = JSON.parse(script.textContent || '{}');
+      const payload = payloadForScript(script);
       renderD3(element, payload);
       script.dataset.rendered = 'true';
+      element.dataset.renderState = 'rendered';
       element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || nextWidth));
     }
   }) : null;
 
-  const renderCharts = () => {
-    document.querySelectorAll('script.figure-chart-data').forEach((script) => {
-      if (script.dataset.rendered === 'true') return;
-      const payload = JSON.parse(script.textContent || '{}');
-      const element = document.getElementById(payload.id);
-      if (!element) return;
-      renderD3(element, payload);
-      element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || 0));
-      if (chartResizeObserver && script.dataset.observed !== 'true') {
-        chartResizeObserver.observe(element);
-        script.dataset.observed = 'true';
+  const renderChartScript = (script, { force = false } = {}) => {
+    if (!force && script.dataset.rendered === 'true') return;
+    const payload = payloadForScript(script);
+    const element = document.getElementById(payload.id);
+    if (!element) return;
+    element.dataset.renderState = 'rendering';
+    renderD3(element, payload);
+    element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || 0));
+    if (chartResizeObserver && script.dataset.observed !== 'true') {
+      chartResizeObserver.observe(element);
+      script.dataset.observed = 'true';
+    }
+    script.dataset.rendered = 'true';
+    script.dataset.scheduled = 'false';
+    script.dataset.idleHandle = '';
+    element.dataset.renderState = 'rendered';
+  };
+
+  const scheduleChartRender = (script, { urgent = false } = {}) => {
+    if (script.dataset.rendered === 'true' || script.dataset.scheduled === 'true') return;
+    if (urgent) {
+      renderChartScript(script);
+      return;
+    }
+    script.dataset.scheduled = 'true';
+    const handle = requestIdle(() => renderChartScript(script));
+    script.dataset.idleHandle = String(handle);
+  };
+
+  const renderAllCharts = ({ force = false } = {}) => {
+    chartScripts().forEach((script) => {
+      if (script.dataset.idleHandle) {
+        cancelIdle(Number(script.dataset.idleHandle));
+        script.dataset.idleHandle = '';
       }
-      script.dataset.rendered = 'true';
+      renderChartScript(script, { force });
     });
   };
-  renderCharts();
+
+  const eagerDistance = () => Math.max(900, window.innerHeight * 1.35);
+  const isNearViewport = (element) => element.getBoundingClientRect().top < eagerDistance();
+  const lazyChartObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const script = scriptByChartId.get(entry.target.id);
+      if (!script) continue;
+      scheduleChartRender(script, { urgent: true });
+      lazyChartObserver.unobserve(entry.target);
+    }
+  }, { rootMargin: '1000px 0px 1400px 0px', threshold: 0.01 }) : null;
+
+  const initializeCharts = () => {
+    chartScripts().forEach((script, index) => {
+      const payload = payloadForScript(script);
+      const element = document.getElementById(payload.id);
+      if (!element) return;
+      scriptByChartId.set(payload.id, script);
+      element.dataset.renderState = script.dataset.rendered === 'true' ? 'rendered' : 'pending';
+      if (!lazyChartObserver || index < 2 || isNearViewport(element)) {
+        scheduleChartRender(script, { urgent: index < 2 });
+      } else {
+        lazyChartObserver.observe(element);
+      }
+    });
+  };
+  initializeCharts();
+  window.addEventListener('beforeprint', () => renderAllCharts());
   let resizeTimer = null;
   window.addEventListener('resize', () => {
     if (chartResizeObserver) return;
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(() => {
-      document.querySelectorAll('script.figure-chart-data').forEach((script) => {
-        script.dataset.rendered = 'false';
-      });
-      renderCharts();
+      chartScripts().forEach((script) => { script.dataset.rendered = 'false'; });
+      renderAllCharts({ force: true });
     }, 140);
   });
 </script>
@@ -1966,6 +2031,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
   .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--chart-fs-note); line-height: var(--chart-leading-body); }
   .figure-note { margin-top: var(--space-3); }
   .d3-figure { position: relative; width: 100%; min-height: 0; margin: var(--space-3) 0; overflow: visible; }
+  .d3-figure[data-render-state='pending'] { min-height: clamp(12rem, 34vh, 20rem); border-radius: var(--radius-card, 0.5rem); background: linear-gradient(110deg, rgba(212,196,184,0.12), rgba(255,250,245,0.52), rgba(212,196,184,0.12)); }
+  .d3-figure[data-render-state='pending']::before { content: 'Loading figure…'; position: absolute; inset: 0; display: grid; place-items: center; color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--chart-fs-caption); }
   .d3-figure svg text { pointer-events: none; user-select: none; }
   .d3-figure .is-hovered rect, .d3-figure .is-hovered circle, .d3-figure .is-hovered polygon, .d3-figure rect.is-hovered, .d3-figure circle.is-hovered, .d3-figure polygon.is-hovered { filter: none; stroke-width: 2.4px; }
   :global(.d3-chart-tooltip) { --tooltip-font: var(--chart-fs-caption, clamp(0.76rem, 0.25vw + 0.72rem, 0.9rem)); --tooltip-pointer-x: 1.4rem; position: fixed; z-index: 1000; display: grid; gap: 0.34rem; width: max-content; max-width: min(24rem, calc(100vw - 1.5rem)); border: 1px solid color-mix(in srgb, var(--claret) 18%, var(--rule)); border-radius: var(--radius-card, 0.5rem); background: color-mix(in srgb, var(--surface-paper) 94%, white); color: var(--ink-page); padding: 0.72rem 0.82rem; font-family: var(--font-sans); font-size: var(--tooltip-font); line-height: var(--chart-leading-caption, 1.36); box-shadow: none; opacity: 0; pointer-events: none; transform: translate3d(0, 0.35rem, 0) scale(0.98); transform-origin: var(--tooltip-pointer-x) top; transition: opacity 120ms ease, transform 120ms ease; }
