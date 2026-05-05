@@ -35,7 +35,7 @@ For each chapter `order` from the loader:
 1. Load the chapter packet:
    `node .agents/skills/startup-research/scripts/load-chapter.mjs --order <n> --format json`
    Workflow context (`previousChapter` / `nextChapter`) ships by default; pass `--no-workflow` only if you need the raw chapter spec. Append `--include-context --report-folder <path>` to inline the sections, tables, figures, and consolidated claimRefs of every file listed in `optionalContext` so the chapter brief carries reusable ground truth from earlier chapters.
-2. Use only `packet.chapter` as the chapter brief: `file`, `artifact`, `title`, `mission`, `optionalContext`, `contentRequirements`, `plannedTables`, `plannedFigures`, `evidenceStrategy`, `qualityBar`, and `gate`.
+2. Use only `packet.chapter` as the chapter brief: `key`, `order`, `file`, `artifact`, `title`, `mission`, `optionalContext`, `contentRequirements`, `plannedTables`, `plannedFigures`, `evidenceStrategy`, `qualityBar`, and `gate`.
 3. **Plan typed research questions first.** Generate at least `gate.minResearchQuestions` items into `localEvidence.researchQuestions[]`; each item follows the `researchQuestion` shape in `references/report-schema-v2.md`. Start every question with `status: unresolved` and flip to `answered` only when a claim cites it via `claim.answersQuestionRefs`. Each `question` string must be at least 20 characters and include a specific anchor (company / product / year / numeric). Distribute the types so that `gate.minQuestionTypeSpread` distinct types are covered, including at least `gate.minAdverseQuestions` of `type: adverse`. Cover at least `gate.minContentRequirementCoverage` (default 80%) of the chapter's `contentRequirements[]` via `targets[]`.
 4. **Search and fetch under audit.** Use `web_search` (or equivalent) to find URLs, then review each kept URL with `fetch-url`:
    `node .agents/skills/fetch-url/scripts/fetch.mjs <url> --text-only`
@@ -140,4 +140,4 @@ After all analysis chapters pass:
 - Do not invent facts, metrics, customers, funding, valuation, or dates.
 - Use structured YAML figures only; no Mermaid/SVG/prose diagrams.
 - Never write scratch files inside `reports/<run>/`. Put per-run notes, fetched bodies, and chapter packets under `.research-cache/<runTimestamp>-<companySlug>/` at the repo root (gitignored). The only files allowed in `reports/<run>/` are the chapter YAMLs (`01-…` … `08-…`), `report-meta.yaml`, and the assembled outputs (`evidence.yaml`, `full-report.yaml`, `summary-card.yaml`).
-- Final response: report folder, generated files, source/claim counts, recommendation, confidence, risks, valuation stance, table/figure counts, validation result, and main gaps.
+- Final response: report folder, generated files, source/claim counts, recommendation, confidence, risks, valuation stance, table/figure counts, finalize result, and main gaps.
