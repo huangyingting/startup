@@ -11,7 +11,9 @@ chapter:
 sections:
   - id: product-scope
     title: Product scope and module map
-    body: 'Arcadia''s current positioning is an enterprise energy intelligence platform rather than a single-purpose utility-data API. The 2026 solutions and enterprise overview pages describe three enterprise solutions — Utility Bill Management, Energy Procurement Advisory, and Sustainability Reporting — layered on top of a platform that includes Utility Bill & Interval Data, Tariff & Energy Rate Calculator, and Solar & Storage Analysis. The company history page ties those modules to acquisitions: Genability became the tariff and modeling layer, Urjanet became utility-data automation, and ENGIE Impact added utility bill management, procurement, and sustainability advising. Public use-case pages show the same stack being routed into multiple customer workflows, especially enterprise energy management and EV charging. In practice, Arcadia is pitching a unified operating system for utility bills, interval data, tariffs, optimization, and reporting rather than a narrow API point solution.'
+    body: >-
+      Arcadia's current positioning is an enterprise energy intelligence platform rather than a single-purpose utility-data API. The 2026 solutions and enterprise overview pages describe three enterprise solutions — Utility Bill Management, Energy Procurement Advisory, and Sustainability Reporting — layered on top of a platform that includes Utility Bill & Interval Data, Tariff & Energy Rate Calculator, and Solar & Storage Analysis. The company history page ties those modules to acquisitions: Genability became the tariff and modeling layer, Urjanet became utility-data automation, and ENGIE Impact added utility bill management, procurement, and sustainability advising. Public use-case pages show the same stack being routed into multiple customer workflows, especially enterprise energy management and EV charging. In practice, Arcadia is pitching a unified operating system for utility bills, interval data, tariffs, optimization, and reporting rather than a narrow API point solution. The
+      public module map also suggests Arcadia is trying to own the operational loop from raw utility data to action. Instead of selling only a data feed, it layers advisory, reporting, and optimization services on top of the same normalized records. That integration story matters because many adjacent vendors still separate bill management, tariff analysis, procurement, and sustainability reporting into different tools and teams.
     claimRefs:
       - C001
       - C002
@@ -26,7 +28,7 @@ sections:
     title: Operating model, data infrastructure, and release cadence
     body: >-
       The operating model is built around data collection, normalization, and downstream delivery. Public pages say the Arcadia Data Model aggregates and standardizes energy data from thousands of sources, supports 50+ countries, updates more than 30,000 tariffs, and captures interval data covering more than 75% of US AMI meters. Plug is the front door for account, bill, and interval ingestion, while DataHub provides enterprise bulk delivery through zipped CSV files to SFTP servers or a Snowflake Direct Share. The API documentation describes Connect-based credential onboarding, tokenized authentication, and explicit activation of statement and interval products. The changelog shows active 2026 maintenance with monthly provider additions, extraction fixes, automated guest access, token storage for selected utilities, and credential-status improvements. The product therefore looks operationally mature on ingestion and data-processing mechanics, with a documented workflow from credential
-      capture to statements, meters, intervals, and bulk exports.
+      capture to statements, meters, intervals, and bulk exports. The strongest publicly supported differentiation is therefore not a single algorithm or dashboard, but the way Arcadia chains several stages together: credential collection, provider connectivity, record normalization, tariff logic, and delivery into downstream systems. The review cache repeatedly shows the same pattern across docs and marketing pages, which makes the operating model more concrete than a generic AI-software narrative.
     claimRefs:
       - C007
       - C008
@@ -51,7 +53,7 @@ sections:
     title: Trust controls, developer surface, and technical gaps
     body: >-
       Arcadia publishes concrete security controls around transport, credential handling, and payment segregation. The security page states that application traffic is forced over HTTPS with TLS 1.2, passwords are hashed and salted, utility credentials are encrypted with AWS KMS, and payment details are handled by Stripe and Plaid rather than stored on Arcadia infrastructure. Developer-facing evidence is also real: the public OpenAPI spec exposes access-token and Connect-token flows, the npm package documents a maintained React wrapper for Connect, and the docs package create-vs-update credential flows for embedded onboarding. Still, the cache shows several disclosure limits. The public trust-center text is extremely sparse, Nudge Security provides third-party badges for SSO and compliance but does not replace first-party attestations, and the reviewed sources do not expose a detailed public incident archive, SLA set, or a deeply articulated forward roadmap beyond launch pages and
-      changelog snippets. That leaves diligence work around trust verification and roadmap precision still open.
+      changelog snippets. That leaves diligence work around trust verification and roadmap precision still open. For diligence, the practical takeaway is that Arcadia appears implementation-ready for data-heavy workflows, but less transparent on governance detail than large enterprise buyers may want. A buyer can see that developer onboarding exists and that security basics are documented, yet still cannot fully validate service history, audit scope, or how newly acquired modules are converging operationally without management materials.
     claimRefs:
       - C036
       - C037
@@ -488,6 +490,82 @@ figures:
       - C048
       - C049
       - C051
+  - id: F004
+    title: Product maturity / capability map
+    type: matrix
+    layout: wide
+    summary: Public evidence is strongest around data acquisition and tariff modeling, moderate around enterprise orchestration, and thinner around trust disclosure detail.
+    data:
+      columns:
+        - Workflow fit
+        - Technical specificity
+        - Fresh 2026 evidence
+        - Disclosure depth
+      rows:
+        - label: Plug / ingestion
+          values:
+            - label: High
+              tone: positive
+              detail: Multiple workflow pages and docs
+            - label: High
+              tone: positive
+              detail: API and changelog detail
+            - label: High
+              tone: positive
+              detail: Monthly 2026 release notes
+            - label: Medium
+              tone: neutral
+              detail: Coverage metrics but limited SLAs
+        - label: Signal / tariff logic
+          values:
+            - label: High
+              tone: positive
+              detail: Energy, EV, and data-center use cases
+            - label: Medium
+              tone: neutral
+              detail: Strong outputs, lighter internals
+            - label: High
+              tone: positive
+              detail: 2026 blogs and platform pages
+            - label: Medium
+              tone: neutral
+              detail: No public benchmark pack
+        - label: DataHub / bulk export
+          values:
+            - label: Medium
+              tone: neutral
+              detail: Clear reporting workflow
+            - label: High
+              tone: positive
+              detail: SFTP and Snowflake are explicit
+            - label: Medium
+              tone: neutral
+              detail: Docs present but few dated updates
+            - label: Medium
+              tone: neutral
+              detail: Schema breadth is partial
+        - label: Trust / governance
+          values:
+            - label: Medium
+              tone: neutral
+              detail: Security page exists
+            - label: Medium
+              tone: neutral
+              detail: Controls are concrete but high level
+            - label: Medium
+              tone: neutral
+              detail: Current but sparse trust center
+            - label: Low
+              tone: warning
+              detail: Attestation depth is limited
+    approximationNotes: null
+    claimRefs:
+      - C025
+      - C033
+      - C036
+      - C040
+      - C050
+      - C052
 callouts:
   - calloutType: strength
     title: Data-ingestion maturity is the clearest product strength
