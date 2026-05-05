@@ -113,8 +113,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       emphasis: 950,
     },
     tracking: {
-      subtle: '0.04em',
-      caps: '0.08em',
+      subtle: '0em',
+      caps: '0em',
     },
     lineHeight: {
       compact: 12,
@@ -299,20 +299,29 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const maxDepth = Math.max(0, ...depthByKey.values());
     const stages = Array.from({ length: maxDepth + 1 }, () => []);
     nodes.forEach((node) => stages[depthByKey.get(node._key) ?? 0].push(node));
-    const stageNames = stages.length === 1
-      ? ['Dependencies']
-      : stages.length === 2
-        ? ['Inputs', 'Impact']
-        : stages.length === 3
-          ? ['Inputs', 'Core dependency', 'Impact']
-          : stages.map((_stage, index) => `Stage ${index + 1}`);
+    /* Stage names: derive directly from the nodes that landed in each
+     * column. This is more informative than generic "Stage N" / "Tier N"
+     * labels because the reader sees the actual dependency name (e.g.
+     * "input / tts → express2 → renderer → cdn → api → lms") above each
+     * column. When a column has multiple nodes we join their ids with
+     * " / "; when an id is missing we fall back to the node label. */
+    const stageNodeLabel = (node) => {
+      const raw = node.id ?? node.label ?? '';
+      return String(raw).trim().toUpperCase();
+    };
+    const stageNames = stages.map((stage) => stage.map(stageNodeLabel).filter(Boolean).join(' / '));
     const stageRole = (index) => index === 0
       ? 'input'
       : index === stages.length - 1
         ? 'impact'
         : 'core';
     const containerWidth = element.getBoundingClientRect().width || 760;
-    const compact = containerWidth < 640;
+    /* Switch to vertical stacked layout when the chart is narrow OR when
+     * the DAG is too deep to give each card readable width horizontally.
+     * 5+ stages at typical figure widths (~880px) leaves <150px per card,
+     * which truncates labels. Vertical layout gives every card the full
+     * column width and reads naturally top-to-bottom. */
+    const compact = containerWidth < 640 || stages.length >= 5;
     const maxRows = Math.max(...stages.map((stage) => stage.length), 1);
     const compactHeight = 74 + stages.reduce((sum, stage) => sum + 30 + stage.length * 76 + Math.max(0, stage.length - 1) * 16 + 36, 0);
     const { svg, width, height } = svgBase(element, compact ? Math.max(520, compactHeight) : Math.max(350, 118 + maxRows * 108));
@@ -624,12 +633,18 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const layers = normalizedItems({ layers: payload.data.layers ?? payload.data.items ?? payload.data.nodes });
     const containerWidth = element.getBoundingClientRect().width || 760;
     const compact = containerWidth < 640;
-    const margin = compact ? { top: 54, right: 24, bottom: 32, left: 24 } : { top: 58, right: 38, bottom: 36, left: 44 };
-    const layerH = compact ? 76 : 80;
-    const layerGap = compact ? 0 : 2;
-    const { svg, width, height } = svgBase(element, Math.max(compact ? 430 : 470, margin.top + margin.bottom + layers.length * (layerH + layerGap) + 22));
+    const margin = compact ? { top: 58, right: 24, bottom: 36, left: 24 } : { top: 62, right: 38, bottom: 40, left: 44 };
+    const layerH = compact ? 96 : 104;
+    const layerGap = compact ? 2 : 4;
+    const { svg, width, height } = svgBase(element, Math.max(compact ? 480 : 540, margin.top + margin.bottom + layers.length * (layerH + layerGap) + 22));
     const maxW = width - margin.left - margin.right;
     const stackInset = compact ? 18 : 24;
+    /* Typography for stack: bump one full step over the global chartFont
+     * defaults so layer titles read as headings rather than captions. */
+    const titleSize = compact ? chartFont.size.title : chartFont.size.large;       // 16 / 20
+    const detailSize = compact ? chartFont.size.axis : chartFont.size.label;       // 13 / 14
+    const pillSize = compact ? chartFont.size.caption : chartFont.size.small;      // 10.5 / 12
+    const badgeSize = compact ? chartFont.size.value : chartFont.size.metric;      // 18 / 26
     svg.append('text')
       .attr('x', margin.left)
       .attr('y', margin.top - 24)
@@ -673,27 +688,27 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('stroke-width', 2);
     groups.append('text')
       .attr('x', 24)
-      .attr('y', compact ? 23 : 25)
+      .attr('y', compact ? 28 : 32)
       .attr('fill', palette.ink)
-      .attr('font-size', chartFont.label)
+      .attr('font-size', titleSize)
       .attr('font-weight', fontWeight('emphasis'))
-      .text((d) => labelText(d.label, compact ? 24 : 32));
+      .text((d) => labelText(d.label, compact ? 28 : 38));
     groups.append('text')
       .attr('x', 24)
-      .attr('y', compact ? 42 : 47)
+      .attr('y', compact ? 50 : 56)
       .attr('fill', palette.muted)
-      .attr('font-size', chartFont.small)
+      .attr('font-size', detailSize)
       .attr('font-weight', fontWeight('medium'))
-      .text((d) => labelText(d.detail, compact ? 40 : 56));
+      .text((d) => labelText(d.detail, compact ? 46 : 64));
     groups.append('text')
       .attr('x', (d, index) => Math.max(104, maxW - index * stackInset * 2 - 18))
-      .attr('y', 28)
+      .attr('y', compact ? 32 : 38)
       .attr('text-anchor', 'end')
       .attr('fill', palette.claret)
-      .attr('font-size', chartFont.size.value)
+      .attr('font-size', badgeSize)
       .attr('font-weight', fontWeight('emphasis'))
       .text((_d, index) => `L${index + 1}`);
-    const moduleRows = groups.append('g').attr('class', 'stack-modules').attr('transform', `translate(24,${compact ? 52 : 56})`);
+    const moduleRows = groups.append('g').attr('class', 'stack-modules').attr('transform', `translate(24,${compact ? 64 : 72})`);
     moduleRows.each(function(d, layerIndex) {
       const layerWidth = Math.max(120, maxW - layerIndex * stackInset * 2);
       const modules = arr(d.modules).slice(0, compact ? 1 : 2);
@@ -702,25 +717,25 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       let xCursor = 0;
       const row = d3.select(this);
       pills.forEach((pill) => {
-        const text = labelText(pill.label, compact ? 12 : 16);
-        const pillW = Math.min(compact ? 90 : 118, Math.max(52, text.length * 7 + 18));
+        const text = labelText(pill.label, compact ? 14 : 20);
+        const pillW = Math.min(compact ? 110 : 150, Math.max(60, text.length * 8 + 22));
         if (xCursor + pillW > layerWidth - 54) return;
         const pillGroup = row.append('g').attr('transform', `translate(${xCursor},0)`);
         pillGroup.append('rect')
           .attr('width', pillW)
-          .attr('height', compact ? 16 : 18)
-          .attr('rx', compact ? 8 : 9)
+          .attr('height', compact ? 20 : 22)
+          .attr('rx', compact ? 10 : 11)
           .attr('fill', pill.label.startsWith('→') ? 'rgba(153,15,61,0.08)' : 'rgba(255,250,245,0.78)')
           .attr('stroke', pill.label.startsWith('→') ? 'rgba(153,15,61,0.22)' : 'rgba(212,196,184,0.72)');
         pillGroup.append('text')
           .attr('x', pillW / 2)
-          .attr('y', compact ? 11.5 : 12.5)
+          .attr('y', compact ? 14 : 15)
           .attr('text-anchor', 'middle')
           .attr('fill', pill.label.startsWith('→') ? palette.claret : palette.ink)
-          .attr('font-size', chartFont.size.tiny)
+          .attr('font-size', pillSize)
           .attr('font-weight', fontWeight('strong'))
           .text(text);
-        xCursor += pillW + 7;
+        xCursor += pillW + 8;
       });
     });
     groups.each(function(d) {

@@ -357,31 +357,30 @@ tables:
       - C742
 
   - id: T703
-    title: Third-Party Counterparty and Concentration Risk Register
+    title: Revenue and Geographic Concentration Risk Register
     columns:
-      - Dependency
-      - Counterparty
-      - Role
-      - Concentration
-      - Failure Scenario
-      - Severity
+      - Concentration Dimension
+      - Estimated Exposure
+      - Evidence Basis
+      - Risk if Concentration Increases
       - Mitigation
-      - Residual Exposure
+      - Residual Severity
     rows:
-      - ["AI infrastructure", "OpenAI", "Sole provider of GPT API for all AI product features", "Critical single-vendor", "API price hike, policy suspension, or service outage disables AI product suite", "Critical", "None publicly disclosed; no multi-vendor fallback confirmed", "Critical — no AI product without OpenAI; valuation thesis at risk"]
-      - ["Capital provider / governance", "WestCap Group", "Lead Series D investor; Allen Mask on board", "High concentration", "WestCap forced sale, exit demand, or governance dispute compresses exit optionality", "High", "EBRD and Indico Capital as co-investors dilute single-investor control somewhat", "Medium — board seat gives WestCap influence over exit timing"]
-      - ["Tutor supply", "100,000+ independent tutors", "Core supply-side of marketplace; no exclusivity", "High fragmentation", "Competitor platform improvement triggers multi-homing migration; supply erosion", "High", "Commission tier incentives for loyalty; no contractual lock-in", "Medium-High — supply erosion is silent until session volume drops"]
-      - ["Payment infrastructure", "Stripe / Payoneer (inferred)", "Student billing and tutor payout rails", "Medium", "Payment network compliance review freezes tutor payouts; reputational damage", "Medium", "Multiple payout providers likely given global tutor base", "Low-Medium — payout freeze risk manageable but disruptive"]
+      - ["B2C vs. B2B revenue split", "~95% B2C, ~5% B2B (estimated)", "Sacra analyst estimate; management has not publicly disclosed segment breakdown", "Demand shock in consumer language learning (e.g., recession, AI substitution) hits 95% of revenue", "Growing Preply Business to rebalance; 2,000+ enterprise clients", "High — B2C revenue concentration is structural and slow to rebalance"]
+      - ["Geographic concentration (EU)", "EU is the largest single geography by learner count; exact share undisclosed", "Privacy Policy EU-representative structure; B2C marketing emphasis in EU languages", "EU regulatory action (GDPR, AI Act, DSA) could suspend EU market access", "EU DPO appointed; Privacy Policy updated Mar 2026", "High — EU regulatory risk is jurisdiction-specific with no offsetting geography"]
+      - ["AI product revenue dependency", "Entire AI product suite runs on OpenAI API; AI products drive retention and pricing power", "Company blog; LBB article; no alternative AI provider disclosed", "OpenAI API suspension or price increase > 30% impairs product-margin and retention", "No fallback disclosed; could rebuild on open-source models (months of lead time)", "Critical — revenue thesis for AI differentiation depends on single-vendor stack"]
+      - ["Enterprise client concentration", "2,000+ B2B clients; top-10 concentration not disclosed; Unilever, Datadog named", "Company statement; no customer revenue concentration breakdown provided", "Loss of top-10 B2B clients could materially impact ARR without public visibility", "Diversified client base (2,000+); multi-year contracts likely but not confirmed", "Medium — no HHI data available; diversification partially mitigates"]
     notes: |
-      Ordered by severity. OpenAI dependency is the dominant partner risk. Counterparty for payment
-      infrastructure is inferred from industry norms — not publicly confirmed by Preply.
+      Revenue and geographic concentration data are largely estimated or inferred from public disclosures.
+      Preply has not provided a segment breakdown of B2C/B2B revenue, a geographic P&L, or enterprise
+      client concentration data. All figures marked 'estimated' require private-data validation.
     claimRefs:
       - C715
-      - C716
+      - C719
       - C721
       - C722
-      - C728
-      - C732
+      - C723
+      - C724
 
   - id: T704
     title: People and Execution Risk Register
@@ -598,15 +597,16 @@ figures:
       - C719
 
   - id: F703
-    title: Dependency Map — Critical Partners, Platforms, and Regulators
+    title: External Platform Architecture — Upstream Node and Regulatory Channel Map
     type: dag
     layout: standard
     summary: |
-      Directed acyclic graph mapping Preply's critical external dependencies onto the core
-      platform. OpenAI and cloud infrastructure are the most upstream nodes with no
-      redundancy path. Regulatory bodies (EU DPA network, FTC) impose compliance constraints
-      that filter into product and legal functions. Tutor supply and capital represent
-      marketplace-specific dependencies with partial redundancy.
+      Structural directed acyclic graph of Preply's external architecture, tracing how upstream
+      technology providers, capital sources, supply-side participants, and regulatory bodies
+      connect to the core platform. This figure maps the wiring of dependencies — which nodes
+      are most upstream, which channels are single-path versus multi-path — rather than scoring
+      risk severity. Regulatory bodies (EU DPA network, FTC) impose compliance constraints
+      through separate channels from commercial/technology dependencies.
     data:
       nodes:
         - id: openai
@@ -842,6 +842,44 @@ localEvidence:
       retainedSourceRefs:
         - S718
         - S716
+
+    - query: EU AI Act compliance checklist high-risk AI systems education 2025 2026
+      engine: web_search
+      hits: null
+      retainedSourceRefs:
+        - S724
+        - S731
+
+    - query: COPPA 2025 2026 rule amendments children privacy biometric data FTC update
+      engine: web_search
+      hits: null
+      retainedSourceRefs:
+        - S725
+
+    - query: platform dependency security risk OpenAI Mixpanel breach inherited risk
+      engine: web_search
+      hits: null
+      retainedSourceRefs:
+        - S726
+
+    - query: Preply user code of conduct tutor obligations platform safety rules
+      engine: web_search
+      hits: null
+      retainedSourceRefs:
+        - S727
+        - S728
+
+    - query: Preply reviews 2025 2026 user experience tutor quality consumer trust
+      engine: web_search
+      hits: null
+      retainedSourceRefs:
+        - S729
+
+    - query: Preply employee reviews company culture compensation 2025
+      engine: web_search
+      hits: null
+      retainedSourceRefs:
+        - S730
 
   researchQuestions:
     - id: RQ701
@@ -1579,7 +1617,7 @@ localEvidence:
       stance: neutral
       sourceType: legal
       reputationTier: high
-      independence: primary
+      independence: company
       topics:
         - user conduct rules
         - platform safety
@@ -1595,10 +1633,10 @@ localEvidence:
       date: null
       accessDate: 2026-05-05
       accessStatus: ok
-      stance: promotional
+      stance: confirming
       sourceType: official
       reputationTier: high
-      independence: primary
+      independence: company
       topics:
         - B2B enterprise offering
         - corporate clients
@@ -2254,6 +2292,18 @@ localEvidence:
       diligencePath: Request Series D term sheet summary from company; review board minutes for governance matters post-January 2026
       relatedQuestionRefs:
         - RQ730
+
+    - type: enumeration-incomplete
+      severity: minor
+      topic: Regulatory and legal risk register completeness
+      missingEvidence: The regulatory/legal risk register (T701) covers US and EU jurisdictions only; country-specific regulations for Latin America, Southeast Asia, Middle East, and other Preply markets have not been individually assessed
+      whyItMatters: Preply operates in 180 countries; jurisdiction-specific data localization laws, employment regulations, and consumer protection regimes create a long tail of regulatory exposure not captured in the five-row table
+      diligencePath: Commission a jurisdiction-by-jurisdiction regulatory map covering top 15 Preply markets by learner volume; prioritize Brazil (LGPD), India (PDPB), and China if any operations exist
+      relatedTableRefs:
+        - T701
+      relatedQuestionRefs:
+        - RQ703
+        - RQ704
 
     - type: enumeration-incomplete
       severity: minor
