@@ -273,26 +273,29 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     const byKey = new Map(nodes.map((node) => [node._key, node]));
     const incoming = d3.group(edges, (edge) => edge.to);
     const outgoing = d3.group(edges, (edge) => edge.from);
-    // BFS topological depth from roots. Hub-and-spoke graphs (many inputs, one
-    // sink) collapse to 2 layers; deeper chains keep their natural layer count
-    // instead of being forced into a fixed 3-stage Inputs/Core/Impact layout.
+    // Cycle-safe topological-ish depth from roots. Some reports label graphs as
+    // DAGs while still containing feedback loops (for example support ↔ users).
+    // A longest-path relaxation loop never converges on cycles, so use Kahn's
+    // algorithm with provisional depths from already-processed predecessors and
+    // preserve unresolved cyclic nodes at their best known stage.
     const roots = nodes.filter((node) => !incoming.has(node._key));
     const depthByKey = new Map();
-    const queue = (roots.length ? roots : [nodes[0]]).map((node) => {
-      depthByKey.set(node._key, 0);
-      return node;
-    });
+    const indegreeByKey = new Map(nodes.map((node) => [node._key, arr(incoming.get(node._key)).length]));
+    const processed = new Set();
+    const queue = (roots.length ? roots : [nodes[0]]).filter(Boolean);
+    queue.forEach((node) => depthByKey.set(node._key, 0));
     while (queue.length) {
       const current = queue.shift();
+      if (!current || processed.has(current._key)) continue;
+      processed.add(current._key);
       const currentDepth = depthByKey.get(current._key) ?? 0;
       for (const edge of arr(outgoing.get(current._key))) {
         const target = byKey.get(edge.to);
-        if (!target) continue;
-        const nextDepth = currentDepth + 1;
-        if (!depthByKey.has(target._key) || depthByKey.get(target._key) < nextDepth) {
-          depthByKey.set(target._key, nextDepth);
-          queue.push(target);
-        }
+        if (!target || processed.has(target._key)) continue;
+        depthByKey.set(target._key, Math.max(depthByKey.get(target._key) ?? 0, currentDepth + 1));
+        const remaining = Math.max(0, (indegreeByKey.get(target._key) ?? 0) - 1);
+        indegreeByKey.set(target._key, remaining);
+        if (remaining === 0) queue.push(target);
       }
     }
     for (const node of nodes) if (!depthByKey.has(node._key)) depthByKey.set(node._key, 0);
@@ -399,7 +402,13 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       .attr('font-size', chartFont.small)
       .attr('font-weight', fontWeight('emphasis'))
       .attr('letter-spacing', chartFont.tracking.caps)
-      .text((label) => label.label);
+      .each(function(label) {
+        renderWrappedText(d3.select(this), label.label, {
+          maxChars: compact ? Math.max(18, Math.floor((width - 68) / 7.2)) : Math.max(10, Math.floor(stageW / 8.2)),
+          maxLines: compact ? 2 : 1,
+          lineHeight: chartFont.lineHeight.tight,
+        });
+      });
     const padRect = 10;
     const routeGap = compact ? 18 : 22;
     const stub = compact ? 14 : 16;
@@ -1011,6 +1020,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     const detailSize = compact ? chartFont.size.axis : chartFont.size.label;       // 13 / 14
     const pillSize = compact ? chartFont.size.caption : chartFont.size.small;      // 10.5 / 12
     const badgeSize = compact ? chartFont.size.value : chartFont.size.metric;      // 18 / 26
+    const stackItemText = (item) => safeText(item);
+    const stackListText = (items) => arr(items).map(stackItemText).filter(Boolean).join(', ');
     svg.append('text')
       .attr('x', margin.left)
       .attr('y', margin.top - 24)
@@ -1077,27 +1088,29 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     const moduleRows = groups.append('g').attr('class', 'stack-modules').attr('transform', `translate(24,${compact ? 64 : 72})`);
     moduleRows.each(function(d, layerIndex) {
       const layerWidth = Math.max(120, maxW - layerIndex * stackInset * 2);
-      const modules = arr(d.modules).slice(0, compact ? 1 : 2);
+      const modules = arr(d.modules).slice(0, compact ? 1 : 2).map((item) => ({ label: stackItemText(item), tone: item?.tone ?? d.tone, kind: 'module' })).filter((item) => item.label);
       const output = arr(d.outputs)[0];
-      const pills = [...modules.map((label) => ({ label, tone: d.tone })), ...(output ? [{ label: `→ ${output}`, tone: 'neutral' }] : [])];
+      const outputLabel = stackItemText(output);
+      const pills = [...modules, ...(outputLabel ? [{ label: `→ ${outputLabel}`, tone: 'neutral', kind: 'output' }] : [])];
       let xCursor = 0;
       const row = d3.select(this);
       pills.forEach((pill) => {
         const text = labelText(pill.label, compact ? 14 : 20);
         const pillW = Math.min(compact ? 110 : 150, Math.max(60, text.length * 8 + 22));
         if (xCursor + pillW > layerWidth - 54) return;
+        const isOutput = pill.kind === 'output';
         const pillGroup = row.append('g').attr('transform', `translate(${xCursor},0)`);
         pillGroup.append('rect')
           .attr('width', pillW)
           .attr('height', compact ? 20 : 22)
           .attr('rx', compact ? 10 : 11)
-          .attr('fill', pill.label.startsWith('→') ? 'rgba(153,15,61,0.08)' : 'rgba(255,250,245,0.78)')
-          .attr('stroke', pill.label.startsWith('→') ? 'rgba(153,15,61,0.22)' : 'rgba(212,196,184,0.72)');
+          .attr('fill', isOutput ? 'rgba(153,15,61,0.08)' : 'rgba(255,250,245,0.78)')
+          .attr('stroke', isOutput ? 'rgba(153,15,61,0.22)' : 'rgba(212,196,184,0.72)');
         pillGroup.append('text')
           .attr('x', pillW / 2)
           .attr('y', compact ? 14 : 15)
           .attr('text-anchor', 'middle')
-          .attr('fill', pill.label.startsWith('→') ? palette.claret : palette.ink)
+          .attr('fill', isOutput ? palette.claret : palette.ink)
           .attr('font-size', pillSize)
           .attr('font-weight', fontWeight('strong'))
           .text(text);
@@ -1105,11 +1118,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       });
     });
     groups.each(function(d) {
-      const modules = arr(d.modules).join(', ');
-      const outputs = arr(d.outputs).join(', ');
+      const modules = stackListText(d.modules);
+      const outputs = stackListText(d.outputs);
       addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}${modules ? `; modules: ${modules}` : ''}${outputs ? `; outputs: ${outputs}` : ''}`);
     });
-    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail, arr(d.modules).length ? `Modules: ${arr(d.modules).join(', ')}` : '', arr(d.outputs).length ? `Outputs: ${arr(d.outputs).join(', ')}` : '']));
+    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail, stackListText(d.modules) ? `Modules: ${stackListText(d.modules)}` : '', stackListText(d.outputs) ? `Outputs: ${stackListText(d.outputs)}` : '']));
   };
 
   const renderPyramid = (element, payload) => {
