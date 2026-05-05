@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Chapter-scoped readiness check for one analysis artifact (01-08).
 // Always runs the pre-ledger checks (localEvidence quotas, claimRef
-// resolution); the post-ledger phase is handled by check-reports.mjs.
+// resolution); the post-ledger phase is handled by check-report.mjs.
 //
 // `--format json` emits structured failures keyed by dimension so the agent's
 // retry loop can target only the failing facets (researchQuestions, sources,

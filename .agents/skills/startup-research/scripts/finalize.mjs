@@ -72,6 +72,9 @@ if (localEvidenceFiles.length === 0 && hasExistingEvidence) {
 if (!skipIndex) {
   steps.push({ name: 'index', script: 'index.mjs', argv: ['--strict'] });
 }
+// Always run the per-report schema/renderer-contract validator last. A green
+// finalize means the report is publishable.
+steps.push({ name: 'check-report', script: 'check-report.mjs', argv: [reportFolder] });
 
 for (const step of steps) {
   console.log(`[finalize] -> ${step.name}`);
@@ -81,4 +84,4 @@ for (const step of steps) {
     process.exit(result.status ?? 1);
   }
 }
-console.log('[finalize] ✓ pipeline complete; run `npm run validate` to re-run schema checks.');
+console.log('[finalize] ✓ pipeline complete; report passed schema validation.');

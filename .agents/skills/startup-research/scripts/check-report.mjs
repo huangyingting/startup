@@ -1,8 +1,20 @@
 #!/usr/bin/env node
-// Schema and renderer-contract checks for report YAML.
-// Run before `astro build`. Chapter content readiness is checked by the startup-research skill scripts.
-import { existsSync, readdirSync, statSync } from 'node:fs';
-import { join, resolve, dirname } from 'node:path';
+// Schema and renderer-contract checks for a single report folder.
+// Usage:
+//   node .agents/skills/startup-research/scripts/check-report.mjs <report-folder>
+//
+// `<report-folder>` may be an absolute path, a path relative to the repo
+// root, or a bare run id (e.g. `20260505063138-cyberhaven`) which is
+// resolved against ./reports/. Exits 0 on success, non-zero on failures.
+//
+// Invoked automatically as the last step of finalize.mjs. Reports are
+// considered immutable post-finalize, so there is no batch re-validation
+// step in `npm run validate` — the website's `astro build` is what catches
+// any later renderer-breaking change. To re-check a single report by hand:
+//   node .agents/skills/startup-research/scripts/check-report.mjs <folder>
+// Chapter content readiness is checked by the other startup-research scripts.
+import { existsSync, statSync } from 'node:fs';
+import { basename, isAbsolute, join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   asDateString,
@@ -20,8 +32,8 @@ import {
   FIGURE_DATA_FIELDS,
   FIGURE_LAYOUTS,
   FIGURE_TYPES,
-} from '../src/lib/figures.mjs';
-const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../reports');
+} from './figures.mjs';
+const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../reports');
 const SCHEMA_VERSION = 'report-v2';
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts(WORKFLOW_CONFIG);
@@ -506,17 +518,6 @@ function checkRefs(run, reportDoc) {
 // per-run pipeline
 // ---------------------------------------------------------------------------
 
-function listRuns() {
-  return readdirSync(REPORTS_DIR).filter((name) => {
-    if (name.startsWith('.') || name.startsWith('_')) return false;
-    try {
-      return statSync(join(REPORTS_DIR, name)).isDirectory();
-    } catch {
-      return false;
-    }
-  });
-}
-
 function parseRunArtifacts(run, dir) {
   const parsed = new Map();
   for (const file of REQUIRED_ENGLISH_FILES.filter((name) => name.endsWith('.yaml'))) {
@@ -681,20 +682,42 @@ function checkRun(run) {
 // main
 // ---------------------------------------------------------------------------
 
-try {
-  if (!existsSync(REPORTS_DIR)) {
-    console.warn(`[check:reports] ${REPORTS_DIR} not found; nothing to check.`);
-    process.exit(0);
-  }
-  let checked = 0;
-  for (const run of listRuns()) if (checkRun(run)) checked += 1;
+function resolveReportDir(arg) {
+  // Bare run id like `20260505063138-cyberhaven` resolves under ./reports/.
+  if (!arg.includes('/') && !isAbsolute(arg)) return join(REPORTS_DIR, arg);
+  return resolve(arg);
+}
 
+try {
+  const folderArg = process.argv[2];
+  if (!folderArg) {
+    console.error('Usage: node .agents/skills/startup-research/scripts/check-report.mjs <report-folder>');
+    process.exit(2);
+  }
+  const dir = resolveReportDir(folderArg);
+  if (!existsSync(dir) || !statSync(dir).isDirectory()) {
+    console.error(`[check:report] not a directory: ${dir}`);
+    process.exit(2);
+  }
+  const run = basename(dir);
+  // checkRun() resolves the folder via REPORTS_DIR; reject anything outside
+  // it instead of silently misbehaving.
+  if (resolve(REPORTS_DIR, run) !== dir) {
+    console.error(`[check:report] folder must live under ${REPORTS_DIR}; got ${dir}`);
+    process.exit(2);
+  }
+
+  const checked = checkRun(run);
   if (failures.length) {
-    console.error('[check:reports] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
+    console.error('[check:report] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
     process.exit(1);
   }
-  console.log(`[check:reports] ✓ ${checked} v2 report(s) verified.`);
+  if (!checked) {
+    console.error(`[check:report] ${run}: not a finalized v2 report (no ${SUMMARY_CARD_FILE}).`);
+    process.exit(1);
+  }
+  console.log(`[check:report] ✓ ${run} verified.`);
 } catch (err) {
-  console.error(`[check:reports] fatal error: ${err.message}`);
+  console.error(`[check:report] fatal error: ${err.message}`);
   process.exit(1);
 }

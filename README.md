@@ -89,7 +89,6 @@ From the repository root:
 ```bash
 npm run check:workflow-config
 npm run check:report-index
-npm run check:reports
 npm run validate
 ```
 

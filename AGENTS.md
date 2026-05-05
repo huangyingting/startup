@@ -19,7 +19,6 @@ This repository generates startup diligence reports as structured YAML and rende
 ## Testing instructions
 
 - Before finishing code, schema, report, loader, renderer, or script changes, run `npm run validate` unless the user asked for a narrower edit.
-- For website/report rendering checks only, run `npm run check:reports`.
 - For workflow config/index checks only, run `npm run check:workflow-config` and `npm run check:report-index`.
 
 ## Working conventions
