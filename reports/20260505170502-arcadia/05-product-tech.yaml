@@ -7,73 +7,112 @@ company:
 chapter:
   number: 5
   title: Product & Technology
-  summary: Arcadia now sells an enterprise energy-management stack that combines utility data acquisition, tariff analytics, procurement and sustainability workflows. Public evidence supports broad data coverage, active 2026 release activity, and a meaningful developer surface, but roadmap depth and Arcadia-specific trust disclosures remain limited in the cache.
+  summary: >-
+    Arcadia now sells an enterprise energy-management stack that combines utility data acquisition, tariff analytics,
+    procurement and sustainability workflows. Public evidence supports broad data coverage, active 2026 release
+    activity, and a meaningful developer surface, but roadmap depth and Arcadia-specific trust disclosures remain
+    limited in the cache.
 sections:
   - id: product-scope
     title: Product scope and module map
     body: >-
-      Arcadia's current positioning is an enterprise energy intelligence platform rather than a single-purpose utility-data API. The 2026 solutions and enterprise overview pages describe three enterprise solutions — Utility Bill Management, Energy Procurement Advisory, and Sustainability Reporting — layered on top of a platform that includes Utility Bill & Interval Data, Tariff & Energy Rate Calculator, and Solar & Storage Analysis. The company history page ties those modules to acquisitions: Genability became the tariff and modeling layer, Urjanet became utility-data automation, and ENGIE Impact added utility bill management, procurement, and sustainability advising. Public use-case pages show the same stack being routed into multiple customer workflows, especially enterprise energy management and EV charging. In practice, Arcadia is pitching a unified operating system for utility bills, interval data, tariffs, optimization, and reporting rather than a narrow API point solution. The
-      public module map also suggests Arcadia is trying to own the operational loop from raw utility data to action. Instead of selling only a data feed, it layers advisory, reporting, and optimization services on top of the same normalized records. That integration story matters because many adjacent vendors still separate bill management, tariff analysis, procurement, and sustainability reporting into different tools and teams.
+      Arcadia's current positioning is an enterprise energy intelligence platform rather than a single-purpose
+      utility-data API. The 2026 solutions and enterprise overview pages describe three enterprise solutions — Utility
+      Bill Management, Energy Procurement Advisory, and Sustainability Reporting — layered on top of a platform that
+      includes Utility Bill & Interval Data, Tariff & Energy Rate Calculator, and Solar & Storage Analysis. The company
+      history page ties those modules to acquisitions: Genability became the tariff and modeling layer, Urjanet became
+      utility-data automation, and ENGIE Impact added utility bill management, procurement, and sustainability advising.
+      Public use-case pages show the same stack being routed into multiple customer workflows, especially enterprise
+      energy management and EV charging. In practice, Arcadia is pitching a unified operating system for utility bills,
+      interval data, tariffs, optimization, and reporting rather than a narrow API point solution. The public module map
+      also suggests Arcadia is trying to own the operational loop from raw utility data to action. Instead of selling
+      only a data feed, it layers advisory, reporting, and optimization services on top of the same normalized records.
+      That integration story matters because many adjacent vendors still separate bill management, tariff analysis,
+      procurement, and sustainability reporting into different tools and teams.
     claimRefs:
-      - C001
-      - C002
-      - C003
-      - C019
-      - C020
-      - C021
-      - C022
-      - C023
-      - C024
+      - C170
+      - C171
+      - C172
+      - C188
+      - C189
+      - C190
+      - C191
+      - C192
+      - C193
   - id: operating-model
     title: Operating model, data infrastructure, and release cadence
     body: >-
-      The operating model is built around data collection, normalization, and downstream delivery. Public pages say the Arcadia Data Model aggregates and standardizes energy data from thousands of sources, supports 50+ countries, updates more than 30,000 tariffs, and captures interval data covering more than 75% of US AMI meters. Plug is the front door for account, bill, and interval ingestion, while DataHub provides enterprise bulk delivery through zipped CSV files to SFTP servers or a Snowflake Direct Share. The API documentation describes Connect-based credential onboarding, tokenized authentication, and explicit activation of statement and interval products. The changelog shows active 2026 maintenance with monthly provider additions, extraction fixes, automated guest access, token storage for selected utilities, and credential-status improvements. The product therefore looks operationally mature on ingestion and data-processing mechanics, with a documented workflow from credential
-      capture to statements, meters, intervals, and bulk exports. The strongest publicly supported differentiation is therefore not a single algorithm or dashboard, but the way Arcadia chains several stages together: credential collection, provider connectivity, record normalization, tariff logic, and delivery into downstream systems. The review cache repeatedly shows the same pattern across docs and marketing pages, which makes the operating model more concrete than a generic AI-software narrative.
+      The operating model is built around data collection, normalization, and downstream delivery. Public pages say the
+      Arcadia Data Model aggregates and standardizes energy data from thousands of sources, supports 50+ countries,
+      updates more than 30,000 tariffs, and captures interval data covering more than 75% of US AMI meters. Plug is the
+      front door for account, bill, and interval ingestion, while DataHub provides enterprise bulk delivery through
+      zipped CSV files to SFTP servers or a Snowflake Direct Share. The API documentation describes Connect-based
+      credential onboarding, tokenized authentication, and explicit activation of statement and interval products. The
+      changelog shows active 2026 maintenance with monthly provider additions, extraction fixes, automated guest access,
+      token storage for selected utilities, and credential-status improvements. The product therefore looks
+      operationally mature on ingestion and data-processing mechanics, with a documented workflow from credential
+      capture to statements, meters, intervals, and bulk exports. The strongest publicly supported differentiation is
+      therefore not a single algorithm or dashboard, but the way Arcadia chains several stages together: credential
+      collection, provider connectivity, record normalization, tariff logic, and delivery into downstream systems. The
+      review cache repeatedly shows the same pattern across docs and marketing pages, which makes the operating model
+      more concrete than a generic AI-software narrative.
     claimRefs:
-      - C007
-      - C008
-      - C009
-      - C010
-      - C015
-      - C016
-      - C017
-      - C018
-      - C025
-      - C026
-      - C027
-      - C028
-      - C029
-      - C030
-      - C031
-      - C032
-      - C033
-      - C034
-      - C035
+      - C176
+      - C177
+      - C178
+      - C179
+      - C184
+      - C185
+      - C186
+      - C187
+      - C194
+      - C195
+      - C196
+      - C197
+      - C198
+      - C199
+      - C200
+      - C201
+      - C202
+      - C203
+      - C204
   - id: trust-risk
     title: Trust controls, developer surface, and technical gaps
     body: >-
-      Arcadia publishes concrete security controls around transport, credential handling, and payment segregation. The security page states that application traffic is forced over HTTPS with TLS 1.2, passwords are hashed and salted, utility credentials are encrypted with AWS KMS, and payment details are handled by Stripe and Plaid rather than stored on Arcadia infrastructure. Developer-facing evidence is also real: the public OpenAPI spec exposes access-token and Connect-token flows, the npm package documents a maintained React wrapper for Connect, and the docs package create-vs-update credential flows for embedded onboarding. Still, the cache shows several disclosure limits. The public trust-center text is extremely sparse, Nudge Security provides third-party badges for SSO and compliance but does not replace first-party attestations, and the reviewed sources do not expose a detailed public incident archive, SLA set, or a deeply articulated forward roadmap beyond launch pages and
-      changelog snippets. That leaves diligence work around trust verification and roadmap precision still open. For diligence, the practical takeaway is that Arcadia appears implementation-ready for data-heavy workflows, but less transparent on governance detail than large enterprise buyers may want. A buyer can see that developer onboarding exists and that security basics are documented, yet still cannot fully validate service history, audit scope, or how newly acquired modules are converging operationally without management materials.
+      Arcadia publishes concrete security controls around transport, credential handling, and payment segregation. The
+      security page states that application traffic is forced over HTTPS with TLS 1.2, passwords are hashed and salted,
+      utility credentials are encrypted with AWS KMS, and payment details are handled by Stripe and Plaid rather than
+      stored on Arcadia infrastructure. Developer-facing evidence is also real: the public OpenAPI spec exposes
+      access-token and Connect-token flows, the npm package documents a maintained React wrapper for Connect, and the
+      docs package create-vs-update credential flows for embedded onboarding. Still, the cache shows several disclosure
+      limits. The public trust-center text is extremely sparse, Nudge Security provides third-party badges for SSO and
+      compliance but does not replace first-party attestations, and the reviewed sources do not expose a detailed public
+      incident archive, SLA set, or a deeply articulated forward roadmap beyond launch pages and changelog snippets.
+      That leaves diligence work around trust verification and roadmap precision still open. For diligence, the
+      practical takeaway is that Arcadia appears implementation-ready for data-heavy workflows, but less transparent on
+      governance detail than large enterprise buyers may want. A buyer can see that developer onboarding exists and that
+      security basics are documented, yet still cannot fully validate service history, audit scope, or how newly
+      acquired modules are converging operationally without management materials.
     claimRefs:
-      - C036
-      - C037
-      - C038
-      - C039
-      - C040
-      - C041
-      - C042
-      - C043
-      - C044
-      - C045
-      - C046
-      - C047
-      - C048
-      - C049
-      - C050
-      - C051
-      - C052
+      - C205
+      - C206
+      - C207
+      - C208
+      - C209
+      - C210
+      - C211
+      - C212
+      - C213
+      - C214
+      - C215
+      - C216
+      - C217
+      - C218
+      - C219
+      - C220
+      - C221
 tables:
-  - id: T001
+  - id: T501
     title: Product module / asset matrix
     columns:
       - Module
@@ -117,19 +156,21 @@ tables:
         - Newer bulk-delivery layer documented in developer hub
         - SFTP CSV and Snowflake Direct Share options on top of Plug data
         - Public schema breadth is narrower than a full implementation guide would provide
-    notes: The public product map is clear at the module level, but pricing, attach rates, and module-level adoption remain undisclosed.
+    notes: >-
+      The public product map is clear at the module level, but pricing, attach rates, and module-level adoption remain
+      undisclosed.
     claimRefs:
-      - C002
-      - C003
-      - C004
-      - C005
-      - C006
-      - C022
-      - C023
-      - C025
-      - C026
-      - C027
-  - id: T002
+      - C171
+      - C172
+      - C173
+      - C174
+      - C175
+      - C191
+      - C192
+      - C194
+      - C195
+      - C196
+  - id: T502
     title: Workflow / use-case table
     columns:
       - User job
@@ -163,24 +204,26 @@ tables:
         - Connect UI, tokens, and React wrapper accelerate credential sync
         - Docs and npm package expose create/update flows and callbacks
         - Public package warns the API remains under active development
-    notes: Benefits are public claims or documented examples; they should not be treated as realized portfolio-wide outcomes without customer-level validation.
+    notes: >-
+      Benefits are public claims or documented examples; they should not be treated as realized portfolio-wide outcomes
+      without customer-level validation.
     claimRefs:
-      - C011
-      - C012
-      - C013
-      - C014
-      - C019
-      - C020
-      - C021
-      - C025
-      - C028
-      - C029
-      - C043
-      - C044
-      - C046
-      - C048
-      - C049
-  - id: T003
+      - C180
+      - C181
+      - C182
+      - C183
+      - C188
+      - C189
+      - C190
+      - C194
+      - C197
+      - C198
+      - C212
+      - C213
+      - C215
+      - C217
+      - C218
+  - id: T503
     title: Technology / operating architecture table
     columns:
       - Layer / component
@@ -212,25 +255,27 @@ tables:
         - Protects accounts, credentials, and payment flows
         - AWS, Stripe, Plaid, and internal key-management controls
         - Arcadia-specific attestations remain thinner than the underlying cloud and payment attestations
-    notes: The operating stack is reconstructible from official docs and product pages, but some internals remain marketing-level descriptions rather than engineering detail.
+    notes: >-
+      The operating stack is reconstructible from official docs and product pages, but some internals remain
+      marketing-level descriptions rather than engineering detail.
     claimRefs:
-      - C007
-      - C008
-      - C009
-      - C010
-      - C015
-      - C016
-      - C025
-      - C026
-      - C027
-      - C028
-      - C029
-      - C036
-      - C037
-      - C038
-      - C039
-      - C040
-  - id: T004
+      - C176
+      - C177
+      - C178
+      - C179
+      - C184
+      - C185
+      - C194
+      - C195
+      - C196
+      - C197
+      - C198
+      - C205
+      - C206
+      - C207
+      - C208
+      - C209
+  - id: T504
     title: Trust / quality / compliance table
     columns:
       - Control or signal
@@ -266,18 +311,20 @@ tables:
         - Sparse
         - Public trust portal
         - Cached trust-center body exposes almost no operational detail or incident history
-    notes: Trust evidence is enough to establish a serious control posture, but not enough to fully validate compliance scope without direct diligence.
+    notes: >-
+      Trust evidence is enough to establish a serious control posture, but not enough to fully validate compliance scope
+      without direct diligence.
     claimRefs:
-      - C036
-      - C037
-      - C038
-      - C039
-      - C040
-      - C041
-      - C042
-      - C050
-      - C051
-  - id: T005
+      - C205
+      - C206
+      - C207
+      - C208
+      - C209
+      - C210
+      - C211
+      - C219
+      - C220
+  - id: T505
     title: Roadmap / release / development-stage table
     columns:
       - Date / stage
@@ -311,21 +358,25 @@ tables:
         - Acquisition announced
         - Adds bill management, procurement, and sustainability advisory capacity
         - Arcadia press / blog
-    notes: Public roadmap evidence is mostly launch, acquisition, and changelog oriented; feature-commitment dates beyond that are limited.
+    notes: >-
+      Public roadmap evidence is mostly launch, acquisition, and changelog oriented; feature-commitment dates beyond
+      that are limited.
     claimRefs:
-      - C022
-      - C023
-      - C024
-      - C033
-      - C034
-      - C035
-      - C047
+      - C191
+      - C192
+      - C193
+      - C202
+      - C203
+      - C204
+      - C216
 figures:
-  - id: F001
+  - id: F501
     title: Product architecture map
     type: stack
     layout: wide
-    summary: Arcadia presents a layered stack from end-user workflows through normalized data, tariff logic, and enterprise governance.
+    summary: >-
+      Arcadia presents a layered stack from end-user workflows through normalized data, tariff logic, and enterprise
+      governance.
     data:
       layers:
         - label: Enterprise workflows
@@ -374,18 +425,20 @@ figures:
             - Governance
     approximationNotes: null
     claimRefs:
-      - C002
-      - C003
-      - C007
-      - C015
-      - C025
-      - C036
-      - C039
-  - id: F002
+      - C171
+      - C172
+      - C176
+      - C184
+      - C194
+      - C205
+      - C208
+  - id: F502
     title: Customer workflow / operating flow
     type: flow
     layout: wide
-    summary: Public docs describe a concrete sequence from credential capture to normalized data, cost modeling, and enterprise action.
+    summary: >-
+      Public docs describe a concrete sequence from credential capture to normalized data, cost modeling, and enterprise
+      action.
     data:
       nodes:
         - id: capture
@@ -430,17 +483,19 @@ figures:
           label: workflow decisions
     approximationNotes: null
     claimRefs:
-      - C025
-      - C026
-      - C027
-      - C028
-      - C029
-      - C030
-  - id: F003
+      - C194
+      - C195
+      - C196
+      - C197
+      - C198
+      - C199
+  - id: F503
     title: Critical dependency map
     type: dag
     layout: wide
-    summary: Arcadia depends on utility-provider access, normalization quality, tariff fidelity, partner infrastructure, and trust controls to deliver enterprise outcomes.
+    summary: >-
+      Arcadia depends on utility-provider access, normalization quality, tariff fidelity, partner infrastructure, and
+      trust controls to deliver enterprise outcomes.
     data:
       nodes:
         - id: providers
@@ -482,19 +537,21 @@ figures:
           to: trust
     approximationNotes: null
     claimRefs:
-      - C008
-      - C015
-      - C025
-      - C036
-      - C038
-      - C048
-      - C049
-      - C051
-  - id: F004
+      - C177
+      - C184
+      - C194
+      - C205
+      - C207
+      - C217
+      - C218
+      - C220
+  - id: F504
     title: Product maturity / capability map
     type: matrix
     layout: wide
-    summary: Public evidence is strongest around data acquisition and tariff modeling, moderate around enterprise orchestration, and thinner around trust disclosure detail.
+    summary: >-
+      Public evidence is strongest around data acquisition and tariff modeling, moderate around enterprise
+      orchestration, and thinner around trust disclosure detail.
     data:
       columns:
         - Workflow fit
@@ -560,37 +617,44 @@ figures:
               detail: Attestation depth is limited
     approximationNotes: null
     claimRefs:
-      - C025
-      - C033
-      - C036
-      - C040
-      - C050
-      - C052
+      - C194
+      - C202
+      - C205
+      - C209
+      - C219
+      - C221
 callouts:
   - calloutType: strength
     title: Data-ingestion maturity is the clearest product strength
-    body: 'Across the product pages, docs, API reference, and changelog, the best-supported part of the story is ingestion and normalization: Connect onboarding, Plug statements and intervals, DataHub bulk delivery, and recurring provider maintenance all appear concrete and current.'
+    body: >-
+      Across the product pages, docs, API reference, and changelog, the best-supported part of the story is ingestion
+      and normalization: Connect onboarding, Plug statements and intervals, DataHub bulk delivery, and recurring
+      provider maintenance all appear concrete and current.
     claimRefs:
-      - C015
-      - C025
-      - C028
-      - C030
-      - C033
-      - C034
-      - C035
+      - C184
+      - C194
+      - C197
+      - C199
+      - C202
+      - C203
+      - C204
   - calloutType: risk
     title: Trust and roadmap disclosures are thinner than the product breadth
-    body: The public cache shows enough controls to take Arcadia seriously, but not enough first-party detail to validate incident history, attestations, or roadmap commitments without direct diligence and customer references.
+    body: >-
+      The public cache shows enough controls to take Arcadia seriously, but not enough first-party detail to validate
+      incident history, attestations, or roadmap commitments without direct diligence and customer references.
     claimRefs:
-      - C040
-      - C041
-      - C042
-      - C050
-      - C051
-      - C052
+      - C209
+      - C210
+      - C211
+      - C219
+      - C220
+      - C221
 localEvidence:
   searchQueries:
-    - query: rg "AI-powered energy management|Enterprise energy intelligence|Utility Bill & Interval Data|Data Model" .research-cache/20260505170502-arcadia/www.arcadia.com_*.txt
+    - query: >-
+        rg "AI-powered energy management|Enterprise energy intelligence|Utility Bill & Interval Data|Data Model"
+        .research-cache/20260505170502-arcadia/www.arcadia.com_*.txt
       engine: rg
       hits: 11
       retainedSourceRefs:
@@ -600,7 +664,10 @@ localEvidence:
         - S004
         - S005
         - S006
-    - query: rg "DataHub|Connect|Access Token|Statements|Meters|Snowflake|SFTP" .research-cache/20260505170502-arcadia/docs.arcadia.com_*.txt .research-cache/20260505170502-arcadia/api.arcadia.com_openapi.yaml.txt
+    - query: >-
+        rg "DataHub|Connect|Access Token|Statements|Meters|Snowflake|SFTP"
+        .research-cache/20260505170502-arcadia/docs.arcadia.com_*.txt
+        .research-cache/20260505170502-arcadia/api.arcadia.com_openapi.yaml.txt
       engine: rg
       hits: 20
       retainedSourceRefs:
@@ -608,20 +675,29 @@ localEvidence:
         - S014
         - S015
         - S016
-    - query: rg "security|TLS|AWS KMS|Stripe|Plaid|SOC 2|SSO|TOTP|Trust Center" .research-cache/20260505170502-arcadia/*arcadia*.txt .research-cache/20260505170502-arcadia/security-profiles.nudgesecurity.com_app_arcadia-com.txt
+    - query: >-
+        rg "security|TLS|AWS KMS|Stripe|Plaid|SOC 2|SSO|TOTP|Trust Center"
+        .research-cache/20260505170502-arcadia/*arcadia*.txt
+        .research-cache/20260505170502-arcadia/security-profiles.nudgesecurity.com_app_arcadia-com.txt
       engine: rg
       hits: 16
       retainedSourceRefs:
         - S012
         - S017
         - S018
-    - query: rg "connect-react|Connect Token|update mode|create mode|callbacks" .research-cache/20260505170502-arcadia/github.com_arcadiapower_connect-react.txt .research-cache/20260505170502-arcadia/www.npmjs.com_package__arcadia-eng_connect-react.txt
+    - query: >-
+        rg "connect-react|Connect Token|update mode|create mode|callbacks"
+        .research-cache/20260505170502-arcadia/github.com_arcadiapower_connect-react.txt
+        .research-cache/20260505170502-arcadia/www.npmjs.com_package__arcadia-eng_connect-react.txt
       engine: rg
       hits: 12
       retainedSourceRefs:
         - S019
         - S020
-    - query: rg "Arcadia|energy management|three million utility accounts|5,000 utilities|AI" .research-cache/20260505170502-arcadia/www.cority.com_news-media_automate-utility-data-for-esg-compliance-with-arcadia_.txt .research-cache/20260505170502-arcadia/www.latitudemedia.com_news_as-grid-constraints-mount-arcadia-launches-an-easy-mode-for-corporate-energy_.txt
+    - query: >-
+        rg "Arcadia|energy management|three million utility accounts|5,000 utilities|AI"
+        .research-cache/20260505170502-arcadia/www.cority.com_news-media_automate-utility-data-for-esg-compliance-with-arcadia_.txt
+        .research-cache/20260505170502-arcadia/www.latitudemedia.com_news_as-grid-constraints-mount-arcadia-launches-an-easy-mode-for-corporate-energy_.txt
       engine: rg
       hits: 14
       retainedSourceRefs:
@@ -707,7 +783,9 @@ localEvidence:
         - contentRequirements/5
       status: answered
     - id: RQ014
-      question: As of 2026, which trust claims rely on underlying infrastructure attestations instead of Arcadia-specific attestations?
+      question: >-
+        As of 2026, which trust claims rely on underlying infrastructure attestations instead of Arcadia-specific
+        attestations?
       type: adverse
       targets:
         - contentRequirements/5
@@ -725,7 +803,9 @@ localEvidence:
         - contentRequirements/5
       status: answered
     - id: RQ017
-      question: What 2026 public developer artifacts demonstrate an externally consumable Connect integration surface for Arcadia?
+      question: >-
+        What 2026 public developer artifacts demonstrate an externally consumable Connect integration surface for
+        Arcadia?
       type: verification
       targets:
         - contentRequirements/3
@@ -749,7 +829,9 @@ localEvidence:
         - contentRequirements/0
       status: answered
     - id: RQ021
-      question: As of 2026, what public evidence confirms a detailed Arcadia status page or incident archive for enterprise customers?
+      question: >-
+        As of 2026, what public evidence confirms a detailed Arcadia status page or incident archive for enterprise
+        customers?
       type: adverse
       targets:
         - contentRequirements/5
@@ -767,7 +849,9 @@ localEvidence:
         - contentRequirements/0
       status: answered
     - id: RQ024
-      question: How does Arcadia describe AI usage in data cleaning, normalization, or bill-processing workflows as of 2025-2026?
+      question: >-
+        How does Arcadia describe AI usage in data cleaning, normalization, or bill-processing workflows as of
+        2025-2026?
       type: mechanism
       targets:
         - contentRequirements/2
@@ -838,7 +922,9 @@ localEvidence:
       topics:
         - plug
         - utility data
-      keyQuote: Arcadia provides access to thousands of data providers across electricity, water, and waste in over 50 countries.
+      keyQuote: >-
+        Arcadia provides access to thousands of data providers across electricity, water, and waste in over 50
+        countries.
     - id: S005
       publisher: Arcadia
       title: Automated data for energy management
@@ -868,7 +954,9 @@ localEvidence:
       topics:
         - use case
         - ev charging
-      keyQuote: Arcadia enables automakers and charging companies to deliver connected charging solutions informed by nationwide utility and tariff data.
+      keyQuote: >-
+        Arcadia enables automakers and charging companies to deliver connected charging solutions informed by nationwide
+        utility and tariff data.
     - id: S007
       publisher: Arcadia
       title: Our story
@@ -883,7 +971,9 @@ localEvidence:
       topics:
         - company
         - product platform
-      keyQuote: We replace fragmented tools and manual workflows with one platform to pay utility bills, buy energy, and advance sustainability.
+      keyQuote: >-
+        We replace fragmented tools and manual workflows with one platform to pay utility bills, buy energy, and advance
+        sustainability.
     - id: S008
       publisher: Arcadia
       title: Company History & Acquisitions
@@ -973,7 +1063,9 @@ localEvidence:
       topics:
         - datahub
         - bulk delivery
-      keyQuote: DataHub provides access to your utility data through zipped CSV files delivered to your SFTP server or access to a Snowflake Direct Share.
+      keyQuote: >-
+        DataHub provides access to your utility data through zipped CSV files delivered to your SFTP server or access to
+        a Snowflake Direct Share.
     - id: S014
       publisher: Arcadia Docs
       title: API Quick Start
@@ -1154,6 +1246,118 @@ localEvidence:
         - utility data benchmark
         - adjacent platform
       keyQuote: UtilityAPI builds the infrastructure to enable applications, agents, and solutions for the utility industry.
+    - publisher: Arcadia
+      title: Navigating MFA for utility data access | Arcadia
+      url: https://www.arcadia.com/blog/navigating-mfa
+      date: null
+      accessStatus: ok
+      stance: confirming
+      sourceType: technical-docs
+      reputationTier: medium
+      independence: company
+      topics:
+        - mfa
+        - utility data access
+        - authentication
+      keyQuote: null
+      id: S026
+      accessDate: '2026-05-05'
+    - publisher: Arcadia
+      title: One year of Plug Intervals | Arcadia
+      url: https://www.arcadia.com/blog/1-year-plug-intervals
+      date: null
+      accessStatus: ok
+      stance: confirming
+      sourceType: technical-docs
+      reputationTier: medium
+      independence: company
+      topics:
+        - interval data
+        - product maturity
+        - coverage
+      keyQuote: null
+      id: S027
+      accessDate: '2026-05-05'
+    - publisher: Arcadia
+      title: Utility interval coverage expansion | Arcadia
+      url: https://www.arcadia.com/blog/intervals-utility-coverage-expansion
+      date: null
+      accessStatus: ok
+      stance: confirming
+      sourceType: technical-docs
+      reputationTier: medium
+      independence: company
+      topics:
+        - provider coverage
+        - interval data
+        - platform
+      keyQuote: null
+      id: S028
+      accessDate: '2026-05-05'
+    - publisher: Arcadia
+      title: What is calendarization? | Arcadia
+      url: https://www.arcadia.com/blog/what-is-calendarization
+      date: null
+      accessStatus: ok
+      stance: confirming
+      sourceType: technical-docs
+      reputationTier: medium
+      independence: company
+      topics:
+        - calendarization
+        - data model
+        - reporting
+      keyQuote: null
+      id: S029
+      accessDate: '2026-05-05'
+    - publisher: Arcadia
+      title: Changing electricity tariffs | Arcadia
+      url: https://www.arcadia.com/blog/changing-electricity-tariffs
+      date: null
+      accessStatus: ok
+      stance: confirming
+      sourceType: technical-docs
+      reputationTier: medium
+      independence: company
+      topics:
+        - tariffs
+        - rate modeling
+        - product
+      keyQuote: null
+      id: S030
+      accessDate: '2026-05-05'
+    - publisher: Arcadia
+      title: Tariff & Energy Rate Calculator | Arcadia
+      url: https://www.arcadia.com/platform/tariff-energy-rate-calculator
+      date: null
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: company
+      topics:
+        - tariff calculator
+        - signal
+        - rate intelligence
+      keyQuote: null
+      id: S031
+      accessDate: '2026-05-05'
+    - publisher: Arcadia
+      title: Solar & Storage Analysis | Arcadia
+      url: https://www.arcadia.com/platform/solar-storage-analysis
+      date: null
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: company
+      topics:
+        - switch
+        - solar storage
+        - analysis
+      keyQuote: null
+      id: S032
+      accessDate: '2026-05-05'
   claims:
     - id: C001
       statement: Arcadia positions itself as an energy intelligence platform for businesses.
@@ -1168,7 +1372,9 @@ localEvidence:
         - RQ001
         - RQ020
     - id: C002
-      statement: Arcadia's enterprise solutions are Utility Bill Management, Energy Procurement Advisory, and Sustainability Reporting.
+      statement: >-
+        Arcadia's enterprise solutions are Utility Bill Management, Energy Procurement Advisory, and Sustainability
+        Reporting.
       type: observed
       topic: solutions
       sourceRefs:
@@ -1181,7 +1387,9 @@ localEvidence:
         - RQ002
         - RQ023
     - id: C003
-      statement: Arcadia publicly markets Utility Bill & Interval Data, Tariff & Energy Rate Calculator, and Solar & Storage Analysis as core platform products.
+      statement: >-
+        Arcadia publicly markets Utility Bill & Interval Data, Tariff & Energy Rate Calculator, and Solar & Storage
+        Analysis as core platform products.
       type: observed
       topic: platform products
       sourceRefs:
@@ -1312,7 +1520,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ004
     - id: C015
-      statement: Plug is described as giving access to thousands of data providers across electricity, water, and waste in over 50 countries.
+      statement: >-
+        Plug is described as giving access to thousands of data providers across electricity, water, and waste in over
+        50 countries.
       type: company-claimed
       topic: plug coverage
       sourceRefs:
@@ -1369,7 +1579,9 @@ localEvidence:
         - RQ011
         - RQ023
     - id: C020
-      statement: The energy-management use-case page recommends Utility Bill & Interval Data, Tariff & Energy Rate Calculator, and Solar & Storage Analysis together.
+      statement: >-
+        The energy-management use-case page recommends Utility Bill & Interval Data, Tariff & Energy Rate Calculator,
+        and Solar & Storage Analysis together.
       type: observed
       topic: use case composition
       sourceRefs:
@@ -1379,7 +1591,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ010
     - id: C021
-      statement: The EV-charging use-case page emphasizes tariff data, whole-home context, and schedule optimization for charging decisions.
+      statement: >-
+        The EV-charging use-case page emphasizes tariff data, whole-home context, and schedule optimization for charging
+        decisions.
       type: observed
       topic: ev workflow
       sourceRefs:
@@ -1389,7 +1603,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ011
     - id: C022
-      statement: Arcadia says it was founded in 2014 and later acquired Genability in 2021, Urjanet in 2022, and ENGIE Impact in 2026.
+      statement: >-
+        Arcadia says it was founded in 2014 and later acquired Genability in 2021, Urjanet in 2022, and ENGIE Impact in
+        2026.
       type: observed
       topic: history
       sourceRefs:
@@ -1409,7 +1625,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ009
     - id: C024
-      statement: Arcadia says the older Arc and Arc Platform names are discontinued and the correct platform name is Arcadia or Arcadia Platform.
+      statement: >-
+        Arcadia says the older Arc and Arc Platform names are discontinued and the correct platform name is Arcadia or
+        Arcadia Platform.
       type: observed
       topic: branding
       sourceRefs:
@@ -1420,7 +1638,9 @@ localEvidence:
         - RQ009
         - RQ019
     - id: C025
-      statement: DataHub is documented as a bulk utility-data product that delivers zipped CSV files to SFTP or exposes data through Snowflake Direct Share.
+      statement: >-
+        DataHub is documented as a bulk utility-data product that delivers zipped CSV files to SFTP or exposes data
+        through Snowflake Direct Share.
       type: observed
       topic: datahub delivery
       sourceRefs:
@@ -1442,7 +1662,9 @@ localEvidence:
         - RQ006
         - RQ023
     - id: C027
-      statement: DataHub's Meter Level Summary table is designed to solve duplicate statement scenarios and standardize units across electric, water, and natural gas service types.
+      statement: >-
+        DataHub's Meter Level Summary table is designed to solve duplicate statement scenarios and standardize units
+        across electric, water, and natural gas service types.
       type: observed
       topic: datahub tables
       sourceRefs:
@@ -1452,7 +1674,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ006
     - id: C028
-      statement: Arcadia's quick-start guide says customers can create credentials either through Connect or directly through the API.
+      statement: >-
+        Arcadia's quick-start guide says customers can create credentials either through Connect or directly through the
+        API.
       type: observed
       topic: onboarding
       sourceRefs:
@@ -1463,7 +1687,9 @@ localEvidence:
         - RQ003
         - RQ007
     - id: C029
-      statement: The API quick-start guide describes Connect as Arcadia's off-the-shelf user interface for provider selection and credential submission.
+      statement: >-
+        The API quick-start guide describes Connect as Arcadia's off-the-shelf user interface for provider selection and
+        credential submission.
       type: observed
       topic: connect flow
       sourceRefs:
@@ -1516,7 +1742,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ008
     - id: C034
-      statement: Arcadia's March 2026 changelog added token storage for PSEG Long Island to reuse session cookies and avoid repeated MFA.
+      statement: >-
+        Arcadia's March 2026 changelog added token storage for PSEG Long Island to reuse session cookies and avoid
+        repeated MFA.
       type: observed
       topic: release cadence
       sourceRefs:
@@ -1536,7 +1764,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ008
     - id: C036
-      statement: Arcadia's security page says all application traffic forces HTTPS and uses TLS 1.2, with rate limits in the authentication system.
+      statement: >-
+        Arcadia's security page says all application traffic forces HTTPS and uses TLS 1.2, with rate limits in the
+        authentication system.
       type: observed
       topic: security controls
       sourceRefs:
@@ -1556,7 +1786,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ012
     - id: C038
-      statement: Arcadia's security page says utility account information is encrypted with AWS KMS in transit and at rest and that decryptions are logged.
+      statement: >-
+        Arcadia's security page says utility account information is encrypted with AWS KMS in transit and at rest and
+        that decryptions are logged.
       type: observed
       topic: security controls
       sourceRefs:
@@ -1566,7 +1798,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ013
     - id: C039
-      statement: Arcadia's security page says Stripe and Plaid handle payment information and that Arcadia does not store banking or credit-card data on its own infrastructure.
+      statement: >-
+        Arcadia's security page says Stripe and Plaid handle payment information and that Arcadia does not store banking
+        or credit-card data on its own infrastructure.
       type: observed
       topic: security controls
       sourceRefs:
@@ -1576,7 +1810,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ013
     - id: C040
-      statement: Arcadia's public security page lists AWS infrastructure accreditations including ISO 27001, SOC 1, SOC 2, PCI Level 1, FISMA Moderate, and SOX.
+      statement: >-
+        Arcadia's public security page lists AWS infrastructure accreditations including ISO 27001, SOC 1, SOC 2, PCI
+        Level 1, FISMA Moderate, and SOX.
       type: observed
       topic: trust posture
       sourceRefs:
@@ -1586,7 +1822,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ014
     - id: C041
-      statement: Nudge Security's Arcadia profile lists SSO support and multiple MFA methods including SMS, email, software, TOTP, and U2F.
+      statement: >-
+        Nudge Security's Arcadia profile lists SSO support and multiple MFA methods including SMS, email, software,
+        TOTP, and U2F.
       type: third-party-reported
       topic: identity controls
       sourceRefs:
@@ -1606,7 +1844,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ016
     - id: C043
-      statement: The public npm package @arcadia-eng/connect-react describes itself as a React wrapper around Arcadia's Connect product.
+      statement: >-
+        The public npm package @arcadia-eng/connect-react describes itself as a React wrapper around Arcadia's Connect
+        product.
       type: observed
       topic: developer tooling
       sourceRefs:
@@ -1616,7 +1856,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ017
     - id: C044
-      statement: The npm package says create mode includes consent, utility selection, and credential entry, while update mode bypasses entry content and opens directly on credential submission.
+      statement: >-
+        The npm package says create mode includes consent, utility selection, and credential entry, while update mode
+        bypasses entry content and opens directly on credential submission.
       type: observed
       topic: developer tooling
       sourceRefs:
@@ -1626,7 +1868,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ018
     - id: C045
-      statement: The npm package warns that the Connect React package remains under active development and that the API is subject to change.
+      statement: >-
+        The npm package warns that the Connect React package remains under active development and that the API is
+        subject to change.
       type: observed
       topic: developer tooling
       sourceRefs:
@@ -1667,7 +1911,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ022
     - id: C049
-      statement: Latitude Media reported that Arcadia uses AI in bill interpretation and in quality-control models for data cleaning and normalization.
+      statement: >-
+        Latitude Media reported that Arcadia uses AI in bill interpretation and in quality-control models for data
+        cleaning and normalization.
       type: third-party-reported
       topic: AI operating model
       sourceRefs:
@@ -1677,7 +1923,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ024
     - id: C050
-      statement: The cached trust.arcadia.io text exposes only the title Arcadia Solutions Trust Center and no detailed operational body content.
+      statement: >-
+        The cached trust.arcadia.io text exposes only the title Arcadia Solutions Trust Center and no detailed
+        operational body content.
       type: observed
       topic: trust disclosure
       sourceRefs:
@@ -1688,7 +1936,9 @@ localEvidence:
         - RQ015
         - RQ021
     - id: C051
-      statement: Nudge Security lists a status-page field for Arcadia, but the reviewed trust-center cache does not expose incident history or uptime detail.
+      statement: >-
+        Nudge Security lists a status-page field for Arcadia, but the reviewed trust-center cache does not expose
+        incident history or uptime detail.
       type: inferred
       topic: trust disclosure
       sourceRefs:
@@ -1699,7 +1949,9 @@ localEvidence:
       answersQuestionRefs:
         - RQ021
     - id: C052
-      statement: The reviewed public docs expose onboarding and integration steps but do not disclose public SLAs or a detailed forward roadmap beyond launch pages and changelog snippets.
+      statement: >-
+        The reviewed public docs expose onboarding and integration steps but do not disclose public SLAs or a detailed
+        forward roadmap beyond launch pages and changelog snippets.
       type: observed
       topic: roadmap disclosure
       sourceRefs:
@@ -1714,23 +1966,41 @@ localEvidence:
     - type: missing-source
       severity: material
       topic: Arcadia-specific attestations and trust-center depth
-      missingEvidence: The cached trust center does not expose audit reports, certificate scopes, incident history, or uptime commitments.
-      whyItMatters: Enterprise buyers will want direct proof that controls described on the security page map to audited Arcadia products, not only to shared infrastructure or third-party vendor badges.
-      diligencePath: Request current SOC 2 / ISO reports, control-scope mapping by product, and the live customer trust portal contents including incident-history retention.
+      missingEvidence: >-
+        The cached trust center does not expose audit reports, certificate scopes, incident history, or uptime
+        commitments.
+      whyItMatters: >-
+        Enterprise buyers will want direct proof that controls described on the security page map to audited Arcadia
+        products, not only to shared infrastructure or third-party vendor badges.
+      diligencePath: >-
+        Request current SOC 2 / ISO reports, control-scope mapping by product, and the live customer trust portal
+        contents including incident-history retention.
       relatedQuestionRefs:
         - RQ015
         - RQ021
     - type: private-evidence-only
       severity: material
       topic: Roadmap precision beyond release notes
-      missingEvidence: Public sources show launch milestones and changelog entries but not a dated roadmap, planned module sequence, or committed customer-delivery milestones.
-      whyItMatters: Product roadmap clarity affects underwriting of implementation risk, feature-gap risk, and how much of the enterprise platform is mature versus recently assembled through acquisition.
-      diligencePath: Ask management for a product roadmap with module owners, customer rollout timing, dependency assumptions, and evidence of recently shipped enterprise features.
+      missingEvidence: >-
+        Public sources show launch milestones and changelog entries but not a dated roadmap, planned module sequence, or
+        committed customer-delivery milestones.
+      whyItMatters: >-
+        Product roadmap clarity affects underwriting of implementation risk, feature-gap risk, and how much of the
+        enterprise platform is mature versus recently assembled through acquisition.
+      diligencePath: >-
+        Ask management for a product roadmap with module owners, customer rollout timing, dependency assumptions, and
+        evidence of recently shipped enterprise features.
       relatedQuestionRefs:
         - RQ025
     - type: conflicting-data
       severity: minor
       topic: Public coverage metrics vary by surface
-      missingEvidence: Reviewed pages cite 2M+ connected accounts, over three million utility accounts, 95% coverage of US accounts, 97% tariff coverage, and 9,500-10,000 providers depending on source and date.
-      whyItMatters: The product is clearly large-scale, but diligence should reconcile which metrics apply to enterprise modules, historical utility-data products, and post-acquisition coverage.
-      diligencePath: Request a current KPI glossary defining accounts, providers, bills, meters, and tariffs, with metric dates and whether they include ENGIE Impact operations.
+      missingEvidence: >-
+        Reviewed pages cite 2M+ connected accounts, over three million utility accounts, 95% coverage of US accounts,
+        97% tariff coverage, and 9,500-10,000 providers depending on source and date.
+      whyItMatters: >-
+        The product is clearly large-scale, but diligence should reconcile which metrics apply to enterprise modules,
+        historical utility-data products, and post-acquisition coverage.
+      diligencePath: >-
+        Request a current KPI glossary defining accounts, providers, bills, meters, and tariffs, with metric dates and
+        whether they include ENGIE Impact operations.
