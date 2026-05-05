@@ -332,6 +332,27 @@ function checkMatrixFigure(path, figure) {
     if (values.length !== cols.length) {
       fail(`${path}: figure ${figure.id} row ${index + 1} (${row?.label ?? '?'}) has ${values.length} values but data.columns declares ${cols.length}; columns are X-axis labels and row.label is the Y-axis label, so values.length must equal columns.length`);
     }
+    // matrix cells must resolve to a renderable text value. Cohort cells are
+    // numeric and validated separately by checkCohortFigure.
+    if (figure.type !== 'matrix') continue;
+    for (const [colIndex, cell] of values.entries()) {
+      // null and bare empty strings are valid 'no-data placeholder' cells in
+      // heatmap-style matrices (e.g. an unfilled cell on a likelihood ×
+      // impact grid). They render as a styled em-dash.
+      if (cell == null) continue;
+      if (typeof cell === 'string' || typeof cell === 'number') continue;
+      if (typeof cell !== 'object') {
+        fail(`${path}: figure ${figure.id} matrix row ${index + 1} (${row?.label ?? '?'}) cell ${colIndex + 1} must be a string, number, or object, got ${typeof cell}`);
+        continue;
+      }
+      const text = cell.label ?? cell.text ?? cell.name ?? cell.displayValue ?? cell.value ?? cell.score;
+      // Object cells with explicit empty text but a tone are valid heatmap
+      // placeholders (e.g. an unfilled cell on a likelihood × impact grid).
+      const hasEmptyTextWithTone = (cell.label === '' || cell.text === '') && cell.tone != null;
+      if ((text == null || String(text).trim() === '') && !hasEmptyTextWithTone) {
+        fail(`${path}: figure ${figure.id} matrix row ${index + 1} (${row?.label ?? '?'}) cell ${colIndex + 1} is missing a text field; provide one of label/text/value/score (label is canonical), or use null / '' for a no-data placeholder`);
+      }
+    }
   }
 }
 

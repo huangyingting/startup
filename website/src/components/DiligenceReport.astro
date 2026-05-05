@@ -429,6 +429,13 @@ const fallbackMetrics = [
   .three-col article { border-top: var(--report-rule); padding-top: var(--space-3); }
   .disclaimer p { font-size: var(--report-fs-note); color: var(--caption-gray); }
   .evidence-index tr:target { background: color-mix(in srgb, var(--claret) 9%, transparent); scroll-margin-top: var(--space-6); }
+  /* Evidence index tables are reference data, not narrative content — drop
+   * one type-step down so they read denser and don't compete with chapter
+   * tables for visual weight. */
+  .evidence-index :global(.table-frame th),
+  .evidence-index :global(.table-frame td),
+  .evidence-index :global(.table-frame .table-note) { font-size: var(--report-fs-caption); line-height: 1.5; }
+  .evidence-index :global(.table-frame caption) { font-size: calc(var(--report-fs-kicker) * 0.95); }
   .evidence-id { font-family: var(--font-mono); color: var(--claret); text-decoration: none; }
   .evidence-id:hover, .evidence-id:focus-visible { text-decoration: underline; }
   .report-shell :global(.claim-ref) { color: var(--caption-gray); font-family: var(--font-mono); font-size: var(--report-fs-caption); display: inline; margin-left: 0.25em; vertical-align: baseline; overflow-wrap: anywhere; }
