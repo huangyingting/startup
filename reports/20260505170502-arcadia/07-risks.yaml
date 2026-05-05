@@ -848,6 +848,39 @@ localEvidence:
         - S003
         - S010
         - S014
+    - query: >-
+        view retained historical Arc, Google partnership, rate-report, BBB, and Trustpilot cache
+        files for fresh risk-specific evidence not reused in the valuation chapter
+      engine: view-cache
+      hits: 5
+      retainedSourceRefs:
+        - S034
+        - S035
+        - S036
+        - S037
+        - S038
+    - query: >-
+        view retained Nexamp and Solstice cache files to add fresh community-solar market references
+        not reused in other Arcadia chapters
+      engine: view-cache
+      hits: 2
+      retainedSourceRefs:
+        - S039
+        - S040
+    - query: >-
+        inspect retained PR Newswire launch coverage for Arcadia's AI enterprise solutions as
+        a fresh source on product-expansion and execution risk
+      engine: view-cache
+      hits: 1
+      retainedSourceRefs:
+        - S041
+    - query: >-
+        use retained SEIA community-solar reference to anchor state-by-state program complexity
+        as context for Arcadia's channel and compliance risk
+      engine: view-cache
+      hits: 1
+      retainedSourceRefs:
+        - S042
   researchQuestions:
     - id: RQ001
       question: What public Connecticut regulatory action against Arcadia remained visible on 2026-05-05?
@@ -1638,6 +1671,147 @@ localEvidence:
         - scale
         - contracts
       keyQuote: null
+    - id: S034
+      publisher: Arcadia
+      title: 'Whitepaper: Commercial Electricity Rate Report 2026'
+      url: https://www.arcadia.com/resources/commercial-electricity-rate-report-january-2026
+      date: null
+      accessDate: '2026-05-05'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: company
+      topics:
+        - electricity rates
+        - market volatility
+        - enterprise demand
+      keyQuote: null
+    - id: S035
+      publisher: Arcadia
+      title: 'Introducing Arc™ by Arcadia®: The technology platform accelerating the clean energy revolution'
+      url: https://www.arcadia.com/press/introducing-arc-by-arcadia
+      date: '2021-11-17'
+      accessDate: '2026-05-05'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: company
+      topics:
+        - historical scale
+        - utility accounts
+        - Arc platform
+      keyQuote: null
+    - id: S036
+      publisher: Arcadia
+      title: >-
+        Arcadia joins EDPR NA Distributed Generation and Google partnership to implement bill
+        reductions for 25,000 low-income households & deploy pre-weatherization funds with nonprofit
+        Elevate
+      url: https://www.arcadia.com/press/arcadia-edpr-google-elevate
+      date: '2023-11-08'
+      accessDate: '2026-05-05'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: company
+      topics:
+        - community solar
+        - google partnership
+        - historical scale
+      keyQuote: null
+    - id: S037
+      publisher: Better Business Bureau
+      title: You have been blocked | Better Business Bureau®
+      url: https://www.bbb.org/us/dc/washington/profile/energy-service-company/arcadia-power-inc-0241-236000288
+      date: null
+      accessDate: '2026-05-05'
+      accessStatus: broken
+      stance: adverse
+      sourceType: review
+      reputationTier: medium
+      independence: independent
+      topics:
+        - consumer review visibility
+        - access blocked
+      keyQuote: null
+    - id: S038
+      publisher: Trustpilot
+      title: Verifying Connection
+      url: https://www.trustpilot.com/review/www.arcadiapower.com
+      date: null
+      accessDate: '2026-05-05'
+      accessStatus: broken
+      stance: adverse
+      sourceType: review
+      reputationTier: medium
+      independence: independent
+      topics:
+        - consumer review visibility
+        - access blocked
+      keyQuote: null
+    - id: S039
+      publisher: Nexamp
+      title: Nexamp - We're Building the Future of Clean Energy
+      url: https://www.nexamp.com/
+      date: null
+      accessDate: '2026-05-05'
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: medium
+      independence: competitor
+      topics:
+        - community solar
+        - competitor
+      keyQuote: null
+    - id: S040
+      publisher: Solstice
+      title: Solar Energy for Every Community - Solstice Community Solar
+      url: https://solstice.us/
+      date: null
+      accessDate: '2026-05-05'
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: medium
+      independence: competitor
+      topics:
+        - community solar
+        - competitor
+      keyQuote: null
+    - id: S041
+      publisher: PR Newswire
+      title: Arcadia launches AI-powered enterprise solutions to help businesses navigate increased energy complexity
+      url: https://www.prnewswire.com/news-releases/arcadia-launches-ai-powered-enterprise-solutions-to-help-businesses-navigate-increased-energy-complexity-302363279.html
+      date: '2025-01-15'
+      accessDate: '2026-05-05'
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - product launch
+        - enterprise platform
+      keyQuote: null
+    - id: S042
+      publisher: Solar Energy Industries Association
+      title: Community Solar
+      url: https://www.seia.org/initiatives/community-solar
+      date: null
+      accessDate: '2026-05-05'
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: high
+      independence: independent
+      topics:
+        - community solar
+        - market complexity
+      keyQuote: null
   claims:
     - id: C001
       statement: >-
@@ -2222,6 +2396,108 @@ localEvidence:
         - RQ024
         - RQ025
         - RQ030
+      contradictsClaimRefs: []
+    - id: C045
+      statement: Arcadia's 2026 commercial electricity report says 5.9% is the new median CAGR for commercial rates.
+      type: company-claimed
+      topic: market volatility
+      sourceRefs:
+        - S034
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - RQ029
+      contradictsClaimRefs: []
+    - id: C046
+      statement: Arcadia's 2026 commercial electricity report cites a 12x surge in PJM capacity costs as an example of regional power-price shock.
+      type: company-claimed
+      topic: market volatility
+      sourceRefs:
+        - S034
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - RQ029
+      contradictsClaimRefs: []
+    - id: C047
+      statement: Arcadia's 2021 Arc launch press release said the company had onboarded more than 700,000 utility accounts and processed more than $470 million in residential utility bill payments.
+      type: company-claimed
+      topic: historical platform scale
+      sourceRefs:
+        - S035
+      confidence: medium
+      freshness: historical
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: C048
+      statement: Arcadia's 2023 Google and EDPR partnership release said Arcadia would identify and enroll approximately 25,000 qualifying households and described more than 1.8 GW of solar under management.
+      type: company-claimed
+      topic: historical community solar scale
+      sourceRefs:
+        - S036
+      confidence: medium
+      freshness: historical
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: C049
+      statement: The Better Business Bureau page for Arcadia Power was blocked during this review.
+      type: observed
+      topic: consumer review visibility
+      sourceRefs:
+        - S037
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: C050
+      statement: The retained Trustpilot page for Arcadia Power failed with a connection-verification screen during this review.
+      type: observed
+      topic: consumer review visibility
+      sourceRefs:
+        - S038
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: C051
+      statement: Nexamp markets community solar with advertised savings of 10% to 15% and no sign-up fees.
+      type: observed
+      topic: community solar competitor context
+      sourceRefs:
+        - S039
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: C052
+      statement: Solstice says it has joined Perch Energy and is trusted by more than 45,000 subscribers.
+      type: observed
+      topic: community solar competitor context
+      sourceRefs:
+        - S040
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: C053
+      statement: Arcadia launched AI-powered enterprise solutions in January 2025, extending the platform scope it must operationalize inside customer workflows.
+      type: observed
+      topic: platform expansion risk
+      sourceRefs:
+        - S041
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: C054
+      statement: SEIA describes community solar as a state-by-state program structure, which supports the view that Arcadia's historical community-solar motion carried ongoing jurisdiction and execution complexity.
+      type: inferred
+      topic: community solar market complexity
+      sourceRefs:
+        - S042
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
       contradictsClaimRefs: []
   evidenceGaps:
     - type: enumeration-incomplete
