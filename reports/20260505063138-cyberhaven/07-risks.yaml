@@ -1,6 +1,6 @@
 schemaVersion: report-v2
 artifact: risks
-slug: cyberhaven-risks
+slug: 20260505063138-cyberhaven
 runDate: '2026-05-05'
 company:
   name: Cyberhaven
@@ -486,36 +486,66 @@ figures:
         - Impact 4 Major
         - Impact 5 Catastrophic
       rows:
-        - - Likelihood 5 Almost Certain
-          - ''
-          - ''
-          - ''
-          - ''
-          - ''
-        - - Likelihood 4 Likely
-          - ''
-          - ''
-          - ''
-          - Class-action litigation
-          - ''
-        - - Likelihood 3 Possible
-          - ''
-          - ''
-          - FP-driven churn
-          - Chrome extension repeat; OAuth phish
-          - ''
-        - - Likelihood 2 Unlikely
-          - ''
-          - ''
-          - GCP outage; Manifest v3
-          - GDPR/FTC fine; People attrition; Purview displacement
-          - ''
-        - - Likelihood 1 Rare
-          - ''
-          - ''
-          - PCI scope creep; IP claims
-          - ''
-          - ''
+        - label: Likelihood 5 Almost Certain
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+        - label: Likelihood 4 Likely
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: Class-action litigation
+              tone: high
+            - label: ''
+              tone: low
+        - label: Likelihood 3 Possible
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: FP-driven churn
+              tone: medium
+            - label: Chrome extension repeat; OAuth phish
+              tone: critical
+            - label: ''
+              tone: low
+        - label: Likelihood 2 Unlikely
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: GCP outage; Manifest v3
+              tone: medium
+            - label: GDPR/FTC fine; People attrition; Purview displacement
+              tone: high
+            - label: ''
+              tone: low
+        - label: Likelihood 1 Rare
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: PCI scope creep; IP claims
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
     approximationNotes: Likelihood and impact are qualitative assessments based on public evidence and precedent.
     claimRefs:
       - C274

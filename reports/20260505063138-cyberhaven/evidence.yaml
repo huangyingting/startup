@@ -77,14 +77,13 @@ coverageMatrix:
     technical-docs: 12
     partner-proof: 2
     news: 23
-    analyst-market-data: 19
+    analyst-market-data: 21
     regulatory: 7
     other: 4
     customer-proof: 2
     review: 5
     filing: 6
     developer-signal: 2
-    analyst: 2
   byStance:
     confirming: 61
     neutral: 58
@@ -97,14 +96,11 @@ coverageMatrix:
   byClaimType:
     company-claimed: 112
     third-party-reported: 82
-    observed: 55
+    observed: 91
     conflicting: 2
-    inferred: 11
-    comparison: 1
+    inferred: 56
     estimated: 9
     open-question: 1
-    factual: 36
-    inferential: 44
 sources:
   - id: S001
     publisher: Cyberhaven
@@ -2301,7 +2297,7 @@ sources:
     accessDate: '2026-05-05'
     accessStatus: ok
     stance: adverse
-    sourceType: analyst
+    sourceType: analyst-market-data
     reputationTier: medium
     independence: competitor
     topics:
@@ -2321,7 +2317,7 @@ sources:
     accessDate: '2026-05-05'
     accessStatus: ok
     stance: neutral
-    sourceType: analyst
+    sourceType: analyst-market-data
     reputationTier: high
     independence: independent
     topics:
@@ -4318,7 +4314,7 @@ claims:
     statement: >-
       Proofpoint emphasizes timeline and evidence-driven insider investigations, while Cyberhaven emphasizes
       lineage-driven incident reconstruction.
-    type: comparison
+    type: inferred
     topic: investigation workflow
     sourceRefs:
       - S059
@@ -5831,7 +5827,7 @@ claims:
       - S106
       - S097
     confidence: medium
-    freshness: stale
+    freshness: historical
     answersQuestionRefs:
       - RQ609
   - id: C252
@@ -6136,7 +6132,7 @@ claims:
     statement: >-
       GDPR Regulation (EU) 2016/679 Article 28 imposes data processor obligations on Cyberhaven when processing EU
       personal data on behalf of enterprise customers, including requirements for signed data processing agreements.
-    type: factual
+    type: observed
     topic: regulatory risk
     sourceRefs:
       - S111
@@ -6149,7 +6145,7 @@ claims:
     statement: >-
       GDPR Article 32 requires appropriate technical and organisational security measures; non-compliance can result in
       fines up to EUR 10M or 2% of global annual turnover under Article 83(4).
-    type: factual
+    type: observed
     topic: regulatory risk
     sourceRefs:
       - S111
@@ -6162,7 +6158,7 @@ claims:
     statement: >-
       GDPR Article 83(5) fines can reach EUR 20M or 4% of global annual turnover for the most serious violations,
       including failures of data security under Article 32.
-    type: factual
+    type: observed
     topic: regulatory risk
     sourceRefs:
       - S111
@@ -6176,7 +6172,7 @@ claims:
       The SEC Rule 33-11216 (effective December 2023) requires public companies to disclose material cybersecurity
       incidents within four business days, creating indirect compliance pressure on vendors like Cyberhaven whose
       customers are public registrants.
-    type: factual
+    type: observed
     topic: regulatory risk
     sourceRefs:
       - S115
@@ -6189,7 +6185,7 @@ claims:
     statement: >-
       California CCPA/CPRA grants consumers broad data rights including deletion and opt-out of sale; CPRA enforcement
       commenced July 2023 with the California Privacy Protection Agency having active rulemaking authority.
-    type: factual
+    type: observed
     topic: regulatory risk
     sourceRefs:
       - S112
@@ -6202,7 +6198,7 @@ claims:
     statement: >-
       The FTC data-security authority under Section 5 of the FTC Act can result in consent decrees imposing 20-year
       compliance obligations on cybersecurity companies following a material breach.
-    type: factual
+    type: observed
     topic: regulatory risk
     sourceRefs:
       - S114
@@ -6215,7 +6211,7 @@ claims:
     statement: >-
       TopClassActions documented a class-action lawsuit filed against Cyberhaven following the December 2024 Chrome
       extension breach, citing exposure of OAuth credentials for approximately 400,000 corporate users.
-    type: factual
+    type: observed
     topic: legal risk
     sourceRefs:
       - S118
@@ -6228,7 +6224,7 @@ claims:
     statement: >-
       PCI DSS v4.0.1, effective March 2024, requires data-loss prevention controls for entities storing, processing, or
       transmitting cardholder data; Cyberhaven holds PCI DSS v4.0.1 certification per its Trust Center.
-    type: factual
+    type: observed
     topic: regulatory compliance
     sourceRefs:
       - S113
@@ -6242,7 +6238,7 @@ claims:
       In December 2024, attackers compromised a developer OAuth token via phishing to publish a malicious version
       v24.10.4 of Cyberhaven Chrome extension, affecting approximately 400,000 corporate users across 35 total
       compromised extensions.
-    type: factual
+    type: observed
     topic: security incident
     sourceRefs:
       - S116
@@ -6257,7 +6253,7 @@ claims:
     statement: >-
       Cyberhaven released a clean replacement extension (v24.10.5) within approximately 24 hours of detecting the
       malicious version and engaged Mandiant for forensic investigation.
-    type: factual
+    type: observed
     topic: incident response
     sourceRefs:
       - S116
@@ -6272,7 +6268,7 @@ claims:
     statement: >-
       Spin.AI and Nightfall AI (direct competitors) published analyses of the Cyberhaven extension incident, framing it
       as evidence that browser-extension DLP architecture is structurally vulnerable to supply-chain attacks.
-    type: factual
+    type: observed
     topic: competitive risk
     sourceRefs:
       - S116
@@ -6287,7 +6283,7 @@ claims:
       The December 2024 attack vector was a phishing email targeting a developer OAuth token used to publish updates to
       the Chrome Web Store without per-customer approval workflows, enabling immediate mass distribution of the
       malicious extension.
-    type: factual
+    type: observed
     topic: security architecture risk
     sourceRefs:
       - S124
@@ -6302,7 +6298,7 @@ claims:
       Google Chrome holds approximately 65% global browser market share as of 2025, making it the rational primary
       channel for enterprise endpoint DLP agents, but creating platform-concentration risk if Chrome policy or API
       availability changes.
-    type: factual
+    type: observed
     topic: platform dependency risk
     sourceRefs:
       - S117
@@ -6316,7 +6312,7 @@ claims:
       Chrome Manifest v3 migration has progressively restricted web request interception APIs available to extensions;
       Cyberhaven deep content inspection capabilities rely on APIs that may face further restriction in future Chrome
       releases.
-    type: factual
+    type: observed
     topic: platform dependency risk
     sourceRefs:
       - S117
@@ -6330,7 +6326,7 @@ claims:
       Cyberhaven offers a separate network DLP agent installed via MDM in addition to its Chrome extension, partially
       mitigating extension-only dependency, but enterprise deployment of the network agent is not universally confirmed
       across the customer base.
-    type: factual
+    type: observed
     topic: operational risk
     sourceRefs:
       - S002
@@ -6343,7 +6339,7 @@ claims:
     statement: >-
       Cyberhaven trust.cyberhaven.com page shows SOC 2 Type 2 certification with a Bridge Letter issued January 2026,
       confirming continuous audit coverage, and PCI DSS v4.0.1 compliance.
-    type: factual
+    type: observed
     topic: compliance certification
     sourceRefs:
       - S012
@@ -6357,7 +6353,7 @@ claims:
       Cyberhaven relies on Google LLC for both Chrome Web Store distribution and GCP cloud hosting, creating a
       dual-vendor concentration risk where a single Google policy change could disrupt both endpoint distribution and
       infrastructure simultaneously.
-    type: inferential
+    type: inferred
     topic: partner dependency risk
     sourceRefs:
       - S116
@@ -6371,7 +6367,7 @@ claims:
     statement: >-
       Google Cloud Platform (GCP) is Cyberhaven primary infrastructure provider; per-customer isolated instances are
       deployed in US GCP regions, providing blast-radius containment but introducing single-cloud concentration risk.
-    type: factual
+    type: observed
     topic: infrastructure dependency
     sourceRefs:
       - S100
@@ -6385,7 +6381,7 @@ claims:
     statement: >-
       Cyberhaven engaged Mandiant (a Google subsidiary) for forensic investigation of the December 2024 incident, adding
       an additional dependency on Google for both incident response capacity and infrastructure.
-    type: factual
+    type: observed
     topic: partner dependency risk
     sourceRefs:
       - S116
@@ -6398,7 +6394,7 @@ claims:
       The December 2024 Chrome extension attack affected at least 35 browser extensions across multiple cybersecurity
       vendors; Cyberhaven bore disproportionate reputational exposure as one of the largest affected vendors by user
       count at approximately 400,000 corporate users.
-    type: factual
+    type: observed
     topic: supply chain risk
     sourceRefs:
       - S119
@@ -6413,7 +6409,7 @@ claims:
       Cyberhaven go-to-market relies primarily on direct enterprise sales with limited disclosed MSSP or channel partner
       leverage; competitors Symantec and Forcepoint have decades-old MSSP relationships generating renewal revenue
       without direct sales effort.
-    type: factual
+    type: observed
     topic: GTM risk
     sourceRefs:
       - S117
@@ -6425,7 +6421,7 @@ claims:
     statement: >-
       DLP replacement sales cycles in regulated enterprise accounts are estimated at 12 to 18 months, requiring legal
       and security team sign-off and facing entrenched incumbent inertia, creating execution risk for Cyberhaven sales.
-    type: inferential
+    type: inferred
     topic: GTM execution risk
     sourceRefs:
       - S117
@@ -6438,7 +6434,7 @@ claims:
       StepStone Group and Schroders Capital (Series D lead investors) are financial investors with no disclosed
       operational support capability specific to enterprise SaaS or data security, limiting strategic value-add beyond
       capital provision.
-    type: inferential
+    type: inferred
     topic: capital dependency risk
     sourceRefs:
       - S126
@@ -6451,7 +6447,7 @@ claims:
       At a $1B valuation and $250M total raised, a down-round scenario triggered by a second material security incident
       or regulatory sanction would likely leave employee options underwater, creating retention risk and potential
       talent exodus.
-    type: inferential
+    type: inferred
     topic: financial risk
     sourceRefs:
       - S126
@@ -6464,7 +6460,7 @@ claims:
     statement: >-
       Cyberhaven was founded in 2016 by Howard Hua, Georgy Gritschuk, and Volodymyr Kuznetsov; the data-lineage graph
       architecture represents deep technical expertise concentrated in a small founding team with high key-person risk.
-    type: factual
+    type: observed
     topic: people risk
     sourceRefs:
       - S003
@@ -6476,7 +6472,7 @@ claims:
     statement: >-
       The roles of CFO, CISO, and head of customer success are not prominently disclosed in Cyberhaven public
       communications, creating opacity around financial controls and executive depth ahead of any potential IPO.
-    type: inferential
+    type: inferred
     topic: people risk
     sourceRefs:
       - S003
@@ -6490,7 +6486,7 @@ claims:
       Cyberhaven December 2024 incident response including CEO blog transparency, 24-hour clean patch deployment, and
       Mandiant forensics engagement demonstrated operationally strong crisis management, raising the bar for expected
       future responses.
-    type: inferential
+    type: inferred
     topic: execution risk
     sourceRefs:
       - S116
@@ -6504,7 +6500,7 @@ claims:
       The Motorola Solutions case study shows enterprise DLP deployment success (90% FP reduction, 98% investigation
       time reduction), suggesting strong customer success delivery, but reflects a small sample of disclosed reference
       accounts.
-    type: factual
+    type: observed
     topic: execution risk
     sourceRefs:
       - S096
@@ -6516,7 +6512,7 @@ claims:
     statement: >-
       Cyberhaven total headcount is approximately 350 employees as of the Series D; the engineering team carries
       specialised data-lineage graph expertise that is difficult and slow to replace through external hiring.
-    type: factual
+    type: observed
     topic: people risk
     sourceRefs:
       - S121
@@ -6530,7 +6526,7 @@ claims:
       Cyberhaven $100M Series D at a $1B valuation implies approximately 18 to 24 months of runway at assumed burn rates
       for a company at this growth stage, reducing near-term financing risk but not eliminating longer-term capital
       dependency.
-    type: inferential
+    type: inferred
     topic: financial risk
     sourceRefs:
       - S126
@@ -6544,7 +6540,7 @@ claims:
       A second material Chrome extension security incident within 18 months would likely trigger enterprise churn,
       regulatory investigations, and potential class-action expansion, representing the highest-severity thesis-break
       risk for Cyberhaven.
-    type: inferential
+    type: inferred
     topic: thesis-break risk
     sourceRefs:
       - S117
@@ -6557,7 +6553,7 @@ claims:
     statement: >-
       A GDPR fine at the 4% global turnover threshold or FTC consent decree would impose multi-year compliance
       obligations on Cyberhaven, potentially freezing EU enterprise expansion and materially impairing sales cycles.
-    type: inferential
+    type: inferred
     topic: regulatory thesis-break risk
     sourceRefs:
       - S111
@@ -6570,7 +6566,7 @@ claims:
       A class-action settlement or judgment exceeding $30M would consume significant Series D runway (approximately 30%
       of capital raised) and could necessitate a distressed financing round if reached before Cyberhaven achieves
       sustainable cash flow.
-    type: inferential
+    type: inferred
     topic: financial thesis-break risk
     sourceRefs:
       - S118
@@ -6584,7 +6580,7 @@ claims:
       Microsoft Purview embedding production-grade AI data-lineage capabilities in the M365 E5 bundle would directly
       undercut Cyberhaven premium pricing in accounts already paying for M365 licensing, representing a competitive
       thesis-break trigger.
-    type: inferential
+    type: inferred
     topic: competitive thesis-break risk
     sourceRefs:
       - S117
@@ -6597,7 +6593,7 @@ claims:
     statement: >-
       Failure to obtain ISAE 3000 (EU) or BSI C5 (Germany) certification would block Cyberhaven from regulated EU
       enterprise expansion in financial services and healthcare where national certification requirements apply.
-    type: inferential
+    type: inferred
     topic: regulatory expansion risk
     sourceRefs:
       - S111
@@ -6611,7 +6607,7 @@ claims:
       The EU AI Act (Regulation 2024/1689), fully applicable from August 2026, may classify Cyberhaven
       employee-monitoring and insider-threat-detection features as high-risk AI systems requiring conformity assessments
       and ongoing monitoring obligations.
-    type: inferential
+    type: inferred
     topic: emerging regulatory risk
     sourceRefs:
       - S111
@@ -6624,7 +6620,7 @@ claims:
     statement: >-
       Cyberhaven IP portfolio includes patents on data-lineage tracking methodology; as Symantec, Microsoft, and other
       incumbents incorporate lineage features, the novelty window narrows and counter-claim risk increases.
-    type: inferential
+    type: inferred
     topic: IP risk
     sourceRefs:
       - S002
@@ -6638,7 +6634,7 @@ claims:
       Cyberhaven net revenue retention is not publicly disclosed; in the absence of audited financials, the gross
       margin, LTV/CAC ratio, and churn rate are unverifiable through public sources, creating a significant blind spot
       for financial diligence.
-    type: factual
+    type: observed
     topic: financial opacity risk
     sourceRefs:
       - S127
@@ -6653,7 +6649,7 @@ claims:
       Cyberhaven Deloitte Technology Fast 500 (2025) and Fortune Cyber 60 (2025) recognitions provide third-party
       validation of growth rate, suggesting revenue grew faster than 500 technology peers, indicating a high revenue
       growth trajectory.
-    type: inferential
+    type: inferred
     topic: financial risk context
     sourceRefs:
       - S103
@@ -6665,7 +6661,7 @@ claims:
     statement: >-
       VentureBeat coverage of the Series D cites an approximate 10x ARR multiple on the $1B valuation, placing total ARR
       at approximately $100M if confirmed, though ARR figures are not officially disclosed by Cyberhaven.
-    type: inferential
+    type: inferred
     topic: financial model risk
     sourceRefs:
       - S127
@@ -6679,7 +6675,7 @@ claims:
       Cyberhaven investment thesis rests on three pillars: AI-native data lineage differentiation, 14+ named Fortune 500
       customer proof with strong review scores, and a $1B valuation that represents a reasonable 10x ARR entry multiple
       post-incident.
-    type: inferential
+    type: inferred
     topic: investment thesis
     sourceRefs:
       - S121
@@ -6693,7 +6689,7 @@ claims:
     statement: >-
       The primary anti-thesis arguments are: unresolved class-action litigation from December 2024, opaque financial
       metrics, Microsoft Purview pricing competition, and structural Chrome extension supply-chain vulnerability.
-    type: inferential
+    type: inferred
     topic: anti-thesis
     sourceRefs:
       - S120
@@ -6708,7 +6704,7 @@ claims:
       Cyberhaven Series D at a $1B post-money valuation occurred in April 2025, approximately four months after the
       December 2024 Chrome extension incident, indicating investor confidence absorbed the security event and priced it
       in.
-    type: inferential
+    type: inferred
     topic: valuation context
     sourceRefs:
       - S121
@@ -6722,7 +6718,7 @@ claims:
     statement: >-
       Cyberhaven growing PeerSpot mindshare (2.3% from 1.5%) and Gartner Peer Insights rating of 4.6/5 across 48 reviews
       provide independent third-party validation of product-market fit and enterprise adoption momentum.
-    type: factual
+    type: observed
     topic: customer proof
     sourceRefs:
       - S125
@@ -6736,7 +6732,7 @@ claims:
       Cyberhaven's Deloitte Technology Fast 500 (2025) recognition confirms that Cyberhaven was among the 500
       fastest-growing technology companies in North America, implying high revenue growth relative to peers, though
       absolute revenue is not disclosed.
-    type: factual
+    type: observed
     topic: growth validation
     sourceRefs:
       - S103
@@ -6749,7 +6745,7 @@ claims:
       The December 2024 Chrome extension incident represents a persistent anti-thesis element: the structural
       architecture risk (Web Store distribution, single developer OAuth token) is unchanged post-incident, and
       class-action litigation remains active.
-    type: factual
+    type: observed
     topic: anti-thesis risk
     sourceRefs:
       - S120
@@ -6765,7 +6761,7 @@ claims:
       Microsoft Purview's bundled M365 E5 positioning (near-zero marginal cost for existing Microsoft customers)
       represents the most significant competitive anti-thesis: it does not need to match Cyberhaven on features to win
       budget-constrained accounts.
-    type: inferential
+    type: inferred
     topic: competitive anti-thesis
     sourceRefs:
       - S117
@@ -6778,7 +6774,7 @@ claims:
     statement: >-
       The agentic AI platform launch in May 2026 signals Cyberhaven's product roadmap extension into AI agent data
       security, which represents a greenfield demand driver not available to legacy DLP incumbents.
-    type: factual
+    type: observed
     topic: investment thesis
     sourceRefs:
       - S123
@@ -6791,7 +6787,7 @@ claims:
     statement: >-
       Cyberhaven's $1B valuation at an estimated $100M ARR implies a 10x ARR multiple; this estimate is derived from
       VentureBeat's comment that the valuation implies approximately 10x ARR, and is not officially confirmed.
-    type: inferential
+    type: inferred
     topic: valuation
     sourceRefs:
       - S127
@@ -6806,7 +6802,7 @@ claims:
     statement: >-
       CrowdStrike reported FY25 annual recurring revenue of $4.24 billion growing 23% year-over-year, trading at
       approximately 29x NTM P/S and 12x ARR with approximately 77% gross margin.
-    type: factual
+    type: observed
     topic: comparable valuation
     sourceRefs:
       - S129
@@ -6821,7 +6817,7 @@ claims:
     statement: >-
       Palo Alto Networks reported next-generation security ARR of $5.6 billion growing 32% in Q3 FY25, trading at
       approximately 14x NTM P/S with approximately 74% gross margin.
-    type: factual
+    type: observed
     topic: comparable valuation
     sourceRefs:
       - S131
@@ -6835,7 +6831,7 @@ claims:
     statement: >-
       Zscaler reported approximately $2.9 billion ARR growing 23% in Q3 FY25, trading at approximately 9x NTM P/S with
       approximately 80% gross margin.
-    type: factual
+    type: observed
     topic: comparable valuation
     sourceRefs:
       - S133
@@ -6849,7 +6845,7 @@ claims:
     statement: >-
       Rubrik reported FY25 ARR of $1.09 billion growing 39% year-over-year, trading at approximately 9x NTM P/S with
       approximately 69% gross margin and a market cap above $8 billion.
-    type: factual
+    type: observed
     topic: comparable valuation
     sourceRefs:
       - S135
@@ -6864,7 +6860,7 @@ claims:
     statement: >-
       Grand View Research estimates the global DLP market at $5.7 billion in 2024 growing at approximately 3.7% CAGR to
       $7.1 billion by 2030 for pure-play DLP vendors.
-    type: factual
+    type: observed
     topic: market size
     sourceRefs:
       - S044
@@ -6876,7 +6872,7 @@ claims:
     statement: >-
       MarketsAndMarkets projects the broader data security market at $21.1 billion growing to $34.4 billion by 2029 at a
       CAGR of 10.3%; Cyberhaven's AI-native data lineage approach targets this broader category, not just pure-play DLP.
-    type: factual
+    type: observed
     topic: market size
     sourceRefs:
       - S128
@@ -6888,7 +6884,7 @@ claims:
     statement: >-
       Cyberhaven's 10x ARR entry multiple compares favourably to Rubrik (9x NTM P/S, $1B+ ARR) but carries an
       uncertainty premium relative to public comps due to unverified financial metrics and unresolved litigation.
-    type: inferential
+    type: inferred
     topic: comparable valuation
     sourceRefs:
       - S136
@@ -6903,7 +6899,7 @@ claims:
     statement: >-
       The bull case assumes 50-60% ARR CAGR through 2028, reaching $400-600M ARR; at 8-12x ARR, this implies a
       $3.2B-$7.2B valuation representing 3-7x return from the $1B Series D entry. Probability assigned: 20%.
-    type: inferential
+    type: inferred
     topic: scenario analysis
     sourceRefs:
       - S127
@@ -6917,7 +6913,7 @@ claims:
     statement: >-
       The base case assumes 30-40% ARR CAGR through 2028, reaching $200-300M ARR; at 5-7x ARR, this implies $1.0B-$2.1B
       valuation representing 1-2x return from Series D entry. Probability assigned: 55%.
-    type: inferential
+    type: inferred
     topic: scenario analysis
     sourceRefs:
       - S127
@@ -6932,7 +6928,7 @@ claims:
       The bear case is triggered by a second Chrome extension incident, Microsoft Purview data-lineage launch, or major
       regulatory/litigation impact; ARR stalls at $120-150M growing 10-20% annually. At 3-5x ARR, valuation implies
       $360M-$750M, a down-round from $1B. Probability: 25%.
-    type: inferential
+    type: inferred
     topic: scenario analysis
     sourceRefs:
       - S120
@@ -6948,7 +6944,7 @@ claims:
       The probability-weighted expected valuation across bull (20%)/base (55%)/bear (25%) scenarios implies
       approximately $1.5B expected value, slightly above the $1B Series D entry, providing a modest expected positive
       return.
-    type: inferential
+    type: inferred
     topic: valuation
     sourceRefs:
       - S127
@@ -6963,7 +6959,7 @@ claims:
       Exit paths for Cyberhaven include: (1) IPO at $400M+ ARR (estimated 2028-2030); (2) strategic acquisition by
       CrowdStrike, Palo Alto Networks, or Cisco for data-lineage DLP capability; (3) Microsoft acquisition (lower
       probability given Purview investment).
-    type: inferential
+    type: inferred
     topic: exit analysis
     sourceRefs:
       - S127
@@ -6979,7 +6975,7 @@ claims:
       CrowdStrike and Palo Alto Networks are the most plausible strategic acquirers for Cyberhaven: both have
       demonstrated appetite for DLP/data-security acquisitions and could integrate Cyberhaven's data-lineage graph into
       their existing platform.
-    type: inferential
+    type: inferred
     topic: M&A exit
     sourceRefs:
       - S129
@@ -6993,7 +6989,7 @@ claims:
     statement: >-
       At $400M+ ARR with demonstrated NRR above 110% and gross margin above 70%, Cyberhaven would meet the typical
       criteria for an enterprise security IPO in the current market environment.
-    type: inferential
+    type: inferred
     topic: exit readiness
     sourceRefs:
       - S130
@@ -7009,7 +7005,7 @@ claims:
       Cyberhaven is not currently IPO-ready as of May 2026: it lacks audited financial statements, a publicly named CFO,
       and the ARR scale (above $400M) typically required for a successful public-market debut at or above current
       valuation.
-    type: inferential
+    type: inferred
     topic: exit readiness
     sourceRefs:
       - S003
@@ -7024,7 +7020,7 @@ claims:
       Cyberhaven has raised $250M total; at a $1B post-money Series D valuation, liquidation preference coverage is
       approximately 25% (250/1000), creating a 4x return threshold for common stockholders before preferred investors
       are made whole on a liquidation.
-    type: inferential
+    type: inferred
     topic: financing context
     sourceRefs:
       - S121
@@ -7038,7 +7034,7 @@ claims:
       Series D represents approximately 10% dilution at a $1B post-money valuation with a $100M round (pre-money $900M);
       cumulative founder and early employee dilution from seed to Series D is estimated at 60-70% based on typical
       venture progression.
-    type: inferential
+    type: inferred
     topic: dilution analysis
     sourceRefs:
       - S121
@@ -7052,7 +7048,7 @@ claims:
       In a down-round exit at $500M, preferred investors (total $250M raised) would receive approximately $125-187M
       (50-75% of exit proceeds depending on participation rights), creating meaningful dilution and morale risk for
       common stockholders.
-    type: inferential
+    type: inferred
     topic: preference overhang risk
     sourceRefs:
       - S121
@@ -7066,7 +7062,7 @@ claims:
       Series D lead investors StepStone Group, Schroders Capital, and Industry Ventures are financial investors with no
       disclosed strategic acquirer relationships, limiting M&A facilitation probability and making IPO the primary exit
       path.
-    type: inferential
+    type: inferred
     topic: financing context
     sourceRefs:
       - S126
@@ -7079,7 +7075,7 @@ claims:
       The $100M Series D provides approximately 18-24 months of runway at assumed burn rates for a company at this
       stage, assuming annual burn of $50-70M; the runway is sufficient to reach the next meaningful milestone but not to
       reach IPO scale without further financing.
-    type: inferential
+    type: inferred
     topic: financing context
     sourceRefs:
       - S127
@@ -7091,7 +7087,7 @@ claims:
     statement: >-
       Industry Ventures' participation in the Series D alongside StepStone and Schroders suggests secondary market and
       fund-of-funds interest in Cyberhaven, potentially providing liquidity options for early employees before IPO.
-    type: inferential
+    type: inferred
     topic: financing context
     sourceRefs:
       - S126
@@ -7104,7 +7100,7 @@ claims:
       The overall investment recommendation is Conditional Explore: Cyberhaven represents a compelling category leader
       but three evidence conditions must be satisfied before investment is finalised: audited financials (NRR >105%, GM
       >70%), litigation exposure cap below $20M, and post-incident architecture security confirmation.
-    type: inferential
+    type: inferred
     topic: recommendation
     sourceRefs:
       - S127
@@ -7120,7 +7116,7 @@ claims:
       Cyberhaven exit readiness is rated Medium as of May 2026: it has customer names and estimated growth trajectory
       for an IPO narrative, but lacks audited financial statements, named CFO, and ARR scale above $400M required for a
       premium public-market listing.
-    type: inferential
+    type: inferred
     topic: exit readiness
     sourceRefs:
       - S103
@@ -7135,7 +7131,7 @@ claims:
       Bull case probability of 20% reflects the difficulty of sustaining 50-60% ARR CAGR without a second major security
       incident, given that the December 2024 incident has already stressed customer trust and the competitive threat
       from Microsoft Purview remains.
-    type: inferential
+    type: inferred
     topic: scenario probability
     sourceRefs:
       - S125
@@ -7150,7 +7146,7 @@ claims:
       Base case probability of 55% reflects the most likely outcome: Cyberhaven maintains growth momentum from current
       $100M ARR base, Microsoft Purview remains a weaker competitor in the data-lineage category, and litigation
       resolves for less than $15M.
-    type: inferential
+    type: inferred
     topic: scenario probability
     sourceRefs:
       - S121
@@ -7164,7 +7160,7 @@ claims:
       Bear case probability of 25% reflects the combination of a realistic 2024 incident repeat risk (probability not
       negligible given unchanged architecture) plus Microsoft Purview roadmap uncertainty plus financial opacity making
       NRR deterioration undetectable until late.
-    type: inferential
+    type: inferred
     topic: scenario probability
     sourceRefs:
       - S120
@@ -7179,7 +7175,7 @@ claims:
       The six mandatory diligence asks are: (1) NRR and gross margin; (2) litigation exposure cap; (3) OAuth/extension
       architecture security confirmation; (4) GCP infrastructure DR documentation; (5) customer ARR concentration; and
       (6) Series D cap table and preference terms.
-    type: factual
+    type: observed
     topic: diligence asks
     sourceRefs:
       - S127
@@ -7194,7 +7190,7 @@ claims:
       The five thesis-break triggers to monitor post-investment are: second Chrome extension incident, GDPR/FTC
       enforcement action, class-action settlement above $30M, Microsoft Purview data-lineage GA launch, and NRR
       confirmed below 100% for two consecutive quarters.
-    type: inferential
+    type: inferred
     topic: thesis-break triggers
     sourceRefs:
       - S120
@@ -7208,7 +7204,7 @@ claims:
       Financial opacity (undisclosed NRR, gross margin, churn, and LTV/CAC) is the single largest investment risk
       because it prevents distinguishing the base case from the bear case; investment at $1B valuation without these
       metrics is underwriting a qualitative narrative, not a quantitative thesis.
-    type: inferential
+    type: inferred
     topic: financial opacity risk
     sourceRefs:
       - S127
@@ -7223,7 +7219,7 @@ claims:
       NRR and gross margin are the highest-priority diligence asks because they single-handedly determine whether the
       10x ARR multiple is defensible or overpriced; NRR below 100% would invalidate the growth thesis regardless of
       other positive indicators.
-    type: inferential
+    type: inferred
     topic: diligence priority
     sourceRefs:
       - S130
@@ -7240,7 +7236,7 @@ claims:
       The $100M ARR estimate is a third-party inference (from VentureBeat's 10x ARR multiple comment) and is not
       confirmed by Cyberhaven; actual ARR could be materially different, and all valuation and return scenarios in this
       chapter should be re-run once actual ARR is confirmed.
-    type: factual
+    type: observed
     topic: data limitation
     sourceRefs:
       - S127

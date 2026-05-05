@@ -3454,15 +3454,9 @@ tables:
       - - Robotic Inspection Services
         - Field deployment of proprietary robots + FDE labor
         - Project / contract-based
-        - Active across power
-        - O&G
-        - steel
-        - pulp & paper
-        - defense
+        - Active across power, O&G, steel, pulp & paper, and defense
         - Medium — recurring but not contractually guaranteed SaaS
-        - Request ACV per vertical
-        - renewal rate
-        - multi-year attach rate
+        - Request ACV per vertical, renewal rate, and multi-year attach rate
       - - Cantilever Platform Subscription
         - Software license / subscription for asset health platform
         - Annual license or multi-year SaaS
@@ -3474,9 +3468,7 @@ tables:
         - Multi-year IDIQ or firm contract
         - Navy IDIQ $71M ceiling / $54M initial; USAF FA9422-22-C-0015
         - High visibility — government-backed multi-year awards
-        - Request total backlog
-        - option exercise probability
-        - and LPTA versus best-value mix
+        - Request total backlog, option exercise probability, and LPTA versus best-value mix
       - - Strategic Partnerships (Energy)
         - Multi-year framework agreements with energy operators
         - Milestone-based contract with expansion options
@@ -3488,9 +3480,7 @@ tables:
         - Contract / subscription
         - 3 new ADNOC agreements signed Nov 2025
         - Early — revenue ramp unclear
-        - Request deal value
-        - deployment timeline
-        - and revenue recognition
+        - Request deal value, deployment timeline, and revenue recognition
     notes: >-
       Gecko's public evidence supports the existence of these streams, but not realized revenue mix or recognition
       timing.
@@ -3637,10 +3627,7 @@ tables:
       - - Total Raised to Date
         - ~$347M (through Series D, June 2025)
         - Multiple press releases and coverage
-        - Includes approximately $49M pre-Series C
-        - $73.3M Series C
-        - $100M Series C extension
-        - and $125M Series D
+        - Includes approximately $49M pre-Series C, $73.3M Series C, $100M Series C extension, and $125M Series D
       - - Series D Valuation
         - $1.25B (unicorn)
         - Gecko press release / CNBC, June 2025
@@ -3664,13 +3651,9 @@ tables:
       - - Debt / Project Finance
         - No public debt disclosed
         - No press release or filing located
-        - Confirm absence of venture debt
-        - project finance
-        - or asset-backed facilities
+        - Confirm absence of venture debt, project finance, or asset-backed facilities
       - - Next Round Trigger
-        - Not stated; could be strategic
-        - IPO
-        - or growth financing
+        - Not stated; could be strategic, IPO, or growth financing
         - Public sources only
         - Too speculative for underwriting without management guidance
       - - Planned Use of Funds (Series D)
@@ -3705,9 +3688,7 @@ tables:
       - - Gross Margin (blended + by segment)
         - Services versus software mix will determine terminal value assumptions
         - High
-        - Request P&L with COGS by services
-        - software
-        - and hardware
+        - Request P&L with COGS by services, software, and hardware
       - - Monthly Burn Rate and Cash Balance
         - Needed for runway and financing-dependency assessment
         - High
@@ -3719,9 +3700,7 @@ tables:
       - - Customer Count and ACV Distribution
         - Needed to assess concentration and customer quality
         - Medium
-        - Request customer cohort data
-        - ACV ladder
-        - and top-10 customer disclosure
+        - Request customer cohort data, ACV ladder, and top-10 customer disclosure
       - - NRR
         - Key signal of platform stickiness and expansion
         - Medium
@@ -5950,31 +5929,31 @@ figures:
       deepening pattern observed in defense and commercial customer acquisitions.
     data:
       items:
-        - stage: Awareness
-          channel: Press / WEF / CNBC / Gov't procurement
+        - channel: Press / WEF / CNBC / Gov't procurement
           description: >-
             Customer encounters Gecko via industry press, WEF coverage, or government IDIQ solicitation. Defense pathway
             often originates in DoD procurement relationships.
-        - stage: Evaluation / Pilot
-          channel: FDE pilot or demonstration robots
+          label: Awareness
+        - channel: FDE pilot or demonstration robots
           description: >-
             Gecko proposes an on-site robot demonstration on customer assets — a flight deck, fabrication floor, storage
             tank, or ship hull. Pilot yields 99.6% coverage result (ADNOC) or 90% inspection span reduction (BPMI).
-        - stage: Initial Contract
-          channel: Commercial contract or government IDIQ
+          label: Evaluation / Pilot
+        - channel: Commercial contract or government IDIQ
           description: >-
             First production contract signed — direct commercial multi-year (NAES, ADNOC) or government vehicle (IDIQ
             via GSA; BlueForge Alliance for Columbia-class). Average initial term is 3–5 years.
-        - stage: Expansion
-          channel: FDE deepening + module cross-sell + option exercise
+          label: Initial Contract
+        - channel: FDE deepening + module cross-sell + option exercise
           description: >-
             Embedded FDE team builds mission-specific Cantilever extensions. Customer expands from 1 module to 2+ (Navy:
             SUSTAIN + BUILD). Contract options exercised (NAES $250M option). New facilities added (Trident: 20 sites).
-        - stage: Advocacy
-          channel: Named executive quote + co-authored press release + case study
+          label: Expansion
+        - channel: Named executive quote + co-authored press release + case study
           description: >-
             Customer provides public endorsement (BPMI President; NAES President; Navy CTO; Trident COO). Customer
             appears in Gecko case studies or co-authors press releases, validating ROI to peers.
+          label: Advocacy
     claimRefs:
       - C198
       - C199
@@ -5991,21 +5970,21 @@ figures:
     data:
       items:
         - label: Announced / Exploratory
-          count: 2
           examples: L3Harris XR (prototype testing); Freeport-McMoRan (mining — implied, no contract announced)
+          value: 2
         - label: Demonstration / Pilot Phase
-          count: 1
           examples: Columbia-class submarine program (demo contract via BlueForge Alliance, November 2023)
+          value: 1
         - label: Production Rollout
-          count: 6
           examples: >-
             U.S. Navy IDIQ (March 2026); NAES (February 2025 rollout); BPMI (July 2025); Trident Maritime (January
             2026); USAF Sentinel; ADNOC Gas
+          value: 6
         - label: Multi-Year Expansion
-          count: 3
           examples: >-
             U.S. Navy (surface → subs → IDIQ progression); ADNOC Gas (multi-year active Nov 2025); NAES ($250M option
             unexercised)
+          value: 3
     claimRefs:
       - C200
       - C202
@@ -6122,18 +6101,16 @@ figures:
       - C211
       - C214
   - id: F604
-    title: Retention / Repeat Cohort
-    type: cohort
+    title: Retention / Repeat Signal Matrix
+    type: matrix
     layout: standard
-    summary: |
-      Estimated retention cohort for Gecko's three largest named customer segments, derived
-      from contract expansion signals and multi-year term evidence. Cell values represent
-      estimated retention likelihood (0–100) at each time point based on public contract
-      evidence. No actual NRR data has been publicly disclosed; these are inference-based
-      estimates only.
+    summary: >-
+      Retention-signal matrix for Gecko's three largest named customer segments, derived from contract expansion signals
+      and multi-year term evidence. Values reflect observed or inferred signal strength rather than reported retention
+      percentages; null marks periods where the public record does not support a view.
     approximationNotes: >-
-      Retention values are analyst estimates inferred from contract structure and expansion announcements, not reported
-      NRR. Actual retention rates are undisclosed.
+      Matrix values combine observed contract duration and inferred repeat-usage strength from public announcements.
+      They are not reported NRR or cohort-retention percentages.
     data:
       columns:
         - Year 1 (Initial Contract)

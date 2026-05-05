@@ -5342,7 +5342,6 @@ figures:
       using verified evidence, company claims, and independent review signals.
     data:
       columns:
-        - Capability
         - Maturity
         - Evidence Quality
         - Differentiation
@@ -5435,26 +5434,32 @@ figures:
     title: Adoption / deployment funnel
     type: funnel
     layout: standard
-    summary: |
-      Estimated adoption funnel from enterprise awareness through full platform deployment.
-      Values are qualitative proxies; no official funnel metrics are publicly disclosed.
+    summary: >-
+      Estimated adoption funnel from enterprise awareness through public reference proof. Numeric values are ordinal
+      proxies anchored to named-account evidence, not company-disclosed funnel counts.
     data:
       items:
         - label: Enterprise security awareness (PeerSpot / Gartner research)
-          value: 100%
+          value: 100
+          displayValue: index 100
         - label: Active evaluation (Gartner Cool Vendor recognition; peer referral)
-          value: Est. moderate
+          value: 35
+          displayValue: proxy 35
         - label: Pilot deployment (limited endpoint + Chrome extension)
-          value: Est. subset of evaluators
+          value: 20
+          displayValue: proxy 20
         - label: Production deployment (full MDM rollout)
-          value: 14+ named accounts confirmed
+          value: 14
+          displayValue: 14 named accounts
         - label: Multi-module expansion (DSPM + IRM or AI Security)
-          value: Evidence limited; Motorola implies full deployment
+          value: 8
+          displayValue: proxy 8
         - label: Reference customer (public case study / quote)
-          value: Motorola, Navan, Iron Mountain confirmed
+          value: 3
+          displayValue: 3 public references
     approximationNotes: >-
-      Funnel conversion rates are not disclosed. Volume at each stage is qualitative. Based on named customer evidence
-      and product structure.
+      Funnel conversion rates are not disclosed. Values are ordinal public-evidence proxies anchored to 14 named
+      accounts and three detailed public references, not company-reported pipeline counts.
     claimRefs:
       - C249
       - C234
@@ -5469,7 +5474,6 @@ figures:
       Reference, Case Study, Vertical Diversification.
     data:
       columns:
-        - Customer
         - Production Confirmed
         - Quantified Outcome
         - Named Reference
@@ -5537,40 +5541,27 @@ figures:
     title: Retention / repeat cohort
     type: cohort
     layout: wide
-    summary: |
-      Illustrative retention cohort for Cyberhaven enterprise customers. No actual
-      retention data has been disclosed. This cohort shows estimated retention assumptions
-      based on industry benchmarks for enterprise security SaaS (comparable to mid-tier
-      DLP / endpoint security vendors), not confirmed Cyberhaven data. Retention at 12
-      months: 85% (estimate); 24 months: 78% (estimate). All values are approximations.
+    summary: >-
+      Illustrative single-cohort retention curve using benchmark assumptions for enterprise security SaaS. Cyberhaven
+      does not disclose actual cohort retention, NRR, or GRR.
     data:
       columns:
-        - Cohort
         - Month-6
         - Month-12
         - Month-24
       rows:
-        - label: Cohort 2022
+        - label: Illustrative benchmark cohort
           values:
-            - 90 (est.)
-            - 85 (est.)
-            - 78 (est.)
-          tone: neutral
-        - label: Cohort 2023
-          values:
-            - 92 (est.)
-            - 87 (est.)
-            - N/A (not yet)
-          tone: neutral
-        - label: Cohort 2024
-          values:
-            - 90 (est.)
-            - N/A (not yet)
-            - N/A (not yet)
+            - value: 90
+              displayValue: 90%
+            - value: 85
+              displayValue: 85%
+            - value: 78
+              displayValue: 78%
           tone: neutral
     approximationNotes: >-
-      All values are illustrative estimates based on comparable enterprise security SaaS benchmarks. Cyberhaven does not
-      disclose retention cohort data. Actual NRR/GRR should be requested during formal diligence.
+      Single illustrative benchmark curve only. Cyberhaven does not disclose actual customer cohorts or retention
+      percentages; use this solely as a placeholder for formal diligence requests.
     claimRefs:
       - C260
       - C271
@@ -5591,36 +5582,66 @@ figures:
         - Impact 4 Major
         - Impact 5 Catastrophic
       rows:
-        - - Likelihood 5 Almost Certain
-          - ''
-          - ''
-          - ''
-          - ''
-          - ''
-        - - Likelihood 4 Likely
-          - ''
-          - ''
-          - ''
-          - Class-action litigation
-          - ''
-        - - Likelihood 3 Possible
-          - ''
-          - ''
-          - FP-driven churn
-          - Chrome extension repeat; OAuth phish
-          - ''
-        - - Likelihood 2 Unlikely
-          - ''
-          - ''
-          - GCP outage; Manifest v3
-          - GDPR/FTC fine; People attrition; Purview displacement
-          - ''
-        - - Likelihood 1 Rare
-          - ''
-          - ''
-          - PCI scope creep; IP claims
-          - ''
-          - ''
+        - label: Likelihood 5 Almost Certain
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+        - label: Likelihood 4 Likely
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: Class-action litigation
+              tone: high
+            - label: ''
+              tone: low
+        - label: Likelihood 3 Possible
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: FP-driven churn
+              tone: medium
+            - label: Chrome extension repeat; OAuth phish
+              tone: critical
+            - label: ''
+              tone: low
+        - label: Likelihood 2 Unlikely
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: GCP outage; Manifest v3
+              tone: medium
+            - label: GDPR/FTC fine; People attrition; Purview displacement
+              tone: high
+            - label: ''
+              tone: low
+        - label: Likelihood 1 Rare
+          values:
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
+            - label: PCI scope creep; IP claims
+              tone: low
+            - label: ''
+              tone: low
+            - label: ''
+              tone: low
     approximationNotes: Likelihood and impact are qualitative assessments based on public evidence and precedent.
     claimRefs:
       - C274
@@ -5767,42 +5788,30 @@ figures:
       - C345
   - id: F802
     title: Valuation sensitivity
-    type: bar
+    type: range
     layout: standard
-    summary: >
-      Horizontal bar chart showing Cyberhaven implied valuation under different ARR and multiple assumptions. Bull
-      (10-12x, $400-600M ARR) = $4B-$7.2B. Base (5-7x, $200-300M ARR) = $1B-$2.1B. Bear (3-5x, $120-150M ARR) =
-      $360M-$750M. Entry valuation $1B shown as reference line.
+    summary: >-
+      Range chart showing Cyberhaven implied valuation under different ARR and multiple assumptions. Bull (10-12x,
+      $400-600M ARR) = $4.0B-$7.2B. Base (5-7x, $200-300M ARR) = $1.0B-$2.1B. Bear (3-5x, $120-150M ARR) =
+      $0.36B-$0.75B. Series D entry valuation is shown as a flat reference range.
     data:
-      series:
-        - name: Bull case (10-12x ARR)
-          values:
-            - 4000
-            - 7200
-          labels:
-            - Low
-            - High
-        - name: Base case (5-7x ARR)
-          values:
-            - 1000
-            - 2100
-          labels:
-            - Low
-            - High
-        - name: Bear case (3-5x ARR)
-          values:
-            - 360
-            - 750
-          labels:
-            - Low
-            - High
-        - name: Series D entry valuation
-          values:
-            - 1000
-            - 1000
-          labels:
-            - Entry
-            - Entry
+      items:
+        - label: Bull case (10-12x ARR)
+          low: 4000
+          mid: 5600
+          high: 7200
+        - label: Base case (5-7x ARR)
+          low: 1000
+          mid: 1550
+          high: 2100
+        - label: Bear case (3-5x ARR)
+          low: 360
+          mid: 555
+          high: 750
+        - label: Series D entry valuation
+          low: 1000
+          mid: 1000
+          high: 1000
     approximationNotes: ARR estimated; multiples based on public comparable set. All values in USD millions.
     claimRefs:
       - C330

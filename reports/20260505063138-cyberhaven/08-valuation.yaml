@@ -1,6 +1,6 @@
 schemaVersion: report-v2
 artifact: valuation
-slug: cyberhaven-valuation
+slug: 20260505063138-cyberhaven
 runDate: '2026-05-05'
 company:
   name: Cyberhaven
@@ -497,42 +497,30 @@ figures:
       - C345
   - id: F802
     title: Valuation sensitivity
-    type: bar
+    type: range
     layout: standard
-    summary: >
-      Horizontal bar chart showing Cyberhaven implied valuation under different ARR and multiple assumptions. Bull
-      (10-12x, $400-600M ARR) = $4B-$7.2B. Base (5-7x, $200-300M ARR) = $1B-$2.1B. Bear (3-5x, $120-150M ARR) =
-      $360M-$750M. Entry valuation $1B shown as reference line.
+    summary: >-
+      Range chart showing Cyberhaven implied valuation under different ARR and multiple assumptions. Bull (10-12x,
+      $400-600M ARR) = $4.0B-$7.2B. Base (5-7x, $200-300M ARR) = $1.0B-$2.1B. Bear (3-5x, $120-150M ARR) =
+      $0.36B-$0.75B. Series D entry valuation is shown as a flat reference range.
     data:
-      series:
-        - name: Bull case (10-12x ARR)
-          values:
-            - 4000
-            - 7200
-          labels:
-            - Low
-            - High
-        - name: Base case (5-7x ARR)
-          values:
-            - 1000
-            - 2100
-          labels:
-            - Low
-            - High
-        - name: Bear case (3-5x ARR)
-          values:
-            - 360
-            - 750
-          labels:
-            - Low
-            - High
-        - name: Series D entry valuation
-          values:
-            - 1000
-            - 1000
-          labels:
-            - Entry
-            - Entry
+      items:
+        - label: Bull case (10-12x ARR)
+          low: 4000
+          mid: 5600
+          high: 7200
+        - label: Base case (5-7x ARR)
+          low: 1000
+          mid: 1550
+          high: 2100
+        - label: Bear case (3-5x ARR)
+          low: 360
+          mid: 555
+          high: 750
+        - label: Series D entry valuation
+          low: 1000
+          mid: 1000
+          high: 1000
     approximationNotes: ARR estimated; multiples based on public comparable set. All values in USD millions.
     claimRefs:
       - C330
