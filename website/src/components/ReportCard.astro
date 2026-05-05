@@ -66,8 +66,9 @@ const metricRows = [
   .report-card:hover { border-color: var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); }
   .card-topline, .card-footer, .card-badges { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 800; color: var(--caption-gray); text-transform: uppercase; letter-spacing: 0.02em; }
   .card-topline { justify-content: space-between; color: var(--claret); gap: var(--space-3); }
-  .card-topline .card-sector { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .card-topline .card-stage { color: var(--caption-gray); flex: none; }
+  .card-topline .card-sector,
+  .card-topline .card-stage { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card-topline .card-stage { color: var(--caption-gray); }
   h3 { margin: var(--space-3) 0 var(--space-2); font-size: var(--fs-xl); line-height: 1.05; overflow-wrap: anywhere; }
   .card-headline { color: var(--caption-gray); margin: 0; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .card-badges span { border: var(--report-rule); padding: 3px 8px; background: var(--paper); color: var(--ink-page); }
