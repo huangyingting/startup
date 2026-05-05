@@ -1,0 +1,660 @@
+schemaVersion: report-v2
+artifact: risks
+slug: cyberhaven-risks
+runDate: '2026-05-05'
+company:
+  name: Cyberhaven
+chapter:
+  number: 7
+  title: Risks
+  summary: >
+    Cyberhaven carries a multi-dimensional risk profile shaped by a high-profile December 2024 Chrome extension
+    supply-chain compromise, mounting global data-privacy regulation, dependence on Google Chrome for endpoint coverage,
+    a concentrated enterprise customer base, and a competitive market where well-resourced incumbents hold brand
+    advantage. Regulatory exposure spans GDPR, CCPA, PCI DSS, FTC data-security authority, and the SEC cybersecurity
+    disclosure rules. Legal risk includes active class-action litigation stemming from the extension incident.
+    Operational risk centres on extension-architecture fragility, GCP single-cloud dependency, and key-person
+    concentration. Mitigations in place include SOC 2 Type 2 certification, PCI DSS v4.0.1 compliance, per-customer
+    isolated GCP instances, rapid incident response (24-hour clean extension release), and Mandiant forensics
+    engagement, which are substantive but insufficient to fully neutralise reputational or regulatory exposure from the
+    2024 event.
+sections:
+  - id: '7.1'
+    title: Regulatory and Legal Risk
+    body: |
+      Cyberhaven operates in one of the most heavily regulated data-handling categories: software
+      that inspects, intercepts, and logs employee and enterprise data flows across endpoints,
+      cloud services, and network channels. This triggers obligations under GDPR (EU 2016/679),
+      CCPA/CPRA (California), PCI DSS v4.0.1, HIPAA where customers are covered entities, and the
+      FTC broad data-security authority under Section 5 of the FTC Act. The 2023 SEC cybersecurity
+      disclosure rules impose material-incident reporting obligations on Cyberhaven enterprise
+      customers, creating indirect pressure on Cyberhaven to deliver rapid documented breach
+      responses, a capability tested in December 2024.
+
+      GDPR Article 28 processor obligations and Article 32 security requirements apply wherever
+      Cyberhaven processes personal data of EU data subjects. Customers in regulated industries
+      such as finance, healthcare, and legal pass downstream compliance requirements to Cyberhaven
+      via data processing agreements. Non-compliance by Cyberhaven could expose customers to
+      supervisory authority enforcement, triggering contract terminations and reputational harm
+      extending beyond any direct fine. GDPR Article 83(5) fines can reach the greater of EUR 20M
+      or 4 percent of global annual turnover for the most serious violations.
+
+      The December 2024 Chrome extension compromise (v24.10.4) triggered at least one class-action
+      lawsuit documented by TopClassActions, citing exposure of OAuth credentials for approximately
+      400,000 corporate users. The litigation risk is material: settlement costs, litigation
+      expenses, and adverse publicity could impair sales cycles and renewal rates. IP risk is
+      moderate because Cyberhaven holds patents on data-lineage tracking, but the novelty window
+      narrows as incumbents such as Symantec and Microsoft Purview incorporate lineage features.
+    claimRefs:
+      - C274
+      - C275
+      - C276
+      - C277
+      - C278
+      - C279
+      - C280
+      - C281
+  - id: '7.2'
+    title: Operational and Security Risk
+    body: |
+      The primary operational risk is architectural: Cyberhaven endpoint coverage depends on a
+      Chrome browser extension, a distribution channel that bypassed traditional endpoint security
+      controls in December 2024 when attackers compromised a developer OAuth token and pushed a
+      malicious version (v24.10.4) to the Chrome Web Store. The extension was live for roughly
+      24 hours before Cyberhaven released the clean v24.10.5 and engaged Mandiant for forensic
+      investigation. The episode exposed the fundamental fragility of browser-extension supply
+      chains: a single compromised developer credential can reach every deployed instance without
+      per-customer approval workflows.
+
+      Google Chrome holds approximately 65 percent global browser market share, making it the
+      rational primary channel for enterprise DLP agents, but creating platform dependency.
+      Chrome Manifest v3 migration changed API availability, and future policy shifts could
+      restrict the depth of network interception available to extensions. Cyberhaven offers a
+      separate network DLP agent installed via MDM that partially mitigates extension-only risk,
+      but this agent is not universally deployed across all customers.
+
+      GCP single-cloud dependency introduces concentration risk: a regional GCP outage or pricing
+      renegotiation constrains flexibility. Infrastructure is deployed in US GCP regions with
+      per-customer isolated instances, a design that limits blast radius but increases operational
+      overhead. DevOps key-person risk is moderate, as the engineering team of approximately 350
+      employees carries specialised data-lineage graph expertise that is difficult to replace
+      quickly. Attrition of key data science or infrastructure engineers would slow the roadmap.
+    claimRefs:
+      - C282
+      - C283
+      - C284
+      - C285
+      - C286
+      - C287
+      - C288
+      - C289
+  - id: '7.3'
+    title: Partner and Dependency Risk
+    body: |
+      Cyberhaven go-to-market relies on a direct enterprise sales force with limited channel or
+      partner leverage at current scale. This creates dependency on a small sales team and limits
+      geographic expansion speed. Partnerships with MSSPs and SIs are nascent; competitors
+      Symantec and Forcepoint have decades-old MSSP relationships that drive renewal revenue
+      without direct sales effort.
+
+      Supply-chain exposure extends beyond the December 2024 extension incident. Cyberhaven
+      relies on third-party OAuth providers, the Chrome Web Store publishing pipeline, and
+      upstream GCP infrastructure. Each represents a distinct failure mode: OAuth token compromise
+      as occurred in 2024, Chrome Web Store review delays blocking emergency patches, or a GCP
+      service disruption degrading product availability. The Chrome extension supply-chain attack
+      affected approximately 35 extensions beyond Cyberhaven, indicating a systemic industry
+      threat rather than a targeted attack, but Cyberhaven bore disproportionate reputational
+      exposure as the largest affected vendor by user count.
+
+      Capital provider dependency is currently low: the $100M Series D (April 2025) provides
+      approximately 18 to 24 months of runway at assumed burn rates, reducing near-term financing
+      risk. However, StepStone Group and Schroders Capital are financial investors with limited
+      disclosed operational support capability in enterprise SaaS. A down-round scenario triggered
+      by competitive displacement or regulatory sanctions would materially impair employee
+      retention through underwater options and reduce customer confidence.
+    claimRefs:
+      - C290
+      - C291
+      - C292
+      - C293
+      - C294
+      - C295
+      - C296
+      - C297
+  - id: '7.4'
+    title: People and Execution Risk
+    body: |
+      Cyberhaven was founded in 2016 by Howard Hua, Georgy Gritschuk, and Volodymyr Kuznetsov.
+      The data-lineage graph concept is technically differentiated, but execution depends on
+      retaining the core engineering team that built this architecture. A startup at this stage
+      typically sees meaningful churn risk among senior engineers as equity vests; the Series D at
+      a $1B valuation provides some liquidity optionality but also means early-stage option holders
+      face a higher exit bar before meaningful proceeds.
+
+      Sales execution risk is significant: Cyberhaven total raise of $250M and estimated ARR near
+      $100M implies a capital-efficient growth trajectory, but penetrating Fortune 500 accounts
+      requires experienced enterprise sellers capable of navigating DLP displacement deals. DLP
+      replacement sales are long, typically 12 to 18 months, require legal and security-team
+      sign-off, and face entrenched inertia from incumbents. If Cyberhaven cannot hire and retain
+      quota-carrying enterprise AEs at pace, growth could stall before the company reaches a
+      sustainable scale for an IPO.
+
+      Executive team depth beyond the founding trio is publicly thin. The CISO role, head of
+      customer success, and CFO function are not prominently disclosed, creating opacity around
+      financial controls and scaling readiness. The December 2024 incident handling, including
+      CEO transparency, rapid patch deployment, and Mandiant engagement, was operationally strong,
+      but repeat incidents without equivalent response quality would be severely damaging to
+      enterprise customer trust and ongoing regulatory posture.
+    claimRefs:
+      - C298
+      - C299
+      - C300
+      - C301
+      - C302
+      - C303
+  - id: '7.5'
+    title: Financial Risk and Thesis-Break Triggers
+    body: |
+      Financial risk centres on burn rate opacity and competitive pricing pressure. Cyberhaven
+      has raised $250M total with approximately $100M ARR estimated from public sources; without
+      audited financials the gross margin, NRR, and LTV/CAC ratios are unverifiable. DLP markets
+      are experiencing price compression from Microsoft Purview bundled with M365 E5 at marginal
+      cost, and from Symantec deeply discounting on renewal. Cyberhaven premium pricing faces
+      displacement if Microsoft embeds comparable data-lineage capabilities into its native tooling.
+
+      Key mitigations in place include SOC 2 Type 2 certification with a Bridge Letter issued
+      January 2026, PCI DSS v4.0.1 compliance, per-customer isolated GCP instances, Chrome
+      extension code-signing improvements post-December 2024, and a documented incident response
+      playbook. These reduce operational risk but do not eliminate regulatory or litigation
+      exposure from the 2024 incident.
+
+      Five thesis-break triggers warrant diligence tracking. First, a second material security
+      incident within 18 months would likely trigger enterprise churns and regulatory
+      investigations. Second, Google restricting Manifest v3 APIs in ways that cripple the
+      extension deep content inspection would require a multi-year agent architecture redesign.
+      Third, Microsoft embedding production-grade AI data lineage into Purview E5 would undercut
+      Cyberhaven premium positioning. Fourth, a class-action settlement or regulatory fine
+      exceeding $30M would consume meaningful Series D runway and might necessitate a distressed
+      financing round. Fifth, failure to achieve SOC 2-equivalent EU certification such as ISAE
+      3000 or BSI C5 would block regulated EU enterprise expansion.
+    claimRefs:
+      - C304
+      - C305
+      - C306
+      - C307
+      - C308
+      - C309
+      - C310
+      - C311
+      - C312
+      - C313
+tables:
+  - id: T701
+    title: Regulatory / legal risk register
+    columns:
+      - Risk
+      - Jurisdiction
+      - Regulatory Instrument
+      - Likelihood 1-5
+      - Impact 1-5
+      - Mitigation Maturity
+      - Residual Exposure
+    rows:
+      - - GDPR Article 28/32 processor liability
+        - EU/EEA
+        - Regulation (EU) 2016/679
+        - '3'
+        - '5'
+        - Partial - DPA templates, isolation arch
+        - High - no EU DPA certification
+      - - CCPA/CPRA consumer data rights enforcement
+        - California (global)
+        - Cal. Civ. Code sec 1798.100
+        - '2'
+        - '3'
+        - Partial - privacy policy published
+        - Medium - no CPRA audit
+      - - FTC Section 5 data security enforcement
+        - USA
+        - 15 U.S.C. sec 45
+        - '2'
+        - '4'
+        - Partial - SOC 2 Type 2
+        - Medium - prior incident on record
+      - - SEC Rule 33-11216 indirect compliance pressure
+        - USA
+        - 17 CFR 229.106
+        - '2'
+        - '3'
+        - Strong - 24h disclosure precedent 2024
+        - Low-Medium
+      - - Class-action litigation (Chrome extension 2024)
+        - USA
+        - Common law / CCPA private right
+        - '4'
+        - '4'
+        - Partial - Mandiant engaged, patch deployed
+        - High - settlement risk unresolved
+      - - PCI DSS v4.0.1 scope creep
+        - Global
+        - PCI DSS v4.0.1
+        - '1'
+        - '3'
+        - Strong - certified
+        - Low
+      - - EU AI Act employee-monitoring obligations
+        - EU/EEA
+        - EU AI Act 2024/1689
+        - '2'
+        - '3'
+        - Nascent - no AI Act plan documented
+        - Medium
+      - - IP/patent risk from incumbent counterclaims
+        - USA/Global
+        - 35 U.S.C. patent law
+        - '1'
+        - '3'
+        - Partial - own patent portfolio
+        - Low-Medium
+    notes: >-
+      Likelihood and Impact on 1-5 scale. Sources: eur-lex.europa.eu, oag.ca.gov, ftc.gov, sec.gov,
+      pcisecuritystandards.org, topclassactions.com.
+    claimRefs:
+      - C274
+      - C275
+      - C276
+      - C277
+      - C278
+      - C279
+      - C280
+      - C281
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Covers key jurisdictions where Cyberhaven has active enterprise customers (US, EU); does not enumerate all 50 US
+        state privacy laws or emerging APAC regulations.
+  - id: T702
+    title: Operational and quality risk register
+    columns:
+      - Failure Mode
+      - Likelihood 1-5
+      - Severity 1-5
+      - Mitigation
+      - Residual Risk
+    rows:
+      - - Chrome extension supply-chain compromise (repeat)
+        - '3'
+        - '5'
+        - Code-signing post-2024, reduced token scope
+        - High - architecture unchanged
+      - - GCP regional outage
+        - '2'
+        - '4'
+        - Multi-region failover planned (not confirmed)
+        - Medium
+      - - Chrome Manifest v3 API restrictions
+        - '2'
+        - '4'
+        - Investing in network agent fallback
+        - Medium
+      - - OAuth token compromise via phishing
+        - '3'
+        - '4'
+        - Post-2024 MFA enforcement, token rotation
+        - Medium-High
+      - - Data false-positive triggering customer churn
+        - '3'
+        - '3'
+        - AI alert triage, Motorola 90% FP reduction claim
+        - Medium
+      - - SOC 2 audit gap / lapsed certification
+        - '1'
+        - '4'
+        - Bridge Letter January 2026, ongoing audit
+        - Low
+      - - DDoS or API abuse on SaaS backend
+        - '2'
+        - '3'
+        - GCP native DDoS protection
+        - Low-Medium
+    notes: >-
+      Operational risks post-December 2024 incident. Sources: bleepingcomputer.com, techcrunch.com, arstechnica.com,
+      cyberhaven.com.
+    claimRefs:
+      - C282
+      - C283
+      - C284
+      - C285
+      - C286
+      - C287
+  - id: T703
+    title: Partner and dependency risk register
+    columns:
+      - Dependency
+      - Counterparty
+      - Role
+      - Concentration
+      - Failure Scenario
+      - Severity
+    rows:
+      - - Chrome Web Store
+        - Google LLC
+        - Extension distribution
+        - Critical
+        - Policy change or manifest v3 restriction
+        - High
+      - - GCP Cloud
+        - Google LLC
+        - Infrastructure hosting
+        - High
+        - Regional outage or pricing renegotiation
+        - High
+      - - OAuth providers (Google/Microsoft)
+        - Google/Microsoft
+        - Extension dev auth
+        - High
+        - Token phish or credential compromise
+        - High - occurred 2024
+      - - Enterprise sales channel
+        - Direct (internal)
+        - Revenue generation
+        - High
+        - AE attrition or missed quota
+        - Medium-High
+      - - Mandiant / Google Cloud Security
+        - Mandiant (Google)
+        - IR forensics
+        - Medium
+        - Scope creep or delayed findings
+        - Medium
+      - - StepStone / Schroders (Series D)
+        - Financial investors
+        - Capital provision
+        - Medium
+        - Down-round trigger or bridge pressure
+        - Medium
+    notes: >-
+      Chrome Web Store and GCP are both Google - dual-concentration risk. Sources: techcrunch.com, siliconangle.com,
+      prnewswire.com.
+    claimRefs:
+      - C290
+      - C291
+      - C292
+      - C293
+  - id: T704
+    title: People and execution risk register
+    columns:
+      - Role or Function
+      - Dependency or Gap
+      - Likelihood 1-5
+      - Severity 1-5
+      - Mitigation
+    rows:
+      - - Founding engineering team (data lineage IP)
+        - Deep architecture knowledge concentrated
+        - '2'
+        - '5'
+        - Equity retention plan; Series D liquidity event
+      - - Enterprise AE / sales leadership
+        - Limited public disclosure of sales org depth
+        - '3'
+        - '4'
+        - Series D capital deployed for GTM hiring
+      - - CFO / financial controls
+        - Not publicly named; financial opacity risk
+        - '2'
+        - '3'
+        - Board-level oversight; pre-IPO audit readiness
+      - - CISO / security leadership
+        - Not prominently disclosed post-2024 incident
+        - '2'
+        - '4'
+        - Mandiant engagement as interim support
+      - - Customer success / professional services
+        - DLP deployments require long onboarding
+        - '2'
+        - '3'
+        - Motorola case study shows strong CS delivery
+    notes: >-
+      Based on publicly available org signals and Series D announcement. Sources: cyberhaven.com, siliconangle.com,
+      prnewswire.com.
+    claimRefs:
+      - C298
+      - C299
+      - C300
+      - C301
+  - id: T705
+    title: Mitigation and kill criteria table
+    columns:
+      - Risk
+      - Monitorable Trigger
+      - Threshold or Event
+      - Action Implication
+    rows:
+      - - Chrome extension repeat incident
+        - CVE disclosures; Chrome Web Store complaints
+        - Any malicious extension version published
+        - Immediate customer notification; churn wave expected
+      - - Regulatory fine (GDPR/FTC)
+        - Supervisory authority investigation opened
+        - Fine exceeding $10M or consent decree issued
+        - Reputational harm; enterprise sales freeze
+      - - Class-action settlement materialises
+        - Court docket filings; settlement announcement
+        - Settlement exceeding $30M
+        - Cash burn acceleration; potential distress financing
+      - - Microsoft Purview AI lineage launch
+        - Microsoft 365 roadmap announcements
+        - Purview adds data-lineage GA feature
+        - Pricing pressure; must accelerate differentiation
+      - - Google Manifest v3 deep inspection ban
+        - Chrome developer blog announcements
+        - API removal blocking content inspection
+        - Multi-year re-architecture required
+      - - Key engineer attrition above 15 percent
+        - LinkedIn departures; Glassdoor sentiment
+        - CTO or 3+ senior architects depart
+        - Roadmap delay; IP risk elevation
+      - - NRR drops below 100 percent
+        - Annual contract renewal data
+        - Two consecutive quarters NRR below 100 percent
+        - Growth stall; requires pricing or product reset
+    notes: >-
+      Thesis-break triggers for diligence tracking. Sources: cyberhaven.com, prnewswire.com, darkreading.com,
+      obsidiansecurity.com.
+    claimRefs:
+      - C304
+      - C305
+      - C306
+      - C307
+      - C308
+figures:
+  - id: F701
+    title: Risk heatmap
+    type: matrix
+    layout: standard
+    summary: >
+      Two-dimensional risk heatmap plotting likelihood (1=rare to 5=almost certain) against impact (1=negligible to
+      5=catastrophic). Chrome extension repeat incident and class-action litigation plot highest (likelihood 3-4, impact
+      4-5). Regulatory GDPR/FTC risk plots medium-high (likelihood 2-3, impact 4-5). Microsoft Purview competitive
+      displacement plots medium (likelihood 2, impact 4).
+    data:
+      columns:
+        - Impact 1 Negligible
+        - Impact 2 Minor
+        - Impact 3 Moderate
+        - Impact 4 Major
+        - Impact 5 Catastrophic
+      rows:
+        - - Likelihood 5 Almost Certain
+          - ''
+          - ''
+          - ''
+          - ''
+          - ''
+        - - Likelihood 4 Likely
+          - ''
+          - ''
+          - ''
+          - Class-action litigation
+          - ''
+        - - Likelihood 3 Possible
+          - ''
+          - ''
+          - FP-driven churn
+          - Chrome extension repeat; OAuth phish
+          - ''
+        - - Likelihood 2 Unlikely
+          - ''
+          - ''
+          - GCP outage; Manifest v3
+          - GDPR/FTC fine; People attrition; Purview displacement
+          - ''
+        - - Likelihood 1 Rare
+          - ''
+          - ''
+          - PCI scope creep; IP claims
+          - ''
+          - ''
+    approximationNotes: Likelihood and impact are qualitative assessments based on public evidence and precedent.
+    claimRefs:
+      - C274
+      - C282
+      - C304
+  - id: F702
+    title: Risk transmission map
+    type: dag
+    layout: wide
+    summary: >
+      Directed acyclic graph showing how upstream risks flow into revenue and valuation outcomes. Chrome extension
+      architectural fragility feeds into both regulatory investigation risk and customer churn risk; both flow into ARR
+      reduction and ultimately valuation compression. Competitive pricing pressure from Microsoft feeds directly into
+      pricing compression and retention challenges.
+    data:
+      nodes:
+        - id: R1
+          label: Chrome ext. architecture fragility
+        - id: R2
+          label: OAuth supply-chain exposure
+        - id: R3
+          label: GDPR/FTC regulatory risk
+        - id: R4
+          label: Class-action litigation
+        - id: R5
+          label: Microsoft Purview pricing pressure
+        - id: R6
+          label: Customer churn
+        - id: R7
+          label: ARR impairment
+        - id: R8
+          label: Valuation compression
+        - id: R9
+          label: Reputational damage
+      edges:
+        - from: R1
+          to: R2
+        - from: R1
+          to: R9
+        - from: R2
+          to: R3
+        - from: R2
+          to: R4
+        - from: R3
+          to: R6
+        - from: R4
+          to: R9
+        - from: R5
+          to: R6
+        - from: R9
+          to: R6
+        - from: R6
+          to: R7
+        - from: R7
+          to: R8
+    approximationNotes: Illustrative causal paths; edge weights are qualitative.
+    claimRefs:
+      - C282
+      - C304
+      - C307
+  - id: F703
+    title: Dependency map
+    type: dag
+    layout: wide
+    summary: >
+      Shows Cyberhaven critical operational dependencies: Google (Chrome Web Store plus GCP), OAuth providers, Mandiant
+      forensics, and financial investors. Google appears twice, highlighting dual-concentration risk. Customer channels
+      flow from direct enterprise sales with limited MSSP leverage.
+    data:
+      nodes:
+        - id: D1
+          label: Google Chrome Web Store
+        - id: D2
+          label: Google Cloud Platform
+        - id: D3
+          label: Google/Microsoft OAuth
+        - id: D4
+          label: Mandiant (incident response)
+        - id: D5
+          label: StepStone / Schroders (capital)
+        - id: D6
+          label: Direct enterprise sales
+        - id: D7
+          label: Cyberhaven SaaS platform
+        - id: D8
+          label: Enterprise customers
+      edges:
+        - from: D1
+          to: D7
+        - from: D2
+          to: D7
+        - from: D3
+          to: D7
+        - from: D4
+          to: D7
+        - from: D5
+          to: D7
+        - from: D6
+          to: D8
+        - from: D7
+          to: D8
+    approximationNotes: Dependency types (critical/moderate/low) are qualitative assessments.
+    claimRefs:
+      - C290
+      - C291
+      - C292
+callouts:
+  - calloutType: risk
+    title: Chrome Extension Architecture Is a Structural Vulnerability
+    body: >
+      The December 2024 supply-chain compromise exposed a fundamental risk: a single developer OAuth token compromise
+      can push a malicious version to all 400,000+ corporate users simultaneously with no per-customer approval gate.
+      Cyberhaven patched within 24 hours and engaged Mandiant, but the underlying Chrome extension distribution model
+      remains architecturally unchanged. Until Cyberhaven migrates to a cryptographically signed, enterprise-managed
+      deployment model similar to EDR kernel drivers, this attack surface persists and represents the single
+      highest-severity operational risk in this chapter.
+    claimRefs:
+      - C282
+      - C283
+      - C284
+  - calloutType: risk
+    title: Class-Action and Regulatory Exposure Remains Unresolved
+    body: >
+      TopClassActions has documented lawsuit filings against Cyberhaven arising from the 2024 incident. GDPR Article 83
+      fines can reach 4% of global annual turnover; FTC consent decrees impose multi-year compliance obligations.
+      Neither the litigation settlement nor any regulatory investigation outcome is publicly resolved as of May 2026.
+      Diligence should obtain legal hold status and privilege-protected litigation exposure estimates before finalising
+      any investment.
+    claimRefs:
+      - C279
+      - C280
+      - C277
+  - calloutType: insight
+    title: Two-Vendor Google Concentration Warrants Structural Mitigation
+    body: >
+      Cyberhaven depends on Google for both its primary endpoint distribution channel (Chrome Web Store) and its cloud
+      infrastructure (GCP). This creates a scenario where a single Google policy or pricing change could simultaneously
+      disrupt distribution and hosting. Multi-cloud roadmap disclosure and a Chrome enterprise deployment alternative
+      such as Group Policy or MDM bypass of the Web Store would materially reduce this concentration risk.
+    claimRefs:
+      - C290
+      - C291

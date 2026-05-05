@@ -1,1290 +1,717 @@
 schemaVersion: report-v2
 artifact: market-analysis
 slug: 20260505063140-gecko-robotics
-runDate: "2026-05-05"
+runDate: '2026-05-05'
 company:
   name: Gecko Robotics
-
 acknowledgedWarnings:
   - dimension: duplicateAnalysis
-    reason: "T202 and F201 present the same sizing data in complementary formats — T202 is a tabular source-comparison matrix (methodology, CAGR, limitation per row) while F201 is a pyramid visual showing TAM/SAM/SOM hierarchy. They answer distinct questions and are not redundant."
+    reason: >-
+      T202 and F201 present the same sizing data in complementary formats — T202 is a tabular source-comparison matrix
+      (methodology, CAGR, limitation per row) while F201 is a pyramid visual showing TAM/SAM/SOM hierarchy. They answer
+      distinct questions and are not redundant.
   - dimension: duplicateAnalysis
-    reason: "T202 and F202 are complementary: T202 compares analyst methodologies while F202 visualizes low/mid/high estimate ranges with uncertainty bands. The table is for methodology audit; the figure is for range visualization."
+    reason: >-
+      T202 and F202 are complementary: T202 compares analyst methodologies while F202 visualizes low/mid/high estimate
+      ranges with uncertainty bands. The table is for methodology audit; the figure is for range visualization.
   - dimension: duplicateAnalysis
-    reason: "T203 and F203 both cover buyer segmentation but from different angles: T203 is a prose-column table (buyer, user, payer, budget owner, trigger) while F203 is a structured matrix with tone indicators for quick visual scanning. Both are required for completeness."
+    reason: >-
+      T203 and F203 both cover buyer segmentation but from different angles: T203 is a prose-column table (buyer, user,
+      payer, budget owner, trigger) while F203 is a structured matrix with tone indicators for quick visual scanning.
+      Both are required for completeness.
   - dimension: duplicateAnalysis
-    reason: "T204 and F204 cover related but distinct content: T204 lists all growth drivers AND constraints with timing and diligence asks; F204 is a funnel diagram focused solely on adoption stages from awareness to platform expansion — different analytical dimensions."
-
+    reason: >-
+      T204 and F204 cover related but distinct content: T204 lists all growth drivers AND constraints with timing and
+      diligence asks; F204 is a funnel diagram focused solely on adoption stages from awareness to platform expansion —
+      different analytical dimensions.
 chapter:
   number: 2
   title: Market Analysis
-  summary: |
-    Gecko Robotics competes at the intersection of inspection robotics and AI-driven asset intelligence across six critical-infrastructure verticals. The global inspection robotics market is valued at $2.8–6.7B in 2024–2025 (analyst estimates vary by scope), growing at ~13% CAGR through 2034. The broader NDT and inspection services market is $10.4B (2025) growing at 8% CAGR. Gecko's addressable sub-market — critical-asset heavy-industry inspection in defense, power, and oil & gas — is estimated at $2–4B, constrained by the company's current product scope and geographic footprint. Three structural tailwinds dominate: aging U.S. critical infrastructure, a sustained surge in electricity demand from AI data centers, and intensified U.S. defense readiness requirements. Key adoption constraints include capital-intensive deployment, data-format switching costs, and trust barriers in safety-critical environments.
-
+  summary: >
+    Gecko Robotics competes at the intersection of inspection robotics and AI-driven asset intelligence across six
+    critical-infrastructure verticals. The global inspection robotics market is valued at $2.8–6.7B in 2024–2025
+    (analyst estimates vary by scope), growing at ~13% CAGR through 2034. The broader NDT and inspection services market
+    is $10.4B (2025) growing at 8% CAGR. Gecko's addressable sub-market — critical-asset heavy-industry inspection in
+    defense, power, and oil & gas — is estimated at $2–4B, constrained by the company's current product scope and
+    geographic footprint. Three structural tailwinds dominate: aging U.S. critical infrastructure, a sustained surge in
+    electricity demand from AI data centers, and intensified U.S. defense readiness requirements. Key adoption
+    constraints include capital-intensive deployment, data-format switching costs, and trust barriers in safety-critical
+    environments.
 sections:
   - id: market-boundary
-    title: "Market Boundary and Status-Quo Substitutes"
-    body: |
-      Gecko Robotics competes within the physical inspection and asset-integrity management market — specifically the segment where autonomous or semi-autonomous robotic data collection replaces or augments manual inspection by human technicians. The market boundary includes: robotic inspection hardware (wall-climbing robots, drones, fixed sensors), the AI software platforms that process inspection data, and multi-year services agreements that bundle both.
+    title: Market Boundary and Status-Quo Substitutes
+    body: >
+      Gecko Robotics competes within the physical inspection and asset-integrity management market — specifically the
+      segment where autonomous or semi-autonomous robotic data collection replaces or augments manual inspection by
+      human technicians. The market boundary includes: robotic inspection hardware (wall-climbing robots, drones, fixed
+      sensors), the AI software platforms that process inspection data, and multi-year services agreements that bundle
+      both.
 
-      Excluded from Gecko's immediate market: traditional NDT services provided by human inspectors without robotic assistance (e.g., TEAM Inc, Mistras Group), general-purpose industrial robots not purpose-built for inspection, SCADA and process-sensor monitoring systems, and pure digital-twin software with no robot data collection component.
 
-      The status-quo substitutes that Gecko displaces are: (1) manual rope-access or scaffolding inspections by certified NDT technicians; (2) third-party inspection services firms such as TEAM Inc and Mistras Group, which deploy human technicians with portable NDT instruments; (3) interval-based scheduled maintenance (calendar or run-hour triggers) rather than condition-based; and (4) fixed-sensor SCADA monitoring, which captures operational data but not physical asset-integrity data. Gecko's differentiation lies in capturing high-resolution, continuous physical data that these substitutes cannot produce economically at scale.
+      Excluded from Gecko's immediate market: traditional NDT services provided by human inspectors without robotic
+      assistance (e.g., TEAM Inc, Mistras Group), general-purpose industrial robots not purpose-built for inspection,
+      SCADA and process-sensor monitoring systems, and pure digital-twin software with no robot data collection
+      component.
 
-      Competitor adjacencies include: drone inspection software platforms (HUVRdata), autonomous inspection robots for oil & gas (Energy Robotics, ANYbotics), digital twins for structural assets (Akselos), and industrial NDT OEM equipment makers (Baker Hughes/Waygate Technologies). None of these players today span all six of Gecko's verticals with a unified AI platform, suggesting the market remains fragmented.
-    claimRefs: [C201, C202, C203, C204, C205, C206, C207]
 
+      The status-quo substitutes that Gecko displaces are: (1) manual rope-access or scaffolding inspections by
+      certified NDT technicians; (2) third-party inspection services firms such as TEAM Inc and Mistras Group, which
+      deploy human technicians with portable NDT instruments; (3) interval-based scheduled maintenance (calendar or
+      run-hour triggers) rather than condition-based; and (4) fixed-sensor SCADA monitoring, which captures operational
+      data but not physical asset-integrity data. Gecko's differentiation lies in capturing high-resolution, continuous
+      physical data that these substitutes cannot produce economically at scale.
+
+
+      Competitor adjacencies include: drone inspection software platforms (HUVRdata), autonomous inspection robots for
+      oil & gas (Energy Robotics, ANYbotics), digital twins for structural assets (Akselos), and industrial NDT OEM
+      equipment makers (Baker Hughes/Waygate Technologies). None of these players today span all six of Gecko's
+      verticals with a unified AI platform, suggesting the market remains fragmented.
+    claimRefs:
+      - C043
+      - C044
+      - C045
+      - C046
+      - C047
+      - C048
+      - C049
   - id: market-sizing
-    title: "Market Sizing — TAM, SAM, and Sizing Lenses"
-    body: |
-      Two analyst firms provide the primary market size estimates for inspection robotics. Global Market Insights (GMI) pegs the global inspection robots market at $2.8 billion in 2024, growing to $9.8 billion by 2034 at a 13.9% CAGR. Research and Markets (R&M) estimates the same market at $6.72 billion in 2025, reaching $16.16 billion by 2032 at a 13.33% CAGR. The gap between these figures ($2.8B vs $6.7B) reflects materially different scope definitions: R&M's boundary appears to include broader industrial automation robotics alongside pure inspection-focused robots.
+    title: Market Sizing — TAM, SAM, and Sizing Lenses
+    body: >
+      Two analyst firms provide the primary market size estimates for inspection robotics. Global Market Insights (GMI)
+      pegs the global inspection robots market at $2.8 billion in 2024, growing to $9.8 billion by 2034 at a 13.9% CAGR.
+      Research and Markets (R&M) estimates the same market at $6.72 billion in 2025, reaching $16.16 billion by 2032 at
+      a 13.33% CAGR. The gap between these figures ($2.8B vs $6.7B) reflects materially different scope definitions:
+      R&M's boundary appears to include broader industrial automation robotics alongside pure inspection-focused robots.
 
-      The broader NDT and inspection services market — including services, manual and robotic — is estimated by R&M at $10.36 billion in 2025, growing to $15.25 billion by 2030 at an 8.1% CAGR. This figure is more relevant to Gecko's competitive footprint against incumbent services firms like TEAM and Mistras.
 
-      North America held 30.3% of the global inspection robots market in 2024 per GMI, implying a U.S. and Canadian sub-market of approximately $850M in 2024, growing toward $3B by 2034. Gecko's near-term revenue pipeline is predominantly U.S.-based (Navy, NAES, Air Force), positioning it within this sub-market.
+      The broader NDT and inspection services market — including services, manual and robotic — is estimated by R&M at
+      $10.36 billion in 2025, growing to $15.25 billion by 2030 at an 8.1% CAGR. This figure is more relevant to Gecko's
+      competitive footprint against incumbent services firms like TEAM and Mistras.
 
-      Gecko's SAM is best constrained by vertical and product scope: defense maintenance inspection, power-generation asset inspection, oil & gas pipeline and vessel inspection, and heavy industrial (steel/mining/pulp) in North America and select international markets (UAE). An analyst-derived estimate of $2–4B globally represents the critical-asset robot-enabled inspection sub-market where Gecko's product is differentiated. This remains an estimate lacking direct public-source corroboration.
-    claimRefs: [C208, C209, C210, C211, C212, C213, C214, C215, C216]
 
+      North America held 30.3% of the global inspection robots market in 2024 per GMI, implying a U.S. and Canadian
+      sub-market of approximately $850M in 2024, growing toward $3B by 2034. Gecko's near-term revenue pipeline is
+      predominantly U.S.-based (Navy, NAES, Air Force), positioning it within this sub-market.
+
+
+      Gecko's SAM is best constrained by vertical and product scope: defense maintenance inspection, power-generation
+      asset inspection, oil & gas pipeline and vessel inspection, and heavy industrial (steel/mining/pulp) in North
+      America and select international markets (UAE). An analyst-derived estimate of $2–4B globally represents the
+      critical-asset robot-enabled inspection sub-market where Gecko's product is differentiated. This remains an
+      estimate lacking direct public-source corroboration.
+    claimRefs:
+      - C050
+      - C051
+      - C052
+      - C053
+      - C054
+      - C055
+      - C056
+      - C057
+      - C058
   - id: buyer-segmentation
-    title: "Buyer Segmentation and Adoption Path"
-    body: |
-      Gecko's buyer universe spans four primary segments, each with distinct procurement structures and adoption triggers. Defense and Navy buyers operate through government contracting vehicles (IDIQ, firm-fixed-price, cost-plus), funded by DoD operations and maintenance (O&M) or procurement appropriations. The March 2026 Navy IDIQ ($71M ceiling) and BPMI partnership confirm institutional DoD procurement as Gecko's defense go-to-market path. Budget authority rests with NAVSEA, OPNAV, and defense prime contractors (BPMI, BlueForge Alliance). Adoption triggers are readiness mandates, congressional pressure on maintenance backlogs, and shipbuilding production timelines.
+    title: Buyer Segmentation and Adoption Path
+    body: >
+      Gecko's buyer universe spans four primary segments, each with distinct procurement structures and adoption
+      triggers. Defense and Navy buyers operate through government contracting vehicles (IDIQ, firm-fixed-price,
+      cost-plus), funded by DoD operations and maintenance (O&M) or procurement appropriations. The March 2026 Navy IDIQ
+      ($71M ceiling) and BPMI partnership confirm institutional DoD procurement as Gecko's defense go-to-market path.
+      Budget authority rests with NAVSEA, OPNAV, and defense prime contractors (BPMI, BlueForge Alliance). Adoption
+      triggers are readiness mandates, congressional pressure on maintenance backlogs, and shipbuilding production
+      timelines.
 
-      Power and energy buyers are independent power producers (IPPs) and plant operators such as NAES, which manages 65 gigawatts across 300+ facilities. The budget owner is the plant-level operations and maintenance (O&M) manager, with capital decisions escalated to CFO/COO for multi-year platform contracts. The NAES $100M+ deal (Feb 2025) establishes a reference partnership validating the IPP procurement path. Adoption is triggered by grid reliability mandates, aging fleet economics (extending asset life vs. greenfield), and rising data-center electricity demand that increases plant utilization.
 
-      Oil and gas buyers include national oil companies (ADNOC Gas, ~$30M contract Apr 2024), refiners, LNG terminal operators, and pipeline operators. Procurement authority is typically held by integrity management or asset operations teams, with sign-off from VP-level operations. International buyers add complexity through local partner requirements (Al Masaood Energy for ADNOC). Adoption triggers are environmental compliance, CO₂ reduction mandates, and predictive-maintenance cost reduction targets.
+      Power and energy buyers are independent power producers (IPPs) and plant operators such as NAES, which manages 65
+      gigawatts across 300+ facilities. The budget owner is the plant-level operations and maintenance (O&M) manager,
+      with capital decisions escalated to CFO/COO for multi-year platform contracts. The NAES $100M+ deal (Feb 2025)
+      establishes a reference partnership validating the IPP procurement path. Adoption is triggered by grid reliability
+      mandates, aging fleet economics (extending asset life vs. greenfield), and rising data-center electricity demand
+      that increases plant utilization.
 
-      Industrial buyers (steel mills, mining operations, pulp and paper plants) are smaller per-contract but collectively represent a large fleet of aging assets. These tend to be price-sensitive, with procurement driven by capital maintenance budgets and driven by production disruption risk rather than regulatory compliance. Adoption lag is typically higher in this segment relative to defense.
-    claimRefs: [C217, C218, C219, C220, C221, C222, C223, C224]
 
+      Oil and gas buyers include national oil companies (ADNOC Gas, ~$30M contract Apr 2024), refiners, LNG terminal
+      operators, and pipeline operators. Procurement authority is typically held by integrity management or asset
+      operations teams, with sign-off from VP-level operations. International buyers add complexity through local
+      partner requirements (Al Masaood Energy for ADNOC). Adoption triggers are environmental compliance, CO₂ reduction
+      mandates, and predictive-maintenance cost reduction targets.
+
+
+      Industrial buyers (steel mills, mining operations, pulp and paper plants) are smaller per-contract but
+      collectively represent a large fleet of aging assets. These tend to be price-sensitive, with procurement driven by
+      capital maintenance budgets and driven by production disruption risk rather than regulatory compliance. Adoption
+      lag is typically higher in this segment relative to defense.
+    claimRefs:
+      - C059
+      - C060
+      - C061
+      - C062
+      - C063
+      - C064
+      - C065
+      - C066
   - id: growth-drivers
-    title: "Growth Drivers"
-    body: |
-      Six structural drivers create multi-year demand for Gecko's platform. First, aging U.S. critical infrastructure: power plants, pipelines, naval vessels, and industrial facilities built 30–60 years ago are reaching end-of-design-life, requiring intensified inspection and condition-based maintenance rather than calendar cycles. Second, U.S. electricity demand growth: NEMA and the Alliance to Save Energy forecast a 35–50% surge in U.S. electricity demand between 2024 and 2040, driven primarily by AI data-center expansion (data center demand alone +300% by 2050 per NEMA) and e-mobility. This growth creates systemic pressure on existing power plants to maximize uptime and extend asset life. DOE corroborates this, reporting data-center electricity consumption at 4.4% of U.S. total in 2023 and projecting it to 6.7–12% by 2028.
+    title: Growth Drivers
+    body: >
+      Six structural drivers create multi-year demand for Gecko's platform. First, aging U.S. critical infrastructure:
+      power plants, pipelines, naval vessels, and industrial facilities built 30–60 years ago are reaching
+      end-of-design-life, requiring intensified inspection and condition-based maintenance rather than calendar cycles.
+      Second, U.S. electricity demand growth: NEMA and the Alliance to Save Energy forecast a 35–50% surge in U.S.
+      electricity demand between 2024 and 2040, driven primarily by AI data-center expansion (data center demand alone
+      +300% by 2050 per NEMA) and e-mobility. This growth creates systemic pressure on existing power plants to maximize
+      uptime and extend asset life. DOE corroborates this, reporting data-center electricity consumption at 4.4% of U.S.
+      total in 2023 and projecting it to 6.7–12% by 2028.
 
-      Third, defense readiness pressure: the U.S. Navy appropriated $25.9 billion for combat surface ship maintenance in FY2020–2023 while still reporting persistent deferred maintenance, limited spare parts, and unimplemented GAO recommendations. Congressional scrutiny is intensifying. Fourth, AI adoption as inspection enabler: the WEF essay by Gecko CEO Loosararian articulates a thesis now widely shared — that AI systems need high-fidelity physical data from robots to deliver on their value promise, creating demand for robotics as the AI data-collection layer. Fifth, regulatory compliance cycles: OSHA, API, ASME, PHMSA, and nuclear safety codes mandate recurring inspection intervals that create predictable, multi-year inspection budgets across all Gecko verticals. Sixth, international energy infrastructure build-out: Gulf NOCs (ADNOC) are investing in predictive maintenance to reduce CO₂ emissions and meet ESG commitments, opening international procurement channels.
-    claimRefs: [C225, C226, C227, C228, C229, C230, C231]
 
+      Third, defense readiness pressure: the U.S. Navy appropriated $25.9 billion for combat surface ship maintenance in
+      FY2020–2023 while still reporting persistent deferred maintenance, limited spare parts, and unimplemented GAO
+      recommendations. Congressional scrutiny is intensifying. Fourth, AI adoption as inspection enabler: the WEF essay
+      by Gecko CEO Loosararian articulates a thesis now widely shared — that AI systems need high-fidelity physical data
+      from robots to deliver on their value promise, creating demand for robotics as the AI data-collection layer.
+      Fifth, regulatory compliance cycles: OSHA, API, ASME, PHMSA, and nuclear safety codes mandate recurring inspection
+      intervals that create predictable, multi-year inspection budgets across all Gecko verticals. Sixth, international
+      energy infrastructure build-out: Gulf NOCs (ADNOC) are investing in predictive maintenance to reduce CO₂ emissions
+      and meet ESG commitments, opening international procurement channels.
+    claimRefs:
+      - C067
+      - C068
+      - C069
+      - C070
+      - C071
+      - C072
+      - C073
   - id: adoption-constraints
-    title: "Adoption Constraints and Sizing Gaps"
-    body: |
-      Adoption of autonomous inspection robotics faces several structural constraints. Capital intensity and deployment friction are primary: deploying Gecko robots on a ship hull, boiler, or pipeline segment requires asset access windows (often during scheduled outages), calibration protocols, and safety review processes. For safety-critical environments (nuclear propulsion, missile silos), qualification timelines can span 12–24 months before operational deployment begins. This high friction limits Gecko's ability to scale rapidly across the installed base.
+    title: Adoption Constraints and Sizing Gaps
+    body: >
+      Adoption of autonomous inspection robotics faces several structural constraints. Capital intensity and deployment
+      friction are primary: deploying Gecko robots on a ship hull, boiler, or pipeline segment requires asset access
+      windows (often during scheduled outages), calibration protocols, and safety review processes. For safety-critical
+      environments (nuclear propulsion, missile silos), qualification timelines can span 12–24 months before operational
+      deployment begins. This high friction limits Gecko's ability to scale rapidly across the installed base.
 
-      Trust and liability risk is a second material constraint. In safety-critical assets, operators may accept AI-assisted inspection findings as supplemental but are reluctant to use them as the primary basis for regulatory sign-off without parallel human inspection. This "trust gap" extends sales cycles and limits early revenue recognition on platform contracts. The BPMI partnership's 90% inspection-time-reduction claim required extensive controlled testing before deployment, which suggests even Gecko's best customers require validation periods.
 
-      Data interoperability and switching-cost lock-in represent a third constraint: most operators have decades of inspection records in proprietary or paper formats incompatible with Gecko's Cantilever platform, raising integration costs. Incumbent inspection firms (TEAM Inc, Mistras) are entrenched in customer workflows and offer competitive robotics and drone services. The competitor field is also growing: HUVRdata, Energy Robotics, Akselos, Voliro, and Invert Robotics all compete for wallet share in overlapping verticals.
+      Trust and liability risk is a second material constraint. In safety-critical assets, operators may accept
+      AI-assisted inspection findings as supplemental but are reluctant to use them as the primary basis for regulatory
+      sign-off without parallel human inspection. This "trust gap" extends sales cycles and limits early revenue
+      recognition on platform contracts. The BPMI partnership's 90% inspection-time-reduction claim required extensive
+      controlled testing before deployment, which suggests even Gecko's best customers require validation periods.
 
-      Two material sizing gaps remain: (1) Gecko's SAM cannot be precisely computed from available public sources; the analyst estimates reflect different scope definitions and are not broken out by Gecko's exact verticals; (2) no reliable SOM estimate can be derived without Gecko's revenue, customer count, and contract utilization data, which are not publicly disclosed.
-    claimRefs: [C232, C233, C234, C235, C236, C237, C238]
 
+      Data interoperability and switching-cost lock-in represent a third constraint: most operators have decades of
+      inspection records in proprietary or paper formats incompatible with Gecko's Cantilever platform, raising
+      integration costs. Incumbent inspection firms (TEAM Inc, Mistras) are entrenched in customer workflows and offer
+      competitive robotics and drone services. The competitor field is also growing: HUVRdata, Energy Robotics, Akselos,
+      Voliro, and Invert Robotics all compete for wallet share in overlapping verticals.
+
+
+      Two material sizing gaps remain: (1) Gecko's SAM cannot be precisely computed from available public sources; the
+      analyst estimates reflect different scope definitions and are not broken out by Gecko's exact verticals; (2) no
+      reliable SOM estimate can be derived without Gecko's revenue, customer count, and contract utilization data, which
+      are not publicly disclosed.
+    claimRefs:
+      - C074
+      - C075
+      - C076
+      - C077
+      - C078
+      - C079
+      - C080
 tables:
   - id: T201
-    title: "Market Definition Table"
-    columns: ["Segment / Category", "Included Spend", "Excluded Spend", "Primary Buyer / Payer", "Relevance to Gecko"]
+    title: Market Definition Table
+    columns:
+      - Segment / Category
+      - Included Spend
+      - Excluded Spend
+      - Primary Buyer / Payer
+      - Relevance to Gecko
     rows:
-      - ["Defense inspection & maintenance", "Robotic hull/vessel inspection, AI readiness platforms, IDIQ service contracts with Navy/DoD", "Human-only NDT services, ground vehicle inspection, avionics testing", "DoD / NAVSEA / defense primes (BPMI)", "Highest contract visibility: $71M Navy IDIQ, BPMI, Air Force; defense now primary revenue vertical"]
-      - ["Power generation inspection", "Plant boiler/turbine/piping robotic inspection, AI predictive maintenance platforms, grid readiness services", "SCADA/DCS systems, grid transmission monitoring, solar/wind O&M", "IPPs and plant operators (NAES), utilities", "NAES $100M+ deal; 65GW managed; aging fleet + demand surge = structural driver"]
-      - ["Oil & gas inspection", "Pipeline, vessel, refinery robotic inspection; predictive integrity management; multi-sensor crawling robots", "Seismic/exploration services, drilling tech, SCADA process control", "NOCs, refiners, LNG operators (ADNOC Gas)", "ADNOC ~$30M; international expansion beachhead; Gulf NOCs critical channel"]
-      - ["Heavy industrial (steel, mining, pulp)", "Mill/furnace/dryer robotic inspection, AI asset health monitoring, condition-based maintenance", "Process quality control automation, material handling, mining extraction", "Mill operators, mine operators, plant maintenance teams", "Lower contract size per site; large fleet count; early-stage pipeline for Gecko"]
-      - ["NDT services (manual + robotic combined)", "All NDT and inspection service spend including human inspectors with robotic/drone assist", "None — broadest market scope", "Industrial operators across all sectors", "Upstream market Gecko disrupts; TEAM Inc and Mistras are primary incumbents"]
-      - ["Inspection robotics platform (software only)", "AI inspection data platforms, digital twin software, asset-health SaaS, Cantilever-type products", "Robot hardware, field services without software component", "Operations and asset management teams", "Cantilever is Gecko's software layer; SAM for software-only is sub-segment of total"]
-    notes: "Market boundary is contested: analyst estimates differ materially based on whether they include manual NDT services or only robot-specific hardware and software. Gecko's most defensible TAM is the intersection of autonomous robotics with critical-asset inspection."
-    claimRefs: [C201, C202, C203, C204, C205]
-
+      - - Defense inspection & maintenance
+        - Robotic hull/vessel inspection, AI readiness platforms, IDIQ service contracts with Navy/DoD
+        - Human-only NDT services, ground vehicle inspection, avionics testing
+        - DoD / NAVSEA / defense primes (BPMI)
+        - 'Highest contract visibility: $71M Navy IDIQ, BPMI, Air Force; defense now primary revenue vertical'
+      - - Power generation inspection
+        - Plant boiler/turbine/piping robotic inspection, AI predictive maintenance platforms, grid readiness services
+        - SCADA/DCS systems, grid transmission monitoring, solar/wind O&M
+        - IPPs and plant operators (NAES), utilities
+        - NAES $100M+ deal; 65GW managed; aging fleet + demand surge = structural driver
+      - - Oil & gas inspection
+        - Pipeline, vessel, refinery robotic inspection; predictive integrity management; multi-sensor crawling robots
+        - Seismic/exploration services, drilling tech, SCADA process control
+        - NOCs, refiners, LNG operators (ADNOC Gas)
+        - ADNOC ~$30M; international expansion beachhead; Gulf NOCs critical channel
+      - - Heavy industrial (steel, mining, pulp)
+        - Mill/furnace/dryer robotic inspection, AI asset health monitoring, condition-based maintenance
+        - Process quality control automation, material handling, mining extraction
+        - Mill operators, mine operators, plant maintenance teams
+        - Lower contract size per site; large fleet count; early-stage pipeline for Gecko
+      - - NDT services (manual + robotic combined)
+        - All NDT and inspection service spend including human inspectors with robotic/drone assist
+        - None — broadest market scope
+        - Industrial operators across all sectors
+        - Upstream market Gecko disrupts; TEAM Inc and Mistras are primary incumbents
+      - - Inspection robotics platform (software only)
+        - AI inspection data platforms, digital twin software, asset-health SaaS, Cantilever-type products
+        - Robot hardware, field services without software component
+        - Operations and asset management teams
+        - Cantilever is Gecko's software layer; SAM for software-only is sub-segment of total
+    notes: >-
+      Market boundary is contested: analyst estimates differ materially based on whether they include manual NDT
+      services or only robot-specific hardware and software. Gecko's most defensible TAM is the intersection of
+      autonomous robotics with critical-asset inspection.
+    claimRefs:
+      - C043
+      - C044
+      - C045
+      - C046
+      - C047
   - id: T202
-    title: "TAM/SAM/SOM or Sizing Lens Table"
-    columns: ["Publisher", "Year", "Geography", "Value", "CAGR", "Methodology", "Confidence", "Limitation"]
+    title: TAM/SAM/SOM or Sizing Lens Table
+    columns:
+      - Publisher
+      - Year
+      - Geography
+      - Value
+      - CAGR
+      - Methodology
+      - Confidence
+      - Limitation
     rows:
-      - ["GMI (Global Market Insights)", "2024 base, 2034 forecast", "Global", "$2.8B (2024) → $9.8B (2034)", "13.9%", "Bottom-up by robot type (stationary/mobile), application, end-use industry", "medium", "Scope excludes manual NDT services; lower base than R&M; methodology not fully disclosed"]
-      - ["Research and Markets", "2025 base, 2032 forecast", "Global", "$6.72B (2025) → $16.16B (2032)", "13.33%", "Not disclosed; likely top-down revenue survey", "medium", "Higher base suggests broader scope than GMI; may include general industrial automation; conflicting with GMI"]
-      - ["Research and Markets (NDT)", "2025 base, 2030 forecast", "Global", "$10.36B (2025) → $15.25B (2030)", "8.1%", "Broader NDT services scope including manual inspection", "medium", "Includes all NDT and testing services; represents larger market Gecko displaces but does not fully compete in"]
-      - ["GAO (Navy maintenance proxy)", "FY2020-2023 actuals", "U.S. (Navy only)", "$6.5B/year avg appropriated", "n/a", "Actual Congressional appropriations data for combat surface ships", "high", "Navy-only segment; not an analyst market estimate; proxy for addressable defense maintenance spend"]
-      - ["Analyst-derived SAM (Gecko verticals)", "2025 estimate", "Global (defense + power + O&G + industrial)", "~$2–4B", "~12–14%", "Top-down constrained from GMI/R&M inspection robot market excluding automotive, semiconductor, food verticals (est. ~40% of market)", "low", "No direct public source; derived by excluding Gecko's non-target verticals from analyst totals; material uncertainty"]
-      - ["DOE/NEMA energy demand (driver proxy)", "2023–2040 forecast", "U.S.", "Electricity demand +35–50% by 2040; data center +300%", "2%/yr overall", "Multi-organization study (NEMA, DOE, ASE)", "high", "Demand driver, not an inspection market size; relevant to power-sector inspection tailwind only"]
-    notes: "The $2.8B vs $6.7B gap between GMI and R&M reflects scope differences, not estimation error. Investors should not anchor to either figure without validating scope boundary against Gecko's actual product set."
-    claimRefs: [C208, C209, C210, C211, C212, C213, C214, C215]
-
+      - - GMI (Global Market Insights)
+        - 2024 base, 2034 forecast
+        - Global
+        - $2.8B (2024) → $9.8B (2034)
+        - 13.9%
+        - Bottom-up by robot type (stationary/mobile), application, end-use industry
+        - medium
+        - Scope excludes manual NDT services; lower base than R&M; methodology not fully disclosed
+      - - Research and Markets
+        - 2025 base, 2032 forecast
+        - Global
+        - $6.72B (2025) → $16.16B (2032)
+        - 13.33%
+        - Not disclosed; likely top-down revenue survey
+        - medium
+        - Higher base suggests broader scope than GMI; may include general industrial automation; conflicting with GMI
+      - - Research and Markets (NDT)
+        - 2025 base, 2030 forecast
+        - Global
+        - $10.36B (2025) → $15.25B (2030)
+        - 8.1%
+        - Broader NDT services scope including manual inspection
+        - medium
+        - Includes all NDT and testing services; represents larger market Gecko displaces but does not fully compete in
+      - - GAO (Navy maintenance proxy)
+        - FY2020-2023 actuals
+        - U.S. (Navy only)
+        - $6.5B/year avg appropriated
+        - n/a
+        - Actual Congressional appropriations data for combat surface ships
+        - high
+        - Navy-only segment; not an analyst market estimate; proxy for addressable defense maintenance spend
+      - - Analyst-derived SAM (Gecko verticals)
+        - 2025 estimate
+        - Global (defense + power + O&G + industrial)
+        - ~$2–4B
+        - ~12–14%
+        - >-
+          Top-down constrained from GMI/R&M inspection robot market excluding automotive, semiconductor, food verticals
+          (est. ~40% of market)
+        - low
+        - >-
+          No direct public source; derived by excluding Gecko's non-target verticals from analyst totals; material
+          uncertainty
+      - - DOE/NEMA energy demand (driver proxy)
+        - 2023–2040 forecast
+        - U.S.
+        - Electricity demand +35–50% by 2040; data center +300%
+        - 2%/yr overall
+        - Multi-organization study (NEMA, DOE, ASE)
+        - high
+        - Demand driver, not an inspection market size; relevant to power-sector inspection tailwind only
+    notes: >-
+      The $2.8B vs $6.7B gap between GMI and R&M reflects scope differences, not estimation error. Investors should not
+      anchor to either figure without validating scope boundary against Gecko's actual product set.
+    claimRefs:
+      - C050
+      - C051
+      - C052
+      - C053
+      - C054
+      - C055
+      - C056
+      - C057
   - id: T203
-    title: "Segment / Buyer Map"
-    columns: ["Segment", "Buyer", "User", "Payer", "Budget Owner", "Adoption Trigger"]
+    title: Segment / Buyer Map
+    columns:
+      - Segment
+      - Buyer
+      - User
+      - Payer
+      - Budget Owner
+      - Adoption Trigger
     rows:
-      - ["Defense / Navy", "NAVSEA / DoD / defense primes (BPMI, BlueForge)", "Ship crew, maintenance technicians, inspection engineers", "DoD O&M and procurement appropriations", "NAVSEA comptroller / program manager", "Readiness mandate, congressional backlog pressure, shipbuilding timelines"]
-      - ["Power / Energy", "Plant operators, IPPs (NAES), utilities", "O&M engineers, plant maintenance teams", "Plant O&M budget + capital maintenance capex", "Plant GM / VP Operations / CFO (multi-year deals)", "Grid demand surge, aging fleet economics, regulatory compliance, extended plant life directive"]
-      - ["Oil & Gas", "NOCs (ADNOC), refiners, LNG terminal and pipeline operators", "Integrity management engineers, inspection leads", "Asset operations / integrity management opex", "VP Asset Integrity / VP Operations", "CO₂ / ESG mandates, API code compliance cycles, predictive maintenance ROI"]
-      - ["Industrial (Steel, Mining, Pulp)", "Mill operators, mine operators, plant maintenance leads", "Maintenance technicians, process engineers", "Capital maintenance budget", "Plant VP/GM, maintenance director", "Production disruption avoidance, safety incidents, equipment failure cost"]
-    notes: "Budget ownership and adoption trigger data derived from contract announcements and Gecko vertical pages; actual procurement process details are not publicly disclosed for any deal. Defense procurement timelines (acquisition reform) are a known variable."
-    claimRefs: [C217, C218, C219, C220, C221, C222, C223]
-
+      - - Defense / Navy
+        - NAVSEA / DoD / defense primes (BPMI, BlueForge)
+        - Ship crew, maintenance technicians, inspection engineers
+        - DoD O&M and procurement appropriations
+        - NAVSEA comptroller / program manager
+        - Readiness mandate, congressional backlog pressure, shipbuilding timelines
+      - - Power / Energy
+        - Plant operators, IPPs (NAES), utilities
+        - O&M engineers, plant maintenance teams
+        - Plant O&M budget + capital maintenance capex
+        - Plant GM / VP Operations / CFO (multi-year deals)
+        - Grid demand surge, aging fleet economics, regulatory compliance, extended plant life directive
+      - - Oil & Gas
+        - NOCs (ADNOC), refiners, LNG terminal and pipeline operators
+        - Integrity management engineers, inspection leads
+        - Asset operations / integrity management opex
+        - VP Asset Integrity / VP Operations
+        - CO₂ / ESG mandates, API code compliance cycles, predictive maintenance ROI
+      - - Industrial (Steel, Mining, Pulp)
+        - Mill operators, mine operators, plant maintenance leads
+        - Maintenance technicians, process engineers
+        - Capital maintenance budget
+        - Plant VP/GM, maintenance director
+        - Production disruption avoidance, safety incidents, equipment failure cost
+    notes: >-
+      Budget ownership and adoption trigger data derived from contract announcements and Gecko vertical pages; actual
+      procurement process details are not publicly disclosed for any deal. Defense procurement timelines (acquisition
+      reform) are a known variable.
+    claimRefs:
+      - C059
+      - C060
+      - C061
+      - C062
+      - C063
+      - C064
+      - C065
   - id: T204
-    title: "Growth Drivers and Constraints Table"
-    columns: ["Driver / Constraint", "Direction", "Timing", "Implication for Gecko", "Diligence Ask"]
+    title: Growth Drivers and Constraints Table
+    columns:
+      - Driver / Constraint
+      - Direction
+      - Timing
+      - Implication for Gecko
+      - Diligence Ask
     rows:
-      - ["Aging U.S. critical infrastructure (power plants, ships, pipelines, industrial assets)", "driver", "Now; sustained multi-decade", "Creates immediate inspection need across all six Gecko verticals; fleet replacement is cost-prohibitive, so asset-life extension is default strategy", "Validate what % of NAES's 300+ plants are >30 years old and inspection-eligible"]
-      - ["U.S. electricity demand surge (+35–50% by 2040, NEMA/ASE)", "driver", "2025–2040, accelerating near-term", "Increases utilization and inspection frequency for power plants; operators cannot afford downtime; extends Gecko's power-sector contract pipeline", "Confirm data-center demand growth translates to higher O&M spend per plant, not just greenfield build"]
-      - ["U.S. Navy maintenance backlog + readiness pressure", "driver", "Now; government budget cycle-dependent", "Navy's $25.9B/4yr maintenance spend with persistent backlog creates multi-year IDIQ demand; GAO recommendations signal systemic, not episodic, problem", "Determine if Navy budget cuts or CR risks could delay IDIQ utilization"]
-      - ["AI technology maturation — need for physical data", "driver", "2025–2030 accelerating", "Gecko positioned as data-collection infrastructure for AI; as AI ROI is demonstrated across industries, demand for robot-generated data increases", "Validate that Cantilever's AI outputs are used for autonomous decisions, not just visualization"]
-      - ["Gulf/Middle East infrastructure investment (ADNOC, Saudi Aramco)", "driver", "2024–2030", "Opens international pipeline; ADNOC contract establishes Gulf reference; NOCs are motivated by ESG/CO₂ reduction commitments", "Assess whether ADNOC contract leads to Aramco or other Gulf NOC pipeline; confirm NextGenFDI exclusivity terms"]
-      - ["Regulatory inspection mandates (OSHA, API, ASME, PHMSA, NRC)", "driver", "Recurring — drives annual/periodic inspection cycles", "Creates non-discretionary inspection budget across all sectors; switching to robotic doesn't eliminate regulatory cycle, just improves data quality and efficiency", "Map which mandates require human sign-off, limiting full automation potential"]
-      - ["Capital intensity and deployment friction", "constraint", "Near-term; reduces over product maturity", "Long sales cycles, outage-window dependency, and safety qualification processes reduce top-of-funnel velocity; limits rapid land-and-expand", "Assess average time from first contact to first contract, and time to full platform deployment"]
-      - ["Trust and liability in safety-critical environments", "constraint", "Medium-term; reduces as track record builds", "Nuclear, Navy, and regulated power plants require parallel human validation of AI findings; extends break-even timeline for customers and reduces initial robot-only revenue", "Ask for % of contracts with AI-primary vs AI-supplemental findings — key for software gross margin"]
-      - ["Competitor and substitute displacement difficulty", "constraint", "Ongoing", "TEAM Inc, Mistras, and incumbent NDT firms are entrenched; human inspectors have regulatory certifications (ASNT Level II/III) that add switching cost; digital competitors (HUVRdata, Energy Robotics) growing", "Evaluate Gecko's win rate vs. incumbents and time to displace in each segment"]
-      - ["Data format lock-in and integration cost", "constraint", "Near-term; persistent", "Operators with legacy inspection records (PDFs, proprietary formats) face integration costs when adopting Cantilever; reduces net ROI in first contract year", "Ask for % of Cantilever deployments with legacy data migration vs. greenfield; assess NPS on data integration"]
-    notes: "Timing labels are qualitative; Gecko has not disclosed pipeline metrics, conversion rates, or sales cycle length. All constraints are generic to robotic inspection adoption unless a Gecko-specific datapoint exists."
-    claimRefs: [C225, C226, C227, C228, C229, C230, C231, C232, C233, C234]
-
+      - - Aging U.S. critical infrastructure (power plants, ships, pipelines, industrial assets)
+        - driver
+        - Now; sustained multi-decade
+        - >-
+          Creates immediate inspection need across all six Gecko verticals; fleet replacement is cost-prohibitive, so
+          asset-life extension is default strategy
+        - Validate what % of NAES's 300+ plants are >30 years old and inspection-eligible
+      - - U.S. electricity demand surge (+35–50% by 2040, NEMA/ASE)
+        - driver
+        - 2025–2040, accelerating near-term
+        - >-
+          Increases utilization and inspection frequency for power plants; operators cannot afford downtime; extends
+          Gecko's power-sector contract pipeline
+        - Confirm data-center demand growth translates to higher O&M spend per plant, not just greenfield build
+      - - U.S. Navy maintenance backlog + readiness pressure
+        - driver
+        - Now; government budget cycle-dependent
+        - >-
+          Navy's $25.9B/4yr maintenance spend with persistent backlog creates multi-year IDIQ demand; GAO
+          recommendations signal systemic, not episodic, problem
+        - Determine if Navy budget cuts or CR risks could delay IDIQ utilization
+      - - AI technology maturation — need for physical data
+        - driver
+        - 2025–2030 accelerating
+        - >-
+          Gecko positioned as data-collection infrastructure for AI; as AI ROI is demonstrated across industries, demand
+          for robot-generated data increases
+        - Validate that Cantilever's AI outputs are used for autonomous decisions, not just visualization
+      - - Gulf/Middle East infrastructure investment (ADNOC, Saudi Aramco)
+        - driver
+        - 2024–2030
+        - >-
+          Opens international pipeline; ADNOC contract establishes Gulf reference; NOCs are motivated by ESG/CO₂
+          reduction commitments
+        - Assess whether ADNOC contract leads to Aramco or other Gulf NOC pipeline; confirm NextGenFDI exclusivity terms
+      - - Regulatory inspection mandates (OSHA, API, ASME, PHMSA, NRC)
+        - driver
+        - Recurring — drives annual/periodic inspection cycles
+        - >-
+          Creates non-discretionary inspection budget across all sectors; switching to robotic doesn't eliminate
+          regulatory cycle, just improves data quality and efficiency
+        - Map which mandates require human sign-off, limiting full automation potential
+      - - Capital intensity and deployment friction
+        - constraint
+        - Near-term; reduces over product maturity
+        - >-
+          Long sales cycles, outage-window dependency, and safety qualification processes reduce top-of-funnel velocity;
+          limits rapid land-and-expand
+        - Assess average time from first contact to first contract, and time to full platform deployment
+      - - Trust and liability in safety-critical environments
+        - constraint
+        - Medium-term; reduces as track record builds
+        - >-
+          Nuclear, Navy, and regulated power plants require parallel human validation of AI findings; extends break-even
+          timeline for customers and reduces initial robot-only revenue
+        - Ask for % of contracts with AI-primary vs AI-supplemental findings — key for software gross margin
+      - - Competitor and substitute displacement difficulty
+        - constraint
+        - Ongoing
+        - >-
+          TEAM Inc, Mistras, and incumbent NDT firms are entrenched; human inspectors have regulatory certifications
+          (ASNT Level II/III) that add switching cost; digital competitors (HUVRdata, Energy Robotics) growing
+        - Evaluate Gecko's win rate vs. incumbents and time to displace in each segment
+      - - Data format lock-in and integration cost
+        - constraint
+        - Near-term; persistent
+        - >-
+          Operators with legacy inspection records (PDFs, proprietary formats) face integration costs when adopting
+          Cantilever; reduces net ROI in first contract year
+        - Ask for % of Cantilever deployments with legacy data migration vs. greenfield; assess NPS on data integration
+    notes: >-
+      Timing labels are qualitative; Gecko has not disclosed pipeline metrics, conversion rates, or sales cycle length.
+      All constraints are generic to robotic inspection adoption unless a Gecko-specific datapoint exists.
+    claimRefs:
+      - C067
+      - C068
+      - C069
+      - C070
+      - C071
+      - C072
+      - C073
+      - C074
+      - C075
+      - C076
 figures:
   - id: F201
-    title: "Market Sizing Lens"
+    title: Market Sizing Lens
     type: pyramid
     layout: standard
-    summary: |
-      Top-down sizing pyramid from the broadest addressable definition (all NDT and inspection services) to Gecko's constrained serviceable market. All values are 2025 estimates. The gap between TAM layers reflects scope boundary uncertainty across analyst sources.
+    summary: >
+      Top-down sizing pyramid from the broadest addressable definition (all NDT and inspection services) to Gecko's
+      constrained serviceable market. All values are 2025 estimates. The gap between TAM layers reflects scope boundary
+      uncertainty across analyst sources.
     data:
       items:
-        - label: "TAM: NDT & Inspection Services (all methods)"
-          value: "$10.4B (2025)"
-          detail: "Broadest scope — includes manual human inspectors, robotic, and digital. Source: R&M NDT market estimate."
-          claimRefs: [C210]
-        - label: "TAM-R: Inspection Robotics & Automation"
-          value: "$6.7B (2025)"
-          detail: "Robot-specific inspection market. Source: R&M inspection robots estimate. Higher than GMI ($2.8B 2024) due to scope differences."
-          claimRefs: [C209]
-        - label: "SAM: Critical-Asset AI Inspection (Gecko verticals)"
-          value: "~$2.5B (estimated)"
-          detail: "Analyst-derived sub-market for defense, power, O&G, and heavy industrial robot inspection. Excludes automotive, semiconductor, food sectors (~40% of R&M total)."
-          claimRefs: [C215]
-        - label: "SOM: Gecko Serviceable (current product + geo)"
-          value: "Not calculable"
-          detail: "Gecko does not disclose revenue or customer count. SOM requires data room access. Contract ceilings ($171M+ in announced deals) are proxies only."
-          claimRefs: [C216]
-    approximationNotes: "SAM is analyst-derived by excluding Gecko's non-target verticals from R&M headline. SOM is not calculable from public data. TAM figures from different analyst sources (R&M NDT vs. R&M robots) have distinct scope boundaries."
-    claimRefs: [C208, C209, C210, C215, C216]
-
+        - label: 'TAM: NDT & Inspection Services (all methods)'
+          value: $10.4B (2025)
+          detail: 'Broadest scope — includes manual human inspectors, robotic, and digital. Source: R&M NDT market estimate.'
+          claimRefs:
+            - C052
+        - label: 'TAM-R: Inspection Robotics & Automation'
+          value: $6.7B (2025)
+          detail: >-
+            Robot-specific inspection market. Source: R&M inspection robots estimate. Higher than GMI ($2.8B 2024) due
+            to scope differences.
+          claimRefs:
+            - C051
+        - label: 'SAM: Critical-Asset AI Inspection (Gecko verticals)'
+          value: ~$2.5B (estimated)
+          detail: >-
+            Analyst-derived sub-market for defense, power, O&G, and heavy industrial robot inspection. Excludes
+            automotive, semiconductor, food sectors (~40% of R&M total).
+          claimRefs:
+            - C057
+        - label: 'SOM: Gecko Serviceable (current product + geo)'
+          value: Not calculable
+          detail: >-
+            Gecko does not disclose revenue or customer count. SOM requires data room access. Contract ceilings ($171M+
+            in announced deals) are proxies only.
+          claimRefs:
+            - C058
+    approximationNotes: >-
+      SAM is analyst-derived by excluding Gecko's non-target verticals from R&M headline. SOM is not calculable from
+      public data. TAM figures from different analyst sources (R&M NDT vs. R&M robots) have distinct scope boundaries.
+    claimRefs:
+      - C050
+      - C051
+      - C052
+      - C057
+      - C058
   - id: F202
-    title: "Market Estimate Range"
+    title: Market Estimate Range
     type: range
     layout: standard
-    summary: |
-      Low/base/high estimates for five market quantities relevant to Gecko's sizing analysis, all in USD billions (2024–2025). The wide range on inspection robotics ($2.8B–$6.7B) reflects analyst scope disagreement, not forecast uncertainty alone.
+    summary: >
+      Low/base/high estimates for five market quantities relevant to Gecko's sizing analysis, all in USD billions
+      (2024–2025). The wide range on inspection robotics ($2.8B–$6.7B) reflects analyst scope disagreement, not forecast
+      uncertainty alone.
     data:
       items:
-        - label: "Inspection robots — global (GMI, 2024)"
+        - label: Inspection robots — global (GMI, 2024)
           low: 2.3
           value: 2.8
           high: 3.3
-          unit: "$B"
+          unit: $B
           claimRef: C208
-        - label: "Inspection robots — global (R&M, 2025)"
+        - label: Inspection robots — global (R&M, 2025)
           low: 5.8
           value: 6.7
           high: 7.6
-          unit: "$B"
+          unit: $B
           claimRef: C209
-        - label: "NDT & inspection services — global (R&M, 2025)"
+        - label: NDT & inspection services — global (R&M, 2025)
           low: 9.5
           value: 10.4
           high: 11.2
-          unit: "$B"
+          unit: $B
           claimRef: C210
-        - label: "U.S. Navy surface ship maintenance — annual avg (GAO, FY2020–2023)"
+        - label: U.S. Navy surface ship maintenance — annual avg (GAO, FY2020–2023)
           low: 5.8
           value: 6.5
-          high: 7.0
-          unit: "$B"
+          high: 7
+          unit: $B
           claimRef: C213
-        - label: "Gecko SAM estimate — critical-asset global (analyst-derived)"
+        - label: Gecko SAM estimate — critical-asset global (analyst-derived)
           low: 1.5
           value: 2.5
-          high: 4.0
-          unit: "$B"
+          high: 4
+          unit: $B
           claimRef: C215
-    approximationNotes: "Range bounds for GMI and R&M rows are ±15% around stated base to reflect estimate uncertainty; analyst sources do not publish confidence intervals. GAO range reflects stated $25.9B/4yr total. SAM range is analyst-derived with high uncertainty."
-    claimRefs: [C208, C209, C210, C213, C215]
-
+    approximationNotes: >-
+      Range bounds for GMI and R&M rows are ±15% around stated base to reflect estimate uncertainty; analyst sources do
+      not publish confidence intervals. GAO range reflects stated $25.9B/4yr total. SAM range is analyst-derived with
+      high uncertainty.
+    claimRefs:
+      - C050
+      - C051
+      - C052
+      - C055
+      - C057
   - id: F203
-    title: "Buyer / Segment Map"
+    title: Buyer / Segment Map
     type: matrix
     layout: standard
-    summary: |
-      Four-by-five matrix mapping Gecko's primary customer segments against buyer, user, payer, budget owner, and adoption trigger dimensions. Highlights structural differences in procurement authority and contract timeline across segments.
+    summary: >
+      Four-by-five matrix mapping Gecko's primary customer segments against buyer, user, payer, budget owner, and
+      adoption trigger dimensions. Highlights structural differences in procurement authority and contract timeline
+      across segments.
     data:
       columns:
-        - "Buyer"
-        - "User"
-        - "Payer"
-        - "Budget Owner"
-        - "Adoption Trigger"
+        - Buyer
+        - User
+        - Payer
+        - Budget Owner
+        - Adoption Trigger
       rows:
-        - label: "Defense / Navy"
+        - label: Defense / Navy
           values:
-            - {text: "NAVSEA / DoD / BPMI / BlueForge Alliance", tone: positive}
-            - {text: "Ship crew, maintenance techs, inspection engineers", tone: neutral}
-            - {text: "DoD O&M + procurement appropriations", tone: positive}
-            - {text: "NAVSEA program manager / comptroller", tone: neutral}
-            - {text: "Readiness mandate + maintenance backlog pressure", tone: positive}
-        - label: "Power / Energy"
+            - text: NAVSEA / DoD / BPMI / BlueForge Alliance
+              tone: positive
+            - text: Ship crew, maintenance techs, inspection engineers
+              tone: neutral
+            - text: DoD O&M + procurement appropriations
+              tone: positive
+            - text: NAVSEA program manager / comptroller
+              tone: neutral
+            - text: Readiness mandate + maintenance backlog pressure
+              tone: positive
+        - label: Power / Energy
           values:
-            - {text: "IPPs, plant operators (NAES, utilities)", tone: positive}
-            - {text: "O&M engineers, plant teams", tone: neutral}
-            - {text: "Plant O&M budget + capital maintenance capex", tone: positive}
-            - {text: "Plant GM / VP Operations / CFO (multi-year)", tone: neutral}
-            - {text: "Grid demand surge + aging fleet economics", tone: positive}
-        - label: "Oil & Gas"
+            - text: IPPs, plant operators (NAES, utilities)
+              tone: positive
+            - text: O&M engineers, plant teams
+              tone: neutral
+            - text: Plant O&M budget + capital maintenance capex
+              tone: positive
+            - text: Plant GM / VP Operations / CFO (multi-year)
+              tone: neutral
+            - text: Grid demand surge + aging fleet economics
+              tone: positive
+        - label: Oil & Gas
           values:
-            - {text: "NOCs (ADNOC), refiners, pipeline operators", tone: positive}
-            - {text: "Integrity management engineers", tone: neutral}
-            - {text: "Asset integrity / operations opex", tone: neutral}
-            - {text: "VP Asset Integrity / VP Operations", tone: neutral}
-            - {text: "CO₂ / ESG mandates + API code compliance", tone: neutral}
-        - label: "Industrial (Steel, Mining)"
+            - text: NOCs (ADNOC), refiners, pipeline operators
+              tone: positive
+            - text: Integrity management engineers
+              tone: neutral
+            - text: Asset integrity / operations opex
+              tone: neutral
+            - text: VP Asset Integrity / VP Operations
+              tone: neutral
+            - text: CO₂ / ESG mandates + API code compliance
+              tone: neutral
+        - label: Industrial (Steel, Mining)
           values:
-            - {text: "Mill operators, mine operators", tone: neutral}
-            - {text: "Maintenance technicians, process engineers", tone: neutral}
-            - {text: "Capital maintenance budget", tone: warning}
-            - {text: "Plant VP/GM, maintenance director", tone: neutral}
-            - {text: "Production disruption risk + safety incidents", tone: warning}
-    approximationNotes: "Procurement structure derived from contract announcements and Gecko vertical pages; actual RFP/RFI processes, sole-source authorities, and contract terms are not publicly disclosed."
-    claimRefs: [C217, C218, C219, C220, C221, C222, C223]
-
+            - text: Mill operators, mine operators
+              tone: neutral
+            - text: Maintenance technicians, process engineers
+              tone: neutral
+            - text: Capital maintenance budget
+              tone: warning
+            - text: Plant VP/GM, maintenance director
+              tone: neutral
+            - text: Production disruption risk + safety incidents
+              tone: warning
+    approximationNotes: >-
+      Procurement structure derived from contract announcements and Gecko vertical pages; actual RFP/RFI processes,
+      sole-source authorities, and contract terms are not publicly disclosed.
+    claimRefs:
+      - C059
+      - C060
+      - C061
+      - C062
+      - C063
+      - C064
+      - C065
   - id: F204
-    title: "Adoption Funnel or Value-Chain Map"
+    title: Adoption Funnel or Value-Chain Map
     type: funnel
     layout: standard
-    summary: |
-      Six-stage adoption funnel for Gecko's enterprise inspection platform, from initial awareness through platform expansion. Values are representative percentages of initial addressable operator base at each stage. Conversion rates are not Gecko-disclosed; estimates reflect typical industrial B2B enterprise deployment cycles for safety-critical systems.
+    summary: >
+      Six-stage adoption funnel for Gecko's enterprise inspection platform, from initial awareness through platform
+      expansion. Values are representative percentages of initial addressable operator base at each stage. Conversion
+      rates are not Gecko-disclosed; estimates reflect typical industrial B2B enterprise deployment cycles for
+      safety-critical systems.
     data:
       items:
-        - label: "Awareness: Operator identifies inspection bottleneck or safety/readiness risk"
+        - label: 'Awareness: Operator identifies inspection bottleneck or safety/readiness risk'
           value: 100
-        - label: "Qualification: Gecko engages, runs ROI/risk assessment, proposes pilot scope"
+        - label: 'Qualification: Gecko engages, runs ROI/risk assessment, proposes pilot scope'
           value: 65
-        - label: "Pilot / PoC: Robots deployed on subset of assets; data quality and coverage validated"
+        - label: 'Pilot / PoC: Robots deployed on subset of assets; data quality and coverage validated'
           value: 38
-        - label: "ROI Validation: AI-flagged findings compared against manual inspection results; safety sign-off obtained"
+        - label: 'ROI Validation: AI-flagged findings compared against manual inspection results; safety sign-off obtained'
           value: 25
-        - label: "Enterprise Contract: Multi-year platform/service agreement signed"
+        - label: 'Enterprise Contract: Multi-year platform/service agreement signed'
           value: 16
-        - label: "Platform Expansion: Additional sites, verticals, or new data layers added to contract"
+        - label: 'Platform Expansion: Additional sites, verticals, or new data layers added to contract'
           value: 10
-    approximationNotes: "Conversion percentages are illustrative estimates for industrial B2B AI+robotics deployment in safety-critical environments. Gecko has not disclosed pipeline metrics, win rates, or conversion data. Actual funnel is unknown."
-    claimRefs: [C232, C233, C234]
-
+    approximationNotes: >-
+      Conversion percentages are illustrative estimates for industrial B2B AI+robotics deployment in safety-critical
+      environments. Gecko has not disclosed pipeline metrics, win rates, or conversion data. Actual funnel is unknown.
+    claimRefs:
+      - C074
+      - C075
+      - C076
 callouts:
   - calloutType: strength
-    title: "Structural tailwinds are multi-decade and sector-diverse"
-    body: "Three independent tailwinds — aging infrastructure, Navy readiness backlog, and AI-driven electricity demand — operate across separate budget cycles and geographies. Even if one vertical softens (e.g., defense budget cuts), the others continue. The NEMA/ASE forecast of 35–50% U.S. electricity demand growth by 2040 alone creates a structural, decade-long inspection runway in the power sector."
-    claimRefs: [C225, C226, C227, C228]
+    title: Structural tailwinds are multi-decade and sector-diverse
+    body: >-
+      Three independent tailwinds — aging infrastructure, Navy readiness backlog, and AI-driven electricity demand —
+      operate across separate budget cycles and geographies. Even if one vertical softens (e.g., defense budget cuts),
+      the others continue. The NEMA/ASE forecast of 35–50% U.S. electricity demand growth by 2040 alone creates a
+      structural, decade-long inspection runway in the power sector.
+    claimRefs:
+      - C067
+      - C068
+      - C069
+      - C070
   - calloutType: risk
-    title: "Conflicting TAM estimates make market boundary diligence essential"
-    body: "GMI and R&M disagree on the global inspection robots market size by 2.4x ($2.8B vs $6.7B for 2024–2025). This is not a rounding difference — it reflects fundamentally different scope definitions. Investors who anchor to the higher figure without verifying that Gecko's product competes in the broader scope risk overstating the addressable market by more than $100M in annual opportunity for each Gecko vertical."
-    claimRefs: [C208, C209, C238]
+    title: Conflicting TAM estimates make market boundary diligence essential
+    body: >-
+      GMI and R&M disagree on the global inspection robots market size by 2.4x ($2.8B vs $6.7B for 2024–2025). This is
+      not a rounding difference — it reflects fundamentally different scope definitions. Investors who anchor to the
+      higher figure without verifying that Gecko's product competes in the broader scope risk overstating the
+      addressable market by more than $100M in annual opportunity for each Gecko vertical.
+    claimRefs:
+      - C050
+      - C051
+      - C080
   - calloutType: assumption
-    title: "SAM and SOM require data room verification"
-    body: "No analyst report directly measures Gecko's addressable market. The $2–4B SAM estimate in this chapter is analyst-derived by excluding non-Gecko verticals from headline figures. SOM cannot be estimated without Gecko's revenue, contract utilization rates, and customer count — none of which are publicly disclosed. Any DCF-based valuation requires these inputs from the data room."
-    claimRefs: [C215, C216]
-
-localEvidence:
-  searchQueries:
-    - query: "inspection robotics market size CAGR 2024 2025 2034 analyst forecast"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S201, S202, S203]
-    - query: "non-destructive testing NDT inspection services market 2025 2030 billion CAGR"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S203]
-    - query: "U.S. electricity demand growth data centers 2028 2030 DOE NEMA forecast"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S204, S205, S206, S212]
-    - query: "U.S. Navy surface ship maintenance spending GAO 2023 2024 backlog"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S208]
-    - query: "Gecko Robotics competitors inspection robots ANYbotics HUVRdata Energy Robotics"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S211, S213, S214]
-    - query: "NAES Gecko Robotics power plant inspection energy demand 2025"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S207, S216]
-    - query: "ADNOC Gas Gecko Robotics contract oil gas inspection 2024"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S218]
-    - query: "inspection robotics buyer procurement defense power oil gas industrial enterprise"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S217, S219, S220, S221, S222]
-    - query: "Waygate Technologies Baker Hughes NDT inspection competitor 2025"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S210]
-    - query: "TEAM Inc Mistras inspection services competitor robotic NDT market share"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S209]
-    - query: "inspection robot adoption barriers switching cost trust liability enterprise"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S215, S223, S224]
-    - query: "Akselos digital twin structural simulation oil gas competitor inspection"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S215]
-    - query: "WEF Davos 2026 AI infrastructure physical data robots Loosararian"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S223]
-    - query: "Alliance to Save Energy power demand study 2040 electricity growth 35-50%"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S212]
-    - query: "EIA Annual Energy Outlook 2025 electricity demand industrial electrification"
-      engine: web_search
-      hits: null
-      retainedSourceRefs: [S206]
-
-  researchQuestions:
-    - id: RQ201
-      question: "What spend categories does Gecko's market include and how should the boundary be drawn?"
-      type: enumeration
-      targets: ["contentRequirements/0", "plannedTables/market-definition-table"]
-      status: answered
-      answer: "Gecko's market includes robotic inspection hardware, AI software platforms processing inspection data, and multi-year service agreements. Excluded: manual NDT services without robotics, general-purpose industrial robots, SCADA monitoring, and pure digital-twin software without robot data collection."
-
-    - id: RQ202
-      question: "What does Gecko's market explicitly exclude, and what are the adjacent markets?"
-      type: enumeration
-      targets: ["contentRequirements/0", "plannedTables/market-definition-table"]
-      status: answered
-      answer: "Excluded: human-inspector NDT services firms (TEAM, Mistras), general industrial automation robots, SCADA/process monitoring, and software-only digital twins. Adjacent markets include industrial IoT platforms, asset-performance management software, and predictive-analytics SaaS for operations."
-
-    - id: RQ203
-      question: "What are the primary status-quo substitutes that Gecko must displace to win a customer?"
-      type: enumeration
-      targets: ["contentRequirements/0"]
-      status: answered
-      answer: "Manual rope-access inspections, third-party NDT services firms (TEAM/Mistras), interval-based scheduled maintenance, and fixed-sensor SCADA monitoring are the four primary substitutes. Each has entrenched procurement relationships, regulatory certifications, and established workflow integration."
-
-    - id: RQ204
-      question: "What is the global inspection robots TAM as of 2024–2025 per analyst sources?"
-      type: quantification
-      targets: ["contentRequirements/1", "plannedTables/tam-sam-som-or-sizing-lens-table", "plannedFigures/market-estimate-range"]
-      status: answered
-      answer: "GMI: $2.8B (2024) → $9.8B (2034) at 13.9% CAGR. R&M: $6.72B (2025) → $16.16B (2032) at 13.33% CAGR. The $2.4x gap reflects scope differences, not estimation disagreement. Both sources agree on ~13–14% CAGR."
-
-    - id: RQ205
-      question: "What is the global NDT and inspection services market, and how does it relate to the robotics sub-market?"
-      type: quantification
-      targets: ["contentRequirements/1", "plannedTables/tam-sam-som-or-sizing-lens-table"]
-      status: answered
-      answer: "R&M estimates NDT & inspection at $10.36B (2025) → $15.25B (2030) at 8.1% CAGR. This is the broader market Gecko disrupts (includes manual services); robotics is a share-gaining sub-segment of this total. The slower 8.1% CAGR vs. 13%+ robotics CAGR confirms robotics taking share."
-
-    - id: RQ206
-      question: "What is the North America and U.S. sub-market size for inspection robots?"
-      type: quantification
-      targets: ["contentRequirements/1", "plannedFigures/market-sizing-lens"]
-      status: answered
-      answer: "GMI reports North America held 30.3% of global inspection robots market in 2024. Implies ~$850M in 2024 growing toward ~$3B by 2034. Gecko's current revenue base is predominantly U.S.-focused."
-
-    - id: RQ207
-      question: "What CAGR do multiple independent analyst sources project for inspection robotics?"
-      type: quantification
-      targets: ["contentRequirements/1", "plannedTables/tam-sam-som-or-sizing-lens-table"]
-      status: answered
-      answer: "GMI projects 13.9% CAGR (2024–2034); R&M projects 13.33% CAGR (2025–2032). Both converge on ~13–14%, providing high confidence in the growth rate even though absolute size estimates differ."
-
-    - id: RQ208
-      question: "What is the scale of the U.S. Navy/defense infrastructure maintenance market that Gecko addresses?"
-      type: quantification
-      targets: ["contentRequirements/1", "plannedTables/tam-sam-som-or-sizing-lens-table"]
-      status: answered
-      answer: "GAO reports $25.9B appropriated for Navy combat surface ship maintenance in FY2020–2023, averaging ~$6.5B/year. This represents the maintenance budget for 149 non-nuclear combat surface ships — a sub-segment of total Navy infrastructure maintenance."
-
-    - id: RQ209
-      question: "What is the power-generation and grid inspection market size or annual spend?"
-      type: quantification
-      targets: ["contentRequirements/1"]
-      status: partial
-      answer: "No direct analyst market size for power-generation-specific robotic inspection exists in research files. Proxy: NAES $100M+ deal (one operator, 300+ plants); electricity demand growing 35–50% by 2040 (NEMA). Exact power-sector inspection market size is an evidence gap."
-
-    - id: RQ210
-      question: "What is the oil and gas pipeline and vessel inspection market size?"
-      type: quantification
-      targets: ["contentRequirements/1"]
-      status: partial
-      answer: "No direct O&G-specific robotic inspection market size in research files. ADNOC Gas ~$30M contract (one NOC, multi-year). O&G is part of the broader inspection robots market; share not isolated in available sources."
-
-    - id: RQ211
-      question: "What is a defensible SAM for Gecko based on available data?"
-      type: quantification
-      targets: ["contentRequirements/1", "plannedFigures/market-sizing-lens"]
-      status: partial
-      answer: "Analyst-derived SAM of $2–4B globally, by excluding automotive, semiconductor, food (~40% of R&M total) from the $6.7B inspection robots base. This is a rough estimate with high uncertainty; no analyst directly segments Gecko's verticals."
-
-    - id: RQ212
-      question: "Who are the buyers and procurement decision-makers in the defense/Navy vertical?"
-      type: enumeration
-      targets: ["contentRequirements/2", "plannedTables/segment-buyer-map"]
-      status: answered
-      answer: "NAVSEA (Naval Sea Systems Command), OPNAV (Office of Chief of Naval Operations), and defense prime contractors (BPMI, BlueForge Alliance) are institutional buyers. Budget authority rests with program managers using DoD O&M or procurement appropriations. Procurement vehicles: IDIQ contracts via GSA."
-
-    - id: RQ213
-      question: "Who are the buyers and procurement decision-makers in the power/energy vertical?"
-      type: enumeration
-      targets: ["contentRequirements/2", "plannedTables/segment-buyer-map"]
-      status: answered
-      answer: "IPPs (NAES, independent generators), utilities, and co-generation operators. NAES ($100M+ deal) operates 300+ plants. Budget owner is plant-level O&M manager for smaller deals; VP Operations and CFO for multi-year platform contracts."
-
-    - id: RQ214
-      question: "Who are the buyers and procurement decision-makers in the oil & gas vertical?"
-      type: enumeration
-      targets: ["contentRequirements/2", "plannedTables/segment-buyer-map"]
-      status: answered
-      answer: "National oil companies (ADNOC Gas), refiners, LNG terminal operators, and pipeline companies. Procurement through VP Asset Integrity or VP Operations. International deals (ADNOC) require local partner (Al Masaood Energy). Budget: operations and integrity management opex."
-
-    - id: RQ215
-      question: "What budget line owns robotic inspection spend in each vertical?"
-      type: enumeration
-      targets: ["contentRequirements/2"]
-      status: answered
-      answer: "Defense: DoD O&M + procurement appropriations (congressional-approved). Power: plant O&M budget + capital maintenance capex. O&G: asset integrity / operations opex. Industrial: capital maintenance budget. All are recurring, not one-time capital lines."
-
-    - id: RQ216
-      question: "What procurement triggers or events cause an operator to initiate an autonomous inspection purchase?"
-      type: mechanism
-      targets: ["contentRequirements/2", "plannedTables/segment-buyer-map"]
-      status: answered
-      answer: "Observed triggers: (1) Navy readiness mandates + deferred maintenance congressional pressure; (2) Grid demand surge forcing plant life extension; (3) CO₂/ESG compliance deadlines for O&G; (4) Production disruption event in industrial. All are external pressure events, not purely ROI-driven."
-
-    - id: RQ217
-      question: "What regulatory requirements mandate inspection frequency and create recurring demand?"
-      type: mechanism
-      targets: ["contentRequirements/3", "plannedTables/growth-drivers-and-constraints-table"]
-      status: answered
-      answer: "OSHA PSM (Process Safety Management) for industrial and O&G; API 510/570/653 inspection codes for vessels/pipelines/tanks; ASME codes for pressure equipment; PHMSA regulations for pipelines; NRC regulations for nuclear; NAVSEA technical manuals for Navy ships. These create non-discretionary inspection cycles across all Gecko verticals."
-
-    - id: RQ218
-      question: "How does aging U.S. infrastructure create structural demand for inspection robotics?"
-      type: mechanism
-      targets: ["contentRequirements/3", "plannedTables/growth-drivers-and-constraints-table"]
-      status: answered
-      answer: "U.S. power plants, naval vessels, pipelines, and industrial facilities built 30–60 years ago are at or past design life. Replacement is cost-prohibitive (greenfield power plants cost $1–5B+), so asset-life extension is the default strategy. This requires more frequent, higher-quality condition-based inspection — exactly Gecko's value proposition."
-
-    - id: RQ219
-      question: "How does the electricity demand surge create inspection opportunities for Gecko's power vertical?"
-      type: mechanism
-      targets: ["contentRequirements/3", "plannedTables/growth-drivers-and-constraints-table"]
-      status: answered
-      answer: "NEMA/ASE forecast 35–50% U.S. electricity demand growth by 2040 (data centers +300%, e-mobility +9,000%). DOE projects data-center electricity consumption growing from 4.4% of U.S. total (2023) to 6.7–12% by 2028. This forces operators to maximize plant utilization, reducing downtime windows and increasing inspection urgency."
-
-    - id: RQ220
-      question: "How is AI adoption across industries creating pull-through demand for robotic inspection data?"
-      type: mechanism
-      targets: ["contentRequirements/3"]
-      status: answered
-      answer: "Gecko CEO Loosararian's WEF essay articulates: AI requires ground-truth physical data; most infrastructure operates 'like the 19th century' in data terms. As AI is adopted for predictive maintenance and operations optimization, robot-generated data becomes the input layer — creating platform demand, not just inspection-service demand."
-
-    - id: RQ221
-      question: "What U.S. government programs or defense mandates create programmatic pipeline for Gecko?"
-      type: enumeration
-      targets: ["contentRequirements/3"]
-      status: answered
-      answer: "The Navy readiness mandate (Congressional focus on deferred maintenance), BPMI Naval Nuclear Propulsion Program, Air Force Sentinel ICBM modernization, and Columbia-class submarine program ($132B) are specific programs with multi-year inspection needs. Navy IDIQ GSA vehicle enables task orders beyond initial 18-ship award."
-
-    - id: RQ222
-      question: "What switching costs or incumbent lock-in limits adoption of Gecko's platform?"
-      type: mechanism
-      targets: ["contentRequirements/3", "plannedTables/growth-drivers-and-constraints-table"]
-      status: answered
-      answer: "Data format lock-in (legacy PDFs, proprietary inspection records), inspection firm relationships (certified inspectors with regulatory standing), integration cost with CMMS/ERP systems, and safety certification processes (ASNT Level II/III) all create switching costs. Incumbent services firms (TEAM, Mistras) are deeply embedded in workflows."
-
-    - id: RQ223
-      question: "What capital intensity or deployment barriers slow robotics adoption?"
-      type: mechanism
-      targets: ["contentRequirements/3", "plannedTables/growth-drivers-and-constraints-table"]
-      status: answered
-      answer: "Deployment requires asset access (often only during scheduled outages), calibration, safety review, and qualification — particularly for nuclear and defense environments where initial qualification can take 12–24 months. High upfront engagement cost limits SME/smaller-operator addressability."
-
-    - id: RQ224
-      question: "How does trust/liability risk affect autonomous inspection adoption in safety-critical environments?"
-      type: mechanism
-      targets: ["contentRequirements/3", "plannedTables/growth-drivers-and-constraints-table"]
-      status: answered
-      answer: "Nuclear and defense operators require parallel human inspection validation of AI findings before regulatory sign-off. This extends sales cycles and reduces near-term revenue quality (inspection service fees vs. software subscription). Trust accumulates over time through track record, limiting early monetization of the platform layer."
-
-    - id: RQ225
-      question: "Are there adverse signals — stalled deployments, failed pilots, regulatory rejections, or negative customer outcomes — in autonomous inspection?"
-      type: adverse
-      adverseFlag: true
-      targets: ["contentRequirements/4"]
-      status: partial
-      answer: "No specific Gecko-adverse incidents identified in research files. General market: industrial AI and robotics deployments face 'pilot purgatory' — pilots that do not convert to enterprise contracts due to ROI uncertainty or integration challenges. No failed Gecko deployment or customer complaint publicly documented as of May 2026."
-
-    - id: RQ226
-      question: "How do conflicting analyst market estimates constrain investor confidence in any single TAM figure?"
-      type: comparison
-      targets: ["contentRequirements/4", "plannedTables/tam-sam-som-or-sizing-lens-table"]
-      status: answered
-      answer: "GMI ($2.8B, 2024) and R&M ($6.72B, 2025) differ by 2.4x for inspection robots. Neither publishes detailed methodology. The gap exceeds normal statistical variance — it reflects scope boundary disagreement (whether general factory automation robots are included). Investors must define their own market boundary before applying CAGR to arrive at TAM."
-
-    - id: RQ227
-      question: "Who are Gecko's closest direct competitors and what is their funding and product overlap?"
-      type: enumeration
-      targets: ["contentRequirements/0", "plannedTables/market-definition-table"]
-      status: answered
-      answer: "Direct competitors: HUVRdata (inspection data platform, U.S.), Energy Robotics (industrial robot inspection, Germany), Akselos (digital twin + structural simulation), Voliro (aerial NDT drones), Invert Robotics (surface-crawling robots). Broader: Baker Hughes/Waygate Technologies (industrial NDT OEM), TEAM Inc and Mistras (incumbent services). VentureRadar also lists Planys (underwater ROVs) and ANYbotics as similar companies. None span all six Gecko verticals with a unified AI platform."
-
-  sources:
-    - id: S201
-      publisher: "Global Market Insights (GMI)"
-      title: "Inspection Robots Market Size, Share & Forecast Report, 2034"
-      url: "https://www.gminsights.com/industry-analysis/inspection-robots-market"
-      date: "2024-01-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics: ["inspection robots", "TAM", "CAGR 13.9%", "North America 30.3%", "semi-autonomous", "mobile robots", "2034 forecast"]
-      keyQuote: "North America held a market share of 30.3% in 2024."
-
-    - id: S202
-      publisher: "Research and Markets"
-      title: "Inspection Robots Market Size Report (2025–2032)"
-      url: "https://www.researchandmarkets.com/report/inspection-robot"
-      date: "2025-01-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics: ["inspection robots", "$6.72B 2025", "$16.16B 2032", "CAGR 13.33%", "infrastructure", "energy"]
-      keyQuote: "The Inspection Robots Market grew from USD 6.72 billion in 2025 to USD 7.56 billion in 2026."
-
-    - id: S203
-      publisher: "Research and Markets"
-      title: "Non-Destructive Testing (NDT) and Inspection Market Report"
-      url: "https://www.researchandmarkets.com/reports/5939335/non-destructive-testing-ndt-inspection-market"
-      date: "2025-01-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics: ["NDT", "inspection", "$10.36B 2025", "$15.25B 2030", "CAGR 8.1%", "industrial safety", "aerospace"]
-      keyQuote: "The non-destructive testing (ndt) and inspection market size has grown strongly in recent years. It will grow from $10.36 billion in 2025 to $11.2 billion in 2026 at a compound annual growth rate (CAGR) of 8.1%."
-
-    - id: S204
-      publisher: "NEMA / makeitelectric.org"
-      title: "New Study Highlights Urgent Need to Prioritize Grid Reliability to Meet Surging Electricity Demand"
-      url: "https://www.makeitelectric.org/newsroom/news/new-study-highlights-urgent-need-to-prioritize-grid-reliability-to-meet-surging-electricity-demand/"
-      date: "2024-11-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: other
-      reputationTier: high
-      independence: independent
-      topics: ["electricity demand", "grid reliability", "2% annual growth", "50% by 2050", "data centers", "NEMA study"]
-      keyQuote: "Electricity demand in the United States will increase 2% annually and 50% by 2050, according to a new study conducted by PA Consulting and released by the National Electrical Manufacturers Association (NEMA)."
-
-    - id: S205
-      publisher: "U.S. Department of Energy"
-      title: "DOE Releases New Report Evaluating Increase in Electricity Demand from Data Centers"
-      url: "https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers"
-      date: "2024-05-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: official
-      reputationTier: high
-      independence: independent
-      topics: ["data centers", "electricity demand", "4.4% of U.S. total 2023", "double or triple by 2028", "176 TWh 2023"]
-      keyQuote: "data centers consumed about 4.4% of total U.S. electricity in 2023 and are expected to consume approximately 6.7 to 12% of total U.S. electricity by 2028."
-
-    - id: S206
-      publisher: "U.S. Energy Information Administration"
-      title: "Annual Energy Outlook"
-      url: "https://www.eia.gov/outlooks/aeo/"
-      date: "2025-01-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: high
-      independence: independent
-      topics: ["energy outlook", "electricity demand", "industrial electrification", "long-term forecast"]
-      keyQuote: null
-
-    - id: S207
-      publisher: "NAES Corporation"
-      title: "NAES and Gecko Robotics Partner to Transform Power Plant Operations"
-      url: "https://www.naes.com/gecko-partnership/"
-      date: "2025-02-27"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: partner-proof
-      reputationTier: medium
-      independence: partner
-      topics: ["NAES", "Gecko Robotics", "$100M partnership", "300+ power plants", "16% grid demand growth", "data center demand 160% by 2030"]
-      keyQuote: "Electricity demand on the grid has grown approximately 16% in the last four years and is expected to continue to surge with data center demand alone expected to increase 160% by 2030."
-
-    - id: S208
-      publisher: "U.S. Government Accountability Office"
-      title: "Navy Surface Ships: Maintenance Funds and Actions Needed to Address Ongoing Challenges"
-      url: "https://www.gao.gov/products/gao-25-106990"
-      date: "2024-09-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: high
-      independence: independent
-      topics: ["Navy maintenance", "$25.9B appropriated FY2020-2023", "deferred maintenance", "spare parts shortages", "149 combat ships", "46 GAO recommendations"]
-      keyQuote: "The Navy requested almost $24.9 billion to maintain combat surface ships during fiscal years 2020 through 2023. The Navy reported that almost $25.9 billion was appropriated for maintenance activities during those same years."
-
-    - id: S209
-      publisher: "U.S. Securities and Exchange Commission"
-      title: "TEAM, Inc. Annual Report on Form 10-K for FY 2023"
-      url: "https://www.sec.gov/ix?doc=/Archives/edgar/data/0319448/000155837024004618/tisi-20231231x10k.htm"
-      date: "2024-04-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: filing
-      reputationTier: high
-      independence: independent
-      topics: ["TEAM Inc", "NDT inspection services", "industrial inspection", "pipeline inspection", "robotics services", "competitor"]
-      keyQuote: null
-
-    - id: S210
-      publisher: "Baker Hughes / Waygate Technologies"
-      title: "Waygate Technologies — Advanced Inspection Technologies"
-      url: "https://www.bakerhughes.com/waygate-technologies"
-      date: "2025-01-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: official
-      reputationTier: medium
-      independence: competitor
-      topics: ["Waygate Technologies", "industrial NDT", "digital X-ray", "computed tomography", "ultrasonic", "Baker Hughes", "competitor"]
-      keyQuote: null
-
-    - id: S211
-      publisher: "VentureRadar"
-      title: "Similar Companies to Gecko Robotics"
-      url: "https://www.ventureradar.com/similar/Gecko%20Robotics/e4eb3136-76a0-42b0-b0a1-2a11a5154c9f"
-      date: "2025-01-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: other
-      reputationTier: medium
-      independence: independent
-      topics: ["Gecko Robotics competitors", "Voliro", "Invert Robotics", "Planys", "TRI Jitai", "ANYbotics", "Energy Robotics", "competitive landscape"]
-      keyQuote: null
-
-    - id: S212
-      publisher: "Alliance to Save Energy (ASE)"
-      title: "Report: Urgent Need to Expand Energy Supply to Meet Rapidly Growing Demand"
-      url: "https://www.ase.org/news/report-urgent-need-expand-energy-supply-meet-rapidly-growing-demand"
-      date: "2024-11-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: other
-      reputationTier: high
-      independence: independent
-      topics: ["energy demand", "35-50% by 2040", "data centers", "manufacturing", "S&P Global study", "grid reliability"]
-      keyQuote: "U.S. electricity demand will surge by 35-50% between 2024 and 2040. This is primarily due to AI data centers and new manufacturing activity in the short-term."
-
-    - id: S213
-      publisher: "HUVRdata"
-      title: "HUVRdata — First Purpose-Built Reliability Automation Platform"
-      url: "https://www.huvrdata.com/"
-      date: "2025-01-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: official
-      reputationTier: medium
-      independence: competitor
-      topics: ["HUVRdata", "inspection data management", "reliability automation", "wind solar assets", "competitor to Cantilever"]
-      keyQuote: "The industry's first reliability automation platform providing automation, AI and a visual way of managing asset integrity."
-
-    - id: S214
-      publisher: "Energy Robotics"
-      title: "Autonomous Robots for Industrial Inspections"
-      url: "https://energy-robotics.com/"
-      date: "2025-01-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: official
-      reputationTier: medium
-      independence: competitor
-      topics: ["Energy Robotics", "autonomous mobile robots", "industrial inspection", "oil gas energy", "Germany-based", "competitor"]
-      keyQuote: null
-
-    - id: S215
-      publisher: "Akselos"
-      title: "Akselos — Structural Performance Management"
-      url: "https://akselos.com/spm/"
-      date: "2025-01-01"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: neutral
-      sourceType: official
-      reputationTier: medium
-      independence: competitor
-      topics: ["Akselos", "digital twin", "structural simulation", "FEA", "offshore oil gas", "competitor to Cantilever digital twin"]
-      keyQuote: null
-
-    - id: S216
-      publisher: "POWER Magazine"
-      title: "NAES, Gecko Robotics Launch $100M AI Partnership Amid Energy Crisis"
-      url: "https://www.powermag.com/naes-gecko-robotics-launch-100m-ai-partnership-amid-energy-crisis-shapiro-questions-pjm-future/"
-      date: "2025-02-27"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics: ["NAES", "Gecko Robotics", "energy partnership", "$100M deal", "power plant inspection", "grid energy crisis"]
-      keyQuote: null
-
-    - id: S217
-      publisher: "Gecko Robotics"
-      title: "Defense Industry — Gecko Robotics"
-      url: "https://www.geckorobotics.com/defense"
-      date: "2026-05-05"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
-      topics: ["defense", "Navy", "Air Force", "nuclear submarines", "missile silos", "Cantilever", "buyer profile"]
-      keyQuote: null
-
-    - id: S218
-      publisher: "Gecko Robotics"
-      title: "Digital Transformation for the Oil and Gas Industry"
-      url: "https://www.geckorobotics.com/oil-and-gas"
-      date: "2026-05-05"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
-      topics: ["oil and gas", "refineries", "LNG", "pipelines", "Cantilever", "predictive maintenance", "buyer profile"]
-      keyQuote: null
-
-    - id: S219
-      publisher: "Gecko Robotics"
-      title: "Power Industry — Gecko Robotics"
-      url: "https://www.geckorobotics.com/power"
-      date: "2026-05-05"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
-      topics: ["power generation", "boilers", "plant inspection", "aging fleet", "decarbonization", "buyer profile"]
-      keyQuote: null
-
-    - id: S220
-      publisher: "Gecko Robotics"
-      title: "Sustainment — Maritime Platform"
-      url: "https://www.geckorobotics.com/sustainment"
-      date: "2026-05-05"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
-      topics: ["naval sustainment", "readiness", "Cantilever", "fleet analysis", "condition-based maintenance", "digital twin"]
-      keyQuote: null
-
-    - id: S221
-      publisher: "Gecko Robotics"
-      title: "Steel Industry — Gecko Robotics"
-      url: "https://www.geckorobotics.com/steel"
-      date: "2026-05-05"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
-      topics: ["steel manufacturing", "aging infrastructure", "mill inspection", "buyer profile"]
-      keyQuote: "The steel industry is ramping up production capacity to meet increasing demand while relying on aging infrastructure."
-
-    - id: S222
-      publisher: "Gecko Robotics"
-      title: "Mining Industry — Gecko Robotics"
-      url: "https://www.geckorobotics.com/mining"
-      date: "2026-05-05"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
-      topics: ["mining", "metals", "minerals", "safety", "sustainability", "buyer profile"]
-      keyQuote: null
-
-    - id: S223
-      publisher: "World Economic Forum"
-      title: "From Steel to Data: The Next AI Revolution"
-      url: "https://www.weforum.org/stories/2026/01/from-steel-to-data-the-next-ai-revolution/"
-      date: "2026-01-13"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: other
-      reputationTier: high
-      independence: company
-      topics: ["AI revolution", "physical data", "robots as AI infrastructure", "critical infrastructure", "Davos 2026", "Loosararian thesis"]
-      keyQuote: "Robots in the field can capture immense volumes of real-world data: ultrasonic, vibration, lidar, thermal, visual. They turn physical infrastructure into high-fidelity digital models."
-
-    - id: S224
-      publisher: "Gecko Robotics"
-      title: "Advanced Manufacturing — Gecko Robotics"
-      url: "https://www.geckorobotics.com/advanced-manufacturing"
-      date: "2026-05-05"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
-      topics: ["advanced manufacturing", "Navy manufacturing", "BPMI", "Trident", "defense industrial base", "buyer profile"]
-      keyQuote: null
-
-    - id: S225
-      publisher: "Gecko Robotics"
-      title: "AIR — AI + Robotics Platform"
-      url: "https://www.geckorobotics.com/air"
-      date: "2026-05-05"
-      accessDate: "2026-05-05"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
-      topics: ["AIR", "AI robotics platform", "Cantilever", "product positioning", "market differentiation"]
-      keyQuote: null
-
-  claims:
-    - id: C201
-      statement: "Gecko's market includes robotic inspection hardware, AI software platforms, and multi-year service agreements. Manual NDT services without robotics, general-purpose industrial robots, SCADA monitoring, and pure digital-twin software are excluded."
-      type: observed
-      topic: market-boundary
-      sourceRefs: [S217, S218, S219]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ201, RQ202]
-
-    - id: C202
-      statement: "Status-quo substitutes that Gecko must displace include manual rope-access inspections, third-party NDT services firms (TEAM Inc, Mistras), interval-based scheduled maintenance, and fixed-sensor SCADA monitoring."
-      type: observed
-      topic: competition
-      sourceRefs: [S209, S217]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ203]
-
-    - id: C203
-      statement: "TEAM Inc offers robotics, drone inspections, laser inspection, API platform, and asset integrity management services across petrochemical, power, and industrial sectors — a direct incumbent competitor."
-      type: observed
-      topic: competition
-      sourceRefs: [S209]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ227]
-
-    - id: C204
-      statement: "Baker Hughes/Waygate Technologies offers digital X-ray, computed tomography, and ultrasonic NDT inspection for aerospace and industrial sectors — an incumbent OEM competitor positioned at the high-end sensing layer."
-      type: observed
-      topic: competition
-      sourceRefs: [S210]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ227]
-
-    - id: C205
-      statement: "HUVRdata positions itself as a 'reliability automation platform' for inspection data management — directly competing with Cantilever's software/data layer, particularly for wind, solar, and energy asset inspection."
-      type: observed
-      topic: competition
-      sourceRefs: [S213]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ227]
-
-    - id: C206
-      statement: "Energy Robotics (Germany) targets oil & gas and energy inspection with autonomous mobile robots — competing in two of Gecko's largest revenue verticals with a focused platform approach."
-      type: observed
-      topic: competition
-      sourceRefs: [S214]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ227]
-
-    - id: C207
-      statement: "VentureRadar identifies Gecko's close competitors as Voliro (aerial NDT drones), Invert Robotics (surface-crawling robots), Planys (underwater ROVs), TRI Jitai, ANYbotics, and Energy Robotics. No single player spans all six of Gecko's verticals with a unified AI platform."
-      type: observed
-      topic: competition
-      sourceRefs: [S211]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ227]
-
-    - id: C208
-      statement: "GMI estimates the global inspection robots market at $2.8 billion in 2024, growing to $9.8 billion by 2034 at a 13.9% CAGR."
-      type: quantification
-      topic: market-sizing
-      sourceRefs: [S201]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ204, RQ207]
-
-    - id: C209
-      statement: "Research and Markets estimates the global inspection robots market at $6.72 billion in 2025, growing to $16.16 billion by 2032 at a 13.33% CAGR — approximately 2.4x higher base than GMI due to differing scope boundaries."
-      type: quantification
-      topic: market-sizing
-      sourceRefs: [S202]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ204, RQ207]
-
-    - id: C210
-      statement: "Research and Markets estimates the broader NDT and inspection services market (including manual services) at $10.36 billion in 2025, growing to $15.25 billion by 2030 at an 8.1% CAGR."
-      type: quantification
-      topic: market-sizing
-      sourceRefs: [S203]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ205]
-
-    - id: C211
-      statement: "Both GMI and R&M independently project ~13–14% CAGR for the inspection robotics market through the mid-2030s, providing high convergence on growth rate even as absolute size estimates diverge by 2.4x."
-      type: quantification
-      topic: market-sizing
-      sourceRefs: [S201, S202]
-      confidence: high
-      freshness: recent
-      answersQuestionRefs: [RQ207]
-
-    - id: C212
-      statement: "North America held 30.3% of the global inspection robots market in 2024 per GMI, implying a North American sub-market of ~$850M in 2024 and approaching ~$3B by 2034."
-      type: quantification
-      topic: market-sizing
-      sourceRefs: [S201]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ206]
-
-    - id: C213
-      statement: "The U.S. Navy received approximately $25.9 billion in appropriations for combat surface ship maintenance across FY2020–2023, averaging more than $6 billion per year."
-      type: quantification
-      topic: market-sizing
-      sourceRefs: [S208, S220]
-      confidence: high
-      freshness: recent
-      answersQuestionRefs: [RQ208]
-
-    - id: C214
-      statement: "The Navy still faces persistent maintenance challenges as of 2024: limited spare parts, insufficient qualified personnel, and deferred maintenance. 34 of 46 prior GAO recommendations remain unimplemented."
-      type: observed
-      topic: market-driver
-      sourceRefs: [S208]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ208, RQ221]
-
-    - id: C215
-      statement: "A plausible SAM for Gecko is estimated at $2–4B globally, derived by excluding non-Gecko verticals (automotive, semiconductor, food, ~40% of inspection robots total) from the R&M headline figure. This estimate has high uncertainty and lacks direct public-source corroboration."
-      type: quantification
-      topic: market-sizing
-      sourceRefs: [S201, S202]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [RQ211]
-
-    - id: C216
-      statement: "Gecko's SOM is not calculable from public sources. Announced contract ceilings ($71M Navy IDIQ, $100M+ NAES, ~$30M ADNOC) total over $200M but represent ceiling values, not recognized revenue or contracted annual run-rate."
-      type: observed
-      topic: market-sizing
-      sourceRefs: [S207, S208, S217]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ211]
-
-    - id: C217
-      statement: "Defense and Navy buyers are institutional (NAVSEA, DoD, defense primes); procurement is through IDIQ government contracts with multi-year ceiling values funded by DoD O&M or procurement appropriations."
-      type: observed
-      topic: buyers
-      sourceRefs: [S208, S217, S224]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ212, RQ215]
-
-    - id: C218
-      statement: "Power sector buyers are IPPs and plant operators such as NAES, which manages more than 65 gigawatts across 300+ facilities. Budget ownership rests with plant-level O&M managers for routine deals and CFO/COO level for multi-year platform contracts."
-      type: observed
-      topic: buyers
-      sourceRefs: [S207, S219]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ213, RQ215]
-
-    - id: C219
-      statement: "Oil and gas buyers include national oil companies (ADNOC Gas, ~$30M Apr 2024) and likely refiners, LNG terminal operators, and pipeline companies. International deals require local partner arrangements, as seen with Al Masaood Energy in the ADNOC contract."
-      type: observed
-      topic: buyers
-      sourceRefs: [S218]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ214, RQ215]
-
-    - id: C220
-      statement: "Industrial buyers (steel mills, mining, pulp and paper) tend to be price-sensitive, with procurement driven by capital maintenance budgets and production disruption risk rather than regulatory compliance — leading to higher adoption lag than defense or power."
-      type: observed
-      topic: buyers
-      sourceRefs: [S221, S222]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ215, RQ216]
-
-    - id: C221
-      statement: "Key adoption triggers across Gecko verticals are externally driven: Navy readiness mandates and congressional backlog pressure (defense), grid demand surge and plant life extension (power), CO₂/ESG compliance and API code deadlines (O&G), production disruption avoidance (industrial)."
-      type: observed
-      topic: buyers
-      sourceRefs: [S207, S208, S216, S217]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ216]
-
-    - id: C222
-      statement: "NAES reports U.S. grid electricity demand has grown approximately 16% in the last four years, with data-center demand alone projected to increase 160% by 2030."
-      type: quantification
-      topic: market-driver
-      sourceRefs: [S207, S216]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ219]
-
-    - id: C223
-      statement: "OSHA PSM, API 510/570/653, ASME pressure codes, PHMSA pipeline regulations, and NRC nuclear safety codes mandate recurring inspection cycles across all Gecko verticals, creating non-discretionary annual inspection budgets."
-      type: observed
-      topic: market-driver
-      sourceRefs: [S218, S219, S217]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ217]
-
-    - id: C224
-      statement: "Akselos targets offshore oil and gas digital twins using FEA-based structural simulation — competing with Cantilever's digital-twin capability for large structural assets."
-      type: observed
-      topic: competition
-      sourceRefs: [S215]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ227]
-
-    - id: C225
-      statement: "U.S. electricity demand is projected to grow 35–50% between 2024 and 2040, driven by AI data centers and new manufacturing in the near term, and EVs/building electrification longer term, per the S&P Global/ASE study."
-      type: quantification
-      topic: market-driver
-      sourceRefs: [S212, S204]
-      confidence: high
-      freshness: recent
-      answersQuestionRefs: [RQ219]
-
-    - id: C226
-      statement: "DOE projects U.S. data center electricity consumption will rise from 4.4% of U.S. total in 2023 to 6.7–12% by 2028, with data center load growth having tripled over the prior decade."
-      type: quantification
-      topic: market-driver
-      sourceRefs: [S205, S204]
-      confidence: high
-      freshness: recent
-      answersQuestionRefs: [RQ219]
-
-    - id: C227
-      statement: "WEF essay by CEO Loosararian (Jan 2026, Davos): 'Robots in the field can capture immense volumes of real-world data...They turn physical infrastructure into high-fidelity digital models' — positioning robotic inspection as the data infrastructure layer for AI."
-      type: company-claimed
-      topic: market-driver
-      sourceRefs: [S223]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ220]
-
-    - id: C228
-      statement: "EIA's Annual Energy Outlook projects continued growth in U.S. electricity demand, particularly from industrial electrification, supporting a multi-decade runway for power-sector inspection demand."
-      type: observed
-      topic: market-driver
-      sourceRefs: [S206]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ219]
-
-    - id: C229
-      statement: "Aging U.S. power plants, pipelines, naval vessels, and industrial facilities built 30–60 years ago are at or past design life. Asset-life extension — requiring intensified inspection — is the economic default over greenfield replacement."
-      type: observed
-      topic: market-driver
-      sourceRefs: [S219, S221, S208]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ218]
-
-    - id: C230
-      statement: "ADNOC Gas contracted Gecko for predictive maintenance specifically to enhance efficiency, minimize downtime, and reduce CO₂ emissions — confirming that Gulf NOC ESG and operational mandates are active procurement triggers."
-      type: observed
-      topic: market-driver
-      sourceRefs: [S218]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ216]
-
-    - id: C231
-      statement: "The U.S. defense and naval readiness agenda creates a programmatic pipeline: Navy IDIQ GSA vehicle enables task orders beyond the initial 18-ship award; Columbia-class ($132B program), Air Force Sentinel, and BPMI represent distinct programmatic entry points."
-      type: observed
-      topic: market-driver
-      sourceRefs: [S217, S224, S220]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ221]
-
-    - id: C232
-      statement: "Adoption constraints include capital-intensive deployment (asset access, calibration, safety qualification), trust and liability risk in safety-critical environments, and data-format switching costs from legacy inspection records."
-      type: observed
-      topic: constraints
-      sourceRefs: [S217, S220, S223]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ222, RQ223, RQ224]
-
-    - id: C233
-      statement: "For nuclear and defense environments, initial robot qualification before operational deployment can take 12–24 months — confirmed by BPMI partnership requiring 'integration into nuclear component manufacturing workflows.'"
-      type: observed
-      topic: constraints
-      sourceRefs: [S224, S220]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [RQ223]
-
-    - id: C234
-      statement: "In safety-critical environments, operators require parallel human inspection validation of AI findings before regulatory sign-off, extending sales cycles and limiting early recognition of pure-software revenue."
-      type: observed
-      topic: constraints
-      sourceRefs: [S220, S217]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ224]
-
-    - id: C235
-      statement: "Incumbent inspection services firms (TEAM Inc, Mistras) are entrenched in customer workflows with certified inspectors holding ASNT Level II/III qualifications — a trust and regulatory-credential moat that creates material switching cost for buyers."
-      type: observed
-      topic: constraints
-      sourceRefs: [S209, S210]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ222]
-
-    - id: C236
-      statement: "No specific Gecko-adverse deployment incident, pilot failure, or safety incident is documented in available research sources as of May 2026. The adverse flag in this chapter is carried for structural market constraint reasons, not Gecko-specific incidents."
-      type: adverse
-      topic: adverse-check
-      sourceRefs: [S211, S217]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ225]
-
-    - id: C237
-      statement: "The $2.8B (GMI, 2024) vs $6.72B (R&M, 2025) inspection robots gap represents a 2.4x scope disagreement, not a statistical confidence interval. Neither analyst publishes methodology sufficient to adjudicate the boundary."
-      type: comparison
-      topic: market-sizing
-      sourceRefs: [S201, S202]
-      confidence: high
-      freshness: recent
-      answersQuestionRefs: [RQ226]
-
-    - id: C238
-      statement: "Gecko's six target verticals — defense, oil & gas, power, pulp & paper, steel, mining — serve buyers with non-overlapping budget lines and procurement authorities, reducing correlated demand risk but increasing sales and go-to-market complexity."
-      type: observed
-      topic: buyers
-      sourceRefs: [S217, S218, S219, S221, S222]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [RQ215]
-
-  evidenceGaps:
-    - type: missing-source
-      severity: blocking
-      topic: "Gecko-specific SAM: no analyst report segments Gecko's exact verticals"
-      missingEvidence: "No analyst market report isolates the critical-asset robotic inspection sub-market covering Gecko's six specific verticals. GMI and R&M headline figures include automotive, semiconductor, and food sectors that Gecko does not serve."
-      whyItMatters: "Without a direct SAM estimate, TAM-to-Gecko valuation comparisons are unreliable. The $2–4B SAM in this chapter is derived, not primary, with high uncertainty."
-      diligencePath: "Commission a custom market analysis or request Gecko's investor materials for management's SAM/SOM estimates. Cross-check with industry reports from IDC, Forrester, or Frost & Sullivan for sub-vertical sizing."
-      relatedQuestionRefs: [RQ211]
-
-    - type: missing-source
-      severity: blocking
-      topic: "Power-generation and oil & gas inspection sub-market size"
-      missingEvidence: "No analyst report in available sources directly sizes the power-generation-specific or oil-and-gas-specific robotic inspection market. NAES and ADNOC deals are data points but not market-wide estimates."
-      whyItMatters: "Power and O&G are Gecko's two largest commercial verticals by disclosed contract value. Without independent market sizing, the relative weighting of these verticals in the SAM is unverifiable."
-      diligencePath: "Search for IEA, Wood Mackenzie, S&P Global Platts, or BloombergNEF reports on predictive maintenance spend in power generation and O&G. Check EPRI published reports for U.S. power plant inspection spend."
-      relatedQuestionRefs: [RQ209, RQ210]
-
-    - type: private-evidence-only
-      severity: blocking
-      topic: "Gecko SAM, SOM, and win-rate metrics"
-      missingEvidence: "Gecko does not disclose revenue, customer count, contract utilization, win rate, or sales cycle length. SOM cannot be calculated. Pipeline metrics are entirely absent from public disclosures."
-      whyItMatters: "SOM and win-rate are core inputs to bottom-up revenue modeling. Without them, the top-down market sizing cannot be validated against actual realized market penetration."
-      diligencePath: "Data room review: request pipeline dashboard, win/loss analysis by vertical, ARR breakdown by vertical, and contract utilization rates on existing IDIQs."
-      relatedQuestionRefs: [RQ211, RQ209, RQ210]
-
-    - type: missing-source
-      severity: material
-      topic: "Market sizing confidence intervals not published by analysts"
-      missingEvidence: "Neither GMI nor R&M publishes confidence intervals, methodology details, or primary survey data for their inspection robots market estimates. The 2.4x gap between firms cannot be adjudicated without methodology transparency."
-      whyItMatters: "Investors anchoring to one analyst estimate may overstate or understate the market by 2x. The gap matters materially for valuation multiples on market-share assumptions."
-      diligencePath: "Contact GMI and R&M for methodology notes or custom segmentation. Cross-check with IFR (International Federation of Robotics) service robot statistics for a volume-based alternative."
-      relatedQuestionRefs: [RQ226]
-
-    - type: missing-source
-      severity: material
-      topic: "Conversion rates and sales cycle data for autonomous inspection enterprise sales"
-      missingEvidence: "No public data source quantifies average time-to-contract, pilot conversion rates, or enterprise sales cycle length for autonomous inspection robotics. The adoption funnel in this chapter is illustrative, not Gecko-specific."
-      whyItMatters: "Sales cycle length and conversion rates directly affect near-term revenue forecasting and burn rate. A longer-than-expected sales cycle (e.g., 18+ months for defense qualification) reduces short-term revenue even with a large announced pipeline."
-      diligencePath: "Request sales operations data in diligence: average days from pilot to contract, proposal win rate, CAC by vertical, and LTV/CAC ratio."
-      relatedQuestionRefs: [RQ225]
-
-    - type: missing-source
-      severity: minor
-      topic: "International markets beyond U.S. and UAE — sizing and pipeline unknown"
-      missingEvidence: "No research file provides sizing for inspection robotics in Europe, Asia-Pacific, or Latin America specifically applicable to Gecko's verticals. ADNOC is the only confirmed international contract."
-      whyItMatters: "International expansion is implied by the UAE/NextGenFDI HQ setup and Loosararian's WEF presence. If Gecko is planning significant non-U.S. revenue, the international market is a material sizing gap."
-      diligencePath: "Request international pipeline breakdown and any LOIs or contracts in negotiation outside U.S. and UAE."
-      relatedQuestionRefs: [RQ210]
-
-    - type: missing-source
-      severity: minor
-      topic: "Regulatory mandates by sector that explicitly permit or require robotic inspection as a substitute for human inspection"
-      missingEvidence: "While mandatory inspection cycles exist (OSHA, API, ASME, NRC), it is unclear which codes currently allow robotic inspection as the primary (not supplemental) compliance method. This determines whether Gecko can fully displace human inspectors or must always serve as an add-on."
-      whyItMatters: "If regulations require licensed human sign-off on all inspection findings, Gecko's platform cannot capture the full inspection services budget — limiting gross margin and revenue ceiling per site."
-      diligencePath: "Review API 510/570/653 codes, ASME inspection standards, OSHA PSM, and PHMSA pipeline integrity rule for automated inspection provisions. Engage regulatory counsel familiar with inspection licensing."
-      relatedQuestionRefs: [RQ217]
+    title: SAM and SOM require data room verification
+    body: >-
+      No analyst report directly measures Gecko's addressable market. The $2–4B SAM estimate in this chapter is
+      analyst-derived by excluding non-Gecko verticals from headline figures. SOM cannot be estimated without Gecko's
+      revenue, contract utilization rates, and customer count — none of which are publicly disclosed. Any DCF-based
+      valuation requires these inputs from the data room.
+    claimRefs:
+      - C057
+      - C058

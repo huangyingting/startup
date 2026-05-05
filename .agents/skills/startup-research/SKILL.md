@@ -124,5 +124,5 @@ After all analysis chapters pass:
 - Do not edit another chapter's artifact while working on the current chapter.
 - Do not invent facts, metrics, customers, funding, valuation, or dates.
 - Use structured YAML figures only; no Mermaid/SVG/prose diagrams.
-- Keep temporary files and research notes out of `reports/`.
+- Never write scratch files inside `reports/<run>/`. Put per-run notes, fetched bodies, and chapter packets under `.research-cache/<runTimestamp>-<companySlug>/` at the repo root (gitignored). The only files allowed in `reports/<run>/` are the chapter YAMLs (`01-…` … `08-…`), `report-meta.yaml`, and the assembled outputs (`evidence.yaml`, `full-report.yaml`, `summary-card.yaml`).
 - Final response: report folder, generated files, source/claim counts, recommendation, confidence, risks, valuation stance, table/figure counts, validation result, and main gaps.
