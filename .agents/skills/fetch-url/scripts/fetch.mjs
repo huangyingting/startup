@@ -10,10 +10,10 @@ import { argv, env, exit } from 'node:process';
 const DEFAULT_URL = 'https://openai.com';
 const DEFAULT_TIMEOUT_MS = 15_000;
 const DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
-const DEFAULT_CACHE_DIR = env.FETCH_URL_CACHE_DIR
+export const DEFAULT_CACHE_DIR = env.FETCH_URL_CACHE_DIR
   ? resolve(env.FETCH_URL_CACHE_DIR)
   : resolve(process.cwd(), '.fetch-cache');
-const DEFAULT_CACHE_TTL_HOURS = 24 * 7;
+export const DEFAULT_CACHE_TTL_HOURS = 24 * 7;
 const DEFAULT_PROFILE = 'bingbot';
 const DEFAULT_THROTTLE_MS = 750;
 
@@ -109,7 +109,7 @@ function resolveWrapperPath(wrapper) {
   return resolved;
 }
 
-// Per-host strategy fast-path. Pre-computed by `probe-strategies.mjs` and
+// Per-host strategy fast-path. Pre-computed by `probe.mjs` and
 // stored at references/host-strategies.json. When a URL's host has a known
 // winning strategy (e.g. reuters.com -> desktop-firefox, wsj.com -> wayback),
 // we skip the full origin->reader->wayback fallback chain and try that
@@ -213,6 +213,27 @@ const ENTITY_MAP = {
   lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”',
 };
 
+function readOptionValue(args, index, flag) {
+  const value = args[index + 1];
+  if (value === undefined || value.startsWith('--')) {
+    return { error: `Missing value for ${flag}.`, value: null };
+  }
+  return { error: null, value };
+}
+
+function parseNumberOption(value, flag, { min = -Infinity, integer = false } = {}) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < min || (integer && !Number.isInteger(number))) {
+    return { error: `Invalid ${flag}: ${value}.`, value: null };
+  }
+  return { error: null, value: number };
+}
+
+function printUsageError(error) {
+  console.error(error);
+  console.error('Run with --help to see supported options.');
+}
+
 function parseArgs(args) {
   const opts = {
     url: DEFAULT_URL,
@@ -236,38 +257,90 @@ function parseArgs(args) {
     noHostMap: false,
     ignoreHostMapFailures: false,
     maxChars: null,
+    json: false,
+    error: null,
+  };
+  const readValue = (flag, index) => {
+    const parsed = readOptionValue(args, index, flag);
+    if (parsed.error) opts.error = parsed.error;
+    return parsed.value;
   };
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
     if (arg === '--help' || arg === '-h') opts.help = true;
     else if (arg === '--text-only' || arg === '-t') opts.textOnly = true;
-    else if (arg === '--out' || arg === '-o') opts.file = args[++i];
-    else if (arg === '--user-agent') {
-      opts.userAgent = args[++i] ?? opts.userAgent;
-      opts.userAgentOverride = true;
+    else if (arg === '--out' || arg === '-o') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      opts.file = value;
+      i += 1;
     }
-    else if (arg === '--profile') { opts.profile = args[++i] ?? opts.profile; opts.profileOverride = true; }
+    else if (arg === '--user-agent') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      opts.userAgent = value;
+      opts.userAgentOverride = true;
+      i += 1;
+    }
+    else if (arg === '--profile') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      opts.profile = value;
+      opts.profileOverride = true;
+      i += 1;
+    }
     else if (arg === '--no-retry-profiles') opts.retryProfiles = false;
     else if (arg === '--via-wayback') opts.viaWayback = true;
     else if (arg === '--no-wayback') opts.noWayback = true;
     else if (arg === '--via-reader') opts.viaReader = true;
     else if (arg === '--no-reader') opts.noReader = true;
-    else if (arg === '--throttle-ms') opts.throttleMs = Number(args[++i] ?? opts.throttleMs);
+    else if (arg === '--throttle-ms') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      const parsed = parseNumberOption(value, arg, { min: 0 });
+      if (parsed.error) { opts.error = parsed.error; break; }
+      opts.throttleMs = parsed.value;
+      i += 1;
+    }
     else if (arg === '--no-throttle') opts.throttleMs = 0;
-    else if (arg === '--cache-dir') opts.cacheDir = resolve(args[++i] ?? opts.cacheDir);
-    else if (arg === '--cache-ttl-hours') opts.cacheTtlHours = Number(args[++i] ?? opts.cacheTtlHours);
+    else if (arg === '--cache-dir') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      opts.cacheDir = resolve(value);
+      i += 1;
+    }
+    else if (arg === '--cache-ttl-hours') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      const parsed = parseNumberOption(value, arg, { min: 0 });
+      if (parsed.error) { opts.error = parsed.error; break; }
+      opts.cacheTtlHours = parsed.value;
+      i += 1;
+    }
     else if (arg === '--no-cache') opts.noCache = true;
     else if (arg === '--refresh-cache') opts.refreshCache = true;
     else if (arg === '--no-host-map') opts.noHostMap = true;
     else if (arg === '--ignore-host-map-failures') opts.ignoreHostMapFailures = true;
-    else if (arg === '--max-chars') opts.maxChars = Number(args[++i] ?? opts.maxChars);
+    else if (arg === '--json') opts.json = true;
+    else if (arg === '--max-chars') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      const parsed = parseNumberOption(value, arg, { min: 0 });
+      if (parsed.error) { opts.error = parsed.error; break; }
+      opts.maxChars = parsed.value;
+      i += 1;
+    }
+    else if (arg.startsWith('-')) {
+      opts.error = `Unknown option: ${arg}.`;
+      break;
+    }
     else opts.url = arg;
   }
   return opts;
 }
 
 function help() {
-  console.log(`Usage: node .agents/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>] [--profile <name>] [--via-reader | --no-reader] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache] [--max-chars N]
+  console.log(`Usage: node .agents/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--json] [--user-agent <ua>] [--profile <name>] [--via-reader | --no-reader] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache] [--max-chars N]
 
 Default URL: ${DEFAULT_URL}
 
@@ -278,6 +351,8 @@ Fallbacks: origin fetch uses browser-like headers and, by default, retries other
 Throttling: network attempts wait ${DEFAULT_THROTTLE_MS}ms by default to avoid hammering a host. Use --throttle-ms <n> or --no-throttle.
 
 Caching: enabled by default at ${DEFAULT_CACHE_DIR} (override with --cache-dir or FETCH_URL_CACHE_DIR env). Cached responses younger than ${DEFAULT_CACHE_TTL_HOURS}h are reused. Use --refresh-cache to bypass the read but still write, --no-cache to disable read+write entirely.
+
+Output: default output is human-readable. Use --json for a structured object with status, final URL, source, title/PDF metadata, and extracted body/text.
 
 Wayback fallback: bot-protected sites (DataDome/Cloudflare challenge, 401/403/451/503) automatically retry through web.archive.org. Use --via-wayback to force, --no-wayback to disable.
 
@@ -678,11 +753,76 @@ export function stripWaybackToolbar(html) {
     .replace(/<link[^>]*\/static\/_wb_\/[^>]*>/gi, '');
 }
 
-async function main() {
-  const opts = parseArgs(argv.slice(2));
+async function writeOutputFile(file, output, { isPdf, textOnly, contentLength }) {
+  if (Buffer.isBuffer(output)) {
+    await writeFile(file, output);
+    return {
+      path: file,
+      kind: 'pdf',
+      bytes: contentLength,
+      message: `Wrote ${contentLength} bytes (PDF) to ${file}`,
+    };
+  }
+  const kind = textOnly || isPdf ? 'text' : 'body';
+  await writeFile(file, output, 'utf8');
+  return {
+    path: file,
+    kind,
+    bytes: Buffer.byteLength(output, 'utf8'),
+    message: `Wrote ${kind} to ${file}`,
+  };
+}
+
+function buildJsonPayload({ result, source, cacheHit, cacheAgeMinutes, cacheTtlHours, isPdf, title, pdfMeta, pdfTruncated, output, outputFile, textOnly }) {
+  const outputIsBuffer = Buffer.isBuffer(output);
+  const payload = {
+    status: result.status,
+    ok: result.ok,
+    requestedUrl: result.url,
+    finalUrl: result.finalUrl,
+    source: cacheHit ? 'cache' : source,
+    retrievalSource: source,
+    cache: {
+      hit: cacheHit,
+      ageMinutes: cacheHit ? cacheAgeMinutes : null,
+      ttlHours: cacheTtlHours,
+    },
+    contentType: result.contentType,
+    profile: result.profile,
+    bytes: result.contentLength,
+    elapsedMs: result.elapsedMs,
+    format: isPdf ? 'pdf' : 'html',
+    title,
+    outputKind: outputIsBuffer ? 'bytes' : (isPdf || textOnly ? 'text' : 'body'),
+    outputBytes: outputIsBuffer ? output.length : Buffer.byteLength(output, 'utf8'),
+  };
+  if (isPdf) {
+    payload.pdf = {
+      pages: pdfMeta?.numPages ?? null,
+      title,
+      author: pdfMeta?.info?.Author ?? null,
+      truncated: pdfTruncated,
+    };
+  }
+  if (outputFile) payload.outputFile = outputFile;
+  if (outputIsBuffer) {
+    if (!outputFile) payload.outputBase64 = output.toString('base64');
+    else payload.outputOmitted = 'binary output written to file';
+  } else {
+    payload.output = output;
+  }
+  return payload;
+}
+
+export async function main(args = argv.slice(2)) {
+  const opts = parseArgs(args);
   if (opts.help) {
     help();
     return;
+  }
+  if (opts.error) {
+    printUsageError(opts.error);
+    exit(2);
   }
   try {
     new URL(opts.url);
@@ -706,6 +846,10 @@ async function main() {
     console.error(`Invalid --throttle-ms: ${opts.throttleMs}`);
     exit(2);
   }
+  if (opts.maxChars !== null && (!Number.isFinite(opts.maxChars) || opts.maxChars < 0)) {
+    console.error(`Invalid --max-chars: ${opts.maxChars}`);
+    exit(2);
+  }
 
   // Fast-path: when the user did not force a profile or fallback, consult the
   // pre-computed host -> winning-strategy map. Hosts where origin/desktop-*
@@ -725,7 +869,7 @@ async function main() {
         const ageMs = Date.now() - new Date(entry.tested_at).valueOf();
         const ageDays = Number.isFinite(ageMs) && ageMs >= 0 ? Math.floor(ageMs / 86_400_000) : null;
         if (ageDays !== null && ageDays > STALE_DAYS) {
-          staleSuffix = ` STALE: ${ageDays}d old, consider re-running probe-strategies.mjs --refresh`;
+          staleSuffix = ` STALE: ${ageDays}d old, consider re-running probe.mjs --refresh`;
         }
       }
 
@@ -901,6 +1045,32 @@ async function main() {
     output = opts.textOnly ? htmlToText(bodyStr) : bodyStr;
   }
 
+  const title = isPdf
+    ? (pdfMeta?.info?.Title?.trim() || null)
+    : extractTitle(bodyStr);
+
+  if (opts.json) {
+    const outputFile = opts.file
+      ? await writeOutputFile(opts.file, output, { isPdf, textOnly: opts.textOnly, contentLength: result.contentLength })
+      : null;
+    console.log(JSON.stringify(buildJsonPayload({
+      result,
+      source,
+      cacheHit,
+      cacheAgeMinutes,
+      cacheTtlHours: opts.cacheTtlHours,
+      isPdf,
+      title,
+      pdfMeta,
+      pdfTruncated,
+      output,
+      outputFile,
+      textOnly: opts.textOnly,
+    }), null, 2));
+    if (!result.ok) exit(1);
+    return;
+  }
+
   console.log(`Status:        ${result.status} ${result.ok ? 'OK' : 'FAIL'}`);
   console.log(`Final URL:     ${result.finalUrl}`);
   if (cacheHit) console.log(`Source:        cache (age ${cacheAgeMinutes}m, ttl ${opts.cacheTtlHours}h, ${source})`);
@@ -912,26 +1082,20 @@ async function main() {
   console.log(`Bytes:         ${result.contentLength}`);
   console.log(`Elapsed:       ${result.elapsedMs} ms${cacheHit ? ' (original)' : ''}`);
   if (isPdf) {
-    const title = pdfMeta?.info?.Title?.trim() || '(not found)';
     console.log(`Format:        PDF`);
     console.log(`PDF pages:     ${pdfMeta?.numPages ?? '(unknown)'}`);
     if (pdfMeta?.info?.Author) console.log(`PDF author:    ${pdfMeta.info.Author}`);
-    console.log(`PDF title:     ${title}`);
+    console.log(`PDF title:     ${title ?? '(not found)'}`);
     if (pdfTruncated) console.log(`Truncated:     yes (--max-chars ${opts.maxChars})`);
     if (typeof output === 'string') console.log(`Text bytes:    ${output.length}`);
   } else {
-    console.log(`<title>:       ${extractTitle(bodyStr) ?? '(not found)'}`);
+    console.log(`<title>:       ${title ?? '(not found)'}`);
     if (opts.textOnly) console.log(`Text bytes:    ${output.length}`);
   }
 
   if (opts.file) {
-    if (Buffer.isBuffer(output)) {
-      await writeFile(opts.file, output);
-      console.log(`Wrote ${result.contentLength} bytes (PDF) to ${opts.file}`);
-    } else {
-      await writeFile(opts.file, output, 'utf8');
-      console.log(`Wrote ${opts.textOnly || isPdf ? 'text' : 'body'} to ${opts.file}`);
-    }
+    const outputFile = await writeOutputFile(opts.file, output, { isPdf, textOnly: opts.textOnly, contentLength: result.contentLength });
+    console.log(outputFile.message);
   } else if (isPdf && !opts.textOnly) {
     // Default behavior for a PDF on a TTY (no --text-only, no --out): show
     // metadata + a short text preview, but do NOT dump full text to terminal.

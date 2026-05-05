@@ -1,23 +1,22 @@
 #!/usr/bin/env node
-// Scan every URL appearing in `reports/*/evidence.yaml`, identify hosts not
-// already covered by `references/host-strategies.json` (using fetch.mjs's
-// 3-layer lookup: exact / www-aliased / registrable-domain), probe each
-// missing host with the same strategy ladder used by probe-strategies.mjs,
+// Scan URLs appearing in `reports/*/evidence.yaml`, identify hosts not already
+// covered by `references/host-strategies.json` (using fetch.mjs's 3-layer
+// lookup: exact / www-aliased / registrable-domain), probe each missing host,
 // and merge the winners into the on-disk host-strategies map.
 //
-// This complements probe-strategies.mjs (which probes a curated, hand-picked
-// URL_SET on --refresh). Evidence-derived URLs are ephemeral — they grow
-// every time a new report is generated — so they are kept OUT of URL_SET.
+// Use --hosts for targeted re-tests and --refresh to re-probe known hosts
+// instead of only filling gaps.
 //
 // Usage:
-//   node .agents/skills/fetch-url/scripts/probe-evidence-hosts.mjs
-//   node .agents/skills/fetch-url/scripts/probe-evidence-hosts.mjs --concurrency 12
-//   node .agents/skills/fetch-url/scripts/probe-evidence-hosts.mjs --dry-run
+//   node .agents/skills/fetch-url/scripts/probe.mjs
+//   node .agents/skills/fetch-url/scripts/probe.mjs --concurrency 12
+//   node .agents/skills/fetch-url/scripts/probe.mjs --dry-run
+//   node .agents/skills/fetch-url/scripts/probe.mjs --refresh --hosts www.reuters.com,www.wsj.com
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { argv } from 'node:process';
+import { argv, exit } from 'node:process';
 
 import {
   fetchUrl,
@@ -46,27 +45,108 @@ const MIN_BYTES = 500;
 const PROBE_TIMEOUT_MS = 8_000;
 const DEFAULT_CONCURRENCY = 6;
 
+function readOptionValue(args, index, flag) {
+  const value = args[index + 1];
+  if (value === undefined || value.startsWith('--')) {
+    return { error: `Missing value for ${flag}.`, value: null };
+  }
+  return { error: null, value };
+}
+
+function parseNumberOption(value, flag, { min = -Infinity, integer = false } = {}) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < min || (integer && !Number.isInteger(number))) {
+    return { error: `Invalid ${flag}: ${value}.`, value: null };
+  }
+  return { error: null, value: number };
+}
+
+function printUsageError(error) {
+  console.error(error);
+  console.error('Run with --help to see supported options.');
+}
+
 function parseArgs(args) {
-  const opts = { concurrency: DEFAULT_CONCURRENCY, dryRun: false };
+  const opts = { concurrency: DEFAULT_CONCURRENCY, dryRun: false, refresh: false, hosts: [], help: false, error: null };
+  const readValue = (flag, index) => {
+    const parsed = readOptionValue(args, index, flag);
+    if (parsed.error) opts.error = parsed.error;
+    return parsed.value;
+  };
   for (let i = 0; i < args.length; i += 1) {
     const a = args[i];
-    if (a === '--dry-run') opts.dryRun = true;
+    if (a === '--help' || a === '-h') opts.help = true;
+    else if (a === '--dry-run') opts.dryRun = true;
+    else if (a === '--refresh') opts.refresh = true;
+    else if (a === '--hosts') {
+      const value = readValue(a, i);
+      if (opts.error) break;
+      opts.hosts = value.split(',').map(normalizeHostInput).filter(Boolean);
+      i += 1;
+    }
     else if (a === '--concurrency') {
-      const n = Number(args[++i]);
-      if (Number.isFinite(n) && n >= 1) opts.concurrency = Math.floor(n);
+      const value = readValue(a, i);
+      if (opts.error) break;
+      const parsed = parseNumberOption(value, a, { min: 1, integer: true });
+      if (parsed.error) { opts.error = parsed.error; break; }
+      opts.concurrency = parsed.value;
+      i += 1;
+    }
+    else {
+      opts.error = `Unknown option: ${a}.`;
+      break;
     }
   }
+  opts.hosts = [...new Set(opts.hosts)];
   return opts;
+}
+
+function help() {
+  console.log(`Usage: node .agents/skills/fetch-url/scripts/probe.mjs [--dry-run] [--refresh] [--hosts host1,host2] [--concurrency N]
+
+Scans reports/*/evidence.yaml for source hosts, probes any hosts missing from references/host-strategies.json, and writes the cheapest working strategy back to the map.
+
+Options:
+  --dry-run          Print the hosts that would be probed without network calls.
+  --refresh          Re-probe known hosts instead of only filling gaps.
+  --hosts <list>     Probe a comma-separated list of hosts or URLs.
+  --concurrency <n>  Number of hosts to probe in parallel (default ${DEFAULT_CONCURRENCY}).
+  --help, -h         Show this help.
+
+This is the only host-strategy probe implementation module.`);
+}
+
+function normalizeHostInput(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return null;
+  try {
+    const url = new URL(raw.includes('://') ? raw : `https://${raw}`);
+    return url.host.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
+function hostLookupKeys(host) {
+  const keys = [host];
+  const aliased = host.startsWith('www.') ? host.slice(4) : `www.${host}`;
+  if (aliased !== host) keys.push(aliased);
+  const reg = registrableDomain(host);
+  if (reg && !keys.includes(reg)) keys.push(reg);
+  return keys;
 }
 
 // Mirror fetch.mjs's 3-layer host-map lookup (exact / www-aliased / eTLD+1).
 function isCovered(host, map) {
-  if (Object.prototype.hasOwnProperty.call(map, host)) return true;
-  const aliased = host.startsWith('www.') ? host.slice(4) : `www.${host}`;
-  if (Object.prototype.hasOwnProperty.call(map, aliased)) return true;
-  const reg = registrableDomain(host);
-  if (reg && Object.prototype.hasOwnProperty.call(map, reg)) return true;
-  return false;
+  return hostLookupKeys(host).some((key) => Object.prototype.hasOwnProperty.call(map, key));
+}
+
+function sampleUrlForHost(host, evidenceHosts, map) {
+  for (const key of hostLookupKeys(host)) {
+    if (evidenceHosts.has(key)) return evidenceHosts.get(key);
+    if (map[key]?.sample_url) return map[key].sample_url;
+  }
+  return `https://${host}/`;
 }
 
 function loadExisting() {
@@ -100,7 +180,7 @@ function scanEvidenceHosts() {
   return byHost;
 }
 
-// Same probe ladder as probe-strategies.mjs: walk strategies in cost order,
+// Walk strategies in cost order,
 // return the first one that returns 200 + non-bot-challenge + >=500 bytes.
 async function probe(url) {
   for (const s of STRATEGIES) {
@@ -130,19 +210,44 @@ async function probe(url) {
   return null;
 }
 
-async function main() {
-  const opts = parseArgs(argv.slice(2));
+export async function main(args = argv.slice(2)) {
+  const opts = parseArgs(args);
+  if (opts.help) {
+    help();
+    return;
+  }
+  if (opts.error) {
+    printUsageError(opts.error);
+    exit(2);
+  }
   const map = loadExisting();
   const evidenceHosts = scanEvidenceHosts();
 
-  const todo = [];
-  for (const [host, url] of evidenceHosts) {
-    if (!isCovered(host, map)) todo.push([host, url]);
+  const targetHosts = new Map();
+  if (opts.hosts.length > 0) {
+    for (const host of opts.hosts) targetHosts.set(host, sampleUrlForHost(host, evidenceHosts, map));
+  } else if (opts.refresh) {
+    for (const [host, url] of evidenceHosts) targetHosts.set(host, url);
+    for (const [host, entry] of Object.entries(map)) {
+      if (entry?.sample_url) targetHosts.set(host, entry.sample_url);
+    }
+  } else {
+    for (const [host, url] of evidenceHosts) {
+      if (!isCovered(host, map)) targetHosts.set(host, url);
+    }
   }
 
+  const todo = [...targetHosts.entries()];
+
   console.log(`Scanned ${evidenceHosts.size} unique hosts across reports/*/evidence.yaml`);
-  console.log(`${evidenceHosts.size - todo.length} already covered by host-strategies.json`);
-  console.log(`${todo.length} hosts need probing`);
+  if (opts.hosts.length > 0) {
+    console.log(`Selected ${todo.length} requested host(s) for probing`);
+  } else if (opts.refresh) {
+    console.log(`Selected ${todo.length} evidence/map host(s) for refresh`);
+  } else {
+    console.log(`${evidenceHosts.size - todo.length} already covered by host-strategies.json`);
+    console.log(`${todo.length} hosts need probing`);
+  }
 
   if (opts.dryRun) {
     console.log('\n--dry-run: hosts that would be probed:');
@@ -207,7 +312,9 @@ async function main() {
   console.log(`\nWrote ${Object.keys(sorted).length} hosts to ${OUT_PATH} (${added} succeeded, ${failed} failed, ${elapsedSec}s elapsed)`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (argv[1] && fileURLToPath(import.meta.url) === resolve(argv[1])) {
+  main().catch((err) => {
+    console.error(err);
+    exit(1);
+  });
+}
