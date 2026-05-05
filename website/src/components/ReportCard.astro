@@ -29,11 +29,11 @@ const metricRows = [
 ---
 <a class="report-card" href={href}>
   <div class="card-topline">
-    <span>{data.company.name}</span>
-    <span>{data.company.sector ?? 'other'}</span>
+    <span class="card-sector">{data.company.sector ?? 'other'}</span>
+    {data.company.stage && <span class="card-stage">{data.company.stage}</span>}
   </div>
   <h3>{data.company.name}</h3>
-  <p>{data.headline}</p>
+  <p class="card-headline">{data.headline}</p>
   <div class="card-badges">
     <span>{displayLabel(data.recommendation)}</span>
     <span>{displayLabel(data.valuationStance)}</span>
@@ -53,7 +53,8 @@ const metricRows = [
 </a>
 <style>
   .report-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
     min-height: 100%;
     border: var(--report-rule);
     background: var(--surface-paper);
@@ -63,13 +64,16 @@ const metricRows = [
     transition: border-color 120ms ease, background-color 120ms ease;
   }
   .report-card:hover { border-color: var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); }
-  .card-topline, .card-footer, .card-badges { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 800; color: var(--caption-gray); text-transform: uppercase; }
-  .card-topline { justify-content: space-between; color: var(--claret); }
-  h3 { margin: var(--space-3) 0 var(--space-2); font-size: var(--fs-xl); line-height: 1.05; }
-  p { color: var(--caption-gray); }
+  .card-topline, .card-footer, .card-badges { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 800; color: var(--caption-gray); text-transform: uppercase; letter-spacing: 0.02em; }
+  .card-topline { justify-content: space-between; color: var(--claret); gap: var(--space-3); }
+  .card-topline .card-sector { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card-topline .card-stage { color: var(--caption-gray); flex: none; }
+  h3 { margin: var(--space-3) 0 var(--space-2); font-size: var(--fs-xl); line-height: 1.05; overflow-wrap: anywhere; }
+  .card-headline { color: var(--caption-gray); margin: 0; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .card-badges span { border: var(--report-rule); padding: 3px 8px; background: var(--paper); color: var(--ink-page); }
   .card-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-1) var(--space-3); margin: var(--space-4) 0; font-family: var(--font-sans); font-size: var(--fs-sm); }
   .card-metrics dt { color: var(--caption-gray); }
   .card-metrics dd { margin: 0; font-weight: 800; color: var(--ink-page); }
+  .card-footer { margin-top: auto; padding-top: var(--space-3); }
   .card-footer strong { display: inline-grid; place-items: center; min-width: 34px; height: 34px; border: 1px solid var(--claret); background: var(--claret); color: white; padding-inline: var(--space-2); }
 </style>
