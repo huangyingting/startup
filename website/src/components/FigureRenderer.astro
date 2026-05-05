@@ -273,26 +273,29 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     const byKey = new Map(nodes.map((node) => [node._key, node]));
     const incoming = d3.group(edges, (edge) => edge.to);
     const outgoing = d3.group(edges, (edge) => edge.from);
-    // BFS topological depth from roots. Hub-and-spoke graphs (many inputs, one
-    // sink) collapse to 2 layers; deeper chains keep their natural layer count
-    // instead of being forced into a fixed 3-stage Inputs/Core/Impact layout.
+    // Cycle-safe topological-ish depth from roots. Some reports label graphs as
+    // DAGs while still containing feedback loops (for example support ↔ users).
+    // A longest-path relaxation loop never converges on cycles, so use Kahn's
+    // algorithm with provisional depths from already-processed predecessors and
+    // preserve unresolved cyclic nodes at their best known stage.
     const roots = nodes.filter((node) => !incoming.has(node._key));
     const depthByKey = new Map();
-    const queue = (roots.length ? roots : [nodes[0]]).map((node) => {
-      depthByKey.set(node._key, 0);
-      return node;
-    });
+    const indegreeByKey = new Map(nodes.map((node) => [node._key, arr(incoming.get(node._key)).length]));
+    const processed = new Set();
+    const queue = (roots.length ? roots : [nodes[0]]).filter(Boolean);
+    queue.forEach((node) => depthByKey.set(node._key, 0));
     while (queue.length) {
       const current = queue.shift();
+      if (!current || processed.has(current._key)) continue;
+      processed.add(current._key);
       const currentDepth = depthByKey.get(current._key) ?? 0;
       for (const edge of arr(outgoing.get(current._key))) {
         const target = byKey.get(edge.to);
-        if (!target) continue;
-        const nextDepth = currentDepth + 1;
-        if (!depthByKey.has(target._key) || depthByKey.get(target._key) < nextDepth) {
-          depthByKey.set(target._key, nextDepth);
-          queue.push(target);
-        }
+        if (!target || processed.has(target._key)) continue;
+        depthByKey.set(target._key, Math.max(depthByKey.get(target._key) ?? 0, currentDepth + 1));
+        const remaining = Math.max(0, (indegreeByKey.get(target._key) ?? 0) - 1);
+        indegreeByKey.set(target._key, remaining);
+        if (remaining === 0) queue.push(target);
       }
     }
     for (const node of nodes) if (!depthByKey.has(node._key)) depthByKey.set(node._key, 0);
@@ -399,7 +402,13 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       .attr('font-size', chartFont.small)
       .attr('font-weight', fontWeight('emphasis'))
       .attr('letter-spacing', chartFont.tracking.caps)
-      .text((label) => label.label);
+      .each(function(label) {
+        renderWrappedText(d3.select(this), label.label, {
+          maxChars: compact ? Math.max(18, Math.floor((width - 68) / 7.2)) : Math.max(10, Math.floor(stageW / 8.2)),
+          maxLines: compact ? 2 : 1,
+          lineHeight: chartFont.lineHeight.tight,
+        });
+      });
     const padRect = 10;
     const routeGap = compact ? 18 : 22;
     const stub = compact ? 14 : 16;
@@ -557,6 +566,59 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       const bottom = Math.min(Math.max(a.a.y, a.b.y), Math.max(b.a.y, b.b.y));
       return Math.max(0, bottom - top);
     };
+    const segmentTouchesBounds = (segment, bounds, pad = 0) => {
+      const left = Math.min(segment.a.x, segment.b.x);
+      const right = Math.max(segment.a.x, segment.b.x);
+      const top = Math.min(segment.a.y, segment.b.y);
+      const bottom = Math.max(segment.a.y, segment.b.y);
+      return right >= bounds.left - pad && left <= bounds.right + pad && bottom >= bounds.top - pad && top <= bounds.bottom + pad;
+    };
+    const pathBounds = (points) => {
+      const clean = simplifyPath(points);
+      return {
+        left: Math.min(...clean.map((point) => point.x)),
+        right: Math.max(...clean.map((point) => point.x)),
+        top: Math.min(...clean.map((point) => point.y)),
+        bottom: Math.max(...clean.map((point) => point.y)),
+      };
+    };
+    const createMinHeap = () => {
+      const heap = [];
+      const swap = (a, b) => { const value = heap[a]; heap[a] = heap[b]; heap[b] = value; };
+      return {
+        get length() { return heap.length; },
+        push(item) {
+          heap.push(item);
+          let index = heap.length - 1;
+          while (index > 0) {
+            const parent = Math.floor((index - 1) / 2);
+            if (heap[parent].cost <= item.cost) break;
+            swap(parent, index);
+            index = parent;
+          }
+        },
+        pop() {
+          if (!heap.length) return null;
+          const top = heap[0];
+          const last = heap.pop();
+          if (heap.length && last) {
+            heap[0] = last;
+            let index = 0;
+            while (true) {
+              const left = index * 2 + 1;
+              const right = left + 1;
+              let smallest = index;
+              if (left < heap.length && heap[left].cost < heap[smallest].cost) smallest = left;
+              if (right < heap.length && heap[right].cost < heap[smallest].cost) smallest = right;
+              if (smallest === index) break;
+              swap(index, smallest);
+              index = smallest;
+            }
+          }
+          return top;
+        },
+      };
+    };
     const routeGrid = (start, end, edge, usedSegments = []) => {
       const ignore = new Set([edge.source._key, edge.target._key]);
       const sourceRect = nodeRects.get(edge.source._key);
@@ -575,6 +637,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       const bounds = compact
         ? { left: xBounds.left, right: xBounds.right, top: 12, bottom: height - 12 }
         : { left: xBounds.left, right: xBounds.right, top: Math.max(12, rawTop), bottom: Math.min(height - 12, rawBottom) };
+      const localUsedSegments = usedSegments.filter((segment) => segmentTouchesBounds(segment, bounds, routeGap * 2)).slice(-80);
       const xs = new Set([norm(bounds.left), norm(bounds.right), norm(start.x), norm(end.x)]);
       const ys = new Set([norm(bounds.top), norm(bounds.bottom), norm(start.y), norm(end.y)]);
       if (!compact) {
@@ -591,7 +654,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
         ys.add(norm(Math.min(bounds.bottom, rect.bottom + routeGap)));
       }
       const parallelOffsets = compact ? [8, -8, 16, -16] : [9, -9, 18, -18];
-      for (const segment of usedSegments) {
+      for (const segment of localUsedSegments) {
         const segLeft = Math.min(segment.a.x, segment.b.x);
         const segRight = Math.max(segment.a.x, segment.b.x);
         const segTop = Math.min(segment.a.y, segment.b.y);
@@ -615,6 +678,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       }
       const xList = Array.from(xs).sort((a, b) => a - b);
       const yList = Array.from(ys).sort((a, b) => a - b);
+      if (xList.length * yList.length > 900) return null;
       const pointClear = (point) => {
         if (point.x < bounds.left - 0.001 || point.x > bounds.right + 0.001 || point.y < bounds.top - 0.001 || point.y > bounds.bottom + 0.001) return false;
         for (const rect of corridorRects) if (!ignore.has(rect.key) && pointInRect(point, rect)) return false;
@@ -650,7 +714,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
         const candidate = { dir, a, b };
         let overlap = 0;
         let shared = 0;
-        for (const used of usedSegments) {
+        for (const used of localUsedSegments) {
           const length = segmentOverlapLength(candidate, used);
           if (length > 0.5) { overlap += length; shared += 1; }
         }
@@ -670,12 +734,13 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       const endIndex = indexByKey.get(endKey);
       const dist = new Map();
       const prev = new Map();
-      const open = [{ node: startIndex, dir: 'n', cost: 0, key: `${startIndex}|n` }];
+      const open = createMinHeap();
+      open.push({ node: startIndex, dir: 'n', cost: 0, key: `${startIndex}|n` });
       dist.set(`${startIndex}|n`, 0);
       let finalKey = null;
       while (open.length) {
-        open.sort((a, b) => a.cost - b.cost);
-        const state = open.shift();
+        const state = open.pop();
+        if (!state) break;
         if (state.cost !== dist.get(state.key)) continue;
         if (state.node === endIndex) { finalKey = state.key; break; }
         for (const stepEdge of adj[state.node]) {
@@ -712,21 +777,63 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       return segments;
     };
     const pathOverlapPenalty = (points, usedSegments) => {
+      const bounds = pathBounds(points);
+      const localUsedSegments = usedSegments.filter((segment) => segmentTouchesBounds(segment, bounds, routeGap * 2));
       let overlap = 0;
       let shared = 0;
       for (const segment of pathSegments(points)) {
-        for (const used of usedSegments) {
+        for (const used of localUsedSegments) {
           const length = segmentOverlapLength(segment, used);
           if (length > 0.5) { overlap += length; shared += 1; }
         }
       }
       return overlap * 900 + shared * 18000;
     };
+    const candidatePortPairs = (edge) => {
+      const pairs = [];
+      for (const sourcePort of edgePorts(edge.source, edge, 'source')) {
+        for (const targetPort of edgePorts(edge.target, edge, 'target')) {
+          const penalty = portPenalty(edge, sourcePort, targetPort);
+          const distance = Math.abs(sourcePort.outX - targetPort.outX) + Math.abs(sourcePort.outY - targetPort.outY);
+          pairs.push({ sourcePort, targetPort, penalty, distance });
+        }
+      }
+      pairs.sort((a, b) => (a.penalty - b.penalty) || (a.distance - b.distance));
+      const limit = compact || routedEdges.length > 10 ? 6 : 8;
+      return pairs.slice(0, limit);
+    };
+    const directOrthogonalPaths = (sourcePort, targetPort, edge) => {
+      const start = { x: sourcePort.x, y: sourcePort.y };
+      const sourceStub = { x: sourcePort.outX, y: sourcePort.outY };
+      const targetStub = { x: targetPort.outX, y: targetPort.outY };
+      const end = { x: targetPort.x, y: targetPort.y };
+      const stageMin = Math.min(edge.source._stage, edge.target._stage);
+      const stageMax = Math.max(edge.source._stage, edge.target._stage);
+      const laneOffset = ((edge._laneIndex ?? 0) - ((edge._laneCount ?? 1) - 1) / 2) * (compact ? 8 : 12);
+      const paths = [];
+      const addViaX = (x) => paths.push(simplifyPath([start, sourceStub, { x, y: sourceStub.y }, { x, y: targetStub.y }, targetStub, end]));
+      const addViaY = (y) => paths.push(simplifyPath([start, sourceStub, { x: sourceStub.x, y }, { x: targetStub.x, y }, targetStub, end]));
+      if (!compact && stageMax > stageMin) {
+        const gutterX = margin.left + stageW * (stageMin + 1) + laneOffset;
+        addViaX(gutterX);
+      }
+      addViaX((sourceStub.x + targetStub.x) / 2 + laneOffset);
+      addViaY((sourceStub.y + targetStub.y) / 2 + laneOffset);
+      return paths;
+    };
     const choosePath = (edge, usedSegments = []) => {
       let best = null;
       let bestScore = Infinity;
-      for (const sourcePort of edgePorts(edge.source, edge, 'source')) {
-        for (const targetPort of edgePorts(edge.target, edge, 'target')) {
+      for (const { sourcePort, targetPort } of candidatePortPairs(edge)) {
+        let directIsClean = false;
+        for (const path of directOrthogonalPaths(sourcePort, targetPort, edge)) {
+          const hits = pathHits(path, edge);
+          const overlapPenalty = pathOverlapPenalty(path, usedSegments);
+          const score = hits * 100000 + overlapPenalty + portPenalty(edge, sourcePort, targetPort) + pathBends(path) * 48 + pathLength(path);
+          if (score < bestScore) { bestScore = score; best = path; }
+          if (hits === 0 && overlapPenalty === 0) directIsClean = true;
+        }
+        if (!directIsClean) {
           const route = routeGrid({ x: sourcePort.outX, y: sourcePort.outY }, { x: targetPort.outX, y: targetPort.outY }, edge, usedSegments);
           const path = route
             ? simplifyPath([{ x: sourcePort.x, y: sourcePort.y }, ...route, { x: targetPort.x, y: targetPort.y }])
@@ -1011,6 +1118,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     const detailSize = compact ? chartFont.size.axis : chartFont.size.label;       // 13 / 14
     const pillSize = compact ? chartFont.size.caption : chartFont.size.small;      // 10.5 / 12
     const badgeSize = compact ? chartFont.size.value : chartFont.size.metric;      // 18 / 26
+    const stackItemText = (item) => safeText(item);
+    const stackListText = (items) => arr(items).map(stackItemText).filter(Boolean).join(', ');
     svg.append('text')
       .attr('x', margin.left)
       .attr('y', margin.top - 24)
@@ -1077,27 +1186,29 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     const moduleRows = groups.append('g').attr('class', 'stack-modules').attr('transform', `translate(24,${compact ? 64 : 72})`);
     moduleRows.each(function(d, layerIndex) {
       const layerWidth = Math.max(120, maxW - layerIndex * stackInset * 2);
-      const modules = arr(d.modules).slice(0, compact ? 1 : 2);
+      const modules = arr(d.modules).slice(0, compact ? 1 : 2).map((item) => ({ label: stackItemText(item), tone: item?.tone ?? d.tone, kind: 'module' })).filter((item) => item.label);
       const output = arr(d.outputs)[0];
-      const pills = [...modules.map((label) => ({ label, tone: d.tone })), ...(output ? [{ label: `→ ${output}`, tone: 'neutral' }] : [])];
+      const outputLabel = stackItemText(output);
+      const pills = [...modules, ...(outputLabel ? [{ label: `→ ${outputLabel}`, tone: 'neutral', kind: 'output' }] : [])];
       let xCursor = 0;
       const row = d3.select(this);
       pills.forEach((pill) => {
         const text = labelText(pill.label, compact ? 14 : 20);
         const pillW = Math.min(compact ? 110 : 150, Math.max(60, text.length * 8 + 22));
         if (xCursor + pillW > layerWidth - 54) return;
+        const isOutput = pill.kind === 'output';
         const pillGroup = row.append('g').attr('transform', `translate(${xCursor},0)`);
         pillGroup.append('rect')
           .attr('width', pillW)
           .attr('height', compact ? 20 : 22)
           .attr('rx', compact ? 10 : 11)
-          .attr('fill', pill.label.startsWith('→') ? 'rgba(153,15,61,0.08)' : 'rgba(255,250,245,0.78)')
-          .attr('stroke', pill.label.startsWith('→') ? 'rgba(153,15,61,0.22)' : 'rgba(212,196,184,0.72)');
+          .attr('fill', isOutput ? 'rgba(153,15,61,0.08)' : 'rgba(255,250,245,0.78)')
+          .attr('stroke', isOutput ? 'rgba(153,15,61,0.22)' : 'rgba(212,196,184,0.72)');
         pillGroup.append('text')
           .attr('x', pillW / 2)
           .attr('y', compact ? 14 : 15)
           .attr('text-anchor', 'middle')
-          .attr('fill', pill.label.startsWith('→') ? palette.claret : palette.ink)
+          .attr('fill', isOutput ? palette.claret : palette.ink)
           .attr('font-size', pillSize)
           .attr('font-weight', fontWeight('strong'))
           .text(text);
@@ -1105,11 +1216,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       });
     });
     groups.each(function(d) {
-      const modules = arr(d.modules).join(', ');
-      const outputs = arr(d.outputs).join(', ');
+      const modules = stackListText(d.modules);
+      const outputs = stackListText(d.outputs);
       addTitle(d3.select(this), `${d.label}${d.detail ? ` — ${d.detail}` : ''}${modules ? `; modules: ${modules}` : ''}${outputs ? `; outputs: ${outputs}` : ''}`);
     });
-    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail, arr(d.modules).length ? `Modules: ${arr(d.modules).join(', ')}` : '', arr(d.outputs).length ? `Outputs: ${arr(d.outputs).join(', ')}` : '']));
+    withTooltip(groups, (d) => tooltipHtml(d.label, [d.detail, stackListText(d.modules) ? `Modules: ${stackListText(d.modules)}` : '', stackListText(d.outputs) ? `Outputs: ${stackListText(d.outputs)}` : '']));
   };
 
   const renderPyramid = (element, payload) => {
