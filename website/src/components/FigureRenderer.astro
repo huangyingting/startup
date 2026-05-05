@@ -566,6 +566,59 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       const bottom = Math.min(Math.max(a.a.y, a.b.y), Math.max(b.a.y, b.b.y));
       return Math.max(0, bottom - top);
     };
+    const segmentTouchesBounds = (segment, bounds, pad = 0) => {
+      const left = Math.min(segment.a.x, segment.b.x);
+      const right = Math.max(segment.a.x, segment.b.x);
+      const top = Math.min(segment.a.y, segment.b.y);
+      const bottom = Math.max(segment.a.y, segment.b.y);
+      return right >= bounds.left - pad && left <= bounds.right + pad && bottom >= bounds.top - pad && top <= bounds.bottom + pad;
+    };
+    const pathBounds = (points) => {
+      const clean = simplifyPath(points);
+      return {
+        left: Math.min(...clean.map((point) => point.x)),
+        right: Math.max(...clean.map((point) => point.x)),
+        top: Math.min(...clean.map((point) => point.y)),
+        bottom: Math.max(...clean.map((point) => point.y)),
+      };
+    };
+    const createMinHeap = () => {
+      const heap = [];
+      const swap = (a, b) => { const value = heap[a]; heap[a] = heap[b]; heap[b] = value; };
+      return {
+        get length() { return heap.length; },
+        push(item) {
+          heap.push(item);
+          let index = heap.length - 1;
+          while (index > 0) {
+            const parent = Math.floor((index - 1) / 2);
+            if (heap[parent].cost <= item.cost) break;
+            swap(parent, index);
+            index = parent;
+          }
+        },
+        pop() {
+          if (!heap.length) return null;
+          const top = heap[0];
+          const last = heap.pop();
+          if (heap.length && last) {
+            heap[0] = last;
+            let index = 0;
+            while (true) {
+              const left = index * 2 + 1;
+              const right = left + 1;
+              let smallest = index;
+              if (left < heap.length && heap[left].cost < heap[smallest].cost) smallest = left;
+              if (right < heap.length && heap[right].cost < heap[smallest].cost) smallest = right;
+              if (smallest === index) break;
+              swap(index, smallest);
+              index = smallest;
+            }
+          }
+          return top;
+        },
+      };
+    };
     const routeGrid = (start, end, edge, usedSegments = []) => {
       const ignore = new Set([edge.source._key, edge.target._key]);
       const sourceRect = nodeRects.get(edge.source._key);
@@ -584,6 +637,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       const bounds = compact
         ? { left: xBounds.left, right: xBounds.right, top: 12, bottom: height - 12 }
         : { left: xBounds.left, right: xBounds.right, top: Math.max(12, rawTop), bottom: Math.min(height - 12, rawBottom) };
+      const localUsedSegments = usedSegments.filter((segment) => segmentTouchesBounds(segment, bounds, routeGap * 2)).slice(-80);
       const xs = new Set([norm(bounds.left), norm(bounds.right), norm(start.x), norm(end.x)]);
       const ys = new Set([norm(bounds.top), norm(bounds.bottom), norm(start.y), norm(end.y)]);
       if (!compact) {
@@ -600,7 +654,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
         ys.add(norm(Math.min(bounds.bottom, rect.bottom + routeGap)));
       }
       const parallelOffsets = compact ? [8, -8, 16, -16] : [9, -9, 18, -18];
-      for (const segment of usedSegments) {
+      for (const segment of localUsedSegments) {
         const segLeft = Math.min(segment.a.x, segment.b.x);
         const segRight = Math.max(segment.a.x, segment.b.x);
         const segTop = Math.min(segment.a.y, segment.b.y);
@@ -624,6 +678,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       }
       const xList = Array.from(xs).sort((a, b) => a - b);
       const yList = Array.from(ys).sort((a, b) => a - b);
+      if (xList.length * yList.length > 900) return null;
       const pointClear = (point) => {
         if (point.x < bounds.left - 0.001 || point.x > bounds.right + 0.001 || point.y < bounds.top - 0.001 || point.y > bounds.bottom + 0.001) return false;
         for (const rect of corridorRects) if (!ignore.has(rect.key) && pointInRect(point, rect)) return false;
@@ -659,7 +714,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
         const candidate = { dir, a, b };
         let overlap = 0;
         let shared = 0;
-        for (const used of usedSegments) {
+        for (const used of localUsedSegments) {
           const length = segmentOverlapLength(candidate, used);
           if (length > 0.5) { overlap += length; shared += 1; }
         }
@@ -679,12 +734,13 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       const endIndex = indexByKey.get(endKey);
       const dist = new Map();
       const prev = new Map();
-      const open = [{ node: startIndex, dir: 'n', cost: 0, key: `${startIndex}|n` }];
+      const open = createMinHeap();
+      open.push({ node: startIndex, dir: 'n', cost: 0, key: `${startIndex}|n` });
       dist.set(`${startIndex}|n`, 0);
       let finalKey = null;
       while (open.length) {
-        open.sort((a, b) => a.cost - b.cost);
-        const state = open.shift();
+        const state = open.pop();
+        if (!state) break;
         if (state.cost !== dist.get(state.key)) continue;
         if (state.node === endIndex) { finalKey = state.key; break; }
         for (const stepEdge of adj[state.node]) {
@@ -721,21 +777,63 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       return segments;
     };
     const pathOverlapPenalty = (points, usedSegments) => {
+      const bounds = pathBounds(points);
+      const localUsedSegments = usedSegments.filter((segment) => segmentTouchesBounds(segment, bounds, routeGap * 2));
       let overlap = 0;
       let shared = 0;
       for (const segment of pathSegments(points)) {
-        for (const used of usedSegments) {
+        for (const used of localUsedSegments) {
           const length = segmentOverlapLength(segment, used);
           if (length > 0.5) { overlap += length; shared += 1; }
         }
       }
       return overlap * 900 + shared * 18000;
     };
+    const candidatePortPairs = (edge) => {
+      const pairs = [];
+      for (const sourcePort of edgePorts(edge.source, edge, 'source')) {
+        for (const targetPort of edgePorts(edge.target, edge, 'target')) {
+          const penalty = portPenalty(edge, sourcePort, targetPort);
+          const distance = Math.abs(sourcePort.outX - targetPort.outX) + Math.abs(sourcePort.outY - targetPort.outY);
+          pairs.push({ sourcePort, targetPort, penalty, distance });
+        }
+      }
+      pairs.sort((a, b) => (a.penalty - b.penalty) || (a.distance - b.distance));
+      const limit = compact || routedEdges.length > 10 ? 6 : 8;
+      return pairs.slice(0, limit);
+    };
+    const directOrthogonalPaths = (sourcePort, targetPort, edge) => {
+      const start = { x: sourcePort.x, y: sourcePort.y };
+      const sourceStub = { x: sourcePort.outX, y: sourcePort.outY };
+      const targetStub = { x: targetPort.outX, y: targetPort.outY };
+      const end = { x: targetPort.x, y: targetPort.y };
+      const stageMin = Math.min(edge.source._stage, edge.target._stage);
+      const stageMax = Math.max(edge.source._stage, edge.target._stage);
+      const laneOffset = ((edge._laneIndex ?? 0) - ((edge._laneCount ?? 1) - 1) / 2) * (compact ? 8 : 12);
+      const paths = [];
+      const addViaX = (x) => paths.push(simplifyPath([start, sourceStub, { x, y: sourceStub.y }, { x, y: targetStub.y }, targetStub, end]));
+      const addViaY = (y) => paths.push(simplifyPath([start, sourceStub, { x: sourceStub.x, y }, { x: targetStub.x, y }, targetStub, end]));
+      if (!compact && stageMax > stageMin) {
+        const gutterX = margin.left + stageW * (stageMin + 1) + laneOffset;
+        addViaX(gutterX);
+      }
+      addViaX((sourceStub.x + targetStub.x) / 2 + laneOffset);
+      addViaY((sourceStub.y + targetStub.y) / 2 + laneOffset);
+      return paths;
+    };
     const choosePath = (edge, usedSegments = []) => {
       let best = null;
       let bestScore = Infinity;
-      for (const sourcePort of edgePorts(edge.source, edge, 'source')) {
-        for (const targetPort of edgePorts(edge.target, edge, 'target')) {
+      for (const { sourcePort, targetPort } of candidatePortPairs(edge)) {
+        let directIsClean = false;
+        for (const path of directOrthogonalPaths(sourcePort, targetPort, edge)) {
+          const hits = pathHits(path, edge);
+          const overlapPenalty = pathOverlapPenalty(path, usedSegments);
+          const score = hits * 100000 + overlapPenalty + portPenalty(edge, sourcePort, targetPort) + pathBends(path) * 48 + pathLength(path);
+          if (score < bestScore) { bestScore = score; best = path; }
+          if (hits === 0 && overlapPenalty === 0) directIsClean = true;
+        }
+        if (!directIsClean) {
           const route = routeGrid({ x: sourcePort.outX, y: sourcePort.outY }, { x: targetPort.outX, y: targetPort.outY }, edge, usedSegments);
           const path = route
             ? simplifyPath([{ x: sourcePort.x, y: sourcePort.y }, ...route, { x: targetPort.x, y: targetPort.y }])
