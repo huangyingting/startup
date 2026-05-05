@@ -83,10 +83,17 @@ The gate emits a `failedDimensions[]` enum with stable keys plus a `retryOrder[]
 | `enumerationCoverageGap` | Open an `evidenceGap` whose `topic` mentions the table or whose `relatedTableRefs[]` cites it. |
 | `enumerationRowCorroboration` | Add sources from additional domains backing the table's claims. |
 | `researchQuestions` / `sources` / `claims` | Add more items to hit the per-chapter floor. |
+| `documentHead` | Fix the chapter document head: `schemaVersion: report-v2`, `artifact` matches the chapter key, `slug`, `runDate: YYYY-MM-DD`, `company.name`, and `chapter.number` matches the chapter order. |
+| `duplicateIds` | Renumber duplicate or malformed table/figure ids; ids must match `T###` / `F###` and be unique within the chapter. |
+| `artifactRefs` | Resolve the dangling `figureRef` / `tableRef`: it must point at an id that exists in this chapter's `figures[]` / `tables[]`. |
+| `sourceShape` | Fix the source object: required fields (`publisher`, `title`, `accessDate`, `url`, `sourceType`, `reputationTier`, `independence`, `topics`, `accessStatus`, `stance`), valid enum values, `accessDate`/`date` in `YYYY-MM-DD` format, non-empty `topics`. |
+| `claimShape` | Fix the claim object: required fields (`statement`, `type`, `topic`, `sourceRefs`, `confidence`, `freshness`), valid enum values, non-empty `sourceRefs` unless `type: open-question`, `contradictsClaimRefs` when `type: conflicting`. |
+| `analysisCallout` | Fix the callout: required `title`, `body`, `claimRefs[]`, and (optional) `calloutType` in `strength|risk|recommendation|insight|assumption`. |
+| `tableShape` | Fix the table: non-empty `columns`, every row has the same number of cells as `columns`, `enumerationScope { coverage, basis(>=20 chars) }` shape when present. |
 | `sectionsMin` / `artifactsMin` | Add the missing section, table, or figure (or substitute per step 6). |
 | `depthSection` / `depthSectionTotal` | Expand the prose of the shortest section(s) only; leave the others untouched. |
 | `depthTableRows` / `depthFigureData` | Add rows/data points to existing tables/figures. |
-| `figureShape` | Fix the figure's `data` to satisfy its type contract (e.g. `dag` needs `edges`, `range` needs numeric `low`/`high`, `matrix` needs `columns` and `rows`). Caught at chapter gate. |
+| `figureShape` | Fix the figure's `data` to satisfy its full contract: type/layout enum, required `data.*` fields per type, item/layer/row labels, matrix row width = columns count, numeric values for `bar`/`waterfall`/`funnel`, numeric `low`/`high` for `range`, 0–100 cells for `cohort`, numeric `x`/`y` for `quadrant`. |
 | `contentRequirementCoverage` | Add researchQuestions whose `targets[]` cover the un-targeted `contentRequirements`. |
 | `duplicateAnalysis` (warning) | Merge the redundant table/figure pair or sharpen one to answer a distinct question. |
 | `figureType` (warning) | Either add a planned figure type or document the substitution in evidenceGaps. |

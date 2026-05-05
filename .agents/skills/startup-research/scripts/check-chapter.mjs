@@ -17,6 +17,16 @@ import { existsSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, getAnalysisArtifacts, normalizeDomain, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from './figures.mjs';
+import {
+  checkArtifactRefs,
+  checkCalloutSchema,
+  checkClaimSchema,
+  checkDocumentHeadSchema,
+  checkFigureDeep,
+  checkSourceSchema,
+  checkTableSchema,
+  checkUniqueIds,
+} from './chapter-schema.mjs';
 
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
 
@@ -84,6 +94,12 @@ const FIX_HINTS = {
   enumerationRows: 'Add rows to reach expectedMinRows or set coverage to partial/sample with rationale.',
   enumerationCoverageGap: 'Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it.',
   enumerationRowCorroboration: "Add sources from additional registrable domains backing the table's claimRefs.",
+  claimShape: 'Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.',
+  analysisCallout: 'Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength|risk|recommendation|insight|assumption).',
+  tableShape: 'Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.',
+  documentHead: 'Fix the chapter document head: schemaVersion=report-v2, artifact matches the chapter key, slug, runDate=YYYY-MM-DD, company.name, and chapter.number matching the chapter order.',
+  duplicateIds: 'Renumber the duplicate or malformed table/figure id; ids must match T### / F### and be unique within the chapter.',
+  artifactRefs: 'Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter\'s figures[] / tables[].',
   sectionsMin: 'Add the missing section(s) to reach minSections.',
   artifactsMin: 'Add the missing table or figure (or substitute a planned figure with an extra table when data shape does not fit).',
   depthSection: 'Expand the prose of the shortest section(s) only; leave the others untouched.',
@@ -112,7 +128,7 @@ const CASCADE_SUPPRESSORS = {
     'searchQueriesMissing',
     'sources', 'sourceShape', 'sourceDomains', 'sourceTypeSpread',
     'requiredSourceTypes', 'netNewSources', 'paywallRisk',
-    'claims', 'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
+    'claims', 'claimShape', 'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
     'highConfidenceCorroboration',
     'enumerationScope', 'enumerationRows', 'enumerationCoverageGap',
     'enumerationRowCorroboration',
@@ -257,8 +273,6 @@ function checkTableFigureOverlap(file, doc) {
   }
 }
 
-const ACCESS_STATUSES = new Set(['ok', 'paywall', 'js-only', 'broken', 'rate-limited']);
-const STANCES = new Set(['confirming', 'adverse', 'neutral']);
 const PRIMARY_TIER_TYPES = new Set(['filing', 'regulatory', 'legal', 'official']);
 
 function registrableDomain(url) {
@@ -315,18 +329,16 @@ function checkSources(file, doc, gate, earlierUrls) {
   let restrictedCount = 0;
   for (const source of sources) {
     const path = `${file}: source ${source?.id ?? '?'}`;
-    if (!ACCESS_STATUSES.has(source?.accessStatus)) {
-      fail('sourceShape', `${path} accessStatus must be one of ${[...ACCESS_STATUSES].join('|')}`, { id: source?.id });
+    // Full schema validation via the shared helper (required fields, enum
+    // values, date format, topic shape). Each violation becomes a
+    // sourceShape failure with the same message check-report would emit.
+    const { errors } = checkSourceSchema(source, { path });
+    for (const err of errors) {
+      fail('sourceShape', err.message, { id: source?.id, ...err });
       shapeFails += 1;
-    } else if (source.accessStatus !== 'ok') {
-      restrictedCount += 1;
     }
-    if (!STANCES.has(source?.stance)) {
-      fail('sourceShape', `${path} stance must be one of ${[...STANCES].join('|')}`, { id: source?.id });
-      shapeFails += 1;
-    } else if (source.stance === 'adverse') {
-      adverseCount += 1;
-    }
+    if (source?.accessStatus && source.accessStatus !== 'ok') restrictedCount += 1;
+    if (source?.stance === 'adverse') adverseCount += 1;
     if (source?.sourceType) types.add(source.sourceType);
     const domain = registrableDomain(source?.url);
     if (domain) domains.add(domain);
@@ -587,6 +599,34 @@ function checkLocalEvidence(file, doc, counts) {
 const doc = loadYamlFile(spec.file);
 let counts = null;
 if (doc) {
+  // Document head: schemaVersion, artifact, slug, runDate, company.name,
+  // chapter.number. Catches malformed runDate, wrong chapter.number, missing
+  // company.name at chapter time instead of waiting for check-report.
+  {
+    const { errors } = checkDocumentHeadSchema(doc, { path: spec.file, expected: spec });
+    for (const err of errors) fail('documentHead', err.message, err);
+  }
+  // Chapter-local table/figure id uniqueness (T### / F###). Duplicate or
+  // malformed ids would otherwise blow up at ledger/assemble time.
+  {
+    const { errors } = checkUniqueIds(doc.tables, { label: 'table', pattern: /^T\d{3}$/, path: spec.file });
+    for (const err of errors) fail('duplicateIds', err.message, err);
+  }
+  {
+    const { errors } = checkUniqueIds(doc.figures, { label: 'figure', pattern: /^F\d{3}$/, path: spec.file });
+    for (const err of errors) fail('duplicateIds', err.message, err);
+  }
+  // Chapter-local figureRef / tableRef resolution. The same check runs
+  // again post-finalize against the assembled full-report (where ids are
+  // global), but catching dangling refs here means the agent fixes them
+  // without rebuilding the whole report.
+  {
+    const figureIds = new Set((doc.figures ?? []).map((f) => f?.id).filter(Boolean));
+    const tableIds = new Set((doc.tables ?? []).map((t) => t?.id).filter(Boolean));
+    const { errors } = checkArtifactRefs(doc, { path: spec.file, figureIds, tableIds });
+    for (const err of errors) fail('artifactRefs', err.message, err);
+  }
+
   counts = {
     sections: doc.sections?.length ?? 0,
     tables: doc.tables?.length ?? 0,
@@ -631,10 +671,41 @@ if (doc) {
   }
 
   for (const figure of doc.figures ?? []) {
-    const { errors } = validateFigureShape(figure);
-    for (const message of errors) {
+    // Light shape check (data field presence per type contract).
+    const { errors: lightErrors } = validateFigureShape(figure);
+    for (const message of lightErrors) {
       fail('figureShape', `${spec.file}: ${message}`, { figureId: figure?.id ?? null });
     }
+    // Deep schema check (item labels, matrix alignment, numeric/range/cohort
+    // value rules, quadrant coordinates). Same rules check-report enforces.
+    const { errors: deepErrors } = checkFigureDeep(figure, { path: spec.file });
+    for (const err of deepErrors) {
+      fail('figureShape', err.message, { figureId: figure?.id ?? null, ...err });
+    }
+  }
+
+  // Per-claim schema (required fields, enum values, contradictsClaimRefs
+  // when type=conflicting, sourceRefs non-empty unless open-question).
+  for (const claim of doc.localEvidence?.claims ?? []) {
+    const path = `${spec.file}: claim ${claim?.id ?? '?'}`;
+    const { errors } = checkClaimSchema(claim, { path });
+    for (const err of errors) fail('claimShape', err.message, { id: claim?.id, ...err });
+  }
+
+  // Per-callout schema (title, body, claimRefs[], optional calloutType enum).
+  for (const [index, callout] of (doc.callouts ?? []).entries()) {
+    const path = `${spec.file}: callout ${index + 1}`;
+    const { errors } = checkCalloutSchema(callout, { path });
+    for (const err of errors) fail('analysisCallout', err.message, { index, ...err });
+  }
+
+  // Per-table column/row alignment + enumerationScope shape. The deeper
+  // enumeration-coverage rules (per-row corroboration, gap requirement) live
+  // in checkEnumerationTables below, since they need source/claim context.
+  for (const table of doc.tables ?? []) {
+    const path = `${spec.file}: table ${table?.id ?? '?'}`;
+    const { errors } = checkTableSchema(table, { path });
+    for (const err of errors) fail('tableShape', err.message, { tableId: table?.id, ...err });
   }
 
   checkLocalEvidence(spec.file, doc, counts);
@@ -667,16 +738,20 @@ const ok = failures.length === 0 && (!args.strict || unackedWarningDims.length =
 // dimensions fail, fix in this order; downstream dimensions often clear once
 // upstream is repaired.
 const RETRY_PRECEDENCE = [
-  'missingArtifact', 'yamlParse', 'localEvidenceMissing',
+  'missingArtifact', 'yamlParse', 'documentHead', 'localEvidenceMissing',
   'researchQuestionShape', 'researchQuestionTargets', 'researchQuestionTypeMix', 'researchQuestionAdverse',
   'searchQueriesMissing',
   'sourceShape', 'sourceDomains', 'sourceTypeSpread', 'requiredSourceTypes', 'netNewSources',
   'paywallRisk',
   'researchQuestions', 'sources', 'claims',
+  'claimShape',
   'highConfidenceCorroboration',
   'researchQuestionAnswerCoverage', 'researchQuestionClosure',
   'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
   'enumerationScope', 'enumerationRows', 'enumerationCoverageGap', 'enumerationRowCorroboration',
+  'tableShape', 'figureShape',
+  'duplicateIds', 'artifactRefs',
+  'analysisCallout',
   'sectionsMin', 'artifactsMin', 'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
   'contentRequirementCoverage',
 ];

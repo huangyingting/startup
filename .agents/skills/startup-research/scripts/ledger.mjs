@@ -15,13 +15,12 @@ const DOWNSTREAM_FILES = [FINAL_ARTIFACTS.fullReport.file, FINAL_ARTIFACTS.summa
 function parseArgs(argv) {
   return {
     folder: argv.find((arg) => !arg.startsWith('-')) ?? null,
-    keepLocal: argv.includes('--keep-local'),
   };
 }
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder> [--keep-local]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder>');
   process.exit(1);
 }
 
@@ -157,12 +156,15 @@ function consolidate(docs) {
   return { sources, claims, sourceIds, claimIds, evidenceGaps };
 }
 
+// Rewrites a chapter document in place: every claimRef is remapped from the
+// chapter's local C### namespace to the consolidated ledger's global C###.
+// localEvidence is preserved as-is so the chapter YAML remains the source of
+// truth the agent edits when fixing post-finalize schema problems.
 function rewrite(value, file, claimIds) {
   if (Array.isArray(value)) return value.map((item) => rewrite(item, file, claimIds));
   if (value && typeof value === 'object') {
     const entries = [];
     for (const [key, child] of Object.entries(value)) {
-      if (key === 'localEvidence' && !args.keepLocal) continue;
       if (key === 'claimRefs' && Array.isArray(child)) {
         entries.push([key, child.map((ref) => claimIds.get(`${file}:${ref}`) ?? ref)]);
       } else {

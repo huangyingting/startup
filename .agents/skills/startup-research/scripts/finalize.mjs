@@ -15,7 +15,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
+import { FINAL_ARTIFACTS } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -37,37 +37,31 @@ if (!existsSync(`${reportFolder}/report-meta.yaml`)) {
   process.exit(1);
 }
 
-const workflowConfig = loadWorkflowConfig();
-const analysisFiles = getAnalysisArtifacts(workflowConfig).map((item) => item.file);
-const presentAnalysisFiles = analysisFiles.filter((file) => existsSync(join(reportFolder, file)));
-const localEvidenceFiles = presentAnalysisFiles.filter((file) => {
-  const result = tryReadYaml(join(reportFolder, file));
-  return result.ok && Object.prototype.hasOwnProperty.call(result.value ?? {}, 'localEvidence');
-});
+// Fast path: when evidence.yaml already exists, skip postmortem + ledger and
+// reuse it. Postmortem and ledger are idempotent in principle, but rebuilding
+// evidence.yaml reassigns canonical claim IDs and would invalidate every
+// claimRef across chapters. Re-runs after fixing report-meta.yaml or a
+// chapter section/figure should not pay that cost. Delete evidence.yaml by
+// hand to force a full rebuild.
 const hasExistingEvidence = existsSync(join(reportFolder, FINAL_ARTIFACTS.evidence.file));
-
-if (localEvidenceFiles.length > 0 && localEvidenceFiles.length < presentAnalysisFiles.length) {
-  console.error('[finalize] mixed chapter state detected: some analysis artifacts still contain localEvidence while others do not.');
-  console.error('[finalize] restore a consistent pre-ledger or post-ledger state before re-running finalize.');
-  process.exit(1);
-}
-
-const steps = localEvidenceFiles.length === 0 && hasExistingEvidence
+const steps = hasExistingEvidence
   ? [
       { name: 'cross-chapter', script: 'cross-chapter.mjs', argv: [reportFolder] },
       { name: 'assemble', script: 'assemble.mjs', argv: [reportFolder] },
     ]
   : [
-      // postmortem runs FIRST so it can read per-chapter localEvidence (sources,
-      // claims, researchQuestions) before ledger consolidates and removes it.
+      // postmortem runs FIRST so it reads chapter localEvidence stats; ledger
+      // then consolidates localEvidence into evidence.yaml (chapter source of
+      // truth is preserved). cross-chapter checks for metric/identity drift.
+      // assemble builds the final full-report + summary-card.
       { name: 'postmortem', script: 'postmortem.mjs', argv: [reportFolder] },
       { name: 'ledger', script: 'ledger.mjs', argv: [reportFolder] },
       { name: 'cross-chapter', script: 'cross-chapter.mjs', argv: [reportFolder] },
       { name: 'assemble', script: 'assemble.mjs', argv: [reportFolder] },
     ];
 
-if (localEvidenceFiles.length === 0 && hasExistingEvidence) {
-  console.log('[finalize] no chapter localEvidence found; reusing existing evidence.yaml and skipping postmortem + ledger');
+if (hasExistingEvidence) {
+  console.log('[finalize] reusing existing evidence.yaml; skipping postmortem + ledger (delete evidence.yaml to force rebuild).');
 }
 if (!skipIndex) {
   steps.push({ name: 'build-index', script: 'build-index.mjs', argv: ['--strict'] });
