@@ -1,36 +1,109 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="Search — Startup Research">
-  <section class="sr-container sr-hero"><h1>Search dossiers.</h1><p class="sr-deck">Search by company, thesis, sector, date, source count, rating signal, or diligence gap. Everything runs locally in your browser.</p></section>
-  <section class="sr-container sr-section" data-search-root data-index-url={`${import.meta.env.BASE_URL}search-index.json`}>
-    <input class="sr-input" type="search" placeholder="Search startup reports..." data-search-input />
-    <p class="sr-muted" data-search-status>Type to search reports.</p>
-    <div class="sr-grid" data-search-results></div>
+<BaseLayout title="Search — Startup Diligence">
+  <section class="sr-container sr-hero"><h1>Search by company.</h1><p class="sr-deck">Find a diligence report by company name. Runs locally in your browser.</p></section>
+  <section class="sr-container sr-section search-section" data-search-root data-index-url={`${import.meta.env.BASE_URL}search-index.json`}>
+    <div class="search-field">
+      <span class="search-field-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="9" r="6" />
+          <line x1="13.5" y1="13.5" x2="17" y2="17" />
+        </svg>
+      </span>
+      <input class="search-field-input" type="search" placeholder="Search by company name…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-search-input />
+      <button type="button" class="search-field-clear" aria-label="Clear" data-search-clear hidden>×</button>
+    </div>
+    <div class="search-status" data-search-status-row>
+      <span class="search-count" data-search-count hidden></span>
+      <span class="search-hint" data-search-status>Type a company name to search.</span>
+    </div>
+    <div class="search-results" data-search-results></div>
   </section>
   <script>
     const root = document.querySelector('[data-search-root]');
     const input = root?.querySelector('[data-search-input]');
-    const status = root?.querySelector('[data-search-status]');
+    const clearButton = root?.querySelector('[data-search-clear]');
+    const statusEl = root?.querySelector('[data-search-status]');
+    const countEl = root?.querySelector('[data-search-count]');
     const results = root?.querySelector('[data-search-results]');
     const state = { docs: [] };
     const norm = (v) => String(v ?? '').toLowerCase().trim();
-    const render = () => {
-      if (!root || !input || !status || !results) return;
-      const query = norm(input.value);
-      if (!query) { status.textContent = 'Type at least one character to filter the dossier archive.'; results.replaceChildren(); return; }
-      const terms = query.split(/\s+/).filter(Boolean);
-      const matches = state.docs.filter((doc) => terms.every((term) => doc.searchText.includes(term))).slice(0, 30);
-      status.textContent = `${matches.length} result${matches.length === 1 ? '' : 's'}`;
-      results.replaceChildren(...matches.map((doc) => {
-        const link = document.createElement('a');
-        link.className = 'sr-card';
-        link.href = doc.href;
-        link.innerHTML = `<div class="sr-meta sr-kicker"><span>${doc.title}</span><span>·</span><span>${doc.sector}</span></div><h3>${doc.headline}</h3><p><span class="sr-score">${Number(doc.rating).toFixed(1)}</span> Overall rating · ${doc.date}</p>`;
-        return link;
-      }));
+    const escapeHtml = (v) => String(v ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    const highlight = (text, query) => {
+      if (!query) return escapeHtml(text);
+      const safe = escapeHtml(text);
+      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return safe.replace(new RegExp(`(${escaped})`, 'ig'), '<mark>$1</mark>');
     };
-    fetch(root?.dataset.indexUrl || '').then((r) => r.json()).then((docs) => { state.docs = Array.isArray(docs) ? docs : []; render(); }).catch(() => { if (status) status.textContent = 'Search index unavailable.'; });
+    const render = () => {
+      if (!root || !input || !statusEl || !countEl || !results || !clearButton) return;
+      const raw = input.value;
+      const query = norm(raw);
+      clearButton.hidden = raw.length === 0;
+      if (!query) {
+        statusEl.textContent = 'Type a company name to search.';
+        countEl.hidden = true;
+        results.replaceChildren();
+        return;
+      }
+      const matches = state.docs.filter((doc) => doc.searchText.includes(query)).slice(0, 30);
+      countEl.hidden = false;
+      countEl.textContent = String(matches.length);
+      statusEl.textContent = matches.length === 1 ? 'result' : 'results';
+      if (matches.length === 0) {
+        results.innerHTML = `<p class="search-empty">No company matches \u201c${escapeHtml(raw)}\u201d. Try a different name.</p>`;
+        return;
+      }
+      results.innerHTML = '';
+      for (const doc of matches) {
+        const link = document.createElement('a');
+        link.className = 'search-result';
+        link.href = doc.href;
+        link.innerHTML = `
+          <span class="search-result-meta">${escapeHtml(doc.sector || 'Other')}</span>
+          <span class="search-result-title">${highlight(doc.title, query)}</span>
+          <span class="search-result-foot"><strong>${Number(doc.rating).toFixed(1)}</strong> Overall rating · ${escapeHtml(doc.date)}</span>
+        `;
+        results.appendChild(link);
+      }
+    };
+    fetch(root?.dataset.indexUrl || '').then((r) => r.json()).then((docs) => { state.docs = Array.isArray(docs) ? docs : []; render(); }).catch(() => { if (statusEl) statusEl.textContent = 'Search index unavailable.'; });
     input?.addEventListener('input', render);
+    clearButton?.addEventListener('click', () => { if (!input) return; input.value = ''; input.focus(); render(); });
+    input?.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && input.value) { event.preventDefault(); input.value = ''; render(); }
+    });
+    setTimeout(() => input?.focus(), 0);
   </script>
+  <style>
+    .search-section { display: flex; flex-direction: column; gap: var(--space-4); }
+    .search-field { position: relative; display: flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-3); border: 2px solid var(--hairline); background: var(--paper); transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .search-field:focus-within { border-color: var(--claret); box-shadow: 0 0 0 3px color-mix(in srgb, var(--claret) 14%, transparent); }
+    .search-field-icon { display: inline-flex; align-items: center; justify-content: center; color: var(--caption-gray); flex: none; }
+    .search-field:focus-within .search-field-icon { color: var(--claret); }
+    .search-field-input { flex: 1 1 auto; min-width: 0; border: 0; background: transparent; padding: var(--space-3) 0; font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 600; color: var(--ink-page); letter-spacing: var(--tracking-display-snug); }
+    .search-field-input:focus { outline: none; }
+    .search-field-input::-webkit-search-decoration, .search-field-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+    .search-field-input::placeholder { color: var(--caption-gray); }
+    .search-field-clear { flex: none; appearance: none; border: 0; background: transparent; padding: 0 var(--space-2); font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 700; color: var(--caption-gray); cursor: pointer; line-height: 1; }
+    .search-field-clear:hover, .search-field-clear:focus-visible { color: var(--claret); outline: none; }
+    .search-status { display: flex; align-items: center; gap: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); font-size: var(--fs-sm); color: var(--caption-gray); }
+    .search-count { display: inline-grid; place-items: center; min-width: 1.6rem; height: 1.6rem; padding: 0 0.45rem; border-radius: 999px; background: var(--claret); color: #fff7ef; font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 800; line-height: 1; }
+    .search-results { display: flex; flex-direction: column; gap: 0; border-top: 2px solid var(--claret); border-bottom: var(--report-rule); }
+    .search-results:empty { border-top: 0; border-bottom: 0; }
+    .search-result { display: grid; grid-template-columns: minmax(7rem, 11rem) minmax(0, 1fr) auto; align-items: baseline; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: var(--report-rule); background: var(--surface-paper); color: var(--ink-page); text-decoration: none; transition: background-color 120ms ease, color 120ms ease; }
+    .search-result:last-child { border-bottom: 0; }
+    .search-result:hover, .search-result:focus-visible { background: color-mix(in srgb, var(--claret) 6%, var(--surface-paper)); outline: none; }
+    .search-result-meta { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); font-size: var(--fs-sm); color: var(--claret); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .search-result-title { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; line-height: 1.15; color: var(--ink-page); min-width: 0; overflow-wrap: anywhere; }
+    .search-result-title :global(mark) { background: color-mix(in srgb, var(--gold) 35%, transparent); color: inherit; padding: 0 0.1em; }
+    .search-result-foot { font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--caption-gray); white-space: nowrap; }
+    .search-result-foot strong { font-family: var(--font-display); color: var(--claret); font-weight: 800; }
+    .search-empty { margin: 0; padding: var(--space-5) var(--space-4); border-top: 2px solid var(--claret); border-bottom: var(--report-rule); background: var(--surface-paper); font-family: var(--font-sans); color: var(--caption-gray); text-align: center; }
+    @media (max-width: 600px) {
+      .search-result { grid-template-columns: 1fr auto; row-gap: var(--space-1); }
+      .search-result-meta { grid-column: 1 / -1; }
+    }
+  </style>
 </BaseLayout>

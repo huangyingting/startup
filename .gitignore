@@ -11,6 +11,16 @@ website/dist/
 # fetch-url on-disk cache (default location; override with FETCH_URL_CACHE_DIR)
 .fetch-cache/
 
+# startup-research per-run scratch (notes, fetched bodies, chapter packets)
+.research-cache/
+
+# Defensive: skill scratch must never live inside reports/<run>/
+reports/*/.research/
+reports/*/.scratch/
+reports/*/.chapter*-packet.json
+reports/*/.chapter*-packet.yaml
+reports/*/*.tmp
+
 # Editor caches
 .cache/
 

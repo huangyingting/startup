@@ -11,10 +11,10 @@ for (const report of reports) {
   byMonth.set(month, [...(byMonth.get(month) ?? []), report]);
 }
 ---
-<BaseLayout title="All dossiers — Startup Research" description="Browse all startup diligence dossiers.">
+<BaseLayout title="All reports — Startup Diligence" description="Every diligence report, grouped by month.">
   <section class="sr-container sr-hero">
-    <h1>All dossiers.</h1>
-    <p class="sr-deck">Browse generated startup research reports by month so the archive stays fast and scannable as the dossier library grows.</p>
+    <h1>All reports.</h1>
+    <p class="sr-deck">Every diligence report grouped by month, newest first.</p>
   </section>
   {[...byMonth.entries()].map(([month, entries], index) => (
     <section class="sr-container sr-section">

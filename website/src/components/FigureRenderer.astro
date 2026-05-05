@@ -70,6 +70,24 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
   const numberValue = (value) => Number(value) || 0;
   const valueLabel = (item) => item?.displayValue ?? item?.value ?? '';
   const fullValueLabel = (item) => item?.displayValue ?? item?.value ?? item?.score ?? item?.label ?? '';
+  // Safely render any cell-like value (string, number, or object) as text.
+  // Object cells in YAML use multiple aliases across the corpus (`label`,
+  // `text`, `value`, `displayValue`, `name`, `score`); blindly stringifying
+  // an object produces "[object Object]". Always route cell text through
+  // this helper.
+  const safeText = (value) => {
+    if (value == null) return '';
+    if (typeof value === 'string' || typeof value === 'number') return String(value);
+    if (typeof value === 'object') {
+      const text = value.label ?? value.text ?? value.name ?? value.displayValue ?? value.value;
+      if (text != null && String(text).trim() !== '') return String(text);
+      // Numeric score cells (`{score: 8, tone: positive, note: ...}`) are a
+      // valid corpus shape; surface the score itself when no text exists.
+      if (value.score != null) return String(value.score);
+      return '';
+    }
+    return String(value);
+  };
 
   const chartFont = {
     family: 'var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif)',
@@ -788,19 +806,16 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
 
   const renderKpi = (element, payload) => {
     const items = normalizedItems({ items: payload.data.items ?? payload.data.nodes });
-    const columns = Math.min(3, Math.max(1, items.length));
-    const margin = { top: 24, right: 28, bottom: 30, left: 28 };
-    const cardH = 128;
-    const rows = Math.ceil(items.length / columns);
-    const { svg, width } = svgBase(element, Math.max(260, margin.top + margin.bottom + rows * (cardH + 18)));
-    const cardW = (width - margin.left - margin.right - (columns - 1) * 16) / columns;
-    const groups = svg.append('g').selectAll('g').data(items).join('g').attr('transform', (_d, index) => `translate(${margin.left + (index % columns) * (cardW + 16)},${margin.top + Math.floor(index / columns) * (cardH + 18)})`);
-    groups.append('rect').attr('width', cardW).attr('height', cardH).attr('rx', 14).attr('fill', '#fff7ef').attr('stroke', (d) => colorForTone(d.tone)).attr('stroke-width', 1.7);
-    groups.append('circle').attr('cx', 18).attr('cy', 25).attr('r', 4.6).attr('fill', (d) => colorForTone(d.tone)).attr('opacity', 0.9);
-    groups.append('text').attr('x', 30).attr('y', 30).attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', fontWeight('label')).each(function(d) { renderWrappedText(d3.select(this), d.label, { maxChars: Math.max(14, Math.floor((cardW - 44) / 8)), maxLines: 2, lineHeight: chartFont.lineHeight.tight }); });
-    groups.append('text').attr('x', 16).attr('y', 78).attr('fill', palette.claret).attr('font-size', chartFont.size.metric).attr('font-weight', fontWeight('emphasis')).text((d) => labelText(fullValueLabel(d), 12));
-    groups.append('text').attr('x', 16).attr('y', 106).attr('fill', palette.muted).attr('font-size', chartFont.size.caption).text((d) => labelText(d.detail, Math.max(18, Math.floor(cardW / 7))));
-    groups.each(function(d) { addTitle(d3.select(this), `${d.label}: ${fullValueLabel(d)}${d.detail ? ` — ${d.detail}` : ''}`); });
+    d3.select(element).selectAll('*').remove();
+    const grid = d3.select(element).append('div').attr('class', 'kpi-grid');
+    const cards = grid.selectAll('div.kpi-card').data(items).join('div')
+      .attr('class', (d) => `kpi-card kpi-tone-${d.tone || 'neutral'}`);
+    const labelRow = cards.append('div').attr('class', 'kpi-card-label');
+    labelRow.append('span').attr('class', 'kpi-card-dot').attr('aria-hidden', 'true');
+    labelRow.append('span').attr('class', 'kpi-card-label-text').text((d) => d.label);
+    cards.append('div').attr('class', 'kpi-card-value').text((d) => String(fullValueLabel(d) ?? ''));
+    cards.filter((d) => d.detail).append('div').attr('class', 'kpi-card-detail').text((d) => d.detail);
+    withTooltip(cards, (d) => tooltipHtml(d.label, [String(fullValueLabel(d) ?? ''), d.detail || d.note]));
   };
 
   const renderBar = (element, payload) => {
@@ -1043,21 +1058,14 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
 
   const renderRange = (element, payload) => {
     const items = arr(payload.data.items);
-    const lows = items.map((item) => numberValue(item.low ?? item.min));
-    const highs = items.map((item) => numberValue(item.high ?? item.max ?? item.value));
-    const mids = items.map((item) => numberValue(item.mid ?? item.value ?? ((numberValue(item.low ?? item.min) + numberValue(item.high ?? item.max ?? item.value)) / 2)));
-    const min = Math.min(...lows, ...mids, 0);
-    const max = Math.max(...highs, ...mids, 1);
-    const containerWidth = element.getBoundingClientRect().width || 760;
-    const compact = containerWidth < 640;
-    const { svg, width, height } = svgBase(element, Math.max(compact ? 330 : 300, items.length * (compact ? 64 : 58) + 88));
-    const margin = compact ? { top: 54, right: 70, bottom: 48, left: 132 } : { top: 54, right: 112, bottom: 48, left: Math.min(206, Math.max(150, Math.max(...items.map((item) => String(item.label ?? '').length), 8) * 8.8)) };
-    const x = d3.scaleLinear().domain([min, max]).nice().range([margin.left, width - margin.right]);
-    const y = d3.scaleBand().domain(items.map((d) => d.label)).range([margin.top, height - margin.bottom]).padding(compact ? 0.28 : 0.24);
-    const plotW = width - margin.left - margin.right;
-    const defs = svg.append('defs');
-    const shadow = defs.append('filter').attr('id', `${payload.id}-range-shadow`).attr('x', '-14%').attr('y', '-34%').attr('width', '128%').attr('height', '168%');
-    shadow.append('feDropShadow').attr('dx', 0).attr('dy', 3).attr('stdDeviation', 3).attr('flood-color', 'rgba(51,48,46,0.13)');
+    if (!items.length) return;
+    const lowOf = (item) => numberValue(item.low ?? item.min);
+    const highOf = (item) => numberValue(item.high ?? item.max ?? item.value);
+    const midOf = (item) => numberValue(item.mid ?? item.value ?? ((lowOf(item) + highOf(item)) / 2));
+    const min = Math.min(...items.map(lowOf), ...items.map(midOf), 0);
+    const max = Math.max(...items.map(highOf), ...items.map(midOf), 1);
+    const span = Math.max(max - min, 1e-9);
+    const pct = (value) => `${((value - min) / span) * 100}%`;
     const rangeColor = (item) => {
       const label = String(item.label ?? '').toLowerCase();
       if (item.tone === 'risk' || label.includes('stress') || label.includes('bear')) return palette.risk;
@@ -1066,130 +1074,51 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       if (label.includes('base')) return palette.claret;
       return colorForTone(item.tone);
     };
-    svg.append('rect')
-      .attr('x', compact ? margin.left - 108 : margin.left - 16)
-      .attr('y', margin.top - 34)
-      .attr('width', plotW + (compact ? 178 : 128))
-      .attr('height', height - margin.top - margin.bottom + 72)
-      .attr('rx', 22)
-      .attr('fill', 'rgba(255,250,245,0.58)')
-      .attr('stroke', 'none');
-    svg.append('text')
-      .attr('x', compact ? margin.left - 112 : margin.left - 16)
-      .attr('y', margin.top - 20)
-      .attr('text-anchor', compact ? 'start' : 'end')
-      .attr('fill', palette.muted)
-      .attr('font-size', chartFont.small)
-      .attr('font-weight', fontWeight('label'))
-      .attr('letter-spacing', chartFont.tracking.subtle)
-      .text('Scenario');
-    svg.append('text')
-      .attr('x', width - margin.right)
-      .attr('y', margin.top - 20)
-      .attr('text-anchor', 'end')
-      .attr('fill', palette.muted)
-      .attr('font-size', chartFont.small)
-      .attr('font-weight', fontWeight('strong'))
-      .text('Low · Mid · High');
-    axisBottom(svg, x, height - margin.bottom);
-    svg.selectAll('.tick text').attr('font-size', chartFont.small).attr('font-weight', fontWeight('medium'));
-    const groups = svg.append('g').selectAll('g.range-row').data(items).join('g').attr('class', 'range-row');
-    groups.append('rect')
-      .attr('class', 'range-row-card')
-      .attr('x', margin.left)
-      .attr('y', (d) => y(d.label))
-      .attr('width', plotW)
-      .attr('height', y.bandwidth())
-      .attr('rx', 16)
-      .attr('fill', 'rgba(255,250,245,0.62)')
-      .attr('stroke', 'rgba(212,196,184,0.45)');
-    groups.append('line')
-      .attr('class', 'range-track')
-      .attr('x1', margin.left + 18)
-      .attr('x2', width - margin.right - 18)
-      .attr('y1', (d) => y(d.label) + y.bandwidth() / 2)
-      .attr('y2', (d) => y(d.label) + y.bandwidth() / 2)
-      .attr('stroke', 'rgba(212,196,184,0.66)')
-      .attr('stroke-width', compact ? 8 : 10)
-      .attr('stroke-linecap', 'round');
-    groups.append('rect')
-      .attr('class', 'range-band')
-      .attr('x', (d) => x(numberValue(d.low ?? d.min)))
-      .attr('y', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 9 : 10))
-      .attr('width', (d) => Math.max(8, x(numberValue(d.high ?? d.max ?? d.value)) - x(numberValue(d.low ?? d.min))))
-      .attr('height', compact ? 18 : 20)
-      .attr('rx', compact ? 9 : 10)
-      .attr('fill', (d) => rangeColor(d))
-      .attr('opacity', 0.88);
-    groups.append('line')
-      .attr('class', 'range-low-tick')
-      .attr('x1', (d) => x(numberValue(d.low ?? d.min)))
-      .attr('x2', (d) => x(numberValue(d.low ?? d.min)))
-      .attr('y1', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 16 : 18))
-      .attr('y2', (d) => y(d.label) + y.bandwidth() / 2 + (compact ? 16 : 18))
-      .attr('stroke', '#fff7ef')
-      .attr('stroke-width', 2.5)
-      .attr('stroke-linecap', 'round');
-    groups.append('line')
-      .attr('class', 'range-high-tick')
-      .attr('x1', (d) => x(numberValue(d.high ?? d.max ?? d.value)))
-      .attr('x2', (d) => x(numberValue(d.high ?? d.max ?? d.value)))
-      .attr('y1', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 16 : 18))
-      .attr('y2', (d) => y(d.label) + y.bandwidth() / 2 + (compact ? 16 : 18))
-      .attr('stroke', '#fff7ef')
-      .attr('stroke-width', 2.5)
-      .attr('stroke-linecap', 'round');
-    groups.append('line')
-      .attr('class', 'range-midpoint')
-      .attr('x1', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2))))
-      .attr('x2', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2))))
-      .attr('y1', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 15 : 17))
-      .attr('y2', (d) => y(d.label) + y.bandwidth() / 2 + (compact ? 15 : 17))
-      .attr('stroke', palette.ink)
-      .attr('stroke-width', 2.2)
-      .attr('stroke-linecap', 'round');
-    groups.append('circle')
-      .attr('class', 'range-midpoint-dot')
-      .attr('cx', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2))))
-      .attr('cy', (d) => y(d.label) + y.bandwidth() / 2)
-      .attr('r', compact ? 5.5 : 6)
-      .attr('fill', '#fff7ef')
-      .attr('stroke', palette.ink)
-      .attr('stroke-width', 2.2);
-    groups.append('text')
-      .attr('x', margin.left - 22)
-      .attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 5)
-      .attr('text-anchor', 'end')
-      .attr('fill', palette.ink)
-      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
-      .attr('font-weight', fontWeight('label'))
-      .text((d) => labelText(d.label, compact ? 18 : 20));
-    groups.append('text')
-      .attr('x', width - margin.right + 14)
-      .attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 5)
-      .attr('text-anchor', 'start')
-      .attr('fill', palette.ink)
-      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
-      .attr('font-weight', fontWeight('label'))
-      .text((d) => labelText(d.displayValue ?? `${d.low ?? d.min}–${d.high ?? d.max}`, compact ? 14 : 16));
-    groups.append('text')
-      .attr('x', (d) => x(numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2))))
-      .attr('y', (d) => y(d.label) + y.bandwidth() / 2 - (compact ? 18 : 20))
-      .attr('text-anchor', 'middle')
-      .attr('fill', palette.muted)
-      .attr('font-size', compact ? chartFont.size.micro : chartFont.size.tiny)
-      .attr('font-weight', fontWeight('strong'))
-      .text((d) => `mid ${d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2)}`);
-    groups.each(function(d) {
-      const low = numberValue(d.low ?? d.min);
-      const mid = numberValue(d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2));
-      const high = numberValue(d.high ?? d.max ?? d.value);
-      addTitle(d3.select(this), `${d.label}: low ${low}, mid ${mid}, high ${high}`);
+    const formatNumber = (value) => {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return String(value ?? '');
+      const abs = Math.abs(n);
+      if (abs >= 1000) return d3.format(',.0f')(n);
+      if (abs >= 100) return d3.format(',.1f')(n);
+      return d3.format(',.2~f')(n);
+    };
+    const tickFormat = (value) => formatNumber(value);
+    const ticks = d3.scaleLinear().domain([min, max]).nice().ticks(4);
+    if (ticks[0] !== min) ticks.unshift(min);
+    if (ticks[ticks.length - 1] !== max) ticks.push(max);
+    d3.select(element).selectAll('*').remove();
+    const root = d3.select(element).append('div').attr('class', 'range-list');
+    items.forEach((item) => {
+      const low = lowOf(item);
+      const mid = midOf(item);
+      const high = highOf(item);
+      const fill = rangeColor(item);
+      const summaryText = item.displayValue ?? `${formatNumber(low)} – ${formatNumber(high)}`;
+      const row = root.append('div').attr('class', 'range-row')
+        .datum({ label: safeText(item), low, mid, high, summary: summaryText, detail: item.detail });
+      row.append('div').attr('class', 'range-row-label').text(safeText(item));
+      const trackCell = row.append('div').attr('class', 'range-row-track-cell');
+      const track = trackCell.append('div').attr('class', 'range-row-track');
+      track.append('div').attr('class', 'range-row-band')
+        .style('left', pct(low))
+        .style('width', `calc(${pct(high)} - ${pct(low)})`)
+        .style('background', fill);
+      track.append('div').attr('class', 'range-row-mid-dot').style('left', pct(mid));
+      const meta = trackCell.append('div').attr('class', 'range-row-meta');
+      meta.append('span').attr('class', 'range-row-meta-low').text(formatNumber(low));
+      meta.append('span').attr('class', 'range-row-meta-mid').text(`mid ${formatNumber(mid)}`);
+      meta.append('span').attr('class', 'range-row-meta-high').text(formatNumber(high));
+      row.append('div').attr('class', 'range-row-summary').text(summaryText);
+      if (item.detail) row.append('div').attr('class', 'range-row-detail').text(item.detail);
     });
-    withTooltip(groups, (d) => {
-      const mid = d.mid ?? d.value ?? ((numberValue(d.low ?? d.min) + numberValue(d.high ?? d.max ?? d.value)) / 2);
-      return tooltipHtml(d.label, [`Low: ${d.low ?? d.min}`, `Mid: ${mid}`, `High: ${d.high ?? d.max ?? d.value}`, d.detail]);
+    const axis = root.append('div').attr('class', 'range-axis');
+    ticks.forEach((tickValue) => {
+      axis.append('span')
+        .attr('class', 'range-axis-tick')
+        .style('left', pct(tickValue))
+        .text(tickFormat(tickValue));
     });
+    withTooltip(root.selectAll('.range-row'), (d) => tooltipHtml(d.label, [`Low: ${formatNumber(d.low)}`, `Mid: ${formatNumber(d.mid)}`, `High: ${formatNumber(d.high)}`, d.detail]));
   };
 
   const renderQuadrant = (element, payload) => {
@@ -1226,8 +1155,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const yRange = safeRange(ys);
     const containerWidth = element.getBoundingClientRect().width || 760;
     const compact = containerWidth < 640;
-    const { svg, width, height } = svgBase(element, compact ? 520 : 440);
-    const margin = compact ? { top: 52, right: 34, bottom: 118, left: 52 } : { top: 54, right: 42, bottom: 104, left: 70 };
+    const { svg, width, height } = svgBase(element, compact ? 420 : 380);
+    const margin = compact ? { top: 52, right: 34, bottom: 60, left: 52 } : { top: 54, right: 42, bottom: 60, left: 70 };
     const plotW = width - margin.left - margin.right;
     const plotH = height - margin.top - margin.bottom;
     const x = d3.scaleLinear().domain([xRange.min, xRange.max]).range([margin.left, width - margin.right]);
@@ -1265,13 +1194,17 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     panel.append('circle').attr('cx', refX).attr('cy', refY).attr('r', 5).attr('fill', '#fffaf5').attr('stroke', palette.claret).attr('stroke-width', 2).attr('opacity', 0.85);
     panel.selectAll('text.quadrant-label').data(quadrants).join('text')
       .attr('class', 'quadrant-label')
-      .attr('x', (q) => q.x + (q.x < refX ? 12 : q.w - 12))
-      .attr('y', (q) => q.y + (q.y < refY ? 20 : q.h - 12))
-      .attr('text-anchor', (q) => q.x < refX ? 'start' : 'end')
+      .attr('x', (q) => q.x + q.w / 2)
+      .attr('y', (q) => q.y + q.h / 2)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
       .attr('fill', palette.muted)
-      .attr('font-size', compact ? chartFont.size.tiny : chartFont.size.caption)
+      .attr('font-size', compact ? chartFont.size.caption : chartFont.size.label)
       .attr('font-weight', fontWeight('label'))
-      .attr('letter-spacing', chartFont.tracking.subtle)
+      .attr('letter-spacing', chartFont.tracking.caps)
+      .attr('opacity', 0.32)
+      .style('text-transform', 'uppercase')
+      .style('pointer-events', 'none')
       .text((q) => q.label);
     const tickValues = (range) => Array.from(new Set([range.min, referenceValue, range.max]));
     const tickFormat = isUnitScore ? d3.format('.1f') : d3.format('~g');
@@ -1310,59 +1243,77 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     dots.append('circle').attr('r', compact ? 15 : 17).attr('fill', (d) => colorForTone(d.tone)).attr('stroke', '#fff7ef').attr('stroke-width', 3).attr('opacity', 0.96);
     dots.append('circle').attr('r', compact ? 7 : 8).attr('fill', '#fff7ef').attr('opacity', 0.18);
     dots.append('text').attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('fill', '#fff7ef').attr('font-size', compact ? chartFont.size.caption : chartFont.size.caption).attr('font-weight', fontWeight('emphasis')).text((d) => d._index + 1);
-    const labelAnchor = (d) => d.x > refX ? 'end' : 'start';
-    dots.append('text')
-      .attr('x', (d) => d.x > refX ? -(compact ? 20 : 23) : compact ? 20 : 23)
-      .attr('y', 4)
-      .attr('text-anchor', labelAnchor)
-      .attr('fill', palette.ink)
-      .attr('font-size', compact ? chartFont.size.caption : chartFont.small)
-      .attr('font-weight', fontWeight('label'))
-      .text((d) => labelText(d.label, compact ? 12 : 18));
+    // Inline text labels next to each dot collide badly when points cluster
+    // along a quadrant boundary. Rely on the numbered badge inside the dot
+    // plus the HTML legend below for identification; tooltips handle hover.
     dots.each(function(d) { addTitle(d3.select(this), `${d.label}: ${xAxisLabel} ${d._valueX}; ${yAxisLabel} ${d._valueY}`); });
     withTooltip(dots, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d._valueX}`, `${yAxisLabel}: ${d._valueY}`, d.detail]));
-    const legend = svg.append('g').attr('transform', `translate(${margin.left},${height - margin.bottom + 64})`);
-    const legendRows = legend.selectAll('g').data(points.map((point, index) => ({ ...point, _index: index }))).join('g').attr('transform', (_d, index) => {
-      const col = compact ? index % 2 : index;
-      const row = compact ? Math.floor(index / 2) : 0;
-      return `translate(${col * (compact ? plotW / 2 : Math.min(132, plotW / Math.max(points.length, 1)))},${row * 22})`;
-    });
-    legendRows.append('circle').attr('cx', 7).attr('cy', -4).attr('r', 7).attr('fill', (d) => colorForTone(d.tone));
-    legendRows.append('text').attr('x', 7).attr('y', 0).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', chartFont.size.micro).attr('font-weight', fontWeight('label')).text((d) => d._index + 1);
-    legendRows.append('text').attr('x', 20).attr('y', 0).attr('fill', palette.ink).attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('strong')).text((d) => labelText(d.label, compact ? 16 : 14));
-    withTooltip(legendRows, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d.x}`, `${yAxisLabel}: ${d.y}`, d.detail]));
+    // HTML legend: responsive flow grid, wraps cleanly at any width.
+    const legendHost = d3.select(element).append('div').attr('class', 'quadrant-legend');
+    const legendItems = legendHost.selectAll('div.quadrant-legend-item').data(plotPoints).join('div')
+      .attr('class', 'quadrant-legend-item');
+    legendItems.append('span')
+      .attr('class', 'quadrant-legend-badge')
+      .style('background', (d) => colorForTone(d.tone))
+      .text((d) => d._index + 1);
+    legendItems.append('span').attr('class', 'quadrant-legend-label').text((d) => d.label);
+    withTooltip(legendItems, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d._valueX}`, `${yAxisLabel}: ${d._valueY}`, d.detail]));
   };
 
   const renderHeatmap = (element, payload) => {
     const columns = arr(payload.data.columns);
     const rows = arr(payload.data.rows);
-    const heatColors = {
-      1: '#dcebe7',
-      2: '#f2d8a0',
-      3: '#c94f43',
-    };
-    const heatTextColors = {
-      1: palette.ink,
-      2: palette.ink,
-      3: '#fff7ef',
-    };
-    const { svg, width, height } = svgBase(element, Math.max(340, rows.length * 68 + 96));
-    const margin = { top: 58, right: 24, bottom: 26, left: Math.min(220, Math.max(136, Math.max(...rows.map((row) => String(row.label ?? '').length), 8) * 8)) };
-    const x = d3.scaleBand().domain(columns).range([margin.left, width - margin.right]).padding(0.08);
-    const y = d3.scaleBand().domain(rows.map((row) => row.label)).range([margin.top, height - margin.bottom]).padding(0.08);
-    svg.append('g').selectAll('text').data(columns).join('text').attr('x', (d) => x(d) + x.bandwidth() / 2).attr('y', margin.top - 16).attr('text-anchor', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')).text((d) => labelText(d, 14));
-    svg.append('g').selectAll('text').data(rows).join('text').attr('x', margin.left - 12).attr('y', (d) => y(d.label) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('fill', palette.ink).attr('font-size', chartFont.axis).attr('font-weight', fontWeight('strong')).each(function(d) {
-      renderWrappedText(d3.select(this), d.label, { maxChars: 22, maxLines: 2, lineHeight: chartFont.lineHeight.tight });
+    const cellDetail = (cell) => (cell && typeof cell === 'object') ? (cell.detail ?? cell.note ?? '') : '';
+    const cellTone = (cell) => (cell && typeof cell === 'object') ? cell.tone : undefined;
+    d3.select(element).selectAll('*').remove();
+    const root = d3.select(element).append('div').attr('class', 'matrix-table');
+    root.style('--matrix-cols', String(Math.max(columns.length, 1)));
+    // Desktop / tablet: CSS grid table. Header row first, then data rows.
+    const grid = root.append('div').attr('class', 'matrix-grid').attr('role', 'table');
+    const headerRow = grid.append('div').attr('class', 'matrix-row matrix-row-head').attr('role', 'row');
+    headerRow.append('div').attr('class', 'matrix-cell matrix-corner').attr('role', 'columnheader').attr('aria-hidden', 'true');
+    headerRow.selectAll('div.matrix-col-head').data(columns).join('div')
+      .attr('class', 'matrix-cell matrix-col-head')
+      .attr('role', 'columnheader')
+      .text((d) => safeText(d));
+    rows.forEach((row) => {
+      const rowEl = grid.append('div').attr('class', 'matrix-row matrix-row-body').attr('role', 'row');
+      rowEl.append('div').attr('class', 'matrix-cell matrix-rowlabel').attr('role', 'rowheader').text(safeText(row?.label));
+      arr(row?.values).forEach((cell, colIndex) => {
+        const rawText = safeText(cell);
+        const isEmpty = cell == null || rawText === '';
+        const text = isEmpty ? '—' : rawText;
+        const detail = cellDetail(cell);
+        const dataCell = rowEl.append('div')
+          .attr('class', `matrix-cell matrix-data matrix-tone-${cellTone(cell) || 'neutral'}${isEmpty ? ' matrix-empty' : ''}`)
+          .attr('role', 'cell')
+          .text(text);
+        dataCell.datum({ row: safeText(row?.label), column: safeText(columns[colIndex]), text: isEmpty ? 'No data' : text, detail });
+      });
     });
-    const cells = [];
-    rows.forEach((row) => arr(row.values).forEach((cell, colIndex) => cells.push({ row: row.label, column: columns[colIndex], cell, value: riskValue(cell.tone) })));
-    const g = svg.append('g').selectAll('g').data(cells).join('g');
-    g.append('rect').attr('x', (d) => x(d.column)).attr('y', (d) => y(d.row)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 7).attr('fill', (d) => heatColors[d.value]).attr('stroke', '#fff7ef').attr('stroke-width', 3);
-    g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('fill', (d) => heatTextColors[d.value]).attr('font-size', chartFont.small).attr('font-weight', fontWeight('strong')).each(function(d) {
-      renderWrappedText(d3.select(this), d.cell.label ?? d.cell, { maxChars: Math.max(8, Math.floor(x.bandwidth() / 7)), maxLines: Math.max(1, Math.floor(y.bandwidth() / 16)), lineHeight: chartFont.lineHeight.tight });
+    withTooltip(grid.selectAll('.matrix-data'), (d) => tooltipHtml(`${d.row} × ${d.column}`, [d.text, d.detail]));
+    // Narrow viewports: card-per-row layout (one card per data row, listing
+    // each column as a labelled key/value). CSS picks which one is visible.
+    const cards = root.append('div').attr('class', 'matrix-cards');
+    rows.forEach((row) => {
+      const card = cards.append('div').attr('class', 'matrix-card');
+      card.append('div').attr('class', 'matrix-card-title').text(safeText(row?.label));
+      arr(row?.values).forEach((cell, colIndex) => {
+        const rawText = safeText(cell);
+        const isEmpty = cell == null || rawText === '';
+        // Skip drawing a card row entry when the cell is empty AND has no
+        // tone signal worth showing. Keeps the mobile card list tight.
+        if (isEmpty && !cellTone(cell)) return;
+        const text = isEmpty ? '—' : rawText;
+        const detail = cellDetail(cell);
+        const item = card.append('div').attr('class', `matrix-card-item matrix-tone-${cellTone(cell) || 'neutral'}${isEmpty ? ' matrix-empty' : ''}`);
+        item.datum({ row: safeText(row?.label), column: safeText(columns[colIndex]), text: isEmpty ? 'No data' : text, detail });
+        item.append('div').attr('class', 'matrix-card-key').text(safeText(columns[colIndex]));
+        item.append('div').attr('class', 'matrix-card-val').text(text);
+        if (detail) item.append('div').attr('class', 'matrix-card-detail').text(detail);
+      });
     });
-    g.each(function(d) { addTitle(d3.select(this), `${d.row} × ${d.column}: ${d.cell.label ?? d.cell}`); });
-    withTooltip(g, (d) => tooltipHtml(`${d.row} × ${d.column}`, [d.cell.label ?? d.cell, d.cell.detail]));
+    withTooltip(cards.selectAll('.matrix-card-item'), (d) => tooltipHtml(`${d.row} × ${d.column}`, [d.text, d.detail]));
   };
 
   const renderCohort = (element, payload) => {
@@ -1402,10 +1353,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const g = svg.append('g').selectAll('g').data(cells).join('g');
     g.append('rect').attr('x', (d) => x(d.column)).attr('y', (d) => y(d.row)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 7).attr('fill', (d) => color(d.value)).attr('stroke', '#fff7ef').attr('stroke-width', 3);
     g.append('text').attr('x', (d) => x(d.column) + x.bandwidth() / 2).attr('y', (d) => y(d.row) + y.bandwidth() / 2).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('fill', palette.ink).attr('font-size', chartFont.small).attr('font-weight', fontWeight('strong')).each(function(d) {
-      renderWrappedText(d3.select(this), d.cell.label ?? d.cell.displayValue ?? d.value, { maxChars: Math.max(7, Math.floor(x.bandwidth() / 7)), maxLines: Math.max(1, Math.floor(y.bandwidth() / 16)), lineHeight: chartFont.lineHeight.tight });
+      const cellLabel = safeText(d.cell) || (Number.isFinite(d.value) ? String(d.value) : '');
+      renderWrappedText(d3.select(this), cellLabel, { maxChars: Math.max(7, Math.floor(x.bandwidth() / 7)), maxLines: Math.max(1, Math.floor(y.bandwidth() / 16)), lineHeight: chartFont.lineHeight.tight });
     });
-    g.each(function(d) { addTitle(d3.select(this), `${d.row} × ${d.column}: ${d.cell.label ?? d.cell.displayValue ?? d.value}`); });
-    withTooltip(g, (d) => tooltipHtml(`${d.row} × ${d.column}`, [d.cell.label ?? d.cell.displayValue ?? d.value, d.cell.detail]));
+    g.each(function(d) { addTitle(d3.select(this), `${d.row} × ${d.column}: ${safeText(d.cell) || d.value}`); });
+    withTooltip(g, (d) => tooltipHtml(`${d.row} × ${d.column}`, [safeText(d.cell) || String(d.value), d.cell?.detail]));
   };
 
   const RENDERERS = {
@@ -1466,17 +1418,31 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
 </script>
 
 <style>
+  /*
+   * CSS scoping caveat: Astro adds [data-astro-cid-XXX] to every selector in
+   * this <style> block at build time, but elements created at runtime by d3
+   * (`d3.select(...).append('div')`) do NOT receive that attribute. Any rule
+   * targeting d3-created DOM MUST be wrapped in :global(...) — see the
+   * .chart-kpi rules below for the canonical pattern.
+   */
   .native-figure { --figure-width: 760px; --chart-fs-kicker: clamp(0.76rem, 0.1vw + 0.72rem, 0.84rem); --chart-fs-caption: clamp(0.8rem, 0.12vw + 0.76rem, 0.9rem); --chart-fs-body: clamp(0.94rem, 0.14vw + 0.88rem, 1.02rem); --chart-fs-note: clamp(0.9rem, 0.12vw + 0.86rem, 0.98rem); --chart-fw-body: 650; --chart-fw-strong: 800; --chart-fw-label: 900; --chart-tracking-subtle: 0.04em; --chart-leading-caption: 1.35; --chart-leading-body: 1.55; width: min(100%, var(--figure-width)); margin: var(--space-6) auto var(--space-6) 0; padding: var(--space-4); background: var(--surface-paper); border: var(--report-rule); border-top: 2px solid var(--claret); }
   .layout-compact { --figure-width: 560px; }
   .layout-standard { --figure-width: 760px; }
   .layout-wide { --figure-width: 980px; }
+  /* Matrix figures fill more horizontal space than narrative figures: extra
+   * column width directly improves cell legibility. Bump standard/wide caps
+   * for matrix only, without affecting other layouts. */
+  .figure-matrix.layout-standard { --figure-width: 920px; }
+  .figure-matrix.layout-wide { --figure-width: 1120px; }
+  .figure-range.layout-standard { --figure-width: 880px; }
+  .figure-range.layout-wide { --figure-width: 1080px; }
   figcaption { margin-bottom: var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--chart-fs-kicker); font-weight: var(--chart-fw-body); letter-spacing: var(--chart-tracking-subtle); line-height: var(--chart-leading-caption); color: var(--claret); }
   .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--chart-fs-note); line-height: var(--chart-leading-body); }
   .figure-note { margin-top: var(--space-3); }
   .d3-figure { position: relative; width: 100%; min-height: 0; margin: var(--space-3) 0; overflow: visible; }
   .d3-figure svg text { pointer-events: none; user-select: none; }
   .d3-figure .is-hovered rect, .d3-figure .is-hovered circle, .d3-figure .is-hovered polygon, .d3-figure rect.is-hovered, .d3-figure circle.is-hovered, .d3-figure polygon.is-hovered { filter: none; stroke-width: 2.4px; }
-  :global(.d3-chart-tooltip) { --tooltip-font: var(--chart-fs-caption, clamp(0.76rem, 0.25vw + 0.72rem, 0.9rem)); --tooltip-pointer-x: 1.4rem; position: fixed; z-index: 1000; display: grid; gap: 0.34rem; width: max-content; max-width: min(24rem, calc(100vw - 1.5rem)); border: 1px solid color-mix(in srgb, var(--claret) 18%, var(--rule)); border-radius: 0.82rem; background: color-mix(in srgb, var(--surface-paper) 94%, white); color: var(--ink-page); padding: 0.72rem 0.82rem; font-family: var(--font-sans); font-size: var(--tooltip-font); line-height: var(--chart-leading-caption, 1.36); box-shadow: none; opacity: 0; pointer-events: none; transform: translate3d(0, 0.35rem, 0) scale(0.98); transform-origin: var(--tooltip-pointer-x) top; transition: opacity 120ms ease, transform 120ms ease; }
+  :global(.d3-chart-tooltip) { --tooltip-font: var(--chart-fs-caption, clamp(0.76rem, 0.25vw + 0.72rem, 0.9rem)); --tooltip-pointer-x: 1.4rem; position: fixed; z-index: 1000; display: grid; gap: 0.34rem; width: max-content; max-width: min(24rem, calc(100vw - 1.5rem)); border: 1px solid color-mix(in srgb, var(--claret) 18%, var(--rule)); border-radius: var(--radius-card, 0.5rem); background: color-mix(in srgb, var(--surface-paper) 94%, white); color: var(--ink-page); padding: 0.72rem 0.82rem; font-family: var(--font-sans); font-size: var(--tooltip-font); line-height: var(--chart-leading-caption, 1.36); box-shadow: none; opacity: 0; pointer-events: none; transform: translate3d(0, 0.35rem, 0) scale(0.98); transform-origin: var(--tooltip-pointer-x) top; transition: opacity 120ms ease, transform 120ms ease; }
   :global(.d3-chart-tooltip::before) { content: ''; position: absolute; left: var(--tooltip-pointer-x); width: 0.72rem; height: 0.72rem; background: inherit; border: inherit; transform: translateX(-50%) rotate(45deg); z-index: 0; }
   :global(.d3-chart-tooltip[data-placement-y='bottom']::before) { top: -0.39rem; border-right: 0; border-bottom: 0; }
   :global(.d3-chart-tooltip[data-placement-y='top']::before) { bottom: -0.39rem; border-left: 0; border-top: 0; }
@@ -1485,6 +1451,67 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
   :global(.d3-chart-tooltip span) { display: block; color: var(--caption-gray); }
   :global(.d3-chart-tooltip span + span) { padding-top: 0.12rem; border-top: 1px solid color-mix(in srgb, var(--rule) 62%, transparent); }
   .chart-bar, .chart-quadrant, .chart-matrix { min-height: 0; }
+  .chart-kpi, .chart-matrix, .chart-quadrant, .chart-range { container-type: inline-size; }
+  /* ---- range figure (HTML rows + CSS bar; mobile-friendly) ---- */
+  :global(.chart-range .range-list) { display: flex; flex-direction: column; gap: 0.7rem; padding-bottom: 1.6rem; position: relative; }
+  :global(.chart-range .range-row) { display: grid; grid-template-columns: minmax(7rem, 14rem) 1fr minmax(6rem, auto); gap: 0.5rem 1rem; align-items: center; padding: 0.5rem 0.6rem; border-radius: var(--radius-card, 0.5rem); background: rgba(255,250,245,0.55); }
+  :global(.chart-range .range-row-label) { font-family: var(--font-sans); font-size: var(--chart-fs-caption); font-weight: var(--chart-fw-strong, 800); color: var(--ink-page, #33302e); overflow-wrap: anywhere; word-break: break-word; min-width: 0; line-height: 1.3; }
+  :global(.chart-range .range-row-track-cell) { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+  :global(.chart-range .range-row-track) { position: relative; height: 0.85rem; border-radius: 999px; background: rgba(212,196,184,0.42); }
+  :global(.chart-range .range-row-band) { position: absolute; top: 0; bottom: 0; min-width: 0.4rem; border-radius: 999px; opacity: 0.9; }
+  :global(.chart-range .range-row-mid-dot) { position: absolute; top: 50%; width: 0.55rem; height: 0.55rem; border-radius: 999px; background: var(--surface-paper, #fff7ef); border: 2px solid var(--ink-page, #33302e); transform: translate(-50%, -50%); box-shadow: 0 0 0 1px rgba(51,48,46,0.06); }
+  :global(.chart-range .range-row-meta) { display: flex; justify-content: space-between; gap: 0.5rem; font-family: var(--font-sans); font-size: var(--chart-fs-kicker); color: var(--caption-gray, #6b625c); white-space: nowrap; }
+  :global(.chart-range .range-row-meta-mid) { font-weight: var(--chart-fw-strong, 800); color: var(--ink-page, #33302e); }
+  :global(.chart-range .range-row-summary) { font-family: var(--font-sans); font-size: var(--chart-fs-caption); font-weight: var(--chart-fw-strong, 800); color: var(--claret, #990f3d); text-align: right; white-space: nowrap; }
+  :global(.chart-range .range-row-detail) { grid-column: 1 / -1; font-size: var(--chart-fs-kicker); color: var(--caption-gray, #6b625c); margin-top: 0.15rem; }
+  :global(.chart-range .range-axis) { position: relative; height: 1.2rem; margin-top: 0.4rem; border-top: 1px dashed var(--rule, #d8ccc2); }
+  :global(.chart-range .range-axis-tick) { position: absolute; top: 0.3rem; transform: translateX(-50%); font-family: var(--font-sans); font-size: var(--chart-fs-kicker); color: var(--caption-gray, #6b625c); white-space: nowrap; }
+  :global(.chart-range .range-axis-tick:first-child) { transform: translateX(0); }
+  :global(.chart-range .range-axis-tick:last-child) { transform: translateX(-100%); }
+  /* Narrow viewports: stack cell stack vertically per row, drop fixed col widths. */
+  @container (max-width: 540px) { :global(.chart-range .range-row) { grid-template-columns: 1fr; gap: 0.35rem; padding: 0.55rem 0.7rem; } :global(.chart-range .range-row-summary) { text-align: left; white-space: normal; } }
+  /* ---- quadrant figure HTML legend (auto-flow grid, wraps cleanly) ---- */
+  :global(.chart-quadrant .quadrant-legend) { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); gap: 0.4rem 0.85rem; margin-top: 0.6rem; }
+  :global(.chart-quadrant .quadrant-legend-item) { display: flex; align-items: center; gap: 0.45rem; min-width: 0; font-family: var(--font-sans); font-size: var(--chart-fs-caption); color: var(--ink-page, #33302e); }
+  :global(.chart-quadrant .quadrant-legend-badge) { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 1.2rem; height: 1.2rem; border-radius: 999px; color: #fff7ef; font-size: var(--chart-fs-kicker); font-weight: var(--chart-fw-strong, 800); line-height: 1; }
+  :global(.chart-quadrant .quadrant-legend-label) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* ---- matrix figure (HTML grid + card fallback for narrow widths) ---- */
+  :global(.chart-matrix .matrix-table) { --matrix-row-head-w: clamp(6rem, 22cqi, 10rem); --matrix-tone-positive: #dcebe7; --matrix-tone-warning: #f2d8a0; --matrix-tone-risk: #f4c7bd; --matrix-tone-critical: #e8a89a; --matrix-tone-high: #f4c7bd; --matrix-tone-opportunity: #f7e3b0; --matrix-tone-neutral: #fff3e3; }
+  :global(.chart-matrix .matrix-grid) { display: grid; grid-template-columns: var(--matrix-row-head-w) repeat(var(--matrix-cols, 1), minmax(0, 1fr)); gap: 4px; }
+  :global(.chart-matrix .matrix-row) { display: contents; }
+  :global(.chart-matrix .matrix-cell) { min-width: 0; padding: 0.55rem 0.6rem; font-family: var(--font-sans); font-size: var(--chart-fs-caption); line-height: 1.3; color: var(--ink-page, #33302e); overflow-wrap: anywhere; word-break: break-word; hyphens: auto; }
+  :global(.chart-matrix .matrix-corner) { background: transparent; }
+  :global(.chart-matrix .matrix-col-head) { font-weight: var(--chart-fw-strong, 800); text-align: center; color: var(--ink-page, #33302e); border-bottom: 1px solid var(--rule, #d8ccc2); padding-bottom: 0.4rem; }
+  :global(.chart-matrix .matrix-rowlabel) { font-weight: var(--chart-fw-strong, 800); display: flex; align-items: center; padding-right: 0.75rem; }
+  :global(.chart-matrix .matrix-data) { border-radius: var(--radius-card, 0.5rem); background: var(--matrix-cell-bg, var(--matrix-tone-neutral)); }
+  :global(.chart-matrix .matrix-tone-positive) { --matrix-cell-bg: var(--matrix-tone-positive); }
+  :global(.chart-matrix .matrix-tone-warning) { --matrix-cell-bg: var(--matrix-tone-warning); }
+  :global(.chart-matrix .matrix-tone-opportunity) { --matrix-cell-bg: var(--matrix-tone-opportunity); }
+  :global(.chart-matrix .matrix-tone-risk), :global(.chart-matrix .matrix-tone-critical), :global(.chart-matrix .matrix-tone-high), :global(.chart-matrix .matrix-tone-negative) { --matrix-cell-bg: var(--matrix-tone-risk); }
+  :global(.chart-matrix .matrix-tone-neutral) { --matrix-cell-bg: var(--matrix-tone-neutral); }
+  :global(.chart-matrix .matrix-empty) { --matrix-cell-bg: rgba(212,196,184,0.18); color: var(--caption-gray, #6b625c); font-style: italic; }
+  :global(.chart-matrix .matrix-cards) { display: none; }
+  :global(.chart-matrix .matrix-card) { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.75rem 0.85rem; border: 1px solid var(--rule, #d8ccc2); border-left: 3px solid var(--claret, #990f3d); border-radius: var(--radius-card, 0.5rem); background: var(--surface-paper, #fff7ef); }
+  :global(.chart-matrix .matrix-card + .matrix-card) { margin-top: 0.6rem; }
+  :global(.chart-matrix .matrix-card-title) { font-family: var(--font-display, var(--font-sans)); font-weight: var(--chart-fw-strong, 800); font-size: var(--chart-fs-body); color: var(--claret, #990f3d); margin-bottom: 0.2rem; }
+  :global(.chart-matrix .matrix-card-item) { padding: 0.45rem 0.55rem; border-radius: calc(var(--radius-card, 0.5rem) * 0.8); background: var(--matrix-cell-bg, var(--matrix-tone-neutral)); }
+  :global(.chart-matrix .matrix-card-item + .matrix-card-item) { margin-top: 0.35rem; }
+  :global(.chart-matrix .matrix-card-key) { font-size: var(--chart-fs-kicker); font-weight: var(--chart-fw-strong, 800); text-transform: uppercase; letter-spacing: var(--chart-tracking-subtle); color: var(--caption-gray, #6b625c); }
+  :global(.chart-matrix .matrix-card-val) { font-size: var(--chart-fs-caption); color: var(--ink-page, #33302e); overflow-wrap: anywhere; }
+  :global(.chart-matrix .matrix-card-detail) { font-size: var(--chart-fs-kicker); color: var(--caption-gray, #6b625c); margin-top: 0.2rem; }
+  /* Below ~520px container width, switch from grid to card layout. */
+  @container (max-width: 520px) { :global(.chart-matrix .matrix-grid) { display: none; } :global(.chart-matrix .matrix-cards) { display: block; } }
+  :global(.chart-kpi .kpi-grid) { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr)); gap: 0.75rem; }
+  :global(.chart-kpi .kpi-card) { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; padding: 0.75rem 0.85rem 0.85rem; border: 1px solid var(--rule, #d8ccc2); border-left: 3px solid var(--claret, #990f3d); border-radius: var(--radius-card, 0.5rem); background: var(--surface-paper, #fff7ef); }
+  :global(.chart-kpi .kpi-card-label) { display: flex; align-items: center; gap: 0.4rem; min-width: 0; font-family: var(--font-sans); font-size: var(--chart-fs-caption); font-weight: var(--chart-fw-label, 900); line-height: 1.2; color: var(--ink-page, #33302e); }
+  :global(.chart-kpi .kpi-card-dot) { flex: none; width: 0.45rem; height: 0.45rem; border-radius: 999px; background: currentColor; color: var(--claret, #990f3d); }
+  :global(.chart-kpi .kpi-card-label-text) { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
+  :global(.chart-kpi .kpi-card-value) { font-family: var(--font-display, var(--font-sans)); font-weight: var(--chart-fw-strong, 800); color: var(--claret, #990f3d); line-height: 1.1; min-width: 0; overflow-wrap: anywhere; word-break: break-word; hyphens: auto; font-size: clamp(1.05rem, 4.4cqi, 1.55rem); }
+  :global(.chart-kpi .kpi-card-detail) { font-family: var(--font-sans); font-size: var(--chart-fs-caption); line-height: 1.35; color: var(--caption-gray, #6b625c); min-width: 0; overflow-wrap: anywhere; }
+  :global(.chart-kpi .kpi-tone-positive) { border-left-color: #0f766e; } :global(.chart-kpi .kpi-tone-positive .kpi-card-dot) { color: #0f766e; }
+  :global(.chart-kpi .kpi-tone-risk), :global(.chart-kpi .kpi-tone-critical), :global(.chart-kpi .kpi-tone-high) { border-left-color: var(--risk-red); } :global(.chart-kpi .kpi-tone-risk .kpi-card-dot), :global(.chart-kpi .kpi-tone-critical .kpi-card-dot), :global(.chart-kpi .kpi-tone-high .kpi-card-dot) { color: var(--risk-red); }
+  :global(.chart-kpi .kpi-tone-opportunity) { border-left-color: #b8860b; } :global(.chart-kpi .kpi-tone-opportunity .kpi-card-dot) { color: #b8860b; }
+  @container (max-width: 360px) { :global(.chart-kpi .kpi-grid) { grid-template-columns: 1fr; gap: 0.6rem; } :global(.chart-kpi .kpi-card) { padding: 0.65rem 0.75rem; } }
   .figure-fallback { border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); padding: var(--space-4); }
   .figure-fallback strong { display: block; margin-bottom: var(--space-2); font-family: var(--font-display); font-size: var(--chart-fs-body); font-weight: var(--chart-fw-strong); }
   .figure-fallback p { margin: 0; color: var(--caption-gray); font-size: var(--chart-fs-body); line-height: var(--chart-leading-body); }

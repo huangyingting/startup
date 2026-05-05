@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content';
+import type { APIContext } from 'astro';
 
-export async function GET(context) {
+export async function GET(context: APIContext) {
   const reports = await getCollection('reports');
   const base = String(context.site ?? 'https://startup.genisisiq.com').replace(/\/$/, '');
   const urls = ['/', '/archive/', '/sectors/', '/top-rated/', '/search/', ...reports.map((entry) => `/${entry.data.folderSlug}/`)];
