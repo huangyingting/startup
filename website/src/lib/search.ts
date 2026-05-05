@@ -20,8 +20,6 @@ export function buildSearchDocuments(entries: CollectionEntry<'reports'>[], base
     const stage = entry.data.company.stage ?? '';
     const sector = entry.data.company.sector ?? '';
     const headline = entry.data.headline;
-    const tags = [entry.data.recommendation, entry.data.confidence, ...entry.data.topStrengths, ...entry.data.topRisks];
-    const parts = [title, headline, entry.data.company.website, sector, stage, ...tags];
     return {
       id: entry.id,
       href: `${base}${entry.data.folderSlug}/`,
@@ -29,11 +27,12 @@ export function buildSearchDocuments(entries: CollectionEntry<'reports'>[], base
       headline,
       sector,
       stage,
-      tags,
+      tags: [],
       rating: entry.data.overallScore,
       date: entry.data.runDate,
       runTimestamp: entry.data.runTimestamp,
-      searchText: parts.join(' ').toLowerCase(),
+      // Search index now only matches against the company name to keep results predictable.
+      searchText: title.toLowerCase(),
     };
   });
 }

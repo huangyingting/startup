@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReportCard from '../../components/ReportCard.astro';
 import { sortNewest, tagSlug } from '../../lib/reports';
 
 const reports = sortNewest(await getCollection('reports'));
@@ -15,15 +16,43 @@ const sectors = [...reports.reduce((map, entry) => {
 <BaseLayout title="Sector index — Startup Diligence" description="Browse diligence reports by market category.">
   <section class="sr-container sr-hero">
     <h1>Sectors.</h1>
-    <p class="sr-deck">Browse diligence reports by market category — enterprise AI, climate, healthcare, consumer, fintech, and more.</p>
+    <p class="sr-deck">Browse diligence reports by market category. Jump to any sector below.</p>
   </section>
-  <section class="sr-container sr-section">
-    <h2>Sectors</h2>
-    <div class="sr-grid">
-      {sectors.map(([sector, entries]) => {
-        const avg = entries.reduce((sum, entry) => sum + entry.data.overallScore, 0) / entries.length;
-        return <a class="sr-card" href={`#${tagSlug(sector)}`} id={tagSlug(sector)}><div class="sr-kicker">{sector}</div><h3>{entries.length} dossiers</h3><p>Avg rating {avg.toFixed(1)} · Recent month {entries[0].data.runDate.slice(0, 7)}</p><span class="sr-pill">Open sector →</span></a>;
-      })}
-    </div>
-  </section>
+
+  <nav class="sr-container sector-jump" aria-label="Sectors">
+    {sectors.map(([sector, entries]) => (
+      <a href={`#${tagSlug(sector)}`}>
+        <span class="sector-jump-label">{sector}</span>
+        <span class="sector-jump-count">{entries.length}</span>
+      </a>
+    ))}
+  </nav>
+
+  {sectors.map(([sector, entries]) => {
+    const avg = entries.reduce((sum, entry) => sum + entry.data.overallScore, 0) / entries.length;
+    return (
+      <section class="sr-container sr-section sector-group" id={tagSlug(sector)}>
+        <header class="sector-header">
+          <h2>{sector}</h2>
+          <span class="sector-meta">{entries.length} {entries.length === 1 ? 'report' : 'reports'} · Avg rating {avg.toFixed(1)}</span>
+        </header>
+        <div class="sr-grid">
+          {entries.map((entry) => <ReportCard entry={entry} />)}
+        </div>
+      </section>
+    );
+  })}
+
+  <style>
+    .sector-jump { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-block: var(--space-3) var(--space-6); padding-block: var(--space-3); border-top: var(--report-rule); border-bottom: var(--report-rule); }
+    .sector-jump a { display: inline-flex; align-items: center; gap: var(--space-2); padding: 4px var(--space-3); border: 1px solid color-mix(in srgb, var(--claret) 22%, var(--hairline)); border-radius: 999px; background: var(--surface-paper); color: var(--ink-page); text-decoration: none; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 700; line-height: 1.2; transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease; }
+    .sector-jump a:hover, .sector-jump a:focus-visible { background: var(--claret); border-color: var(--claret); color: #fff7ef; outline: none; }
+    .sector-jump-count { display: inline-grid; place-items: center; min-width: 1.5rem; height: 1.5rem; padding: 0 0.4rem; border-radius: 999px; background: color-mix(in srgb, var(--claret) 12%, transparent); color: var(--claret); font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 800; line-height: 1; }
+    .sector-jump a:hover .sector-jump-count, .sector-jump a:focus-visible .sector-jump-count { background: rgba(255,255,255,0.22); color: #fff7ef; }
+    .sector-group { scroll-margin-top: var(--space-5); padding-block: var(--space-5); border-top: var(--report-rule); }
+    .sector-group:first-of-type { border-top: 0; }
+    .sector-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); padding-bottom: var(--space-2); border-bottom: 2px solid var(--claret); }
+    .sector-header h2 { margin: 0; font-family: var(--font-display); font-size: var(--report-fs-section, var(--fs-2xl)); font-weight: 700; letter-spacing: var(--tracking-display-snug); color: var(--ink-page); }
+    .sector-meta { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
+  </style>
 </BaseLayout>
