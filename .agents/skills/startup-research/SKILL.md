@@ -127,7 +127,7 @@ After all analysis chapters pass:
 1. Author `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md`. It carries the judgment fields the analysis chapters do not encode (recommendation, confidence, risk rating, valuation stance, headline, overall score, top strengths/risks, unresolved gaps, cover metrics, startup introduction, optional appendices and disclaimer override).
 2. Run the finalization pipeline:
    `node .agents/skills/startup-research/scripts/finalize.mjs <reportFolder>`
-   This runs ledger → cross-chapter → assemble → index in order. It stops at the first failing step so you can fix `report-meta.yaml` (or the offending chapter) and re-run. Pass `--skip-index` if you only want the per-report artifacts.
+   Two phases. Phase 1 (per-report): `ledger` (only on first run, or with `--rebuild`) → `cross-chapter` → `assemble` → `check-report`. Phase 2 (commit, only if Phase 1 succeeds): `postmortem` → `build-index`. Stops at the first failing step so you can fix `report-meta.yaml` (or the offending chapter) and re-run; global state (`_postmortem.yaml`, `_index.yaml`) is only touched after the per-report gate passes. Pass `--skip-index` to skip the global index refresh; pass `--rebuild` to force a fresh ledger consolidation (which reassigns canonical claim IDs).
 3. Validate:
    `npm run validate`
 
