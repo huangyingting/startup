@@ -329,17 +329,23 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
     const stageW = innerW / Math.max(stages.length, 1);
-    const cardW = compact ? Math.min(252, innerW - 18) : Math.min(190, Math.max(140, stageW - 30));
+    /* In compact (vertical) mode reserve a fixed-width gutter on the
+     * right of every card so edges can be routed cleanly along it instead
+     * of crossing through cards. Each edge gets its own "lane" in the
+     * gutter so multiple incoming/outgoing edges don't overlap. */
+    const compactGutter = compact ? 64 : 0;
+    const cardW = compact ? Math.min(252, innerW - 18 - compactGutter) : Math.min(190, Math.max(140, stageW - 30));
     const cardH = compact ? 66 : 74;
+    const compactCenterX = margin.left + cardW / 2;
     const stageLabels = [];
     const positions = [];
     if (compact) {
       let y = margin.top;
       stages.forEach((stage, stageIndex) => {
-        stageLabels.push({ label: stageNames[stageIndex], x: width / 2, y: y + 2 });
+        stageLabels.push({ label: stageNames[stageIndex], x: compactCenterX, y: y + 2 });
         y += 34;
         stage.forEach((node, index) => {
-          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: width / 2, y: y + cardH / 2 + index * (cardH + 16) });
+          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: compactCenterX, y: y + cardH / 2 + index * (cardH + 16) });
         });
         y += stage.length * cardH + Math.max(0, stage.length - 1) * 16 + 36;
       });
@@ -354,8 +360,32 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
     }
     const positionedByKey = new Map(positions.map((node) => [node._key, node]));
     const routedEdges = edges.map((edge, index) => ({ ...edge, _edgeIndex: index, source: positionedByKey.get(edge.from), target: positionedByKey.get(edge.to) })).filter((edge) => edge.source && edge.target);
+    /* Route edges through explicit ports rather than every line entering /
+     * leaving a card at its centre. This is the key to keeping DAGs readable:
+     * a node with three outgoing edges gets three different right-side exit
+     * points; a node with two incoming edges gets two different left-side
+     * entry points. Lanes are also allocated per stage-pair gutter instead of
+     * globally, so parallel edges only compete with neighbours in the same
+     * gutter. */
+    const portOffset = (index, count) => {
+      if (count <= 1) return 0;
+      const step = Math.min(18, Math.max(10, (cardH - 28) / Math.max(1, count - 1)));
+      return (index - (count - 1) / 2) * step;
+    };
+    const bySource = d3.group(routedEdges, (edge) => edge.source._key);
+    const byTarget = d3.group(routedEdges, (edge) => edge.target._key);
+    const byStagePair = d3.group(routedEdges, (edge) => `${edge.source._stage}->${edge.target._stage}`);
+    for (const group of bySource.values()) {
+      group.forEach((edge, index) => { edge._sourcePortIndex = index; edge._sourcePortCount = group.length; });
+    }
+    for (const group of byTarget.values()) {
+      group.forEach((edge, index) => { edge._targetPortIndex = index; edge._targetPortCount = group.length; });
+    }
+    for (const group of byStagePair.values()) {
+      group.forEach((edge, index) => { edge._laneIndex = index; edge._laneCount = group.length; });
+    }
     const defs = svg.append('defs');
-    defs.append('marker').attr('id', `${payload.id}-dependency-arrow`).attr('viewBox', '0 -5 10 10').attr('refX', 8.2).attr('refY', 0).attr('markerWidth', 5.8).attr('markerHeight', 5.8).attr('orient', 'auto')
+    defs.append('marker').attr('id', `${payload.id}-dependency-arrow`).attr('viewBox', '0 -5 10 10').attr('refX', 8.2).attr('refY', 0).attr('markerWidth', 8).attr('markerHeight', 8).attr('orient', 'auto')
       .append('path').attr('d', 'M0,-4L9,0L0,4').attr('fill', palette.claret);
     const shadow = defs.append('filter').attr('id', `${payload.id}-dependency-shadow`).attr('x', '-16%').attr('y', '-22%').attr('width', '132%').attr('height', '150%');
     shadow.append('feDropShadow').attr('dx', 0).attr('dy', 4).attr('stdDeviation', 4).attr('flood-color', 'rgba(51,48,46,0.13)');
@@ -370,18 +400,61 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .text((label) => label.label);
     const edgePath = (edge) => {
       if (compact) {
-        const sx = edge.source.x + cardW / 2 + 8;
-        const sy = edge.source.y;
-        const laneOffset = (edge._edgeIndex - (Math.max(routedEdges.length, 1) - 1) / 2) * 16;
-        const tx = edge.target.x + Math.max(-cardW / 2 + 26, Math.min(cardW / 2 - 26, laneOffset));
-        const ty = edge.target.y - cardH / 2 - 8;
-        const busX = Math.min(width - margin.right - 10, sx + 68 + edge._edgeIndex * 8);
-        return `M${sx},${sy} C${busX},${sy} ${busX},${ty - 34} ${tx},${ty}`;
+        /* Manhattan-style routing in the right gutter:
+         *   1. exit horizontally from the right edge of the source card
+         *   2. drop vertically along a per-edge lane in the gutter
+         *   3. re-enter horizontally into the right edge of the target
+         * Each edge gets its own busX so siblings stay parallel and no
+         * line ever crosses through a card body. */
+        const cardRight = edge.source.x + cardW / 2;
+        const sx = cardRight;
+        const sy = edge.source.y + portOffset(edge._sourcePortIndex, edge._sourcePortCount);
+        const tx = edge.target.x + cardW / 2;
+        const ty = edge.target.y + portOffset(edge._targetPortIndex, edge._targetPortCount);
+        const laneCount = Math.max(edge._laneCount ?? 1, 1);
+        const laneStep = Math.min(10, Math.max(6, (compactGutter - 18) / laneCount));
+        const busX = cardRight + 14 + (edge._laneIndex ?? 0) * laneStep;
+        const cornerR = 6;
+        const dir = ty > sy ? 1 : -1;
+        return [
+          `M${sx},${sy}`,
+          `L${busX - cornerR},${sy}`,
+          `Q${busX},${sy} ${busX},${sy + cornerR * dir}`,
+          `L${busX},${ty - cornerR * dir}`,
+          `Q${busX},${ty} ${busX - cornerR},${ty}`,
+          `L${tx + 4},${ty}`,
+        ].join(' ');
       }
-      const sx = edge.source.x + cardW / 2 + 10;
-      const tx = edge.target.x - cardW / 2 - 12;
-      const midX = (sx + tx) / 2;
-      return `M${sx},${edge.source.y} C${midX},${edge.source.y} ${midX},${edge.target.y} ${tx},${edge.target.y}`;
+      /* Wide (horizontal) routing.
+       * Dense risk maps read best with direct links, not bus-style wiring.
+       * Cross-stage edges use a shallow cubic from source.right to target.left
+       * so the eye can follow one relationship at a time. Same-stage edges
+       * (e.g. Customer trust -> Margin pressure) use a compact U-turn routed
+       * in that stage's right-side gutter. */
+      const sourceOut = portOffset(edge._sourcePortIndex, edge._sourcePortCount);
+      const targetIn = portOffset(edge._targetPortIndex, edge._targetPortCount);
+      const sy = edge.source.y + sourceOut;
+      const ty = edge.target.y + targetIn;
+      if (edge.source._stage === edge.target._stage) {
+        const side = edge.source.x + cardW / 2 + 18 + (edge._laneIndex ?? 0) * 8;
+        const sx = edge.source.x + cardW / 2 + 4;
+        const tx = edge.target.x + cardW / 2 + 4;
+        const r = 7;
+        const dir = ty > sy ? 1 : -1;
+        return [
+          `M${sx},${sy}`,
+          `L${side - r},${sy}`,
+          `Q${side},${sy} ${side},${sy + r * dir}`,
+          `L${side},${ty - r * dir}`,
+          `Q${side},${ty} ${side - r},${ty}`,
+          `L${tx},${ty}`,
+        ].join(' ');
+      }
+      const sx = edge.source.x + cardW / 2 + 5;
+      const tx = edge.target.x - cardW / 2 - 10;
+      const dx = Math.max(40, tx - sx);
+      const curve = Math.min(90, Math.max(42, dx * 0.42));
+      return `M${sx},${sy} C${sx + curve},${sy} ${tx - curve},${ty} ${tx},${ty}`;
     };
     const edgeLayer = svg.append('g');
     edgeLayer.selectAll('path.visible-dependency-edge').data(routedEdges).join('path')
@@ -389,8 +462,10 @@ const chartPayload = usesD3Chart ? { id: chartId, type, title: figure?.title, da
       .attr('d', edgePath)
       .attr('fill', 'none')
       .attr('stroke', (edge) => colorForTone(edge.source.tone ?? edge.target.tone))
-      .attr('stroke-width', 1.8)
-      .attr('opacity', 0.68)
+      .attr('stroke-width', 2.1)
+      .attr('opacity', 0.88)
+      .attr('stroke-linecap', 'round')
+      .attr('stroke-linejoin', 'round')
       .attr('marker-end', `url(#${payload.id}-dependency-arrow)`);
     const hitEdges = edgeLayer.selectAll('path.dependency-edge-hit').data(routedEdges).join('path')
       .attr('class', 'dependency-edge-hit')
