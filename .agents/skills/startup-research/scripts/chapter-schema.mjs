@@ -17,8 +17,8 @@ import {
   FIGURE_DATA_FIELDS,
   FIGURE_LAYOUTS,
   FIGURE_TYPES,
-} from './figures.mjs';
-import { asDateString } from './utils.mjs';
+} from '../../../../website/src/lib/figures.mjs';
+import { asDateString, hasText } from './utils.mjs';
 
 // Single source of truth for the report schema version. Imported by both
 // check-chapter (per-file head check) and check-report (cross-file head
@@ -36,33 +36,33 @@ const COORDINATE_FIGURE_TYPES = new Set(['quadrant']);
 const NUMERIC_VALUE_FIGURE_TYPES = new Set(['bar', 'waterfall', 'funnel']);
 const MATRIX_FIGURE_TYPES = new Set(['matrix', 'cohort']);
 
-// ---- enum sets shared with check-chapter (also referenced there) ----------
+// ---- enum sets used internally by the schema helpers ---------------------
+// All enum sets are non-exported: every consumer goes through the helper
+// functions below (checkSourceSchema, checkClaimSchema, etc.) and never needs
+// the raw set. Keeping the sets local avoids surface-area drift between this
+// module and the consumers.
 
-export const SOURCE_ACCESS_STATUSES = new Set(['ok', 'paywall', 'js-only', 'broken', 'rate-limited']);
-export const SOURCE_STANCES = new Set(['confirming', 'adverse', 'neutral', 'unknown']);
-export const SOURCE_TYPES = new Set([
+const SOURCE_ACCESS_STATUSES = new Set(['ok', 'paywall', 'js-only', 'broken', 'rate-limited']);
+const SOURCE_STANCES = new Set(['confirming', 'adverse', 'neutral', 'unknown']);
+const SOURCE_TYPES = new Set([
   'official', 'filing', 'regulatory', 'news', 'analyst-market-data',
   'technical-docs', 'customer-proof', 'partner-proof', 'developer-signal',
   'review', 'legal', 'other',
 ]);
-export const SOURCE_REPUTATION_TIERS = new Set(['high', 'medium', 'low']);
-export const SOURCE_INDEPENDENCE = new Set(['company', 'partner', 'customer', 'competitor', 'independent', 'unknown']);
+const SOURCE_REPUTATION_TIERS = new Set(['high', 'medium', 'low']);
+const SOURCE_INDEPENDENCE = new Set(['company', 'partner', 'customer', 'competitor', 'independent', 'unknown']);
 
-export const CLAIM_TYPES = new Set([
+const CLAIM_TYPES = new Set([
   'observed', 'company-claimed', 'third-party-reported',
   'estimated', 'inferred', 'open-question', 'conflicting',
 ]);
-export const CLAIM_CONFIDENCES = new Set(['high', 'medium', 'low']);
-export const CLAIM_FRESHNESS = new Set(['current', 'recent', 'historical', 'unknown']);
+const CLAIM_CONFIDENCES = new Set(['high', 'medium', 'low']);
+const CLAIM_FRESHNESS = new Set(['current', 'recent', 'historical', 'unknown']);
 
 export const CALLOUT_TYPES = new Set(['strength', 'risk', 'recommendation', 'insight', 'assumption']);
 export const ENUMERATION_COVERAGE = new Set(['exhaustive', 'partial', 'sample']);
 
 // ---- helpers --------------------------------------------------------------
-
-function hasText(value) {
-  return typeof value === 'string' && value.trim().length > 0;
-}
 
 function isFiniteNumber(value) {
   return typeof value === 'number' && Number.isFinite(value);
@@ -458,9 +458,9 @@ export function checkUniqueIds(rows, { label, pattern, path }) {
 
 // Walks any value recursively and collects every embedded
 //   { figureRef: 'F###' } / { tableRef: 'T###' }
-// occurrence, returning [['figure', id], ['table', id], ...]. Generic enough
-// for chapter sections, full-report chapters/appendices, etc.
-export function collectArtifactRefs(value, out = []) {
+// occurrence, returning [['figure', id], ['table', id], ...]. Internal helper
+// for checkArtifactRefs.
+function collectArtifactRefs(value, out = []) {
   if (Array.isArray(value)) {
     for (const item of value) collectArtifactRefs(item, out);
     return out;

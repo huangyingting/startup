@@ -15,8 +15,8 @@
 // chapter-wide root cause).
 import { existsSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { canonicalSourceUrl, collectClaimRefs, getAnalysisArtifacts, normalizeDomain, tryReadYaml } from './utils.mjs';
-import { validateFigureShape } from './figures.mjs';
+import { canonicalSourceUrl, collectClaimRefs, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
+import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
 import {
   checkArtifactRefs,
   checkCalloutSchema,
@@ -26,6 +26,7 @@ import {
   checkSourceSchema,
   checkTableSchema,
   checkUniqueIds,
+  ENUMERATION_COVERAGE,
 } from './chapter-schema.mjs';
 
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
@@ -275,17 +276,6 @@ function checkTableFigureOverlap(file, doc) {
 
 const PRIMARY_TIER_TYPES = new Set(['filing', 'regulatory', 'legal', 'official']);
 
-function registrableDomain(url) {
-  const host = normalizeDomain(url);
-  if (!host) return '';
-  const parts = host.split('.');
-  // Keep last two labels for normal TLDs; last three for known multi-part TLDs (rough heuristic).
-  if (parts.length <= 2) return host;
-  const multiPart = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
-  const lastTwo = parts.slice(-2).join('.');
-  return multiPart.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
-}
-
 function loadEarlierChapterUrls(reportFolder, currentSpec, allSpecs) {
   const urls = new Set();
   const earlier = allSpecs.filter((s) => s.order < currentSpec.order);
@@ -392,8 +382,6 @@ function checkHighConfidenceCorroboration(file, doc, gate) {
     }
   }
 }
-
-const ENUMERATION_COVERAGE = new Set(['exhaustive', 'partial', 'sample']);
 
 function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
   const enumerationPlans = [...plannedTablesByName.values()].filter((plan) => plan.enumeration === true);

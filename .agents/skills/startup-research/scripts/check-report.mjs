@@ -21,10 +21,12 @@ import {
   FINAL_ARTIFACTS,
   getAnalysisArtifacts,
   getCoreArtifacts,
+  hasText,
   loadWorkflowConfig,
   tryReadYaml,
 } from './utils.mjs';
 import {
+  CALLOUT_TYPES,
   checkArtifactRefs,
   checkCalloutSchema,
   checkClaimSchema,
@@ -48,14 +50,6 @@ const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 const failures = [];
 const fail = (message) => failures.push(message);
-
-// ---------------------------------------------------------------------------
-// helpers
-// ---------------------------------------------------------------------------
-
-function hasText(value) {
-  return typeof value === 'string' && value.trim().length > 0;
-}
 
 // ---------------------------------------------------------------------------
 // ledger schema
@@ -103,7 +97,6 @@ function checkReportBlocks(run, reportDoc) {
   const blocks = [];
   collectBlocks(reportDoc?.chapters ?? [], 'chapters', blocks);
   collectBlocks(reportDoc?.appendices ?? [], 'appendices', blocks);
-  const CALLOUT_TYPES = new Set(['strength', 'risk', 'recommendation', 'insight', 'assumption']);
 
   for (const [location, block] of blocks) {
     const path = `${run}/${FULL_REPORT_FILE}:${location}`;

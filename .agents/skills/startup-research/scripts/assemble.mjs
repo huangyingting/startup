@@ -9,7 +9,7 @@
 // truth for the consolidated artifacts so the agent never hand-edits them.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml, writeYaml } from './utils.mjs';
+import { FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
 
 const SCHEMA_VERSION = 'report-v2';
 const REPORT_META_FILE = 'report-meta.yaml';
@@ -312,10 +312,4 @@ function computeSourceStats(evidenceLedger, chapters, runDateStr) {
   }
   const averageSourceAgeDays = ages.length ? Math.round(ages.reduce((sum, n) => sum + n, 0) / ages.length) : null;
   return { domainCount, adverseSourceCount, unresolvedQuestionCount, averageSourceAgeDays };
-}
-
-function parseDate(value) {
-  if (!value) return null;
-  const d = new Date(`${String(value)}T00:00:00Z`);
-  return Number.isNaN(d.valueOf()) ? null : d;
 }

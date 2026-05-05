@@ -2,9 +2,9 @@ import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from '
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
-import { FIGURE_TYPES } from './figures.mjs';
+import { FIGURE_TYPES } from '../../../../website/src/lib/figures.mjs';
 
-export const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const reportsDir = join(repoRoot, 'reports');
 export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-research', 'references', 'chapters.yaml');
 
@@ -82,6 +82,33 @@ export function asDateString(value) {
 
 export function compactText(value) {
   return String(value ?? '').trim().replace(/\s+/g, ' ');
+}
+
+export function hasText(value) {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+// Parses a YYYY-MM-DD-ish value into a Date (UTC midnight) or null. Tolerates
+// Date objects and strings; returns null on anything unparseable. Used by
+// ledger and assemble for source/claim freshness anchoring.
+export function parseDate(value) {
+  const text = asDateString(value);
+  if (!text) return null;
+  const date = new Date(`${text}T00:00:00Z`);
+  return Number.isNaN(date.valueOf()) ? null : date;
+}
+
+// Best-effort registrable domain (eTLD+1) for canonical-URL bookkeeping.
+// Multi-part TLDs are listed explicitly to avoid pulling in a full PSL.
+// Used by check-chapter and postmortem for source-diversity stats.
+const MULTI_PART_TLDS = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
+export function registrableDomain(url) {
+  const host = normalizeDomain(url);
+  if (!host) return '';
+  const parts = host.split('.');
+  if (parts.length <= 2) return host;
+  const lastTwo = parts.slice(-2).join('.');
+  return MULTI_PART_TLDS.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
 }
 
 // Recursively collects every value found under a `claimRefs` array anywhere in

@@ -5,7 +5,7 @@
 // analysis artifacts.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { asDateString, canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, readYaml, writeYaml } from './utils.mjs';
+import { asDateString, canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
@@ -118,13 +118,6 @@ function consolidateClaims(docs, sourceIds) {
     }
   }
   return { claims, claimIds, evidenceGaps };
-}
-
-function parseDate(value) {
-  const text = asDateString(value);
-  if (!text) return null;
-  const date = new Date(`${text}T00:00:00Z`);
-  return Number.isNaN(date.valueOf()) ? null : date;
 }
 
 function monthDelta(from, to) {

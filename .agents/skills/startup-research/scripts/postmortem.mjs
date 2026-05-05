@@ -16,15 +16,14 @@
 // Plus report-level totals.
 //
 // Idempotent for a given runId: re-running replaces the prior record instead
-// of appending duplicates.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import yaml from 'js-yaml';
 import {
   canonicalSourceUrl,
   getAnalysisArtifacts,
-  normalizeDomain,
   readYaml,
+  registrableDomain,
   reportsDir,
   tryReadYaml,
 } from './utils.mjs';
@@ -35,16 +34,6 @@ const RESTRICTED_ACCESS = new Set(['paywall', 'js-only', 'broken', 'rate-limited
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/postmortem.mjs <report-folder>');
   process.exit(1);
-}
-
-function registrableDomain(url) {
-  const host = normalizeDomain(url);
-  if (!host) return '';
-  const parts = host.split('.');
-  if (parts.length <= 2) return host;
-  const multiPart = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
-  const lastTwo = parts.slice(-2).join('.');
-  return multiPart.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
 }
 
 function chapterStats(reportFolder, spec) {
