@@ -134,6 +134,12 @@ const fallbackMetrics = [
           data-show-label={labels.showRefs}
           data-hide-label={labels.hideRefs}
         >{labels.showRefs}</button>
+        <button
+          type="button"
+          class="print-pdf"
+          data-print-pdf
+          title="Print as A4 PDF. In the print dialog uncheck ‘Headers and footers’ to remove the URL/date strip."
+        >Download PDF</button>
       </div>
     </div>
     <aside class={`decision-card decision-${String(data.recommendation ?? 'unknown').replace(/[^a-z0-9-]/gi, '-')}`}>
@@ -389,6 +395,19 @@ const fallbackMetrics = [
     }
   }
 
+  const printButton = document.querySelector('[data-print-pdf]');
+  if (printButton) {
+    printButton.addEventListener('click', () => {
+      reportShell?.classList.add('print-mode');
+      const restore = () => {
+        reportShell?.classList.remove('print-mode');
+        window.removeEventListener('afterprint', restore);
+      };
+      window.addEventListener('afterprint', restore);
+      requestAnimationFrame(() => window.print());
+    });
+  }
+
   const evidenceToggle = document.querySelector('.evidence-toggle');
   if (reportShell && evidenceToggle) {
     const showLabel = evidenceToggle.dataset.showLabel || 'Show refs';
@@ -587,4 +606,264 @@ const fallbackMetrics = [
   .report-shell :global(.claim-ref a:hover), .report-shell :global(.claim-ref a:focus-visible) { text-decoration: underline; }
   .report-shell.refs-visible :global(.table-frame > .claim-ref) { display: block; }
   @media (max-width: 900px) { .report-cover, .metric-grid, .three-col { grid-template-columns: 1fr; } }
+
+  /* Print PDF button: matches the evidence-toggle styling but uses gold to
+   * distinguish the export action from the in-page refs toggle. */
+  .print-pdf { appearance: none; border: 1px solid var(--gold); background: transparent; color: var(--gold); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 4px var(--space-3); border-radius: 999px; }
+  .print-pdf:hover, .print-pdf:focus-visible { background: var(--gold); color: var(--ink-page); outline: none; }
+
+  /* ---------------------------------------------------------------------
+   * A4 print stylesheet — paginated rendering for "Download PDF".
+   *
+   * Strategy: rely on the browser's native print pipeline (window.print +
+   * "Save as PDF"). We constrain the page box to A4, force breaks before
+   * each chapter / appendix, keep tables-figures-callouts unbroken when
+   * possible, and strip all chrome that does not belong on paper.
+   * ------------------------------------------------------------------- */
+  @media print {
+    @page {
+      size: A4;
+      margin: 18mm 14mm 20mm 14mm;
+      /* Suppress browser-injected page header/footer (URL, date, title)
+       * where supported. Chrome/Edge respect these only when the user keeps
+       * "Headers and footers" unchecked in the print dialog; the button
+       * tooltip surfaces that requirement. Firefox honours them directly. */
+      @top-left { content: ""; }
+      @top-center { content: ""; }
+      @top-right { content: ""; }
+      @bottom-left { content: ""; }
+      @bottom-center { content: counter(page) " / " counter(pages); font-family: var(--font-sans); font-size: 8pt; color: #777; }
+      @bottom-right { content: ""; }
+    }
+    @page :first {
+      /* Cover page gets a tighter top margin so the hero starts higher. */
+      margin-top: 12mm;
+    }
+
+    /* Hide site chrome and any in-report controls. */
+    :global(.bz-utility),
+    :global(.bz-footer),
+    .evidence-toggle,
+    .print-pdf,
+    .toc-sticky,
+    .toc-heading-section {
+      display: none !important;
+    }
+
+    :global(html), :global(body) {
+      background: #fff !important;
+      color: #000;
+      font-size: 10pt;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    :global(main) { display: block; }
+
+    .report-shell {
+      padding: 0 !important;
+      font-size: 10pt;
+      max-width: none !important;
+      width: 100% !important;
+      margin: 0 !important;
+    }
+
+    /* Cover always occupies its own page. */
+    .report-cover {
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 8mm;
+      padding: 4mm 0 6mm;
+      margin: 0 0 6mm;
+      background: #fff;
+      break-after: page;
+      page-break-after: always;
+    }
+    .report-cover h1 { font-size: 26pt; line-height: 1.05; }
+    .report-subtitle, .report-headline { font-size: 11pt; max-width: none; }
+
+    /* Decision card prints with explicit borders since color-mix may degrade. */
+    .decision-card { border: 1px solid #999; border-top: 3px solid #800020; padding: 4mm; box-shadow: none; }
+    .decision-rec { background: #800020 !important; color: #fff !important; }
+    .decision-score-value { font-size: 28pt; }
+
+    /* Cover-metrics block stays with the cover when possible but may flow. */
+    .cover-metrics { break-before: auto; }
+    .metric-grid { grid-template-columns: repeat(4, 1fr); border-top: 2px solid #800020; }
+    .metric-grid article { min-height: 0; padding: 2mm 2.5mm; break-inside: avoid; page-break-inside: avoid; }
+    .metric-grid strong { font-size: 12pt; }
+    .metric-topline { margin-bottom: 2mm; }
+    .metric-label { font-size: 7.5pt; }
+
+    /* Tighten vertical rhythm so cover-metrics, company profile and
+     * executive summary share a single page after the cover. */
+    .report-section { padding-block: 3mm !important; }
+    .report-section h2 {
+      font-size: 13pt;
+      color: #800020;
+      border-left: 3px solid #800020;
+      margin: 0 0 2.5mm !important;
+      padding: 1mm 0 1mm 2mm !important;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    /* Force a fresh page for each chapter and major top-level section.
+     * Executive summary stays in the natural flow so it can sit on the
+     * same page as Company profile when there is room. */
+    .report-chapter,
+    .report-section.appendix,
+    .report-section.evidence-index,
+    .report-section.disclaimer {
+      break-before: page;
+      page-break-before: always;
+      padding-block: 0 !important;
+      border-top: 0;
+    }
+    /* Glue cover-metrics, profile, and exec summary into one block. */
+    .report-section.cover-metrics,
+    .report-section.startup-intro,
+    .report-section.executive-summary {
+      break-before: avoid !important;
+      page-break-before: avoid !important;
+    }
+    .report-chapter:first-of-type { /* keep break — reads cleanly after summary */ }
+
+    .chapter-header { margin-bottom: 6mm; }
+    .chapter-header h2 { font-size: 22pt; gap: 4mm; }
+    .chapter-number { font-size: 28pt; color: #800020; }
+    .chapter-section { margin-top: 6mm; }
+    .chapter-section h3 { font-size: 13pt; break-after: avoid; page-break-after: avoid; }
+
+    .report-section h2 {
+      font-size: 14pt;
+      color: #800020;
+      border-left: 3px solid #800020;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    /* Body content sizing for paper. */
+    .chapter-section :global(p),
+    .chapter-section :global(li),
+    .report-section :global(p) { font-size: 10pt; line-height: 1.45; orphans: 3; widows: 3; }
+
+    /* Atomicity: never split figures, callouts, summary cards, decision
+     * card, or metric tiles across page boundaries when avoidable. Tables
+     * are intentionally excluded — long tables should break across pages
+     * (with header rows repeating) instead of getting bumped whole and
+     * leaving big gaps. Per-row atomicity is enforced separately below. */
+    :global(figure),
+    :global(.report-callout),
+    :global(.report-figure),
+    .summary-card,
+    .decision-card,
+    .metric-grid article {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Repeat table headers across pages when a table does need to break.
+     * Drop the 780px min-width so wide tables fit the A4 column instead of
+     * overflowing into a clipped horizontal scroll snapshot. Tighten cell
+     * padding and font so denser tables stay legible. */
+    :global(.table-frame) { overflow: visible !important; border: 1px solid #999; margin: 4mm 0; }
+    :global(.table-frame table) { width: 100% !important; min-width: 0 !important; table-layout: fixed; }
+    :global(.table-frame caption) { padding: 2mm 3mm; font-size: 9pt; }
+    :global(.table-frame th),
+    :global(.table-frame td) { padding: 1.4mm 2mm; font-size: 8.5pt; line-height: 1.35; word-break: break-word; overflow-wrap: anywhere; hyphens: auto; vertical-align: top; }
+    :global(.table-frame th) { white-space: normal; background: #f5f0ec !important; color: #800020 !important; }
+    :global(.table-frame thead) { display: table-header-group; }
+    :global(.table-frame tfoot) { display: table-footer-group; }
+    :global(.table-frame tr) { break-inside: avoid; page-break-inside: avoid; }
+    /* Striping prints unreliably; replace with crisp 1px row separators. */
+    :global(.table-frame tbody tr) { background: #fff !important; }
+    :global(.table-frame tbody tr td) { border-bottom: 0.4pt solid #ddd; }
+    :global(.table-frame .table-note) { padding: 1.4mm 2mm; font-size: 8pt; line-height: 1.4; }
+
+    /* Figures: collapse to the mobile layouts (already authored in
+     * FigureRenderer.astro) so they fit a single A4 column instead of
+     * relying on container queries that won't fire at A4 width. */
+    :global(.native-figure) { padding: 3mm !important; margin-block: 4mm !important; break-inside: avoid; page-break-inside: avoid; }
+    :global(.native-figure .figure-note) { display: none; }
+    /* range chart — stack rows */
+    :global(.chart-range .range-row) { grid-template-columns: 1fr !important; gap: 1mm !important; padding: 2mm 2.5mm !important; }
+    :global(.chart-range .range-row-summary) { text-align: left !important; white-space: normal !important; }
+    /* matrix chart — swap to card list */
+    :global(.chart-matrix .matrix-grid) { display: none !important; }
+    :global(.chart-matrix .matrix-cards) { display: block !important; }
+    /* kpi chart — single column on A4 column */
+    :global(.chart-kpi .kpi-grid) { grid-template-columns: repeat(2, 1fr) !important; gap: 2mm !important; }
+    :global(.chart-kpi .kpi-card) { padding: 2.5mm 3mm !important; break-inside: avoid; }
+    /* Generic SVG-based charts: cap height so they never own a whole page. */
+    :global(.native-figure svg) { max-width: 100% !important; height: auto !important; max-height: 110mm; }
+
+    /* Hide citation refs in the printout regardless of the in-page toggle. */
+    .report-shell :global(.claim-ref) { display: none !important; }
+
+    /* Expand long URLs in bibliography rather than clipping. */
+    a[href] { color: #000; text-decoration: none; word-break: break-word; }
+
+    /* Executive summary: stack the three cards vertically; inside each
+     * card the title sits on the LEFT and the bullet list flows on the
+     * RIGHT. Mirrors the company-profile horizontal-row treatment so long
+     * bullets never strand a whole page. */
+    .three-col { display: block !important; grid-template-columns: none !important; gap: 0 !important; }
+    .summary-card {
+      display: grid !important;
+      grid-template-columns: 32mm 1fr;
+      align-items: baseline;
+      gap: 0 4mm;
+      padding: 2.5mm 3mm;
+      margin-bottom: 2mm;
+      background: #fff !important;
+      border: 0.4pt solid #ccc;
+      border-left: 3px solid #800020;
+      break-inside: avoid;
+    }
+    .summary-strengths { border-left-color: #b8860b !important; }
+    .summary-risks { border-left-color: #a31515 !important; }
+    .summary-gaps { border-left-color: #777 !important; }
+    .summary-card h2 { margin: 0; font-size: 9pt; color: #800020; }
+    .summary-strengths h2 { color: #b8860b; }
+    .summary-risks h2 { color: #a31515; }
+    .summary-gaps h2 { color: #555; }
+    .summary-card ul { margin: 0; padding: 0; gap: 1mm !important; }
+    .summary-card li { font-size: 9pt; line-height: 1.4; padding-left: 3mm; }
+    .summary-card li::before { top: 0.5em; width: 0.3rem; height: 0.3rem; }
+
+    /* Company profile: stack label/value pairs as a single vertical list
+     * where each row spans the full A4 column width. Inside each row the
+     * label sits on the LEFT (fixed narrow column) and the value flows
+     * horizontally to the right. Avoids the awkward 2-row × 4-col grid
+     * where long cells (Product, Customers, Business Model) stranded a
+     * second page. */
+    .startup-intro .intro-heading { font-size: 12pt; margin-bottom: 3mm; }
+    .intro-grid {
+      display: block !important;
+      grid-template-columns: none !important;
+      margin-top: 3mm;
+      border: 0.4pt solid #ccc;
+      border-top: 1px solid #800020;
+      background: #fff !important;
+    }
+    .intro-grid div {
+      display: grid !important;
+      grid-template-columns: 32mm 1fr;
+      align-items: baseline;
+      gap: 0 4mm;
+      padding: 1.8mm 3mm;
+      border: 0;
+      border-bottom: 0.4pt solid #eee;
+      background: #fff !important;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .intro-grid div:last-child { border-bottom: 0; }
+    .intro-grid div::before { display: none; }
+    .intro-grid dt { font-size: 8pt; color: #800020; margin: 0; }
+    .intro-grid dd { font-size: 9pt; line-height: 1.4; margin: 0; color: #000; }
+
+    /* Evidence index can be long; allow it to flow but keep rows atomic. */
+    .evidence-index :global(.table-frame th),
+    .evidence-index :global(.table-frame td) { font-size: 8.5pt; line-height: 1.35; padding: 2mm; }
+  }
 </style>
