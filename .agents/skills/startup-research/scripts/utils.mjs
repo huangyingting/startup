@@ -136,11 +136,41 @@ function mergeGate(defaultGate, chapterGate) {
   };
 }
 
+// Gate field shapes shared between defaultGate (validated as a complete spec)
+// and chapter.gate overrides (validated post-merge with the merged value).
+const GATE_NUMERIC_FIELDS = [
+  'minSections', 'maxSections', 'minArtifacts', 'maxTables', 'maxFigures',
+  'minResearchQuestions', 'minLocalSources', 'minLocalClaims',
+  'minQuestionTypeSpread', 'minAdverseQuestions',
+  'minSourceDomains', 'minNetNewSources', 'minSourceTypeSpread',
+  'minHighConfidenceCorroboration', 'minSourcesPerEnumerationRow',
+];
+const GATE_RATE_FIELDS = ['minQuestionAnswerRate', 'minContentRequirementCoverage'];
+const GATE_DEPTH_FIELDS = ['minSectionBodyWords', 'minSectionWordsTotal', 'minTableRowsTotal', 'minFigureDataPointsTotal'];
+
+// Validate one gate object's shape. `scope` is "defaultGate" or
+// "<chapterKey>: gate" so the error points at the right source. Used both for
+// defaultGate (called once before merging) and for each chapter's merged gate.
+function assertGateShape(gate, scope) {
+  for (const field of GATE_NUMERIC_FIELDS) {
+    assertConfig(Number.isFinite(gate?.[field]), `${scope}.${field} must be a number`);
+  }
+  for (const field of GATE_RATE_FIELDS) {
+    const value = gate?.[field];
+    assertConfig(Number.isFinite(value) && value >= 0 && value <= 1, `${scope}.${field} must be a number between 0 and 1`);
+  }
+  assertConfig(Array.isArray(gate?.requiredSourceTypes), `${scope}.requiredSourceTypes must be an array (use [] for none)`);
+  for (const field of GATE_DEPTH_FIELDS) {
+    assertConfig(Number.isFinite(gate?.depthFloor?.[field]), `${scope}.depthFloor.${field} must be a number`);
+  }
+}
+
 function normalizeWorkflowConfig(config) {
   assertConfig(config && typeof config === 'object', `${workflowConfigPath} must contain a YAML object`);
   assertConfig(config.schemaVersion === 'workflow-config-v1', `expected schemaVersion workflow-config-v1, got ${config.schemaVersion}`);
   assertConfig(config.reportSchemaVersion === 'report-v2', 'reportSchemaVersion must be report-v2');
   assertConfig(config.defaultGate && typeof config.defaultGate === 'object', 'defaultGate must be an object');
+  assertGateShape(config.defaultGate, 'defaultGate');
   assertConfig(Array.isArray(config.chapters) && config.chapters.length > 0, 'chapters[] must be a non-empty array');
 
   const figureTypes = new Set(FIGURE_TYPES);
@@ -179,21 +209,11 @@ function normalizeWorkflowConfig(config) {
     for (const ref of chapter.optionalContext) {
       assertConfig(knownKeys.has(ref), `${chapter.key}: optionalContext references unknown chapter key "${ref}"`);
     }
-    for (const field of ['minSections', 'maxSections', 'minArtifacts', 'maxTables', 'maxFigures', 'minResearchQuestions', 'minLocalSources', 'minLocalClaims', 'minQuestionTypeSpread', 'minAdverseQuestions', 'minSourceDomains', 'minNetNewSources', 'minSourceTypeSpread', 'minHighConfidenceCorroboration', 'minSourcesPerEnumerationRow']) {
-      assertConfig(Number.isFinite(chapter.gate?.[field]), `${chapter.key}: gate.${field} must be a number`);
-    }
-    for (const field of ['minQuestionAnswerRate', 'minContentRequirementCoverage']) {
-      const value = chapter.gate?.[field];
-      assertConfig(Number.isFinite(value) && value >= 0 && value <= 1, `${chapter.key}: gate.${field} must be a number between 0 and 1`);
-    }
-    assertConfig(Array.isArray(chapter.gate?.requiredSourceTypes), `${chapter.key}: gate.requiredSourceTypes must be an array (use [] for none)`);
+    assertGateShape(chapter.gate, `${chapter.key}: gate`);
     for (const planned of chapter.plannedTables ?? []) {
       if (planned.enumeration === true) {
         assertConfig(Number.isInteger(planned.expectedMinRows) && planned.expectedMinRows > 0, `${chapter.key}: plannedTables[${planned.name}] enumeration:true requires positive integer expectedMinRows`);
       }
-    }
-    for (const field of ['minSectionBodyWords', 'minSectionWordsTotal', 'minTableRowsTotal', 'minFigureDataPointsTotal']) {
-      assertConfig(Number.isFinite(chapter.gate?.depthFloor?.[field]), `${chapter.key}: gate.depthFloor.${field} must be a number`);
     }
     for (const figure of chapter.plannedFigures ?? []) {
       for (const type of figure.acceptedTypes ?? []) {
