@@ -1883,11 +1883,17 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
   };
 
   const renderD3 = (element, payload) => {
-    let result;
-    result = RENDERERS[payload.type]?.(element, payload);
-    normalizeRenderedTypography(element);
-    normalizeRenderedFlatStyle(element);
-    return result;
+    try {
+      const result = RENDERERS[payload.type]?.(element, payload);
+      normalizeRenderedTypography(element);
+      normalizeRenderedFlatStyle(element);
+      return result;
+    } catch (error) {
+      console.error(`[FigureRenderer] Failed to render ${payload?.id ?? payload?.type ?? 'figure'}`, error);
+      d3.select(element).selectAll('*').remove();
+      d3.select(element).append('div').attr('class', 'figure-render-error').text('Figure could not be rendered.');
+      return null;
+    }
   };
 
   const chartResizeObserver = 'ResizeObserver' in window ? new ResizeObserver((entries) => {
@@ -1922,11 +1928,16 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     });
   };
   renderCharts();
+  let resizeTimer = null;
   window.addEventListener('resize', () => {
-    document.querySelectorAll('script.figure-chart-data').forEach((script) => {
-      script.dataset.rendered = 'false';
-    });
-    renderCharts();
+    if (chartResizeObserver) return;
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      document.querySelectorAll('script.figure-chart-data').forEach((script) => {
+        script.dataset.rendered = 'false';
+      });
+      renderCharts();
+    }, 140);
   });
 </script>
 
@@ -2027,6 +2038,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
   :global(.chart-kpi .kpi-tone-risk), :global(.chart-kpi .kpi-tone-critical), :global(.chart-kpi .kpi-tone-high) { border-left-color: var(--risk-red); } :global(.chart-kpi .kpi-tone-risk .kpi-card-dot), :global(.chart-kpi .kpi-tone-critical .kpi-card-dot), :global(.chart-kpi .kpi-tone-high .kpi-card-dot) { color: var(--risk-red); }
   :global(.chart-kpi .kpi-tone-opportunity) { border-left-color: #b8860b; } :global(.chart-kpi .kpi-tone-opportunity .kpi-card-dot) { color: #b8860b; }
   @container (max-width: 360px) { :global(.chart-kpi .kpi-grid) { grid-template-columns: 1fr; gap: 0.6rem; } :global(.chart-kpi .kpi-card) { padding: 0.65rem 0.75rem; } }
+  :global(.figure-render-error) { padding: 0.75rem 0.85rem; border: 1px dashed var(--rule, #d8ccc2); border-radius: var(--radius-card, 0.5rem); color: var(--caption-gray, #6b625c); font-family: var(--font-sans); font-size: var(--chart-fs-caption); }
   .figure-fallback { border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); padding: var(--space-4); }
   .figure-fallback strong { display: block; margin-bottom: var(--space-2); font-family: var(--font-display); font-size: var(--chart-fs-body); font-weight: var(--chart-fw-strong); }
   .figure-fallback p { margin: 0; color: var(--caption-gray); font-size: var(--chart-fs-body); line-height: var(--chart-leading-body); }
