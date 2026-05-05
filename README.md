@@ -23,8 +23,8 @@ Important files:
 - `.agents/skills/startup-research/SKILL.md` — canonical end-to-end report workflow.
 - `.agents/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
 - `.agents/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
-- `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts.
-- `website/scripts/` and `website/src/lib/` — website-owned validation helpers and rendering contracts.
+- `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts (chapter loader, gate checks, ledger consolidation, report assembly, validators).
+- `website/src/lib/` — rendering contracts shared between the renderer and the chapter/report validators.
 - `reports/_index.yaml` — catalog of generated report runs.
 
 ## Quick start
@@ -89,7 +89,6 @@ From the repository root:
 ```bash
 npm run check:workflow-config
 npm run check:report-index
-npm run check:reports
 npm run validate
 ```
 

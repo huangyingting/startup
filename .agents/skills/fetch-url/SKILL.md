@@ -1,12 +1,12 @@
 ---
 name: fetch-url
-description: "Use when: fetching raw HTML or readable text from a URL/link/page, saving a body to disk, extracting a page title, or inspecting official website pages. Keywords: fetch URL, fetch link, HTTP GET, scrape HTML, html to text, plain text, strip tags, page title, sitemap, robots.txt."
-argument-hint: "<url> [--out <file>] [--text-only]"
+description: "Use when: fetching raw HTML or readable text from a URL/link/page, extracting text from a PDF (10-K, S-1, prospectus, investor deck, white paper, court filing, regulatory report), saving a body to disk, extracting a page title, or inspecting official website pages. Keywords: fetch URL, fetch link, HTTP GET, scrape HTML, html to text, plain text, strip tags, page title, sitemap, PDF, pdf to text, parse PDF, extract PDF text, 10-K, S-1, prospectus, SEC filing."
+argument-hint: "<url> [--out <file>] [--text-only] [--max-chars N]"
 ---
 
 # Fetch URL
 
-Fetch the raw HTML or readable text of a single URL. Wraps `./scripts/fetch.mjs` and replaces native `web_fetch`-style tools.
+Fetch the raw HTML or readable text of a single URL, or extract text from a PDF URL. Wraps `./scripts/fetch.mjs` and replaces native `web_fetch`-style tools.
 
 ## Install (one-time, optional but recommended)
 
@@ -40,8 +40,9 @@ node .agents/skills/fetch-url/scripts/fetch.mjs <url>
 
 Options:
 
-- `--text-only` / `-t`: strip HTML/script/style into readable text.
-- `--out <path>` / `-o <path>`: save raw HTML or cleaned text to a diagnostic file.
+- `--text-only` / `-t`: strip HTML/script/style into readable text. For PDFs, runs the pdfjs-dist text extractor and emits per-page text with `--- Page N ---` markers.
+- `--out <path>` / `-o <path>`: save raw HTML or cleaned text to a diagnostic file. For PDFs without `--text-only`, writes the raw PDF bytes; with `--text-only`, writes the extracted text.
+- `--max-chars <n>`: cap extracted PDF text length to protect agent context. Truncation is reported in the summary.
 - `--user-agent <ua>`: override the default desktop Chrome UA.
 - `--profile <name>`: use a browser or search engine profile (`desktop-chrome`, `desktop-firefox`, `desktop-safari`, `mobile-safari`, `googlebot`, `bingbot`; default `bingbot`). Browser profiles use `curl-impersonate` for TLS/JA3 fingerprinting.
 - `--no-retry-profiles`: do not retry other ordinary browser profiles after a bot-challenge response.
@@ -51,7 +52,6 @@ Options:
 - `--no-wayback`: disable the automatic Wayback retry.
 - `--throttle-ms <n>`: wait before each network attempt (default `750`) to avoid hammering a host.
 - `--no-throttle`: disable the default throttle.
-- `--check-robots`: fetch `/robots.txt` first and stop if `User-agent: *` disallows the path.
 - `--cache-dir <path>`: override the on-disk cache directory (default `./.fetch-cache/` or `$FETCH_URL_CACHE_DIR`).
 - `--cache-ttl-hours <n>`: how long cached responses stay valid (default `168` = 7 days).
 - `--no-cache`: disable cache reads and writes for this call.
@@ -135,8 +135,21 @@ Sites behind DataDome, Cloudflare, PerimeterX, etc. block direct HTTP fetches wi
 ## Use for
 
 - Single-URL HTML or readable-text retrieval.
+- PDF text extraction (10-K, S-1, prospectus, investor deck, white paper, court filing, regulatory report).
 - Page-title extraction, reachability checks, and grep-friendly text dumps.
 - Local diagnostic snapshots via `--text-only --out <path>` when repeated extraction or grep would be useful.
+
+## PDFs
+
+PDF responses are detected automatically by the `%PDF-` magic bytes at the start of the body — the URL extension and Content-Type are ignored, so an HTML error page served at a `.pdf` URL still flows through the HTML path, and a no-extension URL (e.g. SEC EDGAR) that returns a real PDF is still parsed correctly. The host-map / curl-impersonate / cache / reader / wayback chain all apply unchanged.
+
+- `node fetch.mjs <pdf-url>` (no `--text-only`): prints metadata (page count, title, author) plus a short preview of the extracted text. The raw bytes are not dumped to the terminal.
+- `node fetch.mjs <pdf-url> --text-only`: prints the full extracted text, with each page prefixed by `--- Page N ---` so callers can cite specific pages in evidence.
+- `node fetch.mjs <pdf-url> --text-only --max-chars 50000`: cap total text length to protect agent context.
+- `node fetch.mjs <pdf-url> --out report.pdf`: save the raw PDF bytes for later re-parsing or archival.
+- `node fetch.mjs <pdf-url> --text-only --out report.txt`: save extracted text to disk.
+
+Scanned PDFs without a text layer return empty or whitespace-only text. v1 does not run OCR — switch to a different source or hand the file to an OCR tool.
 
 ## Do not use for
 

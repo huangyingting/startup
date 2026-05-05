@@ -5,7 +5,7 @@
 // analysis artifacts.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { asDateString, canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, readYaml, writeYaml } from './utils.mjs';
+import { asDateString, canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
@@ -15,13 +15,12 @@ const DOWNSTREAM_FILES = [FINAL_ARTIFACTS.fullReport.file, FINAL_ARTIFACTS.summa
 function parseArgs(argv) {
   return {
     folder: argv.find((arg) => !arg.startsWith('-')) ?? null,
-    keepLocal: argv.includes('--keep-local'),
   };
 }
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder> [--keep-local]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder>');
   process.exit(1);
 }
 
@@ -121,13 +120,6 @@ function consolidateClaims(docs, sourceIds) {
   return { claims, claimIds, evidenceGaps };
 }
 
-function parseDate(value) {
-  const text = asDateString(value);
-  if (!text) return null;
-  const date = new Date(`${text}T00:00:00Z`);
-  return Number.isNaN(date.valueOf()) ? null : date;
-}
-
 function monthDelta(from, to) {
   return (to.getUTCFullYear() - from.getUTCFullYear()) * 12 + (to.getUTCMonth() - from.getUTCMonth());
 }
@@ -157,12 +149,15 @@ function consolidate(docs) {
   return { sources, claims, sourceIds, claimIds, evidenceGaps };
 }
 
+// Rewrites a chapter document in place: every claimRef is remapped from the
+// chapter's local C### namespace to the consolidated ledger's global C###.
+// localEvidence is preserved as-is so the chapter YAML remains the source of
+// truth the agent edits when fixing post-finalize schema problems.
 function rewrite(value, file, claimIds) {
   if (Array.isArray(value)) return value.map((item) => rewrite(item, file, claimIds));
   if (value && typeof value === 'object') {
     const entries = [];
     for (const [key, child] of Object.entries(value)) {
-      if (key === 'localEvidence' && !args.keepLocal) continue;
       if (key === 'claimRefs' && Array.isArray(child)) {
         entries.push([key, child.map((ref) => claimIds.get(`${file}:${ref}`) ?? ref)]);
       } else {

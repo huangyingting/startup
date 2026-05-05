@@ -196,6 +196,16 @@ export function lookupHostStrategy(url) {
 const BLOCK_TAGS = 'p|div|section|article|header|footer|nav|aside|main|ul|ol|li|tr|td|th|h[1-6]|blockquote|pre|figure|figcaption|table';
 const BLOCK_TAG_RE = new RegExp(`<\\/?(${BLOCK_TAGS})(?:\\s[^>]*)?>`, 'gi');
 
+// Magic-byte sniff: real PDFs start with `%PDF-` within the first 1KB.
+// We detect PDFs from the response body, never from the URL extension or
+// Content-Type, so an HTML error page served at a .pdf URL still flows
+// through the HTML path.
+export function looksLikePdfBuffer(buf) {
+  if (!Buffer.isBuffer(buf)) return false;
+  const head = buf.slice(0, 1024).toString('ascii');
+  return /%PDF-/.test(head);
+}
+
 const ENTITY_MAP = {
   amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
   copy: '©', reg: '®', trade: '™', hellip: '…',
@@ -218,7 +228,6 @@ function parseArgs(args) {
     retryProfiles: true,
     userAgentOverride: false,
     throttleMs: DEFAULT_THROTTLE_MS,
-    checkRobots: false,
     help: false,
     cacheDir: DEFAULT_CACHE_DIR,
     cacheTtlHours: DEFAULT_CACHE_TTL_HOURS,
@@ -226,6 +235,7 @@ function parseArgs(args) {
     refreshCache: false,
     noHostMap: false,
     ignoreHostMapFailures: false,
+    maxChars: null,
   };
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
@@ -244,20 +254,20 @@ function parseArgs(args) {
     else if (arg === '--no-reader') opts.noReader = true;
     else if (arg === '--throttle-ms') opts.throttleMs = Number(args[++i] ?? opts.throttleMs);
     else if (arg === '--no-throttle') opts.throttleMs = 0;
-    else if (arg === '--check-robots') opts.checkRobots = true;
     else if (arg === '--cache-dir') opts.cacheDir = resolve(args[++i] ?? opts.cacheDir);
     else if (arg === '--cache-ttl-hours') opts.cacheTtlHours = Number(args[++i] ?? opts.cacheTtlHours);
     else if (arg === '--no-cache') opts.noCache = true;
     else if (arg === '--refresh-cache') opts.refreshCache = true;
     else if (arg === '--no-host-map') opts.noHostMap = true;
     else if (arg === '--ignore-host-map-failures') opts.ignoreHostMapFailures = true;
+    else if (arg === '--max-chars') opts.maxChars = Number(args[++i] ?? opts.maxChars);
     else opts.url = arg;
   }
   return opts;
 }
 
 function help() {
-  console.log(`Usage: node .agents/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>] [--profile <name>] [--via-reader | --no-reader] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache]
+  console.log(`Usage: node .agents/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>] [--profile <name>] [--via-reader | --no-reader] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache] [--max-chars N]
 
 Default URL: ${DEFAULT_URL}
 
@@ -265,13 +275,13 @@ Profiles: ${ALL_PROFILE_NAMES.join(', ')}. Browser profiles use curl-impersonate
 
 Fallbacks: origin fetch uses browser-like headers and, by default, retries other ordinary browser profiles on bot-challenge responses. If still blocked, it tries r.jina.ai reader text, then Wayback Machine snapshots. Use --no-retry-profiles, --no-reader, or --no-wayback to narrow the chain. Use --via-reader or --via-wayback to force a fallback path.
 
-Robots: --check-robots fetches /robots.txt and exits before fetching the target if User-agent: * disallows the URL path.
-
 Throttling: network attempts wait ${DEFAULT_THROTTLE_MS}ms by default to avoid hammering a host. Use --throttle-ms <n> or --no-throttle.
 
 Caching: enabled by default at ${DEFAULT_CACHE_DIR} (override with --cache-dir or FETCH_URL_CACHE_DIR env). Cached responses younger than ${DEFAULT_CACHE_TTL_HOURS}h are reused. Use --refresh-cache to bypass the read but still write, --no-cache to disable read+write entirely.
 
-Wayback fallback: bot-protected sites (DataDome/Cloudflare challenge, 401/403/451/503) automatically retry through web.archive.org. Use --via-wayback to force, --no-wayback to disable.`);
+Wayback fallback: bot-protected sites (DataDome/Cloudflare challenge, 401/403/451/503) automatically retry through web.archive.org. Use --via-wayback to force, --no-wayback to disable.
+
+PDF support: PDF responses (detected by %PDF- magic bytes) are routed to the pdfjs-dist text extractor. With --text-only the full text is emitted, prefixed per page with '--- Page N ---'. Use --max-chars N to cap the total text size and protect agent context. Without --text-only, the default print shows PDF metadata + a short preview; --out file.pdf saves raw bytes.`);
 }
 
 function wait(ms) {
@@ -307,6 +317,9 @@ function profileSequence(opts) {
   return names.map((name) => ({ name, profile: name, headers: null }));
 }
 
+// Always returns `body` as a Buffer. Callers decode to utf-8 themselves when
+// they want a string view (HTML path) and pass the Buffer through unchanged
+// when they want bytes (PDF path, --out).
 export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent = null, profile = DEFAULT_PROFILE, headers = null, throttleMs = 0 } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -339,11 +352,12 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
         args.push(url);
 
         const child = spawn(wrapperPath, args);
-        child.stdout.setEncoding('utf8');
+        // Collect stdout as raw Buffers so binary bodies (PDFs) survive intact.
+        // Headers are ASCII; we decode just the header section to utf-8 below.
+        const stdoutChunks = [];
         child.stderr.setEncoding('utf8');
-        let stdout = '';
         let stderr = '';
-        child.stdout.on('data', (chunk) => { stdout += chunk; });
+        child.stdout.on('data', (chunk) => { stdoutChunks.push(chunk); });
         child.stderr.on('data', (chunk) => { stderr += chunk; });
 
         // Wire the AbortController (driven by the outer timeoutMs timer) to
@@ -358,28 +372,51 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
             return rejectPromise(new Error(`curl-impersonate (${profileData.wrapper}) exited with code ${code}: ${stderr}`));
           }
 
+          const fullBuffer = Buffer.concat(stdoutChunks);
+
           // Recover the post-redirect final URL from the -w sentinel.
-          let payload = stdout;
+          const metaMarker = Buffer.from(`\n${META_SEPARATOR}\n`, 'utf8');
+          let payloadBuf = fullBuffer;
           let finalUrl = url;
-          const metaMarker = `\n${META_SEPARATOR}\n`;
-          const metaIdx = stdout.lastIndexOf(metaMarker);
+          const metaIdx = fullBuffer.lastIndexOf(metaMarker);
           if (metaIdx >= 0) {
-            payload = stdout.slice(0, metaIdx);
-            finalUrl = stdout.slice(metaIdx + metaMarker.length).trim() || url;
+            payloadBuf = fullBuffer.slice(0, metaIdx);
+            finalUrl = fullBuffer.slice(metaIdx + metaMarker.length).toString('utf8').trim() || url;
           }
 
           // With -L curl emits one header block per hop separated by \r\n\r\n.
           // The actual response body follows the LAST `HTTP/...` block; earlier
           // blocks are 30x redirect responses that must NOT be glued into the body.
-          const blocks = payload.split('\r\n\r\n');
-          let lastHttpIdx = -1;
-          for (let i = 0; i < blocks.length; i += 1) {
-            if (/^HTTP\/\d/.test(blocks[i])) lastHttpIdx = i;
+          const headerSep = Buffer.from('\r\n\r\n', 'utf8');
+          const blockStarts = [0];
+          let sepIdx = payloadBuf.indexOf(headerSep, 0);
+          while (sepIdx >= 0) {
+            blockStarts.push(sepIdx + headerSep.length);
+            sepIdx = payloadBuf.indexOf(headerSep, sepIdx + headerSep.length);
           }
-          const headerBlock = lastHttpIdx >= 0 ? blocks[lastHttpIdx] : '';
-          const body = lastHttpIdx >= 0
-            ? blocks.slice(lastHttpIdx + 1).join('\r\n\r\n')
-            : payload;
+          let lastHttpBlockIdx = -1;
+          for (let i = 0; i < blockStarts.length; i += 1) {
+            const s = blockStarts[i];
+            if (payloadBuf.slice(s, s + 5).toString('ascii') === 'HTTP/') {
+              lastHttpBlockIdx = i;
+            }
+          }
+
+          let headerBlock = '';
+          let bodyBuf;
+          if (lastHttpBlockIdx >= 0) {
+            const s = blockStarts[lastHttpBlockIdx];
+            const e = payloadBuf.indexOf(headerSep, s);
+            if (e >= 0) {
+              headerBlock = payloadBuf.slice(s, e).toString('utf8');
+              bodyBuf = payloadBuf.slice(e + headerSep.length);
+            } else {
+              headerBlock = payloadBuf.slice(s).toString('utf8');
+              bodyBuf = Buffer.alloc(0);
+            }
+          } else {
+            bodyBuf = payloadBuf;
+          }
 
           const headerLines = headerBlock.split('\r\n');
           const statusLine = headerLines.find(l => l.startsWith('HTTP/'));
@@ -393,10 +430,10 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
             status,
             ok: status >= 200 && status < 300,
             contentType,
-            contentLength: Buffer.byteLength(body, 'utf8'),
+            contentLength: bodyBuf.length,
             elapsedMs: Date.now() - started,
             profile,
-            body,
+            body: bodyBuf,
           });
         });
 
@@ -407,13 +444,13 @@ export async function fetchUrl(url, { timeoutMs = DEFAULT_TIMEOUT_MS, userAgent 
       });
     }
 
-    // Fallback to standard fetch for search engine bots or if no impersonation is defined
+    // Fallback to standard fetch for search engine bots or if no impersonation is defined.
     const response = await fetch(url, {
       redirect: 'follow',
       signal: controller.signal,
       headers: headers ?? buildHeaders(profile, userAgent),
     });
-    const body = await response.text();
+    const body = Buffer.from(await response.arrayBuffer());
     return {
       url,
       finalUrl: response.url,
@@ -457,6 +494,67 @@ export function htmlToText(html) {
     .trim();
 }
 
+// Extract text from a PDF Buffer using pdfjs-dist. Returns
+// { text, numPages, info, truncated }. `maxChars` caps the total output
+// length to protect agent context; truncation is signalled in the returned
+// `truncated` flag.
+//
+// Each emitted page is prefixed with a `--- Page N ---` marker so callers can
+// quote specific pages in citations.
+export async function pdfToText(buffer, { maxChars = null } = {}) {
+  const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  // pdfjs mutates its input buffer; clone so the caller's body stays intact
+  // (we still want to print byte counts, write --out, etc. on the same data).
+  const data = new Uint8Array(buffer);
+  const loadingTask = getDocument({
+    data,
+    useSystemFonts: true,
+    isEvalSupported: false,
+    // verbosity 0 = errors only. Without this, pdfjs prints noisy
+    // "Warning: Invalid stream" / "XRef entry" lines for nearly every
+    // real-world PDF and drowns the actual program output.
+    verbosity: 0,
+  });
+  const doc = await loadingTask.promise;
+  const numPages = doc.numPages;
+  const info = (await doc.getMetadata().catch(() => null))?.info ?? null;
+
+  const parts = [];
+  let totalChars = 0;
+  let truncated = false;
+  for (let i = 1; i <= numPages; i += 1) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    // Reconstruct line breaks: pdfjs items expose `hasEOL` for explicit line
+    // ends, otherwise we space-join. This is a best-effort layout — column
+    // detection would need positional clustering which we skip in v1.
+    let pageText = '';
+    for (const item of content.items) {
+      pageText += item.str;
+      if (item.hasEOL) pageText += '\n';
+      else pageText += ' ';
+    }
+    pageText = pageText.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+
+    const header = `\n--- Page ${i} ---\n`;
+    const block = header + pageText;
+    if (maxChars && totalChars + block.length > maxChars) {
+      const remaining = Math.max(0, maxChars - totalChars);
+      if (remaining > 0) parts.push(block.slice(0, remaining));
+      truncated = true;
+      break;
+    }
+    parts.push(block);
+    totalChars += block.length;
+    page.cleanup();
+  }
+  await doc.cleanup();
+  await doc.destroy();
+
+  const text = parts.join('').replace(/^\n+/, '');
+  return { text, numPages, info, truncated };
+}
+
 // Wayback Machine fallback for bot-protected sites. The /web/<year>/<url>
 // form 302s to the closest snapshot, so callers do not need to know the
 // snapshot timestamp ahead of time.
@@ -468,74 +566,16 @@ export function readerUrl(url) {
   return `https://r.jina.ai/http://${url}`;
 }
 
-function robotsTxtUrl(url) {
-  const u = new URL(url);
-  return `${u.protocol}//${u.host}/robots.txt`;
-}
-
-export function robotsAllows(robotsText, url) {
-  const targetPath = new URL(url).pathname || '/';
-  const lines = String(robotsText ?? '').split(/\r?\n/);
-  let applies = false;
-  let sawGroup = false;
-  const disallows = [];
-  const allows = [];
-
-  for (const rawLine of lines) {
-    const line = rawLine.replace(/#.*/, '').trim();
-    if (!line) continue;
-    const [rawKey, ...rawValue] = line.split(':');
-    const key = rawKey.trim().toLowerCase();
-    const value = rawValue.join(':').trim();
-    if (key === 'user-agent') {
-      if (sawGroup && applies) break;
-      sawGroup = true;
-      applies = value === '*';
-    } else if (applies && key === 'disallow') {
-      if (value) disallows.push(value);
-    } else if (applies && key === 'allow') {
-      if (value) allows.push(value);
-    }
-  }
-
-  const longestAllow = allows.filter((rule) => targetPath.startsWith(rule)).sort((a, b) => b.length - a.length)[0] ?? '';
-  const longestDisallow = disallows.filter((rule) => targetPath.startsWith(rule)).sort((a, b) => b.length - a.length)[0] ?? '';
-  if (!longestDisallow) return true;
-  return longestAllow.length >= longestDisallow.length;
-}
-
-async function assertRobotsAllows(url, opts) {
-  const robotsUrl = robotsTxtUrl(url);
-  // robotsAllows() only parses the `User-agent: *` group, so fetch robots.txt
-  // with a stable browser UA (not opts.profile, which may be a search-engine
-  // bot or a custom UA whose specific rules we are NOT consulting). This keeps
-  // the rule we evaluate consistent with the rule we fetch under.
-  const robotsProfile = ALL_PROFILES['desktop-chrome'] ? 'desktop-chrome' : DEFAULT_PROFILE;
-  try {
-    const result = await fetchUrl(robotsUrl, {
-      profile: robotsProfile,
-      throttleMs: opts.throttleMs,
-    });
-    if (result.status === 404) return;
-    if (result.ok && !robotsAllows(result.body, url)) {
-      console.error(`[fetch-url] robots.txt disallows this path for User-agent: * (${robotsUrl}).`);
-      exit(3);
-    }
-  } catch (err) {
-    console.error(`[fetch-url] robots.txt check failed (${err.message}); continuing because --check-robots is advisory when robots.txt is unreachable.`);
-  }
-}
-
 // ---------------------------------------------------------------------------
 // On-disk cache (default ON). Avoids repeat bandwidth and rate-limit hits
 // when the same URL is fetched across chapters in a startup-research run.
 // Cache key is a SHA-256 of the canonicalized URL plus a source variant
 // suffix (`:origin`, `:reader`, `:wayback`) so fallback fetches never collide.
+// Bodies are stored as base64-encoded bytes regardless of content type, so
+// HTML and PDF roundtrip identically.
 // ---------------------------------------------------------------------------
-function cacheVariantName(variant = 'origin') {
-  if (variant === true) return 'wayback';
-  if (variant === false || variant == null) return 'origin';
-  return String(variant);
+function cacheVariantName(variant) {
+  return String(variant ?? 'origin');
 }
 
 export function canonicalCacheKey(url, variant = 'origin') {
@@ -566,11 +606,11 @@ function readCache(dir, url, variant, ttlHours) {
   if (!existsSync(path)) return null;
   try {
     const raw = JSON.parse(readFileSync(path, 'utf8'));
-    if (!raw?.fetchedAt) return null;
+    if (!raw?.fetchedAt || typeof raw.body !== 'string') return null;
     const ageMs = Date.now() - new Date(raw.fetchedAt).valueOf();
     if (!Number.isFinite(ageMs) || ageMs < 0) return null;
     if (ttlHours > 0 && ageMs > ttlHours * 3_600_000) return null;
-    return { ...raw, _cachePath: path, _ageMs: ageMs };
+    return { ...raw, body: Buffer.from(raw.body, 'base64'), _cachePath: path, _ageMs: ageMs };
   } catch {
     return null;
   }
@@ -588,9 +628,8 @@ function writeCache(dir, url, variant, result) {
       contentLength: result.contentLength,
       elapsedMs: result.elapsedMs,
       profile: result.profile,
-      body: result.body,
+      body: Buffer.from(result.body).toString('base64'),
       source: cacheVariantName(variant),
-      viaWayback: cacheVariantName(variant) === 'wayback',
       fetchedAt: new Date().toISOString(),
     };
     writeFileSync(cachePath(dir, url, variant), JSON.stringify(payload), 'utf8');
@@ -620,7 +659,11 @@ const BOT_CHALLENGE_MARKERS = [
 export function looksLikeBotChallenge(result) {
   if (!result) return false;
   if (BOT_CHALLENGE_STATUSES.has(result.status)) return true;
-  const body = String(result.body ?? '').slice(0, 4000).toLowerCase();
+  // Bodies are always Buffers; sniff utf-8 of the first 4KB. PDF buffers
+  // decode to mostly garbage and never contain HTML challenge markers.
+  const body = Buffer.isBuffer(result.body)
+    ? result.body.slice(0, 4000).toString('utf8').toLowerCase()
+    : '';
   return BOT_CHALLENGE_MARKERS.some((marker) => body.includes(marker));
 }
 
@@ -714,8 +757,6 @@ async function main() {
     }
   }
 
-  if (opts.checkRobots) await assertRobotsAllows(opts.url, opts);
-
   let result;
   let source = opts.viaReader ? 'reader' : opts.viaWayback ? 'wayback' : 'origin';
   let cacheHit = false;
@@ -738,7 +779,7 @@ async function main() {
         profile: cached.profile,
         body: cached.body,
       };
-      source = cached.source ?? (cached.viaWayback ? 'wayback' : 'origin');
+      source = cached.source ?? 'origin';
       cacheHit = true;
       cacheAgeMinutes = Math.round(cached._ageMs / 60_000);
     }
@@ -820,17 +861,46 @@ async function main() {
       }
     }
 
-    if (source === 'wayback') {
-      const stripped = stripWaybackToolbar(result.body);
-      result = { ...result, body: stripped, contentLength: stripped.length };
-    }
-
     if (useCacheWrite && !cacheHit && result.ok && !looksLikeBotChallenge(result)) {
       writeCache(opts.cacheDir, opts.url, source, result);
     }
   }
 
-  const output = opts.textOnly ? htmlToText(result.body) : result.body;
+  // Magic-byte sniff on the actual body is the only PDF signal: a .pdf URL
+  // that returned an HTML error page still flows through the HTML path, and
+  // a no-extension EDGAR URL that returns a real PDF is still detected.
+  const isPdf = looksLikePdfBuffer(result.body);
+
+  // Compute the displayable output. PDFs always go through pdfToText when we
+  // need text; their raw bytes are never printed to stdout. HTML decodes the
+  // Buffer to utf-8 once here, then optionally strips the Wayback toolbar
+  // and runs htmlToText.
+  let output;
+  let pdfMeta = null;
+  let pdfTruncated = false;
+  let bodyStr = null;
+  if (isPdf) {
+    if (opts.textOnly || !opts.file) {
+      // Need text either to print or to preview. Skip parsing when the user
+      // only wants raw bytes via --out (no --text-only).
+      try {
+        const parsed = await pdfToText(result.body, { maxChars: opts.maxChars });
+        output = parsed.text;
+        pdfMeta = { numPages: parsed.numPages, info: parsed.info };
+        pdfTruncated = parsed.truncated;
+      } catch (err) {
+        console.error(`[fetch-url] PDF parse failed: ${err.message}`);
+        exit(1);
+      }
+    } else {
+      output = result.body;
+    }
+  } else {
+    bodyStr = result.body.toString('utf8');
+    if (source === 'wayback') bodyStr = stripWaybackToolbar(bodyStr);
+    output = opts.textOnly ? htmlToText(bodyStr) : bodyStr;
+  }
+
   console.log(`Status:        ${result.status} ${result.ok ? 'OK' : 'FAIL'}`);
   console.log(`Final URL:     ${result.finalUrl}`);
   if (cacheHit) console.log(`Source:        cache (age ${cacheAgeMinutes}m, ttl ${opts.cacheTtlHours}h, ${source})`);
@@ -841,17 +911,39 @@ async function main() {
   console.log(`Profile:       ${result.profile ?? (opts.userAgentOverride ? 'custom' : opts.profile)}`);
   console.log(`Bytes:         ${result.contentLength}`);
   console.log(`Elapsed:       ${result.elapsedMs} ms${cacheHit ? ' (original)' : ''}`);
-  console.log(`<title>:       ${extractTitle(result.body) ?? '(not found)'}`);
-  if (opts.textOnly) console.log(`Text bytes:    ${output.length}`);
+  if (isPdf) {
+    const title = pdfMeta?.info?.Title?.trim() || '(not found)';
+    console.log(`Format:        PDF`);
+    console.log(`PDF pages:     ${pdfMeta?.numPages ?? '(unknown)'}`);
+    if (pdfMeta?.info?.Author) console.log(`PDF author:    ${pdfMeta.info.Author}`);
+    console.log(`PDF title:     ${title}`);
+    if (pdfTruncated) console.log(`Truncated:     yes (--max-chars ${opts.maxChars})`);
+    if (typeof output === 'string') console.log(`Text bytes:    ${output.length}`);
+  } else {
+    console.log(`<title>:       ${extractTitle(bodyStr) ?? '(not found)'}`);
+    if (opts.textOnly) console.log(`Text bytes:    ${output.length}`);
+  }
 
   if (opts.file) {
-    await writeFile(opts.file, output, 'utf8');
-    console.log(`Wrote ${opts.textOnly ? 'text' : 'body'} to ${opts.file}`);
+    if (Buffer.isBuffer(output)) {
+      await writeFile(opts.file, output);
+      console.log(`Wrote ${result.contentLength} bytes (PDF) to ${opts.file}`);
+    } else {
+      await writeFile(opts.file, output, 'utf8');
+      console.log(`Wrote ${opts.textOnly || isPdf ? 'text' : 'body'} to ${opts.file}`);
+    }
+  } else if (isPdf && !opts.textOnly) {
+    // Default behavior for a PDF on a TTY (no --text-only, no --out): show
+    // metadata + a short text preview, but do NOT dump full text to terminal.
+    // Pass --text-only for the full extraction or --out file.pdf for bytes.
+    const preview = (typeof output === 'string' ? output : '').slice(0, 800);
+    console.log(`Preview:\n${preview}${typeof output === 'string' && output.length > 800 ? '\n…' : ''}`);
+    console.log(`(use --text-only for full text, --out file.pdf for raw bytes, --max-chars N to cap text size)`);
   } else if (!process.stdout.isTTY) {
     // Redirected/piped (e.g. `> file.txt`): emit the full body so callers do
     // not silently capture only the preview window. Interactive TTYs still
     // get the truncated preview below to protect terminal/agent context.
-    if (opts.textOnly) console.log(`Text:\n${output}`);
+    if (opts.textOnly || isPdf) console.log(`Text:\n${output}`);
     else console.log(`Body:\n${output}`);
   } else {
     const limit = opts.textOnly ? 1000 : 500;

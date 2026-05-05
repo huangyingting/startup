@@ -2,9 +2,10 @@
 // Append a per-run postmortem record to reports/_postmortem.yaml so future
 // gate calibration is data-driven, not anecdote-driven.
 //
-// MUST run BEFORE ledger.mjs consolidates per-chapter localEvidence into
-// evidence.yaml — otherwise per-chapter source stance / accessStatus counts
-// are unrecoverable. finalize.mjs places this step first.
+// finalize.mjs runs this after the per-report publishability gate succeeds.
+// ledger.mjs preserves per-chapter localEvidence in the source chapter YAMLs,
+// so per-chapter source stance / accessStatus counts remain recoverable on
+// later finalize re-runs.
 //
 // Reads the report folder (chapters with intact localEvidence + report-meta.yaml)
 // and records, for each chapter:
@@ -16,15 +17,14 @@
 // Plus report-level totals.
 //
 // Idempotent for a given runId: re-running replaces the prior record instead
-// of appending duplicates.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import yaml from 'js-yaml';
 import {
   canonicalSourceUrl,
   getAnalysisArtifacts,
-  normalizeDomain,
   readYaml,
+  registrableDomain,
   reportsDir,
   tryReadYaml,
 } from './utils.mjs';
@@ -35,16 +35,6 @@ const RESTRICTED_ACCESS = new Set(['paywall', 'js-only', 'broken', 'rate-limited
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/postmortem.mjs <report-folder>');
   process.exit(1);
-}
-
-function registrableDomain(url) {
-  const host = normalizeDomain(url);
-  if (!host) return '';
-  const parts = host.split('.');
-  if (parts.length <= 2) return host;
-  const multiPart = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
-  const lastTwo = parts.slice(-2).join('.');
-  return multiPart.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
 }
 
 function chapterStats(reportFolder, spec) {

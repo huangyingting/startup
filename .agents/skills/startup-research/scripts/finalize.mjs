@@ -1,29 +1,40 @@
 #!/usr/bin/env node
-// Run the post-chapter finalization pipeline as a single command:
-//   1. ledger.mjs       -> evidence.yaml
-//   2. cross-chapter.mjs -> drift checks against report-meta.yaml
+// Run the post-chapter finalization pipeline as a single command. The pipeline
+// has two phases:
+//
+// Phase 1 — per-report (everything that touches THIS report only):
+//   1. ledger.mjs       -> evidence.yaml + rewrite chapter claimRefs (only on
+//                          first finalize, or when --rebuild is passed)
+//   2. cross-chapter.mjs -> drift checks across chapters (caught BEFORE
+//                           assemble so fixing report-meta.yaml or a chapter
+//                           does not require throwing away assembled output)
 //   3. assemble.mjs     -> full-report.yaml + summary-card.yaml
-//   4. index.mjs --strict -> rebuild reports/_index.yaml
+//   4. check-report.mjs -> schema/contract validation; this is the gate that
+//                          decides whether the report is publishable
 //
-// The agent must still hand-author report-meta.yaml before invoking this
-// script. cross-chapter runs BEFORE assemble so metric drift is caught while
-// it can still be fixed in report-meta.yaml without rebuilding twice.
+// Phase 2 — commit (global state, only runs after Phase 1 succeeds):
+//   5. postmortem.mjs   -> append a record to reports/_postmortem.yaml
+//   6. build-index.mjs  -> rebuild reports/_index.yaml (skip with --skip-index)
 //
-// Stops at the first failing step and prints which step failed; downstream
-// steps are skipped so the agent can fix and re-run.
+// Splitting like this means a failure in Phase 1 leaves global state untouched
+// (no half-published report in _index.yaml, no postmortem entry for a report
+// that never validated). Re-runs after fixing report-meta.yaml or a chapter
+// reuse the existing evidence.yaml; pass --rebuild to force a full rebuild
+// (ledger reassigns canonical claim IDs, so this only when you want fresh ones).
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
+import { FINAL_ARTIFACTS } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 const folderArg = args.find((arg) => !arg.startsWith('-'));
 const skipIndex = args.includes('--skip-index');
+const rebuild = args.includes('--rebuild');
 
 if (!folderArg) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/finalize.mjs <report-folder> [--skip-index]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/finalize.mjs <report-folder> [--skip-index] [--rebuild]');
   process.exit(1);
 }
 
@@ -37,43 +48,34 @@ if (!existsSync(`${reportFolder}/report-meta.yaml`)) {
   process.exit(1);
 }
 
-const workflowConfig = loadWorkflowConfig();
-const analysisFiles = getAnalysisArtifacts(workflowConfig).map((item) => item.file);
-const presentAnalysisFiles = analysisFiles.filter((file) => existsSync(join(reportFolder, file)));
-const localEvidenceFiles = presentAnalysisFiles.filter((file) => {
-  const result = tryReadYaml(join(reportFolder, file));
-  return result.ok && Object.prototype.hasOwnProperty.call(result.value ?? {}, 'localEvidence');
-});
+// Phase 1 — per-report. ledger only when there is no evidence.yaml yet (or
+// when --rebuild forces a fresh consolidation). evidence.yaml is preserved
+// across re-runs so canonical claim IDs stay stable; the chapter source of
+// truth (localEvidence) is preserved by ledger so the agent always has a
+// place to fix evidence-shape problems.
 const hasExistingEvidence = existsSync(join(reportFolder, FINAL_ARTIFACTS.evidence.file));
-
-if (localEvidenceFiles.length > 0 && localEvidenceFiles.length < presentAnalysisFiles.length) {
-  console.error('[finalize] mixed chapter state detected: some analysis artifacts still contain localEvidence while others do not.');
-  console.error('[finalize] restore a consistent pre-ledger or post-ledger state before re-running finalize.');
-  process.exit(1);
+const needsLedger = !hasExistingEvidence || rebuild;
+const phase1 = [];
+if (needsLedger) {
+  phase1.push({ name: 'ledger', script: 'ledger.mjs', argv: [reportFolder] });
+} else {
+  console.log('[finalize] reusing existing evidence.yaml; pass --rebuild to force a full ledger rebuild.');
 }
+phase1.push({ name: 'cross-chapter', script: 'cross-chapter.mjs', argv: [reportFolder] });
+phase1.push({ name: 'assemble', script: 'assemble.mjs', argv: [reportFolder] });
+phase1.push({ name: 'check-report', script: 'check-report.mjs', argv: [reportFolder] });
 
-const steps = localEvidenceFiles.length === 0 && hasExistingEvidence
-  ? [
-      { name: 'cross-chapter', script: 'cross-chapter.mjs', argv: [reportFolder] },
-      { name: 'assemble', script: 'assemble.mjs', argv: [reportFolder] },
-    ]
-  : [
-      // postmortem runs FIRST so it can read per-chapter localEvidence (sources,
-      // claims, researchQuestions) before ledger consolidates and removes it.
-      { name: 'postmortem', script: 'postmortem.mjs', argv: [reportFolder] },
-      { name: 'ledger', script: 'ledger.mjs', argv: [reportFolder] },
-      { name: 'cross-chapter', script: 'cross-chapter.mjs', argv: [reportFolder] },
-      { name: 'assemble', script: 'assemble.mjs', argv: [reportFolder] },
-    ];
-
-if (localEvidenceFiles.length === 0 && hasExistingEvidence) {
-  console.log('[finalize] no chapter localEvidence found; reusing existing evidence.yaml and skipping postmortem + ledger');
-}
+// Phase 2 — commit. postmortem records the run; build-index publishes it to
+// the global catalog. We never reach this phase unless every Phase 1 step
+// (including the publishable gate) succeeded.
+const phase2 = [
+  { name: 'postmortem', script: 'postmortem.mjs', argv: [reportFolder] },
+];
 if (!skipIndex) {
-  steps.push({ name: 'index', script: 'index.mjs', argv: ['--strict'] });
+  phase2.push({ name: 'build-index', script: 'build-index.mjs', argv: ['--strict'] });
 }
 
-for (const step of steps) {
+function runStep(step) {
   console.log(`[finalize] -> ${step.name}`);
   const result = spawnSync(process.execPath, [resolve(here, step.script), ...step.argv], { stdio: 'inherit' });
   if (result.status !== 0) {
@@ -81,4 +83,7 @@ for (const step of steps) {
     process.exit(result.status ?? 1);
   }
 }
-console.log('[finalize] ✓ pipeline complete; run `npm run validate` to re-run schema checks.');
+
+for (const step of phase1) runStep(step);
+for (const step of phase2) runStep(step);
+console.log('[finalize] ✓ pipeline complete; report passed schema validation.');

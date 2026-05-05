@@ -1,15 +1,33 @@
 #!/usr/bin/env node
 // Chapter-scoped readiness check for one analysis artifact (01-08).
 // Always runs the pre-ledger checks (localEvidence quotas, claimRef
-// resolution); the post-ledger phase is handled by check-reports.mjs.
+// resolution); the post-ledger phase is handled by check-report.mjs.
 //
 // `--format json` emits structured failures keyed by dimension so the agent's
-// retry loop can target only the failing facets (researchQuestions, sources,
-// claims, sections, artifacts, depth, claimRefs, etc.).
+// retry loop can target only the failing facets. Each failure carries:
+//   - dimension   (stable enum, switch on this)
+//   - message     (human-readable problem)
+//   - fix         (one-line action — same data as the SKILL.md retry table)
+//   - actual / required / id / tableId / claimId / etc. (when applicable)
+// The top-level report also surfaces objectFailures[] (failures grouped by
+// the object they touch — e.g. all complaints about T102 in one entry) and
+// globalHints[] (when the same dimension fails on many objects, hinting at a
+// chapter-wide root cause).
 import { existsSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { canonicalSourceUrl, collectClaimRefs, getAnalysisArtifacts, normalizeDomain, tryReadYaml } from './utils.mjs';
-import { validateFigureShape } from './figures.mjs';
+import { canonicalSourceUrl, collectClaimRefs, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
+import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
+import {
+  checkArtifactRefs,
+  checkCalloutSchema,
+  checkClaimSchema,
+  checkDocumentHeadSchema,
+  checkFigureDeep,
+  checkSourceSchema,
+  checkTableSchema,
+  checkUniqueIds,
+  ENUMERATION_COVERAGE,
+} from './chapter-schema.mjs';
 
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
 
@@ -26,7 +44,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/gate.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
   process.exit(1);
 }
 if (!['text', 'json'].includes(args.format)) {
@@ -45,6 +63,80 @@ const reportFolder = resolve(args.folder);
 const failures = [];
 const warnings = [];
 
+// Per-dimension one-line action hints. Same data the SKILL.md retry table
+// expressed in prose; baking it into each failure removes the agent's need to
+// cross-reference SKILL.md when triaging. Keep entries action-oriented and
+// short (<= 120 chars). Add a new entry whenever you add a new dimension.
+const FIX_HINTS = {
+  missingArtifact: 'Create the chapter YAML at the expected path.',
+  yamlParse: 'Fix the YAML syntax error reported in the message.',
+  localEvidenceMissing: 'Add the entire localEvidence block (researchQuestions, searchQueries, sources, claims, evidenceGaps).',
+  researchQuestionShape: 'Fix the question object: id RQ###, >=20-char text, valid type, non-empty targets[], valid status.',
+  researchQuestionTargets: 'Point each targets[] entry at a real contentRequirements/<index>, plannedTables/<slug>, or plannedFigures/<slug>.',
+  researchQuestionTypeMix: 'Add questions of types you have not used yet to reach minQuestionTypeSpread.',
+  researchQuestionAdverse: 'Add type:adverse questions until you reach minAdverseQuestions.',
+  researchQuestionAnswerCoverage: 'Convert questions from unresolved/partial to answered by adding the missing claim and citing it via claim.answersQuestionRefs.',
+  researchQuestionClosure: 'Add an evidenceGap whose relatedQuestionRefs[] includes the still-open question.',
+  searchQueriesMissing: 'Append the actual queries you ran into localEvidence.searchQueries[] ({query, engine, hits, retainedSourceRefs}).',
+  sourceShape: 'Fill accessStatus and stance (and other required fields) on each source.',
+  sourceDomains: 'Add sources from new registrable domains; do not duplicate publishers.',
+  sourceTypeSpread: 'Add sources with sourceType values you have not used yet.',
+  requiredSourceTypes: 'Pull at least one source of each missing type listed in gate.requiredSourceTypes.',
+  netNewSources: 'Run new searches to add URLs not seen in earlier chapters; reusing the global pool will not satisfy this gate.',
+  paywallRisk: 'Swap restricted (paywall|js-only|broken|rate-limited) sources for ok ones to stay under the report-level 30% ceiling.',
+  researchQuestions: 'Add more researchQuestion entries until you hit the per-chapter floor.',
+  sources: 'Add more sources until you hit the per-chapter floor.',
+  claims: 'Add more claims until you hit the per-chapter floor.',
+  highConfidenceCorroboration: 'Either downgrade confidence:high to medium, or add a primary-tier source (filing|regulatory|legal|official or reputationTier:high).',
+  claimAnswerRefs: 'Resolve dangling answersQuestionRefs entries; do not duplicate evidence.',
+  claimContradictRefs: 'Resolve dangling contradictsClaimRefs entries; type:conflicting requires non-empty contradictsClaimRefs.',
+  claimRefs: 'Resolve dangling claimRefs across sections, tables, figures, and callouts.',
+  enumerationScope: 'Add enumerationScope { coverage, basis(>=20 chars) } to the matching enumeration table.',
+  enumerationRows: 'Add rows to reach expectedMinRows or set coverage to partial/sample with rationale.',
+  enumerationCoverageGap: 'Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it.',
+  enumerationRowCorroboration: "Add sources from additional registrable domains backing the table's claimRefs.",
+  claimShape: 'Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.',
+  analysisCallout: 'Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength|risk|recommendation|insight|assumption).',
+  tableShape: 'Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.',
+  documentHead: 'Fix the chapter document head: schemaVersion=report-v2, artifact matches the chapter key, slug, runDate=YYYY-MM-DD, company.name, and chapter.number matching the chapter order.',
+  duplicateIds: 'Renumber the duplicate or malformed table/figure id; ids must match T### / F### and be unique within the chapter.',
+  artifactRefs: 'Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter\'s figures[] / tables[].',
+  sectionsMin: 'Add the missing section(s) to reach minSections.',
+  artifactsMin: 'Add the missing table or figure (or substitute a planned figure with an extra table when data shape does not fit).',
+  depthSection: 'Expand the prose of the shortest section(s) only; leave the others untouched.',
+  depthSectionTotal: 'Expand prose across short sections to reach minSectionWordsTotal.',
+  depthTableRows: 'Add rows to existing tables to reach minTableRowsTotal.',
+  depthFigureData: 'Add data points to existing figures to reach minFigureDataPointsTotal.',
+  contentRequirementCoverage: 'Add researchQuestions whose targets[] cover the un-targeted contentRequirements.',
+  figureShape: 'Fix the figure data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows).',
+  duplicateAnalysis: 'Merge the redundant table/figure pair, or sharpen one to answer a distinct question.',
+  figureType: 'Render at least one of the planned figure types or document the substitution in evidenceGaps.',
+  sectionsMax: 'Reduce or merge sections; the chapter looks over-fragmented.',
+  tablesMax: 'Reduce or merge tables; the chapter looks over-fragmented.',
+  figuresMax: 'Reduce or merge figures; the chapter looks over-fragmented.',
+};
+
+// When an upstream dimension fires, every downstream dimension in this set is
+// almost always a cascading false positive. Suppressing them keeps retry
+// noise down so the agent can fix the root cause first and re-run.
+//   localEvidenceMissing -> nothing inside localEvidence is checkable; every
+//   source/claim/researchQuestion/enumeration failure is downstream noise.
+const CASCADE_SUPPRESSORS = {
+  localEvidenceMissing: new Set([
+    'researchQuestions', 'researchQuestionShape', 'researchQuestionTargets',
+    'researchQuestionTypeMix', 'researchQuestionAdverse',
+    'researchQuestionAnswerCoverage', 'researchQuestionClosure',
+    'searchQueriesMissing',
+    'sources', 'sourceShape', 'sourceDomains', 'sourceTypeSpread',
+    'requiredSourceTypes', 'netNewSources', 'paywallRisk',
+    'claims', 'claimShape', 'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
+    'highConfidenceCorroboration',
+    'enumerationScope', 'enumerationRows', 'enumerationCoverageGap',
+    'enumerationRowCorroboration',
+    'contentRequirementCoverage',
+  ]),
+};
+
 // dimension is a stable enum the retry loop can switch on:
 //   missingArtifact | yamlParse | sectionsMin | sectionsMax | artifactsMin
 //   | tablesMax | figuresMax | depthSection | depthSectionTotal
@@ -52,11 +144,15 @@ const warnings = [];
 //   | figureShape
 //   | localEvidenceMissing | researchQuestions | sources | claims | claimRefs
 function fail(dimension, message, extra = {}) {
-  failures.push({ dimension, file: spec.file, message, ...extra });
+  const entry = { dimension, file: spec.file, message, ...extra };
+  if (FIX_HINTS[dimension]) entry.fix = FIX_HINTS[dimension];
+  failures.push(entry);
 }
 
 function warn(dimension, message, extra = {}) {
-  warnings.push({ dimension, file: spec.file, message, ...extra });
+  const entry = { dimension, file: spec.file, message, ...extra };
+  if (FIX_HINTS[dimension]) entry.fix = FIX_HINTS[dimension];
+  warnings.push(entry);
 }
 
 function loadYamlFile(file) {
@@ -178,20 +274,7 @@ function checkTableFigureOverlap(file, doc) {
   }
 }
 
-const ACCESS_STATUSES = new Set(['ok', 'paywall', 'js-only', 'broken', 'rate-limited']);
-const STANCES = new Set(['confirming', 'adverse', 'neutral']);
 const PRIMARY_TIER_TYPES = new Set(['filing', 'regulatory', 'legal', 'official']);
-
-function registrableDomain(url) {
-  const host = normalizeDomain(url);
-  if (!host) return '';
-  const parts = host.split('.');
-  // Keep last two labels for normal TLDs; last three for known multi-part TLDs (rough heuristic).
-  if (parts.length <= 2) return host;
-  const multiPart = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
-  const lastTwo = parts.slice(-2).join('.');
-  return multiPart.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
-}
 
 function loadEarlierChapterUrls(reportFolder, currentSpec, allSpecs) {
   const urls = new Set();
@@ -236,18 +319,16 @@ function checkSources(file, doc, gate, earlierUrls) {
   let restrictedCount = 0;
   for (const source of sources) {
     const path = `${file}: source ${source?.id ?? '?'}`;
-    if (!ACCESS_STATUSES.has(source?.accessStatus)) {
-      fail('sourceShape', `${path} accessStatus must be one of ${[...ACCESS_STATUSES].join('|')}`, { id: source?.id });
+    // Full schema validation via the shared helper (required fields, enum
+    // values, date format, topic shape). Each violation becomes a
+    // sourceShape failure with the same message check-report would emit.
+    const { errors } = checkSourceSchema(source, { path });
+    for (const err of errors) {
+      fail('sourceShape', err.message, { id: source?.id, ...err });
       shapeFails += 1;
-    } else if (source.accessStatus !== 'ok') {
-      restrictedCount += 1;
     }
-    if (!STANCES.has(source?.stance)) {
-      fail('sourceShape', `${path} stance must be one of ${[...STANCES].join('|')}`, { id: source?.id });
-      shapeFails += 1;
-    } else if (source.stance === 'adverse') {
-      adverseCount += 1;
-    }
+    if (source?.accessStatus && source.accessStatus !== 'ok') restrictedCount += 1;
+    if (source?.stance === 'adverse') adverseCount += 1;
     if (source?.sourceType) types.add(source.sourceType);
     const domain = registrableDomain(source?.url);
     if (domain) domains.add(domain);
@@ -301,8 +382,6 @@ function checkHighConfidenceCorroboration(file, doc, gate) {
     }
   }
 }
-
-const ENUMERATION_COVERAGE = new Set(['exhaustive', 'partial', 'sample']);
 
 function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
   const enumerationPlans = [...plannedTablesByName.values()].filter((plan) => plan.enumeration === true);
@@ -508,6 +587,34 @@ function checkLocalEvidence(file, doc, counts) {
 const doc = loadYamlFile(spec.file);
 let counts = null;
 if (doc) {
+  // Document head: schemaVersion, artifact, slug, runDate, company.name,
+  // chapter.number. Catches malformed runDate, wrong chapter.number, missing
+  // company.name at chapter time instead of waiting for check-report.
+  {
+    const { errors } = checkDocumentHeadSchema(doc, { path: spec.file, expected: spec });
+    for (const err of errors) fail('documentHead', err.message, err);
+  }
+  // Chapter-local table/figure id uniqueness (T### / F###). Duplicate or
+  // malformed ids would otherwise blow up at ledger/assemble time.
+  {
+    const { errors } = checkUniqueIds(doc.tables, { label: 'table', pattern: /^T\d{3}$/, path: spec.file });
+    for (const err of errors) fail('duplicateIds', err.message, err);
+  }
+  {
+    const { errors } = checkUniqueIds(doc.figures, { label: 'figure', pattern: /^F\d{3}$/, path: spec.file });
+    for (const err of errors) fail('duplicateIds', err.message, err);
+  }
+  // Chapter-local figureRef / tableRef resolution. The same check runs
+  // again post-finalize against the assembled full-report (where ids are
+  // global), but catching dangling refs here means the agent fixes them
+  // without rebuilding the whole report.
+  {
+    const figureIds = new Set((doc.figures ?? []).map((f) => f?.id).filter(Boolean));
+    const tableIds = new Set((doc.tables ?? []).map((t) => t?.id).filter(Boolean));
+    const { errors } = checkArtifactRefs(doc, { path: spec.file, figureIds, tableIds });
+    for (const err of errors) fail('artifactRefs', err.message, err);
+  }
+
   counts = {
     sections: doc.sections?.length ?? 0,
     tables: doc.tables?.length ?? 0,
@@ -552,10 +659,41 @@ if (doc) {
   }
 
   for (const figure of doc.figures ?? []) {
-    const { errors } = validateFigureShape(figure);
-    for (const message of errors) {
+    // Light shape check (data field presence per type contract).
+    const { errors: lightErrors } = validateFigureShape(figure);
+    for (const message of lightErrors) {
       fail('figureShape', `${spec.file}: ${message}`, { figureId: figure?.id ?? null });
     }
+    // Deep schema check (item labels, matrix alignment, numeric/range/cohort
+    // value rules, quadrant coordinates). Same rules check-report enforces.
+    const { errors: deepErrors } = checkFigureDeep(figure, { path: spec.file });
+    for (const err of deepErrors) {
+      fail('figureShape', err.message, { figureId: figure?.id ?? null, ...err });
+    }
+  }
+
+  // Per-claim schema (required fields, enum values, contradictsClaimRefs
+  // when type=conflicting, sourceRefs non-empty unless open-question).
+  for (const claim of doc.localEvidence?.claims ?? []) {
+    const path = `${spec.file}: claim ${claim?.id ?? '?'}`;
+    const { errors } = checkClaimSchema(claim, { path });
+    for (const err of errors) fail('claimShape', err.message, { id: claim?.id, ...err });
+  }
+
+  // Per-callout schema (title, body, claimRefs[], optional calloutType enum).
+  for (const [index, callout] of (doc.callouts ?? []).entries()) {
+    const path = `${spec.file}: callout ${index + 1}`;
+    const { errors } = checkCalloutSchema(callout, { path });
+    for (const err of errors) fail('analysisCallout', err.message, { index, ...err });
+  }
+
+  // Per-table column/row alignment + enumerationScope shape. The deeper
+  // enumeration-coverage rules (per-row corroboration, gap requirement) live
+  // in checkEnumerationTables below, since they need source/claim context.
+  for (const table of doc.tables ?? []) {
+    const path = `${spec.file}: table ${table?.id ?? '?'}`;
+    const { errors } = checkTableSchema(table, { path });
+    for (const err of errors) fail('tableShape', err.message, { tableId: table?.id, ...err });
   }
 
   checkLocalEvidence(spec.file, doc, counts);
@@ -588,16 +726,20 @@ const ok = failures.length === 0 && (!args.strict || unackedWarningDims.length =
 // dimensions fail, fix in this order; downstream dimensions often clear once
 // upstream is repaired.
 const RETRY_PRECEDENCE = [
-  'missingArtifact', 'yamlParse', 'localEvidenceMissing',
+  'missingArtifact', 'yamlParse', 'documentHead', 'localEvidenceMissing',
   'researchQuestionShape', 'researchQuestionTargets', 'researchQuestionTypeMix', 'researchQuestionAdverse',
   'searchQueriesMissing',
   'sourceShape', 'sourceDomains', 'sourceTypeSpread', 'requiredSourceTypes', 'netNewSources',
   'paywallRisk',
   'researchQuestions', 'sources', 'claims',
+  'claimShape',
   'highConfidenceCorroboration',
   'researchQuestionAnswerCoverage', 'researchQuestionClosure',
   'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
   'enumerationScope', 'enumerationRows', 'enumerationCoverageGap', 'enumerationRowCorroboration',
+  'tableShape', 'figureShape',
+  'duplicateIds', 'artifactRefs',
+  'analysisCallout',
   'sectionsMin', 'artifactsMin', 'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
   'contentRequirementCoverage',
 ];
@@ -607,20 +749,99 @@ function sortByPrecedence(dimensions) {
   return [...dimensions].sort((a, b) => (rank.get(a) ?? 999) - (rank.get(b) ?? 999));
 }
 
+// Apply CASCADE_SUPPRESSORS: when an upstream "root cause" dimension fired,
+// drop downstream failures it would have caused (e.g. localEvidenceMissing
+// makes every source/claim check fail trivially). Returns the trimmed list
+// plus the set of dimensions that were suppressed (surfaced in the report
+// so the agent knows what to expect after the root cause is fixed).
+function applyCascadeSuppression(allFailures) {
+  const firedDims = new Set(allFailures.map((entry) => entry.dimension));
+  const suppressed = new Set();
+  for (const upstream of Object.keys(CASCADE_SUPPRESSORS)) {
+    if (!firedDims.has(upstream)) continue;
+    for (const downstream of CASCADE_SUPPRESSORS[upstream]) {
+      if (firedDims.has(downstream)) suppressed.add(downstream);
+    }
+  }
+  if (suppressed.size === 0) return { failures: allFailures, suppressed: [] };
+  return {
+    failures: allFailures.filter((entry) => !suppressed.has(entry.dimension)),
+    suppressed: [...suppressed],
+  };
+}
+
+// Group failures by the object they touch (table id, figure id, claim id,
+// question id, source id) so the agent sees "table T102 has 2 problems"
+// instead of two unrelated entries. Failures without an object id are kept
+// out of this grouping; they show up only in failures[]/failedDimensions[].
+function aggregateByObject(failureList) {
+  const buckets = new Map();
+  for (const entry of failureList) {
+    const objectId = entry.tableId
+      || entry.figureId
+      || entry.claimId
+      || entry.id  // research questions, sources
+      || null;
+    if (!objectId) continue;
+    if (!buckets.has(objectId)) buckets.set(objectId, { objectId, dimensions: [], fixes: [], messages: [] });
+    const bucket = buckets.get(objectId);
+    if (!bucket.dimensions.includes(entry.dimension)) bucket.dimensions.push(entry.dimension);
+    if (entry.fix && !bucket.fixes.includes(entry.fix)) bucket.fixes.push(entry.fix);
+    bucket.messages.push(entry.message);
+  }
+  // Stable order: most-broken objects first.
+  return [...buckets.values()].sort((a, b) => b.dimensions.length - a.dimensions.length);
+}
+
+// When the same dimension fails on >=3 distinct objects, surface a single
+// "global" hint at the top so the agent fixes the chapter-wide gap instead
+// of patching each object one at a time.
+function detectGlobalHints(failureList) {
+  const dimToObjects = new Map();
+  for (const entry of failureList) {
+    const objectId = entry.tableId || entry.figureId || entry.claimId || entry.id || null;
+    if (!objectId) continue;
+    if (!dimToObjects.has(entry.dimension)) dimToObjects.set(entry.dimension, new Set());
+    dimToObjects.get(entry.dimension).add(objectId);
+  }
+  const hints = [];
+  for (const [dimension, objects] of dimToObjects) {
+    if (objects.size >= 3) {
+      hints.push({
+        dimension,
+        affectedObjects: [...objects],
+        fix: FIX_HINTS[dimension] ?? null,
+        note: `${objects.size} distinct objects fail this dimension; treat as a chapter-wide gap rather than per-object patches.`,
+      });
+    }
+  }
+  return hints;
+}
+
+// Apply suppression once and reuse the trimmed list for both formats. The
+// raw failures (pre-suppression) are still surfaced so the agent can audit
+// what was hidden.
+const { failures: visibleFailures, suppressed: suppressedDimensions } = applyCascadeSuppression(failures);
+const objectFailures = aggregateByObject(visibleFailures);
+const globalHints = detectGlobalHints(visibleFailures);
+
 if (args.format === 'json') {
-  const failedDimensions = [...new Set(failures.map((entry) => entry.dimension))];
+  const failedDimensions = [...new Set(visibleFailures.map((entry) => entry.dimension))];
   const report = {
     ok,
     artifact: spec.file,
     chapterKey: spec.key,
     reportFolder,
     counts,
-    failures,
+    globalHints,
+    objectFailures,
+    failures: visibleFailures,
     warnings,
     failedDimensions,
     warningDimensions: [...new Set(warnings.map((entry) => entry.dimension))],
     acknowledgedWarnings: [...ackByDim.keys()],
     unackedWarningDimensions: unackedWarningDims,
+    suppressedDimensions,
     retryOrder: sortByPrecedence(failedDimensions),
   };
   console.log(JSON.stringify(report, null, 2));
@@ -630,11 +851,17 @@ if (args.format === 'json') {
     console.log(`[check:chapter] artifact=${spec.file} strict=${args.strict ? 'yes' : 'no'}`);
     console.log(`[check:chapter] sections=${counts.sections} tables=${counts.tables} figures=${counts.figures} localSources=${counts.sources} localClaims=${counts.claims} researchQuestions=${counts.researchQuestions} gaps=${counts.gaps}`);
   }
+  if (globalHints.length) {
+    console.error('[check:chapter] global hints (chapter-wide root causes):\n' + globalHints.map((hint) => `  - [${hint.dimension}] ${hint.note} fix: ${hint.fix ?? ''}`).join('\n'));
+  }
   if (warnings.length) {
     console.warn('[check:chapter] warnings:\n' + warnings.map((entry) => `  - [${entry.dimension}] ${entry.message}`).join('\n'));
   }
-  if (failures.length) {
-    console.error('[check:chapter] failures:\n' + failures.map((entry) => `  - [${entry.dimension}] ${entry.message}`).join('\n'));
+  if (visibleFailures.length) {
+    console.error('[check:chapter] failures:\n' + visibleFailures.map((entry) => `  - [${entry.dimension}] ${entry.message}${entry.fix ? `\n      fix: ${entry.fix}` : ''}`).join('\n'));
+  }
+  if (suppressedDimensions.length) {
+    console.error(`[check:chapter] suppressed cascaded dimensions (re-run after fixing root cause): ${suppressedDimensions.join(', ')}`);
   }
   if (ok) console.log('[check:chapter] ✓ chapter ready for next workflow stage.');
 }

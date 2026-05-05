@@ -14,6 +14,7 @@ import {
 } from './utils.mjs';
 
 const REQUIRED_FILES = ['summary-card.yaml'];
+const FULL_REPORT_FILE = 'full-report.yaml';
 const OUTPUT_PATH = join(reportsDir, '_index.yaml');
 const args = new Set(process.argv.slice(2));
 
@@ -24,10 +25,25 @@ function completeCardPath(runId) {
     : null;
 }
 
+function artifactCounts(runId) {
+  const path = join(reportsDir, runId, FULL_REPORT_FILE);
+  if (!existsSync(path)) return { figureCount: null, tableCount: null };
+  try {
+    const report = readYaml(path);
+    return {
+      figureCount: Array.isArray(report.figures) ? report.figures.length : null,
+      tableCount: Array.isArray(report.tables) ? report.tables.length : null,
+    };
+  } catch {
+    return { figureCount: null, tableCount: null };
+  }
+}
+
 function indexEntry(runId, card) {
   const company = card.company ?? {};
   const summary = card.summary ?? {};
   const metrics = summary.keyMetrics ?? {};
+  const counts = artifactCounts(runId);
   return {
     runId,
     slug: card.slug ?? runId,
@@ -47,8 +63,8 @@ function indexEntry(runId, card) {
     domainCount: card.sourceStats?.domainCount ?? null,
     adverseSourceCount: card.sourceStats?.adverseSourceCount ?? null,
     unresolvedQuestionCount: card.sourceStats?.unresolvedQuestionCount ?? null,
-    figureCount: card.figureCount ?? null,
-    tableCount: card.tableCount ?? null,
+    figureCount: counts.figureCount,
+    tableCount: counts.tableCount,
     valuationUsdM: metrics.valuationUsdM ?? null,
     revenueRunRateUsdM: metrics.revenueRunRateUsdM ?? null,
     path: `reports/${runId}/summary-card.yaml`,
@@ -82,7 +98,7 @@ const serialized = yaml.dump(document, { lineWidth: 120, noRefs: true, sortKeys:
 if (args.has('--check')) {
   const onDisk = existsSync(OUTPUT_PATH) ? readFileSync(OUTPUT_PATH, 'utf8') : '';
   if (onDisk !== serialized) {
-    console.error('[build:report-index] reports/_index.yaml is out of date. Run node .agents/skills/startup-research/scripts/index.mjs --strict.');
+    console.error('[build:report-index] reports/_index.yaml is out of date. Run node .agents/skills/startup-research/scripts/build-index.mjs --strict.');
     process.exit(1);
   }
   console.log(`[build:report-index] ✓ reports/_index.yaml is current (${reports.length} report(s)).`);

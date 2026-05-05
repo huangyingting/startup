@@ -5,9 +5,9 @@ This repository generates startup diligence reports as structured YAML and rende
 ## Project map
 
 - `reports/` — generated report runs and `reports/_index.yaml`.
-- `.agents/skills/startup-research/` — end-to-end report-generation skill, including private references and skill-owned scripts.
-- `.agents/skills/fetch-url/` — direct URL fetch helper skill.
-- `website/` — Astro site, report loader, renderer, and website-owned validation helpers.
+- `.agents/skills/startup-research/` — end-to-end report-generation skill, including private references and skill-owned scripts. Owns chapter checks, report validation, ledger consolidation, and final assembly.
+- `.agents/skills/fetch-url/` — direct URL fetch helper skill (HTML / PDF, with curl-impersonate, host-strategy map, reader/wayback fallbacks, on-disk cache).
+- `website/` — Astro site and rendering contracts (no validators live here; `website/src/lib/figures.mjs` is shared with the skill validators).
 
 ## Setup commands
 
@@ -19,12 +19,11 @@ This repository generates startup diligence reports as structured YAML and rende
 ## Testing instructions
 
 - Before finishing code, schema, report, loader, renderer, or script changes, run `npm run validate` unless the user asked for a narrower edit.
-- For website/report rendering checks only, run `npm run check:reports`.
 - For workflow config/index checks only, run `npm run check:workflow-config` and `npm run check:report-index`.
 
 ## Working conventions
 
-- Keep skill-owned scripts under `.agents/skills/*/scripts/`; keep website-owned helpers under `website/`.
+- Keep skill-owned scripts under `.agents/skills/*/scripts/`. Validation logic that needs to run both during chapter generation and at report-build time (e.g. figure shape contracts) is shared via `website/src/lib/` modules imported by the skill validators.
 - Use `node .agents/skills/.../scripts/*.mjs` directly for skill workflow scripts; do not add npm aliases for skill internals.
 
 ## Core philosophy
