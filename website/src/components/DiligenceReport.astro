@@ -107,12 +107,17 @@ const fallbackMetrics = [
 ---
 <section class="report-shell sr-container">
   <header class="report-cover">
-    <div>
+    <div class="report-cover-main">
+      <div class="cover-eyebrow">
+        <span class="cover-eyebrow-tag">Diligence report</span>
+        {data.company?.sector && <span class="cover-eyebrow-meta">{data.company.sector}</span>}
+        {data.company?.stage && <span class="cover-eyebrow-meta">{data.company.stage}</span>}
+        <span class="cover-eyebrow-meta">{data.runDate}</span>
+      </div>
       <h1>{doc?.company?.name ?? data.company?.name ?? data.slug}</h1>
       {(doc?.subtitle ?? null) && <p class="report-subtitle">{doc?.subtitle}</p>}
       <p class="report-headline">{cleanHeadline(data.headline)}</p>
       <div class="report-meta-line">
-        <span>{data.runDate}</span>
         <span>{data.sourceStats.sourcesRetained} {labels.sources}</span>
         <span>{data.sourceStats.claimsReviewed} {labels.claims}</span>
         {data.sourceStats?.domainCount != null && (<span>{data.sourceStats.domainCount} domains</span>)}
@@ -131,13 +136,19 @@ const fallbackMetrics = [
         >{labels.showRefs}</button>
       </div>
     </div>
-    <aside class="decision-card">
-      <dl>
-        <div><dt>{labels.recommendation}</dt><dd>{displayLabel(data.recommendation)}</dd></div>
+    <aside class={`decision-card decision-${String(data.recommendation ?? 'unknown').replace(/[^a-z0-9-]/gi, '-')}`}>
+      <div class="decision-headline">
+        <span class="decision-eyebrow">{labels.recommendation}</span>
+        <strong class="decision-rec">{displayLabel(data.recommendation)}</strong>
+      </div>
+      <div class="decision-score">
+        <span class="decision-score-value">{data.overallScore.toFixed(1)}</span>
+        <span class="decision-score-label">{labels.score} / 10</span>
+      </div>
+      <dl class="decision-grid">
         <div><dt>{labels.confidence}</dt><dd>{displayLabel(data.confidence)}</dd></div>
         <div><dt>{labels.riskRating}</dt><dd>{displayLabel(data.riskRating)}</dd></div>
         <div><dt>{labels.valuationStance}</dt><dd>{displayLabel(data.valuationStance)}</dd></div>
-        <div><dt>{labels.score}</dt><dd>{data.overallScore.toFixed(1)}</dd></div>
       </dl>
     </aside>
   </header>
@@ -201,12 +212,35 @@ const fallbackMetrics = [
   {chapters.length > 0 && (
     <nav class="report-section toc" aria-label={labels.contents}>
       <h2>{labels.contents}</h2>
-      <ol>
-        {chapters.map((chapter: any) => (
-          <li><a href={`#chapter-${chapter.number}`}>{chapter.title}</a></li>
-        ))}
+      <ol class="toc-list">
+        {chapters.map((chapter: any) => {
+          const sectionCount = arr(chapter.sections).length;
+          return (
+            <li class="toc-item">
+              <a href={`#chapter-${chapter.number}`}>
+                <span class="toc-number">{String(chapter.number).padStart(2, '0')}</span>
+                <span class="toc-body">
+                  <span class="toc-title">{chapter.title}</span>
+                  {sectionCount > 0 && (
+                    <span class="toc-meta">{sectionCount} {sectionCount === 1 ? 'section' : 'sections'}</span>
+                  )}
+                </span>
+                <span class="toc-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          );
+        })}
         {appendices.map((appendix: any) => (
-          <li><a href={`#appendix-${appendix.id}`}>{labels.appendix} {appendix.id}: {appendix.title}</a></li>
+          <li class="toc-item toc-appendix">
+            <a href={`#appendix-${appendix.id}`}>
+              <span class="toc-number">{appendix.id}</span>
+              <span class="toc-body">
+                <span class="toc-title">{appendix.title}</span>
+                <span class="toc-meta">{labels.appendix}</span>
+              </span>
+              <span class="toc-arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
         ))}
       </ol>
     </nav>
@@ -381,19 +415,37 @@ const fallbackMetrics = [
     overflow-x: clip;
     font-size: var(--report-fs-body);
   }
-  .report-cover { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); gap: var(--space-7); align-items: start; padding-block: 0 var(--space-6); }
-  .report-cover h1 { margin: 0 0 var(--space-4); max-width: 28ch; font-family: var(--font-display); font-size: var(--fs-3xl); font-weight: 700; letter-spacing: var(--tracking-display-tight); line-height: var(--lh-display-hero); }
-  .report-subtitle, .report-headline { width: 100%; color: var(--ink-page); font-family: var(--font-sans); line-height: 1.55; }
-  .report-subtitle { font-size: var(--report-fs-body); color: var(--caption-gray); }
-  .report-meta-line { display: flex; flex-wrap: wrap; column-gap: var(--space-4); row-gap: var(--space-2); margin-top: var(--space-4); font-family: var(--font-sans); font-size: var(--report-fs-caption); }
+  .report-cover { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: var(--space-7); align-items: stretch; padding: var(--space-6) var(--space-5); margin-bottom: var(--space-5); border-top: 4px solid var(--claret); border-bottom: var(--report-rule); background: linear-gradient(135deg, color-mix(in srgb, var(--claret) 5%, var(--surface-paper)) 0%, var(--surface-paper) 60%, color-mix(in srgb, var(--gold) 4%, var(--surface-paper)) 100%); }
+  .report-cover-main { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+  .cover-eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); margin-bottom: var(--space-2); font-family: var(--font-sans); font-size: var(--report-fs-kicker); letter-spacing: var(--tracking-eyebrow); }
+  .cover-eyebrow-tag { display: inline-block; padding: 3px var(--space-2); border-radius: 999px; background: var(--claret); color: #fff7ef; font-variant-caps: all-small-caps; font-weight: 800; line-height: 1.1; }
+  .cover-eyebrow-meta { color: var(--caption-gray); font-variant-caps: all-small-caps; font-weight: 700; }
+  .cover-eyebrow-meta + .cover-eyebrow-meta::before { content: '·'; margin-right: var(--space-3); color: color-mix(in srgb, var(--caption-gray) 50%, transparent); }
+  .report-cover h1 { margin: 0; max-width: 22ch; font-family: var(--font-display); font-size: clamp(2.4rem, 4vw + 1rem, 4rem); font-weight: 700; letter-spacing: var(--tracking-display-tight); line-height: 0.98; color: var(--ink-page); }
+  .report-subtitle, .report-headline { width: 100%; max-width: 56ch; color: var(--ink-page); font-family: var(--font-sans); line-height: 1.5; }
+  .report-subtitle { font-size: var(--report-fs-body); color: var(--caption-gray); margin-top: 0; }
+  .report-headline { font-size: clamp(1.05rem, 0.4vw + 0.95rem, 1.2rem); font-weight: 500; }
+  .report-meta-line { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-3); row-gap: var(--space-2); margin-top: auto; padding-top: var(--space-4); font-family: var(--font-sans); font-size: var(--report-fs-caption); }
   .report-meta-line span { color: var(--caption-gray); }
-  .evidence-toggle { appearance: none; border: var(--report-rule); background: transparent; color: var(--claret); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 2px var(--space-2); }
-  .evidence-toggle:hover, .evidence-toggle:focus-visible, .evidence-toggle[aria-pressed="true"] { border-color: var(--claret); background: color-mix(in srgb, var(--claret) 5%, var(--surface-paper)); outline: none; }
-  .decision-card { align-self: start; border-top: 2px solid var(--claret); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
-  .decision-card dl { margin: 0; display: grid; gap: var(--space-3); }
-  .decision-card div { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); }
-  .decision-card dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  .decision-card dd { margin: 0; font-family: var(--font-display); font-size: var(--report-fs-body); font-weight: 700; color: var(--ink-page); text-align: right; }
+  .report-meta-line span + span:not(:last-of-type)::before { content: '·'; margin-right: var(--space-3); color: color-mix(in srgb, var(--caption-gray) 50%, transparent); }
+  .evidence-toggle { appearance: none; border: 1px solid var(--claret); background: transparent; color: var(--claret); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 4px var(--space-3); border-radius: 999px; margin-left: auto; }
+  .evidence-toggle:hover, .evidence-toggle:focus-visible, .evidence-toggle[aria-pressed="true"] { background: var(--claret); color: #fff7ef; outline: none; }
+  /* Decision card: hero panel with recommendation as the primary visual */
+  .decision-card { --decision-accent: var(--claret); --decision-accent-soft: color-mix(in srgb, var(--claret) 12%, transparent); display: flex; flex-direction: column; gap: var(--space-4); align-self: stretch; padding: var(--space-4) var(--space-4) var(--space-4); background: var(--surface-paper); border-top: 3px solid var(--decision-accent); border-radius: var(--space-1); box-shadow: 0 1px 0 color-mix(in srgb, var(--ink-page) 6%, transparent); }
+  .decision-buy, .decision-strong-buy, .decision-invest { --decision-accent: var(--gold); }
+  .decision-pass, .decision-avoid, .decision-decline { --decision-accent: #b42318; }
+  .decision-research-more, .decision-track, .decision-monitor { --decision-accent: var(--claret); }
+  .decision-headline { display: flex; flex-direction: column; gap: var(--space-1); }
+  .decision-eyebrow { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); line-height: 1.1; }
+  .decision-rec { display: inline-block; align-self: flex-start; padding: 4px var(--space-3); border-radius: 999px; background: var(--decision-accent); color: #fff7ef; font-family: var(--font-display); font-size: clamp(1rem, 0.4vw + 0.85rem, 1.2rem); font-weight: 800; letter-spacing: var(--tracking-display-snug); line-height: 1.15; text-transform: uppercase; }
+  .decision-score { display: flex; align-items: baseline; gap: var(--space-2); padding: var(--space-3) 0; border-top: 1px dashed color-mix(in srgb, var(--decision-accent) 30%, transparent); border-bottom: 1px dashed color-mix(in srgb, var(--decision-accent) 30%, transparent); }
+  .decision-score-value { font-family: var(--font-display); font-size: clamp(2.6rem, 2vw + 1.8rem, 3.4rem); font-weight: 800; line-height: 0.95; letter-spacing: -0.04em; color: var(--decision-accent); }
+  .decision-score-label { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
+  .decision-grid { margin: 0; display: grid; gap: var(--space-2) var(--space-3); }
+  .decision-grid div { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: baseline; }
+  .decision-grid dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
+  .decision-grid dd { margin: 0; font-family: var(--font-sans); font-size: var(--report-fs-caption); font-weight: 700; color: var(--ink-page); text-align: right; }
+  @media (max-width: 760px) { .report-cover { grid-template-columns: 1fr; padding: var(--space-5) var(--space-4); gap: var(--space-5); } .report-cover h1 { font-size: clamp(2rem, 6vw + 1rem, 2.8rem); } }
   .report-section, .report-chapter { padding-block: var(--space-6); }
   .report-chapter { border-top: var(--report-rule); }
   .report-section h2, .report-chapter > h2 { margin: 0 0 var(--space-4); }
@@ -402,7 +454,13 @@ const fallbackMetrics = [
   .report-chapter > h2 span { color: var(--claret); }
   .chapter-section { margin-top: var(--space-6); }
   .chapter-section h3 { margin-bottom: var(--space-3); font-size: var(--report-fs-subhead); font-weight: 700; letter-spacing: var(--tracking-display-snug); }
-  .chapter-section p, .chapter-section li, .report-section p { width: 100%; max-width: none; font-size: var(--report-fs-body); line-height: 1.65; }
+  /* Body content (p / li) inside chapter sections is rendered by
+   * ReportBlock.astro as slotted children, so it carries that component's
+   * cid — not DiligenceReport's. Wrap the descendant selector in :global so
+   * it actually matches. The same applies to .equation below. */
+  .chapter-section :global(p),
+  .chapter-section :global(li),
+  .report-section :global(p) { width: 100%; max-width: none; font-size: var(--report-fs-body); line-height: 1.65; }
   .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 3px solid var(--claret); border-left: var(--report-rule); background: var(--surface-paper); }
   .metric-grid article { position: relative; display: grid; align-content: space-between; min-height: 10.5rem; border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); }
   .metric-grid article::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: color-mix(in srgb, var(--claret) 70%, var(--surface-paper)); }
@@ -412,19 +470,40 @@ const fallbackMetrics = [
   .metric-topline em { flex: 0 0 auto; font-family: var(--font-mono); font-size: var(--report-fs-caption); font-style: normal; font-weight: 600; color: color-mix(in srgb, var(--caption-gray) 74%, transparent); }
   .metric-grid strong { display: block; align-self: end; padding-left: var(--space-2); font-family: var(--font-display); font-size: clamp(1.55rem, 1.25vw + 1.05rem, 2.2rem); font-weight: 800; letter-spacing: -0.035em; line-height: 0.98; color: var(--ink-page); overflow-wrap: anywhere; }
   .metric-grid article > :global(.claim-ref) { align-self: end; margin-top: var(--space-3); padding-left: var(--space-2); }
-  .intro-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-4); }
-  .intro-grid div { background: color-mix(in srgb, var(--surface-paper) 42%, transparent); padding: var(--space-3); }
-  .intro-grid dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); }
-  .intro-grid dd { margin: var(--space-1) 0 0; }
-  .toc ol { columns: 2; }
-  .toc a { color: var(--ink-page); text-decoration-color: var(--claret); }
-  .report-callout { margin: var(--space-5) 0; border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 5%, transparent); padding: var(--space-4); }
-  .report-callout h4 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--report-fs-subhead); }
-  .callout-strength { border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
-  .callout-risk { border-left-color: #b42318; background: color-mix(in srgb, #b42318 7%, transparent); }
-  .callout-recommendation { border-left-color: var(--claret); background: color-mix(in srgb, var(--claret) 8%, transparent); }
-  .callout-assumption { border-left-color: var(--caption-gray); background: color-mix(in srgb, var(--caption-gray) 8%, transparent); }
-  .equation { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
+  .intro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 0; margin-top: var(--space-4); border-top: 2px solid var(--claret); border-left: var(--report-rule); background: color-mix(in srgb, var(--surface-paper) 60%, transparent); }
+  .intro-grid div { position: relative; padding: var(--space-3) var(--space-4) var(--space-4); border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); transition: background-color 120ms ease; }
+  .intro-grid div::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px; background: color-mix(in srgb, var(--claret) 18%, transparent); transition: background-color 120ms ease; }
+  .intro-grid div:hover { background: color-mix(in srgb, var(--claret) 3%, var(--surface-paper)); }
+  .intro-grid div:hover::before { background: var(--claret); }
+  .intro-grid dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--claret); line-height: 1.2; }
+  .intro-grid dd { margin: var(--space-2) 0 0; font-family: var(--font-sans); font-size: var(--report-fs-caption); line-height: 1.5; color: var(--ink-page); overflow-wrap: anywhere; }
+  .intro-heading { font-family: var(--font-display); font-size: var(--report-fs-subhead); font-weight: 700; line-height: 1.25; color: var(--ink-page); margin-bottom: var(--space-3); }
+  .intro-heading strong { font-weight: 700; }
+  .toc-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); gap: 0; border-top: 2px solid var(--claret); border-left: var(--report-rule); }
+  .toc-item { margin: 0; }
+  .toc-item a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-right: var(--report-rule); border-bottom: var(--report-rule); background: var(--surface-paper); color: var(--ink-page); text-decoration: none; transition: background-color 120ms ease, color 120ms ease; }
+  .toc-item a:hover, .toc-item a:focus-visible { background: color-mix(in srgb, var(--claret) 6%, var(--surface-paper)); outline: none; }
+  .toc-number { display: inline-grid; place-items: center; min-width: 2.4rem; height: 2.4rem; padding: 0 0.55rem; border-radius: 999px; background: color-mix(in srgb, var(--claret) 10%, transparent); color: var(--claret); font-family: var(--font-display); font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: -0.01em; line-height: 1; transition: background-color 120ms ease, color 120ms ease; }
+  .toc-item a:hover .toc-number, .toc-item a:focus-visible .toc-number { background: var(--claret); color: #fff7ef; }
+  .toc-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .toc-title { font-family: var(--font-display); font-size: var(--report-fs-body); font-weight: 700; line-height: 1.25; color: var(--ink-page); overflow-wrap: anywhere; }
+  .toc-meta { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
+  .toc-arrow { font-family: var(--font-sans); color: color-mix(in srgb, var(--claret) 50%, transparent); transition: color 120ms ease, transform 160ms ease; }
+  .toc-item a:hover .toc-arrow, .toc-item a:focus-visible .toc-arrow { color: var(--claret); transform: translateX(2px); }
+  .toc-appendix .toc-number { background: color-mix(in srgb, var(--gold) 18%, transparent); color: var(--gold); }
+  .toc-appendix a:hover .toc-number, .toc-appendix a:focus-visible .toc-number { background: var(--gold); color: var(--ink-page); }
+  .toc a { color: var(--ink-page); }
+  /* Callouts: rendered by ReportBlock.astro (slotted children with no
+   * data-astro-cid for this component), so all selectors must be :global. */
+  :global(.report-callout) { position: relative; margin: var(--space-5) 0; border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 10%, transparent); padding: var(--space-4); border-radius: 0 var(--space-2) var(--space-2) 0; }
+  :global(.report-callout h4) { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--report-fs-subhead); }
+  :global(.report-callout .callout-eyebrow) { display: inline-block; margin-bottom: var(--space-1, 0.35rem); padding: 2px var(--space-2); border-radius: 999px; background: var(--callout-accent, var(--claret)); color: #fff7ef; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.1; }
+  :global(.callout-strength) { --callout-accent: var(--gold); border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 16%, transparent); }
+  :global(.callout-risk) { --callout-accent: #b42318; border-left-color: #b42318; background: color-mix(in srgb, #b42318 12%, transparent); }
+  :global(.callout-recommendation) { --callout-accent: var(--claret); border-left-color: var(--claret); background: color-mix(in srgb, var(--claret) 13%, transparent); }
+  :global(.callout-assumption) { --callout-accent: var(--caption-gray); border-left-color: var(--caption-gray); background: color-mix(in srgb, var(--caption-gray) 12%, transparent); }
+  :global(.callout-insight) { --callout-accent: var(--claret); }
+  :global(.equation) { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
   .three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
   .three-col article { border-top: var(--report-rule); padding-top: var(--space-3); }
   .disclaimer p { font-size: var(--report-fs-note); color: var(--caption-gray); }
@@ -444,5 +523,5 @@ const fallbackMetrics = [
   .report-shell :global(.claim-ref a) { color: var(--claret); text-decoration: none; }
   .report-shell :global(.claim-ref a:hover), .report-shell :global(.claim-ref a:focus-visible) { text-decoration: underline; }
   .report-shell.refs-visible :global(.table-frame > .claim-ref) { display: block; }
-  @media (max-width: 900px) { .report-cover, .metric-grid, .intro-grid, .three-col { grid-template-columns: 1fr; } .toc ol { columns: 1; } }
+  @media (max-width: 900px) { .report-cover, .metric-grid, .three-col { grid-template-columns: 1fr; } }
 </style>

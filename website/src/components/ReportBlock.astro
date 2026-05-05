@@ -81,6 +81,7 @@ const figure = block.type === 'figure' && block.figureRef ? figures.get(block.fi
 
 {block.type === 'callout' && (
   <aside class={blockClass(block.calloutType)}>
+    <span class="callout-eyebrow">{String(block.calloutType ?? 'insight')}</span>
     <h4>{block.title}</h4>
     <p>
       {splitClaimRefsText(block.body).map((part) => part.ref
