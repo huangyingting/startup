@@ -248,7 +248,10 @@ const fallbackMetrics = [
 
   {chapters.map((chapter: any) => (
     <article class="report-chapter" id={`chapter-${chapter.number}`}>
-      <h2><span>{chapter.number}</span>{chapter.title}</h2>
+      <header class="chapter-header">
+        <span class="chapter-eyebrow">Chapter {String(chapter.number).padStart(2, '0')}</span>
+        <h2><span class="chapter-number">{String(chapter.number).padStart(2, '0')}</span><span class="chapter-title">{chapter.title}</span></h2>
+      </header>
       {arr(chapter.sections).map((section: any) => (
         <section class="chapter-section">
           <h3>{section.number} {section.title}</h3>
@@ -262,29 +265,35 @@ const fallbackMetrics = [
 
   {(data.topStrengths.length > 0 || data.topRisks.length > 0 || data.unresolvedGaps.length > 0) && (
     <section class="report-section three-col">
-      <article>
+      <article class="summary-card summary-strengths">
         <h2>{labels.strengths}</h2>
-        {arr(data.topStrengths).map((item) => (
-          <p>{splitClaimRefsText(item).map((part) => part.ref
-            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
-            : part.text)}</p>
-        ))}
+        <ul>
+          {arr(data.topStrengths).map((item) => (
+            <li>{splitClaimRefsText(item).map((part) => part.ref
+              ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+              : part.text)}</li>
+          ))}
+        </ul>
       </article>
-      <article>
+      <article class="summary-card summary-risks">
         <h2>{labels.risks}</h2>
-        {arr(data.topRisks).map((item) => (
-          <p>{splitClaimRefsText(item).map((part) => part.ref
-            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
-            : part.text)}</p>
-        ))}
+        <ul>
+          {arr(data.topRisks).map((item) => (
+            <li>{splitClaimRefsText(item).map((part) => part.ref
+              ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+              : part.text)}</li>
+          ))}
+        </ul>
       </article>
-      <article>
+      <article class="summary-card summary-gaps">
         <h2>{labels.gaps}</h2>
-        {arr(data.unresolvedGaps).map((item) => (
-          <p>{splitClaimRefsText(item).map((part) => part.ref
-            ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
-            : part.text)}</p>
-        ))}
+        <ul>
+          {arr(data.unresolvedGaps).map((item) => (
+            <li>{splitClaimRefsText(item).map((part) => part.ref
+              ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
+              : part.text)}</li>
+          ))}
+        </ul>
       </article>
     </section>
   )}
@@ -431,9 +440,9 @@ const fallbackMetrics = [
   .evidence-toggle { appearance: none; border: 1px solid var(--claret); background: transparent; color: var(--claret); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 4px var(--space-3); border-radius: 999px; margin-left: auto; }
   .evidence-toggle:hover, .evidence-toggle:focus-visible, .evidence-toggle[aria-pressed="true"] { background: var(--claret); color: #fff7ef; outline: none; }
   /* Decision card: hero panel with recommendation as the primary visual */
-  .decision-card { --decision-accent: var(--claret); --decision-accent-soft: color-mix(in srgb, var(--claret) 12%, transparent); display: flex; flex-direction: column; gap: var(--space-4); align-self: stretch; padding: var(--space-4) var(--space-4) var(--space-4); background: var(--surface-paper); border-top: 3px solid var(--decision-accent); border-radius: var(--space-1); box-shadow: 0 1px 0 color-mix(in srgb, var(--ink-page) 6%, transparent); }
+  .decision-card { --decision-accent: var(--claret); --decision-accent-soft: color-mix(in srgb, var(--claret) 12%, transparent); display: flex; flex-direction: column; gap: var(--space-4); align-self: stretch; padding: var(--space-4) var(--space-4) var(--space-4); background: var(--surface-paper); border-top: 3px solid var(--decision-accent); border-radius: var(--radius-card); box-shadow: 0 1px 0 color-mix(in srgb, var(--ink-page) 6%, transparent); }
   .decision-buy, .decision-strong-buy, .decision-invest { --decision-accent: var(--gold); }
-  .decision-pass, .decision-avoid, .decision-decline { --decision-accent: #b42318; }
+  .decision-pass, .decision-avoid, .decision-decline { --decision-accent: var(--risk-red); }
   .decision-research-more, .decision-track, .decision-monitor { --decision-accent: var(--claret); }
   .decision-headline { display: flex; flex-direction: column; gap: var(--space-1); }
   .decision-eyebrow { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); line-height: 1.1; }
@@ -447,11 +456,14 @@ const fallbackMetrics = [
   .decision-grid dd { margin: 0; font-family: var(--font-sans); font-size: var(--report-fs-caption); font-weight: 700; color: var(--ink-page); text-align: right; }
   @media (max-width: 760px) { .report-cover { grid-template-columns: 1fr; padding: var(--space-5) var(--space-4); gap: var(--space-5); } .report-cover h1 { font-size: clamp(2rem, 6vw + 1rem, 2.8rem); } }
   .report-section, .report-chapter { padding-block: var(--space-6); }
-  .report-chapter { border-top: var(--report-rule); }
-  .report-section h2, .report-chapter > h2 { margin: 0 0 var(--space-4); }
+  .report-chapter { border-top: 2px solid var(--claret); }
+  .report-section h2 { margin: 0 0 var(--space-4); }
   .report-section h2 { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--claret); font-size: var(--report-fs-kicker); line-height: 1.2; }
-  .report-chapter > h2 { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); font-family: var(--font-display); font-size: var(--report-fs-section); font-weight: 700; letter-spacing: var(--tracking-display-snug); line-height: var(--lh-display-block); }
-  .report-chapter > h2 span { color: var(--claret); }
+  .chapter-header { margin-bottom: var(--space-5); }
+  .chapter-eyebrow { display: block; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); margin-bottom: var(--space-2); }
+  .chapter-header h2 { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: var(--space-4); margin: 0; font-family: var(--font-display); font-size: var(--report-fs-section); font-weight: 700; letter-spacing: var(--tracking-display-snug); line-height: var(--lh-display-block); color: var(--ink-page); }
+  .chapter-number { font-family: var(--font-display); font-size: clamp(2.4rem, 2vw + 1.6rem, 3.6rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.04em; color: var(--claret); }
+  .chapter-title { min-width: 0; }
   .chapter-section { margin-top: var(--space-6); }
   .chapter-section h3 { margin-bottom: var(--space-3); font-size: var(--report-fs-subhead); font-weight: 700; letter-spacing: var(--tracking-display-snug); }
   /* Body content (p / li) inside chapter sections is rendered by
@@ -495,17 +507,24 @@ const fallbackMetrics = [
   .toc a { color: var(--ink-page); }
   /* Callouts: rendered by ReportBlock.astro (slotted children with no
    * data-astro-cid for this component), so all selectors must be :global. */
-  :global(.report-callout) { position: relative; margin: var(--space-5) 0; border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 10%, transparent); padding: var(--space-4); border-radius: 0 var(--space-2) var(--space-2) 0; }
+  :global(.report-callout) { position: relative; margin: var(--space-5) 0; border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 10%, transparent); padding: var(--space-4); border-radius: 0 var(--radius-card) var(--radius-card) 0; }
   :global(.report-callout h4) { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--report-fs-subhead); }
   :global(.report-callout .callout-eyebrow) { display: inline-block; margin-bottom: var(--space-1, 0.35rem); padding: 2px var(--space-2); border-radius: 999px; background: var(--callout-accent, var(--claret)); color: #fff7ef; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.1; }
   :global(.callout-strength) { --callout-accent: var(--gold); border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 16%, transparent); }
-  :global(.callout-risk) { --callout-accent: #b42318; border-left-color: #b42318; background: color-mix(in srgb, #b42318 12%, transparent); }
+  :global(.callout-risk) { --callout-accent: var(--risk-red); border-left-color: var(--risk-red); background: color-mix(in srgb, var(--risk-red) 12%, transparent); }
   :global(.callout-recommendation) { --callout-accent: var(--claret); border-left-color: var(--claret); background: color-mix(in srgb, var(--claret) 13%, transparent); }
   :global(.callout-assumption) { --callout-accent: var(--caption-gray); border-left-color: var(--caption-gray); background: color-mix(in srgb, var(--caption-gray) 12%, transparent); }
   :global(.callout-insight) { --callout-accent: var(--claret); }
   :global(.equation) { margin: var(--space-4) 0; font-family: var(--font-mono); background: color-mix(in srgb, var(--surface-paper) 58%, transparent); padding: var(--space-4); }
-  .three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
-  .three-col article { border-top: var(--report-rule); padding-top: var(--space-3); }
+  .three-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--space-4); }
+  .summary-card { --summary-accent: var(--claret); --summary-tint: color-mix(in srgb, var(--summary-accent) 6%, var(--surface-paper)); position: relative; padding: var(--space-4); background: var(--summary-tint); border-radius: var(--radius-card); border-left: 4px solid var(--summary-accent); padding-top: var(--space-3); }
+  .summary-card h2 { margin: 0 0 var(--space-3); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--summary-accent); font-size: var(--report-fs-kicker); line-height: 1.2; }
+  .summary-card ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+  .summary-card li { position: relative; padding-left: var(--space-4); font-family: var(--font-sans); font-size: var(--report-fs-caption); line-height: 1.5; color: var(--ink-page); }
+  .summary-card li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.45rem; height: 0.45rem; border-radius: 999px; background: var(--summary-accent); }
+  .summary-strengths { --summary-accent: var(--gold); }
+  .summary-risks { --summary-accent: var(--risk-red); }
+  .summary-gaps { --summary-accent: var(--caption-gray); }
   .disclaimer p { font-size: var(--report-fs-note); color: var(--caption-gray); }
   .evidence-index tr:target { background: color-mix(in srgb, var(--claret) 9%, transparent); scroll-margin-top: var(--space-6); }
   /* Evidence index tables are reference data, not narrative content — drop
