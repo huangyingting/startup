@@ -14,14 +14,19 @@
 //   - researchQuestion counts (total, unanswered)
 //   - claim counts by type
 //   - acknowledgedWarnings dimensions
-// Plus report-level totals.
+// Plus report-level totals. Two parallel totals are reported so review can
+// distinguish per-chapter raw counts (sum of localEvidence; same source URL
+// counted once per chapter it appears in) from ledger-deduped counts (one
+// canonical entry per URL across the whole report). The two will diverge
+// whenever the same source backs claims in multiple chapters; that gap is
+// expected, not a bug. The chapter-level entries below are inherently raw.
 //
 // Idempotent for a given runId: re-running replaces the prior record instead
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import yaml from 'js-yaml';
 import {
-  canonicalSourceUrl,
+  FINAL_ARTIFACTS,
   getAnalysisArtifacts,
   readYaml,
   registrableDomain,
@@ -30,6 +35,7 @@ import {
 } from './utils.mjs';
 
 const POSTMORTEM_PATH = join(reportsDir, '_postmortem.yaml');
+const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 const RESTRICTED_ACCESS = new Set(['paywall', 'js-only', 'broken', 'rate-limited']);
 
 function usage() {
@@ -108,17 +114,38 @@ function buildRecord(reportFolder) {
     if (stats) chapters.push(stats);
   }
 
-  const totalSources = chapters.reduce((sum, c) => sum + (c.sources ?? 0), 0);
+  const rawSources = chapters.reduce((sum, c) => sum + (c.sources ?? 0), 0);
   const totalAdverse = chapters.reduce((sum, c) => sum + (c.adverseSources ?? 0), 0);
   const totalRestrictedSources = chapters.reduce((sum, c) => {
     const total = c.sources ?? 0;
     return sum + Math.round((c.restrictedAccessPct ?? 0) * total);
   }, 0);
   const acknowledgedDimensions = [...new Set(chapters.flatMap((c) => c.acknowledgedDimensions ?? []))];
-  const claimsByType = {};
+  const rawClaimsByType = {};
   for (const c of chapters) {
     for (const [t, n] of Object.entries(c.claimsByType ?? {})) {
-      claimsByType[t] = (claimsByType[t] ?? 0) + n;
+      rawClaimsByType[t] = (rawClaimsByType[t] ?? 0) + n;
+    }
+  }
+
+  // Pull deduped totals from the assembled ledger when present (postmortem
+  // runs after assemble in the finalize pipeline). When the ledger is
+  // absent (e.g. running postmortem before finalize), record null so review
+  // can tell the difference between "deduped == raw" and "never assembled".
+  const ledgerPath = join(reportFolder, EVIDENCE_FILE);
+  let dedupedSources = null;
+  let dedupedClaims = null;
+  let dedupedClaimsByType = null;
+  if (existsSync(ledgerPath)) {
+    const ledger = readYaml(ledgerPath);
+    const ledgerSources = Array.isArray(ledger?.sources) ? ledger.sources : [];
+    const ledgerClaims = Array.isArray(ledger?.claims) ? ledger.claims : [];
+    dedupedSources = ledgerSources.length;
+    dedupedClaims = ledgerClaims.length;
+    dedupedClaimsByType = {};
+    for (const claim of ledgerClaims) {
+      const t = claim?.type ?? 'unknown';
+      dedupedClaimsByType[t] = (dedupedClaimsByType[t] ?? 0) + 1;
     }
   }
 
@@ -132,11 +159,16 @@ function buildRecord(reportFolder) {
     recommendation: meta.summary?.recommendation ?? null,
     chapterCount: chapters.length,
     totals: {
-      sources: totalSources,
+      // Per-chapter sums: same URL counted once per chapter it appears in.
+      rawSources,
+      rawClaimsByType,
+      // Ledger-deduped: one canonical entry per URL across the whole report.
+      dedupedSources,
+      dedupedClaims,
+      dedupedClaimsByType,
       adverseSources: totalAdverse,
-      adversePct: totalSources ? +(totalAdverse / totalSources).toFixed(3) : 0,
-      restrictedAccessPct: totalSources ? +(totalRestrictedSources / totalSources).toFixed(3) : 0,
-      claimsByType,
+      adversePct: rawSources ? +(totalAdverse / rawSources).toFixed(3) : 0,
+      restrictedAccessPct: rawSources ? +(totalRestrictedSources / rawSources).toFixed(3) : 0,
       acknowledgedDimensions,
     },
     chapters,
@@ -177,4 +209,5 @@ ledger.runs.push(record);
 ledger.runs.sort((a, b) => String(b.runId).localeCompare(String(a.runId)));
 writeLedger(ledger);
 
-console.log(`[postmortem] ✓ recorded ${record.runId} (chapters=${record.chapterCount}, sources=${record.totals.sources}, adversePct=${record.totals.adversePct}, restrictedPct=${record.totals.restrictedAccessPct})`);
+const dedupedTag = record.totals.dedupedSources == null ? 'no-ledger' : `deduped=${record.totals.dedupedSources}`;
+console.log(`[postmortem] ✓ recorded ${record.runId} (chapters=${record.chapterCount}, rawSources=${record.totals.rawSources}, ${dedupedTag}, adversePct=${record.totals.adversePct}, restrictedPct=${record.totals.restrictedAccessPct})`);

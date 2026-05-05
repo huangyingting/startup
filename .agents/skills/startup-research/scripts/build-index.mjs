@@ -62,7 +62,14 @@ function indexEntry(runId, card) {
     sourcesRetained: card.sourceStats?.sourcesRetained ?? null,
     domainCount: card.sourceStats?.domainCount ?? null,
     adverseSourceCount: card.sourceStats?.adverseSourceCount ?? null,
-    unresolvedQuestionCount: card.sourceStats?.unresolvedQuestionCount ?? null,
+    // Question closure breakdown. openQuestionCount is the canonical "still
+    // open" total (alias unresolvedQuestionCount for back-compat with older
+    // cards that predate the split); documented vs blocking distinguishes
+    // closed-out gaps from gate escapes.
+    openQuestionCount: card.sourceStats?.openQuestionCount ?? card.sourceStats?.unresolvedQuestionCount ?? null,
+    documentedGapQuestionCount: card.sourceStats?.documentedGapQuestionCount ?? null,
+    blockingQuestionCount: card.sourceStats?.blockingQuestionCount ?? null,
+    unresolvedQuestionCount: card.sourceStats?.unresolvedQuestionCount ?? card.sourceStats?.openQuestionCount ?? null,
     figureCount: counts.figureCount,
     tableCount: counts.tableCount,
     valuationUsdM: metrics.valuationUsdM ?? null,

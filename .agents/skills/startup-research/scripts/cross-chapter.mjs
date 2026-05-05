@@ -256,6 +256,66 @@ function jaccardTokens(a, b) {
 }
 
 // ---------------------------------------------------------------------------
+// Cross-chapter duplicate analysis: catches the same table or figure topic
+// appearing in two chapters. The chapter-local check (check-chapter.mjs)
+// only sees one chapter at a time and so cannot detect this. The fingerprint
+// is (artifact kind, normalized title tokens, normalized header/row-label
+// tokens for tables / data-label tokens for figures); two artifacts with
+// >=0.7 token overlap on both title and structure are flagged.
+// ---------------------------------------------------------------------------
+function tableFingerprint(table) {
+  const titleTokens = String(table?.title ?? '').toLowerCase();
+  const structureTokens = [
+    ...(table?.columns ?? []).map((c) => String(c ?? '')),
+    ...(table?.rows ?? []).map((row) => Array.isArray(row) ? String(row[0] ?? '') : ''),
+  ].join(' ').toLowerCase();
+  return { titleTokens, structureTokens };
+}
+
+function figureFingerprint(figure) {
+  const titleTokens = String(figure?.title ?? '').toLowerCase();
+  const labelStrings = [];
+  const collectLabels = (value) => {
+    if (Array.isArray(value)) { value.forEach(collectLabels); return; }
+    if (!value || typeof value !== 'object') return;
+    for (const [key, child] of Object.entries(value)) {
+      if (key === 'label' && typeof child === 'string') labelStrings.push(child);
+      else collectLabels(child);
+    }
+  };
+  collectLabels(figure?.data);
+  return { titleTokens, structureTokens: labelStrings.join(' ').toLowerCase() };
+}
+
+const tableFingerprints = [];
+const figureFingerprints = [];
+for (const { spec, doc } of docs) {
+  for (const table of doc.tables ?? []) {
+    tableFingerprints.push({ chapter: spec.file, id: table?.id, kind: 'table', ...tableFingerprint(table) });
+  }
+  for (const figure of doc.figures ?? []) {
+    figureFingerprints.push({ chapter: spec.file, id: figure?.id, kind: 'figure', ...figureFingerprint(figure) });
+  }
+}
+
+function findCrossChapterDuplicates(items) {
+  for (let i = 0; i < items.length; i += 1) {
+    for (let j = i + 1; j < items.length; j += 1) {
+      const a = items[i];
+      const b = items[j];
+      if (a.chapter === b.chapter) continue;
+      const titleOverlap = jaccardTokens(a.titleTokens, b.titleTokens);
+      const structureOverlap = jaccardTokens(a.structureTokens, b.structureTokens);
+      if (titleOverlap >= 0.7 && structureOverlap >= 0.7) {
+        flag('fail', 'duplicateAnalysisCrossChapter', `${a.kind} ${a.id ?? '?'} in ${a.chapter} duplicates ${b.kind} ${b.id ?? '?'} in ${b.chapter} (title overlap ${(titleOverlap * 100).toFixed(0)}%, structure overlap ${(structureOverlap * 100).toFixed(0)}%); merge into one chapter or sharpen one to answer a distinct question`, { kind: a.kind, a: { chapter: a.chapter, id: a.id }, b: { chapter: b.chapter, id: b.id } });
+      }
+    }
+  }
+}
+findCrossChapterDuplicates(tableFingerprints);
+findCrossChapterDuplicates(figureFingerprints);
+
+// ---------------------------------------------------------------------------
 // emit
 // ---------------------------------------------------------------------------
 const ok = conflicts.length === 0 && (!args.strict || warnings.length === 0);
