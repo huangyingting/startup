@@ -1,44 +1,32 @@
-# Scheduled/manual startup research run.
+# Manual single-company startup research run.
 #
-# Two modes:
-#   1. Research a single named company (provide companyName, optionally companyUrl).
-#   2. Discover and research unicorn startups from the last 24 months across
-#      diverse sectors (leave companyName blank; optionally set unicornCount).
-#
-# CI installs deps, drives the GitHub Copilot CLI to produce report YAML under
-# reports/<run>/, rebuilds reports/_index.yaml, validates the site, and commits
-# the new artifacts.
+# Produces one diligence report for a named startup company.
 #
 # Required secrets:
 # - COPILOT_PAT — PAT for a Copilot-licensed account; consumed by the Copilot CLI.
 # - STARTUP_PAT — PAT with repo write access for checkout/push.
 
-name: Research startup company
+name: Research company
+
+env:
+  CURL_IMPERSONATE_VERSION: "1.5.6"
+  CURL_IMPERSONATE_TARBALL: "curl-impersonate-v1.5.6.x86_64-linux-gnu.tar.gz"
+  CURL_IMPERSONATE_SHA256: "b60344f63b9ed8806f0e9f7fd357d9f6c9a82aca279ed1e9e257d544885dcbde"
 
 on:
-  schedule:
-    # Every six hours. Scheduled runs leave inputs blank, so they use the
-    # recent-unicorns discovery mode below.
-    - cron: "30 */6 * * *"
   workflow_dispatch:
     inputs:
       companyName:
-        description: "Company name to research. Leave blank to auto-discover recent two-year unicorns across sectors."
-        required: false
-        default: ""
+        description: "Company."
+        required: true
         type: string
       companyUrl:
-        description: "Optional official website or profile URL for the named company."
+        description: "URL."
         required: false
         default: ""
         type: string
-      unicornCount:
-        description: "How many recent two-year unicorn startups to research when companyName is blank."
-        required: false
-        default: "3"
-        type: string
       model:
-        description: "Copilot CLI model to use."
+        description: "Model."
         required: false
         default: "claude-sonnet-4.6"
         type: choice
@@ -53,7 +41,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: startup-research-${{ github.event.inputs.companyName || 'recent-unicorns' }}
+  group: startup-company-${{ github.event.inputs.companyName || github.run_id }}
   cancel-in-progress: false
 
 jobs:
@@ -84,21 +72,26 @@ jobs:
       - name: Install GitHub Copilot CLI
         run: npm install -g @github/copilot
 
+      - name: Cache curl-impersonate
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/curl-impersonate
+          key: curl-impersonate-${{ runner.os }}-${{ env.CURL_IMPERSONATE_VERSION }}-${{ env.CURL_IMPERSONATE_SHA256 }}
+
       - name: Install curl-impersonate
-        env:
-          CURL_IMPERSONATE_VERSION: "1.5.6"
-          CURL_IMPERSONATE_TARBALL: "curl-impersonate-v1.5.6.x86_64-linux-gnu.tar.gz"
-          CURL_IMPERSONATE_SHA256: "b60344f63b9ed8806f0e9f7fd357d9f6c9a82aca279ed1e9e257d544885dcbde"
         run: |
           set -euo pipefail
           INSTALL_DIR="$HOME/.local/share/curl-impersonate"
-          mkdir -p "$INSTALL_DIR"
-          cd "$INSTALL_DIR"
-          URL="https://github.com/lexiforest/curl-impersonate/releases/download/v${CURL_IMPERSONATE_VERSION}/${CURL_IMPERSONATE_TARBALL}"
-          curl -sSL --retry 3 --retry-delay 5 -o "$CURL_IMPERSONATE_TARBALL" "$URL"
-          echo "${CURL_IMPERSONATE_SHA256}  ${CURL_IMPERSONATE_TARBALL}" | sha256sum -c -
-          tar -xzf "$CURL_IMPERSONATE_TARBALL"
-          rm -f "$CURL_IMPERSONATE_TARBALL"
+          if [ ! -x "$INSTALL_DIR/curl_chrome120" ]; then
+            rm -rf "$INSTALL_DIR"
+            mkdir -p "$INSTALL_DIR"
+            cd "$INSTALL_DIR"
+            URL="https://github.com/lexiforest/curl-impersonate/releases/download/v${CURL_IMPERSONATE_VERSION}/${CURL_IMPERSONATE_TARBALL}"
+            curl -sSL --retry 3 --retry-delay 5 -o "$CURL_IMPERSONATE_TARBALL" "$URL"
+            echo "${CURL_IMPERSONATE_SHA256}  ${CURL_IMPERSONATE_TARBALL}" | sha256sum -c -
+            tar -xzf "$CURL_IMPERSONATE_TARBALL"
+            rm -f "$CURL_IMPERSONATE_TARBALL"
+          fi
           ./curl_chrome120 -s -o /dev/null -w 'curl-impersonate smoke test: %{http_code}\n' https://example.com
           echo "CURL_IMPERSONATE_DIR=$INSTALL_DIR" >> "$GITHUB_ENV"
 
@@ -107,19 +100,17 @@ jobs:
         env:
           RAW_COMPANY: ${{ github.event.inputs.companyName }}
           RAW_URL: ${{ github.event.inputs.companyUrl }}
-          RAW_COUNT: ${{ github.event.inputs.unicornCount }}
           RAW_MODEL: ${{ github.event.inputs.model }}
         run: |
           set -euo pipefail
           trim() { printf '%s' "${1//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//'; }
           COMPANY="$(trim "$RAW_COMPANY")"
           URL="$(trim "$RAW_URL")"
-          COUNT="$(trim "$RAW_COUNT")"
           MODEL="$(trim "$RAW_MODEL")"
           RUN_DATE="$(date -u +%F)"
-          CUTOFF_DATE="$(date -u -d '2 years ago' +%F)"
-          if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
-            COUNT=3
+          if [ -z "$COMPANY" ]; then
+            echo "companyName is required" >&2
+            exit 1
           fi
           case "$MODEL" in
             claude-sonnet-4.6|claude-opus-4.6|gpt-5.5|gpt-5.4) ;;
@@ -129,20 +120,16 @@ jobs:
               exit 1
               ;;
           esac
-          if [ -z "$COMPANY" ]; then
-            MODE="recent-unicorns"
-            LABEL="recent-unicorns"
-          else
-            MODE="single-company"
-            LABEL="$COMPANY"
+          LABEL="$COMPANY"
+          SAFE_LABEL="$(printf '%s' "$LABEL" | tr -c '[:alnum:]' '-' | tr '[:upper:]' '[:lower:]' | sed 's/-\+/-/g; s/^-//; s/-$//' | cut -c1-60)"
+          if [ -z "$SAFE_LABEL" ]; then
+            SAFE_LABEL="startup"
           fi
           {
-            echo "mode=$MODE"
-            echo "count=$COUNT"
             echo "label=$LABEL"
+            echo "safeLabel=$SAFE_LABEL"
             echo "model=$MODEL"
             echo "runDate=$RUN_DATE"
-            echo "cutoffDate=$CUTOFF_DATE"
             echo "company<<EOF"
             echo "$COMPANY"
             echo "EOF"
@@ -151,47 +138,47 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Summarize run inputs
+        run: |
+          {
+            echo "## Startup company research run"
+            echo
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| Company | ${{ steps.inputs.outputs.company }} |"
+            echo "| URL | ${{ steps.inputs.outputs.url || 'unknown' }} |"
+            echo "| Model | ${{ steps.inputs.outputs.model }} |"
+            echo "| Run date | ${{ steps.inputs.outputs.runDate }} UTC |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Snapshot existing reports
+        run: |
+          find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-before.txt"
+
       - name: Run startup research
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
-          MODE: ${{ steps.inputs.outputs.mode }}
-          COUNT: ${{ steps.inputs.outputs.count }}
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
           MODEL: ${{ steps.inputs.outputs.model }}
           RUN_DATE: ${{ steps.inputs.outputs.runDate }}
-          CUTOFF_DATE: ${{ steps.inputs.outputs.cutoffDate }}
         run: |
           set -euo pipefail
-          if [ "$MODE" = "recent-unicorns" ]; then
-            PROMPT=$(cat <<EOF
-          Produce full diligence reports for $COUNT private startup unicorns across different sectors.
-
-          Run date: $RUN_DATE UTC. Recent means the unicorn evidence is dated on or after $CUTOFF_DATE.
-          Pick companies with credible public evidence of a \$1B+ private valuation or unicorn-confirming financing in that window. Prefer sectors/geographies underrepresented in reports/_index.yaml. Skip companies already in reports/_index.yaml unless there is materially new evidence, and avoid repeating the same narrow category within this run.
-
-          For each selected company, run one complete startup diligence report end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under its own reports/<run>/ folder. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
-          EOF
-          )
-          else
-            PROMPT=$(cat <<EOF
+          PROMPT=$(cat <<EOF
           Produce one complete startup diligence report for the company below.
 
+          Run date: $RUN_DATE UTC.
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-unknown}
+
+          If reports/_index.yaml already contains the same company or domain and there is no materially new reason to refresh it, do not create a duplicate folder; print a short duplicate note and exit successfully.
 
           Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
           )
-          fi
           copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT"
 
       - name: Finalize any unfinalized report folders
-        # Safety net for the multi-company mode: if Copilot wrote every chapter
-        # YAML plus report-meta.yaml but skipped the finalize.mjs pipeline
-        # (which produces summary-card / evidence / full-report), run finalize
-        # ourselves. We only attempt finalize when all upstream inputs exist;
-        # truly partial folders are left alone for the next step to drop.
         run: |
           set -euo pipefail
           shopt -s nullglob
@@ -207,11 +194,9 @@ jobs:
             report-meta.yaml
           )
           for dir in reports/*/; do
-            # Skip if already finalized.
             if [ -f "${dir}summary-card.yaml" ]; then
               continue
             fi
-            # Only finalize when every required input is present.
             missing=()
             for f in "${chapter_files[@]}"; do
               [ -f "${dir}${f}" ] || missing+=("$f")
@@ -230,20 +215,15 @@ jobs:
           done
 
       - name: Upload reports as artifact
-        # Capture the full Copilot output (including any partial folders) before
-        # we prune. Available even on failure for offline recovery.
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: research-reports-${{ steps.inputs.outputs.label }}
+          name: research-company-${{ steps.inputs.outputs.safeLabel }}
           path: reports/
           retention-days: 14
           if-no-files-found: ignore
 
       - name: Drop partial report folders
-        # A partial folder = chapter YAMLs without a finalized summary-card,
-        # full-report, evidence, or report-meta. Remove them so they don't
-        # contaminate the commit; the artifact above preserves the originals.
         run: |
           set -euo pipefail
           shopt -s nullglob
@@ -265,26 +245,41 @@ jobs:
             echo "No partial report folders to drop."
           fi
 
+      - name: Summarize report changes
+        run: |
+          set -euo pipefail
+          find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-after.txt"
+          comm -13 "$RUNNER_TEMP/reports-before.txt" "$RUNNER_TEMP/reports-after.txt" > "$RUNNER_TEMP/reports-new.txt" || true
+          {
+            echo
+            echo "### Report folder changes"
+            if [ -s "$RUNNER_TEMP/reports-new.txt" ]; then
+              echo "New report folders:"
+              sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-new.txt"
+            else
+              echo "No new finalized report folders detected."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Rebuild reports/_index.yaml
         run: npm run build:report-index
 
       - name: Validate generated reports and website
         run: npm run validate
 
-      - name: Commit and push new reports
+      - name: Commit and push new report
         env:
-          LABEL: ${{ steps.inputs.outputs.label }}
+          SAFE_LABEL: ${{ steps.inputs.outputs.safeLabel }}
           GH_TOKEN: ${{ secrets.STARTUP_PAT }}
         run: |
           set -euo pipefail
           git config user.name "startup-research-bot"
           git config user.email "startup-research-bot@users.noreply.github.com"
           BRANCH="${{ github.ref_name }}"
-          SAFE_LABEL="$(printf '%s' "$LABEL" | tr -c '[:alnum:]' '-' | tr '[:upper:]' '[:lower:]' | sed 's/-\+/-/g; s/^-//; s/-$//' | cut -c1-60)"
+          SAFE_LABEL="${SAFE_LABEL:-startup}"
           STAMP="$(date -u +%F)"
           MESSAGE="chore(reports): research ${SAFE_LABEL:-startup} $STAMP"
 
-          # Stage and stop early if there is nothing to commit.
           git add reports/
           if git diff --cached --quiet; then
             echo "No new or updated startup reports."
@@ -292,9 +287,6 @@ jobs:
           fi
           git commit -m "$MESSAGE"
 
-          # Try to fast-forward the local commit onto the remote head with up to
-          # 3 rebase+push attempts. This handles a remote that moved while the
-          # 3-hour research run was in progress.
           for attempt in 1 2 3; do
             echo "Push attempt $attempt/3 to $BRANCH"
             git fetch origin "$BRANCH"
@@ -310,11 +302,9 @@ jobs:
             sleep $((attempt * 5))
           done
 
-          # Fallback: push to a side branch and open a PR so the 3-hour run is
-          # never lost when direct push is blocked (branch protection, race, etc.).
-          PR_BRANCH="auto/research-${SAFE_LABEL:-startup}-${STAMP}-$(date -u +%H%M%S)"
+          PR_BRANCH="auto/research-company-${SAFE_LABEL:-startup}-${STAMP}-$(date -u +%H%M%S)"
           echo "Direct push to $BRANCH failed; pushing to $PR_BRANCH and opening PR." >&2
           git push origin "HEAD:$PR_BRANCH"
           gh pr create --base "$BRANCH" --head "$PR_BRANCH" \
             --title "$MESSAGE" \
-            --body "Automated research run. Direct push to \`$BRANCH\` failed after 3 attempts; merging via PR instead."
+            --body "Automated company research run. Direct push to \`$BRANCH\` failed after 3 attempts; merging via PR instead."
