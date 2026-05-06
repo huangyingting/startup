@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { sortNewest, tagSlug } from '../../lib/reports';
+import { currentReports, sortNewest, tagSlug } from '../../lib/reports';
 
-const reports = sortNewest(await getCollection('reports'));
+const reports = sortNewest(currentReports(await getCollection('reports')));
 const base = import.meta.env.BASE_URL;
 type ReportEntry = (typeof reports)[number];
 

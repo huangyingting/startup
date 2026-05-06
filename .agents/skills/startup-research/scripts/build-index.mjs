@@ -5,9 +5,11 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import yaml from 'js-yaml';
 import {
+  isRunId,
   listDirs,
   normalizeCompanyName,
   normalizeDomain,
+  normalizeRevision,
   readYaml,
   reportsDir,
   writeYaml,
@@ -44,11 +46,16 @@ function indexEntry(runId, card) {
   const summary = card.summary ?? {};
   const metrics = summary.keyMetrics ?? {};
   const counts = artifactCounts(runId);
+  const revision = normalizeRevision(card.revision);
   return {
     runId,
     slug: card.slug ?? runId,
     schemaVersion: card.schemaVersion,
     date: card.runDate ?? null,
+    revisionStatus: revision.status,
+    refreshOfRunId: revision.refreshOfRunId,
+    supersededByRunId: revision.supersededByRunId,
+    refreshReason: revision.refreshReason,
     companyName: company.name ?? null,
     companyNameNormalized: normalizeCompanyName(company.name),
     website: company.website ?? null,
@@ -93,7 +100,58 @@ function collectReports() {
   return { reports, failures };
 }
 
+function hasValue(value) {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function validateRevisionGraph(reports) {
+  const failures = [];
+  const byRunId = new Map(reports.map((report) => [report.runId, report]));
+  for (const report of reports) {
+    const path = `${report.runId}: revision`;
+    const status = report.revisionStatus ?? 'current';
+    const refreshOfRunId = report.refreshOfRunId;
+    const supersededByRunId = report.supersededByRunId;
+
+    if (status === 'current' && hasValue(supersededByRunId)) {
+      failures.push(`${path}: current reports must not set supersededByRunId`);
+    }
+    if (status === 'superseded' && !hasValue(supersededByRunId)) {
+      failures.push(`${path}: superseded reports must set supersededByRunId`);
+    }
+    if (hasValue(refreshOfRunId) && refreshOfRunId === supersededByRunId) {
+      failures.push(`${path}: refreshOfRunId and supersededByRunId cannot point to the same run`);
+    }
+
+    for (const [field, value] of Object.entries({ refreshOfRunId, supersededByRunId })) {
+      if (value == null) continue;
+      if (!hasValue(value)) {
+        failures.push(`${path}.${field} must be a non-empty runId string or null`);
+        continue;
+      }
+      if (!isRunId(value)) failures.push(`${path}.${field}=${value} is not a valid report run id`);
+      if (value === report.runId) failures.push(`${path}.${field} cannot reference the same report run`);
+      if (!byRunId.has(value)) failures.push(`${path}.${field} references a missing finalized report: ${value}`);
+    }
+
+    if (hasValue(refreshOfRunId) && byRunId.has(refreshOfRunId)) {
+      const previous = byRunId.get(refreshOfRunId);
+      if (previous.supersededByRunId !== report.runId) {
+        failures.push(`${path}: refreshOfRunId=${refreshOfRunId} must point to a report whose revision.supersededByRunId is ${report.runId}`);
+      }
+    }
+    if (hasValue(supersededByRunId) && byRunId.has(supersededByRunId)) {
+      const next = byRunId.get(supersededByRunId);
+      if (next.refreshOfRunId !== report.runId) {
+        failures.push(`${path}: supersededByRunId=${supersededByRunId} must point to a report whose revision.refreshOfRunId is ${report.runId}`);
+      }
+    }
+  }
+  return failures;
+}
+
 const { reports, failures } = collectReports();
+if (args.has('--strict')) failures.push(...validateRevisionGraph(reports));
 if (failures.length && args.has('--strict')) {
   console.error('[build:report-index] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
   process.exit(1);

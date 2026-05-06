@@ -2,9 +2,9 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ReportCard from '../../components/ReportCard.astro';
-import { sortTopRated } from '../../lib/reports';
+import { currentReports, sortTopRated } from '../../lib/reports';
 
-const reports = sortTopRated(await getCollection('reports'));
+const reports = sortTopRated(currentReports(await getCollection('reports')));
 const leaders = reports.slice(0, 3);
 const rest = reports.slice(3);
 const topScore = reports[0]?.data.overallScore ?? 0;

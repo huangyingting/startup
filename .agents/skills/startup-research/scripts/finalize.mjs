@@ -13,8 +13,9 @@
 //                          decides whether the report is publishable
 //
 // Phase 2 — commit (global state, only runs after Phase 1 succeeds):
-//   5. postmortem.mjs   -> append a record to reports/_postmortem.yaml
-//   6. build-index.mjs  -> rebuild reports/_index.yaml (skip with --skip-index)
+//   5. link-refresh.mjs -> optional; mark the previous report superseded
+//   6. postmortem.mjs   -> append a record to reports/_postmortem.yaml
+//   7. build-index.mjs  -> rebuild reports/_index.yaml (skip with --skip-index)
 //
 // Splitting like this means a failure in Phase 1 leaves global state untouched
 // (no half-published report in _index.yaml, no postmortem entry for a report
@@ -29,13 +30,36 @@ import { FINAL_ARTIFACTS } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
-const folderArg = args.find((arg) => !arg.startsWith('-'));
-const skipIndex = args.includes('--skip-index');
-const rebuild = args.includes('--rebuild');
+
+function usage() {
+  console.error('Usage: node .agents/skills/startup-research/scripts/finalize.mjs <report-folder> [--skip-index] [--rebuild] [--refresh] [--refresh-reason <text>]');
+  process.exit(1);
+}
+
+function parseArgs(argv) {
+  const parsed = { folder: null, skipIndex: false, rebuild: false, refresh: false, refreshReason: '' };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--skip-index') parsed.skipIndex = true;
+    else if (arg === '--rebuild') parsed.rebuild = true;
+    else if (arg === '--refresh') parsed.refresh = true;
+    else if (arg === '--refresh-reason') parsed.refreshReason = argv[++i] ?? '';
+    else if (arg.startsWith('-')) usage();
+    else if (!parsed.folder) parsed.folder = arg;
+    else usage();
+  }
+  return parsed;
+}
+
+const parsedArgs = parseArgs(args);
+const folderArg = parsedArgs.folder;
+const skipIndex = parsedArgs.skipIndex;
+const rebuild = parsedArgs.rebuild;
+const refresh = parsedArgs.refresh;
+const refreshReason = parsedArgs.refreshReason;
 
 if (!folderArg) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/finalize.mjs <report-folder> [--skip-index] [--rebuild]');
-  process.exit(1);
+  usage();
 }
 
 const reportFolder = resolve(folderArg);
@@ -46,6 +70,21 @@ if (!existsSync(reportFolder)) {
 if (!existsSync(`${reportFolder}/report-meta.yaml`)) {
   console.error(`[finalize] missing report-meta.yaml in ${reportFolder}; author it before finalizing.`);
   process.exit(1);
+}
+
+function runStep(step) {
+  console.log(`[finalize] -> ${step.name}`);
+  const result = spawnSync(process.execPath, [resolve(here, step.script), ...step.argv], { stdio: 'inherit' });
+  if (result.status !== 0) {
+    console.error(`[finalize] ${step.name} failed (exit ${result.status}); fix the reported issues and re-run finalize.`);
+    process.exit(result.status ?? 1);
+  }
+}
+
+if (refresh) {
+  const refreshArgs = [reportFolder, '--prepare-current'];
+  if (refreshReason) refreshArgs.push('--refresh-reason', refreshReason);
+  runStep({ name: 'prepare-refresh', script: 'link-refresh.mjs', argv: refreshArgs });
 }
 
 // Phase 1 — per-report. ledger only when there is no evidence.yaml yet (or
@@ -68,20 +107,15 @@ phase1.push({ name: 'check-report', script: 'check-report.mjs', argv: [reportFol
 // Phase 2 — commit. postmortem records the run; build-index publishes it to
 // the global catalog. We never reach this phase unless every Phase 1 step
 // (including the publishable gate) succeeded.
-const phase2 = [
-  { name: 'postmortem', script: 'postmortem.mjs', argv: [reportFolder] },
-];
+const phase2 = [];
+if (refresh) {
+  const refreshArgs = [reportFolder];
+  if (refreshReason) refreshArgs.push('--refresh-reason', refreshReason);
+  phase2.push({ name: 'link-refresh', script: 'link-refresh.mjs', argv: refreshArgs });
+}
+phase2.push({ name: 'postmortem', script: 'postmortem.mjs', argv: [reportFolder] });
 if (!skipIndex) {
   phase2.push({ name: 'build-index', script: 'build-index.mjs', argv: ['--strict'] });
-}
-
-function runStep(step) {
-  console.log(`[finalize] -> ${step.name}`);
-  const result = spawnSync(process.execPath, [resolve(here, step.script), ...step.argv], { stdio: 'inherit' });
-  if (result.status !== 0) {
-    console.error(`[finalize] ${step.name} failed (exit ${result.status}); fix the reported issues and re-run finalize.`);
-    process.exit(result.status ?? 1);
-  }
 }
 
 for (const step of phase1) runStep(step);

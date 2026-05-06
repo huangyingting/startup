@@ -3,9 +3,9 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ReportCard from '../../components/ReportCard.astro';
 import { t } from '../../lib/i18n';
-import { sortNewest } from '../../lib/reports';
+import { currentReports, sortNewest } from '../../lib/reports';
 
-const reports = sortNewest(await getCollection('reports'));
+const reports = sortNewest(currentReports(await getCollection('reports')));
 const byMonth = new Map<string, typeof reports>();
 for (const report of reports) {
   const month = report.data.runDate.slice(0, 7);

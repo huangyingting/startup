@@ -1,10 +1,10 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
-import { sortNewest } from '../lib/reports';
+import { currentReports, sortNewest } from '../lib/reports';
 
 export async function GET(context: APIContext) {
-  const reports = sortNewest(await getCollection('reports'));
+  const reports = sortNewest(currentReports(await getCollection('reports')));
   return rss({
     title: 'Startup Diligence',
     description: 'Evidence-backed startup diligence reports.',

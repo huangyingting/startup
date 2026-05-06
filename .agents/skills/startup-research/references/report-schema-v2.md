@@ -143,6 +143,7 @@ slug: string
 runDate: YYYY-MM-DD
 company:
   name: string
+revision: revision | null          # Optional; missing means current/no refresh links.
 subtitle: string | null            # Optional descriptor; the canonical display title is `company.name`.
 coverageNotes: string | null
 coverFacts: [coverFact]
@@ -178,6 +179,7 @@ company:
   stage: string | null
   headquarters: string | null
   shortDescription: string | null
+revision: revision | null          # Optional; missing means current/no refresh links.
 summary:
   headline: string
   overallScore: number              # 0–10 ordinal score, one decimal place (e.g. 7.4).
@@ -212,6 +214,7 @@ company:
   stage: string | null
   headquarters: string | null
   shortDescription: string | null
+revision: revision | null          # Optional source of truth for refresh/version links; assemble emits it into full-report and summary-card.
 subtitle: string | null
 coverageNotes: string | null
 coverFacts: [coverFact] | null
@@ -234,6 +237,12 @@ disclaimer: string | null           # Overrides default when set.
 ## Reusable objects
 
 ```yaml
+revision:
+  status: current | superseded
+  refreshOfRunId: string | null       # Current refreshed reports point to the prior run id; first reports use null.
+  supersededByRunId: string | null    # Superseded reports point to the newer run id; current reports use null.
+  refreshReason: string | null        # Human-entered reason for the refresh, when known.
+
 source:
   id: S001
   publisher: string

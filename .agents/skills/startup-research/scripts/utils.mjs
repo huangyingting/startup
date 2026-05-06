@@ -7,6 +7,33 @@ import { FIGURE_TYPES } from '../../../../website/src/lib/figures.mjs';
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const reportsDir = join(repoRoot, 'reports');
 export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-research', 'references', 'chapters.yaml');
+export const RUN_ID_RE = /^\d{14}-[a-z0-9-]+$/;
+export const REVISION_STATUSES = new Set(['current', 'superseded']);
+export const FINAL_REPORT_FILES = ['summary-card.yaml', 'full-report.yaml', 'evidence.yaml', 'report-meta.yaml'];
+
+export function isRunId(value) {
+  return RUN_ID_RE.test(String(value ?? ''));
+}
+
+export function reportFolderForRunId(runId) {
+  return join(reportsDir, String(runId ?? ''));
+}
+
+export function isFinalizedReportFolder(path) {
+  return FINAL_REPORT_FILES.every((file) => existsSync(join(path, file)));
+}
+
+export function normalizeRevision(value) {
+  const revision = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  const status = revision.status === 'superseded' ? 'superseded' : 'current';
+  const nullableString = (field) => (typeof revision[field] === 'string' && revision[field].trim() ? revision[field].trim() : null);
+  return {
+    status,
+    refreshOfRunId: nullableString('refreshOfRunId'),
+    supersededByRunId: nullableString('supersededByRunId'),
+    refreshReason: nullableString('refreshReason'),
+  };
+}
 
 export function readYaml(path) {
   return yaml.load(readFileSync(path, 'utf8')) ?? {};
