@@ -1,58 +1,398 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ReportCard from '../../components/ReportCard.astro';
 import { sortNewest, tagSlug } from '../../lib/reports';
 
 const reports = sortNewest(await getCollection('reports'));
-const sectors = [...reports.reduce((map, entry) => {
-  const sector = entry.data.company.sector ?? 'Other';
-  const list = map.get(sector) ?? [];
-  list.push(entry);
-  map.set(sector, list);
-  return map;
-}, new Map<string, typeof reports>()).entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+const base = import.meta.env.BASE_URL;
+type ReportEntry = (typeof reports)[number];
+
+const sectorBuckets = [
+  { label: 'AI', patterns: [/\bai\b/i, /artificial intelligence/i] },
+  { label: 'Enterprise software', patterns: [/enterprise/i, /\bsaas\b/i, /software/i, /\bhcm\b/i, /payroll/i, /workforce/i, /developer tools/i, /project management/i, /cybersecurity/i, /data security/i, /clinical documentation/i] },
+  { label: 'Infrastructure', patterns: [/infrastructure/i, /platform/i, /silicon photonics/i, /onsite power/i, /payments infrastructure/i] },
+  { label: 'Energy & climate', patterns: [/energy/i, /climate/i, /grid batteries/i, /power generation/i] },
+  { label: 'Data & security', patterns: [/data infrastructure/i, /data security/i, /cybersecurity/i] },
+  { label: 'Edtech', patterns: [/edtech/i, /language learning/i, /language training/i] },
+  { label: 'Fintech', patterns: [/payments/i, /financial software/i, /finance software/i] },
+  { label: 'Healthcare', patterns: [/healthcare/i, /clinical/i] },
+  { label: 'Industrial & robotics', patterns: [/industrial/i, /robotics/i, /critical infrastructure/i] },
+  { label: 'Semiconductors', patterns: [/semiconductor/i, /silicon photonics/i] },
+  { label: 'Search', patterns: [/search/i] },
+  { label: 'Workforce', patterns: [/workforce/i, /\bhcm\b/i, /payroll/i] },
+  { label: 'Developer tools', patterns: [/developer tools/i, /project management/i] },
+] as const;
+
+const focusTagLabels: Array<[RegExp, string]> = [
+  [/^ai$/i, 'AI'],
+  [/^artificial intelligence$/i, 'AI'],
+  [/^frontier ai$/i, 'Frontier AI'],
+  [/^generative ai$/i, 'Generative AI'],
+  [/^enterprise generative ai$/i, 'Enterprise genAI'],
+  [/^ai infrastructure$/i, 'AI infrastructure'],
+  [/^ai platform$/i, 'AI platform'],
+  [/^enterprise ai saas$/i, 'Enterprise AI SaaS'],
+  [/^ai video generation$/i, 'AI video'],
+  [/^ai language learning$/i, 'AI language'],
+  [/^consumer subscription edtech$/i, 'Consumer edtech'],
+  [/^enterprise language training$/i, 'Enterprise training'],
+  [/^language learning marketplace$/i, 'Language marketplace'],
+  [/^data infrastructure$/i, 'Data infrastructure'],
+  [/^long-duration energy storage$/i, 'Energy storage'],
+  [/^grid batteries$/i, 'Grid batteries'],
+  [/^onsite power generation$/i, 'Onsite power'],
+  [/^enterprise energy management$/i, 'Energy management'],
+  [/^payments infrastructure$/i, 'Payments infra'],
+  [/^financial software$/i, 'Financial software'],
+  [/^finance software$/i, 'Finance software'],
+  [/^data security$/i, 'Data security'],
+  [/^enterprise cybersecurity$/i, 'Cybersecurity'],
+  [/^clinical documentation$/i, 'Clinical documentation'],
+  [/^critical infrastructure$/i, 'Critical infrastructure'],
+  [/^silicon photonics$/i, 'Silicon photonics'],
+  [/^developer tools$/i, 'Developer tools'],
+  [/^project management software$/i, 'Project management'],
+];
+
+const splitSectorLabel = (sector: string | null | undefined) => (sector ?? 'Other')
+  .split(/\s*\/\s*|\s*&\s*/)
+  .map((part) => part.replace(/\s+/g, ' ').trim())
+  .filter(Boolean);
+
+function titleCase(value: string): string {
+  return value.split(' ').map((word) => {
+    const lower = word.toLowerCase();
+    if (lower === 'ai') return 'AI';
+    if (lower === 'saas') return 'SaaS';
+    if (lower === 'hcm') return 'HCM';
+    if (lower === 'it') return 'IT';
+    return `${lower.slice(0, 1).toUpperCase()}${lower.slice(1)}`;
+  }).join(' ');
+}
+
+function focusTagsForSector(sector: string | null | undefined): string[] {
+  return [...new Set(splitSectorLabel(sector).map((part) => {
+    const match = focusTagLabels.find(([pattern]) => pattern.test(part));
+    return match ? match[1] : titleCase(part);
+  }))];
+}
+
+function bucketsForSector(sector: string | null | undefined): string[] {
+  const label = sector ?? 'Other';
+  const matches = sectorBuckets
+    .filter(({ patterns }) => patterns.some((pattern) => pattern.test(label)))
+    .map(({ label }) => label);
+  return matches.length ? matches : ['Other'];
+}
+
+const sectorMap = new Map<string, { label: string; entries: Map<string, ReportEntry>; focusTags: Set<string> }>();
+for (const entry of reports) {
+  const sector = entry.data.company.sector;
+  const focusTags = focusTagsForSector(sector);
+  for (const label of bucketsForSector(sector)) {
+    const group = sectorMap.get(label) ?? { label, entries: new Map<string, ReportEntry>(), focusTags: new Set<string>() };
+    group.entries.set(entry.data.runId, entry);
+    focusTags.forEach((tag) => group.focusTags.add(tag));
+    sectorMap.set(label, group);
+  }
+}
+
+const sectors = [...sectorMap.values()].map((group) => {
+  const entries = [...group.entries.values()].sort((a, b) => b.data.overallScore - a.data.overallScore || b.data.runTimestamp.localeCompare(a.data.runTimestamp) || a.data.company.name.localeCompare(b.data.company.name));
+  const avg = entries.reduce((sum, entry) => sum + entry.data.overallScore, 0) / entries.length;
+  const sources = entries.reduce((sum, entry) => sum + entry.data.sourceStats.sourcesRetained, 0);
+  const focusTags = [...group.focusTags].sort((a, b) => a.localeCompare(b));
+  return {
+    label: group.label,
+    slug: tagSlug(group.label),
+    entries,
+    avg,
+    sources,
+    focusTags: focusTags.slice(0, 6),
+    focusOverflow: Math.max(0, focusTags.length - 6),
+  };
+}).sort((a, b) => b.entries.length - a.entries.length || b.avg - a.avg || a.label.localeCompare(b.label));
+
+const maxSectorReports = Math.max(1, ...sectors.map((sector) => sector.entries.length));
+const featuredSectors = sectors.slice(0, 4);
+const supportingSectors = sectors.slice(4);
+const exactSectorCount = new Set(reports.map((entry) => entry.data.company.sector ?? 'Other')).size;
+const multiSectorReports = reports.filter((entry) => bucketsForSector(entry.data.company.sector).length > 1).length;
+const formatNumber = (value: number) => value.toLocaleString('en-US');
 ---
 <BaseLayout title="Sector index — Startup Diligence" description="Browse diligence reports by market category.">
-  <section class="sr-container sr-hero">
-    <h1>Sectors.</h1>
-    <p class="sr-deck">Browse diligence reports by market category. Jump to any sector below.</p>
+  <section class="sr-container sr-hero sector-hero">
+    <div>
+      <span class="sr-eyebrow">Market map</span>
+      <h1>Sectors.</h1>
+      <p class="sr-deck">Report labels are normalized into broader market buckets, with short focus tags showing the underlying themes.</p>
+    </div>
+    <dl class="sector-summary" aria-label="Sector summary">
+      <div><dt>Reports</dt><dd>{formatNumber(reports.length)}</dd></div>
+      <div><dt>Source labels</dt><dd>{formatNumber(exactSectorCount)}</dd></div>
+      <div><dt>Short sectors</dt><dd>{formatNumber(sectors.length)}</dd></div>
+      <div><dt>Multi-sector</dt><dd>{formatNumber(multiSectorReports)}</dd></div>
+    </dl>
   </section>
 
-  <nav class="sr-container sector-jump" aria-label="Sectors">
-    {sectors.map(([sector, entries]) => (
-      <a href={`#${tagSlug(sector)}`}>
-        <span class="sector-jump-label">{sector}</span>
-        <span class="sector-jump-count">{entries.length}</span>
-      </a>
-    ))}
-  </nav>
-
-  {sectors.map(([sector, entries]) => {
-    const avg = entries.reduce((sum, entry) => sum + entry.data.overallScore, 0) / entries.length;
-    return (
-      <section class="sr-container sr-section sector-group" id={tagSlug(sector)}>
-        <header class="sector-header">
-          <h2>{sector}</h2>
-          <span class="sector-meta">{entries.length} {entries.length === 1 ? 'report' : 'reports'} · Avg rating {avg.toFixed(1)}</span>
-        </header>
-        <div class="sr-grid">
-          {entries.map((entry) => <ReportCard entry={entry} />)}
-        </div>
-      </section>
-    );
-  })}
+  <section class="sr-container sr-section sector-landscape" aria-labelledby="sector-landscape-title">
+    <div class="sector-section-head">
+      <div>
+        <h2 id="sector-landscape-title">Market landscape</h2>
+        <p>The largest buckets get more visual weight; smaller buckets are grouped below as specialist markets.</p>
+      </div>
+    </div>
+    <div class="landscape-grid">
+      {featuredSectors.map((sector, index) => (
+        <article class="landscape-card" id={sector.slug} aria-labelledby={`${sector.slug}-title`} style={`--sector-share: ${Math.round((sector.entries.length / maxSectorReports) * 100)}%;`}>
+          <header class="landscape-card__head">
+            <span class="landscape-card__rank">{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <h3 id={`${sector.slug}-title`}>{sector.label}</h3>
+              <p>{sector.entries.length} {sector.entries.length === 1 ? 'report' : 'reports'}</p>
+            </div>
+          </header>
+          <div class="landscape-card__bar" aria-hidden="true"></div>
+          <dl class="landscape-card__stats" aria-label={`${sector.label} summary`}>
+            <div><dt>Avg rating</dt><dd>{sector.avg.toFixed(1)}</dd></div>
+            <div><dt>Sources</dt><dd>{formatNumber(sector.sources)}</dd></div>
+          </dl>
+          {sector.focusTags.length > 0 && (
+            <div class="sector-focus" aria-label={`${sector.label} focus tags`}>
+              <span>Focus</span>
+              {sector.focusTags.map((tag) => <em>{tag}</em>)}
+              {sector.focusOverflow > 0 && <em>+{sector.focusOverflow}</em>}
+            </div>
+          )}
+          <ul class="landscape-companies" aria-label={`${sector.label} companies`}>
+            {sector.entries.slice(0, 6).map((entry) => (
+              <li>
+                <a href={`${base}${entry.data.folderSlug}/`} title={entry.data.company.sector ?? 'Other'}>
+                  <span>{entry.data.company.name}</span>
+                  <strong>{entry.data.overallScore.toFixed(1)}</strong>
+                </a>
+              </li>
+            ))}
+            {sector.entries.length > 6 && <li class="landscape-companies__more">+{sector.entries.length - 6} more</li>}
+          </ul>
+        </article>
+      ))}
+    </div>
+    {supportingSectors.length > 0 && (
+      <div class="supporting-grid" aria-label="Specialist sector buckets">
+        {supportingSectors.map((sector, index) => (
+          <article class="supporting-card" id={sector.slug} aria-labelledby={`${sector.slug}-title`}>
+            <header>
+              <span>{String(index + featuredSectors.length + 1).padStart(2, '0')}</span>
+              <h3 id={`${sector.slug}-title`}>{sector.label}</h3>
+            </header>
+            <p>{sector.entries.length} {sector.entries.length === 1 ? 'report' : 'reports'} · Avg {sector.avg.toFixed(1)}</p>
+            {sector.focusTags.length > 0 && (
+              <div class="supporting-card__focus" aria-label={`${sector.label} focus tags`}>
+                {sector.focusTags.map((tag) => <em>{tag}</em>)}
+                {sector.focusOverflow > 0 && <em>+{sector.focusOverflow}</em>}
+              </div>
+            )}
+            <ul>
+              {sector.entries.slice(0, 4).map((entry) => (
+                <li><a href={`${base}${entry.data.folderSlug}/`}>{entry.data.company.name}</a></li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    )}
+  </section>
 
   <style>
-    .sector-jump { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-block: var(--space-3) var(--space-6); padding-block: var(--space-3); border-top: var(--report-rule); border-bottom: var(--report-rule); }
-    .sector-jump a { display: inline-flex; align-items: center; gap: var(--space-2); padding: 4px var(--space-3); border: 1px solid color-mix(in srgb, var(--claret) 22%, var(--hairline)); border-radius: 999px; background: var(--surface-paper); color: var(--ink-page); text-decoration: none; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 700; line-height: 1.2; transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease; }
-    .sector-jump a:hover, .sector-jump a:focus-visible { background: var(--claret); border-color: var(--claret); color: #fff7ef; outline: none; }
-    .sector-jump-count { display: inline-grid; place-items: center; min-width: 1.5rem; height: 1.5rem; padding: 0 0.4rem; border-radius: 999px; background: color-mix(in srgb, var(--claret) 12%, transparent); color: var(--claret); font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 800; line-height: 1; }
-    .sector-jump a:hover .sector-jump-count, .sector-jump a:focus-visible .sector-jump-count { background: rgba(255,255,255,0.22); color: #fff7ef; }
-    .sector-group { scroll-margin-top: var(--space-5); padding-block: var(--space-5); border-top: var(--report-rule); }
-    .sector-group:first-of-type { border-top: 0; }
-    .sector-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); padding-bottom: var(--space-2); border-bottom: 2px solid var(--claret); }
-    .sector-header h2 { margin: 0; font-family: var(--font-display); font-size: var(--report-fs-section, var(--fs-2xl)); font-weight: 700; letter-spacing: var(--tracking-display-snug); color: var(--ink-page); }
-    .sector-meta { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--fs-sm); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
+    .sector-hero {
+      padding-block: var(--space-5) var(--space-4);
+    }
+    .sector-hero h1 { font-size: var(--fs-2xl); }
+    .sector-hero .sr-deck { max-width: 74ch; font-size: var(--fs-base); }
+    .sector-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-3);
+      margin: var(--space-4) 0 0;
+      font-family: var(--font-sans);
+    }
+    .sector-summary div { border-top: var(--report-rule); padding-top: var(--space-3); min-width: 0; }
+    .sector-summary dt {
+      color: var(--caption-gray);
+      font-size: var(--fs-sm);
+      font-variant-caps: all-small-caps;
+      font-weight: 700;
+      letter-spacing: var(--tracking-eyebrow);
+      line-height: 1.2;
+    }
+    .sector-summary dd {
+      margin: var(--space-1) 0 0;
+      color: var(--ink-page);
+      font-family: var(--font-display);
+      font-size: var(--fs-md);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .sector-landscape { padding-top: 0; }
+    .sector-section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .sector-section-head h2 { margin-bottom: var(--space-2); }
+    .sector-section-head p {
+      margin: 0;
+      color: var(--caption-gray);
+      font-family: var(--font-sans);
+      font-size: var(--fs-sm);
+      line-height: 1.4;
+    }
+    .landscape-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: var(--space-5);
+    }
+    .landscape-card {
+      --sector-share: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      grid-column: span 6;
+      min-width: 0;
+      border: var(--report-rule);
+      background: var(--surface-paper);
+      padding: var(--space-4);
+      scroll-margin-top: var(--space-7);
+    }
+    .landscape-card__head {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: var(--space-3);
+      align-items: start;
+    }
+    .landscape-card__rank,
+    .supporting-card header span {
+      color: var(--claret);
+      font-family: var(--font-sans);
+      font-size: var(--fs-sm);
+      font-weight: 800;
+      line-height: 1.25;
+    }
+    .landscape-card h3,
+    .supporting-card h3 {
+      margin: 0;
+      color: var(--ink-page);
+      font-family: var(--font-display);
+      font-size: var(--fs-xl);
+      font-variant-caps: normal;
+      font-weight: 700;
+      letter-spacing: var(--tracking-display-snug);
+      line-height: var(--lh-display-block);
+    }
+    .landscape-card__head p {
+      margin: var(--space-1) 0 0;
+      color: var(--caption-gray);
+      font-family: var(--font-sans);
+      font-size: var(--fs-sm);
+      font-variant-caps: all-small-caps;
+      font-weight: 700;
+      letter-spacing: var(--tracking-eyebrow);
+      line-height: 1.2;
+    }
+    .landscape-card__bar {
+      height: 6px;
+      background: color-mix(in srgb, var(--claret) 10%, transparent);
+      overflow: hidden;
+    }
+    .landscape-card__bar::before {
+      content: '';
+      display: block;
+      width: var(--sector-share);
+      height: 100%;
+      background: var(--claret);
+    }
+    .landscape-card__stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3);
+      margin: 0;
+      font-family: var(--font-sans);
+    }
+    .landscape-card__stats div { border-top: var(--report-rule); padding-top: var(--space-3); min-width: 0; }
+    .landscape-card__stats dt {
+      color: var(--caption-gray);
+      font-size: var(--fs-xs);
+      font-variant-caps: all-small-caps;
+      font-weight: 800;
+      letter-spacing: var(--tracking-eyebrow);
+      line-height: 1.2;
+    }
+    .landscape-card__stats dd {
+      margin: var(--space-1) 0 0;
+      color: var(--ink-page);
+      font-family: var(--font-display);
+      font-size: var(--fs-md);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .sector-focus { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-family: var(--font-sans); font-size: var(--fs-xs); }
+    .sector-focus span { color: var(--caption-gray); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); }
+    .sector-focus em { display: inline-flex; border: var(--report-rule); background: var(--surface-paper); color: var(--ink-page); font-style: normal; font-weight: 700; padding: 1px var(--space-2); line-height: 1.35; }
+    .landscape-companies {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1) var(--space-4);
+      list-style: none;
+      margin: auto 0 0;
+      padding: 0;
+      font-family: var(--font-sans);
+      font-size: var(--fs-sm);
+      line-height: 1.35;
+    }
+    .landscape-companies li { min-width: 0; }
+    .landscape-companies a {
+      display: inline-flex;
+      align-items: baseline;
+      gap: var(--space-2);
+      max-width: 100%;
+      color: var(--ink-page);
+      text-decoration: none;
+    }
+    .landscape-companies a:hover span,
+    .landscape-companies a:focus-visible span { color: var(--claret); }
+    .landscape-companies span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; transition: color 120ms ease; }
+    .landscape-companies strong,
+    .landscape-companies__more { color: var(--claret); font-family: var(--font-display); font-size: var(--fs-sm); font-weight: 800; }
+    .supporting-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-5);
+      padding-top: var(--space-5);
+      border-top: var(--report-rule);
+    }
+    .supporting-card {
+      border: var(--report-rule);
+      background: transparent;
+      padding: var(--space-3);
+    }
+    .supporting-card header { display: flex; gap: var(--space-2); align-items: baseline; margin-bottom: var(--space-2); }
+    .supporting-card h3 { font-size: var(--fs-md); }
+    .supporting-card p { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--fs-sm); line-height: 1.35; }
+    .supporting-card__focus { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); font-family: var(--font-sans); font-size: var(--fs-xs); }
+    .supporting-card__focus em { border: var(--report-rule); background: var(--surface-paper); color: var(--ink-page); font-style: normal; font-weight: 700; padding: 1px var(--space-2); line-height: 1.35; }
+    .supporting-card ul { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); list-style: none; margin: 0; padding: 0; font-family: var(--font-sans); font-size: var(--fs-sm); }
+    .supporting-card a { color: var(--ink-page); text-decoration: none; font-weight: 700; }
+    .supporting-card a:hover,
+    .supporting-card a:focus-visible { color: var(--claret); }
+    @media (max-width: 880px) {
+      .sector-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .landscape-card { grid-column: span 12; }
+    }
+    @media (max-width: 560px) {
+      .sector-summary { grid-template-columns: 1fr; }
+    }
   </style>
 </BaseLayout>

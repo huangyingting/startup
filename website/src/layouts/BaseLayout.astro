@@ -54,7 +54,7 @@ const copyright = `© ${new Date().getUTCFullYear()} Yingting Huang`;
           <span class="bz-footer__dot" aria-hidden="true"></span>
           <span class="bz-footer__tag">{aiNote}</span>
         </div>
-        <span class="bz-footer__copyright bz-mono">{copyright}</span>
+        <span class="bz-footer__copyright">{copyright}</span>
       </div>
     </footer>
 
@@ -193,18 +193,15 @@ const copyright = `© ${new Date().getUTCFullYear()} Yingting Huang`;
         opacity: 0.55;
         transform: translateY(1px);
       }
-      .bz-footer__tag {
+      .bz-footer__tag,
+      .bz-footer__copyright {
         color: var(--paper-wheat);
         opacity: 0.82;
+        font-family: var(--font-sans);
         font-size: var(--fs-base);
         line-height: 1.35;
       }
       .bz-footer__copyright {
-        color: var(--paper);
-        opacity: 0.78;
-        font-size: var(--fs-base);
-        letter-spacing: 0;
-        line-height: 1.45;
         text-align: right;
       }
       @media (max-width: 560px) {

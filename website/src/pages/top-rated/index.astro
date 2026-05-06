@@ -5,14 +5,144 @@ import ReportCard from '../../components/ReportCard.astro';
 import { sortTopRated } from '../../lib/reports';
 
 const reports = sortTopRated(await getCollection('reports'));
+const leaders = reports.slice(0, 3);
+const rest = reports.slice(3);
+const topScore = reports[0]?.data.overallScore ?? 0;
+const avgScore = reports.length
+  ? reports.reduce((sum, entry) => sum + entry.data.overallScore, 0) / reports.length
+  : 0;
+const trackCalls = reports.filter((entry) => entry.data.recommendation === 'track').length;
+const totalSources = reports.reduce((sum, entry) => sum + entry.data.sourceStats.sourcesRetained, 0);
+const formatNumber = (value: number) => value.toLocaleString('en-US');
 ---
 <BaseLayout title="Top-rated reports — Startup Diligence" description="Reports ranked by overall score.">
-  <section class="sr-container sr-hero">
-    <h1>Top-rated reports.</h1>
-    <p class="sr-deck">Ranked by overall score, newest reports break ties.</p>
+  <section class="sr-container sr-hero top-hero">
+    <div>
+      <span class="sr-eyebrow">Scoreboard</span>
+      <h1>Top-rated reports.</h1>
+      <p class="sr-deck">Reports ranked by overall diligence score. Newer reports break ties, so the list stays stable as fresh research lands.</p>
+    </div>
+    <dl class="top-summary" aria-label="Top-rated report summary">
+      <div><dt>Reports</dt><dd>{formatNumber(reports.length)}</dd></div>
+      <div><dt>Top score</dt><dd>{topScore.toFixed(1)}</dd></div>
+      <div><dt>Avg score</dt><dd>{avgScore.toFixed(1)}</dd></div>
+      <div><dt>Track calls</dt><dd>{formatNumber(trackCalls)}</dd></div>
+      <div><dt>Sources</dt><dd>{formatNumber(totalSources)}</dd></div>
+    </dl>
   </section>
-  <section class="sr-container sr-section">
-    <h2>Highest scores</h2>
-    <div class="sr-grid">{reports.map((entry) => <ReportCard entry={entry} />)}</div>
+
+  {leaders.length > 0 && (
+    <section class="sr-container sr-section top-leaders">
+      <div class="top-section-head">
+        <div>
+          <h2>Current leaders</h2>
+          <p>The three highest-scoring diligence reports in the collection.</p>
+        </div>
+      </div>
+      <div class="top-leader-grid">
+        {leaders.map((entry, index) => (
+          <article class={`top-leader top-leader--${index + 1}`}>
+            <div class="top-leader__rank" aria-label={`Rank ${index + 1}`}>#{index + 1}</div>
+            <ReportCard entry={entry} />
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="sr-container sr-section top-ranking">
+    <div class="top-section-head">
+      <div>
+        <h2>Full ranking</h2>
+        <p>{rest.length ? 'Remaining reports by score.' : 'All ranked reports are shown above.'}</p>
+      </div>
+    </div>
+    <div class="sr-grid top-grid">{(rest.length ? rest : reports).map((entry) => <ReportCard entry={entry} />)}</div>
   </section>
+
+  <style>
+    .top-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 520px);
+      gap: var(--space-7);
+      align-items: end;
+      padding-bottom: var(--space-6);
+    }
+    .top-summary {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: var(--space-3);
+      margin: 0;
+      font-family: var(--font-sans);
+      border-top: var(--rule-hard);
+      padding-top: var(--space-4);
+    }
+    .top-summary div { min-width: 0; }
+    .top-summary dt {
+      color: var(--caption-gray);
+      font-size: var(--fs-xs);
+      font-variant-caps: all-small-caps;
+      font-weight: 800;
+      letter-spacing: var(--tracking-eyebrow);
+      line-height: 1.2;
+    }
+    .top-summary dd {
+      margin: var(--space-1) 0 0;
+      color: var(--ink-page);
+      font-family: var(--font-display);
+      font-size: var(--fs-lg);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .top-section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .top-section-head h2 { margin-bottom: var(--space-2); }
+    .top-section-head p {
+      margin: 0;
+      color: var(--caption-gray);
+      font-family: var(--font-sans);
+      font-size: var(--fs-sm);
+      line-height: 1.4;
+    }
+    .top-leader-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-5);
+      align-items: stretch;
+    }
+    .top-leader {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      min-width: 0;
+    }
+    .top-leader__rank {
+      align-self: flex-start;
+      display: inline-grid;
+      place-items: center;
+      min-width: 38px;
+      height: 32px;
+      border: 1px solid var(--claret);
+      background: var(--claret);
+      color: var(--paper);
+      font-family: var(--font-sans);
+      font-size: var(--fs-sm);
+      font-weight: 800;
+      line-height: 1;
+    }
+    .top-leader :global(.report-card) { flex: 1 1 auto; }
+    .top-grid { row-gap: var(--space-5); }
+    @media (max-width: 960px) {
+      .top-hero { grid-template-columns: 1fr; align-items: start; gap: var(--space-5); }
+      .top-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .top-leader-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .top-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
 </BaseLayout>

@@ -200,7 +200,15 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       tooltip.hide();
     });
   const wrapWords = (text, maxChars = 18, maxLines = 2) => {
-    const words = String(text ?? '').split(/\s+/).filter(Boolean);
+    const chunkSize = Math.max(4, Math.floor(maxChars));
+    const splitLongWord = (word) => {
+      const chars = Array.from(String(word ?? ''));
+      if (chars.length <= chunkSize) return [word];
+      const chunks = [];
+      for (let index = 0; index < chars.length; index += chunkSize) chunks.push(chars.slice(index, index + chunkSize).join(''));
+      return chunks;
+    };
+    const words = String(text ?? '').split(/\s+/).filter(Boolean).flatMap(splitLongWord);
     if (!words.length) return [''];
     const lines = [];
     let line = '';
@@ -326,21 +334,34 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
      * vertical stacked mode. */
     const compact = containerWidth < (prefersWide ? 520 : 640) || (!prefersWide && stages.length >= 5);
     const maxRows = Math.max(...stages.map((stage) => stage.length), 1);
-    const compactHeight = 74 + stages.reduce((sum, stage) => sum + 30 + stage.length * 76 + Math.max(0, stage.length - 1) * 16 + 36, 0);
-    const horizontalMinWidth = compact ? null : Math.max(containerWidth, prefersWide ? stages.length * 230 : stages.length * 210, 820);
-    const { svg, width, height } = svgBase(element, compact ? Math.max(520, compactHeight) : Math.max(350, 118 + maxRows * 108), horizontalMinWidth);
-    const margin = compact ? { top: 36, right: 24, bottom: 34, left: 24 } : { top: 42, right: 34, bottom: 40, left: 34 };
+    const cardH = compact ? 74 : 78;
+    const compactHeight = 74 + stages.reduce((sum, stage) => sum + 30 + stage.length * cardH + Math.max(0, stage.length - 1) * 16 + 36, 0);
+    const horizontalMinWidth = compact ? null : Math.max(containerWidth, prefersWide && stages.length > 4 ? stages.length * 190 : 0, 760);
+    const { svg, width, height } = svgBase(element, compact ? Math.max(540, compactHeight) : Math.max(380, 126 + maxRows * (cardH + 42)), horizontalMinWidth);
+    const margin = compact ? { top: 36, right: 24, bottom: 34, left: 24 } : { top: 42, right: 22, bottom: 40, left: 22 };
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
     const stageW = innerW / Math.max(stages.length, 1);
     /* In compact (vertical) mode reserve horizontal gutter space around the
      * centered cards. Edges alternate between left and right gutters by
      * stage-pair so the chart does not collapse into one cable bundle. */
-    const compactGutter = compact ? 128 : 0;
-    const horizontalGutter = stages.length >= 4 ? 78 : 60;
-    const cardW = compact ? Math.min(360, innerW - 18 - compactGutter) : Math.max(112, Math.min(144, stageW - horizontalGutter));
-    const cardH = compact ? 66 : 68;
+    const compactGutter = compact ? Math.min(128, Math.max(72, innerW * 0.18)) : 0;
+    const horizontalGap = stages.length >= 4 ? 28 : 36;
+    const preferredCardW = prefersWide ? 184 : 176;
+    const horizontalCardW = stages.length
+      ? (innerW - horizontalGap * Math.max(0, stages.length - 1)) / stages.length
+      : preferredCardW;
+    const cardW = compact ? Math.max(220, Math.min(420, innerW - 18 - compactGutter)) : Math.max(136, Math.min(preferredCardW, horizontalCardW));
     const compactCenterX = width / 2;
+    const stageCenterXs = compact ? [] : stages.map((_stage, stageIndex) => {
+      if (stages.length <= 1) return compactCenterX;
+      const firstCenter = margin.left + cardW / 2;
+      const lastCenter = width - margin.right - cardW / 2;
+      return firstCenter + ((lastCenter - firstCenter) * stageIndex) / (stages.length - 1);
+    });
+    const stageCenterX = (stageIndex) => stageCenterXs[stageIndex] ?? compactCenterX;
+    const stageGapW = stageCenterXs.length > 1 ? Math.abs(stageCenterXs[1] - stageCenterXs[0]) : stageW;
+    const stageBoundaryX = (stageIndex) => (stageCenterX(stageIndex) + stageCenterX(Math.min(stageIndex + 1, stages.length - 1))) / 2;
     const stageLabels = [];
     const positions = [];
     if (compact) {
@@ -355,10 +376,10 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       });
     } else {
       stages.forEach((stage, stageIndex) => {
-        stageLabels.push({ label: stageNames[stageIndex], x: margin.left + stageW * stageIndex + stageW / 2, y: 24 });
+        stageLabels.push({ label: stageNames[stageIndex], x: stageCenterX(stageIndex), y: 24 });
         const gap = innerH / Math.max(stage.length, 1);
         stage.forEach((node, index) => {
-          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: margin.left + stageW * stageIndex + stageW / 2, y: margin.top + gap * index + gap / 2 });
+          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: stageCenterX(stageIndex), y: margin.top + gap * index + gap / 2 });
         });
       });
     }
@@ -404,7 +425,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       .attr('letter-spacing', chartFont.tracking.caps)
       .each(function(label) {
         renderWrappedText(d3.select(this), label.label, {
-          maxChars: compact ? Math.max(18, Math.floor((width - 68) / 7.2)) : Math.max(10, Math.floor(stageW / 8.2)),
+          maxChars: compact ? Math.max(18, Math.floor((width - 68) / 7.2)) : Math.max(10, Math.floor(stageGapW / 8.2)),
           maxLines: compact ? 2 : 1,
           lineHeight: chartFont.lineHeight.tight,
         });
@@ -643,7 +664,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       if (!compact) {
         const laneOffset = ((edge._laneIndex ?? 0) - ((edge._laneCount ?? 1) - 1) / 2) * 14;
         for (let stageIndex = stageMin; stageIndex < stageMax; stageIndex++) {
-          const gutterX = margin.left + stageW * (stageIndex + 1) + laneOffset;
+          const gutterX = stageBoundaryX(stageIndex) + laneOffset;
           if (gutterX > bounds.left && gutterX < bounds.right) xs.add(norm(gutterX));
         }
       }
@@ -814,7 +835,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       const addViaX = (x) => paths.push(simplifyPath([start, sourceStub, { x, y: sourceStub.y }, { x, y: targetStub.y }, targetStub, end]));
       const addViaY = (y) => paths.push(simplifyPath([start, sourceStub, { x: sourceStub.x, y }, { x: targetStub.x, y }, targetStub, end]));
       if (!compact && stageMax > stageMin) {
-        const gutterX = margin.left + stageW * (stageMin + 1) + laneOffset;
+        const gutterX = stageBoundaryX(stageMin) + laneOffset;
         addViaX(gutterX);
       }
       addViaX((sourceStub.x + targetStub.x) / 2 + laneOffset);
@@ -894,7 +915,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       .attr('rx', 2)
       .attr('fill', (node) => colorForTone(node.tone))
       .attr('opacity', 0.78);
-    const glyphs = cards.append('g').attr('transform', `translate(${-cardW / 2 + 24},${-cardH / 2 + 35})`);
+    const glyphs = cards.append('g').attr('transform', `translate(${-cardW / 2 + 24},0)`);
     glyphs.append('circle')
       .attr('r', 6)
       .attr('fill', (node) => node._role === 'core' ? colorForTone(node.tone) : 'none')
@@ -913,8 +934,15 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       .attr('stroke-width', 2)
       .attr('stroke-linecap', 'round')
       .attr('stroke-linejoin', 'round');
-    cards.append('text').attr('x', -cardW / 2 + 42).attr('y', compact ? 4 : 5).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', fontWeight('label')).each(function(node) {
-      renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(12, Math.floor((cardW - 54) / 8)), maxLines: 2, lineHeight: chartFont.lineHeight.small });
+    const nodeLabelFontSize = compact ? chartFont.small : chartFont.axis;
+    const nodeLabelLineHeight = compact ? chartFont.lineHeight.tight : chartFont.lineHeight.small;
+    const nodeLabelMaxWidth = Math.max(72, cardW - 58);
+    cards.append('text').attr('x', -cardW / 2 + 42).attr('y', compact ? 4 : 5).attr('fill', palette.ink).attr('font-size', nodeLabelFontSize).attr('font-weight', fontWeight('label')).each(function(node) {
+      renderWrappedText(d3.select(this), node.label, {
+        maxChars: Math.max(10, Math.floor(nodeLabelMaxWidth / (nodeLabelFontSize * 0.58))),
+        maxLines: compact ? 2 : 3,
+        lineHeight: nodeLabelLineHeight,
+      });
     });
     cards.each(function(node) { addTitle(d3.select(this), `${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
     withTooltip(cards, (node) => tooltipHtml(node.label, [node.detail, node._role === 'input' ? 'Input dependency' : node._role === 'impact' ? 'Downstream impact' : 'Core dependency']));
@@ -1903,14 +1931,6 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     if (!payloadByScript.has(script)) payloadByScript.set(script, JSON.parse(script.textContent || '{}'));
     return payloadByScript.get(script);
   };
-  const requestIdle = (callback, timeout = 900) => {
-    if ('requestIdleCallback' in window) return window.requestIdleCallback(callback, { timeout });
-    return window.setTimeout(callback, 0);
-  };
-  const cancelIdle = (handle) => {
-    if ('cancelIdleCallback' in window) window.cancelIdleCallback(handle);
-    else window.clearTimeout(handle);
-  };
 
   const chartResizeObserver = 'ResizeObserver' in window ? new ResizeObserver((entries) => {
     for (const entry of entries) {
@@ -1941,57 +1961,22 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       script.dataset.observed = 'true';
     }
     script.dataset.rendered = 'true';
-    script.dataset.scheduled = 'false';
-    script.dataset.idleHandle = '';
     element.dataset.renderState = 'rendered';
   };
 
-  const scheduleChartRender = (script, { urgent = false } = {}) => {
-    if (script.dataset.rendered === 'true' || script.dataset.scheduled === 'true') return;
-    if (urgent) {
-      renderChartScript(script);
-      return;
-    }
-    script.dataset.scheduled = 'true';
-    const handle = requestIdle(() => renderChartScript(script));
-    script.dataset.idleHandle = String(handle);
-  };
-
   const renderAllCharts = ({ force = false } = {}) => {
-    chartScripts().forEach((script) => {
-      if (script.dataset.idleHandle) {
-        cancelIdle(Number(script.dataset.idleHandle));
-        script.dataset.idleHandle = '';
-      }
-      renderChartScript(script, { force });
-    });
+    chartScripts().forEach((script) => renderChartScript(script, { force }));
   };
-
-  const eagerDistance = () => Math.max(900, window.innerHeight * 1.35);
-  const isNearViewport = (element) => element.getBoundingClientRect().top < eagerDistance();
-  const lazyChartObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (!entry.isIntersecting) continue;
-      const script = scriptByChartId.get(entry.target.id);
-      if (!script) continue;
-      scheduleChartRender(script, { urgent: true });
-      lazyChartObserver.unobserve(entry.target);
-    }
-  }, { rootMargin: '1000px 0px 1400px 0px', threshold: 0.01 }) : null;
 
   const initializeCharts = () => {
-    chartScripts().forEach((script, index) => {
+    chartScripts().forEach((script) => {
       const payload = payloadForScript(script);
       const element = document.getElementById(payload.id);
       if (!element) return;
       scriptByChartId.set(payload.id, script);
       element.dataset.renderState = script.dataset.rendered === 'true' ? 'rendered' : 'pending';
-      if (!lazyChartObserver || index < 2 || isNearViewport(element)) {
-        scheduleChartRender(script, { urgent: index < 2 });
-      } else {
-        lazyChartObserver.observe(element);
-      }
     });
+    renderAllCharts();
   };
   initializeCharts();
   window.addEventListener('beforeprint', () => renderAllCharts());

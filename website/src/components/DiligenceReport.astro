@@ -493,15 +493,6 @@ const fallbackMetrics = [
   @media (max-width: 760px) { .report-cover { grid-template-columns: 1fr; padding: var(--space-5) var(--space-4); gap: var(--space-5); } .report-cover h1 { font-size: clamp(2rem, 6vw + 1rem, 2.8rem); } }
   .report-section, .report-chapter { padding-block: var(--space-4); }
   .report-chapter { padding-block: var(--space-5) var(--space-4); border-top: 2px solid var(--claret); }
-  @supports (content-visibility: auto) {
-    .report-chapter,
-    .report-section.appendix,
-    .report-section.evidence-index,
-    .report-section.disclaimer {
-      content-visibility: auto;
-      contain-intrinsic-size: 900px;
-    }
-  }
   .report-section h2 { position: relative; margin: 0 0 var(--space-4); padding: var(--space-2) 0 var(--space-2) var(--space-3); display: flex; align-items: center; gap: var(--space-2); border-left: 4px solid var(--claret); font-family: var(--font-sans); font-variant-caps: normal; font-weight: 800; letter-spacing: 0.01em; text-transform: uppercase; color: var(--claret); font-size: clamp(1.05rem, 0.4vw + 0.95rem, 1.25rem); line-height: 1.15; }
   .chapter-header { margin-bottom: var(--space-5); }
   .chapter-eyebrow { display: block; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); margin-bottom: var(--space-2); }
