@@ -91,6 +91,24 @@ function assertFinalizedRun(runId, label) {
 }
 
 function resolvePreviousRunId({ newRunId, newMeta }) {
+  // Idempotent re-runs of finalize --refresh: once link-refresh has marked the
+  // old report superseded, no current candidate matches anymore. Honour the
+  // new report's already-set revision.refreshOfRunId when it points at a
+  // finalized matching report that is either still current or already
+  // superseded by this same new report.
+  const declared = normalizeRevision(newMeta?.revision).refreshOfRunId;
+  if (declared && declared !== newRunId && isRunId(declared)) {
+    const folder = join(reportsDir, declared);
+    if (isFinalizedReportFolder(folder)) {
+      const card = readSummaryCard(declared);
+      if (matchesCompany(card, newMeta.company)) {
+        const revision = normalizeRevision(card?.revision);
+        const reusable = revision.status !== 'superseded' || revision.supersededByRunId === newRunId;
+        if (reusable) return declared;
+      }
+    }
+  }
+
   const candidates = [];
   for (const runId of listDirs(reportsDir)) {
     if (runId === newRunId) continue;
