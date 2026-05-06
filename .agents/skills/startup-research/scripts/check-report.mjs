@@ -25,6 +25,7 @@ import {
   isFinalizedReportFolder,
   isRunId,
   loadWorkflowConfig,
+  REVISION_STATUSES,
   tryReadYaml,
 } from './utils.mjs';
 import {
@@ -272,10 +273,6 @@ function checkAdverseDistribution(run, parsed) {
 
 function checkCardConsistency(run, card, reportDoc, ledger) {
   const cardPath = `${run}/${SUMMARY_CARD_FILE}`;
-  const RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 'avoid']);
-  const CONFIDENCES = new Set(['high', 'medium', 'low']);
-  const RISK_RATINGS = new Set(['low', 'medium', 'high', 'critical', 'unknown']);
-  const VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
   const summary = card?.summary;
   if (!summary || typeof summary !== 'object') {
     fail(`${cardPath}: summary block is required`);
@@ -284,10 +281,10 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
       fail(`${cardPath}: summary.overallScore must be a number between 0 and 10`);
     }
     if (!hasText(summary.headline)) fail(`${cardPath}: summary.headline is required`);
-    if (!RECOMMENDATIONS.has(summary.recommendation)) fail(`${cardPath}: summary.recommendation must be one of ${[...RECOMMENDATIONS].join('|')}`);
-    if (!CONFIDENCES.has(summary.confidence)) fail(`${cardPath}: summary.confidence must be one of ${[...CONFIDENCES].join('|')}`);
-    if (!RISK_RATINGS.has(summary.riskRating)) fail(`${cardPath}: summary.riskRating must be one of ${[...RISK_RATINGS].join('|')}`);
-    if (!VALUATION_STANCES.has(summary.valuationStance)) fail(`${cardPath}: summary.valuationStance must be one of ${[...VALUATION_STANCES].join('|')}`);
+    if (!CARD_RECOMMENDATIONS.has(summary.recommendation)) fail(`${cardPath}: summary.recommendation must be one of ${[...CARD_RECOMMENDATIONS].join('|')}`);
+    if (!CARD_CONFIDENCES.has(summary.confidence)) fail(`${cardPath}: summary.confidence must be one of ${[...CARD_CONFIDENCES].join('|')}`);
+    if (!CARD_RISK_RATINGS.has(summary.riskRating)) fail(`${cardPath}: summary.riskRating must be one of ${[...CARD_RISK_RATINGS].join('|')}`);
+    if (!CARD_VALUATION_STANCES.has(summary.valuationStance)) fail(`${cardPath}: summary.valuationStance must be one of ${[...CARD_VALUATION_STANCES].join('|')}`);
     for (const field of ['topStrengths', 'topRisks', 'unresolvedGaps']) {
       if (!Array.isArray(summary[field])) fail(`${cardPath}: summary.${field} must be an array`);
     }
@@ -338,8 +335,12 @@ function checkCrossArtifactIdentity(run, parsed) {
   if (slugs.size > 1) fail(`${run}: slug is inconsistent across artifacts`);
 }
 
-const REVISION_STATUSES = new Set(['current', 'superseded']);
 const REVISION_RELATION_FIELDS = ['refreshOfRunId', 'supersededByRunId'];
+
+const CARD_RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 'avoid']);
+const CARD_CONFIDENCES = new Set(['high', 'medium', 'low']);
+const CARD_RISK_RATINGS = new Set(['low', 'medium', 'high', 'critical', 'unknown']);
+const CARD_VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
 
 function revisionComparable(doc) {
   const revision = doc?.revision && typeof doc.revision === 'object' && !Array.isArray(doc.revision) ? doc.revision : {};

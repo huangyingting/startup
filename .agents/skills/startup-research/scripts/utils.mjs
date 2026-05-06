@@ -15,10 +15,6 @@ export function isRunId(value) {
   return RUN_ID_RE.test(String(value ?? ''));
 }
 
-export function reportFolderForRunId(runId) {
-  return join(reportsDir, String(runId ?? ''));
-}
-
 export function isFinalizedReportFolder(path) {
   return FINAL_REPORT_FILES.every((file) => existsSync(join(path, file)));
 }
