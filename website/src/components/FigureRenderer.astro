@@ -958,9 +958,12 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     });
     const containerWidth = element.getBoundingClientRect().width || 760;
     const compact = containerWidth < 520;
-    const cardH = compact ? 96 : 118;
-    const gap = compact ? 18 : 34;
-    const margin = compact ? { top: 14, right: 18, bottom: 18, left: 16 } : { top: 24, right: 34, bottom: 30, left: 30 };
+    const hasDetails = nodes.some((node) => String(node.detail ?? '').trim());
+    const cardH = hasDetails ? (compact ? 96 : 118) : (compact ? 72 : 84);
+    const gap = hasDetails ? (compact ? 18 : 34) : (compact ? 14 : 24);
+    const margin = compact
+      ? { top: hasDetails ? 14 : 12, right: 18, bottom: hasDetails ? 18 : 14, left: 16 }
+      : { top: hasDetails ? 24 : 20, right: 34, bottom: hasDetails ? 30 : 22, left: 30 };
     const { svg, width, height } = svgBase(element, Math.max(260, margin.top + margin.bottom + nodes.length * cardH + Math.max(0, nodes.length - 1) * gap));
     const railX = margin.left + (compact ? 24 : 34);
     const cardX = margin.left + (compact ? 64 : 96);
@@ -971,7 +974,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     gradient.append('stop').attr('offset', '100%').attr('stop-color', '#fbf0e8');
     const stepY = (index) => margin.top + index * (cardH + gap);
     const connectorData = nodes.slice(0, -1).map((node, index) => ({ source: node, target: nodes[index + 1], edge: edgeBetween(node, nodes[index + 1]), index }));
-    const railRadius = compact ? 17 : 22;
+    const railRadius = hasDetails ? (compact ? 17 : 22) : (compact ? 15 : 18);
+    const innerRailRadius = hasDetails ? (compact ? 12 : 16) : (compact ? 10.5 : 13);
     const connectorStartY = (index) => stepY(index) + cardH / 2 + railRadius + 3;
     const connectorArrowBaseY = (index) => stepY(index + 1) + cardH / 2 - railRadius - (compact ? 9 : 10);
     const connectorArrowTipY = (index) => stepY(index + 1) + cardH / 2 - railRadius - 3;
@@ -1025,8 +1029,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       .attr('font-weight', fontWeight('label'))
       .text((d) => labelText(visibleEdgeLabel(d.edge), 12));
     const railNodes = svg.append('g').selectAll('g').data(nodes).join('g').attr('transform', (_node, index) => `translate(${railX},${stepY(index) + cardH / 2})`);
-    railNodes.append('circle').attr('r', compact ? 17 : 22).attr('fill', '#fff7ef').attr('stroke', (node) => colorForTone(node.tone)).attr('stroke-width', compact ? 2.4 : 3);
-    railNodes.append('circle').attr('r', compact ? 12 : 16).attr('fill', (node) => colorForTone(node.tone));
+    railNodes.append('circle').attr('r', railRadius).attr('fill', '#fff7ef').attr('stroke', (node) => colorForTone(node.tone)).attr('stroke-width', compact ? 2.4 : 3);
+    railNodes.append('circle').attr('r', innerRailRadius).attr('fill', (node) => colorForTone(node.tone));
     railNodes.append('text').attr('y', compact ? 4 : 5).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('emphasis')).text((node) => node._index + 1);
     const cards = svg.append('g').selectAll('g').data(nodes).join('g').attr('transform', (_node, index) => `translate(${cardX},${stepY(index)})`);
     cards.append('rect')
@@ -1037,13 +1041,19 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       .attr('stroke', (node) => colorForTone(node.tone))
       .attr('stroke-width', 1.9);
     const textX = compact ? 18 : 24;
-    cards.append('text').attr('x', textX).attr('y', compact ? 18 : 26).attr('fill', palette.claret).attr('font-size', compact ? chartFont.size.tiny : chartFont.size.caption).attr('font-weight', fontWeight('label')).attr('letter-spacing', chartFont.tracking.caps).text((node) => node._index === nodes.length - 1 ? 'DECISION' : node.tone === 'risk' || node.tone === 'critical' || node.tone === 'high' ? 'CONSTRAINT' : 'EVIDENCE');
-    cards.append('text').attr('x', textX).attr('y', compact ? 40 : 52).attr('fill', palette.ink).attr('font-size', compact ? chartFont.label : chartFont.size.title).attr('font-weight', fontWeight('emphasis')).each(function(node) {
-      renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(compact ? 22 : 24, Math.floor((cardW - textX * 2) / (compact ? 7.8 : 8.4))), maxLines: 2, lineHeight: compact ? chartFont.lineHeight.small : chartFont.lineHeight.title });
+    const eyebrowY = hasDetails ? (compact ? 18 : 26) : (compact ? 17 : 22);
+    const labelY = hasDetails ? (compact ? 40 : 52) : (compact ? 45 : 52);
+    const labelFontSize = hasDetails ? (compact ? chartFont.label : chartFont.size.title) : (compact ? chartFont.axis : chartFont.label);
+    const labelLineHeight = hasDetails ? (compact ? chartFont.lineHeight.small : chartFont.lineHeight.title) : chartFont.lineHeight.label;
+    cards.append('text').attr('x', textX).attr('y', eyebrowY).attr('fill', palette.claret).attr('font-size', compact ? chartFont.size.tiny : chartFont.size.caption).attr('font-weight', fontWeight('label')).attr('letter-spacing', chartFont.tracking.caps).text((node) => node._index === nodes.length - 1 ? 'DECISION' : node.tone === 'risk' || node.tone === 'critical' || node.tone === 'high' ? 'CONSTRAINT' : 'EVIDENCE');
+    cards.append('text').attr('x', textX).attr('y', labelY).attr('fill', palette.ink).attr('font-size', labelFontSize).attr('font-weight', fontWeight('emphasis')).each(function(node) {
+      renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(compact ? 22 : 24, Math.floor((cardW - textX * 2) / (compact ? 7.8 : 8.4))), maxLines: 2, lineHeight: labelLineHeight });
     });
-    cards.append('text').attr('x', textX).attr('y', compact ? 66 : 84).attr('fill', palette.muted).attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('regular')).each(function(node) {
-      renderWrappedText(d3.select(this), node.detail, { maxChars: Math.max(compact ? 34 : 40, Math.floor((cardW - textX * 2) / (compact ? 6.2 : 6.5))), maxLines: compact ? 2 : 3, lineHeight: compact ? chartFont.lineHeight.compact : chartFont.lineHeight.small });
-    });
+    if (hasDetails) {
+      cards.append('text').attr('x', textX).attr('y', compact ? 66 : 84).attr('fill', palette.muted).attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('regular')).each(function(node) {
+        renderWrappedText(d3.select(this), node.detail, { maxChars: Math.max(compact ? 34 : 40, Math.floor((cardW - textX * 2) / (compact ? 6.2 : 6.5))), maxLines: compact ? 2 : 3, lineHeight: compact ? chartFont.lineHeight.compact : chartFont.lineHeight.small });
+      });
+    }
     cards.each(function(node) { addTitle(d3.select(this), `${node._index + 1}. ${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
   };
 
