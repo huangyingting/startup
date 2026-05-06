@@ -14,7 +14,7 @@
 // globalHints[] (when the same dimension fails on many objects, hinting at a
 // chapter-wide root cause).
 import { existsSync, readdirSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
 import {
@@ -67,48 +67,96 @@ const warnings = [];
 // expressed in prose; baking it into each failure removes the agent's need to
 // cross-reference SKILL.md when triaging. Keep entries action-oriented and
 // short (<= 120 chars). Add a new entry whenever you add a new dimension.
+//
+// Each entry is `string | (extra) => string`. Functions receive the full
+// `extra` object passed to `fail(dim, msg, extra)` (e.g. `{ actual, required,
+// id, tableId }`) so they can echo the concrete fix value back at the agent
+// ("Set slug: to \"revolut\".") instead of the agent re-deriving it from the
+// surrounding message.
 const FIX_HINTS = {
   missingArtifact: 'Create the chapter YAML at the expected path.',
   yamlParse: 'Fix the YAML syntax error reported in the message.',
   localEvidenceMissing: 'Add the entire localEvidence block (researchQuestions, searchQueries, sources, claims, evidenceGaps).',
-  researchQuestionShape: 'Fix the question object: id RQ###, >=20-char text, valid type, non-empty targets[], valid status.',
-  researchQuestionTargets: 'Point each targets[] entry at a real contentRequirements/<index>, plannedTables/<slug>, or plannedFigures/<slug>.',
-  researchQuestionTypeMix: 'Add questions of types you have not used yet to reach minQuestionTypeSpread.',
-  researchQuestionAdverse: 'Add type:adverse questions until you reach minAdverseQuestions.',
-  researchQuestionAnswerCoverage: 'Convert questions from unresolved/partial to answered by adding the missing claim and citing it via claim.answersQuestionRefs.',
-  researchQuestionClosure: 'Add an evidenceGap whose relatedQuestionRefs[] includes the still-open question.',
+  researchQuestionShape: ({ id, actual } = {}) =>
+    actual !== undefined
+      ? `Fix ${id ?? 'the question'}: invalid value "${actual}". Use a value from the allowed enum shown in the message.`
+      : 'Fix the question object: id RQ###, >=20-char text, valid type, non-empty targets[], valid status.',
+  researchQuestionTargets: ({ id } = {}) =>
+    `Point ${id ?? 'the question'}.targets[] entries at a real contentRequirements/<index>, plannedTables/<slug>, or plannedFigures/<slug>.`,
+  researchQuestionTypeMix: ({ actual, required } = {}) =>
+    required != null ? `Add questions of types you have not used yet so distinct types reach ${required} (currently ${actual}).` : 'Add questions of types you have not used yet to reach minQuestionTypeSpread.',
+  researchQuestionAdverse: ({ actual, required } = {}) =>
+    required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more type:adverse question(s) (currently ${actual}, need ${required}).` : 'Add type:adverse questions until you reach minAdverseQuestions.',
+  researchQuestionAnswerCoverage: ({ actual, required } = {}) =>
+    required != null ? `Raise answered/total ratio to ${required} (currently ${Number(actual).toFixed(2)}) by answering more questions or removing speculative ones.` : 'Convert questions from unresolved/partial to answered by adding the missing claim and citing it via claim.answersQuestionRefs.',
+  researchQuestionClosure: ({ id } = {}) =>
+    `Add an evidenceGap whose relatedQuestionRefs[] includes ${id ?? 'the still-open question'}.`,
   searchQueriesMissing: 'Append the actual queries you ran into localEvidence.searchQueries[] ({query, engine, hits, retainedSourceRefs}).',
-  sourceShape: 'Fill accessStatus and stance (and other required fields) on each source.',
-  sourceDomains: 'Add sources from new registrable domains; do not duplicate publishers.',
-  sourceTypeSpread: 'Add sources with sourceType values you have not used yet.',
-  requiredSourceTypes: 'Pull at least one source of each missing type listed in gate.requiredSourceTypes.',
-  netNewSources: 'Run new searches to add URLs not seen in earlier chapters; reusing the global pool will not satisfy this gate.',
+  sourceShape: ({ id } = {}) =>
+    id ? `Fill the missing required field on source ${id} (see message for which one).` : 'Fill accessStatus and stance (and other required fields) on each source.',
+  sourceDomains: ({ actual, required } = {}) =>
+    required != null ? `Add sources from ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}).` : 'Add sources from new registrable domains; do not duplicate publishers.',
+  sourceTypeSpread: ({ actual, required } = {}) =>
+    required != null ? `Add sources with ${Math.max(required - (actual ?? 0), 1)} more sourceType value(s) you have not used yet (currently ${actual}, need ${required}).` : 'Add sources with sourceType values you have not used yet.',
+  requiredSourceTypes: ({ missing } = {}) =>
+    missing ? `Pull at least one source with sourceType: ${missing}.` : 'Pull at least one source of each missing type listed in gate.requiredSourceTypes.',
+  netNewSources: ({ actual, required } = {}) =>
+    required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more URL(s) not seen in earlier chapters (currently ${actual}, need ${required}).` : 'Run new searches to add URLs not seen in earlier chapters; reusing the global pool will not satisfy this gate.',
   paywallRisk: 'Swap restricted (paywall|js-only|broken|rate-limited) sources for ok ones to stay under the report-level 30% ceiling.',
   researchQuestions: 'Add more researchQuestion entries until you hit the per-chapter floor.',
   sources: 'Add more sources until you hit the per-chapter floor.',
   claims: 'Add more claims until you hit the per-chapter floor.',
-  highConfidenceCorroboration: 'Either downgrade confidence:high to medium, or add a primary-tier source (filing|regulatory|legal|official or reputationTier:high).',
-  claimAnswerRefs: 'Resolve dangling answersQuestionRefs entries; do not duplicate evidence.',
-  claimContradictRefs: 'Resolve dangling contradictsClaimRefs entries; type:conflicting requires non-empty contradictsClaimRefs.',
-  claimRefs: 'Resolve dangling claimRefs across sections, tables, figures, and callouts.',
-  enumerationScope: 'Add enumerationScope { coverage, basis(>=20 chars) } to the matching enumeration table.',
-  enumerationRows: 'Add rows to reach expectedMinRows or set coverage to partial/sample with rationale.',
-  enumerationCoverageGap: 'Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it.',
-  enumerationRowCorroboration: "Add sources from additional registrable domains backing the table's claimRefs.",
-  claimShape: 'Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.',
+  highConfidenceCorroboration: ({ claimId, actual, required } = {}) =>
+    required != null && actual != null
+      ? `On claim ${claimId}: either downgrade confidence:high to medium, or add ${Math.max(required - actual, 1)} more sourceRef(s) including a primary-tier one (filing|regulatory|legal|official or reputationTier:high).`
+      : claimId
+        ? `On claim ${claimId}: either downgrade confidence:high to medium, or add a primary-tier sourceRef (filing|regulatory|legal|official or reputationTier:high).`
+        : 'Either downgrade confidence:high to medium, or add a primary-tier source (filing|regulatory|legal|official or reputationTier:high).',
+  claimAnswerRefs: ({ claimId, ref } = {}) =>
+    claimId ? `On claim ${claimId}: remove answersQuestionRefs entry ${ref ?? ''}, or add the missing RQ### locally.` : 'Resolve dangling answersQuestionRefs entries; do not duplicate evidence.',
+  claimContradictRefs: ({ claimId, ref } = {}) =>
+    claimId ? `On claim ${claimId}: remove contradictsClaimRefs entry ${ref ?? ''}, or add the missing C### locally (type:conflicting requires non-empty contradictsClaimRefs).` : 'Resolve dangling contradictsClaimRefs entries; type:conflicting requires non-empty contradictsClaimRefs.',
+  claimRefs: ({ unresolvedRef } = {}) =>
+    unresolvedRef ? `Resolve claimRef ${unresolvedRef}: either remove it, or add a localEvidence.claims entry with that id.` : 'Resolve dangling claimRefs across sections, tables, figures, and callouts.',
+  enumerationScope: ({ tableId, actual } = {}) =>
+    actual !== undefined
+      ? `On table ${tableId}: enumerationScope.coverage "${actual}" invalid; use exhaustive | partial | sample.`
+      : tableId
+        ? `Add enumerationScope { coverage: exhaustive|partial|sample, basis: "..." (>=20 chars) } to table ${tableId}.`
+        : 'Add enumerationScope { coverage, basis(>=20 chars) } to the matching enumeration table.',
+  enumerationRows: ({ tableId, actual, required } = {}) =>
+    required != null ? `On table ${tableId}: add ${Math.max(required - (actual ?? 0), 1)} more rows (currently ${actual}, need ${required}) or set enumerationScope.coverage to partial/sample with rationale.` : 'Add rows to reach expectedMinRows or set coverage to partial/sample with rationale.',
+  enumerationCoverageGap: ({ tableId } = {}) =>
+    tableId ? `Open an evidenceGap whose topic mentions ${tableId} or whose relatedTableRefs[] includes ${tableId}.` : 'Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it.',
+  enumerationRowCorroboration: ({ tableId, actual, required } = {}) =>
+    required != null ? `On table ${tableId}: add sources from ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}).` : "Add sources from additional registrable domains backing the table's claimRefs.",
+  claimShape: ({ id } = {}) =>
+    id ? `Fix claim ${id}: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.` : 'Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.',
   analysisCallout: 'Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength|risk|recommendation|insight|assumption).',
-  tableShape: 'Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.',
+  tableShape: ({ tableId } = {}) =>
+    tableId ? `Fix table ${tableId}: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.` : 'Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.',
   documentHead: 'Fix the chapter document head: schemaVersion=report-v2, artifact matches the chapter key, slug, runDate=YYYY-MM-DD, company.name, and chapter.number matching the chapter order.',
-  duplicateIds: 'Renumber the duplicate or malformed table/figure id; ids must match T### / F### and be unique within the chapter.',
-  artifactRefs: 'Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter\'s figures[] / tables[].',
-  sectionsMin: 'Add the missing section(s) to reach minSections.',
-  artifactsMin: 'Add the missing table or figure (or substitute a planned figure with an extra table when data shape does not fit).',
-  depthSection: 'Expand the prose of the shortest section(s) only; leave the others untouched.',
-  depthSectionTotal: 'Expand prose across short sections to reach minSectionWordsTotal.',
-  depthTableRows: 'Add rows to existing tables to reach minTableRowsTotal.',
-  depthFigureData: 'Add data points to existing figures to reach minFigureDataPointsTotal.',
-  contentRequirementCoverage: 'Add researchQuestions whose targets[] cover the un-targeted contentRequirements.',
-  figureShape: 'Fix the figure data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows).',
+  slugConsistency: ({ required } = {}) =>
+    required ? `Set slug: to "${required}".` : 'Set slug: to the company slug only (the report folder basename with the leading <timestamp>- stripped).',
+  duplicateIds: ({ id } = {}) =>
+    id ? `Renumber ${id}: ids must match T### / F### and be unique within the chapter.` : 'Renumber the duplicate or malformed table/figure id; ids must match T### / F### and be unique within the chapter.',
+  artifactRefs: "Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter's figures[] / tables[].",
+  sectionsMin: ({ actual, required } = {}) =>
+    required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more section(s) (currently ${actual}, need ${required}).` : 'Add the missing section(s) to reach minSections.',
+  artifactsMin: ({ actual, required } = {}) =>
+    required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more table or figure (currently ${actual}, need ${required}); a planned figure may be substituted with an extra table when data shape does not fit.` : 'Add the missing table or figure (or substitute a planned figure with an extra table when data shape does not fit).',
+  depthSection: ({ actual, required } = {}) =>
+    required != null ? `Expand the shortest section's body by ~${Math.max(required - (actual ?? 0), 1)} more words (currently ${actual}, need ${required} per section).` : 'Expand the prose of the shortest section(s) only; leave the others untouched.',
+  depthSectionTotal: ({ actual, required } = {}) =>
+    required != null ? `Expand prose by ~${Math.max(required - (actual ?? 0), 1)} more words across short sections (currently ${actual} total, need ${required}).` : 'Expand prose across short sections to reach minSectionWordsTotal.',
+  depthTableRows: ({ actual, required } = {}) =>
+    required != null ? `Add ~${Math.max(required - (actual ?? 0), 1)} more rows across existing tables (currently ${actual} total, need ${required}).` : 'Add rows to existing tables to reach minTableRowsTotal.',
+  depthFigureData: ({ actual, required } = {}) =>
+    required != null ? `Add ~${Math.max(required - (actual ?? 0), 1)} more data points across existing figures (currently ${actual} total, need ${required}).` : 'Add data points to existing figures to reach minFigureDataPointsTotal.',
+  contentRequirementCoverage: ({ actual, required } = {}) =>
+    required != null ? `Add researchQuestions whose targets[] cover the un-targeted contentRequirements (current coverage ${Number(actual).toFixed(2)}, need ${required}).` : 'Add researchQuestions whose targets[] cover the un-targeted contentRequirements.',
+  figureShape: ({ figureId } = {}) =>
+    figureId ? `Fix figure ${figureId} data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows).` : 'Fix the figure data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows).',
   duplicateAnalysis: 'Merge the redundant table/figure pair, or sharpen one to answer a distinct question.',
   figureType: 'Render at least one of the planned figure types or document the substitution in evidenceGaps.',
   sectionsMax: 'Reduce or merge sections; the chapter looks over-fragmented.',
@@ -143,15 +191,26 @@ const CASCADE_SUPPRESSORS = {
 //   | depthTableRows | depthFigureData | duplicateAnalysis | figureType
 //   | figureShape
 //   | localEvidenceMissing | researchQuestions | sources | claims | claimRefs
+function resolveFixHint(dimension, extra) {
+  const hint = FIX_HINTS[dimension];
+  if (typeof hint === 'function') {
+    try { return hint(extra); }
+    catch { return undefined; }
+  }
+  return hint;
+}
+
 function fail(dimension, message, extra = {}) {
   const entry = { dimension, file: spec.file, message, ...extra };
-  if (FIX_HINTS[dimension]) entry.fix = FIX_HINTS[dimension];
+  const fix = resolveFixHint(dimension, extra);
+  if (fix) entry.fix = fix;
   failures.push(entry);
 }
 
 function warn(dimension, message, extra = {}) {
   const entry = { dimension, file: spec.file, message, ...extra };
-  if (FIX_HINTS[dimension]) entry.fix = FIX_HINTS[dimension];
+  const fix = resolveFixHint(dimension, extra);
+  if (fix) entry.fix = fix;
   warnings.push(entry);
 }
 
@@ -599,6 +658,17 @@ if (doc) {
     const { errors } = checkDocumentHeadSchema(doc, { path: spec.file, expected: spec });
     for (const err of errors) fail('documentHead', err.message, err);
   }
+  // Slug must equal the company slug, i.e. the report folder basename with
+  // the leading <timestamp>- prefix stripped. new-report.mjs creates the
+  // folder as `${timestamp}-${slugify(companyName)}`; the chapter `slug:`
+  // field is the second half only. Catches the drift seen in RUN-1 where
+  // every chapter accidentally carried the full `<timestamp>-<companySlug>`.
+  {
+    const canonical = basename(reportFolder).replace(/^\d{14}-/, '');
+    if (doc?.slug && doc.slug !== canonical) {
+      fail('slugConsistency', `${spec.file}: slug "${doc.slug}" does not match folder slug "${canonical}"`, { actual: doc.slug, required: canonical });
+    }
+  }
   // Chapter-local table/figure id uniqueness (T### / F###). Duplicate or
   // malformed ids would otherwise blow up at ledger/assemble time.
   {
@@ -731,7 +801,7 @@ const ok = failures.length === 0 && (!args.strict || unackedWarningDims.length =
 // dimensions fail, fix in this order; downstream dimensions often clear once
 // upstream is repaired.
 const RETRY_PRECEDENCE = [
-  'missingArtifact', 'yamlParse', 'documentHead', 'localEvidenceMissing',
+  'missingArtifact', 'yamlParse', 'documentHead', 'slugConsistency', 'localEvidenceMissing',
   'researchQuestionShape', 'researchQuestionTargets', 'researchQuestionTypeMix', 'researchQuestionAdverse',
   'searchQueriesMissing',
   'sourceShape', 'sourceDomains', 'sourceTypeSpread', 'requiredSourceTypes', 'netNewSources',

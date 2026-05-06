@@ -111,7 +111,7 @@ function checkReportBlocks(run, reportDoc) {
     if (block.type === 'callout') {
       if (!hasText(block.body)) fail(`${path} callout block requires body`);
       if (block.calloutType != null && !CALLOUT_TYPES.has(block.calloutType)) {
-        fail(`${path} callout block calloutType must be one of ${[...CALLOUT_TYPES].join('|')}`);
+        fail(`${path} callout block calloutType="${block.calloutType}" must be one of ${[...CALLOUT_TYPES].join('|')}`);
       }
     }
     if (block.type === 'table' && !hasText(block.tableRef)) fail(`${path} table block requires tableRef`);
@@ -174,6 +174,7 @@ function checkRefs(run, reportDoc) {
 
 function parseRunArtifacts(run, dir) {
   const parsed = new Map();
+  const canonicalSlug = run.replace(/^\d{14}-/, '');
   for (const file of REQUIRED_ENGLISH_FILES.filter((name) => name.endsWith('.yaml'))) {
     const result = tryReadYaml(join(dir, file));
     if (!result.ok) {
@@ -184,6 +185,9 @@ function parseRunArtifacts(run, dir) {
     const expected = ARTIFACT_BY_FILE.get(file);
     const { errors } = checkDocumentHeadSchema(result.value, { path: `${run}/${file}`, expected });
     for (const err of errors) fail(err.message);
+    if (result.value?.slug && result.value.slug !== canonicalSlug) {
+      fail(`${run}/${file}: slug "${result.value.slug}" does not match folder slug "${canonicalSlug}"`);
+    }
   }
   return parsed;
 }
@@ -278,13 +282,13 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
     fail(`${cardPath}: summary block is required`);
   } else {
     if (typeof summary.overallScore !== 'number' || summary.overallScore < 0 || summary.overallScore > 10) {
-      fail(`${cardPath}: summary.overallScore must be a number between 0 and 10`);
+      fail(`${cardPath}: summary.overallScore must be a number between 0 and 10 (got ${JSON.stringify(summary.overallScore)})`);
     }
     if (!hasText(summary.headline)) fail(`${cardPath}: summary.headline is required`);
-    if (!CARD_RECOMMENDATIONS.has(summary.recommendation)) fail(`${cardPath}: summary.recommendation must be one of ${[...CARD_RECOMMENDATIONS].join('|')}`);
-    if (!CARD_CONFIDENCES.has(summary.confidence)) fail(`${cardPath}: summary.confidence must be one of ${[...CARD_CONFIDENCES].join('|')}`);
-    if (!CARD_RISK_RATINGS.has(summary.riskRating)) fail(`${cardPath}: summary.riskRating must be one of ${[...CARD_RISK_RATINGS].join('|')}`);
-    if (!CARD_VALUATION_STANCES.has(summary.valuationStance)) fail(`${cardPath}: summary.valuationStance must be one of ${[...CARD_VALUATION_STANCES].join('|')}`);
+    if (!CARD_RECOMMENDATIONS.has(summary.recommendation)) fail(`${cardPath}: summary.recommendation="${summary.recommendation}" must be one of ${[...CARD_RECOMMENDATIONS].join('|')}`);
+    if (!CARD_CONFIDENCES.has(summary.confidence)) fail(`${cardPath}: summary.confidence="${summary.confidence}" must be one of ${[...CARD_CONFIDENCES].join('|')}`);
+    if (!CARD_RISK_RATINGS.has(summary.riskRating)) fail(`${cardPath}: summary.riskRating="${summary.riskRating}" must be one of ${[...CARD_RISK_RATINGS].join('|')}`);
+    if (!CARD_VALUATION_STANCES.has(summary.valuationStance)) fail(`${cardPath}: summary.valuationStance="${summary.valuationStance}" must be one of ${[...CARD_VALUATION_STANCES].join('|')}`);
     for (const field of ['topStrengths', 'topRisks', 'unresolvedGaps']) {
       if (!Array.isArray(summary[field])) fail(`${cardPath}: summary.${field} must be an array`);
     }
@@ -330,9 +334,9 @@ function checkReportConsistency(run, reportDoc) {
 function checkCrossArtifactIdentity(run, parsed) {
   const docs = [...parsed.values()];
   const names = new Set(docs.map((doc) => doc?.company?.name).filter(Boolean));
-  if (names.size > 1) fail(`${run}: company.name is inconsistent across artifacts`);
+  if (names.size > 1) fail(`${run}: company.name is inconsistent across artifacts (found: ${[...names].map((n) => `"${n}"`).join(', ')})`);
   const slugs = new Set(docs.map((doc) => doc?.slug).filter(Boolean));
-  if (slugs.size > 1) fail(`${run}: slug is inconsistent across artifacts`);
+  if (slugs.size > 1) fail(`${run}: slug is inconsistent across artifacts (found: ${[...slugs].map((s) => `"${s}"`).join(', ')})`);
 }
 
 const REVISION_RELATION_FIELDS = ['refreshOfRunId', 'supersededByRunId'];
@@ -361,7 +365,7 @@ function checkRevisionShape(run, file, doc) {
     return;
   }
   const status = revision.status ?? 'current';
-  if (!REVISION_STATUSES.has(status)) fail(`${path}.status must be one of ${[...REVISION_STATUSES].join('|')}`);
+  if (!REVISION_STATUSES.has(status)) fail(`${path}.status="${status}" must be one of ${[...REVISION_STATUSES].join('|')}`);
   if (revision.refreshReason != null && typeof revision.refreshReason !== 'string') {
     fail(`${path}.refreshReason must be a string or null`);
   }

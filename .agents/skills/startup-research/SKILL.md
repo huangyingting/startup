@@ -102,6 +102,7 @@ After all analysis chapters pass:
 
 ## Hard rules
 
+- `slug:` in every YAML under `reports/<run>/` (each `0X-*.yaml` chapter and `report-meta.yaml`) must equal the company slug only — the report folder basename with the leading `<timestamp>-` stripped (i.e. the value `slugify(companyName)` produced by `new-report.mjs`). Example: folder `reports/20260506052900-revolut/` ⇒ `slug: revolut`. `check-chapter` enforces this per chapter; `check-report` enforces it across the assembled artifacts.
 - Do not hand-write `evidence.yaml`, `full-report.yaml`, or `summary-card.yaml`; let the scripts assemble them. Edit the source chapter YAMLs or `report-meta.yaml` instead.
 - Do not edit another chapter's artifact while working on the current chapter.
 - Do not invent facts, metrics, customers, funding, valuation, or dates.

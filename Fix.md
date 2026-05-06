@@ -11,7 +11,7 @@
 
 ## P0 — 信号提前到 chapter 阶段（每家公司省 3–6 轮回头改）
 
-### [ ] P0-1. 给 `check-chapter` 加 `slugConsistency` 维度
+### [x] P0-1. 给 `check-chapter` 加 `slugConsistency` 维度  ✅ 已完成
 **问题**：RUN-2 §A1。Revolut 6 个 chapter 的 `slug:` 漂移要等 finalize 失败才发现。
 
 **真值来源**：`companySlug`，即 folder basename 去掉时间戳前缀。
