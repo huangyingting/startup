@@ -213,6 +213,32 @@ const ENTITY_MAP = {
   lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”',
 };
 
+const NOISE_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE', 'SVG', 'IFRAME', 'CANVAS']);
+const PROTECTED_EXTRACTION_TAGS = new Set(['HTML', 'HEAD', 'BODY', 'MAIN', 'ARTICLE']);
+const NOISE_HINT_RE = /\b(cookie|cookies|consent|gdpr|privacy[-_\s]?preferences?|newsletter|subscribe[-_\s]?(modal|popup|form|box|banner)|sign[-_\s]?up[-_\s]?(modal|popup|form|box|banner)|modal|popup|overlay|interstitial|ad[-_\s]?(container|slot|banner|unit)|advertisement|social[-_\s]?(share|links?)|share[-_\s]?(buttons?|bar|widget)|related[-_\s]?(articles?|posts?)|recommended[-_\s]?(articles?|posts?)|recirculation)\b/i;
+const NOISE_TEXT_RE = /\b(cookie|cookies|consent|gdpr|newsletter|subscribe to|sign up for|share this|advertisement|sponsored)\b/i;
+const BOILERPLATE_LINE_PATTERNS = [
+  /^skip to (main )?content$/i,
+  /^(menu|open menu|close menu)$/i,
+  /^(sign in|log in)$/i,
+  /^(accept|reject|allow|deny)( all)? cookies?$/i,
+  /^(manage|customize|change|set) (cookies?|preferences|privacy settings)$/i,
+  /^cookie (settings|preferences|policy)$/i,
+  /^this (site|website) uses cookies\b.{0,220}$/i,
+  /^we use cookies\b.{0,220}$/i,
+  /^by (continuing|clicking|using this site)\b.{0,220}\bcookies?\b/i,
+  /^(subscribe|sign up) (to|for) (our|the) newsletter\.?$/i,
+  /^get (the )?(latest|updates) (in )?your inbox\.?$/i,
+  /^share this (article|post|page)$/i,
+  /^(share|follow us)( on .*)?$/i,
+  /^advertisement$/i,
+  /^sponsored( content)?$/i,
+  /^(related|recommended) (articles|posts|content)$/i,
+  /^(read more|learn more)$/i,
+  /^all rights reserved\.?$/i,
+  /^©\s?\d{4}.*all rights reserved\.?$/i,
+];
+
 function readOptionValue(args, index, flag) {
   const value = args[index + 1];
   if (value === undefined || value.startsWith('--')) {
@@ -566,6 +592,129 @@ function normalizePlainText(text) {
     .trim();
 }
 
+function elementSignalText(el) {
+  return [
+    el.id,
+    el.className,
+    el.getAttribute?.('role'),
+    el.getAttribute?.('aria-label'),
+    el.getAttribute?.('data-testid'),
+    el.getAttribute?.('data-test'),
+  ].filter((value) => typeof value === 'string' && value.trim()).join(' ');
+}
+
+function isLikelyNoiseElement(el) {
+  const tag = el.tagName?.toUpperCase?.() ?? '';
+  if (NOISE_TAGS.has(tag)) return true;
+  if (PROTECTED_EXTRACTION_TAGS.has(tag)) return false;
+  if (el.hasAttribute?.('hidden') || String(el.getAttribute?.('aria-hidden') ?? '').toLowerCase() === 'true') return true;
+
+  const role = String(el.getAttribute?.('role') ?? '').toLowerCase();
+  const signal = elementSignalText(el);
+  const text = normalizePlainText(el.textContent ?? '').slice(0, 2000);
+  const combined = `${signal} ${text}`;
+
+  if ((role === 'dialog' || role === 'alertdialog') && NOISE_TEXT_RE.test(combined)) return true;
+  if (tag === 'FORM' && /\b(newsletter|subscribe|sign up|email updates?)\b/i.test(combined) && text.length < 1200) return true;
+  if (NOISE_HINT_RE.test(signal) && (text.length < 2000 || NOISE_TEXT_RE.test(text))) return true;
+  return false;
+}
+
+function cleanDomForExtraction(document) {
+  let removedNodes = 0;
+  for (const el of [...document.querySelectorAll('*')]) {
+    if (!el.isConnected) continue;
+    if (isLikelyNoiseElement(el)) {
+      el.remove();
+      removedNodes += 1;
+    }
+  }
+  return { removedNodes };
+}
+
+function legalNavTermCount(line) {
+  const lower = line.toLowerCase();
+  return [
+    'privacy policy',
+    'terms of service',
+    'terms of use',
+    'cookie policy',
+    'accessibility',
+    'do not sell',
+  ].filter((term) => lower.includes(term)).length;
+}
+
+function isBoilerplateLine(line) {
+  if (!line) return false;
+  if (BOILERPLATE_LINE_PATTERNS.some((pattern) => pattern.test(line))) return true;
+  if (line.length <= 180 && legalNavTermCount(line) >= 2 && line.split(/\s+/).length <= 18) return true;
+  return false;
+}
+
+function canonicalShortLine(line) {
+  return line.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+}
+
+export function cleanExtractedText(text) {
+  const normalized = normalizePlainText(text);
+  if (!normalized) return { text: '', removedLines: 0, dedupedLines: 0 };
+
+  const out = [];
+  const seenShortLines = new Set();
+  let removedLines = 0;
+  let dedupedLines = 0;
+  for (const rawLine of normalized.split('\n')) {
+    const line = rawLine.trim();
+    if (!line) {
+      if (out.length && out.at(-1) !== '') out.push('');
+      continue;
+    }
+    if (isBoilerplateLine(line)) {
+      removedLines += 1;
+      continue;
+    }
+
+    const key = canonicalShortLine(line);
+    const wordCount = key ? key.split(/\s+/).length : 0;
+    if (key && line.length <= 80 && wordCount <= 10) {
+      if (seenShortLines.has(key)) {
+        dedupedLines += 1;
+        continue;
+      }
+      seenShortLines.add(key);
+    }
+    out.push(line);
+  }
+
+  return {
+    text: normalizePlainText(out.join('\n')),
+    removedLines,
+    dedupedLines,
+  };
+}
+
+function buildCleaningMetadata(domStats, textStats) {
+  return {
+    removedNodes: domStats?.removedNodes ?? 0,
+    removedLines: textStats?.removedLines ?? 0,
+    dedupedLines: textStats?.dedupedLines ?? 0,
+  };
+}
+
+function cleanHtmlText(html) {
+  return cleanExtractedText(htmlToText(html));
+}
+
+function fullTextExtraction(textStats, { domStats = null, fallbackReason = null } = {}) {
+  return {
+    text: textStats.text,
+    method: 'full-text',
+    used: false,
+    ...(fallbackReason ? { fallbackReason } : {}),
+    cleaning: buildCleaningMetadata(domStats, textStats),
+  };
+}
+
 export function htmlToText(html) {
   const stripped = String(html ?? '')
     .replace(/<!--[\s\S]*?-->/g, '')
@@ -582,36 +731,47 @@ function looksLikeHtml(text, contentType) {
   return /<(html|body|article|main|section|div|p|header|footer|nav)\b/i.test(String(text ?? '').slice(0, 200_000));
 }
 
-async function extractMainText(html, url, contentType) {
-  const fallbackText = htmlToText(html);
+async function extractHtmlText(html, url, contentType, { mainContent = true } = {}) {
+  const fallbackText = cleanHtmlText(html);
   if (!looksLikeHtml(html, contentType)) {
-    return { text: fallbackText, method: 'full-text', used: false, fallbackReason: 'not-html' };
+    return fullTextExtraction(fallbackText, { fallbackReason: 'not-html' });
   }
 
   let dom;
   try {
-    const [{ Readability }, { JSDOM }] = await Promise.all([
-      import('@mozilla/readability'),
+    const [{ Readability } = {}, { JSDOM }] = await Promise.all([
+      mainContent ? import('@mozilla/readability') : Promise.resolve({}),
       import('jsdom'),
     ]);
     dom = new JSDOM(html, { url });
+    const domCleaning = cleanDomForExtraction(dom.window.document);
+    const cleanedFullText = cleanHtmlText(dom.serialize());
+
+    if (!mainContent) return fullTextExtraction(cleanedFullText, { domStats: domCleaning });
+
     const article = new Readability(dom.window.document).parse();
-    const text = normalizePlainText(article?.textContent ?? '');
-    if (!text) {
-      return { text: fallbackText, method: 'full-text', used: false, fallbackReason: 'readability-empty' };
+    const articleText = article?.content ? htmlToText(article.content) : normalizePlainText(article?.textContent ?? '');
+    const cleanedArticleText = cleanExtractedText(articleText);
+    if (!cleanedArticleText.text) {
+      return fullTextExtraction(cleanedFullText.text ? cleanedFullText : fallbackText, {
+        domStats: domCleaning,
+        fallbackReason: 'readability-empty',
+      });
     }
     return {
-      text,
+      text: cleanedArticleText.text,
       method: 'readability',
       used: true,
+      contentSource: article?.content ? 'article-html' : 'article-text',
       title: article?.title ?? null,
       byline: article?.byline ?? null,
       excerpt: article?.excerpt ?? null,
       siteName: article?.siteName ?? null,
-      length: article?.length ?? text.length,
+      length: article?.length ?? cleanedArticleText.text.length,
+      cleaning: buildCleaningMetadata(domCleaning, cleanedArticleText),
     };
   } catch (err) {
-    return { text: fallbackText, method: 'full-text', used: false, fallbackReason: err.message };
+    return fullTextExtraction(fallbackText, { fallbackReason: err.message });
   } finally {
     dom?.window?.close?.();
   }
@@ -1071,7 +1231,7 @@ export async function main(args = argv.slice(2)) {
   // Compute the displayable output. PDFs always go through pdfToText when we
   // need text; their raw bytes are never printed to stdout. HTML decodes the
   // Buffer to utf-8 once here, then optionally strips the Wayback toolbar
-  // and runs htmlToText.
+  // and runs the cleaned text extraction path.
   let output;
   let pdfMeta = null;
   let pdfTruncated = false;
@@ -1099,9 +1259,7 @@ export async function main(args = argv.slice(2)) {
     bodyStr = result.body.toString('utf8');
     if (source === 'wayback') bodyStr = stripWaybackToolbar(bodyStr);
     if (!opts.raw) {
-      textExtraction = opts.mainContent
-        ? await extractMainText(bodyStr, result.finalUrl, result.contentType)
-        : { text: htmlToText(bodyStr), method: 'full-text', used: false };
+      textExtraction = await extractHtmlText(bodyStr, result.finalUrl, result.contentType, { mainContent: opts.mainContent });
       output = textExtraction.text;
     } else {
       output = bodyStr;
