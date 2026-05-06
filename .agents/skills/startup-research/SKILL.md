@@ -26,7 +26,7 @@ Keep the workflow simple: load the ordered chapter config, generate each chapter
 3. Create the report folder:
    `node .agents/skills/startup-research/scripts/new-report.mjs <runTimestamp> <companyName> [--website <companyUrl>]`
 
-If folder creation exits `2`, stop unless this is an intentional refresh; then rerun with `--allow-duplicate`.
+If folder creation exits `2`, stop: `reports/_index.yaml` or an already-finalized folder has the official report. If it exits `3`, the same in-progress folder already exists; rerun the exact same command with `--resume` and continue that folder. Use `--resume` only after exit `3`; it exits `4` when there is no in-progress folder to resume. Do not create `-2` suffixed duplicate folders.
 
 ## Chapter loop
 
