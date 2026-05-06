@@ -8,6 +8,7 @@ import {
   listDirs,
   normalizeCompanyName,
   normalizeDomain,
+  normalizeRevision,
   readYaml,
   reportsDir,
   writeYaml,
@@ -44,11 +45,16 @@ function indexEntry(runId, card) {
   const summary = card.summary ?? {};
   const metrics = summary.keyMetrics ?? {};
   const counts = artifactCounts(runId);
+  const revision = normalizeRevision(card.revision);
   return {
     runId,
     slug: card.slug ?? runId,
     schemaVersion: card.schemaVersion,
     date: card.runDate ?? null,
+    revisionStatus: revision.status,
+    refreshOfRunId: revision.refreshOfRunId,
+    supersededByRunId: revision.supersededByRunId,
+    refreshReason: revision.refreshReason,
     companyName: company.name ?? null,
     companyNameNormalized: normalizeCompanyName(company.name),
     website: company.website ?? null,

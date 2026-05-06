@@ -12,6 +12,10 @@ interface Props {
 }
 
 const { data, stages } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const revision = data.revision ?? { status: 'current', refreshOfFolderSlug: null, supersededByFolderSlug: null, refreshReason: null };
+const refreshOfHref = revision.refreshOfFolderSlug ? `${base}${revision.refreshOfFolderSlug}/` : null;
+const supersededByHref = revision.supersededByFolderSlug ? `${base}${revision.supersededByFolderSlug}/` : null;
 
 const doc = stages.fullReport ?? null;
 const ledger = stages.evidence ?? {};
@@ -102,6 +106,20 @@ const fallbackMetrics = [
 ].filter(([, value]) => value !== '—');
 ---
 <section class="report-shell sr-container">
+  {revision.status === 'superseded' && (
+    <aside class="version-banner version-banner--superseded" aria-label="Superseded report notice">
+      <strong>This report has been refreshed.</strong>
+      <span>{revision.refreshReason ?? 'A newer diligence run is available for this company.'}</span>
+      {supersededByHref && <a href={supersededByHref}>View the current report</a>}
+    </aside>
+  )}
+  {revision.status !== 'superseded' && refreshOfHref && (
+    <aside class="version-banner version-banner--current" aria-label="Report refresh notice">
+      <strong>Refreshed report.</strong>
+      <span>{revision.refreshReason ?? 'This diligence run updates a previous report with newer public evidence.'}</span>
+      <a href={refreshOfHref}>View previous version</a>
+    </aside>
+  )}
   <header class="report-cover">
     <div class="report-cover-main">
       <div class="cover-eyebrow">
@@ -460,6 +478,26 @@ const fallbackMetrics = [
     overflow-x: clip;
     font-size: var(--report-fs-body);
   }
+  .version-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    margin: 0 0 var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border: var(--report-rule);
+    border-left: 4px solid var(--claret);
+    background: color-mix(in srgb, var(--claret) 7%, var(--surface-paper));
+    font-family: var(--font-sans);
+    font-size: var(--report-fs-caption);
+    line-height: 1.35;
+  }
+  .version-banner--superseded { border-left-color: var(--risk-red); background: color-mix(in srgb, var(--risk-red) 8%, var(--surface-paper)); }
+  .version-banner strong { color: var(--ink-page); font-weight: 900; }
+  .version-banner span { color: var(--caption-gray); }
+  .version-banner a { margin-left: auto; color: var(--claret); font-weight: 900; text-decoration: none; }
+  .version-banner a:hover,
+  .version-banner a:focus-visible { text-decoration: underline; outline: none; }
   .report-cover { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: var(--space-7); align-items: stretch; padding: var(--space-6) var(--space-5); margin-bottom: var(--space-5); border-top: 4px solid var(--claret); border-bottom: var(--report-rule); background: linear-gradient(135deg, color-mix(in srgb, var(--claret) 5%, var(--surface-paper)) 0%, var(--surface-paper) 60%, color-mix(in srgb, var(--gold) 4%, var(--surface-paper)) 100%); }
   .report-cover-main { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
   .cover-eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); margin-bottom: var(--space-2); font-family: var(--font-sans); font-size: var(--report-fs-kicker); letter-spacing: var(--tracking-eyebrow); }

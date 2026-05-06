@@ -207,6 +207,18 @@ const tables = collectGlobalArtifacts('tables');
 const figures = collectGlobalArtifacts('figures');
 const sourceRefs = (evidence.sources ?? []).map((source) => source.id).filter(Boolean);
 
+function buildRevision(value) {
+  const revision = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  return {
+    status: revision.status ?? 'current',
+    refreshOfRunId: revision.refreshOfRunId ?? null,
+    supersededByRunId: revision.supersededByRunId ?? null,
+    refreshReason: revision.refreshReason ?? null,
+  };
+}
+
+const revision = buildRevision(meta.revision);
+
 // ---------------------------------------------------------------------------
 // build full-report.yaml
 // ---------------------------------------------------------------------------
@@ -216,6 +228,7 @@ const fullReport = {
   slug,
   runDate,
   company: { name: companyName },
+  revision,
   subtitle: meta.subtitle ?? null,
   coverageNotes: meta.coverageNotes ?? null,
   coverFacts: meta.coverFacts ?? [],
@@ -251,6 +264,7 @@ const summaryCard = {
     ...summaryDefaults,
     ...(meta.company ?? {}),
   },
+  revision,
   summary: {
     headline: meta.summary.headline,
     overallScore: meta.summary.overallScore,

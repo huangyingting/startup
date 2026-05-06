@@ -22,6 +22,8 @@ import {
   getAnalysisArtifacts,
   getCoreArtifacts,
   hasText,
+  isFinalizedReportFolder,
+  isRunId,
   loadWorkflowConfig,
   tryReadYaml,
 } from './utils.mjs';
@@ -336,6 +338,74 @@ function checkCrossArtifactIdentity(run, parsed) {
   if (slugs.size > 1) fail(`${run}: slug is inconsistent across artifacts`);
 }
 
+const REVISION_STATUSES = new Set(['current', 'superseded']);
+const REVISION_RELATION_FIELDS = ['refreshOfRunId', 'supersededByRunId'];
+
+function revisionComparable(doc) {
+  const revision = doc?.revision && typeof doc.revision === 'object' && !Array.isArray(doc.revision) ? doc.revision : {};
+  return {
+    status: revision.status ?? 'current',
+    refreshOfRunId: revision.refreshOfRunId ?? null,
+    supersededByRunId: revision.supersededByRunId ?? null,
+    refreshReason: revision.refreshReason ?? null,
+  };
+}
+
+function checkRevisionShape(run, file, doc) {
+  if (doc?.revision === undefined) return;
+  const path = `${run}/${file}: revision`;
+  const revision = doc.revision;
+  if (!revision || typeof revision !== 'object' || Array.isArray(revision)) {
+    fail(`${path} must be an object when present`);
+    return;
+  }
+  const status = revision.status ?? 'current';
+  if (!REVISION_STATUSES.has(status)) fail(`${path}.status must be one of ${[...REVISION_STATUSES].join('|')}`);
+  if (revision.refreshReason != null && typeof revision.refreshReason !== 'string') {
+    fail(`${path}.refreshReason must be a string or null`);
+  }
+  for (const field of REVISION_RELATION_FIELDS) {
+    const value = revision[field];
+    if (value == null) continue;
+    if (typeof value !== 'string' || !value.trim()) {
+      fail(`${path}.${field} must be a non-empty runId string or null`);
+      continue;
+    }
+    if (!isRunId(value)) fail(`${path}.${field}=${value} is not a valid report run id`);
+    if (value === run) fail(`${path}.${field} cannot reference the same report run`);
+    const targetDir = join(REPORTS_DIR, value);
+    if (!isFinalizedReportFolder(targetDir)) fail(`${path}.${field} references a missing or unfinalized report: ${value}`);
+  }
+  if (status === 'current' && hasText(revision.supersededByRunId)) {
+    fail(`${path}: current reports must not set supersededByRunId`);
+  }
+  if (status === 'superseded' && !hasText(revision.supersededByRunId)) {
+    fail(`${path}: superseded reports must set supersededByRunId`);
+  }
+  if (hasText(revision.refreshOfRunId) && revision.refreshOfRunId === revision.supersededByRunId) {
+    fail(`${path}: refreshOfRunId and supersededByRunId cannot point to the same run`);
+  }
+  if (status === 'superseded' && hasText(revision.supersededByRunId)) {
+    const target = tryReadYaml(join(REPORTS_DIR, revision.supersededByRunId, SUMMARY_CARD_FILE));
+    const targetRefreshOf = target.ok ? target.value?.revision?.refreshOfRunId : null;
+    if (target.ok && targetRefreshOf !== run) {
+      fail(`${path}: supersededByRunId=${revision.supersededByRunId} must point to a report whose revision.refreshOfRunId is ${run}`);
+    }
+  }
+}
+
+function checkRevisionConsistency(run, parsed) {
+  const reportDoc = parsed.get(FULL_REPORT_FILE);
+  const card = parsed.get(SUMMARY_CARD_FILE);
+  checkRevisionShape(run, FULL_REPORT_FILE, reportDoc);
+  checkRevisionShape(run, SUMMARY_CARD_FILE, card);
+  const reportRevision = revisionComparable(reportDoc);
+  const cardRevision = revisionComparable(card);
+  if (JSON.stringify(reportRevision) !== JSON.stringify(cardRevision)) {
+    fail(`${run}: revision is inconsistent between ${FULL_REPORT_FILE} and ${SUMMARY_CARD_FILE}`);
+  }
+}
+
 function checkRun(run) {
   const dir = join(REPORTS_DIR, run);
   if (!existsSync(join(dir, SUMMARY_CARD_FILE))) return false;
@@ -352,6 +422,7 @@ function checkRun(run) {
   const card = parsed.get(SUMMARY_CARD_FILE);
 
   checkCrossArtifactIdentity(run, parsed);
+  checkRevisionConsistency(run, parsed);
   checkLedgerCrossReferences(run, ledger, parsed);
   checkAdverseDistribution(run, parsed);
 

@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { sortNewest, sortTopRated } from '../../lib/reports';
+import { currentReports, sortNewest, sortTopRated } from '../../lib/reports';
 
-const reports = await getCollection('reports');
+const reports = currentReports(await getCollection('reports'));
 const newest = sortNewest(reports)[0];
 const suggestions = sortTopRated(reports).slice(0, 5).map((entry) => entry.data.company.name);
 const totalSources = reports.reduce((sum, entry) => sum + entry.data.sourceStats.sourcesRetained, 0);

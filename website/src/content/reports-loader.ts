@@ -20,6 +20,14 @@ interface ReportCardData extends Record<string, unknown> {
     headquarters: string | null;
     shortDescription: string | null;
   };
+  revision: {
+    status: 'current' | 'superseded';
+    refreshOfRunId: string | null;
+    supersededByRunId: string | null;
+    refreshReason: string | null;
+    refreshOfFolderSlug: string | null;
+    supersededByFolderSlug: string | null;
+  };
   headline: string;
   recommendation: string;
   confidence: string;
@@ -67,6 +75,27 @@ function parseRunId(runId: string): { runTimestamp: string; folderSlug: string }
   const match = runId.match(RUN_ID_RE);
   if (match) return { runTimestamp: match[1]!, folderSlug: `${match[2]!}-${shortHash(runId)}` };
   return { runTimestamp: '00000000000000', folderSlug: `${runId}-${shortHash(runId)}` };
+}
+
+function relatedFolderSlug(runId: unknown): string | null {
+  if (typeof runId !== 'string' || !RUN_ID_RE.test(runId)) return null;
+  return parseRunId(runId).folderSlug;
+}
+
+function normalizeRevision(raw: Record<string, any>): ReportCardData['revision'] {
+  const revision = raw.revision && typeof raw.revision === 'object' ? raw.revision : {};
+  const status = revision.status === 'superseded' ? 'superseded' : 'current';
+  const nullable = (field: string) => (typeof revision[field] === 'string' && revision[field].trim() ? revision[field].trim() : null);
+  const refreshOfRunId = nullable('refreshOfRunId');
+  const supersededByRunId = nullable('supersededByRunId');
+  return {
+    status,
+    refreshOfRunId,
+    supersededByRunId,
+    refreshReason: nullable('refreshReason'),
+    refreshOfFolderSlug: relatedFolderSlug(refreshOfRunId),
+    supersededByFolderSlug: relatedFolderSlug(supersededByRunId),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -135,6 +164,7 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
       headquarters: company.headquarters ?? null,
       shortDescription: company.shortDescription ?? null,
     },
+    revision: normalizeRevision(raw),
     headline: summary.headline ?? `${company.name ?? 'Startup'} diligence report`,
     recommendation: typeof summary.recommendation === 'string' ? summary.recommendation : 'research-more',
     confidence: summary.confidence ?? 'low',
