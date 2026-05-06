@@ -104,6 +104,7 @@ jobs:
             tar -xzf "$CURL_IMPERSONATE_TARBALL"
             rm -f "$CURL_IMPERSONATE_TARBALL"
           fi
+          cd "$INSTALL_DIR"
           ./curl_chrome120 -s -o /dev/null -w 'curl-impersonate smoke test: %{http_code}\n' https://example.com
           echo "CURL_IMPERSONATE_DIR=$INSTALL_DIR" >> "$GITHUB_ENV"
 
