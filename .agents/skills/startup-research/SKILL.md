@@ -64,52 +64,11 @@ For each chapter `order` from the loader:
     - `failures[]` — per-issue entries; each carries `dimension`, `message`, and a one-line `fix` action.
     - `failedDimensions[]` and `retryOrder[]` (root-cause sorted) for the dimensions you must clear.
     - `suppressedDimensions[]` — downstream checks skipped because an upstream failure (e.g. `localEvidenceMissing`) makes them trivially fail; they will re-evaluate after you fix the root cause.
-    See "Retry scope" below for the canonical dimension → action table (the same hints are inlined as `failure.fix`).
 11. Advance with `packet.nextChapter`; if it is `null`, move to finalization.
 
 ### Retry scope
 
-`check-chapter` emits a `failedDimensions[]` enum with stable keys plus a `retryOrder[]` sorted by causal precedence. Always work the dimensions in `retryOrder[]` order — fixing upstream dimensions often clears downstream ones. The table below mirrors that precedence.
-
-| Failed dimension | Targeted action |
-|---|---|
-| `missingArtifact` | Create the chapter YAML at the expected path. |
-| `yamlParse` | Fix the YAML syntax error reported in the message. |
-| `documentHead` | Fix the chapter document head: `schemaVersion: report-v2`, `artifact` matches the chapter key, `slug`, `runDate: YYYY-MM-DD`, `company.name`, and `chapter.number` matches the chapter order. |
-| `localEvidenceMissing` | Add the entire `localEvidence` block. |
-| `researchQuestionShape` | Fix question objects: id `RQ###`, ≥20-char text, valid `type`, non-empty `targets[]`, valid `status`. |
-| `researchQuestionTargets` | Point each `targets[]` entry at a real `contentRequirements/<index>`, `plannedTables/<slug>`, or `plannedFigures/<slug>`. |
-| `researchQuestionTypeMix` | Add questions of types you have not used yet (need `gate.minQuestionTypeSpread` distinct types). |
-| `researchQuestionAdverse` | Add `type: adverse` questions; the chapter (especially `risks` / `valuation`) needs at least `gate.minAdverseQuestions`. |
-| `searchQueriesMissing` | Append the actual queries you ran into `localEvidence.searchQueries[]`. |
-| `sourceShape` | Fix the source object: required fields (`publisher`, `title`, `accessDate`, `url`, `sourceType`, `reputationTier`, `independence`, `topics`, `accessStatus`, `stance`), valid enum values, `accessDate` / `date` in `YYYY-MM-DD` format, non-empty `topics`. |
-| `sourceDomains` / `sourceTypeSpread` | Add sources from new domains / new `sourceType` values; don't duplicate publishers. |
-| `requiredSourceTypes` | Pull at least one source of each missing type listed in `gate.requiredSourceTypes`. |
-| `netNewSources` | Run new searches/fetches to add URLs not seen in earlier chapters; reusing the existing pool will not satisfy this gate. |
-| `paywallRisk` (warning) | Swap restricted-access (`paywall`/`js-only`/`broken`/`rate-limited`) sources for `accessStatus: ok` ones to stay under the report-level 30 % ceiling. |
-| `researchQuestions` / `sources` / `claims` | Add more items to hit the per-chapter floor. |
-| `claimShape` | Fix the claim object: required fields (`statement`, `type`, `topic`, `sourceRefs`, `confidence`, `freshness`), valid enum values, non-empty `sourceRefs` unless `type: open-question`, `contradictsClaimRefs` when `type: conflicting`. |
-| `highConfidenceCorroboration` | Either downgrade `confidence` from `high` to `medium`, or add a primary-tier source. |
-| `researchQuestionAnswerCoverage` | Convert questions from `unresolved`/`partial` to `answered` by adding the missing claim and citing it via `claim.answersQuestionRefs`. |
-| `researchQuestionClosure` | Add an `evidenceGap` whose `relatedQuestionRefs[]` includes the still-open question. |
-| `claimAnswerRefs` | Resolve dangling `claim.answersQuestionRefs[]` entries (referenced `RQ###` does not exist in this chapter). |
-| `claimContradictRefs` | Resolve dangling `claim.contradictsClaimRefs[]` entries; `type: conflicting` requires non-empty `contradictsClaimRefs`. |
-| `claimRefs` | Resolve dangling `[C###]` references in sections / tables / figures / callouts. |
-| `enumerationScope` | Add the `enumerationScope { coverage, basis(>=20 chars) }` block to the matching enumeration table. |
-| `enumerationRows` | Add rows to reach `expectedMinRows` or set `coverage: partial` / `sample` with rationale. |
-| `enumerationCoverageGap` | Open an `evidenceGap` whose `topic` mentions the table or whose `relatedTableRefs[]` cites it. |
-| `enumerationRowCorroboration` | Add sources from additional registrable domains backing the table's `claimRefs`. |
-| `tableShape` | Fix the table: non-empty `columns`, every row has the same number of cells as `columns`, `enumerationScope { coverage, basis(>=20 chars) }` shape when present. |
-| `figureShape` | Fix the figure's `data` to satisfy its full contract: type/layout enum, required `data.*` fields per type, item/layer/row labels, matrix row width = columns count, numeric values for `bar` / `waterfall` / `funnel`, numeric `low`/`high` for `range`, 0–100 cells for `cohort`, numeric `x`/`y` for `quadrant`. |
-| `duplicateIds` | Renumber duplicate or malformed table/figure ids; ids must match `T###` / `F###` and be unique within the chapter. |
-| `artifactRefs` | Resolve the dangling `figureRef` / `tableRef`: it must point at an id that exists in this chapter's `figures[]` / `tables[]`. |
-| `analysisCallout` | Fix the callout: required `title`, `body`, `claimRefs[]`, and (optional) `calloutType` in `strength|risk|recommendation|insight|assumption`. |
-| `sectionsMin` / `artifactsMin` | Add the missing section, table, or figure (or substitute per step 6). |
-| `depthSection` / `depthSectionTotal` | Expand the prose of the shortest section(s) only; leave the others untouched. |
-| `depthTableRows` / `depthFigureData` | Add rows / data points to existing tables / figures. |
-| `contentRequirementCoverage` | Add researchQuestions whose `targets[]` cover the un-targeted `contentRequirements`. |
-| `duplicateAnalysis` (warning) | Merge the redundant table/figure pair, or sharpen one to answer a distinct question. |
-| `figureType` (warning) | Either render a planned figure type, or document the substitution in `evidenceGaps`. |
+`check-chapter` emits a `failedDimensions[]` enum with stable keys plus a `retryOrder[]` sorted by causal precedence. Always work the dimensions in `retryOrder[]` order — fixing upstream dimensions often clears downstream ones. The exact remediation for every dimension is inlined as `failure.fix` in the JSON output (and grouped per object as `objectFailures[].fixes[]`); read those instead of guessing.
 
 Retry up to 3 times per chapter, scoping each retry strictly to the dimensions in `retryOrder[]`. The total failure count must monotonically decrease across retries; if it stalls, abort and surface the chapter as `unresolved` rather than thrashing. To accept a `--strict` warning instead of fixing it, add a top-level `acknowledgedWarnings: [{dimension, reason}]` entry in the chapter YAML where each `reason` is at least 30 characters explaining why the warning is intentional.
 
