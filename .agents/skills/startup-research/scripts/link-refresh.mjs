@@ -179,6 +179,18 @@ function setOldRevision({ oldRunId, newRunId, refreshReason }) {
   return updateMetaRevision(oldMetaPath, nextRevision);
 }
 
+// Detect partial Phase 2 recovery: report-meta.yaml says superseded but the
+// assembled artifacts still carry the old revision. Without this check, a
+// re-run of finalize --refresh would skip reassemble (because setOldRevision
+// returns false when meta is already up to date) and leave the inconsistency
+// for build-index --strict to discover.
+function oldArtifactsAreInSync(oldRunId, newRunId) {
+  const card = readSummaryCard(oldRunId);
+  if (!card) return false;
+  const cardRevision = normalizeRevision(card?.revision);
+  return cardRevision.status === 'superseded' && cardRevision.supersededByRunId === newRunId;
+}
+
 const args = parseArgs(process.argv.slice(2));
 const { folder: newFolder, runId: newRunId } = resolveReportFolder(args.folder);
 const { doc: newMeta } = readReportMeta(newFolder);
@@ -200,7 +212,7 @@ if (currentChanged) {
 assertFinalizedRun(newRunId, 'new refresh report');
 const oldChanged = setOldRevision({ oldRunId, newRunId, refreshReason: args.refreshReason });
 console.log(`[refresh] previous report ${oldRunId} supersededByRunId=${newRunId}${oldChanged ? ' (updated)' : ' (already set)'}`);
-if (oldChanged) {
+if (oldChanged || !oldArtifactsAreInSync(oldRunId, newRunId)) {
   const oldFolder = join(reportsDir, oldRunId);
   runScript('assemble.mjs', [oldFolder]);
   runScript('check-report.mjs', [oldFolder]);
