@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 // Create or resume a report folder under reports/<timestamp>-<slug>/ after
-// checking reports/_index.yaml for duplicate company name or website/domain risk.
+// walking existing reports/<runId>/summary-card.yaml files for duplicate
+// company name or website/domain risk.
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import yaml from 'js-yaml';
 import {
   isFinalizedReportFolder,
+  listDirs,
   normalizeCompanyName,
   normalizeDomain,
   normalizeRevision,
@@ -17,13 +19,13 @@ import {
 const DISCLOSURE_PROFILES = new Set(['public', 'private-disclosed', 'private-undisclosed', 'stealth']);
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/new-report.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--refresh] [--refresh-reason <text>] [--resume] [--index reports/_index.yaml]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/new-report.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--refresh] [--refresh-reason <text>] [--resume]');
   process.exit(1);
 }
 
 function parseArgs(argv) {
   const [timestamp, ...rest] = argv;
-  const args = { timestamp, nameParts: [], website: '', disclosure: '', refresh: false, refreshReason: '', resume: false, indexPath: 'reports/_index.yaml' };
+  const args = { timestamp, nameParts: [], website: '', disclosure: '', refresh: false, refreshReason: '', resume: false };
   for (let i = 0; i < rest.length; i += 1) {
     const arg = rest[i];
     if (arg === '--website' || arg === '--url' || arg === '--domain') args.website = rest[++i] ?? '';
@@ -31,7 +33,6 @@ function parseArgs(argv) {
     else if (arg === '--refresh') args.refresh = true;
     else if (arg === '--refresh-reason') args.refreshReason = rest[++i] ?? '';
     else if (arg === '--resume') args.resume = true;
-    else if (arg === '--index') args.indexPath = rest[++i] ?? '';
     else if (arg.startsWith('--')) usage();
     else args.nameParts.push(arg);
   }
@@ -43,10 +44,28 @@ function parseArgs(argv) {
   return args;
 }
 
-function loadIndexReports(indexPath) {
-  if (!existsSync(indexPath)) return;
-  const index = readYaml(indexPath);
-  return Array.isArray(index?.reports) ? index.reports : [];
+// Walk every reports/<runId>/summary-card.yaml and return a flat list of the
+// fields needed for duplicate detection and --refresh target resolution.
+// Folders without summary-card.yaml (in-progress, partial) are skipped.
+function loadReportsFromDisk() {
+  const reports = [];
+  for (const runId of listDirs(reportsDir)) {
+    const cardPath = join(reportsDir, runId, 'summary-card.yaml');
+    if (!existsSync(cardPath)) continue;
+    let card;
+    try { card = readYaml(cardPath); }
+    catch { continue; }
+    const company = card?.company ?? {};
+    const revision = normalizeRevision(card?.revision);
+    reports.push({
+      runId,
+      companyName: company.name ?? null,
+      website: company.website ?? null,
+      revisionStatus: revision.status,
+      path: `reports/${runId}/summary-card.yaml`,
+    });
+  }
+  return reports;
 }
 
 function duplicateMatches({ companyName, website, reports }) {
@@ -75,7 +94,7 @@ function ensureFinalizedRun(runId, label) {
 function resolveRefreshTarget({ refresh, matches }) {
   if (!refresh) return null;
   if (!matches.length) {
-    console.error('[new] --refresh requested, but reports/_index.yaml has no matching finalized report for this company/domain.');
+    console.error('[new] --refresh requested, but no matching finalized report exists for this company/domain.');
     process.exit(2);
   }
   const candidates = currentMatches(matches).sort((a, b) => String(b.runId).localeCompare(String(a.runId)));
@@ -97,9 +116,9 @@ function checkDuplicateRisk({ matches, refreshTarget }) {
 
   console.error('[new] duplicate-risk: high');
   for (const match of matches) {
-    console.error(`  - ${match.companyName ?? match.slug} (${match.path})`);
+    console.error(`  - ${match.companyName ?? match.runId} (${match.path})`);
   }
-  console.error('[new] stop: reports/_index.yaml already contains an official report for this company/domain.');
+  console.error('[new] stop: a finalized report already exists for this company/domain.');
   process.exit(2);
 }
 
@@ -121,7 +140,7 @@ function writeRefreshContext({ base, companyName, website, refreshTarget, refres
       runId: previousRunId,
       path: `reports/${previousRunId}`,
       summaryCardPath: `reports/${previousRunId}/summary-card.yaml`,
-      runDate: previousCard.runDate ?? refreshTarget.date ?? null,
+      runDate: previousCard.runDate ?? null,
       revisionStatus: revision.status,
       company: previousCard.company ?? {
         name: refreshTarget.companyName ?? companyName,
@@ -149,7 +168,7 @@ function writeRefreshContext({ base, companyName, website, refreshTarget, refres
 
 const args = parseArgs(process.argv.slice(2));
 const companyName = args.nameParts.join(' ') || 'startup';
-const reports = loadIndexReports(args.indexPath) ?? [];
+const reports = loadReportsFromDisk();
 const matches = duplicateMatches({ companyName, website: args.website, reports });
 const refreshTarget = resolveRefreshTarget({ refresh: args.refresh, matches });
 checkDuplicateRisk({ matches, refreshTarget });

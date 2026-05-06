@@ -269,11 +269,10 @@ function checkTableFigureOverlap(file, doc) {
       const highClaimOverlap = smallerRefSet >= 3 && sharedRefs / smallerRefSet >= 0.75;
       if (titleSimilarity >= 0.75 || highClaimOverlap) {
         // Hard fail (was previously a warning that could be acknowledged).
-        // Repeated `acknowledgedDimensions: [duplicateAnalysis]` in
-        // _postmortem.yaml showed the warn+ack escape hatch was being used
-        // as the default, not the exception. If two artifacts genuinely
-        // answer different questions, sharpen one (different lens, different
-        // axis); otherwise merge them.
+        // Telemetry from many runs showed `acknowledgedDimensions:
+        // [duplicateAnalysis]` was being used as the default, not the
+        // exception. If two artifacts genuinely answer different questions,
+        // sharpen one (different lens, different axis); otherwise merge them.
         fail('duplicateAnalysis', `${file}: duplicate table/figure analysis (${table.id ?? tableTitle} vs ${figure.id ?? figureTitle}); merge them, or sharpen one to answer a distinct question`);
       }
     }

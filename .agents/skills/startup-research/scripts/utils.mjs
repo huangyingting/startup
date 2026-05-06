@@ -15,10 +15,6 @@ export function isRunId(value) {
   return RUN_ID_RE.test(String(value ?? ''));
 }
 
-export function reportFolderForRunId(runId) {
-  return join(reportsDir, String(runId ?? ''));
-}
-
 export function isFinalizedReportFolder(path) {
   return FINAL_REPORT_FILES.every((file) => existsSync(join(path, file)));
 }
@@ -127,7 +123,7 @@ export function parseDate(value) {
 
 // Best-effort registrable domain (eTLD+1) for canonical-URL bookkeeping.
 // Multi-part TLDs are listed explicitly to avoid pulling in a full PSL.
-// Used by check-chapter and postmortem for source-diversity stats.
+// Used by check-chapter for source-diversity stats.
 const MULTI_PART_TLDS = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
 export function registrableDomain(url) {
   const host = normalizeDomain(url);

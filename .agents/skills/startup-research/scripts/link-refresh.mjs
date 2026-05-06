@@ -3,11 +3,11 @@
 //
 // Modes:
 //   --prepare-current  Update only the new report's report-meta.yaml revision
-//                      before the normal finalize Phase 1 runs.
+//                      before the rest of the per-report finalize pipeline runs.
 //   default            Ensure the new report is marked current/refresh-of, then
 //                      mark the old report superseded and reassemble/check the
-//                      old report. Intended for finalize Phase 2 after the new
-//                      report already passed its publishable gate.
+//                      old report. Intended to run inside finalize after the
+//                      new report already passed its publishable gate.
 //
 // The previous report is resolved automatically: the newest finalized
 // non-superseded report whose summary-card matches the new report's
@@ -179,11 +179,11 @@ function setOldRevision({ oldRunId, newRunId, refreshReason }) {
   return updateMetaRevision(oldMetaPath, nextRevision);
 }
 
-// Detect partial Phase 2 recovery: report-meta.yaml says superseded but the
-// assembled artifacts still carry the old revision. Without this check, a
-// re-run of finalize --refresh would skip reassemble (because setOldRevision
-// returns false when meta is already up to date) and leave the inconsistency
-// for build-index --strict to discover.
+// Detect partial recovery: report-meta.yaml says superseded but the assembled
+// artifacts still carry the old revision. Without this check, a re-run of
+// finalize --refresh would skip reassemble (because setOldRevision returns
+// false when meta is already up to date) and leave the inconsistency for
+// check-revision-graph to discover.
 function oldArtifactsAreInSync(oldRunId, newRunId) {
   const card = readSummaryCard(oldRunId);
   if (!card) return false;
