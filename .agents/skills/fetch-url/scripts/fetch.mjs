@@ -238,7 +238,7 @@ function parseArgs(args) {
   const opts = {
     url: DEFAULT_URL,
     file: null,
-    textOnly: false,
+    raw: false,
     userAgent: DEFAULT_USER_AGENT,
     viaWayback: false,
     noWayback: false,
@@ -256,6 +256,7 @@ function parseArgs(args) {
     refreshCache: false,
     noHostMap: false,
     ignoreHostMapFailures: false,
+    mainContent: true,
     maxChars: null,
     json: false,
     error: null,
@@ -268,7 +269,7 @@ function parseArgs(args) {
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
     if (arg === '--help' || arg === '-h') opts.help = true;
-    else if (arg === '--text-only' || arg === '-t') opts.textOnly = true;
+    else if (arg === '--raw' || arg === '--raw-html') opts.raw = true;
     else if (arg === '--out' || arg === '-o') {
       const value = readValue(arg, i);
       if (opts.error) break;
@@ -321,6 +322,8 @@ function parseArgs(args) {
     else if (arg === '--refresh-cache') opts.refreshCache = true;
     else if (arg === '--no-host-map') opts.noHostMap = true;
     else if (arg === '--ignore-host-map-failures') opts.ignoreHostMapFailures = true;
+    else if (arg === '--main-content') opts.mainContent = true;
+    else if (arg === '--full-text' || arg === '--no-main-content') opts.mainContent = false;
     else if (arg === '--json') opts.json = true;
     else if (arg === '--max-chars') {
       const value = readValue(arg, i);
@@ -340,7 +343,7 @@ function parseArgs(args) {
 }
 
 function help() {
-  console.log(`Usage: node .agents/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--json] [--user-agent <ua>] [--profile <name>] [--via-reader | --no-reader] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache] [--max-chars N]
+  console.log(`Usage: node .agents/skills/fetch-url/scripts/fetch.mjs [url] [--full-text] [--raw] [--out <file>] [--json] [--user-agent <ua>] [--profile <name>] [--via-reader | --no-reader] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache] [--max-chars N]
 
 Default URL: ${DEFAULT_URL}
 
@@ -352,11 +355,11 @@ Throttling: network attempts wait ${DEFAULT_THROTTLE_MS}ms by default to avoid h
 
 Caching: enabled by default at ${DEFAULT_CACHE_DIR} (override with --cache-dir or FETCH_URL_CACHE_DIR env). Cached responses younger than ${DEFAULT_CACHE_TTL_HOURS}h are reused. Use --refresh-cache to bypass the read but still write, --no-cache to disable read+write entirely.
 
-Output: default output is human-readable. Use --json for a structured object with status, final URL, source, title/PDF metadata, and extracted body/text.
+Output: default output is readable text. HTML pages use Mozilla Readability to extract main content by default; PDFs output extracted text. Use --full-text only as an escape hatch when Readability likely dropped useful non-article content (product/home pages, pricing pages, docs tables, feature grids, logos, navigation context). It is not cleaner; it intentionally keeps header/footer/navigation text. Use --raw only for diagnostics or archival raw HTML/PDF bytes. Use --json for a structured object with status, final URL, source, title/PDF metadata, and extracted body/text.
 
 Wayback fallback: bot-protected sites (DataDome/Cloudflare challenge, 401/403/451/503) automatically retry through web.archive.org. Use --via-wayback to force, --no-wayback to disable.
 
-PDF support: PDF responses (detected by %PDF- magic bytes) are routed to the pdfjs-dist text extractor. With --text-only the full text is emitted, prefixed per page with '--- Page N ---'. Use --max-chars N to cap any text output and protect agent context. Without --text-only, the default print shows PDF metadata + a short preview; --out file.pdf saves raw bytes.`);
+PDF support: PDF responses (detected by %PDF- magic bytes) are routed to the pdfjs-dist text extractor. Text is emitted with '--- Page N ---' page markers. Use --max-chars N to cap any text output and protect agent context. Use --raw --out file.pdf to save raw PDF bytes.`);
 }
 
 function wait(ms) {
@@ -555,6 +558,14 @@ function decodeEntities(text) {
     .replace(/&([a-z]+);/gi, (match, name) => ENTITY_MAP[name.toLowerCase()] ?? match);
 }
 
+function normalizePlainText(text) {
+  return String(text ?? '')
+    .replace(/[ \t\f\v]+/g, ' ')
+    .replace(/ *\n */g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 export function htmlToText(html) {
   const stripped = String(html ?? '')
     .replace(/<!--[\s\S]*?-->/g, '')
@@ -562,11 +573,48 @@ export function htmlToText(html) {
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(BLOCK_TAG_RE, '\n')
     .replace(/<[^>]+>/g, '');
-  return decodeEntities(stripped)
-    .replace(/[ \t\f\v]+/g, ' ')
-    .replace(/ *\n */g, '\n')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+  return normalizePlainText(decodeEntities(stripped));
+}
+
+function looksLikeHtml(text, contentType) {
+  const type = String(contentType ?? '').toLowerCase();
+  if (type.includes('html') || type.includes('xml')) return true;
+  return /<(html|body|article|main|section|div|p|header|footer|nav)\b/i.test(String(text ?? '').slice(0, 200_000));
+}
+
+async function extractMainText(html, url, contentType) {
+  const fallbackText = htmlToText(html);
+  if (!looksLikeHtml(html, contentType)) {
+    return { text: fallbackText, method: 'full-text', used: false, fallbackReason: 'not-html' };
+  }
+
+  let dom;
+  try {
+    const [{ Readability }, { JSDOM }] = await Promise.all([
+      import('@mozilla/readability'),
+      import('jsdom'),
+    ]);
+    dom = new JSDOM(html, { url });
+    const article = new Readability(dom.window.document).parse();
+    const text = normalizePlainText(article?.textContent ?? '');
+    if (!text) {
+      return { text: fallbackText, method: 'full-text', used: false, fallbackReason: 'readability-empty' };
+    }
+    return {
+      text,
+      method: 'readability',
+      used: true,
+      title: article?.title ?? null,
+      byline: article?.byline ?? null,
+      excerpt: article?.excerpt ?? null,
+      siteName: article?.siteName ?? null,
+      length: article?.length ?? text.length,
+    };
+  } catch (err) {
+    return { text: fallbackText, method: 'full-text', used: false, fallbackReason: err.message };
+  } finally {
+    dom?.window?.close?.();
+  }
 }
 
 // Extract text from a PDF Buffer using pdfjs-dist. Returns
@@ -743,7 +791,7 @@ export function looksLikeBotChallenge(result) {
 }
 
 // The Wayback toolbar injects <div id="wm-ipp-base">...</div> and a
-// SCRIPT_PATH redirect block. Strip them so --text-only output is just the
+// SCRIPT_PATH redirect block. Strip them so text output is just the
 // archived page content.
 export function stripWaybackToolbar(html) {
   return String(html ?? '')
@@ -753,7 +801,7 @@ export function stripWaybackToolbar(html) {
     .replace(/<link[^>]*\/static\/_wb_\/[^>]*>/gi, '');
 }
 
-async function writeOutputFile(file, output, { isPdf, textOnly, contentLength }) {
+async function writeOutputFile(file, output, { isPdf, raw, contentLength }) {
   if (Buffer.isBuffer(output)) {
     await writeFile(file, output);
     return {
@@ -763,7 +811,7 @@ async function writeOutputFile(file, output, { isPdf, textOnly, contentLength })
       message: `Wrote ${contentLength} bytes (PDF) to ${file}`,
     };
   }
-  const kind = textOnly || isPdf ? 'text' : 'body';
+  const kind = raw && !isPdf ? 'body' : 'text';
   await writeFile(file, output, 'utf8');
   return {
     path: file,
@@ -773,7 +821,7 @@ async function writeOutputFile(file, output, { isPdf, textOnly, contentLength })
   };
 }
 
-function buildJsonPayload({ result, source, cacheHit, cacheAgeMinutes, cacheTtlHours, isPdf, title, pdfMeta, pdfTruncated, outputTruncated, output, outputFile, textOnly }) {
+function buildJsonPayload({ result, source, cacheHit, cacheAgeMinutes, cacheTtlHours, isPdf, title, pdfMeta, pdfTruncated, textExtraction, outputTruncated, output, outputFile, raw }) {
   const outputIsBuffer = Buffer.isBuffer(output);
   const payload = {
     status: result.status,
@@ -794,9 +842,13 @@ function buildJsonPayload({ result, source, cacheHit, cacheAgeMinutes, cacheTtlH
     format: isPdf ? 'pdf' : 'html',
     title,
     truncated: outputTruncated,
-    outputKind: outputIsBuffer ? 'bytes' : (isPdf || textOnly ? 'text' : 'body'),
+    outputKind: outputIsBuffer ? 'bytes' : (raw && !isPdf ? 'body' : 'text'),
     outputBytes: outputIsBuffer ? output.length : Buffer.byteLength(output, 'utf8'),
   };
+  if (textExtraction) {
+    const { text: _text, ...extraction } = textExtraction;
+    payload.extraction = extraction;
+  }
   if (isPdf) {
     payload.pdf = {
       pages: pdfMeta?.numPages ?? null,
@@ -1023,12 +1075,13 @@ export async function main(args = argv.slice(2)) {
   let output;
   let pdfMeta = null;
   let pdfTruncated = false;
+  let textExtraction = null;
   let outputTruncated = false;
   let bodyStr = null;
   if (isPdf) {
-    if (opts.textOnly || !opts.file) {
-      // Need text either to print or to preview. Skip parsing when the user
-      // only wants raw bytes via --out (no --text-only).
+    if (!opts.raw || !opts.file) {
+      // Need text for the default output. Skip parsing only when the user
+      // explicitly wants raw bytes via --raw --out.
       try {
         const parsed = await pdfToText(result.body, { maxChars: opts.maxChars });
         output = parsed.text;
@@ -1045,7 +1098,14 @@ export async function main(args = argv.slice(2)) {
   } else {
     bodyStr = result.body.toString('utf8');
     if (source === 'wayback') bodyStr = stripWaybackToolbar(bodyStr);
-    output = opts.textOnly ? htmlToText(bodyStr) : bodyStr;
+    if (!opts.raw) {
+      textExtraction = opts.mainContent
+        ? await extractMainText(bodyStr, result.finalUrl, result.contentType)
+        : { text: htmlToText(bodyStr), method: 'full-text', used: false };
+      output = textExtraction.text;
+    } else {
+      output = bodyStr;
+    }
   }
 
   if (typeof output === 'string' && opts.maxChars !== null && output.length > opts.maxChars) {
@@ -1056,11 +1116,11 @@ export async function main(args = argv.slice(2)) {
 
   const title = isPdf
     ? (pdfMeta?.info?.Title?.trim() || null)
-    : extractTitle(bodyStr);
+    : (textExtraction?.title?.trim?.() || extractTitle(bodyStr));
 
   if (opts.json) {
     const outputFile = opts.file
-      ? await writeOutputFile(opts.file, output, { isPdf, textOnly: opts.textOnly, contentLength: result.contentLength })
+      ? await writeOutputFile(opts.file, output, { isPdf, raw: opts.raw, contentLength: result.contentLength })
       : null;
     console.log(JSON.stringify(buildJsonPayload({
       result,
@@ -1072,10 +1132,11 @@ export async function main(args = argv.slice(2)) {
       title,
       pdfMeta,
       pdfTruncated,
+      textExtraction,
       outputTruncated,
       output,
       outputFile,
-      textOnly: opts.textOnly,
+      raw: opts.raw,
     }), null, 2));
     if (!result.ok) exit(1);
     return;
@@ -1100,32 +1161,38 @@ export async function main(args = argv.slice(2)) {
     if (typeof output === 'string') console.log(`Text bytes:    ${output.length}`);
   } else {
     console.log(`<title>:       ${title ?? '(not found)'}`);
+    if (!opts.raw && textExtraction) {
+      const extractionLabel = textExtraction.used
+        ? 'main-content (Readability)'
+        : `full-text${textExtraction.fallbackReason ? ` (${textExtraction.fallbackReason})` : ''}`;
+      console.log(`Text mode:     ${extractionLabel}`);
+    }
     if (outputTruncated) console.log(`Truncated:     yes (--max-chars ${opts.maxChars})`);
-    if (opts.textOnly) console.log(`Text bytes:    ${output.length}`);
+    if (!opts.raw) console.log(`Text bytes:    ${output.length}`);
   }
 
   if (opts.file) {
-    const outputFile = await writeOutputFile(opts.file, output, { isPdf, textOnly: opts.textOnly, contentLength: result.contentLength });
+    const outputFile = await writeOutputFile(opts.file, output, { isPdf, raw: opts.raw, contentLength: result.contentLength });
     console.log(outputFile.message);
-  } else if (isPdf && !opts.textOnly) {
-    // Default behavior for a PDF on a TTY (no --text-only, no --out): show
+  } else if (isPdf && opts.raw) {
+    // Raw PDF behavior on a TTY (--raw, no --out): show
     // metadata + a short text preview, but do NOT dump full text to terminal.
-    // Pass --text-only for the full extraction or --out file.pdf for bytes.
+    // Omit --raw for the normal extracted-text path, or use --raw --out file.pdf for bytes.
     const preview = (typeof output === 'string' ? output : '').slice(0, 800);
     console.log(`Preview:\n${preview}${typeof output === 'string' && output.length > 800 ? '\n…' : ''}`);
-    console.log(`(use --text-only for full text, --out file.pdf for raw bytes, --max-chars N to cap text size)`);
+    console.log(`(omit --raw for extracted text, use --raw --out file.pdf for raw bytes, --max-chars N to cap text size)`);
   } else if (!process.stdout.isTTY) {
     // Redirected/piped (e.g. `> file.txt`): emit the full body so callers do
     // not silently capture only the preview window. Interactive TTYs still
     // get the truncated preview below to protect terminal/agent context.
-    if (opts.textOnly || isPdf) console.log(`Text:\n${output}`);
+    if (!opts.raw || isPdf) console.log(`Text:\n${output}`);
     else console.log(`Body:\n${output}`);
   } else {
-    const limit = opts.textOnly ? 1000 : 500;
-    const preview = opts.textOnly
+    const limit = !opts.raw ? 1000 : 500;
+    const preview = !opts.raw
       ? output.slice(0, limit)
       : output.slice(0, limit).replace(/\s+/g, ' ').trim();
-    if (opts.textOnly) console.log(`Text:\n${preview}${output.length > limit ? '\n…' : ''}`);
+    if (!opts.raw) console.log(`Text:\n${preview}${output.length > limit ? '\n…' : ''}`);
     else console.log(`Preview:       ${preview}${output.length > limit ? '…' : ''}`);
   }
   if (!result.ok) exit(1);
