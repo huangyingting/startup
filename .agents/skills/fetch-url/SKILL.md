@@ -19,7 +19,7 @@ node .agents/skills/fetch-url/scripts/fetch.mjs <url> --json
 
 ## Fetch options
 
-- Output: `--text-only` / `-t` strips HTML/script/style into readable text; for PDFs, emits page-prefixed text with `--- Page N ---` markers. `--out <path>` / `-o <path>` saves HTML/text or raw PDF bytes. `--json` returns structured status/source/cache/title/PDF/body output. `--max-chars <n>` caps extracted PDF text.
+- Output: `--text-only` / `-t` strips HTML/script/style into readable text; for PDFs, emits page-prefixed text with `--- Page N ---` markers. `--out <path>` / `-o <path>` saves HTML/text or raw PDF bytes. `--json` returns structured status/source/cache/title/PDF/body output. `--max-chars <n>` caps text output.
 - Identity: `--user-agent <ua>`, `--profile <name>` (`bingbot` default; also `googlebot`, `desktop-chrome`, `desktop-firefox`, `desktop-safari`, `mobile-safari`), `--no-retry-profiles`.
 - Fallbacks: `--via-reader`, `--no-reader`, `--via-wayback`, `--no-wayback`, `--no-host-map`, `--ignore-host-map-failures`.
 - Runtime/cache: `--throttle-ms <n>` (default `750`), `--no-throttle`, `--cache-dir <path>`, `--cache-ttl-hours <n>` (default `168`), `--no-cache`, `--refresh-cache`, `--help`.

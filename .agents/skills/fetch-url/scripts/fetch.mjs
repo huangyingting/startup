@@ -356,7 +356,7 @@ Output: default output is human-readable. Use --json for a structured object wit
 
 Wayback fallback: bot-protected sites (DataDome/Cloudflare challenge, 401/403/451/503) automatically retry through web.archive.org. Use --via-wayback to force, --no-wayback to disable.
 
-PDF support: PDF responses (detected by %PDF- magic bytes) are routed to the pdfjs-dist text extractor. With --text-only the full text is emitted, prefixed per page with '--- Page N ---'. Use --max-chars N to cap the total text size and protect agent context. Without --text-only, the default print shows PDF metadata + a short preview; --out file.pdf saves raw bytes.`);
+PDF support: PDF responses (detected by %PDF- magic bytes) are routed to the pdfjs-dist text extractor. With --text-only the full text is emitted, prefixed per page with '--- Page N ---'. Use --max-chars N to cap any text output and protect agent context. Without --text-only, the default print shows PDF metadata + a short preview; --out file.pdf saves raw bytes.`);
 }
 
 function wait(ms) {
@@ -773,7 +773,7 @@ async function writeOutputFile(file, output, { isPdf, textOnly, contentLength })
   };
 }
 
-function buildJsonPayload({ result, source, cacheHit, cacheAgeMinutes, cacheTtlHours, isPdf, title, pdfMeta, pdfTruncated, output, outputFile, textOnly }) {
+function buildJsonPayload({ result, source, cacheHit, cacheAgeMinutes, cacheTtlHours, isPdf, title, pdfMeta, pdfTruncated, outputTruncated, output, outputFile, textOnly }) {
   const outputIsBuffer = Buffer.isBuffer(output);
   const payload = {
     status: result.status,
@@ -793,6 +793,7 @@ function buildJsonPayload({ result, source, cacheHit, cacheAgeMinutes, cacheTtlH
     elapsedMs: result.elapsedMs,
     format: isPdf ? 'pdf' : 'html',
     title,
+    truncated: outputTruncated,
     outputKind: outputIsBuffer ? 'bytes' : (isPdf || textOnly ? 'text' : 'body'),
     outputBytes: outputIsBuffer ? output.length : Buffer.byteLength(output, 'utf8'),
   };
@@ -1022,6 +1023,7 @@ export async function main(args = argv.slice(2)) {
   let output;
   let pdfMeta = null;
   let pdfTruncated = false;
+  let outputTruncated = false;
   let bodyStr = null;
   if (isPdf) {
     if (opts.textOnly || !opts.file) {
@@ -1032,6 +1034,7 @@ export async function main(args = argv.slice(2)) {
         output = parsed.text;
         pdfMeta = { numPages: parsed.numPages, info: parsed.info };
         pdfTruncated = parsed.truncated;
+        outputTruncated = parsed.truncated;
       } catch (err) {
         console.error(`[fetch-url] PDF parse failed: ${err.message}`);
         exit(1);
@@ -1043,6 +1046,12 @@ export async function main(args = argv.slice(2)) {
     bodyStr = result.body.toString('utf8');
     if (source === 'wayback') bodyStr = stripWaybackToolbar(bodyStr);
     output = opts.textOnly ? htmlToText(bodyStr) : bodyStr;
+  }
+
+  if (typeof output === 'string' && opts.maxChars !== null && output.length > opts.maxChars) {
+    output = output.slice(0, opts.maxChars);
+    outputTruncated = true;
+    if (isPdf) pdfTruncated = true;
   }
 
   const title = isPdf
@@ -1063,6 +1072,7 @@ export async function main(args = argv.slice(2)) {
       title,
       pdfMeta,
       pdfTruncated,
+      outputTruncated,
       output,
       outputFile,
       textOnly: opts.textOnly,
@@ -1090,6 +1100,7 @@ export async function main(args = argv.slice(2)) {
     if (typeof output === 'string') console.log(`Text bytes:    ${output.length}`);
   } else {
     console.log(`<title>:       ${title ?? '(not found)'}`);
+    if (outputTruncated) console.log(`Truncated:     yes (--max-chars ${opts.maxChars})`);
     if (opts.textOnly) console.log(`Text bytes:    ${output.length}`);
   }
 
