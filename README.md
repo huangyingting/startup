@@ -14,7 +14,7 @@ Startup is a diligence report generator for startup companies. It produces evide
 ```text
 .agents/skills/startup-research/  # report-generation workflow skill
 .agents/skills/fetch-url/         # direct URL fetch helper skill
-reports/                          # generated report runs and _index.yaml
+reports/                          # generated report runs (one folder per finalized run)
 website/                          # Astro static site and website-owned validation
 ```
 
@@ -25,7 +25,6 @@ Important files:
 - `.agents/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
 - `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts (chapter loader, gate checks, ledger consolidation, report assembly, validators).
 - `website/src/lib/` — rendering contracts shared between the renderer and the chapter/report validators.
-- `reports/_index.yaml` — catalog of generated report runs.
 
 ## Quick start
 
@@ -88,7 +87,7 @@ From the repository root:
 
 ```bash
 npm run check:workflow-config
-npm run check:report-index
+npm run check:revision-graph
 npm run validate
 ```
 

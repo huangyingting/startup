@@ -9,10 +9,10 @@
 //
 // What this exercises end-to-end (no LLM, no network):
 //   - new-report.mjs duplicate-guard + --refresh acceptance
-//   - finalize Phase 0 prepare-refresh (link-refresh --prepare-current)
-//   - finalize Phase 1 ledger reuse, cross-chapter, assemble, check-report
-//   - finalize Phase 2 link-refresh (mark old superseded + reassemble),
-//     postmortem, build-index --strict (incl. revision graph check)
+//   - finalize prepare-refresh (link-refresh --prepare-current)
+//   - finalize ledger reuse, cross-chapter, assemble, check-report
+//   - finalize link-refresh (mark old superseded + reassemble)
+//   - revision-graph check via `npm run validate`
 //
 // Usage:
 //   node .agents/skills/startup-research/scripts/refresh-fixture.mjs \
@@ -167,17 +167,13 @@ if (existsSync(newFolder)) {
   process.exit(2);
 }
 
-const TOUCHED_GLOBAL = [
-  join(reportsDir, '_index.yaml'),
-  join(reportsDir, '_postmortem.yaml'),
-];
 const TOUCHED_SOURCE = [
   join(sourceFolder, 'report-meta.yaml'),
   join(sourceFolder, 'summary-card.yaml'),
   join(sourceFolder, 'full-report.yaml'),
 ];
 const SNAPSHOTS = new Map();
-for (const path of [...TOUCHED_GLOBAL, ...TOUCHED_SOURCE]) {
+for (const path of TOUCHED_SOURCE) {
   SNAPSHOTS.set(path, snapshotFile(path));
 }
 
@@ -253,7 +249,7 @@ try {
     console.log(`[fixture] --keep set; leaving reports/${newRunId} (and mutated source ${sourceRunId}) in place.`);
     console.log('[fixture] manual rollback:');
     console.log(`  rm -rf reports/${newRunId} .research-cache/${newRunId}`);
-    console.log(`  git checkout -- reports/${sourceRunId}/{report-meta,summary-card,full-report}.yaml reports/_index.yaml reports/_postmortem.yaml`);
+    console.log(`  git checkout -- reports/${sourceRunId}/{report-meta,summary-card,full-report}.yaml`);
   }
 } catch (err) {
   console.error(`[fixture] ✗ ${err.message}`);

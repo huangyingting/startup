@@ -171,7 +171,7 @@ jobs:
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-unknown}
 
-          If reports/_index.yaml already contains the same company or domain and there is no materially new reason to refresh it, do not create a duplicate folder; print a short duplicate note and exit successfully.
+          If a finalized report folder for the same company or domain already exists under reports/<runId>/ (the new-report.mjs duplicate guard checks this) and there is no materially new reason to refresh it, do not create a duplicate folder; print a short duplicate note and exit successfully.
 
           Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
@@ -206,7 +206,7 @@ jobs:
               continue
             fi
             echo "::group::Finalizing $dir"
-            if node .agents/skills/startup-research/scripts/finalize.mjs "$dir" --skip-index; then
+            if node .agents/skills/startup-research/scripts/finalize.mjs "$dir"; then
               echo "Finalize succeeded for $dir"
             else
               echo "::warning::Finalize failed for $dir; will be dropped"
@@ -261,9 +261,6 @@ jobs:
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Rebuild reports/_index.yaml
-        run: npm run build:report-index
-
       - name: Validate generated reports and website
         run: npm run validate
 
@@ -287,17 +284,22 @@ jobs:
           fi
           git commit -m "$MESSAGE"
 
+          # Each report run only writes its own reports/<runId>/ folder; there
+          # is no derived cross-report file. Parallel runs cannot conflict
+          # unless two runs picked the exact same runId+slug, so a plain
+          # rebase loop is sufficient.
           for attempt in 1 2 3; do
             echo "Push attempt $attempt/3 to $BRANCH"
             git fetch origin "$BRANCH"
-            if git rebase --autostash "origin/$BRANCH"; then
-              if git push origin "HEAD:$BRANCH"; then
-                echo "Pushed to $BRANCH on attempt $attempt."
-                exit 0
-              fi
-            else
+            if ! git rebase --autostash "origin/$BRANCH"; then
               echo "Rebase failed; aborting and retrying." >&2
               git rebase --abort || true
+              sleep $((attempt * 5))
+              continue
+            fi
+            if git push origin "HEAD:$BRANCH"; then
+              echo "Pushed to $BRANCH on attempt $attempt."
+              exit 0
             fi
             sleep $((attempt * 5))
           done
@@ -305,6 +307,8 @@ jobs:
           PR_BRANCH="auto/research-company-${SAFE_LABEL:-startup}-${STAMP}-$(date -u +%H%M%S)"
           echo "Direct push to $BRANCH failed; pushing to $PR_BRANCH and opening PR." >&2
           git push origin "HEAD:$PR_BRANCH"
-          gh pr create --base "$BRANCH" --head "$PR_BRANCH" \
+          # The default GITHUB_TOKEN with `permissions: pull-requests: write`
+          # is what `gh pr create` needs; STARTUP_PAT lacks that scope.
+          GH_TOKEN="${{ secrets.GITHUB_TOKEN }}" gh pr create --base "$BRANCH" --head "$PR_BRANCH" \
             --title "$MESSAGE" \
             --body "Automated company research run. Direct push to \`$BRANCH\` failed after 3 attempts; merging via PR instead."

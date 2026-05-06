@@ -33,7 +33,7 @@ Keep the workflow simple: load the ordered chapter config, generate each chapter
 
    Refresh mode auto-resolves the previous run from the company match (newest current finalized report whose `summary-card.yaml` matches `companyName` or `companyUrl`) and writes `.research-cache/<runTimestamp>-<companySlug>/refresh-context.yaml` with the prior run summary. Use it only as background/diff context. Re-fetch current evidence for volatile facts such as funding, valuation, headcount, customers, pricing, legal/regulatory status, outages, partnerships, and product launches; do not copy stale claims without re-verifying them.
 
-If folder creation exits `2`, stop: `reports/_index.yaml` or an already-finalized folder has the official report. If it exits `3`, the same in-progress folder already exists; rerun the exact same command with `--resume` and continue that folder. Use `--resume` only after exit `3`; it exits `4` when there is no in-progress folder to resume. Do not create `-2` suffixed duplicate folders.
+If folder creation exits `2`, stop: a finalized report already exists for this company/domain (the duplicate guard walks every `reports/<runId>/summary-card.yaml`). If it exits `3`, the same in-progress folder already exists; rerun the exact same command with `--resume` and continue that folder. Use `--resume` only after exit `3`; it exits `4` when there is no in-progress folder to resume. Do not create `-2` suffixed duplicate folders.
 
 In refresh mode, duplicate company/domain detection is intentionally bypassed only for the resolved refresh target. A refresh is still a full 8-chapter report generation followed by the normal gates; do not patch an old report in place.
 
@@ -142,9 +142,9 @@ After all analysis chapters pass:
    `node .agents/skills/startup-research/scripts/finalize.mjs <reportFolder>`
    For a refresh run, pass the same flag and reason:
    `node .agents/skills/startup-research/scripts/finalize.mjs <reportFolder> --refresh [--refresh-reason <refreshReason>]`
-   Two phases. Phase 1 (per-report): `ledger` (only on first run, or with `--rebuild`) → `cross-chapter` → `assemble` → `check-report`. Phase 2 (commit, only if Phase 1 succeeds): optional `link-refresh` → `postmortem` → `build-index`. Stops at the first failing step so you can fix `report-meta.yaml` (or the offending chapter) and re-run; global state (`_postmortem.yaml`, `_index.yaml`) is only touched after the per-report gate passes. Pass `--skip-index` to skip the global index refresh; pass `--rebuild` to force a fresh ledger consolidation (which reassigns canonical claim IDs). A green finalize means the report passed `check-report` and is publishable; no further validation step is required.
+   Per-report only: `ledger` (only on first run, or with `--rebuild`) → `cross-chapter` → `assemble` → `check-report`. With `--refresh` it also wraps the chain with `link-refresh` (sets the new report `revision.status: current` first, then marks the previous report `superseded` and reassembles it once the new report passes `check-report`). Stops at the first failing step so you can fix `report-meta.yaml` (or the offending chapter) and re-run. Pass `--rebuild` to force a fresh ledger consolidation (which reassigns canonical claim IDs). A green finalize means the report passed `check-report` and is publishable.
 
-   Refresh finalization first marks the new report as `revision.status: current` with `revision.refreshOfRunId` (auto-resolved from the company match), then only after the new report passes Phase 1 it marks the previous report as `revision.status: superseded`, reassembles/checks that previous report, and rebuilds the global index. Do not manually edit old generated artifacts to mark them superseded.
+   Refresh finalization first marks the new report as `revision.status: current` with `revision.refreshOfRunId` (auto-resolved from the company match), then only after the new report passes the publishability gate it marks the previous report as `revision.status: superseded` and reassembles/checks that previous report. Do not manually edit old generated artifacts to mark them superseded.
 
 ## Hard rules
 
