@@ -1,9 +1,9 @@
-# Manual startup research run.
+# Scheduled/manual startup research run.
 #
 # Two modes:
 #   1. Research a single named company (provide companyName, optionally companyUrl).
-#   2. Discover and research recent unicorn startups (leave companyName blank;
-#      optionally set unicornCount).
+#   2. Discover and research unicorn startups from the last 24 months across
+#      diverse sectors (leave companyName blank; optionally set unicornCount).
 #
 # CI installs deps, drives the GitHub Copilot CLI to produce report YAML under
 # reports/<run>/, rebuilds reports/_index.yaml, validates the site, and commits
@@ -16,10 +16,14 @@
 name: Research startup company
 
 on:
+  schedule:
+    # Every six hours. Scheduled runs leave inputs blank, so they use the
+    # recent-unicorns discovery mode below.
+    - cron: "30 */6 * * *"
   workflow_dispatch:
     inputs:
       companyName:
-        description: "Company name to research. Leave blank to auto-discover recent unicorns."
+        description: "Company name to research. Leave blank to auto-discover recent two-year unicorns across sectors."
         required: false
         default: ""
         type: string
@@ -29,18 +33,20 @@ on:
         default: ""
         type: string
       unicornCount:
-        description: "How many recent unicorn startups to research when companyName is blank."
+        description: "How many recent two-year unicorn startups to research when companyName is blank."
         required: false
         default: "3"
         type: string
       model:
         description: "Copilot CLI model to use."
         required: false
-        default: "gpt-5.4"
+        default: "claude-sonnet-4.6"
         type: choice
         options:
+          - gpt-5.5
           - gpt-5.4
           - claude-sonnet-4.6
+          - claude-opus-4.6
 
 permissions:
   contents: write
@@ -110,14 +116,16 @@ jobs:
           URL="$(trim "$RAW_URL")"
           COUNT="$(trim "$RAW_COUNT")"
           MODEL="$(trim "$RAW_MODEL")"
+          RUN_DATE="$(date -u +%F)"
+          CUTOFF_DATE="$(date -u -d '2 years ago' +%F)"
           if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
             COUNT=3
           fi
           case "$MODEL" in
-            claude-sonnet-4.6|gpt-5.4) ;;
-            "") MODEL="gpt-5.4" ;;
+            claude-sonnet-4.6|claude-opus-4.6|gpt-5.5|gpt-5.4) ;;
+            "") MODEL="claude-sonnet-4.6" ;;
             *)
-              echo "Unsupported model: $MODEL (allowed: claude-sonnet-4.6, gpt-5.4)" >&2
+              echo "Unsupported model: $MODEL (allowed: claude-sonnet-4.6, claude-opus-4.6, gpt-5.5, gpt-5.4)" >&2
               exit 1
               ;;
           esac
@@ -133,6 +141,8 @@ jobs:
             echo "count=$COUNT"
             echo "label=$LABEL"
             echo "model=$MODEL"
+            echo "runDate=$RUN_DATE"
+            echo "cutoffDate=$CUTOFF_DATE"
             echo "company<<EOF"
             echo "$COMPANY"
             echo "EOF"
@@ -149,16 +159,16 @@ jobs:
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
           MODEL: ${{ steps.inputs.outputs.model }}
+          RUN_DATE: ${{ steps.inputs.outputs.runDate }}
+          CUTOFF_DATE: ${{ steps.inputs.outputs.cutoffDate }}
         run: |
           set -euo pipefail
           if [ "$MODE" = "recent-unicorns" ]; then
             PROMPT=$(cat <<EOF
-          Produce full diligence reports for $COUNT recent private unicorn startups suitable for VC review.
+          Produce full diligence reports for $COUNT private startup unicorns across different sectors.
 
-          Selection rules:
-          - Prefer companies that recently raised at, crossed, or were reported above a \$1B valuation, or became newly prominent in the last 12-24 months.
-          - Skip companies already present in reports/_index.yaml unless a materially new report is justified.
-          - Pick a diverse set across sectors when possible.
+          Run date: $RUN_DATE UTC. Recent means the unicorn evidence is dated on or after $CUTOFF_DATE.
+          Pick companies with credible public evidence of a \$1B+ private valuation or unicorn-confirming financing in that window. Prefer sectors/geographies underrepresented in reports/_index.yaml. Skip companies already in reports/_index.yaml unless there is materially new evidence, and avoid repeating the same narrow category within this run.
 
           For each selected company, run one complete startup diligence report end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under its own reports/<run>/ folder. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
