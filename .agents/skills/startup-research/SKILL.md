@@ -16,7 +16,7 @@ Keep the workflow simple: load the ordered chapter config, generate each chapter
 - `companyUrl` — optional identity anchor.
 - `runTimestamp` — UTC `YYYYMMDDHHmmss`.
 - `currentDate` — actual session date; use it for freshness and `runDate`.
-- `refreshOfRunId` — optional explicit refresh target (`YYYYMMDDHHmmss-slug` or `latest` when the user/workflow requests a refresh).
+- `refresh` — optional boolean; when set, the workflow refreshes the existing current report for `companyName`/`companyUrl` (the previous run is auto-resolved from the company match).
 - `refreshReason` — optional human reason for refreshing an existing report.
 - User requirements — route to the relevant chapter; do not create new repo templates from one request.
 
@@ -29,9 +29,9 @@ Keep the workflow simple: load the ordered chapter config, generate each chapter
    `node .agents/skills/startup-research/scripts/new-report.mjs <runTimestamp> <companyName> [--website <companyUrl>]`
 
    For an explicit full refresh of an existing report, create a new run instead of overwriting the old one:
-   `node .agents/skills/startup-research/scripts/new-report.mjs <runTimestamp> <companyName> [--website <companyUrl>] --refresh-of <refreshOfRunId|latest> [--refresh-reason <refreshReason>]`
+   `node .agents/skills/startup-research/scripts/new-report.mjs <runTimestamp> <companyName> [--website <companyUrl>] --refresh [--refresh-reason <refreshReason>]`
 
-   Refresh mode writes `.research-cache/<runTimestamp>-<companySlug>/refresh-context.yaml` with the prior run summary. Use it only as background/diff context. Re-fetch current evidence for volatile facts such as funding, valuation, headcount, customers, pricing, legal/regulatory status, outages, partnerships, and product launches; do not copy stale claims without re-verifying them.
+   Refresh mode auto-resolves the previous run from the company match (newest current finalized report whose `summary-card.yaml` matches `companyName` or `companyUrl`) and writes `.research-cache/<runTimestamp>-<companySlug>/refresh-context.yaml` with the prior run summary. Use it only as background/diff context. Re-fetch current evidence for volatile facts such as funding, valuation, headcount, customers, pricing, legal/regulatory status, outages, partnerships, and product launches; do not copy stale claims without re-verifying them.
 
 If folder creation exits `2`, stop: `reports/_index.yaml` or an already-finalized folder has the official report. If it exits `3`, the same in-progress folder already exists; rerun the exact same command with `--resume` and continue that folder. Use `--resume` only after exit `3`; it exits `4` when there is no in-progress folder to resume. Do not create `-2` suffixed duplicate folders.
 
@@ -140,11 +140,11 @@ After all analysis chapters pass:
 1. Author `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md`. It carries the judgment fields the analysis chapters do not encode (recommendation, confidence, risk rating, valuation stance, headline, overall score, top strengths/risks, unresolved gaps, cover metrics, startup introduction, optional appendices and disclaimer override).
 2. Run the finalization pipeline:
    `node .agents/skills/startup-research/scripts/finalize.mjs <reportFolder>`
-   For a refresh run, pass the same refresh target and reason:
-   `node .agents/skills/startup-research/scripts/finalize.mjs <reportFolder> --refresh-of <refreshOfRunId|latest> [--refresh-reason <refreshReason>]`
+   For a refresh run, pass the same flag and reason:
+   `node .agents/skills/startup-research/scripts/finalize.mjs <reportFolder> --refresh [--refresh-reason <refreshReason>]`
    Two phases. Phase 1 (per-report): `ledger` (only on first run, or with `--rebuild`) → `cross-chapter` → `assemble` → `check-report`. Phase 2 (commit, only if Phase 1 succeeds): optional `link-refresh` → `postmortem` → `build-index`. Stops at the first failing step so you can fix `report-meta.yaml` (or the offending chapter) and re-run; global state (`_postmortem.yaml`, `_index.yaml`) is only touched after the per-report gate passes. Pass `--skip-index` to skip the global index refresh; pass `--rebuild` to force a fresh ledger consolidation (which reassigns canonical claim IDs). A green finalize means the report passed `check-report` and is publishable; no further validation step is required.
 
-   Refresh finalization first marks the new report as `revision.status: current` with `revision.refreshOfRunId`, then only after the new report passes Phase 1 it marks the previous report as `revision.status: superseded`, reassembles/checks that previous report, and rebuilds the global index. Do not manually edit old generated artifacts to mark them superseded.
+   Refresh finalization first marks the new report as `revision.status: current` with `revision.refreshOfRunId` (auto-resolved from the company match), then only after the new report passes Phase 1 it marks the previous report as `revision.status: superseded`, reassembles/checks that previous report, and rebuilds the global index. Do not manually edit old generated artifacts to mark them superseded.
 
 ## Hard rules
 

@@ -32,17 +32,17 @@ const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/finalize.mjs <report-folder> [--skip-index] [--rebuild] [--refresh-of <runId|latest>] [--refresh-reason <text>]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/finalize.mjs <report-folder> [--skip-index] [--rebuild] [--refresh] [--refresh-reason <text>]');
   process.exit(1);
 }
 
 function parseArgs(argv) {
-  const parsed = { folder: null, skipIndex: false, rebuild: false, refreshOf: '', refreshReason: '' };
+  const parsed = { folder: null, skipIndex: false, rebuild: false, refresh: false, refreshReason: '' };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--skip-index') parsed.skipIndex = true;
     else if (arg === '--rebuild') parsed.rebuild = true;
-    else if (arg === '--refresh-of') parsed.refreshOf = argv[++i] ?? '';
+    else if (arg === '--refresh') parsed.refresh = true;
     else if (arg === '--refresh-reason') parsed.refreshReason = argv[++i] ?? '';
     else if (arg.startsWith('-')) usage();
     else if (!parsed.folder) parsed.folder = arg;
@@ -55,7 +55,7 @@ const parsedArgs = parseArgs(args);
 const folderArg = parsedArgs.folder;
 const skipIndex = parsedArgs.skipIndex;
 const rebuild = parsedArgs.rebuild;
-const refreshOf = parsedArgs.refreshOf;
+const refresh = parsedArgs.refresh;
 const refreshReason = parsedArgs.refreshReason;
 
 if (!folderArg) {
@@ -81,8 +81,8 @@ function runStep(step) {
   }
 }
 
-if (refreshOf) {
-  const refreshArgs = [reportFolder, '--refresh-of', refreshOf, '--prepare-current'];
+if (refresh) {
+  const refreshArgs = [reportFolder, '--prepare-current'];
   if (refreshReason) refreshArgs.push('--refresh-reason', refreshReason);
   runStep({ name: 'prepare-refresh', script: 'link-refresh.mjs', argv: refreshArgs });
 }
@@ -108,8 +108,8 @@ phase1.push({ name: 'check-report', script: 'check-report.mjs', argv: [reportFol
 // the global catalog. We never reach this phase unless every Phase 1 step
 // (including the publishable gate) succeeded.
 const phase2 = [];
-if (refreshOf) {
-  const refreshArgs = [reportFolder, '--refresh-of', refreshOf];
+if (refresh) {
+  const refreshArgs = [reportFolder];
   if (refreshReason) refreshArgs.push('--refresh-reason', refreshReason);
   phase2.push({ name: 'link-refresh', script: 'link-refresh.mjs', argv: refreshArgs });
 }

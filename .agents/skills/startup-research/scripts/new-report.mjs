@@ -6,7 +6,6 @@ import { join } from 'node:path';
 import yaml from 'js-yaml';
 import {
   isFinalizedReportFolder,
-  isRunId,
   normalizeCompanyName,
   normalizeDomain,
   normalizeRevision,
@@ -18,18 +17,18 @@ import {
 const DISCLOSURE_PROFILES = new Set(['public', 'private-disclosed', 'private-undisclosed', 'stealth']);
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/new-report.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--refresh-of <runId|latest>] [--refresh-reason <text>] [--resume] [--index reports/_index.yaml]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/new-report.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--refresh] [--refresh-reason <text>] [--resume] [--index reports/_index.yaml]');
   process.exit(1);
 }
 
 function parseArgs(argv) {
   const [timestamp, ...rest] = argv;
-  const args = { timestamp, nameParts: [], website: '', disclosure: '', refreshOf: '', refreshReason: '', resume: false, indexPath: 'reports/_index.yaml' };
+  const args = { timestamp, nameParts: [], website: '', disclosure: '', refresh: false, refreshReason: '', resume: false, indexPath: 'reports/_index.yaml' };
   for (let i = 0; i < rest.length; i += 1) {
     const arg = rest[i];
     if (arg === '--website' || arg === '--url' || arg === '--domain') args.website = rest[++i] ?? '';
     else if (arg === '--disclosure' || arg === '--disclosure-profile') args.disclosure = rest[++i] ?? '';
-    else if (arg === '--refresh-of') args.refreshOf = rest[++i] ?? '';
+    else if (arg === '--refresh') args.refresh = true;
     else if (arg === '--refresh-reason') args.refreshReason = rest[++i] ?? '';
     else if (arg === '--resume') args.resume = true;
     else if (arg === '--index') args.indexPath = rest[++i] ?? '';
@@ -39,10 +38,6 @@ function parseArgs(argv) {
   if (!/^\d{14}$/.test(args.timestamp ?? '')) usage();
   if (args.disclosure && !DISCLOSURE_PROFILES.has(args.disclosure)) {
     console.error(`[new] invalid --disclosure value: ${args.disclosure} (allowed: ${[...DISCLOSURE_PROFILES].join(', ')})`);
-    process.exit(1);
-  }
-  if (args.refreshOf && args.refreshOf !== 'latest' && !isRunId(args.refreshOf)) {
-    console.error(`[new] invalid --refresh-of value: ${args.refreshOf} (expected a report run id or "latest")`);
     process.exit(1);
   }
   return args;
@@ -77,36 +72,19 @@ function ensureFinalizedRun(runId, label) {
   }
 }
 
-function resolveRefreshTarget({ refreshOf, matches, reports }) {
-  if (!refreshOf) return null;
+function resolveRefreshTarget({ refresh, matches }) {
+  if (!refresh) return null;
   if (!matches.length) {
-    console.error('[new] refresh requested, but reports/_index.yaml has no matching finalized report for this company/domain.');
+    console.error('[new] --refresh requested, but reports/_index.yaml has no matching finalized report for this company/domain.');
     process.exit(2);
   }
-  if (refreshOf === 'latest') {
-    const candidates = currentMatches(matches).sort((a, b) => String(b.runId).localeCompare(String(a.runId)));
-    if (!candidates.length) {
-      console.error('[new] refresh requested, but every matching report is already superseded.');
-      process.exit(2);
-    }
-    const target = candidates[0];
-    ensureFinalizedRun(target.runId, '--refresh-of latest target');
-    return target;
-  }
-  const target = reports.find((report) => report.runId === refreshOf);
-  if (!target) {
-    console.error(`[new] --refresh-of ${refreshOf} was not found in reports/_index.yaml.`);
+  const candidates = currentMatches(matches).sort((a, b) => String(b.runId).localeCompare(String(a.runId)));
+  if (!candidates.length) {
+    console.error('[new] --refresh requested, but every matching report is already superseded.');
     process.exit(2);
   }
-  if (!matches.some((report) => report.runId === refreshOf)) {
-    console.error(`[new] --refresh-of ${refreshOf} does not match the requested company/domain.`);
-    process.exit(2);
-  }
-  if ((target.revisionStatus ?? 'current') === 'superseded') {
-    console.error(`[new] --refresh-of ${refreshOf} is already superseded; refresh the current report instead.`);
-    process.exit(2);
-  }
-  ensureFinalizedRun(refreshOf, '--refresh-of target');
+  const target = candidates[0];
+  ensureFinalizedRun(target.runId, '--refresh target');
   return target;
 }
 
@@ -173,7 +151,7 @@ const args = parseArgs(process.argv.slice(2));
 const companyName = args.nameParts.join(' ') || 'startup';
 const reports = loadIndexReports(args.indexPath) ?? [];
 const matches = duplicateMatches({ companyName, website: args.website, reports });
-const refreshTarget = resolveRefreshTarget({ refreshOf: args.refreshOf, matches, reports });
+const refreshTarget = resolveRefreshTarget({ refresh: args.refresh, matches });
 checkDuplicateRisk({ matches, refreshTarget });
 
 const base = `${args.timestamp}-${slugify(companyName)}`;

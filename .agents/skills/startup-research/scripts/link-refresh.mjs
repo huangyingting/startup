@@ -8,6 +8,11 @@
 //                      mark the old report superseded and reassemble/check the
 //                      old report. Intended for finalize Phase 2 after the new
 //                      report already passed its publishable gate.
+//
+// The previous report is resolved automatically: the newest finalized
+// non-superseded report whose summary-card matches the new report's
+// company.name or company.website. Refusing to refresh anything other than
+// that single current report keeps the duplicate-guard invariants intact.
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
@@ -27,7 +32,7 @@ import {
 const here = dirname(fileURLToPath(import.meta.url));
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/link-refresh.mjs <new-report-folder> --refresh-of <runId|latest> [--refresh-reason <text>] [--prepare-current]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/link-refresh.mjs <new-report-folder> [--refresh-reason <text>] [--prepare-current]');
   process.exit(1);
 }
 
@@ -37,18 +42,16 @@ function abort(message, code = 1) {
 }
 
 function parseArgs(argv) {
-  const args = { folder: null, refreshOf: '', refreshReason: '', prepareCurrent: false };
+  const args = { folder: null, refreshReason: '', prepareCurrent: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
-    if (arg === '--refresh-of') args.refreshOf = argv[++i] ?? '';
-    else if (arg === '--refresh-reason') args.refreshReason = argv[++i] ?? '';
+    if (arg === '--refresh-reason') args.refreshReason = argv[++i] ?? '';
     else if (arg === '--prepare-current') args.prepareCurrent = true;
     else if (arg.startsWith('-')) usage();
     else if (!args.folder) args.folder = arg;
     else usage();
   }
-  if (!args.folder || !args.refreshOf) usage();
-  if (args.refreshOf !== 'latest' && !isRunId(args.refreshOf)) abort(`invalid --refresh-of value: ${args.refreshOf} (expected run id or "latest")`, 2);
+  if (!args.folder) usage();
   return args;
 }
 
@@ -87,14 +90,7 @@ function assertFinalizedRun(runId, label) {
   if (!isFinalizedReportFolder(folder)) abort(`${label} is not a finalized report: reports/${runId}`, 2);
 }
 
-function resolveRefreshOfRunId(refreshOf, { newRunId, newMeta }) {
-  if (refreshOf !== 'latest') {
-    assertFinalizedRun(refreshOf, '--refresh-of target');
-    const oldCard = readSummaryCard(refreshOf);
-    if (!matchesCompany(oldCard, newMeta.company)) abort(`--refresh-of ${refreshOf} does not match the new report company/domain`, 2);
-    return refreshOf;
-  }
-
+function resolvePreviousRunId({ newRunId, newMeta }) {
   const candidates = [];
   for (const runId of listDirs(reportsDir)) {
     if (runId === newRunId) continue;
@@ -107,7 +103,7 @@ function resolveRefreshOfRunId(refreshOf, { newRunId, newMeta }) {
     candidates.push(runId);
   }
   candidates.sort((a, b) => b.localeCompare(a));
-  if (!candidates.length) abort('--refresh-of latest could not find a current finalized report matching the new report company/domain', 2);
+  if (!candidates.length) abort('could not find a current finalized report matching the new report company/domain', 2);
   return candidates[0];
 }
 
@@ -168,7 +164,7 @@ function setOldRevision({ oldRunId, newRunId, refreshReason }) {
 const args = parseArgs(process.argv.slice(2));
 const { folder: newFolder, runId: newRunId } = resolveReportFolder(args.folder);
 const { doc: newMeta } = readReportMeta(newFolder);
-const oldRunId = resolveRefreshOfRunId(args.refreshOf, { newRunId, newMeta });
+const oldRunId = resolvePreviousRunId({ newRunId, newMeta });
 if (oldRunId === newRunId) abort('new report cannot refresh itself', 2);
 
 const currentChanged = setCurrentRevision({ newFolder, newRunId, oldRunId, refreshReason: args.refreshReason });

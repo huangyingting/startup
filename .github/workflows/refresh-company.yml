@@ -27,11 +27,6 @@ on:
         required: false
         default: ""
         type: string
-      previousRunId:
-        description: "Existing report run id to refresh. Leave empty to use latest current match."
-        required: false
-        default: ""
-        type: string
       refreshReason:
         description: "Why this report should be refreshed."
         required: false
@@ -113,7 +108,6 @@ jobs:
         env:
           RAW_COMPANY: ${{ github.event.inputs.companyName }}
           RAW_URL: ${{ github.event.inputs.companyUrl }}
-          RAW_PREVIOUS_RUN_ID: ${{ github.event.inputs.previousRunId }}
           RAW_REFRESH_REASON: ${{ github.event.inputs.refreshReason }}
           RAW_MODEL: ${{ github.event.inputs.model }}
         run: |
@@ -121,7 +115,6 @@ jobs:
           trim() { printf '%s' "${1//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//'; }
           COMPANY="$(trim "$RAW_COMPANY")"
           URL="$(trim "$RAW_URL")"
-          PREVIOUS_RUN_ID="$(trim "$RAW_PREVIOUS_RUN_ID")"
           REFRESH_REASON="$(trim "$RAW_REFRESH_REASON")"
           MODEL="$(trim "$RAW_MODEL")"
           RUN_DATE="$(date -u +%F)"
@@ -137,10 +130,6 @@ jobs:
               exit 1
               ;;
           esac
-          if [ -n "$PREVIOUS_RUN_ID" ] && ! printf '%s' "$PREVIOUS_RUN_ID" | grep -Eq '^[0-9]{14}-[a-z0-9-]+$'; then
-            echo "previousRunId must look like YYYYMMDDHHmmss-slug; got: $PREVIOUS_RUN_ID" >&2
-            exit 1
-          fi
           if [ -z "$REFRESH_REASON" ]; then
             REFRESH_REASON="Manual refresh requested on $RUN_DATE UTC."
           fi
@@ -154,7 +143,6 @@ jobs:
             echo "safeLabel=$SAFE_LABEL"
             echo "model=$MODEL"
             echo "runDate=$RUN_DATE"
-            echo "previousRunId=$PREVIOUS_RUN_ID"
             echo "refreshReason<<EOF"
             echo "$REFRESH_REASON"
             echo "EOF"
@@ -175,7 +163,6 @@ jobs:
             echo "| --- | --- |"
             echo "| Company | ${{ steps.inputs.outputs.company }} |"
             echo "| URL | ${{ steps.inputs.outputs.url || 'unknown' }} |"
-            echo "| Previous run | ${{ steps.inputs.outputs.previousRunId || 'latest current match' }} |"
             echo "| Refresh reason | ${{ steps.inputs.outputs.refreshReason }} |"
             echo "| Model | ${{ steps.inputs.outputs.model }} |"
             echo "| Run date | ${{ steps.inputs.outputs.runDate }} UTC |"
@@ -190,7 +177,6 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
-          PREVIOUS_RUN_ID: ${{ steps.inputs.outputs.previousRunId }}
           REFRESH_REASON: ${{ steps.inputs.outputs.refreshReason }}
           MODEL: ${{ steps.inputs.outputs.model }}
           RUN_DATE: ${{ steps.inputs.outputs.runDate }}
@@ -202,10 +188,9 @@ jobs:
           Run date: $RUN_DATE UTC.
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-unknown}
-          Previous report run id: ${PREVIOUS_RUN_ID:-latest current match}
           Refresh reason: ${REFRESH_REASON:-n/a}
 
-          This is an explicit full refresh. Create a new report folder even when reports/_index.yaml already contains the same company/domain by using new-report.mjs with --refresh-of ${PREVIOUS_RUN_ID:-latest} and --refresh-reason. Treat the prior report only as background/diff context; re-fetch current evidence for volatile facts such as funding, valuation, headcount, customers, pricing, legal/regulatory status, outages, partnerships, and product launches.
+          This is an explicit full refresh. Create a new report folder even when reports/_index.yaml already contains the same company/domain by using new-report.mjs with --refresh and --refresh-reason. The previous report is auto-resolved from the company name/domain. Treat the prior report only as background/diff context; re-fetch current evidence for volatile facts such as funding, valuation, headcount, customers, pricing, legal/regulatory status, outages, partnerships, and product launches.
 
           Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
@@ -214,7 +199,6 @@ jobs:
 
       - name: Finalize refreshed report folders
         env:
-          PREVIOUS_RUN_ID: ${{ steps.inputs.outputs.previousRunId }}
           REFRESH_REASON: ${{ steps.inputs.outputs.refreshReason }}
         run: |
           set -euo pipefail
@@ -254,7 +238,7 @@ jobs:
               echo "::endgroup::"
               continue
             fi
-            refresh_args=(--refresh-of "${PREVIOUS_RUN_ID:-latest}")
+            refresh_args=(--refresh)
             if [ -n "${REFRESH_REASON:-}" ]; then
               refresh_args+=(--refresh-reason "$REFRESH_REASON")
             fi
