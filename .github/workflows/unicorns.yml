@@ -1,0 +1,410 @@
+# Scheduled/manual startup unicorn research run.
+#
+# Discovers and researches recent private unicorn startups, optionally filtered
+# by industry.
+#
+# CI installs deps, drives the GitHub Copilot CLI to produce report YAML under
+# reports/<run>/, rebuilds reports/_index.yaml, validates the site, and commits
+# the new artifacts.
+#
+# Required secrets:
+# - COPILOT_PAT — PAT for a Copilot-licensed account; consumed by the Copilot CLI.
+# - STARTUP_PAT — PAT with repo write access for checkout/push.
+
+name: Research unicorns
+
+env:
+  CURL_IMPERSONATE_VERSION: "1.5.6"
+  CURL_IMPERSONATE_TARBALL: "curl-impersonate-v1.5.6.x86_64-linux-gnu.tar.gz"
+  CURL_IMPERSONATE_SHA256: "b60344f63b9ed8806f0e9f7fd357d9f6c9a82aca279ed1e9e257d544885dcbde"
+
+on:
+  schedule:
+    # Every six hours. Scheduled runs leave inputs blank, so they use the
+    # recent-unicorns discovery mode below.
+    - cron: "30 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      industry:
+        description: "Industry."
+        required: false
+        default: "Any"
+        type: choice
+        options:
+          - Any
+          - AI / application software
+          - infrastructure / devtools
+          - fintech
+          - healthcare / biotech
+          - climate / energy
+          - cybersecurity
+          - robotics / hardware
+          - consumer / education
+          - industrial / logistics
+      unicornCount:
+        description: "Max reports."
+        required: false
+        default: "3"
+        type: string
+      model:
+        description: "Model."
+        required: false
+        default: "claude-sonnet-4.6"
+        type: choice
+        options:
+          - gpt-5.5
+          - gpt-5.4
+          - claude-sonnet-4.6
+          - claude-opus-4.6
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: startup-research-${{ github.event.inputs.industry || 'all-industries' }}
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.STARTUP_PAT }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            website/package-lock.json
+
+      - name: Install root deps
+        run: npm ci || npm install --no-audit --no-fund
+
+      - name: Install website deps
+        working-directory: website
+        run: npm ci || npm install --no-audit --no-fund
+
+      - name: Install GitHub Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Cache curl-impersonate
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/curl-impersonate
+          key: curl-impersonate-${{ runner.os }}-${{ env.CURL_IMPERSONATE_VERSION }}-${{ env.CURL_IMPERSONATE_SHA256 }}
+
+      - name: Install curl-impersonate
+        run: |
+          set -euo pipefail
+          INSTALL_DIR="$HOME/.local/share/curl-impersonate"
+          if [ ! -x "$INSTALL_DIR/curl_chrome120" ]; then
+            rm -rf "$INSTALL_DIR"
+            mkdir -p "$INSTALL_DIR"
+            cd "$INSTALL_DIR"
+            URL="https://github.com/lexiforest/curl-impersonate/releases/download/v${CURL_IMPERSONATE_VERSION}/${CURL_IMPERSONATE_TARBALL}"
+            curl -sSL --retry 3 --retry-delay 5 -o "$CURL_IMPERSONATE_TARBALL" "$URL"
+            echo "${CURL_IMPERSONATE_SHA256}  ${CURL_IMPERSONATE_TARBALL}" | sha256sum -c -
+            tar -xzf "$CURL_IMPERSONATE_TARBALL"
+            rm -f "$CURL_IMPERSONATE_TARBALL"
+          fi
+          ./curl_chrome120 -s -o /dev/null -w 'curl-impersonate smoke test: %{http_code}\n' https://example.com
+          echo "CURL_IMPERSONATE_DIR=$INSTALL_DIR" >> "$GITHUB_ENV"
+
+      - name: Resolve run inputs
+        id: inputs
+        env:
+          RAW_INDUSTRY: ${{ github.event.inputs.industry }}
+          RAW_COUNT: ${{ github.event.inputs.unicornCount }}
+          RAW_MODEL: ${{ github.event.inputs.model }}
+        run: |
+          set -euo pipefail
+          trim() { printf '%s' "${1//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//'; }
+          INDUSTRY="$(trim "$RAW_INDUSTRY")"
+          COUNT="$(trim "$RAW_COUNT")"
+          MODEL="$(trim "$RAW_MODEL")"
+          RUN_DATE="$(date -u +%F)"
+          CUTOFF_DATE="$(date -u -d '2 years ago' +%F)"
+          if [ -z "$INDUSTRY" ]; then
+            INDUSTRY="Any"
+          fi
+          case "$INDUSTRY" in
+            Any|"AI / application software"|"infrastructure / devtools"|fintech|"healthcare / biotech"|"climate / energy"|cybersecurity|"robotics / hardware"|"consumer / education"|"industrial / logistics") ;;
+            *)
+              echo "Unsupported industry: $INDUSTRY" >&2
+              exit 1
+              ;;
+          esac
+          if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
+            COUNT=3
+          fi
+          case "$MODEL" in
+            claude-sonnet-4.6|claude-opus-4.6|gpt-5.5|gpt-5.4) ;;
+            "") MODEL="claude-sonnet-4.6" ;;
+            *)
+              echo "Unsupported model: $MODEL (allowed: claude-sonnet-4.6, claude-opus-4.6, gpt-5.5, gpt-5.4)" >&2
+              exit 1
+              ;;
+          esac
+          if [ "$INDUSTRY" = "Any" ]; then
+            LABEL="recent-unicorns"
+            INDUSTRY_RULE="Choose across different sectors, preferring underrepresented sectors/geographies."
+          else
+            LABEL="recent-unicorns-$INDUSTRY"
+            INDUSTRY_RULE="Choose only companies in this industry: $INDUSTRY."
+          fi
+          SAFE_LABEL="$(printf '%s' "$LABEL" | tr -c '[:alnum:]' '-' | tr '[:upper:]' '[:lower:]' | sed 's/-\+/-/g; s/^-//; s/-$//' | cut -c1-60)"
+          if [ -z "$SAFE_LABEL" ]; then
+            SAFE_LABEL="startup"
+          fi
+          {
+            echo "count=$COUNT"
+            echo "industry=$INDUSTRY"
+            echo "industryRule=$INDUSTRY_RULE"
+            echo "label=$LABEL"
+            echo "safeLabel=$SAFE_LABEL"
+            echo "model=$MODEL"
+            echo "runDate=$RUN_DATE"
+            echo "cutoffDate=$CUTOFF_DATE"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Summarize run inputs
+        run: |
+          {
+            echo "## Startup research run"
+            echo
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| Max reports | ${{ steps.inputs.outputs.count }} |"
+            echo "| Industry | ${{ steps.inputs.outputs.industry }} |"
+            echo "| Model | ${{ steps.inputs.outputs.model }} |"
+            echo "| Run date | ${{ steps.inputs.outputs.runDate }} UTC |"
+            echo "| Unicorn cutoff | ${{ steps.inputs.outputs.cutoffDate }} |"
+            echo "| Label | ${{ steps.inputs.outputs.label }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Summarize report coverage
+        id: coverage
+        run: |
+          set -euo pipefail
+          node --input-type=module > "$RUNNER_TEMP/report-coverage.txt" <<'NODE'
+          import fs from 'node:fs';
+          import yaml from 'js-yaml';
+
+          const index = yaml.load(fs.readFileSync('reports/_index.yaml', 'utf8')) ?? {};
+          const reports = Array.isArray(index.reports) ? index.reports : [];
+          const buckets = [
+            ['AI / application software', /\b(ai|artificial intelligence|machine learning|ml|llm|video generation|language learning|saas)\b/i],
+            ['infrastructure / devtools', /\b(infrastructure|devtools|developer|data platform|cloud|database|observability)\b/i],
+            ['fintech', /\b(fintech|payments?|banking|payroll|finance|financial)\b/i],
+            ['healthcare / biotech', /\b(health|healthcare|bio|biotech|clinical|medical|drug|therapeutic|diagnostic)\b/i],
+            ['climate / energy', /\b(climate|energy|battery|grid|carbon|solar|renewable|power)\b/i],
+            ['cybersecurity', /\b(cyber|security|identity|fraud|risk)\b/i],
+            ['robotics / hardware', /\b(robot|robotics|hardware|semiconductor|chip|manufacturing)\b/i],
+            ['consumer / education', /\b(consumer|education|edtech|learning|creator|media)\b/i],
+            ['industrial / logistics', /\b(industrial|logistics|supply chain|warehouse|transport|construction)\b/i],
+          ];
+          const counts = new Map(buckets.map(([name]) => [name, 0]));
+          for (const report of reports) {
+            const text = `${report.sector ?? ''} ${report.stage ?? ''} ${report.companyName ?? ''}`;
+            const match = buckets.find(([, pattern]) => pattern.test(text));
+            if (match) counts.set(match[0], (counts.get(match[0]) ?? 0) + 1);
+          }
+          const ranked = [...counts.entries()].sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0]));
+          const under = ranked.slice(0, 5).map(([name, count]) => `${name} (${count})`).join(', ');
+          const covered = ranked.filter(([, count]) => count > 0).slice(-5).reverse().map(([name, count]) => `${name} (${count})`).join(', ') || 'none yet';
+          console.log(`Existing reports: ${reports.length}. Underrepresented sectors: ${under}. More covered sectors: ${covered}.`);
+          NODE
+          {
+            echo "coverageHint<<EOF"
+            cat "$RUNNER_TEMP/report-coverage.txt"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo
+            echo "### Portfolio coverage hint"
+            cat "$RUNNER_TEMP/report-coverage.txt"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Snapshot existing reports
+        run: |
+          find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-before.txt"
+
+      - name: Run startup research
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
+          COUNT: ${{ steps.inputs.outputs.count }}
+          INDUSTRY_RULE: ${{ steps.inputs.outputs.industryRule }}
+          MODEL: ${{ steps.inputs.outputs.model }}
+          RUN_DATE: ${{ steps.inputs.outputs.runDate }}
+          CUTOFF_DATE: ${{ steps.inputs.outputs.cutoffDate }}
+          COVERAGE_HINT: ${{ steps.coverage.outputs.coverageHint }}
+        run: |
+          set -euo pipefail
+          PROMPT=$(cat <<EOF
+          Produce full diligence reports for up to $COUNT private startup unicorns.
+
+          Run date: $RUN_DATE UTC. Recent means the unicorn evidence is dated on or after $CUTOFF_DATE.
+          $INDUSTRY_RULE
+          Pick only companies with credible public evidence of a \$1B+ private valuation or unicorn-confirming financing in that window. Use this portfolio hint: $COVERAGE_HINT
+          Skip duplicates already in reports/_index.yaml unless there is materially new evidence. If fewer than $COUNT qualify, research only the actual qualifying companies. If none qualify, do not create report folders; print a short no-candidates note and exit successfully.
+
+          For each selected company, run one complete startup diligence report end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under its own reports/<run>/ folder. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
+          EOF
+          )
+          copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT"
+
+      - name: Finalize any unfinalized report folders
+        # Safety net for the multi-company mode: if Copilot wrote every chapter
+        # YAML plus report-meta.yaml but skipped the finalize.mjs pipeline
+        # (which produces summary-card / evidence / full-report), run finalize
+        # ourselves. We only attempt finalize when all upstream inputs exist;
+        # truly partial folders are left alone for the next step to drop.
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          chapter_files=(
+            01-company-overview.yaml
+            02-market-analysis.yaml
+            03-competitors.yaml
+            04-financials.yaml
+            05-product-tech.yaml
+            06-customers.yaml
+            07-risks.yaml
+            08-valuation.yaml
+            report-meta.yaml
+          )
+          for dir in reports/*/; do
+            # Skip if already finalized.
+            if [ -f "${dir}summary-card.yaml" ]; then
+              continue
+            fi
+            # Only finalize when every required input is present.
+            missing=()
+            for f in "${chapter_files[@]}"; do
+              [ -f "${dir}${f}" ] || missing+=("$f")
+            done
+            if [ "${#missing[@]}" -gt 0 ]; then
+              echo "Skipping ${dir%/}: missing $(IFS=,; echo "${missing[*]}")"
+              continue
+            fi
+            echo "::group::Finalizing $dir"
+            if node .agents/skills/startup-research/scripts/finalize.mjs "$dir" --skip-index; then
+              echo "Finalize succeeded for $dir"
+            else
+              echo "::warning::Finalize failed for $dir; will be dropped"
+            fi
+            echo "::endgroup::"
+          done
+
+      - name: Upload reports as artifact
+        # Capture the full Copilot output (including any partial folders) before
+        # we prune. Available even on failure for offline recovery.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-reports-${{ steps.inputs.outputs.safeLabel }}
+          path: reports/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Drop partial report folders
+        # A partial folder = chapter YAMLs without a finalized summary-card,
+        # full-report, evidence, or report-meta. Remove them so they don't
+        # contaminate the commit; the artifact above preserves the originals.
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          required_files=(summary-card.yaml full-report.yaml evidence.yaml report-meta.yaml)
+          dropped=()
+          for dir in reports/*/; do
+            for required in "${required_files[@]}"; do
+              if [ ! -f "${dir}${required}" ]; then
+                rm -rf "$dir"
+                dropped+=("${dir%/}")
+                break
+              fi
+            done
+          done
+          if [ "${#dropped[@]}" -gt 0 ]; then
+            printf '::warning::Dropped partial report folder(s):\n'
+            printf ' - %s\n' "${dropped[@]}"
+          else
+            echo "No partial report folders to drop."
+          fi
+
+      - name: Summarize report changes
+        run: |
+          set -euo pipefail
+          find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-after.txt"
+          comm -13 "$RUNNER_TEMP/reports-before.txt" "$RUNNER_TEMP/reports-after.txt" > "$RUNNER_TEMP/reports-new.txt" || true
+          {
+            echo
+            echo "### Report folder changes"
+            if [ -s "$RUNNER_TEMP/reports-new.txt" ]; then
+              echo "New report folders:"
+              sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-new.txt"
+            else
+              echo "No new finalized report folders detected."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Rebuild reports/_index.yaml
+        run: npm run build:report-index
+
+      - name: Validate generated reports and website
+        run: npm run validate
+
+      - name: Commit and push new reports
+        env:
+          LABEL: ${{ steps.inputs.outputs.label }}
+          SAFE_LABEL: ${{ steps.inputs.outputs.safeLabel }}
+          GH_TOKEN: ${{ secrets.STARTUP_PAT }}
+        run: |
+          set -euo pipefail
+          git config user.name "startup-research-bot"
+          git config user.email "startup-research-bot@users.noreply.github.com"
+          BRANCH="${{ github.ref_name }}"
+          SAFE_LABEL="${SAFE_LABEL:-startup}"
+          STAMP="$(date -u +%F)"
+          MESSAGE="chore(reports): research ${SAFE_LABEL:-startup} $STAMP"
+
+          # Stage and stop early if there is nothing to commit.
+          git add reports/
+          if git diff --cached --quiet; then
+            echo "No new or updated startup reports."
+            exit 0
+          fi
+          git commit -m "$MESSAGE"
+
+          # Try to fast-forward the local commit onto the remote head with up to
+          # 3 rebase+push attempts. This handles a remote that moved while the
+          # long research run was in progress.
+          for attempt in 1 2 3; do
+            echo "Push attempt $attempt/3 to $BRANCH"
+            git fetch origin "$BRANCH"
+            if git rebase --autostash "origin/$BRANCH"; then
+              if git push origin "HEAD:$BRANCH"; then
+                echo "Pushed to $BRANCH on attempt $attempt."
+                exit 0
+              fi
+            else
+              echo "Rebase failed; aborting and retrying." >&2
+              git rebase --abort || true
+            fi
+            sleep $((attempt * 5))
+          done
+
+          # Fallback: push to a side branch and open a PR so the long run is
+          # never lost when direct push is blocked (branch protection, race, etc.).
+          PR_BRANCH="auto/research-${SAFE_LABEL:-startup}-${STAMP}-$(date -u +%H%M%S)"
+          echo "Direct push to $BRANCH failed; pushing to $PR_BRANCH and opening PR." >&2
+          git push origin "HEAD:$PR_BRANCH"
+          gh pr create --base "$BRANCH" --head "$PR_BRANCH" \
+            --title "$MESSAGE" \
+            --body "Automated research run. Direct push to \`$BRANCH\` failed after 3 attempts; merging via PR instead."

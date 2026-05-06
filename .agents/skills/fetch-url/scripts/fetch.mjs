@@ -10,10 +10,10 @@ import { argv, env, exit } from 'node:process';
 const DEFAULT_URL = 'https://openai.com';
 const DEFAULT_TIMEOUT_MS = 15_000;
 const DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
-const DEFAULT_CACHE_DIR = env.FETCH_URL_CACHE_DIR
+export const DEFAULT_CACHE_DIR = env.FETCH_URL_CACHE_DIR
   ? resolve(env.FETCH_URL_CACHE_DIR)
   : resolve(process.cwd(), '.fetch-cache');
-const DEFAULT_CACHE_TTL_HOURS = 24 * 7;
+export const DEFAULT_CACHE_TTL_HOURS = 24 * 7;
 const DEFAULT_PROFILE = 'bingbot';
 const DEFAULT_THROTTLE_MS = 750;
 
@@ -109,7 +109,7 @@ function resolveWrapperPath(wrapper) {
   return resolved;
 }
 
-// Per-host strategy fast-path. Pre-computed by `probe-strategies.mjs` and
+// Per-host strategy fast-path. Pre-computed by `probe.mjs` and
 // stored at references/host-strategies.json. When a URL's host has a known
 // winning strategy (e.g. reuters.com -> desktop-firefox, wsj.com -> wayback),
 // we skip the full origin->reader->wayback fallback chain and try that
@@ -213,11 +213,58 @@ const ENTITY_MAP = {
   lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”',
 };
 
+const NOISE_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE', 'SVG', 'IFRAME', 'CANVAS']);
+const PROTECTED_EXTRACTION_TAGS = new Set(['HTML', 'HEAD', 'BODY', 'MAIN', 'ARTICLE']);
+const NOISE_HINT_RE = /\b(cookie|cookies|consent|gdpr|privacy[-_\s]?preferences?|newsletter|subscribe[-_\s]?(modal|popup|form|box|banner)|sign[-_\s]?up[-_\s]?(modal|popup|form|box|banner)|modal|popup|overlay|interstitial|ad[-_\s]?(container|slot|banner|unit)|advertisement|social[-_\s]?(share|links?)|share[-_\s]?(buttons?|bar|widget)|related[-_\s]?(articles?|posts?)|recommended[-_\s]?(articles?|posts?)|recirculation)\b/i;
+const NOISE_TEXT_RE = /\b(cookie|cookies|consent|gdpr|newsletter|subscribe to|sign up for|share this|advertisement|sponsored)\b/i;
+const BOILERPLATE_LINE_PATTERNS = [
+  /^skip to (main )?content$/i,
+  /^(menu|open menu|close menu)$/i,
+  /^(sign in|log in)$/i,
+  /^(accept|reject|allow|deny)( all)? cookies?$/i,
+  /^(manage|customize|change|set) (cookies?|preferences|privacy settings)$/i,
+  /^cookie (settings|preferences|policy)$/i,
+  /^this (site|website) uses cookies\b.{0,220}$/i,
+  /^we use cookies\b.{0,220}$/i,
+  /^by (continuing|clicking|using this site)\b.{0,220}\bcookies?\b/i,
+  /^(subscribe|sign up) (to|for) (our|the) newsletter\.?$/i,
+  /^get (the )?(latest|updates) (in )?your inbox\.?$/i,
+  /^share this (article|post|page)$/i,
+  /^(share|follow us)( on .*)?$/i,
+  /^advertisement$/i,
+  /^sponsored( content)?$/i,
+  /^(related|recommended) (articles|posts|content)$/i,
+  /^(read more|learn more)$/i,
+  /^all rights reserved\.?$/i,
+  /^©\s?\d{4}.*all rights reserved\.?$/i,
+];
+
+function readOptionValue(args, index, flag) {
+  const value = args[index + 1];
+  if (value === undefined || value.startsWith('--')) {
+    return { error: `Missing value for ${flag}.`, value: null };
+  }
+  return { error: null, value };
+}
+
+function parseNumberOption(value, flag, { min = -Infinity, integer = false } = {}) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < min || (integer && !Number.isInteger(number))) {
+    return { error: `Invalid ${flag}: ${value}.`, value: null };
+  }
+  return { error: null, value: number };
+}
+
+function printUsageError(error) {
+  console.error(error);
+  console.error('Run with --help to see supported options.');
+}
+
 function parseArgs(args) {
   const opts = {
     url: DEFAULT_URL,
     file: null,
-    textOnly: false,
+    raw: false,
     userAgent: DEFAULT_USER_AGENT,
     viaWayback: false,
     noWayback: false,
@@ -235,39 +282,94 @@ function parseArgs(args) {
     refreshCache: false,
     noHostMap: false,
     ignoreHostMapFailures: false,
+    mainContent: true,
     maxChars: null,
+    json: false,
+    error: null,
+  };
+  const readValue = (flag, index) => {
+    const parsed = readOptionValue(args, index, flag);
+    if (parsed.error) opts.error = parsed.error;
+    return parsed.value;
   };
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
     if (arg === '--help' || arg === '-h') opts.help = true;
-    else if (arg === '--text-only' || arg === '-t') opts.textOnly = true;
-    else if (arg === '--out' || arg === '-o') opts.file = args[++i];
-    else if (arg === '--user-agent') {
-      opts.userAgent = args[++i] ?? opts.userAgent;
-      opts.userAgentOverride = true;
+    else if (arg === '--raw' || arg === '--raw-html') opts.raw = true;
+    else if (arg === '--out' || arg === '-o') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      opts.file = value;
+      i += 1;
     }
-    else if (arg === '--profile') { opts.profile = args[++i] ?? opts.profile; opts.profileOverride = true; }
+    else if (arg === '--user-agent') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      opts.userAgent = value;
+      opts.userAgentOverride = true;
+      i += 1;
+    }
+    else if (arg === '--profile') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      opts.profile = value;
+      opts.profileOverride = true;
+      i += 1;
+    }
     else if (arg === '--no-retry-profiles') opts.retryProfiles = false;
     else if (arg === '--via-wayback') opts.viaWayback = true;
     else if (arg === '--no-wayback') opts.noWayback = true;
     else if (arg === '--via-reader') opts.viaReader = true;
     else if (arg === '--no-reader') opts.noReader = true;
-    else if (arg === '--throttle-ms') opts.throttleMs = Number(args[++i] ?? opts.throttleMs);
+    else if (arg === '--throttle-ms') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      const parsed = parseNumberOption(value, arg, { min: 0 });
+      if (parsed.error) { opts.error = parsed.error; break; }
+      opts.throttleMs = parsed.value;
+      i += 1;
+    }
     else if (arg === '--no-throttle') opts.throttleMs = 0;
-    else if (arg === '--cache-dir') opts.cacheDir = resolve(args[++i] ?? opts.cacheDir);
-    else if (arg === '--cache-ttl-hours') opts.cacheTtlHours = Number(args[++i] ?? opts.cacheTtlHours);
+    else if (arg === '--cache-dir') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      opts.cacheDir = resolve(value);
+      i += 1;
+    }
+    else if (arg === '--cache-ttl-hours') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      const parsed = parseNumberOption(value, arg, { min: 0 });
+      if (parsed.error) { opts.error = parsed.error; break; }
+      opts.cacheTtlHours = parsed.value;
+      i += 1;
+    }
     else if (arg === '--no-cache') opts.noCache = true;
     else if (arg === '--refresh-cache') opts.refreshCache = true;
     else if (arg === '--no-host-map') opts.noHostMap = true;
     else if (arg === '--ignore-host-map-failures') opts.ignoreHostMapFailures = true;
-    else if (arg === '--max-chars') opts.maxChars = Number(args[++i] ?? opts.maxChars);
+    else if (arg === '--main-content') opts.mainContent = true;
+    else if (arg === '--full-text' || arg === '--no-main-content') opts.mainContent = false;
+    else if (arg === '--json') opts.json = true;
+    else if (arg === '--max-chars') {
+      const value = readValue(arg, i);
+      if (opts.error) break;
+      const parsed = parseNumberOption(value, arg, { min: 0 });
+      if (parsed.error) { opts.error = parsed.error; break; }
+      opts.maxChars = parsed.value;
+      i += 1;
+    }
+    else if (arg.startsWith('-')) {
+      opts.error = `Unknown option: ${arg}.`;
+      break;
+    }
     else opts.url = arg;
   }
   return opts;
 }
 
 function help() {
-  console.log(`Usage: node .agents/skills/fetch-url/scripts/fetch.mjs [url] [--text-only] [--out <file>] [--user-agent <ua>] [--profile <name>] [--via-reader | --no-reader] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache] [--max-chars N]
+  console.log(`Usage: node .agents/skills/fetch-url/scripts/fetch.mjs [url] [--full-text] [--raw] [--out <file>] [--json] [--user-agent <ua>] [--profile <name>] [--via-reader | --no-reader] [--via-wayback | --no-wayback] [--cache-dir <path>] [--cache-ttl-hours <n>] [--no-cache] [--refresh-cache] [--max-chars N]
 
 Default URL: ${DEFAULT_URL}
 
@@ -279,9 +381,11 @@ Throttling: network attempts wait ${DEFAULT_THROTTLE_MS}ms by default to avoid h
 
 Caching: enabled by default at ${DEFAULT_CACHE_DIR} (override with --cache-dir or FETCH_URL_CACHE_DIR env). Cached responses younger than ${DEFAULT_CACHE_TTL_HOURS}h are reused. Use --refresh-cache to bypass the read but still write, --no-cache to disable read+write entirely.
 
+Output: default output is readable text. HTML pages use Mozilla Readability to extract main content by default; PDFs output extracted text. Use --full-text only as an escape hatch when Readability likely dropped useful non-article content (product/home pages, pricing pages, docs tables, feature grids, logos, navigation context). It is not cleaner; it intentionally keeps header/footer/navigation text. Use --raw only for diagnostics or archival raw HTML/PDF bytes. Use --json for a structured object with status, final URL, source, title/PDF metadata, and extracted body/text.
+
 Wayback fallback: bot-protected sites (DataDome/Cloudflare challenge, 401/403/451/503) automatically retry through web.archive.org. Use --via-wayback to force, --no-wayback to disable.
 
-PDF support: PDF responses (detected by %PDF- magic bytes) are routed to the pdfjs-dist text extractor. With --text-only the full text is emitted, prefixed per page with '--- Page N ---'. Use --max-chars N to cap the total text size and protect agent context. Without --text-only, the default print shows PDF metadata + a short preview; --out file.pdf saves raw bytes.`);
+PDF support: PDF responses (detected by %PDF- magic bytes) are routed to the pdfjs-dist text extractor. Text is emitted with '--- Page N ---' page markers. Use --max-chars N to cap any text output and protect agent context. Use --raw --out file.pdf to save raw PDF bytes.`);
 }
 
 function wait(ms) {
@@ -480,6 +584,137 @@ function decodeEntities(text) {
     .replace(/&([a-z]+);/gi, (match, name) => ENTITY_MAP[name.toLowerCase()] ?? match);
 }
 
+function normalizePlainText(text) {
+  return String(text ?? '')
+    .replace(/[ \t\f\v]+/g, ' ')
+    .replace(/ *\n */g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function elementSignalText(el) {
+  return [
+    el.id,
+    el.className,
+    el.getAttribute?.('role'),
+    el.getAttribute?.('aria-label'),
+    el.getAttribute?.('data-testid'),
+    el.getAttribute?.('data-test'),
+  ].filter((value) => typeof value === 'string' && value.trim()).join(' ');
+}
+
+function isLikelyNoiseElement(el) {
+  const tag = el.tagName?.toUpperCase?.() ?? '';
+  if (NOISE_TAGS.has(tag)) return true;
+  if (PROTECTED_EXTRACTION_TAGS.has(tag)) return false;
+  if (el.hasAttribute?.('hidden') || String(el.getAttribute?.('aria-hidden') ?? '').toLowerCase() === 'true') return true;
+
+  const role = String(el.getAttribute?.('role') ?? '').toLowerCase();
+  const signal = elementSignalText(el);
+  const text = normalizePlainText(el.textContent ?? '').slice(0, 2000);
+  const combined = `${signal} ${text}`;
+
+  if ((role === 'dialog' || role === 'alertdialog') && NOISE_TEXT_RE.test(combined)) return true;
+  if (tag === 'FORM' && /\b(newsletter|subscribe|sign up|email updates?)\b/i.test(combined) && text.length < 1200) return true;
+  if (NOISE_HINT_RE.test(signal) && (text.length < 2000 || NOISE_TEXT_RE.test(text))) return true;
+  return false;
+}
+
+function cleanDomForExtraction(document) {
+  let removedNodes = 0;
+  for (const el of [...document.querySelectorAll('*')]) {
+    if (!el.isConnected) continue;
+    if (isLikelyNoiseElement(el)) {
+      el.remove();
+      removedNodes += 1;
+    }
+  }
+  return { removedNodes };
+}
+
+function legalNavTermCount(line) {
+  const lower = line.toLowerCase();
+  return [
+    'privacy policy',
+    'terms of service',
+    'terms of use',
+    'cookie policy',
+    'accessibility',
+    'do not sell',
+  ].filter((term) => lower.includes(term)).length;
+}
+
+function isBoilerplateLine(line) {
+  if (!line) return false;
+  if (BOILERPLATE_LINE_PATTERNS.some((pattern) => pattern.test(line))) return true;
+  if (line.length <= 180 && legalNavTermCount(line) >= 2 && line.split(/\s+/).length <= 18) return true;
+  return false;
+}
+
+function canonicalShortLine(line) {
+  return line.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+}
+
+export function cleanExtractedText(text) {
+  const normalized = normalizePlainText(text);
+  if (!normalized) return { text: '', removedLines: 0, dedupedLines: 0 };
+
+  const out = [];
+  const seenShortLines = new Set();
+  let removedLines = 0;
+  let dedupedLines = 0;
+  for (const rawLine of normalized.split('\n')) {
+    const line = rawLine.trim();
+    if (!line) {
+      if (out.length && out.at(-1) !== '') out.push('');
+      continue;
+    }
+    if (isBoilerplateLine(line)) {
+      removedLines += 1;
+      continue;
+    }
+
+    const key = canonicalShortLine(line);
+    const wordCount = key ? key.split(/\s+/).length : 0;
+    if (key && line.length <= 80 && wordCount <= 10) {
+      if (seenShortLines.has(key)) {
+        dedupedLines += 1;
+        continue;
+      }
+      seenShortLines.add(key);
+    }
+    out.push(line);
+  }
+
+  return {
+    text: normalizePlainText(out.join('\n')),
+    removedLines,
+    dedupedLines,
+  };
+}
+
+function buildCleaningMetadata(domStats, textStats) {
+  return {
+    removedNodes: domStats?.removedNodes ?? 0,
+    removedLines: textStats?.removedLines ?? 0,
+    dedupedLines: textStats?.dedupedLines ?? 0,
+  };
+}
+
+function cleanHtmlText(html) {
+  return cleanExtractedText(htmlToText(html));
+}
+
+function fullTextExtraction(textStats, { domStats = null, fallbackReason = null } = {}) {
+  return {
+    text: textStats.text,
+    method: 'full-text',
+    used: false,
+    ...(fallbackReason ? { fallbackReason } : {}),
+    cleaning: buildCleaningMetadata(domStats, textStats),
+  };
+}
+
 export function htmlToText(html) {
   const stripped = String(html ?? '')
     .replace(/<!--[\s\S]*?-->/g, '')
@@ -487,11 +722,59 @@ export function htmlToText(html) {
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(BLOCK_TAG_RE, '\n')
     .replace(/<[^>]+>/g, '');
-  return decodeEntities(stripped)
-    .replace(/[ \t\f\v]+/g, ' ')
-    .replace(/ *\n */g, '\n')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+  return normalizePlainText(decodeEntities(stripped));
+}
+
+function looksLikeHtml(text, contentType) {
+  const type = String(contentType ?? '').toLowerCase();
+  if (type.includes('html') || type.includes('xml')) return true;
+  return /<(html|body|article|main|section|div|p|header|footer|nav)\b/i.test(String(text ?? '').slice(0, 200_000));
+}
+
+async function extractHtmlText(html, url, contentType, { mainContent = true } = {}) {
+  const fallbackText = cleanHtmlText(html);
+  if (!looksLikeHtml(html, contentType)) {
+    return fullTextExtraction(fallbackText, { fallbackReason: 'not-html' });
+  }
+
+  let dom;
+  try {
+    const [{ Readability } = {}, { JSDOM }] = await Promise.all([
+      mainContent ? import('@mozilla/readability') : Promise.resolve({}),
+      import('jsdom'),
+    ]);
+    dom = new JSDOM(html, { url });
+    const domCleaning = cleanDomForExtraction(dom.window.document);
+    const cleanedFullText = cleanHtmlText(dom.serialize());
+
+    if (!mainContent) return fullTextExtraction(cleanedFullText, { domStats: domCleaning });
+
+    const article = new Readability(dom.window.document).parse();
+    const articleText = article?.content ? htmlToText(article.content) : normalizePlainText(article?.textContent ?? '');
+    const cleanedArticleText = cleanExtractedText(articleText);
+    if (!cleanedArticleText.text) {
+      return fullTextExtraction(cleanedFullText.text ? cleanedFullText : fallbackText, {
+        domStats: domCleaning,
+        fallbackReason: 'readability-empty',
+      });
+    }
+    return {
+      text: cleanedArticleText.text,
+      method: 'readability',
+      used: true,
+      contentSource: article?.content ? 'article-html' : 'article-text',
+      title: article?.title ?? null,
+      byline: article?.byline ?? null,
+      excerpt: article?.excerpt ?? null,
+      siteName: article?.siteName ?? null,
+      length: article?.length ?? cleanedArticleText.text.length,
+      cleaning: buildCleaningMetadata(domCleaning, cleanedArticleText),
+    };
+  } catch (err) {
+    return fullTextExtraction(fallbackText, { fallbackReason: err.message });
+  } finally {
+    dom?.window?.close?.();
+  }
 }
 
 // Extract text from a PDF Buffer using pdfjs-dist. Returns
@@ -668,7 +951,7 @@ export function looksLikeBotChallenge(result) {
 }
 
 // The Wayback toolbar injects <div id="wm-ipp-base">...</div> and a
-// SCRIPT_PATH redirect block. Strip them so --text-only output is just the
+// SCRIPT_PATH redirect block. Strip them so text output is just the
 // archived page content.
 export function stripWaybackToolbar(html) {
   return String(html ?? '')
@@ -678,11 +961,81 @@ export function stripWaybackToolbar(html) {
     .replace(/<link[^>]*\/static\/_wb_\/[^>]*>/gi, '');
 }
 
-async function main() {
-  const opts = parseArgs(argv.slice(2));
+async function writeOutputFile(file, output, { isPdf, raw, contentLength }) {
+  if (Buffer.isBuffer(output)) {
+    await writeFile(file, output);
+    return {
+      path: file,
+      kind: 'pdf',
+      bytes: contentLength,
+      message: `Wrote ${contentLength} bytes (PDF) to ${file}`,
+    };
+  }
+  const kind = raw && !isPdf ? 'body' : 'text';
+  await writeFile(file, output, 'utf8');
+  return {
+    path: file,
+    kind,
+    bytes: Buffer.byteLength(output, 'utf8'),
+    message: `Wrote ${kind} to ${file}`,
+  };
+}
+
+function buildJsonPayload({ result, source, cacheHit, cacheAgeMinutes, cacheTtlHours, isPdf, title, pdfMeta, pdfTruncated, textExtraction, outputTruncated, output, outputFile, raw }) {
+  const outputIsBuffer = Buffer.isBuffer(output);
+  const payload = {
+    status: result.status,
+    ok: result.ok,
+    requestedUrl: result.url,
+    finalUrl: result.finalUrl,
+    source: cacheHit ? 'cache' : source,
+    retrievalSource: source,
+    cache: {
+      hit: cacheHit,
+      ageMinutes: cacheHit ? cacheAgeMinutes : null,
+      ttlHours: cacheTtlHours,
+    },
+    contentType: result.contentType,
+    profile: result.profile,
+    bytes: result.contentLength,
+    elapsedMs: result.elapsedMs,
+    format: isPdf ? 'pdf' : 'html',
+    title,
+    truncated: outputTruncated,
+    outputKind: outputIsBuffer ? 'bytes' : (raw && !isPdf ? 'body' : 'text'),
+    outputBytes: outputIsBuffer ? output.length : Buffer.byteLength(output, 'utf8'),
+  };
+  if (textExtraction) {
+    const { text: _text, ...extraction } = textExtraction;
+    payload.extraction = extraction;
+  }
+  if (isPdf) {
+    payload.pdf = {
+      pages: pdfMeta?.numPages ?? null,
+      title,
+      author: pdfMeta?.info?.Author ?? null,
+      truncated: pdfTruncated,
+    };
+  }
+  if (outputFile) payload.outputFile = outputFile;
+  if (outputIsBuffer) {
+    if (!outputFile) payload.outputBase64 = output.toString('base64');
+    else payload.outputOmitted = 'binary output written to file';
+  } else {
+    payload.output = output;
+  }
+  return payload;
+}
+
+export async function main(args = argv.slice(2)) {
+  const opts = parseArgs(args);
   if (opts.help) {
     help();
     return;
+  }
+  if (opts.error) {
+    printUsageError(opts.error);
+    exit(2);
   }
   try {
     new URL(opts.url);
@@ -706,6 +1059,10 @@ async function main() {
     console.error(`Invalid --throttle-ms: ${opts.throttleMs}`);
     exit(2);
   }
+  if (opts.maxChars !== null && (!Number.isFinite(opts.maxChars) || opts.maxChars < 0)) {
+    console.error(`Invalid --max-chars: ${opts.maxChars}`);
+    exit(2);
+  }
 
   // Fast-path: when the user did not force a profile or fallback, consult the
   // pre-computed host -> winning-strategy map. Hosts where origin/desktop-*
@@ -725,7 +1082,7 @@ async function main() {
         const ageMs = Date.now() - new Date(entry.tested_at).valueOf();
         const ageDays = Number.isFinite(ageMs) && ageMs >= 0 ? Math.floor(ageMs / 86_400_000) : null;
         if (ageDays !== null && ageDays > STALE_DAYS) {
-          staleSuffix = ` STALE: ${ageDays}d old, consider re-running probe-strategies.mjs --refresh`;
+          staleSuffix = ` STALE: ${ageDays}d old, consider re-running probe.mjs --refresh`;
         }
       }
 
@@ -874,20 +1231,23 @@ async function main() {
   // Compute the displayable output. PDFs always go through pdfToText when we
   // need text; their raw bytes are never printed to stdout. HTML decodes the
   // Buffer to utf-8 once here, then optionally strips the Wayback toolbar
-  // and runs htmlToText.
+  // and runs the cleaned text extraction path.
   let output;
   let pdfMeta = null;
   let pdfTruncated = false;
+  let textExtraction = null;
+  let outputTruncated = false;
   let bodyStr = null;
   if (isPdf) {
-    if (opts.textOnly || !opts.file) {
-      // Need text either to print or to preview. Skip parsing when the user
-      // only wants raw bytes via --out (no --text-only).
+    if (!opts.raw || !opts.file) {
+      // Need text for the default output. Skip parsing only when the user
+      // explicitly wants raw bytes via --raw --out.
       try {
         const parsed = await pdfToText(result.body, { maxChars: opts.maxChars });
         output = parsed.text;
         pdfMeta = { numPages: parsed.numPages, info: parsed.info };
         pdfTruncated = parsed.truncated;
+        outputTruncated = parsed.truncated;
       } catch (err) {
         console.error(`[fetch-url] PDF parse failed: ${err.message}`);
         exit(1);
@@ -898,7 +1258,46 @@ async function main() {
   } else {
     bodyStr = result.body.toString('utf8');
     if (source === 'wayback') bodyStr = stripWaybackToolbar(bodyStr);
-    output = opts.textOnly ? htmlToText(bodyStr) : bodyStr;
+    if (!opts.raw) {
+      textExtraction = await extractHtmlText(bodyStr, result.finalUrl, result.contentType, { mainContent: opts.mainContent });
+      output = textExtraction.text;
+    } else {
+      output = bodyStr;
+    }
+  }
+
+  if (typeof output === 'string' && opts.maxChars !== null && output.length > opts.maxChars) {
+    output = output.slice(0, opts.maxChars);
+    outputTruncated = true;
+    if (isPdf) pdfTruncated = true;
+  }
+
+  const title = isPdf
+    ? (pdfMeta?.info?.Title?.trim() || null)
+    : (textExtraction?.title?.trim?.() || extractTitle(bodyStr));
+
+  if (opts.json) {
+    const outputFile = opts.file
+      ? await writeOutputFile(opts.file, output, { isPdf, raw: opts.raw, contentLength: result.contentLength })
+      : null;
+    console.log(JSON.stringify(buildJsonPayload({
+      result,
+      source,
+      cacheHit,
+      cacheAgeMinutes,
+      cacheTtlHours: opts.cacheTtlHours,
+      isPdf,
+      title,
+      pdfMeta,
+      pdfTruncated,
+      textExtraction,
+      outputTruncated,
+      output,
+      outputFile,
+      raw: opts.raw,
+    }), null, 2));
+    if (!result.ok) exit(1);
+    return;
   }
 
   console.log(`Status:        ${result.status} ${result.ok ? 'OK' : 'FAIL'}`);
@@ -912,45 +1311,46 @@ async function main() {
   console.log(`Bytes:         ${result.contentLength}`);
   console.log(`Elapsed:       ${result.elapsedMs} ms${cacheHit ? ' (original)' : ''}`);
   if (isPdf) {
-    const title = pdfMeta?.info?.Title?.trim() || '(not found)';
     console.log(`Format:        PDF`);
     console.log(`PDF pages:     ${pdfMeta?.numPages ?? '(unknown)'}`);
     if (pdfMeta?.info?.Author) console.log(`PDF author:    ${pdfMeta.info.Author}`);
-    console.log(`PDF title:     ${title}`);
+    console.log(`PDF title:     ${title ?? '(not found)'}`);
     if (pdfTruncated) console.log(`Truncated:     yes (--max-chars ${opts.maxChars})`);
     if (typeof output === 'string') console.log(`Text bytes:    ${output.length}`);
   } else {
-    console.log(`<title>:       ${extractTitle(bodyStr) ?? '(not found)'}`);
-    if (opts.textOnly) console.log(`Text bytes:    ${output.length}`);
+    console.log(`<title>:       ${title ?? '(not found)'}`);
+    if (!opts.raw && textExtraction) {
+      const extractionLabel = textExtraction.used
+        ? 'main-content (Readability)'
+        : `full-text${textExtraction.fallbackReason ? ` (${textExtraction.fallbackReason})` : ''}`;
+      console.log(`Text mode:     ${extractionLabel}`);
+    }
+    if (outputTruncated) console.log(`Truncated:     yes (--max-chars ${opts.maxChars})`);
+    if (!opts.raw) console.log(`Text bytes:    ${output.length}`);
   }
 
   if (opts.file) {
-    if (Buffer.isBuffer(output)) {
-      await writeFile(opts.file, output);
-      console.log(`Wrote ${result.contentLength} bytes (PDF) to ${opts.file}`);
-    } else {
-      await writeFile(opts.file, output, 'utf8');
-      console.log(`Wrote ${opts.textOnly || isPdf ? 'text' : 'body'} to ${opts.file}`);
-    }
-  } else if (isPdf && !opts.textOnly) {
-    // Default behavior for a PDF on a TTY (no --text-only, no --out): show
+    const outputFile = await writeOutputFile(opts.file, output, { isPdf, raw: opts.raw, contentLength: result.contentLength });
+    console.log(outputFile.message);
+  } else if (isPdf && opts.raw) {
+    // Raw PDF behavior on a TTY (--raw, no --out): show
     // metadata + a short text preview, but do NOT dump full text to terminal.
-    // Pass --text-only for the full extraction or --out file.pdf for bytes.
+    // Omit --raw for the normal extracted-text path, or use --raw --out file.pdf for bytes.
     const preview = (typeof output === 'string' ? output : '').slice(0, 800);
     console.log(`Preview:\n${preview}${typeof output === 'string' && output.length > 800 ? '\n…' : ''}`);
-    console.log(`(use --text-only for full text, --out file.pdf for raw bytes, --max-chars N to cap text size)`);
+    console.log(`(omit --raw for extracted text, use --raw --out file.pdf for raw bytes, --max-chars N to cap text size)`);
   } else if (!process.stdout.isTTY) {
     // Redirected/piped (e.g. `> file.txt`): emit the full body so callers do
     // not silently capture only the preview window. Interactive TTYs still
     // get the truncated preview below to protect terminal/agent context.
-    if (opts.textOnly || isPdf) console.log(`Text:\n${output}`);
+    if (!opts.raw || isPdf) console.log(`Text:\n${output}`);
     else console.log(`Body:\n${output}`);
   } else {
-    const limit = opts.textOnly ? 1000 : 500;
-    const preview = opts.textOnly
+    const limit = !opts.raw ? 1000 : 500;
+    const preview = !opts.raw
       ? output.slice(0, limit)
       : output.slice(0, limit).replace(/\s+/g, ' ').trim();
-    if (opts.textOnly) console.log(`Text:\n${preview}${output.length > limit ? '\n…' : ''}`);
+    if (!opts.raw) console.log(`Text:\n${preview}${output.length > limit ? '\n…' : ''}`);
     else console.log(`Preview:       ${preview}${output.length > limit ? '…' : ''}`);
   }
   if (!result.ok) exit(1);

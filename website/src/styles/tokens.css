@@ -1,3 +1,5 @@
+@import '@fontsource-variable/mona-sans/wght.css';
+
 /* FT.com-inspired design tokens (mirrored from the BizIdea website).
  *
  * Signature moves:
@@ -5,16 +7,8 @@
  *  - Warm near-black ink (#33302e) for text.
  *  - Claret accent (#990f3d) for the only brand color on the page.
  *  - Warm hairline rules (#ccc1b7) instead of cool gray.
- *  - Mona Sans + Noto Sans SC typography stack.
+ *  - Self-hosted Mona Sans + system CJK fallback typography stack.
  */
-
-@font-face {
-  font-family: 'Mona Sans';
-  src: url('https://github.blog/wp-content/themes/github-2021/dist/fonts/mona-sans.woff2') format('woff2');
-  font-weight: 200 900;
-  font-style: normal;
-  font-display: swap;
-}
 
 :root {
   /* Palette — FT */
@@ -45,10 +39,10 @@
   --shadow: none;
 
   /* Type stack */
-  --font-display: 'Mona Sans', 'Noto Sans SC', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-serif:   'Mona Sans', 'Noto Sans SC', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-sans:    'Mona Sans', 'Noto Sans SC', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-mono:    'JetBrains Mono', 'Courier New', monospace;
+  --font-display: 'Mona Sans Variable', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-serif:   'Mona Sans Variable', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-sans:    'Mona Sans Variable', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono:    ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
   --lh-display-hero: 1.02;
   --lh-display-block: 1.12;

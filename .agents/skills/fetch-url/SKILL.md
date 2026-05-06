@@ -1,162 +1,64 @@
 ---
 name: fetch-url
 description: "Use when: fetching raw HTML or readable text from a URL/link/page, extracting text from a PDF (10-K, S-1, prospectus, investor deck, white paper, court filing, regulatory report), saving a body to disk, extracting a page title, or inspecting official website pages. Keywords: fetch URL, fetch link, HTTP GET, scrape HTML, html to text, plain text, strip tags, page title, sitemap, PDF, pdf to text, parse PDF, extract PDF text, 10-K, S-1, prospectus, SEC filing."
-argument-hint: "<url> [--out <file>] [--text-only] [--max-chars N]"
+argument-hint: "<url> [--json] [--out <file>] [--max-chars N] [--full-text]"
 ---
 
 # Fetch URL
 
-Fetch the raw HTML or readable text of a single URL, or extract text from a PDF URL. Wraps `./scripts/fetch.mjs` and replaces native `web_fetch`-style tools.
+Fetch one URL and return useful readable content. By default, HTML pages return main-content text and PDFs return extracted text. Use `./scripts/fetch.mjs` directly.
 
-## Install (one-time, optional but recommended)
-
-`curl-impersonate` is required for the `desktop-chrome` / `desktop-firefox` / `desktop-safari` / `mobile-safari` profiles to defeat TLS/JA3 fingerprint–based bot walls (DataDome, Cloudflare, PerimeterX, etc.). Without it, those profiles silently fall back to plain `fetch()`, which fails on protected sites such as Reuters, WSJ, FT, Bloomberg.
-
-Linux x86_64 (the project's target environment):
-
-```sh
-INSTALL_DIR="$HOME/.local/share/curl-impersonate"
-TARBALL="curl-impersonate-v1.5.6.x86_64-linux-gnu.tar.gz"
-URL="https://github.com/lexiforest/curl-impersonate/releases/download/v1.5.6/$TARBALL"
-SHA256="b60344f63b9ed8806f0e9f7fd357d9f6c9a82aca279ed1e9e257d544885dcbde"
-
-mkdir -p "$INSTALL_DIR"
-cd "$INSTALL_DIR"
-curl -sSL -o "$TARBALL" "$URL"
-echo "$SHA256  $TARBALL" | sha256sum -c -
-tar -xzf "$TARBALL"
-./curl_chrome120 -s -o /dev/null -w '%{http_code}\n' https://example.com   # expect 200
-```
-
-`fetch.mjs` looks for the wrappers at `$CURL_IMPERSONATE_DIR/<wrapper>` (default `~/.local/share/curl-impersonate/`), then falls back to `$PATH`. Override the location with `CURL_IMPERSONATE_DIR=/path/to/dir` if you installed elsewhere. Other architectures (arm64, macOS, musl, Windows) have matching tarballs on the same release page — pick the one for your platform.
-
-If `curl-impersonate` is absent, the script still runs: browser profiles fall through to plain `fetch()`, the `googlebot` / `bingbot` profiles work unchanged, and the reader / Wayback fallbacks remain available.
-
-## Run
+## Start here
 
 ```sh
 node .agents/skills/fetch-url/scripts/fetch.mjs <url>
 ```
 
-Options:
+Use this default for normal source review. It is the preferred agent path: URL in, readable content out.
 
-- `--text-only` / `-t`: strip HTML/script/style into readable text. For PDFs, runs the pdfjs-dist text extractor and emits per-page text with `--- Page N ---` markers.
-- `--out <path>` / `-o <path>`: save raw HTML or cleaned text to a diagnostic file. For PDFs without `--text-only`, writes the raw PDF bytes; with `--text-only`, writes the extracted text.
-- `--max-chars <n>`: cap extracted PDF text length to protect agent context. Truncation is reported in the summary.
-- `--user-agent <ua>`: override the default desktop Chrome UA.
-- `--profile <name>`: use a browser or search engine profile (`desktop-chrome`, `desktop-firefox`, `desktop-safari`, `mobile-safari`, `googlebot`, `bingbot`; default `bingbot`). Browser profiles use `curl-impersonate` for TLS/JA3 fingerprinting.
-- `--no-retry-profiles`: do not retry other ordinary browser profiles after a bot-challenge response.
-- `--via-reader`: rewrite the URL through `r.jina.ai` reader text view (force reader fallback).
-- `--no-reader`: disable automatic `r.jina.ai` reader fallback.
-- `--via-wayback`: rewrite the URL through `web.archive.org` before fetching (force snapshot).
-- `--no-wayback`: disable the automatic Wayback retry.
-- `--throttle-ms <n>`: wait before each network attempt (default `750`) to avoid hammering a host.
-- `--no-throttle`: disable the default throttle.
-- `--cache-dir <path>`: override the on-disk cache directory (default `./.fetch-cache/` or `$FETCH_URL_CACHE_DIR`).
-- `--cache-ttl-hours <n>`: how long cached responses stay valid (default `168` = 7 days).
-- `--no-cache`: disable cache reads and writes for this call.
-- `--refresh-cache`: bypass the cache read but still write the new response.
-- `--no-host-map`: ignore the pre-computed host -> strategy map and run the standard origin/reader/wayback chain.
-- `--ignore-host-map-failures`: when the host is in the map as a known-failure (`strategy: null`), still attempt the full chain instead of exiting with code 4.
-- `--help`: print CLI usage.
+## Common parameters
 
-## Caching (default ON)
+- `--json`: use when another script/agent step needs structured fields such as status, final URL, source/cache state, title/PDF metadata, extraction mode, and output text.
+- `--out <file>` / `-o <file>`: use when the output is long, should be grepped later, or should be kept as a diagnostic artifact. By default this saves the same readable text that would be printed.
+- `--max-chars <n>`: use to protect context on long pages, filings, reports, or PDFs. The output says when it was truncated.
+- `--full-text` / `--no-main-content`: use only when the default output looks suspiciously short or misses important page sections. This keeps more page chrome and is useful for product/home pages, pricing pages, feature grids, docs tables, customer logos, or navigation context. It is not a cleaner mode.
+- `--raw` / `--raw-html`: use only for diagnostics or archival when you need original HTML or raw PDF bytes. For PDFs, pair it with `--out`, e.g. `--raw --out report.pdf`.
 
-The script writes successful responses to `./.fetch-cache/<sha256>.json` (relative to the current working directory) and reuses them on subsequent calls when they are younger than `--cache-ttl-hours` (default 7 days). This avoids repeat bandwidth and rate-limit hits when the same URL is fetched more than once.
+## PDF scenarios
 
-- Cache key is the canonicalized URL (sorted query params, lowercase host, no fragment) plus a source suffix (`:origin`, `:reader`, `:wayback`); origin, reader, and snapshot fetches never collide.
-- Failed responses (non-2xx) and bot-challenge bodies are not cached. Reader and Wayback fallbacks cache under their own keys so retries can reuse the best successful retrieval path directly.
-- Set `FETCH_URL_CACHE_DIR=/path/to/cache` to point all calls at a shared cache directory.
-- Use `--refresh-cache` to force a re-fetch when you suspect the page changed; use `--no-cache` for ad-hoc checks where you want network truth every time.
+- Normal PDF review: `node .agents/skills/fetch-url/scripts/fetch.mjs <pdf-url>`
+- Long filing/report: add `--max-chars 50000` or another cap.
+- Save extracted text: add `--out report.txt`.
+- Save the original PDF file: add `--raw --out report.pdf`.
 
-## Host strategy map (fast-path)
+Scanned PDFs without a text layer may return empty/whitespace text; this skill does not OCR.
 
-`references/host-strategies.json` maps known hosts to the cheapest strategy that empirically succeeded for them. The bundled map covers ~290 hosts across AI/ML, SaaS, dev tools, fintech, biotech, climate, news, regulators, patents, funding databases, code/package registries, and more. When a fetched URL's host resolves to an entry, the script jumps straight to that strategy and skips the full origin -> retry-other-browsers -> reader -> wayback chain.
+## Rare troubleshooting parameters
 
-### Lookup order
+Use these only when the simple command is blocked, stale, or needs a controlled retry.
 
-Lookup tries three keys in order, cheapest to most general:
+- `--refresh-cache`: use when a page likely changed and cached content may be stale.
+- `--no-cache`: use when you need one network-truth check and do not want to read or write cache.
+- `--cache-dir <path>`: use when multiple runs should share a specific cache location.
+- `--cache-ttl-hours <n>`: use when the default cache lifetime is too short or too long for a source.
+- `--profile <name>`: use when a source behaves differently by caller identity. Supported names: `bingbot`, `googlebot`, `desktop-chrome`, `desktop-firefox`, `desktop-safari`, `mobile-safari`.
+- `--user-agent <ua>`: use only when you must test a specific User-Agent string.
+- `--no-retry-profiles`: use to reproduce the first attempt without automatic identity retries.
+- `--via-reader`: use when the origin page is blocked or too noisy and a reader-style copy is acceptable.
+- `--via-wayback`: use when the live page is blocked, removed, or you need an archived snapshot.
+- `--no-reader` / `--no-wayback`: use when you must avoid fallback sources and inspect only the live/origin behavior.
+- `--no-host-map`: use when you want to ignore saved per-host strategy choices for a fresh diagnostic attempt.
+- `--ignore-host-map-failures`: use when a host was previously marked as blocked but you want to test it again.
+- `--throttle-ms <n>`: use to slow down requests to sensitive hosts.
+- `--no-throttle`: use only for quick local diagnostics where rate pressure is not a concern.
+- `--help`: print the script's full CLI help.
 
-1. **Exact host** — `www.reuters.com` matches a `"www.reuters.com"` entry.
-2. **`www.` alias swap** — if the exact host misses, try with `www.` added or stripped (so `openai.com` and `www.openai.com` are interchangeable).
-3. **Registrable domain** — if both miss, try the eTLD+1 (e.g. `data.sec.gov` looks for `"sec.gov"`). Layer 3 only matches when the bare-domain key is *explicitly* in the map; we never auto-coerce subdomains so peers like `en.wikipedia.org` and `www.wikipedia.org` can keep distinct strategies.
+## Use for / do not use for
 
-The matched key is shown in the log line, e.g. `host-map: www.openai.com via openai.com -> bingbot`.
+Use for single-URL source review, readable-text extraction, PDF text extraction, page-title/reachability checks, grep-friendly dumps, and local diagnostic snapshots.
 
-### Distribution in the bundled map (296 hosts)
-
-- `bingbot` (cheapest, no curl-impersonate spawn): ~55% — most company sites, AWS/GCP, NYT, GitHub, Stripe, OpenAI, arxiv, search engines.
-- `desktop-chrome`: ~27% — Anthropic, Notion, Bloomberg, SEC, Crunchbase, FTC/FCC/Treasury, Salesforce, Snowflake.
-- `reader` (r.jina.ai): ~11% — Stack Overflow, HuggingFace, Economist, LinkedIn, Quora, Klarna, Hims.
-- `wayback`: ~3% — WSJ, IMDB, Capterra, Trustpilot, OECD, Britannica.
-- `desktop-firefox`: ~2% — Reuters, FT, Gartner, investing.com (Chrome JA3 blocked, Firefox passes).
-- `desktop-safari` / `mobile-safari` / `googlebot`: rare specialists (McKinsey, G2, japantimes).
-- A handful of hosts have no working strategy and are flagged `strategy: null` (Glassdoor, signalnfx, espacenet, sometimes Reddit) — these need their official APIs or a real headless browser. Calls to such hosts exit with code 4 and an actionable message; pass `--ignore-host-map-failures` to attempt the full chain anyway.
-
-### Behaviour and overrides
-
-- If the chosen strategy now fails (site changed protection), the standard reader/wayback fallback chain still runs — the map only chooses the *first* attempt, never disables fallbacks.
-- Entries older than 90 days print a `STALE: Nd old, consider re-running probe-strategies.mjs --refresh` suffix in the log line.
-- `--no-host-map` skips the map entirely for one call; `--profile <name>` / `--via-reader` / `--via-wayback` also bypass the map.
-- `--ignore-host-map-failures` overrides the known-failure short-circuit (useful when probing whether a previously-blocked site has reopened).
-
-### Refresh the map
-
-Re-run the probe when:
-
-- a host that used to work now fails (`--refresh --hosts host1.com,host2.com` for a targeted re-test);
-- you add new hosts to the URL set in `scripts/probe-strategies.mjs`;
-- it's been a few months and you want to revalidate everything (`--refresh` for a full re-test).
-
-```sh
-# Probe only new hosts (cheap; skips ones already in the map):
-node .agents/skills/fetch-url/scripts/probe-strategies.mjs
-
-# Re-test specific hosts after their protection seems to have changed:
-node .agents/skills/fetch-url/scripts/probe-strategies.mjs --refresh --hosts www.reuters.com,www.wsj.com
-
-# Full refresh with parallel workers (default concurrency=6):
-node .agents/skills/fetch-url/scripts/probe-strategies.mjs --refresh --concurrency 8
-```
-
-The probe walks each strategy in cost order (`bingbot` -> `desktop-chrome` -> `desktop-firefox` -> `desktop-safari` -> `mobile-safari` -> `googlebot` -> `reader` -> `wayback`) and records the first one that returns a 200, non-bot-challenge body of at least 500 bytes. Each per-attempt timeout is 8 s (vs. 15 s for production fetches) so a fully-blocked host fails fast (~1 min worst case). Output is prefixed with `[N/total]` so progress is visible.
-
-## Bot-protected sites
-
-Sites behind DataDome, Cloudflare, PerimeterX, etc. block direct HTTP fetches with a 401/403/429/451/503 or a JS challenge page even when the User-Agent looks legitimate. The script handles this automatically:
-
-- The first attempt uses the requested profile with browser-like headers and a small default throttle.
-- If the response is a known bot-challenge status or body marker, it retries the other browser profiles (`desktop-chrome`, `desktop-firefox`, `desktop-safari`, `mobile-safari`) — each one using its own TLS/JA3 fingerprint via `curl-impersonate` — unless `--no-retry-profiles` is set.
-- If origin attempts still look blocked, it tries `r.jina.ai` reader text view and prints `Source: reader (r.jina.ai text view)` on success.
-- If reader fallback is disabled or still blocked, it retries through `https://web.archive.org/web/<currentYear>/<url>` and prints `Source: wayback (web.archive.org snapshot)`.
-- The Wayback toolbar (`<div id="wm-ipp-base">` etc.) is stripped before `--text-only` output so the readable text is just the archived page.
-- Use `--via-reader` or `--via-wayback` to skip the origin attempt and go straight to a fallback path; use `--no-reader` or `--no-wayback` when you only want the raw origin/challenge behavior.
-
-## Use for
-
-- Single-URL HTML or readable-text retrieval.
-- PDF text extraction (10-K, S-1, prospectus, investor deck, white paper, court filing, regulatory report).
-- Page-title extraction, reachability checks, and grep-friendly text dumps.
-- Local diagnostic snapshots via `--text-only --out <path>` when repeated extraction or grep would be useful.
-
-## PDFs
-
-PDF responses are detected automatically by the `%PDF-` magic bytes at the start of the body — the URL extension and Content-Type are ignored, so an HTML error page served at a `.pdf` URL still flows through the HTML path, and a no-extension URL (e.g. SEC EDGAR) that returns a real PDF is still parsed correctly. The host-map / curl-impersonate / cache / reader / wayback chain all apply unchanged.
-
-- `node fetch.mjs <pdf-url>` (no `--text-only`): prints metadata (page count, title, author) plus a short preview of the extracted text. The raw bytes are not dumped to the terminal.
-- `node fetch.mjs <pdf-url> --text-only`: prints the full extracted text, with each page prefixed by `--- Page N ---` so callers can cite specific pages in evidence.
-- `node fetch.mjs <pdf-url> --text-only --max-chars 50000`: cap total text length to protect agent context.
-- `node fetch.mjs <pdf-url> --out report.pdf`: save the raw PDF bytes for later re-parsing or archival.
-- `node fetch.mjs <pdf-url> --text-only --out report.txt`: save extracted text to disk.
-
-Scanned PDFs without a text layer return empty or whitespace-only text. v1 does not run OCR — switch to a different source or hand the file to an OCR tool.
-
-## Do not use for
-
-- Multi-page crawling, JavaScript-rendered login flows, or interactive pages; use browser tooling instead.
-- Broad source discovery; use search first, then fetch direct URLs for review.
+Do not use for broad source discovery, multi-page crawling, JavaScript login flows, or interactive pages. Search first, then fetch direct URLs.
 
 ## Completion check
 
-- Confirm status, final URL, content type, bytes, elapsed time, and title in the printed summary.
-- For non-2xx responses, record the failure rather than inventing page content.
+Confirm status, final URL, source/cache state, content type, bytes, elapsed time, title/PDF metadata, and whether output was truncated. For non-2xx responses, record the failure rather than inventing page content.

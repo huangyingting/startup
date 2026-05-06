@@ -89,10 +89,6 @@ const reportTables = arr(doc?.tables);
 const figureCount = reportFigures.length;
 const tableCount = reportTables.length;
 
-const claimLinkMap = Object.fromEntries(
-  claims.map((claim: any) => [claim.id, { href: `#claim-${claim.id}`, title: claim.statement ?? claim.id }])
-);
-
 const keyMetrics = data.keyMetrics ?? {};
 const fallbackMetrics = [
   ['Valuation', moneyM(keyMetrics.valuationUsdM)],
@@ -361,52 +357,8 @@ const fallbackMetrics = [
   </button>
 </section>
 
-<script type="application/json" id="claim-link-map" set:html={JSON.stringify(claimLinkMap)}></script>
-<script type="module" is:inline>
-  // Replace inline `[C123]` markers in body text with linked spans, and wire
-  // the evidence toggle to show/hide the markers throughout the report.
-  const claimLinkMapElement = document.getElementById('claim-link-map');
-  const claimLinkMap = claimLinkMapElement
-    ? JSON.parse(claimLinkMapElement.textContent || '{}')
-    : {};
-
-  const makeClaimRef = (ref) => {
-    const link = claimLinkMap[ref] || { href: `#claim-${ref}`, title: ref };
-    const span = document.createElement('span');
-    span.className = 'claim-ref';
-    span.append('[');
-    const anchor = document.createElement('a');
-    anchor.href = link.href;
-    anchor.textContent = ref;
-    anchor.title = link.title || ref;
-    span.append(anchor, ']');
-    return span;
-  };
-
+<script>
   const reportShell = document.querySelector('.report-shell');
-  if (reportShell) {
-    const walker = document.createTreeWalker(reportShell, NodeFilter.SHOW_TEXT, {
-      acceptNode(node) {
-        const parent = node.parentElement;
-        if (!parent || parent.closest('script, style, pre, a, .claim-ref')) return NodeFilter.FILTER_REJECT;
-        return /\[C\d{3}\]/.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-      },
-    });
-    const nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
-    for (const node of nodes) {
-      const fragment = document.createDocumentFragment();
-      const text = node.nodeValue || '';
-      let lastIndex = 0;
-      for (const match of text.matchAll(/\[(C\d{3})\]/g)) {
-        if (match.index > lastIndex) fragment.append(text.slice(lastIndex, match.index));
-        fragment.append(makeClaimRef(match[1]));
-        lastIndex = match.index + match[0].length;
-      }
-      if (lastIndex < text.length) fragment.append(text.slice(lastIndex));
-      node.parentNode?.replaceChild(fragment, node);
-    }
-  }
 
   const printButton = document.querySelector('[data-print-pdf]');
   if (printButton) {
@@ -427,12 +379,17 @@ const fallbackMetrics = [
   const backToTop = document.querySelector('[data-back-to-top]');
   if (backToTop) {
     const threshold = 600;
+    let backToTopFrame = 0;
     const sync = () => {
+      backToTopFrame = 0;
       const visible = window.scrollY > threshold;
       backToTop.toggleAttribute('hidden', !visible);
     };
+    const scheduleSync = () => {
+      if (!backToTopFrame) backToTopFrame = requestAnimationFrame(sync);
+    };
     sync();
-    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('scroll', scheduleSync, { passive: true });
     backToTop.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
@@ -777,6 +734,8 @@ const fallbackMetrics = [
       page-break-before: always;
       padding-block: 0 !important;
       border-top: 0;
+      content-visibility: visible;
+      contain-intrinsic-size: none;
     }
     /* Glue cover-metrics, profile, and exec summary into one block. */
     .report-section.cover-metrics,

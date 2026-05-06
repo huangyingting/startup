@@ -1,11 +1,11 @@
 import type { CollectionEntry } from 'astro:content';
 
 export function sortNewest(entries: CollectionEntry<'reports'>[]): CollectionEntry<'reports'>[] {
-  return [...entries].sort((a, b) => b.data.runTimestamp.localeCompare(a.data.runTimestamp));
+  return [...entries].sort((a, b) => b.data.runTimestamp.localeCompare(a.data.runTimestamp) || b.data.runId.localeCompare(a.data.runId));
 }
 
 export function sortTopRated(entries: CollectionEntry<'reports'>[]): CollectionEntry<'reports'>[] {
-  return [...entries].sort((a, b) => b.data.overallScore - a.data.overallScore || b.data.runTimestamp.localeCompare(a.data.runTimestamp));
+  return [...entries].sort((a, b) => b.data.overallScore - a.data.overallScore || b.data.runTimestamp.localeCompare(a.data.runTimestamp) || b.data.runId.localeCompare(a.data.runId));
 }
 
 export function tagSlug(value: string): string {

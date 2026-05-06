@@ -17,7 +17,7 @@ const usesD3Chart = chartTypes.has(type);
 const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
 const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
 const blockRefs = (block: any) => arr<string>(block?.claimRefs).slice(0, 6);
-const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.title, data } : null;
+const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? { layout } : {}), data } : null;
 ---
 
 <figure class:list={['native-figure', `figure-${type}`, `layout-${layout}`]}>
@@ -25,7 +25,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
 
   {figure.summary && <p class="figure-summary">{figure.summary}</p>}
 
-  {usesD3Chart && <div id={chartId} class:list={['d3-figure', `chart-${type}`]} data-chart-type={type}></div>}
+  {usesD3Chart && <div id={chartId} class:list={['d3-figure', `chart-${type}`]}></div>}
 
   {type === 'other' && (
     <div class="figure-fallback" role="note">
@@ -36,7 +36,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
 
   {figure.approximationNotes && <p class="figure-note">{figure.approximationNotes}</p>}
   <ClaimRefs refs={blockRefs(figure)} claims={claims} sources={sources} />
-  {chartPayload && <script type="application/json" class="figure-chart-data" data-chart-id={chartId} set:html={JSON.stringify(chartPayload)}></script>}
+  {chartPayload && <script type="application/json" class="figure-chart-data" set:html={JSON.stringify(chartPayload)}></script>}
 </figure>
 
 <script>
@@ -200,7 +200,15 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       tooltip.hide();
     });
   const wrapWords = (text, maxChars = 18, maxLines = 2) => {
-    const words = String(text ?? '').split(/\s+/).filter(Boolean);
+    const chunkSize = Math.max(4, Math.floor(maxChars));
+    const splitLongWord = (word) => {
+      const chars = Array.from(String(word ?? ''));
+      if (chars.length <= chunkSize) return [word];
+      const chunks = [];
+      for (let index = 0; index < chars.length; index += chunkSize) chunks.push(chars.slice(index, index + chunkSize).join(''));
+      return chunks;
+    };
+    const words = String(text ?? '').split(/\s+/).filter(Boolean).flatMap(splitLongWord);
     if (!words.length) return [''];
     const lines = [];
     let line = '';
@@ -326,21 +334,34 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
      * vertical stacked mode. */
     const compact = containerWidth < (prefersWide ? 520 : 640) || (!prefersWide && stages.length >= 5);
     const maxRows = Math.max(...stages.map((stage) => stage.length), 1);
-    const compactHeight = 74 + stages.reduce((sum, stage) => sum + 30 + stage.length * 76 + Math.max(0, stage.length - 1) * 16 + 36, 0);
-    const horizontalMinWidth = compact ? null : Math.max(containerWidth, prefersWide ? stages.length * 230 : stages.length * 210, 820);
-    const { svg, width, height } = svgBase(element, compact ? Math.max(520, compactHeight) : Math.max(350, 118 + maxRows * 108), horizontalMinWidth);
-    const margin = compact ? { top: 36, right: 24, bottom: 34, left: 24 } : { top: 42, right: 34, bottom: 40, left: 34 };
+    const cardH = compact ? 74 : 78;
+    const compactHeight = 74 + stages.reduce((sum, stage) => sum + 30 + stage.length * cardH + Math.max(0, stage.length - 1) * 16 + 36, 0);
+    const horizontalMinWidth = compact ? null : Math.max(containerWidth, prefersWide && stages.length > 4 ? stages.length * 190 : 0, 760);
+    const { svg, width, height } = svgBase(element, compact ? Math.max(540, compactHeight) : Math.max(380, 126 + maxRows * (cardH + 42)), horizontalMinWidth);
+    const margin = compact ? { top: 36, right: 24, bottom: 34, left: 24 } : { top: 42, right: 22, bottom: 40, left: 22 };
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
     const stageW = innerW / Math.max(stages.length, 1);
     /* In compact (vertical) mode reserve horizontal gutter space around the
      * centered cards. Edges alternate between left and right gutters by
      * stage-pair so the chart does not collapse into one cable bundle. */
-    const compactGutter = compact ? 128 : 0;
-    const horizontalGutter = stages.length >= 4 ? 78 : 60;
-    const cardW = compact ? Math.min(360, innerW - 18 - compactGutter) : Math.max(112, Math.min(144, stageW - horizontalGutter));
-    const cardH = compact ? 66 : 68;
+    const compactGutter = compact ? Math.min(128, Math.max(72, innerW * 0.18)) : 0;
+    const horizontalGap = stages.length >= 4 ? 28 : 36;
+    const preferredCardW = prefersWide ? 184 : 176;
+    const horizontalCardW = stages.length
+      ? (innerW - horizontalGap * Math.max(0, stages.length - 1)) / stages.length
+      : preferredCardW;
+    const cardW = compact ? Math.max(220, Math.min(420, innerW - 18 - compactGutter)) : Math.max(136, Math.min(preferredCardW, horizontalCardW));
     const compactCenterX = width / 2;
+    const stageCenterXs = compact ? [] : stages.map((_stage, stageIndex) => {
+      if (stages.length <= 1) return compactCenterX;
+      const firstCenter = margin.left + cardW / 2;
+      const lastCenter = width - margin.right - cardW / 2;
+      return firstCenter + ((lastCenter - firstCenter) * stageIndex) / (stages.length - 1);
+    });
+    const stageCenterX = (stageIndex) => stageCenterXs[stageIndex] ?? compactCenterX;
+    const stageGapW = stageCenterXs.length > 1 ? Math.abs(stageCenterXs[1] - stageCenterXs[0]) : stageW;
+    const stageBoundaryX = (stageIndex) => (stageCenterX(stageIndex) + stageCenterX(Math.min(stageIndex + 1, stages.length - 1))) / 2;
     const stageLabels = [];
     const positions = [];
     if (compact) {
@@ -355,10 +376,10 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       });
     } else {
       stages.forEach((stage, stageIndex) => {
-        stageLabels.push({ label: stageNames[stageIndex], x: margin.left + stageW * stageIndex + stageW / 2, y: 24 });
+        stageLabels.push({ label: stageNames[stageIndex], x: stageCenterX(stageIndex), y: 24 });
         const gap = innerH / Math.max(stage.length, 1);
         stage.forEach((node, index) => {
-          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: margin.left + stageW * stageIndex + stageW / 2, y: margin.top + gap * index + gap / 2 });
+          positions.push({ ...node, _stage: stageIndex, _role: stageRole(stageIndex), x: stageCenterX(stageIndex), y: margin.top + gap * index + gap / 2 });
         });
       });
     }
@@ -404,7 +425,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       .attr('letter-spacing', chartFont.tracking.caps)
       .each(function(label) {
         renderWrappedText(d3.select(this), label.label, {
-          maxChars: compact ? Math.max(18, Math.floor((width - 68) / 7.2)) : Math.max(10, Math.floor(stageW / 8.2)),
+          maxChars: compact ? Math.max(18, Math.floor((width - 68) / 7.2)) : Math.max(10, Math.floor(stageGapW / 8.2)),
           maxLines: compact ? 2 : 1,
           lineHeight: chartFont.lineHeight.tight,
         });
@@ -643,7 +664,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       if (!compact) {
         const laneOffset = ((edge._laneIndex ?? 0) - ((edge._laneCount ?? 1) - 1) / 2) * 14;
         for (let stageIndex = stageMin; stageIndex < stageMax; stageIndex++) {
-          const gutterX = margin.left + stageW * (stageIndex + 1) + laneOffset;
+          const gutterX = stageBoundaryX(stageIndex) + laneOffset;
           if (gutterX > bounds.left && gutterX < bounds.right) xs.add(norm(gutterX));
         }
       }
@@ -814,7 +835,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       const addViaX = (x) => paths.push(simplifyPath([start, sourceStub, { x, y: sourceStub.y }, { x, y: targetStub.y }, targetStub, end]));
       const addViaY = (y) => paths.push(simplifyPath([start, sourceStub, { x: sourceStub.x, y }, { x: targetStub.x, y }, targetStub, end]));
       if (!compact && stageMax > stageMin) {
-        const gutterX = margin.left + stageW * (stageMin + 1) + laneOffset;
+        const gutterX = stageBoundaryX(stageMin) + laneOffset;
         addViaX(gutterX);
       }
       addViaX((sourceStub.x + targetStub.x) / 2 + laneOffset);
@@ -894,7 +915,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       .attr('rx', 2)
       .attr('fill', (node) => colorForTone(node.tone))
       .attr('opacity', 0.78);
-    const glyphs = cards.append('g').attr('transform', `translate(${-cardW / 2 + 24},${-cardH / 2 + 35})`);
+    const glyphs = cards.append('g').attr('transform', `translate(${-cardW / 2 + 24},0)`);
     glyphs.append('circle')
       .attr('r', 6)
       .attr('fill', (node) => node._role === 'core' ? colorForTone(node.tone) : 'none')
@@ -913,8 +934,15 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       .attr('stroke-width', 2)
       .attr('stroke-linecap', 'round')
       .attr('stroke-linejoin', 'round');
-    cards.append('text').attr('x', -cardW / 2 + 42).attr('y', compact ? 4 : 5).attr('fill', palette.ink).attr('font-size', chartFont.label).attr('font-weight', fontWeight('label')).each(function(node) {
-      renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(12, Math.floor((cardW - 54) / 8)), maxLines: 2, lineHeight: chartFont.lineHeight.small });
+    const nodeLabelFontSize = compact ? chartFont.small : chartFont.axis;
+    const nodeLabelLineHeight = compact ? chartFont.lineHeight.tight : chartFont.lineHeight.small;
+    const nodeLabelMaxWidth = Math.max(72, cardW - 58);
+    cards.append('text').attr('x', -cardW / 2 + 42).attr('y', compact ? 4 : 5).attr('fill', palette.ink).attr('font-size', nodeLabelFontSize).attr('font-weight', fontWeight('label')).each(function(node) {
+      renderWrappedText(d3.select(this), node.label, {
+        maxChars: Math.max(10, Math.floor(nodeLabelMaxWidth / (nodeLabelFontSize * 0.58))),
+        maxLines: compact ? 2 : 3,
+        lineHeight: nodeLabelLineHeight,
+      });
     });
     cards.each(function(node) { addTitle(d3.select(this), `${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
     withTooltip(cards, (node) => tooltipHtml(node.label, [node.detail, node._role === 'input' ? 'Input dependency' : node._role === 'impact' ? 'Downstream impact' : 'Core dependency']));
@@ -930,9 +958,12 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     });
     const containerWidth = element.getBoundingClientRect().width || 760;
     const compact = containerWidth < 520;
-    const cardH = compact ? 96 : 118;
-    const gap = compact ? 18 : 34;
-    const margin = compact ? { top: 14, right: 18, bottom: 18, left: 16 } : { top: 24, right: 34, bottom: 30, left: 30 };
+    const hasDetails = nodes.some((node) => String(node.detail ?? '').trim());
+    const cardH = hasDetails ? (compact ? 96 : 118) : (compact ? 72 : 84);
+    const gap = hasDetails ? (compact ? 18 : 34) : (compact ? 14 : 24);
+    const margin = compact
+      ? { top: hasDetails ? 14 : 12, right: 18, bottom: hasDetails ? 18 : 14, left: 16 }
+      : { top: hasDetails ? 24 : 20, right: 34, bottom: hasDetails ? 30 : 22, left: 30 };
     const { svg, width, height } = svgBase(element, Math.max(260, margin.top + margin.bottom + nodes.length * cardH + Math.max(0, nodes.length - 1) * gap));
     const railX = margin.left + (compact ? 24 : 34);
     const cardX = margin.left + (compact ? 64 : 96);
@@ -943,7 +974,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
     gradient.append('stop').attr('offset', '100%').attr('stop-color', '#fbf0e8');
     const stepY = (index) => margin.top + index * (cardH + gap);
     const connectorData = nodes.slice(0, -1).map((node, index) => ({ source: node, target: nodes[index + 1], edge: edgeBetween(node, nodes[index + 1]), index }));
-    const railRadius = compact ? 17 : 22;
+    const railRadius = hasDetails ? (compact ? 17 : 22) : (compact ? 15 : 18);
+    const innerRailRadius = hasDetails ? (compact ? 12 : 16) : (compact ? 10.5 : 13);
     const connectorStartY = (index) => stepY(index) + cardH / 2 + railRadius + 3;
     const connectorArrowBaseY = (index) => stepY(index + 1) + cardH / 2 - railRadius - (compact ? 9 : 10);
     const connectorArrowTipY = (index) => stepY(index + 1) + cardH / 2 - railRadius - 3;
@@ -997,8 +1029,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       .attr('font-weight', fontWeight('label'))
       .text((d) => labelText(visibleEdgeLabel(d.edge), 12));
     const railNodes = svg.append('g').selectAll('g').data(nodes).join('g').attr('transform', (_node, index) => `translate(${railX},${stepY(index) + cardH / 2})`);
-    railNodes.append('circle').attr('r', compact ? 17 : 22).attr('fill', '#fff7ef').attr('stroke', (node) => colorForTone(node.tone)).attr('stroke-width', compact ? 2.4 : 3);
-    railNodes.append('circle').attr('r', compact ? 12 : 16).attr('fill', (node) => colorForTone(node.tone));
+    railNodes.append('circle').attr('r', railRadius).attr('fill', '#fff7ef').attr('stroke', (node) => colorForTone(node.tone)).attr('stroke-width', compact ? 2.4 : 3);
+    railNodes.append('circle').attr('r', innerRailRadius).attr('fill', (node) => colorForTone(node.tone));
     railNodes.append('text').attr('y', compact ? 4 : 5).attr('text-anchor', 'middle').attr('fill', '#fff7ef').attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('emphasis')).text((node) => node._index + 1);
     const cards = svg.append('g').selectAll('g').data(nodes).join('g').attr('transform', (_node, index) => `translate(${cardX},${stepY(index)})`);
     cards.append('rect')
@@ -1009,13 +1041,19 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       .attr('stroke', (node) => colorForTone(node.tone))
       .attr('stroke-width', 1.9);
     const textX = compact ? 18 : 24;
-    cards.append('text').attr('x', textX).attr('y', compact ? 18 : 26).attr('fill', palette.claret).attr('font-size', compact ? chartFont.size.tiny : chartFont.size.caption).attr('font-weight', fontWeight('label')).attr('letter-spacing', chartFont.tracking.caps).text((node) => node._index === nodes.length - 1 ? 'DECISION' : node.tone === 'risk' || node.tone === 'critical' || node.tone === 'high' ? 'CONSTRAINT' : 'EVIDENCE');
-    cards.append('text').attr('x', textX).attr('y', compact ? 40 : 52).attr('fill', palette.ink).attr('font-size', compact ? chartFont.label : chartFont.size.title).attr('font-weight', fontWeight('emphasis')).each(function(node) {
-      renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(compact ? 22 : 24, Math.floor((cardW - textX * 2) / (compact ? 7.8 : 8.4))), maxLines: 2, lineHeight: compact ? chartFont.lineHeight.small : chartFont.lineHeight.title });
+    const eyebrowY = hasDetails ? (compact ? 18 : 26) : (compact ? 17 : 22);
+    const labelY = hasDetails ? (compact ? 40 : 52) : (compact ? 45 : 52);
+    const labelFontSize = hasDetails ? (compact ? chartFont.label : chartFont.size.title) : (compact ? chartFont.axis : chartFont.label);
+    const labelLineHeight = hasDetails ? (compact ? chartFont.lineHeight.small : chartFont.lineHeight.title) : chartFont.lineHeight.label;
+    cards.append('text').attr('x', textX).attr('y', eyebrowY).attr('fill', palette.claret).attr('font-size', compact ? chartFont.size.tiny : chartFont.size.caption).attr('font-weight', fontWeight('label')).attr('letter-spacing', chartFont.tracking.caps).text((node) => node._index === nodes.length - 1 ? 'DECISION' : node.tone === 'risk' || node.tone === 'critical' || node.tone === 'high' ? 'CONSTRAINT' : 'EVIDENCE');
+    cards.append('text').attr('x', textX).attr('y', labelY).attr('fill', palette.ink).attr('font-size', labelFontSize).attr('font-weight', fontWeight('emphasis')).each(function(node) {
+      renderWrappedText(d3.select(this), node.label, { maxChars: Math.max(compact ? 22 : 24, Math.floor((cardW - textX * 2) / (compact ? 7.8 : 8.4))), maxLines: 2, lineHeight: labelLineHeight });
     });
-    cards.append('text').attr('x', textX).attr('y', compact ? 66 : 84).attr('fill', palette.muted).attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('regular')).each(function(node) {
-      renderWrappedText(d3.select(this), node.detail, { maxChars: Math.max(compact ? 34 : 40, Math.floor((cardW - textX * 2) / (compact ? 6.2 : 6.5))), maxLines: compact ? 2 : 3, lineHeight: compact ? chartFont.lineHeight.compact : chartFont.lineHeight.small });
-    });
+    if (hasDetails) {
+      cards.append('text').attr('x', textX).attr('y', compact ? 66 : 84).attr('fill', palette.muted).attr('font-size', compact ? chartFont.size.caption : chartFont.small).attr('font-weight', fontWeight('regular')).each(function(node) {
+        renderWrappedText(d3.select(this), node.detail, { maxChars: Math.max(compact ? 34 : 40, Math.floor((cardW - textX * 2) / (compact ? 6.2 : 6.5))), maxLines: compact ? 2 : 3, lineHeight: compact ? chartFont.lineHeight.compact : chartFont.lineHeight.small });
+      });
+    }
     cards.each(function(node) { addTitle(d3.select(this), `${node._index + 1}. ${node.label}${node.detail ? ` — ${node.detail}` : ''}`); });
   };
 
@@ -1883,11 +1921,25 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
   };
 
   const renderD3 = (element, payload) => {
-    let result;
-    result = RENDERERS[payload.type]?.(element, payload);
-    normalizeRenderedTypography(element);
-    normalizeRenderedFlatStyle(element);
-    return result;
+    try {
+      const result = RENDERERS[payload.type]?.(element, payload);
+      normalizeRenderedTypography(element);
+      normalizeRenderedFlatStyle(element);
+      return result;
+    } catch (error) {
+      console.error(`[FigureRenderer] Failed to render ${payload?.id ?? payload?.type ?? 'figure'}`, error);
+      d3.select(element).selectAll('*').remove();
+      d3.select(element).append('div').attr('class', 'figure-render-error').text('Figure could not be rendered.');
+      return null;
+    }
+  };
+
+  const payloadByScript = new WeakMap();
+  const scriptByChartId = new Map();
+  const chartScripts = () => Array.from(document.querySelectorAll('script.figure-chart-data'));
+  const payloadForScript = (script) => {
+    if (!payloadByScript.has(script)) payloadByScript.set(script, JSON.parse(script.textContent || '{}'));
+    return payloadByScript.get(script);
   };
 
   const chartResizeObserver = 'ResizeObserver' in window ? new ResizeObserver((entries) => {
@@ -1896,37 +1948,56 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
       const nextWidth = Math.round(entry.contentRect.width || 0);
       const prevWidth = Number(element.dataset.renderWidth || 0);
       if (!nextWidth || (prevWidth && Math.abs(nextWidth - prevWidth) < 18)) continue;
-      const script = Array.from(document.querySelectorAll('script.figure-chart-data'))
-        .find((candidate) => candidate.dataset.chartId === element.id);
+      const script = scriptByChartId.get(element.id);
       if (!script) continue;
-      const payload = JSON.parse(script.textContent || '{}');
+      const payload = payloadForScript(script);
       renderD3(element, payload);
       script.dataset.rendered = 'true';
+      element.dataset.renderState = 'rendered';
       element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || nextWidth));
     }
   }) : null;
 
-  const renderCharts = () => {
-    document.querySelectorAll('script.figure-chart-data').forEach((script) => {
-      if (script.dataset.rendered === 'true') return;
-      const payload = JSON.parse(script.textContent || '{}');
+  const renderChartScript = (script, { force = false } = {}) => {
+    if (!force && script.dataset.rendered === 'true') return;
+    const payload = payloadForScript(script);
+    const element = document.getElementById(payload.id);
+    if (!element) return;
+    element.dataset.renderState = 'rendering';
+    renderD3(element, payload);
+    element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || 0));
+    if (chartResizeObserver && script.dataset.observed !== 'true') {
+      chartResizeObserver.observe(element);
+      script.dataset.observed = 'true';
+    }
+    script.dataset.rendered = 'true';
+    element.dataset.renderState = 'rendered';
+  };
+
+  const renderAllCharts = ({ force = false } = {}) => {
+    chartScripts().forEach((script) => renderChartScript(script, { force }));
+  };
+
+  const initializeCharts = () => {
+    chartScripts().forEach((script) => {
+      const payload = payloadForScript(script);
       const element = document.getElementById(payload.id);
       if (!element) return;
-      renderD3(element, payload);
-      element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || 0));
-      if (chartResizeObserver && script.dataset.observed !== 'true') {
-        chartResizeObserver.observe(element);
-        script.dataset.observed = 'true';
-      }
-      script.dataset.rendered = 'true';
+      scriptByChartId.set(payload.id, script);
+      element.dataset.renderState = script.dataset.rendered === 'true' ? 'rendered' : 'pending';
     });
+    renderAllCharts();
   };
-  renderCharts();
+  initializeCharts();
+  window.addEventListener('beforeprint', () => renderAllCharts());
+  let resizeTimer = null;
   window.addEventListener('resize', () => {
-    document.querySelectorAll('script.figure-chart-data').forEach((script) => {
-      script.dataset.rendered = 'false';
-    });
-    renderCharts();
+    if (chartResizeObserver) return;
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      chartScripts().forEach((script) => { script.dataset.rendered = 'false'; });
+      renderAllCharts({ force: true });
+    }, 140);
   });
 </script>
 
@@ -1955,6 +2026,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
   .figure-summary, .figure-note { margin: 0 0 var(--space-3); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--chart-fs-note); line-height: var(--chart-leading-body); }
   .figure-note { margin-top: var(--space-3); }
   .d3-figure { position: relative; width: 100%; min-height: 0; margin: var(--space-3) 0; overflow: visible; }
+  .d3-figure[data-render-state='pending'] { min-height: clamp(12rem, 34vh, 20rem); border-radius: var(--radius-card, 0.5rem); background: linear-gradient(110deg, rgba(212,196,184,0.12), rgba(255,250,245,0.52), rgba(212,196,184,0.12)); }
+  .d3-figure[data-render-state='pending']::before { content: 'Loading figure…'; position: absolute; inset: 0; display: grid; place-items: center; color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--chart-fs-caption); }
   .d3-figure svg text { pointer-events: none; user-select: none; }
   .d3-figure .is-hovered rect, .d3-figure .is-hovered circle, .d3-figure .is-hovered polygon, .d3-figure rect.is-hovered, .d3-figure circle.is-hovered, .d3-figure polygon.is-hovered { filter: none; stroke-width: 2.4px; }
   :global(.d3-chart-tooltip) { --tooltip-font: var(--chart-fs-caption, clamp(0.76rem, 0.25vw + 0.72rem, 0.9rem)); --tooltip-pointer-x: 1.4rem; position: fixed; z-index: 1000; display: grid; gap: 0.34rem; width: max-content; max-width: min(24rem, calc(100vw - 1.5rem)); border: 1px solid color-mix(in srgb, var(--claret) 18%, var(--rule)); border-radius: var(--radius-card, 0.5rem); background: color-mix(in srgb, var(--surface-paper) 94%, white); color: var(--ink-page); padding: 0.72rem 0.82rem; font-family: var(--font-sans); font-size: var(--tooltip-font); line-height: var(--chart-leading-caption, 1.36); box-shadow: none; opacity: 0; pointer-events: none; transform: translate3d(0, 0.35rem, 0) scale(0.98); transform-origin: var(--tooltip-pointer-x) top; transition: opacity 120ms ease, transform 120ms ease; }
@@ -2027,6 +2100,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, layout, title: figure?.t
   :global(.chart-kpi .kpi-tone-risk), :global(.chart-kpi .kpi-tone-critical), :global(.chart-kpi .kpi-tone-high) { border-left-color: var(--risk-red); } :global(.chart-kpi .kpi-tone-risk .kpi-card-dot), :global(.chart-kpi .kpi-tone-critical .kpi-card-dot), :global(.chart-kpi .kpi-tone-high .kpi-card-dot) { color: var(--risk-red); }
   :global(.chart-kpi .kpi-tone-opportunity) { border-left-color: #b8860b; } :global(.chart-kpi .kpi-tone-opportunity .kpi-card-dot) { color: #b8860b; }
   @container (max-width: 360px) { :global(.chart-kpi .kpi-grid) { grid-template-columns: 1fr; gap: 0.6rem; } :global(.chart-kpi .kpi-card) { padding: 0.65rem 0.75rem; } }
+  :global(.figure-render-error) { padding: 0.75rem 0.85rem; border: 1px dashed var(--rule, #d8ccc2); border-radius: var(--radius-card, 0.5rem); color: var(--caption-gray, #6b625c); font-family: var(--font-sans); font-size: var(--chart-fs-caption); }
   .figure-fallback { border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); padding: var(--space-4); }
   .figure-fallback strong { display: block; margin-bottom: var(--space-2); font-family: var(--font-display); font-size: var(--chart-fs-body); font-weight: var(--chart-fw-strong); }
   .figure-fallback p { margin: 0; color: var(--caption-gray); font-size: var(--chart-fs-body); line-height: var(--chart-leading-body); }
