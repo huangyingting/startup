@@ -21,14 +21,15 @@ nextChapter: compactChapter | null
 # Present only when loaded with context.
 contextChapters: [contextChapter]
 cumulativeContext: cumulativeContext
+run: run
 runCache: runCache
 ```
 
 `load-chapter-runtime-context.mjs` can also emit:
 
-- `chapter-runtime-context-list-v2` when called with `--list`. It replaces `chapter`, `previousChapter`, and `nextChapter` with `chapters: [compactChapter]`.
-- An array of `chapter-runtime-context-v2` objects when called with `--all`.
-- A raw `compactChapter` object when called with `--no-workflow`.
+- `chapter-runtime-context-list-v2` (list mode): replaces `chapter`, `previousChapter`, and `nextChapter` with `chapters: [compactChapter]`.
+- An array of `chapter-runtime-context-v2` objects (all-chapters mode).
+- A raw `compactChapter` object (chapter-only mode, with the workflow projection omitted).
 
 ## Contract sources
 
@@ -63,6 +64,7 @@ If runtime context output and a source file disagree, fix the source file or `lo
 | `rendererContracts` | `website/src/lib/figures.mjs` | Agent-readable figure contract summary. |
 | `contextChapters` | existing report YAMLs | Truncated prior-chapter context only. Full artifact shapes live in `report-schema-v2.md`. |
 | `cumulativeContext` | existing report YAMLs | Advisory metrics from earlier chapters; never gates the current chapter. |
+| `run` | report folder name (the runId) | Identity slices of the runId: `runId`, `companySlug`, `runDate`. `runDate` is the canonical clock anchor for chapter / report-meta `runDate`. |
 | `runCache` | `.research-cache/<runId>/` | Disclosure and refresh context written by workflow scripts. Cache file shapes live in `report-schema-v2.md`. |
 
 ## workflowProjection
@@ -188,6 +190,17 @@ cumulativeContext:
       restricted: number | null
 ```
 
+## Run
+
+Identity slices of the runId itself (no filesystem reads). `runDate` is the canonical clock anchor chapter / report-meta doc heads must copy as their `runDate` field; the agent should never format a date itself.
+
+```yaml
+run:
+  runId: string
+  companySlug: string | null
+  runDate: string | null            # YYYY-MM-DD derived from the runId timestamp. null when the report folder name is not a valid runId.
+```
+
 ## Run cache
 
 Loaded from `.research-cache/<runId>/`. For `disclosureHint` and `refreshContext` file shapes, see `report-schema-v2.md`.
@@ -195,8 +208,6 @@ Loaded from `.research-cache/<runId>/`. For `disclosureHint` and `refreshContext
 ```yaml
 runCache:
   cacheDir: string | null
-  runId: string
-  companySlug: string | null
   disclosureHint: object | null
   refreshContext: object | null
 ```

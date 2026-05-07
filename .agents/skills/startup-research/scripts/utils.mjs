@@ -70,6 +70,29 @@ export function isRunId(value) {
   return RUN_ID_RE.test(String(value ?? ''));
 }
 
+// UTC YYYYMMDDHHmmss for the leading 14 chars of a runId. Single source of
+// truth so create-report-run.mjs and test-refresh-pipeline.mjs never re-implement the
+// formatting — both must agree on UTC and zero-padding so the same Date can
+// reproduce the same runId.
+export function nowRunTimestamp(date = new Date()) {
+  const pad = (n) => String(n).padStart(2, '0');
+  return (
+    `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}` +
+    `${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(date.getUTCSeconds())}`
+  );
+}
+
+// Extract YYYY-MM-DD (UTC) from the leading timestamp of a runId. The runId
+// is the canonical clock anchor for a report; chapter doc heads `runDate`
+// values come from this so the agent never has to format a date itself.
+export function runDateFromRunId(runId) {
+  const value = String(runId ?? '');
+  if (!RUN_ID_RE.test(value)) {
+    throw new Error(`[utils] runDateFromRunId requires a runId matching ${RUN_ID_RE}; got: ${JSON.stringify(value)}`);
+  }
+  return `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}`;
+}
+
 export function isFinalizedReportFolder(path) {
   return FINAL_REPORT_FILES.every((file) => existsSync(join(path, file)));
 }

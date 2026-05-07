@@ -14,6 +14,7 @@ import {
   normalizeCompanyName,
   normalizeDomain,
   normalizeRevision,
+  nowRunTimestamp,
   readYaml,
   reportsDir,
   researchCacheDir,
@@ -31,24 +32,33 @@ function volatileFactRefreshInstruction() {
 }
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--refresh] [--refresh-reason <text>] [--resume]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--refresh] [--refresh-reason <text>] [--resume] [--timestamp <YYYYMMDDHHmmss>]');
   process.exit(EXIT.failure);
 }
 
+// `--timestamp` is intentionally undocumented in SKILL.md: it exists only so
+// the refresh smoke test (test-refresh-pipeline.mjs) can pin a deterministic
+// runId for snapshot/cleanup tracking. Production callers omit it and let the
+// script anchor the run with the system clock.
 function parseArgs(argv) {
-  const [timestamp, ...rest] = argv;
-  const args = { timestamp, nameParts: [], website: '', disclosure: '', refresh: false, refreshReason: '', resume: false };
-  for (let i = 0; i < rest.length; i += 1) {
-    const arg = rest[i];
-    if (arg === '--website' || arg === '--url' || arg === '--domain') args.website = rest[++i] ?? '';
-    else if (arg === '--disclosure' || arg === '--disclosure-profile') args.disclosure = rest[++i] ?? '';
+  const args = { timestamp: '', nameParts: [], website: '', disclosure: '', refresh: false, refreshReason: '', resume: false };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--website' || arg === '--url' || arg === '--domain') args.website = argv[++i] ?? '';
+    else if (arg === '--disclosure' || arg === '--disclosure-profile') args.disclosure = argv[++i] ?? '';
     else if (arg === '--refresh') args.refresh = true;
-    else if (arg === '--refresh-reason') args.refreshReason = rest[++i] ?? '';
+    else if (arg === '--refresh-reason') args.refreshReason = argv[++i] ?? '';
     else if (arg === '--resume') args.resume = true;
+    else if (arg === '--timestamp') args.timestamp = argv[++i] ?? '';
     else if (arg.startsWith('--')) usage();
     else args.nameParts.push(arg);
   }
-  if (!/^\d{14}$/.test(args.timestamp ?? '')) usage();
+  if (!args.timestamp) args.timestamp = nowRunTimestamp();
+  if (!/^\d{14}$/.test(args.timestamp)) {
+    console.error(`[create-report-run] invalid --timestamp value: ${args.timestamp} (must be 14 digits YYYYMMDDHHmmss)`);
+    process.exit(EXIT.failure);
+  }
+  if (!args.nameParts.length) usage();
   if (args.disclosure && !DISCLOSURE_PROFILES.has(args.disclosure)) {
     console.error(`[create-report-run] invalid --disclosure value: ${args.disclosure} (allowed: ${[...DISCLOSURE_PROFILES].join(', ')})`);
     process.exit(EXIT.failure);

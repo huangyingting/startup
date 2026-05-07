@@ -97,7 +97,7 @@ localEvidence:
   sources: [source]
   claims: [claim]
   evidenceGaps: [evidenceGap]
-acknowledgedWarnings:                          # Optional; opt out of `--strict` chapter warnings without fixing them.
+acknowledgedWarnings:                          # Optional; opt out of chapter warnings (only enforced in strict mode) without fixing them.
   - dimension: string                          # Must match a warning dimension check-chapter actually emits. Only warnings can be acknowledged; failures cannot.
     reason: string                             # ≥ 30 chars explaining why the warning is intentional.
 ```

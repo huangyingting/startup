@@ -12,10 +12,10 @@ Keep the workflow simple: load the ordered chapter config, generate each chapter
 
 ## Inputs
 
+The agent gathers these from the user prompt; nothing is passed in by an upstream caller.
+
 - `companyName` — required.
 - `companyUrl` — optional identity anchor.
-- `runTimestamp` — UTC `YYYYMMDDHHmmss`.
-- `currentDate` — actual session date; use it for freshness and `runDate`.
 - `disclosureProfile` — optional; one of `public | private-disclosed | private-undisclosed | stealth`. Set this when the company is publicly known to be stealth or to keep its financials undisclosed; passing it into `create-report-run.mjs --disclosure <value>` writes a `disclosure-hint.yaml` whose `canonicalEvidenceGaps[]` chapter 04 must adopt instead of rediscovering.
 - `refresh` — optional boolean; when set, the workflow refreshes the existing current report for `companyName`/`companyUrl` (the previous run is auto-resolved from the company match).
 - `refreshReason` — optional human reason for refreshing an existing report.
@@ -32,14 +32,16 @@ Keep the workflow simple: load the ordered chapter config, generate each chapter
    - `vocabularies`, `checkDimensions`, and `rendererContracts` carry the canonical enums, retry dimensions/default fixes, and figure contracts.
 
 3. Create the report folder:
-   `node .agents/skills/startup-research/scripts/create-report-run.mjs <runTimestamp> <companyName> [--website <companyUrl>] [--disclosure <disclosureProfile>]`
+   `node .agents/skills/startup-research/scripts/create-report-run.mjs <companyName> [--website <companyUrl>] [--disclosure <disclosureProfile>]`
 
-   Pass `--disclosure` whenever you set `disclosureProfile` in the Inputs. It writes `.research-cache/<runTimestamp>-<companySlug>/disclosure-hint.yaml`, which chapter runtime contexts surface as `runtimeContext.runCache.disclosureHint`; chapter 04 should adopt those canonical evidence gaps. Also set the same value as `companyProfile.disclosureProfile` in `report-meta.yaml`.
+   The script anchors the run with the system clock (UTC) and prints the new `reports/<runId>/` path on stdout. Capture that path and use it as `<reportFolder>` for every later command; the chapter runtime context loader exposes the same anchor as `runtimeContext.run.runDate` (`YYYY-MM-DD`), and chapter / report-meta YAML doc heads must use that exact value for their `runDate` field — never format a date yourself.
+
+   Pass `--disclosure` whenever you set `disclosureProfile` in the Inputs. It writes `.research-cache/<runId>/disclosure-hint.yaml`, which chapter runtime contexts surface as `runtimeContext.runCache.disclosureHint`; chapter 04 should adopt those canonical evidence gaps. Also set the same value as `companyProfile.disclosureProfile` in `report-meta.yaml`.
 
    For an explicit full refresh of an existing report, create a new run instead of overwriting the old one:
-   `node .agents/skills/startup-research/scripts/create-report-run.mjs <runTimestamp> <companyName> [--website <companyUrl>] --refresh [--refresh-reason <refreshReason>]`
+   `node .agents/skills/startup-research/scripts/create-report-run.mjs <companyName> [--website <companyUrl>] --refresh [--refresh-reason <refreshReason>]`
 
-   Refresh mode writes `.research-cache/<runTimestamp>-<companySlug>/refresh-context.yaml` with the prior run summary. Use it only as background/diff context. Re-fetch every item in `workflow.agentPolicy.volatileFacts`; do not copy stale volatile claims without re-verifying them. Refresh still runs the full chapter loop and normal gates.
+   Refresh mode writes `.research-cache/<runId>/refresh-context.yaml` with the prior run summary. Use it only as background/diff context. Re-fetch every item in `workflow.agentPolicy.volatileFacts`; do not copy stale volatile claims without re-verifying them. Refresh still runs the full chapter loop and normal gates.
 
 If folder creation exits `2`, stop: a finalized report already exists for this company/domain (the duplicate guard walks every `reports/<runId>/summary-card.yaml`). If it exits `3`, the same in-progress folder already exists; rerun the exact same command with `--resume` and continue that folder. Use `--resume` only after exit `3`; it exits `4` when there is no in-progress folder to resume. Do not create `-2` suffixed duplicate folders.
 
@@ -52,7 +54,7 @@ For each chapter `order` from the loader:
    Drop `--include-context` for chapter 1 (no earlier chapters yet); keep it from chapter 2 onward to surface `contextChapters[]`, `cumulativeContext`, and `runCache`. The flag is advisory and never changes gates.
 2. **Author from the runtime context.** Use `runtimeContext.chapter` as the brief and `runtimeContext.chapter.gate` as the binding gate. Author against `runtimeContext.workflow.agentPolicy` (researchRules, chapterAuthoringRules, hardRules, volatileFacts), `runtimeContext.vocabularies`, `runtimeContext.rendererContracts`, and `runtimeContext.checkDimensions` rather than memorising literals from this file. Detailed YAML shapes remain in `references/report-schema-v2.md`.
 3. **Plan typed research questions.** Generate at least `gate.minResearchQuestions` items in `localEvidence.researchQuestions[]`, cover the required question type mix and content targets from `runtimeContext.chapter`, and close questions through `claim.answersQuestionRefs` or typed evidence gaps.
-4. **Search and fetch under audit.** Use web search to find URLs, then review each kept URL with `fetch-url`:
+4. **Search and fetch under audit.** Use web search to find URLs (anchor queries to `runtimeContext.run.runDate` so volatile facts pull current-year sources, not training-cutoff stale ones), then review each kept URL with `fetch-url`:
    `node .agents/skills/fetch-url/scripts/fetch.mjs <url>`
    Default output is readable extracted text; add `--full-text` only when needed. Record the actual queries in `localEvidence.searchQueries[]`; leaving this empty when research questions exist is a gate failure.
 5. **Build local evidence.** Convert reviewed URLs into `localEvidence.sources[]`, then write atomic `localEvidence.claims[]`. Meet the diversity, net-new-source, required-source-type, adverse-source, and high-confidence corroboration floors from `runtimeContext.chapter.gate`.
