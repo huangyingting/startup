@@ -268,7 +268,7 @@ jobs:
           Run date: $RUN_DATE UTC. Recent means the unicorn evidence is dated on or after $CUTOFF_DATE.
           $INDUSTRY_RULE
           Pick only companies with credible public evidence of a \$1B+ private valuation or unicorn-confirming financing in that window. Use this portfolio hint: $COVERAGE_HINT
-          Skip duplicates already in reports/ (each finalized run lives in reports/<runId>/summary-card.yaml; the new-report.mjs duplicate guard checks the same set) unless there is materially new evidence. If fewer than $COUNT qualify, research only the actual qualifying companies. If none qualify, do not create report folders; print a short no-candidates note and exit successfully.
+          Skip duplicates already in reports/ (each finalized run lives in reports/<runId>/summary-card.yaml; the create-report-run.mjs duplicate guard checks the same set) unless there is materially new evidence. If fewer than $COUNT qualify, research only the actual qualifying companies. If none qualify, do not create report folders; print a short no-candidates note and exit successfully.
 
           For each selected company, run one complete startup diligence report end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under its own reports/<run>/ folder. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
@@ -277,7 +277,7 @@ jobs:
 
       - name: Finalize any unfinalized report folders
         # Safety net for the multi-company mode: if Copilot wrote every chapter
-        # YAML plus report-meta.yaml but skipped the finalize.mjs pipeline
+        # YAML plus report-meta.yaml but skipped the finalize-report.mjs pipeline
         # (which produces summary-card / evidence / full-report), run finalize
         # ourselves. We only attempt finalize when all upstream inputs exist;
         # truly partial folders are left alone for the next step to drop.
@@ -310,7 +310,7 @@ jobs:
               continue
             fi
             echo "::group::Finalizing $dir"
-            if node .agents/skills/startup-research/scripts/finalize.mjs "$dir"; then
+            if node .agents/skills/startup-research/scripts/finalize-report.mjs "$dir"; then
               echo "Finalize succeeded for $dir"
             else
               echo "::warning::Finalize failed for $dir; will be dropped"

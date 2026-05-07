@@ -34,8 +34,6 @@ import {
   tryReadYaml,
 } from './utils.mjs';
 import {
-  BLOCK_TYPES,
-  CALLOUT_TYPES,
   checkArtifactRefs,
   checkCalloutSchema,
   checkClaimSchema,
@@ -47,6 +45,8 @@ import {
   SCHEMA_VERSION,
 } from './report-artifact-schema.mjs';
 import {
+  BLOCK_TYPES,
+  CALLOUT_TYPES,
   CARD_CONFIDENCES,
   CARD_RECOMMENDATIONS,
   CARD_RISK_RATINGS,

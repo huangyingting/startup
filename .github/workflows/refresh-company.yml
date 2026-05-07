@@ -189,7 +189,7 @@ jobs:
           Company URL: ${COMPANY_URL:-unknown}
           Refresh reason: ${REFRESH_REASON:-n/a}
 
-          This is an explicit full refresh. Create a new report folder even when a finalized report folder for the same company/domain already exists by using new-report.mjs with --refresh and --refresh-reason. The previous report is auto-resolved from the company name/domain by walking reports/<runId>/summary-card.yaml. Treat the prior report only as background/diff context; re-fetch current evidence for volatile facts such as funding, valuation, headcount, customers, pricing, legal/regulatory status, outages, partnerships, and product launches.
+          This is an explicit full refresh. Create a new report folder even when a finalized report folder for the same company/domain already exists by using create-report-run.mjs with --refresh and --refresh-reason. The previous report is auto-resolved from the company name/domain by walking reports/<runId>/summary-card.yaml. Treat the prior report only as background/diff context; re-fetch current evidence for volatile facts such as funding, valuation, headcount, customers, pricing, legal/regulatory status, outages, partnerships, and product launches.
 
           Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
@@ -229,7 +229,7 @@ jobs:
             run_id="$(basename "${dir%/}")"
             if grep -Fxq "$run_id" "$RUNNER_TEMP/reports-before.txt"; then
               echo "Skipping refresh args for pre-existing in-progress folder: $run_id"
-              if node .agents/skills/startup-research/scripts/finalize.mjs "$dir"; then
+              if node .agents/skills/startup-research/scripts/finalize-report.mjs "$dir"; then
                 echo "Finalize succeeded for $dir"
               else
                 echo "::warning::Finalize failed for $dir; will be dropped"
@@ -241,7 +241,7 @@ jobs:
             if [ -n "${REFRESH_REASON:-}" ]; then
               refresh_args+=(--refresh-reason "$REFRESH_REASON")
             fi
-            if node .agents/skills/startup-research/scripts/finalize.mjs "$dir" "${refresh_args[@]}"; then
+            if node .agents/skills/startup-research/scripts/finalize-report.mjs "$dir" "${refresh_args[@]}"; then
               echo "Finalize succeeded for $dir"
             else
               echo "::warning::Finalize failed for $dir; will be dropped"

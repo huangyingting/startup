@@ -20,12 +20,11 @@ import {
 } from '../../../../website/src/lib/figures.mjs';
 import { asDateString, hasText } from './utils.mjs';
 import {
-  BLOCK_TYPES as DIMENSION_BLOCK_TYPES,
-  CALLOUT_TYPES as DIMENSION_CALLOUT_TYPES,
+  CALLOUT_TYPES,
   CLAIM_CONFIDENCES,
   CLAIM_FRESHNESS,
   CLAIM_TYPES,
-  ENUMERATION_COVERAGE as DIMENSION_ENUMERATION_COVERAGE,
+  ENUMERATION_COVERAGE,
   SOURCE_ACCESS_STATUSES,
   SOURCE_INDEPENDENCE,
   SOURCE_REPUTATION_TIERS,
@@ -50,16 +49,6 @@ const FIGURE_ALLOWED_POPULATED_MAP = new Map(
 const COORDINATE_FIGURE_TYPES = new Set(['quadrant']);
 const NUMERIC_VALUE_FIGURE_TYPES = new Set(['bar', 'waterfall', 'funnel']);
 const MATRIX_FIGURE_TYPES = new Set(['matrix', 'cohort']);
-
-// ---- enum sets ----------------------------------------------------------
-// Field-level enum vocab is imported from validation-catalog.mjs (the single
-// source of truth shared with check-chapter and chapter runtime context exports).
-// CALLOUT_TYPES and ENUMERATION_COVERAGE are re-exported here so older
-// consumers that import them from report-artifact-schema keep working.
-
-export const CALLOUT_TYPES = DIMENSION_CALLOUT_TYPES;
-export const ENUMERATION_COVERAGE = DIMENSION_ENUMERATION_COVERAGE;
-export const BLOCK_TYPES = DIMENSION_BLOCK_TYPES;
 
 // ---- helpers --------------------------------------------------------------
 
