@@ -340,8 +340,11 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
     fail(`${cardPath}: claimsReviewed exceeds ledger claims`);
   }
-  for (const field of ['sourcesRetained', 'claimsReviewed', 'domainCount', 'adverseSourceCount', 'unresolvedQuestionCount', 'openQuestionCount', 'documentedGapQuestionCount', 'blockingQuestionCount']) {
+  for (const field of ['sourcesRetained', 'claimsReviewed', 'domainCount', 'adverseSourceCount', 'openQuestionCount', 'documentedGapQuestionCount', 'blockingQuestionCount']) {
     if (typeof card?.sourceStats?.[field] !== 'number') fail(`${cardPath}: sourceStats.${field} is required and must be a number`);
+  }
+  if (card?.sourceStats?.unresolvedQuestionCount !== undefined) {
+    fail(`${cardPath}: sourceStats.unresolvedQuestionCount is obsolete; use sourceStats.openQuestionCount`);
   }
   // Invariant: every open question must be closed out by an evidenceGap
   // (the chapter gate enforces this). A nonzero blockingQuestionCount means

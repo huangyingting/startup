@@ -34,7 +34,16 @@ interface ReportCardData extends Record<string, unknown> {
   riskRating: string;
   valuationStance: string;
   overallScore: number;
-  sourceStats: { sourcesRetained: number; claimsReviewed: number };
+  sourceStats: {
+    sourcesRetained: number;
+    claimsReviewed: number;
+    domainCount: number;
+    adverseSourceCount: number;
+    openQuestionCount: number;
+    documentedGapQuestionCount: number;
+    blockingQuestionCount: number;
+    averageSourceAgeDays: number | null;
+  };
   keyMetrics: Record<string, number | null>;
   topStrengths: string[];
   topRisks: string[];
@@ -174,6 +183,12 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
     sourceStats: {
       sourcesRetained: raw.sourceStats?.sourcesRetained ?? 0,
       claimsReviewed: raw.sourceStats?.claimsReviewed ?? 0,
+      domainCount: raw.sourceStats?.domainCount ?? 0,
+      adverseSourceCount: raw.sourceStats?.adverseSourceCount ?? 0,
+      openQuestionCount: raw.sourceStats?.openQuestionCount ?? 0,
+      documentedGapQuestionCount: raw.sourceStats?.documentedGapQuestionCount ?? 0,
+      blockingQuestionCount: raw.sourceStats?.blockingQuestionCount ?? 0,
+      averageSourceAgeDays: raw.sourceStats?.averageSourceAgeDays ?? null,
     },
     keyMetrics: {
       valuationUsdM: metrics.valuationUsdM ?? null,

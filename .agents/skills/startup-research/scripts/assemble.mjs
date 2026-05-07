@@ -349,12 +349,9 @@ const summaryCard = {
     //    evidenceGap.relatedQuestionRefs (i.e. closed out as a known gap)
     //  - blockingQuestionCount: open AND not referenced by any evidenceGap
     //    (the chapter gate forbids this; should be 0 after a clean finalize)
-    // unresolvedQuestionCount is kept as an alias for openQuestionCount so
-    // existing readers (website, index) keep working without coordination.
     openQuestionCount: sourceStats.openQuestionCount,
     documentedGapQuestionCount: sourceStats.documentedGapQuestionCount,
     blockingQuestionCount: sourceStats.blockingQuestionCount,
-    unresolvedQuestionCount: sourceStats.openQuestionCount,
     averageSourceAgeDays: sourceStats.averageSourceAgeDays,
   },
 };
