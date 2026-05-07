@@ -71,18 +71,15 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
   const valueLabel = (item) => item?.displayValue ?? item?.value ?? '';
   const fullValueLabel = (item) => item?.displayValue ?? item?.value ?? item?.score ?? item?.label ?? '';
   // Safely render any cell-like value (string, number, or object) as text.
-  // Object cells in YAML use multiple aliases across the corpus (`label`,
-  // `text`, `value`, `displayValue`, `name`, `score`); blindly stringifying
-  // an object produces "[object Object]". Always route cell text through
-  // this helper.
+  // Object cells use canonical display fields (`label`, `displayValue`,
+  // `value`, `score`); blindly stringifying an object produces
+  // "[object Object]". Always route cell text through this helper.
   const safeText = (value) => {
     if (value == null) return '';
     if (typeof value === 'string' || typeof value === 'number') return String(value);
     if (typeof value === 'object') {
-      const text = value.label ?? value.text ?? value.name ?? value.displayValue ?? value.value;
+      const text = value.label ?? value.displayValue ?? value.value;
       if (text != null && String(text).trim() !== '') return String(text);
-      // Numeric score cells (`{score: 8, tone: positive, note: ...}`) are a
-      // valid corpus shape; surface the score itself when no text exists.
       if (value.score != null) return String(value.score);
       return '';
     }

@@ -123,8 +123,8 @@ const fallbackMetrics = [
         <span>{data.sourceStats.claimsReviewed} {labels.claims}</span>
         {data.sourceStats?.domainCount != null && (<span>{data.sourceStats.domainCount} domains</span>)}
         {data.sourceStats?.adverseSourceCount != null && (<span>{data.sourceStats.adverseSourceCount} adverse</span>)}
-        {data.sourceStats?.unresolvedQuestionCount != null && data.sourceStats.unresolvedQuestionCount > 0 && (
-          <span>{data.sourceStats.unresolvedQuestionCount} open Qs</span>
+        {data.sourceStats?.openQuestionCount != null && data.sourceStats.openQuestionCount > 0 && (
+          <span>{data.sourceStats.openQuestionCount} open Qs</span>
         )}
         <span>{figureCount} {labels.figures}</span>
         <span>{tableCount} {labels.tables}</span>

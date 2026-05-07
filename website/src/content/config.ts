@@ -43,6 +43,12 @@ const reports = defineCollection({
     sourceStats: z.object({
       sourcesRetained: z.number(),
       claimsReviewed: z.number(),
+      domainCount: z.number(),
+      adverseSourceCount: z.number(),
+      openQuestionCount: z.number(),
+      documentedGapQuestionCount: z.number(),
+      blockingQuestionCount: z.number(),
+      averageSourceAgeDays: z.number().nullable(),
     }),
     keyMetrics: z.object({
       valuationUsdM: nullableMetric,

@@ -5,7 +5,8 @@
   "scripts": {
     "check:workflow-config": "node .agents/skills/startup-research/scripts/check-workflow-config.mjs",
     "check:revision-graph": "node .agents/skills/startup-research/scripts/check-revision-graph.mjs",
-    "validate": "npm run check:workflow-config && npm run check:revision-graph && npm --prefix website run build"
+    "check:reports-contract": "node .agents/skills/startup-research/scripts/check-reports-contract.mjs",
+    "validate": "npm run check:workflow-config && npm run check:revision-graph && npm run check:reports-contract && npm --prefix website run build"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

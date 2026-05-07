@@ -19,6 +19,9 @@ import {
 } from './check-dimensions.mjs';
 const REPORT_META_FILE = 'report-meta.yaml';
 const DEFAULT_DISCLAIMER = 'This report is a public-evidence diligence snapshot, not investment advice. Important financial, legal, technical, and contractual facts remain non-public and should be verified directly with management and primary documents before any investment decision.';
+const CLAIM_ID_RE = /^C[A-Z]\d{3}$/;
+const LEGACY_CLAIM_ID_RE = /^C\d{3}$/;
+const INLINE_CLAIM_REF_RE = /\[(C[A-Z]\d{3}|C\d{3})\]/g;
 
 function abort(message) {
   console.error(`[assemble] ${message}`);
@@ -84,6 +87,53 @@ function requireField(obj, path) {
   if (cursor == null || cursor === '') abort(`${REPORT_META_FILE} field is empty: ${path}`);
   return cursor;
 }
+
+function collectReportMetaClaimRefs(value, path = REPORT_META_FILE, out = []) {
+  if (typeof value === 'string') {
+    for (const match of value.matchAll(INLINE_CLAIM_REF_RE)) out.push({ ref: match[1], path });
+    return out;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => collectReportMetaClaimRefs(item, `${path}.${index}`, out));
+    return out;
+  }
+  if (!value || typeof value !== 'object') return out;
+  for (const [key, child] of Object.entries(value)) {
+    if (key === 'claimRefs') {
+      if (!Array.isArray(child)) abort(`${path}.claimRefs must be an array`);
+      child.forEach((ref, index) => {
+        if (typeof ref !== 'string') abort(`${path}.claimRefs.${index} must be a claim id string`);
+        out.push({ ref, path: `${path}.claimRefs.${index}` });
+      });
+      continue;
+    }
+    if (key === 'claimRef') {
+      if (typeof child !== 'string') abort(`${path}.claimRef must be a claim id string`);
+      out.push({ ref: child, path: `${path}.claimRef` });
+      continue;
+    }
+    collectReportMetaClaimRefs(child, `${path}.${key}`, out);
+  }
+  return out;
+}
+
+function checkReportMetaClaimRefs(metaDoc, evidenceLedger) {
+  const claimIds = new Set((evidenceLedger.claims ?? []).map((claim) => claim?.id).filter(Boolean));
+  if (!claimIds.size) abort(`${evidenceFile} has no claims; run ledger.mjs before assemble.mjs`);
+  for (const { ref, path } of collectReportMetaClaimRefs(metaDoc)) {
+    if (LEGACY_CLAIM_ID_RE.test(ref)) {
+      abort(`${path} uses legacy claim ref ${ref}; use the chapter-letter id from ${evidenceFile} (for example CO001)`);
+    }
+    if (!CLAIM_ID_RE.test(ref)) {
+      abort(`${path} has invalid claim ref ${ref}; expected C<ChapterLetter><Seq3> (for example CO001)`);
+    }
+    if (!claimIds.has(ref)) {
+      abort(`${path} references missing claim ${ref} in ${evidenceFile}`);
+    }
+  }
+}
+
+checkReportMetaClaimRefs(meta, evidence);
 
 const slug = requireField(meta, 'slug');
 const runDate = requireField(meta, 'runDate');
@@ -299,12 +349,9 @@ const summaryCard = {
     //    evidenceGap.relatedQuestionRefs (i.e. closed out as a known gap)
     //  - blockingQuestionCount: open AND not referenced by any evidenceGap
     //    (the chapter gate forbids this; should be 0 after a clean finalize)
-    // unresolvedQuestionCount is kept as an alias for openQuestionCount so
-    // existing readers (website, index) keep working without coordination.
     openQuestionCount: sourceStats.openQuestionCount,
     documentedGapQuestionCount: sourceStats.documentedGapQuestionCount,
     blockingQuestionCount: sourceStats.blockingQuestionCount,
-    unresolvedQuestionCount: sourceStats.openQuestionCount,
     averageSourceAgeDays: sourceStats.averageSourceAgeDays,
   },
 };

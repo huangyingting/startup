@@ -92,6 +92,7 @@ From the repository root:
 ```bash
 npm run check:workflow-config
 npm run check:revision-graph
+npm run check:reports-contract
 npm run validate
 ```
 
