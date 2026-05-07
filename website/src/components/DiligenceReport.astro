@@ -270,14 +270,6 @@ const fallbackMetrics = [
             </a>
           </li>
         ))}
-        {appendices.map((appendix: any) => (
-          <li class="toc-item toc-appendix" data-toc-target={`appendix-${appendix.id}`}>
-            <a href={`#appendix-${appendix.id}`}>
-              <span class="toc-number">{appendix.id}</span>
-              <span class="toc-title">{appendix.title}</span>
-            </a>
-          </li>
-        ))}
       </ol>
     </nav>
   )}
@@ -573,12 +565,9 @@ const fallbackMetrics = [
   .toc-number { display: inline-grid; place-items: center; flex: none; min-width: 1.9rem; height: 1.9rem; padding: 0 0.45rem; border-radius: 999px; background: color-mix(in srgb, var(--claret) 10%, transparent); color: var(--claret); font-family: var(--font-display); font-size: var(--report-fs-kicker); font-weight: 800; letter-spacing: -0.01em; line-height: 1; transition: background-color 120ms ease, color 120ms ease; }
   .toc-item a:hover .toc-number, .toc-item a:focus-visible .toc-number { background: var(--claret); color: #fff7ef; }
   .toc-title { min-width: 0; font-family: var(--font-display); font-size: var(--report-fs-caption); font-weight: 700; line-height: 1.2; color: var(--ink-page); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .toc-appendix .toc-number { background: color-mix(in srgb, var(--gold) 18%, transparent); color: var(--gold); }
-  .toc-appendix a:hover .toc-number, .toc-appendix a:focus-visible .toc-number { background: var(--gold); color: var(--ink-page); }
   /* Active state: scroll-spy adds is-active to the toc-item matching the chapter currently in view */
   .toc-item.is-active a { background: color-mix(in srgb, var(--claret) 8%, var(--surface-paper)); }
   .toc-item.is-active .toc-number { background: var(--claret); color: #fff7ef; }
-  .toc-item.is-active.toc-appendix .toc-number { background: var(--gold); color: var(--ink-page); }
   .toc a { color: var(--ink-page); }
   /* Callouts: rendered by ReportBlock.astro (slotted children with no
    * data-astro-cid for this component), so all selectors must be :global. */
