@@ -49,8 +49,8 @@ For each chapter `order` from the loader:
 
 1. **Load the chapter runtime context.**
    `node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order <n> --format json --include-context --report-folder <reportFolder>`
-   Use `--include-context` from chapter 2 onward. It adds `contextChapters[]`, `cumulativeContext`, and `runCache` without changing the current chapter's gates. Drop the flag only when authoring chapter 1. Pass `--no-workflow` only if you specifically need the raw chapter spec without enrichment.
-2. **Author from the runtime context.** Use `runtimeContext.chapter` as the brief and `runtimeContext.chapter.gate` as the binding gate. Use `runtimeContext.workflow.agentPolicy.chapterAuthoringRules`, `runtimeContext.vocabularies`, `runtimeContext.rendererContracts`, and `runtimeContext.checkDimensions` instead of memorising literals from this file.
+   Drop `--include-context` for chapter 1 (no earlier chapters yet); keep it from chapter 2 onward to surface `contextChapters[]`, `cumulativeContext`, and `runCache`. The flag is advisory and never changes gates.
+2. **Author from the runtime context.** Use `runtimeContext.chapter` as the brief and `runtimeContext.chapter.gate` as the binding gate. Author against `runtimeContext.workflow.agentPolicy` (researchRules, chapterAuthoringRules, hardRules, volatileFacts), `runtimeContext.vocabularies`, `runtimeContext.rendererContracts`, and `runtimeContext.checkDimensions` rather than memorising literals from this file. Detailed YAML shapes remain in `references/report-schema-v2.md`.
 3. **Plan typed research questions.** Generate at least `gate.minResearchQuestions` items in `localEvidence.researchQuestions[]`, cover the required question type mix and content targets from `runtimeContext.chapter`, and close questions through `claim.answersQuestionRefs` or typed evidence gaps.
 4. **Search and fetch under audit.** Use web search to find URLs, then review each kept URL with `fetch-url`:
    `node .agents/skills/fetch-url/scripts/fetch.mjs <url>`
@@ -71,9 +71,9 @@ For each chapter `order` from the loader:
 
 `check-chapter` emits stable dimensions and fixes in JSON. Work `retryOrder[]` first, use `failure.fix` / `objectFailures[].fixes[]`, and respect `runtimeContext.workflow.agentPolicy.retryPolicy` for retry count and progress requirements. To accept a `--strict` warning instead of fixing it, add `acknowledgedWarnings[]` with the warning dimension and a reason of at least 30 characters.
 
-## Research and evidence rules
+### Parallel authoring
 
-Follow `runtimeContext.workflow.agentPolicy.researchRules`, `runtimeContext.workflow.agentPolicy.chapterAuthoringRules`, and `runtimeContext.workflow.agentPolicy.hardRules`. Treat `runtimeContext.workflow.agentPolicy.volatileFacts` as the canonical refresh list. Treat `runtimeContext.vocabularies` and `runtimeContext.rendererContracts` as the canonical authoring dictionaries. Detailed YAML shapes remain in `references/report-schema-v2.md`.
+The 8 analysis chapters can be drafted in parallel: each chapter owns its ID namespace via `runtimeContext.chapter.letter`, and the evidence ledger dedupes by canonical URL at finalize. Caveats: `--include-context` only sees chapters already on disk (skip it when fanning out), and `gate.minNetNewSources` plus `crossChapterRefLeak` cross-read sibling chapters — run all 8 `check-chapter` passes after every chapter YAML exists, and expect retries when those gates flag URL overlap. `finalize-report` itself stays single-threaded.
 
 ## Finalization
 
@@ -88,4 +88,4 @@ After all analysis chapters pass:
 
 ## Hard rules
 
-The hard rules are loaded from `runtimeContext.workflow.agentPolicy.hardRules`. The allowed files under the report folder are loaded from `runtimeContext.workflow.allowedReportFiles`. Final responses must cover the fields listed in `runtimeContext.workflow.agentPolicy.finalResponseFields`.
+Hard rules, allowed report-folder files, and required final-response fields all come from the runtime context (`runtimeContext.workflow.agentPolicy.hardRules`, `runtimeContext.workflow.allowedReportFiles`, `runtimeContext.workflow.agentPolicy.finalResponseFields`).

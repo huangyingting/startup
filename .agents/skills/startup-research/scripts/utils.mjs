@@ -27,14 +27,13 @@ const FINAL_REPORT_FILES = Object.freeze([...GENERATED_REPORT_FILES, REPORT_META
 // state errors from validation failures. Keep stable; SKILL.md references
 // some of these by number.
 //
-// `validation` and `invalidArgs` deliberately share exit code 1 — both mean
-// "this script could not produce a passing artifact"; CI and humans only
+// `failure` collapses what used to be `validation` and `invalidArgs` — both
+// mean "this script could not produce a passing artifact"; CI and humans only
 // need to know it failed. Anything that needs to distinguish should read
 // stderr (every script prefixes its messages with `[script-name]`).
 export const EXIT = Object.freeze({
   ok: 0,
-  validation: 1,         // a check produced findings (chapter/report/workflow gate failed)
-  invalidArgs: 1,        // bad CLI arguments — same exit as validation by design (see note above)
+  failure: 1,            // bad CLI args, validation findings, or any non-recoverable failure
   alreadyExists: 2,      // company already has a finalized current report (create-report-run duplicate guard)
   inProgress: 3,         // an in-progress folder for the same run already exists; rerun with --resume
   notFound: 4,           // requested target (e.g. resume folder) does not exist
@@ -456,7 +455,7 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
 // Convenience: ordered list of chapter YAML filenames (`01-…`, `02-…`, …).
 // Use this anywhere you need to iterate per-chapter file names instead of
 // hardcoding the list (e.g. fixture replay, full-report assembly, doc tools).
-export function analysisChapterFiles(config = loadWorkflowConfig()) {
+export function getAnalysisChapterFiles(config = loadWorkflowConfig()) {
   return getAnalysisArtifacts(config).map((c) => c.file);
 }
 

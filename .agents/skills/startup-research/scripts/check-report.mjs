@@ -499,7 +499,7 @@ function resolveReportDir(arg) {
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/check-report.mjs <report-folder> [--contract]');
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
@@ -528,21 +528,21 @@ try {
   // it instead of silently misbehaving.
   if (resolve(REPORTS_DIR, run) !== dir) {
     console.error(`[check:report] folder must live under ${REPORTS_DIR}; got ${dir}`);
-    process.exit(EXIT.invalidArgs);
+    process.exit(EXIT.failure);
   }
 
   const checked = checkRun(run, { contentGates: !args.contract });
   if (failures.length) {
     console.error('[check:report] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
-    process.exit(EXIT.validation);
+    process.exit(EXIT.failure);
   }
   if (!checked) {
     console.error(`[check:report] ${run}: not a finalized v2 report (no ${SUMMARY_CARD_FILE}).`);
-    process.exit(EXIT.validation);
+    process.exit(EXIT.failure);
   }
   const mode = args.contract ? 'contract verified' : 'verified';
   console.log(`[check:report] ✓ ${run} ${mode}.`);
 } catch (err) {
   console.error(`[check:report] fatal error: ${err.message}`);
-  process.exit(EXIT.validation);
+  process.exit(EXIT.failure);
 }

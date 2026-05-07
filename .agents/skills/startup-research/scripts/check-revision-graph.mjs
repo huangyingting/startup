@@ -93,6 +93,6 @@ const { reports, failures } = collectReports();
 failures.push(...validateRevisionGraph(reports));
 if (failures.length) {
   console.error('[check:revision-graph] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
-  process.exit(EXIT.validation);
+  process.exit(EXIT.failure);
 }
 console.log(`[check:revision-graph] ✓ ${reports.length} report(s); revision graph consistent.`);

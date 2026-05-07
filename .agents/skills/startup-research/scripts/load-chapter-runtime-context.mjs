@@ -32,7 +32,7 @@ Examples:
     node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list --format markdown
     node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 1 --format json
     node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 4 --include-context --report-folder reports/20260503145959-openai`);
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
@@ -453,13 +453,13 @@ function main() {
   const chapter = selectChapter(config, args);
   if (!chapter) {
     console.error('[chapter] no chapter matched the provided selector');
-    process.exit(EXIT.invalidArgs);
+    process.exit(EXIT.failure);
   }
   const runtimeContext = buildRuntimeContext(config, chapter);
   if (args.includeContext) {
     if (!args.reportFolder) {
       console.error('[chapter] --include-context requires --report-folder <path>');
-      process.exit(EXIT.invalidArgs);
+      process.exit(EXIT.failure);
     }
     const fileByKey = new Map(config.chapters.map((item) => [item.key, item.file]));
     runtimeContext.contextChapters = (chapter.optionalContext ?? []).map((key) => {

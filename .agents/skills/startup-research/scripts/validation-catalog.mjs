@@ -85,7 +85,6 @@ export const ID_PATTERN_SOURCE = /^S[A-Z]\d{3}$/;
 export const ID_PATTERN_CLAIM = /^C[A-Z]\d{3}$/;
 export const ID_PATTERN_FIGURE = /^F[A-Z]\d{3}$/;
 export const ID_PATTERN_TABLE = /^T[A-Z]\d{3}$/;
-export const ID_PATTERN_RESEARCH_QUESTION = /^Q[A-Z]\d{3}$/;
 
 // Inline claim-ref pattern used in section bodies, list items, table cells,
 // and callout text. Capture group 1 is the bare claim id without brackets.
@@ -99,22 +98,6 @@ export const INLINE_CLAIM_REF_PATTERN = new RegExp(INLINE_CLAIM_REF_SOURCE, 'g')
 // as Claim/Chapter-C/#1 — technically unambiguous but confusing).
 export const RESERVED_TYPE_LETTERS = new Set(['S', 'C', 'T', 'F', 'Q']);
 
-// Maximum sequence per chapter for any ID type (3 digits = 999).
-export const ID_MAX_SEQUENCE = 999;
-
-// Generate a new ID from a chapter letter and a 0-based index.
-// Throws if the index would exceed ID_MAX_SEQUENCE or letter is invalid.
-export function makeId(typeLetter, chapterLetter, index) {
-  if (!/^[SCTFQ]$/.test(typeLetter)) throw new Error(`makeId: invalid type letter "${typeLetter}"`);
-  if (!/^[A-Z]$/.test(chapterLetter)) throw new Error(`makeId: invalid chapter letter "${chapterLetter}"`);
-  if (RESERVED_TYPE_LETTERS.has(chapterLetter)) throw new Error(`makeId: chapter letter "${chapterLetter}" collides with reserved type letter`);
-  const seq = index + 1;
-  if (!Number.isInteger(seq) || seq < 1 || seq > ID_MAX_SEQUENCE) {
-    throw new Error(`makeId: sequence ${seq} out of range 1..${ID_MAX_SEQUENCE}`);
-  }
-  return `${typeLetter}${chapterLetter}${String(seq).padStart(3, '0')}`;
-}
-
 // Build a regex that matches one specific (typeLetter, chapterLetter)
 // combination, e.g. /^SO\d{3}$/. Used by check-chapter to enforce that every
 // id in a chapter file carries the chapter's own letter (so an id from
@@ -123,13 +106,6 @@ export function makeIdPattern(typeLetter, chapterLetter) {
   if (!/^[SCTFQ]$/.test(typeLetter)) throw new Error(`makeIdPattern: invalid type letter "${typeLetter}"`);
   if (!/^[A-Z]$/.test(chapterLetter)) throw new Error(`makeIdPattern: invalid chapter letter "${chapterLetter}"`);
   return new RegExp(`^${typeLetter}${chapterLetter}\\d{3}$`);
-}
-
-// Extract the chapter letter from an ID. Returns null if the ID does not
-// match the canonical S/C/T/F/Q + LETTER + 3-digit format.
-export function chapterLetterOf(id) {
-  const match = /^([SCTFQ])([A-Z])\d{3}$/.exec(String(id ?? ''));
-  return match ? match[2] : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -155,20 +131,19 @@ export const FRESHNESS_THRESHOLDS = {
   recent: 60,    // recent: ≤60 months; ≥24 → historical
 };
 
-// Analysis artifact title normalization: stop words that are ignored when
-// comparing table/figure titles to detect cross-artifact and cross-chapter
-// duplicates. Shared by check-chapter.mjs (per-chapter duplicateAnalysis)
-// and check-cross-chapter-consistency.mjs (report-level cross-chapter duplicates).
-export const ANALYSIS_TOKEN_STOP_WORDS = new Set([
+// Title tokenization stop words: ignored when comparing table/figure titles
+// to detect cross-artifact and cross-chapter duplicates. Shared by
+// check-chapter.mjs (per-chapter duplicateAnalysis) and
+// check-cross-chapter-consistency.mjs (report-level cross-chapter duplicates).
+export const TITLE_TOKEN_STOP_WORDS = new Set([
   'table', 'figure', 'fig', 'chart', 'graph', 'matrix', 'map',
   'kpi', 'kpis', 'scorecard', 'analysis', 'overview', 'summary',
 ]);
 
-// Minimum token length for analysis token filtering (titles, descriptions).
-// Tokens shorter than this are ignored during duplicate detection and
-// similarity comparisons. Ensures consistency between check-chapter.mjs
-// and check-cross-chapter-consistency.mjs.
-export const MIN_ANALYSIS_TOKEN_LENGTH = 4;
+// Minimum token length for title tokenization. Tokens shorter than this are
+// ignored during duplicate detection and similarity comparisons. Shared by
+// check-chapter.mjs and check-cross-chapter-consistency.mjs.
+export const MIN_TITLE_TOKEN_LENGTH = 4;
 
 // Evidence quality tier thresholds. Used by build-evidence-ledger.mjs to classify the
 // overall quality of consolidated evidence based on source diversity,
@@ -221,11 +196,11 @@ export const KEY_FACT_TOPICS = [
 // Used by check-chapter.mjs checkSources().
 export const PAYWALL_RISK_WARNING_THRESHOLD = 0.25;
 
-// Duplicate analysis title similarity threshold. When a figure's and table's
+// Duplicate title similarity threshold. When a figure's and table's
 // normalized titles have Jaccard overlap >= this value, and the figure's
 // claimRefs are a subset of the table's, duplicateAnalysis check fires.
 // Used by check-chapter.mjs checkDuplicateAnalysis().
-export const DUPLICATE_ANALYSIS_TITLE_THRESHOLD = 0.5;
+export const DUPLICATE_TITLE_THRESHOLD = 0.5;
 
 // JSON-friendly bundle shipped in the chapter runtime context so the agent never
 // has to grep source code to learn the vocabulary. Sorted arrays keep diffs

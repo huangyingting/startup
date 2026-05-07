@@ -37,7 +37,7 @@ const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/link-refresh.mjs <new-report-folder> [--refresh-reason <text>] [--prepare-current]');
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 // Caller must pick an explicit EXIT.X — link-refresh handles a mix of
@@ -66,8 +66,8 @@ function resolveReportFolder(folderArg) {
   const folder = resolve(folderArg);
   if (!existsSync(folder)) abort(`report folder not found: ${folder}`, EXIT.notFound);
   const runId = basename(folder);
-  if (resolve(reportsDir, runId) !== folder) abort(`report folder must live under ${reportsDir}: ${folder}`, EXIT.invalidArgs);
-  if (!isRunId(runId)) abort(`report folder name is not a valid run id: ${runId}`, EXIT.invalidArgs);
+  if (resolve(reportsDir, runId) !== folder) abort(`report folder must live under ${reportsDir}: ${folder}`, EXIT.failure);
+  if (!isRunId(runId)) abort(`report folder name is not a valid run id: ${runId}`, EXIT.failure);
   return { folder, runId };
 }
 
@@ -94,7 +94,7 @@ function matchesCompany(card, company) {
 
 function assertFinalizedRun(runId, label) {
   const folder = join(reportsDir, runId);
-  if (!isFinalizedReportFolder(folder)) abort(`${label} is not a finalized report: reports/${runId}`, EXIT.invalidArgs);
+  if (!isFinalizedReportFolder(folder)) abort(`${label} is not a finalized report: reports/${runId}`, EXIT.failure);
 }
 
 function resolvePreviousRunId({ newRunId, newMeta }) {
@@ -202,7 +202,7 @@ const args = parseArgs(process.argv.slice(2));
 const { folder: newFolder, runId: newRunId } = resolveReportFolder(args.folder);
 const { doc: newMeta } = readReportMeta(newFolder);
 const oldRunId = resolvePreviousRunId({ newRunId, newMeta });
-if (oldRunId === newRunId) abort('new report cannot refresh itself', EXIT.invalidArgs);
+if (oldRunId === newRunId) abort('new report cannot refresh itself', EXIT.failure);
 
 const currentChanged = setCurrentRevision({ newFolder, newRunId, oldRunId, refreshReason: args.refreshReason });
 console.log(`[refresh] current report ${newRunId} refreshOfRunId=${oldRunId}${currentChanged ? ' (updated)' : ' (already set)'}`);

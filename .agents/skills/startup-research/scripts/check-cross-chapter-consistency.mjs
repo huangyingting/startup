@@ -10,7 +10,7 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
-import { ANALYSIS_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_ANALYSIS_TOKEN_LENGTH } from './validation-catalog.mjs';
+import { TITLE_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_TITLE_TOKEN_LENGTH } from './validation-catalog.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 
@@ -24,17 +24,17 @@ const args = (() => {
       const next = argv[++i];
       if (next === undefined || next.startsWith('-')) {
         console.error('[cross-chapter] --format requires a value (text|json)');
-        process.exit(EXIT.invalidArgs);
+        process.exit(EXIT.failure);
       }
       parsed.format = next;
     } else if (arg.startsWith('-')) {
       console.error(`[cross-chapter] unknown flag: ${arg}`);
       console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter-consistency.mjs <report-folder> [--strict] [--format text|json]');
-      process.exit(EXIT.invalidArgs);
+      process.exit(EXIT.failure);
     } else if (!parsed.folder) parsed.folder = arg;
     else {
       console.error(`[cross-chapter] unexpected positional argument: ${arg}`);
-      process.exit(EXIT.invalidArgs);
+      process.exit(EXIT.failure);
     }
   }
   return parsed;
@@ -42,11 +42,11 @@ const args = (() => {
 
 if (!args.folder) {
   console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter-consistency.mjs <report-folder> [--strict] [--format text|json]');
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 if (!['text', 'json'].includes(args.format)) {
   console.error(`Invalid --format value: ${args.format}; expected text or json`);
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 const reportFolder = resolve(args.folder);
@@ -261,8 +261,8 @@ if (overview) {
 }
 
 function jaccardTokens(a, b) {
-  const tokA = new Set(a.split(/[^a-z0-9]+/).filter((t) => t.length >= MIN_ANALYSIS_TOKEN_LENGTH && !ANALYSIS_TOKEN_STOP_WORDS.has(t)));
-  const tokB = new Set(b.split(/[^a-z0-9]+/).filter((t) => t.length >= MIN_ANALYSIS_TOKEN_LENGTH && !ANALYSIS_TOKEN_STOP_WORDS.has(t)));
+  const tokA = new Set(a.split(/[^a-z0-9]+/).filter((t) => t.length >= MIN_TITLE_TOKEN_LENGTH && !TITLE_TOKEN_STOP_WORDS.has(t)));
+  const tokB = new Set(b.split(/[^a-z0-9]+/).filter((t) => t.length >= MIN_TITLE_TOKEN_LENGTH && !TITLE_TOKEN_STOP_WORDS.has(t)));
   if (!tokA.size || !tokB.size) return 0;
   const inter = [...tokA].filter((t) => tokB.has(t)).length;
   const union = new Set([...tokA, ...tokB]).size;
@@ -348,4 +348,4 @@ if (args.format === 'json') {
   if (ok) console.log('[cross-chapter] ✓ no material drift detected.');
 }
 
-process.exit(ok ? EXIT.ok : EXIT.validation);
+process.exit(ok ? EXIT.ok : EXIT.failure);

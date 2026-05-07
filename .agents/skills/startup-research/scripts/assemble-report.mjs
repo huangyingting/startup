@@ -24,7 +24,7 @@ const INLINE_CLAIM_REF_RE = /\[(C[A-Z]\d{3}|C\d{3})\]/g;
 
 function abort(message) {
   console.error(`[assemble-report] ${message}`);
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {

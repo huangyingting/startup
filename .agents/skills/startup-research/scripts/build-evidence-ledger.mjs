@@ -31,11 +31,11 @@ function parseArgs(argv) {
   for (const arg of argv) {
     if (arg.startsWith('-')) {
       console.error(`[evidence-ledger] unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder>`);
-      process.exit(EXIT.invalidArgs);
+      process.exit(EXIT.failure);
     } else if (!args.folder) args.folder = arg;
     else {
       console.error(`[evidence-ledger] unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder>`);
-      process.exit(EXIT.invalidArgs);
+      process.exit(EXIT.failure);
     }
   }
   return args;
@@ -44,7 +44,7 @@ function parseArgs(argv) {
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
   console.error('Usage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder>');
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 const reportFolder = resolve(args.folder);

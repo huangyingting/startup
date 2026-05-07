@@ -29,7 +29,7 @@ const args = process.argv.slice(2);
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/finalize-report.mjs <report-folder> [--rebuild] [--refresh] [--refresh-reason <text>]');
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
@@ -74,7 +74,7 @@ function runStep(step) {
     // Pass the subprocess exit code through as-is so callers see the same
     // semantic the underlying script emitted; only fall back to validation
     // when the subprocess died from a signal (status === null).
-    process.exit(result.status ?? EXIT.validation);
+    process.exit(result.status ?? EXIT.failure);
   }
 }
 
