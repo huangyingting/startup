@@ -4,7 +4,7 @@
 // workflow has one machine-readable source of truth for chapter order, gates,
 // output files, and final artifact names.
 import { join, basename } from 'node:path';
-import { FINAL_ARTIFACTS, companySlugFromRunId, loadWorkflowConfig, researchCacheDir, tryReadYaml, workflowConfigPath } from './utils.mjs';
+import { FINAL_ARTIFACTS, companySlugFromRunId, isRunId, loadWorkflowConfig, researchCacheDir, tryReadYaml, workflowConfigPath } from './utils.mjs';
 import { RESTRICTED_ACCESS_STATUSES, VOCABULARIES, dimensionCatalog } from './check-dimensions.mjs';
 
 function usage() {
@@ -161,6 +161,12 @@ function cumulativeContext(reportFolder, currentOrder, allChapters) {
 //     diff context only; volatile facts must still be re-fetched.
 function runCacheContext(reportFolder) {
   const runId = basename(reportFolder);
+  // Be permissive about --report-folder: if the basename is not a runId
+  // (developer pointing at a scratch folder), return an empty cache slot
+  // instead of crashing the load-chapter packet.
+  if (!isRunId(runId)) {
+    return { cacheDir: null, runId, companySlug: null, disclosureHint: null, refreshContext: null };
+  }
   const cacheDir = researchCacheDir(runId);
   const out = {
     cacheDir,

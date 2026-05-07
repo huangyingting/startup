@@ -34,7 +34,7 @@ evidenceQuality: high | medium | low | unknown
 calloutType: strength | risk | recommendation | insight | assumption    # shared vocabulary for chapter callouts and report callout blocks
 claim.type: observed | company-claimed | third-party-reported | estimated | inferred | open-question | conflicting
 freshness: current | recent | historical | unknown
-sourceType: official | filing | regulatory | news | analyst-market-data | technical-docs | customer-proof | partner-proof | developer-signal | review | legal | other
+sourceType: official* | filing* | regulatory* | news | analyst-market-data | technical-docs | customer-proof | partner-proof | developer-signal | review | legal* | other     # * = primary tier (matches `packet.vocabularies.primaryTierSourceTypes`); a source whose sourceType is starred OR whose `reputationTier: high` satisfies the high-confidence corroboration rule.
 reputationTier: high | medium | low
 independence: company | partner | customer | competitor | independent | unknown
 stance: confirming | adverse | neutral | unknown
@@ -95,7 +95,7 @@ localEvidence:
   claims: [claim]
   evidenceGaps: [evidenceGap]
 acknowledgedWarnings:                          # Optional; opt out of `--strict` chapter warnings without fixing them.
-  - dimension: string                          # Must match a warning dimension actually emitted by check-chapter (paywallRisk | sectionsMax | tablesMax | figuresMax | figureType).
+  - dimension: string                          # Must match one of the warning dimensions check-chapter actually emits: paywallRisk | sectionsMax | tablesMax | figuresMax | figureType. Only warnings can be acknowledged; failures cannot.
     reason: string                             # ≥ 30 chars explaining why the warning is intentional.
 ```
 
@@ -256,10 +256,10 @@ source:
   url: string
   date: YYYY-MM-DD | null                          # null only when no publish/document date exists.
   accessDate: YYYY-MM-DD                           # Required; never null.
-  accessStatus: ok | paywall | js-only | broken | rate-limited
-  stance: confirming | adverse | neutral | unknown
-  sourceType: sourceType
-  reputationTier: high | medium | low
+  accessStatus: ok | paywall | js-only | broken | rate-limited   # Everything except `ok` is a restricted-access status (see `packet.vocabularies.restrictedAccessStatuses`).
+  stance: confirming | adverse | neutral | unknown   # YAML field name is `stance`; the catalog key in packet.vocabularies is `sourceStance` (namespaced to distinguish from valuationStance).
+  sourceType: sourceType                            # See the sourceType enum below; * marks the primary-tier values that satisfy the high-confidence corroboration rule.
+  reputationTier: high | medium | low               # `high` also satisfies the primary-tier requirement for high-confidence claims.
   independence: company | partner | customer | competitor | independent | unknown
   topics: [string]                                 # Non-empty.
   keyQuote: string | null
@@ -280,7 +280,7 @@ researchQuestion:
   question: string                                 # Non-empty.
   type: enumeration | quantification | verification | adverse | freshness | comparison | mechanism
   targets: [string]                                # Non-empty; each target is `contentRequirements/<index>` or `plannedTables/<table-slug>` or `plannedFigures/<figure-slug>`.
-  status: answered | partial | unresolved
+  status: answered | partial | unresolved          # `answered` = a claim cites this question via `answersQuestionRefs`. `partial` = answered with caveats / incomplete data (counts toward neither answered nor unresolved — surface in evidenceGaps to explain). `unresolved` = no claim closed it (must surface in evidenceGaps via relatedQuestionRefs).
 
 searchQuery:
   query: string                                    # Exact query string sent to the search tool.
@@ -374,6 +374,56 @@ appendix:
   id: A | B | C | ...
   title: string
   blocks: [block]
+```
+
+## Run cache files
+
+Read-only inputs the orchestrator (`new-report.mjs`) writes under `.research-cache/<runId>/`. The chapter packet surfaces them as `packet.runCache.disclosureHint` and `packet.runCache.refreshContext` whenever `load-chapter.mjs` is called with `--include-context --report-folder <reportFolder>`. Treat them strictly as inputs — do not write to them from chapter generation.
+
+```yaml
+disclosure-hint.yaml:                        # Written when new-report.mjs is given --disclosure stealth | private-undisclosed.
+  disclosureProfile: public | private-disclosed | private-undisclosed | stealth
+  note: string                               # Operator note pointing at companyProfile.disclosureProfile + chapter-04 adoption.
+  canonicalEvidenceGaps: [string]            # Plain-string gap descriptions the agent should adopt as the `missingEvidence` field of typed evidenceGap entries in chapter 04 (financials).
+
+refresh-context.yaml:                        # Written when new-report.mjs is given --refresh; carries the prior run's summary card snapshot.
+  schemaVersion: refresh-context-v1
+  mode: refresh
+  newRunId: string                           # `<14-digit-timestamp>-<companySlug>` of the new run.
+  refreshOfRunId: string                     # Run id of the report being refreshed.
+  refreshReason: string | null
+  previousReport:
+    runId: string
+    path: string                             # `reports/<runId>` (relative to repo root).
+    summaryCardPath: string
+    runDate: YYYY-MM-DD | null
+    revisionStatus: current | superseded
+    company: { name, website }
+    headline: string | null
+    overallScore: number | null
+    recommendation: recommendation | null
+    riskRating: riskRating | null
+    valuationStance: valuationStance | null
+    keyMetrics: keyMetrics
+    sourceStats: {}                          # Verbatim copy of prior summary-card.sourceStats.
+  refreshInstructions: [string]              # Human-readable reminders the orchestrator wrote; agent re-reads as a checklist.
+```
+
+Adoption rules:
+
+- `disclosureHint.canonicalEvidenceGaps[]` — chapter 04 (financials) should adopt each entry as the `missingEvidence` field of a typed `evidenceGap` (pick a sensible `type` / `severity` / `topic` per entry). Other chapters do not consume this file.
+- `refreshContext.previousReport` — use only as background/diff context. Re-fetch every volatile fact (see SKILL.md's *Research and evidence rules*); never copy a stale claim or metric without re-verifying it.
+
+## depthFloor (per-chapter `gate.depthFloor`)
+
+Defined in `chapters.yaml`'s `defaultGate`. Each field maps to a check-chapter dimension:
+
+```yaml
+depthFloor:
+  minSectionBodyWords: number          # depthSection: each section's combined body+block prose must reach this floor.
+  minSectionWordsTotal: number         # depthSectionTotal: sum across all sections.
+  minTableRowsTotal: number            # depthTableRows: sum of rows across the chapter's tables.
+  minFigureDataPointsTotal: number     # depthFigureData: sum of data-point counts across the chapter's figures.
 ```
 
 ## Figure types
