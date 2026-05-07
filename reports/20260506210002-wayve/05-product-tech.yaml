@@ -48,10 +48,10 @@ sections:
       No rules-based modules — pure neural network end-to-end. Python/PyTorch training stack.
       Kubernetes-based cloud training infrastructure (Microsoft Azure partnership).
     claimRefs:
-      - C141
-      - C142
-      - C143
-      - C144
+      - CE001
+      - CE002
+      - CE003
+      - CE004
   - id: s2
     title: GAIA-1 Technical Deep Dive and Published Research
     body: |
@@ -80,10 +80,10 @@ sections:
       suitable for real-time on-vehicle deployment); it functions as a training-time world model,
       not a driving policy model. WAYVE-1 handles real-time driving policy.
     claimRefs:
-      - C145
-      - C146
-      - C147
-      - C148
+      - CE005
+      - CE006
+      - CE007
+      - CE008
   - id: s3
     title: Product Maturity, Certifications, and Integration Status
     body: |
@@ -114,10 +114,10 @@ sections:
       in press materials but does not disclose SOTIF (Safety of the Intended Functionality) test
       results or NCAP-equivalent scores.
     claimRefs:
-      - C149
-      - C150
-      - C151
-      - C152
+      - CE009
+      - CE010
+      - CE011
+      - CE012
   - id: s4
     title: Technology Roadmap and Competitive Technical Risks
     body: |
@@ -146,12 +146,12 @@ sections:
       5. NVIDIA dependency: WAYVE-1 is optimized for NVIDIA Orin/Thor; if OEMs choose different
          silicon (Qualcomm Snapdragon Ride, Mobileye EyeQ), Wayve faces re-porting costs.
     claimRefs:
-      - C153
-      - C154
-      - C155
-      - C156
+      - CE013
+      - CE014
+      - CE015
+      - CE016
 tables:
-  - id: T501
+  - id: TE001
     title: Product Module / Asset Matrix
     slug: product-module-asset-matrix
     columns:
@@ -193,11 +193,11 @@ tables:
         - Third-party (Azure/NVIDIA)
     notes: TRL 1=basic concept; TRL 9=full commercial deployment. Wayve's product is at TRL 5–7 across components.
     claimRefs:
-      - C141
-      - C142
-      - C143
-      - C144
-  - id: T502
+      - CE001
+      - CE002
+      - CE003
+      - CE004
+  - id: TE002
     title: Workflow / Use Case Table
     slug: workflow-use-case-table
     columns:
@@ -246,10 +246,10 @@ tables:
         - Low
     notes: All use cases are pilot or evaluation stage. No commercial revenue contracts have been announced.
     claimRefs:
-      - C149
-      - C150
-      - C151
-  - id: T503
+      - CE009
+      - CE010
+      - CE011
+  - id: TE003
     title: Technology / Operating Architecture Table
     slug: technology-operating-architecture-table
     columns:
@@ -291,10 +291,10 @@ tables:
         - Per-OEM integration engineering required
     notes: Architecture reconstructed from published research and product announcements. Not audited by Wayve.
     claimRefs:
-      - C142
-      - C144
-      - C146
-  - id: T504
+      - CE002
+      - CE004
+      - CE006
+  - id: TE004
     title: Trust / Quality / Compliance Table
     slug: trust-quality-compliance-table
     columns:
@@ -331,10 +331,10 @@ tables:
       Trust and quality posture is based on public information. Wayve has not disclosed internal safety metrics or
       regulatory submissions.
     claimRefs:
-      - C151
-      - C152
-      - C156
-  - id: T505
+      - CE011
+      - CE012
+      - CE016
+  - id: TE005
     title: Roadmap / Release / Development Stage Table
     slug: roadmap-release-development-stage-table
     columns:
@@ -378,11 +378,11 @@ tables:
       Timeline estimates reconstructed from Wayve press materials and industry benchmarks. No official roadmap has been
       published.
     claimRefs:
-      - C153
-      - C154
-      - C155
+      - CE013
+      - CE014
+      - CE015
 figures:
-  - id: F501
+  - id: FE001
     title: Product Architecture Map — Wayve AV Platform
     type: dag
     layout: wide
@@ -437,11 +437,11 @@ figures:
           to: gaia
           label: world model update
     claimRefs:
-      - C162
-      - C163
-      - C164
-      - C165
-  - id: F502
+      - CE022
+      - CE023
+      - CE024
+      - CE025
+  - id: FE002
     title: Customer Workflow / Operating Flow — Uber London Robotaxi
     type: flow
     layout: standard
@@ -484,10 +484,10 @@ figures:
           to: learning
           label: continuous improvement
     claimRefs:
-      - C149
-      - C150
-      - C155
-  - id: F503
+      - CE009
+      - CE010
+      - CE015
+  - id: FE003
     title: Critical Dependency Map — WAYVE-1 Platform
     type: dag
     layout: standard
@@ -525,10 +525,10 @@ figures:
           to: wayve1
           label: vehicle integration
     claimRefs:
-      - C151
-      - C153
-      - C156
-  - id: F504
+      - CE011
+      - CE013
+      - CE016
+  - id: FE004
     title: Product Maturity / Capability Map — Wayve Components
     type: matrix
     layout: standard
@@ -574,10 +574,10 @@ figures:
             - 4
     approximationNotes: Scores 1–5 qualitative. 5=excellent, 1=early stage. Technical readiness highest; commercial lowest.
     claimRefs:
-      - C147
-      - C148
-      - C152
-      - C154
+      - CE007
+      - CE008
+      - CE012
+      - CE014
 callouts:
   - id: CL501
     type: strength
@@ -589,8 +589,8 @@ callouts:
       validate scientific depth. This model enables synthetic data generation that could allow Wayve to scale training
       without proportionally expanding its physical test fleet — a critical cost and time advantage for generalization.
     claimRefs:
-      - C145
-      - C146
+      - CE005
+      - CE006
   - id: CL502
     type: risk
     severity: high
@@ -602,245 +602,245 @@ callouts:
       require — creating a potential certification barrier that could force Wayve to add interpretability layers,
       reducing its technical differentiation.
     claimRefs:
-      - C156
-      - C152
+      - CE016
+      - CE012
 localEvidence:
   searchQueries:
     - query: WAYVE-1 autonomous driving foundation model architecture 2024
       engine: web_search
       hits: 6
       retainedSourceRefs:
-        - S501
-        - S502
+        - SE001
+        - SE002
     - query: GAIA-1 generative world model AV Wayve 2023 paper
       engine: web_search
       hits: 8
       retainedSourceRefs:
-        - S503
-        - S504
+        - SE003
+        - SE004
     - query: Wayve NVIDIA Orin autonomous driving hardware SoC
       engine: web_search
       hits: 5
       retainedSourceRefs:
-        - S505
-        - S506
+        - SE005
+        - SE006
     - query: Wayve end-to-end neural network LIDAR free camera radar
       engine: web_search
       hits: 5
       retainedSourceRefs:
-        - S507
+        - SE007
     - query: Wayve Uber London robotaxi pilot 2024 operational
       engine: web_search
       hits: 6
       retainedSourceRefs:
-        - S508
-        - S509
+        - SE008
+        - SE009
     - query: Wayve ASDA grocery delivery autonomous vehicle trial UK
       engine: web_search
       hits: 4
       retainedSourceRefs:
-        - S510
+        - SE010
     - query: Wayve Nissan autonomous vehicle UK road trial 2023 2024
       engine: web_search
       hits: 5
       retainedSourceRefs:
-        - S511
-        - S512
+        - SE011
+        - SE012
     - query: autonomous vehicle black box neural network certification explainability
       engine: web_search
       hits: 6
       retainedSourceRefs:
-        - S513
-        - S514
+        - SE013
+        - SE014
     - query: Wayve California DMV testing permit autonomous vehicle
       engine: web_search
       hits: 4
       retainedSourceRefs:
-        - S515
+        - SE015
     - query: Wayve Microsoft Azure cloud partnership autonomous driving training
       engine: web_search
       hits: 4
       retainedSourceRefs:
-        - S516
+        - SE016
     - query: Wayve Stellantis delivery vehicle autonomous partnership
       engine: web_search
       hits: 4
       retainedSourceRefs:
-        - S517
+        - SE017
     - query: Wayve Alex Kendall SegNet embodied AI autonomous driving research
       engine: web_search
       hits: 5
       retainedSourceRefs:
-        - S518
-        - S519
+        - SE018
+        - SE019
     - query: UK Automated Vehicles Act 2024 certification requirements AV
       engine: web_search
       hits: 5
       retainedSourceRefs:
-        - S520
-        - S521
+        - SE020
+        - SE021
     - query: ISO 26262 SOTIF autonomous vehicle certification requirements
       engine: web_search
       hits: 4
       retainedSourceRefs:
-        - S522
+        - SE022
     - query: Wayve Mercedes Benz collaboration autonomous vehicle 2023
       engine: web_search
       hits: 4
       retainedSourceRefs:
-        - S523
-        - S524
+        - SE023
+        - SE024
     - query: generative world model AV training synthetic data scale
       engine: web_search
       hits: 4
       retainedSourceRefs:
-        - S525
+        - SE025
   researchQuestions:
-    - id: RQ501
+    - id: QE001
       question: What is WAYVE-1 and how does it function as an end-to-end driving policy model?
       type: mechanism
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ502
+    - id: QE002
       question: What is GAIA-1 and what were the key technical findings from the 2023 paper (arXiv 2309.17080)?
       type: mechanism
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ503
+    - id: QE003
       question: What hardware platform does WAYVE-1 run on and what is the NVIDIA Orin/Thor dependency?
       type: verification
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ504
+    - id: QE004
       question: What is the AIM (Autonomous Intelligence Module) and how does it integrate with OEM vehicles?
       type: mechanism
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ505
+    - id: QE005
       question: What is the current operational status of the Wayve / Uber London robotaxi pilot?
       type: verification
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ506
+    - id: QE006
       question: What ASDA grocery delivery pilot did Wayve complete and what were the outcomes?
       type: verification
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ507
+    - id: QE007
       question: What OEM partnerships has Wayve announced for vehicle integration evaluation?
       type: enumeration
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ508
+    - id: QE008
       question: How does Wayve's sensor suite (camera + radar, no LIDAR) compare to LIDAR-equipped systems for safety?
       type: comparison
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ509
+    - id: QE009
       question: What certifications has Wayve obtained or applied for under UK AV Act 2024 requirements?
       type: verification
       targets:
         - contentRequirements/2
       status: answered
-    - id: RQ510
+    - id: QE010
       question: What is the certification risk from explainability requirements for Wayve's black-box neural network?
       type: adverse
       targets:
         - contentRequirements/2
       status: answered
-    - id: RQ511
+    - id: QE011
       question: What is Wayve's California DMV testing permit status and what does it enable in the US market?
       type: verification
       targets:
         - contentRequirements/2
       status: answered
-    - id: RQ512
+    - id: QE012
       question: How does Microsoft Azure's partnership with Wayve support model training and infrastructure?
       type: mechanism
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ513
+    - id: QE013
       question: What is Wayve's published technology roadmap and when does it plan first commercial OEM deployment?
       type: enumeration
       targets:
         - contentRequirements/3
       status: answered
-    - id: RQ514
+    - id: QE014
       question: What is the dependency risk on NVIDIA Orin/Thor hardware for Wayve's platform portability?
       type: adverse
       targets:
         - contentRequirements/2
       status: answered
-    - id: RQ515
+    - id: QE015
       question: What academic citations has GAIA-1 received and what does this say about Wayve's research position?
       type: quantification
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ516
+    - id: QE016
       question: What is Wayve's ISO 26262 and SOTIF compliance status for AV functional safety?
       type: verification
       targets:
         - contentRequirements/2
       status: answered
-    - id: RQ517
+    - id: QE017
       question: How does GAIA-1's synthetic data generation capability address the data scale gap vs Waymo 10M miles?
       type: mechanism
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ518
+    - id: QE018
       question: What is the technology readiness level (TRL) for each major Wayve platform component?
       type: quantification
       targets:
         - contentRequirements/3
       status: answered
-    - id: RQ519
+    - id: QE019
       question: What is Wayve's end-to-end AI approach vs modular AV stacks — what are the engineering trade-offs?
       type: comparison
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ520
+    - id: QE020
       question: What is the Wayve / Nissan UK autonomous vehicle road trial and what has been demonstrated?
       type: verification
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ521
+    - id: QE021
       question: What is the Wayve / Stellantis delivery vehicle partnership and timeline?
       type: verification
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ522
+    - id: QE022
       question: What is the Wayve / Mercedes-Benz R&D collaboration and its technology scope?
       type: verification
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ523
+    - id: QE023
       question: What are the key risks to Wayve's WAYVE-1 commercialization timeline in 2025–2026?
       type: adverse
       targets:
         - contentRequirements/3
       status: answered
-    - id: RQ524
+    - id: QE024
       question: What does Alex Kendall's embodied AI research background mean for Wayve's technical IP depth?
       type: mechanism
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ525
+    - id: QE025
       question: >-
         Is Wayve's generalization claim (WAYVE-1 across vehicle types without reprogramming) validated by published
         evidence?
@@ -848,7 +848,7 @@ localEvidence:
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ526
+    - id: QE026
       question: >-
         What are Wayve's key technology differentiators — IP, data moat, regulatory approvals, and manufacturing
         know-how — that separate it from competitors?
@@ -856,7 +856,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: answered
-    - id: RQ527
+    - id: QE027
       question: >-
         What trust, safety, and compliance controls does Wayve operate for its AV platform including privacy,
         cybersecurity, and functional safety?
@@ -865,7 +865,7 @@ localEvidence:
         - contentRequirements/5
       status: answered
   sources:
-    - id: S501
+    - id: SE001
       publisher: Wayve Technologies
       title: 'WAYVE-1: An Embodied AI Foundation Model for Autonomous Driving'
       url: https://wayve.ai/thinking/wayve-1-autonomous-driving-foundation-model/
@@ -883,7 +883,7 @@ localEvidence:
         - autonomous driving
         - architecture
       keyQuote: null
-    - id: S502
+    - id: SE002
       publisher: MIT Technology Review
       title: Wayve's end-to-end neural network approach could change autonomous driving
       url: https://www.technologyreview.com/2024/05/wayve-end-to-end-neural-network-autonomous-driving/
@@ -901,7 +901,7 @@ localEvidence:
         - embodied AI
         - technical analysis
       keyQuote: null
-    - id: S503
+    - id: SE003
       publisher: arXiv (Wayve Technologies)
       title: 'GAIA-1: A Generative World Model for Autonomous Driving'
       url: https://arxiv.org/abs/2309.17080
@@ -919,7 +919,7 @@ localEvidence:
         - autonomous driving
         - arXiv
       keyQuote: null
-    - id: S504
+    - id: SE004
       publisher: Wayve Technologies
       title: 'GAIA-1: Generative AI for AV — Product Announcement'
       url: https://wayve.ai/thinking/gaia-1-world-model-autonomous-driving/
@@ -938,7 +938,7 @@ localEvidence:
         - generative AI
         - Wayve
       keyQuote: null
-    - id: S505
+    - id: SE005
       publisher: NVIDIA Corporation
       title: NVIDIA Orin — Autonomous Vehicle SoC for L4 Self-Driving
       url: https://www.nvidia.com/en-us/self-driving-cars/drive-orin/
@@ -955,7 +955,7 @@ localEvidence:
         - L4
         - AV compute
       keyQuote: null
-    - id: S506
+    - id: SE006
       publisher: NVIDIA Corporation
       title: NVIDIA invests in Wayve to accelerate embodied AI for autonomous vehicles
       url: https://investor.nvidia.com/news-releases/news-release-details/nvidia-invests-wayve-autonomous-vehicle-company
@@ -973,7 +973,7 @@ localEvidence:
         - AV
         - Series C co-investor
       keyQuote: null
-    - id: S507
+    - id: SE007
       publisher: Wayve Technologies
       title: Why Wayve doesn't use LIDAR — camera-first autonomous driving approach
       url: https://wayve.ai/thinking/why-wayve-camera-first-no-lidar/
@@ -991,7 +991,7 @@ localEvidence:
         - sensor philosophy
         - AV approach
       keyQuote: null
-    - id: S508
+    - id: SE008
       publisher: Uber Technologies Inc.
       title: Uber and Wayve launch autonomous vehicle rides in London
       url: https://www.uber.com/en-GB/newsroom/wayve-autonomous-rides-london/
@@ -1008,7 +1008,7 @@ localEvidence:
         - autonomous rides
         - partnership
       keyQuote: null
-    - id: S509
+    - id: SE009
       publisher: The Guardian
       title: Wayve and Uber launch self-driving taxi service in London boroughs
       url: https://www.theguardian.com/technology/2023/nov/wayve-uber-self-driving-london
@@ -1026,7 +1026,7 @@ localEvidence:
         - UK
         - pilot
       keyQuote: null
-    - id: S510
+    - id: SE010
       publisher: ASDA Stores Ltd.
       title: ASDA trials autonomous grocery delivery vehicles with Wayve
       url: https://corporate.asda.com/newsroom/2022/10/28/asda-trials-autonomous-grocery-delivery-wayve
@@ -1043,7 +1043,7 @@ localEvidence:
         - autonomous vehicle
         - UK trial
       keyQuote: null
-    - id: S511
+    - id: SE011
       publisher: Wayve Technologies
       title: 'Wayve and Nissan: Advancing Autonomous Driving in the UK'
       url: https://wayve.ai/thinking/wayve-nissan-autonomous-driving-uk/
@@ -1060,7 +1060,7 @@ localEvidence:
         - AV integration
         - OEM partnership
       keyQuote: null
-    - id: S512
+    - id: SE012
       publisher: Financial Times
       title: Nissan tests Wayve autonomous driving technology on UK roads
       url: https://www.ft.com/content/nissan-wayve-autonomous-uk-trials
@@ -1077,7 +1077,7 @@ localEvidence:
         - embodied AI
         - OEM evaluation
       keyQuote: null
-    - id: S513
+    - id: SE013
       publisher: IEEE Transactions on Intelligent Transportation Systems
       title: Explainability Requirements for Level 4 Autonomous Vehicle Certification
       url: https://ieeexplore.ieee.org/document/av-explainability-l4-certification
@@ -1095,7 +1095,7 @@ localEvidence:
         - neural network
         - regulatory
       keyQuote: null
-    - id: S514
+    - id: SE014
       publisher: UK DVSA (Department for Transport)
       title: Automated Vehicles Act 2024 — Technical Requirements Consultation
       url: https://www.gov.uk/government/consultations/automated-vehicles-act-2024-technical-requirements
@@ -1113,7 +1113,7 @@ localEvidence:
         - autonomous vehicles
         - DVSA
       keyQuote: null
-    - id: S515
+    - id: SE015
       publisher: California Department of Motor Vehicles
       title: Autonomous Vehicle Testing Permit — Wayve Technologies (2023)
       url: https://www.dmv.ca.gov/portal/vehicle-industry-services/autonomous-vehicles/testing-permit-holders/
@@ -1130,7 +1130,7 @@ localEvidence:
         - AV testing
         - US market
       keyQuote: null
-    - id: S516
+    - id: SE016
       publisher: Microsoft Corporation
       title: Microsoft invests in Wayve through M12 venture fund to accelerate autonomous vehicle AI
       url: https://news.microsoft.com/m12-wayve-investment-autonomous-vehicle-ai/
@@ -1148,7 +1148,7 @@ localEvidence:
         - AV AI
         - Series C
       keyQuote: null
-    - id: S517
+    - id: SE017
       publisher: Wayve Technologies
       title: Wayve and Stellantis partner on autonomous delivery vehicle AI
       url: https://wayve.ai/thinking/wayve-stellantis-autonomous-delivery-partnership/
@@ -1165,7 +1165,7 @@ localEvidence:
         - LCV
         - OEM partnership
       keyQuote: null
-    - id: S518
+    - id: SE018
       publisher: Alex Kendall (University of Cambridge)
       title: 'SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation'
       url: https://arxiv.org/abs/1511.00561
@@ -1183,7 +1183,7 @@ localEvidence:
         - image segmentation
         - Cambridge
       keyQuote: null
-    - id: S519
+    - id: SE019
       publisher: Wayve Technologies
       title: 'AIM: Autonomous Intelligence Module — On-Vehicle Inference System'
       url: https://wayve.ai/technology/autonomous-intelligence-module/
@@ -1201,7 +1201,7 @@ localEvidence:
         - CAN-bus
         - NVIDIA Orin
       keyQuote: null
-    - id: S520
+    - id: SE020
       publisher: UK Department for Transport
       title: Automated Vehicles Act 2024 — Royal Assent and Regulatory Framework
       url: https://www.gov.uk/government/news/automated-vehicles-act-2024-becomes-law
@@ -1219,7 +1219,7 @@ localEvidence:
         - commercial deployment
         - AVE license
       keyQuote: null
-    - id: S521
+    - id: SE021
       publisher: Society of Motor Manufacturers and Traders (SMMT)
       title: 'UK Automated Vehicles Act: What it means for the automotive industry'
       url: https://www.smmt.co.uk/2024/05/uk-automated-vehicles-act-2024-automotive/
@@ -1237,7 +1237,7 @@ localEvidence:
         - SMMT
         - regulatory
       keyQuote: null
-    - id: S522
+    - id: SE022
       publisher: BSI (British Standards Institution)
       title: 'ISO 26262 and SOTIF: Functional Safety Standards for Autonomous Vehicles'
       url: https://www.bsigroup.com/en-GB/automotive-certification/iso-26262-sotif/
@@ -1254,7 +1254,7 @@ localEvidence:
         - AV safety
         - functional safety certification
       keyQuote: null
-    - id: S523
+    - id: SE023
       publisher: Wayve Technologies
       title: Wayve and Mercedes-Benz collaboration on autonomous driving AI
       url: https://wayve.ai/thinking/wayve-mercedes-benz-autonomous-ai-collaboration/
@@ -1271,7 +1271,7 @@ localEvidence:
         - OEM R&D
         - Europe collaboration
       keyQuote: null
-    - id: S524
+    - id: SE024
       publisher: Automotive News Europe
       title: Mercedes-Benz, Wayve team up on UK autonomous vehicle AI development
       url: https://europe.autonews.com/automakers/mercedes-wayve-autonomous-ai-uk-2023
@@ -1288,7 +1288,7 @@ localEvidence:
         - embodied AI
         - OEM partnership
       keyQuote: null
-    - id: S525
+    - id: SE025
       publisher: DeepMind (Google)
       title: 'Synthetic data generation for autonomous vehicle training: Scale and diversity'
       url: https://deepmind.google/discover/blog/synthetic-data-autonomous-vehicle-training/
@@ -1306,7 +1306,7 @@ localEvidence:
         - scale
         - data flywheel
       keyQuote: null
-    - id: S526
+    - id: SE026
       publisher: GitHub (Wayve Technologies)
       title: Wayve Technologies — GitHub Organization and Open-Source Repositories
       url: https://github.com/wayveai
@@ -1325,7 +1325,7 @@ localEvidence:
         - ML research
       keyQuote: null
   claims:
-    - id: C501
+    - id: CE001
       statement: >-
         WAYVE-1 is Wayve's embodied AI foundation model for autonomous driving: an end-to-end neural network that takes
         raw camera and radar inputs and outputs driving commands directly, without intermediate
@@ -1333,14 +1333,15 @@ localEvidence:
       type: observed
       topic: WAYVE-1 architecture
       sourceRefs:
-        - S501
-        - S502
+        - SE001
+        - SE002
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ501
-        - RQ519
-    - id: C502
+        - QE001
+        - QE019
+      contradictsClaimRefs: []
+    - id: CE002
       statement: >-
         WAYVE-1 is designed to run on NVIDIA Orin SoC hardware, creating a hardware dependency on NVIDIA's automotive
         compute platform — both for on-vehicle inference and for pre-production partnership with OEMs that select NVIDIA
@@ -1348,14 +1349,15 @@ localEvidence:
       type: observed
       topic: WAYVE-1 hardware dependency NVIDIA Orin
       sourceRefs:
-        - S505
-        - S506
+        - SE005
+        - SE006
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ503
-        - RQ514
-    - id: C503
+        - QE003
+        - QE014
+      contradictsClaimRefs: []
+    - id: CE003
       statement: >-
         The AIM (Autonomous Intelligence Module) is Wayve's on-vehicle software integration package that runs WAYVE-1 at
         safety-critical real-time latency and interfaces with vehicle CAN-bus, sensor arrays, and actuation systems —
@@ -1363,13 +1365,14 @@ localEvidence:
       type: observed
       topic: AIM on-vehicle module
       sourceRefs:
-        - S519
-        - S501
+        - SE019
+        - SE001
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ504
-    - id: C504
+        - QE004
+      contradictsClaimRefs: []
+    - id: CE004
       statement: >-
         Wayve operates a continuous learning fleet data pipeline that ingests driving footage from its 60–70 London test
         vehicles, labels safety-relevant scenarios, and retrains WAYVE-1 — creating a data flywheel that improves model
@@ -1377,13 +1380,14 @@ localEvidence:
       type: observed
       topic: fleet data pipeline continuous learning
       sourceRefs:
-        - S501
-        - S507
+        - SE001
+        - SE007
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ517
-    - id: C505
+        - QE017
+      contradictsClaimRefs: []
+    - id: CE005
       statement: >-
         GAIA-1 (arXiv:2309.17080, September 2023) is a 6.9B-parameter generative world model trained on Wayve's
         proprietary driving footage that can generate photorealistic future-frame video predictions conditioned on
@@ -1391,13 +1395,14 @@ localEvidence:
       type: observed
       topic: GAIA-1 technical specification
       sourceRefs:
-        - S503
-        - S504
+        - SE003
+        - SE004
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ502
-    - id: C506
+        - QE002
+      contradictsClaimRefs: []
+    - id: CE006
       statement: >-
         GAIA-1 received 400+ academic citations within 12 months of publication (September 2023 to September 2024) —
         unusually rapid uptake for an industrial research paper and evidence of genuine scientific contribution to the
@@ -1405,13 +1410,14 @@ localEvidence:
       type: observed
       topic: GAIA-1 citation impact
       sourceRefs:
-        - S503
-        - S504
+        - SE003
+        - SE004
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ515
-    - id: C507
+        - QE015
+      contradictsClaimRefs: []
+    - id: CE007
       statement: >-
         GAIA-1's primary commercial application is synthetic data augmentation for WAYVE-1 training, reducing the test
         fleet miles required per model iteration and enabling generation of rare edge-case scenarios (night driving,
@@ -1419,13 +1425,14 @@ localEvidence:
       type: inferred
       topic: GAIA-1 synthetic data commercial use
       sourceRefs:
-        - S503
-        - S525
+        - SE003
+        - SE025
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ517
-    - id: C508
+        - QE017
+      contradictsClaimRefs: []
+    - id: CE008
       statement: >-
         Wayve's LIDAR-free approach uses cameras and radar only — a philosophy consistent with Tesla FSD but distinct
         from Waymo, Aurora, and Mobileye, which use LIDAR; Wayve claims cameras provide sufficient data for its
@@ -1433,26 +1440,28 @@ localEvidence:
       type: observed
       topic: LIDAR-free sensor approach
       sourceRefs:
-        - S507
-        - S502
+        - SE007
+        - SE002
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ508
-    - id: C509
+        - QE008
+      contradictsClaimRefs: []
+    - id: CE009
       statement: >-
         Wayve and Uber launched supervised autonomous vehicle rides in London in November 2023, covering 30+ London
         boroughs — the first commercial robotaxi pilot in the UK, though with safety drivers present at this stage.
       type: observed
       topic: Uber London robotaxi pilot status
       sourceRefs:
-        - S508
-        - S509
+        - SE008
+        - SE009
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ505
-    - id: C510
+        - QE005
+      contradictsClaimRefs: []
+    - id: CE010
       statement: >-
         Wayve completed an autonomous grocery delivery trial with ASDA (Walmart-owned UK supermarket) in 2022–2023,
         demonstrating its platform on commercial delivery vehicle hardware — validating the product's adaptability
@@ -1460,25 +1469,27 @@ localEvidence:
       type: observed
       topic: ASDA delivery trial
       sourceRefs:
-        - S510
+        - SE010
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ506
-    - id: C511
+        - QE006
+      contradictsClaimRefs: []
+    - id: CE011
       statement: >-
         Wayve has conducted UK road trials with Nissan in 2023, integrating WAYVE-1 on a Nissan vehicle platform —
         representing the first public OEM integration trial and validating cross-vehicle generalization claims.
       type: observed
       topic: Nissan UK AV trials
       sourceRefs:
-        - S511
-        - S512
+        - SE011
+        - SE012
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ520
-    - id: C512
+        - QE020
+      contradictsClaimRefs: []
+    - id: CE012
       statement: >-
         Wayve has not publicly obtained ISO 26262 (functional safety) or SOTIF (ISO/PAS 21448) certification — standards
         that will likely be required for OEM production integration; the absence of this certification is a product
@@ -1486,13 +1497,14 @@ localEvidence:
       type: observed
       topic: ISO 26262 SOTIF certification gap
       sourceRefs:
-        - S522
-        - S514
+        - SE022
+        - SE014
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ516
-    - id: C513
+        - QE016
+      contradictsClaimRefs: []
+    - id: CE013
       statement: >-
         Wayve's Phase 1 roadmap (2024–2026) targets: (1) WAYVE-1 regulatory submission to UK DVSA under AV Act 2024, (2)
         transition Uber London pilot from supervised to unsupervised rides, and (3) sign first commercial OEM licensing
@@ -1500,13 +1512,14 @@ localEvidence:
       type: inferred
       topic: Phase 1 roadmap targets
       sourceRefs:
-        - S501
-        - S520
+        - SE001
+        - SE020
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ513
-    - id: C514
+        - QE013
+      contradictsClaimRefs: []
+    - id: CE014
       statement: >-
         UK AV Act 2024 implementation regulations are in consultation through 2025, with AVE (AV Entity) and OAV
         (Operator of Automated Vehicles) licensing expected to begin in 2026 — aligning with Wayve's Phase 1 commercial
@@ -1514,25 +1527,27 @@ localEvidence:
       type: observed
       topic: UK AV Act implementation timeline
       sourceRefs:
-        - S520
-        - S521
+        - SE020
+        - SE021
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ509
-    - id: C515
+        - QE009
+      contradictsClaimRefs: []
+    - id: CE015
       statement: >-
         Wayve obtained a California DMV autonomous vehicle testing permit in 2023, enabling US road testing — a
         prerequisite for eventual US market entry but not commercial approval.
       type: observed
       topic: California DMV testing permit
       sourceRefs:
-        - S515
+        - SE015
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ511
-    - id: C516
+        - QE011
+      contradictsClaimRefs: []
+    - id: CE016
       statement: >-
         UK and EU regulatory frameworks for L4 AV certification may require interpretable, fault-attributable AI systems
         — a requirement that Wayve's end-to-end black-box neural network currently cannot satisfy, representing a
@@ -1540,13 +1555,14 @@ localEvidence:
       type: third-party-reported
       topic: black-box certification risk
       sourceRefs:
-        - S513
-        - S514
+        - SE013
+        - SE014
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ510
-    - id: C517
+        - QE010
+      contradictsClaimRefs: []
+    - id: CE017
       statement: >-
         Microsoft's M12 venture fund co-invested in Wayve's Series C, and Wayve uses Microsoft Azure as its primary
         cloud training infrastructure — creating a cloud-to-capital alignment that reduces Wayve's infrastructure costs
@@ -1554,13 +1570,14 @@ localEvidence:
       type: observed
       topic: Microsoft Azure partnership and capital
       sourceRefs:
-        - S516
-        - S506
+        - SE016
+        - SE006
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ512
-    - id: C518
+        - QE012
+      contradictsClaimRefs: []
+    - id: CE018
       statement: >-
         Wayve and Stellantis announced a partnership in April 2023 to develop autonomous delivery vehicle technology for
         Stellantis's commercial van platform — representing a second OEM commercial vehicle integration validation
@@ -1568,26 +1585,28 @@ localEvidence:
       type: observed
       topic: Stellantis delivery vehicle partnership
       sourceRefs:
-        - S517
-        - S512
+        - SE017
+        - SE012
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ521
-    - id: C519
+        - QE021
+      contradictsClaimRefs: []
+    - id: CE019
       statement: >-
         Wayve and Mercedes-Benz announced an R&D collaboration in December 2023 for autonomous driving AI development —
         a prestigious OEM partnership for credibility but at an early R&D stage with no commercial terms disclosed.
       type: observed
       topic: Mercedes-Benz R&D collaboration
       sourceRefs:
-        - S523
-        - S524
+        - SE023
+        - SE024
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ522
-    - id: C520
+        - QE022
+      contradictsClaimRefs: []
+    - id: CE020
       statement: >-
         Alex Kendall (Wayve CEO/co-founder) invented SegNet (arXiv:1511.00561, 2015) — the deep learning semantic
         segmentation architecture with 20,000+ citations — providing the foundational research IP and academic
@@ -1595,13 +1614,14 @@ localEvidence:
       type: observed
       topic: Alex Kendall SegNet IP foundation
       sourceRefs:
-        - S518
-        - S519
+        - SE018
+        - SE019
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ524
-    - id: C521
+        - QE024
+      contradictsClaimRefs: []
+    - id: CE021
       statement: >-
         Wayve's generalization claim — that WAYVE-1 can be deployed on new vehicle types without significant re-training
         — is company-claimed and partially validated by the Nissan trial, but has not been demonstrated at commercial
@@ -1609,13 +1629,14 @@ localEvidence:
       type: company-claimed
       topic: WAYVE-1 generalization claim validation status
       sourceRefs:
-        - S501
-        - S511
+        - SE001
+        - SE011
       confidence: low
       freshness: recent
       answersQuestionRefs:
-        - RQ525
-    - id: C522
+        - QE025
+      contradictsClaimRefs: []
+    - id: CE022
       statement: >-
         Wayve's product maturity assessment by component: GAIA-1 world model (TRL 7 — deployed in production training),
         WAYVE-1 policy model (TRL 6 — demonstrated in London), AIM module (TRL 5 — validated in OEM evaluation), Fleet
@@ -1623,13 +1644,14 @@ localEvidence:
       type: estimated
       topic: Wayve platform TRL assessment
       sourceRefs:
-        - S501
-        - S504
+        - SE001
+        - SE004
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ518
-    - id: C523
+        - QE018
+      contradictsClaimRefs: []
+    - id: CE023
       statement: >-
         NVIDIA's DRIVE platform roadmap (Orin → Thor) is aligned with Wayve's deployment timeline, and NVIDIA's Series C
         investment creates a commercial incentive for NVIDIA to provide preferential DRIVE software support — a material
@@ -1637,13 +1659,14 @@ localEvidence:
       type: inferred
       topic: NVIDIA DRIVE roadmap alignment
       sourceRefs:
-        - S505
-        - S506
+        - SE005
+        - SE006
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ514
-    - id: C524
+        - QE014
+      contradictsClaimRefs: []
+    - id: CE024
       statement: >-
         WAYVE-1's key technical risk beyond certification is training data scale: with 60–70 test vehicles, Wayve
         accumulates data at 1/100th the rate of Waymo's 700+ vehicle fleet — a gap that GAIA-1 synthetic data is
@@ -1651,13 +1674,14 @@ localEvidence:
       type: estimated
       topic: training data scale gap vs Waymo
       sourceRefs:
-        - S507
-        - S525
+        - SE007
+        - SE025
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ523
-    - id: C525
+        - QE023
+      contradictsClaimRefs: []
+    - id: CE025
       statement: >-
         Wayve's product differentiator (end-to-end AI generalization) has a theoretical advantage for OEM licensing:
         once WAYVE-1 is certified, it could potentially be deployed across 10+ OEM vehicle types with minimal
@@ -1665,13 +1689,14 @@ localEvidence:
       type: inferred
       topic: end-to-end AI marginal cost advantage at scale
       sourceRefs:
-        - S501
-        - S502
+        - SE001
+        - SE002
       confidence: low
       freshness: recent
       answersQuestionRefs:
-        - RQ519
-    - id: C526
+        - QE019
+      contradictsClaimRefs: []
+    - id: CE026
       statement: >-
         Wayve's embodied AI IP (GAIA-1, WAYVE-1, AIM) provides differentiation on four dimensions: (1) generalization
         without re-training, (2) continuous improvement through fleet data, (3) lower sensor cost (no LIDAR), and (4)
@@ -1679,13 +1704,14 @@ localEvidence:
       type: observed
       topic: Wayve technical differentiation summary
       sourceRefs:
-        - S501
-        - S502
+        - SE001
+        - SE002
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ501
-    - id: C527
+        - QE001
+      contradictsClaimRefs: []
+    - id: CE027
       statement: >-
         Wayve's developer community (open-source tooling and research publication) provides a developer-signal moat: the
         Wayve GitHub repository has published auxiliary tools for AV data processing, attracting AI researchers and
@@ -1693,13 +1719,14 @@ localEvidence:
       type: observed
       topic: developer community and open-source signal
       sourceRefs:
-        - S526
-        - S518
+        - SE026
+        - SE018
       confidence: low
       freshness: recent
       answersQuestionRefs:
-        - RQ524
-    - id: C528
+        - QE024
+      contradictsClaimRefs: []
+    - id: CE028
       statement: >-
         The UK DVSA's AV certification process under the 2024 AV Act requires demonstrating safety in a defined
         operational design domain (ODD) — Wayve's London test fleet establishes a clear ODD (London urban roads) that is
@@ -1707,13 +1734,14 @@ localEvidence:
       type: inferred
       topic: UK AV Act ODD alignment with Wayve test domain
       sourceRefs:
-        - S514
-        - S520
+        - SE014
+        - SE020
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ509
-    - id: C529
+        - QE009
+      contradictsClaimRefs: []
+    - id: CE029
       statement: >-
         Wayve's LIDAR-free sensor suite reduces vehicle sensor BOM (bill of materials) cost by an estimated
         $10,000–$70,000 per vehicle versus LIDAR-equipped competitors — a significant OEM pricing advantage that
@@ -1721,13 +1749,14 @@ localEvidence:
       type: estimated
       topic: LIDAR-free BOM cost advantage
       sourceRefs:
-        - S507
-        - S505
+        - SE007
+        - SE005
       confidence: low
       freshness: recent
       answersQuestionRefs:
-        - RQ508
-    - id: C530
+        - QE008
+      contradictsClaimRefs: []
+    - id: CE030
       statement: >-
         Wayve's embodied AI approach is technically differentiated from Mobileye's rule-based EyeQ ADAS at the algorithm
         level: Mobileye uses a modular perception-prediction-planning pipeline with hand-coded rules; Wayve uses pure
@@ -1735,26 +1764,28 @@ localEvidence:
       type: observed
       topic: Wayve vs Mobileye technical architecture difference
       sourceRefs:
-        - S502
-        - S501
+        - SE002
+        - SE001
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ519
-    - id: C531
+        - QE019
+      contradictsClaimRefs: []
+    - id: CE031
       statement: >-
         Wayve has implemented UK GDPR-compliant data processing for its fleet video data, including privacy masking of
         faces and license plates in training data — a compliance posture required for operating in UK public roads.
       type: inferred
       topic: UK GDPR compliance for fleet video data
       sourceRefs:
-        - S520
-        - S507
+        - SE020
+        - SE007
       confidence: low
       freshness: recent
       answersQuestionRefs:
-        - RQ516
-    - id: C532
+        - QE016
+      contradictsClaimRefs: []
+    - id: CE032
       statement: >-
         The Wayve GitHub developer community includes public repositories related to AV perception and ML tooling, with
         500+ stars on key repositories — providing a developer-signal indicator of technical interest from the external
@@ -1762,12 +1793,13 @@ localEvidence:
       type: observed
       topic: Wayve GitHub developer community signal
       sourceRefs:
-        - S526
+        - SE026
       confidence: low
       freshness: recent
       answersQuestionRefs:
-        - RQ524
-    - id: C533
+        - QE024
+      contradictsClaimRefs: []
+    - id: CE033
       statement: >-
         WAYVE-1's continuous learning pipeline creates a compounding data advantage: every additional hour of
         operational driving improves model performance without manual engineering intervention — a property that modular
@@ -1775,13 +1807,14 @@ localEvidence:
       type: inferred
       topic: continuous learning compounding advantage
       sourceRefs:
-        - S501
-        - S525
+        - SE001
+        - SE025
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ504
-    - id: C534
+        - QE004
+      contradictsClaimRefs: []
+    - id: CE034
       statement: >-
         Wayve's Uber partnership creates a trust and quality signal: Uber's risk and safety standards (FMVSS compliance,
         TfL approval) implicitly constrain Wayve's operational safety standards during the London pilot, providing a
@@ -1789,13 +1822,14 @@ localEvidence:
       type: inferred
       topic: Uber safety standard as third-party quality constraint
       sourceRefs:
-        - S508
-        - S509
+        - SE008
+        - SE009
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ505
-    - id: C535
+        - QE005
+      contradictsClaimRefs: []
+    - id: CE035
       statement: >-
         Wayve has not publicly announced a cybersecurity program for WAYVE-1 — an increasing requirement as AV systems
         become connected and remotely updatable; absence of a public security posture is a compliance gap for OEM
@@ -1803,12 +1837,13 @@ localEvidence:
       type: observed
       topic: cybersecurity program gap
       sourceRefs:
-        - S514
-        - S522
+        - SE014
+        - SE022
       confidence: low
       freshness: recent
       answersQuestionRefs:
-        - RQ516
+        - QE016
+      contradictsClaimRefs: []
   evidenceGaps:
     - id: EG501
       type: data-unavailable
@@ -1822,7 +1857,8 @@ localEvidence:
         blocking diligence on the primary product.
       diligencePath: Request Wayve's internal safety metrics, DVSA submission documents, and scenario coverage reports.
       relatedQuestionRefs:
-        - RQ509
+        - QE009
+      relatedTableRefs: []
     - id: EG502
       type: data-unavailable
       severity: material
@@ -1833,7 +1869,8 @@ localEvidence:
       whyItMatters: Training data scale determines whether WAYVE-1's generalization will hold on new vehicle types and geographies.
       diligencePath: Request Wayve's data collection statistics and training dataset composition.
       relatedQuestionRefs:
-        - RQ517
+        - QE017
+      relatedTableRefs: []
     - id: EG503
       type: data-unavailable
       severity: material
@@ -1846,7 +1883,8 @@ localEvidence:
         automotive regulatory environments.
       diligencePath: Verify with Wayve whether ISO 26262 program is underway and when certification is expected.
       relatedQuestionRefs:
-        - RQ516
+        - QE016
+      relatedTableRefs: []
     - id: EG504
       type: data-unavailable
       severity: minor
@@ -1855,5 +1893,6 @@ localEvidence:
       whyItMatters: The Nissan trial is the primary evidence for cross-vehicle generalization — Wayve's key OEM selling proposition.
       diligencePath: Request Nissan trial results from Wayve and confirm independently with Nissan.
       relatedQuestionRefs:
-        - RQ520
-        - RQ525
+        - QE020
+        - QE025
+      relatedTableRefs: []
