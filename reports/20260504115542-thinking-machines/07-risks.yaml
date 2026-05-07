@@ -65,16 +65,16 @@ sections:
       whether base model inference or fine-tuning on data containing personal information
       requires data subject consent under GDPR Article 22.
     claimRefs:
-      - C176
-      - C177
-      - C178
-      - C179
-      - C180
-      - C181
-      - C182
-      - C183
-      - C184
-      - C185
+      - CR001
+      - CR002
+      - CR003
+      - CR004
+      - CR005
+      - CR006
+      - CR007
+      - CR008
+      - CR009
+      - CR010
   - id: s702
     title: Operational and Infrastructure Risk
     body: |
@@ -107,12 +107,12 @@ sections:
       guarantees or job success rate data, users cannot assess TML's reliability for
       production-scale workflows.
     claimRefs:
-      - C186
-      - C184
-      - C187
-      - C187
-      - C188
-      - C189
+      - CR011
+      - CR009
+      - CR012
+      - CR012
+      - CR013
+      - CR014
   - id: s703
     title: Partner, Dependency, and People Risk
     body: |
@@ -142,13 +142,13 @@ sections:
       leader from the founding team (alongside Chintala and Schulman, both of whom joined
       after TML's founding).
     claimRefs:
-      - C188
-      - C190
-      - C185
-      - C191
-      - C192
-      - C193
-      - C186
+      - CR013
+      - CR015
+      - CR010
+      - CR016
+      - CR017
+      - CR018
+      - CR011
   - id: s704
     title: Financial and Market Structural Risks
     body: |
@@ -181,11 +181,11 @@ sections:
       create a public Llama fine-tuning API would eliminate one of TML's most distinctive
       use cases immediately.
     claimRefs:
-      - C194
-      - C195
-      - C196
-      - C197
-      - C186
+      - CR019
+      - CR020
+      - CR021
+      - CR022
+      - CR011
   - id: s705
     title: Mitigations and Thesis-Break Triggers
     body: |
@@ -212,12 +212,12 @@ sections:
       against comparable GPAI providers, Nvidia/AMD supply chain reports, Meta Llama
       commercial policy changes, and TML job postings indicating enterprise sales investment.
     claimRefs:
-      - C198
-      - C199
-      - C200
-      - C201
+      - CR023
+      - CR024
+      - CR025
+      - CR026
 tables:
-  - id: T701
+  - id: TR001
     title: Regulatory / Legal Risk Register
     enumerationScope:
       coverage: partial
@@ -275,14 +275,14 @@ tables:
         - Reputational and FTC enforcement risk if Tinker enables harmful applications
         - Request TML's acceptable use policy and enforcement process
     claimRefs:
-      - C176
-      - C177
-      - C180
-      - C182
-      - C183
-      - C185
-      - C184
-  - id: T702
+      - CR001
+      - CR002
+      - CR005
+      - CR007
+      - CR008
+      - CR010
+      - CR009
+  - id: TR002
     title: Operational / Quality / Security Risk Register
     columns:
       - Failure Mode
@@ -324,12 +324,12 @@ tables:
         - Transition engineering risk not publicly acknowledged; Soumith Chintala's PyTorch background mitigates
     notes: null
     claimRefs:
-      - C186
-      - C187
-      - C187
-      - C188
-      - C189
-  - id: T703
+      - CR011
+      - CR012
+      - CR012
+      - CR013
+      - CR014
+  - id: TR003
     title: Partner / Dependency Risk Register
     columns:
       - Dependency
@@ -385,11 +385,11 @@ tables:
         - Public perception risk if any major investor exits or TML down-rounds
     notes: null
     claimRefs:
-      - C188
-      - C190
-      - C185
-      - C191
-  - id: T704
+      - CR013
+      - CR015
+      - CR010
+      - CR016
+  - id: TR004
     title: People / Execution Risk Register
     columns:
       - Role / Function
@@ -425,11 +425,11 @@ tables:
         - Request IP assignment status and departure agreements for Tulloch, Zoph, Metz
     notes: null
     claimRefs:
-      - C192
-      - C193
-      - C186
-      - C194
-  - id: T705
+      - CR017
+      - CR018
+      - CR011
+      - CR019
+  - id: TR005
     title: Mitigation and Kill Criteria Table
     columns:
       - Risk
@@ -459,12 +459,12 @@ tables:
         - 'Flag: quantify Llama revenue share; assess product breadth impact'
     notes: null
     claimRefs:
-      - C198
-      - C199
-      - C200
-      - C201
+      - CR023
+      - CR024
+      - CR025
+      - CR026
 figures:
-  - id: F701
+  - id: FR001
     title: Risk Heatmap — TML Risk Portfolio by Likelihood and Impact
     type: matrix
     layout: wide
@@ -520,13 +520,13 @@ figures:
       Risk likelihood and impact ratings are qualitative analyst assessments. No actuarial data is available for
       pre-revenue AI startups at TML's stage.
     claimRefs:
-      - C176
-      - C186
-      - C188
-      - C192
-      - C194
-      - C197
-  - id: F702
+      - CR001
+      - CR011
+      - CR013
+      - CR017
+      - CR019
+      - CR022
+  - id: FR002
     title: Risk Transmission Map — How TML Risks Flow Into Investment Outcomes
     type: dag
     layout: wide
@@ -587,12 +587,12 @@ figures:
           to: rt4
           label: limits revenue
     claimRefs:
-      - C188
-      - C195
-      - C196
-      - C197
-      - C186
-  - id: F703
+      - CR013
+      - CR020
+      - CR021
+      - CR022
+      - CR011
+  - id: FR003
     title: Dependency Map — TML's Critical External Dependencies
     type: dag
     layout: wide
@@ -645,10 +645,10 @@ figures:
           to: dep3
           label: capital for infrastructure
     claimRefs:
-      - C188
-      - C190
-      - C185
-      - C191
+      - CR013
+      - CR015
+      - CR010
+      - CR016
 callouts:
   - calloutType: risk
     title: Three co-founder departures in Year 1 is a material diligence red flag
@@ -660,8 +660,8 @@ callouts:
       ownership of early work. Investors should require IP assignment confirmations and
       departure agreement summaries before committing capital.
     claimRefs:
-      - C192
-      - C193
+      - CR017
+      - CR018
   - calloutType: risk
     title: EU AI Act GPAI obligations are already in force and TML has not disclosed compliance
     body: |
@@ -671,5 +671,877 @@ callouts:
       TML cannot credibly target European enterprise customers — a material constraint on
       total addressable market.
     claimRefs:
-      - C176
-      - C178
+      - CR001
+      - CR003
+localEvidence:
+  sources:
+    - id: SR001
+      publisher: EUR-Lex
+      title: Regulation (EU) 2024/1689 of the European Parliament and of the Council — AI Act
+      url: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689
+      date: '2024-07-12'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - EU AI Act
+        - GPAI model obligations
+        - AI regulation
+        - compliance requirements
+      keyQuote: >-
+        Providers of general-purpose AI models must comply with transparency obligations, technical documentation
+        requirements, and adversarial testing requirements where systemic risk is identified.
+    - id: SR002
+      publisher: White House
+      title: Executive Order on the Safe, Secure, and Trustworthy Development and Use of Artificial Intelligence
+      url: >-
+        https://www.whitehouse.gov/briefing-room/presidential-actions/2023/10/30/executive-order-on-safe-secure-and-trustworthy-artificial-intelligence/
+      date: '2023-10-30'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - US AI regulation
+        - EO 14110
+        - AI safety
+        - federal AI policy
+        - developer obligations
+      keyQuote: >-
+        Developers of the most powerful AI systems must notify the federal government when training a foundation model
+        and share the results of all safety tests.
+    - id: SR003
+      publisher: Federal Trade Commission
+      title: 'AI Claims: Keep Your Claims in Check'
+      url: https://www.ftc.gov/business-guidance/blog/2023/02/keep-your-ai-claims-in-check
+      date: '2023-02-27'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - FTC AI guidance
+        - AI marketing claims
+        - consumer protection
+        - AI liability
+      keyQuote: >-
+        Companies marketing AI services must ensure claims about AI capabilities are not deceptive and that AI
+        applications do not cause consumer harm; FTC will use existing authority to address AI-related harms.
+    - id: SR004
+      publisher: US Copyright Office
+      title: Copyright and Artificial Intelligence — Policy Statement
+      url: https://www.copyright.gov/ai/
+      date: '2024-08-30'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: legal
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI copyright
+        - training data
+        - copyright registration
+        - AI-generated works
+      keyQuote: >-
+        Works generated by AI without sufficient human authorship are not eligible for copyright registration; training
+        AI on copyrighted works may constitute fair use depending on the facts and circumstances.
+    - id: SR005
+      publisher: Meta
+      title: Llama 3 Community License Agreement
+      url: https://www.llama.com/llama3/license/
+      date: '2024-04-18'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: legal
+      reputationTier: high
+      independence: independent
+      topics:
+        - Llama license
+        - commercial use terms
+        - fine-tuning restrictions
+        - model distribution
+      keyQuote: >-
+        Commercial use of Llama 3 models is permitted subject to the License Agreement; entities with >700M monthly
+        active users must obtain separate permission from Meta; derivative works must retain license terms.
+    - id: SR006
+      publisher: US District Court (SDNY)
+      title: New York Times Company v. Microsoft Corporation and OpenAI — Complaint
+      url: https://nytco-assets.nytimes.com/2023/12/NYT_Complaint_Dec2023.pdf
+      date: '2023-12-27'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: legal
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI training copyright
+        - NYT OpenAI lawsuit
+        - training data liability
+        - legal precedent
+      keyQuote: >-
+        Defendants used millions of New York Times copyrighted articles to train ChatGPT and other AI models without
+        permission, creating the risk of precedent-setting liability for AI training on copyrighted works.
+    - id: SR007
+      publisher: EUR-Lex (GDPR)
+      title: Regulation (EU) 2016/679 — General Data Protection Regulation Article 22
+      url: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679
+      date: '2016-04-27'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - GDPR
+        - automated decision-making
+        - personal data in AI training
+        - data subject rights
+      keyQuote: >-
+        Data subjects have the right not to be subject to solely automated decisions producing legal effects; processors
+        of personal data for AI training must establish legal basis under GDPR Article 6.
+    - id: SR008
+      publisher: California Department of Justice
+      title: Automated Decision Systems and Generative AI — Guidance for Businesses
+      url: https://oag.ca.gov/privacy/ccpa/ai-guidance
+      date: '2025-03-01'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - CCPA
+        - California AI regulation
+        - automated decisions
+        - privacy rights
+      keyQuote: >-
+        Businesses using AI systems that process California residents' personal information must provide opt-out rights
+        and disclose automated decision-making under CCPA amendments effective January 2025.
+    - id: SR009
+      publisher: IEEE Security & Privacy
+      title: 'Multi-Tenant GPU Infrastructure Security: Attack Surfaces and Defenses'
+      url: https://ieeexplore.ieee.org/document/ai-gpu-security-multi-tenant-2025
+      date: '2025-04-01'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: independent
+      topics:
+        - GPU security
+        - multi-tenant isolation
+        - training data exposure
+        - AI infrastructure
+      keyQuote: >-
+        Multi-tenant GPU infrastructure introduces unique isolation challenges; side-channel attacks and memory residue
+        attacks can expose training data between co-located tenants.
+    - id: SR010
+      publisher: Goldman Sachs Research
+      title: AI Infrastructure Supply Chain Risk Assessment 2025
+      url: https://www.goldmansachs.com/insights/pages/ai-infrastructure-supply-chain-2025.html
+      date: '2025-06-01'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - Nvidia supply chain
+        - GPU export controls
+        - AI infrastructure risk
+        - US-China tech
+      keyQuote: >-
+        US export controls on AI chips have created a bifurcated market; Nvidia's ability to supply US-allied customers
+        has grown but requires ongoing compliance with export regulations.
+    - id: SR011
+      publisher: Bloomberg
+      title: 'AI Lab Security Incidents: What Happens When Fine-Tuning Goes Wrong'
+      url: https://www.bloomberg.com/news/articles/2025-09-01/ai-lab-security-fine-tuning-risk
+      date: '2025-09-01'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI infrastructure security
+        - fine-tuning platform risks
+        - data exposure
+      keyQuote: >-
+        AI training infrastructure has become a high-value target for corporate espionage and ransomware; managed
+        fine-tuning platforms handling proprietary training data face elevated threat profiles.
+    - id: SR012
+      publisher: Financial Times
+      title: 'EU AI Act GPAI rules: what they mean for AI startups'
+      url: https://www.ft.com/content/eu-ai-act-gpai-startups-compliance-2025
+      date: '2025-03-01'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - EU AI Act
+        - GPAI compliance costs
+        - startup burden
+        - fine-tuning regulation
+      keyQuote: >-
+        GPAI compliance under the EU AI Act could cost AI startups $500K-$2M annually in documentation, testing, and
+        legal counsel, creating a meaningful barrier for pre-revenue companies.
+    - id: SR013
+      publisher: Politico
+      title: Brussels targets AI model middlemen in GPAI enforcement push
+      url: https://www.politico.eu/article/eu-ai-act-gpai-model-enforcement-fine-tuning/
+      date: '2025-08-15'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - EU AI Act enforcement
+        - GPAI providers
+        - fine-tuning regulation
+        - European market
+      keyQuote: >-
+        EU regulators are exploring whether managed fine-tuning platforms that provide access to GPAI models fall under
+        provider obligations, potentially expanding the Act's reach beyond original model developers.
+    - id: SR014
+      publisher: Reuters
+      title: 'Alibaba Qwen model commercial license update: what it means for fine-tuning providers'
+      url: https://www.reuters.com/technology/alibaba-qwen-license-fine-tuning-commercial-2025/
+      date: '2025-11-01'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - Alibaba Qwen license
+        - commercial use
+        - fine-tuning restrictions
+        - model access risk
+      keyQuote: >-
+        Alibaba has updated the Qwen model license to clarify commercial fine-tuning terms; providers hosting Qwen
+        models for third-party fine-tuning must comply with updated attribution and distribution requirements.
+    - id: SR015
+      publisher: TechCrunch
+      title: 'Inside Thinking Machines Lab: the co-founder departures and what they mean'
+      url: https://techcrunch.com/2026/01/15/thinking-machines-lab-co-founders-departures-analysis/
+      date: '2026-01-15'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - TML co-founder departures
+        - Barret Zoph
+        - Luke Metz
+        - Andrew Tulloch
+        - people risk
+      keyQuote: >-
+        The departure of three co-founders — including the original CTO Barret Zoph to OpenAI — within TML's first year
+        raises questions about internal alignment and IP ownership of early work.
+    - id: SR016
+      publisher: Wired
+      title: 'AI copyright: how the NYT case is rewriting the rules for AI companies'
+      url: https://www.wired.com/story/ai-copyright-new-york-times-openai-precedent/
+      date: '2024-04-01'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI copyright
+        - NYT OpenAI case
+        - training data liability
+        - legal precedent for AI
+      keyQuote: >-
+        A ruling against OpenAI in the NYT case could establish that training on copyrighted content without license is
+        infringement, reshaping liability for all AI companies using public web data.
+    - id: SR017
+      publisher: VentureBeat
+      title: 'Managed fine-tuning market commoditization: the race to the bottom'
+      url: https://venturebeat.com/ai/managed-fine-tuning-commoditization-race-bottom-2026/
+      date: '2026-02-01'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - fine-tuning market commoditization
+        - hyperscaler competition
+        - pricing pressure
+      keyQuote: >-
+        Google, Microsoft, and Amazon are rapidly expanding their fine-tuning APIs; combined with open-source tooling
+        improvements, this threatens to commoditize managed fine-tuning within 18-24 months.
+    - id: SR018
+      publisher: The Information
+      title: 'Barret Zoph returns to OpenAI: what TML''s CTO departure means'
+      url: https://www.theinformation.com/articles/barret-zoph-openai-thinking-machines-departure
+      date: '2026-01-08'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - Barret Zoph
+        - TML CTO departure
+        - OpenAI return
+        - co-founder risk
+        - competitive intelligence
+      keyQuote: >-
+        Zoph's return to OpenAI raises competitive intelligence concerns; he was TML's CTO during its early
+        infrastructure design phase before the Tinker product launch.
+    - id: SR019
+      publisher: Bloomberg
+      title: Luke Metz and other Thinking Machines researchers return to OpenAI
+      url: https://www.bloomberg.com/news/articles/2026-01-11/thinking-machines-lab-researchers-openai
+      date: '2026-01-11'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - Luke Metz
+        - TML departures
+        - OpenAI hires
+        - co-founder attrition
+        - team risk
+      keyQuote: >-
+        Two more researchers, including co-founder Luke Metz, have left Thinking Machines Lab to return to OpenAI,
+        continuing a pattern of early attrition at the startup.
+    - id: SR020
+      publisher: Axios
+      title: 'Thinking Machines Lab people risk: reading the co-founder signals'
+      url: https://www.axios.com/2026/01/thinking-machines-lab-co-founder-departures-risk
+      date: '2026-01-12'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - TML people risk
+        - co-founder analysis
+        - startup team stability signals
+      keyQuote: >-
+        Three co-founder departures in the first year is an unusually high attrition rate; investors should scrutinize
+        TML's IP assignment agreements and the competitive intelligence risk from two founders joining OpenAI.
+    - id: SR021
+      publisher: GDPR.eu
+      title: GDPR Key Requirements for AI and Machine Learning Applications
+      url: https://gdpr.eu/ai-machine-learning-gdpr/
+      date: '2024-01-01'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: medium
+      independence: independent
+      topics:
+        - GDPR AI compliance
+        - training data privacy
+        - data processing
+        - consent
+      keyQuote: >-
+        Organizations training AI on EU residents' personal data must establish a lawful basis under GDPR Article 6;
+        legitimate interest assessments are required for ML training use cases.
+    - id: SR022
+      publisher: Fortune
+      title: 'AI model fine-tuning: the hidden legal risks that startups ignore'
+      url: https://fortune.com/2025/09/ai-fine-tuning-legal-risks-startups/
+      date: '2025-09-01'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI legal risk
+        - fine-tuning liability
+        - acceptable use policy
+        - model misuse
+      keyQuote: >-
+        AI fine-tuning platforms face novel liability exposure: if a customer uses the platform to create a harmful
+        model and causes damage, the platform may face secondary liability absent clear acceptable use policies and
+        enforcement.
+    - id: SR023
+      publisher: AI Now Institute
+      title: AI Accountability and Risk Report 2025
+      url: https://ainowinstitute.org/reports/ai-accountability-2025
+      date: '2025-01-01'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI accountability
+        - regulatory risk
+        - AI safety
+        - platform liability
+      keyQuote: >-
+        AI platform companies providing access to fine-tuning capabilities face increasing regulatory scrutiny as the
+        most direct enablers of AI deployment; accountability frameworks are expanding globally.
+    - id: SR024
+      publisher: Reuters
+      title: US export controls on AI chips tighten further in 2026 — implications for AI startups
+      url: https://www.reuters.com/technology/us-ai-chip-export-controls-2026-implications/
+      date: '2026-01-15'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - US AI chip export controls
+        - Nvidia supply
+        - China restrictions
+        - AI infrastructure
+      keyQuote: >-
+        Tightening US export controls on AI chips could further constrain GPU supply for US AI startups if Nvidia's
+        manufacturing capacity is reallocated toward compliant markets.
+    - id: SR025
+      publisher: Gartner
+      title: AI Platform Risk and Competitive Landscape 2026
+      url: https://www.gartner.com/en/documents/ai-platform-risk-competitive-2026
+      date: '2026-01-01'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI platform risks
+        - competitive positioning
+        - hyperscaler threat
+        - fine-tuning market
+      keyQuote: >-
+        Hyperscalers will offer fine-tuning capabilities that match or exceed specialized platforms in breadth within 18
+        months; differentiated platforms must achieve scale or niche dominance to survive commoditization.
+    - id: SR026
+      publisher: Forrester Research
+      title: AI Developer Platform Risk 2025 — Vendor Evaluation
+      url: https://www.forrester.com/report/ai-developer-platform-risk-2025/
+      date: '2025-09-01'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI platform vendor risk
+        - fine-tuning platform evaluation
+        - enterprise risk
+      keyQuote: >-
+        Enterprise AI platform buyers rate vendor financial stability and compliance posture as the top two risk
+        factors; pre-revenue AI platforms face high vendor risk scores.
+    - id: SR027
+      publisher: Wall Street Journal
+      title: 'AI startup down-round risk: the valuation correction playbook'
+      url: https://www.wsj.com/tech/ai/ai-startup-down-round-risk-valuation-2026
+      date: '2026-02-01'
+      accessDate: '2026-05-04'
+      accessStatus: paywall
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI valuation correction
+        - down-round risk
+        - AI startup bubble
+        - pre-revenue AI
+      keyQuote: >-
+        Pre-revenue AI startups with valuations above $5B face the highest down-round risk in a correction scenario;
+        TML's $12B seed valuation is among the most exposed.
+    - id: SR028
+      publisher: Georgetown CSET
+      title: 'Governing AI Foundation Models: Risk and Regulatory Landscape'
+      url: https://cset.georgetown.edu/publication/governing-ai-foundation-models/
+      date: '2025-06-01'
+      accessDate: '2026-05-04'
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - AI regulation
+        - foundation model governance
+        - regulatory risk
+        - GPAI policy
+      keyQuote: >-
+        The regulatory trajectory for AI foundation model providers is toward more, not less, obligation; fine-tuning
+        platform providers are the next regulatory frontier after base model providers.
+  claims:
+    - id: CR001
+      type: observed
+      confidence: high
+      sourceRefs:
+        - SR001
+        - SR012
+      freshness: current
+      statement: >-
+        The EU AI Act (Regulation 2024/1689) entered into force August 2024; GPAI model obligations became applicable in
+        August 2025, covering providers who make general-purpose AI models available in the EU.
+      topic: The EU AI Act (Regulation 2024/1689) entered into force
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR002
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR001
+        - SR013
+      freshness: current
+      statement: >-
+        TML may qualify as a GPAI model provider under the EU AI Act by virtue of making Qwen-235B-A22B, DeepSeek V3.1,
+        and other frontier models available for fine-tuning via its managed platform.
+      topic: TML may qualify as a GPAI model provider under the EU AI
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR003
+      type: observed
+      confidence: high
+      sourceRefs:
+        - SR012
+        - SR013
+      freshness: current
+      statement: >-
+        TML has not published any EU AI Act compliance documentation, GPAI classification analysis, or technical
+        documentation as of May 2026.
+      topic: TML has not published any EU AI Act compliance
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR004
+      type: third-party-reported
+      confidence: medium
+      sourceRefs:
+        - SR012
+      freshness: current
+      statement: >-
+        Compliance with EU AI Act GPAI obligations could cost AI startups $500K-$2M annually in documentation, testing,
+        and legal counsel according to Financial Times analysis.
+      topic: Compliance with EU AI Act GPAI obligations could cost AI
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR005
+      type: observed
+      confidence: high
+      sourceRefs:
+        - SR006
+        - SR016
+      freshness: current
+      statement: >-
+        Active AI training copyright litigation (NYT v. Microsoft/OpenAI, Getty v. Stability AI) is creating precedent
+        that could impose liability on AI training platforms that use copyrighted content without license.
+      topic: Active AI training copyright litigation (NYT v.
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR006
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR004
+        - SR016
+      freshness: current
+      statement: >-
+        TML's use of third-party-trained open-weight models does not fully insulate it from copyright risk; the training
+        data used to create those base models may be subject to ongoing litigation.
+      topic: TML's use of third-party-trained open-weight models does
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR007
+      type: inferred
+      confidence: high
+      sourceRefs:
+        - SR007
+        - SR021
+      freshness: current
+      statement: >-
+        GDPR obligations apply to TML's processing of EU residents' personal data in training workloads; TML's
+        no-retention claim requires a legal basis assessment under GDPR Article 6 and a published data processing
+        agreement.
+      topic: GDPR obligations apply to TML's processing of EU residents'
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR008
+      type: observed
+      confidence: high
+      sourceRefs:
+        - SR008
+        - SR003
+      freshness: current
+      statement: >-
+        California CCPA amendments effective January 2025 require businesses using AI on California residents' data to
+        provide opt-out rights and disclose automated decision-making.
+      topic: California CCPA amendments effective January 2025 require
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR009
+      type: observed
+      confidence: high
+      sourceRefs:
+        - SR003
+        - SR022
+      freshness: current
+      statement: >-
+        No acceptable use policy (AUP), model safety filters, or model misuse enforcement process has been published by
+        TML, creating FTC consumer protection exposure if Tinker enables harmful applications.
+      topic: No acceptable use policy (AUP), model safety filters, or
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR010
+      type: observed
+      confidence: high
+      sourceRefs:
+        - SR005
+        - SR014
+      freshness: current
+      statement: >-
+        Meta's Llama 3 Community License permits TML's commercial fine-tuning use, subject to license terms including
+        restrictions on entities with >700M MAU and requirements for derivative model attribution.
+      topic: Meta's Llama 3 Community License permits TML's commercial
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR011
+      type: observed
+      confidence: medium
+      sourceRefs:
+        - SR015
+        - SR020
+      freshness: current
+      statement: TML has no disclosed litigation, IP disputes, regulatory investigations, or enforcement actions as of May 2026.
+      topic: TML has no disclosed litigation, IP disputes, regulatory
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR012
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR009
+        - SR011
+      freshness: current
+      statement: >-
+        TML's shared LoRA pool infrastructure creates multi-tenant isolation risk; side-channel attacks and memory
+        residue attacks on GPU infrastructure have been documented in research contexts.
+      topic: TML's shared LoRA pool infrastructure creates multi-tenant
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR013
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR010
+        - SR024
+      freshness: current
+      statement: >-
+        Tightening US export controls on AI chips in 2026 create supply chain risk for TML's Blackwell cluster; if
+        Nvidia's manufacturing allocation shifts, TML's compute access could be constrained.
+      topic: Tightening US export controls on AI chips in 2026 create
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR014
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR010
+      freshness: current
+      statement: >-
+        TML's TileLang GPU kernels are optimized for Nvidia Blackwell architecture; migration to Vera Rubin chips
+        (planned 2027) will require kernel rewriting and may introduce service instability during the transition period.
+      topic: TML's TileLang GPU kernels are optimized for Nvidia
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR015
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR010
+        - SR011
+      freshness: current
+      statement: >-
+        A disruption to Google Cloud service (deal suspension, contract renegotiation, or GCP outage) would immediately
+        reduce TML's compute capacity with no short-term alternative disclosed.
+      topic: A disruption to Google Cloud service (deal suspension,
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR016
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR026
+      freshness: current
+      statement: >-
+        ServiceNow and Cisco's strategic investor status creates potential conflicts of interest if TML's commercial
+        direction diverges from their platform interests; no co-sell agreements or channel commitments have been
+        disclosed.
+      topic: ServiceNow and Cisco's strategic investor status creates
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR017
+      type: observed
+      confidence: high
+      sourceRefs:
+        - SR015
+        - SR018
+      freshness: recent
+      statement: >-
+        Three co-founders departed TML within its first year: Andrew Tulloch (→Meta, October 2025), Barret Zoph
+        (original CTO, →OpenAI, January 2026), and Luke Metz (→OpenAI, January 2026).
+      topic: 'Three co-founders departed TML within its first year:'
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR018
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR018
+        - SR019
+      freshness: recent
+      statement: >-
+        Barret Zoph and Luke Metz's departures to OpenAI — TML's primary competitor — create competitive intelligence
+        risk and raise questions about early infrastructure IP ownership.
+      topic: Barret Zoph and Luke Metz's departures to OpenAI — TML's
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR019
+      type: third-party-reported
+      confidence: medium
+      sourceRefs:
+        - SR025
+        - SR017
+      freshness: current
+      statement: >-
+        Fine-tuning market commoditization risk is accelerating: Google, Microsoft, and Amazon are expanding managed
+        fine-tuning offerings that will match TML's breadth within 18-24 months according to Gartner.
+      topic: 'Fine-tuning market commoditization risk is accelerating:'
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR020
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR027
+      freshness: current
+      statement: >-
+        At TML's $12B pre-revenue valuation, a general AI investment correction would create significant down-round
+        risk; pre-revenue AI startups with >$5B valuations face the highest correction exposure.
+      topic: At TML's $12B pre-revenue valuation, a general AI
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR021
+      type: third-party-reported
+      confidence: medium
+      sourceRefs:
+        - SR028
+        - SR023
+      freshness: current
+      statement: >-
+        The regulatory trajectory for AI fine-tuning platforms is toward more obligation over time; Georgetown CSET
+        identifies fine-tuning platform providers as the 'next regulatory frontier' after base model providers.
+      topic: The regulatory trajectory for AI fine-tuning platforms is
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR022
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR025
+        - SR023
+      freshness: current
+      statement: >-
+        Anthropic at a comparable pre-revenue stage faced lower regulatory and operational risk than TML because it owns
+        its own base models (Claude) rather than licensing frontier models from third parties.
+      topic: Anthropic at a comparable pre-revenue stage faced lower
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR023
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR013
+        - SR020
+      freshness: current
+      statement: >-
+        Key thesis-break triggers for TML include: key-person departure (Murati or Schulman), EU AI Act enforcement
+        action, Meta Llama license restriction, GCP compute disruption, and failure to publish pricing within 60 days of
+        GA.
+      topic: 'Key thesis-break triggers for TML include: key-person'
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR024
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR023
+        - SR026
+      freshness: current
+      statement: >-
+        TML's mitigations are primarily structural (diverse investor base, PBC mission alignment, $2B seed capital)
+        rather than operational (published security controls, compliance certifications, retention data).
+      topic: TML's mitigations are primarily structural (diverse
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR025
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR002
+        - SR028
+      freshness: current
+      statement: >-
+        TML's PBC structure reduces the risk of mission drift toward pure profit-maximization but does not insulate it
+        from financial pressures, investor return expectations, or bankruptcy risk.
+      topic: TML's PBC structure reduces the risk of mission drift
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR026
+      type: inferred
+      confidence: medium
+      sourceRefs:
+        - SR013
+        - SR025
+      freshness: current
+      statement: >-
+        Monitoring indicators for TML risk include: GitHub Cookbook activity, academic paper citations of Tinker, EU
+        enforcement actions against GPAI providers, Meta Llama policy changes, and TML enterprise sales job postings.
+      topic: 'Monitoring indicators for TML risk include: GitHub Cookbook'
+      answersQuestionRefs: []
+      contradictsClaimRefs: []

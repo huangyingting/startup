@@ -16,49 +16,49 @@ sections:
       regulatory risk is interchange compression via Durbin Amendment expansion: the 2010 Durbin Amendment capped
       interchange fees for debit cards issued by banks with >$10B in assets, and legislative proposals to extend similar
       caps to credit/commercial cards would directly cut Ramp's interchange revenue, which funds the card reward
-      programme and drives economics for Sutton Bank [C222]. Industry analysis suggests a Durbin-style cap on commercial
-      card interchange could reduce Ramp's gross revenue per card dollar by 30–50%, materially compressing margins if
-      not offset by SaaS fee growth [C223].
+      programme and drives economics for Sutton Bank [CR001]. Industry analysis suggests a Durbin-style cap on
+      commercial card interchange could reduce Ramp's gross revenue per card dollar by 30–50%, materially compressing
+      margins if not offset by SaaS fee growth [CR002].
 
       Ramp's BIN sponsorship arrangement with Sutton Bank (an Iowa state-chartered bank) places Ramp in a
       "bank-as-a-service" (BaaS) regulatory structure. Sutton Bank is Ramp's issuing bank and holds primary BSA/AML,
       KYC, and Regulation E obligations for the card programme; Ramp must comply with Sutton Bank's programme
-      requirements and the OCC/FDIC's guidance on third-party fintech relationships [C224]. If the OCC or state
+      requirements and the OCC/FDIC's guidance on third-party fintech relationships [CR003]. If the OCC or state
       regulators mandate tighter supervision of BaaS arrangements (as they signalled in 2023–2024 guidance), Sutton Bank
       could impose additional compliance costs on Ramp or exit the BIN sponsorship, requiring Ramp to find a new issuing
-      partner — a material operational risk [C225]. CFPB supervision of larger fintech companies (non-bank supervision
+      partner — a material operational risk [CR004]. CFPB supervision of larger fintech companies (non-bank supervision
       programme) is an increasing risk as Ramp's ARR approaches $1B; CFPB examiners have targeted expense management and
-      corporate card players under its unfair, deceptive, or abusive acts or practices (UDAAP) authority [C226].
+      corporate card players under its unfair, deceptive, or abusive acts or practices (UDAAP) authority [CR005].
 
       On the legal side, Ramp faces no material known pending litigation as of 2025. The company has patent applications
-      covering AI-powered expense classification and anomaly detection [C227]. IP risk from SAP, Coupa, or BILL.com
-      claiming infringement of expense management patents is a plausible but unconfirmed risk [C228]. Privacy: Ramp
+      covering AI-powered expense classification and anomaly detection [CR006]. IP risk from SAP, Coupa, or BILL.com
+      claiming infringement of expense management patents is a plausible but unconfirmed risk [CR007]. Privacy: Ramp
       processes sensitive financial transaction data for 25,000+ businesses; a material data breach or CCPA/state
-      privacy law violation could trigger regulatory enforcement, civil litigation, and customer churn [C229].
+      privacy law violation could trigger regulatory enforcement, civil litigation, and customer churn [CR008].
   - id: sec702
     title: Operational, Security, and Infrastructure Risk
     body: >
       Ramp's platform is a cloud-native SaaS application hosted on AWS, with Snowflake for data analytics and a
-      microservices architecture. Operational risks centre on service availability, data integrity, and fraud [C230]. A
+      microservices architecture. Operational risks centre on service availability, data integrity, and fraud [CR009]. A
       platform outage during month-end close — when the highest concentration of expense-report submissions and ERP
-      syncs occur — would cause maximum customer pain and the most likely trigger for competitive switching [C231]. Ramp
-      has not published its historical uptime SLA metrics; typical B2B fintech targets 99.9%+ (< 9 hours annual
+      syncs occur — would cause maximum customer pain and the most likely trigger for competitive switching [CR010].
+      Ramp has not published its historical uptime SLA metrics; typical B2B fintech targets 99.9%+ (< 9 hours annual
       downtime), but a major outage affecting the card authorisation pipeline (which Sutton Bank and Visa co-operate)
-      would impact cardholders directly [C232].
+      would impact cardholders directly [CR011].
 
       Fraud and credit risk exposure: Ramp issues corporate cards with spend limits set by the customer; fraud losses
       (stolen card numbers, fraudulent merchant charges) and credit losses (customers failing to repay) are ultimately
       borne by Sutton Bank under the BIN sponsorship agreement, but chargebacks from fraud can reduce Ramp's interchange
-      revenue and trigger programme audits [C233]. Ramp's AI-based anomaly detection claims high fraud-detection
-      accuracy, but the attack surface grows as card volume scales toward $25B+ annualised [C234]. Security: Ramp is SOC
-      2 Type II certified; no material data breach has been publicly reported as of 2025, but a breach affecting stored
-      financial transaction data, PII, or ERP integration credentials would be a critical incident [C235].
+      revenue and trigger programme audits [CR012]. Ramp's AI-based anomaly detection claims high fraud-detection
+      accuracy, but the attack surface grows as card volume scales toward $25B+ annualised [CR013]. Security: Ramp is
+      SOC 2 Type II certified; no material data breach has been publicly reported as of 2025, but a breach affecting
+      stored financial transaction data, PII, or ERP integration credentials would be a critical incident [CR014].
 
       Engineering execution risk is material given Ramp's ambitious product roadmap (AI finance suite, international
       expansion, FedRAMP, Vendor Network). The company employs ~1,500–2,000 people, with engineering estimated at
       400–600. Ramp has launched multiple major products in quick succession (Ramp Intelligence, Ramp Copilot, Bill Pay
       2.0, Ramp Travel) — increasing the risk of quality regressions in core modules while new products are being
-      shipped [C236].
+      shipped [CR015].
   - id: sec703
     title: Partner and Dependency Risk
     body: >
@@ -66,81 +66,81 @@ sections:
       Ramp's BIN sponsor, card issuer, and primary regulatory interface. If Sutton Bank were to exit the Ramp programme
       (due to regulatory enforcement, capital adequacy issues, or strategic exit from BaaS), Ramp would need to find a
       new issuing bank and migrate all 25,000+ customer card programmes — a process that could take 6–18 months and
-      would disrupt card issuance for all customers during the transition [C237]. This is a well-known risk in the BaaS
-      ecosystem; competitors including Brex migrated their banking partner and faced customer disruption [C238].
+      would disrupt card issuance for all customers during the transition [CR016]. This is a well-known risk in the BaaS
+      ecosystem; competitors including Brex migrated their banking partner and faced customer disruption [CR017].
 
       Visa's card network rules are a second significant dependency: changes to Visa's interchange schedule, dispute
       resolution rules, or commercial card programme requirements could materially affect Ramp's economics. Visa has
       been actively renegotiating commercial interchange rates with merchants and exploring alternative payment rails
-      [C239]. AWS infrastructure dependency: Ramp's platform is multi-region on AWS; an AWS US-East outage would impact
-      the core platform unless multi-region failover is fully implemented [C240]. QuickBooks (Intuit) is Ramp's largest
+      [CR018]. AWS infrastructure dependency: Ramp's platform is multi-region on AWS; an AWS US-East outage would impact
+      the core platform unless multi-region failover is fully implemented [CR019]. QuickBooks (Intuit) is Ramp's largest
       integration partner by customer count; an Intuit API change or deliberate competitive restriction could disrupt
-      the ERP integration that is Ramp's primary stickiness driver for 60–70% of its SMB customers [C241].
+      the ERP integration that is Ramp's primary stickiness driver for 60–70% of its SMB customers [CR020].
 
       Capital provider dependency: Ramp uses a credit facility to fund the float between card spend and customer
       payment. If credit market conditions tighten (as in Q4 2022), Ramp's access to working capital at favourable rates
-      could be constrained, forcing either higher fees or reduced card limits for customers [C242]. The loss of a VC
+      could be constrained, forcing either higher fees or reduced card limits for customers [CR021]. The loss of a VC
       partner relationship (e.g. if Founders Fund or Thrive Capital were to exit materially) could affect Ramp's startup
-      customer pipeline, since these firms co-market Ramp to their portfolio companies [C243].
+      customer pipeline, since these firms co-market Ramp to their portfolio companies [CR022].
   - id: sec704
     title: People, Execution, and Competitive Risk
     body: >
       Ramp's co-founder concentration is an execution risk: Eric Glyman (CEO) and Karim Atiyeh (CTO) are the primary
       product vision and technical architecture owners. Loss of either founder would create significant uncertainty
-      about strategic direction, particularly for the AI Intelligence roadmap that differentiates Ramp from Brex [C244].
-      There is no public evidence of a deep succession bench at the VP/C-suite level, and no COO has been announced
-      (Gene Lee departed or reduced his role in the 2023–2024 period based on public sources) [C245]. CFO risk: Ramp
-      does not have a publicly confirmed CFO as of 2025, which is unusual for a Series D+ company approaching $1B ARR
-      and creates uncertainty for the capital markets strategy and eventual IPO readiness [C246].
+      about strategic direction, particularly for the AI Intelligence roadmap that differentiates Ramp from Brex
+      [CR023]. There is no public evidence of a deep succession bench at the VP/C-suite level, and no COO has been
+      announced (Gene Lee departed or reduced his role in the 2023–2024 period based on public sources) [CR024]. CFO
+      risk: Ramp does not have a publicly confirmed CFO as of 2025, which is unusual for a Series D+ company approaching
+      $1B ARR and creates uncertainty for the capital markets strategy and eventual IPO readiness [CR025].
 
       Competitive risk is the most proximate execution risk: Brex has secured comparably sized funding ($1.5B+), has
       comparable product breadth, and is actively targeting the same 200–2,000 employee enterprise segment. SAP Concur
       has announced AI-powered expense features, suggesting incumbents are responding to Ramp's product differentiation.
       BILL.com's acquisition of Divvy positions it directly in Ramp's corporate card and expense management market with
-      a significant existing customer base [C247]. New entrants (Mercury, Navan) are also targeting Ramp's customer
-      segments [C248]. Ramp's sustainable competitive advantage is not proven at scale; network effects and data moats
-      are still being built [C249].
+      a significant existing customer base [CR026]. New entrants (Mercury, Navan) are also targeting Ramp's customer
+      segments [CR027]. Ramp's sustainable competitive advantage is not proven at scale; network effects and data moats
+      are still being built [CR028].
 
       Retention of key engineering talent is a risk: the AI/ML engineering talent market is highly competitive, and Ramp
       competes for these employees with OpenAI, Google DeepMind, and other well-capitalised AI companies. Accelerated
       vesting events (if secondary transactions occurred at $13B+ valuations) could reduce urgency for some early
-      employees, creating retention headwind [C250].
+      employees, creating retention headwind [CR029].
   - id: sec705
     title: Financial, Model, and Thesis-Break Risk
     body: >
       Ramp's core financial model risk is interchange compression. Interchange fees (typically 1.8–2.4% for commercial
       Visa cards) represent the primary revenue source for the card programme; SaaS subscription fees (Ramp Plus at
       ~$12–15/user/month) contribute an increasingly important second revenue stream but remain a minority of total
-      revenue [C251]. If the US Congress passes the Credit Card Competition Act (CCCA) or a commercial card equivalent
+      revenue [CR030]. If the US Congress passes the Credit Card Competition Act (CCCA) or a commercial card equivalent
       of the Durbin Amendment, Ramp's interchange revenue per card dollar could fall by 30–50%, requiring a 2–3×
-      increase in SaaS attach to maintain margin neutrality [C252].
+      increase in SaaS attach to maintain margin neutrality [CR031].
 
       Burn and capital efficiency: Ramp raised $150M at $7.65B in March 2024 (a down-round from $8.1B) and additional
-      secondary transactions at ~$13B implied valuation in late 2024 [C253]. Profitability is not publicly confirmed;
+      secondary transactions at ~$13B implied valuation in late 2024 [CR032]. Profitability is not publicly confirmed;
       Ramp has stated it is on a path to profitability, but without audited financials it is unclear whether operating
       losses are narrow or wide. If revenue growth decelerates below 100% YoY, the current valuation multiples (7–8×
-      estimated ARR) would compress significantly at IPO [C254]. Working capital: Ramp extends card credit to customers
+      estimated ARR) would compress significantly at IPO [CR033]. Working capital: Ramp extends card credit to customers
       for 30-day billing cycles; at $25B annualised volume (~$2B monthly), Ramp's credit facility must fund this float
-      continuously — a liquidity risk if the credit facility is not renewed at comparable terms [C255].
+      continuously — a liquidity risk if the credit facility is not renewed at comparable terms [CR034].
 
       Fraud and credit loss risk: as Ramp's card programme scales, the absolute dollar exposure to fraud and credit
       defaults increases. While Sutton Bank bears primary credit risk, reputational risk from large fraud events falls
-      on Ramp [C256]. The down-round signal from the $7.65B March 2024 financing (vs $8.1B Dec 2021 peak) is an adverse
+      on Ramp [CR035]. The down-round signal from the $7.65B March 2024 financing (vs $8.1B Dec 2021 peak) is an adverse
       data point indicating that investor confidence in the peak valuation has not been maintained; re-acceleration of
-      growth to justify the $13B secondary valuation is an execution dependency [C257].
+      growth to justify the $13B secondary valuation is an execution dependency [CR036].
 tables:
-  - id: T701
+  - id: TR001
     title: Regulatory / legal risk register
     subtitle: Key regulatory and legal risks for Ramp — 2024–2026
     claimRefs:
-      - C222
-      - C223
-      - C224
-      - C225
-      - C226
-      - C227
-      - C228
-      - C229
+      - CR001
+      - CR002
+      - CR003
+      - CR004
+      - CR005
+      - CR006
+      - CR007
+      - CR008
     enumerationScope:
       coverage: partial
       basis: >-
@@ -213,17 +213,17 @@ tables:
         - Medium — financial transaction data is high-value target
         - Request incident response plan and most recent penetration test
     notes: Enumeration is partial; covers publicly identifiable regulatory and legal risk vectors only.
-  - id: T702
+  - id: TR002
     title: Operational / quality / security risk register
     subtitle: Operational and security risks — Ramp 2024
     claimRefs:
-      - C230
-      - C231
-      - C232
-      - C233
-      - C234
-      - C235
-      - C236
+      - CR009
+      - CR010
+      - CR011
+      - CR012
+      - CR013
+      - CR014
+      - CR015
     columns:
       - Failure Mode
       - Likelihood
@@ -268,17 +268,17 @@ tables:
         - Low-medium — QA process; internal testing
         - Medium
         - No public SLA or defect rate; pace of product launches is risk factor
-  - id: T703
+  - id: TR003
     title: Partner / dependency risk register
     subtitle: Critical external dependencies — Ramp 2024
     claimRefs:
-      - C237
-      - C238
-      - C239
-      - C240
-      - C241
-      - C242
-      - C243
+      - CR016
+      - CR017
+      - CR018
+      - CR019
+      - CR020
+      - CR021
+      - CR022
     columns:
       - Dependency
       - Counterparty
@@ -337,17 +337,17 @@ tables:
         - Medium
         - Enterprise sales team reduces VC-channel dependence
         - Low-medium — manageable with enterprise sales growth
-  - id: T704
+  - id: TR004
     title: People / execution risk register
     subtitle: Key person and execution risks — Ramp 2024
     claimRefs:
-      - C244
-      - C245
-      - C246
-      - C247
-      - C248
-      - C249
-      - C250
+      - CR023
+      - CR024
+      - CR025
+      - CR026
+      - CR027
+      - CR028
+      - CR029
     columns:
       - Role / Function
       - Dependency or Gap
@@ -392,17 +392,17 @@ tables:
         - High — revenue growth depends on net new customers
         - Product differentiation via AI; ERP stickiness; price competition
         - Request competitive win/loss data by segment
-  - id: T705
+  - id: TR005
     title: Mitigation and kill criteria table
     subtitle: Risk monitoring triggers and thesis-break scenarios — Ramp
     claimRefs:
-      - C251
-      - C252
-      - C253
-      - C254
-      - C255
-      - C256
-      - C257
+      - CR030
+      - CR031
+      - CR032
+      - CR033
+      - CR034
+      - CR035
+      - CR036
     columns:
       - Risk
       - Monitorable Trigger
@@ -438,7 +438,7 @@ tables:
         - Annualised fraud/chargeback rate exceeds 0.1% of card volume ($25M+ at current scale)
         - Programme audit; tighten AI anomaly detection thresholds; reduce card limits
 figures:
-  - id: F701
+  - id: FR001
     type: matrix
     title: Risk heatmap
     subtitle: Ramp risk severity matrix — likelihood vs. impact (2024)
@@ -446,12 +446,12 @@ figures:
       Likelihood and impact are qualitative assessments based on industry research, press, and analyst commentary. Not
       derived from quantitative modelling.
     claimRefs:
-      - C222
-      - C224
-      - C237
-      - C244
-      - C247
-      - C251
+      - CR001
+      - CR003
+      - CR016
+      - CR023
+      - CR026
+      - CR030
     data:
       columns:
         - Low Impact
@@ -489,18 +489,18 @@ figures:
               tone: warning
             - label: CEO / CTO departure
               tone: negative
-  - id: F702
+  - id: FR002
     type: dag
     title: Risk transmission map
     subtitle: How key risks flow into Ramp's revenue, margin, and valuation
     approximationNotes: Causal transmission chains are qualitative; relative severity encoded in node labels.
     claimRefs:
-      - C223
-      - C225
-      - C237
-      - C252
-      - C254
-      - C257
+      - CR002
+      - CR004
+      - CR016
+      - CR031
+      - CR033
+      - CR036
     data:
       nodes:
         - id: r1
@@ -560,15 +560,15 @@ figures:
           to: o1
         - from: o4
           to: o6
-  - id: F703
+  - id: FR003
     type: dag
     title: Dependency map
     subtitle: Ramp's critical partner and infrastructure dependencies
     approximationNotes: Dependency criticality based on business model analysis and press sources.
     claimRefs:
-      - C243
-      - C244
-      - C245
+      - CR022
+      - CR023
+      - CR024
     data:
       nodes:
         - id: d1
@@ -617,120 +617,120 @@ analysisCallout:
     should be a standard term sheet request.
   calloutType: risk
   claimRefs:
-    - C223
-    - C225
-    - C237
-    - C252
+    - CR002
+    - CR004
+    - CR016
+    - CR031
 localEvidence:
   searchQueries:
     - query: Ramp corporate card regulatory risk Durbin Amendment interchange 2024
       engine: web
       hits: 6
       retainedSourceRefs:
-        - S701
-        - S702
+        - SR001
+        - SR002
     - query: OCC BaaS bank fintech third party guidance 2023 2024
       engine: web
       hits: 7
       retainedSourceRefs:
-        - S703
-        - S704
+        - SR003
+        - SR004
     - query: Sutton Bank BIN sponsor corporate card fintech risk
       engine: web
       hits: 5
       retainedSourceRefs:
-        - S705
-        - S706
+        - SR005
+        - SR006
     - query: CFPB nonbank supervision fintech larger participant 2024
       engine: web
       hits: 6
       retainedSourceRefs:
-        - S707
-        - S708
+        - SR007
+        - SR008
     - query: Credit Card Competition Act commercial card interchange Visa 2024
       engine: web
       hits: 7
       retainedSourceRefs:
-        - S709
-        - S710
+        - SR009
+        - SR010
     - query: Ramp platform outage security incident data breach 2024
       engine: web
       hits: 3
       retainedSourceRefs:
-        - S711
+        - SR011
     - query: Ramp SOC 2 Type II security compliance certification
       engine: web
       hits: 4
       retainedSourceRefs:
-        - S712
+        - SR012
     - query: Ramp vs Brex competitive risk enterprise market 2024
       engine: web
       hits: 5
       retainedSourceRefs:
-        - S713
-        - S714
+        - SR013
+        - SR014
     - query: Ramp down round valuation $7.65B March 2024 financing
       engine: web
       hits: 4
       retainedSourceRefs:
-        - S715
-        - S716
+        - SR015
+        - SR016
     - query: Ramp Eric Glyman CEO leadership key person risk
       engine: web
       hits: 4
       retainedSourceRefs:
-        - S717
+        - SR017
     - query: bank fintech BaaS regulatory enforcement actions 2023 2024
       engine: web
       hits: 7
       retainedSourceRefs:
-        - S718
-        - S719
+        - SR018
+        - SR019
     - query: Ramp BSA AML KYC compliance corporate card program
       engine: web
       hits: 3
       retainedSourceRefs:
-        - S720
+        - SR020
     - query: Ramp CCPA privacy data protection fintech compliance
       engine: web
       hits: 3
       retainedSourceRefs:
-        - S721
+        - SR021
     - query: Brex BILL Divvy competitive threat Ramp market 2024
       engine: web
       hits: 5
       retainedSourceRefs:
-        - S722
-        - S723
+        - SR022
+        - SR023
     - query: Ramp interchange revenue model financial risk SaaS pricing
       engine: web
       hits: 4
       retainedSourceRefs:
-        - S724
-        - S725
+        - SR024
+        - SR025
     - query: corporate card fraud risk BaaS chargeback Visa 2024
       engine: web
       hits: 4
       retainedSourceRefs:
-        - S726
+        - SR026
     - query: Ramp patent intellectual property expense management AI
       engine: web
       hits: 3
       retainedSourceRefs:
-        - S727
+        - SR027
     - query: BILL.com Divvy acquisition competitive threat 2024
       engine: web
       hits: 5
       retainedSourceRefs:
-        - S728
-        - S729
+        - SR028
+        - SR029
     - query: Ramp working capital credit facility float fintech 2024
       engine: web
       hits: 4
       retainedSourceRefs:
-        - S730
+        - SR030
   sources:
-    - id: S701
+    - id: SR001
       publisher: National Retail Federation
       title: NRF comments on Credit Card Competition Act — Durbin extension to credit cards
       url: https://nrf.com/advocacy/credit-card-competition-act-2024
@@ -745,7 +745,7 @@ localEvidence:
         - Durbin-extension
       accessStatus: ok
       stance: neutral
-    - id: S702
+    - id: SR002
       publisher: U.S. Senate Banking Committee
       title: Credit Card Competition Act of 2023 — bill text and committee testimony
       url: https://www.banking.senate.gov/imo/media/doc/credit_card_competition_act_2023.pdf
@@ -760,7 +760,7 @@ localEvidence:
         - commercial-cards
       accessStatus: ok
       stance: neutral
-    - id: S703
+    - id: SR003
       publisher: OCC (Office of the Comptroller of the Currency)
       title: 'OCC Bulletin 2023-17: Third-Party Relationships: Interagency Guidance on Risk Management'
       url: https://www.occ.gov/news-issuances/bulletins/2023/bulletin-2023-17.html
@@ -776,7 +776,7 @@ localEvidence:
         - fintech-bank-partnership
       accessStatus: ok
       stance: neutral
-    - id: S704
+    - id: SR004
       publisher: FDIC
       title: FDIC Supervisory Guidance on Third-Party Relationships — fintech BaaS risk
       url: https://www.fdic.gov/news/financial-institution-letters/2023/fil23029.html
@@ -791,7 +791,7 @@ localEvidence:
         - third-party-risk
       accessStatus: ok
       stance: neutral
-    - id: S705
+    - id: SR005
       publisher: American Banker
       title: 'Sutton Bank''s fintech BaaS partnerships: compliance exposure and OCC scrutiny'
       url: https://www.americanbanker.com/news/sutton-bank-fintech-baas-occ-2024
@@ -807,7 +807,7 @@ localEvidence:
         - fintech-risk
       accessStatus: ok
       stance: adverse
-    - id: S706
+    - id: SR006
       publisher: Banking Dive
       title: 'The risks of bank-as-a-service: lessons from fintech programme failures'
       url: https://www.bankingdive.com/news/bank-as-a-service-risks-fintech-programme-failures-2024
@@ -822,7 +822,7 @@ localEvidence:
         - programme-failure
       accessStatus: ok
       stance: adverse
-    - id: S707
+    - id: SR007
       publisher: CFPB
       title: CFPB Rule on Nonbank Supervision — Larger Participants in Certain Consumer Financial Markets
       url: https://www.consumerfinance.gov/rules-policy/final-rules/larger-participant-rule-nonbank-2024/
@@ -838,7 +838,7 @@ localEvidence:
         - UDAAP
       accessStatus: ok
       stance: neutral
-    - id: S708
+    - id: SR008
       publisher: CFPB
       title: CFPB Enforcement Actions — UDAAP violations in corporate financial services
       url: https://www.consumerfinance.gov/enforcement/actions/
@@ -853,7 +853,7 @@ localEvidence:
         - fintech-compliance
       accessStatus: ok
       stance: neutral
-    - id: S709
+    - id: SR009
       publisher: Bloomberg Law
       title: 'Credit Card Competition Act: analysis of interchange impact for fintech card programmes'
       url: https://news.bloomberglaw.com/banking-law/credit-card-competition-act-interchange-fintech-2024
@@ -868,7 +868,7 @@ localEvidence:
         - commercial-card-fintech
       accessStatus: paywall
       stance: adverse
-    - id: S710
+    - id: SR010
       publisher: Payment Source
       title: How the Credit Card Competition Act would affect commercial card programmes
       url: https://www.paymentsource.com/credit-card-competition-act-commercial-impact-2024
@@ -883,7 +883,7 @@ localEvidence:
         - interchange-risk
       accessStatus: ok
       stance: adverse
-    - id: S711
+    - id: SR011
       publisher: DownDetector
       title: Ramp outage reports history — user-reported incidents
       url: https://downdetector.com/status/ramp/
@@ -898,7 +898,7 @@ localEvidence:
         - operational-risk
       accessStatus: ok
       stance: neutral
-    - id: S712
+    - id: SR012
       publisher: Ramp
       title: Ramp Security and Compliance — SOC 2 Type II, encryption, access controls
       url: https://ramp.com/security
@@ -913,7 +913,7 @@ localEvidence:
         - data-protection
       accessStatus: ok
       stance: confirming
-    - id: S713
+    - id: SR013
       publisher: Forbes
       title: 'Brex vs Ramp: Who is winning the corporate card war in 2024?'
       url: https://www.forbes.com/sites/brex-ramp-corporate-card-2024/
@@ -928,7 +928,7 @@ localEvidence:
         - enterprise-market
       accessStatus: ok
       stance: neutral
-    - id: S714
+    - id: SR014
       publisher: The Information
       title: Brex enterprise expansion and the threat to Ramp's growth
       url: https://www.theinformation.com/articles/brex-enterprise-expansion-ramp-threat
@@ -943,7 +943,7 @@ localEvidence:
         - enterprise-expansion
       accessStatus: paywall
       stance: adverse
-    - id: S715
+    - id: SR015
       publisher: Financial Times
       title: Ramp raises at $7.65B — a down-round from its 2021 peak
       url: https://www.ft.com/content/ramp-down-round-7-65b-2024
@@ -958,7 +958,7 @@ localEvidence:
         - financing-risk
       accessStatus: paywall
       stance: adverse
-    - id: S716
+    - id: SR016
       publisher: The Wall Street Journal
       title: Ramp secondary transactions at $13B implied valuation — 2024
       url: https://www.wsj.com/articles/ramp-secondary-13b-2024
@@ -973,7 +973,7 @@ localEvidence:
         - financing
       accessStatus: paywall
       stance: neutral
-    - id: S717
+    - id: SR017
       publisher: LinkedIn
       title: Eric Glyman — founder and CEO of Ramp; professional profile
       url: https://www.linkedin.com/in/ericglyman
@@ -988,7 +988,7 @@ localEvidence:
         - founder
       accessStatus: ok
       stance: neutral
-    - id: S718
+    - id: SR018
       publisher: Federal Reserve
       title: Federal Reserve enforcement actions against BaaS banks 2023–2024
       url: https://www.federalreserve.gov/apps/enforcementactions/enforcementactions
@@ -1003,7 +1003,7 @@ localEvidence:
         - regulatory-risk
       accessStatus: ok
       stance: adverse
-    - id: S719
+    - id: SR019
       publisher: FinCEN
       title: FinCEN BSA/AML guidance for fintech and bank partnerships 2024
       url: https://www.fincen.gov/resources/statutes-regulations/guidance/anti-money-laundering-fintech-2024
@@ -1018,7 +1018,7 @@ localEvidence:
         - KYC
       accessStatus: ok
       stance: neutral
-    - id: S720
+    - id: SR020
       publisher: Ramp
       title: Ramp Trust Centre — compliance, privacy, and security documentation
       url: https://trust.ramp.com/
@@ -1034,7 +1034,7 @@ localEvidence:
         - SOC-2
       accessStatus: ok
       stance: confirming
-    - id: S721
+    - id: SR021
       publisher: California Attorney General
       title: CCPA enforcement actions 2023–2024 — fintech and SaaS companies
       url: https://oag.ca.gov/privacy/ccpa/enforcement
@@ -1049,7 +1049,7 @@ localEvidence:
         - fintech-compliance
       accessStatus: ok
       stance: neutral
-    - id: S722
+    - id: SR022
       publisher: TechCrunch
       title: BILL.com acquires Divvy to compete directly with Ramp and Brex
       url: https://techcrunch.com/bill-divvy-acquisition-ramp-brex-competition/
@@ -1064,7 +1064,7 @@ localEvidence:
         - corporate-card-market
       accessStatus: ok
       stance: adverse
-    - id: S723
+    - id: SR023
       publisher: Crunchbase News
       title: Mercury and Navan targeting Ramp's small business corporate card market
       url: https://news.crunchbase.com/fintech/mercury-navan-ramp-competition-2024
@@ -1080,7 +1080,7 @@ localEvidence:
         - corporate-card
       accessStatus: ok
       stance: adverse
-    - id: S724
+    - id: SR024
       publisher: Sacra
       title: 'Ramp revenue model breakdown: interchange vs SaaS fees 2024'
       url: https://sacra.com/c/ramp/revenue-model/
@@ -1096,7 +1096,7 @@ localEvidence:
         - financial-risk
       accessStatus: ok
       stance: neutral
-    - id: S725
+    - id: SR025
       publisher: Andreessen Horowitz
       title: 'Ramp fintech financial model: interchange compression scenario analysis'
       url: https://a16z.com/portfolio/ramp/financial-model-2024
@@ -1111,7 +1111,7 @@ localEvidence:
         - financial-model
       accessStatus: ok
       stance: neutral
-    - id: S726
+    - id: SR026
       publisher: Visa
       title: Visa commercial card programme rules and chargeback regulations 2024
       url: https://usa.visa.com/run-your-business/commercial-solutions/visa-commercial-card.html
@@ -1127,7 +1127,7 @@ localEvidence:
         - fraud-risk
       accessStatus: ok
       stance: neutral
-    - id: S727
+    - id: SR027
       publisher: USPTO
       title: Ramp patent applications — AI expense classification and financial automation
       url: https://patents.google.com/?assignee=Ramp+Financial
@@ -1142,7 +1142,7 @@ localEvidence:
         - AI-expense-classification
       accessStatus: ok
       stance: neutral
-    - id: S728
+    - id: SR028
       publisher: Bloomberg
       title: BILL.com and Divvy corporate card competitive position vs Ramp 2024
       url: https://www.bloomberg.com/news/articles/bill-divvy-corporate-card-ramp-2024
@@ -1158,7 +1158,7 @@ localEvidence:
         - SMB-corporate-card
       accessStatus: paywall
       stance: adverse
-    - id: S729
+    - id: SR029
       publisher: G2
       title: 'G2 comparison: Ramp vs BILL Divvy — user reviews and competitive feature comparison'
       url: https://www.g2.com/compare/ramp-vs-bill-spend
@@ -1173,7 +1173,7 @@ localEvidence:
         - competitive-analysis
       accessStatus: ok
       stance: neutral
-    - id: S730
+    - id: SR030
       publisher: Ramp
       title: Ramp corporate card credit facility and funding structure — press release
       url: https://ramp.com/blog/ramp-credit-facility-2024
@@ -1189,7 +1189,7 @@ localEvidence:
       accessStatus: ok
       stance: confirming
   claims:
-    - id: C701
+    - id: CR001
       statement: >-
         Interchange fees (typically 1.8–2.4% for commercial Visa cards issued via Sutton Bank) are the primary revenue
         source funding Ramp's card reward programme and driving the overall fintech model; this makes Ramp structurally
@@ -1197,13 +1197,14 @@ localEvidence:
       type: observed
       topic: interchange-revenue-dependency
       sourceRefs:
-        - S724
-        - S725
+        - SR024
+        - SR025
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ701
-    - id: C702
+        - QR001
+      contradictsClaimRefs: []
+    - id: CR002
       statement: >-
         Industry analysis from Sacra and a16z suggests that a Durbin-style cap applied to commercial cards (as proposed
         in the Credit Card Competition Act) could reduce Ramp's gross revenue per card dollar by 30–50%, requiring a
@@ -1211,14 +1212,15 @@ localEvidence:
       type: estimated
       topic: interchange-compression-impact
       sourceRefs:
-        - S724
-        - S725
-        - S702
+        - SR024
+        - SR025
+        - SR002
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ702
-    - id: C703
+        - QR002
+      contradictsClaimRefs: []
+    - id: CR003
       statement: >-
         Ramp's BIN sponsorship arrangement with Sutton Bank (Iowa) places Ramp in a bank-as-a-service (BaaS) regulatory
         structure; Sutton Bank holds primary BSA/AML, KYC, and Regulation E obligations, with Ramp co-obligated as a
@@ -1226,14 +1228,15 @@ localEvidence:
       type: observed
       topic: BaaS-structure
       sourceRefs:
-        - S703
-        - S705
-        - S706
+        - SR003
+        - SR005
+        - SR006
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ703
-    - id: C704
+        - QR003
+      contradictsClaimRefs: []
+    - id: CR004
       statement: >-
         The OCC and FDIC issued interagency guidance (Bulletin 2023-17) tightening supervision of third-party fintech
         relationships for sponsored banks; this guidance increases compliance burden on Sutton Bank's Ramp programme and
@@ -1242,14 +1245,15 @@ localEvidence:
       type: observed
       topic: OCC-BaaS-guidance
       sourceRefs:
-        - S703
-        - S704
-        - S718
+        - SR003
+        - SR004
+        - SR018
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ703
-    - id: C705
+        - QR003
+      contradictsClaimRefs: []
+    - id: CR005
       statement: >-
         The CFPB's non-bank supervision rule (finalised November 2024) enables the CFPB to examine larger fintech
         companies under its supervision programme; as Ramp's ARR approaches $1B and it processes payments for 25,000+
@@ -1257,13 +1261,14 @@ localEvidence:
       type: observed
       topic: CFPB-supervision-risk
       sourceRefs:
-        - S707
-        - S708
+        - SR007
+        - SR008
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ704
-    - id: C706
+        - QR004
+      contradictsClaimRefs: []
+    - id: CR006
       statement: >-
         Ramp has filed patent applications with the USPTO covering AI-powered expense classification, spend anomaly
         detection, and financial automation workflows; these patents provide defensive IP coverage and support the AI
@@ -1271,12 +1276,13 @@ localEvidence:
       type: observed
       topic: patent-portfolio
       sourceRefs:
-        - S727
+        - SR027
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ705
-    - id: C707
+        - QR005
+      contradictsClaimRefs: []
+    - id: CR007
       statement: >-
         SAP, Coupa, and BILL.com hold substantial patent portfolios in expense management software; while no known
         infringement claim against Ramp has been filed as of 2025, freedom-to-operate risk from incumbent patent holders
@@ -1284,13 +1290,14 @@ localEvidence:
       type: inferred
       topic: IP-infringement-risk
       sourceRefs:
-        - S727
-        - S728
+        - SR027
+        - SR028
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ705
-    - id: C708
+        - QR005
+      contradictsClaimRefs: []
+    - id: CR008
       statement: >-
         Ramp processes sensitive financial transaction data and ERP integration credentials for 25,000+ businesses; a
         material data breach or CCPA/state privacy law violation could trigger regulatory enforcement, civil litigation,
@@ -1298,13 +1305,14 @@ localEvidence:
       type: inferred
       topic: data-breach-risk
       sourceRefs:
-        - S721
-        - S712
+        - SR021
+        - SR012
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ706
-    - id: C709
+        - QR006
+      contradictsClaimRefs: []
+    - id: CR009
       statement: >-
         Ramp's platform is built on AWS with Snowflake for analytics; operational risk centres on service availability,
         data integrity, AI classification accuracy, and fraud prevention — all of which scale in absolute exposure as
@@ -1312,13 +1320,14 @@ localEvidence:
       type: observed
       topic: operational-risk-profile
       sourceRefs:
-        - S712
-        - S720
+        - SR012
+        - SR020
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ707
-    - id: C710
+        - QR007
+      contradictsClaimRefs: []
+    - id: CR010
       statement: >-
         A platform outage during month-end close — when the highest concentration of expense submissions and ERP syncs
         occur — would cause maximum customer pain and represents the most likely trigger for competitive switching to
@@ -1326,13 +1335,14 @@ localEvidence:
       type: inferred
       topic: month-end-outage-risk
       sourceRefs:
-        - S711
-        - S712
+        - SR011
+        - SR012
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ707
-    - id: C711
+        - QR007
+      contradictsClaimRefs: []
+    - id: CR011
       statement: >-
         Ramp has not published a public uptime SLA or historical availability metrics; typical B2B fintech targets
         99.9%+ availability (<9 hours annual downtime), but Ramp's SLA commitments to customers are not publicly
@@ -1340,13 +1350,14 @@ localEvidence:
       type: observed
       topic: uptime-SLA-disclosure
       sourceRefs:
-        - S711
-        - S712
+        - SR011
+        - SR012
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ708
-    - id: C712
+        - QR008
+      contradictsClaimRefs: []
+    - id: CR012
       statement: >-
         Fraud losses and credit losses on Ramp's card programme are primarily borne by Sutton Bank under the BIN
         sponsorship agreement; however, chargebacks from fraud can reduce Ramp's net interchange revenue and trigger
@@ -1354,13 +1365,14 @@ localEvidence:
       type: observed
       topic: fraud-credit-loss-structure
       sourceRefs:
-        - S726
-        - S705
+        - SR026
+        - SR005
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ709
-    - id: C713
+        - QR009
+      contradictsClaimRefs: []
+    - id: CR013
       statement: >-
         Ramp's AI-based anomaly detection claims high fraud detection accuracy on its corporate card programme, but the
         absolute fraud exposure grows proportionally with the $25B annualised card volume; the actual fraud rate at
@@ -1368,26 +1380,28 @@ localEvidence:
       type: observed
       topic: AI-fraud-detection
       sourceRefs:
-        - S724
-        - S726
+        - SR024
+        - SR026
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ709
-    - id: C714
+        - QR009
+      contradictsClaimRefs: []
+    - id: CR014
       statement: >-
         Ramp is SOC 2 Type II certified as of 2024, indicating it has passed an independent audit of its security
         controls for the Trust Services Criteria; no material data breach has been publicly reported as of 2025.
       type: observed
       topic: SOC2-certification
       sourceRefs:
-        - S712
-        - S720
+        - SR012
+        - SR020
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ706
-    - id: C715
+        - QR006
+      contradictsClaimRefs: []
+    - id: CR015
       statement: >-
         Ramp has launched at least five major product lines in rapid succession (Intelligence AI suite, Ramp Copilot,
         Bill Pay 2.0, Ramp Travel, Vendor Network) in 2023–2024; this rapid release cadence increases engineering
@@ -1395,13 +1409,14 @@ localEvidence:
       type: observed
       topic: engineering-execution-risk
       sourceRefs:
-        - S717
-        - S724
+        - SR017
+        - SR024
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ707
-    - id: C716
+        - QR007
+      contradictsClaimRefs: []
+    - id: CR016
       statement: >-
         Ramp's most critical single-point-of-failure is Sutton Bank (Iowa) as its sole BIN sponsor and card issuer; if
         Sutton exits the programme under regulatory pressure or strategic change, Ramp would need to migrate 25,000+
@@ -1410,14 +1425,15 @@ localEvidence:
       type: inferred
       topic: Sutton-Bank-dependency
       sourceRefs:
-        - S705
-        - S706
-        - S703
+        - SR005
+        - SR006
+        - SR003
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ710
-    - id: C717
+        - QR010
+      contradictsClaimRefs: []
+    - id: CR017
       statement: >-
         Brex's migration from its original banking partner to Column N.A. in 2022 is a documented example of BIN sponsor
         migration in the corporate card space; the migration caused several months of customer disruption and
@@ -1425,13 +1441,14 @@ localEvidence:
       type: observed
       topic: BIN-migration-precedent
       sourceRefs:
-        - S706
-        - S713
+        - SR006
+        - SR013
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ710
-    - id: C718
+        - QR010
+      contradictsClaimRefs: []
+    - id: CR018
       statement: >-
         Visa's ongoing renegotiation of commercial interchange rates with large merchants and its exploration of
         alternative payment rails (Visa DPS, real-time payments) introduces uncertainty about the long-term stability of
@@ -1439,13 +1456,14 @@ localEvidence:
       type: observed
       topic: Visa-interchange-uncertainty
       sourceRefs:
-        - S726
-        - S702
+        - SR026
+        - SR002
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ701
-    - id: C719
+        - QR001
+      contradictsClaimRefs: []
+    - id: CR019
       statement: >-
         Ramp's AWS infrastructure dependency is high — the platform is hosted on AWS with multi-region deployment; a
         major AWS US-East outage would impact the core platform unless multi-region failover is fully and consistently
@@ -1453,13 +1471,14 @@ localEvidence:
       type: inferred
       topic: AWS-dependency
       sourceRefs:
-        - S712
-        - S709
+        - SR012
+        - SR009
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ711
-    - id: C720
+        - QR011
+      contradictsClaimRefs: []
+    - id: CR020
       statement: >-
         Intuit QuickBooks is Ramp's largest integration partner by customer count (~60% of Ramp's SMB customers use
         QuickBooks as their primary accounting system); an Intuit API restriction or competitive change could disrupt
@@ -1467,13 +1486,14 @@ localEvidence:
       type: estimated
       topic: QuickBooks-dependency
       sourceRefs:
-        - S729
-        - S724
+        - SR029
+        - SR024
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ711
-    - id: C721
+        - QR011
+      contradictsClaimRefs: []
+    - id: CR021
       statement: >-
         Ramp uses a credit facility to fund the 30-day float between card spend ($~2B/month at current $25B annualised
         volume) and customer payment; if credit market conditions tighten, Ramp's access to working capital at
@@ -1481,13 +1501,14 @@ localEvidence:
       type: observed
       topic: credit-facility-risk
       sourceRefs:
-        - S730
-        - S715
+        - SR030
+        - SR015
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ712
-    - id: C722
+        - QR013
+      contradictsClaimRefs: []
+    - id: CR022
       statement: >-
         Ramp's startup customer pipeline is partially dependent on VC firm co-marketing relationships (Founders Fund,
         Thrive Capital, YC); a venture investment slowdown reduces new startup formation and thus top-of-funnel supply
@@ -1495,13 +1516,14 @@ localEvidence:
       type: inferred
       topic: VC-channel-risk
       sourceRefs:
-        - S730
-        - S714
+        - SR030
+        - SR014
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ713
-    - id: C723
+        - QR014
+      contradictsClaimRefs: []
+    - id: CR023
       statement: >-
         Eric Glyman (CEO) and Karim Atiyeh (CTO) are the primary product vision and technical architecture owners at
         Ramp; loss of either founder would create significant uncertainty about strategic direction, particularly for
@@ -1509,13 +1531,14 @@ localEvidence:
       type: inferred
       topic: founder-key-person-risk
       sourceRefs:
-        - S717
-        - S713
+        - SR017
+        - SR013
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ714
-    - id: C724
+        - QR015
+      contradictsClaimRefs: []
+    - id: CR024
       statement: >-
         There is no public evidence of a deep management succession bench at Ramp below the co-founder level; Gene Lee's
         reduced public profile at Ramp since 2023 indicates a potential COO vacancy or role restructuring that
@@ -1523,13 +1546,14 @@ localEvidence:
       type: inferred
       topic: management-succession-gap
       sourceRefs:
-        - S717
-        - S714
+        - SR017
+        - SR014
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ714
-    - id: C725
+        - QR015
+      contradictsClaimRefs: []
+    - id: CR025
       statement: >-
         Ramp does not have a publicly confirmed CFO appointment as of 2025 — unusual for a Series D+ company approaching
         $1B ARR and creating uncertainty for IPO readiness, debt covenant reporting, and institutional investor
@@ -1537,13 +1561,14 @@ localEvidence:
       type: observed
       topic: CFO-vacancy-risk
       sourceRefs:
-        - S717
-        - S716
+        - SR017
+        - SR016
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ715
-    - id: C726
+        - QR016
+      contradictsClaimRefs: []
+    - id: CR026
       statement: >-
         BILL.com's acquisition of Divvy and Brex's enterprise expansion have positioned two well-funded competitors
         (BILL/Divvy with large SMB customer base; Brex with comparable funding and product breadth) directly in Ramp's
@@ -1551,14 +1576,15 @@ localEvidence:
       type: observed
       topic: competitive-intensity
       sourceRefs:
-        - S722
-        - S713
-        - S714
+        - SR022
+        - SR013
+        - SR014
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ716
-    - id: C727
+        - QR017
+      contradictsClaimRefs: []
+    - id: CR027
       statement: >-
         Mercury (business banking + corporate card) and Navan (travel + expense) are targeting Ramp's small business and
         mid-market segments respectively; while neither is a direct full-platform competitor today, their product
@@ -1566,13 +1592,14 @@ localEvidence:
       type: observed
       topic: new-entrant-competitive-risk
       sourceRefs:
-        - S723
-        - S713
+        - SR023
+        - SR013
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ716
-    - id: C728
+        - QR017
+      contradictsClaimRefs: []
+    - id: CR028
       statement: >-
         Ramp's sustainable competitive advantage has not yet been proven at scale — the company's AI expense
         classification moat depends on proprietary data network effects that are still being built, and several
@@ -1581,13 +1608,14 @@ localEvidence:
       type: inferred
       topic: competitive-moat-durability
       sourceRefs:
-        - S713
-        - S724
+        - SR013
+        - SR024
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ716
-    - id: C729
+        - QR017
+      contradictsClaimRefs: []
+    - id: CR029
       statement: >-
         AI/ML engineering talent competition from OpenAI, Google DeepMind, and other well-capitalised AI companies
         represents a structural retention risk for Ramp's technical staff; secondary transactions at $13B+ implied
@@ -1595,13 +1623,14 @@ localEvidence:
       type: inferred
       topic: AI-talent-retention-risk
       sourceRefs:
-        - S717
-        - S716
+        - SR017
+        - SR016
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ717
-    - id: C730
+        - QR018
+      contradictsClaimRefs: []
+    - id: CR030
       statement: >-
         Ramp's core interchange-based revenue model is exposed to structural compression: while SaaS fees (Ramp Plus at
         ~$12–15/user/month) contribute a growing second revenue stream, interchange remains the dominant revenue source
@@ -1609,13 +1638,14 @@ localEvidence:
       type: observed
       topic: financial-model-risk
       sourceRefs:
-        - S724
-        - S725
+        - SR024
+        - SR025
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ701
-    - id: C731
+        - QR001
+      contradictsClaimRefs: []
+    - id: CR031
       statement: >-
         The Credit Card Competition Act (CCCA) proposes routing competition for commercial card transactions similar to
         the Durbin Amendment's effect on debit cards; if passed, card-issuing banks like Sutton Bank would face
@@ -1624,14 +1654,15 @@ localEvidence:
       type: observed
       topic: CCCA-mechanism
       sourceRefs:
-        - S702
-        - S701
-        - S710
+        - SR002
+        - SR001
+        - SR010
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ702
-    - id: C732
+        - QR002
+      contradictsClaimRefs: []
+    - id: CR032
       statement: >-
         Ramp's March 2024 financing of $150M was priced at $7.65B — a down-round of approximately 6% from the $8.1B
         December 2021 peak; late 2024 secondary transactions at ~$13B implied valuation represent a partial recovery but
@@ -1639,13 +1670,14 @@ localEvidence:
       type: observed
       topic: valuation-trajectory
       sourceRefs:
-        - S715
-        - S716
+        - SR015
+        - SR016
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ718
-    - id: C733
+        - QR019
+      contradictsClaimRefs: []
+    - id: CR033
       statement: >-
         Ramp's current $13B implied valuation (secondary) represents approximately 18–26× estimated ARR of $500–700M; if
         revenue growth decelerates below 80% YoY, comparable public fintech multiples would compress this to 8–12× ARR
@@ -1653,13 +1685,14 @@ localEvidence:
       type: estimated
       topic: valuation-compression-risk
       sourceRefs:
-        - S725
-        - S716
+        - SR025
+        - SR016
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ718
-    - id: C734
+        - QR019
+      contradictsClaimRefs: []
+    - id: CR034
       statement: >-
         Ramp extends card credit to customers on 30-day billing cycles; at $25B annualised card volume (~$2B/month), the
         credit facility must continuously fund this float — a liquidity risk if the credit facility is not renewed at
@@ -1667,13 +1700,14 @@ localEvidence:
       type: observed
       topic: working-capital-risk
       sourceRefs:
-        - S730
-        - S721
+        - SR030
+        - SR021
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ712
-    - id: C735
+        - QR013
+      contradictsClaimRefs: []
+    - id: CR035
       statement: >-
         While Sutton Bank bears primary credit risk on Ramp's card programme, reputational risk from large fraud events
         falls on Ramp; a high-profile corporate card fraud incident (e.g. misuse of virtual cards for unauthorised
@@ -1681,13 +1715,14 @@ localEvidence:
       type: inferred
       topic: fraud-reputational-risk
       sourceRefs:
-        - S726
-        - S711
+        - SR026
+        - SR011
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ709
-    - id: C736
+        - QR009
+      contradictsClaimRefs: []
+    - id: CR036
       statement: >-
         The March 2024 down-round from $8.1B to $7.65B is an adverse signal indicating investor confidence in the peak
         2021 valuation has not been maintained; Ramp must demonstrate re-acceleration of growth to $1B+ ARR to justify
@@ -1695,26 +1730,28 @@ localEvidence:
       type: observed
       topic: down-round-signal
       sourceRefs:
-        - S715
-        - S716
+        - SR015
+        - SR016
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ718
-    - id: C737
+        - QR019
+      contradictsClaimRefs: []
+    - id: CR037
       statement: >-
         Ramp has no publicly known pending material litigation as of 2025; searches of PACER, SEC EDGAR, and legal news
         sources find no civil or criminal cases naming Ramp as defendant in material disputes as of the report date.
       type: observed
       topic: litigation-status
       sourceRefs:
-        - S727
-        - S721
+        - SR027
+        - SR021
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ705
-    - id: C738
+        - QR005
+      contradictsClaimRefs: []
+    - id: CR038
       statement: >-
         The Federal Reserve issued enforcement actions against multiple BaaS sponsor banks in 2023–2024 (including Blue
         Ridge Bank and Cross River Bank); these precedents signal that regulatory risk is not hypothetical for BaaS
@@ -1722,13 +1759,14 @@ localEvidence:
       type: observed
       topic: BaaS-enforcement-precedents
       sourceRefs:
-        - S718
-        - S704
+        - SR018
+        - SR004
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ703
-    - id: C739
+        - QR003
+      contradictsClaimRefs: []
+    - id: CR039
       statement: >-
         FinCEN's BSA/AML guidance for fintech-bank partnerships imposes ongoing monitoring and reporting obligations on
         both Sutton Bank and Ramp's programme; failure to file Suspicious Activity Reports (SARs) on time or to maintain
@@ -1736,13 +1774,14 @@ localEvidence:
       type: observed
       topic: BSA-AML-penalty-exposure
       sourceRefs:
-        - S719
-        - S718
+        - SR019
+        - SR018
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ704
-    - id: C740
+        - QR004
+      contradictsClaimRefs: []
+    - id: CR040
       statement: >-
         Ramp's competitive position in the 200–500 employee mid-market is its most defensible: Brex has higher churn at
         this segment due to pricing complexity; SAP Concur has implementation overhead; and BILL/Divvy lacks the AI
@@ -1750,13 +1789,14 @@ localEvidence:
       type: inferred
       topic: defensible-competitive-segment
       sourceRefs:
-        - S713
-        - S729
+        - SR013
+        - SR029
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ716
-    - id: C741
+        - QR017
+      contradictsClaimRefs: []
+    - id: CR041
       statement: >-
         Ramp's corporate card programme operates in a payments facilitation model rather than as a money transmitter in
         most US states; Ramp relies on Sutton Bank's money transmission licences and banking charter rather than
@@ -1765,13 +1805,14 @@ localEvidence:
       type: inferred
       topic: money-transmission-licence-structure
       sourceRefs:
-        - S703
-        - S720
+        - SR003
+        - SR020
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ720
-    - id: C742
+        - QR021
+      contradictsClaimRefs: []
+    - id: CR042
       statement: >-
         Ramp has not disclosed a specific credit loss reserve or card default rate in any public communication; based on
         the BaaS programme structure, Sutton Bank holds the credit risk and required regulatory capital for the card
@@ -1780,13 +1821,14 @@ localEvidence:
       type: inferred
       topic: credit-loss-reserve-structure
       sourceRefs:
-        - S705
-        - S730
+        - SR005
+        - SR030
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ721
-    - id: C743
+        - QR022
+      contradictsClaimRefs: []
+    - id: CR043
       statement: >-
         Ramp's FedRAMP authorisation is listed as 'in progress' on its security documentation page as of 2025; FedRAMP
         High authorisation typically takes 12–24 months from application submission; Ramp's ability to serve US federal
@@ -1794,14 +1836,15 @@ localEvidence:
       type: observed
       topic: FedRAMP-timeline
       sourceRefs:
-        - S712
-        - S720
+        - SR012
+        - SR020
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ731
+        - QR012
+      contradictsClaimRefs: []
   researchQuestions:
-    - id: RQ701
+    - id: QR001
       question: >-
         What percentage of Ramp's total revenue is derived from card interchange fees versus SaaS subscription fees as
         of 2024, and how does the revenue mix affect regulatory risk?
@@ -1809,7 +1852,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: answered
-    - id: RQ702
+    - id: QR002
       question: >-
         What is the estimated financial impact on Ramp's revenue if the Credit Card Competition Act passes and
         commercial card interchange rates are compressed by 30–50%?
@@ -1817,7 +1860,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: answered
-    - id: RQ703
+    - id: QR003
       question: >-
         What is the nature of Ramp's BaaS arrangement with Sutton Bank, and what regulatory risks from OCC/FDIC BaaS
         guidance could trigger Sutton Bank's exit from the programme?
@@ -1825,7 +1868,7 @@ localEvidence:
       targets:
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ704
+    - id: QR004
       question: >-
         Has the CFPB initiated or signalled examination of Ramp under its nonbank supervision programme, and what UDAAP
         exposure does Ramp face from its card and expense management products?
@@ -1833,7 +1876,7 @@ localEvidence:
       targets:
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ705
+    - id: QR005
       question: >-
         What is the status of Ramp's patent portfolio, and is there known or credible IP infringement risk from
         incumbent enterprise software vendors?
@@ -1841,7 +1884,7 @@ localEvidence:
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ706
+    - id: QR006
       question: >-
         What is Ramp's data security posture, and has it experienced any material data breaches or privacy enforcement
         actions as of 2025?
@@ -1849,7 +1892,7 @@ localEvidence:
       targets:
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ707
+    - id: QR007
       question: >-
         What are the primary operational risks from Ramp's cloud-native architecture and rapid product release cadence,
         including platform availability and engineering quality regression?
@@ -1857,7 +1900,7 @@ localEvidence:
       targets:
         - contentRequirements/2
       status: answered
-    - id: RQ708
+    - id: QR008
       question: >-
         What uptime SLA does Ramp commit to for its core card authorisation and expense management pipeline, and what is
         the historical availability record?
@@ -1865,7 +1908,7 @@ localEvidence:
       targets:
         - contentRequirements/2
       status: partial
-    - id: RQ709
+    - id: QR009
       question: >-
         What is Ramp's fraud loss rate on the corporate card programme, and how does the BIN sponsorship structure with
         Sutton Bank allocate credit and fraud risk?
@@ -1873,7 +1916,7 @@ localEvidence:
       targets:
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ710
+    - id: QR010
       question: >-
         What would happen to Ramp's card programme if Sutton Bank exits the BIN sponsorship, and how long would a bank
         migration take based on comparable precedents?
@@ -1881,7 +1924,7 @@ localEvidence:
       targets:
         - contentRequirements/3
       status: answered
-    - id: RQ711
+    - id: QR011
       question: >-
         How exposed is Ramp to AWS infrastructure failure or Intuit QuickBooks API changes, and what mitigation is in
         place for each dependency?
@@ -1889,7 +1932,7 @@ localEvidence:
       targets:
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: RQ731
+    - id: QR012
       question: >-
         What is the expected timeline for Ramp to achieve FedRAMP authorisation, and how does this affect its ability to
         serve US government customers?
@@ -1897,7 +1940,7 @@ localEvidence:
       targets:
         - contentRequirements/5
       status: answered
-    - id: RQ712
+    - id: QR013
       question: >-
         What is the size and structure of Ramp's credit facility for funding the card float, and what are the covenants
         that could trigger a reduction or termination of the facility?
@@ -1905,7 +1948,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: answered
-    - id: RQ713
+    - id: QR014
       question: >-
         How dependent is Ramp's startup customer growth on VC firm co-marketing partnerships, and how has the direct
         enterprise sales motion reduced this channel dependency?
@@ -1913,7 +1956,7 @@ localEvidence:
       targets:
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: RQ714
+    - id: QR015
       question: >-
         What is the key person dependency risk from the departure of either Eric Glyman (CEO) or Karim Atiyeh (CTO), and
         what succession planning exists?
@@ -1921,7 +1964,7 @@ localEvidence:
       targets:
         - plannedTables/people-execution-risk-register
       status: answered
-    - id: RQ715
+    - id: QR016
       question: >-
         Has Ramp appointed a CFO, and what are the implications of the apparent CFO vacancy for IPO readiness and
         institutional investor confidence?
@@ -1929,7 +1972,7 @@ localEvidence:
       targets:
         - plannedTables/people-execution-risk-register
       status: answered
-    - id: RQ716
+    - id: QR017
       question: >-
         How intense is competitive risk from Brex, BILL/Divvy, SAP Concur, Mercury, and Navan, and in which segments is
         Ramp most vulnerable to competitive displacement?
@@ -1937,7 +1980,7 @@ localEvidence:
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ717
+    - id: QR018
       question: >-
         Is there evidence of elevated AI/ML engineering talent attrition at Ramp following secondary transactions that
         provided early employee liquidity at $13B+ valuation?
@@ -1945,7 +1988,7 @@ localEvidence:
       targets:
         - plannedTables/people-execution-risk-register
       status: partial
-    - id: RQ718
+    - id: QR019
       question: >-
         What does the March 2024 down-round from $8.1B to $7.65B indicate about investor confidence in Ramp's peak
         valuation, and what growth trajectory is required to support the $13B secondary valuation?
@@ -1953,7 +1996,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: answered
-    - id: RQ719
+    - id: QR020
       question: >-
         What is the severity ranking of Ramp's top 5 risks by estimated financial impact on revenue and valuation, and
         which are most amenable to mitigation?
@@ -1961,7 +2004,7 @@ localEvidence:
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ720
+    - id: QR021
       question: >-
         Are there any state money transmission licence requirements or payment service licensing obligations that Ramp
         has not yet obtained?
@@ -1969,7 +2012,7 @@ localEvidence:
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ721
+    - id: QR022
       question: >-
         Has Ramp disclosed its credit loss reserve or default rate on the corporate card programme in any investor
         communications?
@@ -1977,7 +2020,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: answered
-    - id: RQ722
+    - id: QR023
       question: >-
         What is the regulatory status of the Durbin Amendment proposed extension as of the report date, and what is the
         probability of CCCA passage based on congressional vote tracking?
@@ -1985,7 +2028,7 @@ localEvidence:
       targets:
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ723
+    - id: QR024
       question: >-
         Has the Federal Reserve or OCC issued any enforcement actions or consent orders involving Sutton Bank's BaaS
         programme operations as of 2025?
@@ -1993,7 +2036,7 @@ localEvidence:
       targets:
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ724
+    - id: QR025
       question: >-
         What is Ramp's BSA/AML programme maturity, and has it passed any regulatory examination without material
         findings?
@@ -2001,7 +2044,7 @@ localEvidence:
       targets:
         - contentRequirements/1
       status: partial
-    - id: RQ725
+    - id: QR026
       question: >-
         How does Ramp's total regulatory and compliance cost as a percentage of revenue compare to public fintech peers
         at comparable scale?
@@ -2009,7 +2052,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: unresolved
-    - id: RQ726
+    - id: QR027
       question: >-
         What is the current legislative status of the Credit Card Competition Act (CCCA) in the US Senate and House as
         of Q1 2026?
@@ -2017,7 +2060,7 @@ localEvidence:
       targets:
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ727
+    - id: QR028
       question: >-
         Has SAP Concur, Coupa, or any other incumbent expense management platform filed a patent infringement suit
         against Ramp or a comparable AI expense platform?
@@ -2025,7 +2068,7 @@ localEvidence:
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ728
+    - id: QR029
       question: >-
         What is the estimated annual compliance cost for Ramp's BSA/AML, CFPB, and SOC 2 programmes, and how does this
         scale with ARR growth?
@@ -2033,7 +2076,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: unresolved
-    - id: RQ729
+    - id: QR030
       question: >-
         What kill criteria would cause a venture investor to exit the Ramp position — specifically, at what NRR or
         growth rate would the investment thesis break?
@@ -2041,7 +2084,7 @@ localEvidence:
       targets:
         - contentRequirements/5
       status: answered
-    - id: RQ730
+    - id: QR031
       question: >-
         Are there any anti-competitive or market manipulation concerns related to Ramp's vendor network or data
         aggregation practices that could attract antitrust scrutiny?
@@ -2060,7 +2103,8 @@ localEvidence:
         SLA commitments determine customer contractual rights on outage; absence of public SLA suggests month-to-month
         commitments rather than enterprise-grade guarantees.
       relatedQuestionRefs:
-        - RQ708
+        - QR008
+      relatedTableRefs: []
     - type: missing-source
       severity: moderate
       topic: AI/ML talent attrition — no disclosure of engineering attrition rates post-secondary
@@ -2069,7 +2113,8 @@ localEvidence:
         increased voluntary departures.
       whyItMatters: AI talent retention is central to maintaining the Intelligence product competitive advantage.
       relatedQuestionRefs:
-        - RQ717
+        - QR018
+      relatedTableRefs: []
     - type: enumeration-incomplete
       severity: minor
       topic: Regulatory / legal risk register is partial — novel regulatory developments may not be captured
@@ -2078,9 +2123,9 @@ localEvidence:
         state-level licensing gaps may exist beyond public record.
       whyItMatters: Unidentified regulatory risks could emerge unexpectedly.
       relatedTableRefs:
-        - T701
+        - TR001
       relatedQuestionRefs:
-        - RQ720
+        - QR021
     - type: missing-source
       severity: moderate
       topic: Credit loss reserve and default rate — not disclosed in investor communications
@@ -2089,7 +2134,8 @@ localEvidence:
         financial risk modelling.
       whyItMatters: Credit/fraud losses could be material if the corporate card programme scales without proportional risk controls.
       relatedQuestionRefs:
-        - RQ721
+        - QR022
+      relatedTableRefs: []
     - type: missing-source
       severity: minor
       topic: BSA/AML programme audit results — no independent confirmation of passing exam
@@ -2098,7 +2144,8 @@ localEvidence:
         confidential.
       whyItMatters: Undisclosed BSA/AML findings at Sutton Bank could trigger programme exit sooner than expected.
       relatedQuestionRefs:
-        - RQ724
+        - QR025
+      relatedTableRefs: []
     - type: missing-source
       severity: minor
       topic: Regulatory compliance cost as percentage of revenue — no public benchmark
@@ -2107,8 +2154,9 @@ localEvidence:
         at comparable scale.
       whyItMatters: Compliance cost inflation at scale could compress operating margins materially.
       relatedQuestionRefs:
-        - RQ725
-        - RQ728
+        - QR026
+        - QR029
+      relatedTableRefs: []
     - type: missing-source
       severity: minor
       topic: Antitrust / market power concerns — no published regulatory review
@@ -2119,4 +2167,5 @@ localEvidence:
         Antitrust scrutiny could restrict data aggregation practices that underpin Ramp's Intelligence benchmarking
         product.
       relatedQuestionRefs:
-        - RQ730
+        - QR031
+      relatedTableRefs: []

@@ -53,7 +53,7 @@
 
 ---
 
-### [ ] P0-2. 给 `check-chapter` 加 `sourceStanceSpread` 维度（每章 ≥1 adverse）
+### [x] P0-2. 给 `check-chapter` 加 `sourceStanceSpread` 维度（每章 ≥1 adverse）  ✅ 已完成
 **问题**：RUN-2 §A2。`stance: adverse` 的最小覆盖只在 [check-report.mjs](.agents/skills/startup-research/scripts/check-report.mjs#L245) 的 `checkAdverseDistribution` 里查（report-level），导致每家公司 finalize 时才发现 1–3 章缺 adverse 源。
 **改**：[.agents/skills/startup-research/scripts/check-chapter.mjs](.agents/skills/startup-research/scripts/check-chapter.mjs)
 - 读 workflow-config 的 `adverseDistribution.requireAtLeastOneAdverseSource` 列表（已存在）。当前章 `key` 出现在该列表里 → `localEvidence.sources[]` 必须有至少 1 条 `stance: adverse`。
@@ -64,24 +64,32 @@
 
 ---
 
-### [ ] P0-3. 给 `check-chapter` 加 `crossChapterRefLeak` 维度
+### [x] P0-3. 给 `check-chapter` 加 `crossChapterRefLeak` 维度
 **问题**：RUN-1 §2。八章写完才发现散文 / `claimRefs` 引用了别章的 `C2xx` / `S3xx`，agent 末尾批量 sed 重新编号。RUN-2 没复发但属侥幸。
-**改**：[.agents/skills/startup-research/scripts/check-chapter.mjs](.agents/skills/startup-research/scripts/check-chapter.mjs)
-- 扫描章内所有 `claimRefs`、散文里裸出现的 `\bC\d{3,}\b` / `\bS\d{3,}\b` / `\bT\d{3,}\b` / `\bF\d{3,}\b` / `\bRQ\d{3,}\b`，凡是不在本章 `localEvidence` 出现的一律报错。
-- `FIX_HINTS.crossChapterRefLeak = 'Remove the cross-chapter reference (IDs are scoped to one artifact) or add a local atomic claim/source/RQ in this chapter.'`
+**已实施**（闭环，沿用 P0-2 invariant）：
+- [.agents/skills/startup-research/scripts/load-chapter.mjs](.agents/skills/startup-research/scripts/load-chapter.mjs) `gateMarkdown` 末尾增加 "Local IDs are scoped to THIS chapter only — restate, don't copy" 一行；agent 在 chapter packet 中即可看到契约。
+- [.agents/skills/startup-research/scripts/check-chapter.mjs](.agents/skills/startup-research/scripts/check-chapter.mjs) 新增 `crossChapterRefLeak` dimension：扫描章内所有 `claimRefs`，若 unresolved ref 在另一章 `localEvidence.claims[]` 出现 → `crossChapterRefLeak` 并在 fix 中点名"defined in `02-market-analysis.yaml` 这种 file"+ 给"restate as new local claim with own sourceRefs"配方；否则保持原 `claimRefs` 维度（真·dangling）。FIX_HINTS / RETRY_PRECEDENCE / CASCADE_SUPPRESSORS 均同步。
+- [.agents/skills/startup-research/scripts/ledger.mjs](.agents/skills/startup-research/scripts/ledger.mjs) `rewrite()` 去掉 silent `?? ref` 兜底，改为收集所有 unresolved local ref 后 `process.exit(1)`，杜绝 "ref 静默落原值导致语义腐蚀或后置 dangling" 的窗口。
+- [.agents/skills/startup-research/SKILL.md](.agents/skills/startup-research/SKILL.md) 把"Local IDs are scoped to one artifact"那条 hard rule 升级成显式 recipe（restate, never copy）并点名 dimension 名字。
 
-**验证**：把 `reports/.../02-market-analysis.yaml` 里随便一个 `claimRefs: [C201]` 改成 `[C801]`，应触发该维度。
+**验证（已通过）**：
+- 合成 fixture：ch1 含 `C001`，ch2.section.claimRefs = `[C001, C002, C999]`（C002 本地存在）→ 仅 `C001` 触发 `crossChapterRefLeak` 并点名 ch1 文件，`C999` 触发 `claimRefs`（真 dangling），`C002` 通过。
+- ledger fail-loud：对已 finalize 的 revolut 报告再跑 ledger，section.claimRefs 中的旧 global id 找不到映射 → exit 1 并打印每条 unresolved ref。
+- `npm run validate`：36 pages built，全 pass。
 
 ---
 
-### [ ] P0-4. 放宽 figure↔table `duplicateAnalysis` 阈值（仅限同对图/表）
+### [x] P0-4. 放宽 figure↔table `duplicateAnalysis` 阈值（仅限同对图/表）
 **问题**：RUN-1 §7 + RUN-2 §B2。本次 12 对 T/F 反复修 `claimRefs`。本质是图与表本来就是同源数据的两种呈现形式。
-**改**：[.agents/skills/startup-research/scripts/chapter-schema.mjs](.agents/skills/startup-research/scripts/chapter-schema.mjs)（或 `check-chapter.mjs` 调用 jaccard 的位置）
-- 当 duplicate 候选对一方是 `T###` 一方是 `F###` 时：仅当 jaccard ≥ 1.0（即 figure 的 claimRefs 完全是 table 的子集且无任何其他 claim 区分）才报错；其它对（T-T、F-F、analysisCallout-analysisCallout）维持现阈值。
-- 否则把阈值改为可配（workflow-config.duplicateAnalysis 之类），默认对 T-F 配对 1.0、其它沿用原值。
-- `FIX_HINTS.duplicateAnalysis` 末尾追加："For paired table/figure (same data, two views), keep ≥1 claimRef unique to the figure or accept via acknowledgedWarnings."
+**已实施**：[.agents/skills/startup-research/scripts/check-chapter.mjs](.agents/skills/startup-research/scripts/check-chapter.mjs)
+- 旧规则同时有两个误报源：`titleSimilarity ≥ 0.75` 单独触发（"Revenue by region table" vs "Revenue by region map" 必然命中），以及 `≥75% smaller-side claim overlap`（top-N 摘要图必然命中）。
+- 新规则同时要求两个共信号：figure.claimRefs 是 table.claimRefs 的非空真子集（且 figure 至少有 3 个 ref，过滤单点噪声），并且标题 token jaccard ≥ 0.5。两个条件都满足才算"figure 既不带新 claim 又确实在讲同一件事"。
+- 失败信息升级为 `Figure F### re-renders the same claims as table T### (3/3 of the figure's claimRefs are also on the table). Either give the figure at least one claimRef the table does not have (a distinct slice/lens), rename it to reflect that lens, or merge it into the table.`，把可执行修法直接放在面前。
 
-**验证**：跑 `npm run validate`，所有现有报告仍 pass。然后构造一个 100% 重叠的 T/F 对，仍应失败；构造一个 50% 重叠的 T/F 对，应通过。
+**验证（已通过）**：
+- 6 个 finalized 报告（revolut/ramp/monzo/abnormal/innovaccer/project44）每章 `duplicateAnalysis = 0`，无回归。
+- 合成 fixture 三例：T001/F001 完全相同 claimRefs + 同标题 → 触发；F001 多带一个 C004 → 不触发；F001 标题"Customer concentration heatmap by industry" 与 table 标题"Revenue by segment"无 token 重叠 → 不触发。
+- `npm run validate`：36 pages built 通过。
 
 ---
 

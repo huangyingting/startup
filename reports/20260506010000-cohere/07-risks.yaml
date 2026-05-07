@@ -16,21 +16,21 @@ sections:
       was denied in November 2025, advancing the case toward discovery and potential trial in 2026–2027. If an adverse
       verdict is reached, statutory damages under the U.S. Copyright Act could reach tens of millions of dollars per
       work infringed. More materially, the lawsuit could require Cohere to modify its training data practices, imposing
-      ongoing licensing costs or limiting access to web-scraped corpora that underpin its enterprise LLMs. [C228] [C229]
-      [C230]
+      ongoing licensing costs or limiting access to web-scraped corpora that underpin its enterprise LLMs. [CR001]
+      [CR002] [CR003]
 
       On the regulatory front, the EU AI Act's General-Purpose AI (GPAI) systemic risk provisions took effect in August
       2025 for providers of foundation models above the 10^25 FLOPs training threshold. Cohere's Command A model almost
       certainly qualifies. Obligations include model capability assessments, adversarial testing, transparency reporting
       to the EU AI Office, and cybersecurity incident notification. Non-compliance carries fines of up to 3% of global
-      annual turnover or €15 million, whichever is higher. [C231] [C232] [C233]
+      annual turnover or €15 million, whichever is higher. [CR004] [CR005] [CR006]
 
       Cohere's absence from the FedRAMP Authorized marketplace — despite a preliminary listing — is a strategic risk
       limiting access to U.S. federal civilian agency contracts, a TAM estimated at $8–10 billion annually. GDPR
       exposure is partially mitigated by Cohere's private-deployment architecture, which keeps customer data
       on-premises; however, EU customers still face AI Act transparency and human oversight requirements. Canada's AIDA
       (Artificial Intelligence and Data Act), tabled in 2022 and still progressing as of early 2026, could impose
-      additional compliance overhead on Cohere's Canadian operations. [C234] [C235] [C236]
+      additional compliance overhead on Cohere's Canadian operations. [CR007] [CR008] [CR009]
   - id: SEC002
     title: Operational and Technology Risks
     body: >
@@ -38,20 +38,20 @@ sections:
       allocation constraints and pricing pressures remain elevated. Compute OpEx is estimated to represent 30–45% of
       Cohere's operating cost base given the scale of R&D spend required to maintain frontier-adjacent model quality.
       Any multi-month delay in GPU procurement directly threatens Cohere's model release cadence and competitive
-      positioning relative to OpenAI and Anthropic, which have preferential NVIDIA supply relationships. [C244] [C245]
-      [C246]
+      positioning relative to OpenAI and Anthropic, which have preferential NVIDIA supply relationships. [CR017] [CR018]
+      [CR019]
 
       The Aleph Alpha acquisition completed in early 2026 introduces integration risk: two engineering organizations
       with different technical stacks, hiring cultures, and customer bases must be merged while maintaining active
       enterprise deployments across Europe. Aleph Alpha's German/EU customers have strict data sovereignty requirements
-      that may conflict with Cohere's standard deployment architecture, requiring custom engineering. [C247] [C248]
+      that may conflict with Cohere's standard deployment architecture, requiring custom engineering. [CR020] [CR021]
 
       Key-person dependency is Cohere's most acute organizational risk. Aidan Gomez, CEO and co-founder, is the central
       figure in enterprise sales relationships, investor relations, and technical credibility. His departure — whether
       to a competitor, his own venture, or academia — would materially destabilize the company at a critical growth
       phase. Co-founders Nick Frosst and Ivan Zhang reduce but do not eliminate this risk. There are no succession plan
       disclosures in public sources. Security certifications (SOC 2 Type II, ISO 27001) are in place but AI-specific
-      safety certifications aligned with NIST AI RMF remain incomplete. [C249] [C250] [C251]
+      safety certifications aligned with NIST AI RMF remain incomplete. [CR022] [CR023] [CR024]
   - id: SEC003
     title: Strategic Risks, Financial Exposure, and Mitigations
     body: >
@@ -60,20 +60,20 @@ sections:
       enterprise model performance on many benchmarks. If open-source models achieve enterprise-grade reliability —
       including fine-tuning pipelines, retrieval-augmented generation, and private deployment support — Cohere's
       per-token pricing premium becomes harder to sustain. The differentiated moat remains the North enterprise platform
-      and compliance posture, not the base LLM itself. [C260] [C261] [C262]
+      and compliance posture, not the base LLM itself. [CR033] [CR034] [CR035]
 
       Partner concentration risk is elevated. Oracle holds an equity stake and is a key distribution partner; Microsoft
       Azure simultaneously offers Azure OpenAI Service (a direct Cohere competitor) while being a cloud infrastructure
       provider for some Cohere workloads. This creates a structural tension where Cohere's most important distribution
       partners are also advancing competing products. AWS Bedrock marketplace listings provide distribution but also
-      commoditize LLM access in ways that compress Cohere's pricing power. [C263] [C264] [C265]
+      commoditize LLM access in ways that compress Cohere's pricing power. [CR036] [CR037] [CR038]
 
       Cohere's cash burn is estimated at $80–120 million annually based on disclosed R&D headcount and compute costs
       against a $500M+ balance sheet. At $240M ARR with ~80% gross margins on platform subscriptions, Cohere is not yet
       profitable; customer acquisition costs in enterprise sales cycles of 6–18 months are substantial. The primary
       thesis-break scenarios are: (a) copyright adverse verdict with >$50M liability, (b) loss of two or more Fortune
       500 customers to Azure OpenAI sovereign parity, (c) open-source models eliminating the mid-market pricing tier,
-      and (d) Aidan Gomez departure before Series E+ exit event. [C266] [C267] [C268] [C269]
+      and (d) Aidan Gomez departure before Series E+ exit event. [CR039] [CR040] [CR041] [CR042]
 
       Mitigations in place include: private-deployment architecture reducing data sovereignty exposure; SOC 2 and ISO
       27001 certifications enabling regulated-industry sales; multi-jurisdictional HQ structure (Toronto + London + San
@@ -81,7 +81,7 @@ sections:
       model access. Kill criteria that would justify early exit: copyright damages exceeding insurance coverage, NRR
       falling below 90%, or command API pricing falling below $0.50/1M tokens (open-source substitution signal).
 tables:
-  - id: T701
+  - id: TR001
     title: Regulatory / Legal Risk Register
     columns:
       - Rule / Case
@@ -135,20 +135,20 @@ tables:
         - Request legal memo on AIDA obligations if enacted
     notes: 'Severity scale: Critical / Severe / Moderate / Minor. Likelihood: High / Medium-High / Medium / Low-Medium / Low.'
     claimRefs:
-      - C228
-      - C229
-      - C230
-      - C231
-      - C232
-      - C234
-      - C235
-      - C236
+      - CR001
+      - CR002
+      - CR003
+      - CR004
+      - CR005
+      - CR007
+      - CR008
+      - CR009
     enumerationScope:
       coverage: partial
       basis: >-
         Only publicly known legal proceedings and enacted/pending regulations included. Private litigation, sealed
         proceedings, or undisclosed regulatory inquiries are not captured in this register.
-  - id: T702
+  - id: TR002
     title: Operational / Quality / Security Risk Register
     columns:
       - Failure Mode
@@ -190,13 +190,13 @@ tables:
         - No disclosed retention bonus structure or equity refresh cadence
     notes: 'Maturity scale: High / Moderate / Partial / Low. Residual exposure assumes mitigations partially effective.'
     claimRefs:
-      - C244
-      - C245
-      - C247
-      - C248
-      - C249
-      - C251
-  - id: T703
+      - CR017
+      - CR018
+      - CR020
+      - CR021
+      - CR022
+      - CR024
+  - id: TR003
     title: Partner / Dependency Risk Register
     columns:
       - Dependency
@@ -252,11 +252,11 @@ tables:
         - Medium — integration risk peaks in 12–18 months post-acquisition
     notes: 'Concentration scale: Critical / High / Medium / Low. Residual exposure is post-mitigation estimate.'
     claimRefs:
-      - C241
-      - C242
-      - C243
-      - C255
-  - id: T704
+      - CR014
+      - CR015
+      - CR016
+      - CR028
+  - id: TR004
     title: People / Execution Risk Register
     columns:
       - Role / Function
@@ -298,11 +298,11 @@ tables:
         - Assess regional leadership depth and tenure for EU and APAC expansion
     notes: Severity assumes no concurrent execution; multiple departures compound risk multiplicatively.
     claimRefs:
-      - C249
-      - C250
-      - C256
-      - C257
-  - id: T705
+      - CR022
+      - CR023
+      - CR029
+      - CR030
+  - id: TR005
     title: Mitigation and Kill Criteria Table
     columns:
       - Risk
@@ -338,14 +338,14 @@ tables:
       Kill criteria are investment thresholds, not operational management triggers. Action implication is specific to a
       prospective investor at Series E stage.
     claimRefs:
-      - C258
-      - C259
-      - C260
-      - C265
-      - C266
-      - C267
+      - CR031
+      - CR032
+      - CR033
+      - CR038
+      - CR039
+      - CR040
 figures:
-  - id: F701
+  - id: FR001
     title: Risk Heatmap — Likelihood vs Impact
     type: matrix
     layout: standard
@@ -384,16 +384,16 @@ figures:
             - label: Open-source base model parity
               tone: warning
     claimRefs:
-      - C228
-      - C233
-      - C244
-      - C249
-      - C260
-      - C263
+      - CR001
+      - CR006
+      - CR017
+      - CR022
+      - CR033
+      - CR036
     approximationNotes: >-
       Likelihood and impact positions are analyst estimates based on public information; no internal risk register has
       been disclosed by Cohere.
-  - id: F702
+  - id: FR002
     title: Risk Transmission Map
     type: dag
     layout: standard
@@ -453,13 +453,13 @@ figures:
           target: i1
           label: Customer substitution risk for mid-market
     claimRefs:
-      - C230
-      - C232
-      - C235
-      - C245
-      - C250
-      - C261
-  - id: F703
+      - CR003
+      - CR005
+      - CR008
+      - CR018
+      - CR023
+      - CR034
+  - id: FR003
     title: Dependency Map — Critical Partners and Suppliers
     type: dag
     layout: standard
@@ -511,118 +511,118 @@ figures:
           target: d8
           label: Product and service delivery
     claimRefs:
-      - C252
-      - C253
-      - C254
-      - C256
-      - C257
-      - C264
+      - CR025
+      - CR026
+      - CR027
+      - CR029
+      - CR030
+      - CR037
 localEvidence:
   searchQueries:
     - query: Condé Nast Cohere copyright lawsuit SDNY 2024 2025 status
       engine: web
       hits: 12
       retainedSourceRefs:
-        - S001
-        - S002
+        - SR001
+        - SR002
     - query: EU AI Act GPAI obligations general purpose AI August 2025
       engine: web
       hits: 15
       retainedSourceRefs:
-        - S003
-        - S004
-        - S005
+        - SR003
+        - SR004
+        - SR005
     - query: Cohere FedRAMP authorization status 2025 2026
       engine: web
       hits: 8
       retainedSourceRefs:
-        - S006
-        - S007
+        - SR006
+        - SR007
     - query: NIST AI Risk Management Framework enterprise AI compliance
       engine: web
       hits: 10
       retainedSourceRefs:
-        - S008
+        - SR008
     - query: NVIDIA GPU supply H100 H200 AI startup allocation 2025
       engine: web
       hits: 14
       retainedSourceRefs:
-        - S009
-        - S010
+        - SR009
+        - SR010
     - query: Cohere Aleph Alpha acquisition integration risk 2026
       engine: web
       hits: 9
       retainedSourceRefs:
-        - S011
-        - S012
+        - SR011
+        - SR012
     - query: Aidan Gomez Cohere CEO key person risk departure
       engine: web
       hits: 7
       retainedSourceRefs:
-        - S013
+        - SR013
     - query: open source LLM Meta Llama 4 enterprise parity Cohere threat
       engine: web
       hits: 18
       retainedSourceRefs:
-        - S014
-        - S015
+        - SR014
+        - SR015
     - query: Canada AIDA Artificial Intelligence and Data Act compliance 2026
       engine: web
       hits: 6
       retainedSourceRefs:
-        - S016
-        - S017
+        - SR016
+        - SR017
     - query: Azure OpenAI Service sovereign cloud enterprise FedRAMP 2025
       engine: web
       hits: 11
       retainedSourceRefs:
-        - S018
-        - S019
+        - SR018
+        - SR019
     - query: Cohere SOC2 ISO27001 security certifications enterprise AI
       engine: web
       hits: 5
       retainedSourceRefs:
-        - S020
+        - SR020
     - query: enterprise AI startup copyright training data litigation risk 2025
       engine: web
       hits: 16
       retainedSourceRefs:
-        - S021
-        - S022
+        - SR021
+        - SR022
     - query: Cohere cash burn rate revenue 2025 2026 profitability path
       engine: web
       hits: 8
       retainedSourceRefs:
-        - S023
+        - SR023
     - query: AI startup burn multiple SaaS CAC LTV enterprise 2025
       engine: web
       hits: 9
       retainedSourceRefs:
-        - S024
+        - SR024
     - query: Cohere Oracle partnership equity stake distribution risk
       engine: web
       hits: 7
       retainedSourceRefs:
-        - S025
+        - SR025
     - query: GDPR AI Act private deployment data sovereignty enterprise LLM
       engine: web
       hits: 11
       retainedSourceRefs:
-        - S026
-        - S027
+        - SR026
+        - SR027
     - query: Cohere copyright lawsuit publishers news media training data defense
       engine: web
       hits: 10
       retainedSourceRefs:
-        - S028
-        - S029
+        - SR028
+        - SR029
     - query: enterprise AI vendor concentration risk cloud marketplace AWS Azure 2025
       engine: web
       hits: 9
       retainedSourceRefs:
-        - S030
+        - SR030
   sources:
-    - id: S001
+    - id: SR001
       publisher: Wired
       title: Publishers Sue Cohere Over AI Training Data — Motion to Dismiss Denied
       date: '2025-11-18'
@@ -638,7 +638,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: adverse
-    - id: S002
+    - id: SR002
       publisher: CourtListener / RECAP Archive
       title: Raw Story Media et al. v. OpenAI Inc. and Cohere Inc., Case 1:24-cv-01514 SDNY
       date: '2025-11-12'
@@ -655,7 +655,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S003
+    - id: SR003
       publisher: EUR-Lex (Official Journal of the European Union)
       title: Regulation (EU) 2024/1689 — Artificial Intelligence Act (AI Act) Full Text
       date: '2024-07-12'
@@ -672,7 +672,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S004
+    - id: SR004
       publisher: EU Artificial Intelligence Act Tracker
       title: GPAI Tier 2 Provider Obligations — Systemic Risk Thresholds and Compliance Timeline
       date: '2025-10-05'
@@ -689,7 +689,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S005
+    - id: SR005
       publisher: European Commission
       title: EU AI Office — General-Purpose AI Model Registration and Transparency Requirements
       date: '2025-08-01'
@@ -706,7 +706,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S006
+    - id: SR006
       publisher: FedRAMP Program Management Office
       title: FedRAMP Marketplace — Cohere Enterprise AI Platform Assessment Status
       date: '2025-09-30'
@@ -723,7 +723,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S007
+    - id: SR007
       publisher: FCW — Federal Computer Week
       title: Enterprise AI Vendors Racing for FedRAMP Authorization as Federal AI Demand Grows
       date: '2025-07-22'
@@ -740,7 +740,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S008
+    - id: SR008
       publisher: National Institute of Standards and Technology (NIST)
       title: AI Risk Management Framework (AI RMF 1.0)
       date: '2023-01-26'
@@ -757,7 +757,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S009
+    - id: SR009
       publisher: Computerworld
       title: NVIDIA GPU Allocation Constraints Continue to Affect AI Startup Training Schedules in 2025
       date: '2025-06-15'
@@ -775,7 +775,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S010
+    - id: SR010
       publisher: The Wall Street Journal
       title: NVIDIA Faces Growing Competition in AI Chip Market as AMD and Intel Scale Up
       date: '2025-08-30'
@@ -793,7 +793,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S011
+    - id: SR011
       publisher: TechCrunch
       title: Cohere Completes Aleph Alpha Acquisition — Integration Challenges Ahead
       date: '2026-01-15'
@@ -811,7 +811,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S012
+    - id: SR012
       publisher: Handelsblatt (Germany)
       title: 'Aleph Alpha und Cohere: Was die Übernahme für die europäische KI-Souveränität bedeutet'
       date: '2026-02-10'
@@ -829,7 +829,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S013
+    - id: SR013
       publisher: Bloomberg Technology
       title: Aidan Gomez Is Cohere's Biggest Asset — And Its Biggest Risk
       date: '2025-04-22'
@@ -846,7 +846,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S014
+    - id: SR014
       publisher: VentureBeat
       title: Meta Llama 4 Enterprise Benchmarks Challenge Closed-Model API Providers Including Cohere
       date: '2025-10-18'
@@ -863,7 +863,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: adverse
-    - id: S015
+    - id: SR015
       publisher: Forrester Research
       title: The Open-Source LLM Threat to Enterprise AI Platform Vendors — 2025 Assessment
       date: '2025-09-01'
@@ -880,7 +880,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: paywall
       stance: neutral
-    - id: S016
+    - id: SR016
       publisher: Government of Canada — Department of Justice
       title: Artificial Intelligence and Data Act (AIDA) — Legislative Summary
       date: '2022-06-16'
@@ -897,7 +897,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S017
+    - id: SR017
       publisher: Canada.ca — Innovation, Science and Economic Development
       title: Artificial Intelligence and Data Act — Progress Update and Timeline
       date: '2025-11-01'
@@ -915,7 +915,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S018
+    - id: SR018
       publisher: Microsoft Azure Blog
       title: Azure OpenAI Service Expands Sovereign Cloud and FedRAMP Authorized Deployments in 2025
       date: '2025-06-10'
@@ -932,7 +932,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: confirming
-    - id: S019
+    - id: SR019
       publisher: CIO Dive
       title: Enterprise CIOs Weigh Azure OpenAI vs Independent LLM Providers as Sovereign Deployments Mature
       date: '2025-10-05'
@@ -950,7 +950,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S020
+    - id: SR020
       publisher: Cohere Security & Trust Center
       title: Cohere Enterprise Security Certifications — SOC 2 Type II, ISO 27001, GDPR
       date: '2025-12-01'
@@ -968,7 +968,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: confirming
-    - id: S021
+    - id: SR021
       publisher: Reuters
       title: AI Companies Face Wave of Copyright Lawsuits from News Publishers in 2025
       date: '2025-03-14'
@@ -985,7 +985,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: adverse
-    - id: S022
+    - id: SR022
       publisher: Press Gazette
       title: Publishers Pursuing AI Copyright Claims — Condé Nast, NYT, News/Media Alliance Strategy
       date: '2025-09-20'
@@ -1003,7 +1003,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: adverse
-    - id: S023
+    - id: SR023
       publisher: Sacra Research
       title: Cohere Financial Model — ARR, Burn Rate, and Path to Profitability in 2026
       date: '2025-10-28'
@@ -1020,7 +1020,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S024
+    - id: SR024
       publisher: SaaStr
       title: Enterprise SaaS Burn Multiple Benchmarks 2025 — What Good Looks Like at $200M ARR
       date: '2025-07-10'
@@ -1038,7 +1038,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S025
+    - id: SR025
       publisher: Oracle Corporation
       title: Oracle Deepens Strategic Investment in Cohere to Accelerate Enterprise AI on Oracle Cloud
       date: '2025-01-20'
@@ -1056,7 +1056,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: confirming
-    - id: S026
+    - id: SR026
       publisher: European Data Protection Board (EDPB)
       title: Guidelines on Personal Data in AI Models — GDPR Compliance for AI Systems
       date: '2025-04-30'
@@ -1074,7 +1074,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S027
+    - id: SR027
       publisher: International Association of Privacy Professionals (IAPP)
       title: 'Private Deployment vs Cloud API: GDPR Exposure Comparison for Enterprise LLM Users'
       date: '2025-06-01'
@@ -1091,7 +1091,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S028
+    - id: SR028
       publisher: Law360
       title: Cohere Copyright Case Advances Past Motion to Dismiss in SDNY
       date: '2025-11-20'
@@ -1108,7 +1108,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: neutral
-    - id: S029
+    - id: SR029
       publisher: Reuters
       title: US Publishers Copyright Claims Against AI Training — Legal Strategy Update
       date: '2025-08-05'
@@ -1126,7 +1126,7 @@ localEvidence:
       accessDate: '2026-05-06'
       accessStatus: ok
       stance: adverse
-    - id: S030
+    - id: SR030
       publisher: S&P Global Market Intelligence
       title: Enterprise AI Vendor Concentration Risk — Cloud Marketplace Dependency Analysis 2025
       date: '2025-09-15'
@@ -1146,21 +1146,21 @@ localEvidence:
       accessStatus: ok
       stance: neutral
   researchQuestions:
-    - id: RQ001
+    - id: QR001
       question: What is the current legal status of the Condé Nast et al. copyright lawsuit against Cohere as of early 2026?
       type: verification
       targets:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ002
+    - id: QR002
       question: Could Cohere face statutory copyright damages exceeding $50M if the SDNY lawsuit proceeds to an adverse verdict?
       type: adverse
       targets:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ003
+    - id: QR003
       question: >-
         Do Cohere's Command A and Embed v3 foundation models exceed the EU AI Act's 10^25 FLOP training threshold
         triggering Tier 2 GPAI obligations?
@@ -1169,14 +1169,14 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ004
+    - id: QR004
       question: What is the precise status of Cohere's FedRAMP authorization application as of 2025–2026?
       type: verification
       targets:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ005
+    - id: QR005
       question: >-
         What specific EU AI Act GPAI Tier 2 obligations take effect in August 2025 and what compliance costs do they
         impose on foundation model providers like Cohere?
@@ -1185,14 +1185,14 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ006
+    - id: QR006
       question: What GDPR compliance architecture does Cohere's private-deployment model provide compared to cloud API delivery?
       type: verification
       targets:
         - contentRequirements/1
         - contentRequirements/2
       status: answered
-    - id: RQ007
+    - id: QR007
       question: >-
         Has Canada's Artificial Intelligence and Data Act (AIDA) been passed and what would it require of Cohere as a
         Canadian-incorporated AI company?
@@ -1201,7 +1201,7 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ008
+    - id: QR008
       question: >-
         What percentage of Cohere's operating cost base is estimated to be GPU compute (training plus inference) in
         2025–2026?
@@ -1211,7 +1211,7 @@ localEvidence:
         - contentRequirements/4
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ009
+    - id: QR009
       question: >-
         Is there evidence of NVIDIA GPU allocation constraints materially delaying Cohere's model training or release
         schedule?
@@ -1220,7 +1220,7 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ010
+    - id: QR010
       question: >-
         What enterprise security certifications does Cohere hold — specifically SOC 2 Type II, ISO 27001, and NIST AI
         RMF alignment?
@@ -1229,7 +1229,7 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ011
+    - id: QR011
       question: >-
         What integration risks emerged from Cohere's acquisition of Aleph Alpha and how is the EU engineering team being
         merged?
@@ -1239,28 +1239,28 @@ localEvidence:
         - contentRequirements/3
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ012
+    - id: QR012
       question: What is the key-person risk if CEO Aidan Gomez departed Cohere — how replicable is his role?
       type: adverse
       targets:
         - contentRequirements/2
         - plannedTables/people-execution-risk-register
       status: answered
-    - id: RQ013
+    - id: QR013
       question: What is Cohere's estimated quarterly cash burn rate and how many months of runway remain as of 2026?
       type: quantification
       targets:
         - contentRequirements/4
         - plannedTables/mitigation-and-kill-criteria-table
       status: partial
-    - id: RQ014
+    - id: QR014
       question: Does Cohere have any disclosed single-source supply chain dependencies beyond NVIDIA GPUs?
       type: verification
       targets:
         - contentRequirements/3
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: RQ015
+    - id: QR015
       question: >-
         What is the risk that Meta Llama 4 or Mistral Large 2 open-source models achieve enterprise-grade reliability
         and eliminate Cohere's differentiation?
@@ -1269,7 +1269,7 @@ localEvidence:
         - contentRequirements/4
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ016
+    - id: QR016
       question: >-
         How does Oracle's equity stake in Cohere create both a distribution advantage and a potential
         conflict-of-interest risk for Cohere's independence?
@@ -1278,7 +1278,7 @@ localEvidence:
         - contentRequirements/3
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: RQ017
+    - id: QR017
       question: >-
         Does Microsoft Azure's simultaneous role as Cohere cloud infrastructure provider and direct Azure OpenAI
         competitor create a structural distribution conflict?
@@ -1287,7 +1287,7 @@ localEvidence:
         - contentRequirements/3
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: RQ018
+    - id: QR018
       question: >-
         What is Cohere's headcount trajectory and is there public evidence of engineering attrition to OpenAI,
         Anthropic, or Google?
@@ -1296,7 +1296,7 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/people-execution-risk-register
       status: answered
-    - id: RQ019
+    - id: QR019
       question: >-
         What are Cohere's estimated customer acquisition cost (CAC), lifetime value (LTV), and burn multiple metrics for
         2025?
@@ -1305,14 +1305,14 @@ localEvidence:
         - contentRequirements/4
         - plannedTables/mitigation-and-kill-criteria-table
       status: partial
-    - id: RQ020
+    - id: QR020
       question: What are the specific thesis-break triggers that would cause a Cohere Series E investment to fail?
       type: mechanism
       targets:
         - contentRequirements/5
         - plannedTables/mitigation-and-kill-criteria-table
       status: answered
-    - id: RQ021
+    - id: QR021
       question: >-
         Has Cohere disclosed any AI safety incident or model hallucination event causing a customer breach or regulatory
         complaint?
@@ -1321,7 +1321,7 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ022
+    - id: QR022
       question: >-
         How does Cohere's concentration in financial services and healthcare verticals expose it to sector-specific AI
         regulation (OCC guidance, FDA AI/ML rules)?
@@ -1331,7 +1331,7 @@ localEvidence:
         - contentRequirements/0
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ023
+    - id: QR023
       question: >-
         What data residency and sovereignty requirements do Cohere's Japanese (Fujitsu) and Korean (LG CNS) customers
         impose on Cohere's architecture?
@@ -1340,7 +1340,7 @@ localEvidence:
         - contentRequirements/3
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: RQ024
+    - id: QR024
       question: What top 10 risk factors would Cohere be required to disclose in a hypothetical S-1 filing as of 2026?
       type: enumeration
       targets:
@@ -1348,7 +1348,7 @@ localEvidence:
         - contentRequirements/5
         - plannedTables/mitigation-and-kill-criteria-table
       status: partial
-    - id: RQ025
+    - id: QR025
       question: >-
         Has Cohere achieved or applied for any government contract authorization (FedRAMP, StateRAMP, DoD IL2) enabling
         access to US federal or defense procurement?
@@ -1357,7 +1357,7 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: partial
-    - id: RQ026
+    - id: QR026
       question: >-
         How does Canada's AIDA interact with Cohere's GDPR and EU AI Act obligations as a multi-jurisdictional AI
         company?
@@ -1366,7 +1366,7 @@ localEvidence:
         - contentRequirements/1
         - contentRequirements/5
       status: answered
-    - id: RQ027
+    - id: QR027
       question: >-
         Does Cohere's private-deployment architecture genuinely reduce GDPR and EU AI Act liability versus cloud API
         delivery models?
@@ -1375,14 +1375,14 @@ localEvidence:
         - contentRequirements/1
         - contentRequirements/5
       status: answered
-    - id: RQ028
+    - id: QR028
       question: What is the latest publicly available information on Cohere's ARR trajectory and growth rate as of Q1 2026?
       type: freshness
       targets:
         - contentRequirements/4
         - plannedTables/mitigation-and-kill-criteria-table
       status: answered
-    - id: RQ029
+    - id: QR029
       question: >-
         What is the risk that AWS, Azure, or Google build proprietary enterprise AI platforms that directly
         disintermediate Cohere's distribution channels?
@@ -1392,7 +1392,7 @@ localEvidence:
         - contentRequirements/4
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: RQ030
+    - id: QR030
       question: >-
         What capital investment would Cohere need to maintain model leadership and competitive infrastructure through
         2027?
@@ -1402,45 +1402,49 @@ localEvidence:
         - plannedTables/mitigation-and-kill-criteria-table
       status: partial
   claims:
-    - id: C001
+    - id: CR001
       statement: >-
         The Condé Nast et al. copyright lawsuit against Cohere was filed in the SDNY in December 2023 and a motion to
         dismiss was denied in November 2025, advancing the case to discovery.
       type: third-party-reported
       topic: legal risk
       sourceRefs:
-        - S001
-        - S002
-        - S028
+        - SR001
+        - SR002
+        - SR028
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ001
-    - id: C002
+        - QR001
+      contradictsClaimRefs: []
+    - id: CR002
       statement: >-
         If Cohere loses the copyright lawsuit at trial, statutory damages under the US Copyright Act could reach
         $150,000 per work infringed, potentially aggregating to tens or hundreds of millions of dollars.
       type: inferred
       topic: legal risk
       sourceRefs:
-        - S021
-        - S029
+        - SR021
+        - SR029
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ002
-    - id: C003
+        - QR002
+      contradictsClaimRefs: []
+    - id: CR003
       statement: >-
         The copyright lawsuit against Cohere has created procurement friction among regulated-industry enterprise
         customers who require legal indemnification before committing to multi-year AI platform contracts.
       type: inferred
       topic: legal risk
       sourceRefs:
-        - S001
-        - S022
+        - SR001
+        - SR022
       confidence: medium
       freshness: current
-    - id: C004
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR004
       statement: >-
         Cohere's Command A model, trained with an estimated compute budget exceeding 10^25 FLOPs, likely meets the EU AI
         Act Tier 2 GPAI threshold triggering model capability assessments, adversarial testing, and EU AI Office
@@ -1448,13 +1452,14 @@ localEvidence:
       type: inferred
       topic: EU AI Act compliance
       sourceRefs:
-        - S003
-        - S004
+        - SR003
+        - SR004
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ003
-    - id: C005
+        - QR003
+      contradictsClaimRefs: []
+    - id: CR005
       statement: >-
         The EU AI Act GPAI Tier 2 obligations require providers of frontier foundation models to conduct adversarial
         testing, publish transparency reports, notify the EU AI Office of incidents, and implement cybersecurity
@@ -1462,38 +1467,42 @@ localEvidence:
       type: third-party-reported
       topic: EU AI Act compliance
       sourceRefs:
-        - S003
-        - S004
-        - S005
+        - SR003
+        - SR004
+        - SR005
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ005
-    - id: C006
+        - QR005
+      contradictsClaimRefs: []
+    - id: CR006
       statement: >-
         Fines under the EU AI Act for GPAI Tier 2 violations are capped at €15 million or 3% of global annual turnover,
         whichever is higher; at Cohere's estimated $240M ARR, that represents up to ~$7M in maximum fine exposure.
       type: inferred
       topic: EU AI Act compliance
       sourceRefs:
-        - S003
-        - S004
+        - SR003
+        - SR004
       confidence: medium
       freshness: current
-    - id: C007
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR007
       statement: >-
         As of early 2026, Cohere does not appear on the FedRAMP Authorized marketplace, limiting its ability to win US
         federal civilian agency contracts, an estimated $8–10 billion annual AI procurement TAM.
       type: third-party-reported
       topic: FedRAMP gap
       sourceRefs:
-        - S006
-        - S007
+        - SR006
+        - SR007
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ004
-    - id: C008
+        - QR004
+      contradictsClaimRefs: []
+    - id: CR008
       statement: >-
         Cohere's FedRAMP gap is particularly significant because Azure OpenAI Service received FedRAMP High
         authorization in 2025, creating a directly competitive sovereign deployment option that Cohere cannot currently
@@ -1501,11 +1510,13 @@ localEvidence:
       type: inferred
       topic: FedRAMP competitive risk
       sourceRefs:
-        - S018
-        - S019
+        - SR018
+        - SR019
       confidence: medium
       freshness: current
-    - id: C009
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR009
       statement: >-
         Canada's AIDA (Artificial Intelligence and Data Act) was tabled as part of Bill C-27 in 2022 and had not yet
         been enacted as of early 2026; if passed, it would create compliance obligations for high-impact AI systems
@@ -1513,13 +1524,14 @@ localEvidence:
       type: third-party-reported
       topic: Canadian AI regulation
       sourceRefs:
-        - S016
-        - S017
+        - SR016
+        - SR017
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ007
-    - id: C010
+        - QR007
+      contradictsClaimRefs: []
+    - id: CR010
       statement: >-
         Canada's AIDA would require companies like Cohere to conduct impact assessments for high-impact AI systems,
         implement monitoring for unexpected outputs, and notify regulators of serious harms; compliance costs for a
@@ -1527,26 +1539,28 @@ localEvidence:
       type: inferred
       topic: Canadian AI regulation
       sourceRefs:
-        - S016
-        - S017
+        - SR016
+        - SR017
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ026
-    - id: C011
+        - QR026
+      contradictsClaimRefs: []
+    - id: CR011
       statement: >-
         Cohere holds SOC 2 Type II and ISO 27001 security certifications as of 2025; however, its alignment with the
         NIST AI RMF (AI-specific risk management standard) is not publicly disclosed as complete.
       type: third-party-reported
       topic: security certifications
       sourceRefs:
-        - S008
-        - S020
+        - SR008
+        - SR020
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ010
-    - id: C012
+        - QR010
+      contradictsClaimRefs: []
+    - id: CR012
       statement: >-
         GDPR fines for AI data handling violations can reach 4% of global annual turnover; Cohere's private-deployment
         architecture, which keeps all customer data on-premises, materially reduces GDPR data processing risk compared
@@ -1554,14 +1568,15 @@ localEvidence:
       type: inferred
       topic: GDPR compliance
       sourceRefs:
-        - S026
-        - S027
+        - SR026
+        - SR027
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ006
-        - RQ027
-    - id: C013
+        - QR006
+        - QR027
+      contradictsClaimRefs: []
+    - id: CR013
       statement: >-
         The European Data Protection Board issued guidelines in April 2025 clarifying that personal data used to train
         AI models must be justified under GDPR's legitimate interest or consent provisions, creating retroactive risk
@@ -1569,10 +1584,12 @@ localEvidence:
       type: third-party-reported
       topic: GDPR compliance
       sourceRefs:
-        - S026
+        - SR026
       confidence: medium
       freshness: current
-    - id: C014
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR014
       statement: >-
         Financial services customers (OCC-regulated banks) and healthcare customers (HIPAA-covered entities) face
         specific sector regulators that impose AI-specific requirements beyond GDPR and EU AI Act, creating
@@ -1580,13 +1597,14 @@ localEvidence:
       type: inferred
       topic: sector regulatory risk
       sourceRefs:
-        - S003
-        - S019
+        - SR003
+        - SR019
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ022
-    - id: C015
+        - QR022
+      contradictsClaimRefs: []
+    - id: CR015
       statement: >-
         Data residency requirements from Fujitsu (Japan's Personal Information Protection Act — PIPA) and LG CNS
         (Korea's Personal Information Protection Act — PIPA-K) require Cohere to ensure customer data does not leave the
@@ -1594,13 +1612,14 @@ localEvidence:
       type: inferred
       topic: APAC data sovereignty
       sourceRefs:
-        - S027
-        - S020
+        - SR027
+        - SR020
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ023
-    - id: C016
+        - QR023
+      contradictsClaimRefs: []
+    - id: CR016
       statement: >-
         Cohere's multi-jurisdictional headquarters structure (Toronto + London + San Francisco) provides regulatory
         arbitrage benefits — Canadian HQ may offer more favorable AI regulatory environment in near term compared to EU
@@ -1608,26 +1627,28 @@ localEvidence:
       type: inferred
       topic: regulatory structure
       sourceRefs:
-        - S016
-        - S017
+        - SR016
+        - SR017
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ026
-    - id: C017
+        - QR026
+      contradictsClaimRefs: []
+    - id: CR017
       statement: >-
         GPU compute (training and inference) is estimated to represent 30–45% of Cohere's total operating cost base,
         making NVIDIA H100/H200 supply constraints a direct threat to model release cadence and gross margin.
       type: inferred
       topic: GPU dependency
       sourceRefs:
-        - S009
-        - S010
+        - SR009
+        - SR010
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ008
-    - id: C018
+        - QR008
+      contradictsClaimRefs: []
+    - id: CR018
       statement: >-
         NVIDIA GPU allocation constraints in 2024–2025 disproportionately affected mid-tier AI companies lacking
         preferential supply agreements with Hyperscalers, putting Cohere at risk of training compute delays relative to
@@ -1635,13 +1656,14 @@ localEvidence:
       type: inferred
       topic: GPU supply risk
       sourceRefs:
-        - S009
-        - S010
+        - SR009
+        - SR010
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ009
-    - id: C019
+        - QR009
+      contradictsClaimRefs: []
+    - id: CR019
       statement: >-
         AMD MI300X and Intel Gaudi 3 represent potential GPU supply alternatives for AI training, but at Cohere's model
         size (~111 billion parameters for Command A) a full migration from NVIDIA to alternative silicon would require
@@ -1649,24 +1671,27 @@ localEvidence:
       type: inferred
       topic: GPU supply alternatives
       sourceRefs:
-        - S009
-        - S010
+        - SR009
+        - SR010
       confidence: medium
       freshness: current
-    - id: C020
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR020
       statement: >-
         Cohere completed the Aleph Alpha acquisition in early 2026; Aleph Alpha had approximately 500 employees and an
         EU-focused sovereign AI architecture using a different proprietary approach from Cohere's Command model family.
       type: third-party-reported
       topic: Aleph Alpha integration
       sourceRefs:
-        - S011
-        - S012
+        - SR011
+        - SR012
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ011
-    - id: C021
+        - QR011
+      contradictsClaimRefs: []
+    - id: CR021
       statement: >-
         The Aleph Alpha acquisition introduces integration risk from merging two engineering organizations with
         different technical stacks, hiring cultures, and EU customer bases; Aleph Alpha's German sovereign AI customers
@@ -1674,11 +1699,13 @@ localEvidence:
       type: inferred
       topic: Aleph Alpha integration risk
       sourceRefs:
-        - S011
-        - S012
+        - SR011
+        - SR012
       confidence: medium
       freshness: current
-    - id: C022
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR022
       statement: >-
         Aidan Gomez, as Cohere's founder and CEO, is the central figure in investor relations, enterprise C-suite sales,
         and technical credibility; his departure would be a material negative event with no clear succession plan
@@ -1686,12 +1713,13 @@ localEvidence:
       type: inferred
       topic: key-person risk
       sourceRefs:
-        - S013
+        - SR013
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ012
-    - id: C023
+        - QR012
+      contradictsClaimRefs: []
+    - id: CR023
       statement: >-
         Cohere co-founders Nick Frosst and Ivan Zhang provide technical depth and organizational resilience, but neither
         has demonstrated the CEO-level enterprise sales credibility and investor relationship management that Gomez has
@@ -1699,10 +1727,12 @@ localEvidence:
       type: inferred
       topic: key-person risk
       sourceRefs:
-        - S013
+        - SR013
       confidence: low
       freshness: current
-    - id: C024
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR024
       statement: >-
         There is no public disclosure of a Cohere CEO succession plan, board-led leadership development program, or
         key-man insurance policy as of early 2026.
@@ -1711,7 +1741,9 @@ localEvidence:
       sourceRefs: []
       confidence: low
       freshness: current
-    - id: C025
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR025
       statement: >-
         Oracle holds an equity stake in Cohere and is the primary enterprise distribution partner via Oracle Cloud
         Marketplace, creating a structural dependency where Oracle is simultaneously Cohere's largest investor and
@@ -1719,13 +1751,14 @@ localEvidence:
       type: third-party-reported
       topic: Oracle dependency
       sourceRefs:
-        - S025
-        - S030
+        - SR025
+        - SR030
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ016
-    - id: C026
+        - QR016
+      contradictsClaimRefs: []
+    - id: CR026
       statement: >-
         NVIDIA GPUs represent a critical single-source dependency for Cohere's model training pipeline; no disclosed
         alternative compute architecture can support training at 111B+ parameter scale without significant engineering
@@ -1733,13 +1766,14 @@ localEvidence:
       type: inferred
       topic: NVIDIA dependency
       sourceRefs:
-        - S009
-        - S010
+        - SR009
+        - SR010
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ014
-    - id: C027
+        - QR014
+      contradictsClaimRefs: []
+    - id: CR027
       statement: >-
         AWS Bedrock and Azure AI Gallery marketplace listings provide cloud-native distribution for Cohere but create a
         structural dependency where cloud providers control discovery, pricing presentation, and customer contract
@@ -1747,13 +1781,14 @@ localEvidence:
       type: inferred
       topic: cloud marketplace dependency
       sourceRefs:
-        - S030
-        - S018
+        - SR030
+        - SR018
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ029
-    - id: C028
+        - QR029
+      contradictsClaimRefs: []
+    - id: CR028
       statement: >-
         Microsoft Azure simultaneously provides Cohere with cloud infrastructure access and operates Azure OpenAI
         Service (a direct competitor) — this creates a structural conflict where Cohere's cloud host is incentivized to
@@ -1761,13 +1796,14 @@ localEvidence:
       type: inferred
       topic: Azure competitive tension
       sourceRefs:
-        - S018
-        - S019
+        - SR018
+        - SR019
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ017
-    - id: C029
+        - QR017
+      contradictsClaimRefs: []
+    - id: CR029
       statement: >-
         Cohere's enterprise sales team is dependent on Aidan Gomez's direct C-suite relationships for large deals;
         without a VP of Enterprise Sales with comparable relationships, new logo growth would slow materially if Gomez
@@ -1775,34 +1811,39 @@ localEvidence:
       type: inferred
       topic: key-person sales dependency
       sourceRefs:
-        - S013
+        - SR013
       confidence: low
       freshness: current
-    - id: C030
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR030
       statement: >-
         Cohere's headcount grew from approximately 600 employees in 2023 to ~950 by end of 2025; no public evidence of
         material layoffs, but technology talent competition from OpenAI, Anthropic, and Google DeepMind is ongoing.
       type: third-party-reported
       topic: headcount and retention
       sourceRefs:
-        - S013
-        - S023
+        - SR013
+        - SR023
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ018
-    - id: C031
+        - QR018
+      contradictsClaimRefs: []
+    - id: CR031
       statement: >-
         Cohere's estimated annual cash burn rate is $80–120 million against a reported $500M+ balance sheet from recent
         fundraising, implying approximately 4–6 years of runway at current burn.
       type: inferred
       topic: cash burn
       sourceRefs:
-        - S023
-        - S024
+        - SR023
+        - SR024
       confidence: low
       freshness: current
-    - id: C032
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR032
       statement: >-
         Enterprise SaaS companies at $200–300M ARR with 80%+ gross margins and 30% YoY growth typically operate at a
         1.5–2.5x burn multiple; Cohere's high R&D intensity (compute + talent) likely places it at the higher end of
@@ -1810,23 +1851,26 @@ localEvidence:
       type: inferred
       topic: financial efficiency
       sourceRefs:
-        - S024
+        - SR024
       confidence: low
       freshness: current
-    - id: C033
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR033
       statement: >-
         Meta Llama 4 and Mistral Large 2, both open-weight models released in 2025, achieved MMLU scores within 5–8% of
         Cohere Command A on standard enterprise benchmarks, narrowing but not eliminating the performance gap.
       type: third-party-reported
       topic: open-source model parity
       sourceRefs:
-        - S014
-        - S015
+        - SR014
+        - SR015
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ015
-    - id: C034
+        - QR015
+      contradictsClaimRefs: []
+    - id: CR034
       statement: >-
         Open-source model parity on benchmark tasks does not equate to enterprise deployment parity — Cohere's
         differentiation via North platform, fine-tuning pipelines, private deployment support, and SLAs is not
@@ -1834,11 +1878,13 @@ localEvidence:
       type: inferred
       topic: open-source risk mitigation
       sourceRefs:
-        - S014
-        - S015
+        - SR014
+        - SR015
       confidence: medium
       freshness: current
-    - id: C035
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR035
       statement: >-
         Forrester Research's 2025 assessment found that open-source LLM adoption in enterprise environments is growing
         fastest in the mid-market (<$1B revenue) where engineering resources for self-hosting are available, creating
@@ -1846,10 +1892,12 @@ localEvidence:
       type: third-party-reported
       topic: open-source substitution risk
       sourceRefs:
-        - S015
+        - SR015
       confidence: medium
       freshness: current
-    - id: C036
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR036
       statement: >-
         Oracle's equity stake creates a potential conflict where Oracle could redirect its AI strategy toward OCI-native
         models (built in partnership with OpenAI or developed internally) and defund or de-prioritize Cohere's OCI
@@ -1857,45 +1905,52 @@ localEvidence:
       type: inferred
       topic: Oracle conflict risk
       sourceRefs:
-        - S025
-        - S030
+        - SR025
+        - SR030
       confidence: low
       freshness: current
-    - id: C037
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR037
       statement: >-
         Cohere has diversified its cloud distribution across AWS Bedrock, Azure AI Gallery, and Oracle Cloud
         Marketplace, reducing dependency on any single cloud platform for distribution.
       type: third-party-reported
       topic: cloud distribution diversification
       sourceRefs:
-        - S030
-        - S025
+        - SR030
+        - SR025
       confidence: medium
       freshness: current
-    - id: C038
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR038
       statement: >-
         Azure OpenAI Service expanded its FedRAMP High-authorized sovereign cloud deployment capabilities in 2025,
         directly competing with Cohere for US federal enterprise contracts where Cohere lacks FedRAMP authorization.
       type: third-party-reported
       topic: Azure competitive threat
       sourceRefs:
-        - S018
-        - S019
+        - SR018
+        - SR019
       confidence: high
       freshness: current
-    - id: C039
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR039
       statement: >-
         Cohere's ARR trajectory grew from approximately $35M in 2023 to $240M in 2025, representing ~163% CAGR; if
         growth rate normalizes to 60% YoY in 2026, ARR would reach approximately $385M by end of 2026.
       type: inferred
       topic: ARR trajectory
       sourceRefs:
-        - S023
+        - SR023
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ028
-    - id: C040
+        - QR028
+      contradictsClaimRefs: []
+    - id: CR040
       statement: >-
         The primary thesis-break scenarios for Cohere are: (1) copyright adverse verdict >$50M, (2) Azure OAI sovereign
         parity enabling Fortune 500 defection, (3) open-source models capturing the mid-market ACV tier, and (4) Aidan
@@ -1903,15 +1958,16 @@ localEvidence:
       type: inferred
       topic: thesis-break analysis
       sourceRefs:
-        - S001
-        - S018
-        - S014
-        - S013
+        - SR001
+        - SR018
+        - SR014
+        - SR013
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ020
-    - id: C041
+        - QR020
+      contradictsClaimRefs: []
+    - id: CR041
       statement: >-
         Cohere's mitigations against regulatory and legal risk include: private-deployment architecture (reduces data
         sovereignty exposure), SOC 2 and ISO 27001 certifications (enables regulated-industry sales), and
@@ -1919,11 +1975,13 @@ localEvidence:
       type: third-party-reported
       topic: risk mitigation
       sourceRefs:
-        - S020
-        - S027
+        - SR020
+        - SR027
       confidence: medium
       freshness: current
-    - id: C042
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CR042
       statement: >-
         Kill criteria that would justify early investor exit include: copyright damages exceeding insurance coverage,
         NRR falling below 90% for two consecutive quarters, or Command A API pricing falling below $0.50/1M tokens
@@ -1931,10 +1989,12 @@ localEvidence:
       type: inferred
       topic: exit criteria
       sourceRefs:
-        - S023
-        - S024
+        - SR023
+        - SR024
       confidence: low
       freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
   evidenceGaps:
     - type: private-evidence-only
       severity: critical
@@ -1947,8 +2007,9 @@ localEvidence:
         on management-provided figures in data rooms.
       diligencePath: Request quarterly P&L, CAC by vertical, NRR by cohort, and burn multiple for 2024 and 2025 under NDA.
       relatedQuestionRefs:
-        - RQ013
-        - RQ019
+        - QR013
+        - QR019
+      relatedTableRefs: []
     - type: data-not-public
       severity: major
       topic: FedRAMP authorization timeline — no public milestone or agency ATO disclosed
@@ -1960,9 +2021,9 @@ localEvidence:
         material revenue risk.
       diligencePath: Request FedRAMP project plan and Agency ATO partner from Cohere management.
       relatedTableRefs:
-        - T701
+        - TR001
       relatedQuestionRefs:
-        - RQ025
+        - QR025
     - type: data-not-public
       severity: major
       topic: Capital requirements through 2027 — no disclosed forward compute budget or Series E use of proceeds
@@ -1974,7 +2035,8 @@ localEvidence:
         may not leave adequate investor margin of safety.
       diligencePath: Request 3-year capital plan, model training budget, and projected breakeven ARR under NDA.
       relatedQuestionRefs:
-        - RQ030
+        - QR030
+      relatedTableRefs: []
     - type: enumeration-incomplete
       severity: minor
       topic: Hypothetical S-1 risk disclosure list (RQ024) — analyst-inferred, not based on company disclosure
@@ -1986,7 +2048,8 @@ localEvidence:
         concentration).
       diligencePath: Request Series E offering memorandum or PPM from management for actual risk disclosure language.
       relatedQuestionRefs:
-        - RQ024
+        - QR024
+      relatedTableRefs: []
 callouts:
   - title: 'Copyright Litigation: The Highest-Probability Adverse Event'
     body: >-
@@ -1996,9 +2059,9 @@ callouts:
       using web-scraped training data, which would impose structural costs on future model training.
     calloutType: risk
     claimRefs:
-      - C228
-      - C229
-      - C230
+      - CR001
+      - CR002
+      - CR003
   - title: 'Open-Source Parity: Real Threat for Mid-Market, Not for Enterprise Platform'
     body: >-
       Meta Llama 4 and Mistral Large 2 have narrowed the performance gap on benchmarks. But benchmark parity ≠
@@ -2007,6 +2070,6 @@ callouts:
       of the ACV distribution — companies paying $50K–$150K ARR who have engineering resources to self-host.
     calloutType: insight
     claimRefs:
-      - C260
-      - C261
-      - C262
+      - CR033
+      - CR034
+      - CR035

@@ -10,8 +10,7 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
-
-const SCHEMA_VERSION = 'report-v2';
+import { SCHEMA_VERSION } from './chapter-schema.mjs';
 const REPORT_META_FILE = 'report-meta.yaml';
 const DEFAULT_DISCLAIMER = 'This report is a public-evidence diligence snapshot, not investment advice. Important financial, legal, technical, and contractual facts remain non-public and should be verified directly with management and primary documents before any investment decision.';
 
@@ -323,8 +322,9 @@ function computeSourceStats(evidenceLedger, chapters, runDateStr) {
   let openQuestionCount = 0;
   let documentedGapQuestionCount = 0;
   let blockingQuestionCount = 0;
-  // evidenceGap.relatedQuestionRefs are RQ### ids local to the same chapter,
-  // so the open-vs-documented match is done per-chapter rather than globally.
+  // evidenceGap.relatedQuestionRefs are Q<L>### ids local to the same chapter
+  // (each chapter has its own letter L), so the open-vs-documented match is
+  // done per-chapter rather than globally.
   for (const { doc } of chapters) {
     const local = doc.localEvidence ?? {};
     const gapRefs = new Set();

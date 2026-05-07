@@ -19,6 +19,19 @@ import {
   FIGURE_TYPES,
 } from '../../../../website/src/lib/figures.mjs';
 import { asDateString, hasText } from './utils.mjs';
+import {
+  CALLOUT_TYPES as DIMENSION_CALLOUT_TYPES,
+  CLAIM_CONFIDENCES,
+  CLAIM_FRESHNESS,
+  CLAIM_TYPES,
+  ENUMERATION_COVERAGE as DIMENSION_ENUMERATION_COVERAGE,
+  SOURCE_ACCESS_STATUSES,
+  SOURCE_INDEPENDENCE,
+  SOURCE_REPUTATION_TIERS,
+  SOURCE_STANCES,
+  SOURCE_TYPES,
+  formatEnumChoices,
+} from './check-dimensions.mjs';
 
 // Single source of truth for the report schema version. Imported by both
 // check-chapter (per-file head check) and check-report (cross-file head
@@ -36,31 +49,14 @@ const COORDINATE_FIGURE_TYPES = new Set(['quadrant']);
 const NUMERIC_VALUE_FIGURE_TYPES = new Set(['bar', 'waterfall', 'funnel']);
 const MATRIX_FIGURE_TYPES = new Set(['matrix', 'cohort']);
 
-// ---- enum sets used internally by the schema helpers ---------------------
-// All enum sets are non-exported: every consumer goes through the helper
-// functions below (checkSourceSchema, checkClaimSchema, etc.) and never needs
-// the raw set. Keeping the sets local avoids surface-area drift between this
-// module and the consumers.
+// ---- enum sets ----------------------------------------------------------
+// Field-level enum vocab is imported from check-dimensions.mjs (the single
+// source of truth shared with check-chapter and load-chapter packet exports).
+// CALLOUT_TYPES and ENUMERATION_COVERAGE are re-exported here so older
+// consumers that import them from chapter-schema keep working.
 
-const SOURCE_ACCESS_STATUSES = new Set(['ok', 'paywall', 'js-only', 'broken', 'rate-limited']);
-const SOURCE_STANCES = new Set(['confirming', 'adverse', 'neutral', 'unknown']);
-const SOURCE_TYPES = new Set([
-  'official', 'filing', 'regulatory', 'news', 'analyst-market-data',
-  'technical-docs', 'customer-proof', 'partner-proof', 'developer-signal',
-  'review', 'legal', 'other',
-]);
-const SOURCE_REPUTATION_TIERS = new Set(['high', 'medium', 'low']);
-const SOURCE_INDEPENDENCE = new Set(['company', 'partner', 'customer', 'competitor', 'independent', 'unknown']);
-
-const CLAIM_TYPES = new Set([
-  'observed', 'company-claimed', 'third-party-reported',
-  'estimated', 'inferred', 'open-question', 'conflicting',
-]);
-const CLAIM_CONFIDENCES = new Set(['high', 'medium', 'low']);
-const CLAIM_FRESHNESS = new Set(['current', 'recent', 'historical', 'unknown']);
-
-export const CALLOUT_TYPES = new Set(['strength', 'risk', 'recommendation', 'insight', 'assumption']);
-export const ENUMERATION_COVERAGE = new Set(['exhaustive', 'partial', 'sample']);
+export const CALLOUT_TYPES = DIMENSION_CALLOUT_TYPES;
+export const ENUMERATION_COVERAGE = DIMENSION_ENUMERATION_COVERAGE;
 
 // ---- helpers --------------------------------------------------------------
 
@@ -116,19 +112,19 @@ export function checkSourceSchema(source, { path }) {
     c.fail(`${path} topics must be a non-empty array`, { id });
   }
   if (source?.accessStatus && !SOURCE_ACCESS_STATUSES.has(source.accessStatus)) {
-    c.fail(`${path} accessStatus must be one of ${[...SOURCE_ACCESS_STATUSES].join('|')}`, { id, actual: source.accessStatus });
+    c.fail(`${path} accessStatus must be one of ${formatEnumChoices(SOURCE_ACCESS_STATUSES)}`, { id, actual: source.accessStatus });
   }
   if (source?.stance && !SOURCE_STANCES.has(source.stance)) {
-    c.fail(`${path} stance must be one of ${[...SOURCE_STANCES].join('|')}`, { id, actual: source.stance });
+    c.fail(`${path} stance must be one of ${formatEnumChoices(SOURCE_STANCES)}`, { id, actual: source.stance });
   }
   if (source?.sourceType && !SOURCE_TYPES.has(source.sourceType)) {
-    c.fail(`${path} sourceType must be one of ${[...SOURCE_TYPES].join('|')}`, { id, actual: source.sourceType });
+    c.fail(`${path} sourceType must be one of ${formatEnumChoices(SOURCE_TYPES)}`, { id, actual: source.sourceType });
   }
   if (source?.reputationTier && !SOURCE_REPUTATION_TIERS.has(source.reputationTier)) {
-    c.fail(`${path} reputationTier must be one of ${[...SOURCE_REPUTATION_TIERS].join('|')}`, { id, actual: source.reputationTier });
+    c.fail(`${path} reputationTier must be one of ${formatEnumChoices(SOURCE_REPUTATION_TIERS)}`, { id, actual: source.reputationTier });
   }
   if (source?.independence && !SOURCE_INDEPENDENCE.has(source.independence)) {
-    c.fail(`${path} independence must be one of ${[...SOURCE_INDEPENDENCE].join('|')}`, { id, actual: source.independence });
+    c.fail(`${path} independence must be one of ${formatEnumChoices(SOURCE_INDEPENDENCE)}`, { id, actual: source.independence });
   }
   return { errors: c.errors };
 }
@@ -165,13 +161,13 @@ export function checkClaimSchema(claim, { path }) {
     c.fail(`${path} type=conflicting requires non-empty contradictsClaimRefs`, { id });
   }
   if (claim?.type && !CLAIM_TYPES.has(claim.type)) {
-    c.fail(`${path} type must be one of ${[...CLAIM_TYPES].join('|')}`, { id, actual: claim.type });
+    c.fail(`${path} type must be one of ${formatEnumChoices(CLAIM_TYPES)}`, { id, actual: claim.type });
   }
   if (claim?.confidence && !CLAIM_CONFIDENCES.has(claim.confidence)) {
-    c.fail(`${path} confidence must be one of ${[...CLAIM_CONFIDENCES].join('|')}`, { id, actual: claim.confidence });
+    c.fail(`${path} confidence must be one of ${formatEnumChoices(CLAIM_CONFIDENCES)}`, { id, actual: claim.confidence });
   }
   if (claim?.freshness && !CLAIM_FRESHNESS.has(claim.freshness)) {
-    c.fail(`${path} freshness must be one of ${[...CLAIM_FRESHNESS].join('|')}`, { id, actual: claim.freshness });
+    c.fail(`${path} freshness must be one of ${formatEnumChoices(CLAIM_FRESHNESS)}`, { id, actual: claim.freshness });
   }
   if (claim?.type !== 'open-question' && Array.isArray(claim?.sourceRefs) && claim.sourceRefs.length === 0) {
     c.fail(`${path} sourceRefs must be non-empty unless type is open-question`, { id });
@@ -187,7 +183,7 @@ export function checkCalloutSchema(callout, { path }) {
   if (!hasText(callout?.body)) c.fail(`${path} requires body`);
   if (!Array.isArray(callout?.claimRefs)) c.fail(`${path} requires claimRefs array`);
   if (callout?.calloutType !== undefined && !CALLOUT_TYPES.has(callout.calloutType)) {
-    c.fail(`${path} calloutType must be one of ${[...CALLOUT_TYPES].join('|')}`, { actual: callout.calloutType });
+    c.fail(`${path} calloutType must be one of ${formatEnumChoices(CALLOUT_TYPES)}`, { actual: callout.calloutType });
   }
   return { errors: c.errors };
 }
@@ -221,7 +217,7 @@ export function checkTableSchema(table, { path }) {
       c.fail(`${path} enumerationScope must be an object`, { tableId: id });
     } else {
       if (!ENUMERATION_COVERAGE.has(scope.coverage)) {
-        c.fail(`${path} enumerationScope.coverage must be one of ${[...ENUMERATION_COVERAGE].join('|')}`, { tableId: id, actual: scope.coverage });
+        c.fail(`${path} enumerationScope.coverage must be one of ${formatEnumChoices(ENUMERATION_COVERAGE)}`, { tableId: id, actual: scope.coverage });
       }
       if (typeof scope.basis !== 'string' || scope.basis.trim().length < 20) {
         c.fail(`${path} enumerationScope.basis must be a non-empty string (>=20 chars)`, { tableId: id });

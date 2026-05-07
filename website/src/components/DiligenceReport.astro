@@ -57,13 +57,13 @@ function moneyM(value: unknown): string {
 }
 
 function cleanHeadline(value: unknown): string {
-  return String(value ?? '').replace(/(?:\s*\[C\d{3}\])+\.?$/g, '.').trim();
+  return String(value ?? '').replace(/(?:\s*\[C[A-Z]\d{3}\])+\.?$/g, '.').trim();
 }
 
 function splitClaimRefsText(value: unknown): Array<{ text?: string; ref?: string }> {
   const text = String(value ?? '');
   const parts: Array<{ text?: string; ref?: string }> = [];
-  const pattern = /\[(C\d{3})\]/g;
+  const pattern = /\[(C[A-Z]\d{3})\]/g;
   let lastIndex = 0;
   for (const match of text.matchAll(pattern)) {
     if (match.index > lastIndex) parts.push({ text: text.slice(lastIndex, match.index) });

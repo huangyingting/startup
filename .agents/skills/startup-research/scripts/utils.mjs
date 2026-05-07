@@ -3,6 +3,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 import { FIGURE_TYPES } from '../../../../website/src/lib/figures.mjs';
+import { REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS, RESERVED_TYPE_LETTERS } from './check-dimensions.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const reportsDir = join(repoRoot, 'reports');
@@ -122,14 +123,12 @@ export function parseDate(value) {
 }
 
 // Best-effort registrable domain (eTLD+1) for canonical-URL bookkeeping.
-// Multi-part TLDs are listed explicitly to avoid pulling in a full PSL.
-// Used by check-chapter for source-diversity stats.
-const MULTI_PART_TLDS = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
+// Uses MULTI_PART_TLDS from check-dimensions for consistency across the codebase.
 export function registrableDomain(url) {
   const host = normalizeDomain(url);
   if (!host) return '';
   const parts = host.split('.');
-  if (parts.length <= 2) return host;
+  if (parts.length <= REGISTRABLE_DOMAIN_MAX_PARTS) return host;
   const lastTwo = parts.slice(-2).join('.');
   return MULTI_PART_TLDS.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
 }
@@ -224,18 +223,24 @@ function normalizeWorkflowConfig(config) {
   assertConfig(Array.isArray(config.chapters) && config.chapters.length > 0, 'chapters[] must be a non-empty array');
 
   const figureTypes = new Set(FIGURE_TYPES);
-  // Chapter identity is (key, order); the file name is derived as `<order:02>-<key>.yaml`.
+  // Chapter identity is (key, order, letter); the file name is derived as
+  // `<order:02>-<key>.yaml`. The `letter` is the chapter's ID-space letter
+  // (per check-dimensions.mjs) used by source/claim/table/figure/question IDs
+  // generated within the chapter (e.g. SO001, CO045, TA008).
   const chapters = config.chapters
     .map((chapter) => {
       assertConfig(chapter && typeof chapter === 'object', 'each chapter entry must be an object');
       assertConfig(chapter.key, 'chapter is missing key');
       assertConfig(/^[a-z][a-z0-9-]*$/.test(chapter.key), `${chapter.key}: key must be kebab-case (a-z, 0-9, -)`);
       assertConfig(Number.isInteger(Number(chapter.order)) && Number(chapter.order) > 0, `${chapter.key}: order must be a positive integer`);
+      assertConfig(typeof chapter.letter === 'string' && /^[A-Z]$/.test(chapter.letter), `${chapter.key}: letter must be a single uppercase A-Z`);
+      assertConfig(!RESERVED_TYPE_LETTERS.has(chapter.letter), `${chapter.key}: letter "${chapter.letter}" collides with a reserved type letter (${[...RESERVED_TYPE_LETTERS].join(', ')})`);
       const order = Number(chapter.order);
       const key = String(chapter.key);
       return {
         key,
         order,
+        letter: chapter.letter,
         file: `${String(order).padStart(2, '0')}-${key}.yaml`,
         title: chapter.title,
         mission: chapter.mission,
@@ -252,6 +257,7 @@ function normalizeWorkflowConfig(config) {
 
   assertUnique(chapters.map((chapter) => chapter.order), 'chapters[].order');
   assertUnique(chapters.map((chapter) => chapter.key), 'chapters[].key');
+  assertUnique(chapters.map((chapter) => chapter.letter), 'chapters[].letter');
 
   const knownKeys = new Set(chapters.map((chapter) => chapter.key));
   for (const chapter of chapters) {
@@ -272,6 +278,39 @@ function normalizeWorkflowConfig(config) {
     }
   }
 
+  // Report-level gate (hard floors across the entire report, not per-chapter).
+  const reportGate = config.reportGate ?? null;
+  if (reportGate) {
+    assertConfig(typeof reportGate === 'object', 'reportGate must be an object');
+    if (reportGate.minDistinctDomains !== undefined) {
+      const value = reportGate.minDistinctDomains;
+      assertConfig(Number.isInteger(value) && value > 0, 'reportGate.minDistinctDomains must be a positive integer');
+    }
+    if (reportGate.requireAdverseSource !== undefined) {
+      assertConfig(typeof reportGate.requireAdverseSource === 'boolean', 'reportGate.requireAdverseSource must be a boolean');
+    }
+    if (reportGate.maxPaywallPercent !== undefined) {
+      const value = reportGate.maxPaywallPercent;
+      assertConfig(typeof value === 'number' && value >= 0 && value <= 1, 'reportGate.maxPaywallPercent must be a number between 0 and 1');
+    }
+    if (reportGate.crossChapterTolerances !== undefined) {
+      const ct = reportGate.crossChapterTolerances;
+      assertConfig(typeof ct === 'object', 'reportGate.crossChapterTolerances must be an object');
+      if (ct.metricDrift !== undefined) {
+        const v = ct.metricDrift;
+        assertConfig(typeof v === 'number' && v >= 0 && v <= 1, 'reportGate.crossChapterTolerances.metricDrift must be a number between 0 and 1');
+      }
+      if (ct.keyFactOverlap !== undefined) {
+        const v = ct.keyFactOverlap;
+        assertConfig(typeof v === 'number' && v >= 0 && v <= 1, 'reportGate.crossChapterTolerances.keyFactOverlap must be a number between 0 and 1');
+      }
+      if (ct.duplicateOverlap !== undefined) {
+        const v = ct.duplicateOverlap;
+        assertConfig(typeof v === 'number' && v >= 0 && v <= 1, 'reportGate.crossChapterTolerances.duplicateOverlap must be a number between 0 and 1');
+      }
+    }
+  }
+
   // Optional report-level adverse-evidence distribution gate. Default is no
   // floor / no concentration warning; chapters.yaml opts in.
   const adverseDistribution = config.adverseDistribution ?? null;
@@ -288,7 +327,17 @@ function normalizeWorkflowConfig(config) {
     }
   }
 
-  return { ...config, chapters, adverseDistribution };
+  // Inject report-level adverse-distribution requirements into each chapter's
+  // gate as gate.minAdverseSources. Single source of truth so every consumer
+  // of loadWorkflowConfig (load-chapter packets, getAnalysisArtifacts, the
+  // check-chapter retry loop) sees the same gate — the agent must receive
+  // every constraint the gate will enforce.
+  const adverseRequiredKeys = new Set(adverseDistribution?.requireAtLeastOneAdverseSource ?? []);
+  for (const chapter of chapters) {
+    chapter.gate = { ...chapter.gate, minAdverseSources: adverseRequiredKeys.has(chapter.key) ? 1 : 0 };
+  }
+
+  return { ...config, chapters, adverseDistribution, reportGate };
 }
 
 export function loadWorkflowConfig() {
@@ -302,6 +351,7 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
   return config.chapters.map((chapter) => ({
     key: chapter.key,
     order: chapter.order,
+    letter: chapter.letter,
     file: chapter.file,
     artifact: chapter.key,
     chapter: chapter.order,

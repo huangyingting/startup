@@ -24,13 +24,13 @@ function blockRefs(value: any): string[] {
 }
 
 function hasInlineClaimRefs(value: unknown): boolean {
-  return /\[C\d{3}\]/.test(String(value ?? ''));
+  return /\[C[A-Z]\d{3}\]/.test(String(value ?? ''));
 }
 
 function splitClaimRefsText(value: unknown): Array<{ text?: string; ref?: string }> {
   const text = String(value ?? '');
   const parts: Array<{ text?: string; ref?: string }> = [];
-  const pattern = /\[(C\d{3})\]/g;
+  const pattern = /\[(C[A-Z]\d{3})\]/g;
   let lastIndex = 0;
   for (const match of text.matchAll(pattern)) {
     if (match.index > lastIndex) parts.push({ text: text.slice(lastIndex, match.index) });

@@ -9,7 +9,10 @@
 // finalization. Warnings are non-fatal unless --strict is passed.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { getAnalysisArtifacts, tryReadYaml } from './utils.mjs';
+import { getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
+import { ANALYSIS_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_ANALYSIS_TOKEN_LENGTH } from './check-dimensions.mjs';
+
+const WORKFLOW_CONFIG = loadWorkflowConfig();
 
 const args = (() => {
   const positional = process.argv.slice(2).filter((arg) => !arg.startsWith('-'));
@@ -141,7 +144,8 @@ for (const { spec, doc } of docs) {
 // conflict detection: same metric label, materially different numeric values
 // across two or more chapters
 // ---------------------------------------------------------------------------
-const RELATIVE_TOLERANCE = 0.10; // 10% drift considered material
+const tolerances = WORKFLOW_CONFIG.reportGate?.crossChapterTolerances ?? {};
+const RELATIVE_TOLERANCE = tolerances.metricDrift ?? 0.10;
 
 for (const [key, entries] of metrics) {
   // group by chapter (multiple values from one chapter are not cross-chapter
@@ -210,15 +214,6 @@ for (const [id, owners] of claimOwners) {
 // must do so by referencing claim IDs from company-overview rather than
 // inventing parallel local claims.
 // ---------------------------------------------------------------------------
-const KEY_FACT_TOPICS = [
-  /founded|founding date|incorporation/,
-  /founder|cofounder|co-founder/,
-  /headquarter|hq location|principal office/,
-  /total raised|cumulative funding|capital raised/,
-  /latest valuation|post-money valuation|secondary valuation/,
-  /headcount|employees|fte|full[- ]?time/,
-  /customer count|paid customers|paying users/,
-];
 
 const overview = docs.find((d) => d.spec.key === 'company-overview');
 if (overview) {
@@ -234,10 +229,11 @@ if (overview) {
       const norm = stmt.toLowerCase();
       const matchesKey = KEY_FACT_TOPICS.some((re) => re.test(norm));
       if (!matchesKey) continue;
-      // Look for a near-match in overview claims (>=70% token overlap)
+      // Look for a near-match in overview claims (>=keyFactOverlap token overlap)
+      const keyFactOverlap = tolerances.keyFactOverlap ?? 0.7;
       for (const [overviewNorm, overviewId] of overviewClaimStatements) {
         const overlap = jaccardTokens(norm, overviewNorm);
-        if (overlap >= 0.7 && claim.id !== overviewId) {
+        if (overlap >= keyFactOverlap && claim.id !== overviewId) {
           flag('fail', 'keyFactDrift', `${spec.file}: claim ${claim.id} restates a key fact ("${stmt.slice(0, 80)}") that already exists in company-overview as ${overviewId}; reference the canonical claim instead of creating a parallel local claim`, { chapter: spec.file, claimId: claim.id, canonicalId: overviewId });
           break;
         }
@@ -247,8 +243,8 @@ if (overview) {
 }
 
 function jaccardTokens(a, b) {
-  const tokA = new Set(a.split(/[^a-z0-9]+/).filter((t) => t.length >= 4));
-  const tokB = new Set(b.split(/[^a-z0-9]+/).filter((t) => t.length >= 4));
+  const tokA = new Set(a.split(/[^a-z0-9]+/).filter((t) => t.length >= MIN_ANALYSIS_TOKEN_LENGTH && !ANALYSIS_TOKEN_STOP_WORDS.has(t)));
+  const tokB = new Set(b.split(/[^a-z0-9]+/).filter((t) => t.length >= MIN_ANALYSIS_TOKEN_LENGTH && !ANALYSIS_TOKEN_STOP_WORDS.has(t)));
   if (!tokA.size || !tokB.size) return 0;
   const inter = [...tokA].filter((t) => tokB.has(t)).length;
   const union = new Set([...tokA, ...tokB]).size;
@@ -299,6 +295,7 @@ for (const { spec, doc } of docs) {
 }
 
 function findCrossChapterDuplicates(items) {
+  const duplicateOverlap = tolerances.duplicateOverlap ?? 0.7;
   for (let i = 0; i < items.length; i += 1) {
     for (let j = i + 1; j < items.length; j += 1) {
       const a = items[i];
@@ -306,7 +303,7 @@ function findCrossChapterDuplicates(items) {
       if (a.chapter === b.chapter) continue;
       const titleOverlap = jaccardTokens(a.titleTokens, b.titleTokens);
       const structureOverlap = jaccardTokens(a.structureTokens, b.structureTokens);
-      if (titleOverlap >= 0.7 && structureOverlap >= 0.7) {
+      if (titleOverlap >= duplicateOverlap && structureOverlap >= duplicateOverlap) {
         flag('fail', 'duplicateAnalysisCrossChapter', `${a.kind} ${a.id ?? '?'} in ${a.chapter} duplicates ${b.kind} ${b.id ?? '?'} in ${b.chapter} (title overlap ${(titleOverlap * 100).toFixed(0)}%, structure overlap ${(structureOverlap * 100).toFixed(0)}%); merge into one chapter or sharpen one to answer a distinct question`, { kind: a.kind, a: { chapter: a.chapter, id: a.id }, b: { chapter: b.chapter, id: b.id } });
       }
     }

@@ -1,16 +1,30 @@
 #!/usr/bin/env node
 // Consolidate localEvidence from analysis artifacts 01-08 into a single
-// evidence.yaml, deduplicating sources by canonical URL and claims
-// by statement+topic+sourceRefs. Rewrites claimRefs in-place across English
-// analysis artifacts.
+// evidence.yaml.
+//
+// New ID architecture: each chapter generates its own IDs from its
+// `letter:` (per chapters.yaml), e.g. SO001/CO045 for company-overview,
+// SM001/CM045 for market-analysis. IDs are never renumbered.
+//
+// Consolidation:
+//   - Sources: deduped by canonical URL. The first occurrence wins as
+//     `canonical`; subsequent duplicates are kept in the ledger but tagged
+//     with `canonical: <firstId>` so the website can resolve to one entry.
+//   - Claims: same treatment, keyed by statement+topic+canonical sourceRefs.
+//   - evidenceGaps: aggregated from all chapters as-is (no dedup needed
+//     because each gap carries chapter-letter-scoped relatedQuestionRefs).
+//
+// Chapter YAMLs are NEVER rewritten. The local IDs in each chapter file are
+// already the canonical (or canonicalable) IDs because of the chapter-letter
+// namespace. This makes the chapter loop fully parallel-safe.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { asDateString, canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
+import { canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
+import { FRESHNESS_THRESHOLDS, EVIDENCE_QUALITY_TIERS, REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS } from './check-dimensions.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
 const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
-const DOWNSTREAM_FILES = [FINAL_ARTIFACTS.fullReport.file, FINAL_ARTIFACTS.summaryCard.file];
 
 function parseArgs(argv) {
   return {
@@ -30,22 +44,12 @@ if (!docs.size) {
   console.error(`[ledger] no report artifacts found in ${reportFolder}`);
   process.exit(1);
 }
-for (const downstream of DOWNSTREAM_FILES) {
-  if (existsSync(join(reportFolder, downstream))) {
-    console.warn(`[ledger] warning: ${downstream} already exists; canonical claim IDs will be reassigned, so re-run full-report and summary-card assembly after ledger rebuild.`);
-    break;
-  }
-}
 
-const { sources, claims, sourceIds, claimIds, evidenceGaps } = consolidate(docs);
+const { sources, claims, evidenceGaps, duplicateSourceCount, duplicateClaimCount } = consolidate(docs);
 const ledger = buildLedger(docs, sources, claims, evidenceGaps);
 
 writeYaml(join(reportFolder, EVIDENCE_FILE), ledger);
-for (const [file, doc] of docs) {
-  writeYaml(join(reportFolder, file), rewrite(doc, file, claimIds));
-}
-
-console.log(`[ledger] wrote ${join(reportFolder, EVIDENCE_FILE)} (${sources.length} sources, ${claims.length} claims)`);
+console.log(`[ledger] wrote ${join(reportFolder, EVIDENCE_FILE)} (${sources.length} sources [${duplicateSourceCount} duplicates], ${claims.length} claims [${duplicateClaimCount} duplicates])`);
 
 // ---------------------------------------------------------------------------
 
@@ -58,10 +62,6 @@ function loadAnalysisDocs(folder) {
   return map;
 }
 
-function nextId(prefix, count) {
-  return `${prefix}${String(count + 1).padStart(3, '0')}`;
-}
-
 function sourceKey(source) {
   return canonicalSourceUrl(source?.url)
     || ['fallback', source?.publisher, source?.title, source?.date].map(textKey).join('|');
@@ -71,53 +71,62 @@ function textKey(value) {
   return compactText(value).toLowerCase();
 }
 
-function claimKey(claim, sourceRefs) {
+function claimKey(claim) {
+  const sourceRefs = claim.sourceRefs ?? [];
   return [textKey(claim?.statement), textKey(claim?.topic), [...sourceRefs].sort().join(',')].join('|');
 }
 
+// Aggregate sources from every chapter, preserving original chapter-letter
+// IDs (SO001, SM045, ...). The first occurrence of a canonical URL becomes
+// the canonical entry; later duplicates keep their own id but carry a
+// `canonical` field pointing to the first id so the website can resolve to
+// one bibliography entry.
 function consolidateSources(docs) {
-  const sourceIds = new Map();
   const sources = [];
-  const seen = new Map();
-  for (const [file, doc] of docs) {
-    const localSources = doc.localEvidence?.sources ?? [];
-    for (const source of localSources) {
+  const canonicalByKey = new Map(); // urlKey -> first id seen
+  let duplicateCount = 0;
+  for (const [, doc] of docs) {
+    for (const source of doc.localEvidence?.sources ?? []) {
       const key = sourceKey(source);
-      let finalId = seen.get(key);
-      if (!finalId) {
-        finalId = nextId('S', sources.length);
-        seen.set(key, finalId);
-        sources.push({ ...source, id: finalId });
+      const existingCanonical = canonicalByKey.get(key);
+      if (existingCanonical && existingCanonical !== source.id) {
+        // Keep the duplicate but tag it as canonical-of the first id.
+        sources.push({ ...source, canonical: existingCanonical });
+        duplicateCount += 1;
+      } else {
+        if (!existingCanonical) canonicalByKey.set(key, source.id);
+        sources.push({ ...source });
       }
-      if (source.id) sourceIds.set(`${file}:${source.id}`, finalId);
     }
   }
-  return { sources, sourceIds };
+  return { sources, duplicateCount };
 }
 
-function consolidateClaims(docs, sourceIds) {
-  const claimIds = new Map();
+// Aggregate claims from every chapter, preserving original chapter-letter
+// IDs (CO001, CM045, ...). Same canonical-tagging strategy as sources.
+function consolidateClaims(docs) {
   const claims = [];
   const evidenceGaps = [];
-  const seen = new Map();
-  for (const [file, doc] of docs) {
+  const canonicalByKey = new Map();
+  let duplicateCount = 0;
+  for (const [, doc] of docs) {
     const local = doc.localEvidence ?? {};
     evidenceGaps.push(...(local.evidenceGaps ?? []));
     for (const claim of local.claims ?? []) {
-      const sourceRefs = (claim.sourceRefs ?? []).map((ref) => sourceIds.get(`${file}:${ref}`) ?? ref);
-      const key = claimKey(claim, sourceRefs);
-      let finalId = seen.get(key);
-      if (!finalId) {
-        finalId = nextId('C', claims.length);
-        seen.set(key, finalId);
-        // `corroboration` is derived from sourceRefs at read time; do not persist it.
-        const { corroboration: _drop, ...rest } = claim;
-        claims.push({ ...rest, id: finalId, sourceRefs });
+      // `corroboration` is derived from sourceRefs.length; do not persist it.
+      const { corroboration: _drop, ...rest } = claim;
+      const key = claimKey(claim);
+      const existingCanonical = canonicalByKey.get(key);
+      if (existingCanonical && existingCanonical !== claim.id) {
+        claims.push({ ...rest, canonical: existingCanonical });
+        duplicateCount += 1;
+      } else {
+        if (!existingCanonical) canonicalByKey.set(key, claim.id);
+        claims.push({ ...rest });
       }
-      if (claim.id) claimIds.set(`${file}:${claim.id}`, finalId);
     }
   }
-  return { claims, claimIds, evidenceGaps };
+  return { claims, evidenceGaps, duplicateCount };
 }
 
 function monthDelta(from, to) {
@@ -129,8 +138,8 @@ function sourceFreshness(source, anchorDate) {
   if (!date || !anchorDate) return 'unknown';
   const months = monthDelta(date, anchorDate);
   if (months < 0) return 'current';
-  if (months <= 24) return 'current';
-  if (months <= 60) return 'recent';
+  if (months <= FRESHNESS_THRESHOLDS.current) return 'current';
+  if (months <= FRESHNESS_THRESHOLDS.recent) return 'recent';
   return 'historical';
 }
 
@@ -144,35 +153,15 @@ function summarizeRecency(runDate, sources, claims) {
 }
 
 function consolidate(docs) {
-  const { sources, sourceIds } = consolidateSources(docs);
-  const { claims, claimIds, evidenceGaps } = consolidateClaims(docs, sourceIds);
-  return { sources, claims, sourceIds, claimIds, evidenceGaps };
-}
-
-// Rewrites a chapter document in place: every claimRef is remapped from the
-// chapter's local C### namespace to the consolidated ledger's global C###.
-// localEvidence is preserved as-is so the chapter YAML remains the source of
-// truth the agent edits when fixing post-finalize schema problems.
-function rewrite(value, file, claimIds) {
-  if (Array.isArray(value)) return value.map((item) => rewrite(item, file, claimIds));
-  if (value && typeof value === 'object') {
-    const entries = [];
-    for (const [key, child] of Object.entries(value)) {
-      if (key === 'claimRefs' && Array.isArray(child)) {
-        entries.push([key, child.map((ref) => claimIds.get(`${file}:${ref}`) ?? ref)]);
-      } else {
-        entries.push([key, rewrite(child, file, claimIds)]);
-      }
-    }
-    return Object.fromEntries(entries);
-  }
-  if (typeof value === 'string') {
-    return value.replace(/\[C\d{3}\]/g, (match) => {
-      const local = match.slice(1, -1);
-      return `[${claimIds.get(`${file}:${local}`) ?? local}]`;
-    });
-  }
-  return value;
+  const sourceResult = consolidateSources(docs);
+  const claimResult = consolidateClaims(docs);
+  return {
+    sources: sourceResult.sources,
+    claims: claimResult.claims,
+    evidenceGaps: claimResult.evidenceGaps,
+    duplicateSourceCount: sourceResult.duplicateCount,
+    duplicateClaimCount: claimResult.duplicateCount,
+  };
 }
 
 function buildLedger(docs, sources, claims, evidenceGaps) {
@@ -258,10 +247,9 @@ function normalizedDomain(value) {
     if (!raw) return '';
     const host = new URL(raw.startsWith('http') ? raw : `https://${raw}`).hostname.replace(/^www\./, '').toLowerCase();
     const parts = host.split('.');
-    if (parts.length <= 2) return host;
-    const multiPart = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
+    if (parts.length <= REGISTRABLE_DOMAIN_MAX_PARTS) return host;
     const lastTwo = parts.slice(-2).join('.');
-    return multiPart.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
+    return MULTI_PART_TLDS.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
   } catch {
     return '';
   }
@@ -276,8 +264,21 @@ function inferEvidenceQuality(sources, claims) {
   const independentShare = independentCount / sources.length;
   const highReputationShare = highReputationCount / sources.length;
   const multiSourceShare = multiSourceClaims / claims.length;
-  if (sources.length >= 30 && claims.length >= 50 && independentShare >= 0.2 && highReputationShare >= 0.35 && multiSourceShare >= 0.2) return 'high';
-  if (sources.length >= 10 && claims.length >= 20 && (independentShare >= 0.1 || highReputationShare >= 0.25)) return 'medium';
+  
+  const high = EVIDENCE_QUALITY_TIERS.high;
+  if (
+    sources.length >= high.minSources &&
+    claims.length >= high.minClaims &&
+    independentShare >= high.minIndependentShare &&
+    highReputationShare >= high.minHighReputationShare &&
+    multiSourceShare >= high.minMultiSourceShare
+  ) return 'high';
+  
+  const medium = EVIDENCE_QUALITY_TIERS.medium;
+  const reputationOk = highReputationShare >= medium.minHighReputationShare;
+  const independenceOk = independentShare >= medium.minIndependentShare;
+  const reputationCheck = medium.requireBoth ? (reputationOk && independenceOk) : (reputationOk || independenceOk);
+  if (sources.length >= medium.minSources && claims.length >= medium.minClaims && reputationCheck) return 'medium';
   return 'low';
 }
 

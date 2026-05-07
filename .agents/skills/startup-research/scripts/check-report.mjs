@@ -40,6 +40,17 @@ import {
   checkUniqueIds,
   SCHEMA_VERSION,
 } from './chapter-schema.mjs';
+import {
+  CARD_CONFIDENCES,
+  CARD_RECOMMENDATIONS,
+  CARD_RISK_RATINGS,
+  CARD_VALUATION_STANCES,
+  ID_PATTERN_CLAIM,
+  ID_PATTERN_FIGURE,
+  ID_PATTERN_SOURCE,
+  ID_PATTERN_TABLE,
+  formatEnumChoices,
+} from './check-dimensions.mjs';
 const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../reports');
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts(WORKFLOW_CONFIG);
@@ -111,7 +122,7 @@ function checkReportBlocks(run, reportDoc) {
     if (block.type === 'callout') {
       if (!hasText(block.body)) fail(`${path} callout block requires body`);
       if (block.calloutType != null && !CALLOUT_TYPES.has(block.calloutType)) {
-        fail(`${path} callout block calloutType="${block.calloutType}" must be one of ${[...CALLOUT_TYPES].join('|')}`);
+        fail(`${path} callout block calloutType="${block.calloutType}" must be one of ${formatEnumChoices(CALLOUT_TYPES)}`);
       }
     }
     if (block.type === 'table' && !hasText(block.tableRef)) fail(`${path} table block requires tableRef`);
@@ -199,8 +210,8 @@ function checkLedgerCrossReferences(run, ledger, parsed) {
   checkLedgerCoverage(run, ledger.coverage ?? {});
   checkLedgerSources(run, ledger.sources ?? []);
   checkLedgerClaims(run, ledger.claims ?? []);
-  for (const err of checkUniqueIds(ledger.sources, { label: 'source', pattern: /^S\d{3}$/, path: run }).errors) fail(err.message);
-  for (const err of checkUniqueIds(ledger.claims, { label: 'claim', pattern: /^C\d{3}$/, path: run }).errors) fail(err.message);
+  for (const err of checkUniqueIds(ledger.sources, { label: 'source', pattern: ID_PATTERN_SOURCE, path: run }).errors) fail(err.message);
+  for (const err of checkUniqueIds(ledger.claims, { label: 'claim', pattern: ID_PATTERN_CLAIM, path: run }).errors) fail(err.message);
   for (const claim of ledger.claims ?? []) {
     for (const ref of claim.sourceRefs ?? []) {
       if (!sourceIds.has(ref)) fail(`${run}: claim ${claim.id} references missing source ${ref}`);
@@ -216,26 +227,40 @@ function checkLedgerCrossReferences(run, ledger, parsed) {
 }
 
 function checkReportLevelDiversity(run, ledger) {
+  const gate = WORKFLOW_CONFIG.reportGate ?? {
+    minDistinctDomains: 30,
+    requireAdverseSource: true,
+    maxPaywallPercent: 0.3,
+  };
+
   const matrix = ledger.coverageMatrix;
   if (!matrix) {
     fail(`${run}/${EVIDENCE_FILE}: coverageMatrix missing — re-run ledger.mjs`);
     return;
   }
-  // Report-wide floors: at least 30 distinct domains across the full report;
-  // at least one adverse-stance source; not more than 30% paywall/broken sources.
-  const REPORT_MIN_DOMAINS = 30;
-  if ((matrix.totalDistinctDomains ?? 0) < REPORT_MIN_DOMAINS) {
-    fail(`${run}/${EVIDENCE_FILE}: report-wide totalDistinctDomains=${matrix.totalDistinctDomains ?? 0}, expected at least ${REPORT_MIN_DOMAINS}`);
+
+  // Report-wide floors: at least minDistinctDomains distinct domains;
+  // at least one adverse-stance source (if requireAdverseSource is true);
+  // not more than maxPaywallPercent of paywall/broken sources.
+  const minDistinctDomains = gate.minDistinctDomains ?? 30;
+  if ((matrix.totalDistinctDomains ?? 0) < minDistinctDomains) {
+    fail(`${run}/${EVIDENCE_FILE}: report-wide totalDistinctDomains=${matrix.totalDistinctDomains ?? 0}, expected at least ${minDistinctDomains}`);
   }
-  const adverseTotal = matrix.byStance?.adverse ?? 0;
-  if (adverseTotal === 0) {
-    fail(`${run}/${EVIDENCE_FILE}: no adverse-stance sources across the entire report (risks chapter must contribute at least one)`);
+
+  if (gate.requireAdverseSource ?? true) {
+    const adverseTotal = matrix.byStance?.adverse ?? 0;
+    if (adverseTotal === 0) {
+      fail(`${run}/${EVIDENCE_FILE}: no adverse-stance sources across the entire report (risks chapter must contribute at least one)`);
+    }
   }
+
   const totalSources = (ledger.sources ?? []).length;
   if (totalSources > 0) {
+    const maxPaywallPercent = gate.maxPaywallPercent ?? 0.3;
     const blockedTotal = (matrix.byAccessStatus?.broken ?? 0) + (matrix.byAccessStatus?.paywall ?? 0) + (matrix.byAccessStatus?.['rate-limited'] ?? 0);
-    if (blockedTotal / totalSources > 0.3) {
-      fail(`${run}/${EVIDENCE_FILE}: ${blockedTotal}/${totalSources} sources are paywall/broken/rate-limited (>30%); replace blocked sources with accessible alternatives`);
+    if (blockedTotal / totalSources > maxPaywallPercent) {
+      const pct = (blockedTotal / totalSources * 100).toFixed(0);
+      fail(`${run}/${EVIDENCE_FILE}: ${blockedTotal}/${totalSources} sources are paywall/broken/rate-limited (${pct}%, max ${Math.round(maxPaywallPercent * 100)}%); replace blocked sources with accessible alternatives`);
     }
   }
 }
@@ -285,10 +310,10 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
       fail(`${cardPath}: summary.overallScore must be a number between 0 and 10 (got ${JSON.stringify(summary.overallScore)})`);
     }
     if (!hasText(summary.headline)) fail(`${cardPath}: summary.headline is required`);
-    if (!CARD_RECOMMENDATIONS.has(summary.recommendation)) fail(`${cardPath}: summary.recommendation="${summary.recommendation}" must be one of ${[...CARD_RECOMMENDATIONS].join('|')}`);
-    if (!CARD_CONFIDENCES.has(summary.confidence)) fail(`${cardPath}: summary.confidence="${summary.confidence}" must be one of ${[...CARD_CONFIDENCES].join('|')}`);
-    if (!CARD_RISK_RATINGS.has(summary.riskRating)) fail(`${cardPath}: summary.riskRating="${summary.riskRating}" must be one of ${[...CARD_RISK_RATINGS].join('|')}`);
-    if (!CARD_VALUATION_STANCES.has(summary.valuationStance)) fail(`${cardPath}: summary.valuationStance="${summary.valuationStance}" must be one of ${[...CARD_VALUATION_STANCES].join('|')}`);
+    if (!CARD_RECOMMENDATIONS.has(summary.recommendation)) fail(`${cardPath}: summary.recommendation="${summary.recommendation}" must be one of ${formatEnumChoices(CARD_RECOMMENDATIONS)}`);
+    if (!CARD_CONFIDENCES.has(summary.confidence)) fail(`${cardPath}: summary.confidence="${summary.confidence}" must be one of ${formatEnumChoices(CARD_CONFIDENCES)}`);
+    if (!CARD_RISK_RATINGS.has(summary.riskRating)) fail(`${cardPath}: summary.riskRating="${summary.riskRating}" must be one of ${formatEnumChoices(CARD_RISK_RATINGS)}`);
+    if (!CARD_VALUATION_STANCES.has(summary.valuationStance)) fail(`${cardPath}: summary.valuationStance="${summary.valuationStance}" must be one of ${formatEnumChoices(CARD_VALUATION_STANCES)}`);
     for (const field of ['topStrengths', 'topRisks', 'unresolvedGaps']) {
       if (!Array.isArray(summary[field])) fail(`${cardPath}: summary.${field} must be an array`);
     }
@@ -341,11 +366,6 @@ function checkCrossArtifactIdentity(run, parsed) {
 
 const REVISION_RELATION_FIELDS = ['refreshOfRunId', 'supersededByRunId'];
 
-const CARD_RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 'avoid']);
-const CARD_CONFIDENCES = new Set(['high', 'medium', 'low']);
-const CARD_RISK_RATINGS = new Set(['low', 'medium', 'high', 'critical', 'unknown']);
-const CARD_VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched', 'expensive', 'unknown']);
-
 function revisionComparable(doc) {
   const revision = doc?.revision && typeof doc.revision === 'object' && !Array.isArray(doc.revision) ? doc.revision : {};
   return {
@@ -365,7 +385,7 @@ function checkRevisionShape(run, file, doc) {
     return;
   }
   const status = revision.status ?? 'current';
-  if (!REVISION_STATUSES.has(status)) fail(`${path}.status="${status}" must be one of ${[...REVISION_STATUSES].join('|')}`);
+  if (!REVISION_STATUSES.has(status)) fail(`${path}.status="${status}" must be one of ${formatEnumChoices(REVISION_STATUSES)}`);
   if (revision.refreshReason != null && typeof revision.refreshReason !== 'string') {
     fail(`${path}.refreshReason must be a string or null`);
   }
@@ -433,8 +453,8 @@ function checkRun(run) {
 
   if (reportDoc) {
     checkReportBlocks(run, reportDoc);
-    for (const err of checkUniqueIds(reportDoc.figures, { label: 'figure', pattern: /^F\d{3}$/, path: run }).errors) fail(err.message);
-    for (const err of checkUniqueIds(reportDoc.tables, { label: 'table', pattern: /^T\d{3}$/, path: run }).errors) fail(err.message);
+    for (const err of checkUniqueIds(reportDoc.figures, { label: 'figure', pattern: ID_PATTERN_FIGURE, path: run }).errors) fail(err.message);
+    for (const err of checkUniqueIds(reportDoc.tables, { label: 'table', pattern: ID_PATTERN_TABLE, path: run }).errors) fail(err.message);
     checkRefs(run, reportDoc);
     checkReportConsistency(run, reportDoc);
   }

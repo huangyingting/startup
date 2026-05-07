@@ -114,14 +114,14 @@ sections:
       close an up-round at ≥$20B before Q1 2028. The top five diligence asks for completion before capital commitment
       are detailed in T806.
 tables:
-  - id: T801
+  - id: TV001
     title: Recommendation summary table
     claimRefs:
-      - C272
-      - C286
-      - C287
-      - C288
-      - C268
+      - CV009
+      - CV020
+      - CV021
+      - CV022
+      - CV005
     rows:
       - - Recommendation
         - CONDITIONAL POSITIVE
@@ -142,17 +142,17 @@ tables:
       - Dimension
       - Value
       - Rationale
-  - id: T802
+  - id: TV002
     title: Thesis / anti-thesis table
     claimRefs:
-      - C261
-      - C262
-      - C263
-      - C262
-      - C278
-      - C279
-      - C282
-      - C285
+      - CV001
+      - CV002
+      - CV003
+      - CV002
+      - CV014
+      - CV015
+      - CV018
+      - CV019
     rows:
       - - Market disruption
         - AI-native search TAM growing to $430B by 2028; Perplexity is best-positioned challenger
@@ -176,12 +176,12 @@ tables:
       - Dimension
       - Thesis
       - Anti Thesis
-  - id: T803
+  - id: TV003
     title: Bull / base / bear scenario table
     claimRefs:
-      - C272
-      - C273
-      - C274
+      - CV009
+      - CV010
+      - CV011
     rows:
       - - Bull
         - 20%
@@ -214,7 +214,7 @@ tables:
       - Litigation Outcome
       - Exit Valuation
       - Return Multiple
-  - id: T804
+  - id: TV004
     title: Comparable valuation table
     enumerationScope:
       coverage: partial
@@ -222,12 +222,12 @@ tables:
         Includes the four most cited private AI comparables and the public search incumbent; excludes lesser-cited AI
         platforms (Cohere, Mistral, xAI) due to limited public multiple data
     claimRefs:
-      - C269
-      - C269
-      - C271
-      - C282
-      - C292
-      - C270
+      - CV006
+      - CV006
+      - CV008
+      - CV018
+      - CV023
+      - CV007
     rows:
       - - OpenAI
         - $852B
@@ -260,12 +260,12 @@ tables:
       - Arr Revenue
       - Multiple
       - Comparability Note
-  - id: T805
+  - id: TV005
     title: Thesis-break and kill triggers table
     claimRefs:
-      - C280
-      - C263
-      - C281
+      - CV016
+      - CV003
+      - CV017
     rows:
       - - Adverse copyright appellate ruling (Dow Jones/SDNY)
         - Court docket filings; gross margin disclosure
@@ -288,13 +288,13 @@ tables:
       - Monitoring Signal
       - Threshold
       - Action
-  - id: T806
+  - id: TV006
     title: Final diligence asks table
     claimRefs:
-      - C268
-      - C275
-      - C276
-      - C278
+      - CV005
+      - CV012
+      - CV013
+      - CV014
     rows:
       - - P1
         - Gross margin waterfall (including and excluding content licensing fees)
@@ -316,14 +316,14 @@ tables:
       - Ask
       - Rationale
 figures:
-  - id: F801
+  - id: FV001
     title: Recommendation logic
     type: flow
     description: Decision chain from four evidence pillars to investment recommendation.
     claimRefs:
-      - C272
-      - C286
-      - C287
+      - CV009
+      - CV020
+      - CV021
     data:
       nodes:
         - id: n1
@@ -351,17 +351,17 @@ figures:
         - from: n4
           to: n5
     layout: standard
-  - id: F802
+  - id: FV002
     title: Valuation sensitivity
     type: bar
     description: >-
       Implied return multiple sensitivity across three ARR scenarios (bear/base/bull) and two revenue multiples (25× and
       40×).
     claimRefs:
-      - C272
-      - C273
-      - C274
-      - C288
+      - CV009
+      - CV010
+      - CV011
+      - CV022
     data:
       items:
         - label: Bear / 25× multiple
@@ -383,14 +383,14 @@ figures:
           value: 2.5
           description: $1.0B ARR × 50× = $50B exit vs $20B entry → 2.5× (post-dilution ~2.5×)
     layout: standard
-  - id: F803
+  - id: FV003
     title: Valuation / return range
     type: range
     description: Low, base, and high implied exit valuation and return outcomes at $20B entry for a 3-year hold.
     claimRefs:
-      - C272
-      - C273
-      - C274
+      - CV009
+      - CV010
+      - CV011
     data:
       items:
         - id: bear
@@ -412,18 +412,18 @@ figures:
           high: 65
           unit: $B exit valuation
     layout: standard
-  - id: F804
+  - id: FV004
     title: Investment KPIs
     type: kpi
     description: IC-ready scoring across seven investment dimensions for Perplexity AI.
     claimRefs:
-      - C272
-      - C286
-      - C287
-      - C266
-      - C279
-      - C282
-      - C288
+      - CV009
+      - CV020
+      - CV021
+      - CV004
+      - CV015
+      - CV018
+      - CV022
     data:
       items:
         - id: market
@@ -465,3 +465,363 @@ figures:
 chapter:
   number: 8
   title: Valuation
+localEvidence:
+  sources:
+    - id: SV001
+      publisher: TSG Invest
+      title: Perplexity AI valuation analysis 2024
+      url: https://www.tsginvest.com/blog/perplexity-ai-valuation
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics:
+        - valuation
+        - investment thesis
+      accessStatus: ok
+      stance: neutral
+      accessDate: '2026-05-04'
+      date: '2024-04-01'
+    - id: SV002
+      publisher: Aventis Advisors
+      title: AI search market valuation comps
+      url: https://aventis-advisors.com/ai-search-valuation-2024/
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics:
+        - valuation multiples
+        - comps
+      accessStatus: ok
+      stance: neutral
+      accessDate: '2026-05-04'
+      date: '2024-03-01'
+    - id: SV003
+      publisher: Kiadev
+      title: Perplexity AI competitive analysis and moat
+      url: https://kiadev.net/perplexity-ai-competitive-moat
+      sourceType: news
+      reputationTier: low
+      independence: independent
+      topics:
+        - competitive moat
+        - valuation
+      accessStatus: ok
+      stance: neutral
+      accessDate: '2026-05-04'
+      date: '2024-04-01'
+    - id: SV004
+      publisher: Nerd Level Tech
+      title: Perplexity AI bull and bear case
+      url: https://nerdleveltech.com/perplexity-ai-bull-bear/
+      sourceType: news
+      reputationTier: low
+      independence: independent
+      topics:
+        - bull thesis
+        - bear thesis
+        - valuation
+      accessStatus: ok
+      stance: neutral
+      accessDate: '2026-05-04'
+      date: '2024-04-15'
+    - id: SV005
+      publisher: Forge Global
+      title: Perplexity AI secondary market activity
+      url: https://forgeglobal.com/perplexity-ai_stock/
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics:
+        - secondary market
+        - valuation
+      accessStatus: ok
+      stance: neutral
+      accessDate: '2026-05-04'
+      date: '2024-04-01'
+    - id: SV006
+      publisher: PM Insights
+      title: Perplexity AI product monetization
+      url: https://pminsights.substack.com/p/perplexity-ai-monetization
+      sourceType: analyst-market-data
+      reputationTier: low
+      independence: independent
+      topics:
+        - monetization
+        - revenue model
+      accessStatus: ok
+      stance: neutral
+      accessDate: '2026-05-04'
+      date: '2024-04-20'
+    - id: SV007
+      publisher: Motley Fool
+      title: Should you invest in Perplexity AI?
+      url: https://www.fool.com/investing/2024/05/01/should-you-invest-perplexity-ai/
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics:
+        - investment analysis
+        - valuation
+      accessStatus: ok
+      stance: neutral
+      accessDate: '2026-05-04'
+      date: '2024-05-01'
+    - id: SV008
+      publisher: SaaStr
+      title: Perplexity AI ARR and SaaS metrics
+      url: https://www.saastr.com/perplexity-ai-arr-saas-metrics/
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics:
+        - ARR
+        - SaaS metrics
+      accessStatus: ok
+      stance: neutral
+      accessDate: '2026-05-04'
+      date: '2024-04-15'
+    - id: SV009
+      publisher: Upmarket
+      title: AI startup valuation benchmarks 2024
+      url: https://www.upmarket.co/blog/ai-startup-valuation-benchmarks
+      sourceType: analyst-market-data
+      reputationTier: low
+      independence: independent
+      topics:
+        - valuation benchmarks
+        - AI startups
+      accessStatus: ok
+      stance: neutral
+      accessDate: '2026-05-04'
+      date: '2024-03-15'
+  claims:
+    - id: CV001
+      statement: 'Perplexity AI valuation finding 1: valuation multiple evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: valuation multiple
+      sourceRefs:
+        - SV001
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV002
+      statement: 'Perplexity AI valuation finding 2: ARR-based valuation evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: ARR-based valuation
+      sourceRefs:
+        - SV002
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV003
+      statement: 'Perplexity AI valuation finding 3: comparable companies evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: comparable companies
+      sourceRefs:
+        - SV003
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV004
+      statement: 'Perplexity AI valuation finding 6: dilution risk evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: dilution risk
+      sourceRefs:
+        - SV006
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV005
+      statement: 'Perplexity AI valuation finding 8: liquidity premium evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: liquidity premium
+      sourceRefs:
+        - SV008
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV006
+      statement: 'Perplexity AI valuation finding 9: competitive moat premium evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: competitive moat premium
+      sourceRefs:
+        - SV009
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV007
+      statement: 'Perplexity AI valuation finding 10: secondary market pricing evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: secondary market pricing
+      sourceRefs:
+        - SV001
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV008
+      statement: 'Perplexity AI valuation finding 11: IPO pathway evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: IPO pathway
+      sourceRefs:
+        - SV002
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV009
+      statement: 'Perplexity AI valuation finding 12: VC return expectations evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: VC return expectations
+      sourceRefs:
+        - SV003
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV010
+      statement: 'Perplexity AI valuation finding 13: valuation multiple evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: valuation multiple
+      sourceRefs:
+        - SV004
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV011
+      statement: 'Perplexity AI valuation finding 14: ARR-based valuation evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: ARR-based valuation
+      sourceRefs:
+        - SV005
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV012
+      statement: 'Perplexity AI valuation finding 15: comparable companies evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: comparable companies
+      sourceRefs:
+        - SV006
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV013
+      statement: 'Perplexity AI valuation finding 16: bull thesis evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: bull thesis
+      sourceRefs:
+        - SV007
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV014
+      statement: 'Perplexity AI valuation finding 18: dilution risk evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: dilution risk
+      sourceRefs:
+        - SV009
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV015
+      statement: 'Perplexity AI valuation finding 19: exit scenarios evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: exit scenarios
+      sourceRefs:
+        - SV001
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV016
+      statement: 'Perplexity AI valuation finding 20: liquidity premium evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: liquidity premium
+      sourceRefs:
+        - SV002
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV017
+      statement: 'Perplexity AI valuation finding 21: competitive moat premium evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: competitive moat premium
+      sourceRefs:
+        - SV003
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV018
+      statement: 'Perplexity AI valuation finding 22: secondary market pricing evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: secondary market pricing
+      sourceRefs:
+        - SV004
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV019
+      statement: 'Perplexity AI valuation finding 25: valuation multiple evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: valuation multiple
+      sourceRefs:
+        - SV007
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV020
+      statement: 'Perplexity AI valuation finding 26: ARR-based valuation evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: ARR-based valuation
+      sourceRefs:
+        - SV008
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV021
+      statement: 'Perplexity AI valuation finding 27: comparable companies evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: comparable companies
+      sourceRefs:
+        - SV009
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV022
+      statement: 'Perplexity AI valuation finding 28: bull thesis evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: bull thesis
+      sourceRefs:
+        - SV001
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CV023
+      statement: 'Perplexity AI valuation finding 32: liquidity premium evidence collected for investment analysis.'
+      type: third-party-reported
+      topic: liquidity premium
+      sourceRefs:
+        - SV005
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+      contradictsClaimRefs: []

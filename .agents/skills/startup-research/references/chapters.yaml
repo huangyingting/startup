@@ -39,6 +39,21 @@ defaultGate:
     minSectionWordsTotal: 600
     minTableRowsTotal: 16
     minFigureDataPointsTotal: 12
+# Report-level gates (hard floors across the entire report, not per-chapter).
+# These apply after finalization, when all chapters are consolidated into the
+# evidence ledger. See check-report.mjs checkReportLevelDiversity().
+reportGate:
+  minDistinctDomains: 30          # distinct registrable domains across all sources in evidence.yaml
+  requireAdverseSource: true      # at least one stance:adverse source must be present
+  maxPaywallPercent: 0.3          # fail if >30% of sources are paywall/broken/rate-limited
+  # Cross-chapter tolerances (used by cross-chapter.mjs for drift detection).
+  # Metric drift: relative tolerance for numeric values across chapters (e.g., 0.1 = 10%).
+  # Key-fact overlap: Jaccard threshold for matching identity facts across chapters (≥ threshold = match).
+  # Duplicate overlap: Jaccard threshold for table/figure title+structure across chapters (both must meet threshold).
+  crossChapterTolerances:
+    metricDrift: 0.1              # 10% relative tolerance on metric values
+    keyFactOverlap: 0.7           # 70% token overlap triggers key-fact drift check
+    duplicateOverlap: 0.7         # 70% title+structure overlap flags cross-chapter duplicate
 # Report-level adverse-evidence distribution. Per-chapter gates already enforce
 # adverse *questions*; this gate keeps adverse *sources* from collecting in
 # only one chapter (typically risks). Each listed chapter must contribute at
@@ -56,6 +71,7 @@ adverseDistribution:
 chapters:
   - key: company-overview
     order: 1
+    letter: O
     title: Company Overview
     mission: Establish identity, leadership, funding, scale, and milestones that every later chapter can reuse as ground truth.
     optionalContext: []
@@ -101,6 +117,7 @@ chapters:
       - Unsupported cover metrics use null plus a concrete diligence path.
   - key: market-analysis
     order: 2
+    letter: M
     title: Market Analysis
     mission: Define the market, buyer, sizing, drivers, and constraints that govern adoption and valuation.
     optionalContext: []
@@ -144,6 +161,7 @@ chapters:
       - Major chart numbers must match source-backed table numbers or state transformations in approximationNotes.
   - key: competitors
     order: 3
+    letter: P
     title: Competitors
     mission: Identify direct, incumbent, adjacent, substitute, and status-quo alternatives, and assess differentiation durability.
     optionalContext: [market-analysis]
@@ -183,6 +201,7 @@ chapters:
       - Query by competitor class; do not build the matrix from one generic comparison source.
   - key: financials
     order: 4
+    letter: I
     title: Financials
     mission: Explain revenue model, unit economics, capital needs, and which financial inputs are insufficient for underwriting.
     optionalContext: [market-analysis, competitors]
@@ -233,6 +252,7 @@ chapters:
       - Scenario inputs must be labeled public, estimated, or unavailable.
   - key: product-tech
     order: 5
+    letter: E
     title: Product & Technology
     mission: Explain what is delivered, how it works, maturity, dependencies, and product/technical risks.
     optionalContext: [market-analysis, competitors, financials]
@@ -284,6 +304,7 @@ chapters:
       - Figures use structured YAML fields, not Mermaid or prose diagrams.
   - key: customers
     order: 6
+    letter: U
     title: Customers
     mission: Identify who pays/uses the product, the proof of real adoption, durability, expansion, and concentration risks.
     optionalContext: [financials, product-tech]
@@ -335,6 +356,7 @@ chapters:
       - Logos alone do not prove retention or production deployment.
   - key: risks
     order: 7
+    letter: R
     title: Risks
     mission: Rank legal, regulatory, operational, technical, financial, partner, customer, and execution risks with mitigations and kill criteria.
     optionalContext: [financials, product-tech, customers]
@@ -387,6 +409,7 @@ chapters:
       - Include thesis-break triggers tied to measurable operating, regulatory, customer, financial, or management events.
   - key: valuation
     order: 8
+    letter: V
     title: Valuation
     mission: Convert evidence into recommendation, confidence, risk rating, valuation stance, scenarios, and diligence asks.
     optionalContext: [market-analysis, competitors, financials, product-tech, customers, risks]
