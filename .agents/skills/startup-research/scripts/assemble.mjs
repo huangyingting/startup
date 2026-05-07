@@ -9,7 +9,7 @@
 // truth for the consolidated artifacts so the agent never hand-edits them.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
+import { EXIT, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
 import { SCHEMA_VERSION } from './chapter-schema.mjs';
 import {
   CARD_CONFIDENCES,
@@ -22,7 +22,7 @@ const DEFAULT_DISCLAIMER = 'This report is a public-evidence diligence snapshot,
 
 function abort(message) {
   console.error(`[assemble] ${message}`);
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 function parseArgs(argv) {
@@ -319,7 +319,7 @@ if (args.dryRun) {
   console.log(`[assemble] dry-run: would write ${fullReportPath}`);
   console.log(`[assemble] dry-run: would write ${summaryCardPath}`);
   console.log(`[assemble] chapters=${chapterDocs.length} tables=${tables.length} figures=${figures.length} sources=${sourceRefs.length}`);
-  process.exit(0);
+  process.exit(EXIT.ok);
 }
 
 writeYaml(fullReportPath, fullReport);

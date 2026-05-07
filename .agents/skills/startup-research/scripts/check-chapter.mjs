@@ -58,31 +58,46 @@ try {
 }
 
 function parseArgs(argv) {
-  const positional = argv.filter((arg) => !arg.startsWith('-'));
-  const formatIndex = argv.indexOf('--format');
-  return {
-    folder: positional[0] ?? null,
-    chapter: positional[1] ?? null,
-    strict: argv.includes('--strict'),
-    format: formatIndex >= 0 ? argv[formatIndex + 1] : 'text',
-  };
+  const args = { folder: null, chapter: null, strict: false, format: 'text' };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--strict') args.strict = true;
+    else if (arg === '--format') {
+      const next = argv[++i];
+      if (next === undefined || next.startsWith('-')) {
+        console.error(`[check:chapter] --format requires a value (text|json)`);
+        process.exit(EXIT.invalidArgs);
+      }
+      args.format = next;
+    } else if (arg.startsWith('-')) {
+      console.error(`[check:chapter] unknown flag: ${arg}`);
+      console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
+      process.exit(EXIT.invalidArgs);
+    } else if (!args.folder) args.folder = arg;
+    else if (!args.chapter) args.chapter = arg;
+    else {
+      console.error(`[check:chapter] unexpected positional argument: ${arg}`);
+      process.exit(EXIT.invalidArgs);
+    }
+  }
+  return args;
 }
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
   console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 if (!['text', 'json'].includes(args.format)) {
   console.error(`Invalid --format value: ${args.format}; expected text or json`);
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 const spec = ANALYSIS_ARTIFACTS.find((item) => item.file === args.chapter);
 if (!spec) {
   console.error(`Unknown chapter artifact: ${args.chapter}`);
   console.error(`Expected one of: ${ANALYSIS_ARTIFACTS.map((item) => item.file).join(', ')}`);
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 // Per-chapter id patterns: every id in this chapter must carry the chapter's
@@ -888,4 +903,4 @@ if (args.format === 'json') {
   if (ok) console.log('[check:chapter] ✓ chapter ready for next workflow stage.');
 }
 
-process.exit(ok ? 0 : 1);
+process.exit(ok ? EXIT.ok : EXIT.validation);

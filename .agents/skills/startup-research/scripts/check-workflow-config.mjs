@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Validate the config-driven startup research workflow metadata.
-import { FINAL_ARTIFACTS, getAnalysisArtifacts, getCoreArtifacts, loadWorkflowConfig, workflowConfigPath } from './utils.mjs';
+import { EXIT, FINAL_ARTIFACTS, getAnalysisArtifacts, getCoreArtifacts, loadWorkflowConfig, workflowConfigPath } from './utils.mjs';
 
 try {
   const config = loadWorkflowConfig();
@@ -24,5 +24,5 @@ try {
   console.log(`[check:workflow-config] analysis=${analysis.length} final=${finalFiles.length} core=${core.length}`);
 } catch (err) {
   console.error(`[check:workflow-config] failure: ${err.message}`);
-  process.exit(1);
+  process.exit(EXIT.validation);
 }

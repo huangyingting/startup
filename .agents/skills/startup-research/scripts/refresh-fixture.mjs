@@ -46,7 +46,7 @@ const repoRoot = resolve(here, '../../../..');
 function usage(message) {
   if (message) console.error(`[fixture] ${message}`);
   console.error('Usage: node .agents/skills/startup-research/scripts/refresh-fixture.mjs [<source-run-id>] [--reason <text>] [--keep]');
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 function parseArgs(argv) {
@@ -103,7 +103,7 @@ function rewriteMetaIdentity(filePath, newSlug, newRunDate) {
   const doc = readYaml(filePath);
   if (!doc || typeof doc !== 'object') {
     console.error(`[fixture] failed to parse ${filePath} as YAML object`);
-    process.exit(1);
+    process.exit(EXIT.validation);
   }
   doc.slug = newSlug;
   doc.runDate = newRunDate;
@@ -143,19 +143,19 @@ const sourceRunId = args.source || pickLatestCurrentRunId();
 const sourceFolder = join(reportsDir, sourceRunId);
 if (!isFinalizedReportFolder(sourceFolder)) {
   console.error(`[fixture] source ${sourceRunId} is not a finalized report folder.`);
-  process.exit(EXIT.alreadyExists);
+  process.exit(EXIT.invalidArgs);
 }
 const sourceMeta = readYaml(join(sourceFolder, 'report-meta.yaml'));
 const sourceCard = readYaml(join(sourceFolder, 'summary-card.yaml'));
 if (normalizeRevision(sourceCard?.revision).status !== 'current') {
   console.error(`[fixture] source ${sourceRunId} is not a current report; pick a different source.`);
-  process.exit(EXIT.alreadyExists);
+  process.exit(EXIT.invalidArgs);
 }
 const companyName = sourceMeta?.company?.name;
 const companyWebsite = sourceMeta?.company?.website ?? '';
 if (!companyName) {
   console.error(`[fixture] source ${sourceRunId} has no company.name in report-meta.yaml.`);
-  process.exit(EXIT.alreadyExists);
+  process.exit(EXIT.invalidArgs);
 }
 
 const sourceSlug = companySlugFromRunId(sourceRunId);
@@ -198,8 +198,8 @@ function cleanup() {
   }
 }
 
-process.on('SIGINT', () => { cleanup(); process.exit(130); });
-process.on('SIGTERM', () => { cleanup(); process.exit(143); });
+process.on('SIGINT', () => { cleanup(); process.exit(130); });   // POSIX 128 + SIGINT(2)
+process.on('SIGTERM', () => { cleanup(); process.exit(143); });  // POSIX 128 + SIGTERM(15)
 
 console.log(`[fixture] source: ${sourceRunId} (${companyName})`);
 console.log(`[fixture] new:    ${newRunId}`);

@@ -33,7 +33,7 @@ schemaVersion: chapter-packet-v1
 generatedFrom: <absolute path to chapters.yaml>
 workflow:
   reportSchemaVersion: report-v2
-  finalArtifacts:                    # mirror of chapters.yaml finalArtifacts; map of {evidence, fullReport, summaryCard, reportMeta}
+  finalArtifacts:                    # mirror of utils.FINAL_ARTIFACTS; map of {evidence, fullReport, summaryCard}. report-meta.yaml is intentionally absent: it is hand-authored input to assemble.mjs, not an assembled output.
     <key>:
       file: string                   # filename written under reports/<runId>/
       artifact: string               # value the artifact's top-level `artifact:` field must equal
@@ -103,7 +103,7 @@ gate:                                # all floors and ceilings the chapter must 
     minFigureDataPointsTotal: number # sum of structural data points across figures[] (figure-type specific).
 ```
 
-`packet.chapter.gate` is the canonical gate for that chapter; floors injected from workflow-config (e.g. `minAdverseSources` from `chapters.yaml.reportGate`) are already merged in by `utils.normalizeWorkflowConfig`. Read floors from this object — never from `chapters.yaml` directly.
+`packet.chapter.gate` is the canonical gate for that chapter; floors injected from workflow-config (e.g. `minAdverseSources`, derived from `chapters.yaml.adverseDistribution.requireAtLeastOneAdverseSource`) are already merged in by `utils.normalizeWorkflowConfig`. Read floors from this object — never from `chapters.yaml` directly.
 
 ## Vocabularies (`packet.vocabularies`)
 
