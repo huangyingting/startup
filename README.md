@@ -22,10 +22,13 @@ Important files:
 
 - `.agents/skills/startup-research/SKILL.md` — canonical end-to-end report workflow.
 - `.agents/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
-- `.agents/skills/startup-research/references/report-schema-v2.md` — report schema and rendering contract.
+- `.agents/skills/startup-research/references/report-schema-v2.md` — report-v2 YAML field shapes (the artifacts written under `reports/<runId>/`).
+- `.agents/skills/startup-research/references/chapter-packet-schema-v2.md` — schema for the JSON the chapter loader emits.
+- `.agents/skills/startup-research/references/yaml-rules.md` — YAML syntax constraints shared by every artifact.
 - `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts (chapter loader, gate checks, ledger consolidation, report assembly, validators).
 - `website/src/lib/` — rendering contracts shared between the renderer and the chapter/report validators.
-
+- `AGENTS.md` — repo-development conventions (working rules, core philosophy). Read before touching skills, scripts, or schemas.
+- `.agents/skills/README.md` — skills index and skill-folder conventions.
 ## Quick start
 
 Install dependencies from the repository root:
@@ -72,6 +75,7 @@ A complete report run contains:
 08-valuation.yaml
 evidence.yaml
 full-report.yaml
+report-meta.yaml
 summary-card.yaml
 ```
 
