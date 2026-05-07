@@ -704,6 +704,15 @@ if (doc) {
   }
 
   // Per-callout schema (title, body, claimRefs[], optional calloutType enum).
+  // The canonical key is `callouts:`; reject legacy `analysisCallouts` /
+  // `analysisCallout` writes as documentHead failures so they never get
+  // silently dropped during assemble (which only reads `callouts`).
+  if (doc.analysisCallouts !== undefined) {
+    fail('documentHead', `${spec.file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`);
+  }
+  if (doc.analysisCallout !== undefined) {
+    fail('documentHead', `${spec.file}: top-level field "analysisCallout" (singular) is obsolete; rename to "callouts" and wrap the object in a list`);
+  }
   for (const [index, callout] of (doc.callouts ?? []).entries()) {
     const path = `${spec.file}: callout ${index + 1}`;
     const { errors } = checkCalloutSchema(callout, { path });

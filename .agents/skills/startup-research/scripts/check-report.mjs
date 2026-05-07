@@ -132,6 +132,12 @@ function checkReportBlocks(run, reportDoc) {
 
 function checkAnalysisCallouts(run, file, doc) {
   if (!ANALYSIS_FILES.includes(file)) return;
+  if (doc?.analysisCallouts !== undefined) {
+    fail(`${run}/${file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`);
+  }
+  if (doc?.analysisCallout !== undefined) {
+    fail(`${run}/${file}: top-level field "analysisCallout" (singular) is obsolete; rename to "callouts" and wrap the object in a list`);
+  }
   for (const [index, callout] of (doc?.callouts ?? []).entries()) {
     const path = `${run}/${file}: callout ${index + 1}`;
     const { errors } = checkCalloutSchema(callout, { path });

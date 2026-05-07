@@ -68,6 +68,16 @@ adverseDistribution:
   warnIfChaptersWithAdverseSourceAtMost: 2
 # Chapter identity is the (key, order) pair. The loader derives the file name
 # as "<order:02>-<key>.yaml". optionalContext entries are chapter keys.
+#
+# Each chapter MUST declare a `letter:` (single uppercase A-Z, not in the
+# reserved type letters S/C/T/F/Q). Every id generated inside the chapter is
+# `<Type><ChapterLetter><Seq3>` (e.g. SO001 = source #1 in the company-overview
+# chapter whose letter is `O`). Letters must be unique across chapters.
+#
+# Per-chapter `gate:` overrides merge with `defaultGate` above; a separate
+# floor `gate.minAdverseSources` is INJECTED at config-load time from
+# `adverseDistribution.requireAtLeastOneAdverseSource[]` below — so chapters
+# listed there require at least one stance:adverse source.
 chapters:
   - key: company-overview
     order: 1

@@ -14,6 +14,8 @@
 // Add a new enum or dimension here exactly once; every consumer reads from
 // this file.
 
+import { INLINE_CLAIM_REF_SOURCE } from '../../../../website/src/lib/claim-refs.mjs';
+
 // ---------------------------------------------------------------------------
 // Field-level vocabularies
 // ---------------------------------------------------------------------------
@@ -82,7 +84,10 @@ export const ID_PATTERN_RESEARCH_QUESTION = /^Q[A-Z]\d{3}$/;
 
 // Inline claim-ref pattern used in section bodies, list items, table cells,
 // and callout text. Capture group 1 is the bare claim id without brackets.
-export const INLINE_CLAIM_REF_PATTERN = /\[(C[A-Z]\d{3})\]/g;
+// Source string lives in website/src/lib/claim-refs.mjs so the renderer and
+// the validators share one regex; if the claim-id format changes, both sides
+// update from one file.
+export const INLINE_CLAIM_REF_PATTERN = new RegExp(INLINE_CLAIM_REF_SOURCE, 'g');
 
 // Type letters that are reserved as ID prefixes; chapter letters cannot use
 // these to avoid visual ambiguity in compact IDs (e.g. "CC001" would parse
@@ -363,9 +368,34 @@ export const FIX_HINTS = {
 // When an upstream dimension fires, every downstream dimension in this set
 // is almost always a cascading false positive. Suppressing them keeps retry
 // noise down so the agent can fix the root cause first and re-run.
+//   yamlParse -> document failed to parse; loadYamlFile returns null and
+//   short-circuits the rest of check-chapter, so this entry is mostly
+//   defensive (kept so dimensionCatalog() reflects the intent for any
+//   future caller that does not short-circuit).
 //   localEvidenceMissing -> nothing inside localEvidence is checkable; every
 //   source/claim/researchQuestion/enumeration failure is downstream noise.
 export const CASCADE_SUPPRESSORS = {
+  yamlParse: new Set([
+    'documentHead', 'slugConsistency',
+    'researchQuestions', 'researchQuestionShape', 'researchQuestionTargets',
+    'researchQuestionTypeMix', 'researchQuestionAdverse',
+    'researchQuestionAnswerCoverage', 'researchQuestionClosure',
+    'searchQueriesMissing',
+    'sources', 'sourceShape', 'sourceDomains', 'sourceTypeSpread',
+    'requiredSourceTypes', 'netNewSources', 'paywallRisk',
+    'sourceStanceSpread',
+    'claims', 'claimShape', 'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
+    'crossChapterRefLeak',
+    'highConfidenceCorroboration',
+    'enumerationScope', 'enumerationRows', 'enumerationCoverageGap',
+    'enumerationRowCorroboration',
+    'contentRequirementCoverage',
+    'tableShape', 'figureShape', 'duplicateIds', 'artifactRefs',
+    'analysisCallout', 'duplicateAnalysis', 'figureType',
+    'sectionsMin', 'sectionsMax', 'artifactsMin',
+    'tablesMax', 'figuresMax',
+    'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
+  ]),
   localEvidenceMissing: new Set([
     'researchQuestions', 'researchQuestionShape', 'researchQuestionTargets',
     'researchQuestionTypeMix', 'researchQuestionAdverse',
@@ -402,10 +432,11 @@ export const RETRY_PRECEDENCE = [
   'researchQuestionAnswerCoverage', 'researchQuestionClosure',
   'claimAnswerRefs', 'claimContradictRefs', 'crossChapterRefLeak', 'claimRefs',
   'enumerationScope', 'enumerationRows', 'enumerationCoverageGap', 'enumerationRowCorroboration',
-  'tableShape', 'figureShape',
-  'duplicateIds', 'artifactRefs',
+  'tableShape', 'figureShape', 'figureType',
+  'duplicateIds', 'artifactRefs', 'duplicateAnalysis',
   'analysisCallout',
-  'sectionsMin', 'artifactsMin', 'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
+  'sectionsMin', 'sectionsMax', 'artifactsMin', 'tablesMax', 'figuresMax',
+  'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
   'contentRequirementCoverage',
 ];
 
