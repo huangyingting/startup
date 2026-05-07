@@ -44,6 +44,8 @@ export const QUESTION_STATUSES = new Set(['answered', 'partial', 'unresolved']);
 
 export const CALLOUT_TYPES = new Set(['strength', 'risk', 'recommendation', 'insight', 'assumption']);
 export const ENUMERATION_COVERAGE = new Set(['exhaustive', 'partial', 'sample']);
+export const TONE_VALUES = new Set(['positive', 'neutral', 'warning', 'negative', 'low', 'medium', 'high', 'critical', 'risk', 'opportunity', 'adverse']);
+export const BLOCK_TYPES = new Set(['paragraph', 'callout', 'table', 'figure', 'list', 'equation']);
 
 // Derived classifications (not a single field's enum, but used by checks).
 // PRIMARY_TIER_TYPES qualifies a source as "primary tier" for high-confidence
@@ -238,6 +240,8 @@ export const VOCABULARIES = Object.freeze({
   questionStatus: [...QUESTION_STATUSES].sort(),
   calloutType: [...CALLOUT_TYPES].sort(),
   enumerationCoverage: [...ENUMERATION_COVERAGE].sort(),
+  tone: [...TONE_VALUES].sort(),
+  blockType: [...BLOCK_TYPES].sort(),
   primaryTierSourceTypes: [...PRIMARY_TIER_TYPES].sort(),
   restrictedAccessStatuses: [...RESTRICTED_ACCESS_STATUSES].sort(),
   cardRecommendation: [...CARD_RECOMMENDATIONS].sort(),

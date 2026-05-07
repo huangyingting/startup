@@ -20,6 +20,7 @@ import {
 } from '../../../../website/src/lib/figures.mjs';
 import { asDateString, hasText } from './utils.mjs';
 import {
+  BLOCK_TYPES as DIMENSION_BLOCK_TYPES,
   CALLOUT_TYPES as DIMENSION_CALLOUT_TYPES,
   CLAIM_CONFIDENCES,
   CLAIM_FRESHNESS,
@@ -30,6 +31,7 @@ import {
   SOURCE_REPUTATION_TIERS,
   SOURCE_STANCES,
   SOURCE_TYPES,
+  TONE_VALUES,
   formatEnumChoices,
 } from './check-dimensions.mjs';
 
@@ -57,6 +59,7 @@ const MATRIX_FIGURE_TYPES = new Set(['matrix', 'cohort']);
 
 export const CALLOUT_TYPES = DIMENSION_CALLOUT_TYPES;
 export const ENUMERATION_COVERAGE = DIMENSION_ENUMERATION_COVERAGE;
+export const BLOCK_TYPES = DIMENSION_BLOCK_TYPES;
 
 // ---- helpers --------------------------------------------------------------
 
@@ -74,6 +77,20 @@ function hasPopulatedField(data, key) {
 
 function hasAnyPopulatedField(data, keys) {
   return keys.some((key) => hasPopulatedField(data, key));
+}
+
+function checkToneValues(value, path, c, figureId) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => checkToneValues(item, `${path}.${index}`, c, figureId));
+    return;
+  }
+  if (!value || typeof value !== 'object') return;
+  if (Object.prototype.hasOwnProperty.call(value, 'tone') && value.tone != null && !TONE_VALUES.has(value.tone)) {
+    c.fail(`${path}.tone must be one of ${formatEnumChoices(TONE_VALUES)}`, { figureId, actual: value.tone });
+  }
+  for (const [key, child] of Object.entries(value)) {
+    if (child && typeof child === 'object') checkToneValues(child, `${path}.${key}`, c, figureId);
+  }
 }
 
 // Internal builder so each public helper can collect errors with a stable
@@ -267,6 +284,7 @@ export function checkFigureDeep(figure, { path }) {
       c.fail(`${figurePath} must not include empty placeholder data.${field}; omit unused figure data arrays`, { figureId: id });
     }
   }
+  checkToneValues(figure.data, `${figurePath} data`, c, id);
 
   // Per-type contract (required + exclusive + allowed populated fields)
   const contract = FIGURE_CONTRACT_MAP.get(figure.type) ?? [];

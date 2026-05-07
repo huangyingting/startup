@@ -108,6 +108,8 @@ vocabularies:
   questionStatus: […]
   enumerationCoverage: […]
   calloutType: […]
+  tone: […]                     # figure/data tone vocabulary used by renderer and validators.
+  blockType: […]                # full-report / appendix block.type enum.
   cardRecommendation, cardConfidence, cardRiskRating, cardValuationStance: […]   # report-meta enums; surfaced for completeness.
 ```
 
