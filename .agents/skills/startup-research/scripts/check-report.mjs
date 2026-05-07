@@ -42,7 +42,6 @@ import {
   checkSourceSchema,
   checkTableSchema,
   checkUniqueIds,
-  SCHEMA_VERSION,
 } from './report-artifact-schema.mjs';
 import {
   BLOCK_TYPES,

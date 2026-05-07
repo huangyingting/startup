@@ -13,7 +13,7 @@
 // the object they touch — e.g. all complaints about T102 in one entry) and
 // globalHints[] (when the same dimension fails on many objects, hinting at a
 // chapter-wide root cause).
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';

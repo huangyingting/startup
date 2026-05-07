@@ -7,7 +7,7 @@ import { REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS, RESERVED_TYPE_LETTERS } 
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const reportsDir = join(repoRoot, 'reports');
-export const researchCacheRoot = join(repoRoot, '.research-cache');
+const researchCacheRoot = join(repoRoot, '.research-cache');
 export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-research', 'references', 'workflow-config.yaml');
 export const RUN_ID_RE = /^\d{14}-[a-z0-9-]+$/;
 export const REVISION_STATUSES = new Set(['current', 'superseded']);
@@ -20,7 +20,7 @@ export const FINAL_ARTIFACTS = Object.freeze({
   summaryCard: { file: 'summary-card.yaml', artifact: 'summary-card' },
 });
 export const GENERATED_REPORT_FILES = Object.freeze(Object.values(FINAL_ARTIFACTS).map((artifact) => artifact.file));
-export const FINAL_REPORT_FILES = Object.freeze([...GENERATED_REPORT_FILES, REPORT_META_FILE]);
+const FINAL_REPORT_FILES = Object.freeze([...GENERATED_REPORT_FILES, REPORT_META_FILE]);
 
 // Single contract for non-zero exit codes used across skill scripts. Callers
 // (CI, test-refresh-pipeline, finalize-report) switch on these to distinguish recoverable
