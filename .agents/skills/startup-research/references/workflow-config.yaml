@@ -30,6 +30,7 @@ agentPolicy:
     - "Prefer primary, official, independent, customer, regulatory, legal, and adverse sources over summary pages."
     - "Record reviewed sources, atomic claims, search queries, typed research questions, and typed evidence gaps in localEvidence."
     - "Re-fetch volatile facts every run; refresh context and earlier chapters are background only for those facts."
+    - "Anchor freshness to runtimeContext.run.runDate, not the model's training cutoff: include the current year (and the prior year for trailing windows) in queries for volatile facts (funding, ARR, headcount, customers, leadership, regulatory) and prefer sources dated within ~12 months of runDate."
   chapterAuthoringRules:
     - "Use runtimeContext.chapter as the chapter brief and runtimeContext.chapter.gate as the binding per-chapter gate."
     - "Use runtimeContext.vocabularies for enums and runtimeContext.checkDimensions/defaultFix for retry triage."

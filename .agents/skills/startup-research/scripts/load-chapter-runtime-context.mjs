@@ -4,7 +4,7 @@
 // workflow has one machine-readable source of truth for chapter order, gates,
 // output files, and final artifact names.
 import { join, basename } from 'node:path';
-import { EXIT, FINAL_ARTIFACTS, GENERATED_REPORT_FILES, REPORT_META_FILE, companySlugFromRunId, isRunId, loadWorkflowConfig, researchCacheDir, tryReadYaml, workflowConfigPath } from './utils.mjs';
+import { EXIT, FINAL_ARTIFACTS, GENERATED_REPORT_FILES, REPORT_META_FILE, companySlugFromRunId, isRunId, loadWorkflowConfig, researchCacheDir, runDateFromRunId, tryReadYaml, workflowConfigPath } from './utils.mjs';
 import { RESTRICTED_ACCESS_STATUSES, VOCABULARIES, dimensionCatalog } from './validation-catalog.mjs';
 import {
   FIGURE_ALLOWED_POPULATED_FIELDS,
@@ -169,6 +169,22 @@ function cumulativeContext(reportFolder, currentOrder, allChapters) {
   };
 }
 
+// Run identity derived from the report folder name. Split out from runCache
+// because none of these come from `.research-cache/` — they are slices of the
+// runId itself. `runtimeContext.run.runDate` is the canonical clock anchor
+// chapter doc heads must copy as `runDate`, so the agent never formats a date.
+function runIdentity(reportFolder) {
+  const runId = basename(reportFolder);
+  if (!isRunId(runId)) {
+    return { runId, companySlug: null, runDate: null };
+  }
+  return {
+    runId,
+    companySlug: companySlugFromRunId(runId),
+    runDate: runDateFromRunId(runId),
+  };
+}
+
 // Per-run scratch surfaced into the chapter runtime context. create-report-run.mjs writes
 // these into .research-cache/<runId>/ but historically they were never
 // loaded back, so an agent invoking --disclosure stealth or --refresh would
@@ -185,13 +201,11 @@ function runCacheContext(reportFolder) {
   // (developer pointing at a scratch folder), return an empty cache slot
   // instead of crashing the chapter runtime context loader.
   if (!isRunId(runId)) {
-    return { cacheDir: null, runId, companySlug: null, disclosureHint: null, refreshContext: null };
+    return { cacheDir: null, disclosureHint: null, refreshContext: null };
   }
   const cacheDir = researchCacheDir(runId);
   const out = {
     cacheDir,
-    runId,
-    companySlug: companySlugFromRunId(runId),
     disclosureHint: null,
     refreshContext: null,
   };
@@ -468,6 +482,7 @@ function main() {
       return { key, ...compactContextChapter(args.reportFolder, file) };
     });
     runtimeContext.cumulativeContext = cumulativeContext(args.reportFolder, chapter.order, config.chapters);
+    runtimeContext.run = runIdentity(args.reportFolder);
     runtimeContext.runCache = runCacheContext(args.reportFolder);
   }
   const output = args.includeWorkflow ? runtimeContext : runtimeContext.chapter;

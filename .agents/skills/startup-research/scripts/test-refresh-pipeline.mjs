@@ -35,10 +35,12 @@ import {
   isRunId,
   listDirs,
   normalizeRevision,
+  nowRunTimestamp,
   readYaml,
   REPORT_META_FILE,
   reportsDir,
   researchCacheDir,
+  runDateFromRunId,
   writeYaml,
 } from './utils.mjs';
 
@@ -85,23 +87,6 @@ function pickLatestCurrentRunId() {
     process.exit(EXIT.alreadyExists);
   }
   return candidates[0];
-}
-
-function timestampUtc(date = new Date()) {
-  const pad = (n) => String(n).padStart(2, '0');
-  return (
-    `${date.getUTCFullYear()}` +
-    `${pad(date.getUTCMonth() + 1)}` +
-    `${pad(date.getUTCDate())}` +
-    `${pad(date.getUTCHours())}` +
-    `${pad(date.getUTCMinutes())}` +
-    `${pad(date.getUTCSeconds())}`
-  );
-}
-
-function dateUtc(date = new Date()) {
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
 }
 
 function rewriteMetaIdentity(filePath, newSlug, newRunDate) {
@@ -164,11 +149,11 @@ if (!companyName) {
 }
 
 const sourceSlug = companySlugFromRunId(sourceRunId);
-const newTimestamp = timestampUtc();
+const newTimestamp = nowRunTimestamp();
 const newRunId = `${newTimestamp}-${sourceSlug}`;
 const newFolder = join(reportsDir, newRunId);
 const newCacheFolder = researchCacheDir(newRunId);
-const newRunDate = dateUtc();
+const newRunDate = runDateFromRunId(newRunId);
 const refreshReason = args.reason || `Fixture smoke test (${new Date().toISOString()})`;
 
 if (existsSync(newFolder)) {
@@ -214,7 +199,11 @@ try {
     'create-report-run',
     resolve(here, 'create-report-run.mjs'),
     [
-      newTimestamp,
+      // Pin --timestamp so the predict-then-invoke pattern (snapshots /
+      // cleanup tracking computed before the script runs) sees the same
+      // runId the script materializes. Production callers omit --timestamp
+      // and let create-report-run.mjs anchor the run with the system clock.
+      '--timestamp', newTimestamp,
       companyName,
       ...(companyWebsite ? ['--website', companyWebsite] : []),
       '--refresh',
