@@ -145,7 +145,7 @@ for (const { spec, doc } of docs) {
 // across two or more chapters
 // ---------------------------------------------------------------------------
 const tolerances = WORKFLOW_CONFIG.reportGate?.crossChapterTolerances ?? {};
-const RELATIVE_TOLERANCE = tolerances.metricDrift ?? 0.10;
+const metricDriftTolerance = tolerances.metricDrift ?? 0.10;
 
 for (const [key, entries] of metrics) {
   // group by chapter (multiple values from one chapter are not cross-chapter
@@ -171,7 +171,7 @@ for (const [key, entries] of metrics) {
     continue;
   }
   const drift = (max - min) / Math.abs(min);
-  if (drift > RELATIVE_TOLERANCE) {
+  if (drift > metricDriftTolerance) {
     flag('fail', 'metricDrift', `metric "${key}" varies ${(drift * 100).toFixed(1)}% across chapters (${min} vs ${max})`, {
       metric: key,
       min,

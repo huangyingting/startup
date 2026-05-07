@@ -11,6 +11,12 @@ import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
 import { SCHEMA_VERSION } from './chapter-schema.mjs';
+import {
+  CARD_CONFIDENCES,
+  CARD_RECOMMENDATIONS,
+  CARD_RISK_RATINGS,
+  CARD_VALUATION_STANCES,
+} from './check-dimensions.mjs';
 const REPORT_META_FILE = 'report-meta.yaml';
 const DEFAULT_DISCLAIMER = 'This report is a public-evidence diligence snapshot, not investment advice. Important financial, legal, technical, and contractual facts remain non-public and should be verified directly with management and primary documents before any investment decision.';
 
@@ -92,12 +98,15 @@ requireField(meta, 'summary.topRisks');
 requireField(meta, 'summary.unresolvedGaps');
 
 // Enum gates: catch typos in judgment fields here so the agent fixes
-// report-meta.yaml before bad values land in summary-card.yaml.
+// report-meta.yaml before bad values land in summary-card.yaml. The card
+// enum sets live in check-dimensions.mjs (single source of truth shared with
+// check-report); we just unwrap them into ordered arrays so the abort
+// message lists allowed values in a stable order.
 const SUMMARY_ENUMS = {
-  recommendation: ['strong-buy', 'buy', 'track', 'research-more', 'avoid'],
-  confidence: ['high', 'medium', 'low'],
-  riskRating: ['low', 'medium', 'high', 'critical', 'unknown'],
-  valuationStance: ['attractive', 'fair', 'stretched', 'expensive', 'unknown'],
+  recommendation: [...CARD_RECOMMENDATIONS],
+  confidence: [...CARD_CONFIDENCES],
+  riskRating: [...CARD_RISK_RATINGS],
+  valuationStance: [...CARD_VALUATION_STANCES],
 };
 for (const [field, allowed] of Object.entries(SUMMARY_ENUMS)) {
   const value = meta.summary?.[field];

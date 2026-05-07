@@ -4,6 +4,7 @@ import ClaimRefs from './ClaimRefs.astro';
 import ReportBlock from './ReportBlock.astro';
 import DataTable from './DataTable.astro';
 import { displayLabel } from '../lib/display';
+import { splitClaimRefsText, stripTrailingClaimRefs } from '../lib/claim-refs.mjs';
 
 interface Props {
   entry: CollectionEntry<'reports'>;
@@ -57,21 +58,7 @@ function moneyM(value: unknown): string {
 }
 
 function cleanHeadline(value: unknown): string {
-  return String(value ?? '').replace(/(?:\s*\[C[A-Z]\d{3}\])+\.?$/g, '.').trim();
-}
-
-function splitClaimRefsText(value: unknown): Array<{ text?: string; ref?: string }> {
-  const text = String(value ?? '');
-  const parts: Array<{ text?: string; ref?: string }> = [];
-  const pattern = /\[(C[A-Z]\d{3})\]/g;
-  let lastIndex = 0;
-  for (const match of text.matchAll(pattern)) {
-    if (match.index > lastIndex) parts.push({ text: text.slice(lastIndex, match.index) });
-    parts.push({ ref: match[1] });
-    lastIndex = match.index + match[0].length;
-  }
-  if (lastIndex < text.length) parts.push({ text: text.slice(lastIndex) });
-  return parts.length ? parts : [{ text }];
+  return stripTrailingClaimRefs(value);
 }
 
 function blockRefs(value: any): string[] {

@@ -33,6 +33,7 @@ import {
   normalizeRevision,
   readYaml,
   reportsDir,
+  writeYaml,
 } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -96,14 +97,14 @@ function dateUtc(date = new Date()) {
 }
 
 function rewriteMetaIdentity(filePath, newSlug, newRunDate) {
-  const original = readFileSync(filePath, 'utf8');
-  let next = original.replace(/^slug:[^\n]*$/m, `slug: ${newSlug}`);
-  next = next.replace(/^runDate:[^\n]*$/m, `runDate: "${newRunDate}"`);
-  if (next === original) {
-    console.error(`[fixture] failed to rewrite slug/runDate in ${filePath}`);
+  const doc = readYaml(filePath);
+  if (!doc || typeof doc !== 'object') {
+    console.error(`[fixture] failed to parse ${filePath} as YAML object`);
     process.exit(1);
   }
-  writeFileSync(filePath, next, 'utf8');
+  doc.slug = newSlug;
+  doc.runDate = newRunDate;
+  writeYaml(filePath, doc);
 }
 
 function snapshotFile(path) {

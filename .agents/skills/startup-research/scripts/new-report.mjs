@@ -204,7 +204,9 @@ if (args.disclosure) {
   // to stderr so the spawning workflow surfaces it. The hint lists canonical
   // evidenceGap topics that are almost-certain to remain unsupported for the
   // given disclosureProfile, so chapter 04 can pre-populate them rather than
-  // rediscovering they are unavailable.
+  // rediscovering they are unavailable. Lives under .research-cache/<base>/
+  // to keep reports/<run>/ to the canonical artifact set the SKILL hard rules
+  // allow.
   const undisclosedGaps = [
     'Annual Recurring Revenue (ARR) — not publicly disclosed.',
     'Trailing-twelve-month revenue or revenue run-rate — not publicly disclosed.',
@@ -227,8 +229,11 @@ if (args.disclosure) {
     note: 'Set companyProfile.disclosureProfile in report-meta.yaml to this value. Pre-populate the canonical evidenceGaps below in chapter 04 (financials) instead of rediscovering they are unavailable.',
     canonicalEvidenceGaps: canonicalGaps,
   };
-  writeFileSync(join(path, '_disclosure-hint.yaml'), yaml.dump(hint, { lineWidth: 120, noRefs: true, sortKeys: false }), 'utf8');
-  console.error(`[new] disclosureProfile=${args.disclosure}; wrote _disclosure-hint.yaml with ${canonicalGaps.length} canonical evidenceGaps.`);
+  const cacheDir = join(reportsDir, '..', '.research-cache', base);
+  mkdirSync(cacheDir, { recursive: true });
+  const hintPath = join(cacheDir, 'disclosure-hint.yaml');
+  writeFileSync(hintPath, yaml.dump(hint, { lineWidth: 120, noRefs: true, sortKeys: false }), 'utf8');
+  console.error(`[new] disclosureProfile=${args.disclosure}; wrote ${hintPath} with ${canonicalGaps.length} canonical evidenceGaps.`);
 }
 
 console.log(path);

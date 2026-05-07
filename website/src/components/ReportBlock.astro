@@ -4,6 +4,7 @@
 import ClaimRefs from './ClaimRefs.astro';
 import DataTable from './DataTable.astro';
 import FigureRenderer from './FigureRenderer.astro';
+import { hasInlineClaimRefs, splitClaimRefsText } from '../lib/claim-refs.mjs';
 
 interface Props {
   block: any;
@@ -21,24 +22,6 @@ function arr<T = unknown>(value: T[] | undefined | null): T[] {
 
 function blockRefs(value: any): string[] {
   return arr<string>(value?.claimRefs).slice(0, 6);
-}
-
-function hasInlineClaimRefs(value: unknown): boolean {
-  return /\[C[A-Z]\d{3}\]/.test(String(value ?? ''));
-}
-
-function splitClaimRefsText(value: unknown): Array<{ text?: string; ref?: string }> {
-  const text = String(value ?? '');
-  const parts: Array<{ text?: string; ref?: string }> = [];
-  const pattern = /\[(C[A-Z]\d{3})\]/g;
-  let lastIndex = 0;
-  for (const match of text.matchAll(pattern)) {
-    if (match.index > lastIndex) parts.push({ text: text.slice(lastIndex, match.index) });
-    parts.push({ ref: match[1] });
-    lastIndex = match.index + match[0].length;
-  }
-  if (lastIndex < text.length) parts.push({ text: text.slice(lastIndex) });
-  return parts.length ? parts : [{ text }];
 }
 
 function blockClass(type: string | null | undefined): string {

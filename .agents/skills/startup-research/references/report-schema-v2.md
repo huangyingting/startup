@@ -94,6 +94,9 @@ localEvidence:
   sources: [source]
   claims: [claim]
   evidenceGaps: [evidenceGap]
+acknowledgedWarnings:                          # Optional; opt out of `--strict` chapter warnings without fixing them.
+  - dimension: string                          # Must match a warning dimension actually emitted by check-chapter (paywallRisk | sectionsMax | tablesMax | figuresMax | figureType).
+    reason: string                             # ≥ 30 chars explaining why the warning is intentional.
 ```
 
 ## Evidence artifact schema
@@ -196,7 +199,10 @@ sourceStats:
   claimsReviewed: number          # ≤ evidence ledger claims count.
   domainCount: number             # Distinct registrable domains across evidence.sources[].
   adverseSourceCount: number      # Count of sources with stance=adverse.
-  unresolvedQuestionCount: number # Count of researchQuestions with status != answered across all chapters.
+  unresolvedQuestionCount: number # Alias for openQuestionCount, kept for legacy readers.
+  openQuestionCount: number       # Count of researchQuestions with status != answered across all chapters.
+  documentedGapQuestionCount: number  # Open AND referenced by some evidenceGap.relatedQuestionRefs[].
+  blockingQuestionCount: number   # Open AND not referenced by any evidenceGap; chapter gate forbids this, so a clean finalize emits 0.
   averageSourceAgeDays: number | null  # Mean (runDate - source.date) in days; null when no dated sources.
 ```
 
