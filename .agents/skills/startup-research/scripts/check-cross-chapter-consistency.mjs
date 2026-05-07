@@ -10,7 +10,7 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
-import { ANALYSIS_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_ANALYSIS_TOKEN_LENGTH } from './check-dimensions.mjs';
+import { ANALYSIS_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_ANALYSIS_TOKEN_LENGTH } from './validation-catalog.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 
@@ -29,7 +29,7 @@ const args = (() => {
       parsed.format = next;
     } else if (arg.startsWith('-')) {
       console.error(`[cross-chapter] unknown flag: ${arg}`);
-      console.error('Usage: node .agents/skills/startup-research/scripts/cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
+      console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter-consistency.mjs <report-folder> [--strict] [--format text|json]');
       process.exit(EXIT.invalidArgs);
     } else if (!parsed.folder) parsed.folder = arg;
     else {
@@ -41,7 +41,7 @@ const args = (() => {
 })();
 
 if (!args.folder) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter-consistency.mjs <report-folder> [--strict] [--format text|json]');
   process.exit(EXIT.invalidArgs);
 }
 if (!['text', 'json'].includes(args.format)) {

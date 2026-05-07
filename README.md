@@ -21,9 +21,10 @@ website/                          # Astro static site and website-owned validati
 Important files:
 
 - `.agents/skills/startup-research/SKILL.md` — canonical end-to-end report workflow.
-- `.agents/skills/startup-research/references/chapters.yaml` — chapter order, artifacts, gates, and requirements.
+- `.agents/skills/startup-research/references/workflow-config.yaml` — workflow policy, chapter order, artifacts, gates, and requirements.
+- `.agents/skills/startup-research/references/workflow-config-schema-v1.md` — schema and field semantics for the workflow config.
 - `.agents/skills/startup-research/references/report-schema-v2.md` — report-v2 YAML field shapes (the artifacts written under `reports/<runId>/`).
-- `.agents/skills/startup-research/references/chapter-packet-schema-v2.md` — schema for the JSON the chapter loader emits.
+- `.agents/skills/startup-research/references/chapter-runtime-context-schema-v2.md` — runtime projection contract for the JSON the chapter loader emits.
 - `.agents/skills/startup-research/references/yaml-rules.md` — YAML syntax constraints shared by every artifact.
 - `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts (chapter loader, gate checks, ledger consolidation, report assembly, validators).
 - `website/src/lib/` — rendering contracts shared between the renderer and the chapter/report validators.

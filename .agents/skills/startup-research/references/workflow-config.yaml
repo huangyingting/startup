@@ -6,6 +6,57 @@ reportSchemaVersion: report-v2
 # named `source` / `publisher` / `attribution` are reserved for the *origin
 # institution or document* (e.g. "Gartner", "SEC 10-K"), not for claim ids.
 
+# === agent-facing workflow policy ===
+# Surfaced as runtimeContext.workflow.agentPolicy by load-chapter-runtime-context.mjs. Keep here the
+# skill execution rules that are workflow policy, not executable schema or
+# renderer logic. SKILL.md should point agents to the runtime context instead of
+# re-declaring these literals in prose.
+agentPolicy:
+  volatileFacts:
+    - funding
+    - valuation
+    - headcount
+    - customer count
+    - pricing
+    - legal/regulatory status
+    - outages
+    - partnerships
+    - product launches
+  retryPolicy:
+    maxChapterRetries: 3
+    requireMonotonicFailureDecrease: true
+  researchRules:
+    - "Review direct URLs with fetch-url before retaining them as evidence; do not cite generic search-result pages."
+    - "Prefer primary, official, independent, customer, regulatory, legal, and adverse sources over summary pages."
+    - "Record reviewed sources, atomic claims, search queries, typed research questions, and typed evidence gaps in localEvidence."
+    - "Re-fetch volatile facts every run; refresh context and earlier chapters are background only for those facts."
+  chapterAuthoringRules:
+    - "Use runtimeContext.chapter as the chapter brief and runtimeContext.chapter.gate as the binding per-chapter gate."
+    - "Use runtimeContext.vocabularies for enums and runtimeContext.checkDimensions/defaultFix for retry triage."
+    - "Use runtimeContext.rendererContracts before writing figures; substitute a table when the evidence does not fit the figure contract."
+    - "Use only the current chapter letter for S/C/T/F/Q ids; restate cross-chapter facts as local claims when needed."
+    - "Cite tables through table-level claimRefs, never through evidence-only columns that hold raw claim ids."
+  hardRules:
+    - "Set slug to the company slug only: the report folder basename with the leading timestamp removed."
+    - "Do not hand-write evidence.yaml, full-report.yaml, or summary-card.yaml; let finalization scripts assemble them."
+    - "Do not invent facts, metrics, customers, funding, valuation, or dates."
+    - "Do not edit another chapter artifact while working on the current chapter."
+    - "Keep scratch files under .research-cache/<runId>/, never under reports/<runId>/."
+    - "Only chapter YAMLs, report-meta.yaml, and assembled final artifacts belong under reports/<runId>/."
+  finalResponseFields:
+    - report folder
+    - generated files
+    - source count
+    - claim count
+    - recommendation
+    - confidence
+    - risks
+    - valuation stance
+    - table count
+    - figure count
+    - finalize result
+    - main gaps
+
 # === per-chapter gates ===
 # `defaultGate` applies to every chapter; per-chapter `gate:` blocks override
 # specific keys. Each chapter's gate is what `check-chapter` enforces against
@@ -51,7 +102,7 @@ reportGate:
   minDistinctDomains: 30          # distinct registrable domains across all sources in evidence.yaml
   requireAdverseSource: true      # at least one stance:adverse source must be present
   maxPaywallPercent: 0.3          # fail if >30% of sources are paywall/broken/rate-limited
-  # Cross-chapter tolerances (used by cross-chapter.mjs for drift detection).
+  # Cross-chapter tolerances (used by check-cross-chapter-consistency.mjs for drift detection).
   # Metric drift: relative tolerance for numeric values across chapters (e.g., 0.1 = 10%).
   # Key-fact overlap: Jaccard threshold for matching identity facts across chapters (≥ threshold = match).
   # Duplicate overlap: Jaccard threshold for table/figure title+structure across chapters (both must meet threshold).

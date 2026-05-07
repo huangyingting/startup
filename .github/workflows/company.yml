@@ -171,7 +171,7 @@ jobs:
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-unknown}
 
-          If a finalized report folder for the same company or domain already exists under reports/<runId>/ (the new-report.mjs duplicate guard checks this) and there is no materially new reason to refresh it, do not create a duplicate folder; print a short duplicate note and exit successfully.
+          If a finalized report folder for the same company or domain already exists under reports/<runId>/ (the create-report-run.mjs duplicate guard checks this) and there is no materially new reason to refresh it, do not create a duplicate folder; print a short duplicate note and exit successfully.
 
           Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
@@ -206,7 +206,7 @@ jobs:
               continue
             fi
             echo "::group::Finalizing $dir"
-            if node .agents/skills/startup-research/scripts/finalize.mjs "$dir"; then
+            if node .agents/skills/startup-research/scripts/finalize-report.mjs "$dir"; then
               echo "Finalize succeeded for $dir"
             else
               echo "::warning::Finalize failed for $dir; will be dropped"

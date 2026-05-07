@@ -26,7 +26,7 @@ import {
   checkSourceSchema,
   checkTableSchema,
   checkUniqueIds,
-} from './chapter-schema.mjs';
+} from './report-artifact-schema.mjs';
 import {
   ANALYSIS_TOKEN_STOP_WORDS,
   CASCADE_SUPPRESSORS,
@@ -42,18 +42,18 @@ import {
   formatEnumChoices,
   makeIdPattern,
   resolveFixHint,
-} from './check-dimensions.mjs';
+} from './validation-catalog.mjs';
 
 // Loaded eagerly so the chapter-id `spec` is available for the per-chapter
 // ID patterns built immediately after argv parsing. Wrapped so a broken
-// chapters.yaml surfaces as a friendly error instead of a raw stack trace
+// workflow-config.yaml surfaces as a friendly error instead of a raw stack trace
 // before the user even sees the usage line.
 let ANALYSIS_ARTIFACTS;
 try {
   ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
 } catch (err) {
   console.error(`[check:chapter] failed to load workflow config: ${err.message}`);
-  console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose chapters.yaml.');
+  console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose workflow-config.yaml.');
   process.exit(EXIT.invalidArgs);
 }
 
@@ -113,7 +113,7 @@ const failures = [];
 const warnings = [];
 
 // FIX_HINTS, CASCADE_SUPPRESSORS, RETRY_PRECEDENCE, and resolveFixHint live
-// in check-dimensions.mjs so the load-chapter packet can ship the same
+// in validation-catalog.mjs so the chapter runtime context can ship the same
 // catalog to the agent before it writes anything (single source of truth).
 
 function fail(dimension, message, extra = {}) {
@@ -361,9 +361,9 @@ function checkSources(file, doc, gate, earlierUrls) {
     fail('sourceTypeSpread', `${file}: ${types.size} distinct sourceType values, expected at least ${gate.minSourceTypeSpread}`, { actual: types.size, required: gate.minSourceTypeSpread });
   }
   // Per-chapter adverse-stance requirement. Driven by gate.minAdverseSources,
-  // which load-chapter.mjs derives from
+  // which load-chapter-runtime-context.mjs derives from
   // workflow-config.adverseDistribution.requireAtLeastOneAdverseSource so the
-  // packet the agent receives and the check it must clear share one source of
+  // runtime context the agent receives and the check it must clear share one source of
   // truth. Catches the RUN-2 failure pattern (every fintech report failed at
   // finalize because ch1 / ch6 / ch8 only carried neutral/confirming sources).
   const minAdverseSources = gate.minAdverseSources ?? 0;
@@ -557,7 +557,7 @@ function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFig
 }
 
 function titleSlug(value) {
-  // Title-slug used to match planned table/figure names (chapters.yaml) against
+  // Title-slug used to match planned table/figure names (workflow-config.yaml) against
   // actual table/figure titles. Intentionally simpler than utils.slugify() —
   // no `&→and` substitution, no length cap, no fallback — because we are
   // comparing two human-authored title strings, not building a URL slug.
@@ -603,7 +603,7 @@ function checkLocalEvidence(file, doc, counts, otherChapterClaimIds) {
   // Walk every claimRefs[] across sections / tables / figures / callouts. An
   // unresolved ref splits two ways:
   //   - foundIn another chapter -> crossChapterRefLeak (the agent copied an id
-  //     from elsewhere). Each chapter has its own letter (chapters.yaml
+  //     from elsewhere). Each chapter has its own letter (workflow-config.yaml
   //     `letter:`); ids are formed as <Type><ChapterLetter><Seq3>, so an id
   //     whose letter does not match this chapter's letter is by construction
   //     foreign. The right fix is to restate the underlying fact as a new
@@ -633,7 +633,7 @@ if (doc) {
     for (const err of errors) fail('documentHead', err.message, err);
   }
   // Slug must equal the company slug, i.e. the report folder basename with
-  // the leading <timestamp>- prefix stripped. new-report.mjs creates the
+  // the leading <timestamp>- prefix stripped. create-report-run.mjs creates the
   // folder as `${timestamp}-${slugify(companyName)}`; the chapter `slug:`
   // field is the second half only. Catches the drift seen in RUN-1 where
   // every chapter accidentally carried the full `<timestamp>-<companySlug>`.
@@ -644,7 +644,7 @@ if (doc) {
     }
   }
   // Chapter-local table/figure id uniqueness (T### / F###). Duplicate or
-  // malformed ids would otherwise blow up at ledger/assemble time.
+  // malformed ids would otherwise blow up at build-evidence-ledger/assemble-report time.
   {
     const { errors } = checkUniqueIds(doc.tables, { label: 'table', pattern: ID_PATTERN_CHAPTER_TABLE, path: spec.file });
     for (const err of errors) fail('duplicateIds', err.message, err);
@@ -732,7 +732,7 @@ if (doc) {
   // Per-callout schema (title, body, claimRefs[], optional calloutType enum).
   // The canonical key is `callouts:`; reject legacy `analysisCallouts` /
   // `analysisCallout` writes as documentHead failures so they never get
-  // silently dropped during assemble (which only reads `callouts`).
+  // silently dropped during assemble-report (which only reads `callouts`).
   if (doc.analysisCallouts !== undefined) {
     fail('documentHead', `${spec.file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`);
   }

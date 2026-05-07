@@ -1,5 +1,5 @@
 // Inline claim-ref helpers shared by the website renderer (Astro) and the
-// skill validators (`check-dimensions.mjs`). Single source of truth for the
+// skill validators (`validation-catalog.mjs`). Single source of truth for the
 // inline claim-ref pattern and its associated text-splitting helpers; if the
 // claim-id format changes, every consumer (renderer + validators) updates
 // from this one file.

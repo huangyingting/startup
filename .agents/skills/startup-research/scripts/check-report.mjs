@@ -8,7 +8,7 @@
 // root, or a bare run id (e.g. `20260505063138-cyberhaven`) which is
 // resolved against ./reports/. Exits 0 on success, non-zero on failures.
 //
-// Invoked automatically as the last step of finalize.mjs in full gate mode.
+// Invoked automatically as the last step of finalize-report.mjs in full gate mode.
 // `--contract` keeps schema / renderer / reference checks but skips current
 // content-quality gates (source diversity and adverse-source distribution),
 // which makes it suitable for re-checking historical reports after renderer
@@ -34,8 +34,6 @@ import {
   tryReadYaml,
 } from './utils.mjs';
 import {
-  BLOCK_TYPES,
-  CALLOUT_TYPES,
   checkArtifactRefs,
   checkCalloutSchema,
   checkClaimSchema,
@@ -45,8 +43,10 @@ import {
   checkTableSchema,
   checkUniqueIds,
   SCHEMA_VERSION,
-} from './chapter-schema.mjs';
+} from './report-artifact-schema.mjs';
 import {
+  BLOCK_TYPES,
+  CALLOUT_TYPES,
   CARD_CONFIDENCES,
   CARD_RECOMMENDATIONS,
   CARD_RISK_RATINGS,
@@ -56,7 +56,7 @@ import {
   ID_PATTERN_SOURCE,
   ID_PATTERN_TABLE,
   formatEnumChoices,
-} from './check-dimensions.mjs';
+} from './validation-catalog.mjs';
 const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../reports');
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts(WORKFLOW_CONFIG);
@@ -76,7 +76,7 @@ const fail = (message) => failures.push(message);
 // ---------------------------------------------------------------------------
 
 function checkLedgerSources(run, sources) {
-  // Schema rules live in chapter-schema.mjs so check-chapter and check-report
+  // Schema rules live in report-artifact-schema.mjs so check-chapter and check-report
   // can never drift. We just route the per-source errors into our flat
   // failure list with the same path prefix this checker has always used.
   for (const source of sources) {
@@ -160,7 +160,7 @@ function checkCallouts(run, file, doc) {
 // ---------------------------------------------------------------------------
 
 function checkFigure(path, figure) {
-  // All figure deep-schema rules now live in chapter-schema.mjs so the
+  // All figure deep-schema rules now live in report-artifact-schema.mjs so the
   // chapter-time gate and post-finalize gate enforce the same contract.
   const { errors } = checkFigureDeep(figure, { path });
   for (const err of errors) fail(err.message);
@@ -251,7 +251,7 @@ function checkReportLevelDiversity(run, ledger) {
 
   const matrix = ledger.coverageMatrix;
   if (!matrix) {
-    fail(`${run}/${EVIDENCE_FILE}: coverageMatrix missing — re-run ledger.mjs`);
+    fail(`${run}/${EVIDENCE_FILE}: coverageMatrix missing — re-run build-evidence-ledger.mjs`);
     return;
   }
 
@@ -310,7 +310,7 @@ function checkAdverseDistribution(run, parsed) {
     if (chaptersWithAdverse <= threshold) {
       // Concentration is a fail, not a warn: reports that pass with adverse
       // evidence in only 1-2 chapters look "green" but are structurally
-      // unbalanced. The threshold is operator-tunable in chapters.yaml.
+      // unbalanced. The threshold is operator-tunable in workflow-config.yaml.
       fail(`${run}/${EVIDENCE_FILE}: adverse-stance sources appear in only ${chaptersWithAdverse} chapter(s) (<= ${threshold}); spread adverse evidence across more chapters`);
     }
   }
