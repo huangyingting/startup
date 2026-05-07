@@ -30,6 +30,7 @@ const labels = {
   valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims',
   figures: 'figures', tables: 'tables',
   coverMetrics: 'Cover facts', startupIntro: 'Company profile',
+  website: 'Website',
   founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location',
   headquarters: 'Headquarters', product: 'Product', customers: 'Customers',
   businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status',
@@ -198,6 +199,9 @@ const fallbackMetrics = [
         </p>
       )}
       <dl class="intro-grid">
+        {data.company?.website && /^https?:\/\//i.test(data.company.website) && (
+          <div><dt>{labels.website}</dt><dd><a href={data.company.website} target="_blank" rel="noopener noreferrer">{data.company.website.replace(/^https?:\/\//i, '').replace(/\/$/, '')}</a></dd></div>
+        )}
         {companyProfile.foundedDate && (
           <div><dt>{labels.founded}</dt><dd>{companyProfile.foundedDate}</dd></div>
         )}
