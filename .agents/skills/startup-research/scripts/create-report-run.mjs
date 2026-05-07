@@ -76,7 +76,10 @@ function loadReportsFromDisk() {
     if (!existsSync(cardPath)) continue;
     let card;
     try { card = readYaml(cardPath); }
-    catch { continue; }
+    catch (err) {
+      console.warn(`[create-report-run] skipping ${cardPath} (unreadable YAML): ${err.message}`);
+      continue;
+    }
     const company = card?.company ?? {};
     const revision = normalizeRevision(card?.revision);
     reports.push({
