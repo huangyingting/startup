@@ -212,6 +212,8 @@ sourceStats:
 
 Applies to `report-meta.yaml` — the hand-authored input that `assemble-report.mjs` consumes to build `full-report.yaml` and `summary-card.yaml`. It carries the judgment fields the analysis chapters do not encode.
 
+> ⚠️ `recommendation`, `overallScore`, `riskRating`, `valuationStance`, `keyMetrics`, `topStrengths`, `topRisks`, and `unresolvedGaps` MUST be nested under the top-level `summary:` mapping shown below — putting them at the document root is the most common shape error and `validate-report-meta.mjs` will reject it.
+
 ```yaml
 slug: string
 runDate: YYYY-MM-DD

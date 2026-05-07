@@ -67,6 +67,8 @@ For each chapter `order` from the loader:
    - `failures[]` — per-issue entries; each carries `dimension`, `message`, and a one-line `fix` action.
    - `failedDimensions[]` and `retryOrder[]` (root-cause sorted) for the dimensions you must clear.
    - `suppressedDimensions[]` — downstream checks skipped because an upstream failure (e.g. `localEvidenceMissing`) makes them trivially fail; they will re-evaluate after you fix the root cause.
+
+   For shell-driven loops where you do not need the full nested objectFailures view, prefer `--format compact`: it emits one line per finding (`STATUS: OK|FAIL`, `failedDimensions: …`, `retryOrder: …`, `GLOBAL [dim] …`, `FAIL [dim] msg | fix: …`, `WARN [dim] msg`) so you can `head -1` for pass/fail and `grep '^FAIL'` for the full failure messages without piping through a python wrapper that truncates them.
 8. **Advance** with `runtimeContext.nextChapter`; if it is `null`, move to finalization.
 
 ### Retry scope
@@ -81,12 +83,12 @@ The 8 analysis chapters can be drafted in parallel: each chapter owns its ID nam
 
 After all analysis chapters pass:
 
-1. Author `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md`. It carries the judgment fields the analysis chapters do not encode. Any prior finalized report with a matching disclosure profile can be used as a shape example, but volatile facts still need fresh evidence.
+1. Author `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md` (note the warning at the top of that section: `recommendation`/`riskRating`/`valuationStance`/`overallScore`/`topStrengths`/`topRisks`/`unresolvedGaps` belong inside the `summary:` block, not at the document root). It carries the judgment fields the analysis chapters do not encode. Any prior finalized report with a matching disclosure profile can be used as a shape example, but volatile facts still need fresh evidence.
 2. Run the finalization pipeline:
    `node .agents/skills/startup-research/scripts/finalize-report.mjs <reportFolder>`
    For a refresh run, pass the same flag and reason:
    `node .agents/skills/startup-research/scripts/finalize-report.mjs <reportFolder> --refresh [--refresh-reason <refreshReason>]`
-   Finalization runs `build-evidence-ledger`, `check-cross-chapter-consistency`, `assemble-report`, and `check-report`; refresh also links the old and new report revisions. Stops at the first failing step so you can fix `report-meta.yaml` or the offending chapter and re-run. Pass `--rebuild` only when you need fresh evidence-ledger consolidation.
+   Finalization first runs `validate-report-meta` (lists every shape/enum problem in `report-meta.yaml` at once), then `build-evidence-ledger`, `check-cross-chapter-consistency`, `assemble-report`, and `check-report`; refresh also links the old and new report revisions. Stops at the first failing step so you can fix `report-meta.yaml` or the offending chapter and re-run. Pass `--rebuild` only when you need fresh evidence-ledger consolidation.
 
 ## Hard rules
 
