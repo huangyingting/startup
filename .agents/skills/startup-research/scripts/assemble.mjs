@@ -26,11 +26,14 @@ function abort(message) {
 }
 
 function parseArgs(argv) {
-  const positional = argv.filter((arg) => !arg.startsWith('-'));
-  return {
-    folder: positional[0] ?? null,
-    dryRun: argv.includes('--dry-run'),
-  };
+  const args = { folder: null, dryRun: false };
+  for (const arg of argv) {
+    if (arg === '--dry-run') args.dryRun = true;
+    else if (arg.startsWith('-')) abort(`unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/assemble.mjs <report-folder> [--dry-run]`);
+    else if (!args.folder) args.folder = arg;
+    else abort(`unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/assemble.mjs <report-folder> [--dry-run]`);
+  }
+  return args;
 }
 
 const args = parseArgs(process.argv.slice(2));

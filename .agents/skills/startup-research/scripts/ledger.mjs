@@ -27,9 +27,18 @@ const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.
 const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 
 function parseArgs(argv) {
-  return {
-    folder: argv.find((arg) => !arg.startsWith('-')) ?? null,
-  };
+  const args = { folder: null };
+  for (const arg of argv) {
+    if (arg.startsWith('-')) {
+      console.error(`[ledger] unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder>`);
+      process.exit(1);
+    } else if (!args.folder) args.folder = arg;
+    else {
+      console.error(`[ledger] unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder>`);
+      process.exit(1);
+    }
+  }
+  return args;
 }
 
 const args = parseArgs(process.argv.slice(2));
