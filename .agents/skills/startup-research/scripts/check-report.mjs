@@ -18,6 +18,7 @@ import { basename, isAbsolute, join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   collectClaimRefs,
+  companySlugFromRunId,
   FINAL_ARTIFACTS,
   getAnalysisArtifacts,
   getCoreArtifacts,
@@ -130,7 +131,7 @@ function checkReportBlocks(run, reportDoc) {
   }
 }
 
-function checkAnalysisCallouts(run, file, doc) {
+function checkCallouts(run, file, doc) {
   if (!ANALYSIS_FILES.includes(file)) return;
   if (doc?.analysisCallouts !== undefined) {
     fail(`${run}/${file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`);
@@ -191,7 +192,7 @@ function checkRefs(run, reportDoc) {
 
 function parseRunArtifacts(run, dir) {
   const parsed = new Map();
-  const canonicalSlug = run.replace(/^\d{14}-/, '');
+  const canonicalSlug = companySlugFromRunId(run);
   for (const file of REQUIRED_ENGLISH_FILES.filter((name) => name.endsWith('.yaml'))) {
     const result = tryReadYaml(join(dir, file));
     if (!result.ok) {
@@ -466,7 +467,7 @@ function checkRun(run) {
   }
 
   for (const [file, doc] of parsed) checkTables(run, file, doc);
-  for (const [file, doc] of parsed) checkAnalysisCallouts(run, file, doc);
+  for (const [file, doc] of parsed) checkCallouts(run, file, doc);
   for (const [file, doc] of parsed) {
     for (const figure of doc?.figures ?? []) checkFigure(`${run}/${file}`, figure);
   }

@@ -33,12 +33,12 @@ import {
   normalizeRevision,
   readYaml,
   reportsDir,
+  researchCacheDir,
   writeYaml,
 } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../../../..');
-const cacheRoot = join(repoRoot, '.research-cache');
 
 function usage(message) {
   if (message) console.error(`[fixture] ${message}`);
@@ -159,7 +159,7 @@ const sourceSlug = sourceRunId.slice(15); // strip leading "YYYYMMDDHHmmss-"
 const newTimestamp = timestampUtc();
 const newRunId = `${newTimestamp}-${sourceSlug}`;
 const newFolder = join(reportsDir, newRunId);
-const newCacheFolder = join(cacheRoot, newRunId);
+const newCacheFolder = researchCacheDir(newRunId);
 const newRunDate = dateUtc();
 const refreshReason = args.reason || `Fixture smoke test (${new Date().toISOString()})`;
 

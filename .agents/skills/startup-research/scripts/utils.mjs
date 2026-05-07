@@ -7,10 +7,27 @@ import { REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS, RESERVED_TYPE_LETTERS } 
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const reportsDir = join(repoRoot, 'reports');
+export const researchCacheRoot = join(repoRoot, '.research-cache');
 export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-research', 'references', 'chapters.yaml');
 export const RUN_ID_RE = /^\d{14}-[a-z0-9-]+$/;
 export const REVISION_STATUSES = new Set(['current', 'superseded']);
 export const FINAL_REPORT_FILES = ['summary-card.yaml', 'full-report.yaml', 'evidence.yaml', 'report-meta.yaml'];
+
+// Per-run scratch dir under .research-cache/ (gitignored). Single source of
+// truth so new-report.mjs, refresh-fixture.mjs, load-chapter.mjs, and any
+// future consumer never hand-build the path. `base` is the run id
+// (`<timestamp>-<companySlug>`) — the same name as the report folder.
+export function researchCacheDir(base) {
+  return join(researchCacheRoot, base);
+}
+
+// Strip the leading "<timestamp>-" prefix from a run id / report folder name
+// to recover the company slug that chapter-level `slug:` fields and
+// new-report.mjs's `slugify(companyName)` use. Single source of truth so
+// every "what's the canonical slug for this run" caller agrees.
+export function companySlugFromRunId(runId) {
+  return String(runId ?? '').replace(/^\d{14}-/, '');
+}
 
 export function isRunId(value) {
   return RUN_ID_RE.test(String(value ?? ''));
