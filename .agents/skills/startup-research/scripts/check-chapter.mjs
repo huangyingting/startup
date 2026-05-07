@@ -15,7 +15,7 @@
 // chapter-wide root cause).
 import { existsSync, readdirSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
-import { canonicalSourceUrl, collectClaimRefs, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
+import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
 import {
   checkArtifactRefs,
@@ -612,7 +612,7 @@ if (doc) {
   // field is the second half only. Catches the drift seen in RUN-1 where
   // every chapter accidentally carried the full `<timestamp>-<companySlug>`.
   {
-    const canonical = basename(reportFolder).replace(/^\d{14}-/, '');
+    const canonical = companySlugFromRunId(basename(reportFolder));
     if (doc?.slug && doc.slug !== canonical) {
       fail('slugConsistency', `${spec.file}: slug "${doc.slug}" does not match folder slug "${canonical}"`, { actual: doc.slug, required: canonical });
     }
@@ -716,7 +716,7 @@ if (doc) {
   for (const [index, callout] of (doc.callouts ?? []).entries()) {
     const path = `${spec.file}: callout ${index + 1}`;
     const { errors } = checkCalloutSchema(callout, { path });
-    for (const err of errors) fail('analysisCallout', err.message, { index, ...err });
+    for (const err of errors) fail('calloutShape', err.message, { index, ...err });
   }
 
   // Per-table column/row alignment + enumerationScope shape. The deeper

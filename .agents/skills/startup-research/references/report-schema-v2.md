@@ -325,17 +325,17 @@ block:
   title: string | null
   body: string | null              # Required (non-empty) when type is paragraph or callout.
   calloutType: strength | risk | recommendation | insight | assumption | null   # Required when type is callout.
-  tableRef: T001 | null            # Required when type is table.
-  figureRef: F001 | null           # Required when type is figure.
+  tableRef: TO001 | null           # Required when type is table; chapter-letter prefix matches the owning chapter.
+  figureRef: FO001 | null          # Required when type is figure; chapter-letter prefix matches the owning chapter.
   items: [string]                  # Required (non-empty) when type is list.
   equation: string | null          # Required (non-empty) when type is equation.
-  claimRefs: [C001]
+  claimRefs: [CO001]
 
 coverFact:
   label: string
   value: number | string | null     # Numeric when sortable/chartable; string for textual values like "Series A".
   unit: string | null               # e.g. `USD M`, `%`, `employees`. Omit for textual values.
-  claimRefs: [C001]
+  claimRefs: [CO001]
 
 companyProfile:
   summary: string                  # Non-empty.
@@ -344,7 +344,7 @@ companyProfile:
     - name: string
       role: string | null
       background: string | null
-      claimRefs: [C001]
+      claimRefs: [CO001]
   foundingLocation: string | null
   headquarters: string | null
   productSummary: string           # Non-empty.
@@ -357,7 +357,7 @@ companyProfile:
   # rarely have public ARR/revenue/headcount; record the profile so chapter 04
   # (financials) can pre-populate canonical evidenceGaps for those metrics rather
   # than rediscovering they are unavailable. Default null = unspecified.
-  claimRefs: [C001]
+  claimRefs: [CO001]
 
 keyMetrics:
   valuationUsdM: number | null

@@ -13,6 +13,7 @@ import {
   normalizeRevision,
   readYaml,
   reportsDir,
+  researchCacheDir,
   slugify,
 } from './utils.mjs';
 
@@ -128,7 +129,7 @@ function writeRefreshContext({ base, companyName, website, refreshTarget, refres
   const previousCardPath = join(reportsDir, previousRunId, 'summary-card.yaml');
   const previousCard = existsSync(previousCardPath) ? readYaml(previousCardPath) : {};
   const revision = normalizeRevision(previousCard.revision);
-  const cacheDir = join(reportsDir, '..', '.research-cache', base);
+  const cacheDir = researchCacheDir(base);
   mkdirSync(cacheDir, { recursive: true });
   const context = {
     schemaVersion: 'refresh-context-v1',
@@ -229,7 +230,7 @@ if (args.disclosure) {
     note: 'Set companyProfile.disclosureProfile in report-meta.yaml to this value. Pre-populate the canonical evidenceGaps below in chapter 04 (financials) instead of rediscovering they are unavailable.',
     canonicalEvidenceGaps: canonicalGaps,
   };
-  const cacheDir = join(reportsDir, '..', '.research-cache', base);
+  const cacheDir = researchCacheDir(base);
   mkdirSync(cacheDir, { recursive: true });
   const hintPath = join(cacheDir, 'disclosure-hint.yaml');
   writeFileSync(hintPath, yaml.dump(hint, { lineWidth: 120, noRefs: true, sortKeys: false }), 'utf8');

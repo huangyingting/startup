@@ -3,8 +3,8 @@
 // The CLI intentionally reads only chapters.yaml through utils so the
 // workflow has one machine-readable source of truth for chapter order, gates,
 // output files, and final artifact names.
-import { join } from 'node:path';
-import { FINAL_ARTIFACTS, loadWorkflowConfig, tryReadYaml, workflowConfigPath } from './utils.mjs';
+import { join, basename } from 'node:path';
+import { FINAL_ARTIFACTS, companySlugFromRunId, loadWorkflowConfig, researchCacheDir, tryReadYaml, workflowConfigPath } from './utils.mjs';
 import { RESTRICTED_ACCESS_STATUSES, VOCABULARIES, dimensionCatalog } from './check-dimensions.mjs';
 
 function usage() {
@@ -147,6 +147,33 @@ function cumulativeContext(reportFolder, currentOrder, allChapters) {
     cumulativeRestrictedAccessPct: totalSources ? +(restricted / totalSources).toFixed(3) : 0,
     earlierChapters: seen,
   };
+}
+
+// Per-run scratch surfaced into the chapter packet. new-report.mjs writes
+// these into .research-cache/<runId>/ but historically they were never
+// loaded back, so an agent invoking --disclosure stealth or --refresh would
+// never see the hint/context. Surface both inside the packet so the agent
+// reads the same files the orchestrator wrote.
+//   disclosureHint: pre-populated canonical evidenceGaps for stealth /
+//     private-undisclosed companies (chapter 04 financials should adopt them
+//     as-is rather than rediscovering they are unavailable).
+//   refreshContext: prior-run summary card snapshot used as background /
+//     diff context only; volatile facts must still be re-fetched.
+function runCacheContext(reportFolder) {
+  const runId = basename(reportFolder);
+  const cacheDir = researchCacheDir(runId);
+  const out = {
+    cacheDir,
+    runId,
+    companySlug: companySlugFromRunId(runId),
+    disclosureHint: null,
+    refreshContext: null,
+  };
+  const disclosure = tryReadYaml(join(cacheDir, 'disclosure-hint.yaml'));
+  if (disclosure.ok) out.disclosureHint = disclosure.value;
+  const refresh = tryReadYaml(join(cacheDir, 'refresh-context.yaml'));
+  if (refresh.ok) out.refreshContext = refresh.value;
+  return out;
 }
 
 function buildPacket(config, chapter) {
@@ -352,6 +379,7 @@ function main() {
       return { key, ...compactContextChapter(args.reportFolder, file) };
     });
     packet.cumulativeContext = cumulativeContext(args.reportFolder, chapter.order, config.chapters);
+    packet.runCache = runCacheContext(args.reportFolder);
   }
   const output = args.includeWorkflow ? packet : packet.chapter;
   if (args.format === 'json') printJson(output);

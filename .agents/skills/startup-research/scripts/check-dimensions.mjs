@@ -326,7 +326,7 @@ export const FIX_HINTS = {
     required != null ? `On table ${tableId}: add sources from ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}).` : "Add sources from additional registrable domains backing the table's claimRefs.",
   claimShape: ({ id } = {}) =>
     id ? `Fix claim ${id}: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.` : 'Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.',
-  analysisCallout: 'Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength|risk|recommendation|insight|assumption).',
+  calloutShape: 'Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength|risk|recommendation|insight|assumption).',
   tableShape: ({ tableId } = {}) =>
     tableId ? `Fix table ${tableId}: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.` : 'Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.',
   documentHead: 'Fix the chapter document head: schemaVersion=report-v2, artifact matches the chapter key, slug, runDate=YYYY-MM-DD, company.name, and chapter.number matching the chapter order.',
@@ -391,7 +391,7 @@ export const CASCADE_SUPPRESSORS = {
     'enumerationRowCorroboration',
     'contentRequirementCoverage',
     'tableShape', 'figureShape', 'duplicateIds', 'artifactRefs',
-    'analysisCallout', 'duplicateAnalysis', 'figureType',
+    'calloutShape', 'duplicateAnalysis', 'figureType',
     'sectionsMin', 'sectionsMax', 'artifactsMin',
     'tablesMax', 'figuresMax',
     'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
@@ -434,7 +434,7 @@ export const RETRY_PRECEDENCE = [
   'enumerationScope', 'enumerationRows', 'enumerationCoverageGap', 'enumerationRowCorroboration',
   'tableShape', 'figureShape', 'figureType',
   'duplicateIds', 'artifactRefs', 'duplicateAnalysis',
-  'analysisCallout',
+  'calloutShape',
   'sectionsMin', 'sectionsMax', 'artifactsMin', 'tablesMax', 'figuresMax',
   'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
   'contentRequirementCoverage',
