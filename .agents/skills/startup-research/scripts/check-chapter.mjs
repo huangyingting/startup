@@ -295,16 +295,15 @@ function loadEarlierChapterUrls(reportFolder, currentSpec, allSpecs) {
 // Build a Set of canonical URLs that fetch-url actually retrieved during this
 // run. The fetch trail is written by .agents/skills/fetch-url/scripts/fetch.mjs
 // when env STARTUP_FETCH_LOG_PATH is set (the workflow points it at
-// `.research-cache/<runId>/_fetch-log.jsonl`). Returns null when the log file
-// is absent so checkSourceFetchTrail() can skip silently for older reports
-// or interactive runs that did not enable the trail.
+// `.research-cache/_fetch-log.jsonl`). Returns null when the log file is
+// absent so checkSourceFetchTrail() can skip silently for older reports or
+// interactive runs that did not enable the trail.
 function loadFetchTrailUrls(reportFolder) {
   const candidates = [];
   if (process.env.STARTUP_FETCH_LOG_PATH) candidates.push(resolve(process.env.STARTUP_FETCH_LOG_PATH));
   const runId = basename(reportFolder);
   candidates.push(resolve('.research-cache', runId, '_fetch-log.jsonl'));
   candidates.push(resolve('.research-cache', '_fetch-log.jsonl'));
-  candidates.push(join(reportFolder, '.fetch-trail.jsonl'));
   for (const path of candidates) {
     if (!existsSync(path)) continue;
     let text;
