@@ -26,6 +26,29 @@ This repository generates startup diligence reports as structured YAML and rende
 - Keep skill-owned scripts under `.agents/skills/*/scripts/`. Validation logic that needs to run both during chapter generation and at report-build time (e.g. figure shape contracts) is shared via `website/src/lib/` modules imported by the skill validators.
 - Use `node .agents/skills/.../scripts/*.mjs` directly for skill workflow scripts; do not add npm aliases for skill internals.
 
+## Skill documentation responsibility
+
+Each file in a skill answers exactly one question. Other files referencing the same topic degrade to a one-line pointer.
+
+| File | Owns | Does **not** own |
+|---|---|---|
+| `SKILL.md` | Process: steps, CLI invocations, decisions, retry policy, research/evidence rules | Field definitions, enum values, checker algorithms |
+| `references/<topic>-schema-v<N>.md` | Schema: field shapes, enums, IDs, cross-schema pointers | CLI, process advice, checker internals |
+| `references/yaml-rules.md` | YAML syntax constraints (indentation, quoting, anchors, numeric/null) | Schema, process |
+| `references/<config>.yaml` | Configuration data | — |
+| `scripts/<name>.mjs --help` | CLI usage: argument list, mutual-exclusion rules | Field semantics, process |
+| `scripts/check-dimensions.mjs` (and similar source modules) | Source of truth for vocab values + checker algorithms | Documentation duplication |
+
+**Total rule.** Schema docs describe "what this field is in the data". Anything about "what command produced it", "what the checker does with it", or "what another schema looks like" degrades to a one-line pointer to the file that owns it. Cross-schema pointers are one-directional: schema → schema is allowed; schema → SKILL.md is not (process docs read schemas; schemas don't loop back to describe process).
+
+**Common violations to watch for in schema docs:**
+
+- CLI flags or invocation commands inline (belongs in SKILL.md or `--help`).
+- "The agent should ..." / "Use this to ..." advice (belongs in SKILL.md).
+- Re-listing enum values whose source of truth is a `.mjs` module (point to it; don't restate).
+- Inlining another schema's fields when a `see references/<other>.md` pointer would do.
+- Field comments that describe checker algorithms instead of field semantics.
+
 ## Core philosophy
 
 > ⚠️ **These rules govern repo development only — they have NO bearing on report generation.**

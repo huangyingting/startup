@@ -378,15 +378,15 @@ appendix:
 
 ## Run cache files
 
-Read-only inputs the orchestrator (`new-report.mjs`) writes under `.research-cache/<runId>/`. The chapter packet surfaces them as `packet.runCache.disclosureHint` and `packet.runCache.refreshContext` whenever `load-chapter.mjs` is called with `--include-context --report-folder <reportFolder>`. Treat them strictly as inputs — do not write to them from chapter generation.
+Read-only inputs the orchestrator writes under `.research-cache/<runId>/`. They appear in the chapter packet as `packet.runCache.disclosureHint` and `packet.runCache.refreshContext` (see `references/chapter-packet-schema-v2.md`).
 
 ```yaml
-disclosure-hint.yaml:                        # Written when new-report.mjs is given --disclosure stealth | private-undisclosed.
+disclosure-hint.yaml:                        # Optional. Carries the operator-supplied disclosure hint.
   disclosureProfile: public | private-disclosed | private-undisclosed | stealth
   note: string                               # Operator note pointing at companyProfile.disclosureProfile + chapter-04 adoption.
-  canonicalEvidenceGaps: [string]            # Plain-string gap descriptions the agent should adopt as the `missingEvidence` field of typed evidenceGap entries in chapter 04 (financials).
+  canonicalEvidenceGaps: [string]            # Plain-string gap descriptions; chapter 04 (financials) adopts each as the `missingEvidence` field of a typed evidenceGap.
 
-refresh-context.yaml:                        # Written when new-report.mjs is given --refresh; carries the prior run's summary card snapshot.
+refresh-context.yaml:                        # Optional. Carries the prior run's summary-card snapshot for refresh runs.
   schemaVersion: refresh-context-v1
   mode: refresh
   newRunId: string                           # `<14-digit-timestamp>-<companySlug>` of the new run.
@@ -408,11 +408,6 @@ refresh-context.yaml:                        # Written when new-report.mjs is gi
     sourceStats: {}                          # Verbatim copy of prior summary-card.sourceStats.
   refreshInstructions: [string]              # Human-readable reminders the orchestrator wrote; agent re-reads as a checklist.
 ```
-
-Adoption rules:
-
-- `disclosureHint.canonicalEvidenceGaps[]` — chapter 04 (financials) should adopt each entry as the `missingEvidence` field of a typed `evidenceGap` (pick a sensible `type` / `severity` / `topic` per entry). Other chapters do not consume this file.
-- `refreshContext.previousReport` — use only as background/diff context. Re-fetch every volatile fact (see SKILL.md's *Research and evidence rules*); never copy a stale claim or metric without re-verifying it.
 
 ## depthFloor (per-chapter `gate.depthFloor`)
 

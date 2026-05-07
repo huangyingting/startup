@@ -1,35 +1,14 @@
-# Chapter packet schema (`chapter-packet-v1`)
+# Chapter packet schema (`chapter-packet-v2`)
 
-Schema reference for the JSON object emitted by `load-chapter.mjs`. The agent
-reads this packet to plan and write a chapter; the same packet feeds the
-gate floors that `check-chapter.mjs` enforces, so values here and values the
-checker reads from `chapters.yaml` / `check-dimensions.mjs` cannot drift.
-
-## Invocation modes
-
-```
-node .agents/skills/startup-research/scripts/load-chapter.mjs <selector> [--format json|markdown] [--no-workflow] [--include-context --report-folder <path>]
-```
-
-Selectors (mutually exclusive; default is `--list`):
-
-- `--order <n>` — chapter by 1-based order.
-- `--key <key>` — chapter by `chapters.yaml.key` (e.g. `company-overview`).
-- `--file <artifact.yaml>` — chapter by output filename (e.g. `01-company-overview.yaml`).
-- `--list` — top-level workflow listing instead of a chapter packet.
-- `--all` — every chapter packet at once (array).
-
-Flags:
-
-- `--format json` (default) | `markdown` — machine-readable vs. human review.
-- `--no-workflow` — emit only `packet.chapter` (drops vocabularies/checkDimensions/runCache/contextChapters). Use sparingly; the chapter loop wants the enriched packet.
-- `--include-context` — adds `contextChapters[]`, `cumulativeContext`, and `runCache`. Requires `--report-folder <path>`.
-- `--report-folder <path>` — points at the active `reports/<runId>/` folder. When the basename is not a `<14-digit-timestamp>-<slug>` runId, `runCache` is returned with all fields null instead of crashing.
+Schema reference for the JSON object emitted by `load-chapter.mjs`. The packet
+feeds chapter generation and the gate floors that `check-chapter.mjs`
+enforces, so values here and values the checker reads from `chapters.yaml` /
+`check-dimensions.mjs` cannot drift.
 
 ## Top-level shape
 
 ```yaml
-schemaVersion: chapter-packet-v1
+schemaVersion: chapter-packet-v2
 generatedFrom: <absolute path to chapters.yaml>
 workflow:
   reportSchemaVersion: report-v2
@@ -44,15 +23,18 @@ previousChapter: compactChapter | null
 chapter: compactChapter              # see "Chapter object"
 nextChapter: compactChapter | null
 
-# Present only when --include-context --report-folder are both passed:
+# Optional context block. Present only when the packet was emitted with
+# context enabled; absent otherwise.
 contextChapters: [contextChapter]    # see "Context chapter"
 cumulativeContext: cumulativeContext # advisory metrics from earlier chapters
 runCache: runCache                   # disclosure-hint + refresh-context, when present
 ```
 
-The `--list` mode returns `schemaVersion: chapter-list-v1` instead and replaces `chapter`/`previousChapter`/`nextChapter` with `chapters: [compactChapter]`. Vocabularies and check dimensions are still included.
+The `schemaVersion` field discriminates three shapes the same loader emits:
 
-The `--all` mode returns an array of chapter packets in chapter order.
+- `chapter-packet-v2` — single-chapter packet (top-level shape above).
+- `chapter-list-v2` — replaces `chapter` / `previousChapter` / `nextChapter` with `chapters: [compactChapter]`. Vocabularies and check dimensions are still included.
+- An array of `chapter-packet-v2` objects when every chapter is requested at once.
 
 ## Chapter object (`compactChapter`)
 
@@ -64,12 +46,12 @@ file: string                         # output filename under reports/<runId>/ (e
 artifact: string                     # equals `key`; report-v2 chapter YAML's `artifact:` field must equal this.
 title: string
 mission: string                      # 1–3 sentence chapter mission statement.
-optionalContext: [string]            # chapters.yaml keys; their loaded artifacts appear in contextChapters[] when --include-context is set.
+optionalContext: [string]            # chapters.yaml keys; loaded artifacts appear in contextChapters[] when that block is present.
 contentRequirements: [string]        # narrative obligations the chapter must satisfy (gate.minContentRequirementCoverage of these must be cited via researchQuestion.targets[]).
 plannedTables:                       # gate.maxTables / gate.maxFigures bound the totals.
   - name: string                     # slug used in researchQuestion.targets[] (`plannedTables/<name>`).
     requirement: string              # one-line description.
-    enumeration: boolean | null      # true = matching table[] must include enumerationScope and meet gate.minSourcesPerEnumerationRow per row.
+    enumeration: boolean | null      # true = enumeration table (matching table[] requires enumerationScope and per-row source corroboration; see check-chapter for the rule).
     expectedMinRows: number | null   # only meaningful when enumeration is true.
 plannedFigures:
   - name: string                     # slug used in researchQuestion.targets[] (`plannedFigures/<name>`).
@@ -86,15 +68,16 @@ gate:                                # all floors and ceilings the chapter must 
   minResearchQuestions: number
   minQuestionTypeSpread: number      # distinct values from packet.vocabularies.questionType.
   minAdverseQuestions: number        # of researchQuestions whose type is `adverse`.
+  minQuestionAnswerRate: number      # decimal share (0–1) of researchQuestions whose status is `answered`.
   minContentRequirementCoverage: number  # decimal share (0–1; default 0.8) of contentRequirements[] that must be cited via researchQuestion.targets[].
   minLocalSources: number
   minLocalClaims: number
   minAdverseSources: number          # source.stance === 'adverse'.
   minSourceDomains: number           # distinct registrable domains across local sources.
   minSourceTypeSpread: number        # distinct values from packet.vocabularies.sourceType.
-  requiredSourceTypes: [sourceType]  # every value here must appear at least once.
+  requiredSourceTypes: [sourceType]  # values that must each appear at least once in localSources.
   minNetNewSources: number           # local source URLs that did not appear in any earlier-order chapter's localEvidence.sources[].
-  minHighConfidenceCorroboration: number  # claim.confidence === 'high' must carry at least this many sourceRefs and ≥1 primary-tier source.
+  minHighConfidenceCorroboration: number  # floor for distinct sourceRefs on each high-confidence claim (corroboration rule, see check-chapter).
   minSourcesPerEnumerationRow: number     # for enumeration tables, distinct registrable domains backing each row.
   depthFloor:
     minSectionBodyWords: number      # words per individual section body.
@@ -103,34 +86,34 @@ gate:                                # all floors and ceilings the chapter must 
     minFigureDataPointsTotal: number # sum of structural data points across figures[] (figure-type specific).
 ```
 
-`packet.chapter.gate` is the canonical gate for that chapter; floors injected from workflow-config (e.g. `minAdverseSources`, derived from `chapters.yaml.adverseDistribution.requireAtLeastOneAdverseSource`) are already merged in by `utils.normalizeWorkflowConfig`. Read floors from this object — never from `chapters.yaml` directly.
+`packet.chapter.gate` is the canonical per-chapter gate, already merged with workflow-config-injected floors (e.g. `minAdverseSources` derived from `chapters.yaml.adverseDistribution`). `check-chapter` reads the same object.
 
 ## Vocabularies (`packet.vocabularies`)
 
-Object with the canonical enum lists, exported from `scripts/check-dimensions.mjs`. The agent should read `Object.keys(packet.vocabularies)` for the complete list rather than hard-coding values.
+Object with the canonical enum lists, exported from `scripts/check-dimensions.mjs` (the source of truth for both keys and values).
 
 ```yaml
 vocabularies:
-  sourceType: [official, filing, regulatory, news, analyst-market-data, technical-docs, customer-proof, partner-proof, developer-signal, review, legal, other]
-  primaryTierSourceTypes: [official, filing, regulatory, legal]   # subset of sourceType that satisfies the high-confidence corroboration rule (or any source with reputationTier === 'high').
-  sourceStance: [confirming, adverse, neutral, unknown]            # YAML field is `stance`; vocab key is namespaced.
-  sourceAccessStatus: [ok, paywall, js-only, broken, rate-limited]
-  restrictedAccessStatuses: [paywall, js-only, broken, rate-limited]
-  sourceReputationTier: [high, medium, low]
-  sourceIndependence: [company, partner, customer, competitor, independent, unknown]
-  claimType: [observed, company-claimed, third-party-reported, estimated, inferred, open-question, conflicting]
-  claimConfidence: [high, medium, low]
-  claimFreshness: [current, recent, historical, unknown]
-  questionType: [enumeration, quantification, verification, adverse, freshness, comparison, mechanism]
-  questionStatus: [answered, partial, unresolved]
-  enumerationCoverage: [exhaustive, partial, sample]
-  calloutType: [strength, risk, recommendation, insight, assumption]
-  cardRecommendation, cardConfidence, cardRiskRating, cardValuationStance: …    # report-meta enums; surfaced for completeness.
+  sourceType: […]                  # canonical source-type enum.
+  primaryTierSourceTypes: […]      # subset of sourceType used by the high-confidence corroboration rule (sources with reputationTier === 'high' also satisfy it).
+  sourceStance: […]                # YAML field name is `stance`; vocab key is namespaced.
+  sourceAccessStatus: […]
+  restrictedAccessStatuses: […]    # subset of sourceAccessStatus that counts toward the restricted-access cap.
+  sourceReputationTier: […]
+  sourceIndependence: […]
+  claimType: […]
+  claimConfidence: […]
+  claimFreshness: […]
+  questionType: […]
+  questionStatus: […]
+  enumerationCoverage: […]
+  calloutType: […]
+  cardRecommendation, cardConfidence, cardRiskRating, cardValuationStance: […]   # report-meta enums; surfaced for completeness.
 ```
 
 ## Check dimensions (`packet.checkDimensions`)
 
-Array of every validator dimension `check-chapter` may emit, sorted by retry precedence (root causes first). Used by the agent's retry loop to know which dimension to fix first.
+Array of every validator dimension `check-chapter` may emit, sorted by retry precedence (root causes first).
 
 ```yaml
 checkDimensions:
@@ -141,7 +124,7 @@ checkDimensions:
 
 ## Context chapter (`packet.contextChapters[]`)
 
-One entry per `chapter.optionalContext[]` key. Loaded from disk only when `--include-context --report-folder` are both set; absent files are reported with `status: missing`.
+Optional. When the context block is present, one entry per `chapter.optionalContext[]` key; absent files are reported with `status: missing`.
 
 ```yaml
 contextChapters:
@@ -169,7 +152,7 @@ contextChapters:
 
 ## Cumulative context (`packet.cumulativeContext`)
 
-Advisory only; never gates the current chapter. Use it to spend research effort on closing earlier unresolved questions and to avoid pushing the report's restricted-access share above the 30 % report-level ceiling.
+Advisory only; never gates the current chapter. Aggregated from earlier chapters' `localEvidence`.
 
 ```yaml
 cumulativeContext:
@@ -186,29 +169,19 @@ cumulativeContext:
 
 ## Run cache (`packet.runCache`)
 
-Loaded from `.research-cache/<runId>/` (written by `new-report.mjs`). Both `disclosureHint` and `refreshContext` are `null` when their underlying files do not exist. When the report folder basename is not a runId, the entire object's identity fields fall back to nulls (no crash).
+Loaded from `.research-cache/<runId>/`. When the report folder basename is not a runId, the identity fields fall back to nulls (no crash). For the `disclosureHint` and `refreshContext` shapes, see *Run cache files* in `references/report-schema-v2.md`.
 
 ```yaml
 runCache:
-  cacheDir: string | null            # absolute path to .research-cache/<runId>/, or null if not a runId folder.
+  cacheDir: string | null            # absolute path to .research-cache/<runId>/, or null if the report folder basename is not a runId.
   runId: string                      # report folder basename.
   companySlug: string | null         # slug derived from runId, or null when not a runId.
-  disclosureHint:                    # see references/report-schema-v2.md "Run cache files" for the full shape.
-    disclosureProfile: public | private-disclosed | private-undisclosed | stealth
-    note: string
-    canonicalEvidenceGaps: [string]  # adopt verbatim as evidenceGap.missingEvidence in chapter 04 (financials).
-  refreshContext:                    # set when new-report.mjs --refresh wrote the prior-run snapshot.
-    schemaVersion: refresh-context-v1
-    mode: refresh
-    newRunId: string
-    refreshOfRunId: string
-    refreshReason: string | null
-    previousReport: { runId, path, summaryCardPath, runDate, revisionStatus, company, headline, overallScore, recommendation, riskRating, valuationStance, keyMetrics, sourceStats }
-    refreshInstructions: [string]
+  disclosureHint: object | null      # null when disclosure-hint.yaml is absent.
+  refreshContext: object | null      # null unless this run was started with --refresh.
 ```
 
 ## What is intentionally NOT in the packet
 
-- The chapter's prior-run YAML body. Refresh runs use `runCache.refreshContext` for diff context only; **re-fetch every volatile fact** instead of reading old chapter YAMLs.
-- Report-meta judgment fields (`recommendation`, `riskRating`, `valuationStance`, etc.). Those are authored once in `report-meta.yaml` at finalization, not per chapter.
-- Cross-chapter claim ids. Each chapter generates ids only with its own `letter`; consolidation across chapters happens later in `ledger.mjs` (run by `finalize.mjs`). The agent never looks up another chapter's id by hand — `crossChapterRefLeak` would flag it.
+- The chapter's prior-run YAML body. Refresh runs surface only the prior run's summary-card snapshot via `runCache.refreshContext`; full chapter YAMLs are not loaded.
+- Report-meta judgment fields (`recommendation`, `riskRating`, `valuationStance`, etc.). Those live in `report-meta.yaml` (see `references/report-schema-v2.md`).
+- Cross-chapter claim ids. Each chapter generates ids only with its own `letter`; consolidation across chapters happens later in `ledger.mjs`.

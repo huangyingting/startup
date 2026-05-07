@@ -188,7 +188,7 @@ function buildPacket(config, chapter) {
   const chapters = config.chapters;
   const index = chapters.findIndex((item) => item.order === chapter.order);
   return {
-    schemaVersion: 'chapter-packet-v1',
+    schemaVersion: 'chapter-packet-v2',
     generatedFrom: workflowConfigPath,
     workflow: {
       reportSchemaVersion: config.reportSchemaVersion,
@@ -217,7 +217,7 @@ function selectChapter(config, args) {
 
 function orderedList(config) {
   return {
-    schemaVersion: 'chapter-list-v1',
+    schemaVersion: 'chapter-list-v2',
     generatedFrom: workflowConfigPath,
     workflow: {
       reportSchemaVersion: config.reportSchemaVersion,
