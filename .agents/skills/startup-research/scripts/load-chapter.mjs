@@ -5,8 +5,7 @@
 // output files, and final artifact names.
 import { join } from 'node:path';
 import { FINAL_ARTIFACTS, loadWorkflowConfig, tryReadYaml, workflowConfigPath } from './utils.mjs';
-
-const RESTRICTED_ACCESS = new Set(['paywall', 'js-only', 'broken', 'rate-limited']);
+import { RESTRICTED_ACCESS_STATUSES, VOCABULARIES, dimensionCatalog } from './check-dimensions.mjs';
 
 function usage() {
   console.error(`Usage: node .agents/skills/startup-research/scripts/load-chapter.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--no-workflow] [--include-context --report-folder <path>]
@@ -60,6 +59,7 @@ function compactChapter(chapter) {
   return {
     key: chapter.key,
     order: chapter.order,
+    letter: chapter.letter,
     file: chapter.file,
     artifact: chapter.key,
     title: chapter.title,
@@ -70,6 +70,10 @@ function compactChapter(chapter) {
     plannedFigures: chapter.plannedFigures ?? [],
     evidenceStrategy: chapter.evidenceStrategy ?? [],
     qualityBar: chapter.qualityBar ?? [],
+    // gate already carries gate.minAdverseSources (and any other workflow-
+    // config-derived floors) because normalizeWorkflowConfig in utils.mjs
+    // injects them — the same gate object check-chapter reads, so the packet
+    // the agent receives and the check it must clear can never drift apart.
     gate: chapter.gate,
   };
 }
@@ -131,7 +135,7 @@ function cumulativeContext(reportFolder, currentOrder, allChapters) {
     const sources = doc.localEvidence?.sources ?? [];
     const questions = doc.localEvidence?.researchQuestions ?? [];
     const chUnanswered = questions.filter((q) => q?.status !== 'answered').length;
-    const chRestricted = sources.filter((s) => RESTRICTED_ACCESS.has(s?.accessStatus)).length;
+    const chRestricted = sources.filter((s) => RESTRICTED_ACCESS_STATUSES.has(s?.accessStatus)).length;
     unanswered += chUnanswered;
     totalSources += sources.length;
     restricted += chRestricted;
@@ -156,6 +160,13 @@ function buildPacket(config, chapter) {
       finalArtifacts: FINAL_ARTIFACTS,
       totalChapters: chapters.length,
     },
+    // Single source of truth for enum vocab and validator dimensions. Agents
+    // and the SKILL.md should reference packet.vocabularies / packet.checkDimensions
+    // rather than re-declaring these literals in prose; the same module backs
+    // chapter-schema validation and check-chapter retry hints, so the packet
+    // and the gate cannot drift.
+    vocabularies: VOCABULARIES,
+    checkDimensions: dimensionCatalog(),
     previousChapter: index > 0 ? compactChapter(chapters[index - 1]) : null,
     chapter: compactChapter(chapter),
     nextChapter: index < chapters.length - 1 ? compactChapter(chapters[index + 1]) : null,
@@ -177,6 +188,8 @@ function orderedList(config) {
       reportSchemaVersion: config.reportSchemaVersion,
       finalArtifacts: FINAL_ARTIFACTS,
     },
+    vocabularies: VOCABULARIES,
+    checkDimensions: dimensionCatalog(),
     chapters: config.chapters.map(compactChapter),
   };
 }
@@ -205,7 +218,7 @@ function figureItems(values) {
   return values.map((item) => `- ${item.name} (${(item.acceptedTypes ?? []).join(' | ')}): ${item.requirement}`).join('\n');
 }
 
-function gateMarkdown(gate) {
+function gateMarkdown(gate, letter) {
   const floor = gate?.depthFloor ?? {};
   return [
     `- Sections: ${gate?.minSections}-${gate?.maxSections}`,
@@ -213,10 +226,45 @@ function gateMarkdown(gate) {
     `- Tables ceiling: ${gate?.maxTables}`,
     `- Figures ceiling: ${gate?.maxFigures}`,
     `- Research questions: >= ${gate?.minResearchQuestions}`,
-    `- Local sources: >= ${gate?.minLocalSources}`,
+    `- Local sources: >= ${gate?.minLocalSources} (>= ${gate?.minAdverseSources ?? 0} with stance: adverse)`,
     `- Local claims: >= ${gate?.minLocalClaims}`,
     `- Depth floor: section body >= ${floor.minSectionBodyWords} words; total section words >= ${floor.minSectionWordsTotal}; table rows >= ${floor.minTableRowsTotal}; figure data points >= ${floor.minFigureDataPointsTotal}`,
+    `- IDs in this chapter must use letter "${letter}": sources S${letter}###, claims C${letter}###, tables T${letter}###, figures F${letter}###, researchQuestions Q${letter}###. Never copy an id from another chapter's letter into this chapter's claimRefs[] or prose. If you need a fact established in a different chapter, restate it as a new local claim here with its own sourceRefs[]; ledger consolidation dedupes equivalent claims at the end.`,
   ].join('\n');
+}
+
+function vocabSummaryMarkdown(vocab) {
+  if (!vocab) return '- (vocabularies unavailable)';
+  const order = [
+    'sourceType',
+    'sourceStance',
+    'sourceAccessStatus',
+    'restrictedAccessStatuses',
+    'sourceReputationTier',
+    'sourceIndependence',
+    'claimType',
+    'claimConfidence',
+    'claimFreshness',
+    'questionType',
+    'questionStatus',
+    'calloutType',
+    'enumerationCoverage',
+    'primaryTierSourceTypes',
+  ];
+  return order
+    .filter((key) => Array.isArray(vocab[key]))
+    .map((key) => `- \`${key}\`: ${vocab[key].map((v) => `\`${v}\``).join(', ')}`)
+    .join('\n');
+}
+
+function dimensionsSummaryMarkdown(dimensions) {
+  if (!Array.isArray(dimensions) || !dimensions.length) return '- (dimension catalog unavailable)';
+  return dimensions
+    .map((d) => {
+      const sup = d.suppressedBy?.length ? ` (suppressed by: ${d.suppressedBy.map((s) => `\`${s}\``).join(', ')})` : '';
+      return `- \`${d.dimension}\` rank=${d.precedenceRank}${sup}`;
+    })
+    .join('\n');
 }
 
 function printListMarkdown(value) {
@@ -231,6 +279,10 @@ function printListMarkdown(value) {
   for (const [key, artifact] of Object.entries(value.workflow.finalArtifacts ?? {})) {
     console.log(`- ${key}: \`${artifact.file}\` / \`${artifact.artifact}\``);
   }
+  console.log('\n## Vocabularies (canonical enums)\n');
+  console.log(vocabSummaryMarkdown(value.vocabularies));
+  console.log('\n## Validator dimensions (retry order)\n');
+  console.log(dimensionsSummaryMarkdown(value.checkDimensions));
 }
 
 function printPacketMarkdown(packet) {
@@ -256,7 +308,11 @@ function printPacketMarkdown(packet) {
   console.log('\n## Quality bar\n');
   console.log(listItems(chapter.qualityBar));
   console.log('\n## Gate\n');
-  console.log(gateMarkdown(chapter.gate));
+  console.log(gateMarkdown(chapter.gate, chapter.letter));
+  console.log('\n## Vocabularies (canonical enums)\n');
+  console.log(vocabSummaryMarkdown(packet.vocabularies));
+  console.log('\n## Validator dimensions (retry order)\n');
+  console.log(dimensionsSummaryMarkdown(packet.checkDimensions));
 }
 
 function main() {

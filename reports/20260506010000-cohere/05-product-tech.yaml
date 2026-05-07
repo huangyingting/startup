@@ -120,7 +120,7 @@ sections:
     figureRefs:
       - F504
 tables:
-  - id: T501
+  - id: TE001
     title: Product Module / Asset Matrix
     columns:
       - Product
@@ -191,18 +191,18 @@ tables:
       Product status as of May 2026 based on public Cohere documentation and blog posts. Context windows for
       non-generative models are N/A as they process individual chunks.
     claimRefs:
-      - C162
-      - C175
-      - C176
-      - C177
-      - C191
-      - C192
+      - CE005
+      - CE018
+      - CE019
+      - CE020
+      - CE034
+      - CE035
     enumerationScope:
       coverage: partial
       basis: >-
         Cohere may have unreleased or enterprise-only products not covered in public documentation; the Aleph Alpha
         acquisition may add new products to the portfolio.
-  - id: T502
+  - id: TE002
     title: Workflow / Use-Case Table
     columns:
       - Use Case
@@ -250,11 +250,11 @@ tables:
         - GitHub Copilot, AWS CodeWhisperer, Cursor AI
     notes: Use cases identified from public Cohere product documentation and customer case studies. Not an exhaustive list.
     claimRefs:
-      - C160
-      - C177
-      - C188
-      - C189
-  - id: T503
+      - CE003
+      - CE020
+      - CE031
+      - CE032
+  - id: TE003
     title: Technology / Operating Architecture Table
     columns:
       - Layer
@@ -298,11 +298,11 @@ tables:
       Architecture details inferred from Cohere public documentation, API docs, and technical blog posts. Specific
       implementation details may differ from public descriptions.
     claimRefs:
-      - C170
-      - C179
-      - C190
-      - C191
-  - id: T504
+      - CE013
+      - CE022
+      - CE033
+      - CE034
+  - id: TE004
     title: Trust / Quality / Compliance Table
     columns:
       - Dimension
@@ -364,16 +364,16 @@ tables:
       Compliance status from Cohere public documentation and security page. Government compliance timelines based on
       public statements; actual certification dates may differ.
     claimRefs:
-      - C171
-      - C172
-      - C173
-      - C174
+      - CE014
+      - CE015
+      - CE016
+      - CE017
     enumerationScope:
       coverage: partial
       basis: >-
         Compliance standards listed are those with public evidence from Cohere documentation; additional certifications
         may be in progress but not publicly disclosed.
-  - id: T505
+  - id: TE005
     title: Roadmap / Release / Development-Stage Table
     columns:
       - Feature
@@ -426,12 +426,12 @@ tables:
       Roadmap items based on public Cohere blog posts, conference announcements, and investor presentations. Unconfirmed
       items are analyst inference.
     claimRefs:
-      - C175
-      - C176
-      - C177
-      - C178
+      - CE018
+      - CE019
+      - CE020
+      - CE021
 figures:
-  - id: F501
+  - id: FE001
     title: Product Architecture Map
     type: flow
     layout: standard
@@ -484,10 +484,10 @@ figures:
       Simplified architectural representation; actual deployment may include additional load balancers, caching layers,
       and monitoring infrastructure.
     claimRefs:
-      - C167
-      - C168
-      - C169
-  - id: F502
+      - CE010
+      - CE011
+      - CE012
+  - id: FE002
     title: Customer Workflow / Operating Flow
     type: flow
     layout: standard
@@ -540,11 +540,11 @@ figures:
       Representative RAG workflow for enterprise document Q&A use case; actual workflow steps may vary by customer
       deployment configuration.
     claimRefs:
-      - C164
-      - C165
-      - C166
-      - C170
-  - id: F503
+      - CE007
+      - CE008
+      - CE009
+      - CE013
+  - id: FE003
     title: Critical Dependency Map
     type: dag
     layout: standard
@@ -609,10 +609,10 @@ figures:
       Dependency severity: NVIDIA GPU supply and Oracle Cloud are rated critical; PyTorch/CUDA and Kubernetes are
       high-availability open-source stacks with low single-point-of-failure risk.
     claimRefs:
-      - C179
-      - C180
-      - C181
-  - id: F504
+      - CE022
+      - CE023
+      - CE024
+  - id: FE004
     title: Product Maturity / Capability Map
     type: quadrant
     layout: standard
@@ -655,12 +655,12 @@ figures:
       Scores are analyst assessments. Maturity = approximate months since GA release. Differentiation = relative
       competitive uniqueness on a 0-10 scale.
     claimRefs:
-      - C158
-      - C159
-      - C160
-      - C161
-      - C163
-      - C164
+      - CE001
+      - CE002
+      - CE003
+      - CE004
+      - CE006
+      - CE007
 callouts:
   - calloutType: strength
     title: Embed + Rerank Retrieval Moat Is the Most Durable Technical Differentiator
@@ -673,9 +673,9 @@ callouts:
       retrieval advantage gives it a penetration pathway into enterprise accounts that does not depend on Command A's
       generative benchmark performance.
     claimRefs:
-      - C165
-      - C166
-      - C182
+      - CE008
+      - CE009
+      - CE025
   - calloutType: risk
     title: Context Window Gap (256k vs 1M) Limits Large-Document Use Cases
     body: >
@@ -686,78 +686,78 @@ callouts:
       window. Until Cohere ships a 1M+ context model (unconfirmed; informally referenced for 2026–2027), it will
       continue to lose some large-document enterprise RFPs to Anthropic and Google.
     claimRefs:
-      - C183
-      - C184
-      - C185
+      - CE026
+      - CE027
+      - CE028
 localEvidence:
   searchQueries:
     - query: Cohere Command A model architecture 256k context enterprise deployment 2025
       engine: web_search
       hits: 10
       retainedSourceRefs:
-        - S001
-        - S002
-        - S003
+        - SE001
+        - SE002
+        - SE003
     - query: Cohere Embed v3 MTEB leaderboard retrieval benchmark 2025 results
       engine: web_search
       hits: 8
       retainedSourceRefs:
-        - S004
-        - S005
-        - S006
+        - SE004
+        - SE005
+        - SE006
     - query: Cohere North platform enterprise agentic AI connectors workflow 2025
       engine: web_search
       hits: 9
       retainedSourceRefs:
-        - S007
-        - S008
-        - S009
+        - SE007
+        - SE008
+        - SE009
     - query: Cohere API documentation developer resources getting started
       engine: web_search
       hits: 6
       retainedSourceRefs:
-        - S010
-        - S011
+        - SE010
+        - SE011
     - query: Cohere GitHub repository developer community SDK usage 2025
       engine: web_search
       hits: 7
       retainedSourceRefs:
-        - S012
-        - S013
+        - SE012
+        - SE013
     - query: Cohere SOC 2 FedRAMP compliance certification security 2025
       engine: web_search
       hits: 7
       retainedSourceRefs:
-        - S014
-        - S015
+        - SE014
+        - SE015
     - query: mixture of experts MoE LLM architecture inference efficiency Command A
       engine: web_search
       hits: 8
       retainedSourceRefs:
-        - S016
-        - S017
-        - S018
+        - SE016
+        - SE017
+        - SE018
     - query: Cohere private deployment on-premises enterprise VPC Kubernetes 2025
       engine: web_search
       hits: 6
       retainedSourceRefs:
-        - S019
-        - S020
+        - SE019
+        - SE020
     - query: enterprise RAG benchmark evaluation Cohere Embed rerank accuracy 2025
       engine: web_search
       hits: 8
       retainedSourceRefs:
-        - S021
-        - S022
-        - S023
+        - SE021
+        - SE022
+        - SE023
     - query: Cohere HuggingFace model card Aya multilingual technical specifications
       engine: web_search
       hits: 6
       retainedSourceRefs:
-        - S024
-        - S025
+        - SE024
+        - SE025
   researchQuestions:
-    - id: RQ001
+    - id: QE001
       question: >-
         What are the key specifications of Cohere Command A released in March 2025 — parameters, architecture, and
         context window?
@@ -766,7 +766,7 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/product-module-asset-matrix
       status: answered
-    - id: RQ002
+    - id: QE002
       question: >-
         How does Cohere Embed v3 rank on the MTEB benchmark relative to OpenAI text-embedding-3-large and Google
         embedding models?
@@ -775,14 +775,14 @@ localEvidence:
         - contentRequirements/4
         - plannedFigures/product-maturity-capability-map
       status: answered
-    - id: RQ003
+    - id: QE003
       question: What is the North platform and how does it differ from Cohere's raw model API offering?
       type: mechanism
       targets:
         - contentRequirements/0
         - plannedTables/product-module-asset-matrix
       status: answered
-    - id: RQ004
+    - id: QE004
       question: What enterprise SaaS applications does the North platform connect to via its connector integrations in 2025?
       type: verification
       targets:
@@ -790,7 +790,7 @@ localEvidence:
         - contentRequirements/3
         - plannedTables/workflow-use-case-table
       status: answered
-    - id: RQ005
+    - id: QE005
       question: >-
         What deployment architecture does Cohere use for private enterprise deployments — containers, bare metal, or
         managed cloud?
@@ -799,7 +799,7 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/technology-operating-architecture-table
       status: answered
-    - id: RQ006
+    - id: QE006
       question: >-
         What is Cohere's GPU training infrastructure and what is the extent of its NVIDIA partnership for training
         compute access?
@@ -808,7 +808,7 @@ localEvidence:
         - contentRequirements/2
         - plannedFigures/critical-dependency-map
       status: answered
-    - id: RQ007
+    - id: QE007
       question: >-
         What SOC 2, FedRAMP, and HIPAA certifications does Cohere hold and what is the status of planned compliance
         expansions?
@@ -817,7 +817,7 @@ localEvidence:
         - contentRequirements/5
         - plannedTables/trust-quality-compliance-table
       status: answered
-    - id: RQ008
+    - id: QE008
       question: >-
         Is Cohere Command A's mixture-of-experts architecture technically superior to dense alternatives at the same
         parameter count for inference efficiency?
@@ -826,7 +826,7 @@ localEvidence:
         - contentRequirements/4
         - plannedTables/technology-operating-architecture-table
       status: answered
-    - id: RQ009
+    - id: QE009
       question: >-
         How does Cohere handle data residency for enterprise customers — does any data leave the customer's
         infrastructure in private deployment?
@@ -835,7 +835,7 @@ localEvidence:
         - contentRequirements/5
         - plannedTables/trust-quality-compliance-table
       status: answered
-    - id: RQ010
+    - id: QE010
       question: >-
         What programming languages and SDKs does Cohere support for developer integration — Python, Java, TypeScript,
         etc.?
@@ -844,7 +844,7 @@ localEvidence:
         - contentRequirements/3
         - contentRequirements/0
       status: answered
-    - id: RQ011
+    - id: QE011
       question: >-
         What is the Aya model's language coverage and how does Cohere handle low-resource language quality for
         enterprise use cases?
@@ -853,7 +853,7 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/product-module-asset-matrix
       status: answered
-    - id: RQ012
+    - id: QE012
       question: >-
         What are the key technical limitations of Command A compared to Anthropic Claude Opus and Google Gemini 1.5 Pro
         for enterprise workflows?
@@ -862,7 +862,7 @@ localEvidence:
         - contentRequirements/4
         - plannedFigures/product-maturity-capability-map
       status: answered
-    - id: RQ013
+    - id: QE013
       question: >-
         How does Cohere's RAG pipeline (Embed + Rerank + Command) perform compared to OpenAI's file search + GPT-4o
         combination on standard enterprise benchmarks?
@@ -871,14 +871,14 @@ localEvidence:
         - contentRequirements/4
         - plannedTables/workflow-use-case-table
       status: partial
-    - id: RQ014
+    - id: QE014
       question: What is the Compass product and when is it expected to reach general availability?
       type: verification
       targets:
         - contentRequirements/1
         - plannedTables/roadmap-release-development-stage-table
       status: answered
-    - id: RQ015
+    - id: QE015
       question: >-
         What is the technical architecture of the North platform — frontend, backend, deployment model, and connector
         SDK?
@@ -887,7 +887,7 @@ localEvidence:
         - contentRequirements/2
         - plannedTables/technology-operating-architecture-table
       status: answered
-    - id: RQ016
+    - id: QE016
       question: >-
         Does Cohere have any pending patents or published research papers that demonstrate technical IP depth beyond
         model weights?
@@ -895,7 +895,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: partial
-    - id: RQ017
+    - id: QE017
       question: >-
         What is Cohere's dependency on Oracle Cloud Infrastructure and what would be the impact of losing this
         partnership?
@@ -904,14 +904,14 @@ localEvidence:
         - contentRequirements/2
         - plannedFigures/critical-dependency-map
       status: answered
-    - id: RQ018
+    - id: QE018
       question: Has Cohere had any publicly reported security incidents, data breaches, or service outages?
       type: adverse
       targets:
         - contentRequirements/5
         - plannedTables/trust-quality-compliance-table
       status: answered
-    - id: RQ019
+    - id: QE019
       question: >-
         What is the developer community engagement around Cohere — GitHub stars, Stack Overflow questions, HuggingFace
         downloads?
@@ -919,7 +919,7 @@ localEvidence:
       targets:
         - contentRequirements/3
       status: answered
-    - id: RQ020
+    - id: QE020
       question: >-
         How has Cohere's product evolved from 2022 to 2026 — what products were deprecated and what major new launches
         occurred?
@@ -928,7 +928,7 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/roadmap-release-development-stage-table
       status: answered
-    - id: RQ021
+    - id: QE021
       question: >-
         What is the typical time-to-value (from contract signing to production deployment) for a new Cohere enterprise
         customer?
@@ -937,7 +937,7 @@ localEvidence:
         - contentRequirements/3
         - contentRequirements/0
       status: partial
-    - id: RQ022
+    - id: QE022
       question: >-
         Does Cohere provide OpenAI-compatible API endpoints enabling drop-in replacement for existing OpenAI
         integrations?
@@ -946,7 +946,7 @@ localEvidence:
         - contentRequirements/3
         - contentRequirements/0
       status: answered
-    - id: RQ023
+    - id: QE023
       question: >-
         What is the EU AI Act compliance posture for Cohere Command A and how is it classified under the Act's risk tier
         system?
@@ -955,7 +955,7 @@ localEvidence:
         - contentRequirements/5
         - plannedTables/trust-quality-compliance-table
       status: answered
-    - id: RQ024
+    - id: QE024
       question: >-
         What is the technical basis of Cohere's multilingual capability in Aya — is it trained on multilingual data
         separately from Command A?
@@ -964,7 +964,7 @@ localEvidence:
         - contentRequirements/4
         - contentRequirements/1
       status: answered
-    - id: RQ025
+    - id: QE025
       question: >-
         What observable signals suggest that enterprise developers prefer or disfavour Cohere's developer experience vs
         OpenAI or Anthropic?
@@ -973,7 +973,7 @@ localEvidence:
         - contentRequirements/3
       status: answered
   sources:
-    - id: S001
+    - id: SE001
       publisher: Cohere
       title: 'Command A: Cohere''s Most Powerful Enterprise Model'
       url: https://cohere.com/blog/command-a
@@ -993,7 +993,7 @@ localEvidence:
       keyQuote: >-
         Command A is an 111B parameter model using a mixture-of-experts architecture, designed for enterprise private
         deployment with a 256k token context window.
-    - id: S002
+    - id: SE002
       publisher: Cohere Research
       title: Command A Technical Report
       url: https://cohere.com/research/papers/command-a-technical-report
@@ -1013,7 +1013,7 @@ localEvidence:
       keyQuote: >-
         Command A achieves competitive performance on enterprise tasks while maintaining significantly lower inference
         cost per token through sparse activation via its MoE architecture.
-    - id: S003
+    - id: SE003
       publisher: Cohere
       title: 'Cohere for Enterprise: Products and Platform'
       url: https://cohere.com/enterprise
@@ -1031,7 +1031,7 @@ localEvidence:
         - North platform
         - enterprise use cases
       keyQuote: null
-    - id: S004
+    - id: SE004
       publisher: Hugging Face
       title: 'MTEB Leaderboard: Text Embedding Benchmark Results'
       url: https://huggingface.co/spaces/mteb/leaderboard
@@ -1051,7 +1051,7 @@ localEvidence:
       keyQuote: >-
         Cohere Embed v3 ranks among the top 5 models on the MTEB leaderboard across retrieval and semantic similarity
         tasks.
-    - id: S005
+    - id: SE005
       publisher: Cohere
       title: 'Cohere Embed v3: The Best Embedding Model for Enterprise'
       url: https://cohere.com/blog/introducing-embed-v3
@@ -1069,7 +1069,7 @@ localEvidence:
         - retrieval accuracy
         - multilingual embeddings
       keyQuote: Embed v3 achieves state-of-the-art results across multiple MTEB benchmark categories.
-    - id: S006
+    - id: SE006
       publisher: Towards Data Science
       title: 'State of RAG in 2025: Benchmark Analysis of Leading Retrieval Models'
       url: https://towardsdatascience.com/state-of-rag-2025-benchmark-retrieval-models/
@@ -1089,7 +1089,7 @@ localEvidence:
       keyQuote: >-
         Cohere's Embed + Rerank combination consistently outperforms competing retrieval solutions on enterprise
         document retrieval benchmarks.
-    - id: S007
+    - id: SE007
       publisher: Cohere
       title: 'North: The Enterprise AI Platform'
       url: https://cohere.com/north
@@ -1109,7 +1109,7 @@ localEvidence:
       keyQuote: >-
         North connects to over 100 enterprise applications including Salesforce, ServiceNow, Google Workspace, and
         Microsoft 365.
-    - id: S008
+    - id: SE008
       publisher: Cohere
       title: Cohere API Reference Documentation
       url: https://docs.cohere.com/reference/about
@@ -1129,7 +1129,7 @@ localEvidence:
       keyQuote: >-
         Cohere provides official SDKs for Python, TypeScript, Java, and Go, plus an OpenAI-compatible API endpoint for
         drop-in replacement.
-    - id: S009
+    - id: SE009
       publisher: Cohere
       title: 'Cohere Compass: Enterprise AI Search'
       url: https://cohere.com/compass
@@ -1147,7 +1147,7 @@ localEvidence:
         - document Q&A
         - enterprise AI search
       keyQuote: null
-    - id: S010
+    - id: SE010
       publisher: GitHub
       title: cohere-ai/cohere-python — Official Python SDK
       url: https://github.com/cohere-ai/cohere-python
@@ -1165,7 +1165,7 @@ localEvidence:
         - open-source SDK
         - developer adoption
       keyQuote: null
-    - id: S011
+    - id: SE011
       publisher: Hugging Face
       title: Cohere/aya-23-8B — Aya Model Card
       url: https://huggingface.co/CohereForAI/aya-23-8B
@@ -1183,7 +1183,7 @@ localEvidence:
         - HuggingFace
         - model specifications
       keyQuote: Aya-23 is a massively multilingual language model supporting 23 languages with state-of-the-art performance.
-    - id: S012
+    - id: SE012
       publisher: Hugging Face
       title: CohereForAI — Cohere Model Repository
       url: https://huggingface.co/CohereForAI
@@ -1201,7 +1201,7 @@ localEvidence:
         - multilingual models
         - model weights
       keyQuote: null
-    - id: S013
+    - id: SE013
       publisher: Stack Overflow
       title: Questions tagged cohere-ai — Developer Community Discussions
       url: https://stackoverflow.com/questions/tagged/cohere-ai
@@ -1219,7 +1219,7 @@ localEvidence:
         - enterprise developer experience
         - support
       keyQuote: null
-    - id: S014
+    - id: SE014
       publisher: Cohere
       title: AI Security and Data Protection
       url: https://cohere.com/security
@@ -1239,7 +1239,7 @@ localEvidence:
       keyQuote: >-
         Cohere holds SOC 2 Type II certification. In private deployment mode, no data is transmitted to Cohere's
         servers.
-    - id: S015
+    - id: SE015
       publisher: FedRAMP
       title: FedRAMP Marketplace — Authorised Cloud Products
       url: https://marketplace.fedramp.gov/
@@ -1258,7 +1258,7 @@ localEvidence:
         - OpenAI
         - Cohere status
       keyQuote: null
-    - id: S016
+    - id: SE016
       publisher: arXiv
       title: 'Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity'
       url: https://arxiv.org/abs/2101.03961
@@ -1278,7 +1278,7 @@ localEvidence:
       keyQuote: >-
         MoE models route each token to a subset of experts, dramatically reducing inference FLOPs per token while
         maintaining model capacity.
-    - id: S017
+    - id: SE017
       publisher: Cohere Research
       title: 'Aya: A Massively Multilingual Generative Language Model'
       url: https://arxiv.org/abs/2402.07827
@@ -1298,7 +1298,7 @@ localEvidence:
       keyQuote: >-
         Aya covers 101 languages, achieving state-of-the-art multilingual performance across low, mid, and high-resource
         language categories.
-    - id: S018
+    - id: SE018
       publisher: VentureBeat
       title: How Cohere Is Using Mixture of Experts to Win Enterprise AI Deployments
       url: https://venturebeat.com/ai/cohere-mixture-of-experts-enterprise-2025/
@@ -1318,7 +1318,7 @@ localEvidence:
       keyQuote: >-
         Cohere's MoE approach makes Command A approximately 3x cheaper to serve than a comparable dense model while
         maintaining 90%+ of its performance.
-    - id: S019
+    - id: SE019
       publisher: Cohere
       title: Deploying Cohere on Your Own Infrastructure
       url: https://docs.cohere.com/docs/on-prem-deployment
@@ -1339,7 +1339,7 @@ localEvidence:
       keyQuote: >-
         Cohere's private deployment uses containerised model images deployed on Kubernetes; compatible with AWS, Azure,
         GCP, and on-premises GPU clusters.
-    - id: S020
+    - id: SE020
       publisher: Oracle
       title: Cohere Models on Oracle Cloud Infrastructure
       url: https://www.oracle.com/artificial-intelligence/cohere/
@@ -1357,7 +1357,7 @@ localEvidence:
         - enterprise cloud
         - inference infrastructure
       keyQuote: null
-    - id: S021
+    - id: SE021
       publisher: LangChain
       title: Cohere Integration Documentation
       url: https://python.langchain.com/docs/integrations/providers/cohere/
@@ -1375,7 +1375,7 @@ localEvidence:
         - developer ecosystem
         - community usage
       keyQuote: null
-    - id: S022
+    - id: SE022
       publisher: Cohere
       title: 'Rerank: Improving Retrieval Quality for Enterprise RAG'
       url: https://cohere.com/blog/rerank
@@ -1395,7 +1395,7 @@ localEvidence:
       keyQuote: >-
         Rerank improves top-k retrieval accuracy by 15–40% compared to using embedding search alone across enterprise
         document retrieval benchmarks.
-    - id: S023
+    - id: SE023
       publisher: AI Quality Institute
       title: 'Enterprise LLM Benchmark Report: RAG Pipeline Evaluation 2025'
       url: https://aiqualityinstitute.org/reports/enterprise-llm-rag-2025
@@ -1414,7 +1414,7 @@ localEvidence:
         - latency
         - cost
       keyQuote: null
-    - id: S024
+    - id: SE024
       publisher: Hugging Face
       title: Cohere/Cohere-embed-multilingual-v3.0 — Model Card
       url: https://huggingface.co/Cohere/Cohere-embed-multilingual-v3.0
@@ -1432,7 +1432,7 @@ localEvidence:
         - benchmark scores
         - language support
       keyQuote: Embed-multilingual-v3.0 supports 100+ languages and is designed for enterprise multilingual retrieval use cases.
-    - id: S025
+    - id: SE025
       publisher: AI Safety Index
       title: 'EU AI Act Compliance Status: Foundation Model Providers 2025'
       url: https://aisafetyindex.org/eu-ai-act-compliance-2025
@@ -1451,20 +1451,21 @@ localEvidence:
         - high-risk AI
       keyQuote: null
   claims:
-    - id: C001
+    - id: CE001
       statement: >-
         Cohere Command A was released in March 2025 as an 111-billion-parameter model using a mixture-of-experts (MoE)
         architecture, with a 256,000-token context window designed for enterprise agentic tasks and private deployment.
       type: observed
       topic: product
       sourceRefs:
-        - S001
-        - S002
+        - SE001
+        - SE002
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ001
-    - id: C002
+        - QE001
+      contradictsClaimRefs: []
+    - id: CE002
       statement: >-
         Command A's MoE architecture activates only approximately 20–40 billion parameters per forward pass despite its
         111B total parameter count, resulting in approximately 3x lower inference cost per token compared to a dense
@@ -1472,13 +1473,14 @@ localEvidence:
       type: observed
       topic: architecture
       sourceRefs:
-        - S002
-        - S018
+        - SE002
+        - SE018
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ008
-    - id: C003
+        - QE008
+      contradictsClaimRefs: []
+    - id: CE003
       statement: >-
         The North enterprise agentic platform, launched January 2025, provides pre-built connectors to 100+ enterprise
         applications including Salesforce, ServiceNow, Google Workspace, Microsoft 365, SAP, and Confluence, making it
@@ -1486,14 +1488,15 @@ localEvidence:
       type: observed
       topic: product
       sourceRefs:
-        - S007
-        - S003
+        - SE007
+        - SE003
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ003
-        - RQ004
-    - id: C004
+        - QE003
+        - QE004
+      contradictsClaimRefs: []
+    - id: CE004
       statement: >-
         Cohere Embed v3 consistently ranks among the top-5 models on the MTEB (Massive Text Embedding Benchmark)
         leaderboard across retrieval, semantic similarity, and classification tasks — making it the preferred enterprise
@@ -1501,27 +1504,29 @@ localEvidence:
       type: observed
       topic: capability
       sourceRefs:
-        - S004
-        - S005
+        - SE004
+        - SE005
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ002
-    - id: C005
+        - QE002
+      contradictsClaimRefs: []
+    - id: CE005
       statement: >-
         Cohere's Aya model covers 101 languages (per the arXiv model paper), with the commercial Aya-23 release
         supporting 23 languages in the managed API tier and planned expansion to 100+ in the platform tier.
       type: observed
       topic: product
       sourceRefs:
-        - S017
-        - S011
+        - SE017
+        - SE011
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ011
-        - RQ024
-    - id: C006
+        - QE011
+        - QE024
+      contradictsClaimRefs: []
+    - id: CE006
       statement: >-
         Compass, Cohere's self-service RAG pipeline builder for enterprise document repositories, was in public beta as
         of mid-2025 and targeted general availability in 2026, competing with Glean and Microsoft Copilot Search in
@@ -1529,26 +1534,28 @@ localEvidence:
       type: observed
       topic: product
       sourceRefs:
-        - S009
-        - S007
+        - SE009
+        - SE007
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ014
-    - id: C007
+        - QE014
+      contradictsClaimRefs: []
+    - id: CE007
       statement: >-
         Cohere's Embed + Rerank combination improves top-k retrieval accuracy by 15–40% compared to using embedding
         search alone, making it the preferred RAG pipeline component for enterprise document search use cases.
       type: observed
       topic: capability
       sourceRefs:
-        - S022
-        - S006
+        - SE022
+        - SE006
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ013
-    - id: C008
+        - QE013
+      contradictsClaimRefs: []
+    - id: CE008
       statement: >-
         Enterprise RAG is the dominant use case for Cohere's products: combining Embed v3 (for semantic indexing),
         Rerank (for precision improvement), and Command R+ or Command A (for grounded generation) enables enterprises to
@@ -1556,11 +1563,13 @@ localEvidence:
       type: observed
       topic: use-case
       sourceRefs:
-        - S006
-        - S022
+        - SE006
+        - SE022
       confidence: high
       freshness: current
-    - id: C009
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE009
       statement: >-
         Cohere's workflow / use-case coverage spans contract review, compliance reporting, multilingual customer
         service, enterprise knowledge search, code generation, and agentic workflow automation — all enabled by
@@ -1568,11 +1577,13 @@ localEvidence:
       type: observed
       topic: use-case
       sourceRefs:
-        - S003
-        - S007
+        - SE003
+        - SE007
       confidence: medium
       freshness: current
-    - id: C010
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE010
       statement: >-
         Cohere's private deployment model uses containerised Docker images and Kubernetes Helm charts, enabling
         air-gapped on-premises deployment with no data leaving the customer's infrastructure — the core technical
@@ -1580,52 +1591,57 @@ localEvidence:
       type: observed
       topic: architecture
       sourceRefs:
-        - S019
-        - S014
+        - SE019
+        - SE014
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ005
-        - RQ009
-    - id: C011
+        - QE005
+        - QE009
+      contradictsClaimRefs: []
+    - id: CE011
       statement: >-
         Cohere provides official SDKs for Python, TypeScript, Java, and Go, plus an OpenAI-compatible API endpoint that
         enables drop-in replacement for existing OpenAI integrations without full code rewrites.
       type: observed
       topic: developer-experience
       sourceRefs:
-        - S008
-        - S021
+        - SE008
+        - SE021
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ010
-        - RQ022
-    - id: C012
+        - QE010
+        - QE022
+      contradictsClaimRefs: []
+    - id: CE012
       statement: >-
         Cohere's inference serving stack is vLLM-compatible, using standard LLM serving optimisations including KV cache
         management, continuous batching, and speculative decoding for high-throughput enterprise inference.
       type: observed
       topic: architecture
       sourceRefs:
-        - S019
-        - S002
+        - SE019
+        - SE002
       confidence: medium
       freshness: current
-    - id: C013
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE013
       statement: >-
         The North platform's backend is built on Python/FastAPI with a React frontend, deployed as a Kubernetes-native
         application, with SAML/SSO authentication and role-based access control for enterprise security requirements.
       type: observed
       topic: architecture
       sourceRefs:
-        - S007
-        - S019
+        - SE007
+        - SE019
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ015
-    - id: C014
+        - QE015
+      contradictsClaimRefs: []
+    - id: CE014
       statement: >-
         Cohere holds SOC 2 Type II certification for its managed cloud services and in private deployment mode retains
         no customer data on its own infrastructure, satisfying the primary data residency requirement for most regulated
@@ -1633,14 +1649,15 @@ localEvidence:
       type: observed
       topic: compliance
       sourceRefs:
-        - S014
-        - S003
+        - SE014
+        - SE003
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ007
-        - RQ009
-    - id: C015
+        - QE007
+        - QE009
+      contradictsClaimRefs: []
+    - id: CE015
       statement: >-
         Cohere does not hold FedRAMP authorisation as of May 2026, which prevents direct sales to US federal agencies;
         FedRAMP Moderate authorisation is targeted for H2 2026 and is a prerequisite for significant US government
@@ -1648,13 +1665,14 @@ localEvidence:
       type: observed
       topic: compliance
       sourceRefs:
-        - S015
-        - S003
+        - SE015
+        - SE003
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ007
-    - id: C016
+        - QE007
+      contradictsClaimRefs: []
+    - id: CE016
       statement: >-
         Microsoft Azure OpenAI Service holds FedRAMP High authorisation and HIPAA BAA availability, giving it a
         significant compliance advantage over Cohere for US government and healthcare enterprise customers who require
@@ -1662,11 +1680,13 @@ localEvidence:
       type: observed
       topic: competitive-gap
       sourceRefs:
-        - S015
-        - S014
+        - SE015
+        - SE014
       confidence: high
       freshness: current
-    - id: C017
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE017
       statement: >-
         Cohere's EU AI Act compliance posture is supported by its private deployment architecture (data does not leave
         customer infrastructure) and by the planned Aleph Alpha acquisition, which would add German GDPR-native AI
@@ -1674,13 +1694,14 @@ localEvidence:
       type: observed
       topic: compliance
       sourceRefs:
-        - S025
-        - S014
+        - SE025
+        - SE014
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ023
-    - id: C018
+        - QE023
+      contradictsClaimRefs: []
+    - id: CE018
       statement: >-
         Cohere's product roadmap for 2026–2027 includes: context window expansion to 500k+ tokens for Command A's
         successor, Compass GA, Aya v2 (100+ languages), FedRAMP Moderate authorisation, and HIPAA BAA availability — all
@@ -1688,11 +1709,13 @@ localEvidence:
       type: observed
       topic: roadmap
       sourceRefs:
-        - S001
-        - S007
+        - SE001
+        - SE007
       confidence: medium
       freshness: current
-    - id: C019
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE019
       statement: >-
         The Aleph Alpha acquisition (announced April 2026, pending close) is the primary vehicle for Cohere's European
         sovereign AI expansion, as Aleph Alpha has German government AI relationships and EU regulatory expertise that
@@ -1700,11 +1723,13 @@ localEvidence:
       type: observed
       topic: roadmap
       sourceRefs:
-        - S003
-        - S017
+        - SE003
+        - SE017
       confidence: medium
       freshness: current
-    - id: C020
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE020
       statement: >-
         Cohere evolved from a pure model API company (2020–2023) to a full-stack enterprise AI platform (2024–2026) with
         the addition of North (orchestration), Compass (self-service RAG), and Transcribe (audio), substantially
@@ -1712,13 +1737,14 @@ localEvidence:
       type: observed
       topic: product-evolution
       sourceRefs:
-        - S003
-        - S007
+        - SE003
+        - SE007
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ020
-    - id: C021
+        - QE020
+      contradictsClaimRefs: []
+    - id: CE021
       statement: >-
         Cohere's product roadmap execution risk is moderate: the context window expansion (to 1M) and FedRAMP
         authorisation are both multi-quarter initiatives with uncertain timelines, and delay on either could cost
@@ -1726,11 +1752,13 @@ localEvidence:
       type: estimated
       topic: roadmap-risk
       sourceRefs:
-        - S001
-        - S015
+        - SE001
+        - SE015
       confidence: medium
       freshness: current
-    - id: C022
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE022
       statement: >-
         Cohere depends on NVIDIA H100 GPU clusters for model training, accessed primarily via Oracle Cloud
         Infrastructure and its own GPU cluster investments backed by NVIDIA as a strategic investor — creating a
@@ -1738,14 +1766,15 @@ localEvidence:
       type: observed
       topic: dependencies
       sourceRefs:
-        - S020
-        - S002
+        - SE020
+        - SE002
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ006
-        - RQ017
-    - id: C023
+        - QE006
+        - QE017
+      contradictsClaimRefs: []
+    - id: CE023
       statement: >-
         Oracle Cloud Infrastructure is Cohere's preferred deployment and inference infrastructure partner; the
         Oracle-Cohere integration is deep enough that Cohere models are natively available via Oracle OCI AI,
@@ -1753,13 +1782,14 @@ localEvidence:
       type: observed
       topic: dependencies
       sourceRefs:
-        - S020
-        - S003
+        - SE020
+        - SE003
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ017
-    - id: C024
+        - QE017
+      contradictsClaimRefs: []
+    - id: CE024
       statement: >-
         Cohere's primary technical dependencies — NVIDIA GPU supply, PyTorch/CUDA ecosystem, and Kubernetes — are all
         subject to external supply or support risks, though PyTorch and Kubernetes are open-source with broad community
@@ -1767,11 +1797,13 @@ localEvidence:
       type: estimated
       topic: dependencies
       sourceRefs:
-        - S002
-        - S019
+        - SE002
+        - SE019
       confidence: medium
       freshness: current
-    - id: C025
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE025
       statement: >-
         Cohere's Embed + Rerank retrieval models are independently deployable and usable regardless of which generative
         model is used for generation, creating a separate value proposition that insulates retrieval revenue from
@@ -1779,11 +1811,13 @@ localEvidence:
       type: observed
       topic: differentiation
       sourceRefs:
-        - S022
-        - S004
+        - SE022
+        - SE004
       confidence: medium
       freshness: current
-    - id: C026
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE026
       statement: >-
         Command A's 256k token context window is four times smaller than Anthropic Claude's 1M-token context and Google
         Gemini 1.5 Pro's 1M-token context, representing a significant capability gap for large-document enterprise
@@ -1791,13 +1825,14 @@ localEvidence:
       type: observed
       topic: competitive-gap
       sourceRefs:
-        - S001
-        - S002
+        - SE001
+        - SE002
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ012
-    - id: C027
+        - QE012
+      contradictsClaimRefs: []
+    - id: CE027
       statement: >-
         Cohere has not published Command A results on LMSYS Chatbot Arena, HumanEval coding benchmark, or MMLU academic
         reasoning benchmark, limiting independent third-party quality verification relative to OpenAI and Anthropic who
@@ -1805,13 +1840,14 @@ localEvidence:
       type: observed
       topic: competitive-gap
       sourceRefs:
-        - S004
-        - S002
+        - SE004
+        - SE002
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ012
-    - id: C028
+        - QE012
+      contradictsClaimRefs: []
+    - id: CE028
       statement: >-
         The context window gap between Cohere (256k) and leading competitors (1M) is expected to close with the next
         generation Command model; until then, Cohere's go-to-market team must proactively qualify deals to ensure 256k
@@ -1819,24 +1855,27 @@ localEvidence:
       type: estimated
       topic: competitive-gap
       sourceRefs:
-        - S001
-        - S003
+        - SE001
+        - SE003
       confidence: medium
       freshness: current
-    - id: C029
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE029
       statement: >-
         No publicly reported security incidents, data breaches, or major service outages affecting Cohere's enterprise
         customers were identified in research through May 2026.
       type: observed
       topic: security
       sourceRefs:
-        - S014
-        - S003
+        - SE014
+        - SE003
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ018
-    - id: C030
+        - QE018
+      contradictsClaimRefs: []
+    - id: CE030
       statement: >-
         Cohere's developer community engagement is visible on GitHub (cohere-ai Python SDK has thousands of stars),
         Stack Overflow (active 'cohere-ai' tag with hundreds of questions), and HuggingFace (thousands of model
@@ -1844,14 +1883,15 @@ localEvidence:
       type: observed
       topic: developer-community
       sourceRefs:
-        - S010
-        - S012
-        - S013
+        - SE010
+        - SE012
+        - SE013
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ019
-    - id: C031
+        - QE019
+      contradictsClaimRefs: []
+    - id: CE031
       statement: >-
         Cohere's LangChain and LlamaIndex integration as first-class providers (official Cohere integration packages in
         both frameworks) signals strong developer ecosystem adoption and reduces switching friction for developers who
@@ -1859,11 +1899,13 @@ localEvidence:
       type: observed
       topic: developer-ecosystem
       sourceRefs:
-        - S021
-        - S008
+        - SE021
+        - SE008
       confidence: medium
       freshness: current
-    - id: C032
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE032
       statement: >-
         Cohere's typical enterprise time-to-production deployment is estimated at 2–6 months from contract signing to
         first production workload, based on comparable enterprise AI deployment complexity — faster than traditional
@@ -1871,13 +1913,14 @@ localEvidence:
       type: estimated
       topic: deployment
       sourceRefs:
-        - S003
-        - S019
+        - SE003
+        - SE019
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ021
-    - id: C033
+        - QE021
+      contradictsClaimRefs: []
+    - id: CE033
       statement: >-
         Cohere's MoE architecture for Command A represents a deliberate trade-off: optimising for inference efficiency
         and deployment cost over raw benchmark performance, which is the right prioritisation for private-deploy
@@ -1885,11 +1928,13 @@ localEvidence:
       type: estimated
       topic: architecture
       sourceRefs:
-        - S018
-        - S002
+        - SE018
+        - SE002
       confidence: medium
       freshness: current
-    - id: C034
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CE034
       statement: >-
         Cohere Research has published multiple arXiv papers including the Aya multilingual model paper, embedding model
         methodology, and retrieval-augmented generation research, demonstrating research depth beyond just product
@@ -1897,13 +1942,14 @@ localEvidence:
       type: observed
       topic: IP
       sourceRefs:
-        - S017
-        - S002
+        - SE017
+        - SE002
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ016
-    - id: C035
+        - QE016
+      contradictsClaimRefs: []
+    - id: CE035
       statement: >-
         Cohere's developer community relative to OpenAI and Anthropic is substantially smaller, reflected in GitHub star
         counts, Stack Overflow question volumes, and HuggingFace model download metrics — an adverse signal for API tier
@@ -1911,12 +1957,13 @@ localEvidence:
       type: observed
       topic: developer-community
       sourceRefs:
-        - S010
-        - S013
+        - SE010
+        - SE013
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ025
+        - QE025
+      contradictsClaimRefs: []
   evidenceGaps:
     - type: private-evidence-only
       severity: minor
@@ -1931,7 +1978,8 @@ localEvidence:
         Commission or review independent RAG benchmark study covering Cohere and OpenAI on realistic enterprise
         datasets.
       relatedQuestionRefs:
-        - RQ013
+        - QE013
+      relatedTableRefs: []
     - type: data-not-public
       severity: minor
       topic: Cohere patent portfolio and proprietary IP depth beyond model weights
@@ -1945,7 +1993,8 @@ localEvidence:
         Search USPTO PAIR database for Cohere AI Inc. and Aidan Gomez as inventor; review patent applications filed
         since 2019.
       relatedQuestionRefs:
-        - RQ016
+        - QE016
+      relatedTableRefs: []
     - type: data-not-public
       severity: minor
       topic: Enterprise time-to-production for Cohere private deployment — no case study data
@@ -1957,4 +2006,5 @@ localEvidence:
         calculations.
       diligencePath: Request 3–5 enterprise customer case studies with deployment timeline data from Cohere.
       relatedQuestionRefs:
-        - RQ021
+        - QE021
+      relatedTableRefs: []

@@ -14,7 +14,7 @@
 // globalHints[] (when the same dimension fails on many objects, hinting at a
 // chapter-wide root cause).
 import { existsSync, readdirSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
 import {
@@ -26,8 +26,23 @@ import {
   checkSourceSchema,
   checkTableSchema,
   checkUniqueIds,
-  ENUMERATION_COVERAGE,
 } from './chapter-schema.mjs';
+import {
+  ANALYSIS_TOKEN_STOP_WORDS,
+  CASCADE_SUPPRESSORS,
+  DUPLICATE_ANALYSIS_TITLE_THRESHOLD,
+  ENUMERATION_COVERAGE,
+  FIX_HINTS,
+  MIN_ANALYSIS_TOKEN_LENGTH,
+  PAYWALL_RISK_WARNING_THRESHOLD,
+  PRIMARY_TIER_TYPES,
+  QUESTION_STATUSES,
+  QUESTION_TYPES,
+  RETRY_PRECEDENCE,
+  formatEnumChoices,
+  makeIdPattern,
+  resolveFixHint,
+} from './check-dimensions.mjs';
 
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
 
@@ -59,99 +74,33 @@ if (!spec) {
   process.exit(1);
 }
 
+// Per-chapter id patterns: every id in this chapter must carry the chapter's
+// own letter (e.g. for company-overview whose `letter:` is `O`, valid ids are
+// SO###, CO###, TO###, FO###, QO###). Catches the common mistake of pasting
+// an id from another chapter into this chapter's localEvidence/artifacts.
+const ID_PATTERN_CHAPTER_TABLE = makeIdPattern('T', spec.letter);
+const ID_PATTERN_CHAPTER_FIGURE = makeIdPattern('F', spec.letter);
+const ID_PATTERN_CHAPTER_RESEARCH_QUESTION = makeIdPattern('Q', spec.letter);
+
 const reportFolder = resolve(args.folder);
 const failures = [];
 const warnings = [];
 
-// Per-dimension one-line action hints. Same data the SKILL.md retry table
-// expressed in prose; baking it into each failure removes the agent's need to
-// cross-reference SKILL.md when triaging. Keep entries action-oriented and
-// short (<= 120 chars). Add a new entry whenever you add a new dimension.
-const FIX_HINTS = {
-  missingArtifact: 'Create the chapter YAML at the expected path.',
-  yamlParse: 'Fix the YAML syntax error reported in the message.',
-  localEvidenceMissing: 'Add the entire localEvidence block (researchQuestions, searchQueries, sources, claims, evidenceGaps).',
-  researchQuestionShape: 'Fix the question object: id RQ###, >=20-char text, valid type, non-empty targets[], valid status.',
-  researchQuestionTargets: 'Point each targets[] entry at a real contentRequirements/<index>, plannedTables/<slug>, or plannedFigures/<slug>.',
-  researchQuestionTypeMix: 'Add questions of types you have not used yet to reach minQuestionTypeSpread.',
-  researchQuestionAdverse: 'Add type:adverse questions until you reach minAdverseQuestions.',
-  researchQuestionAnswerCoverage: 'Convert questions from unresolved/partial to answered by adding the missing claim and citing it via claim.answersQuestionRefs.',
-  researchQuestionClosure: 'Add an evidenceGap whose relatedQuestionRefs[] includes the still-open question.',
-  searchQueriesMissing: 'Append the actual queries you ran into localEvidence.searchQueries[] ({query, engine, hits, retainedSourceRefs}).',
-  sourceShape: 'Fill accessStatus and stance (and other required fields) on each source.',
-  sourceDomains: 'Add sources from new registrable domains; do not duplicate publishers.',
-  sourceTypeSpread: 'Add sources with sourceType values you have not used yet.',
-  requiredSourceTypes: 'Pull at least one source of each missing type listed in gate.requiredSourceTypes.',
-  netNewSources: 'Run new searches to add URLs not seen in earlier chapters; reusing the global pool will not satisfy this gate.',
-  paywallRisk: 'Swap restricted (paywall|js-only|broken|rate-limited) sources for ok ones to stay under the report-level 30% ceiling.',
-  researchQuestions: 'Add more researchQuestion entries until you hit the per-chapter floor.',
-  sources: 'Add more sources until you hit the per-chapter floor.',
-  claims: 'Add more claims until you hit the per-chapter floor.',
-  highConfidenceCorroboration: 'Either downgrade confidence:high to medium, or add a primary-tier source (filing|regulatory|legal|official or reputationTier:high).',
-  claimAnswerRefs: 'Resolve dangling answersQuestionRefs entries; do not duplicate evidence.',
-  claimContradictRefs: 'Resolve dangling contradictsClaimRefs entries; type:conflicting requires non-empty contradictsClaimRefs.',
-  claimRefs: 'Resolve dangling claimRefs across sections, tables, figures, and callouts.',
-  enumerationScope: 'Add enumerationScope { coverage, basis(>=20 chars) } to the matching enumeration table.',
-  enumerationRows: 'Add rows to reach expectedMinRows or set coverage to partial/sample with rationale.',
-  enumerationCoverageGap: 'Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it.',
-  enumerationRowCorroboration: "Add sources from additional registrable domains backing the table's claimRefs.",
-  claimShape: 'Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.',
-  analysisCallout: 'Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength|risk|recommendation|insight|assumption).',
-  tableShape: 'Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.',
-  documentHead: 'Fix the chapter document head: schemaVersion=report-v2, artifact matches the chapter key, slug, runDate=YYYY-MM-DD, company.name, and chapter.number matching the chapter order.',
-  duplicateIds: 'Renumber the duplicate or malformed table/figure id; ids must match T### / F### and be unique within the chapter.',
-  artifactRefs: 'Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter\'s figures[] / tables[].',
-  sectionsMin: 'Add the missing section(s) to reach minSections.',
-  artifactsMin: 'Add the missing table or figure (or substitute a planned figure with an extra table when data shape does not fit).',
-  depthSection: 'Expand the prose of the shortest section(s) only; leave the others untouched.',
-  depthSectionTotal: 'Expand prose across short sections to reach minSectionWordsTotal.',
-  depthTableRows: 'Add rows to existing tables to reach minTableRowsTotal.',
-  depthFigureData: 'Add data points to existing figures to reach minFigureDataPointsTotal.',
-  contentRequirementCoverage: 'Add researchQuestions whose targets[] cover the un-targeted contentRequirements.',
-  figureShape: 'Fix the figure data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows).',
-  duplicateAnalysis: 'Merge the redundant table/figure pair, or sharpen one to answer a distinct question.',
-  figureType: 'Render at least one of the planned figure types or document the substitution in evidenceGaps.',
-  sectionsMax: 'Reduce or merge sections; the chapter looks over-fragmented.',
-  tablesMax: 'Reduce or merge tables; the chapter looks over-fragmented.',
-  figuresMax: 'Reduce or merge figures; the chapter looks over-fragmented.',
-};
+// FIX_HINTS, CASCADE_SUPPRESSORS, RETRY_PRECEDENCE, and resolveFixHint live
+// in check-dimensions.mjs so the load-chapter packet can ship the same
+// catalog to the agent before it writes anything (single source of truth).
 
-// When an upstream dimension fires, every downstream dimension in this set is
-// almost always a cascading false positive. Suppressing them keeps retry
-// noise down so the agent can fix the root cause first and re-run.
-//   localEvidenceMissing -> nothing inside localEvidence is checkable; every
-//   source/claim/researchQuestion/enumeration failure is downstream noise.
-const CASCADE_SUPPRESSORS = {
-  localEvidenceMissing: new Set([
-    'researchQuestions', 'researchQuestionShape', 'researchQuestionTargets',
-    'researchQuestionTypeMix', 'researchQuestionAdverse',
-    'researchQuestionAnswerCoverage', 'researchQuestionClosure',
-    'searchQueriesMissing',
-    'sources', 'sourceShape', 'sourceDomains', 'sourceTypeSpread',
-    'requiredSourceTypes', 'netNewSources', 'paywallRisk',
-    'claims', 'claimShape', 'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
-    'highConfidenceCorroboration',
-    'enumerationScope', 'enumerationRows', 'enumerationCoverageGap',
-    'enumerationRowCorroboration',
-    'contentRequirementCoverage',
-  ]),
-};
-
-// dimension is a stable enum the retry loop can switch on:
-//   missingArtifact | yamlParse | sectionsMin | sectionsMax | artifactsMin
-//   | tablesMax | figuresMax | depthSection | depthSectionTotal
-//   | depthTableRows | depthFigureData | duplicateAnalysis | figureType
-//   | figureShape
-//   | localEvidenceMissing | researchQuestions | sources | claims | claimRefs
 function fail(dimension, message, extra = {}) {
   const entry = { dimension, file: spec.file, message, ...extra };
-  if (FIX_HINTS[dimension]) entry.fix = FIX_HINTS[dimension];
+  const fix = resolveFixHint(dimension, extra);
+  if (fix) entry.fix = fix;
   failures.push(entry);
 }
 
 function warn(dimension, message, extra = {}) {
   const entry = { dimension, file: spec.file, message, ...extra };
-  if (FIX_HINTS[dimension]) entry.fix = FIX_HINTS[dimension];
+  const fix = resolveFixHint(dimension, extra);
+  if (fix) entry.fix = fix;
   warnings.push(entry);
 }
 
@@ -220,12 +169,11 @@ function checkDepthFloor(file, doc, floor) {
 }
 
 function normalizeAnalysisTokens(value) {
-  const stop = new Set(['table', 'figure', 'fig', 'chart', 'graph', 'matrix', 'map', 'kpi', 'kpis', 'scorecard', 'analysis', 'overview', 'summary']);
   return new Set(String(value ?? '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
     .split(/\s+/)
-    .filter((token) => token.length >= 3 && !stop.has(token)));
+    .filter((token) => token.length >= MIN_ANALYSIS_TOKEN_LENGTH && !ANALYSIS_TOKEN_STOP_WORDS.has(token)));
 }
 
 function jaccardSimilarity(a, b) {
@@ -256,30 +204,44 @@ function collectEmbeddedClaimRefs(value, refs = new Set()) {
 }
 
 function checkTableFigureOverlap(file, doc) {
+  // Flags only genuine table↔figure duplicates: figures whose claimRefs are
+  // a non-empty subset of the table's (i.e. the figure adds NO new claim) and
+  // whose title tokens overlap the table's title meaningfully.
+  //
+  // History: previous rule also fired on (a) title token jaccard >= 0.75 alone
+  // (sibling artifacts on the same topic but different lens — e.g. "Revenue
+  // by region table" vs "Revenue by region map"), and (b) >= 75% claim
+  // overlap on the smaller side, which falsely flagged paired views
+  // intentionally summarizing top-N from a longer table. RUN-1 §7 / RUN-2 §B2
+  // showed both producing +37/-37 cosmetic rewrites instead of catching real
+  // duplication. The current rule fires only when the figure literally
+  // re-renders a slice of the same claim set with no distinguishing claim;
+  // the singleton guard (figureRefs >= 3) suppresses noise from one-row
+  // figures that happen to share their backing claim with a tiny table.
   for (const table of doc.tables ?? []) {
     const tableTitle = displayTitle(table);
-    const tableTokens = normalizeAnalysisTokens(tableTitle);
     const tableRefs = collectEmbeddedClaimRefs(table);
+    if (tableRefs.size === 0) continue;
     for (const figure of doc.figures ?? []) {
       const figureTitle = displayTitle(figure);
-      const titleSimilarity = jaccardSimilarity(tableTokens, normalizeAnalysisTokens(figureTitle));
       const figureRefs = collectEmbeddedClaimRefs(figure);
-      const sharedRefs = [...tableRefs].filter((ref) => figureRefs.has(ref)).length;
-      const smallerRefSet = Math.min(tableRefs.size, figureRefs.size);
-      const highClaimOverlap = smallerRefSet >= 3 && sharedRefs / smallerRefSet >= 0.75;
-      if (titleSimilarity >= 0.75 || highClaimOverlap) {
-        // Hard fail (was previously a warning that could be acknowledged).
-        // Telemetry from many runs showed `acknowledgedDimensions:
-        // [duplicateAnalysis]` was being used as the default, not the
-        // exception. If two artifacts genuinely answer different questions,
-        // sharpen one (different lens, different axis); otherwise merge them.
-        fail('duplicateAnalysis', `${file}: duplicate table/figure analysis (${table.id ?? tableTitle} vs ${figure.id ?? figureTitle}); merge them, or sharpen one to answer a distinct question`);
-      }
+      if (figureRefs.size < 3) continue;
+      const figureSubsetOfTable = [...figureRefs].every((ref) => tableRefs.has(ref));
+      if (!figureSubsetOfTable) continue;
+      const titleSimilarity = jaccardSimilarity(
+        normalizeAnalysisTokens(tableTitle),
+        normalizeAnalysisTokens(figureTitle),
+      );
+      if (titleSimilarity < DUPLICATE_ANALYSIS_TITLE_THRESHOLD) continue;
+      const sharedRefs = figureRefs.size; // by construction (subset)
+      fail(
+        'duplicateAnalysis',
+        `${file}: figure ${figure.id ?? figureTitle} adds no claim that table ${table.id ?? tableTitle} does not already cover (${sharedRefs}/${figureRefs.size} of the figure's claimRefs are also on the table; title overlap ${(titleSimilarity * 100).toFixed(0)}%)`,
+        { tableId: table.id, figureId: figure.id, sharedRefs, figureRefs: figureRefs.size },
+      );
     }
   }
 }
-
-const PRIMARY_TIER_TYPES = new Set(['filing', 'regulatory', 'legal', 'official']);
 
 function loadEarlierChapterUrls(reportFolder, currentSpec, allSpecs) {
   const urls = new Set();
@@ -295,6 +257,29 @@ function loadEarlierChapterUrls(reportFolder, currentSpec, allSpecs) {
     }
   }
   return urls;
+}
+
+// Build a map { localClaimId -> chapterFile } across every OTHER chapter that
+// already exists on disk (earlier or later — agents sometimes patch chapter N
+// after writing N+1). Used by checkLocalEvidence to distinguish the
+// crossChapterRefLeak failure ("this id is defined elsewhere — restate it
+// here as a new local claim") from the generic claimRefs failure ("this id
+// does not exist anywhere"). Returns the FIRST chapter where the id is found
+// so the fix message can name a concrete file.
+function loadOtherChapterClaimIds(reportFolder, currentSpec, allSpecs) {
+  const claimIdToFile = new Map();
+  const others = allSpecs.filter((s) => s.file !== currentSpec.file);
+  for (const s of others) {
+    const path = join(reportFolder, s.file);
+    if (!existsSync(path)) continue;
+    const result = tryReadYaml(path);
+    if (!result.ok) continue;
+    for (const claim of result.value?.localEvidence?.claims ?? []) {
+      const id = claim?.id;
+      if (typeof id === 'string' && !claimIdToFile.has(id)) claimIdToFile.set(id, s.file);
+    }
+  }
+  return claimIdToFile;
 }
 
 function checkSearchQueries(file, doc) {
@@ -349,6 +334,16 @@ function checkSources(file, doc, gate, earlierUrls) {
   if (types.size < gate.minSourceTypeSpread) {
     fail('sourceTypeSpread', `${file}: ${types.size} distinct sourceType values, expected at least ${gate.minSourceTypeSpread}`, { actual: types.size, required: gate.minSourceTypeSpread });
   }
+  // Per-chapter adverse-stance requirement. Driven by gate.minAdverseSources,
+  // which load-chapter.mjs derives from
+  // workflow-config.adverseDistribution.requireAtLeastOneAdverseSource so the
+  // packet the agent receives and the check it must clear share one source of
+  // truth. Catches the RUN-2 failure pattern (every fintech report failed at
+  // finalize because ch1 / ch6 / ch8 only carried neutral/confirming sources).
+  const minAdverseSources = gate.minAdverseSources ?? 0;
+  if (minAdverseSources > 0 && adverseCount < minAdverseSources) {
+    fail('sourceStanceSpread', `${file}: ${adverseCount} stance:adverse sources, expected at least ${minAdverseSources}`, { actual: adverseCount, required: minAdverseSources, chapterKey: spec.key });
+  }
   for (const required of gate.requiredSourceTypes ?? []) {
     if (!types.has(required)) {
       fail('requiredSourceTypes', `${file}: missing required sourceType "${required}" (chapter requires ${(gate.requiredSourceTypes ?? []).join(', ')})`, { missing: required });
@@ -362,7 +357,7 @@ function checkSources(file, doc, gate, earlierUrls) {
   // swapping sources. Advisory only — does not fail unless --strict is set
   // and the dimension is not in acknowledgedWarnings.
   const restrictedPct = restrictedCount / sources.length;
-  if (restrictedPct > 0.25) {
+  if (restrictedPct > PAYWALL_RISK_WARNING_THRESHOLD) {
     warn('paywallRisk', `${file}: ${restrictedCount}/${sources.length} sources have restricted accessStatus (paywall|js-only|broken|rate-limited) = ${(restrictedPct * 100).toFixed(0)}% (>25%). Risk of breaching the report-level 30% ceiling once chapters aggregate; swap restricted sources for ok ones where possible.`, { actual: +restrictedPct.toFixed(3), ceiling: 0.25 });
   }
   // adverse-source bookkeeping is informational; the binding constraint is on adverse questions (P1) and on risks chapter sourceType requirements above.
@@ -407,7 +402,7 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
       continue;
     }
     if (!ENUMERATION_COVERAGE.has(scope.coverage)) {
-      fail('enumerationScope', `${file}: table ${table.id} enumerationScope.coverage must be one of ${[...ENUMERATION_COVERAGE].join('|')}`, { tableId: table.id, actual: scope.coverage });
+      fail('enumerationScope', `${file}: table ${table.id} enumerationScope.coverage must be one of ${formatEnumChoices(ENUMERATION_COVERAGE)}`, { tableId: table.id, actual: scope.coverage });
     }
     if (typeof scope.basis !== 'string' || scope.basis.trim().length < 20) {
       fail('enumerationScope', `${file}: table ${table.id} enumerationScope.basis must be at least 20 chars (explain how completeness was verified)`, { tableId: table.id });
@@ -448,9 +443,6 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
   }
 }
 
-const QUESTION_TYPES = new Set(['enumeration', 'quantification', 'verification', 'adverse', 'freshness', 'comparison', 'mechanism']);
-const QUESTION_STATUSES = new Set(['answered', 'partial', 'unresolved']);
-
 function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFiguresByName, contentRequirementsCount) {
   const questions = doc.localEvidence?.researchQuestions ?? [];
   const seenIds = new Set();
@@ -464,8 +456,8 @@ function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFig
       fail('researchQuestionShape', `${file}: localEvidence.researchQuestions[${index}] must be an object with id/question/type/targets/status`);
       continue;
     }
-    if (!/^RQ\d{3}$/.test(String(question.id ?? ''))) {
-      fail('researchQuestionShape', `${file}: localEvidence.researchQuestions[${index}].id must match RQ###`, { id: question.id });
+    if (!ID_PATTERN_CHAPTER_RESEARCH_QUESTION.test(String(question.id ?? ''))) {
+      fail('researchQuestionShape', `${file}: localEvidence.researchQuestions[${index}].id must match Q${spec.letter}### (chapter '${spec.key}' uses letter '${spec.letter}')`, { id: question.id });
       continue;
     }
     if (seenIds.has(question.id)) {
@@ -476,12 +468,12 @@ function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFig
       fail('researchQuestionShape', `${file}: ${question.id} question text must be at least 20 chars`, { id: question.id });
     }
     if (!QUESTION_TYPES.has(question.type)) {
-      fail('researchQuestionShape', `${file}: ${question.id} type must be one of ${[...QUESTION_TYPES].join('|')}`, { id: question.id, actual: question.type });
+      fail('researchQuestionShape', `${file}: ${question.id} type must be one of ${formatEnumChoices(QUESTION_TYPES)}`, { id: question.id, actual: question.type });
     } else {
       typeCounts.set(question.type, (typeCounts.get(question.type) ?? 0) + 1);
     }
     if (!QUESTION_STATUSES.has(question.status)) {
-      fail('researchQuestionShape', `${file}: ${question.id} status must be one of ${[...QUESTION_STATUSES].join('|')}`, { id: question.id, actual: question.status });
+      fail('researchQuestionShape', `${file}: ${question.id} status must be one of ${formatEnumChoices(QUESTION_STATUSES)}`, { id: question.id, actual: question.status });
     } else if (question.status === 'answered') {
       answeredCount += 1;
     } else if (!gapTopics.has(String(question.question).toLowerCase().slice(0, 80)) && !(doc.localEvidence?.evidenceGaps ?? []).some((gap) => (gap?.relatedQuestionRefs ?? []).includes(question.id))) {
@@ -524,7 +516,7 @@ function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFig
 
   const distinctTypes = typeCounts.size;
   if (distinctTypes < gate.minQuestionTypeSpread) {
-    fail('researchQuestionTypeMix', `${file}: researchQuestions[] cover ${distinctTypes} distinct types, expected at least ${gate.minQuestionTypeSpread} (${[...QUESTION_TYPES].join('|')})`, { actual: distinctTypes, required: gate.minQuestionTypeSpread });
+    fail('researchQuestionTypeMix', `${file}: researchQuestions[] cover ${distinctTypes} distinct types, expected at least ${gate.minQuestionTypeSpread} (${formatEnumChoices(QUESTION_TYPES)})`, { actual: distinctTypes, required: gate.minQuestionTypeSpread });
   }
   const adverseCount = typeCounts.get('adverse') ?? 0;
   if (adverseCount < gate.minAdverseQuestions) {
@@ -566,7 +558,7 @@ function checkClaimAnswerRefs(file, doc) {
   }
 }
 
-function checkLocalEvidence(file, doc, counts) {
+function checkLocalEvidence(file, doc, counts, otherChapterClaimIds) {
   if (!doc.localEvidence) {
     fail('localEvidenceMissing', `${file}: missing localEvidence before ledger consolidation`);
     return;
@@ -582,8 +574,23 @@ function checkLocalEvidence(file, doc, counts) {
     }
   }
   const localClaimIds = new Set((doc.localEvidence.claims ?? []).map((claim) => claim?.id));
+  // Walk every claimRefs[] across sections / tables / figures / callouts. An
+  // unresolved ref splits two ways:
+  //   - foundIn another chapter -> crossChapterRefLeak (the agent copied an id
+  //     from elsewhere). Each chapter has its own letter (chapters.yaml
+  //     `letter:`); ids are formed as <Type><ChapterLetter><Seq3>, so an id
+  //     whose letter does not match this chapter's letter is by construction
+  //     foreign. The right fix is to restate the underlying fact as a new
+  //     local claim here, not to copy the id.
+  //   - not foundIn anywhere -> the original generic claimRefs failure.
+  // Splitting the dimension makes the retry loop signal sharper: a brief
+  // digest entry of `crossChapterRefLeak` is unambiguous.
   for (const ref of collectClaimRefs(doc)) {
-    if (!localClaimIds.has(ref)) {
+    if (localClaimIds.has(ref)) continue;
+    const foundIn = otherChapterClaimIds.get(ref);
+    if (foundIn) {
+      fail('crossChapterRefLeak', `${file}: claimRef ${ref} belongs to another chapter (${foundIn}); chapter-letter ids must not be copied across chapters`, { unresolvedRef: ref, foundIn });
+    } else {
       fail('claimRefs', `${file}: claimRef ${ref} does not resolve to localEvidence.claims before consolidation`, { unresolvedRef: ref });
     }
   }
@@ -599,14 +606,25 @@ if (doc) {
     const { errors } = checkDocumentHeadSchema(doc, { path: spec.file, expected: spec });
     for (const err of errors) fail('documentHead', err.message, err);
   }
+  // Slug must equal the company slug, i.e. the report folder basename with
+  // the leading <timestamp>- prefix stripped. new-report.mjs creates the
+  // folder as `${timestamp}-${slugify(companyName)}`; the chapter `slug:`
+  // field is the second half only. Catches the drift seen in RUN-1 where
+  // every chapter accidentally carried the full `<timestamp>-<companySlug>`.
+  {
+    const canonical = basename(reportFolder).replace(/^\d{14}-/, '');
+    if (doc?.slug && doc.slug !== canonical) {
+      fail('slugConsistency', `${spec.file}: slug "${doc.slug}" does not match folder slug "${canonical}"`, { actual: doc.slug, required: canonical });
+    }
+  }
   // Chapter-local table/figure id uniqueness (T### / F###). Duplicate or
   // malformed ids would otherwise blow up at ledger/assemble time.
   {
-    const { errors } = checkUniqueIds(doc.tables, { label: 'table', pattern: /^T\d{3}$/, path: spec.file });
+    const { errors } = checkUniqueIds(doc.tables, { label: 'table', pattern: ID_PATTERN_CHAPTER_TABLE, path: spec.file });
     for (const err of errors) fail('duplicateIds', err.message, err);
   }
   {
-    const { errors } = checkUniqueIds(doc.figures, { label: 'figure', pattern: /^F\d{3}$/, path: spec.file });
+    const { errors } = checkUniqueIds(doc.figures, { label: 'figure', pattern: ID_PATTERN_CHAPTER_FIGURE, path: spec.file });
     for (const err of errors) fail('duplicateIds', err.message, err);
   }
   // Chapter-local figureRef / tableRef resolution. The same check runs
@@ -701,7 +719,8 @@ if (doc) {
     for (const err of errors) fail('tableShape', err.message, { tableId: table?.id, ...err });
   }
 
-  checkLocalEvidence(spec.file, doc, counts);
+  const otherChapterClaimIds = loadOtherChapterClaimIds(reportFolder, spec, ANALYSIS_ARTIFACTS);
+  checkLocalEvidence(spec.file, doc, counts, otherChapterClaimIds);
   const plannedTablesByName = new Map((spec.plannedTables ?? []).map((item) => [slugify(item.name), item]));
   const plannedFiguresByName = new Map((spec.plannedFigures ?? []).map((item) => [slugify(item.name), item]));
   checkResearchQuestions(spec.file, doc, gate, plannedTablesByName, plannedFiguresByName, (spec.contentRequirements ?? []).length);
@@ -726,28 +745,6 @@ for (const ack of acks) {
 const unackedWarningDims = [...new Set(warnings.map((w) => w.dimension))].filter((d) => !ackByDim.has(d));
 
 const ok = failures.length === 0 && (!args.strict || unackedWarningDims.length === 0);
-
-// Causal precedence for retry ordering (root cause first). When multiple
-// dimensions fail, fix in this order; downstream dimensions often clear once
-// upstream is repaired.
-const RETRY_PRECEDENCE = [
-  'missingArtifact', 'yamlParse', 'documentHead', 'localEvidenceMissing',
-  'researchQuestionShape', 'researchQuestionTargets', 'researchQuestionTypeMix', 'researchQuestionAdverse',
-  'searchQueriesMissing',
-  'sourceShape', 'sourceDomains', 'sourceTypeSpread', 'requiredSourceTypes', 'netNewSources',
-  'paywallRisk',
-  'researchQuestions', 'sources', 'claims',
-  'claimShape',
-  'highConfidenceCorroboration',
-  'researchQuestionAnswerCoverage', 'researchQuestionClosure',
-  'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
-  'enumerationScope', 'enumerationRows', 'enumerationCoverageGap', 'enumerationRowCorroboration',
-  'tableShape', 'figureShape',
-  'duplicateIds', 'artifactRefs',
-  'analysisCallout',
-  'sectionsMin', 'artifactsMin', 'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
-  'contentRequirementCoverage',
-];
 
 function sortByPrecedence(dimensions) {
   const rank = new Map(RETRY_PRECEDENCE.map((d, i) => [d, i]));

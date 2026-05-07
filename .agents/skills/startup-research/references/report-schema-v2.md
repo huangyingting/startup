@@ -19,9 +19,9 @@ Conventions:
 
 - Unknown optional values use `null`.
 - Numeric fields are numbers or `null`, not formatted strings.
-- IDs use `S001`, `C001`, `T001`, `F001`, and appendix IDs `A`, `B`, `C`.
-- `claimRefs[]` on any object cites the canonical `C###` ids that back it.
-- Each `T###` / `F###` id may be referenced by at most one block across all `chapters` and `appendices`.
+- IDs use a 5-character `<Type><ChapterLetter><Seq3>` format. Type is `S` (source), `C` (claim), `T` (table), `F` (figure), `Q` (researchQuestion). ChapterLetter is the chapter's `letter:` declared in `chapters.yaml` (currently `O` overview, `M` market-analysis, `P` competitors, `I` financials, `E` product-tech, `U` customers, `R` risks, `V` valuation). Seq3 is a 3-digit sequence local to that chapter (001..999). Examples: `SO001`, `CM045`, `TI008`, `FE002`, `QR003`. Appendix ids remain single letters `A`, `B`, `C`.
+- `claimRefs[]` on any object cites the canonical `C[A-Z]\d{3}` ids that back it.
+- Each `T<L>###` / `F<L>###` id may be referenced by at most one block across all `chapters` and `appendices`.
 
 ## Enums
 
@@ -65,29 +65,29 @@ sections:
   - id: string
     title: string
     body: string
-    claimRefs: [C001]
+    claimRefs: [CO001]
 tables:
-  - id: T001
+  - id: TO001
     title: string
     columns: [string]
     rows:
       - [string | number | null]
     notes: string | null
-    claimRefs: [C001]
+    claimRefs: [CO001]
 figures:
-  - id: F001
+  - id: FO001
     title: string
     type: figureType
     layout: compact | standard | wide
     summary: string
     data: {}
     approximationNotes: string | null
-    claimRefs: [C001]
+    claimRefs: [CO001]
 callouts:
   - calloutType: strength | risk | recommendation | insight | assumption
     title: string
     body: string
-    claimRefs: [C001]
+    claimRefs: [CO001]
 localEvidence:
   searchQueries: [searchQuery]                 # Required; may be empty only when researchQuestions is also empty.
   researchQuestions: [researchQuestion]
@@ -159,7 +159,7 @@ tables: [table]
 figures: [figure]
 appendices: [appendix]
 bibliography:
-  sourceRefs: [S001]
+  sourceRefs: [SO001]
 disclaimer: string                  # Non-empty.
 ```
 
@@ -244,7 +244,7 @@ revision:
   refreshReason: string | null        # Human-entered reason for the refresh, when known.
 
 source:
-  id: S001
+  id: SO001                                        # Chapter-letter prefix matches the owning chapter (e.g. SM001 for market-analysis).
   publisher: string
   title: string
   url: string
@@ -259,18 +259,18 @@ source:
   keyQuote: string | null
 
 claim:
-  id: C001
+  id: CO001                                        # Chapter-letter prefix matches the owning chapter (e.g. CM045 for market-analysis).
   statement: string                                # Non-empty; one atomic fact per claim.
   type: claim.type
   topic: string
-  sourceRefs: [S001]                               # May be empty only when type is `open-question`.
+  sourceRefs: [SO001]                              # May be empty only when type is `open-question`.
   confidence: high | medium | low
   freshness: current | recent | historical | unknown
-  answersQuestionRefs: [RQ001]                     # Optional; researchQuestion ids this claim answers.
-  contradictsClaimRefs: [C012]                     # Optional; required when type is `conflicting`.
+  answersQuestionRefs: [QO001]                     # Optional; researchQuestion ids this claim answers.
+  contradictsClaimRefs: [CO012]                    # Optional; required when type is `conflicting`.
 
 researchQuestion:
-  id: RQ001
+  id: QO001                                        # Chapter-letter prefix matches the owning chapter.
   question: string                                 # Non-empty.
   type: enumeration | quantification | verification | adverse | freshness | comparison | mechanism
   targets: [string]                                # Non-empty; each target is `contentRequirements/<index>` or `plannedTables/<table-slug>` or `plannedFigures/<figure-slug>`.
@@ -280,7 +280,7 @@ searchQuery:
   query: string                                    # Exact query string sent to the search tool.
   engine: string | null                            # e.g. `web_search`, `google`, `bing`, `sec.gov`, `duckduckgo`.
   hits: number | null                              # Optional.
-  retainedSourceRefs: [S001]                       # Local source ids retained from this query.
+  retainedSourceRefs: [SO001]                      # Local source ids retained from this query.
 
 evidenceGap:
   type: missing-source | conflicting-data | private-evidence-only | enumeration-incomplete | stale | access-blocked
@@ -289,11 +289,11 @@ evidenceGap:
   missingEvidence: string
   whyItMatters: string
   diligencePath: string
-  relatedQuestionRefs: [RQ001]                   # Optional; cite when this gap closes an unresolved/partial researchQuestion.
-  relatedTableRefs: [T001]                       # Optional.
+  relatedQuestionRefs: [QO001]                   # Optional; cite when this gap closes an unresolved/partial researchQuestion.
+  relatedTableRefs: [TO001]                      # Optional.
 
 table:
-  id: T001                                       # Sequential per chapter family (T101, T201, ...).
+  id: TO001                                      # Chapter-letter prefix matches the owning chapter.
   title: string
   columns: [string]                              # Header labels; defines row width.
   rows:
@@ -302,17 +302,17 @@ table:
   enumerationScope:                              # Optional; populate when the table is an enumeration.
     coverage: exhaustive | partial | sample
     basis: string                                # 1–2 sentences explaining how completeness was verified (or why it could not be).
-  claimRefs: [C001]
+  claimRefs: [CO001]
 
 figure:
-  id: F001                                       # Sequential per chapter family (F101, F201, ...).
+  id: FO001                                      # Chapter-letter prefix matches the owning chapter.
   title: string
   type: figureType
   layout: compact | standard | wide
   summary: string
   data: {}                                       # Structured object; never Mermaid/SVG/prose/JSON-string. See "Figure types" for required shape.
   approximationNotes: string | null              # Required when figure values are derived/estimated.
-  claimRefs: [C001]
+  claimRefs: [CO001]
 
 block:
   type: paragraph | callout | table | figure | list | equation

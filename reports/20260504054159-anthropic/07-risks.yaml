@@ -15,7 +15,7 @@ chapter:
     disclosure still leaves key underwriting questions open around customer concentration, SLA terms, the current LTBT
     seat map, and the spend bridge from contracted compute to realized monetization.
 tables:
-  - id: T701
+  - id: TR001
     title: Regulatory / legal risk register
     columns:
       - rule/license/case
@@ -76,18 +76,18 @@ tables:
         private contracts, regulator correspondence, and sealed or inaccessible filings not visible in the public
         record.
     claimRefs:
-      - C002
-      - C005
-      - C006
-      - C007
-      - C008
-      - C025
-      - C026
-      - C027
-      - C028
-      - C029
-      - C045
-  - id: T702
+      - CR002
+      - CR005
+      - CR006
+      - CR007
+      - CR008
+      - CR025
+      - CR026
+      - CR027
+      - CR028
+      - CR029
+      - CR045
+  - id: TR002
     title: Operational / quality / security risk register
     columns:
       - failure mode
@@ -125,19 +125,19 @@ tables:
       This register focuses on public signs that quality, uptime, and safety controls remain under active load rather
       than on theoretical software risk.
     claimRefs:
-      - C009
-      - C010
-      - C011
-      - C012
-      - C014
-      - C033
-      - C034
-      - C035
-      - C036
-      - C037
-      - C044
-      - C046
-  - id: T703
+      - CR009
+      - CR010
+      - CR011
+      - CR012
+      - CR014
+      - CR033
+      - CR034
+      - CR035
+      - CR036
+      - CR037
+      - CR044
+      - CR046
+  - id: TR003
     title: Partner / dependency risk register
     columns:
       - dependency
@@ -191,20 +191,20 @@ tables:
         - high
     notes: Severity reflects how directly a dependency can transmit into revenue, gross margin, or rollout velocity.
     claimRefs:
-      - C015
-      - C016
-      - C017
-      - C018
-      - C019
-      - C020
-      - C021
-      - C022
-      - C023
-      - C024
-      - C039
-      - C040
-      - C041
-  - id: T704
+      - CR015
+      - CR016
+      - CR017
+      - CR018
+      - CR019
+      - CR020
+      - CR021
+      - CR022
+      - CR023
+      - CR024
+      - CR039
+      - CR040
+      - CR041
+  - id: TR004
     title: People / execution risk register
     columns:
       - role/function
@@ -242,16 +242,16 @@ tables:
       Execution risk is concentrated where Anthropic’s strategic differentiation—safety, coding quality, and
       growth—depends on a small set of leadership and process choices.
     claimRefs:
-      - C003
-      - C004
-      - C011
-      - C012
-      - C031
-      - C032
-      - C038
-      - C042
-      - C043
-  - id: T705
+      - CR003
+      - CR004
+      - CR011
+      - CR012
+      - CR031
+      - CR032
+      - CR038
+      - CR042
+      - CR043
+  - id: TR005
     title: Mitigation and kill criteria table
     columns:
       - risk
@@ -293,18 +293,18 @@ tables:
       These triggers are designed to be monitorable from public filings, status pages, news, or management diligence
       responses rather than from intuition.
     claimRefs:
-      - C003
-      - C009
-      - C011
-      - C016
-      - C017
-      - C026
-      - C028
-      - C031
-      - C032
-      - C043
+      - CR003
+      - CR009
+      - CR011
+      - CR016
+      - CR017
+      - CR026
+      - CR028
+      - CR031
+      - CR032
+      - CR043
 figures:
-  - id: F701
+  - id: FR001
     title: Risk heatmap
     type: matrix
     layout: wide
@@ -376,15 +376,15 @@ figures:
               detail: Residual exposure is driven mostly by missing public precision, not by zero mitigation.
     approximationNotes: null
     claimRefs:
-      - C009
-      - C016
-      - C017
-      - C025
-      - C028
-      - C033
-      - C039
-      - C046
-  - id: F702
+      - CR009
+      - CR016
+      - CR017
+      - CR025
+      - CR028
+      - CR033
+      - CR039
+      - CR046
+  - id: FR002
     title: Risk transmission map
     type: dag
     layout: wide
@@ -442,16 +442,16 @@ figures:
           to: n8
     approximationNotes: null
     claimRefs:
-      - C013
-      - C016
-      - C017
-      - C023
-      - C025
-      - C028
-      - C039
-      - C043
-      - C046
-  - id: F703
+      - CR013
+      - CR016
+      - CR017
+      - CR023
+      - CR025
+      - CR028
+      - CR039
+      - CR043
+      - CR046
+  - id: FR003
     title: Dependency map
     type: dag
     layout: wide
@@ -509,14 +509,14 @@ figures:
           to: d8
     approximationNotes: null
     claimRefs:
-      - C015
-      - C017
-      - C019
-      - C023
-      - C027
-      - C039
-      - C041
-      - C046
+      - CR015
+      - CR017
+      - CR019
+      - CR023
+      - CR027
+      - CR039
+      - CR041
+      - CR046
 callouts:
   - calloutType: risk
     title: Compute strain is the clearest near-term operational risk
@@ -524,39 +524,39 @@ callouts:
       Anthropic’s own April 2026 compute announcement says growth has strained infrastructure, and external reporting
       says the resulting product regressions already hurt Claude Code trust.
     claimRefs:
-      - C011
-      - C016
-      - C037
+      - CR011
+      - CR016
+      - CR037
   - calloutType: risk
     title: Legal exposure is narrowed, not resolved
     body: >-
       Bartz settled, but publisher litigation stayed live into late April 2026 and government-policy conflict already
       impaired one federal channel.
     claimRefs:
-      - C025
-      - C026
-      - C028
-      - C029
+      - CR025
+      - CR026
+      - CR028
+      - CR029
   - calloutType: insight
     title: Multicloud helps but does not eliminate counterparty leverage
     body: >-
       AWS, Google/Broadcom, and Azure reduce single-node failure risk, yet all three still influence rollout timing,
       pricing, and margins.
     claimRefs:
-      - C015
-      - C017
-      - C018
-      - C039
+      - CR015
+      - CR017
+      - CR018
+      - CR039
   - calloutType: assumption
     title: Best-case valuation depends on sustained coding-product quality
     body: >-
       Investor and media sources both link Anthropic’s acceleration to coding demand, so another prolonged Claude Code
       quality shock would matter disproportionately.
     claimRefs:
-      - C023
-      - C042
-      - C043
-      - C046
+      - CR023
+      - CR042
+      - CR043
+      - CR046
 sections:
   - id: section-1
     title: 'Top risk stack: compute strain, reliability regressions, and live litigation are the highest residual exposures'
@@ -574,15 +574,15 @@ sections:
       not a broken thesis, but a company whose fastest-growing products are still creating new legal, reliability, and
       governance surface area faster than public disclosure is closing it.
     claimRefs:
-      - C001
-      - C003
-      - C009
-      - C011
-      - C012
-      - C025
-      - C026
-      - C028
-      - C037
+      - CR001
+      - CR003
+      - CR009
+      - CR011
+      - CR012
+      - CR025
+      - CR026
+      - CR028
+      - CR037
   - id: section-2
     title: >-
       Legal, regulatory, and safety posture: mitigations are real, but privacy, copyright, and dual-use questions stay
@@ -601,16 +601,16 @@ sections:
       the same transparency hub still discusses evaluation awareness and over-eager model behavior as active research
       issues rather than solved problems.
     claimRefs:
-      - C002
-      - C004
-      - C005
-      - C006
-      - C007
-      - C025
-      - C026
-      - C033
-      - C034
-      - C044
+      - CR002
+      - CR004
+      - CR005
+      - CR006
+      - CR007
+      - CR025
+      - CR026
+      - CR033
+      - CR034
+      - CR044
   - id: section-3
     title: >-
       Infrastructure, partner, customer, and competitive risk: diversification helps, but counterparties and open
@@ -630,19 +630,19 @@ sections:
       Code’s availability and quality now matter directly to growth because multiple investor and media sources tie
       Anthropic’s revenue acceleration to coding demand.
     claimRefs:
-      - C015
-      - C016
-      - C017
-      - C018
-      - C019
-      - C021
-      - C022
-      - C023
-      - C024
-      - C039
-      - C040
-      - C041
-      - C046
+      - CR015
+      - CR016
+      - CR017
+      - CR018
+      - CR019
+      - CR021
+      - CR022
+      - CR023
+      - CR024
+      - CR039
+      - CR040
+      - CR041
+      - CR046
   - id: section-4
     title: >-
       Monitoring and kill criteria: the underwriting problem is less whether risk exists and more whether hidden
@@ -662,17 +662,17 @@ sections:
       company on risk grounds alone, but to require tighter proof on concentration, service quality, and compute
       economics before underwriting a best-case valuation path.
     claimRefs:
-      - C009
-      - C013
-      - C016
-      - C017
-      - C028
-      - C029
-      - C030
-      - C031
-      - C032
-      - C043
-      - C046
+      - CR009
+      - CR013
+      - CR016
+      - CR017
+      - CR028
+      - CR029
+      - CR030
+      - CR031
+      - CR032
+      - CR043
+      - CR046
 acknowledgedWarnings:
   - dimension: duplicateAnalysis
     reason: >-
@@ -684,39 +684,39 @@ localEvidence:
       engine: web_search
       hits: null
       retainedSourceRefs:
-        - S001
-        - S002
-        - S003
+        - SR001
+        - SR002
+        - SR003
     - query: Anthropic Risks Reuters
       engine: web_search
       hits: null
       retainedSourceRefs:
-        - S004
-        - S005
-        - S006
+        - SR004
+        - SR005
+        - SR006
     - query: Anthropic Risks pricing partnerships
       engine: web_search
       hits: null
       retainedSourceRefs:
-        - S007
-        - S008
-        - S009
+        - SR007
+        - SR008
+        - SR009
     - query: Anthropic Risks regulatory risks
       engine: web_search
       hits: null
       retainedSourceRefs:
-        - S010
-        - S011
-        - S012
+        - SR010
+        - SR011
+        - SR012
     - query: Anthropic Risks analysis 2026
       engine: web_search
       hits: null
       retainedSourceRefs:
-        - S013
-        - S014
-        - S015
+        - SR013
+        - SR014
+        - SR015
   researchQuestions:
-    - id: RQ001
+    - id: QR001
       question: >-
         What adverse or disconfirming public evidence affects severity-ranked risks with likelihood, impact, mitigation
         maturity, residual exposure, and investment implication. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -724,7 +724,7 @@ localEvidence:
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ002
+    - id: QR002
       question: >-
         What adverse or disconfirming public evidence affects regulatory/legal risk — licenses, approvals, litigation,
         enforcement, ip, privacy, environmental/safety. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -732,7 +732,7 @@ localEvidence:
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ003
+    - id: QR003
       question: >-
         What adverse or disconfirming public evidence affects operational risk — supply chain, manufacturing, logistics,
         reliability, outages, recalls, safety, facilities, labor. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -740,7 +740,7 @@ localEvidence:
       targets:
         - contentRequirements/2
       status: answered
-    - id: RQ004
+    - id: QR004
       question: >-
         What adverse or disconfirming public evidence affects partner/dependency risk — supplier, distributor,
         cloud/platform, capital provider, regulator, key customer concentration. in the Risks chapter for Anthropic as
@@ -749,7 +749,7 @@ localEvidence:
       targets:
         - contentRequirements/3
       status: answered
-    - id: RQ005
+    - id: QR005
       question: >-
         What adverse or disconfirming public evidence affects financial/model risk — burn, capital intensity,
         credit/loss exposure, fraud, working capital, margin compression. in the Risks chapter for Anthropic as of
@@ -758,7 +758,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: answered
-    - id: RQ006
+    - id: QR006
       question: >-
         What adverse or disconfirming public evidence affects mitigations, monitoring indicators, thesis-break triggers,
         and diligence asks. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -766,7 +766,7 @@ localEvidence:
       targets:
         - contentRequirements/5
       status: answered
-    - id: RQ007
+    - id: QR007
       question: >-
         What public evidence verifies severity-ranked risks with likelihood, impact, mitigation maturity, residual
         exposure, and investment implication. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -774,7 +774,7 @@ localEvidence:
       targets:
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ008
+    - id: QR008
       question: >-
         Which public numbers best quantify regulatory/legal risk — licenses, approvals, litigation, enforcement, ip,
         privacy, environmental/safety. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -782,7 +782,7 @@ localEvidence:
       targets:
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ009
+    - id: QR009
       question: >-
         How does Anthropic compare publicly on operational risk — supply chain, manufacturing, logistics, reliability,
         outages, recalls, safety, facilities, labor. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -790,7 +790,7 @@ localEvidence:
       targets:
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: RQ010
+    - id: QR010
       question: >-
         What public evidence explains the mechanism behind partner/dependency risk — supplier, distributor,
         cloud/platform, capital provider, regulator, key customer concentration. in the Risks chapter for Anthropic as
@@ -799,7 +799,7 @@ localEvidence:
       targets:
         - plannedTables/people-execution-risk-register
       status: answered
-    - id: RQ011
+    - id: QR011
       question: >-
         What current-dated sources update financial/model risk — burn, capital intensity, credit/loss exposure, fraud,
         working capital, margin compression. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -807,7 +807,7 @@ localEvidence:
       targets:
         - plannedTables/mitigation-and-kill-criteria-table
       status: answered
-    - id: RQ012
+    - id: QR012
       question: >-
         Which publicly visible items enumerate mitigations, monitoring indicators, thesis-break triggers, and diligence
         asks. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -815,7 +815,7 @@ localEvidence:
       targets:
         - plannedFigures/risk-heatmap
       status: answered
-    - id: RQ013
+    - id: QR013
       question: >-
         What public evidence verifies severity-ranked risks with likelihood, impact, mitigation maturity, residual
         exposure, and investment implication. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -823,7 +823,7 @@ localEvidence:
       targets:
         - plannedFigures/risk-transmission-map
       status: answered
-    - id: RQ014
+    - id: QR014
       question: >-
         Which public numbers best quantify regulatory/legal risk — licenses, approvals, litigation, enforcement, ip,
         privacy, environmental/safety. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -831,7 +831,7 @@ localEvidence:
       targets:
         - plannedFigures/dependency-map
       status: answered
-    - id: RQ015
+    - id: QR015
       question: >-
         How does Anthropic compare publicly on operational risk — supply chain, manufacturing, logistics, reliability,
         outages, recalls, safety, facilities, labor. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -839,7 +839,7 @@ localEvidence:
       targets:
         - contentRequirements/0
       status: answered
-    - id: RQ016
+    - id: QR016
       question: >-
         What public evidence explains the mechanism behind partner/dependency risk — supplier, distributor,
         cloud/platform, capital provider, regulator, key customer concentration. in the Risks chapter for Anthropic as
@@ -848,7 +848,7 @@ localEvidence:
       targets:
         - contentRequirements/1
       status: answered
-    - id: RQ017
+    - id: QR017
       question: >-
         What current-dated sources update financial/model risk — burn, capital intensity, credit/loss exposure, fraud,
         working capital, margin compression. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -856,7 +856,7 @@ localEvidence:
       targets:
         - contentRequirements/2
       status: answered
-    - id: RQ018
+    - id: QR018
       question: >-
         Which publicly visible items enumerate mitigations, monitoring indicators, thesis-break triggers, and diligence
         asks. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -864,7 +864,7 @@ localEvidence:
       targets:
         - contentRequirements/3
       status: answered
-    - id: RQ019
+    - id: QR019
       question: >-
         What public evidence verifies severity-ranked risks with likelihood, impact, mitigation maturity, residual
         exposure, and investment implication. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -872,7 +872,7 @@ localEvidence:
       targets:
         - contentRequirements/4
       status: answered
-    - id: RQ020
+    - id: QR020
       question: >-
         Which public numbers best quantify regulatory/legal risk — licenses, approvals, litigation, enforcement, ip,
         privacy, environmental/safety. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -880,7 +880,7 @@ localEvidence:
       targets:
         - contentRequirements/5
       status: answered
-    - id: RQ021
+    - id: QR021
       question: >-
         How does Anthropic compare publicly on operational risk — supply chain, manufacturing, logistics, reliability,
         outages, recalls, safety, facilities, labor. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -888,7 +888,7 @@ localEvidence:
       targets:
         - plannedTables/regulatory-legal-risk-register
       status: answered
-    - id: RQ022
+    - id: QR022
       question: >-
         What public evidence explains the mechanism behind partner/dependency risk — supplier, distributor,
         cloud/platform, capital provider, regulator, key customer concentration. in the Risks chapter for Anthropic as
@@ -897,7 +897,7 @@ localEvidence:
       targets:
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: RQ023
+    - id: QR023
       question: >-
         What current-dated sources update financial/model risk — burn, capital intensity, credit/loss exposure, fraud,
         working capital, margin compression. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -905,7 +905,7 @@ localEvidence:
       targets:
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: RQ024
+    - id: QR024
       question: >-
         Which publicly visible items enumerate mitigations, monitoring indicators, thesis-break triggers, and diligence
         asks. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -913,7 +913,7 @@ localEvidence:
       targets:
         - plannedTables/people-execution-risk-register
       status: answered
-    - id: RQ025
+    - id: QR025
       question: >-
         What public evidence verifies severity-ranked risks with likelihood, impact, mitigation maturity, residual
         exposure, and investment implication. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -921,7 +921,7 @@ localEvidence:
       targets:
         - plannedTables/mitigation-and-kill-criteria-table
       status: answered
-    - id: RQ026
+    - id: QR026
       question: >-
         Which public numbers best quantify regulatory/legal risk — licenses, approvals, litigation, enforcement, ip,
         privacy, environmental/safety. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -929,7 +929,7 @@ localEvidence:
       targets:
         - plannedFigures/risk-heatmap
       status: answered
-    - id: RQ027
+    - id: QR027
       question: >-
         How does Anthropic compare publicly on operational risk — supply chain, manufacturing, logistics, reliability,
         outages, recalls, safety, facilities, labor. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -937,7 +937,7 @@ localEvidence:
       targets:
         - plannedFigures/risk-transmission-map
       status: answered
-    - id: RQ028
+    - id: QR028
       question: >-
         What public evidence explains the mechanism behind partner/dependency risk — supplier, distributor,
         cloud/platform, capital provider, regulator, key customer concentration. in the Risks chapter for Anthropic as
@@ -946,7 +946,7 @@ localEvidence:
       targets:
         - plannedFigures/dependency-map
       status: answered
-    - id: RQ029
+    - id: QR029
       question: >-
         What current-dated sources update financial/model risk — burn, capital intensity, credit/loss exposure, fraud,
         working capital, margin compression. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -954,7 +954,7 @@ localEvidence:
       targets:
         - contentRequirements/0
       status: unresolved
-    - id: RQ030
+    - id: QR030
       question: >-
         Which publicly visible items enumerate mitigations, monitoring indicators, thesis-break triggers, and diligence
         asks. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -962,7 +962,7 @@ localEvidence:
       targets:
         - contentRequirements/1
       status: unresolved
-    - id: RQ031
+    - id: QR031
       question: >-
         What public evidence verifies severity-ranked risks with likelihood, impact, mitigation maturity, residual
         exposure, and investment implication. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -970,7 +970,7 @@ localEvidence:
       targets:
         - contentRequirements/2
       status: unresolved
-    - id: RQ032
+    - id: QR032
       question: >-
         Which public numbers best quantify regulatory/legal risk — licenses, approvals, litigation, enforcement, ip,
         privacy, environmental/safety. in the Risks chapter for Anthropic as of 2026-05-04?
@@ -979,7 +979,7 @@ localEvidence:
         - contentRequirements/3
       status: unresolved
   sources:
-    - id: S001
+    - id: SR001
       publisher: Anthropic
       title: The Long-Term Benefit Trust - Anthropic
       url: https://www.anthropic.com/news/the-long-term-benefit-trust
@@ -995,7 +995,7 @@ localEvidence:
         - board
         - trust
       keyQuote: null
-    - id: S002
+    - id: SR002
       publisher: Anthropic
       title: Snowflake and Anthropic announce $200 million partnership to bring agentic AI to global enterprises
       url: https://www.anthropic.com/news/snowflake-anthropic-expanded-partnership
@@ -1011,7 +1011,7 @@ localEvidence:
         - distribution
         - enterprise
       keyQuote: null
-    - id: S003
+    - id: SR003
       publisher: Anthropic
       title: Transparency | Anthropic
       url: https://www.anthropic.com/transparency
@@ -1027,7 +1027,7 @@ localEvidence:
         - governance
         - transparency
       keyQuote: null
-    - id: S004
+    - id: SR004
       publisher: Anthropic
       title: Anthropic raises $30 billion in Series G funding at $380 billion post-money valuation
       url: https://www.anthropic.com/news/anthropic-raises-30-billion-series-g-funding-380-billion-post-money-valuation
@@ -1045,7 +1045,7 @@ localEvidence:
       keyQuote: >-
         The investment will fuel the frontier research, product development, and infrastructure expansions that have
         made Anthropic the market leader in enterprise AI and coding.
-    - id: S005
+    - id: SR005
       publisher: Anthropic
       title: 'Project Glasswing: Securing critical software for the AI era'
       url: https://www.anthropic.com/glasswing
@@ -1061,7 +1061,7 @@ localEvidence:
         - donations
         - security
       keyQuote: null
-    - id: S006
+    - id: SR006
       publisher: Anthropic
       title: Anthropic and Amazon expand collaboration for up to 5 gigawatts of new compute
       url: https://www.anthropic.com/news/anthropic-amazon-compute
@@ -1077,7 +1077,7 @@ localEvidence:
         - compute commitment
         - primary cloud
       keyQuote: null
-    - id: S007
+    - id: SR007
       publisher: Amazon
       title: Amazon completes $4B Anthropic investment to advance generative AI
       url: https://www.aboutamazon.com/news/company-news/amazon-anthropic-ai-investment
@@ -1092,7 +1092,7 @@ localEvidence:
         - investment
         - minority ownership
       keyQuote: null
-    - id: S008
+    - id: SR008
       publisher: Model Context Protocol
       title: What is the Model Context Protocol (MCP)? - Model Context Protocol
       url: https://modelcontextprotocol.io/docs/getting-started/intro
@@ -1108,7 +1108,7 @@ localEvidence:
         - protocol
         - architecture
       keyQuote: null
-    - id: S009
+    - id: SR009
       publisher: Microsoft / GitHub
       title: Add and manage MCP servers in VS Code
       url: https://code.visualstudio.com/docs/copilot/customization/mcp-servers
@@ -1124,7 +1124,7 @@ localEvidence:
         - vscode
         - developer-tools
       keyQuote: null
-    - id: S010
+    - id: SR010
       publisher: OpenAI
       title: Docs MCP | OpenAI Developers
       url: https://developers.openai.com/learn/docs-mcp
@@ -1140,7 +1140,7 @@ localEvidence:
         - developer-tools
         - cross-vendor
       keyQuote: null
-    - id: S011
+    - id: SR011
       publisher: Anthropic
       title: Usage Policy
       url: https://www.anthropic.com/legal/aup
@@ -1156,7 +1156,7 @@ localEvidence:
         - safety
         - abuse
       keyQuote: null
-    - id: S012
+    - id: SR012
       publisher: Anthropic
       title: Responsible Scaling Policy Updates
       url: https://www.anthropic.com/responsible-scaling-policy
@@ -1172,7 +1172,7 @@ localEvidence:
         - governance
         - safety
       keyQuote: null
-    - id: S013
+    - id: SR013
       publisher: Anthropic
       title: Claude Status
       url: https://status.claude.com/
@@ -1188,7 +1188,7 @@ localEvidence:
         - incidents
         - reliability
       keyQuote: null
-    - id: S014
+    - id: SR014
       publisher: Anthropic
       title: Anthropic expands partnership with Google and Broadcom for multiple gigawatts of next-generation compute
       url: https://www.anthropic.com/news/google-broadcom-partnership-compute
@@ -1204,7 +1204,7 @@ localEvidence:
         - google-cloud
         - infrastructure
       keyQuote: null
-    - id: S015
+    - id: SR015
       publisher: GIC Newsroom
       title: GIC Leads $30 Billion Series G in Anthropic
       url: https://www.gic.com.sg/newsroom/all/gic-leads-30-billion-series-g-in-anthropic/
@@ -1222,7 +1222,7 @@ localEvidence:
       keyQuote: >-
         In the past year, Anthropic customers spending over $1 million annually have grown from less than 100 to over
         500.
-    - id: S016
+    - id: SR016
       publisher: Anthropic
       title: Privacy Policy | Anthropic
       url: https://www.anthropic.com/legal/privacy
@@ -1237,7 +1237,7 @@ localEvidence:
         - privacy
         - data governance
       keyQuote: null
-    - id: S017
+    - id: SR017
       publisher: Anthropic Privacy Center
       title: Is my data used for model training?
       url: https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training
@@ -1253,7 +1253,7 @@ localEvidence:
         - opt-out
         - consumer data
       keyQuote: We will use your chats and coding sessions (including to improve our models) if ...
-    - id: S018
+    - id: SR018
       publisher: Anthropic
       title: An update on recent Claude Code quality reports | Anthropic
       url: https://www.anthropic.com/engineering/april-23-postmortem
@@ -1271,7 +1271,7 @@ localEvidence:
       keyQuote: >-
         We traced these reports to three separate changes that affected Claude Code, the Claude Agent SDK, and Claude
         Cowork.
-    - id: S019
+    - id: SR019
       publisher: Anthropic
       title: Microsoft, NVIDIA and Anthropic announced new strategic partnerships. | Anthropic
       url: https://www.anthropic.com/news/microsoft-nvidia-anthropic-announce-strategic-partnerships
@@ -1287,7 +1287,7 @@ localEvidence:
         - NVIDIA
         - distribution
       keyQuote: Anthropic has committed to purchase $30 billion of Azure compute capacity.
-    - id: S020
+    - id: SR020
       publisher: Fortune
       title: Anthropic explains Claude Code’s recent performance decline after weeks of user backlash
       url: https://fortune.com/2026/04/24/anthropic-engineering-missteps-claude-code-performance-decline-user-backlash/
@@ -1303,7 +1303,7 @@ localEvidence:
         - quality decline
         - reputation
       keyQuote: null
-    - id: S021
+    - id: SR021
       publisher: Reuters
       title: US judge preliminarily approves $1.5 billion Anthropic copyright settlement
       url: >-
@@ -1320,7 +1320,7 @@ localEvidence:
         - settlement
         - Bartz
       keyQuote: null
-    - id: S022
+    - id: SR022
       publisher: CourtListener
       title: Concord Music Group, Inc. v. Anthropic PBC, 5:24-cv-03811
       url: https://www.courtlistener.com/docket/68889092/concord-music-group-inc-v-anthropic-pbc/
@@ -1336,7 +1336,7 @@ localEvidence:
         - publisher litigation
         - copyright
       keyQuote: null
-    - id: S023
+    - id: SR023
       publisher: AP News
       title: Anthropic wins ruling on AI training in copyright lawsuit but must face trial on pirated books
       url: https://apnews.com/article/anthropic-ai-fair-use-copyright-pirated-libraries-1e5cece51c2e4bd0bb21d94de2abb035
@@ -1352,7 +1352,7 @@ localEvidence:
         - fair use
         - pirated books
       keyQuote: null
-    - id: S024
+    - id: SR024
       publisher: TechCrunch
       title: 'It’s official: The Pentagon has labeled Anthropic a supply-chain risk'
       url: https://techcrunch.com/2026/03/05/its-official-the-pentagon-has-labeled-anthropic-a-supply-chain-risk/
@@ -1368,7 +1368,7 @@ localEvidence:
         - government channel
         - procurement
       keyQuote: null
-    - id: S025
+    - id: SR025
       publisher: TechCrunch
       title: Anthropic wins injunction against Trump administration over Defense Department saga
       url: >-
@@ -1385,7 +1385,7 @@ localEvidence:
         - government channel
         - procurement
       keyQuote: null
-    - id: S026
+    - id: SR026
       publisher: TechCrunch
       title: Anthropic sues Defense Department over supply-chain risk designation
       url: https://techcrunch.com/2026/03/09/anthropic-sues-defense-department-over-supply-chain-risk-designation/
@@ -1401,7 +1401,7 @@ localEvidence:
         - Defense Department
         - supply-chain risk
       keyQuote: null
-    - id: S027
+    - id: SR027
       publisher: CNBC
       title: Anthropic weighs raising funds at $900B valuation, topping OpenAI
       url: https://www.cnbc.com/2026/04/29/anthropic-weighs-raising-funds-at-900b-valuation-topping-openai.html
@@ -1417,7 +1417,7 @@ localEvidence:
         - valuation
         - IPO readiness
       keyQuote: null
-    - id: S028
+    - id: SR028
       publisher: red.anthropic.com
       title: Claude Mythos Preview
       url: https://red.anthropic.com/2026/mythos-preview/
@@ -1435,7 +1435,7 @@ localEvidence:
       keyQuote: >-
         Mythos Preview has proven capable of reverse-engineering exploits on closed-source software, and turning N-day
         vulnerabilities into exploits.
-    - id: S029
+    - id: SR029
       publisher: Anthropic
       title: Activating AI Safety Level 3 protections
       url: https://www.anthropic.com/news/activating-asl3-protections
@@ -1450,7 +1450,7 @@ localEvidence:
         - safety controls
         - security overhead
       keyQuote: null
-    - id: S030
+    - id: SR030
       publisher: NIST
       title: AI Risk Management Framework
       url: https://www.nist.gov/itl/ai-risk-management-framework
@@ -1466,7 +1466,7 @@ localEvidence:
         - risk
         - oversight
       keyQuote: null
-    - id: S031
+    - id: SR031
       publisher: AWS
       title: Generative AI Data Governance – Amazon Bedrock Guardrails – AWS
       url: https://aws.amazon.com/bedrock/guardrails/
@@ -1497,315 +1497,315 @@ localEvidence:
         - outages
         - status
       keyQuote: null
-      id: S032
+      id: SR032
   claims:
-    - id: C001
+    - id: CR001
       statement: >-
         Anthropic publicly documents safety rules, public status reporting, and gated security releases, making its
         mitigation posture more legible than many peers.
       type: inferred
       topic: risk mitigations
       sourceRefs:
-        - S011
-        - S012
-        - S013
-        - S005
+        - SR011
+        - SR012
+        - SR013
+        - SR005
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ001
+        - QR001
       contradictsClaimRefs: []
-    - id: C002
+    - id: CR002
       statement: >-
         Anthropic’s current Responsible Scaling Policy still uses AI Safety Level thresholds to govern deployment and
         safeguard escalation.
       type: company-claimed
       topic: responsible scaling
       sourceRefs:
-        - S012
+        - SR012
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ002
+        - QR002
       contradictsClaimRefs: []
-    - id: C003
+    - id: CR003
       statement: Anthropic’s Long-Term Benefit Trust is an independent body of five financially disinterested members.
       type: observed
       topic: governance
       sourceRefs:
-        - S001
+        - SR001
       confidence: medium
       freshness: historical
       answersQuestionRefs:
-        - RQ003
+        - QR003
       contradictsClaimRefs: []
-    - id: C004
+    - id: CR004
       statement: >-
         Anthropic says the LTBT can ultimately control a majority of board seats, and the Apr 29 2026 RSP update gave it
         approval rights over external reviewers plus regular briefings.
       type: company-claimed
       topic: governance
       sourceRefs:
-        - S012
-        - S001
+        - SR012
+        - SR001
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ004
+        - QR004
       contradictsClaimRefs: []
-    - id: C005
+    - id: CR005
       statement: >-
         Anthropic’s consumer privacy materials say chats and coding sessions may be used to improve models unless users
         disable model improvement.
       type: company-claimed
       topic: privacy
       sourceRefs:
-        - S016
-        - S017
+        - SR016
+        - SR017
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ005
+        - QR005
       contradictsClaimRefs: []
-    - id: C006
+    - id: CR006
       statement: >-
         Anthropic says conversations flagged for safety review may still be used or analyzed for safeguards work even
         when normal training is disabled.
       type: company-claimed
       topic: privacy
       sourceRefs:
-        - S017
+        - SR017
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ006
+        - QR006
       contradictsClaimRefs: []
-    - id: C007
+    - id: CR007
       statement: >-
         Anthropic’s public Usage Policy includes universal standards, high-risk requirements, and enforcement actions
         such as throttling, suspension, termination, or output blocking.
       type: observed
       topic: policy enforcement
       sourceRefs:
-        - S011
+        - SR011
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ007
+        - QR007
       contradictsClaimRefs: []
-    - id: C008
+    - id: CR008
       statement: Anthropic says its Safeguards Team implements detection and monitoring to enforce the Usage Policy.
       type: company-claimed
       topic: policy enforcement
       sourceRefs:
-        - S011
+        - SR011
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ008
+        - QR008
       contradictsClaimRefs: []
-    - id: C009
+    - id: CR009
       statement: >-
         Anthropic’s April 2026 Amazon compute announcement said Claude demand was straining infrastructure and
         reliability.
       type: company-claimed
       topic: reliability
       sourceRefs:
-        - S006
+        - SR006
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ009
+        - QR009
       contradictsClaimRefs: []
-    - id: C010
+    - id: CR010
       statement: Claude Status recorded repeated incidents across Claude.ai, the Claude API, and Claude Code in late April 2026.
       type: observed
       topic: reliability
       sourceRefs:
-        - S013
+        - SR013
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ010
+        - QR010
       contradictsClaimRefs: []
-    - id: C011
+    - id: CR011
       statement: >-
         Anthropic’s Apr 23 2026 postmortem traced the Claude Code decline to three product-layer changes rather than a
         base-model regression.
       type: company-claimed
       topic: release management
       sourceRefs:
-        - S018
+        - SR018
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ011
+        - QR011
       contradictsClaimRefs: []
-    - id: C012
+    - id: CR012
       statement: >-
         Anthropic said it reverted or fixed the three identified Claude Code issues by Apr 20 2026 and reset usage
         limits for subscribers.
       type: company-claimed
       topic: release management
       sourceRefs:
-        - S018
+        - SR018
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ012
+        - QR012
       contradictsClaimRefs: []
-    - id: C013
+    - id: CR013
       statement: >-
         Anthropic’s main risk transmission channels run through customer trust, revenue growth, margin and financing,
         and valuation support rather than isolated technical failures.
       type: inferred
       topic: risk transmission
       sourceRefs:
-        - S018
-        - S013
-        - S006
-        - S014
-        - S020
+        - SR018
+        - SR013
+        - SR006
+        - SR014
+        - SR020
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ013
+        - QR013
       contradictsClaimRefs: []
-    - id: C014
+    - id: CR014
       statement: >-
         Mythos Preview is intentionally partner-gated because Anthropic believes it is unusually capable at computer
         security tasks.
       type: company-claimed
       topic: cyber safety
       sourceRefs:
-        - S005
-        - S028
+        - SR005
+        - SR028
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ014
+        - QR014
       contradictsClaimRefs: []
-    - id: C015
+    - id: CR015
       statement: >-
         Amazon says Anthropic uses AWS as its primary cloud provider for mission-critical workloads and future
         foundation-model development.
       type: third-party-reported
       topic: cloud dependency
       sourceRefs:
-        - S007
+        - SR007
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ015
+        - QR015
       contradictsClaimRefs: []
-    - id: C016
+    - id: CR016
       statement: Anthropic committed more than $100 billion over ten years to AWS technologies and up to 5 GW of new capacity.
       type: company-claimed
       topic: cloud dependency
       sourceRefs:
-        - S006
+        - SR006
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ016
+        - QR016
       contradictsClaimRefs: []
-    - id: C017
+    - id: CR017
       statement: >-
         Anthropic’s Google and Broadcom agreement covers multiple gigawatts of TPU capacity expected to come online
         starting in 2027.
       type: company-claimed
       topic: cloud dependency
       sourceRefs:
-        - S014
+        - SR014
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ017
+        - QR017
       contradictsClaimRefs: []
-    - id: C018
+    - id: CR018
       statement: >-
         Anthropic’s Microsoft and NVIDIA partnership announcement says Anthropic committed to purchase $30 billion of
         Azure compute capacity and can contract up to one additional gigawatt.
       type: company-claimed
       topic: cloud dependency
       sourceRefs:
-        - S019
+        - SR019
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ018
+        - QR018
       contradictsClaimRefs: []
-    - id: C019
+    - id: CR019
       statement: >-
         Multicloud distribution lowers single-provider outage risk but leaves AWS, Google and Broadcom, and Microsoft
         able to influence rollout timing, cost, and bargaining power.
       type: inferred
       topic: cloud dependency
       sourceRefs:
-        - S006
-        - S014
-        - S019
+        - SR006
+        - SR014
+        - SR019
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ019
+        - QR019
       contradictsClaimRefs: []
-    - id: C020
+    - id: CR020
       statement: MCP is an open protocol rather than an Anthropic-only connector standard.
       type: observed
       topic: ecosystem
       sourceRefs:
-        - S008
-        - S009
-        - S010
+        - SR008
+        - SR009
+        - SR010
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ020
+        - QR020
       contradictsClaimRefs: []
-    - id: C021
+    - id: CR021
       statement: >-
         GIC said in February 2026 that over 500 Anthropic business customers were each spending more than $1 million on
         an annualized basis.
       type: third-party-reported
       topic: customer breadth
       sourceRefs:
-        - S015
+        - SR015
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ021
+        - QR021
       contradictsClaimRefs: []
-    - id: C022
+    - id: CR022
       statement: >-
         Anthropic said in April 2026 that more than 1,000 business customers were each spending over $1 million on an
         annualized basis.
       type: company-claimed
       topic: customer breadth
       sourceRefs:
-        - S014
+        - SR014
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ022
+        - QR022
       contradictsClaimRefs: []
-    - id: C023
+    - id: CR023
       statement: >-
         Official fundraising and partnership materials, plus outside coverage, tie Anthropic’s recent acceleration to
         coding and developer demand.
       type: inferred
       topic: growth dependency
       sourceRefs:
-        - S014
-        - S002
-        - S004
-        - S020
+        - SR014
+        - SR002
+        - SR004
+        - SR020
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ023
+        - QR023
       contradictsClaimRefs: []
-    - id: C024
+    - id: CR024
       statement: >-
         Public sources reviewed do not disclose top-customer share, renewal behavior, or direct-versus-partner revenue
         mix.
@@ -1815,72 +1815,72 @@ localEvidence:
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ024
+        - QR024
       contradictsClaimRefs: []
-    - id: C025
+    - id: CR025
       statement: Reuters reported that a judge preliminarily approved a $1.5 billion Anthropic copyright settlement in Bartz.
       type: third-party-reported
       topic: copyright litigation
       sourceRefs:
-        - S021
+        - SR021
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ025
+        - QR025
       contradictsClaimRefs: []
-    - id: C026
+    - id: CR026
       statement: The Concord Music Group publisher case remained active in public dockets into late April 2026.
       type: observed
       topic: copyright litigation
       sourceRefs:
-        - S022
+        - SR022
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ026
+        - QR026
       contradictsClaimRefs: []
-    - id: C027
+    - id: CR027
       statement: Anthropic’s Azure and Foundry partnership broadens enterprise distribution beyond direct sales and AWS.
       type: inferred
       topic: distribution dependency
       sourceRefs:
-        - S019
+        - SR019
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ027
+        - QR027
       contradictsClaimRefs: []
-    - id: C028
+    - id: CR028
       statement: >-
         The Defense Department supply-chain-risk dispute became public in March 2026 and pushed Anthropic into
         litigation and injunction practice.
       type: third-party-reported
       topic: government channel risk
       sourceRefs:
-        - S024
-        - S025
-        - S026
+        - SR024
+        - SR025
+        - SR026
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ028
+        - QR028
       contradictsClaimRefs: []
-    - id: C029
+    - id: CR029
       statement: >-
         Anthropic’s injunction did not remove the underlying lesson that a sensitive government channel can become
         politically volatile.
       type: inferred
       topic: government channel risk
       sourceRefs:
-        - S024
-        - S025
-        - S026
+        - SR024
+        - SR025
+        - SR026
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ001
+        - QR001
       contradictsClaimRefs: []
-    - id: C030
+    - id: CR030
       statement: Public sources reviewed do not disclose enterprise renewal cohorts or concentration by customer cohort.
       type: open-question
       topic: customer durability
@@ -1888,9 +1888,9 @@ localEvidence:
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ002
+        - QR002
       contradictsClaimRefs: []
-    - id: C031
+    - id: CR031
       statement: >-
         Public materials do not show Anthropic’s current LTBT-elected seat map, veto boundaries, or conflict-resolution
         process.
@@ -1900,47 +1900,47 @@ localEvidence:
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ003
+        - QR003
       contradictsClaimRefs: []
-    - id: C032
+    - id: CR032
       statement: >-
         The possibility of a 2026 mega-round at roughly a $900 billion valuation would increase disclosure and execution
         pressure even before an IPO.
       type: third-party-reported
       topic: execution risk
       sourceRefs:
-        - S027
+        - SR027
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ004
+        - QR004
       contradictsClaimRefs: []
-    - id: C033
+    - id: CR033
       statement: Anthropic’s Glasswing and Mythos materials frame zero-day discovery as dual-use and therefore partner-gated.
       type: company-claimed
       topic: cyber safety
       sourceRefs:
-        - S005
-        - S028
+        - SR005
+        - SR028
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ005
+        - QR005
       contradictsClaimRefs: []
-    - id: C034
+    - id: CR034
       statement: >-
         Anthropic transparency materials still describe issues such as evaluation awareness and over-eager model
         behavior as active research problems rather than solved concerns.
       type: observed
       topic: safety posture
       sourceRefs:
-        - S003
+        - SR003
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ006
+        - QR006
       contradictsClaimRefs: []
-    - id: C035
+    - id: CR035
       statement: Public materials do not quantify Mythos abuse attempts, false negatives, or export-control review outcomes.
       type: open-question
       topic: cyber safety
@@ -1948,34 +1948,34 @@ localEvidence:
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ007
+        - QR007
       contradictsClaimRefs: []
-    - id: C036
+    - id: CR036
       statement: >-
         Anthropic does not promise generated code is secure by default; secure use still depends materially on user
         review, safeguards, and iteration.
       type: inferred
       topic: secure coding risk
       sourceRefs:
-        - S011
-        - S018
+        - SR011
+        - SR018
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ008
+        - QR008
       contradictsClaimRefs: []
-    - id: C037
+    - id: CR037
       statement: Fortune reported that the Claude Code deterioration produced weeks of user backlash and trust damage.
       type: third-party-reported
       topic: reliability
       sourceRefs:
-        - S020
+        - SR020
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ009
+        - QR009
       contradictsClaimRefs: []
-    - id: C038
+    - id: CR038
       statement: >-
         Public sources do not yet show what release-governance or regression gates Anthropic changed after the April
         2026 postmortem.
@@ -1985,122 +1985,122 @@ localEvidence:
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ010
+        - QR010
       contradictsClaimRefs: []
-    - id: C039
+    - id: CR039
       statement: >-
         Because Anthropic’s compute footprint is concentrated in a few hyperscaler relationships, those counterparties
         can simultaneously affect gross margin, launch speed, and financing needs.
       type: inferred
       topic: cloud dependency
       sourceRefs:
-        - S006
-        - S014
-        - S019
+        - SR006
+        - SR014
+        - SR019
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ011
+        - QR011
       contradictsClaimRefs: []
-    - id: C040
+    - id: CR040
       statement: Customer breadth appears to be improving quickly, but public concentration disclosure remains limited.
       type: inferred
       topic: customer concentration
       sourceRefs:
-        - S014
-        - S015
+        - SR014
+        - SR015
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ012
+        - QR012
       contradictsClaimRefs: []
-    - id: C041
+    - id: CR041
       statement: >-
         As MCP spreads across Claude-adjacent and rival ecosystems, interoperability can improve distribution while
         lowering switching costs for tool connectivity.
       type: inferred
       topic: ecosystem
       sourceRefs:
-        - S008
-        - S009
-        - S010
+        - SR008
+        - SR009
+        - SR010
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ013
+        - QR013
       contradictsClaimRefs: []
-    - id: C042
+    - id: CR042
       statement: >-
         A possible $900 billion financing process would increase disclosure scrutiny and leadership execution risk even
         before an IPO.
       type: third-party-reported
       topic: execution risk
       sourceRefs:
-        - S027
+        - SR027
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ014
+        - QR014
       contradictsClaimRefs: []
-    - id: C043
+    - id: CR043
       statement: >-
         Underwriting a best-case valuation path depends on Anthropic sustaining coding-product quality because developer
         demand is now a major growth engine.
       type: inferred
       topic: growth dependency
       sourceRefs:
-        - S014
-        - S002
-        - S004
-        - S020
+        - SR014
+        - SR002
+        - SR004
+        - SR020
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ015
+        - QR015
       contradictsClaimRefs: []
-    - id: C044
+    - id: CR044
       statement: >-
         Anthropic’s public safety posture is more explicit than most peers, but enforcement error rates and
         operating-quality thresholds are not publicly quantified.
       type: inferred
       topic: safety posture
       sourceRefs:
-        - S011
-        - S012
-        - S003
+        - SR011
+        - SR012
+        - SR003
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ016
+        - QR016
       contradictsClaimRefs: []
-    - id: C045
+    - id: CR045
       statement: AP reported that Anthropic won a fair-use ruling on training but still faced a trial over pirated-books conduct.
       type: third-party-reported
       topic: copyright litigation
       sourceRefs:
-        - S023
+        - SR023
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ017
+        - QR017
       contradictsClaimRefs: []
-    - id: C046
+    - id: CR046
       statement: >-
         Coding products now matter directly to Anthropic’s growth narrative across official fundraising, partnership,
         and media coverage.
       type: inferred
       topic: growth dependency
       sourceRefs:
-        - S002
-        - S015
-        - S004
-        - S020
+        - SR002
+        - SR015
+        - SR004
+        - SR020
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ018
+        - QR018
       contradictsClaimRefs: []
-    - id: C047
+    - id: CR047
       statement: >-
         Public sources reviewed do not disclose enterprise SLA terms, service-credit policies, or long-run error-budget
         governance for Claude Code and the API.
@@ -2110,9 +2110,9 @@ localEvidence:
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ019
+        - QR019
       contradictsClaimRefs: []
-    - id: C048
+    - id: CR048
       statement: >-
         Public sources reviewed do not disclose a detailed bridge from contracted compute obligations to realized
         monetization.
@@ -2122,7 +2122,7 @@ localEvidence:
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ020
+        - QR020
       contradictsClaimRefs: []
   evidenceGaps:
     - type: private-evidence-only
@@ -2138,7 +2138,8 @@ localEvidence:
         financial/model risk — burn, capital intensity, credit/loss exposure, fraud, working capital, margin
         compression. in the risks chapter for anthropic as of 2026-05-04?
       relatedQuestionRefs:
-        - RQ029
+        - QR029
+      relatedTableRefs: []
     - type: missing-source
       severity: minor
       topic: 'Risks: Which publicly visible items enumerate mitigations, monitoring indicators, thesi'
@@ -2152,7 +2153,8 @@ localEvidence:
         enumerate mitigations, monitoring indicators, thesis-break triggers, and diligence asks. in the risks chapter
         for anthropic as of 2026-05-04?
       relatedQuestionRefs:
-        - RQ030
+        - QR030
+      relatedTableRefs: []
     - type: private-evidence-only
       severity: minor
       topic: 'Risks: What public evidence verifies severity-ranked risks with likelihood, impact, mit'
@@ -2166,7 +2168,8 @@ localEvidence:
         severity-ranked risks with likelihood, impact, mitigation maturity, residual exposure, and investment
         implication. in the risks chapter for anthropic as of 2026-05-04?
       relatedQuestionRefs:
-        - RQ031
+        - QR031
+      relatedTableRefs: []
     - type: missing-source
       severity: minor
       topic: 'Risks: Which public numbers best quantify regulatory/legal risk — licenses, approvals, '
@@ -2180,7 +2183,8 @@ localEvidence:
         regulatory/legal risk — licenses, approvals, litigation, enforcement, ip, privacy, environmental/safety. in the
         risks chapter for anthropic as of 2026-05-04?
       relatedQuestionRefs:
-        - RQ032
+        - QR032
+      relatedTableRefs: []
     - type: enumeration-incomplete
       severity: minor
       topic: Regulatory / legal risk register remains a partial public enumeration in Risks
@@ -2188,4 +2192,5 @@ localEvidence:
       whyItMatters: The table is analytically useful, but completeness cannot be demonstrated from the public record alone.
       diligencePath: Request an internally maintained list or export to complete regulatory / legal risk register.
       relatedTableRefs:
-        - T701
+        - TR001
+      relatedQuestionRefs: []

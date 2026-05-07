@@ -114,7 +114,7 @@ sections:
     figureRefs:
       - F404
 tables:
-  - id: T401
+  - id: TI001
     title: Revenue Streams Table
     columns:
       - Revenue Stream
@@ -152,11 +152,11 @@ tables:
       Revenue mix estimates based on public statements (85% private deploy) and analyst inference. Exact figures are not
       publicly disclosed.
     claimRefs:
-      - C123
-      - C124
-      - C125
-      - C126
-  - id: T402
+      - CI001
+      - CI002
+      - CI003
+      - CI004
+  - id: TI002
     title: Pricing / Monetization Table
     columns:
       - Product
@@ -218,16 +218,16 @@ tables:
       API pricing from Cohere.com public pricing page as of May 2026. Private deployment and North platform pricing are
       custom ACV; ranges are analyst estimates.
     claimRefs:
-      - C123
-      - C127
-      - C128
-      - C129
+      - CI001
+      - CI005
+      - CI006
+      - CI007
     enumerationScope:
       coverage: partial
       basis: >-
         Cohere does not disclose full pricing schedule; API tier pricing is public but private deployment ACV pricing is
         custom and not disclosed.
-  - id: T403
+  - id: TI003
     title: Unit Economics Table
     columns:
       - Metric
@@ -280,12 +280,12 @@ tables:
       All estimates are analyst inferences from public data; Cohere does not disclose unit economics. High uncertainty
       applies to all estimates.
     claimRefs:
-      - C130
-      - C131
-      - C132
-      - C133
-      - C134
-  - id: T404
+      - CI008
+      - CI009
+      - CI010
+      - CI011
+      - CI012
+  - id: TI004
     title: Capital Adequacy Table
     columns:
       - Round
@@ -329,16 +329,16 @@ tables:
       Round details sourced from Crunchbase, Bloomberg, TechCrunch, and PSP Investments disclosure. Valuations are
       reported or implied post-money valuations.
     claimRefs:
-      - C135
-      - C136
-      - C137
-      - C138
+      - CI013
+      - CI014
+      - CI015
+      - CI016
     enumerationScope:
       coverage: partial
       basis: >-
         Earlier seed/pre-seed rounds may not be fully disclosed; total raised figure (~$1.7B) is an analyst aggregation
         from public sources.
-  - id: T405
+  - id: TI005
     title: Public Financial Gaps Table
     columns:
       - Data Point
@@ -391,17 +391,17 @@ tables:
       These data points are standard VC diligence asks for Series E+ growth investments. Absence of public data does not
       imply poor performance — it is standard for private companies at this stage.
     claimRefs:
-      - C139
-      - C140
-      - C141
-      - C142
+      - CI017
+      - CI018
+      - CI019
+      - CI020
     enumerationScope:
       coverage: partial
       basis: >-
         Financial data gaps are partially enumerated; additional gaps may exist around tax, international revenue mix,
         and deferred revenue treatment.
 figures:
-  - id: F401
+  - id: FI001
     title: Revenue Model Bridge
     type: waterfall
     layout: standard
@@ -436,10 +436,10 @@ figures:
           category: end
     approximationNotes: All values are analyst estimates. Actual ARR and growth drivers are not publicly disclosed by Cohere.
     claimRefs:
-      - C130
-      - C131
-      - C143
-  - id: F402
+      - CI008
+      - CI009
+      - CI021
+  - id: FI002
     title: Unit Economics Bridge
     type: kpi
     layout: compact
@@ -468,11 +468,11 @@ figures:
       Most figures are analyst estimates with medium-to-low confidence. Official metrics are not publicly available for
       Cohere.
     claimRefs:
-      - C132
-      - C135
-      - C136
-      - C144
-  - id: F403
+      - CI010
+      - CI013
+      - CI014
+      - CI022
+  - id: FI003
     title: Financial Estimate Range
     type: range
     layout: standard
@@ -506,11 +506,11 @@ figures:
       2026 and strong NRR. Mid case is analyst consensus. Units: ARR in $M, margin in %, runway in months, multiple in
       x.
     claimRefs:
-      - C130
-      - C137
-      - C138
-      - C145
-  - id: F404
+      - CI008
+      - CI015
+      - CI016
+      - CI023
+  - id: FI004
     title: Capital Intensity / Cash-Flow Map
     type: flow
     layout: standard
@@ -563,9 +563,9 @@ figures:
       Cost allocation percentages are analyst estimates based on comparable enterprise AI companies; Cohere has not
       disclosed operational expense breakdown.
     claimRefs:
-      - C146
-      - C147
-      - C148
+      - CI024
+      - CI025
+      - CI026
 callouts:
   - calloutType: risk
     title: Revenue Concentration in Large Private-Deploy Contracts Creates Churn Exposure
@@ -577,9 +577,9 @@ callouts:
       large accounts could materially impact ARR growth. Cohere has not disclosed NRR or retention metrics, which is the
       single most important unknown for underwriting the revenue quality.
     claimRefs:
-      - C140
-      - C141
-      - C149
+      - CI018
+      - CI019
+      - CI027
   - calloutType: strength
     title: High-Margin ACV Model With Strategic Co-Selling Partners Is Rare at Series E Stage
     body: >
@@ -591,109 +591,109 @@ callouts:
       allowing the company to punch above its weight in large-enterprise accounts relative to its direct sales
       headcount.
     claimRefs:
-      - C126
-      - C135
-      - C146
+      - CI004
+      - CI013
+      - CI024
 localEvidence:
   searchQueries:
     - query: Cohere ARR revenue 2025 2026 financial metrics enterprise AI
       engine: web_search
       hits: 12
       retainedSourceRefs:
-        - S001
-        - S002
-        - S003
+        - SI001
+        - SI002
+        - SI003
     - query: Cohere funding rounds 2024 2025 valuation Series D E capital raised
       engine: web_search
       hits: 10
       retainedSourceRefs:
-        - S004
-        - S005
-        - S006
-        - S007
+        - SI004
+        - SI005
+        - SI006
+        - SI007
     - query: enterprise AI SaaS gross margins unit economics LLM providers 2025
       engine: web_search
       hits: 9
       retainedSourceRefs:
-        - S008
-        - S009
-        - S010
+        - SI008
+        - SI009
+        - SI010
     - query: Cohere private deployment ACV enterprise pricing model revenue mix
       engine: web_search
       hits: 8
       retainedSourceRefs:
-        - S011
-        - S012
+        - SI011
+        - SI012
     - query: AI startup ARR valuation multiples 2025 OpenAI Anthropic Cohere comps
       engine: web_search
       hits: 10
       retainedSourceRefs:
-        - S013
-        - S014
-        - S015
+        - SI013
+        - SI014
+        - SI015
     - query: PSP Investments Cohere portfolio 2025 annual report
       engine: web_search
       hits: 6
       retainedSourceRefs:
-        - S016
-        - S017
+        - SI016
+        - SI017
     - query: NVIDIA Oracle AMD strategic investment Cohere announcement 2025
       engine: web_search
       hits: 8
       retainedSourceRefs:
-        - S018
-        - S019
-        - S020
+        - SI018
+        - SI019
+        - SI020
     - query: enterprise SaaS benchmarks BVP cloud index NRR net dollar retention 2025
       engine: web_search
       hits: 8
       retainedSourceRefs:
-        - S021
-        - S022
+        - SI021
+        - SI022
     - query: AI model inference compute cost GPU H100 A100 per token economics 2025
       engine: web_search
       hits: 7
       retainedSourceRefs:
-        - S023
-        - S024
-        - S025
+        - SI023
+        - SI024
+        - SI025
   researchQuestions:
-    - id: RQ001
+    - id: QI001
       question: What is Cohere's reported or estimated ARR as of Q4 2025 and early 2026?
       type: quantification
       targets:
         - contentRequirements/3
         - plannedTables/unit-economics-table
       status: answered
-    - id: RQ002
+    - id: QI002
       question: What is the revenue mix between private deployment ACV and API consumption for Cohere in 2025?
       type: quantification
       targets:
         - contentRequirements/0
         - plannedTables/revenue-streams-table
       status: answered
-    - id: RQ003
+    - id: QI003
       question: What pricing tiers and per-token rates does Cohere charge for Command A and Command R+ API access in 2025?
       type: quantification
       targets:
         - contentRequirements/0
         - plannedTables/pricing-monetization-table
       status: answered
-    - id: RQ004
+    - id: QI004
       question: What is the estimated gross margin for Cohere's private deployment product vs API tier?
       type: quantification
       targets:
         - contentRequirements/2
         - plannedTables/unit-economics-table
       status: partial
-    - id: RQ005
+    - id: QI005
       question: What is Cohere's total capital raised and what is the implied valuation at each round since 2022?
       type: quantification
       targets:
         - contentRequirements/4
         - plannedTables/capital-adequacy-table
       status: answered
-    - id: RQ006
+    - id: QI006
       question: >-
         What strategic investors participated in Cohere's most recent funding rounds and what commercial arrangements
         accompany their investments?
@@ -703,35 +703,35 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/capital-adequacy-table
       status: answered
-    - id: RQ007
+    - id: QI007
       question: What is Cohere's estimated ARR growth rate year-over-year from 2024 to 2026?
       type: quantification
       targets:
         - contentRequirements/3
         - plannedFigures/revenue-model-bridge
       status: answered
-    - id: RQ008
+    - id: QI008
       question: Has Cohere disclosed any Net Dollar Retention (NRR) or customer retention data publicly?
       type: verification
       targets:
         - contentRequirements/3
         - plannedTables/public-financial-gaps-table
       status: answered
-    - id: RQ009
+    - id: QI009
       question: What is Cohere's estimated enterprise customer count and average contract value as of 2025?
       type: quantification
       targets:
         - contentRequirements/1
         - plannedTables/unit-economics-table
       status: partial
-    - id: RQ010
+    - id: QI010
       question: What is the estimated burn rate and cash runway for Cohere given total capital raised of ~$1.7B?
       type: quantification
       targets:
         - contentRequirements/4
         - plannedTables/capital-adequacy-table
       status: partial
-    - id: RQ011
+    - id: QI011
       question: >-
         What comparable ARR revenue multiples are other leading private AI companies (OpenAI, Anthropic) trading at in
         2025?
@@ -740,7 +740,7 @@ localEvidence:
         - contentRequirements/5
         - plannedFigures/financial-estimate-range
       status: answered
-    - id: RQ012
+    - id: QI012
       question: >-
         What are the primary GPU compute cost inputs for Cohere's inference business and how do they affect gross
         margins?
@@ -749,21 +749,21 @@ localEvidence:
         - contentRequirements/2
         - plannedFigures/capital-intensity-cash-flow-map
       status: partial
-    - id: RQ013
+    - id: QI013
       question: Did Cohere's September 2025 funding round represent a valuation step-up from the July 2024 Series D?
       type: verification
       targets:
         - contentRequirements/4
         - plannedTables/capital-adequacy-table
       status: answered
-    - id: RQ014
+    - id: QI014
       question: Has Cohere disclosed any revenue recognition or deferred revenue treatment for multi-year ACV contracts?
       type: verification
       targets:
         - contentRequirements/0
         - plannedTables/public-financial-gaps-table
       status: answered
-    - id: RQ015
+    - id: QI015
       question: >-
         What is Cohere's enterprise sales motion and how does it achieve enterprise account acquisition — direct,
         channel, or both?
@@ -772,14 +772,14 @@ localEvidence:
         - contentRequirements/1
         - plannedTables/revenue-streams-table
       status: answered
-    - id: RQ016
+    - id: QI016
       question: Does Cohere have any publicly disclosed major contract wins or customer revenue announcements in 2025–2026?
       type: verification
       targets:
         - contentRequirements/3
         - plannedTables/unit-economics-table
       status: answered
-    - id: RQ017
+    - id: QI017
       question: >-
         What is the Rule of 40 score for Cohere (estimated) and how does it compare to public enterprise SaaS
         benchmarks?
@@ -788,21 +788,21 @@ localEvidence:
         - contentRequirements/5
         - plannedFigures/financial-estimate-range
       status: answered
-    - id: RQ018
+    - id: QI018
       question: What do BVP or SaaS Capital enterprise cloud benchmarks suggest about median NRR for enterprise AI SaaS peers?
       type: comparison
       targets:
         - contentRequirements/1
         - contentRequirements/2
       status: answered
-    - id: RQ019
+    - id: QI019
       question: Are there any adverse signals about Cohere's financial health — delayed payments, layoffs, or investor markdown?
       type: adverse
       targets:
         - contentRequirements/5
         - plannedTables/public-financial-gaps-table
       status: answered
-    - id: RQ020
+    - id: QI020
       question: >-
         What is the fully burdened compute cost per million tokens served for leading LLM inference on NVIDIA H100
         clusters?
@@ -811,14 +811,14 @@ localEvidence:
         - contentRequirements/2
         - plannedFigures/capital-intensity-cash-flow-map
       status: answered
-    - id: RQ021
+    - id: QI021
       question: How does Cohere's $7B valuation at ~$240M ARR compare to comparable companies on a revenue multiple basis?
       type: comparison
       targets:
         - contentRequirements/5
         - plannedFigures/financial-estimate-range
       status: answered
-    - id: RQ022
+    - id: QI022
       question: >-
         What is the expected capital requirement for training a frontier-class LLM at the scale Cohere would need in
         2025–2026?
@@ -828,7 +828,7 @@ localEvidence:
         - contentRequirements/2
         - plannedFigures/capital-intensity-cash-flow-map
       status: answered
-    - id: RQ023
+    - id: QI023
       question: >-
         Does PSP Investments or other institutional investors in Cohere provide any financial disclosures through
         regulatory filings?
@@ -837,14 +837,14 @@ localEvidence:
         - contentRequirements/4
         - plannedTables/capital-adequacy-table
       status: answered
-    - id: RQ024
+    - id: QI024
       question: What does the Sacra analyst report say about Cohere's revenue quality and gross margin estimates?
       type: verification
       targets:
         - contentRequirements/5
         - contentRequirements/2
       status: answered
-    - id: RQ025
+    - id: QI025
       question: >-
         Is there evidence that Cohere's enterprise contract revenue is growing through expansion (upsell/cross-sell) or
         primarily new logos?
@@ -854,7 +854,7 @@ localEvidence:
         - contentRequirements/3
       status: answered
   sources:
-    - id: S001
+    - id: SI001
       publisher: Sacra
       title: Cohere Revenue, Growth, and Competitive Analysis
       url: https://sacra.com/research/cohere/
@@ -872,7 +872,7 @@ localEvidence:
         - competitive analysis
         - financial estimates
       keyQuote: Cohere's ARR is estimated to have reached approximately $240M by early 2026, up from $150M earlier in 2025.
-    - id: S002
+    - id: SI002
       publisher: Bloomberg
       title: Cohere Revenues Top $200 Million as AI Competition Intensifies
       url: https://www.bloomberg.com/news/articles/2026-02-15/cohere-ai-revenue-enterprise
@@ -891,7 +891,7 @@ localEvidence:
       keyQuote: >-
         Cohere's annualized revenue has surpassed $200 million, with sources saying it recently reached approximately
         $240 million.
-    - id: S003
+    - id: SI003
       publisher: The Information
       title: 'Enterprise AI Startups Race Past $200M ARR: Cohere, Glean Lead'
       url: https://www.theinformation.com/articles/enterprise-ai-startups-arr-2026
@@ -908,7 +908,7 @@ localEvidence:
         - Glean comparison
         - private company growth
       keyQuote: null
-    - id: S004
+    - id: SI004
       publisher: TechCrunch
       title: Cohere Raises $500 Million Series D at $5 Billion Valuation
       url: https://techcrunch.com/2024/07/22/cohere-raises-500-million-series-d-funding-round/
@@ -926,7 +926,7 @@ localEvidence:
         - investor syndicate
         - strategic investors
       keyQuote: Cohere has raised $500 million in a Series D round at a $5 billion valuation.
-    - id: S005
+    - id: SI005
       publisher: Bloomberg
       title: Cohere Raises $500 Million at $6.8 Billion Valuation, Sources Say
       url: https://www.bloomberg.com/news/articles/2025-09-10/cohere-raises-500-million-valuation-6-8-billion
@@ -946,7 +946,7 @@ localEvidence:
       keyQuote: >-
         Cohere is raising $500 million at a valuation of approximately $6.8 billion, according to people familiar with
         the matter.
-    - id: S006
+    - id: SI006
       publisher: Crunchbase News
       title: Cohere Funding, Valuation, and Investor History
       url: https://www.crunchbase.com/organization/cohere-ai/funding_rounds
@@ -963,7 +963,7 @@ localEvidence:
         - valuation history
         - investor list
       keyQuote: null
-    - id: S007
+    - id: SI007
       publisher: Axios
       title: AI Startup Funding Hits Record in 2025 as Enterprise Demand Surges
       url: https://www.axios.com/2025/12/15/ai-startup-funding-record-2025-enterprise
@@ -980,7 +980,7 @@ localEvidence:
         - valuation multiples
         - 2025 market overview
       keyQuote: null
-    - id: S008
+    - id: SI008
       publisher: Bessemer Venture Partners
       title: 'State of the Cloud 2025: BVP Nasdaq Enterprise Cloud Index'
       url: https://www.bvp.com/atlas/state-of-the-cloud-2025
@@ -999,7 +999,7 @@ localEvidence:
         - ARR growth
         - cloud index
       keyQuote: Median NRR for top-decile enterprise SaaS companies remains at 115–125% even as the market normalises post-2022.
-    - id: S009
+    - id: SI009
       publisher: SaaStr
       title: What's a Good NRR for a SaaS Company in 2025?
       url: https://www.saastr.com/whats-a-good-ndr-for-a-saas-company-in-2025/
@@ -1016,7 +1016,7 @@ localEvidence:
         - SaaS unit economics
         - expansion revenue
       keyQuote: A good NRR for enterprise SaaS is 110–130%; anything above 120% indicates strong land-and-expand dynamics.
-    - id: S010
+    - id: SI010
       publisher: Battery Ventures
       title: Enterprise SaaS Metrics and Benchmarks 2025
       url: https://www.battery.com/blog/enterprise-saas-metrics-benchmarks-2025/
@@ -1034,7 +1034,7 @@ localEvidence:
         - payback period
         - enterprise AI
       keyQuote: null
-    - id: S011
+    - id: SI011
       publisher: Cohere
       title: Cohere API Pricing
       url: https://cohere.com/pricing
@@ -1052,7 +1052,7 @@ localEvidence:
         - Rerank pricing
         - per-token rates
       keyQuote: 'Command R+: $1.00 / $2.00 per million tokens; Command A pricing available via enterprise inquiry.'
-    - id: S012
+    - id: SI012
       publisher: Cohere
       title: Cohere Enterprise Solutions
       url: https://cohere.com/enterprise
@@ -1070,7 +1070,7 @@ localEvidence:
         - enterprise support
         - SLA
       keyQuote: null
-    - id: S013
+    - id: SI013
       publisher: Meritech Capital
       title: Public Company SaaS Comps and Valuation Multiples 2025
       url: https://www.meritechcapital.com/benchmarking
@@ -1087,7 +1087,7 @@ localEvidence:
         - public SaaS comps
         - NTM revenue multiple
       keyQuote: Median NTM revenue multiple for public high-growth SaaS is 8–15x; top-decile companies trade at 20–30x.
-    - id: S014
+    - id: SI014
       publisher: Sacra
       title: 'Cohere at $150M ARR: Revenue Analysis and Competitive Moat'
       url: https://sacra.com/research/cohere-at-150m-arr/
@@ -1107,7 +1107,7 @@ localEvidence:
       keyQuote: >-
         Cohere's 46.7x ARR multiple at its $7 billion valuation reflects the premium investors pay for enterprise AI
         with private-deploy differentiation.
-    - id: S015
+    - id: SI015
       publisher: Dealroom
       title: Enterprise AI Startup Valuations and Revenue Benchmarks 2025
       url: https://dealroom.co/reports/enterprise-ai-valuations-2025
@@ -1126,7 +1126,7 @@ localEvidence:
         - Anthropic
         - OpenAI
       keyQuote: null
-    - id: S016
+    - id: SI016
       publisher: PSP Investments
       title: PSP Investments Annual Report 2025
       url: https://www.investpsp.com/en/annual-report-2025/
@@ -1143,7 +1143,7 @@ localEvidence:
         - institutional capital
         - private equity AI
       keyQuote: null
-    - id: S017
+    - id: SI017
       publisher: Inovia Capital
       title: 'Inovia Portfolio: Cohere'
       url: https://inovia.vc/portfolio/cohere/
@@ -1161,7 +1161,7 @@ localEvidence:
         - Series D
         - strategic investment
       keyQuote: null
-    - id: S018
+    - id: SI018
       publisher: NVIDIA
       title: 'NVIDIA Accelerated Computing Ecosystem: Strategic AI Investments'
       url: https://www.nvidia.com/en-us/industries/ai/strategic-investments/
@@ -1179,7 +1179,7 @@ localEvidence:
         - enterprise AI
         - strategic investor
       keyQuote: null
-    - id: S019
+    - id: SI019
       publisher: Oracle
       title: 'Oracle and Cohere Partnership: Enterprise AI on Oracle Cloud Infrastructure'
       url: https://www.oracle.com/news/announcement/oracle-cohere-partnership/
@@ -1197,7 +1197,7 @@ localEvidence:
         - strategic investment
         - co-selling
       keyQuote: null
-    - id: S020
+    - id: SI020
       publisher: TechCrunch
       title: 'Enterprise AI Company Valuations in 2025: How Do They Compare?'
       url: https://techcrunch.com/2025/11/10/enterprise-ai-valuation-multiples-openai-anthropic-cohere/
@@ -1218,7 +1218,7 @@ localEvidence:
       keyQuote: >-
         OpenAI trades at approximately 38.5x ARR while Anthropic and Cohere are priced at 36.6x and approximately 29x
         respectively.
-    - id: S021
+    - id: SI021
       publisher: Pitchbook
       title: Cohere Private Company Profile and Funding History
       url: https://pitchbook.com/profiles/company/179265-00
@@ -1236,7 +1236,7 @@ localEvidence:
         - private company financials
         - ARR estimates
       keyQuote: null
-    - id: S022
+    - id: SI022
       publisher: A16Z Research
       title: 'The Unit Economics of Generative AI: What the Numbers Actually Say'
       url: https://a16z.com/the-unit-economics-of-generative-ai/
@@ -1256,7 +1256,7 @@ localEvidence:
       keyQuote: >-
         Leading enterprise AI providers targeting 70–80% gross margins must achieve GPU utilisation rates above 60% to
         hit their margin targets.
-    - id: S023
+    - id: SI023
       publisher: Epoch AI
       title: Compute Costs for AI Model Training and Inference 2025
       url: https://epochai.org/research/compute-costs-training-inference-2025
@@ -1276,7 +1276,7 @@ localEvidence:
       keyQuote: >-
         Inference cost on H100 clusters at scale runs approximately $0.30–$1.50 per million tokens depending on model
         size and utilization rate.
-    - id: S024
+    - id: SI024
       publisher: Cohere
       title: Cohere Model Overview and Enterprise Use Cases
       url: https://cohere.com/models
@@ -1295,7 +1295,7 @@ localEvidence:
         - product lineup
         - enterprise capabilities
       keyQuote: null
-    - id: S025
+    - id: SI025
       publisher: Radical Ventures
       title: 'Radical Portfolio: Cohere'
       url: https://radical.vc/cohere/
@@ -1313,7 +1313,7 @@ localEvidence:
         - enterprise AI investment thesis
       keyQuote: null
   claims:
-    - id: C001
+    - id: CI001
       statement: >-
         Cohere generates approximately 85% of its revenue from private and on-premises deployment annual contracts
         (ACV), with approximately 15% from API consumption and SaaS products, reflecting a deliberate enterprise-focused
@@ -1321,13 +1321,14 @@ localEvidence:
       type: observed
       topic: revenue-model
       sourceRefs:
-        - S001
-        - S012
+        - SI001
+        - SI012
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ002
-    - id: C002
+        - QI002
+      contradictsClaimRefs: []
+    - id: CI002
       statement: >-
         Cohere's enterprise private deployment contracts are multi-year ACV agreements estimated at $500,000 to $5
         million or more per enterprise customer annually, targeting regulated-industry verticals including financial
@@ -1335,14 +1336,15 @@ localEvidence:
       type: estimated
       topic: pricing
       sourceRefs:
-        - S012
-        - S011
+        - SI012
+        - SI011
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ003
-        - RQ015
-    - id: C003
+        - QI003
+        - QI015
+      contradictsClaimRefs: []
+    - id: CI003
       statement: >-
         Cohere launched its North agentic AI platform in January 2025 as a SaaS subscription product targeting
         enterprise workflow automation, adding a third revenue stream to its private-deployment ACV and API consumption
@@ -1350,11 +1352,13 @@ localEvidence:
       type: observed
       topic: revenue-model
       sourceRefs:
-        - S001
-        - S012
+        - SI001
+        - SI012
       confidence: medium
       freshness: recent
-    - id: C004
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI004
       statement: >-
         Cohere's strategic investors — NVIDIA, AMD, Oracle, Salesforce, and Cisco — each provide commercial co-selling
         and distribution access alongside financial capital, partially substituting for a large direct enterprise sales
@@ -1362,13 +1366,14 @@ localEvidence:
       type: observed
       topic: capital-structure
       sourceRefs:
-        - S018
-        - S019
+        - SI018
+        - SI019
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ006
-    - id: C005
+        - QI006
+      contradictsClaimRefs: []
+    - id: CI005
       statement: >-
         Cohere's public API pricing for Command R+ is approximately $1.00 per million input tokens and $2.00 per million
         output tokens, positioning it competitively between open-source free tiers and frontier model pricing of
@@ -1376,36 +1381,40 @@ localEvidence:
       type: observed
       topic: pricing
       sourceRefs:
-        - S011
-        - S014
+        - SI011
+        - SI014
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ003
-    - id: C006
+        - QI003
+      contradictsClaimRefs: []
+    - id: CI006
       statement: >-
         Cohere's Embed v3 model is priced at approximately $0.10 per million input tokens, and Rerank is priced at
         approximately $1.00 per 1,000 searches, reflecting lower-margin commodity retrieval model pricing.
       type: observed
       topic: pricing
       sourceRefs:
-        - S011
+        - SI011
       confidence: medium
       freshness: current
-    - id: C007
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI007
       statement: >-
         Cohere does not publicly disclose revenue recognition policies for multi-year ACV contracts, creating
         uncertainty about whether revenue is recognised upfront, ratably over contract term, or on delivery milestones.
       type: observed
       topic: revenue-quality
       sourceRefs:
-        - S001
-        - S014
+        - SI001
+        - SI014
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ014
-    - id: C008
+        - QI014
+      contradictsClaimRefs: []
+    - id: CI008
       statement: >-
         Cohere's ARR reached approximately $240 million as of February 2026, up from an estimated $150 million in early
         2025 and approximately $60–100 million in mid-2024, representing rapid acceleration driven by enterprise
@@ -1413,14 +1422,15 @@ localEvidence:
       type: third-party-reported
       topic: revenue-traction
       sourceRefs:
-        - S001
-        - S002
+        - SI001
+        - SI002
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ001
-        - RQ007
-    - id: C009
+        - QI001
+        - QI007
+      contradictsClaimRefs: []
+    - id: CI009
       statement: >-
         Cohere's ARR growth from $150M to $240M in approximately 12 months (early 2025 to February 2026) represents
         approximately 60% year-over-year growth — strong for an enterprise SaaS business at this scale, though
@@ -1428,27 +1438,29 @@ localEvidence:
       type: estimated
       topic: growth
       sourceRefs:
-        - S001
-        - S003
+        - SI001
+        - SI003
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ007
-    - id: C010
+        - QI007
+      contradictsClaimRefs: []
+    - id: CI010
       statement: >-
         Cohere's implied ARR revenue multiple at its $7 billion valuation and approximately $240 million ARR is
         approximately 29x forward ARR — lower than OpenAI (~38.5x) and Anthropic (~36.6x) private market comparables.
       type: estimated
       topic: valuation
       sourceRefs:
-        - S014
-        - S020
+        - SI014
+        - SI020
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ011
-        - RQ021
-    - id: C011
+        - QI011
+        - QI021
+      contradictsClaimRefs: []
+    - id: CI011
       statement: >-
         Cohere has not publicly disclosed Net Dollar Retention (NRR) or gross customer retention figures, making it
         impossible for external analysts to independently assess the quality and stickiness of its enterprise revenue
@@ -1456,26 +1468,28 @@ localEvidence:
       type: observed
       topic: evidence-gap
       sourceRefs:
-        - S001
-        - S014
+        - SI001
+        - SI014
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ008
-    - id: C012
+        - QI008
+      contradictsClaimRefs: []
+    - id: CI012
       statement: >-
         Cohere's enterprise customer count is estimated by analysts at approximately 400–600 active enterprise accounts
         as of early 2026, with no official disclosure from the company.
       type: estimated
       topic: customer-traction
       sourceRefs:
-        - S001
-        - S015
+        - SI001
+        - SI015
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ009
-    - id: C013
+        - QI009
+      contradictsClaimRefs: []
+    - id: CI013
       statement: >-
         Cohere raised $500 million in its Series D round (July 2024) at a $5 billion post-money valuation, with Cisco
         and AMD joining the strategic investor syndicate alongside existing investors NVIDIA, Oracle, Salesforce, PSP
@@ -1483,14 +1497,15 @@ localEvidence:
       type: observed
       topic: funding
       sourceRefs:
-        - S004
-        - S006
+        - SI004
+        - SI006
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ005
-        - RQ013
-    - id: C014
+        - QI005
+        - QI013
+      contradictsClaimRefs: []
+    - id: CI014
       statement: >-
         Cohere raised an additional $500 million in September 2025 at a valuation of approximately $6.8–7 billion,
         representing a 40% step-up from the July 2024 Series D at $5 billion — a meaningful valuation increase in
@@ -1498,40 +1513,43 @@ localEvidence:
       type: observed
       topic: funding
       sourceRefs:
-        - S005
-        - S006
+        - SI005
+        - SI006
       confidence: high
       freshness: recent
       answersQuestionRefs:
-        - RQ005
-        - RQ013
-    - id: C015
+        - QI005
+        - QI013
+      contradictsClaimRefs: []
+    - id: CI015
       statement: >-
         Cohere has raised approximately $1.7 billion in total disclosed financing since its founding in 2019, making it
         one of the most heavily capitalised private enterprise LLM companies outside of OpenAI and Anthropic.
       type: observed
       topic: capital-structure
       sourceRefs:
-        - S005
-        - S006
+        - SI005
+        - SI006
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ005
-    - id: C016
+        - QI005
+      contradictsClaimRefs: []
+    - id: CI016
       statement: >-
         PSP Investments, a major institutional investor in Cohere, disclosed the Cohere investment in its annual
         portfolio reporting, providing a limited institutional validation of Cohere's financial standing.
       type: observed
       topic: investor-disclosure
       sourceRefs:
-        - S016
-        - S006
+        - SI016
+        - SI006
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ023
-    - id: C017
+        - QI023
+      contradictsClaimRefs: []
+    - id: CI017
       statement: >-
         Cohere has not disclosed its burn rate or cash runway publicly; with approximately $1.7 billion raised and an
         unknown cash consumption rate, runway estimates range from 18 to 40 months depending on assumptions about
@@ -1539,50 +1557,55 @@ localEvidence:
       type: estimated
       topic: capital-adequacy
       sourceRefs:
-        - S001
-        - S021
+        - SI001
+        - SI021
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ010
-    - id: C018
+        - QI010
+      contradictsClaimRefs: []
+    - id: CI018
       statement: >-
         Enterprise AI SaaS companies at Cohere's revenue scale typically have top-10 customers representing 30–60% of
         total ARR, suggesting significant revenue concentration risk that Cohere has not publicly quantified.
       type: estimated
       topic: concentration-risk
       sourceRefs:
-        - S008
-        - S010
+        - SI008
+        - SI010
       confidence: medium
       freshness: current
-    - id: C019
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI019
       statement: >-
         Cohere does not publish audited financial statements, customer contract schedules, or revenue concentration data
         — all of which are standard due diligence items for a Series E enterprise SaaS company.
       type: observed
       topic: evidence-gap
       sourceRefs:
-        - S001
-        - S021
+        - SI001
+        - SI021
       confidence: high
       freshness: current
       answersQuestionRefs:
-        - RQ008
-    - id: C020
+        - QI008
+      contradictsClaimRefs: []
+    - id: CI020
       statement: >-
         No adverse financial signals — layoffs, investor markdowns, delayed payments, or executive financial-related
         departures — were identified in public reporting on Cohere through May 2026.
       type: observed
       topic: financial-health
       sourceRefs:
-        - S002
-        - S003
+        - SI002
+        - SI003
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ019
-    - id: C021
+        - QI019
+      contradictsClaimRefs: []
+    - id: CI021
       statement: >-
         Cohere's ARR trajectory from approximately $60M (mid-2024) to $240M (February 2026) over roughly 20 months
         represents a compound growth rate of approximately 100% per year — consistent with the top decile of enterprise
@@ -1590,13 +1613,14 @@ localEvidence:
       type: estimated
       topic: growth
       sourceRefs:
-        - S001
-        - S008
+        - SI001
+        - SI008
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ007
-    - id: C022
+        - QI007
+      contradictsClaimRefs: []
+    - id: CI022
       statement: >-
         At the $7 billion Series E round, Cohere's ARR multiple of approximately 29x is a significant premium to public
         enterprise SaaS companies trading at 8–15x NTM revenue, but a discount to private AI peers OpenAI and Anthropic
@@ -1604,13 +1628,14 @@ localEvidence:
       type: observed
       topic: valuation
       sourceRefs:
-        - S013
-        - S020
+        - SI013
+        - SI020
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ021
-    - id: C023
+        - QI021
+      contradictsClaimRefs: []
+    - id: CI023
       statement: >-
         The bear case for Cohere's ARR in 2026 is approximately $200 million (50% growth), reflecting slowdown from
         enterprise budget scrutiny and open-source substitution; the bull case is $450 million if North platform
@@ -1618,11 +1643,13 @@ localEvidence:
       type: estimated
       topic: financial-forecast
       sourceRefs:
-        - S001
-        - S015
+        - SI001
+        - SI015
       confidence: low
       freshness: current
-    - id: C024
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI024
       statement: >-
         Enterprise AI providers targeting 70–80% gross margins must achieve GPU utilisation rates above 60% on their
         inference clusters; Cohere's private-deployment model may actually improve margin by shifting inference
@@ -1630,14 +1657,15 @@ localEvidence:
       type: estimated
       topic: unit-economics
       sourceRefs:
-        - S022
-        - S023
+        - SI022
+        - SI023
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ012
-        - RQ020
-    - id: C025
+        - QI012
+        - QI020
+      contradictsClaimRefs: []
+    - id: CI025
       statement: >-
         Fully loaded inference cost on NVIDIA H100 clusters runs approximately $0.30–$1.50 per million tokens at scale,
         depending on model size and GPU utilisation; Cohere's API tier pricing of $1–$10 per million tokens implies
@@ -1645,13 +1673,14 @@ localEvidence:
       type: estimated
       topic: unit-economics
       sourceRefs:
-        - S023
-        - S022
+        - SI023
+        - SI022
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ020
-    - id: C026
+        - QI020
+      contradictsClaimRefs: []
+    - id: CI026
       statement: >-
         Cohere's capital allocation must balance three competing demands: (1) frontier model R&D (estimated $100–300M
         per large training run), (2) enterprise GTM scaling (estimated 30–40% of total opex), and (3) inference
@@ -1659,13 +1688,14 @@ localEvidence:
       type: estimated
       topic: capital-allocation
       sourceRefs:
-        - S022
-        - S021
+        - SI022
+        - SI021
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ022
-    - id: C027
+        - QI022
+      contradictsClaimRefs: []
+    - id: CI027
       statement: >-
         Cohere's Oracle partnership provides access to Oracle Cloud Infrastructure (OCI) GPU clusters, which reduces
         Cohere's direct capital expenditure on GPU hardware for inference — a significant cost reduction benefit for
@@ -1673,24 +1703,27 @@ localEvidence:
       type: observed
       topic: cost-structure
       sourceRefs:
-        - S019
-        - S018
+        - SI019
+        - SI018
       confidence: medium
       freshness: recent
-    - id: C028
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI028
       statement: >-
         Bessemer Venture Partners' 2025 State of the Cloud data shows median NRR for top-decile enterprise SaaS
         companies at 115–125%, providing a benchmark against which Cohere's undisclosed NRR can be assessed.
       type: observed
       topic: benchmark
       sourceRefs:
-        - S008
-        - S009
+        - SI008
+        - SI009
       confidence: medium
       freshness: recent
       answersQuestionRefs:
-        - RQ018
-    - id: C029
+        - QI018
+      contradictsClaimRefs: []
+    - id: CI029
       statement: >-
         Cohere's Rule of 40 score (estimated) is approximately 50–80 if ARR growth is 60–100% and gross margin is
         70–80%, positioning it as a high-quality growth company by public SaaS benchmarks — though burn contribution is
@@ -1698,13 +1731,14 @@ localEvidence:
       type: estimated
       topic: financial-quality
       sourceRefs:
-        - S008
-        - S013
+        - SI008
+        - SI013
       confidence: low
       freshness: current
       answersQuestionRefs:
-        - RQ017
-    - id: C030
+        - QI017
+      contradictsClaimRefs: []
+    - id: CI030
       statement: >-
         Cohere's Series B (October 2022) at $2.1 billion valuation represented a significant step-up from its
         seed/Series A stages and marked its unicorn entry, with NVIDIA and Oracle joining as strategic investors for the
@@ -1712,11 +1746,13 @@ localEvidence:
       type: observed
       topic: funding
       sourceRefs:
-        - S006
-        - S025
+        - SI006
+        - SI025
       confidence: medium
       freshness: historical
-    - id: C031
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI031
       statement: >-
         Cohere's Series C (June 2023) at $2.2 billion was effectively flat-to-Series B on valuation — a reflection of
         the broader 2023 venture market correction affecting many late-stage startups — despite continued strong product
@@ -1724,11 +1760,13 @@ localEvidence:
       type: observed
       topic: funding
       sourceRefs:
-        - S006
-        - S007
+        - SI006
+        - SI007
       confidence: medium
       freshness: historical
-    - id: C032
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI032
       statement: >-
         Oracle's strategic investment in Cohere (first participating in Series B, increased in Series D) creates a
         commercial relationship where Oracle Cloud Infrastructure acts as a preferred deployment platform for Cohere's
@@ -1736,22 +1774,26 @@ localEvidence:
       type: observed
       topic: partnership
       sourceRefs:
-        - S019
-        - S006
+        - SI019
+        - SI006
       confidence: medium
       freshness: recent
-    - id: C033
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI033
       statement: >-
         No public evidence of Cohere revenue generated from consumer applications or prosumer tiers as of May 2026; the
         company has maintained a pure enterprise B2B focus since founding.
       type: observed
       topic: revenue-model
       sourceRefs:
-        - S012
-        - S001
+        - SI012
+        - SI001
       confidence: medium
       freshness: current
-    - id: C034
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI034
       statement: >-
         Cohere's $240M ARR as of February 2026 versus total capital raised of approximately $1.7B implies a capital
         efficiency ratio of approximately $7.08 of capital raised per dollar of ARR — moderate for an enterprise AI
@@ -1759,11 +1801,13 @@ localEvidence:
       type: estimated
       topic: capital-efficiency
       sourceRefs:
-        - S005
-        - S001
+        - SI005
+        - SI001
       confidence: medium
       freshness: current
-    - id: C035
+      answersQuestionRefs: []
+      contradictsClaimRefs: []
+    - id: CI035
       statement: >-
         Analyst and investor reports uniformly note that the most critical financial diligence item for Cohere is net
         dollar retention (NRR) — if NRR is below 100%, it would signal net churn from enterprise accounts and
@@ -1771,12 +1815,13 @@ localEvidence:
       type: observed
       topic: financial-verdict
       sourceRefs:
-        - S014
-        - S001
+        - SI014
+        - SI001
       confidence: medium
       freshness: current
       answersQuestionRefs:
-        - RQ025
+        - QI025
+      contradictsClaimRefs: []
   evidenceGaps:
     - type: private-evidence-only
       severity: major
@@ -1791,8 +1836,9 @@ localEvidence:
         Request audited or management-certified P&L, including gross margin by product line, from Cohere under Series E
         due diligence NDA.
       relatedQuestionRefs:
-        - RQ004
-        - RQ012
+        - QI004
+        - QI012
+      relatedTableRefs: []
     - type: private-evidence-only
       severity: major
       topic: Customer count, contract sizes, and NRR — enterprise revenue concentration risk
@@ -1806,8 +1852,9 @@ localEvidence:
         Request customer contract schedule (top 20 customers by ACV), cohort retention data, and NRR calculation under
         NDA from Cohere management.
       relatedQuestionRefs:
-        - RQ009
-        - RQ025
+        - QI009
+        - QI025
+      relatedTableRefs: []
     - type: private-evidence-only
       severity: minor
       topic: Burn rate and runway — capital adequacy assessment
@@ -1819,8 +1866,9 @@ localEvidence:
         shorter than market assumes, increasing near-term financing risk.
       diligencePath: Request monthly board reporting on cash position, burn rate, and next financing trigger under NDA.
       relatedQuestionRefs:
-        - RQ010
-        - RQ022
+        - QI010
+        - QI022
+      relatedTableRefs: []
     - type: stale
       severity: minor
       topic: ARR growth rate confirmation — single data point February 2026
@@ -1832,4 +1880,5 @@ localEvidence:
         one-time contracts.
       diligencePath: Request monthly ARR schedule for the trailing 12 months under NDA; validate against board reporting.
       relatedQuestionRefs:
-        - RQ007
+        - QI007
+      relatedTableRefs: []
