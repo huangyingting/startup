@@ -1,6 +1,6 @@
 import type { CollectionEntry } from 'astro:content';
 
-export function isCurrentReport(entry: CollectionEntry<'reports'>): boolean {
+function isCurrentReport(entry: CollectionEntry<'reports'>): boolean {
   return entry.data.revision?.status !== 'superseded';
 }
 

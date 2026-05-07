@@ -31,5 +31,5 @@ try {
   console.log(`[check:workflow-config] analysis=${analysis.length} final=${finalFiles.length} core=${core.length} policy=${policy.volatileFacts.length}/${policy.finalResponseFields.length}`);
 } catch (err) {
   console.error(`[check:workflow-config] failure: ${err.message}`);
-  process.exit(EXIT.validation);
+  process.exit(EXIT.failure);
 }

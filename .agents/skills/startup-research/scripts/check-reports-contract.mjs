@@ -43,7 +43,7 @@ if (failures.length) {
     console.error(`\n--- ${failure.runId} ---`);
     console.error(failure.output || '(no output)');
   }
-  process.exit(EXIT.validation);
+  process.exit(EXIT.failure);
 }
 
 console.log(`[check:reports-contract] ✓ ${checked} finalized report(s); contract checks passed.`);

@@ -13,7 +13,7 @@
 // the object they touch — e.g. all complaints about T102 in one entry) and
 // globalHints[] (when the same dimension fails on many objects, hinting at a
 // chapter-wide root cause).
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
@@ -28,12 +28,12 @@ import {
   checkUniqueIds,
 } from './report-artifact-schema.mjs';
 import {
-  ANALYSIS_TOKEN_STOP_WORDS,
+  TITLE_TOKEN_STOP_WORDS,
   CASCADE_SUPPRESSORS,
-  DUPLICATE_ANALYSIS_TITLE_THRESHOLD,
+  DUPLICATE_TITLE_THRESHOLD,
   ENUMERATION_COVERAGE,
   FIX_HINTS,
-  MIN_ANALYSIS_TOKEN_LENGTH,
+  MIN_TITLE_TOKEN_LENGTH,
   PAYWALL_RISK_WARNING_THRESHOLD,
   PRIMARY_TIER_TYPES,
   QUESTION_STATUSES,
@@ -54,7 +54,7 @@ try {
 } catch (err) {
   console.error(`[check:chapter] failed to load workflow config: ${err.message}`);
   console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose workflow-config.yaml.');
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
@@ -66,18 +66,18 @@ function parseArgs(argv) {
       const next = argv[++i];
       if (next === undefined || next.startsWith('-')) {
         console.error(`[check:chapter] --format requires a value (text|json)`);
-        process.exit(EXIT.invalidArgs);
+        process.exit(EXIT.failure);
       }
       args.format = next;
     } else if (arg.startsWith('-')) {
       console.error(`[check:chapter] unknown flag: ${arg}`);
       console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
-      process.exit(EXIT.invalidArgs);
+      process.exit(EXIT.failure);
     } else if (!args.folder) args.folder = arg;
     else if (!args.chapter) args.chapter = arg;
     else {
       console.error(`[check:chapter] unexpected positional argument: ${arg}`);
-      process.exit(EXIT.invalidArgs);
+      process.exit(EXIT.failure);
     }
   }
   return args;
@@ -86,18 +86,18 @@ function parseArgs(argv) {
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
   console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 if (!['text', 'json'].includes(args.format)) {
   console.error(`Invalid --format value: ${args.format}; expected text or json`);
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 const spec = ANALYSIS_ARTIFACTS.find((item) => item.file === args.chapter);
 if (!spec) {
   console.error(`Unknown chapter artifact: ${args.chapter}`);
   console.error(`Expected one of: ${ANALYSIS_ARTIFACTS.map((item) => item.file).join(', ')}`);
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 // Per-chapter id patterns: every id in this chapter must carry the chapter's
@@ -199,7 +199,7 @@ function normalizeAnalysisTokens(value) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
     .split(/\s+/)
-    .filter((token) => token.length >= MIN_ANALYSIS_TOKEN_LENGTH && !ANALYSIS_TOKEN_STOP_WORDS.has(token)));
+    .filter((token) => token.length >= MIN_TITLE_TOKEN_LENGTH && !TITLE_TOKEN_STOP_WORDS.has(token)));
 }
 
 function jaccardSimilarity(a, b) {
@@ -258,7 +258,7 @@ function checkTableFigureOverlap(file, doc) {
         normalizeAnalysisTokens(tableTitle),
         normalizeAnalysisTokens(figureTitle),
       );
-      if (titleSimilarity < DUPLICATE_ANALYSIS_TITLE_THRESHOLD) continue;
+      if (titleSimilarity < DUPLICATE_TITLE_THRESHOLD) continue;
       const sharedRefs = figureRefs.size; // by construction (subset)
       fail(
         'duplicateAnalysis',
@@ -903,4 +903,4 @@ if (args.format === 'json') {
   if (ok) console.log('[check:chapter] ✓ chapter ready for next workflow stage.');
 }
 
-process.exit(ok ? EXIT.ok : EXIT.validation);
+process.exit(ok ? EXIT.ok : EXIT.failure);

@@ -32,7 +32,7 @@ function volatileFactRefreshInstruction() {
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--refresh] [--refresh-reason <text>] [--resume]');
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
@@ -51,7 +51,7 @@ function parseArgs(argv) {
   if (!/^\d{14}$/.test(args.timestamp ?? '')) usage();
   if (args.disclosure && !DISCLOSURE_PROFILES.has(args.disclosure)) {
     console.error(`[create-report-run] invalid --disclosure value: ${args.disclosure} (allowed: ${[...DISCLOSURE_PROFILES].join(', ')})`);
-    process.exit(EXIT.invalidArgs);
+    process.exit(EXIT.failure);
   }
   return args;
 }
@@ -99,7 +99,7 @@ function ensureFinalizedRun(runId, label) {
   const folder = join(reportsDir, runId);
   if (!isFinalizedReportFolder(folder)) {
     console.error(`[create-report-run] ${label} is not a finalized report folder: reports/${runId}`);
-    process.exit(EXIT.invalidArgs);
+    process.exit(EXIT.failure);
   }
 }
 
@@ -107,12 +107,12 @@ function resolveRefreshTarget({ refresh, matches }) {
   if (!refresh) return null;
   if (!matches.length) {
     console.error('[create-report-run] --refresh requested, but no matching finalized report exists for this company/domain.');
-    process.exit(EXIT.invalidArgs);
+    process.exit(EXIT.failure);
   }
   const candidates = currentMatches(matches).sort((a, b) => String(b.runId).localeCompare(String(a.runId)));
   if (!candidates.length) {
     console.error('[create-report-run] --refresh requested, but every matching report is already superseded.');
-    process.exit(EXIT.invalidArgs);
+    process.exit(EXIT.failure);
   }
   const target = candidates[0];
   ensureFinalizedRun(target.runId, '--refresh target');

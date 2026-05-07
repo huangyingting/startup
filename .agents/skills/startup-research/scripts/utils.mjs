@@ -7,7 +7,7 @@ import { REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS, RESERVED_TYPE_LETTERS } 
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const reportsDir = join(repoRoot, 'reports');
-export const researchCacheRoot = join(repoRoot, '.research-cache');
+const researchCacheRoot = join(repoRoot, '.research-cache');
 export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-research', 'references', 'workflow-config.yaml');
 export const RUN_ID_RE = /^\d{14}-[a-z0-9-]+$/;
 export const REVISION_STATUSES = new Set(['current', 'superseded']);
@@ -20,21 +20,20 @@ export const FINAL_ARTIFACTS = Object.freeze({
   summaryCard: { file: 'summary-card.yaml', artifact: 'summary-card' },
 });
 export const GENERATED_REPORT_FILES = Object.freeze(Object.values(FINAL_ARTIFACTS).map((artifact) => artifact.file));
-export const FINAL_REPORT_FILES = Object.freeze([...GENERATED_REPORT_FILES, REPORT_META_FILE]);
+const FINAL_REPORT_FILES = Object.freeze([...GENERATED_REPORT_FILES, REPORT_META_FILE]);
 
 // Single contract for non-zero exit codes used across skill scripts. Callers
 // (CI, test-refresh-pipeline, finalize-report) switch on these to distinguish recoverable
 // state errors from validation failures. Keep stable; SKILL.md references
 // some of these by number.
 //
-// `validation` and `invalidArgs` deliberately share exit code 1 — both mean
-// "this script could not produce a passing artifact"; CI and humans only
+// `failure` collapses what used to be `validation` and `invalidArgs` — both
+// mean "this script could not produce a passing artifact"; CI and humans only
 // need to know it failed. Anything that needs to distinguish should read
 // stderr (every script prefixes its messages with `[script-name]`).
 export const EXIT = Object.freeze({
   ok: 0,
-  validation: 1,         // a check produced findings (chapter/report/workflow gate failed)
-  invalidArgs: 1,        // bad CLI arguments — same exit as validation by design (see note above)
+  failure: 1,            // bad CLI args, validation findings, or any non-recoverable failure
   alreadyExists: 2,      // company already has a finalized current report (create-report-run duplicate guard)
   inProgress: 3,         // an in-progress folder for the same run already exists; rerun with --resume
   notFound: 4,           // requested target (e.g. resume folder) does not exist
@@ -456,7 +455,7 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
 // Convenience: ordered list of chapter YAML filenames (`01-…`, `02-…`, …).
 // Use this anywhere you need to iterate per-chapter file names instead of
 // hardcoding the list (e.g. fixture replay, full-report assembly, doc tools).
-export function analysisChapterFiles(config = loadWorkflowConfig()) {
+export function getAnalysisChapterFiles(config = loadWorkflowConfig()) {
   return getAnalysisArtifacts(config).map((c) => c.file);
 }
 

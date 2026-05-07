@@ -15,13 +15,52 @@ The three main contracts are layered, not peer schemas:
 
 ## Runtime flow
 
-1. `references/workflow-config.yaml` defines workflow policy, chapter order, chapter requirements, and gates.
-2. `scripts/utils.mjs` loads and normalizes that config, injects derived gate values, and owns shared artifact filename constants.
-3. `scripts/load-chapter-runtime-context.mjs` combines workflow config, validator vocabularies, checker dimensions, renderer contracts, and optional run context into the chapter runtime context.
-4. The agent writes chapter YAMLs from the runtime context plus the report schema.
-5. `check-chapter.mjs`, `check-cross-chapter-consistency.mjs`, and `check-report.mjs` enforce executable gates.
-6. `build-evidence-ledger.mjs`, `assemble-report.mjs`, and `finalize-report.mjs` consolidate and generate final artifacts.
-7. The Astro website renders the generated artifacts; website-owned libraries keep owning renderer-specific behavior.
+```mermaid
+flowchart TD
+  WF[references/workflow-config.yaml]
+  VC[scripts/validation-catalog.mjs]
+  FIG[website/src/lib/figures.mjs]
+
+  subgraph BOOT["1 · Bootstrap"]
+    CR[create-report-run.mjs]
+    CR --> RUN[(reports/runId/)]
+    CR --> CACHE[(.research-cache/runId/<br/>disclosure-hint · refresh-context)]
+  end
+
+  subgraph CHAP["2 · Per-chapter loop · ×8 · parallelizable"]
+    LD[load-chapter-runtime-context.mjs]
+    RC{{runtimeContext JSON}}
+    AG[/Agent · search · fetch-url · author chapter YAML/]
+    CC[check-chapter.mjs]
+    CY[(NN-key.yaml)]
+    LD --> RC --> AG --> CC
+    CC -- fail --> AG
+    CC -- ok --> CY
+  end
+
+  WF --> LD
+  VC --> LD
+  FIG --> LD
+  CACHE --> LD
+
+  subgraph FIN["3 · finalize-report.mjs · single-threaded"]
+    L1[build-evidence-ledger.mjs] --> L2[check-cross-chapter-consistency.mjs] --> L3[assemble-report.mjs] --> L4[check-report.mjs]
+  end
+
+  CY --> L1
+  RM[(report-meta.yaml · hand-authored)] --> L1
+  L4 -- ok --> OUT[(evidence.yaml<br/>full-report.yaml<br/>summary-card.yaml)]
+  L4 -. refresh .-> LR[link-refresh.mjs] -.-> RUN
+
+  OUT --> AS[Astro · website/]
+```
+
+Stage notes:
+
+- **Bootstrap.** `create-report-run.mjs` allocates the run id, writes the report folder, and (for stealth/refresh runs) seeds `.research-cache/runId/` with `disclosure-hint.yaml` or `refresh-context.yaml`.
+- **Per-chapter loop.** `load-chapter-runtime-context.mjs` merges `workflow-config.yaml` (via `utils.mjs`), `validation-catalog.mjs` vocabularies/dimensions, `figures.mjs` renderer contracts, and run-cache hints into the runtime context the agent reads. Each chapter is independent (own ID-letter namespace), so the 8 chapters can be drafted in parallel; `check-chapter` for chapter N still cross-reads chapters 1..N-1 for `gate.minNetNewSources` and `crossChapterRefLeak`, so all checks must run after every chapter YAML lands.
+- **Finalize.** `finalize-report.mjs` runs the consolidation and gate scripts in order; first failure stops the pipeline. `link-refresh.mjs` writes the revision graph for `--refresh` runs.
+- **Render.** The Astro site reads `reports/runId/` and renders the static pages.
 
 ## Ownership map
 

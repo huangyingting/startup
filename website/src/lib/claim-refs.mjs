@@ -13,7 +13,7 @@
 // brittle.
 export const INLINE_CLAIM_REF_SOURCE = '\\[(C[A-Z]\\d{3})\\]';
 
-export function inlineClaimRefPattern() {
+function inlineClaimRefPattern() {
   return new RegExp(INLINE_CLAIM_REF_SOURCE, 'g');
 }
 

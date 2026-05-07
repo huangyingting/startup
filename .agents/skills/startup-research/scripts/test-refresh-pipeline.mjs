@@ -27,7 +27,7 @@ import { spawnSync } from 'node:child_process';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  analysisChapterFiles,
+  getAnalysisChapterFiles,
   companySlugFromRunId,
   EXIT,
   FINAL_ARTIFACTS,
@@ -51,7 +51,7 @@ const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 function usage(message) {
   if (message) console.error(`[refresh-test] ${message}`);
   console.error('Usage: node .agents/skills/startup-research/scripts/test-refresh-pipeline.mjs [<source-run-id>] [--reason <text>] [--keep]');
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
@@ -108,7 +108,7 @@ function rewriteMetaIdentity(filePath, newSlug, newRunDate) {
   const doc = readYaml(filePath);
   if (!doc || typeof doc !== 'object') {
     console.error(`[refresh-test] failed to parse ${filePath} as YAML object`);
-    process.exit(EXIT.validation);
+    process.exit(EXIT.failure);
   }
   doc.slug = newSlug;
   doc.runDate = newRunDate;
@@ -148,19 +148,19 @@ const sourceRunId = args.source || pickLatestCurrentRunId();
 const sourceFolder = join(reportsDir, sourceRunId);
 if (!isFinalizedReportFolder(sourceFolder)) {
   console.error(`[refresh-test] source ${sourceRunId} is not a finalized report folder.`);
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 const sourceMeta = readYaml(join(sourceFolder, REPORT_META_FILE));
 const sourceCard = readYaml(join(sourceFolder, SUMMARY_CARD_FILE));
 if (normalizeRevision(sourceCard?.revision).status !== 'current') {
   console.error(`[refresh-test] source ${sourceRunId} is not a current report; pick a different source.`);
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 const companyName = sourceMeta?.company?.name;
 const companyWebsite = sourceMeta?.company?.website ?? '';
 if (!companyName) {
   console.error(`[refresh-test] source ${sourceRunId} has no company.name in report-meta.yaml.`);
-  process.exit(EXIT.invalidArgs);
+  process.exit(EXIT.failure);
 }
 
 const sourceSlug = companySlugFromRunId(sourceRunId);
@@ -230,7 +230,7 @@ try {
   // Pull the chapter file list from the workflow config so adding/removing a
   // chapter only requires editing workflow-config.yaml, not this fixture script.
   const COPY_FILES = [
-    ...analysisChapterFiles(),
+    ...getAnalysisChapterFiles(),
     REPORT_META_FILE,
     EVIDENCE_FILE,
   ];

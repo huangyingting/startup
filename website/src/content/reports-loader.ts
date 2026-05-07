@@ -214,13 +214,15 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
 // path resolution
 // ---------------------------------------------------------------------------
 
+const SUMMARY_CARD_FILE = 'summary-card.yaml';
+
 function isPublishableRun(folder: string): boolean {
-  return existsSync(join(folder, 'summary-card.yaml'));
+  return existsSync(join(folder, SUMMARY_CARD_FILE));
 }
 
 function reportCardPath(folder: string): string | null {
   if (!isPublishableRun(folder)) return null;
-  return join(folder, 'summary-card.yaml');
+  return join(folder, SUMMARY_CARD_FILE);
 }
 
 function readStageYaml(folder: string, basename: string): unknown | null {
@@ -254,14 +256,6 @@ export function reportsLoader(): Loader {
   };
 }
 
-export function loadReportCard(runId: string): ReportCardData | null {
-  const folder = join(REPORTS_DIR, runId);
-  const path = reportCardPath(folder);
-  if (!path) return null;
-  const raw = readYaml(path);
-  return raw ? normalizeReportCard(raw, runId) : null;
-}
-
 export function loadStageFiles(runId: string): Record<string, unknown> {
   const folder = join(REPORTS_DIR, runId);
   return {
@@ -269,4 +263,12 @@ export function loadStageFiles(runId: string): Record<string, unknown> {
     fullReport: readStageYaml(folder, 'full-report'),
     summaryCard: loadReportCard(runId),
   };
+}
+
+function loadReportCard(runId: string): ReportCardData | null {
+  const folder = join(REPORTS_DIR, runId);
+  const path = reportCardPath(folder);
+  if (!path) return null;
+  const raw = readYaml(path);
+  return raw ? normalizeReportCard(raw, runId) : null;
 }
