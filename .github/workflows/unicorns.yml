@@ -197,22 +197,38 @@ jobs:
           import path from 'node:path';
           import yaml from 'js-yaml';
 
-          // Walk every reports/<runId>/summary-card.yaml; folders without a
-          // card (in-progress) are skipped. No cross-report catalog is read.
-          const reports = [];
+          // Walk every reports/<runId>/. Folders WITH summary-card.yaml are
+          // finalized and bucketed by sector; folders WITHOUT summary-card
+          // but with at least one chapter YAML are "in-flight" and surfaced
+          // separately so a parallel run does not pick the same companies.
+          const finalized = [];
+          const inFlight = [];
+          const chapterPattern = /^0[1-8]-.+\.yaml$/;
           for (const name of fs.readdirSync('reports')) {
             if (name.startsWith('.') || name.startsWith('_')) continue;
-            const cardPath = path.join('reports', name, 'summary-card.yaml');
-            if (!fs.existsSync(cardPath)) continue;
+            const dir = path.join('reports', name);
+            const cardPath = path.join(dir, 'summary-card.yaml');
+            if (fs.existsSync(cardPath)) {
+              try {
+                const card = yaml.load(fs.readFileSync(cardPath, 'utf8')) ?? {};
+                const company = card.company ?? {};
+                finalized.push({
+                  companyName: company.name ?? null,
+                  sector: company.sector ?? null,
+                  stage: company.stage ?? null,
+                });
+              } catch {}
+              continue;
+            }
+            // No card; treat as in-flight only when at least one chapter is
+            // present (otherwise it is empty scratch / cleanup target).
+            let hasChapter = false;
             try {
-              const card = yaml.load(fs.readFileSync(cardPath, 'utf8')) ?? {};
-              const company = card.company ?? {};
-              reports.push({
-                companyName: company.name ?? null,
-                sector: company.sector ?? null,
-                stage: company.stage ?? null,
-              });
+              for (const f of fs.readdirSync(dir)) {
+                if (chapterPattern.test(f)) { hasChapter = true; break; }
+              }
             } catch {}
+            if (hasChapter) inFlight.push(name.replace(/^\d{14}-/, ''));
           }
           const buckets = [
             ['AI / application software', /\b(ai|artificial intelligence|machine learning|ml|llm|video generation|language learning|saas)\b/i],
@@ -226,7 +242,7 @@ jobs:
             ['industrial / logistics', /\b(industrial|logistics|supply chain|warehouse|transport|construction)\b/i],
           ];
           const counts = new Map(buckets.map(([name]) => [name, 0]));
-          for (const report of reports) {
+          for (const report of finalized) {
             const text = `${report.sector ?? ''} ${report.stage ?? ''} ${report.companyName ?? ''}`;
             const match = buckets.find(([, pattern]) => pattern.test(text));
             if (match) counts.set(match[0], (counts.get(match[0]) ?? 0) + 1);
@@ -234,7 +250,10 @@ jobs:
           const ranked = [...counts.entries()].sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0]));
           const under = ranked.slice(0, 5).map(([name, count]) => `${name} (${count})`).join(', ');
           const covered = ranked.filter(([, count]) => count > 0).slice(-5).reverse().map(([name, count]) => `${name} (${count})`).join(', ') || 'none yet';
-          console.log(`Existing reports: ${reports.length}. Underrepresented sectors: ${under}. More covered sectors: ${covered}.`);
+          const inFlightLine = inFlight.length === 0
+            ? 'In-flight runs: 0.'
+            : `In-flight runs: ${inFlight.length} (${inFlight.slice(0, 10).join(', ')}${inFlight.length > 10 ? ', ...' : ''}); avoid picking these companies.`;
+          console.log(`Existing reports: ${finalized.length}. Underrepresented sectors: ${under}. More covered sectors: ${covered}. ${inFlightLine}`);
           NODE
           {
             echo "coverageHint<<EOF"
@@ -260,8 +279,17 @@ jobs:
           RUN_DATE: ${{ steps.inputs.outputs.runDate }}
           CUTOFF_DATE: ${{ steps.inputs.outputs.cutoffDate }}
           COVERAGE_HINT: ${{ steps.coverage.outputs.coverageHint }}
+          # fetch-url's main() appends one JSON line per call to this file
+          # whenever the env var is set. check-chapter cross-references each
+          # cited URL against the trail and surfaces unverifiedSource warnings
+          # when a citation never went through fetch-url. Single file per
+          # workflow run is fine: check-chapter only needs "did this URL get
+          # retrieved at least once during this run".
+          STARTUP_FETCH_LOG_PATH: ${{ github.workspace }}/.research-cache/_fetch-log.jsonl
         run: |
           set -euo pipefail
+          mkdir -p "$(dirname "$STARTUP_FETCH_LOG_PATH")"
+          : > "$STARTUP_FETCH_LOG_PATH"
           PROMPT=$(cat <<EOF
           Produce full diligence reports for up to $COUNT private startup unicorns.
 
@@ -271,9 +299,39 @@ jobs:
           Skip duplicates already in reports/ (each finalized run lives in reports/<runId>/summary-card.yaml; the create-report-run.mjs duplicate guard checks the same set) unless there is materially new evidence. If fewer than $COUNT qualify, research only the actual qualifying companies. If none qualify, do not create report folders; print a short no-candidates note and exit successfully.
 
           For each selected company, run one complete startup diligence report end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under its own reports/<run>/ folder. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
+
+          Source verification: every URL you cite in a chapter's localEvidence.sources[] must be retrieved through .agents/skills/fetch-url/scripts/fetch.mjs at least once during this run (the workflow exports STARTUP_FETCH_LOG_PATH so each fetch appends a line to the trail). check-chapter emits an unverifiedSource warning per citation that is not in the trail; clear those warnings by either (a) re-fetching the URL through fetch-url so accessStatus/sourceType/stance reflect the actual page, or (b) removing the citation if it cannot be retrieved.
           EOF
           )
-          copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT"
+          # tee the Copilot CLI output so the next step can parse the trailing
+          # "Changes / Requests / Tokens" stats line into the step summary.
+          mkdir -p "$RUNNER_TEMP/copilot-logs"
+          COPILOT_LOG="$RUNNER_TEMP/copilot-logs/run.log"
+          set +e
+          copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
+          status=${PIPESTATUS[0]}
+          set -e
+          # Per-step stats summary (best-effort: copilot CLI prints these on
+          # the last few lines of its output). Also report fetch-url trail
+          # size so the validate step's unverifiedSource warnings have
+          # context.
+          {
+            echo
+            echo "### Copilot run stats"
+            if [ -s "$COPILOT_LOG" ]; then
+              tail -n 20 "$COPILOT_LOG" | grep -iE '^(changes?|requests?|tokens?)\b' | sed 's/^/- /' || echo "- (no stats line emitted)"
+            else
+              echo "- (no Copilot output captured)"
+            fi
+            if [ -s "$STARTUP_FETCH_LOG_PATH" ]; then
+              fetch_calls=$(wc -l < "$STARTUP_FETCH_LOG_PATH")
+              fetch_ok=$(grep -c '"ok":true' "$STARTUP_FETCH_LOG_PATH" || true)
+              echo "- fetch-url calls: $fetch_calls (ok=$fetch_ok)"
+            else
+              echo "- fetch-url trail empty (the agent did not call fetch-url; expect unverifiedSource warnings)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
 
       - name: Finalize any unfinalized report folders
         # Safety net for the multi-company mode: if Copilot wrote every chapter
@@ -371,6 +429,11 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate generated reports and website
+        env:
+          # Same trail file the research step appended to. check-chapter
+          # cross-references it to surface unverifiedSource warnings for any
+          # citation the agent did not retrieve through fetch-url.
+          STARTUP_FETCH_LOG_PATH: ${{ github.workspace }}/.research-cache/_fetch-log.jsonl
         run: npm run validate
 
       - name: Commit and push new reports

@@ -344,6 +344,10 @@ export const FIX_HINTS = {
   sectionsMax: 'Reduce or merge sections; the chapter looks over-fragmented.',
   tablesMax: 'Reduce or merge tables; the chapter looks over-fragmented.',
   figuresMax: 'Reduce or merge figures; the chapter looks over-fragmented.',
+  unverifiedSource: ({ id, url } = {}) =>
+    id || url
+      ? `Source ${id ?? ''}${url ? ` (${url})` : ''} was cited but never went through fetch-url during this run; pull the URL with .agents/skills/fetch-url/scripts/fetch.mjs (or remove the citation if the source cannot be retrieved).`
+      : 'One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess.',
 };
 
 // ---------------------------------------------------------------------------
@@ -368,7 +372,7 @@ export const CASCADE_SUPPRESSORS = {
     'searchQueriesMissing',
     'sources', 'sourceShape', 'sourceDomains', 'sourceTypeSpread',
     'requiredSourceTypes', 'netNewSources', 'paywallRisk',
-    'sourceStanceSpread',
+    'sourceStanceSpread', 'unverifiedSource',
     'claims', 'claimShape', 'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
     'crossChapterRefLeak',
     'highConfidenceCorroboration',
@@ -388,7 +392,7 @@ export const CASCADE_SUPPRESSORS = {
     'searchQueriesMissing',
     'sources', 'sourceShape', 'sourceDomains', 'sourceTypeSpread',
     'requiredSourceTypes', 'netNewSources', 'paywallRisk',
-    'sourceStanceSpread',
+    'sourceStanceSpread', 'unverifiedSource',
     'claims', 'claimShape', 'claimAnswerRefs', 'claimContradictRefs', 'claimRefs',
     'crossChapterRefLeak',
     'highConfidenceCorroboration',
@@ -422,8 +426,7 @@ export const RETRY_PRECEDENCE = [
   'calloutShape',
   'sectionsMin', 'sectionsMax', 'artifactsMin', 'tablesMax', 'figuresMax',
   'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
-  'contentRequirementCoverage',
-];
+  'contentRequirementCoverage',  'unverifiedSource',];
 
 // ---------------------------------------------------------------------------
 // Helpers

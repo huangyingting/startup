@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Fetch a URL with optional readable-text extraction. Used by the fetch-url skill.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { delimiter, dirname, join, resolve } from 'node:path';
@@ -258,6 +258,32 @@ function parseNumberOption(value, flag, { min = -Infinity, integer = false } = {
 function printUsageError(error) {
   console.error(error);
   console.error('Run with --help to see supported options.');
+}
+
+// When STARTUP_FETCH_LOG_PATH is set, every main() invocation appends a
+// single JSON line describing the fetch (url, finalUrl, source, status,
+// profile, ok, sha256, bytes, ts). Downstream graders consume the log to
+// verify that every cited URL in a report was actually retrieved through
+// fetch-url at least once. The env-var guard keeps fetch-url generic: when
+// the var is unset (interactive use), nothing is logged.
+function appendFetchLog(entry) {
+  const path = env.STARTUP_FETCH_LOG_PATH;
+  if (!path) return;
+  try {
+    mkdirSync(dirname(path), { recursive: true });
+    appendFileSync(path, JSON.stringify({ ts: new Date().toISOString(), ...entry }) + '\n', 'utf8');
+  } catch {
+    // Logging is best-effort; never let it kill the fetch.
+  }
+}
+
+function bodySha256(body) {
+  if (!body) return null;
+  try {
+    return createHash('sha256').update(body).digest('hex');
+  } catch {
+    return null;
+  }
 }
 
 function parseArgs(args) {
@@ -1167,6 +1193,17 @@ export async function main(args = argv.slice(2)) {
       }
     } catch (err) {
       console.error(`Fetch failed: ${err.message}`);
+      appendFetchLog({
+        url: opts.url,
+        finalUrl: null,
+        source,
+        status: 0,
+        profile: opts.profile,
+        ok: false,
+        sha256: null,
+        bytes: 0,
+        error: err.message,
+      });
       exit(1);
     }
 
@@ -1222,6 +1259,23 @@ export async function main(args = argv.slice(2)) {
       writeCache(opts.cacheDir, opts.url, source, result);
     }
   }
+
+  // One log line per main() invocation (cache hit OR live fetch). Lets a
+  // downstream "every cited URL was fetched at least once" gate cross-check
+  // report bibliographies against the actual fetch trail without parsing
+  // stderr or per-call JSON output. No-op when STARTUP_FETCH_LOG_PATH is
+  // unset (so interactive CLI runs do not write side-channel files).
+  appendFetchLog({
+    url: opts.url,
+    finalUrl: result.finalUrl,
+    source,
+    status: result.status,
+    profile: result.profile ?? opts.profile,
+    ok: Boolean(result.ok),
+    sha256: bodySha256(result.body),
+    bytes: result.contentLength ?? (result.body?.length ?? 0),
+    cacheHit,
+  });
 
   // Magic-byte sniff on the actual body is the only PDF signal: a .pdf URL
   // that returned an HTML error page still flows through the HTML path, and

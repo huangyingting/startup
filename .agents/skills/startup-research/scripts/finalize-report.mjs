@@ -5,13 +5,17 @@
 // website discovers reports by walking reports/<runId>/summary-card.yaml.
 //
 // Pipeline:
-//   1. (refresh only) link-refresh.mjs --prepare-current
+//   1. validate-report-meta.mjs -> shape + enum check on report-meta.yaml
+//                                   (runs first so every missing/invalid field
+//                                   surfaces in one shot, instead of one per
+//                                   finalize-loop iteration)
+//   2. (refresh only) link-refresh.mjs --prepare-current
 //                       -> mark the new report as revision.status=current
-//   2. build-evidence-ledger.mjs -> evidence.yaml + chapter claimRef consolidation
-//   3. check-cross-chapter-consistency.mjs -> drift checks across chapters
-//   4. assemble-report.mjs -> full-report.yaml + summary-card.yaml
-//   5. check-report.mjs -> schema/contract validation and publishability gate
-//   6. (refresh only) link-refresh.mjs
+//   3. build-evidence-ledger.mjs -> evidence.yaml + chapter claimRef consolidation
+//   4. check-cross-chapter-consistency.mjs -> drift checks across chapters
+//   5. assemble-report.mjs -> full-report.yaml + summary-card.yaml
+//   6. check-report.mjs -> schema/contract validation and publishability gate
+//   7. (refresh only) link-refresh.mjs
 //                       -> mark the previous report as revision.status=superseded
 //                          and reassemble it
 //
@@ -77,6 +81,12 @@ function runStep(step) {
     process.exit(result.status ?? EXIT.failure);
   }
 }
+
+// Fast pre-flight: surface every shape/enum problem in report-meta.yaml
+// before any expensive step runs. The full assemble-report.mjs check still
+// runs later as defense-in-depth (it also covers cross-refs against
+// evidence.yaml, which this step intentionally does not load).
+runStep({ name: 'validate-report-meta', script: 'validate-report-meta.mjs', argv: [reportFolder] });
 
 if (refresh) {
   const refreshArgs = [reportFolder, '--prepare-current'];

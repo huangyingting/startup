@@ -13,7 +13,14 @@
 // the object they touch — e.g. all complaints about T102 in one entry) and
 // globalHints[] (when the same dimension fails on many objects, hinting at a
 // chapter-wide root cause).
-import { existsSync } from 'node:fs';
+//
+// `--format compact` is the recommended default for shell loops: one line per
+// finding, no truncation, no preamble. The first line is `STATUS: OK` or
+// `STATUS: FAIL` so callers can decide pass/fail with `head -1`. Subsequent
+// lines are tagged (`GLOBAL`, `FAIL`, `WARN`, `SUPPRESSED`, `RETRY`) so the
+// agent can grep for what it needs without piping through a python wrapper
+// (the prior pattern truncated `message` to 100 chars and dropped `fix`).
+import { existsSync, readFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
@@ -65,13 +72,13 @@ function parseArgs(argv) {
     else if (arg === '--format') {
       const next = argv[++i];
       if (next === undefined || next.startsWith('-')) {
-        console.error(`[check:chapter] --format requires a value (text|json)`);
+        console.error(`[check:chapter] --format requires a value (text|json|compact)`);
         process.exit(EXIT.failure);
       }
       args.format = next;
     } else if (arg.startsWith('-')) {
       console.error(`[check:chapter] unknown flag: ${arg}`);
-      console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
+      console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json|compact]');
       process.exit(EXIT.failure);
     } else if (!args.folder) args.folder = arg;
     else if (!args.chapter) args.chapter = arg;
@@ -85,11 +92,11 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json|compact]');
   process.exit(EXIT.failure);
 }
-if (!['text', 'json'].includes(args.format)) {
-  console.error(`Invalid --format value: ${args.format}; expected text or json`);
+if (!['text', 'json', 'compact'].includes(args.format)) {
+  console.error(`Invalid --format value: ${args.format}; expected text, json, or compact`);
   process.exit(EXIT.failure);
 }
 
@@ -283,6 +290,40 @@ function loadEarlierChapterUrls(reportFolder, currentSpec, allSpecs) {
     }
   }
   return urls;
+}
+
+// Build a Set of canonical URLs that fetch-url actually retrieved during this
+// run. The fetch trail is written by .agents/skills/fetch-url/scripts/fetch.mjs
+// when env STARTUP_FETCH_LOG_PATH is set (the workflow points it at
+// `.research-cache/<runId>/_fetch-log.jsonl`). Returns null when the log file
+// is absent so checkSourceFetchTrail() can skip silently for older reports
+// or interactive runs that did not enable the trail.
+function loadFetchTrailUrls(reportFolder) {
+  const candidates = [];
+  if (process.env.STARTUP_FETCH_LOG_PATH) candidates.push(resolve(process.env.STARTUP_FETCH_LOG_PATH));
+  const runId = basename(reportFolder);
+  candidates.push(resolve('.research-cache', runId, '_fetch-log.jsonl'));
+  candidates.push(resolve('.research-cache', '_fetch-log.jsonl'));
+  candidates.push(join(reportFolder, '.fetch-trail.jsonl'));
+  for (const path of candidates) {
+    if (!existsSync(path)) continue;
+    let text;
+    try { text = readFileSync(path, 'utf8'); }
+    catch { continue; }
+    const urls = new Set();
+    for (const line of text.split('\n')) {
+      if (!line.trim()) continue;
+      let entry;
+      try { entry = JSON.parse(line); }
+      catch { continue; }
+      const u1 = canonicalSourceUrl(entry?.url);
+      if (u1) urls.add(u1);
+      const u2 = canonicalSourceUrl(entry?.finalUrl);
+      if (u2) urls.add(u2);
+    }
+    return { urls, path };
+  }
+  return null;
 }
 
 // Build a map { localClaimId -> chapterFile } across every OTHER chapter that
@@ -763,6 +804,24 @@ if (doc) {
   checkSearchQueries(spec.file, doc);
   const earlierUrls = loadEarlierChapterUrls(reportFolder, spec, ANALYSIS_ARTIFACTS);
   checkSources(spec.file, doc, gate, earlierUrls);
+  // Optional: cross-check cited URLs against the fetch-url trail file. Soft
+  // warning (not a hard fail) so older reports without a trail file still
+  // pass cleanly. Trail file is written by the fetch-url skill when
+  // STARTUP_FETCH_LOG_PATH is set; see loadFetchTrailUrls() above.
+  const trail = loadFetchTrailUrls(reportFolder);
+  if (trail) {
+    for (const source of doc.localEvidence?.sources ?? []) {
+      const canonical = canonicalSourceUrl(source?.url);
+      if (!canonical) continue;
+      if (!trail.urls.has(canonical)) {
+        warn(
+          'unverifiedSource',
+          `${spec.file}: source ${source?.id ?? '?'} cites ${source?.url ?? '(missing url)'} but that URL was not found in the fetch-url trail (${trail.path}); the citation cannot be verified against an actual retrieval.`,
+          { id: source?.id, url: source?.url ?? null },
+        );
+      }
+    }
+  }
   checkHighConfidenceCorroboration(spec.file, doc, gate);
   checkEnumerationTables(spec.file, doc, gate, plannedTablesByName);
 }
@@ -844,10 +903,14 @@ function detectGlobalHints(failureList) {
   const hints = [];
   for (const [dimension, objects] of dimToObjects) {
     if (objects.size >= 3) {
+      // resolveFixHint() unwraps function-form FIX_HINTS to a string; pulling
+      // FIX_HINTS[dimension] directly leaked the function source through the
+      // compact format and silently dropped it from --format json (because
+      // JSON.stringify drops functions).
       hints.push({
         dimension,
         affectedObjects: [...objects],
-        fix: FIX_HINTS[dimension] ?? null,
+        fix: resolveFixHint(dimension, {}) ?? null,
         note: `${objects.size} distinct objects fail this dimension; treat as a chapter-wide gap rather than per-object patches.`,
       });
     }
@@ -861,9 +924,10 @@ function detectGlobalHints(failureList) {
 const { failures: visibleFailures, suppressed: suppressedDimensions } = applyCascadeSuppression(failures);
 const objectFailures = aggregateByObject(visibleFailures);
 const globalHints = detectGlobalHints(visibleFailures);
+const failedDimensions = [...new Set(visibleFailures.map((entry) => entry.dimension))];
+const retryOrder = sortByPrecedence(failedDimensions);
 
 if (args.format === 'json') {
-  const failedDimensions = [...new Set(visibleFailures.map((entry) => entry.dimension))];
   const report = {
     ok,
     artifact: spec.file,
@@ -879,9 +943,46 @@ if (args.format === 'json') {
     acknowledgedWarnings: [...ackByDim.keys()],
     unackedWarningDimensions: unackedWarningDims,
     suppressedDimensions,
-    retryOrder: sortByPrecedence(failedDimensions),
+    retryOrder,
   };
   console.log(JSON.stringify(report, null, 2));
+} else if (args.format === 'compact') {
+  // Single-stream, lossless line format. The agent can consume this with
+  // basic shell tools (`head -1` for STATUS, `grep ^FAIL` for failures, etc.)
+  // instead of inventing a python wrapper that truncates messages and drops
+  // the `fix` field. Lines are emitted in this fixed order; absent sections
+  // print no lines (no empty headers).
+  //   STATUS: OK | FAIL
+  //   chapter: <file>  strict=<yes|no>
+  //   counts: sections=N tables=N figures=N localSources=N localClaims=N researchQuestions=N gaps=N
+  //   failedDimensions: dim1,dim2,...   (omitted when none)
+  //   retryOrder: dim2,dim1,...         (root-cause sorted; omitted when none)
+  //   warningDimensions: dimW1,...      (omitted when none)
+  //   suppressed: dimS1,...             (omitted when none)
+  //   GLOBAL [dim] N objects fail; <note> | fix: <text>     (one per hint)
+  //   FAIL [dim] <full message> | fix: <full fix or "">     (one per failure)
+  //   WARN [dim] <full message>                              (one per warning)
+  const lines = [];
+  lines.push(`STATUS: ${ok ? 'OK' : 'FAIL'}`);
+  lines.push(`chapter: ${spec.file}  strict=${args.strict ? 'yes' : 'no'}`);
+  if (counts) {
+    lines.push(`counts: sections=${counts.sections} tables=${counts.tables} figures=${counts.figures} localSources=${counts.sources} localClaims=${counts.claims} researchQuestions=${counts.researchQuestions} gaps=${counts.gaps}`);
+  }
+  if (failedDimensions.length) lines.push(`failedDimensions: ${failedDimensions.join(',')}`);
+  if (retryOrder.length) lines.push(`retryOrder: ${retryOrder.join(',')}`);
+  const warningDimensions = [...new Set(warnings.map((entry) => entry.dimension))];
+  if (warningDimensions.length) lines.push(`warningDimensions: ${warningDimensions.join(',')}`);
+  if (suppressedDimensions.length) lines.push(`suppressed: ${suppressedDimensions.join(',')}`);
+  for (const hint of globalHints) {
+    lines.push(`GLOBAL [${hint.dimension}] ${hint.note}${hint.fix ? ` | fix: ${hint.fix}` : ''}`);
+  }
+  for (const entry of visibleFailures) {
+    lines.push(`FAIL [${entry.dimension}] ${entry.message}${entry.fix ? ` | fix: ${entry.fix}` : ''}`);
+  }
+  for (const entry of warnings) {
+    lines.push(`WARN [${entry.dimension}] ${entry.message}`);
+  }
+  console.log(lines.join('\n'));
 } else {
   if (counts) {
     console.log(`[check:chapter] reportFolder=${reportFolder}`);
