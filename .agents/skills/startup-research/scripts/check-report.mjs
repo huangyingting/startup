@@ -31,6 +31,7 @@ import {
   tryReadYaml,
 } from './utils.mjs';
 import {
+  BLOCK_TYPES,
   CALLOUT_TYPES,
   checkArtifactRefs,
   checkCalloutSchema,
@@ -116,6 +117,10 @@ function checkReportBlocks(run, reportDoc) {
 
   for (const [location, block] of blocks) {
     const path = `${run}/${FULL_REPORT_FILE}:${location}`;
+    if (!BLOCK_TYPES.has(block.type)) {
+      fail(`${path} block.type="${block.type}" must be one of ${formatEnumChoices(BLOCK_TYPES)}`);
+      continue;
+    }
     if (block.type === 'paragraph' && !hasText(block.body)) fail(`${path} paragraph block requires body`);
     if (block.type === 'list' && (!Array.isArray(block.items) || block.items.length === 0)) {
       fail(`${path} list block requires non-empty items`);

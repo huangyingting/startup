@@ -41,7 +41,7 @@ stance: confirming | adverse | neutral | unknown
 accessStatus: ok | paywall | js-only | broken | rate-limited
 evidenceGap.type: missing-source | conflicting-data | private-evidence-only | enumeration-incomplete | stale | access-blocked
 severity: blocking | material | minor
-tone: positive | neutral | warning | negative
+tone: positive | neutral | warning | negative | low | medium | high | critical | risk | opportunity | adverse
 figure.layout: compact | standard | wide
 block.type: paragraph | callout | table | figure | list | equation
 ```
@@ -444,7 +444,7 @@ Universal rules:
 | `funnel` | Stage-by-stage conversion drop-off. | `items[]` or `series[]` | Order = stage order. |
 | `waterfall` | Bridge from start to end via deltas. | `items[]` | Numeric `value`; mark totals via `kind: total`. |
 | `range` | Low/base/high estimate per item. | `items[]` | Numeric `low`/`min` and `high`/`max`; optional `mid`/`value` numeric. |
-| `matrix` | Two-dim grid with cell labels (capability, evidence quality, risk heatmap, ordinal scoring). | `columns[]` + `rows[]` | `row.values.length === columns.length`; row label in `row.label`. Each cell is either a string or an object `{label, tone, detail?}` — `label` is the canonical text field (`text` accepted as alias). Cell `tone` (`positive | neutral | warning | negative`) drives discrete color. |
+| `matrix` | Two-dim grid with cell labels (capability, evidence quality, risk heatmap, ordinal scoring). | `columns[]` + `rows[]` | `row.values.length === columns.length`; row label in `row.label`. Each cell is either a string or an object `{label, tone, detail?}` — `label` is the canonical text field (`text` accepted as alias). Cell `tone` uses the shared tone enum and drives discrete color. |
 | `cohort` | Time-series retention only. | `columns[]` + `rows[]` | `columns[]` are time buckets (e.g. `month-1`, `month-3`, `year-1`); cells are retention percentages 0–100. Use `matrix` for ordinal scoring. |
 | `stack` | Layered stack (tech stack, opportunity layers). | `layers[]` or `items[]` | Use `layers[]` when each layer has modules/outputs. |
 | `pyramid` | Nested narrowing levels for sizing or segmentation (TAM/SAM/SOM, segment, geography). | `nodes[]` or `items[]` | One level per layer; declared order is top-to-bottom. |

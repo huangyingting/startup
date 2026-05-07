@@ -57,13 +57,13 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
   const arr = (value) => Array.isArray(value) ? value : [];
   const colorForTone = (tone) => {
     if (tone === 'positive' || tone === 'low') return palette.positive;
-    if (tone === 'risk' || tone === 'critical' || tone === 'high') return palette.risk;
-    if (tone === 'opportunity') return palette.opportunity;
+    if (tone === 'risk' || tone === 'critical' || tone === 'high' || tone === 'negative' || tone === 'adverse') return palette.risk;
+    if (tone === 'opportunity' || tone === 'warning' || tone === 'medium') return palette.opportunity;
     return palette.neutral;
   };
   const riskValue = (tone) => {
-    if (tone === 'high' || tone === 'critical' || tone === 'risk') return 3;
-    if (tone === 'medium' || tone === 'neutral') return 2;
+    if (tone === 'high' || tone === 'critical' || tone === 'risk' || tone === 'negative' || tone === 'adverse') return 3;
+    if (tone === 'medium' || tone === 'warning' || tone === 'neutral') return 2;
     return 1;
   };
   const labelText = (text, max = 24) => String(text ?? '').length > max ? `${String(text).slice(0, max - 1)}…` : String(text ?? '');
@@ -2072,10 +2072,10 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
   :global(.chart-matrix .matrix-col-head) { font-weight: var(--chart-fw-strong, 800); text-align: center; color: var(--ink-page, #33302e); border-bottom: 1px solid var(--rule, #d8ccc2); padding-bottom: 0.4rem; }
   :global(.chart-matrix .matrix-rowlabel) { font-weight: var(--chart-fw-strong, 800); display: flex; align-items: center; padding-right: 0.75rem; }
   :global(.chart-matrix .matrix-data) { border-radius: var(--radius-card, 0.5rem); background: var(--matrix-cell-bg, var(--matrix-tone-neutral)); }
-  :global(.chart-matrix .matrix-tone-positive) { --matrix-cell-bg: var(--matrix-tone-positive); }
-  :global(.chart-matrix .matrix-tone-warning) { --matrix-cell-bg: var(--matrix-tone-warning); }
+  :global(.chart-matrix .matrix-tone-positive), :global(.chart-matrix .matrix-tone-low) { --matrix-cell-bg: var(--matrix-tone-positive); }
+  :global(.chart-matrix .matrix-tone-warning), :global(.chart-matrix .matrix-tone-medium) { --matrix-cell-bg: var(--matrix-tone-warning); }
   :global(.chart-matrix .matrix-tone-opportunity) { --matrix-cell-bg: var(--matrix-tone-opportunity); }
-  :global(.chart-matrix .matrix-tone-risk), :global(.chart-matrix .matrix-tone-critical), :global(.chart-matrix .matrix-tone-high), :global(.chart-matrix .matrix-tone-negative) { --matrix-cell-bg: var(--matrix-tone-risk); }
+  :global(.chart-matrix .matrix-tone-risk), :global(.chart-matrix .matrix-tone-critical), :global(.chart-matrix .matrix-tone-high), :global(.chart-matrix .matrix-tone-negative), :global(.chart-matrix .matrix-tone-adverse) { --matrix-cell-bg: var(--matrix-tone-risk); }
   :global(.chart-matrix .matrix-tone-neutral) { --matrix-cell-bg: var(--matrix-tone-neutral); }
   :global(.chart-matrix .matrix-empty) { --matrix-cell-bg: rgba(212,196,184,0.18); color: var(--caption-gray, #6b625c); font-style: italic; }
   :global(.chart-matrix .matrix-cards) { display: none; }
@@ -2096,9 +2096,9 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
   :global(.chart-kpi .kpi-card-label-text) { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
   :global(.chart-kpi .kpi-card-value) { font-family: var(--font-display, var(--font-sans)); font-weight: var(--chart-fw-strong, 800); color: var(--claret, #990f3d); line-height: 1.1; min-width: 0; overflow-wrap: anywhere; word-break: break-word; hyphens: auto; font-size: clamp(1.05rem, 4.4cqi, 1.55rem); }
   :global(.chart-kpi .kpi-card-detail) { font-family: var(--font-sans); font-size: var(--chart-fs-caption); line-height: 1.35; color: var(--caption-gray, #6b625c); min-width: 0; overflow-wrap: anywhere; }
-  :global(.chart-kpi .kpi-tone-positive) { border-left-color: #0f766e; } :global(.chart-kpi .kpi-tone-positive .kpi-card-dot) { color: #0f766e; }
-  :global(.chart-kpi .kpi-tone-risk), :global(.chart-kpi .kpi-tone-critical), :global(.chart-kpi .kpi-tone-high) { border-left-color: var(--risk-red); } :global(.chart-kpi .kpi-tone-risk .kpi-card-dot), :global(.chart-kpi .kpi-tone-critical .kpi-card-dot), :global(.chart-kpi .kpi-tone-high .kpi-card-dot) { color: var(--risk-red); }
-  :global(.chart-kpi .kpi-tone-opportunity) { border-left-color: #b8860b; } :global(.chart-kpi .kpi-tone-opportunity .kpi-card-dot) { color: #b8860b; }
+  :global(.chart-kpi .kpi-tone-positive), :global(.chart-kpi .kpi-tone-low) { border-left-color: #0f766e; } :global(.chart-kpi .kpi-tone-positive .kpi-card-dot), :global(.chart-kpi .kpi-tone-low .kpi-card-dot) { color: #0f766e; }
+  :global(.chart-kpi .kpi-tone-risk), :global(.chart-kpi .kpi-tone-critical), :global(.chart-kpi .kpi-tone-high), :global(.chart-kpi .kpi-tone-negative), :global(.chart-kpi .kpi-tone-adverse) { border-left-color: var(--risk-red); } :global(.chart-kpi .kpi-tone-risk .kpi-card-dot), :global(.chart-kpi .kpi-tone-critical .kpi-card-dot), :global(.chart-kpi .kpi-tone-high .kpi-card-dot), :global(.chart-kpi .kpi-tone-negative .kpi-card-dot), :global(.chart-kpi .kpi-tone-adverse .kpi-card-dot) { color: var(--risk-red); }
+  :global(.chart-kpi .kpi-tone-opportunity), :global(.chart-kpi .kpi-tone-warning), :global(.chart-kpi .kpi-tone-medium) { border-left-color: #b8860b; } :global(.chart-kpi .kpi-tone-opportunity .kpi-card-dot), :global(.chart-kpi .kpi-tone-warning .kpi-card-dot), :global(.chart-kpi .kpi-tone-medium .kpi-card-dot) { color: #b8860b; }
   @container (max-width: 360px) { :global(.chart-kpi .kpi-grid) { grid-template-columns: 1fr; gap: 0.6rem; } :global(.chart-kpi .kpi-card) { padding: 0.65rem 0.75rem; } }
   :global(.figure-render-error) { padding: 0.75rem 0.85rem; border: 1px dashed var(--rule, #d8ccc2); border-radius: var(--radius-card, 0.5rem); color: var(--caption-gray, #6b625c); font-family: var(--font-sans); font-size: var(--chart-fs-caption); }
   .figure-fallback { border: var(--report-rule); border-left: 4px solid var(--claret); background: color-mix(in srgb, var(--claret) 4%, var(--surface-paper)); padding: var(--space-4); }
