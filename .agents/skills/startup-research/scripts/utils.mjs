@@ -3,18 +3,27 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 import { FIGURE_TYPES } from '../../../../website/src/lib/figures.mjs';
-import { REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS, RESERVED_TYPE_LETTERS } from './check-dimensions.mjs';
+import { REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS, RESERVED_TYPE_LETTERS } from './validation-catalog.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const reportsDir = join(repoRoot, 'reports');
 export const researchCacheRoot = join(repoRoot, '.research-cache');
-export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-research', 'references', 'chapters.yaml');
+export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-research', 'references', 'workflow-config.yaml');
 export const RUN_ID_RE = /^\d{14}-[a-z0-9-]+$/;
 export const REVISION_STATUSES = new Set(['current', 'superseded']);
-export const FINAL_REPORT_FILES = ['summary-card.yaml', 'full-report.yaml', 'evidence.yaml', 'report-meta.yaml'];
+export const REPORT_META_FILE = 'report-meta.yaml';
+// Final-stage artifact filenames are fixed by report-schema-v2 ("Literal value; do not rename").
+// Keep this object shape — chapter runtime contexts and downstream tooling iterate by camelCase key.
+export const FINAL_ARTIFACTS = Object.freeze({
+  evidence: { file: 'evidence.yaml', artifact: 'evidence' },
+  fullReport: { file: 'full-report.yaml', artifact: 'full-report' },
+  summaryCard: { file: 'summary-card.yaml', artifact: 'summary-card' },
+});
+export const GENERATED_REPORT_FILES = Object.freeze(Object.values(FINAL_ARTIFACTS).map((artifact) => artifact.file));
+export const FINAL_REPORT_FILES = Object.freeze([...GENERATED_REPORT_FILES, REPORT_META_FILE]);
 
 // Single contract for non-zero exit codes used across skill scripts. Callers
-// (CI, refresh-fixture, finalize) switch on these to distinguish recoverable
+// (CI, test-refresh-pipeline, finalize-report) switch on these to distinguish recoverable
 // state errors from validation failures. Keep stable; SKILL.md references
 // some of these by number.
 //
@@ -26,13 +35,13 @@ export const EXIT = Object.freeze({
   ok: 0,
   validation: 1,         // a check produced findings (chapter/report/workflow gate failed)
   invalidArgs: 1,        // bad CLI arguments — same exit as validation by design (see note above)
-  alreadyExists: 2,      // company already has a finalized current report (new-report duplicate guard)
+  alreadyExists: 2,      // company already has a finalized current report (create-report-run duplicate guard)
   inProgress: 3,         // an in-progress folder for the same run already exists; rerun with --resume
   notFound: 4,           // requested target (e.g. resume folder) does not exist
 });
 
 // Per-run scratch dir under .research-cache/ (gitignored). Single source of
-// truth so new-report.mjs, refresh-fixture.mjs, load-chapter.mjs, and any
+// truth so create-report-run.mjs, test-refresh-pipeline.mjs, load-chapter-runtime-context.mjs, and any
 // future consumer never hand-build the path. `base` is the run id
 // (`<timestamp>-<companySlug>`) — the same name as the report folder.
 export function researchCacheDir(base) {
@@ -45,7 +54,7 @@ export function researchCacheDir(base) {
 
 // Strip the leading "<timestamp>-" prefix from a run id / report folder name
 // to recover the company slug that chapter-level `slug:` fields and
-// new-report.mjs's `slugify(companyName)` use. Single source of truth so
+// create-report-run.mjs's `slugify(companyName)` use. Single source of truth so
 // every "what's the canonical slug for this run" caller agrees. Throws
 // if `runId` is not in `<14-digit-timestamp>-<slug>` form so a misuse
 // (e.g. an absolute path) fails loudly instead of silently producing
@@ -160,7 +169,7 @@ export function hasText(value) {
 
 // Parses a YYYY-MM-DD-ish value into a Date (UTC midnight) or null. Tolerates
 // Date objects and strings; returns null on anything unparseable. Used by
-// ledger and assemble for source/claim freshness anchoring.
+// build-evidence-ledger and assemble-report for source/claim freshness anchoring.
 export function parseDate(value) {
   const text = asDateString(value);
   if (!text) return null;
@@ -169,7 +178,7 @@ export function parseDate(value) {
 }
 
 // Best-effort registrable domain (eTLD+1) for canonical-URL bookkeeping.
-// Uses MULTI_PART_TLDS from check-dimensions for consistency across the codebase.
+// Uses MULTI_PART_TLDS from validation-catalog for consistency across the codebase.
 export function registrableDomain(url) {
   const host = normalizeDomain(url);
   if (!host) return '';
@@ -231,6 +240,40 @@ function mergeGate(defaultGate, chapterGate) {
   };
 }
 
+const AGENT_POLICY_STRING_ARRAY_FIELDS = [
+  'volatileFacts',
+  'researchRules',
+  'chapterAuthoringRules',
+  'hardRules',
+  'finalResponseFields',
+];
+
+function assertStringArray(value, scope) {
+  assertConfig(Array.isArray(value), `${scope} must be an array (use [] for none)`);
+  for (const [index, item] of value.entries()) {
+    assertConfig(typeof item === 'string' && item.trim().length > 0, `${scope}[${index}] must be a non-empty string`);
+  }
+}
+
+function normalizeAgentPolicy(policy = {}) {
+  assertConfig(policy && typeof policy === 'object' && !Array.isArray(policy), 'agentPolicy must be an object');
+  const out = deepClone(policy);
+  for (const field of AGENT_POLICY_STRING_ARRAY_FIELDS) {
+    if (out[field] === undefined) out[field] = [];
+    assertStringArray(out[field], `agentPolicy.${field}`);
+  }
+  if (out.retryPolicy === undefined) out.retryPolicy = {};
+  assertConfig(out.retryPolicy && typeof out.retryPolicy === 'object' && !Array.isArray(out.retryPolicy), 'agentPolicy.retryPolicy must be an object');
+  if (out.retryPolicy.maxChapterRetries !== undefined) {
+    const value = out.retryPolicy.maxChapterRetries;
+    assertConfig(Number.isInteger(value) && value > 0, 'agentPolicy.retryPolicy.maxChapterRetries must be a positive integer');
+  }
+  if (out.retryPolicy.requireMonotonicFailureDecrease !== undefined) {
+    assertConfig(typeof out.retryPolicy.requireMonotonicFailureDecrease === 'boolean', 'agentPolicy.retryPolicy.requireMonotonicFailureDecrease must be a boolean');
+  }
+  return out;
+}
+
 // Gate field shapes shared between defaultGate (validated as a complete spec)
 // and chapter.gate overrides (validated post-merge with the merged value).
 const GATE_NUMERIC_FIELDS = [
@@ -264,6 +307,7 @@ function normalizeWorkflowConfig(config) {
   assertConfig(config && typeof config === 'object', `${workflowConfigPath} must contain a YAML object`);
   assertConfig(config.schemaVersion === 'workflow-config-v1', `expected schemaVersion workflow-config-v1, got ${config.schemaVersion}`);
   assertConfig(config.reportSchemaVersion === 'report-v2', 'reportSchemaVersion must be report-v2');
+  const agentPolicy = normalizeAgentPolicy(config.agentPolicy ?? {});
   assertConfig(config.defaultGate && typeof config.defaultGate === 'object', 'defaultGate must be an object');
   assertGateShape(config.defaultGate, 'defaultGate');
   assertConfig(Array.isArray(config.chapters) && config.chapters.length > 0, 'chapters[] must be a non-empty array');
@@ -271,7 +315,7 @@ function normalizeWorkflowConfig(config) {
   const figureTypes = new Set(FIGURE_TYPES);
   // Chapter identity is (key, order, letter); the file name is derived as
   // `<order:02>-<key>.yaml`. The `letter` is the chapter's ID-space letter
-  // (per check-dimensions.mjs) used by source/claim/table/figure/question IDs
+  // (per validation-catalog.mjs) used by source/claim/table/figure/question IDs
   // generated within the chapter (e.g. SO001, CO045, TA008).
   const chapters = config.chapters
     .map((chapter) => {
@@ -358,7 +402,7 @@ function normalizeWorkflowConfig(config) {
   }
 
   // Optional report-level adverse-evidence distribution gate. Default is no
-  // floor / no concentration warning; chapters.yaml opts in.
+  // floor / no concentration warning; workflow-config.yaml opts in.
   const adverseDistribution = config.adverseDistribution ?? null;
   if (adverseDistribution) {
     assertConfig(typeof adverseDistribution === 'object', 'adverseDistribution must be an object');
@@ -375,7 +419,7 @@ function normalizeWorkflowConfig(config) {
 
   // Inject report-level adverse-distribution requirements into each chapter's
   // gate as gate.minAdverseSources. Single source of truth so every consumer
-  // of loadWorkflowConfig (load-chapter packets, getAnalysisArtifacts, the
+  // of loadWorkflowConfig (chapter runtime contexts, getAnalysisArtifacts, the
   // check-chapter retry loop) sees the same gate — the agent must receive
   // every constraint the gate will enforce.
   const adverseRequiredKeys = new Set(adverseDistribution?.requireAtLeastOneAdverseSource ?? []);
@@ -383,7 +427,7 @@ function normalizeWorkflowConfig(config) {
     chapter.gate = { ...chapter.gate, minAdverseSources: adverseRequiredKeys.has(chapter.key) ? 1 : 0 };
   }
 
-  return { ...config, chapters, adverseDistribution, reportGate };
+  return { ...config, agentPolicy, chapters, adverseDistribution, reportGate };
 }
 
 export function loadWorkflowConfig() {
@@ -424,10 +468,3 @@ export function getCoreArtifacts(config = loadWorkflowConfig()) {
   ];
 }
 
-// Final-stage artifact filenames are fixed by report-schema-v2 ("Literal value; do not rename").
-// Keep this object shape — chapter packets and downstream tooling iterate by camelCase key.
-export const FINAL_ARTIFACTS = {
-  evidence: { file: 'evidence.yaml', artifact: 'evidence' },
-  fullReport: { file: 'full-report.yaml', artifact: 'full-report' },
-  summaryCard: { file: 'summary-card.yaml', artifact: 'summary-card' },
-};

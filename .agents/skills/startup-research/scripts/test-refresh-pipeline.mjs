@@ -3,19 +3,19 @@
 //
 // Picks a finalized "current" report, copies its 8 chapter YAMLs +
 // report-meta.yaml + evidence.yaml into a fresh run folder, runs the standard
-// new-report -> finalize (with --refresh) pipeline, and (unless --keep is
+// create-report-run -> finalize-report (with --refresh) pipeline, and (unless --keep is
 // passed) restores every byte we touched on the way out so the working tree
 // looks like it did before the run.
 //
 // What this exercises end-to-end (no LLM, no network):
-//   - new-report.mjs duplicate-guard + --refresh acceptance
-//   - finalize prepare-refresh (link-refresh --prepare-current)
-//   - finalize ledger reuse, cross-chapter, assemble, check-report
-//   - finalize link-refresh (mark old superseded + reassemble)
+//   - create-report-run.mjs duplicate-guard + --refresh acceptance
+//   - finalize-report prepare-refresh (link-refresh --prepare-current)
+//   - finalize-report build-evidence-ledger reuse, cross-chapter consistency, assemble-report, check-report
+//   - finalize-report link-refresh (mark old superseded + reassemble)
 //   - revision-graph check via `npm run validate`
 //
 // Usage:
-//   node .agents/skills/startup-research/scripts/refresh-fixture.mjs \
+//   node .agents/skills/startup-research/scripts/test-refresh-pipeline.mjs \
 //     [<source-run-id>] [--reason <text>] [--keep]
 //
 //   <source-run-id>  Defaults to the newest current finalized report.
@@ -35,6 +35,7 @@ import {
   listDirs,
   normalizeRevision,
   readYaml,
+  REPORT_META_FILE,
   reportsDir,
   researchCacheDir,
   writeYaml,
@@ -44,8 +45,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../../../..');
 
 function usage(message) {
-  if (message) console.error(`[fixture] ${message}`);
-  console.error('Usage: node .agents/skills/startup-research/scripts/refresh-fixture.mjs [<source-run-id>] [--reason <text>] [--keep]');
+  if (message) console.error(`[refresh-test] ${message}`);
+  console.error('Usage: node .agents/skills/startup-research/scripts/test-refresh-pipeline.mjs [<source-run-id>] [--reason <text>] [--keep]');
   process.exit(EXIT.invalidArgs);
 }
 
@@ -76,7 +77,7 @@ function pickLatestCurrentRunId() {
   }
   candidates.sort((a, b) => b.localeCompare(a));
   if (!candidates.length) {
-    console.error('[fixture] no current finalized report available to use as a source.');
+    console.error('[refresh-test] no current finalized report available to use as a source.');
     process.exit(EXIT.alreadyExists);
   }
   return candidates[0];
@@ -102,7 +103,7 @@ function dateUtc(date = new Date()) {
 function rewriteMetaIdentity(filePath, newSlug, newRunDate) {
   const doc = readYaml(filePath);
   if (!doc || typeof doc !== 'object') {
-    console.error(`[fixture] failed to parse ${filePath} as YAML object`);
+    console.error(`[refresh-test] failed to parse ${filePath} as YAML object`);
     process.exit(EXIT.validation);
   }
   doc.slug = newSlug;
@@ -123,7 +124,7 @@ function restoreFile(path, bytes) {
 }
 
 function runNode(label, scriptPath, argv) {
-  console.log(`[fixture] -> ${label}`);
+  console.log(`[refresh-test] -> ${label}`);
   const result = spawnSync(process.execPath, [scriptPath, ...argv], { stdio: 'inherit' });
   if (result.status !== 0) {
     throw new Error(`${label} failed (exit ${result.status})`);
@@ -131,7 +132,7 @@ function runNode(label, scriptPath, argv) {
 }
 
 function runNpm(label, scriptName) {
-  console.log(`[fixture] -> ${label}`);
+  console.log(`[refresh-test] -> ${label}`);
   const result = spawnSync('npm', ['run', scriptName], { stdio: 'inherit', cwd: repoRoot });
   if (result.status !== 0) {
     throw new Error(`${label} failed (exit ${result.status})`);
@@ -142,19 +143,19 @@ const args = parseArgs(process.argv.slice(2));
 const sourceRunId = args.source || pickLatestCurrentRunId();
 const sourceFolder = join(reportsDir, sourceRunId);
 if (!isFinalizedReportFolder(sourceFolder)) {
-  console.error(`[fixture] source ${sourceRunId} is not a finalized report folder.`);
+  console.error(`[refresh-test] source ${sourceRunId} is not a finalized report folder.`);
   process.exit(EXIT.invalidArgs);
 }
-const sourceMeta = readYaml(join(sourceFolder, 'report-meta.yaml'));
+const sourceMeta = readYaml(join(sourceFolder, REPORT_META_FILE));
 const sourceCard = readYaml(join(sourceFolder, 'summary-card.yaml'));
 if (normalizeRevision(sourceCard?.revision).status !== 'current') {
-  console.error(`[fixture] source ${sourceRunId} is not a current report; pick a different source.`);
+  console.error(`[refresh-test] source ${sourceRunId} is not a current report; pick a different source.`);
   process.exit(EXIT.invalidArgs);
 }
 const companyName = sourceMeta?.company?.name;
 const companyWebsite = sourceMeta?.company?.website ?? '';
 if (!companyName) {
-  console.error(`[fixture] source ${sourceRunId} has no company.name in report-meta.yaml.`);
+  console.error(`[refresh-test] source ${sourceRunId} has no company.name in report-meta.yaml.`);
   process.exit(EXIT.invalidArgs);
 }
 
@@ -167,12 +168,12 @@ const newRunDate = dateUtc();
 const refreshReason = args.reason || `Fixture smoke test (${new Date().toISOString()})`;
 
 if (existsSync(newFolder)) {
-  console.error(`[fixture] target folder already exists: reports/${newRunId}`);
+  console.error(`[refresh-test] target folder already exists: reports/${newRunId}`);
   process.exit(EXIT.alreadyExists);
 }
 
 const TOUCHED_SOURCE = [
-  join(sourceFolder, 'report-meta.yaml'),
+  join(sourceFolder, REPORT_META_FILE),
   join(sourceFolder, 'summary-card.yaml'),
   join(sourceFolder, 'full-report.yaml'),
 ];
@@ -187,27 +188,27 @@ let exitCode = 0;
 function cleanup() {
   if (!cleanupArmed) return;
   cleanupArmed = false;
-  console.log('[fixture] -> rollback (restoring snapshots, removing fixture folder)');
+  console.log('[refresh-test] -> rollback (restoring snapshots, removing fixture folder)');
   for (const [path, bytes] of SNAPSHOTS) {
     try { restoreFile(path, bytes); }
-    catch (err) { console.error(`[fixture] failed to restore ${path}: ${err.message}`); }
+    catch (err) { console.error(`[refresh-test] failed to restore ${path}: ${err.message}`); }
   }
   for (const path of [newFolder, newCacheFolder]) {
     try { if (existsSync(path)) rmSync(path, { recursive: true, force: true }); }
-    catch (err) { console.error(`[fixture] failed to remove ${path}: ${err.message}`); }
+    catch (err) { console.error(`[refresh-test] failed to remove ${path}: ${err.message}`); }
   }
 }
 
 process.on('SIGINT', () => { cleanup(); process.exit(130); });   // POSIX 128 + SIGINT(2)
 process.on('SIGTERM', () => { cleanup(); process.exit(143); });  // POSIX 128 + SIGTERM(15)
 
-console.log(`[fixture] source: ${sourceRunId} (${companyName})`);
-console.log(`[fixture] new:    ${newRunId}`);
+console.log(`[refresh-test] source: ${sourceRunId} (${companyName})`);
+console.log(`[refresh-test] new:    ${newRunId}`);
 
 try {
   runNode(
-    'new-report',
-    resolve(here, 'new-report.mjs'),
+    'create-report-run',
+    resolve(here, 'create-report-run.mjs'),
     [
       newTimestamp,
       companyName,
@@ -218,15 +219,15 @@ try {
   );
 
   if (!existsSync(newFolder)) {
-    throw new Error(`new-report did not create ${newFolder}`);
+    throw new Error(`create-report-run did not create ${newFolder}`);
   }
 
-  console.log('[fixture] -> copy chapter fixtures + evidence + meta from source');
+  console.log('[refresh-test] -> copy chapter fixtures + evidence + meta from source');
   // Pull the chapter file list from the workflow config so adding/removing a
-  // chapter only requires editing chapters.yaml, not this fixture script.
+  // chapter only requires editing workflow-config.yaml, not this fixture script.
   const COPY_FILES = [
     ...analysisChapterFiles(),
-    'report-meta.yaml',
+    REPORT_META_FILE,
     'evidence.yaml',
   ];
   for (const fileName of COPY_FILES) {
@@ -235,23 +236,23 @@ try {
   }
 
   runNode(
-    'finalize',
-    resolve(here, 'finalize.mjs'),
+    'finalize-report',
+    resolve(here, 'finalize-report.mjs'),
     [newFolder, '--refresh', '--refresh-reason', refreshReason],
   );
 
   runNpm('npm run validate', 'validate');
 
-  console.log('[fixture] ✓ refresh fixture passed');
+  console.log('[refresh-test] ✓ refresh pipeline test passed');
   if (args.keep) {
     cleanupArmed = false;
-    console.log(`[fixture] --keep set; leaving reports/${newRunId} (and mutated source ${sourceRunId}) in place.`);
-    console.log('[fixture] manual rollback:');
+    console.log(`[refresh-test] --keep set; leaving reports/${newRunId} (and mutated source ${sourceRunId}) in place.`);
+    console.log('[refresh-test] manual rollback:');
     console.log(`  rm -rf reports/${newRunId} .research-cache/${newRunId}`);
     console.log(`  git checkout -- reports/${sourceRunId}/{report-meta,summary-card,full-report}.yaml`);
   }
 } catch (err) {
-  console.error(`[fixture] ✗ ${err.message}`);
+  console.error(`[refresh-test] ✗ ${err.message}`);
   exitCode = 1;
 } finally {
   cleanup();

@@ -3,12 +3,12 @@
 // together (FIX_HINTS, RETRY_PRECEDENCE, CASCADE_SUPPRESSORS).
 //
 // Three consumer roles:
-//   - chapter-schema.mjs imports the field-level enum Sets to validate
+//   - report-artifact-schema.mjs imports the field-level enum Sets to validate
 //     individual sources, claims, callouts, and enumeration tables.
 //   - check-chapter.mjs imports the same enum Sets plus the FIX_HINTS table
 //     and the precedence/suppressor metadata to drive its retry loop.
-//   - load-chapter.mjs imports the JSON-friendly bundles (`VOCABULARIES`,
-//     `dimensionCatalog()`) and ships them inside the chapter packet so the
+//   - load-chapter-runtime-context.mjs imports the JSON-friendly bundles (`VOCABULARIES`,
+//     `dimensionCatalog()`) and ships them inside the chapter runtime context so the
 //     agent learns the vocabulary BEFORE writing, not after a failed check.
 //
 // Add a new enum or dimension here exactly once; every consumer reads from
@@ -44,6 +44,9 @@ export const QUESTION_STATUSES = new Set(['answered', 'partial', 'unresolved']);
 
 export const CALLOUT_TYPES = new Set(['strength', 'risk', 'recommendation', 'insight', 'assumption']);
 export const ENUMERATION_COVERAGE = new Set(['exhaustive', 'partial', 'sample']);
+export const EVIDENCE_GAP_TYPES = new Set(['missing-source', 'conflicting-data', 'private-evidence-only', 'enumeration-incomplete', 'stale', 'access-blocked']);
+export const EVIDENCE_GAP_SEVERITIES = new Set(['blocking', 'material', 'minor']);
+export const EVIDENCE_QUALITIES = new Set(['high', 'medium', 'low', 'unknown']);
 export const TONE_VALUES = new Set(['positive', 'neutral', 'warning', 'negative', 'low', 'medium', 'high', 'critical', 'risk', 'opportunity', 'adverse']);
 export const BLOCK_TYPES = new Set(['paragraph', 'callout', 'table', 'figure', 'list', 'equation']);
 
@@ -55,7 +58,7 @@ export const PRIMARY_TIER_TYPES = new Set(['filing', 'regulatory', 'legal', 'off
 export const RESTRICTED_ACCESS_STATUSES = new Set(['paywall', 'js-only', 'broken', 'rate-limited']);
 
 // Summary-card (report-meta.yaml) enums — same pattern as chapter-level vocab,
-// so they appear in the check-report packet for agent visibility.
+// so they appear in the runtime context for agent visibility.
 export const CARD_RECOMMENDATIONS = new Set(['strong-buy', 'buy', 'track', 'research-more', 'avoid']);
 export const CARD_CONFIDENCES = new Set(['high', 'medium', 'low']);
 export const CARD_RISK_RATINGS = new Set(['low', 'medium', 'high', 'critical', 'unknown']);
@@ -71,7 +74,7 @@ export const CARD_VALUATION_STANCES = new Set(['attractive', 'fair', 'stretched'
 //
 // Format: <Type><ChapterLetter><Seq3>
 //   Type:           S (Source) | C (Claim) | T (Table) | F (Figure) | Q (Question)
-//   ChapterLetter:  Single uppercase letter declared in chapters.yaml `letter:` field.
+//   ChapterLetter:  Single uppercase letter declared in workflow-config.yaml `letter:` field.
 //                   Reserved type letters (S, C, T, F, Q) cannot be used.
 //   Seq3:           Zero-padded 3-digit sequence within the chapter (001..999).
 //
@@ -144,7 +147,7 @@ export function formatEnumChoices(enumSet) {
 // ---------------------------------------------------------------------------
 
 // Source freshness classification thresholds (in months from anchor date).
-// Baked here so ledger.mjs, load-chapter packet, and agent all see the same
+// Baked here so build-evidence-ledger.mjs, load-chapter-runtime-context, and agent all see the same
 // policy. These represent maximum age for classification: if a source is
 // within N months of the anchor date, it counts as current/recent.
 export const FRESHNESS_THRESHOLDS = {
@@ -155,7 +158,7 @@ export const FRESHNESS_THRESHOLDS = {
 // Analysis artifact title normalization: stop words that are ignored when
 // comparing table/figure titles to detect cross-artifact and cross-chapter
 // duplicates. Shared by check-chapter.mjs (per-chapter duplicateAnalysis)
-// and cross-chapter.mjs (report-level cross-chapter duplicates).
+// and check-cross-chapter-consistency.mjs (report-level cross-chapter duplicates).
 export const ANALYSIS_TOKEN_STOP_WORDS = new Set([
   'table', 'figure', 'fig', 'chart', 'graph', 'matrix', 'map',
   'kpi', 'kpis', 'scorecard', 'analysis', 'overview', 'summary',
@@ -164,10 +167,10 @@ export const ANALYSIS_TOKEN_STOP_WORDS = new Set([
 // Minimum token length for analysis token filtering (titles, descriptions).
 // Tokens shorter than this are ignored during duplicate detection and
 // similarity comparisons. Ensures consistency between check-chapter.mjs
-// and cross-chapter.mjs.
+// and check-cross-chapter-consistency.mjs.
 export const MIN_ANALYSIS_TOKEN_LENGTH = 4;
 
-// Evidence quality tier thresholds. Used by ledger.mjs to classify the
+// Evidence quality tier thresholds. Used by build-evidence-ledger.mjs to classify the
 // overall quality of consolidated evidence based on source diversity,
 // reputation distribution, and claim corroboration patterns.
 export const EVIDENCE_QUALITY_TIERS = {
@@ -193,13 +196,13 @@ export const EVIDENCE_QUALITY_TIERS = {
 export const REGISTRABLE_DOMAIN_MAX_PARTS = 2;
 
 // Multi-part TLDs that don't fit the typical 2-level domain pattern.
-// Used by registrableDomain() in utils.mjs and normalizedDomain() in ledger.mjs
+// Used by registrableDomain() in utils.mjs and normalizedDomain() in build-evidence-ledger.mjs
 // to correctly extract the registrable domain for diverse gTLDs.
 export const MULTI_PART_TLDS = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'com.au', 'com.br', 'gov.uk', 'gov.cn']);
 
 // Key-fact pattern matching: regex patterns that identify identity facts
 // (founders, founding date, funding, valuation, headcount, customers) in
-// claim statements. Used by cross-chapter.mjs keyFactDrift check to ensure
+// claim statements. Used by check-cross-chapter-consistency.mjs keyFactDrift check to ensure
 // these canonical facts reference company-overview claims instead of being
 // duplicated in later chapters.
 export const KEY_FACT_TOPICS = [
@@ -224,7 +227,7 @@ export const PAYWALL_RISK_WARNING_THRESHOLD = 0.25;
 // Used by check-chapter.mjs checkDuplicateAnalysis().
 export const DUPLICATE_ANALYSIS_TITLE_THRESHOLD = 0.5;
 
-// JSON-friendly bundle shipped in the load-chapter packet so the agent never
+// JSON-friendly bundle shipped in the chapter runtime context so the agent never
 // has to grep source code to learn the vocabulary. Sorted arrays keep diffs
 // stable.
 export const VOCABULARIES = Object.freeze({
@@ -240,6 +243,9 @@ export const VOCABULARIES = Object.freeze({
   questionStatus: [...QUESTION_STATUSES].sort(),
   calloutType: [...CALLOUT_TYPES].sort(),
   enumerationCoverage: [...ENUMERATION_COVERAGE].sort(),
+  evidenceGapType: [...EVIDENCE_GAP_TYPES].sort(),
+  severity: [...EVIDENCE_GAP_SEVERITIES].sort(),
+  evidenceQuality: [...EVIDENCE_QUALITIES].sort(),
   tone: [...TONE_VALUES].sort(),
   blockType: [...BLOCK_TYPES].sort(),
   primaryTierSourceTypes: [...PRIMARY_TIER_TYPES].sort(),
@@ -460,7 +466,7 @@ export function resolveFixHint(dimension, extra) {
   return hint;
 }
 
-// JSON-friendly dimension index shipped in the load-chapter packet. Each
+// JSON-friendly dimension index shipped in the chapter runtime context. Each
 // entry pairs a dimension with its precedence rank, the suppressors that
 // could mask it, and a baseline fix string (function fixes are called with
 // {} so the agent sees the generic form before it has concrete extras).

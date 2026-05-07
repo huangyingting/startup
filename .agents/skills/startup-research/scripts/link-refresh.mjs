@@ -3,10 +3,10 @@
 //
 // Modes:
 //   --prepare-current  Update only the new report's report-meta.yaml revision
-//                      before the rest of the per-report finalize pipeline runs.
+//                      before the rest of the per-report finalize-report pipeline runs.
 //   default            Ensure the new report is marked current/refresh-of, then
 //                      mark the old report superseded and reassemble/check the
-//                      old report. Intended to run inside finalize after the
+//                      old report. Intended to run inside finalize-report after the
 //                      new report already passed its publishable gate.
 //
 // The previous report is resolved automatically: the newest finalized
@@ -26,6 +26,7 @@ import {
   normalizeDomain,
   normalizeRevision,
   readYaml,
+  REPORT_META_FILE,
   reportsDir,
   writeYaml,
 } from './utils.mjs';
@@ -39,7 +40,7 @@ function usage() {
 
 // Caller must pick an explicit EXIT.X — link-refresh handles a mix of
 // invalidArgs / notFound / alreadyExists conditions and the right code
-// matters because finalize.mjs passes our exit code straight through.
+// matters because finalize-report.mjs passes our exit code straight through.
 function abort(message, code) {
   console.error(`[refresh] ${message}`);
   process.exit(code);
@@ -69,8 +70,8 @@ function resolveReportFolder(folderArg) {
 }
 
 function readReportMeta(folder) {
-  const path = join(folder, 'report-meta.yaml');
-  if (!existsSync(path)) abort(`missing report-meta.yaml in ${folder}`, EXIT.notFound);
+  const path = join(folder, REPORT_META_FILE);
+  if (!existsSync(path)) abort(`missing ${REPORT_META_FILE} in ${folder}`, EXIT.notFound);
   return { path, doc: readYaml(path) };
 }
 
@@ -95,7 +96,7 @@ function assertFinalizedRun(runId, label) {
 }
 
 function resolvePreviousRunId({ newRunId, newMeta }) {
-  // Idempotent re-runs of finalize --refresh: once link-refresh has marked the
+  // Idempotent re-runs of finalize-report --refresh: once link-refresh has marked the
   // old report superseded, no current candidate matches anymore. Honour the
   // new report's already-set revision.refreshOfRunId when it points at a
   // finalized matching report that is either still current or already
@@ -185,7 +186,7 @@ function setOldRevision({ oldRunId, newRunId, refreshReason }) {
 
 // Detect partial recovery: report-meta.yaml says superseded but the assembled
 // artifacts still carry the old revision. Without this check, a re-run of
-// finalize --refresh would skip reassemble (because setOldRevision returns
+// finalize-report --refresh would skip reassemble (because setOldRevision returns
 // false when meta is already up to date) and leave the inconsistency for
 // check-revision-graph to discover.
 function oldArtifactsAreInSync(oldRunId, newRunId) {
@@ -209,7 +210,7 @@ if (args.prepareCurrent) {
 }
 
 if (currentChanged) {
-  runScript('assemble.mjs', [newFolder]);
+  runScript('assemble-report.mjs', [newFolder]);
   runScript('check-report.mjs', [newFolder]);
 }
 
@@ -218,7 +219,7 @@ const oldChanged = setOldRevision({ oldRunId, newRunId, refreshReason: args.refr
 console.log(`[refresh] previous report ${oldRunId} supersededByRunId=${newRunId}${oldChanged ? ' (updated)' : ' (already set)'}`);
 if (oldChanged || !oldArtifactsAreInSync(oldRunId, newRunId)) {
   const oldFolder = join(reportsDir, oldRunId);
-  runScript('assemble.mjs', [oldFolder]);
+  runScript('assemble-report.mjs', [oldFolder]);
   runScript('check-report.mjs', [oldFolder]);
 }
 console.log(`[refresh] ✓ linked ${oldRunId} -> ${newRunId}`);

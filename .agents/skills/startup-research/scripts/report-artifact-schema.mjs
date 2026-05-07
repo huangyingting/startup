@@ -33,7 +33,7 @@ import {
   SOURCE_TYPES,
   TONE_VALUES,
   formatEnumChoices,
-} from './check-dimensions.mjs';
+} from './validation-catalog.mjs';
 
 // Single source of truth for the report schema version. Imported by both
 // check-chapter (per-file head check) and check-report (cross-file head
@@ -52,10 +52,10 @@ const NUMERIC_VALUE_FIGURE_TYPES = new Set(['bar', 'waterfall', 'funnel']);
 const MATRIX_FIGURE_TYPES = new Set(['matrix', 'cohort']);
 
 // ---- enum sets ----------------------------------------------------------
-// Field-level enum vocab is imported from check-dimensions.mjs (the single
-// source of truth shared with check-chapter and load-chapter packet exports).
+// Field-level enum vocab is imported from validation-catalog.mjs (the single
+// source of truth shared with check-chapter and chapter runtime context exports).
 // CALLOUT_TYPES and ENUMERATION_COVERAGE are re-exported here so older
-// consumers that import them from chapter-schema keep working.
+// consumers that import them from report-artifact-schema keep working.
 
 export const CALLOUT_TYPES = DIMENSION_CALLOUT_TYPES;
 export const ENUMERATION_COVERAGE = DIMENSION_ENUMERATION_COVERAGE;

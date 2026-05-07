@@ -7,14 +7,10 @@
 // Pipeline:
 //   1. (refresh only) link-refresh.mjs --prepare-current
 //                       -> mark the new report as revision.status=current
-//   2. ledger.mjs       -> evidence.yaml + rewrite chapter claimRefs (only on
-//                          first finalize, or when --rebuild is passed)
-//   3. cross-chapter.mjs -> drift checks across chapters (caught BEFORE
-//                           assemble so fixing report-meta.yaml or a chapter
-//                           does not require throwing away assembled output)
-//   4. assemble.mjs     -> full-report.yaml + summary-card.yaml
-//   5. check-report.mjs -> schema/contract validation; this is the gate that
-//                          decides whether the report is publishable
+//   2. build-evidence-ledger.mjs -> evidence.yaml + chapter claimRef consolidation
+//   3. check-cross-chapter-consistency.mjs -> drift checks across chapters
+//   4. assemble-report.mjs -> full-report.yaml + summary-card.yaml
+//   5. check-report.mjs -> schema/contract validation and publishability gate
 //   6. (refresh only) link-refresh.mjs
 //                       -> mark the previous report as revision.status=superseded
 //                          and reassemble it
@@ -26,13 +22,13 @@ import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EXIT, FINAL_ARTIFACTS } from './utils.mjs';
+import { EXIT, FINAL_ARTIFACTS, REPORT_META_FILE } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/finalize.mjs <report-folder> [--rebuild] [--refresh] [--refresh-reason <text>]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/finalize-report.mjs <report-folder> [--rebuild] [--refresh] [--refresh-reason <text>]');
   process.exit(EXIT.invalidArgs);
 }
 
@@ -62,19 +58,19 @@ if (!folderArg) {
 
 const reportFolder = resolve(folderArg);
 if (!existsSync(reportFolder)) {
-  console.error(`[finalize] report folder not found: ${reportFolder}`);
+  console.error(`[finalize-report] report folder not found: ${reportFolder}`);
   process.exit(EXIT.notFound);
 }
-if (!existsSync(`${reportFolder}/report-meta.yaml`)) {
-  console.error(`[finalize] missing report-meta.yaml in ${reportFolder}; author it before finalizing.`);
+if (!existsSync(join(reportFolder, REPORT_META_FILE))) {
+  console.error(`[finalize-report] missing ${REPORT_META_FILE} in ${reportFolder}; author it before finalizing.`);
   process.exit(EXIT.notFound);
 }
 
 function runStep(step) {
-  console.log(`[finalize] -> ${step.name}`);
+  console.log(`[finalize-report] -> ${step.name}`);
   const result = spawnSync(process.execPath, [resolve(here, step.script), ...step.argv], { stdio: 'inherit' });
   if (result.status !== 0) {
-    console.error(`[finalize] ${step.name} failed (exit ${result.status}); fix the reported issues and re-run finalize.`);
+    console.error(`[finalize-report] ${step.name} failed (exit ${result.status}); fix the reported issues and rerun this command.`);
     // Pass the subprocess exit code through as-is so callers see the same
     // semantic the underlying script emitted; only fall back to validation
     // when the subprocess died from a signal (status === null).
@@ -88,21 +84,21 @@ if (refresh) {
   runStep({ name: 'prepare-refresh', script: 'link-refresh.mjs', argv: refreshArgs });
 }
 
-// Per-report pipeline. ledger only when there is no evidence.yaml yet (or when
+// Per-report pipeline. Build the evidence ledger only when there is no evidence.yaml yet (or when
 // --rebuild forces a fresh consolidation). evidence.yaml is preserved across
 // re-runs so canonical claim IDs stay stable; the chapter source of truth
-// (localEvidence) is preserved by ledger so the agent always has a place to
+// (localEvidence) is preserved by build-evidence-ledger so the agent always has a place to
 // fix evidence-shape problems.
 const hasExistingEvidence = existsSync(join(reportFolder, FINAL_ARTIFACTS.evidence.file));
 const needsLedger = !hasExistingEvidence || rebuild;
 const steps = [];
 if (needsLedger) {
-  steps.push({ name: 'ledger', script: 'ledger.mjs', argv: [reportFolder] });
+  steps.push({ name: 'build-evidence-ledger', script: 'build-evidence-ledger.mjs', argv: [reportFolder] });
 } else {
-  console.log('[finalize] reusing existing evidence.yaml; pass --rebuild to force a full ledger rebuild.');
+  console.log('[finalize-report] reusing existing evidence.yaml; pass --rebuild to force a full evidence-ledger rebuild.');
 }
-steps.push({ name: 'cross-chapter', script: 'cross-chapter.mjs', argv: [reportFolder] });
-steps.push({ name: 'assemble', script: 'assemble.mjs', argv: [reportFolder] });
+steps.push({ name: 'check-cross-chapter-consistency', script: 'check-cross-chapter-consistency.mjs', argv: [reportFolder] });
+steps.push({ name: 'assemble-report', script: 'assemble-report.mjs', argv: [reportFolder] });
 steps.push({ name: 'check-report', script: 'check-report.mjs', argv: [reportFolder] });
 
 // link-refresh runs after the publishability gate so we never mark a prior
@@ -115,4 +111,4 @@ if (refresh) {
 }
 
 for (const step of steps) runStep(step);
-console.log('[finalize] ✓ pipeline complete; report passed schema validation.');
+console.log('[finalize-report] ✓ pipeline complete; report passed schema validation.');
