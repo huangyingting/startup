@@ -4,7 +4,7 @@
 // workflow has one machine-readable source of truth for chapter order, gates,
 // output files, and final artifact names.
 import { join, basename } from 'node:path';
-import { FINAL_ARTIFACTS, companySlugFromRunId, loadWorkflowConfig, researchCacheDir, tryReadYaml, workflowConfigPath } from './utils.mjs';
+import { EXIT, FINAL_ARTIFACTS, companySlugFromRunId, isRunId, loadWorkflowConfig, researchCacheDir, tryReadYaml, workflowConfigPath } from './utils.mjs';
 import { RESTRICTED_ACCESS_STATUSES, VOCABULARIES, dimensionCatalog } from './check-dimensions.mjs';
 
 function usage() {
@@ -14,7 +14,7 @@ Examples:
     node .agents/skills/startup-research/scripts/load-chapter.mjs --list --format markdown
     node .agents/skills/startup-research/scripts/load-chapter.mjs --order 1 --format json
     node .agents/skills/startup-research/scripts/load-chapter.mjs --order 4 --include-context --report-folder reports/20260503145959-openai`);
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 function parseArgs(argv) {
@@ -128,7 +128,9 @@ function cumulativeContext(reportFolder, currentOrder, allChapters) {
     if (ch.order >= currentOrder) continue;
     const result = tryReadYaml(join(reportFolder, ch.file));
     if (!result.ok) {
-      seen.push({ file: ch.file, status: 'missing' });
+      // Keep the field set stable across loaded/missing entries so consumers
+      // can read entry.unanswered without checking entry.status first.
+      seen.push({ file: ch.file, status: 'missing', unanswered: null, sources: null, restricted: null });
       continue;
     }
     const doc = result.value ?? {};
@@ -161,6 +163,12 @@ function cumulativeContext(reportFolder, currentOrder, allChapters) {
 //     diff context only; volatile facts must still be re-fetched.
 function runCacheContext(reportFolder) {
   const runId = basename(reportFolder);
+  // Be permissive about --report-folder: if the basename is not a runId
+  // (developer pointing at a scratch folder), return an empty cache slot
+  // instead of crashing the load-chapter packet.
+  if (!isRunId(runId)) {
+    return { cacheDir: null, runId, companySlug: null, disclosureHint: null, refreshContext: null };
+  }
   const cacheDir = researchCacheDir(runId);
   const out = {
     cacheDir,
@@ -180,7 +188,7 @@ function buildPacket(config, chapter) {
   const chapters = config.chapters;
   const index = chapters.findIndex((item) => item.order === chapter.order);
   return {
-    schemaVersion: 'chapter-packet-v1',
+    schemaVersion: 'chapter-packet-v2',
     generatedFrom: workflowConfigPath,
     workflow: {
       reportSchemaVersion: config.reportSchemaVersion,
@@ -209,7 +217,7 @@ function selectChapter(config, args) {
 
 function orderedList(config) {
   return {
-    schemaVersion: 'chapter-list-v1',
+    schemaVersion: 'chapter-list-v2',
     generatedFrom: workflowConfigPath,
     workflow: {
       reportSchemaVersion: config.reportSchemaVersion,
@@ -364,13 +372,13 @@ function main() {
   const chapter = selectChapter(config, args);
   if (!chapter) {
     console.error('[chapter] no chapter matched the provided selector');
-    process.exit(1);
+    process.exit(EXIT.invalidArgs);
   }
   const packet = buildPacket(config, chapter);
   if (args.includeContext) {
     if (!args.reportFolder) {
       console.error('[chapter] --include-context requires --report-folder <path>');
-      process.exit(1);
+      process.exit(EXIT.invalidArgs);
     }
     const fileByKey = new Map(config.chapters.map((item) => [item.key, item.file]));
     packet.contextChapters = (chapter.optionalContext ?? []).map((key) => {

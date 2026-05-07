@@ -5,6 +5,11 @@ reportSchemaVersion: report-v2
 # is citation (`evidence`, `evidence quality`, `claim refs`, etc.). Columns
 # named `source` / `publisher` / `attribution` are reserved for the *origin
 # institution or document* (e.g. "Gartner", "SEC 10-K"), not for claim ids.
+
+# === per-chapter gates ===
+# `defaultGate` applies to every chapter; per-chapter `gate:` blocks override
+# specific keys. Each chapter's gate is what `check-chapter` enforces against
+# that one chapter's YAML.
 defaultGate:
   minSections: 3
   maxSections: 8
@@ -39,9 +44,9 @@ defaultGate:
     minSectionWordsTotal: 600
     minTableRowsTotal: 16
     minFigureDataPointsTotal: 12
-# Report-level gates (hard floors across the entire report, not per-chapter).
-# These apply after finalization, when all chapters are consolidated into the
-# evidence ledger. See check-report.mjs checkReportLevelDiversity().
+# === report-level gates ===
+# Hard floors evaluated AFTER finalization across all chapters consolidated
+# into the evidence ledger. See check-report.mjs checkReportLevelDiversity().
 reportGate:
   minDistinctDomains: 30          # distinct registrable domains across all sources in evidence.yaml
   requireAdverseSource: true      # at least one stance:adverse source must be present
@@ -59,6 +64,8 @@ reportGate:
 # only one chapter (typically risks). Each listed chapter must contribute at
 # least one adverse-stance source. A warning fires when the number of chapters
 # carrying any adverse source falls at or below the threshold.
+# (Logically part of `reportGate` above; kept top-level only because the loader
+# injects gate.minAdverseSources into per-chapter gates from this list.)
 adverseDistribution:
   requireAtLeastOneAdverseSource:
     - company-overview
@@ -66,6 +73,7 @@ adverseDistribution:
     - customers
     - valuation
   warnIfChaptersWithAdverseSourceAtMost: 2
+# === chapters ===
 # Chapter identity is the (key, order) pair. The loader derives the file name
 # as "<order:02>-<key>.yaml". optionalContext entries are chapter keys.
 #

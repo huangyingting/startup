@@ -15,7 +15,7 @@
 // chapter-wide root cause).
 import { existsSync, readdirSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
-import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
+import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
 import {
   checkArtifactRefs,
@@ -44,34 +44,60 @@ import {
   resolveFixHint,
 } from './check-dimensions.mjs';
 
-const ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
+// Loaded eagerly so the chapter-id `spec` is available for the per-chapter
+// ID patterns built immediately after argv parsing. Wrapped so a broken
+// chapters.yaml surfaces as a friendly error instead of a raw stack trace
+// before the user even sees the usage line.
+let ANALYSIS_ARTIFACTS;
+try {
+  ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
+} catch (err) {
+  console.error(`[check:chapter] failed to load workflow config: ${err.message}`);
+  console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose chapters.yaml.');
+  process.exit(EXIT.invalidArgs);
+}
 
 function parseArgs(argv) {
-  const positional = argv.filter((arg) => !arg.startsWith('-'));
-  const formatIndex = argv.indexOf('--format');
-  return {
-    folder: positional[0] ?? null,
-    chapter: positional[1] ?? null,
-    strict: argv.includes('--strict'),
-    format: formatIndex >= 0 ? argv[formatIndex + 1] : 'text',
-  };
+  const args = { folder: null, chapter: null, strict: false, format: 'text' };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--strict') args.strict = true;
+    else if (arg === '--format') {
+      const next = argv[++i];
+      if (next === undefined || next.startsWith('-')) {
+        console.error(`[check:chapter] --format requires a value (text|json)`);
+        process.exit(EXIT.invalidArgs);
+      }
+      args.format = next;
+    } else if (arg.startsWith('-')) {
+      console.error(`[check:chapter] unknown flag: ${arg}`);
+      console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
+      process.exit(EXIT.invalidArgs);
+    } else if (!args.folder) args.folder = arg;
+    else if (!args.chapter) args.chapter = arg;
+    else {
+      console.error(`[check:chapter] unexpected positional argument: ${arg}`);
+      process.exit(EXIT.invalidArgs);
+    }
+  }
+  return args;
 }
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
   console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json]');
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 if (!['text', 'json'].includes(args.format)) {
   console.error(`Invalid --format value: ${args.format}; expected text or json`);
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 const spec = ANALYSIS_ARTIFACTS.find((item) => item.file === args.chapter);
 if (!spec) {
   console.error(`Unknown chapter artifact: ${args.chapter}`);
   console.error(`Expected one of: ${ANALYSIS_ARTIFACTS.map((item) => item.file).join(', ')}`);
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 // Per-chapter id patterns: every id in this chapter must carry the chapter's
@@ -390,8 +416,8 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
   const claimById = new Map((doc.localEvidence?.claims ?? []).map((c) => [c?.id, c]));
   const gapTopics = new Set((doc.localEvidence?.evidenceGaps ?? []).map((gap) => String(gap?.topic ?? '').toLowerCase()).filter(Boolean));
   for (const plan of enumerationPlans) {
-    const planSlug = slugify(plan.name);
-    const table = (doc.tables ?? []).find((t) => slugify(t?.title) === planSlug);
+    const planSlug = titleSlug(plan.name);
+    const table = (doc.tables ?? []).find((t) => titleSlug(t?.title) === planSlug);
     if (!table) {
       fail('enumerationScope', `${file}: planned enumeration table "${plan.name}" not present in tables[] (slug=${planSlug})`, { planned: plan.name });
       continue;
@@ -423,10 +449,6 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
     }
     // Per-row corroboration: each row must be supported by claims pointing to >= minSourcesPerEnumerationRow distinct registrable domains.
     const tableClaimRefs = new Set(table.claimRefs ?? []);
-    for (const claim of doc.localEvidence?.claims ?? []) {
-      // skip; per-row check below uses table-level claimRefs instead
-      void claim;
-    }
     const tableDomains = new Set();
     for (const ref of tableClaimRefs) {
       const claim = claimById.get(ref);
@@ -534,7 +556,11 @@ function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFig
   }
 }
 
-function slugify(value) {
+function titleSlug(value) {
+  // Title-slug used to match planned table/figure names (chapters.yaml) against
+  // actual table/figure titles. Intentionally simpler than utils.slugify() —
+  // no `&→and` substitution, no length cap, no fallback — because we are
+  // comparing two human-authored title strings, not building a URL slug.
   return String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
@@ -730,8 +756,8 @@ if (doc) {
 
   const otherChapterClaimIds = loadOtherChapterClaimIds(reportFolder, spec, ANALYSIS_ARTIFACTS);
   checkLocalEvidence(spec.file, doc, counts, otherChapterClaimIds);
-  const plannedTablesByName = new Map((spec.plannedTables ?? []).map((item) => [slugify(item.name), item]));
-  const plannedFiguresByName = new Map((spec.plannedFigures ?? []).map((item) => [slugify(item.name), item]));
+  const plannedTablesByName = new Map((spec.plannedTables ?? []).map((item) => [titleSlug(item.name), item]));
+  const plannedFiguresByName = new Map((spec.plannedFigures ?? []).map((item) => [titleSlug(item.name), item]));
   checkResearchQuestions(spec.file, doc, gate, plannedTablesByName, plannedFiguresByName, (spec.contentRequirements ?? []).length);
   checkClaimAnswerRefs(spec.file, doc);
   checkSearchQueries(spec.file, doc);
@@ -877,4 +903,4 @@ if (args.format === 'json') {
   if (ok) console.log('[check:chapter] ✓ chapter ready for next workflow stage.');
 }
 
-process.exit(ok ? 0 : 1);
+process.exit(ok ? EXIT.ok : EXIT.validation);

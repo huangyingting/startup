@@ -26,14 +26,14 @@ import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { FINAL_ARTIFACTS } from './utils.mjs';
+import { EXIT, FINAL_ARTIFACTS } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/finalize.mjs <report-folder> [--rebuild] [--refresh] [--refresh-reason <text>]');
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 function parseArgs(argv) {
@@ -63,11 +63,11 @@ if (!folderArg) {
 const reportFolder = resolve(folderArg);
 if (!existsSync(reportFolder)) {
   console.error(`[finalize] report folder not found: ${reportFolder}`);
-  process.exit(1);
+  process.exit(EXIT.notFound);
 }
 if (!existsSync(`${reportFolder}/report-meta.yaml`)) {
   console.error(`[finalize] missing report-meta.yaml in ${reportFolder}; author it before finalizing.`);
-  process.exit(1);
+  process.exit(EXIT.notFound);
 }
 
 function runStep(step) {
@@ -75,7 +75,10 @@ function runStep(step) {
   const result = spawnSync(process.execPath, [resolve(here, step.script), ...step.argv], { stdio: 'inherit' });
   if (result.status !== 0) {
     console.error(`[finalize] ${step.name} failed (exit ${result.status}); fix the reported issues and re-run finalize.`);
-    process.exit(result.status ?? 1);
+    // Pass the subprocess exit code through as-is so callers see the same
+    // semantic the underlying script emitted; only fall back to validation
+    // when the subprocess died from a signal (status === null).
+    process.exit(result.status ?? EXIT.validation);
   }
 }
 

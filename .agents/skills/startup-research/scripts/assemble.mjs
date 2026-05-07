@@ -9,7 +9,7 @@
 // truth for the consolidated artifacts so the agent never hand-edits them.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
+import { EXIT, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
 import { SCHEMA_VERSION } from './chapter-schema.mjs';
 import {
   CARD_CONFIDENCES,
@@ -22,15 +22,18 @@ const DEFAULT_DISCLAIMER = 'This report is a public-evidence diligence snapshot,
 
 function abort(message) {
   console.error(`[assemble] ${message}`);
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 function parseArgs(argv) {
-  const positional = argv.filter((arg) => !arg.startsWith('-'));
-  return {
-    folder: positional[0] ?? null,
-    dryRun: argv.includes('--dry-run'),
-  };
+  const args = { folder: null, dryRun: false };
+  for (const arg of argv) {
+    if (arg === '--dry-run') args.dryRun = true;
+    else if (arg.startsWith('-')) abort(`unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/assemble.mjs <report-folder> [--dry-run]`);
+    else if (!args.folder) args.folder = arg;
+    else abort(`unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/assemble.mjs <report-folder> [--dry-run]`);
+  }
+  return args;
 }
 
 const args = parseArgs(process.argv.slice(2));
@@ -316,7 +319,7 @@ if (args.dryRun) {
   console.log(`[assemble] dry-run: would write ${fullReportPath}`);
   console.log(`[assemble] dry-run: would write ${summaryCardPath}`);
   console.log(`[assemble] chapters=${chapterDocs.length} tables=${tables.length} figures=${figures.length} sources=${sourceRefs.length}`);
-  process.exit(0);
+  process.exit(EXIT.ok);
 }
 
 writeYaml(fullReportPath, fullReport);

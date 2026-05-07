@@ -17,6 +17,7 @@ import { existsSync, statSync } from 'node:fs';
 import { basename, isAbsolute, join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  EXIT,
   collectClaimRefs,
   companySlugFromRunId,
   FINAL_ARTIFACTS,
@@ -490,32 +491,32 @@ try {
   const folderArg = process.argv[2];
   if (!folderArg) {
     console.error('Usage: node .agents/skills/startup-research/scripts/check-report.mjs <report-folder>');
-    process.exit(2);
+    process.exit(EXIT.invalidArgs);
   }
   const dir = resolveReportDir(folderArg);
   if (!existsSync(dir) || !statSync(dir).isDirectory()) {
     console.error(`[check:report] not a directory: ${dir}`);
-    process.exit(2);
+    process.exit(EXIT.notFound);
   }
   const run = basename(dir);
   // checkRun() resolves the folder via REPORTS_DIR; reject anything outside
   // it instead of silently misbehaving.
   if (resolve(REPORTS_DIR, run) !== dir) {
     console.error(`[check:report] folder must live under ${REPORTS_DIR}; got ${dir}`);
-    process.exit(2);
+    process.exit(EXIT.invalidArgs);
   }
 
   const checked = checkRun(run);
   if (failures.length) {
     console.error('[check:report] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
-    process.exit(1);
+    process.exit(EXIT.validation);
   }
   if (!checked) {
     console.error(`[check:report] ${run}: not a finalized v2 report (no ${SUMMARY_CARD_FILE}).`);
-    process.exit(1);
+    process.exit(EXIT.validation);
   }
   console.log(`[check:report] ✓ ${run} verified.`);
 } catch (err) {
   console.error(`[check:report] fatal error: ${err.message}`);
-  process.exit(1);
+  process.exit(EXIT.validation);
 }

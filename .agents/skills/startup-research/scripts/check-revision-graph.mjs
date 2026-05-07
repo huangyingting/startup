@@ -5,6 +5,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+  EXIT,
   isRunId,
   listDirs,
   normalizeRevision,
@@ -89,6 +90,6 @@ const { reports, failures } = collectReports();
 failures.push(...validateRevisionGraph(reports));
 if (failures.length) {
   console.error('[check:revision-graph] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
-  process.exit(1);
+  process.exit(EXIT.validation);
 }
 console.log(`[check:revision-graph] ✓ ${reports.length} report(s); revision graph consistent.`);

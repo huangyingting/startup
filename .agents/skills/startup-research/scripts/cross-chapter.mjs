@@ -9,32 +9,50 @@
 // finalization. Warnings are non-fatal unless --strict is passed.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
+import { EXIT, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
 import { ANALYSIS_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_ANALYSIS_TOKEN_LENGTH } from './check-dimensions.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 
 const args = (() => {
-  const positional = process.argv.slice(2).filter((arg) => !arg.startsWith('-'));
-  const strict = process.argv.includes('--strict');
-  const formatIndex = process.argv.indexOf('--format');
-  const format = formatIndex >= 0 ? process.argv[formatIndex + 1] : 'text';
-  return { folder: positional[0] ?? null, strict, format };
+  const parsed = { folder: null, strict: false, format: 'text' };
+  const argv = process.argv.slice(2);
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--strict') parsed.strict = true;
+    else if (arg === '--format') {
+      const next = argv[++i];
+      if (next === undefined || next.startsWith('-')) {
+        console.error('[cross-chapter] --format requires a value (text|json)');
+        process.exit(EXIT.invalidArgs);
+      }
+      parsed.format = next;
+    } else if (arg.startsWith('-')) {
+      console.error(`[cross-chapter] unknown flag: ${arg}`);
+      console.error('Usage: node .agents/skills/startup-research/scripts/cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
+      process.exit(EXIT.invalidArgs);
+    } else if (!parsed.folder) parsed.folder = arg;
+    else {
+      console.error(`[cross-chapter] unexpected positional argument: ${arg}`);
+      process.exit(EXIT.invalidArgs);
+    }
+  }
+  return parsed;
 })();
 
 if (!args.folder) {
   console.error('Usage: node .agents/skills/startup-research/scripts/cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 if (!['text', 'json'].includes(args.format)) {
   console.error(`Invalid --format value: ${args.format}; expected text or json`);
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 const reportFolder = resolve(args.folder);
 if (!existsSync(reportFolder)) {
   console.error(`[cross-chapter] folder not found: ${reportFolder}`);
-  process.exit(1);
+  process.exit(EXIT.notFound);
 }
 
 const conflicts = [];
@@ -330,4 +348,4 @@ if (args.format === 'json') {
   if (ok) console.log('[cross-chapter] ✓ no material drift detected.');
 }
 
-process.exit(ok ? 0 : 1);
+process.exit(ok ? EXIT.ok : EXIT.validation);

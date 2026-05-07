@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import yaml from 'js-yaml';
 import {
+  EXIT,
   isFinalizedReportFolder,
   listDirs,
   normalizeCompanyName,
@@ -21,7 +22,7 @@ const DISCLOSURE_PROFILES = new Set(['public', 'private-disclosed', 'private-und
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/new-report.mjs <YYYYMMDDHHmmss> <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--refresh] [--refresh-reason <text>] [--resume]');
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 function parseArgs(argv) {
@@ -40,7 +41,7 @@ function parseArgs(argv) {
   if (!/^\d{14}$/.test(args.timestamp ?? '')) usage();
   if (args.disclosure && !DISCLOSURE_PROFILES.has(args.disclosure)) {
     console.error(`[new] invalid --disclosure value: ${args.disclosure} (allowed: ${[...DISCLOSURE_PROFILES].join(', ')})`);
-    process.exit(1);
+    process.exit(EXIT.invalidArgs);
   }
   return args;
 }
@@ -88,7 +89,7 @@ function ensureFinalizedRun(runId, label) {
   const folder = join(reportsDir, runId);
   if (!isFinalizedReportFolder(folder)) {
     console.error(`[new] ${label} is not a finalized report folder: reports/${runId}`);
-    process.exit(2);
+    process.exit(EXIT.invalidArgs);
   }
 }
 
@@ -96,12 +97,12 @@ function resolveRefreshTarget({ refresh, matches }) {
   if (!refresh) return null;
   if (!matches.length) {
     console.error('[new] --refresh requested, but no matching finalized report exists for this company/domain.');
-    process.exit(2);
+    process.exit(EXIT.invalidArgs);
   }
   const candidates = currentMatches(matches).sort((a, b) => String(b.runId).localeCompare(String(a.runId)));
   if (!candidates.length) {
     console.error('[new] --refresh requested, but every matching report is already superseded.');
-    process.exit(2);
+    process.exit(EXIT.invalidArgs);
   }
   const target = candidates[0];
   ensureFinalizedRun(target.runId, '--refresh target');
@@ -120,7 +121,7 @@ function checkDuplicateRisk({ matches, refreshTarget }) {
     console.error(`  - ${match.companyName ?? match.runId} (${match.path})`);
   }
   console.error('[new] stop: a finalized report already exists for this company/domain.');
-  process.exit(2);
+  process.exit(EXIT.alreadyExists);
 }
 
 function writeRefreshContext({ base, companyName, website, refreshTarget, refreshReason }) {
@@ -180,22 +181,22 @@ if (existsSync(path)) {
   if (isFinalizedReportFolder(path)) {
     console.error(`[new] finalized report folder already exists: ${path}`);
     console.error('[new] stop: use the existing official report instead of resuming.');
-    process.exit(2);
+    process.exit(EXIT.alreadyExists);
   }
   if (!args.resume) {
     console.error(`[new] in-progress report folder already exists: ${path}`);
     console.error('[new] rerun the same command with --resume to continue it; duplicate suffix folders are not created.');
-    process.exit(3);
+    process.exit(EXIT.inProgress);
   }
   writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
   console.error(`[new] resume: ${path}`);
   console.log(path);
-  process.exit(0);
+  process.exit(EXIT.ok);
 }
 if (args.resume) {
   console.error(`[new] cannot resume missing report folder: ${path}`);
   console.error('[new] run without --resume to create a fresh in-progress report folder.');
-  process.exit(4);
+  process.exit(EXIT.notFound);
 }
 mkdirSync(path, { recursive: true });
 writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });

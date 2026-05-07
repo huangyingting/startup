@@ -19,7 +19,7 @@
 // namespace. This makes the chapter loop fully parallel-safe.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
+import { EXIT, canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
 import { FRESHNESS_THRESHOLDS, EVIDENCE_QUALITY_TIERS, REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS } from './check-dimensions.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
@@ -27,22 +27,31 @@ const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.
 const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 
 function parseArgs(argv) {
-  return {
-    folder: argv.find((arg) => !arg.startsWith('-')) ?? null,
-  };
+  const args = { folder: null };
+  for (const arg of argv) {
+    if (arg.startsWith('-')) {
+      console.error(`[ledger] unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder>`);
+      process.exit(EXIT.invalidArgs);
+    } else if (!args.folder) args.folder = arg;
+    else {
+      console.error(`[ledger] unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder>`);
+      process.exit(EXIT.invalidArgs);
+    }
+  }
+  return args;
 }
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
   console.error('Usage: node .agents/skills/startup-research/scripts/ledger.mjs <report-folder>');
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 const reportFolder = resolve(args.folder);
 const docs = loadAnalysisDocs(reportFolder);
 if (!docs.size) {
   console.error(`[ledger] no report artifacts found in ${reportFolder}`);
-  process.exit(1);
+  process.exit(EXIT.notFound);
 }
 
 const { sources, claims, evidenceGaps, duplicateSourceCount, duplicateClaimCount } = consolidate(docs);

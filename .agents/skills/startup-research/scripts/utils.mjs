@@ -13,20 +13,49 @@ export const RUN_ID_RE = /^\d{14}-[a-z0-9-]+$/;
 export const REVISION_STATUSES = new Set(['current', 'superseded']);
 export const FINAL_REPORT_FILES = ['summary-card.yaml', 'full-report.yaml', 'evidence.yaml', 'report-meta.yaml'];
 
+// Single contract for non-zero exit codes used across skill scripts. Callers
+// (CI, refresh-fixture, finalize) switch on these to distinguish recoverable
+// state errors from validation failures. Keep stable; SKILL.md references
+// some of these by number.
+//
+// `validation` and `invalidArgs` deliberately share exit code 1 — both mean
+// "this script could not produce a passing artifact"; CI and humans only
+// need to know it failed. Anything that needs to distinguish should read
+// stderr (every script prefixes its messages with `[script-name]`).
+export const EXIT = Object.freeze({
+  ok: 0,
+  validation: 1,         // a check produced findings (chapter/report/workflow gate failed)
+  invalidArgs: 1,        // bad CLI arguments — same exit as validation by design (see note above)
+  alreadyExists: 2,      // company already has a finalized current report (new-report duplicate guard)
+  inProgress: 3,         // an in-progress folder for the same run already exists; rerun with --resume
+  notFound: 4,           // requested target (e.g. resume folder) does not exist
+});
+
 // Per-run scratch dir under .research-cache/ (gitignored). Single source of
 // truth so new-report.mjs, refresh-fixture.mjs, load-chapter.mjs, and any
 // future consumer never hand-build the path. `base` is the run id
 // (`<timestamp>-<companySlug>`) — the same name as the report folder.
 export function researchCacheDir(base) {
-  return join(researchCacheRoot, base);
+  const value = String(base ?? '');
+  if (!RUN_ID_RE.test(value)) {
+    throw new Error(`[utils] researchCacheDir requires a runId matching ${RUN_ID_RE}; got: ${JSON.stringify(value)}`);
+  }
+  return join(researchCacheRoot, value);
 }
 
 // Strip the leading "<timestamp>-" prefix from a run id / report folder name
 // to recover the company slug that chapter-level `slug:` fields and
 // new-report.mjs's `slugify(companyName)` use. Single source of truth so
-// every "what's the canonical slug for this run" caller agrees.
+// every "what's the canonical slug for this run" caller agrees. Throws
+// if `runId` is not in `<14-digit-timestamp>-<slug>` form so a misuse
+// (e.g. an absolute path) fails loudly instead of silently producing
+// nonsense paths downstream.
 export function companySlugFromRunId(runId) {
-  return String(runId ?? '').replace(/^\d{14}-/, '');
+  const value = String(runId ?? '');
+  if (!RUN_ID_RE.test(value)) {
+    throw new Error(`[utils] companySlugFromRunId requires a runId matching ${RUN_ID_RE}; got: ${JSON.stringify(value)}`);
+  }
+  return value.replace(/^\d{14}-/, '');
 }
 
 export function isRunId(value) {
@@ -378,6 +407,13 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
     plannedTables: chapter.plannedTables ?? [],
     plannedFigures: chapter.plannedFigures ?? [],
   }));
+}
+
+// Convenience: ordered list of chapter YAML filenames (`01-…`, `02-…`, …).
+// Use this anywhere you need to iterate per-chapter file names instead of
+// hardcoding the list (e.g. fixture replay, full-report assembly, doc tools).
+export function analysisChapterFiles(config = loadWorkflowConfig()) {
+  return getAnalysisArtifacts(config).map((c) => c.file);
 }
 
 export function getCoreArtifacts(config = loadWorkflowConfig()) {

@@ -27,6 +27,9 @@ import { spawnSync } from 'node:child_process';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  analysisChapterFiles,
+  companySlugFromRunId,
+  EXIT,
   isFinalizedReportFolder,
   isRunId,
   listDirs,
@@ -43,7 +46,7 @@ const repoRoot = resolve(here, '../../../..');
 function usage(message) {
   if (message) console.error(`[fixture] ${message}`);
   console.error('Usage: node .agents/skills/startup-research/scripts/refresh-fixture.mjs [<source-run-id>] [--reason <text>] [--keep]');
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
 function parseArgs(argv) {
@@ -74,7 +77,7 @@ function pickLatestCurrentRunId() {
   candidates.sort((a, b) => b.localeCompare(a));
   if (!candidates.length) {
     console.error('[fixture] no current finalized report available to use as a source.');
-    process.exit(2);
+    process.exit(EXIT.alreadyExists);
   }
   return candidates[0];
 }
@@ -100,7 +103,7 @@ function rewriteMetaIdentity(filePath, newSlug, newRunDate) {
   const doc = readYaml(filePath);
   if (!doc || typeof doc !== 'object') {
     console.error(`[fixture] failed to parse ${filePath} as YAML object`);
-    process.exit(1);
+    process.exit(EXIT.validation);
   }
   doc.slug = newSlug;
   doc.runDate = newRunDate;
@@ -140,22 +143,22 @@ const sourceRunId = args.source || pickLatestCurrentRunId();
 const sourceFolder = join(reportsDir, sourceRunId);
 if (!isFinalizedReportFolder(sourceFolder)) {
   console.error(`[fixture] source ${sourceRunId} is not a finalized report folder.`);
-  process.exit(2);
+  process.exit(EXIT.invalidArgs);
 }
 const sourceMeta = readYaml(join(sourceFolder, 'report-meta.yaml'));
 const sourceCard = readYaml(join(sourceFolder, 'summary-card.yaml'));
 if (normalizeRevision(sourceCard?.revision).status !== 'current') {
   console.error(`[fixture] source ${sourceRunId} is not a current report; pick a different source.`);
-  process.exit(2);
+  process.exit(EXIT.invalidArgs);
 }
 const companyName = sourceMeta?.company?.name;
 const companyWebsite = sourceMeta?.company?.website ?? '';
 if (!companyName) {
   console.error(`[fixture] source ${sourceRunId} has no company.name in report-meta.yaml.`);
-  process.exit(2);
+  process.exit(EXIT.invalidArgs);
 }
 
-const sourceSlug = sourceRunId.slice(15); // strip leading "YYYYMMDDHHmmss-"
+const sourceSlug = companySlugFromRunId(sourceRunId);
 const newTimestamp = timestampUtc();
 const newRunId = `${newTimestamp}-${sourceSlug}`;
 const newFolder = join(reportsDir, newRunId);
@@ -165,7 +168,7 @@ const refreshReason = args.reason || `Fixture smoke test (${new Date().toISOStri
 
 if (existsSync(newFolder)) {
   console.error(`[fixture] target folder already exists: reports/${newRunId}`);
-  process.exit(2);
+  process.exit(EXIT.alreadyExists);
 }
 
 const TOUCHED_SOURCE = [
@@ -195,8 +198,8 @@ function cleanup() {
   }
 }
 
-process.on('SIGINT', () => { cleanup(); process.exit(130); });
-process.on('SIGTERM', () => { cleanup(); process.exit(143); });
+process.on('SIGINT', () => { cleanup(); process.exit(130); });   // POSIX 128 + SIGINT(2)
+process.on('SIGTERM', () => { cleanup(); process.exit(143); });  // POSIX 128 + SIGTERM(15)
 
 console.log(`[fixture] source: ${sourceRunId} (${companyName})`);
 console.log(`[fixture] new:    ${newRunId}`);
@@ -219,21 +222,16 @@ try {
   }
 
   console.log('[fixture] -> copy chapter fixtures + evidence + meta from source');
+  // Pull the chapter file list from the workflow config so adding/removing a
+  // chapter only requires editing chapters.yaml, not this fixture script.
   const COPY_FILES = [
-    '01-company-overview.yaml',
-    '02-market-analysis.yaml',
-    '03-competitors.yaml',
-    '04-financials.yaml',
-    '05-product-tech.yaml',
-    '06-customers.yaml',
-    '07-risks.yaml',
-    '08-valuation.yaml',
+    ...analysisChapterFiles(),
     'report-meta.yaml',
     'evidence.yaml',
   ];
   for (const fileName of COPY_FILES) {
     cpSync(join(sourceFolder, fileName), join(newFolder, fileName));
-    rewriteMetaIdentity(join(newFolder, fileName), newRunId, newRunDate);
+    rewriteMetaIdentity(join(newFolder, fileName), sourceSlug, newRunDate);
   }
 
   runNode(

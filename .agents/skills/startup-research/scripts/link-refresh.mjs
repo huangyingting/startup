@@ -18,6 +18,7 @@ import { existsSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  EXIT,
   isFinalizedReportFolder,
   isRunId,
   listDirs,
@@ -33,10 +34,13 @@ const here = dirname(fileURLToPath(import.meta.url));
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/link-refresh.mjs <new-report-folder> [--refresh-reason <text>] [--prepare-current]');
-  process.exit(1);
+  process.exit(EXIT.invalidArgs);
 }
 
-function abort(message, code = 1) {
+// Caller must pick an explicit EXIT.X — link-refresh handles a mix of
+// invalidArgs / notFound / alreadyExists conditions and the right code
+// matters because finalize.mjs passes our exit code straight through.
+function abort(message, code) {
   console.error(`[refresh] ${message}`);
   process.exit(code);
 }
@@ -57,16 +61,16 @@ function parseArgs(argv) {
 
 function resolveReportFolder(folderArg) {
   const folder = resolve(folderArg);
-  if (!existsSync(folder)) abort(`report folder not found: ${folder}`, 2);
+  if (!existsSync(folder)) abort(`report folder not found: ${folder}`, EXIT.notFound);
   const runId = basename(folder);
-  if (resolve(reportsDir, runId) !== folder) abort(`report folder must live under ${reportsDir}: ${folder}`, 2);
-  if (!isRunId(runId)) abort(`report folder name is not a valid run id: ${runId}`, 2);
+  if (resolve(reportsDir, runId) !== folder) abort(`report folder must live under ${reportsDir}: ${folder}`, EXIT.invalidArgs);
+  if (!isRunId(runId)) abort(`report folder name is not a valid run id: ${runId}`, EXIT.invalidArgs);
   return { folder, runId };
 }
 
 function readReportMeta(folder) {
   const path = join(folder, 'report-meta.yaml');
-  if (!existsSync(path)) abort(`missing report-meta.yaml in ${folder}`, 2);
+  if (!existsSync(path)) abort(`missing report-meta.yaml in ${folder}`, EXIT.notFound);
   return { path, doc: readYaml(path) };
 }
 
@@ -87,7 +91,7 @@ function matchesCompany(card, company) {
 
 function assertFinalizedRun(runId, label) {
   const folder = join(reportsDir, runId);
-  if (!isFinalizedReportFolder(folder)) abort(`${label} is not a finalized report: reports/${runId}`, 2);
+  if (!isFinalizedReportFolder(folder)) abort(`${label} is not a finalized report: reports/${runId}`, EXIT.invalidArgs);
 }
 
 function resolvePreviousRunId({ newRunId, newMeta }) {
@@ -121,7 +125,7 @@ function resolvePreviousRunId({ newRunId, newMeta }) {
     candidates.push(runId);
   }
   candidates.sort((a, b) => b.localeCompare(a));
-  if (!candidates.length) abort('could not find a current finalized report matching the new report company/domain', 2);
+  if (!candidates.length) abort('could not find a current finalized report matching the new report company/domain', EXIT.notFound);
   return candidates[0];
 }
 
@@ -129,7 +133,7 @@ function assertRefreshableOld(oldRunId, newRunId) {
   const oldCard = readSummaryCard(oldRunId);
   const oldRevision = normalizeRevision(oldCard?.revision);
   if (oldRevision.status === 'superseded' && oldRevision.supersededByRunId !== newRunId) {
-    abort(`${oldRunId} is already superseded by ${oldRevision.supersededByRunId}; refresh the current report instead.`, 2);
+    abort(`${oldRunId} is already superseded by ${oldRevision.supersededByRunId}; refresh the current report instead.`, EXIT.alreadyExists);
   }
 }
 
@@ -169,7 +173,7 @@ function setOldRevision({ oldRunId, newRunId, refreshReason }) {
   const { path: oldMetaPath, doc: oldMeta } = readReportMeta(oldFolder);
   const existing = normalizeRevision(oldMeta.revision);
   if (existing.status === 'superseded' && existing.supersededByRunId === newRunId) return false;
-  if (existing.status === 'superseded') abort(`${oldRunId} is already superseded by ${existing.supersededByRunId}; refusing to relink.`, 2);
+  if (existing.status === 'superseded') abort(`${oldRunId} is already superseded by ${existing.supersededByRunId}; refusing to relink.`, EXIT.alreadyExists);
   const nextRevision = {
     status: 'superseded',
     refreshOfRunId: existing.refreshOfRunId,
@@ -195,13 +199,13 @@ const args = parseArgs(process.argv.slice(2));
 const { folder: newFolder, runId: newRunId } = resolveReportFolder(args.folder);
 const { doc: newMeta } = readReportMeta(newFolder);
 const oldRunId = resolvePreviousRunId({ newRunId, newMeta });
-if (oldRunId === newRunId) abort('new report cannot refresh itself', 2);
+if (oldRunId === newRunId) abort('new report cannot refresh itself', EXIT.invalidArgs);
 
 const currentChanged = setCurrentRevision({ newFolder, newRunId, oldRunId, refreshReason: args.refreshReason });
 console.log(`[refresh] current report ${newRunId} refreshOfRunId=${oldRunId}${currentChanged ? ' (updated)' : ' (already set)'}`);
 
 if (args.prepareCurrent) {
-  process.exit(0);
+  process.exit(EXIT.ok);
 }
 
 if (currentChanged) {
