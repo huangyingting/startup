@@ -41,10 +41,11 @@ export const EXIT = Object.freeze({
 
 // Per-run scratch dir under .research-cache/ (gitignored). Single source of
 // truth so create-report-run.mjs, test-refresh-pipeline.mjs, load-chapter-runtime-context.mjs, and any
-// future consumer never hand-build the path. `base` is the run id
-// (`<timestamp>-<companySlug>`) — the same name as the report folder.
-export function researchCacheDir(base) {
-  const value = String(base ?? '');
+// future consumer never hand-build the path. The folder name under
+// .research-cache/ is the run id (`<timestamp>-<companySlug>`) — the same
+// name as the report folder.
+export function researchCacheDir(runId) {
+  const value = String(runId ?? '');
   if (!RUN_ID_RE.test(value)) {
     throw new Error(`[utils] researchCacheDir requires a runId matching ${RUN_ID_RE}; got: ${JSON.stringify(value)}`);
   }
@@ -179,10 +180,6 @@ export function canonicalSourceUrl(value) {
 export function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
   return typeof value === 'string' ? value : '';
-}
-
-export function compactText(value) {
-  return String(value ?? '').trim().replace(/\s+/g, ' ');
 }
 
 export function hasText(value) {

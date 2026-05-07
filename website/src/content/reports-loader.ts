@@ -146,7 +146,9 @@ function readYaml(path: string): Record<string, any> | null {
   try {
     const raw = yaml.load(readFileSync(path, 'utf8'));
     return normalizeDates(repairCollapsedKey(raw)) as Record<string, any>;
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[reports-loader] YAML parse failed for ${path}: ${message}`);
     return null;
   }
 }
