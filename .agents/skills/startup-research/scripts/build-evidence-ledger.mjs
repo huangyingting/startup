@@ -19,8 +19,14 @@
 // namespace. This makes the chapter loop fully parallel-safe.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { EXIT, canonicalSourceUrl, compactText, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
+import { EXIT, canonicalSourceUrl, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
 import { FRESHNESS_THRESHOLDS, EVIDENCE_QUALITY_TIERS, REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS } from './validation-catalog.mjs';
+
+// Local: collapse all whitespace runs to single spaces and trim. Used only by
+// textKey() below for source/claim deduplication keys; not worth a public export.
+function compactText(value) {
+  return String(value ?? '').trim().replace(/\s+/g, ' ');
+}
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
