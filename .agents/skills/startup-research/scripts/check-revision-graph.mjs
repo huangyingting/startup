@@ -6,12 +6,15 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   EXIT,
+  FINAL_ARTIFACTS,
   isRunId,
   listDirs,
   normalizeRevision,
   readYaml,
   reportsDir,
 } from './utils.mjs';
+
+const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 function hasValue(value) {
   return typeof value === 'string' && value.trim().length > 0;
@@ -21,7 +24,7 @@ function collectReports() {
   const reports = [];
   const failures = [];
   for (const runId of listDirs(reportsDir).sort().reverse()) {
-    const cardPath = join(reportsDir, runId, 'summary-card.yaml');
+    const cardPath = join(reportsDir, runId, SUMMARY_CARD_FILE);
     if (!existsSync(cardPath)) continue;
     let card;
     try { card = readYaml(cardPath); }

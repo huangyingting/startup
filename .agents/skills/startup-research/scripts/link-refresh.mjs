@@ -19,6 +19,7 @@ import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   EXIT,
+  FINAL_ARTIFACTS,
   isFinalizedReportFolder,
   isRunId,
   listDirs,
@@ -32,6 +33,7 @@ import {
 } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
+const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/link-refresh.mjs <new-report-folder> [--refresh-reason <text>] [--prepare-current]');
@@ -76,7 +78,7 @@ function readReportMeta(folder) {
 }
 
 function readSummaryCard(runId) {
-  const path = join(reportsDir, runId, 'summary-card.yaml');
+  const path = join(reportsDir, runId, SUMMARY_CARD_FILE);
   return existsSync(path) ? readYaml(path) : null;
 }
 

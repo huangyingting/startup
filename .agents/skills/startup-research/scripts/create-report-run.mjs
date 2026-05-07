@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import yaml from 'js-yaml';
 import {
   EXIT,
+  FINAL_ARTIFACTS,
   isFinalizedReportFolder,
   listDirs,
   loadWorkflowConfig,
@@ -20,6 +21,7 @@ import {
 } from './utils.mjs';
 
 const DISCLOSURE_PROFILES = new Set(['public', 'private-disclosed', 'private-undisclosed', 'stealth']);
+const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 function volatileFactRefreshInstruction() {
   const facts = loadWorkflowConfig().agentPolicy?.volatileFacts ?? [];
@@ -60,7 +62,7 @@ function parseArgs(argv) {
 function loadReportsFromDisk() {
   const reports = [];
   for (const runId of listDirs(reportsDir)) {
-    const cardPath = join(reportsDir, runId, 'summary-card.yaml');
+    const cardPath = join(reportsDir, runId, SUMMARY_CARD_FILE);
     if (!existsSync(cardPath)) continue;
     let card;
     try { card = readYaml(cardPath); }
@@ -72,7 +74,7 @@ function loadReportsFromDisk() {
       companyName: company.name ?? null,
       website: company.website ?? null,
       revisionStatus: revision.status,
-      path: `reports/${runId}/summary-card.yaml`,
+      path: `reports/${runId}/${SUMMARY_CARD_FILE}`,
     });
   }
   return reports;
@@ -135,7 +137,7 @@ function checkDuplicateRisk({ matches, refreshTarget }) {
 function writeRefreshContext({ base, companyName, website, refreshTarget, refreshReason }) {
   if (!refreshTarget) return;
   const previousRunId = refreshTarget.runId;
-  const previousCardPath = join(reportsDir, previousRunId, 'summary-card.yaml');
+  const previousCardPath = join(reportsDir, previousRunId, SUMMARY_CARD_FILE);
   const previousCard = existsSync(previousCardPath) ? readYaml(previousCardPath) : {};
   const revision = normalizeRevision(previousCard.revision);
   const cacheDir = researchCacheDir(base);
@@ -149,7 +151,7 @@ function writeRefreshContext({ base, companyName, website, refreshTarget, refres
     previousReport: {
       runId: previousRunId,
       path: `reports/${previousRunId}`,
-      summaryCardPath: `reports/${previousRunId}/summary-card.yaml`,
+      summaryCardPath: `reports/${previousRunId}/${SUMMARY_CARD_FILE}`,
       runDate: previousCard.runDate ?? null,
       revisionStatus: revision.status,
       company: previousCard.company ?? {

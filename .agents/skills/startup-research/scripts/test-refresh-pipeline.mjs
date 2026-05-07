@@ -30,6 +30,7 @@ import {
   analysisChapterFiles,
   companySlugFromRunId,
   EXIT,
+  FINAL_ARTIFACTS,
   isFinalizedReportFolder,
   isRunId,
   listDirs,
@@ -43,6 +44,9 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../../../..');
+const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
+const FULL_REPORT_FILE = FINAL_ARTIFACTS.fullReport.file;
+const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 function usage(message) {
   if (message) console.error(`[refresh-test] ${message}`);
@@ -71,7 +75,7 @@ function pickLatestCurrentRunId() {
     if (!isRunId(runId)) continue;
     const folder = join(reportsDir, runId);
     if (!isFinalizedReportFolder(folder)) continue;
-    const card = readYaml(join(folder, 'summary-card.yaml'));
+    const card = readYaml(join(folder, SUMMARY_CARD_FILE));
     if (normalizeRevision(card?.revision).status === 'superseded') continue;
     candidates.push(runId);
   }
@@ -147,7 +151,7 @@ if (!isFinalizedReportFolder(sourceFolder)) {
   process.exit(EXIT.invalidArgs);
 }
 const sourceMeta = readYaml(join(sourceFolder, REPORT_META_FILE));
-const sourceCard = readYaml(join(sourceFolder, 'summary-card.yaml'));
+const sourceCard = readYaml(join(sourceFolder, SUMMARY_CARD_FILE));
 if (normalizeRevision(sourceCard?.revision).status !== 'current') {
   console.error(`[refresh-test] source ${sourceRunId} is not a current report; pick a different source.`);
   process.exit(EXIT.invalidArgs);
@@ -174,8 +178,8 @@ if (existsSync(newFolder)) {
 
 const TOUCHED_SOURCE = [
   join(sourceFolder, REPORT_META_FILE),
-  join(sourceFolder, 'summary-card.yaml'),
-  join(sourceFolder, 'full-report.yaml'),
+  join(sourceFolder, SUMMARY_CARD_FILE),
+  join(sourceFolder, FULL_REPORT_FILE),
 ];
 const SNAPSHOTS = new Map();
 for (const path of TOUCHED_SOURCE) {
@@ -228,7 +232,7 @@ try {
   const COPY_FILES = [
     ...analysisChapterFiles(),
     REPORT_META_FILE,
-    'evidence.yaml',
+    EVIDENCE_FILE,
   ];
   for (const fileName of COPY_FILES) {
     cpSync(join(sourceFolder, fileName), join(newFolder, fileName));
