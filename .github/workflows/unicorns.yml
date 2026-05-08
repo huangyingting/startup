@@ -19,10 +19,8 @@ env:
   CURL_IMPERSONATE_SHA256: "b60344f63b9ed8806f0e9f7fd357d9f6c9a82aca279ed1e9e257d544885dcbde"
 
 on:
-  schedule:
-    # Every six hours. Scheduled runs leave inputs blank, so they use the
-    # recent-unicorns discovery mode below.
-    - cron: "30 */4 * * *"
+  # schedule:  # Disabled: Cloudflare Worker handles scheduling.
+  #   - cron: "30 */4 * * *"
   workflow_dispatch:
     inputs:
       industry:

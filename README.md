@@ -16,6 +16,7 @@ Startup is a diligence report generator for startup companies. It produces evide
 .agents/skills/fetch-url/         # direct URL fetch helper skill
 reports/                          # generated report runs (one folder per finalized run)
 website/                          # Astro static site and website-owned validation
+cloudflare/                       # Cloudflare Worker scheduler for GitHub Actions
 ```
 
 Important files:
@@ -28,6 +29,7 @@ Important files:
 - `.agents/skills/startup-research/references/yaml-rules.md` — YAML syntax constraints shared by every artifact.
 - `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts (chapter loader, gate checks, ledger consolidation, report assembly, validators).
 - `website/src/lib/` — rendering contracts shared between the renderer and the chapter/report validators.
+- `cloudflare/worker.js` — Cloudflare Cron Trigger that dispatches scheduled GitHub Actions workflows.
 - `AGENTS.md` — repo-development conventions (working rules, core philosophy). Read before touching skills, scripts, or schemas.
 - `.agents/skills/README.md` — skills index and skill-folder conventions.
 ## Quick start
@@ -49,6 +51,23 @@ Start the website locally:
 
 ```bash
 npm --prefix website run dev
+```
+
+## Cloudflare scheduler
+
+The GitHub Actions cron for `unicorns.yml` is disabled in favor of the Worker in `cloudflare/`. It fires every four hours at `:30` UTC and dispatches the `Research unicorns` workflow on `main` with the same default inputs as the former scheduled run.
+
+Set the required Worker secrets from `cloudflare/`:
+
+```bash
+npx wrangler secret put GITHUB_TOKEN
+npx wrangler secret put GITHUB_REPO
+```
+
+`GITHUB_TOKEN` needs Actions read/write permission on the target repository. `GITHUB_REPO` should be `vibewatch/startup`. Deploy the scheduler with:
+
+```bash
+npx wrangler deploy
 ```
 
 ## Generate a report
