@@ -53,15 +53,18 @@ concurrency:
 
 jobs:
   refresh:
+    name: Refresh existing company diligence report
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository history
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.STARTUP_PAT }}
 
-      - uses: actions/setup-node@v6
+      - name: Set up Node.js with npm cache
+        uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: "npm"
@@ -69,23 +72,19 @@ jobs:
             package-lock.json
             website/package-lock.json
 
-      - name: Install root deps
-        run: npm ci || npm install --no-audit --no-fund
+      - name: Install dependencies and Copilot CLI
+        run: |
+          npm ci || npm install --no-audit --no-fund
+          npm --prefix website ci || npm --prefix website install --no-audit --no-fund
+          npm install -g @github/copilot
 
-      - name: Install website deps
-        working-directory: website
-        run: npm ci || npm install --no-audit --no-fund
-
-      - name: Install GitHub Copilot CLI
-        run: npm install -g @github/copilot
-
-      - name: Cache curl-impersonate
+      - name: Restore curl-impersonate cache
         uses: actions/cache@v5
         with:
           path: ~/.local/share/curl-impersonate
           key: curl-impersonate-${{ runner.os }}-${{ env.CURL_IMPERSONATE_VERSION }}-${{ env.CURL_IMPERSONATE_SHA256 }}
 
-      - name: Install curl-impersonate
+      - name: Install browser-impersonating fetch client
         run: |
           set -euo pipefail
           INSTALL_DIR="$HOME/.local/share/curl-impersonate"
@@ -102,7 +101,7 @@ jobs:
           "$INSTALL_DIR/curl_chrome120" -s -o /dev/null -w 'curl-impersonate smoke test: %{http_code}\n' https://example.com
           echo "CURL_IMPERSONATE_DIR=$INSTALL_DIR" >> "$GITHUB_ENV"
 
-      - name: Resolve refresh inputs
+      - name: Normalize refresh request inputs
         id: inputs
         env:
           RAW_COMPANY: ${{ github.event.inputs.companyName }}
@@ -153,7 +152,7 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Summarize refresh inputs
+      - name: Write refresh run summary
         run: |
           {
             echo "## Startup company refresh run"
@@ -167,11 +166,11 @@ jobs:
             echo "| Run date | ${{ steps.inputs.outputs.runDate }} UTC |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Snapshot existing reports
+      - name: Snapshot reports before refresh
         run: |
           find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-before.txt"
 
-      - name: Run startup research refresh
+      - name: Generate refreshed diligence report
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
           COMPANY: ${{ steps.inputs.outputs.company }}
@@ -196,7 +195,7 @@ jobs:
           )
           copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT"
 
-      - name: Finalize refreshed report folders
+      - name: Finalize complete refreshed report folders
         env:
           REFRESH_REASON: ${{ steps.inputs.outputs.refreshReason }}
         run: |
@@ -249,7 +248,7 @@ jobs:
             echo "::endgroup::"
           done
 
-      - name: Upload reports as artifact
+      - name: Preserve refreshed reports artifact
         if: always()
         uses: actions/upload-artifact@v7
         with:
@@ -258,7 +257,7 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
-      - name: Drop partial report folders
+      - name: Remove incomplete report folders
         run: |
           set -euo pipefail
           shopt -s nullglob
@@ -280,7 +279,7 @@ jobs:
             echo "No partial report folders to drop."
           fi
 
-      - name: Summarize report changes
+      - name: Summarize refreshed report folders
         run: |
           set -euo pipefail
           find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-after.txt"
@@ -296,10 +295,10 @@ jobs:
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Validate generated reports and website
+      - name: Validate reports and website build
         run: npm run validate
 
-      - name: Commit and push refreshed report
+      - name: Commit and publish refreshed report
         env:
           SAFE_LABEL: ${{ steps.inputs.outputs.safeLabel }}
           GH_TOKEN: ${{ secrets.STARTUP_PAT }}
