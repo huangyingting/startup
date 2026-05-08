@@ -200,7 +200,8 @@ jobs:
           // separately so a parallel run does not pick the same companies.
           const finalized = [];
           const inFlight = [];
-          const chapterPattern = /^0[1-8]-.+\.yaml$/;
+          const workflowConfig = yaml.load(fs.readFileSync('.agents/skills/startup-research/references/workflow-config.yaml', 'utf8')) ?? {};
+          const chapterFiles = new Set((workflowConfig.chapters ?? []).map((chapter) => `${String(chapter.order).padStart(2, '0')}-${chapter.key}.yaml`));
           for (const name of fs.readdirSync('reports')) {
             if (name.startsWith('.') || name.startsWith('_')) continue;
             const dir = path.join('reports', name);
@@ -222,7 +223,7 @@ jobs:
             let hasChapter = false;
             try {
               for (const f of fs.readdirSync(dir)) {
-                if (chapterPattern.test(f)) { hasChapter = true; break; }
+                if (chapterFiles.has(f)) { hasChapter = true; break; }
               }
             } catch {}
             if (hasChapter) inFlight.push(name.replace(/^\d{14}-/, ''));
@@ -296,6 +297,7 @@ jobs:
           Skip duplicates already in reports/ (each finalized run lives in reports/<runId>/summary-card.yaml; the create-report-run.mjs duplicate guard checks the same set) unless there is materially new evidence. If fewer than $COUNT qualify, research only the actual qualifying companies. If none qualify, do not create report folders; print a short no-candidates note and exit successfully.
 
           For each selected company, generate a startup diligence research report.
+          If you fan out any work, wait for each task, inspect the result, and verify the on-disk report folder has all final artifacts before exiting.
 
           Source verification: every URL you cite in a chapter's localEvidence.sources[] must be retrieved through .agents/skills/fetch-url/scripts/fetch.mjs at least once during this run (the workflow exports STARTUP_FETCH_LOG_PATH so each fetch appends a line to the trail). check-chapter emits an unverifiedSource warning per citation that is not in the trail; clear those warnings by either (a) re-fetching the URL through fetch-url so accessStatus/sourceType/stance reflect the actual page, or (b) removing the citation if it cannot be retrieved.
           EOF
@@ -339,17 +341,14 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          chapter_files=(
-            01-company-overview.yaml
-            02-market-analysis.yaml
-            03-competitors.yaml
-            04-financials.yaml
-            05-product-tech.yaml
-            06-customers.yaml
-            07-risks.yaml
-            08-valuation.yaml
-            report-meta.yaml
+          mapfile -t required_inputs < <(
+            node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list --format json |
+              node --input-type=module -e 'import fs from "node:fs"; const ctx = JSON.parse(fs.readFileSync(0, "utf8")); const allowed = ctx.workflow?.allowedReportFiles ?? {}; const files = [...(allowed.chapterArtifacts ?? []), ...(allowed.handAuthored ?? [])]; for (const file of files) console.log(file);'
           )
+          if [ "${#required_inputs[@]}" -eq 0 ]; then
+            echo "No required report inputs found in runtime context." >&2
+            exit 1
+          fi
           for dir in reports/*/; do
             # Skip if already finalized.
             if [ -f "${dir}summary-card.yaml" ]; then
@@ -357,7 +356,7 @@ jobs:
             fi
             # Only finalize when every required input is present.
             missing=()
-            for f in "${chapter_files[@]}"; do
+            for f in "${required_inputs[@]}"; do
               [ -f "${dir}${f}" ] || missing+=("$f")
             done
             if [ "${#missing[@]}" -gt 0 ]; then
@@ -391,13 +390,30 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          required_files=(summary-card.yaml full-report.yaml evidence.yaml report-meta.yaml)
+          mapfile -t required_files < <(
+            node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list --format json |
+              node --input-type=module -e 'import fs from "node:fs"; const ctx = JSON.parse(fs.readFileSync(0, "utf8")); const allowed = ctx.workflow?.allowedReportFiles ?? {}; const files = [...(allowed.handAuthored ?? []), ...(allowed.generated ?? [])]; for (const file of files) console.log(file);'
+          )
+          if [ "${#required_files[@]}" -eq 0 ]; then
+            echo "No required finalized report files found in runtime context." >&2
+            exit 1
+          fi
+          find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-before-prune.txt"
+          comm -13 "$RUNNER_TEMP/reports-before.txt" "$RUNNER_TEMP/reports-before-prune.txt" > "$RUNNER_TEMP/reports-created.txt" || true
+          : > "$RUNNER_TEMP/reports-dropped.txt"
+          : > "$RUNNER_TEMP/reports-new-dropped.txt"
           dropped=()
           for dir in reports/*/; do
             for required in "${required_files[@]}"; do
               if [ ! -f "${dir}${required}" ]; then
+                folder="${dir%/}"
+                folder_name="${folder#reports/}"
                 rm -rf "$dir"
-                dropped+=("${dir%/}")
+                dropped+=("$folder")
+                printf '%s\n' "$folder_name" >> "$RUNNER_TEMP/reports-dropped.txt"
+                if grep -Fxq "$folder_name" "$RUNNER_TEMP/reports-created.txt"; then
+                  printf '%s\n' "$folder_name" >> "$RUNNER_TEMP/reports-new-dropped.txt"
+                fi
                 break
               fi
             done
@@ -417,6 +433,21 @@ jobs:
           {
             echo
             echo "### Report folder changes"
+            if [ -s "$RUNNER_TEMP/reports-created.txt" ]; then
+              echo "Report folders created during generation/finalization:"
+              sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-created.txt"
+              echo
+            fi
+            if [ -s "$RUNNER_TEMP/reports-dropped.txt" ]; then
+              echo "Partial report folders dropped before commit:"
+              sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-dropped.txt"
+              echo
+            fi
+            if [ -s "$RUNNER_TEMP/reports-new-dropped.txt" ]; then
+              echo "Newly-created report folders that failed to finalize:"
+              sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-new-dropped.txt"
+              echo
+            fi
             if [ -s "$RUNNER_TEMP/reports-new.txt" ]; then
               echo "New report folders:"
               sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-new.txt"
@@ -424,6 +455,14 @@ jobs:
               echo "No new finalized report folders detected."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
+          if [ -s "$RUNNER_TEMP/reports-new-dropped.txt" ]; then
+            echo "::error::Newly-created report folder(s) were incomplete and had to be pruned. This means report generation did not finish cleanly; see the preserved research-reports artifact for recovery details."
+            exit 1
+          fi
+          if [ -s "$RUNNER_TEMP/reports-created.txt" ] && [ ! -s "$RUNNER_TEMP/reports-new.txt" ]; then
+            echo "::error::Report folders were created, but none survived finalization/pruning. This usually means generation exited before writing complete report artifacts. See the preserved research-reports artifact for recovery details."
+            exit 1
+          fi
 
       - name: Validate reports and website build
         env:
