@@ -67,15 +67,18 @@ concurrency:
 
 jobs:
   research:
+    name: Discover and generate unicorn diligence reports
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository history
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.STARTUP_PAT }}
 
-      - uses: actions/setup-node@v6
+      - name: Set up Node.js with npm cache
+        uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: "npm"
@@ -83,23 +86,19 @@ jobs:
             package-lock.json
             website/package-lock.json
 
-      - name: Install root deps
-        run: npm ci || npm install --no-audit --no-fund
+      - name: Install dependencies and Copilot CLI
+        run: |
+          npm ci || npm install --no-audit --no-fund
+          npm --prefix website ci || npm --prefix website install --no-audit --no-fund
+          npm install -g @github/copilot
 
-      - name: Install website deps
-        working-directory: website
-        run: npm ci || npm install --no-audit --no-fund
-
-      - name: Install GitHub Copilot CLI
-        run: npm install -g @github/copilot
-
-      - name: Cache curl-impersonate
+      - name: Restore curl-impersonate cache
         uses: actions/cache@v5
         with:
           path: ~/.local/share/curl-impersonate
           key: curl-impersonate-${{ runner.os }}-${{ env.CURL_IMPERSONATE_VERSION }}-${{ env.CURL_IMPERSONATE_SHA256 }}
 
-      - name: Install curl-impersonate
+      - name: Install browser-impersonating fetch client
         run: |
           set -euo pipefail
           INSTALL_DIR="$HOME/.local/share/curl-impersonate"
@@ -116,7 +115,7 @@ jobs:
           "$INSTALL_DIR/curl_chrome120" -s -o /dev/null -w 'curl-impersonate smoke test: %{http_code}\n' https://example.com
           echo "CURL_IMPERSONATE_DIR=$INSTALL_DIR" >> "$GITHUB_ENV"
 
-      - name: Resolve run inputs
+      - name: Normalize unicorn discovery inputs
         id: inputs
         env:
           RAW_INDUSTRY: ${{ github.event.inputs.industry }}
@@ -173,7 +172,7 @@ jobs:
             echo "cutoffDate=$CUTOFF_DATE"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Summarize run inputs
+      - name: Write unicorn run summary
         run: |
           {
             echo "## Startup research run"
@@ -188,7 +187,7 @@ jobs:
             echo "| Label | ${{ steps.inputs.outputs.label }} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Summarize report coverage
+      - name: Summarize portfolio coverage gaps
         id: coverage
         run: |
           set -euo pipefail
@@ -266,11 +265,11 @@ jobs:
             cat "$RUNNER_TEMP/report-coverage.txt"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Snapshot existing reports
+      - name: Snapshot reports before generation
         run: |
           find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-before.txt"
 
-      - name: Run startup research
+      - name: Generate recent-unicorn diligence reports
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
           COUNT: ${{ steps.inputs.outputs.count }}
@@ -333,7 +332,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           exit "$status"
 
-      - name: Finalize any unfinalized report folders
+      - name: Finalize complete generated report folders
         # Safety net for the multi-company mode: if Copilot wrote every chapter
         # YAML plus report-meta.yaml but skipped the finalize-report.mjs pipeline
         # (which produces summary-card / evidence / full-report), run finalize
@@ -376,18 +375,18 @@ jobs:
             echo "::endgroup::"
           done
 
-      - name: Upload reports as artifact
+      - name: Preserve generated reports artifact
         # Capture the full Copilot output (including any partial folders) before
         # we prune. Available even on failure for offline recovery.
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: research-reports-${{ steps.inputs.outputs.safeLabel }}
           path: reports/
           retention-days: 14
           if-no-files-found: ignore
 
-      - name: Drop partial report folders
+      - name: Remove incomplete report folders
         # A partial folder = chapter YAMLs without a finalized summary-card,
         # full-report, evidence, or report-meta. Remove them so they don't
         # contaminate the commit; the artifact above preserves the originals.
@@ -412,7 +411,7 @@ jobs:
             echo "No partial report folders to drop."
           fi
 
-      - name: Summarize report changes
+      - name: Summarize finalized report folders
         run: |
           set -euo pipefail
           find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-after.txt"
@@ -428,7 +427,7 @@ jobs:
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Validate generated reports and website
+      - name: Validate reports and website build
         env:
           # Same trail file the research step appended to. check-chapter
           # cross-references it to surface unverifiedSource warnings for any
@@ -436,7 +435,7 @@ jobs:
           STARTUP_FETCH_LOG_PATH: ${{ github.workspace }}/.research-cache/_fetch-log.jsonl
         run: npm run validate
 
-      - name: Commit and push new reports
+      - name: Commit and publish generated reports
         env:
           LABEL: ${{ steps.inputs.outputs.label }}
           SAFE_LABEL: ${{ steps.inputs.outputs.safeLabel }}

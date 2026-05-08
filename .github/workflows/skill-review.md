@@ -65,12 +65,12 @@ Decide whether `.agents/skills/startup-research/` needs **exactly one** focused 
 
 First resolve `RUN_ID` from §Run to analyze (`workflow_run.id` or `inputs.run_id`); use it everywhere `<RUN_ID>` appears below.
 
-1. **`Run startup research` step log** — failed checks, blind retries, prompt instructions Copilot ignored, vague errors, runaway tokens.
+1. **`Generate recent-unicorn diligence reports` step log** — failed checks, blind retries, prompt instructions Copilot ignored, vague errors, runaway tokens.
    ```bash
    gh run view <RUN_ID> --log --repo ${{ github.repository }} \
-     | sed -n '/Run startup research/,/##\[group\]Run /p'
+     | sed -n '/Generate recent-unicorn diligence reports/,/##\[group\]Run /p'
    ```
-2. **`::warning::` / `::error::` markers** elsewhere (e.g. "Drop partial report folders"):
+2. **`::warning::` / `::error::` markers** elsewhere (e.g. "Remove incomplete report folders"):
    ```bash
    gh run view <RUN_ID> --log --repo ${{ github.repository }} | grep -E '::(warning|error)::' | head -50
    ```
