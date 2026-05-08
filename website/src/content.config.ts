@@ -1,5 +1,5 @@
 import { defineCollection, z } from 'astro:content';
-import { reportsLoader } from './reports-loader';
+import { reportsLoader } from './content/reports-loader';
 
 const dateString = z.preprocess((v) => {
   if (v instanceof Date) return v.toISOString().slice(0, 10);
