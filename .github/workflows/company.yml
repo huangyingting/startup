@@ -175,7 +175,7 @@ jobs:
           Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
           EOF
           )
-          copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT"
+          copilot --yolo --no-ask-user --autopilot --model "$MODEL" -p "$PROMPT"
 
       - name: Finalize complete generated report folders
         run: |
