@@ -75,7 +75,7 @@ tables:
     columns: [string]
     rows:
       - [string | number | null]
-    notes: string | null
+    notes: string | null                          # Populate when the table contains estimates, partial coverage, computed/derived cells, or any caveat the reader needs (data-source convention, units, vintage, what null means). May stay null only for pure factual snapshot tables where every cell is a primary-source fact with no qualifier.
     claimRefs: [CO001]
 figures:
   - id: FO001
@@ -308,7 +308,7 @@ table:
   columns: [string]                              # Header labels; defines row width.
   rows:
     - [string | number | null]                   # Each row must have exactly columns.length cells.
-  notes: string | null
+  notes: string | null                           # Populate when the table contains estimates, partial coverage, computed/derived cells, or any caveat the reader needs (data-source convention, units, vintage, what null means). May stay null only for pure factual snapshot tables where every cell is a primary-source fact with no qualifier.
   enumerationScope:                              # Optional; populate when the table is an enumeration.
     coverage: enumerationCoverage
     basis: string                                # 1–2 sentences explaining how completeness was verified (or why it could not be).

@@ -37,6 +37,7 @@ agentPolicy:
     - "Use runtimeContext.rendererContracts before writing figures; substitute a table when the evidence does not fit the figure contract."
     - "Use only the current chapter letter for S/C/T/F/Q ids; restate cross-chapter facts as local claims when needed."
     - "Cite tables through table-level claimRefs, never through evidence-only columns that hold raw claim ids."
+    - "Populate tables[].notes whenever the table contains estimates, partial coverage, computed/derived cells, or any caveat the reader needs (data-source convention, units, vintage, what null means). Leave notes null only for pure factual snapshot tables where every cell is a primary-source fact with no qualifier."
   hardRules:
     - "Set slug to the company slug only: the report folder basename with the leading timestamp removed."
     - "Do not hand-write evidence.yaml, full-report.yaml, or summary-card.yaml; let finalization scripts assemble them."

@@ -314,6 +314,8 @@ export const FIX_HINTS = {
   calloutShape: 'Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength|risk|recommendation|insight|assumption).',
   tableShape: ({ tableId } = {}) =>
     tableId ? `Fix table ${tableId}: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.` : 'Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present.',
+  tableNotes: ({ tableId } = {}) =>
+    tableId ? `On table ${tableId}: write a one-line notes string covering data source / estimation / partial coverage / what null means. If the table is a pure factual snapshot with no caveat, add an acknowledgedWarnings entry for dimension "tableNotes".` : 'Write tables[].notes (one line: data source / estimation / partial coverage / what null means), or acknowledge dimension "tableNotes" for pure factual snapshot tables.',
   documentHead: 'Fix the chapter document head: schemaVersion=report-v2, artifact matches the chapter key, slug, runDate=YYYY-MM-DD, company.name, and chapter.number matching the chapter order.',
   slugConsistency: ({ required } = {}) =>
     required ? `Set slug: to "${required}".` : 'Set slug: to the company slug only (the report folder basename with the leading <timestamp>- stripped).',
