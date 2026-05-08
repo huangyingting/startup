@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Chapter-scoped readiness check for one analysis artifact (01-08).
+// Chapter-scoped readiness check for one configured analysis artifact.
 // Always runs the pre-ledger checks (localEvidence quotas, claimRef
 // resolution); the post-ledger phase is handled by check-report.mjs.
 //
@@ -16,10 +16,9 @@
 //
 // `--format compact` is the recommended default for shell loops: one line per
 // finding, no truncation, no preamble. The first line is `STATUS: OK` or
-// `STATUS: FAIL` so callers can decide pass/fail with `head -1`. Subsequent
-// lines are tagged (`GLOBAL`, `FAIL`, `WARN`, `SUPPRESSED`, `RETRY`) so the
-// agent can grep for what it needs without piping through a python wrapper
-// (the prior pattern truncated `message` to 100 chars and dropped `fix`).
+// `STATUS: FAIL`; subsequent lines carry stable labels such as
+// `failedDimensions`, `retryOrder`, `suppressed`, `GLOBAL`, `FAIL`, and `WARN`
+// so callers can read the complete output while preserving the process exit code.
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
@@ -78,7 +77,7 @@ function parseArgs(argv) {
       args.format = next;
     } else if (arg.startsWith('-')) {
       console.error(`[check:chapter] unknown flag: ${arg}`);
-      console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json|compact]');
+      console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <chapter-artifact.yaml> [--strict] [--format text|json|compact]');
       process.exit(EXIT.failure);
     } else if (!args.folder) args.folder = arg;
     else if (!args.chapter) args.chapter = arg;
@@ -92,7 +91,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <01-08-artifact.yaml> [--strict] [--format text|json|compact]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <chapter-artifact.yaml> [--strict] [--format text|json|compact]');
   process.exit(EXIT.failure);
 }
 if (!['text', 'json', 'compact'].includes(args.format)) {
@@ -955,11 +954,10 @@ if (args.format === 'json') {
   };
   console.log(JSON.stringify(report, null, 2));
 } else if (args.format === 'compact') {
-  // Single-stream, lossless line format. The agent can consume this with
-  // basic shell tools (`head -1` for STATUS, `grep ^FAIL` for failures, etc.)
-  // instead of inventing a python wrapper that truncates messages and drops
-  // the `fix` field. Lines are emitted in this fixed order; absent sections
-  // print no lines (no empty headers).
+  // Single-stream, lossless line format. Callers should keep the full output
+  // and process exit code intact instead of piping through preview/filter tools
+  // that truncate messages or drop the `fix` field. Lines are emitted in this
+  // fixed order; absent sections print no lines (no empty headers).
   //   STATUS: OK | FAIL
   //   chapter: <file>  strict=<yes|no>
   //   counts: sections=N tables=N figures=N localSources=N localClaims=N researchQuestions=N gaps=N

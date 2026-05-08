@@ -203,12 +203,11 @@ run:
 
 ## Run cache
 
-Loaded from `.research-cache/<runId>/`. For `disclosureHint` and `refreshContext` file shapes, see `report-schema-v2.md`.
+Loaded from `.research-cache/<runId>/`. For `refreshContext` file shape, see `report-schema-v2.md`.
 
 ```yaml
 runCache:
   cacheDir: string | null
-  disclosureHint: object | null
   refreshContext: object | null
 ```
 

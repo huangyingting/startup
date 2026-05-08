@@ -166,9 +166,9 @@ function validateReportMeta(meta) {
     }
     requireArray(meta, 'summary.topStrengths', issues, { minLength: 1 });
     requireArray(meta, 'summary.topRisks', issues, { minLength: 1 });
-    // unresolvedGaps may legitimately be empty (when chapter-04 reported no
-    // material gaps), but the field itself must exist so downstream renderers
-    // can iterate without a guard.
+    // unresolvedGaps may legitimately be empty (when the configured financials
+    // chapter reported no material gaps), but the field itself must exist so
+    // downstream renderers can iterate without a guard.
     requireArray(meta, 'summary.unresolvedGaps', issues);
   }
 

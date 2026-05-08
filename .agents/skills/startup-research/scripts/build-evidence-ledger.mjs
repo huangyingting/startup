@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Consolidate localEvidence from analysis artifacts 01-08 into a single
+// Consolidate localEvidence from configured analysis artifacts into a single
 // evidence.yaml.
 //
 // New ID architecture: each chapter generates its own IDs from its
@@ -16,7 +16,7 @@
 //
 // Chapter YAMLs are NEVER rewritten. The local IDs in each chapter file are
 // already the canonical (or canonicalable) IDs because of the chapter-letter
-// namespace. This makes the chapter loop fully parallel-safe.
+// namespace. This makes chapter generation fully parallel-safe.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, canonicalSourceUrl, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';

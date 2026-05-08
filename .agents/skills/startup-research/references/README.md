@@ -24,10 +24,10 @@ flowchart TD
   subgraph BOOT["1 · Bootstrap"]
     CR[create-report-run.mjs]
     CR --> RUN[(reports/runId/)]
-    CR --> CACHE[(.research-cache/runId/<br/>disclosure-hint · refresh-context)]
+    CR --> CACHE[(.research-cache/runId/<br/>refresh-context)]
   end
 
-  subgraph CHAP["2 · Per-chapter loop · ×8 · parallelizable"]
+  subgraph CHAP["2 · Configured chapter generation · parallelizable"]
     LD[load-chapter-runtime-context.mjs]
     RC{{runtimeContext JSON}}
     AG[/Agent · search · fetch-url · author chapter YAML/]
@@ -57,8 +57,8 @@ flowchart TD
 
 Stage notes:
 
-- **Bootstrap.** `create-report-run.mjs` allocates the run id, writes the report folder, and (for stealth/refresh runs) seeds `.research-cache/runId/` with `disclosure-hint.yaml` or `refresh-context.yaml`.
-- **Per-chapter loop.** `load-chapter-runtime-context.mjs` merges `workflow-config.yaml` (via `utils.mjs`), `validation-catalog.mjs` vocabularies/dimensions, `figures.mjs` renderer contracts, and run-cache hints into the runtime context the agent reads. Each chapter is independent (own ID-letter namespace), so the 8 chapters can be drafted in parallel; `check-chapter` for chapter N still cross-reads chapters 1..N-1 for `gate.minNetNewSources` and `crossChapterRefLeak`, so all checks must run after every chapter YAML lands.
+- **Bootstrap.** `create-report-run.mjs` allocates the run id, writes the report folder, and (for refresh runs) seeds `.research-cache/runId/` with `refresh-context.yaml`.
+- **Configured chapter generation.** `load-chapter-runtime-context.mjs` merges `workflow-config.yaml` (via `utils.mjs`), `validation-catalog.mjs` vocabularies/dimensions, `figures.mjs` renderer contracts, and run-cache hints into the runtime context the agent reads. Each configured chapter is independent (own ID-letter namespace), so chapters can be drafted in parallel; `check-chapter` still compares `gate.minNetNewSources` against earlier-order configured chapters and scans other on-disk chapters for `crossChapterRefLeak`, so all checks must run after every chapter YAML lands.
 - **Finalize.** `finalize-report.mjs` runs the consolidation and gate scripts in order; first failure stops the pipeline. `link-refresh.mjs` writes the revision graph for `--refresh` runs.
 - **Render.** The Astro site reads `reports/runId/` and renders the static pages.
 
@@ -66,7 +66,7 @@ Stage notes:
 
 | Owner | Owns | Does **not** own |
 |---|---|---|
-| `SKILL.md` | Process entry point: inputs, command sequence, chapter loop, retry flow, finalization flow | Field definitions, enum values, gates, file allowlists, checker algorithms, renderer contracts |
+| `SKILL.md` | Process entry point: inputs, command sequence, chapter generation, retry flow, finalization flow | Field definitions, enum values, gates, file allowlists, checker algorithms, renderer contracts |
 | `references/workflow-config.yaml` | Workflow policy, `agentPolicy`, chapter order, chapter missions, requirements, planned tables/figures, per-chapter gates, report-level gate settings | Validator algorithms, enum catalogs, renderer data contracts, CLI behavior |
 | `references/workflow-config-schema-v1.md` | Field semantics for `workflow-config.yaml`, including `agentPolicy`, chapter briefs, planned tables/figures, and gate settings | Report artifact shapes, checker algorithms, renderer data contracts |
 | `scripts/utils.mjs` | Config loading/normalization, derived workflow values, shared paths, shared final artifact filename constants | Human-facing workflow prose, checker-specific rules beyond normalization |

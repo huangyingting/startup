@@ -21,7 +21,6 @@ import {
   slugify,
 } from './utils.mjs';
 
-const DISCLOSURE_PROFILES = new Set(['public', 'private-disclosed', 'private-undisclosed', 'stealth']);
 const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 function volatileFactRefreshInstruction() {
@@ -32,7 +31,7 @@ function volatileFactRefreshInstruction() {
 }
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website <url>] [--disclosure <public|private-disclosed|private-undisclosed|stealth>] [--refresh] [--refresh-reason <text>] [--resume] [--timestamp <YYYYMMDDHHmmss>]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website <url>] [--refresh] [--refresh-reason <text>] [--resume] [--timestamp <YYYYMMDDHHmmss>]');
   process.exit(EXIT.failure);
 }
 
@@ -41,11 +40,10 @@ function usage() {
 // runId for snapshot/cleanup tracking. Production callers omit it and let the
 // script anchor the run with the system clock.
 function parseArgs(argv) {
-  const args = { timestamp: '', nameParts: [], website: '', disclosure: '', refresh: false, refreshReason: '', resume: false };
+  const args = { timestamp: '', nameParts: [], website: '', refresh: false, refreshReason: '', resume: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--website' || arg === '--url' || arg === '--domain') args.website = argv[++i] ?? '';
-    else if (arg === '--disclosure' || arg === '--disclosure-profile') args.disclosure = argv[++i] ?? '';
     else if (arg === '--refresh') args.refresh = true;
     else if (arg === '--refresh-reason') args.refreshReason = argv[++i] ?? '';
     else if (arg === '--resume') args.resume = true;
@@ -59,10 +57,6 @@ function parseArgs(argv) {
     process.exit(EXIT.failure);
   }
   if (!args.nameParts.length) usage();
-  if (args.disclosure && !DISCLOSURE_PROFILES.has(args.disclosure)) {
-    console.error(`[create-report-run] invalid --disclosure value: ${args.disclosure} (allowed: ${[...DISCLOSURE_PROFILES].join(', ')})`);
-    process.exit(EXIT.failure);
-  }
   return args;
 }
 
@@ -182,7 +176,7 @@ function writeRefreshContext({ base, companyName, website, refreshTarget, refres
     refreshInstructions: [
       'Use the previous report only as background and diff context; do not copy stale claims without re-verifying them.',
       volatileFactRefreshInstruction(),
-      'Generate a full 8-chapter report and run the normal chapter gates before finalizing.',
+      'Generate a full report covering every configured analysis chapter and run the normal chapter gates before finalizing.',
       'Set report-meta.yaml revision.status=current, revision.refreshOfRunId to the previous run id, revision.supersededByRunId=null, and revision.refreshReason to the reason above.',
     ],
   };
@@ -223,42 +217,5 @@ if (args.resume) {
 }
 mkdirSync(path, { recursive: true });
 writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
-
-if (args.disclosure) {
-  // Write a hint file the agent reads when authoring chapters; also printed
-  // to stderr so the spawning workflow surfaces it. The hint lists canonical
-  // evidenceGap topics that are almost-certain to remain unsupported for the
-  // given disclosureProfile, so chapter 04 can pre-populate them rather than
-  // rediscovering they are unavailable. Lives under .research-cache/<base>/
-  // to keep reports/<run>/ to the canonical artifact set the SKILL hard rules
-  // allow.
-  const undisclosedGaps = [
-    'Annual Recurring Revenue (ARR) — not publicly disclosed.',
-    'Trailing-twelve-month revenue or revenue run-rate — not publicly disclosed.',
-    'Headcount — no public filing or verified headcount source.',
-    'Gross margin / unit economics — not publicly disclosed.',
-    'Customer count — not publicly disclosed.',
-  ];
-  const stealthGaps = [
-    ...undisclosedGaps,
-    'Product release timeline — company in stealth, no public roadmap.',
-    'Named customer references — company in stealth, no public deployments.',
-  ];
-  const canonicalGaps = args.disclosure === 'stealth'
-    ? stealthGaps
-    : args.disclosure === 'private-undisclosed'
-      ? undisclosedGaps
-      : [];
-  const hint = {
-    disclosureProfile: args.disclosure,
-    note: 'Set companyProfile.disclosureProfile in report-meta.yaml to this value. Pre-populate the canonical evidenceGaps below in chapter 04 (financials) instead of rediscovering they are unavailable.',
-    canonicalEvidenceGaps: canonicalGaps,
-  };
-  const cacheDir = researchCacheDir(base);
-  mkdirSync(cacheDir, { recursive: true });
-  const hintPath = join(cacheDir, 'disclosure-hint.yaml');
-  writeFileSync(hintPath, yaml.dump(hint, { lineWidth: 120, noRefs: true, sortKeys: false }), 'utf8');
-  console.error(`[create-report-run] disclosureProfile=${args.disclosure}; wrote ${hintPath} with ${canonicalGaps.length} canonical evidenceGaps.`);
-}
 
 console.log(path);

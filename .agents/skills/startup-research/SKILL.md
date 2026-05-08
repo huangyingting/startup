@@ -8,7 +8,15 @@ user-invocable: true
 
 Single entry point for generating a complete `report-v2` startup diligence report.
 
-Keep the workflow simple: load the ordered chapter config, generate each chapter, run its gate, iterate only failed parts, then build the final artifacts.
+Keep the workflow simple: load the configured chapter plan, generate each chapter from runtime context, run its gate, iterate only failed parts, then build the final artifacts.
+
+## Execution contract
+
+- Treat the runtime context as the source of truth. Do not hardcode chapter names, allowed files, policy text, enums, gates, or renderer contracts in your plan; load them from `load-chapter-runtime-context.mjs` and follow `runtimeContext.workflow` / `runtimeContext.chapter`.
+- Drive each report through three phases: setup, chapter generation, finalization. Do not enter finalization until every configured chapter file exists and has passed its current `check-chapter` gate.
+- Validation commands are gates, not preview commands. Run `check-chapter.mjs`, `validate-report-meta.mjs`, `finalize-report.mjs`, `check-report.mjs`, and other validation/finalization scripts directly so their full diagnostics and nonzero exit codes are preserved. Do not pipe these gate commands through `head`, `tail`, `grep`, `sed`, `python`, or any other truncating/filtering wrapper; do not hide stderr.
+- When a checker supports structured output, use its `--format compact` or `--format json` option to control verbosity instead of shell truncation. Shell filters such as `head`, `tail`, or `grep` are acceptable only for non-gate inspection tasks (for example browsing source snippets, long directory listings, or fetched-page previews), not for deciding whether a chapter/report passed.
+- Treat every nonzero gate exit as a blocker. Fix the reported root cause and rerun the same gate directly before advancing phases.
 
 ## Inputs
 
@@ -16,11 +24,10 @@ The agent gathers these from the user prompt; nothing is passed in by an upstrea
 
 - `companyName` — required.
 - `companyUrl` — optional identity anchor.
-- `disclosureProfile` — optional; one of `public | private-disclosed | private-undisclosed | stealth`. Set this when the company is publicly known to be stealth or to keep its financials undisclosed; passing it into `create-report-run.mjs --disclosure <value>` writes a `disclosure-hint.yaml` whose `canonicalEvidenceGaps[]` chapter 04 must adopt instead of rediscovering.
 - `refresh` — optional boolean; when set, the workflow refreshes the existing current report for `companyName`/`companyUrl` (the previous run is auto-resolved from the company match).
 - `refreshReason` — optional human reason for refreshing an existing report.
 
-## Required setup
+## Setup: establish runtime contract
 
 1. Read `./references/report-schema-v2.md`, `./references/workflow-config-schema-v1.md`, `./references/yaml-rules.md`, and `./references/chapter-runtime-context-schema-v2.md` (the runtime projection emitted by the chapter loader).
 2. Load the workflow runtime context:
@@ -32,44 +39,42 @@ The agent gathers these from the user prompt; nothing is passed in by an upstrea
    - `vocabularies`, `checkDimensions`, and `rendererContracts` carry the canonical enums, retry dimensions/default fixes, and figure contracts.
 
 3. Create the report folder:
-   `node .agents/skills/startup-research/scripts/create-report-run.mjs <companyName> [--website <companyUrl>] [--disclosure <disclosureProfile>]`
+   `node .agents/skills/startup-research/scripts/create-report-run.mjs <companyName> [--website <companyUrl>]`
 
    The script anchors the run with the system clock (UTC) and prints the new `reports/<runId>/` path on stdout. Capture that path and use it as `<reportFolder>` for every later command; the chapter runtime context loader exposes the same anchor as `runtimeContext.run.runDate` (`YYYY-MM-DD`), and chapter / report-meta YAML doc heads must use that exact value for their `runDate` field — never format a date yourself.
-
-   Pass `--disclosure` whenever you set `disclosureProfile` in the Inputs. It writes `.research-cache/<runId>/disclosure-hint.yaml`, which chapter runtime contexts surface as `runtimeContext.runCache.disclosureHint`; chapter 04 should adopt those canonical evidence gaps. Also set the same value as `companyProfile.disclosureProfile` in `report-meta.yaml`.
 
    For an explicit full refresh of an existing report, create a new run instead of overwriting the old one:
    `node .agents/skills/startup-research/scripts/create-report-run.mjs <companyName> [--website <companyUrl>] --refresh [--refresh-reason <refreshReason>]`
 
-   Refresh mode writes `.research-cache/<runId>/refresh-context.yaml` with the prior run summary. Use it only as background/diff context. Re-fetch every item in `workflow.agentPolicy.volatileFacts`; do not copy stale volatile claims without re-verifying them. Refresh still runs the full chapter loop and normal gates.
+   Refresh mode writes `.research-cache/<runId>/refresh-context.yaml` with the prior run summary. Use it only as background/diff context. Re-fetch every item in `workflow.agentPolicy.volatileFacts`; do not copy stale volatile claims without re-verifying them. Refresh still runs the full chapter generation phase and normal gates.
 
 If folder creation exits `2`, stop: a finalized report already exists for this company/domain (the duplicate guard walks every `reports/<runId>/summary-card.yaml`). If it exits `3`, the same in-progress folder already exists; rerun the exact same command with `--resume` and continue that folder. Use `--resume` only after exit `3`; it exits `4` when there is no in-progress folder to resume. Do not create `-2` suffixed duplicate folders.
 
-## Chapter loop
+## Chapter generation
 
-For each chapter `order` from the loader:
+For each chapter listed in the loader's `chapters[]` output, use that chapter's `order` to load runtime context and preserve report/file numbering; it is not a requirement to author chapters serially.
 
 1. **Load the chapter runtime context.**
    `node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order <n> --format json --include-context --report-folder <reportFolder>`
-   Drop `--include-context` for chapter 1 (no earlier chapters yet); keep it from chapter 2 onward to surface `contextChapters[]`, `cumulativeContext`, and `runCache`. The flag is advisory and never changes gates.
-2. **Author from the runtime context.** Use `runtimeContext.chapter` as the brief and `runtimeContext.chapter.gate` as the binding gate. Author against `runtimeContext.workflow.agentPolicy` (researchRules, chapterAuthoringRules, hardRules, volatileFacts), `runtimeContext.vocabularies`, `runtimeContext.rendererContracts`, and `runtimeContext.checkDimensions` rather than memorising literals from this file. Detailed YAML shapes remain in `references/report-schema-v2.md`.
-3. **Plan typed research questions.** Generate at least `gate.minResearchQuestions` items in `localEvidence.researchQuestions[]`, cover the required question type mix and content targets from `runtimeContext.chapter`, and close questions through `claim.answersQuestionRefs` or typed evidence gaps.
-4. **Search and fetch under audit.** Use web search to find URLs (anchor queries to `runtimeContext.run.runDate` so volatile facts pull current-year sources, not training-cutoff stale ones), then review each kept URL with `fetch-url`:
+   Use `--include-context` only when relevant context chapters are already on disk. Drop it for the first configured chapter and when fanning out chapters in parallel; when drafting sequentially, include it for later configured chapters to surface `contextChapters[]`, `cumulativeContext`, and `runCache`. The flag is advisory and never changes gates.
+1. **Author from the runtime context.** Use `runtimeContext.chapter` as the brief and `runtimeContext.chapter.gate` as the binding gate. Author against `runtimeContext.workflow.agentPolicy` (researchRules, chapterAuthoringRules, hardRules, volatileFacts), `runtimeContext.vocabularies`, `runtimeContext.rendererContracts`, and `runtimeContext.checkDimensions` rather than memorising literals from this file. Detailed YAML shapes remain in `references/report-schema-v2.md`.
+1. **Plan typed research questions.** Generate at least `gate.minResearchQuestions` items in `localEvidence.researchQuestions[]`, cover the required question type mix and content targets from `runtimeContext.chapter`, and close questions through `claim.answersQuestionRefs` or typed evidence gaps.
+1. **Search and fetch under audit.** Use web search to find URLs (anchor queries to `runtimeContext.run.runDate` so volatile facts pull current-year sources, not training-cutoff stale ones), then review each kept URL with `fetch-url`:
    `node .agents/skills/fetch-url/scripts/fetch.mjs <url>`
    Default output is readable extracted text; add `--full-text` only when needed. Record the actual queries in `localEvidence.searchQueries[]`; leaving this empty when research questions exist is a gate failure.
-5. **Build local evidence.** Convert reviewed URLs into `localEvidence.sources[]`, then write atomic `localEvidence.claims[]`. Meet the diversity, net-new-source, required-source-type, adverse-source, and high-confidence corroboration floors from `runtimeContext.chapter.gate`.
-6. **Write the chapter YAML** at `reportFolder/<chapter.file>` per the report schema. Populate `sections[]`, `tables[]`, `figures[]`, `callouts[]`, and `evidenceGaps[]` from the same local evidence ledger. Honor planned tables/figures where the evidence fits; when it does not, document the table/figure substitution or unresolved gap in typed `evidenceGaps[]`.
-7. **Run the chapter check** with structured output:
+1. **Build local evidence.** Convert reviewed URLs into `localEvidence.sources[]`, then write atomic `localEvidence.claims[]`. Meet the diversity, net-new-source, required-source-type, adverse-source, and high-confidence corroboration floors from `runtimeContext.chapter.gate`.
+1. **Write the chapter YAML** at `reportFolder/<chapter.file>` per the report schema. Populate `sections[]`, `tables[]`, `figures[]`, `callouts[]`, and `evidenceGaps[]` from the same local evidence ledger. Honor planned tables/figures where the evidence fits; when it does not, document the table/figure substitution or unresolved gap in typed `evidenceGaps[]`.
+1. **Run the chapter check** with structured output:
    `node .agents/skills/startup-research/scripts/check-chapter.mjs <reportFolder> <chapter.file> --format json`
-   Exit `0` means the chapter is ready. On nonzero exit, parse the JSON for:
+   Run the checker directly without shell truncation or filtering. Exit `0` means the chapter is ready. On nonzero exit, parse the JSON for:
    - `globalHints[]` — chapter-wide root causes (one dimension failing on ≥3 objects); fix these first.
    - `objectFailures[]` — failures grouped by table/figure/claim/question id, each with the full `dimensions[]` and `fixes[]` for that object.
    - `failures[]` — per-issue entries; each carries `dimension`, `message`, and a one-line `fix` action.
    - `failedDimensions[]` and `retryOrder[]` (root-cause sorted) for the dimensions you must clear.
    - `suppressedDimensions[]` — downstream checks skipped because an upstream failure (e.g. `localEvidenceMissing`) makes them trivially fail; they will re-evaluate after you fix the root cause.
 
-   For shell-driven loops where you do not need the full nested objectFailures view, prefer `--format compact`: it emits one line per finding (`STATUS: OK|FAIL`, `failedDimensions: …`, `retryOrder: …`, `GLOBAL [dim] …`, `FAIL [dim] msg | fix: …`, `WARN [dim] msg`) so you can `head -1` for pass/fail and `grep '^FAIL'` for the full failure messages without piping through a python wrapper that truncates them.
-8. **Advance** with `runtimeContext.nextChapter`; if it is `null`, move to finalization.
+   For shell-driven loops where you do not need the full nested objectFailures view, prefer `--format compact`: it emits one line per finding (`STATUS: OK|FAIL`, `failedDimensions: …`, `retryOrder: …`, `GLOBAL [dim] …`, `FAIL [dim] msg | fix: …`, `WARN [dim] msg`). Keep the complete compact output and the checker exit code intact; do not pipe it through preview/filter commands.
+1. **Track completion.** If working sequentially, `runtimeContext.nextChapter` tells you the next configured chapter. If drafting in parallel, track completion against `runtimeContext.workflow.allowedReportFiles.chapterArtifacts`. Move to finalization only after every configured chapter exists and passes its latest gate.
 
 ### Retry scope
 
@@ -77,18 +82,21 @@ For each chapter `order` from the loader:
 
 ### Parallel authoring
 
-The 8 analysis chapters can be drafted in parallel: each chapter owns its ID namespace via `runtimeContext.chapter.letter`, and the evidence ledger dedupes by canonical URL at finalize. Caveats: `--include-context` only sees chapters already on disk (skip it when fanning out), and `gate.minNetNewSources` plus `crossChapterRefLeak` cross-read sibling chapters — run all 8 `check-chapter` passes after every chapter YAML exists, and expect retries when those gates flag URL overlap. `finalize-report` itself stays single-threaded.
+Configured analysis chapters can be drafted in parallel: each chapter owns its ID namespace via `runtimeContext.chapter.letter`, and the evidence ledger dedupes by canonical URL at finalize. Caveats: `--include-context` only sees chapters already on disk (skip it when fanning out), `gate.minNetNewSources` compares against earlier-order configured chapters, and `crossChapterRefLeak` scans other on-disk chapters — run `check-chapter` for every configured chapter after every chapter YAML exists, and expect retries when those gates flag URL overlap. Before finalization, explicitly wait for or read every parallel/background chapter-writing task, confirm none is still running, and verify every configured chapter file exists on disk. `finalize-report` itself stays single-threaded.
 
 ## Finalization
 
-After all analysis chapters pass:
+Only enter this phase after every chapter listed in `runtimeContext.workflow.allowedReportFiles.chapterArtifacts` exists under `<reportFolder>` and passes `check-chapter`:
 
-1. Author `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md` (note the warning at the top of that section: `recommendation`/`riskRating`/`valuationStance`/`overallScore`/`topStrengths`/`topRisks`/`unresolvedGaps` belong inside the `summary:` block, not at the document root). It carries the judgment fields the analysis chapters do not encode. Any prior finalized report with a matching disclosure profile can be used as a shape example, but volatile facts still need fresh evidence.
-2. Run the finalization pipeline:
+0. **Preflight completeness.** Verify every configured chapter file exists, no background or parallel chapter-writing task is still running, and each chapter check has passed after the final on-disk edit. If any chapter is missing or still failing, fix that chapter first. Do not use finalization as a partial-progress probe.
+
+1. **Author report meta.** Write `report-meta.yaml` in the report folder per the `report-meta` schema in `references/report-schema-v2.md` (note the warning at the top of that section: `recommendation`/`riskRating`/`valuationStance`/`overallScore`/`topStrengths`/`topRisks`/`unresolvedGaps` belong inside the `summary:` block, not at the document root). It carries the judgment fields the analysis chapters do not encode, including the evidence-backed `companyProfile.disclosureProfile` classification after research. Any prior finalized report with a matching disclosure profile can be used as a shape example, but volatile facts still need fresh evidence.
+2. **Optional shape-only check.** If you only need to inspect `report-meta.yaml` shape, run `node .agents/skills/startup-research/scripts/validate-report-meta.mjs <reportFolder>` directly. Do not run `finalize-report.mjs` as a report-meta-only probe, especially before chapters are complete.
+3. **Run finalization.** Run the finalization pipeline directly:
    `node .agents/skills/startup-research/scripts/finalize-report.mjs <reportFolder>`
    For a refresh run, pass the same flag and reason:
    `node .agents/skills/startup-research/scripts/finalize-report.mjs <reportFolder> --refresh [--refresh-reason <refreshReason>]`
-   Finalization first runs `validate-report-meta` (lists every shape/enum problem in `report-meta.yaml` at once), then `build-evidence-ledger`, `check-cross-chapter-consistency`, `assemble-report`, and `check-report`; refresh also links the old and new report revisions. Stops at the first failing step so you can fix `report-meta.yaml` or the offending chapter and re-run. Pass `--rebuild` only when you need fresh evidence-ledger consolidation.
+   Do not pipe or truncate finalization output. Finalization first runs `validate-report-meta` (lists every shape/enum problem in `report-meta.yaml` at once), then `build-evidence-ledger`, `check-cross-chapter-consistency`, `assemble-report`, and `check-report`; refresh also links the old and new report revisions. Stops at the first failing step so you can fix `report-meta.yaml` or the offending chapter and re-run. Pass `--rebuild` only when you need fresh evidence-ledger consolidation.
 
 ## Hard rules
 
