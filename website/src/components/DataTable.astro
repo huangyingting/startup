@@ -16,7 +16,8 @@ interface Props {
 }
 
 const { title = null, columns } = Astro.props;
-const hasNotes = Astro.slots.has('notes');
+const notesHTML = Astro.slots.has('notes') ? await Astro.slots.render('notes') : '';
+const hasNotes = notesHTML.replace(/<[^>]+>/g, '').trim().length > 0;
 const hasFooter = Astro.slots.has('footer');
 ---
 <div class="table-frame">
@@ -25,7 +26,7 @@ const hasFooter = Astro.slots.has('footer');
     <thead><tr>{(columns ?? []).map((column) => <th>{column}</th>)}</tr></thead>
     <tbody><slot /></tbody>
   </table>
-  {hasNotes && <p class="table-note"><slot name="notes" /></p>}
+  {hasNotes && <p class="table-note" set:html={notesHTML} />}
   {hasFooter && <slot name="footer" />}
 </div>
 

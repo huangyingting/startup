@@ -30,6 +30,7 @@ const labels = {
   valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims',
   figures: 'figures', tables: 'tables',
   coverMetrics: 'Cover facts', startupIntro: 'Company profile',
+  website: 'Website',
   founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location',
   headquarters: 'Headquarters', product: 'Product', customers: 'Customers',
   businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status',
@@ -75,10 +76,6 @@ const companyProfile = doc?.companyProfile
 
 const chapters = arr<any>(doc?.chapters);
 const appendices = arr<any>(doc?.appendices);
-const reportFigures = arr(doc?.figures);
-const reportTables = arr(doc?.tables);
-const figureCount = reportFigures.length;
-const tableCount = reportTables.length;
 
 const keyMetrics = data.keyMetrics ?? {};
 const fallbackMetrics = [
@@ -118,30 +115,6 @@ const fallbackMetrics = [
       <h1>{doc?.company?.name ?? data.company?.name ?? data.slug}</h1>
       {(doc?.subtitle ?? null) && <p class="report-subtitle">{doc?.subtitle}</p>}
       <p class="report-headline">{cleanHeadline(data.headline)}</p>
-      <div class="report-meta-line">
-        <span>{data.sourceStats.sourcesRetained} {labels.sources}</span>
-        <span>{data.sourceStats.claimsReviewed} {labels.claims}</span>
-        {data.sourceStats?.domainCount != null && (<span>{data.sourceStats.domainCount} domains</span>)}
-        {data.sourceStats?.adverseSourceCount != null && (<span>{data.sourceStats.adverseSourceCount} adverse</span>)}
-        {data.sourceStats?.openQuestionCount != null && data.sourceStats.openQuestionCount > 0 && (
-          <span>{data.sourceStats.openQuestionCount} open Qs</span>
-        )}
-        <span>{figureCount} {labels.figures}</span>
-        <span>{tableCount} {labels.tables}</span>
-        <button
-          type="button"
-          class="evidence-toggle"
-          aria-pressed="false"
-          data-show-label={labels.showRefs}
-          data-hide-label={labels.hideRefs}
-        >{labels.showRefs}</button>
-        <button
-          type="button"
-          class="print-pdf"
-          data-print-pdf
-          title="Print as A4 PDF. In the print dialog uncheck ‘Headers and footers’ to remove the URL/date strip."
-        >Download PDF</button>
-      </div>
     </div>
     <aside class={`decision-card decision-${String(data.recommendation ?? 'unknown').replace(/[^a-z0-9-]/gi, '-')}`}>
       <div class="decision-headline">
@@ -157,6 +130,21 @@ const fallbackMetrics = [
         <div><dt>{labels.riskRating}</dt><dd>{displayLabel(data.riskRating)}</dd></div>
         <div><dt>{labels.valuationStance}</dt><dd>{displayLabel(data.valuationStance)}</dd></div>
       </dl>
+      <div class="decision-actions">
+        <button
+          type="button"
+          class="evidence-toggle"
+          aria-pressed="false"
+          data-show-label={labels.showRefs}
+          data-hide-label={labels.hideRefs}
+        >{labels.showRefs}</button>
+        <button
+          type="button"
+          class="print-pdf"
+          data-print-pdf
+          title="Print as A4 PDF. In the print dialog uncheck ‘Headers and footers’ to remove the URL/date strip."
+        >Download PDF</button>
+      </div>
     </aside>
   </header>
 
@@ -198,6 +186,9 @@ const fallbackMetrics = [
         </p>
       )}
       <dl class="intro-grid">
+        {data.company?.website && /^https?:\/\//i.test(data.company.website) && (
+          <div><dt>{labels.website}</dt><dd><a href={data.company.website} target="_blank" rel="noopener noreferrer">{data.company.website.replace(/^https?:\/\//i, '').replace(/\/$/, '')}</a></dd></div>
+        )}
         {companyProfile.foundedDate && (
           <div><dt>{labels.founded}</dt><dd>{companyProfile.foundedDate}</dd></div>
         )}
@@ -487,10 +478,7 @@ const fallbackMetrics = [
   .report-subtitle, .report-headline { width: 100%; max-width: 56ch; color: var(--ink-page); font-family: var(--font-sans); line-height: 1.5; }
   .report-subtitle { font-size: var(--report-fs-body); color: var(--caption-gray); margin-top: 0; }
   .report-headline { font-size: clamp(1.05rem, 0.4vw + 0.95rem, 1.2rem); font-weight: 500; }
-  .report-meta-line { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-3); row-gap: var(--space-2); margin-top: auto; padding-top: var(--space-4); font-family: var(--font-sans); font-size: var(--report-fs-caption); }
-  .report-meta-line span { color: var(--caption-gray); }
-  .report-meta-line span + span:not(:last-of-type)::before { content: '·'; margin-right: var(--space-3); color: color-mix(in srgb, var(--caption-gray) 50%, transparent); }
-  .evidence-toggle { appearance: none; border: 1px solid var(--claret); background: transparent; color: var(--claret); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 4px var(--space-3); border-radius: 999px; margin-left: auto; }
+  .evidence-toggle { appearance: none; border: 1px solid var(--claret); background: transparent; color: var(--claret); cursor: pointer; font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-caption); font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; padding: 4px var(--space-3); border-radius: 999px; }
   .evidence-toggle:hover, .evidence-toggle:focus-visible, .evidence-toggle[aria-pressed="true"] { background: var(--claret); color: #fff7ef; outline: none; }
   /* Decision card: hero panel with recommendation as the primary visual */
   .decision-card { --decision-accent: var(--claret); --decision-accent-soft: color-mix(in srgb, var(--claret) 12%, transparent); display: flex; flex-direction: column; gap: var(--space-4); align-self: stretch; padding: var(--space-4) var(--space-4) var(--space-4); background: transparent; border: 0; border-top: 3px solid var(--decision-accent); border-radius: var(--radius-card); box-shadow: none; }
@@ -507,6 +495,7 @@ const fallbackMetrics = [
   .decision-grid div { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: baseline; }
   .decision-grid dt { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-size: var(--report-fs-kicker); font-weight: 700; letter-spacing: var(--tracking-eyebrow); color: var(--caption-gray); }
   .decision-grid dd { margin: 0; font-family: var(--font-sans); font-size: var(--report-fs-caption); font-weight: 700; color: var(--ink-page); text-align: right; }
+  .decision-actions { margin-top: auto; display: flex; flex-wrap: wrap; gap: var(--space-2); padding-top: var(--space-3); }
   @media (max-width: 760px) { .report-cover { grid-template-columns: 1fr; padding: var(--space-5) var(--space-4); gap: var(--space-5); } .report-cover h1 { font-size: clamp(2rem, 6vw + 1rem, 2.8rem); } }
   .report-section, .report-chapter { padding-block: var(--space-4); }
   .report-chapter { padding-block: var(--space-5) var(--space-4); border-top: 2px solid var(--claret); }
@@ -661,7 +650,7 @@ const fallbackMetrics = [
       @top-left { content: ""; }
       @top-center { content: ""; }
       @top-right { content: ""; }
-      @bottom-left { content: ""; }
+      @bottom-left { content: "Yingting Huang \00b7  startup.genisisiq.com"; font-family: var(--font-sans); font-size: 8pt; color: #777; }
       @bottom-center { content: counter(page) " / " counter(pages); font-family: var(--font-sans); font-size: 8pt; color: #777; }
       @bottom-right { content: ""; }
     }
@@ -698,15 +687,15 @@ const fallbackMetrics = [
       margin: 0 !important;
     }
 
-    /* Cover always occupies its own page. */
+    /* Cover flows continuously into the following sections; no forced
+     * page break so the first page can carry cover-metrics / profile /
+     * exec summary when they fit. */
     .report-cover {
       grid-template-columns: minmax(0, 1fr) 220px;
       gap: 8mm;
       padding: 4mm 0 6mm;
       margin: 0 0 6mm;
       background: #fff;
-      break-after: page;
-      page-break-after: always;
     }
     .report-cover h1 { font-size: 26pt; line-height: 1.05; }
     .report-subtitle, .report-headline { font-size: 11pt; max-width: none; }
@@ -751,14 +740,16 @@ const fallbackMetrics = [
       content-visibility: visible;
       contain-intrinsic-size: none;
     }
-    /* Glue cover-metrics, profile, and exec summary into one block. */
+    /* Glue cover-metrics, profile, exec summary, and the first chapter
+     * (Company Overview) into the natural flow so they share the front
+     * matter pages instead of each forcing a hard break. */
     .report-section.cover-metrics,
     .report-section.startup-intro,
-    .report-section.executive-summary {
+    .report-section.executive-summary,
+    .report-chapter:first-of-type {
       break-before: avoid !important;
       page-break-before: avoid !important;
     }
-    .report-chapter:first-of-type { /* keep break — reads cleanly after summary */ }
 
     .chapter-header { margin-bottom: 6mm; }
     .chapter-header h2 { font-size: 22pt; gap: 4mm; }
@@ -798,15 +789,21 @@ const fallbackMetrics = [
      * Drop the 780px min-width so wide tables fit the A4 column instead of
      * overflowing into a clipped horizontal scroll snapshot. Tighten cell
      * padding and font so denser tables stay legible. */
-    :global(.table-frame) { overflow: visible !important; border: 1px solid #999; margin: 4mm 0; }
-    :global(.table-frame table) { width: 100% !important; min-width: 0 !important; table-layout: fixed; }
-    :global(.table-frame caption) { padding: 2mm 3mm; font-size: 9pt; }
+    :global(.table-frame) { overflow: visible !important; border: 1px solid #999; margin: 4mm 0; background: #fff !important; }
+    :global(.table-frame table) { width: 100% !important; min-width: 0 !important; table-layout: fixed; background: #fff !important; }
+    :global(.table-frame caption) { padding: 2mm 3mm; font-size: 9pt; background: #fff !important; }
     :global(.table-frame th),
     :global(.table-frame td) { padding: 1.4mm 2mm; font-size: 8.5pt; line-height: 1.35; word-break: break-word; overflow-wrap: anywhere; hyphens: auto; vertical-align: top; }
     :global(.table-frame th) { white-space: normal; background: #f5f0ec !important; color: #800020 !important; }
     :global(.table-frame thead) { display: table-header-group; }
     :global(.table-frame tfoot) { display: table-footer-group; }
     :global(.table-frame tr) { break-inside: avoid; page-break-inside: avoid; }
+    /* Don't strand the caption or header band alone at a page bottom when
+     * a table breaks. Keep caption + header glued to the first body row. */
+    :global(.table-frame caption) { break-after: avoid; page-break-after: avoid; }
+    :global(.table-frame thead),
+    :global(.table-frame thead tr) { break-after: avoid; page-break-after: avoid; }
+    :global(.table-frame tbody tr:first-child) { break-before: avoid; page-break-before: avoid; }
     /* Striping prints unreliably; replace with crisp 1px row separators. */
     :global(.table-frame tbody tr) { background: #fff !important; }
     :global(.table-frame tbody tr td) { border-bottom: 0.4pt solid #ddd; }

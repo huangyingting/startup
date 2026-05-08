@@ -792,6 +792,15 @@ if (doc) {
     const path = `${spec.file}: table ${table?.id ?? '?'}`;
     const { errors } = checkTableSchema(table, { path });
     for (const err of errors) fail('tableShape', err.message, { tableId: table?.id, ...err });
+    // Soft warning: tables[].notes should be populated when the table
+    // carries any caveat (estimates, partial coverage, derived cells,
+    // unit/vintage convention). Pure factual snapshots may leave notes
+    // null and acknowledge this dimension. Warn only — never fails.
+    const notes = typeof table?.notes === 'string' ? table.notes.trim() : '';
+    const hasRows = Array.isArray(table?.rows) && table.rows.length > 0;
+    if (hasRows && !notes) {
+      warn('tableNotes', `${path}: notes is empty; add a one-line caveat (data source / estimation / partial coverage / what null means) or acknowledge this dimension if the table is a pure factual snapshot.`, { tableId: table?.id });
+    }
   }
 
   const otherChapterClaimIds = loadOtherChapterClaimIds(reportFolder, spec, ANALYSIS_ARTIFACTS);

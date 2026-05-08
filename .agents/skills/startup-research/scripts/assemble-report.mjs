@@ -279,6 +279,19 @@ function buildRevision(value) {
 
 const revision = buildRevision(meta.revision);
 
+const companyDefaults = {
+  website: null,
+  sector: null,
+  stage: null,
+  headquarters: null,
+  shortDescription: null,
+};
+const company = {
+  name: companyName,
+  ...companyDefaults,
+  ...(meta.company ?? {}),
+};
+
 // ---------------------------------------------------------------------------
 // build full-report.yaml
 // ---------------------------------------------------------------------------
@@ -287,7 +300,7 @@ const fullReport = {
   artifact: 'full-report',
   slug,
   runDate,
-  company: { name: companyName },
+  company,
   revision,
   subtitle: meta.subtitle ?? null,
   coverageNotes: meta.coverageNotes ?? null,
@@ -304,14 +317,6 @@ const fullReport = {
 // ---------------------------------------------------------------------------
 // build summary-card.yaml
 // ---------------------------------------------------------------------------
-const summaryDefaults = {
-  website: null,
-  sector: null,
-  stage: null,
-  headquarters: null,
-  shortDescription: null,
-};
-
 const sourceStats = computeSourceStats(evidence, chapterDocs, runDate);
 
 const summaryCard = {
@@ -319,11 +324,7 @@ const summaryCard = {
   artifact: 'summary-card',
   slug,
   runDate,
-  company: {
-    name: companyName,
-    ...summaryDefaults,
-    ...(meta.company ?? {}),
-  },
+  company,
   revision,
   summary: {
     headline: meta.summary.headline,
