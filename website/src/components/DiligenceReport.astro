@@ -650,7 +650,7 @@ const fallbackMetrics = [
       @top-left { content: ""; }
       @top-center { content: ""; }
       @top-right { content: ""; }
-      @bottom-left { content: ""; }
+      @bottom-left { content: "Yingting Huang \00b7  startup.genisisiq.com"; font-family: var(--font-sans); font-size: 8pt; color: #777; }
       @bottom-center { content: counter(page) " / " counter(pages); font-family: var(--font-sans); font-size: 8pt; color: #777; }
       @bottom-right { content: ""; }
     }
@@ -687,15 +687,15 @@ const fallbackMetrics = [
       margin: 0 !important;
     }
 
-    /* Cover always occupies its own page. */
+    /* Cover flows continuously into the following sections; no forced
+     * page break so the first page can carry cover-metrics / profile /
+     * exec summary when they fit. */
     .report-cover {
       grid-template-columns: minmax(0, 1fr) 220px;
       gap: 8mm;
       padding: 4mm 0 6mm;
       margin: 0 0 6mm;
       background: #fff;
-      break-after: page;
-      page-break-after: always;
     }
     .report-cover h1 { font-size: 26pt; line-height: 1.05; }
     .report-subtitle, .report-headline { font-size: 11pt; max-width: none; }
@@ -740,14 +740,16 @@ const fallbackMetrics = [
       content-visibility: visible;
       contain-intrinsic-size: none;
     }
-    /* Glue cover-metrics, profile, and exec summary into one block. */
+    /* Glue cover-metrics, profile, exec summary, and the first chapter
+     * (Company Overview) into the natural flow so they share the front
+     * matter pages instead of each forcing a hard break. */
     .report-section.cover-metrics,
     .report-section.startup-intro,
-    .report-section.executive-summary {
+    .report-section.executive-summary,
+    .report-chapter:first-of-type {
       break-before: avoid !important;
       page-break-before: avoid !important;
     }
-    .report-chapter:first-of-type { /* keep break — reads cleanly after summary */ }
 
     .chapter-header { margin-bottom: 6mm; }
     .chapter-header h2 { font-size: 22pt; gap: 4mm; }
@@ -787,15 +789,21 @@ const fallbackMetrics = [
      * Drop the 780px min-width so wide tables fit the A4 column instead of
      * overflowing into a clipped horizontal scroll snapshot. Tighten cell
      * padding and font so denser tables stay legible. */
-    :global(.table-frame) { overflow: visible !important; border: 1px solid #999; margin: 4mm 0; }
-    :global(.table-frame table) { width: 100% !important; min-width: 0 !important; table-layout: fixed; }
-    :global(.table-frame caption) { padding: 2mm 3mm; font-size: 9pt; }
+    :global(.table-frame) { overflow: visible !important; border: 1px solid #999; margin: 4mm 0; background: #fff !important; }
+    :global(.table-frame table) { width: 100% !important; min-width: 0 !important; table-layout: fixed; background: #fff !important; }
+    :global(.table-frame caption) { padding: 2mm 3mm; font-size: 9pt; background: #fff !important; }
     :global(.table-frame th),
     :global(.table-frame td) { padding: 1.4mm 2mm; font-size: 8.5pt; line-height: 1.35; word-break: break-word; overflow-wrap: anywhere; hyphens: auto; vertical-align: top; }
     :global(.table-frame th) { white-space: normal; background: #f5f0ec !important; color: #800020 !important; }
     :global(.table-frame thead) { display: table-header-group; }
     :global(.table-frame tfoot) { display: table-footer-group; }
     :global(.table-frame tr) { break-inside: avoid; page-break-inside: avoid; }
+    /* Don't strand the caption or header band alone at a page bottom when
+     * a table breaks. Keep caption + header glued to the first body row. */
+    :global(.table-frame caption) { break-after: avoid; page-break-after: avoid; }
+    :global(.table-frame thead),
+    :global(.table-frame thead tr) { break-after: avoid; page-break-after: avoid; }
+    :global(.table-frame tbody tr:first-child) { break-before: avoid; page-break-before: avoid; }
     /* Striping prints unreliably; replace with crisp 1px row separators. */
     :global(.table-frame tbody tr) { background: #fff !important; }
     :global(.table-frame tbody tr td) { border-bottom: 0.4pt solid #ddd; }
