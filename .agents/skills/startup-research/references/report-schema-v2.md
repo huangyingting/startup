@@ -357,10 +357,8 @@ companyProfile:
   stage: string | null
   fundingStatus: string | null
   disclosureProfile: public | private-disclosed | private-undisclosed | stealth | null
-  # Optional. Pre-revenue stealth labs and undisclosed-financials private companies
-  # rarely have public ARR/revenue/headcount; record the profile so chapter 04
-  # (financials) can pre-populate canonical evidenceGaps for those metrics rather
-  # than rediscovering they are unavailable. Default null = unspecified.
+  # Optional. Evidence-backed classification of how much the company publicly
+  # discloses; set after research. Default null = unspecified.
   claimRefs: [CO001]
 
 keyMetrics:
@@ -382,14 +380,9 @@ appendix:
 
 ## Run cache files
 
-Read-only inputs the orchestrator writes under `.research-cache/<runId>/`. They appear in the chapter runtime context as `runtimeContext.runCache.disclosureHint` and `runtimeContext.runCache.refreshContext` (see `references/chapter-runtime-context-schema-v2.md`).
+Read-only inputs the orchestrator writes under `.research-cache/<runId>/`. They appear in the chapter runtime context as `runtimeContext.runCache.refreshContext` (see `references/chapter-runtime-context-schema-v2.md`).
 
 ```yaml
-disclosure-hint.yaml:                        # Optional. Carries the operator-supplied disclosure hint.
-  disclosureProfile: public | private-disclosed | private-undisclosed | stealth
-  note: string                               # Operator note pointing at companyProfile.disclosureProfile + chapter-04 adoption.
-  canonicalEvidenceGaps: [string]            # Plain-string gap descriptions; chapter 04 (financials) adopts each as the `missingEvidence` field of a typed evidenceGap.
-
 refresh-context.yaml:                        # Optional. Carries the prior run's summary-card snapshot for refresh runs.
   schemaVersion: refresh-context-v1
   mode: refresh

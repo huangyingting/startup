@@ -295,7 +295,7 @@ jobs:
           Pick only companies with credible public evidence of a \$1B+ private valuation or unicorn-confirming financing in that window. Use this portfolio hint: $COVERAGE_HINT
           Skip duplicates already in reports/ (each finalized run lives in reports/<runId>/summary-card.yaml; the create-report-run.mjs duplicate guard checks the same set) unless there is materially new evidence. If fewer than $COUNT qualify, research only the actual qualifying companies. If none qualify, do not create report folders; print a short no-candidates note and exit successfully.
 
-          For each selected company, run one complete startup diligence report end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under its own reports/<run>/ folder. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
+          For each selected company, generate a startup diligence research report.
 
           Source verification: every URL you cite in a chapter's localEvidence.sources[] must be retrieved through .agents/skills/fetch-url/scripts/fetch.mjs at least once during this run (the workflow exports STARTUP_FETCH_LOG_PATH so each fetch appends a line to the trail). check-chapter emits an unverifiedSource warning per citation that is not in the trail; clear those warnings by either (a) re-fetching the URL through fetch-url so accessStatus/sourceType/stance reflect the actual page, or (b) removing the citation if it cannot be retrieved.
           EOF

@@ -187,12 +187,9 @@ function runIdentity(reportFolder) {
 
 // Per-run scratch surfaced into the chapter runtime context. create-report-run.mjs writes
 // these into .research-cache/<runId>/ but historically they were never
-// loaded back, so an agent invoking --disclosure stealth or --refresh would
-// never see the hint/context. Surface both inside the runtime context so the agent
-// reads the same files the orchestrator wrote.
-//   disclosureHint: pre-populated canonical evidenceGaps for stealth /
-//     private-undisclosed companies (chapter 04 financials should adopt them
-//     as-is rather than rediscovering they are unavailable).
+// loaded back, so an agent invoking --refresh would never see the context.
+// Surface it inside the runtime context so the agent reads the same file the
+// orchestrator wrote.
 //   refreshContext: prior-run summary card snapshot used as background /
 //     diff context only; volatile facts must still be re-fetched.
 function runCacheContext(reportFolder) {
@@ -201,16 +198,13 @@ function runCacheContext(reportFolder) {
   // (developer pointing at a scratch folder), return an empty cache slot
   // instead of crashing the chapter runtime context loader.
   if (!isRunId(runId)) {
-    return { cacheDir: null, disclosureHint: null, refreshContext: null };
+    return { cacheDir: null, refreshContext: null };
   }
   const cacheDir = researchCacheDir(runId);
   const out = {
     cacheDir,
-    disclosureHint: null,
     refreshContext: null,
   };
-  const disclosure = tryReadYaml(join(cacheDir, 'disclosure-hint.yaml'));
-  if (disclosure.ok) out.disclosureHint = disclosure.value;
   const refresh = tryReadYaml(join(cacheDir, 'refresh-context.yaml'));
   if (refresh.ok) out.refreshContext = refresh.value;
   return out;
