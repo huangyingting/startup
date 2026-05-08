@@ -56,6 +56,10 @@ function isFiniteNumber(value) {
   return typeof value === 'number' && Number.isFinite(value);
 }
 
+function isTableCellScalar(value) {
+  return value == null || typeof value === 'string' || typeof value === 'number';
+}
+
 function hasPopulatedField(data, key) {
   if (key === 'series') {
     return Array.isArray(data?.series)
@@ -215,6 +219,11 @@ export function checkTableSchema(table, { path }) {
     }
     if (row.length !== expectedCols) {
       c.fail(`${path} row ${index + 1} has ${row.length} cells but columns declares ${expectedCols}`, { tableId: id, rowIndex: index, actual: row.length, expected: expectedCols });
+    }
+    for (const [cellIndex, cell] of row.entries()) {
+      if (!isTableCellScalar(cell)) {
+        c.fail(`${path} row ${index + 1} cell ${cellIndex + 1} must be a string, number, or null; object cells like {label: ...} are only valid in matrix figures, and table strings containing ':' must be quoted`, { tableId: id, rowIndex: index, cellIndex, actual: Array.isArray(cell) ? 'array' : typeof cell });
+      }
     }
   }
   if (table.enumerationScope !== undefined) {

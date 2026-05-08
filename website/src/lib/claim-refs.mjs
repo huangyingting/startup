@@ -17,14 +17,41 @@ function inlineClaimRefPattern() {
   return new RegExp(INLINE_CLAIM_REF_SOURCE, 'g');
 }
 
+function objectFallbackText(value) {
+  const entries = Object.entries(value).filter(([, entryValue]) => entryValue !== undefined);
+  return entries.map(([key, entryValue]) => {
+    const text = plainText(entryValue);
+    return text.trim() ? `${key}: ${text}` : key;
+  }).filter(Boolean).join(', ');
+}
+
+function plainText(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'bigint') return String(value);
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
+  if (Array.isArray(value)) return value.map(plainText).filter(Boolean).join(', ');
+  if (typeof value === 'object') {
+    const primary = value.label ?? value.displayValue ?? value.value ?? value.score ?? value.title ?? value.name;
+    const primaryText = plainText(primary);
+    if (primaryText.trim()) return primaryText;
+    const fallback = value.detail ?? value.note ?? value.summary;
+    const fallbackText = plainText(fallback);
+    if (fallbackText.trim()) return fallbackText;
+    return objectFallbackText(value);
+  }
+  return String(value);
+}
+
 export function hasInlineClaimRefs(value) {
-  return new RegExp(INLINE_CLAIM_REF_SOURCE).test(String(value ?? ''));
+  return new RegExp(INLINE_CLAIM_REF_SOURCE).test(plainText(value));
 }
 
 // Strips a trailing run of `[C<L>###]` refs (with surrounding whitespace and
 // a final period) so headlines/summaries collapse to clean prose.
 export function stripTrailingClaimRefs(value) {
-  return String(value ?? '').replace(/(?:\s*\[C[A-Z]\d{3}\])+\.?$/g, '.').trim();
+  return plainText(value).replace(/(?:\s*\[C[A-Z]\d{3}\])+\.?$/g, '.').trim();
 }
 
 // Splits a string into a list of `{ text }` and `{ ref }` parts so the
@@ -32,7 +59,7 @@ export function stripTrailingClaimRefs(value) {
 // the surrounding prose intact. Returns a single-element list when the input
 // has no inline refs.
 export function splitClaimRefsText(value) {
-  const text = String(value ?? '');
+  const text = plainText(value);
   const parts = [];
   const pattern = inlineClaimRefPattern();
   let lastIndex = 0;
