@@ -178,46 +178,76 @@ jobs:
           REFRESH_REASON: ${{ steps.inputs.outputs.refreshReason }}
           MODEL: ${{ steps.inputs.outputs.model }}
           RUN_DATE: ${{ steps.inputs.outputs.runDate }}
+          # fetch-url appends one JSON line per call here when set; chapter
+          # checks can use the trail to surface unverifiedSource warnings.
+          STARTUP_FETCH_LOG_PATH: ${{ github.workspace }}/.research-cache/_fetch-log.jsonl
         run: |
           set -euo pipefail
+          mkdir -p "$(dirname "$STARTUP_FETCH_LOG_PATH")"
+          : > "$STARTUP_FETCH_LOG_PATH"
           PROMPT=$(cat <<EOF
           Produce one complete refreshed startup diligence report for the company below.
 
-          Run date: $RUN_DATE UTC.
+          Use $RUN_DATE UTC as the research date.
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-unknown}
           Refresh reason: ${REFRESH_REASON:-n/a}
 
           This is an explicit full refresh. Create a new report folder even when a finalized report folder for the same company/domain already exists by using create-report-run.mjs with --refresh and --refresh-reason. The previous report is auto-resolved from the company name/domain by walking reports/<runId>/summary-card.yaml. Treat the prior report only as background/diff context; re-fetch current evidence for volatile facts such as funding, valuation, headcount, customers, pricing, legal/regulatory status, outages, partnerships, and product launches.
+          Generate and finalize a complete refreshed startup diligence research report for this company.
+          Treat completion as an on-disk contract: the new refresh report folder must end with all required chapter, metadata, and generated artifacts. If you fan out chapter work, join every task, inspect failures, and never exit successfully with partial report folders.
 
-          Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Delete duplicate, failed, or partial report folders before finishing. Do not run git add or git commit.
+          Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Follow the startup-research skill's source-verification rules; this workflow provides STARTUP_FETCH_LOG_PATH so fetch-url calls are auditable. Do not run git add or git commit.
           EOF
           )
-          copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT"
+          mkdir -p "$RUNNER_TEMP/copilot-logs"
+          COPILOT_LOG="$RUNNER_TEMP/copilot-logs/run.log"
+          set +e
+          copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
+          status=${PIPESTATUS[0]}
+          set -e
+          {
+            echo
+            echo "### Copilot run stats"
+            if [ -s "$COPILOT_LOG" ]; then
+              tail -n 20 "$COPILOT_LOG" | grep -iE '^(changes?|requests?|tokens?)\b' | sed 's/^/- /' || echo "- (no stats line emitted)"
+            else
+              echo "- (no Copilot output captured)"
+            fi
+            if [ -s "$STARTUP_FETCH_LOG_PATH" ]; then
+              fetch_calls=$(wc -l < "$STARTUP_FETCH_LOG_PATH")
+              fetch_ok=$(grep -c '"ok":true' "$STARTUP_FETCH_LOG_PATH" || true)
+              echo "- fetch-url calls: $fetch_calls (ok=$fetch_ok)"
+            else
+              echo "- fetch-url trail empty (the agent did not call fetch-url; expect unverifiedSource warnings)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
 
       - name: Finalize complete refreshed report folders
         env:
           REFRESH_REASON: ${{ steps.inputs.outputs.refreshReason }}
+        # Safety net: if Copilot wrote every chapter YAML plus report-meta.yaml
+        # but skipped the finalize-report.mjs pipeline, run finalize ourselves.
+        # Only attempt finalize when all upstream inputs from the runtime
+        # context exist; truly partial folders are left for the prune step.
         run: |
           set -euo pipefail
           shopt -s nullglob
-          chapter_files=(
-            01-company-overview.yaml
-            02-market-analysis.yaml
-            03-competitors.yaml
-            04-financials.yaml
-            05-product-tech.yaml
-            06-customers.yaml
-            07-risks.yaml
-            08-valuation.yaml
-            report-meta.yaml
+          mapfile -t required_inputs < <(
+            node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list --format json |
+              node --input-type=module -e 'import fs from "node:fs"; const ctx = JSON.parse(fs.readFileSync(0, "utf8")); const allowed = ctx.workflow?.allowedReportFiles ?? {}; const files = [...(allowed.chapterArtifacts ?? []), ...(allowed.handAuthored ?? [])]; for (const file of files) console.log(file);'
           )
+          if [ "${#required_inputs[@]}" -eq 0 ]; then
+            echo "No required report inputs found in runtime context." >&2
+            exit 1
+          fi
           for dir in reports/*/; do
             if [ -f "${dir}summary-card.yaml" ]; then
               continue
             fi
             missing=()
-            for f in "${chapter_files[@]}"; do
+            for f in "${required_inputs[@]}"; do
               [ -f "${dir}${f}" ] || missing+=("$f")
             done
             if [ "${#missing[@]}" -gt 0 ]; then
@@ -249,6 +279,8 @@ jobs:
           done
 
       - name: Preserve refreshed reports artifact
+        # Capture the full Copilot output, including any partial folders,
+        # before pruning. Available even on failure for offline recovery.
         if: always()
         uses: actions/upload-artifact@v7
         with:
@@ -258,16 +290,35 @@ jobs:
           if-no-files-found: ignore
 
       - name: Remove incomplete report folders
+        # Remove partial folders so they do not contaminate the commit; the
+        # artifact above preserves the originals for recovery/debugging.
         run: |
           set -euo pipefail
           shopt -s nullglob
-          required_files=(summary-card.yaml full-report.yaml evidence.yaml report-meta.yaml)
+          mapfile -t required_files < <(
+            node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list --format json |
+              node --input-type=module -e 'import fs from "node:fs"; const ctx = JSON.parse(fs.readFileSync(0, "utf8")); const allowed = ctx.workflow?.allowedReportFiles ?? {}; const files = [...(allowed.handAuthored ?? []), ...(allowed.generated ?? [])]; for (const file of files) console.log(file);'
+          )
+          if [ "${#required_files[@]}" -eq 0 ]; then
+            echo "No required finalized report files found in runtime context." >&2
+            exit 1
+          fi
+          find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-before-prune.txt"
+          comm -13 "$RUNNER_TEMP/reports-before.txt" "$RUNNER_TEMP/reports-before-prune.txt" > "$RUNNER_TEMP/reports-created.txt" || true
+          : > "$RUNNER_TEMP/reports-dropped.txt"
+          : > "$RUNNER_TEMP/reports-new-dropped.txt"
           dropped=()
           for dir in reports/*/; do
             for required in "${required_files[@]}"; do
               if [ ! -f "${dir}${required}" ]; then
+                folder="${dir%/}"
+                folder_name="${folder#reports/}"
                 rm -rf "$dir"
-                dropped+=("${dir%/}")
+                dropped+=("$folder")
+                printf '%s\n' "$folder_name" >> "$RUNNER_TEMP/reports-dropped.txt"
+                if grep -Fxq "$folder_name" "$RUNNER_TEMP/reports-created.txt"; then
+                  printf '%s\n' "$folder_name" >> "$RUNNER_TEMP/reports-new-dropped.txt"
+                fi
                 break
               fi
             done
@@ -287,6 +338,21 @@ jobs:
           {
             echo
             echo "### Refreshed report folder changes"
+            if [ -s "$RUNNER_TEMP/reports-created.txt" ]; then
+              echo "Report folders created during generation/finalization:"
+              sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-created.txt"
+              echo
+            fi
+            if [ -s "$RUNNER_TEMP/reports-dropped.txt" ]; then
+              echo "Partial report folders dropped before commit:"
+              sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-dropped.txt"
+              echo
+            fi
+            if [ -s "$RUNNER_TEMP/reports-new-dropped.txt" ]; then
+              echo "Newly-created report folders that failed to finalize:"
+              sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-new-dropped.txt"
+              echo
+            fi
             if [ -s "$RUNNER_TEMP/reports-new.txt" ]; then
               echo "New refreshed report folders:"
               sed 's/^/- `reports\//; s/$/`/' "$RUNNER_TEMP/reports-new.txt"
@@ -294,8 +360,20 @@ jobs:
               echo "No new finalized refreshed report folders detected."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
+          if [ -s "$RUNNER_TEMP/reports-new-dropped.txt" ]; then
+            echo "::error::Newly-created refreshed report folder(s) were incomplete and had to be pruned. This means refresh generation did not finish cleanly; see the preserved refresh-company artifact for recovery details."
+            exit 1
+          fi
+          if [ -s "$RUNNER_TEMP/reports-created.txt" ] && [ ! -s "$RUNNER_TEMP/reports-new.txt" ]; then
+            echo "::error::Report folders were created, but none survived finalization/pruning. This usually means refresh generation exited before writing complete report artifacts. See the preserved refresh-company artifact for recovery details."
+            exit 1
+          fi
 
       - name: Validate reports and website build
+        env:
+          # Same trail file the refresh step appended to. check-chapter can
+          # cross-reference it when chapter gates run during generation.
+          STARTUP_FETCH_LOG_PATH: ${{ github.workspace }}/.research-cache/_fetch-log.jsonl
         run: npm run validate
 
       - name: Commit and publish refreshed report
