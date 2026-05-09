@@ -56,7 +56,7 @@ workflow:
             - On exit 3, rerun the exact command with --resume; do not create suffixed duplicate folders.
         - key: load-runtime
           title: Load workflow runtime context
-          command: load-chapter-runtime-context.mjs --list --format json
+          command: load-chapter-runtime-context.mjs --list
           requires: [report-run-created]
           produces: [runtimeContext.workflow, runtimeContext.vocabularies, runtimeContext.checkDimensions, runtimeContext.rendererContracts]
           gate: runtimeContext schema
@@ -70,7 +70,7 @@ workflow:
       steps:
         - key: load-chapter-context
           title: Load chapter context
-          command: load-chapter-runtime-context.mjs --order <n> --format json --include-context --report-folder <reportFolder>
+          command: load-chapter-runtime-context.mjs --order <n> --include-context --report-folder <reportFolder>
           requires: [report-run-created, runtime-contract-loaded]
           produces: [runtimeContext.chapter]
           gate: runtimeContext schema
