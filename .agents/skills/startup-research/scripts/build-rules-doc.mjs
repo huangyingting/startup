@@ -70,6 +70,12 @@ function policySection(policy) {
   lines.push('');
   lines.push(bulletList(policy.volatileFacts ?? []));
   lines.push('');
+  lines.push(`#### \`volatileFactQueryTokens\` (substring tokens that trigger \`searchQueryFreshness\`)`);
+  lines.push('');
+  lines.push('Any `localEvidence.searchQueries[].query` whose lowercased text contains one of these substrings is classified as a volatile-fact query and must include the chapter `runDate`\'s year (or the prior year for trailing windows) as a literal 4-digit token. The `searchQueryFreshness` validator emits a warning per offending query (promoted to failure under `--strict` and at finalize-report). Edit this list (and rerun `npm run build:rules`) when you add a new volatile-fact vocabulary.');
+  lines.push('');
+  lines.push((policy.volatileFactQueryTokens ?? []).map((t) => `\`${t}\``).join(', '));
+  lines.push('');
   lines.push(`#### \`finalResponseFields\` (every field must appear in the final user-facing summary)`);
   lines.push('');
   lines.push(bulletList(policy.finalResponseFields ?? []));

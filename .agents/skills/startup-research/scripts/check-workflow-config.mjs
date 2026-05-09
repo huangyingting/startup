@@ -67,6 +67,9 @@ if (issues.length === 0) {
   if (!policy.volatileFacts?.length) {
     issues.push(validationIssue({ path: 'agentPolicy.volatileFacts', message: 'agentPolicy.volatileFacts must list at least one volatile fact', dimension: 'workflowConfigShape' }));
   }
+  if (!policy.volatileFactQueryTokens?.length) {
+    issues.push(validationIssue({ path: 'agentPolicy.volatileFactQueryTokens', message: 'agentPolicy.volatileFactQueryTokens must list at least one substring token; the searchQueryFreshness validator reads this list at runtime', dimension: 'workflowConfigShape' }));
+  }
   if (!policy.finalResponseFields?.length) {
     issues.push(validationIssue({ path: 'agentPolicy.finalResponseFields', message: 'agentPolicy.finalResponseFields must list the final response contract', dimension: 'workflowConfigShape' }));
   }
@@ -76,6 +79,7 @@ if (issues.length === 0) {
     finalArtifacts: finalFiles.length,
     coreArtifacts: core.length,
     volatileFacts: policy.volatileFacts?.length ?? 0,
+    volatileFactQueryTokens: policy.volatileFactQueryTokens?.length ?? 0,
     finalResponseFields: policy.finalResponseFields?.length ?? 0,
     workflowInputs: Object.keys(config.workflow?.inputs ?? {}).length,
     workflowPhases: config.workflow?.phases?.length ?? 0,
@@ -94,7 +98,7 @@ if (args.format === 'json') console.log(JSON.stringify(result, null, 2));
 else if (args.format === 'compact') console.log(formatValidationCompact(result));
 else if (result.ok) {
   console.log(`[check:workflow-config] ✓ ${workflowConfigPath}`);
-  console.log(`[check:workflow-config] analysis=${summary.analysisChapters} final=${summary.finalArtifacts} core=${summary.coreArtifacts} policy=${summary.volatileFacts}/${summary.finalResponseFields} inputs=${summary.workflowInputs} phases=${summary.workflowPhases}`);
+  console.log(`[check:workflow-config] analysis=${summary.analysisChapters} final=${summary.finalArtifacts} core=${summary.coreArtifacts} policy=${summary.volatileFacts}/${summary.volatileFactQueryTokens}/${summary.finalResponseFields} inputs=${summary.workflowInputs} phases=${summary.workflowPhases}`);
 } else {
   console.error(formatValidationText(result, { failureMessage: '[check:workflow-config] failures' }));
 }

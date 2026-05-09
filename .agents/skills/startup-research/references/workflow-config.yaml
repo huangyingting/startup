@@ -161,6 +161,69 @@ agentPolicy:
     - outages
     - partnerships
     - product launches
+  # Tokens that mark a `localEvidence.searchQueries[].query` as targeting a
+  # volatile fact. The `searchQueryFreshness` validator (warning, --strict
+  # promotes to failure) requires any query whose lowercased text contains one
+  # of these substrings to also include the current year (or the prior year
+  # for a trailing window) derived from the chapter's `runDate`. Edit this
+  # list (and rerun `npm run build:rules`) when adding a new volatile-fact
+  # vocabulary; the validator reads from agentPolicy at runtime.
+  volatileFactQueryTokens:
+    - raise
+    - raised
+    - round
+    - series
+    - seed
+    - venture
+    - valuation
+    - valued
+    - arr
+    - revenue
+    - growth
+    - burn
+    - runway
+    - margin
+    - headcount
+    - hiring
+    - layoff
+    - layoffs
+    - customer
+    - customers
+    - client
+    - clients
+    - partner
+    - partnership
+    - channel
+    - reseller
+    - distributor
+    - pricing
+    - launch
+    - launches
+    - released
+    - roadmap
+    - announce
+    - announced
+    - ipo
+    - s-1
+    - prospectus
+    - lawsuit
+    - litigation
+    - regulator
+    - regulatory
+    - sanction
+    - enforcement
+    - breach
+    - outage
+    - incident
+    - leadership
+    - ceo
+    - cfo
+    - coo
+    - cto
+    - executive
+    - acquisition
+    - acquired
+    - merger
   retryPolicy:
     maxChapterRetries: 3
     requireMonotonicFailureDecrease: true
@@ -169,7 +232,7 @@ agentPolicy:
     - "Prefer primary, official, independent, customer, regulatory, legal, and adverse sources over summary pages."
     - "Record reviewed sources, atomic claims, search queries, typed research questions, and typed evidence gaps in localEvidence."
     - "Re-fetch volatile facts every run; refresh context and earlier chapters are background only for those facts."
-    - "Anchor freshness to runtimeContext.run.runDate, not the model's training cutoff: include the current year (and the prior year for trailing windows) in queries for volatile facts (funding, ARR, headcount, customers, leadership, regulatory) and prefer sources dated within ~12 months of runDate."
+    - "Anchor freshness to runtimeContext.run.runDate, not the model's training cutoff: every query in localEvidence.searchQueries[] whose text matches a volatileFactQueryTokens substring (funding/ARR/headcount/customers/leadership/regulatory/launches/etc.) MUST contain the current year — and the prior year for trailing windows — as a literal 4-digit token. The searchQueryFreshness validator emits a warning per offending query (promoted to failure under --strict and at finalize-report); rewrite the query to include the year, or rephrase it so it no longer matches a volatile-fact token if the lookup is genuinely historical."
   chapterAuthoringRules:
     - "Use runtimeContext.chapter as the chapter brief and runtimeContext.chapter.gate as the binding per-chapter gate."
     - "Use the *Validator dimensions* section below for dimension precedence/suppressors and the inline allowed enum values in references/contracts.md for each field; trust the per-issue `fix` in check-chapter JSON output (`issues[].fix`) for concrete repair."

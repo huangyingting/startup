@@ -23,7 +23,7 @@ Pairs with [SKILL.md](../SKILL.md) (the workflow narrative) and [contracts.md](c
 - Prefer primary, official, independent, customer, regulatory, legal, and adverse sources over summary pages.
 - Record reviewed sources, atomic claims, search queries, typed research questions, and typed evidence gaps in localEvidence.
 - Re-fetch volatile facts every run; refresh context and earlier chapters are background only for those facts.
-- Anchor freshness to runtimeContext.run.runDate, not the model's training cutoff: include the current year (and the prior year for trailing windows) in queries for volatile facts (funding, ARR, headcount, customers, leadership, regulatory) and prefer sources dated within ~12 months of runDate.
+- Anchor freshness to runtimeContext.run.runDate, not the model's training cutoff: every query in localEvidence.searchQueries[] whose text matches a volatileFactQueryTokens substring (funding/ARR/headcount/customers/leadership/regulatory/launches/etc.) MUST contain the current year — and the prior year for trailing windows — as a literal 4-digit token. The searchQueryFreshness validator emits a warning per offending query (promoted to failure under --strict and at finalize-report); rewrite the query to include the year, or rephrase it so it no longer matches a volatile-fact token if the lookup is genuinely historical.
 
 #### `chapterAuthoringRules`
 
@@ -51,6 +51,12 @@ requireMonotonicFailureDecrease: true
 - outages
 - partnerships
 - product launches
+
+#### `volatileFactQueryTokens` (substring tokens that trigger `searchQueryFreshness`)
+
+Any `localEvidence.searchQueries[].query` whose lowercased text contains one of these substrings is classified as a volatile-fact query and must include the chapter `runDate`'s year (or the prior year for trailing windows) as a literal 4-digit token. The `searchQueryFreshness` validator emits a warning per offending query (promoted to failure under `--strict` and at finalize-report). Edit this list (and rerun `npm run build:rules`) when you add a new volatile-fact vocabulary.
+
+`raise`, `raised`, `round`, `series`, `seed`, `venture`, `valuation`, `valued`, `arr`, `revenue`, `growth`, `burn`, `runway`, `margin`, `headcount`, `hiring`, `layoff`, `layoffs`, `customer`, `customers`, `client`, `clients`, `partner`, `partnership`, `channel`, `reseller`, `distributor`, `pricing`, `launch`, `launches`, `released`, `roadmap`, `announce`, `announced`, `ipo`, `s-1`, `prospectus`, `lawsuit`, `litigation`, `regulator`, `regulatory`, `sanction`, `enforcement`, `breach`, `outage`, `incident`, `leadership`, `ceo`, `cfo`, `coo`, `cto`, `executive`, `acquisition`, `acquired`, `merger`
 
 #### `finalResponseFields` (every field must appear in the final user-facing summary)
 
@@ -201,6 +207,7 @@ Dimensions are grouped by class. Only the **chapter-warning** class is acknowled
 | — | `chapter-warning` | `figuresMax` | Reduce or merge figures; the chapter looks over-fragmented. | `yamlParse` |
 | — | `chapter-warning` | `figureType` | Render at least one of the planned figure types, or add an acknowledgedWarnings entry for dimension "figureType" with a >=30-char reason when the substitution is intentional. | `yamlParse` |
 | — | `chapter-warning` | `paywallRisk` | At chapter scope (warning, ack-able): swap restricted (paywall\|js-only\|broken\|rate-limited) sources for ok ones to stay under the report-level 30% ceiling. At report scope (failure from check-report, NOT ack-able): the per-report restricted share already exceeds the 30% ceiling and must be brought back below it before finalize-report can pass. | `yamlParse`, `localEvidenceMissing` |
+| — | `chapter-warning` | `searchQueryFreshness` | For volatile-fact queries (funding/ARR/headcount/customers/leadership/regulatory/launches), append the current year — and prior year for trailing windows — derived from runDate; the searchQueryFreshness validator (warning by default, --strict promotes to failure) reads agentPolicy.volatileFactQueryTokens to decide which queries are volatile-fact-shaped. | `yamlParse`, `localEvidenceMissing` |
 | — | `chapter-warning` | `sectionsMax` | Reduce or merge sections; the chapter looks over-fragmented. | `yamlParse` |
 | — | `chapter-warning` | `tableNotes` | Write tables[].notes (one line: data source / estimation / partial coverage / what null means), or acknowledge dimension "tableNotes" for pure factual snapshot tables. | — |
 | — | `chapter-warning` | `tablesMax` | Reduce or merge tables; the chapter looks over-fragmented. | `yamlParse` |
@@ -236,7 +243,7 @@ Dimensions are grouped by class. Only the **chapter-warning** class is acknowled
 
 You may opt out of intentional `--strict` warnings by listing them under a top-level `acknowledgedWarnings: [{ dimension, reason }]` entry on the chapter YAML. Each entry must satisfy:
 
-- **dimension** is one of the chapter warning-class dimensions listed above: `fetchTrailMissing`, `figureType`, `figuresMax`, `paywallRisk`, `sectionsMax`, `tableNotes`, `tablesMax`, `unverifiedSource`. (Reminder: `paywallRisk` is ack-able **only** at chapter scope — the report-scope failure cannot be acknowledged from a chapter file.) Acks against any other dimension (cross-chapter, finalize-step, report-meta warnings, the report-level instances of `paywallRisk` / `sourceDomains` / `sourceStanceSpread`, or any other failure-class dimension) surface as a non-blocking `acknowledgedWarnings` warning so the misuse is visible without breaking historical reports.
+- **dimension** is one of the chapter warning-class dimensions listed above: `fetchTrailMissing`, `figureType`, `figuresMax`, `paywallRisk`, `searchQueryFreshness`, `sectionsMax`, `tableNotes`, `tablesMax`, `unverifiedSource`. (Reminder: `paywallRisk` is ack-able **only** at chapter scope — the report-scope failure cannot be acknowledged from a chapter file.) Acks against any other dimension (cross-chapter, finalize-step, report-meta warnings, the report-level instances of `paywallRisk` / `sourceDomains` / `sourceStanceSpread`, or any other failure-class dimension) surface as a non-blocking `acknowledgedWarnings` warning so the misuse is visible without breaking historical reports.
 - **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons do not take effect and produce a non-blocking `acknowledgedWarnings` warning.
 
 Acks never silence a real failure; the `failures.length === 0` gate is checked unconditionally. Use this only for genuinely non-actionable warnings (e.g. `tableNotes` on a pure factual snapshot whose `defaultFix` explicitly tells you to acknowledge it).
