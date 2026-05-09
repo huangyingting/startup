@@ -220,7 +220,13 @@ export const WARNING_DIMENSIONS = new Set([
   'figureType',
   'tableNotes',
   'unverifiedSource',
+  'fetchTrailMissing',
 ]);
+
+// Derived once for messaging consistency. Sorted so the printed order is
+// stable across reports and any new warning-class dimension shows up
+// automatically wherever this list is referenced.
+const WARNING_DIMENSIONS_LIST_TEXT = [...WARNING_DIMENSIONS].sort().join(', ');
 
 // JSON-friendly bundle shipped in the chapter runtime context so the agent never
 // has to grep source code to learn the vocabulary. Sorted arrays keep diffs
@@ -370,10 +376,11 @@ export const FIX_HINTS = {
     id || url
       ? `Source ${id ?? ''}${url ? ` (${url})` : ''} was cited but never went through fetch-url during this run; pull the URL with .agents/skills/fetch-url/scripts/fetch.mjs (or remove the citation if the source cannot be retrieved).`
       : 'One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess.',
+  fetchTrailMissing: 'Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; without the trail every cited URL is silently treated as verified.',
   acknowledgedWarnings: ({ ackDimension } = {}) =>
     ackDimension
-      ? `acknowledgedWarnings entry targets dimension "${ackDimension}", which is not a warning-class dimension. Only warnings (paywallRisk, sectionsMax, tablesMax, figuresMax, figureType, tableNotes, unverifiedSource) may be acknowledged; failures must be fixed. Each acknowledgedWarnings entry also requires a >=30-char reason. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`
-      : 'Each acknowledgedWarnings entry must (1) target a warning-class dimension (paywallRisk, sectionsMax, tablesMax, figuresMax, figureType, tableNotes, unverifiedSource) and (2) carry a >=30-char reason. Failure-class dimensions cannot be acknowledged.',
+      ? `acknowledgedWarnings entry targets dimension "${ackDimension}", which is not a warning-class dimension. Only warnings (${WARNING_DIMENSIONS_LIST_TEXT}) may be acknowledged; failures must be fixed. Each acknowledgedWarnings entry also requires a >=30-char reason. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`
+      : `Each acknowledgedWarnings entry must (1) target a warning-class dimension (${WARNING_DIMENSIONS_LIST_TEXT}) and (2) carry a >=30-char reason. Failure-class dimensions cannot be acknowledged.`,
 };
 
 // ---------------------------------------------------------------------------
@@ -452,7 +459,8 @@ export const RETRY_PRECEDENCE = [
   'calloutShape',
   'sectionsMin', 'sectionsMax', 'artifactsMin', 'tablesMax', 'figuresMax',
   'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
-  'contentRequirementCoverage',  'unverifiedSource',];
+  'contentRequirementCoverage', 'unverifiedSource', 'fetchTrailMissing',
+];
 
 // ---------------------------------------------------------------------------
 // Helpers

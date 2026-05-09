@@ -263,7 +263,16 @@ contextChapters?:
     sections: [{...}]
     tables: [{...}]
     figures: [{...}]
-cumulativeContext?: {...}
+cumulativeContext?:
+  note: string
+  partial?: boolean
+  warnings?:
+    - code: string
+      message: string
+      missingFiles?: [string]
+  cumulativeUnresolvedQuestions: number
+  cumulativeRestrictedAccessPct: number
+  earlierChapters: [{...}]
 run?:
   runId: string
   companySlug: string|null

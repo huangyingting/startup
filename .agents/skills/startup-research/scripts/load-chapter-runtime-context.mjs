@@ -121,6 +121,13 @@ function compactContextChapter(reportFolder, contextFile) {
 //     accessStatus is paywall|js-only|broken|rate-limited across earlier
 //     chapters.
 // Returned as a runtime-context field; never gates anything.
+//
+// `partial` and `warnings` flag the case where one or more earlier chapters
+// could not be loaded (most commonly because the agent is drafting chapters
+// in parallel and a prior file is not on disk yet). Without this flag a
+// subagent that mechanically passes --include-context would treat the
+// cumulative metrics as authoritative when they are actually computed over
+// an incomplete set of siblings.
 function cumulativeContext(reportFolder, currentOrder, allChapters) {
   let unanswered = 0;
   let totalSources = 0;
@@ -145,8 +152,18 @@ function cumulativeContext(reportFolder, currentOrder, allChapters) {
     restricted += chRestricted;
     seen.push({ file: ch.file, status: 'loaded', unanswered: chUnanswered, sources: sources.length, restricted: chRestricted });
   }
+  const missing = seen.filter((entry) => entry.status !== 'loaded');
+  const warnings = missing.length > 0
+    ? [{
+        code: 'cumulativeContextPartial',
+        message: `--include-context aggregated ${seen.length - missing.length}/${seen.length} earlier chapters; ${missing.length} are missing or unreadable. Treat the rollup as incomplete (most likely parallel drafting).`,
+        missingFiles: missing.map((entry) => entry.file),
+      }]
+    : [];
   return {
     note: 'Advisory metrics aggregated from earlier chapters; does not gate this chapter.',
+    partial: missing.length > 0,
+    warnings,
     cumulativeUnresolvedQuestions: unanswered,
     cumulativeRestrictedAccessPct: totalSources ? +(restricted / totalSources).toFixed(3) : 0,
     earlierChapters: seen,

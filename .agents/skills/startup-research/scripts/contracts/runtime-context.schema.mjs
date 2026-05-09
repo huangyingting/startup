@@ -54,7 +54,21 @@ export const ChapterRuntimeContextSchema = z.object({
   chapter: CompactChapterSchema,
   nextChapter: CompactChapterSchema.nullable(),
   contextChapters: z.array(ContextChapterSchema).optional(),
-  cumulativeContext: z.record(z.string(), z.any()).optional(),
+  cumulativeContext: z.object({
+    note: z.string(),
+    // True when one or more earlier chapters could not be loaded. Subagents
+    // drafting chapters in parallel should treat the rollup as incomplete
+    // when this is true and prefer per-chapter signals instead.
+    partial: z.boolean().optional(),
+    warnings: z.array(z.object({
+      code: z.string(),
+      message: z.string(),
+      missingFiles: z.array(nonEmptyString).optional(),
+    }).passthrough()).optional(),
+    cumulativeUnresolvedQuestions: z.number(),
+    cumulativeRestrictedAccessPct: z.number(),
+    earlierChapters: z.array(z.record(z.string(), z.any())),
+  }).passthrough().optional(),
   run: z.object({
     runId: nonEmptyString,
     companySlug: nullableString,

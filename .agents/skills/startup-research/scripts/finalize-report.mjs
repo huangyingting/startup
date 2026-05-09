@@ -62,7 +62,11 @@ const parsedArgs = parseArgs(args);
 const folderArg = parsedArgs.folder;
 const rebuild = parsedArgs.rebuild;
 const refresh = parsedArgs.refresh;
-const refreshReason = parsedArgs.refreshReason;
+// Mutable so ensureRefreshReasonMatchesCache() can backfill from the cached
+// refresh-context.yaml when the caller did not pass --refresh-reason. SKILL.md
+// used to require the same reason on both create-report-run and finalize-report;
+// the backfill removes that footgun and keeps both code paths in sync.
+let refreshReason = parsedArgs.refreshReason;
 
 if (!folderArg) {
   usage();
@@ -113,34 +117,36 @@ function strictCheckEveryChapter() {
   }
 }
 
-// Stale-evidence guard: when finalize is rerun without --rebuild, the
-// pipeline reuses the existing evidence.yaml. If any chapter's localEvidence
-// changed since evidence.yaml was last assembled, the ledger and downstream
-// checks will see the *old* evidence and the agent's edits get silently
-// ignored (a footgun documented in SKILL.md). Compare mtimes and fail fast
-// when a chapter is newer; the agent must rerun with --rebuild.
-function ensureEvidenceFresh() {
+// Stale-evidence detection: when finalize is rerun without --rebuild, the
+// pipeline reuses the existing evidence.yaml. If any chapter file is newer
+// than evidence.yaml, the ledger and downstream checks would otherwise see
+// the stale ledger and the agent's edits get silently ignored. We compare
+// mtimes (cheap; not content-aware) and trigger an automatic rebuild — the
+// previous behaviour exited with `evidence.yaml is older than N chapter
+// file(s)…` which forced the agent to remember to pass --rebuild after every
+// edit (including prose-only ones like chapter.summary or sections[].body).
+// build-report runs after the rebuild and surfaces dangling report-meta
+// claimRefs if a canonical id pointer shifted, so safety is preserved.
+function detectStaleEvidence() {
   const evidencePath = join(reportFolder, FINAL_ARTIFACTS.evidence.file);
-  if (!existsSync(evidencePath)) return;
+  if (!existsSync(evidencePath)) return [];
   const evidenceMtime = statSync(evidencePath).mtimeMs;
-  const chapters = getAnalysisArtifacts();
   const newer = [];
-  for (const spec of chapters) {
+  for (const spec of getAnalysisArtifacts()) {
     const chapterPath = join(reportFolder, spec.file);
     if (!existsSync(chapterPath)) continue;
     if (statSync(chapterPath).mtimeMs > evidenceMtime) newer.push(spec.file);
   }
-  if (newer.length) {
-    console.error(`[finalize-report] evidence.yaml is older than ${newer.length} chapter file(s): ${newer.join(', ')}`);
-    console.error('[finalize-report] localEvidence edits would be silently ignored. Rerun with --rebuild to reconsolidate the ledger.');
-    process.exit(EXIT.failure);
-  }
+  return newer;
 }
 
-// Refresh-reason consistency: SKILL.md requires the same --refresh-reason
-// string on create-report-run and finalize-report; otherwise the audit
-// trail (refresh-context cache vs. report-meta revision) drifts silently.
-// Compare against the cached refresh-context.yaml and fail if they diverge.
+// Refresh-reason consistency: SKILL.md asks the agent to pass the same
+// --refresh-reason string to create-report-run and finalize-report so the
+// audit trail (refresh-context cache vs. report-meta revision) stays in
+// sync. We make the second pass optional: when finalize-report receives no
+// --refresh-reason, we backfill from the cached refresh-context.yaml so the
+// agent only has to remember the string once. When the caller does pass a
+// value, we still enforce the original consistency check.
 function ensureRefreshReasonMatchesCache() {
   if (!refresh) return;
   const runId = basename(reportFolder);
@@ -149,10 +155,15 @@ function ensureRefreshReasonMatchesCache() {
   const result = tryReadYaml(ctxPath);
   if (!result.ok) return; // create-report-run --refresh always writes it; absent means a refresh started without create-report-run, leave it to link-refresh
   const cached = result.value?.refreshReason ?? null;
+  if (!refreshReason && cached) {
+    refreshReason = cached;
+    console.error(`[finalize-report] using cached --refresh-reason from refresh-context.yaml: ${JSON.stringify(cached)}`);
+    return;
+  }
   const provided = refreshReason || null;
   if ((cached ?? '') !== (provided ?? '')) {
     console.error(`[finalize-report] --refresh-reason mismatch: refresh-context.yaml has ${JSON.stringify(cached)} but finalize-report was given ${JSON.stringify(provided)}.`);
-    console.error('[finalize-report] pass the same --refresh-reason string to both create-report-run and finalize-report so the audit trail stays consistent.');
+    console.error('[finalize-report] omit --refresh-reason to reuse the cached value, or pass the same string both times.');
     process.exit(EXIT.failure);
   }
 }
@@ -164,9 +175,14 @@ strictCheckEveryChapter();
 // Refresh audit-trail consistency must hold before we touch report-meta.
 ensureRefreshReasonMatchesCache();
 
-// Stale-evidence guard runs before the existing-evidence reuse decision below
-// so the agent gets a clear error rather than a silently stale ledger.
-if (!parsedArgs.rebuild) ensureEvidenceFresh();
+// Detect stale evidence so the ledger decision below can rebuild it. Skipped
+// when --rebuild was passed (we are going to rebuild anyway) so the noisy
+// notice is not printed twice.
+const staleChapters = parsedArgs.rebuild ? [] : detectStaleEvidence();
+if (staleChapters.length > 0) {
+  console.error(`[finalize-report] auto-rebuild: evidence.yaml is older than ${staleChapters.length} chapter file(s): ${staleChapters.join(', ')}`);
+  console.error('[finalize-report] note: rebuilding the ledger may shift canonical claim id pointers; build-report will surface dangling report-meta claimRefs if any.');
+}
 
 // Fast pre-flight: surface every shape/enum problem in report-meta.yaml
 // before any expensive step runs. The full build-report.mjs check still
@@ -181,12 +197,13 @@ if (refresh) {
 }
 
 // Per-report pipeline. Build the evidence ledger only when there is no evidence.yaml yet (or when
-// --rebuild forces a fresh consolidation). evidence.yaml is preserved across
+// --rebuild forces a fresh consolidation, or when chapter files are newer
+// than evidence.yaml — auto-rebuild). evidence.yaml is preserved across
 // re-runs so canonical claim IDs stay stable; the chapter source of truth
 // (localEvidence) is preserved by build-evidence-ledger so the agent always has a place to
 // fix evidence-shape problems.
 const hasExistingEvidence = existsSync(join(reportFolder, FINAL_ARTIFACTS.evidence.file));
-const needsLedger = !hasExistingEvidence || rebuild;
+const needsLedger = !hasExistingEvidence || rebuild || staleChapters.length > 0;
 const steps = [];
 if (needsLedger) {
   steps.push({ name: 'build-evidence-ledger', script: 'build-evidence-ledger.mjs', argv: [reportFolder] });

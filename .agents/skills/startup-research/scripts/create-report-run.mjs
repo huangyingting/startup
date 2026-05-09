@@ -200,6 +200,7 @@ if (existsSync(path)) {
   mkdirSync(researchCacheDir(base), { recursive: true });
   writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
   console.error(`[create-report-run] resume: ${path}`);
+  console.error(`[create-report-run] hint: export STARTUP_FETCH_LOG_PATH=.research-cache/${base}/_fetch-log.jsonl before running fetch-url so check-chapter can audit cited URLs.`);
   console.log(path);
   process.exit(EXIT.ok);
 }
@@ -216,5 +217,11 @@ mkdirSync(path, { recursive: true });
 // "scratch lives under .research-cache/<runId>/" invariant explicit.
 mkdirSync(researchCacheDir(base), { recursive: true });
 writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
+
+// Final hint: the fetch-url skill only writes its audit trail when
+// STARTUP_FETCH_LOG_PATH is set. Without it, check-chapter silently treats
+// every cited URL as verified — the most dangerous failure mode for an
+// autonomous subagent. Stay on stderr so stdout still emits only the path.
+console.error(`[create-report-run] hint: export STARTUP_FETCH_LOG_PATH=.research-cache/${base}/_fetch-log.jsonl before running fetch-url so check-chapter can audit cited URLs.`);
 
 console.log(path);

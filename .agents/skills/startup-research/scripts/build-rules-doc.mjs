@@ -25,6 +25,7 @@ import yaml from 'js-yaml';
 import { loadWorkflowConfig } from './utils.mjs';
 import {
   RESERVED_TYPE_LETTERS,
+  WARNING_DIMENSIONS,
   dimensionCatalog,
 } from './validation-catalog.mjs';
 import {
@@ -113,6 +114,7 @@ function dimensionsSection() {
     const suppressed = d.suppressedBy.length ? d.suppressedBy.map((s) => `\`${s}\``).join(', ') : '—';
     return `| ${d.precedenceRank ?? '—'} | \`${d.dimension}\` | ${fix} | ${suppressed} |`;
   });
+  const warningList = [...WARNING_DIMENSIONS].sort().map((d) => `\`${d}\``).join(', ');
   return [
     '`check-chapter` and `check-report` emit failures tagged with these `dimension` keys. Fix in `precedence` order (lowest rank = root cause first); a suppressed dimension is masked while its upstream still fails, so the upstream fix usually clears the downstream too.',
     '',
@@ -128,7 +130,7 @@ function dimensionsSection() {
     '',
     'You may opt out of intentional `--strict` warnings by listing them under a top-level `acknowledgedWarnings: [{ dimension, reason }]` entry on the chapter YAML. Each entry must satisfy:',
     '',
-    '- **dimension** is one of the warning-class dimensions above (precedence `—`): `paywallRisk`, `sectionsMax`, `tablesMax`, `figuresMax`, `figureType`, `tableNotes`, `unverifiedSource`. Acks against any other dimension surface as a non-blocking `acknowledgedWarnings` warning so the misuse is visible without breaking historical reports.',
+    `- **dimension** is one of the warning-class dimensions above (precedence \`—\`): ${warningList}. Acks against any other dimension surface as a non-blocking \`acknowledgedWarnings\` warning so the misuse is visible without breaking historical reports.`,
     '- **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons are silently ignored (the ack does not take effect).',
     '',
     'Acks never silence a real failure; the `failures.length === 0` gate is checked unconditionally. Use this only for genuinely non-actionable warnings (e.g. `tableNotes` on a pure factual snapshot whose `defaultFix` explicitly tells you to acknowledge it).',

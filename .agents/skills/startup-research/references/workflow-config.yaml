@@ -135,8 +135,8 @@ workflow:
           produces: [evidence.yaml, full-report.yaml, summary-card.yaml]
           gate: finalize-report exit code
           notes:
-            - Pass --refresh and --refresh-reason only for explicit refresh runs; the --refresh-reason value must match the one passed to create-report-run.mjs (finalize-report exits with a mismatch error otherwise).
-            - Pass --rebuild after any chapter file edit since the last successful finalize; the pre-flight stale-evidence guard is mtime-based and refuses to reuse a stale ledger.
+            - Pass --refresh for explicit refresh runs. --refresh-reason on finalize-report is optional; it defaults to the value cached in .research-cache/<runId>/refresh-context.yaml by create-report-run.mjs. Re-pass it on finalize-report only when overriding the cache, in which case both values must match (finalize-report exits with a mismatch error otherwise).
+            - --rebuild is no longer required after chapter edits. finalize-report auto-rebuilds the ledger when any chapter file's mtime is newer than evidence.yaml; pass --rebuild only to force a fresh consolidation regardless of mtimes.
             - finalize-report internally runs check-chapter --strict on every chapter as the first step; resolve those warnings via the chapter-generation strict sweep to avoid late aborts.
 
 # Tables cite their backing claims via the table-level `claimRefs` field, never

@@ -809,10 +809,16 @@ if (doc) {
   checkSearchQueries(spec.file, doc);
   const earlierUrls = loadEarlierChapterUrls(reportFolder, spec, ANALYSIS_ARTIFACTS);
   checkSources(spec.file, doc, gate, earlierUrls);
-  // Optional: cross-check cited URLs against the fetch-url trail file. Soft
-  // warning (not a hard fail) so older reports without a trail file still
-  // pass cleanly. Trail file is written by the fetch-url skill when
-  // STARTUP_FETCH_LOG_PATH is set; see loadFetchTrailUrls() above.
+  // Cross-check cited URLs against the fetch-url trail file. The trail is
+  // written by the fetch-url skill when STARTUP_FETCH_LOG_PATH is set; see
+  // loadFetchTrailUrls() above. We emit two warning-class signals:
+  //   - unverifiedSource: trail exists but a cited URL never appeared in it.
+  //   - fetchTrailMissing: chapter cites sources but no trail file was found
+  //     anywhere check-chapter looked. Without it source verification is
+  //     silently disabled, which is the most dangerous failure mode for
+  //     subagent-driven runs (cited URLs are silently treated as verified).
+  // Both are warnings under the default gate so older reports without a
+  // trail file still pass; --strict promotes them to failures.
   const trail = loadFetchTrailUrls(reportFolder);
   if (trail) {
     for (const source of doc.localEvidence?.sources ?? []) {
@@ -826,6 +832,12 @@ if (doc) {
         );
       }
     }
+  } else if ((doc.localEvidence?.sources ?? []).length > 0) {
+    warn(
+      'fetchTrailMissing',
+      `${spec.file}: chapter cites ${counts.sources} source(s) but no fetch-url trail file was found at any candidate path (STARTUP_FETCH_LOG_PATH, .research-cache/${basename(reportFolder)}/_fetch-log.jsonl, .research-cache/_fetch-log.jsonl); source verification is disabled. Export STARTUP_FETCH_LOG_PATH=.research-cache/${basename(reportFolder)}/_fetch-log.jsonl in your shell BEFORE any fetch-url call so cited URLs can be audited.`,
+      { runId: basename(reportFolder) },
+    );
   }
   checkHighConfidenceCorroboration(spec.file, doc, gate);
   checkEnumerationTables(spec.file, doc, gate, plannedTablesByName);

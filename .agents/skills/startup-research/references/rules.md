@@ -194,13 +194,14 @@ Precedence `—` marks **warning-class** dimensions: they never appear in `retry
 | 47 | `depthFigureData` | Add data points to existing figures to reach minFigureDataPointsTotal. | `yamlParse` |
 | 48 | `contentRequirementCoverage` | Add researchQuestions whose targets[] cover the un-targeted contentRequirements. | `yamlParse`, `localEvidenceMissing` |
 | 49 | `unverifiedSource` | One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess. | — |
+| 50 | `fetchTrailMissing` | Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; without the trail every cited URL is silently treated as verified. | — |
 | — | `tableNotes` | Write tables[].notes (one line: data source / estimation / partial coverage / what null means), or acknowledge dimension "tableNotes" for pure factual snapshot tables. | — |
 
 ### `acknowledgedWarnings` opt-out
 
 You may opt out of intentional `--strict` warnings by listing them under a top-level `acknowledgedWarnings: [{ dimension, reason }]` entry on the chapter YAML. Each entry must satisfy:
 
-- **dimension** is one of the warning-class dimensions above (precedence `—`): `paywallRisk`, `sectionsMax`, `tablesMax`, `figuresMax`, `figureType`, `tableNotes`, `unverifiedSource`. Acks against any other dimension surface as a non-blocking `acknowledgedWarnings` warning so the misuse is visible without breaking historical reports.
+- **dimension** is one of the warning-class dimensions above (precedence `—`): `fetchTrailMissing`, `figureType`, `figuresMax`, `paywallRisk`, `sectionsMax`, `tableNotes`, `tablesMax`, `unverifiedSource`. Acks against any other dimension surface as a non-blocking `acknowledgedWarnings` warning so the misuse is visible without breaking historical reports.
 - **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons are silently ignored (the ack does not take effect).
 
 Acks never silence a real failure; the `failures.length === 0` gate is checked unconditionally. Use this only for genuinely non-actionable warnings (e.g. `tableNotes` on a pure factual snapshot whose `defaultFix` explicitly tells you to acknowledge it).
