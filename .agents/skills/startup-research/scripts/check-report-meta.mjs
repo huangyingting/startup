@@ -7,7 +7,7 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, REPORT_META_FILE, tryReadYaml } from './utils.mjs';
-import { ReportMetaSchema, schemaErrors } from './contracts/report-artifacts.schema.mjs';
+import { OBSOLETE_SUMMARY_ROOT_FIELDS, ReportMetaSchema, schemaErrors } from './contracts/report-artifacts.schema.mjs';
 import {
   formatValidationCompact,
   formatValidationText,
@@ -123,7 +123,7 @@ function displayWarnings(meta) {
 
 function obsoleteRootFieldIssues(meta) {
   const issues = [];
-  for (const field of ['headline', 'recommendation', 'confidence', 'riskRating', 'valuationStance', 'overallScore', 'keyMetrics', 'topStrengths', 'topRisks', 'unresolvedGaps']) {
+  for (const field of OBSOLETE_SUMMARY_ROOT_FIELDS) {
     if (meta?.[field] !== undefined) {
       issues.push(validationIssue({
         path: field,

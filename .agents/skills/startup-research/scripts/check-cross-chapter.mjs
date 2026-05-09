@@ -11,25 +11,31 @@ import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
 import { TITLE_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_TITLE_TOKEN_LENGTH } from './validation-catalog.mjs';
+import {
+  formatValidationCompact,
+  formatValidationText,
+  validationEnvelope,
+  validationIssue,
+  validationWarning,
+} from './contracts/validation-result.mjs';
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 
-const args = (() => {
+function parseArgs(argv) {
   const parsed = { folder: null, strict: false, format: 'text' };
-  const argv = process.argv.slice(2);
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--strict') parsed.strict = true;
     else if (arg === '--format') {
       const next = argv[++i];
       if (next === undefined || next.startsWith('-')) {
-        console.error('[cross-chapter] --format requires a value (text|json)');
+        console.error('[cross-chapter] --format requires a value (text|json|compact)');
         process.exit(EXIT.failure);
       }
       parsed.format = next;
     } else if (arg.startsWith('-')) {
       console.error(`[cross-chapter] unknown flag: ${arg}`);
-      console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
+      console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter.mjs <report-folder> [--strict] [--format text|json|compact]');
       process.exit(EXIT.failure);
     } else if (!parsed.folder) parsed.folder = arg;
     else {
@@ -37,17 +43,18 @@ const args = (() => {
       process.exit(EXIT.failure);
     }
   }
+  if (!parsed.folder) {
+    console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter.mjs <report-folder> [--strict] [--format text|json|compact]');
+    process.exit(EXIT.failure);
+  }
+  if (!['text', 'json', 'compact'].includes(parsed.format)) {
+    console.error(`Invalid --format value: ${parsed.format}; expected text, json, or compact`);
+    process.exit(EXIT.failure);
+  }
   return parsed;
-})();
+}
 
-if (!args.folder) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
-  process.exit(EXIT.failure);
-}
-if (!['text', 'json'].includes(args.format)) {
-  console.error(`Invalid --format value: ${args.format}; expected text or json`);
-  process.exit(EXIT.failure);
-}
+const args = parseArgs(process.argv.slice(2));
 
 const reportFolder = resolve(args.folder);
 if (!existsSync(reportFolder)) {
@@ -333,19 +340,55 @@ findCrossChapterDuplicates(figureFingerprints);
 // ---------------------------------------------------------------------------
 // emit
 // ---------------------------------------------------------------------------
-const ok = conflicts.length === 0 && (!args.strict || warnings.length === 0);
-
-if (args.format === 'json') {
-  console.log(JSON.stringify({ ok, reportFolder, conflicts, warnings, metricCount: metrics.size }, null, 2));
-} else {
-  console.log(`[cross-chapter] checked ${docs.length} chapters and ${metrics.size} normalized metric labels`);
-  for (const entry of conflicts) {
-    console.error(`  ✗ [${entry.dimension}] ${entry.message}`);
-  }
-  for (const entry of warnings) {
-    console.warn(`  ! [${entry.dimension}] ${entry.message}`);
-  }
-  if (ok) console.log('[cross-chapter] ✓ no material drift detected.');
+// In --strict mode, every warning becomes a fail so the envelope ok flips to
+// false. Outside --strict, warnings remain non-blocking warnings.
+function toIssuePayload(entry) {
+  // Drop the bespoke `severity: 'fail'|'warn'` field; validationIssue assigns
+  // the canonical 'error'/'warning' severity itself. Keep the rest of the
+  // entry's context fields (metric, occurrences, claimId, ...) as extras.
+  const { severity, message, dimension, ...extra } = entry;
+  return {
+    path: entry.chapter ?? entry.kind ?? 'cross-chapter',
+    message,
+    dimension,
+    code: dimension,
+    ...extra,
+  };
 }
 
-process.exit(ok ? EXIT.ok : EXIT.failure);
+const issues = conflicts.map((entry) => validationIssue(toIssuePayload(entry)));
+if (args.strict) {
+  for (const entry of warnings) {
+    issues.push(validationIssue(toIssuePayload(entry)));
+  }
+}
+const nonBlockingWarnings = args.strict ? [] : warnings.map((entry) => validationWarning(toIssuePayload(entry)));
+
+const envelope = validationEnvelope({
+  ok: issues.length === 0,
+  validator: 'check-cross-chapter',
+  reportFolder,
+  issues,
+  warnings: nonBlockingWarnings,
+  summary: { chapters: docs.length, normalizedMetricLabels: metrics.size, strict: args.strict },
+});
+
+if (args.format === 'json') {
+  console.log(JSON.stringify(envelope, null, 2));
+} else if (args.format === 'compact') {
+  console.log(formatValidationCompact(envelope));
+} else if (envelope.ok) {
+  console.log(`[cross-chapter] checked ${docs.length} chapters and ${metrics.size} normalized metric labels`);
+  for (const entry of nonBlockingWarnings) {
+    console.warn(`  ! [${entry.dimension}] ${entry.message}`);
+  }
+  console.log('[cross-chapter] ✓ no material drift detected.');
+} else {
+  console.log(`[cross-chapter] checked ${docs.length} chapters and ${metrics.size} normalized metric labels`);
+  for (const entry of nonBlockingWarnings) {
+    console.warn(`  ! [${entry.dimension}] ${entry.message}`);
+  }
+  console.error(formatValidationText(envelope, { failureMessage: '[cross-chapter] failures' }));
+}
+
+process.exit(envelope.ok ? EXIT.ok : EXIT.failure);

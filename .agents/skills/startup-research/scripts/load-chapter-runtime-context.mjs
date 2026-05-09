@@ -26,11 +26,11 @@ const CONTRACT_SOURCES = Object.freeze({
 });
 
 function usage() {
-  console.error(`Usage: node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--format json|markdown] [--no-workflow] [--include-context --report-folder <path>]
+  console.error(`Usage: node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--no-workflow] [--include-context --report-folder <path>]
 
 Examples:
-    node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list --format markdown
-    node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 1 --format json
+    node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list
+    node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 1
     node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 4 --include-context --report-folder reports/20260503145959-openai`);
   process.exit(EXIT.failure);
 }
@@ -42,7 +42,6 @@ function parseArgs(argv) {
     file: null,
     list: false,
     all: false,
-    format: 'json',
     includeWorkflow: true,
     includeContext: false,
     reportFolder: null,
@@ -56,7 +55,6 @@ function parseArgs(argv) {
     else if (arg === '--file') args.file = argv[++i] ?? null;
     else if (arg === '--list') args.list = true;
     else if (arg === '--all') args.all = true;
-    else if (arg === '--format') args.format = argv[++i] ?? 'json';
     else if (arg === '--include-workflow') args.includeWorkflow = true;
     else if (arg === '--no-workflow') args.includeWorkflow = false;
     else if (arg === '--include-context') args.includeContext = true;
@@ -64,7 +62,6 @@ function parseArgs(argv) {
     else usage();
   }
 
-  if (!['json', 'markdown'].includes(args.format)) usage();
   const selectors = [Number.isFinite(args.order), Boolean(args.key), Boolean(args.file), args.list, args.all].filter(Boolean).length;
   if (selectors > 1) usage();
   if (args.order !== null && !Number.isInteger(args.order)) usage();
@@ -284,180 +281,18 @@ function printJson(value) {
   console.log(JSON.stringify(value, null, 2));
 }
 
-function listItems(values) {
-  if (!values?.length) return '- None';
-  return values.map((value) => `- ${value}`).join('\n');
-}
-
-function tableItems(values) {
-  if (!values?.length) return '- None';
-  return values.map((item) => {
-    const tags = [];
-    if (item.enumeration === true) tags.push(`enumeration: true (expectedMinRows=${item.expectedMinRows ?? '?'})`);
-    const tagText = tags.length ? ` [${tags.join('; ')}]` : '';
-    return `- ${item.name}${tagText}: ${item.requirement}`;
-  }).join('\n');
-}
-
-function figureItems(values) {
-  if (!values?.length) return '- None';
-  return values.map((item) => `- ${item.name} (${(item.acceptedTypes ?? []).join(' | ')}): ${item.requirement}`).join('\n');
-}
-
-function gateMarkdown(gate, letter) {
-  const floor = gate?.depthFloor ?? {};
-  return [
-    `- Sections: ${gate?.minSections}-${gate?.maxSections}`,
-    `- Artifacts (tables + figures): >= ${gate?.minArtifacts}`,
-    `- Tables ceiling: ${gate?.maxTables}`,
-    `- Figures ceiling: ${gate?.maxFigures}`,
-    `- Research questions: >= ${gate?.minResearchQuestions}`,
-    `- Local sources: >= ${gate?.minLocalSources} (>= ${gate?.minAdverseSources ?? 0} with stance: adverse)`,
-    `- Local claims: >= ${gate?.minLocalClaims}`,
-    `- Depth floor: section body >= ${floor.minSectionBodyWords} words; total section words >= ${floor.minSectionWordsTotal}; table rows >= ${floor.minTableRowsTotal}; figure data points >= ${floor.minFigureDataPointsTotal}`,
-    `- IDs in this chapter must use letter "${letter}": sources S${letter}###, claims C${letter}###, tables T${letter}###, figures F${letter}###, researchQuestions Q${letter}###. Never copy an id from another chapter's letter into this chapter's claimRefs[] or prose. If you need a fact established in a different chapter, restate it as a new local claim here with its own sourceRefs[]; ledger consolidation dedupes equivalent claims at the end.`,
-  ].join('\n');
-}
-
-function vocabSummaryMarkdown(vocab) {
-  if (!vocab) return '- (vocabularies unavailable)';
-  const order = [
-    'sourceType',
-    'sourceStance',
-    'sourceAccessStatus',
-    'restrictedAccessStatuses',
-    'sourceReputationTier',
-    'sourceIndependence',
-    'claimType',
-    'claimConfidence',
-    'claimFreshness',
-    'questionType',
-    'questionStatus',
-    'calloutType',
-    'enumerationCoverage',
-    'evidenceGapType',
-    'severity',
-    'evidenceQuality',
-    'primaryTierSourceTypes',
-  ];
-  return order
-    .filter((key) => Array.isArray(vocab[key]))
-    .map((key) => `- \`${key}\`: ${vocab[key].map((v) => `\`${v}\``).join(', ')}`)
-    .join('\n');
-}
-
-function dimensionsSummaryMarkdown(dimensions) {
-  if (!Array.isArray(dimensions) || !dimensions.length) return '- (dimension catalog unavailable)';
-  return dimensions
-    .map((d) => {
-      const sup = d.suppressedBy?.length ? ` (suppressed by: ${d.suppressedBy.map((s) => `\`${s}\``).join(', ')})` : '';
-      return `- \`${d.dimension}\` rank=${d.precedenceRank}${sup}`;
-    })
-    .join('\n');
-}
-
-function policySummaryMarkdown(policy) {
-  if (!policy || typeof policy !== 'object') return '- (agent policy unavailable)';
-  const lines = [];
-  if (policy.volatileFacts?.length) lines.push(`- Volatile facts: ${policy.volatileFacts.join(', ')}`);
-  if (policy.retryPolicy?.maxChapterRetries) lines.push(`- Max chapter retries: ${policy.retryPolicy.maxChapterRetries}`);
-  if (policy.retryPolicy?.requireMonotonicFailureDecrease !== undefined) lines.push(`- Require retry progress: ${policy.retryPolicy.requireMonotonicFailureDecrease}`);
-  if (policy.finalResponseFields?.length) lines.push(`- Final response fields: ${policy.finalResponseFields.join(', ')}`);
-  return lines.length ? lines.join('\n') : '- None';
-}
-
-function rendererSummaryMarkdown(contracts) {
-  if (!contracts || typeof contracts !== 'object') return '- (renderer contracts unavailable)';
-  return [
-    `- Figure types: ${(contracts.figureTypes ?? []).map((type) => `\`${type}\``).join(', ')}`,
-    `- Layouts: ${(contracts.figureLayouts ?? []).map((layout) => `\`${layout}\``).join(', ')}`,
-    `- Data fields: ${(contracts.figureDataFields ?? []).map((field) => `\`${field}\``).join(', ')}`,
-  ].join('\n');
-}
-
-function contractSourcesMarkdown(sources) {
-  if (!sources || typeof sources !== 'object') return '- (contract sources unavailable)';
-  return Object.entries(sources)
-    .map(([key, value]) => `- ${key}: \`${value}\``)
-    .join('\n');
-}
-
-function printListMarkdown(value) {
-  console.log(`# Startup research chapter order\n`);
-  console.log(`Config: \`${value.generatedFrom}\``);
-  console.log(`Report schema: \`${value.workflow.reportSchemaVersion}\``);
-  console.log('\n## Contract sources\n');
-  console.log(contractSourcesMarkdown(value.contractSources));
-  console.log('');
-  for (const chapter of value.chapters) {
-    console.log(`${chapter.order}. \`${chapter.file}\` — ${chapter.title} (key: \`${chapter.key}\`)`);
-  }
-  console.log('\nFinal artifacts:');
-  for (const [key, artifact] of Object.entries(value.workflow.finalArtifacts ?? {})) {
-    console.log(`- ${key}: \`${artifact.file}\` / \`${artifact.artifact}\``);
-  }
-  console.log('\n## Agent policy\n');
-  console.log(policySummaryMarkdown(value.workflow.agentPolicy));
-  console.log('\n## Vocabularies (canonical enums)\n');
-  console.log(vocabSummaryMarkdown(value.vocabularies));
-  console.log('\n## Validator dimensions (retry order)\n');
-  console.log(dimensionsSummaryMarkdown(value.checkDimensions));
-  console.log('\n## Renderer contracts\n');
-  console.log(rendererSummaryMarkdown(value.rendererContracts));
-}
-
-function printRuntimeContextMarkdown(runtimeContext) {
-  const chapter = runtimeContext.chapter;
-  console.log(`# Chapter ${chapter.order}: ${chapter.title}\n`);
-  console.log(`Config: \`${runtimeContext.generatedFrom}\``);
-  console.log(`Output: \`${chapter.file}\``);
-  console.log(`Artifact: \`${chapter.artifact}\``);
-  console.log(`Previous: ${runtimeContext.previousChapter ? `\`${runtimeContext.previousChapter.file}\`` : 'none'}`);
-  console.log(`Next: ${runtimeContext.nextChapter ? `\`${runtimeContext.nextChapter.file}\`` : 'none'}`);
-  console.log('\n## Contract sources\n');
-  console.log(contractSourcesMarkdown(runtimeContext.contractSources));
-  console.log('\n## Mission\n');
-  console.log(chapter.mission);
-  console.log('\n## Optional context\n');
-  console.log(listItems(chapter.optionalContext));
-  console.log('\n## Content requirements\n');
-  console.log(listItems(chapter.contentRequirements));
-  console.log('\n## Planned tables\n');
-  console.log(tableItems(chapter.plannedTables));
-  console.log('\n## Planned figures\n');
-  console.log(figureItems(chapter.plannedFigures));
-  console.log('\n## Evidence strategy\n');
-  console.log(listItems(chapter.evidenceStrategy));
-  console.log('\n## Quality bar\n');
-  console.log(listItems(chapter.qualityBar));
-  console.log('\n## Gate\n');
-  console.log(gateMarkdown(chapter.gate, chapter.letter));
-  console.log('\n## Vocabularies (canonical enums)\n');
-  console.log(vocabSummaryMarkdown(runtimeContext.vocabularies));
-  console.log('\n## Validator dimensions (retry order)\n');
-  console.log(dimensionsSummaryMarkdown(runtimeContext.checkDimensions));
-  console.log('\n## Agent policy\n');
-  console.log(policySummaryMarkdown(runtimeContext.workflow.agentPolicy));
-  console.log('\n## Renderer contracts\n');
-  console.log(rendererSummaryMarkdown(runtimeContext.rendererContracts));
-}
-
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const config = loadWorkflowConfig();
 
   if (args.list) {
-    const list = orderedList(config);
-    args.format === 'json' ? printJson(list) : printListMarkdown(list);
+    printJson(orderedList(config));
     return;
   }
 
   if (args.all) {
     const runtimeContexts = config.chapters.map((chapter) => buildRuntimeContext(config, chapter));
-    args.format === 'json' ? printJson(runtimeContexts) : runtimeContexts.forEach((runtimeContext, index) => {
-      if (index) console.log('\n---\n');
-      printRuntimeContextMarkdown(runtimeContext);
-    });
+    printJson(runtimeContexts);
     return;
   }
 
@@ -483,8 +318,7 @@ function main() {
     runtimeContext.runCache = runCacheContext(args.reportFolder);
   }
   const output = args.includeWorkflow ? runtimeContext : runtimeContext.chapter;
-  if (args.format === 'json') printJson(output);
-  else printRuntimeContextMarkdown(runtimeContext);
+  printJson(output);
 }
 
 main();

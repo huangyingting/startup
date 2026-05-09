@@ -20,6 +20,10 @@ export const FINAL_ARTIFACTS = Object.freeze({
   summaryCard: { file: 'summary-card.yaml', artifact: 'summary-card' },
 });
 export const GENERATED_REPORT_FILES = Object.freeze(Object.values(FINAL_ARTIFACTS).map((artifact) => artifact.file));
+// summary-card.yaml is the cross-run revision-graph anchor (current/superseded
+// pointers live here). Several scripts reference it by filename outside the
+// FINAL_ARTIFACTS map, so expose it as a named constant.
+export const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 const FINAL_REPORT_FILES = Object.freeze([...GENERATED_REPORT_FILES, REPORT_META_FILE]);
 
 // Single contract for non-zero exit codes used across skill scripts. Callers
@@ -177,7 +181,9 @@ export function canonicalSourceUrl(value) {
   }
 }
 
-export function asDateString(value) {
+// Internal helper used by parseDate(); kept private since no external caller
+// needs raw date-to-string coercion.
+function asDateString(value) {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
   return typeof value === 'string' ? value : '';
 }
@@ -252,13 +258,6 @@ export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
     plannedTables: chapter.plannedTables ?? [],
     plannedFigures: chapter.plannedFigures ?? [],
   }));
-}
-
-// Convenience: ordered list of chapter YAML filenames (`01-…`, `02-…`, …).
-// Use this anywhere you need to iterate per-chapter file names instead of
-// hardcoding the list (e.g. fixture replay, full-report assembly, doc tools).
-export function getAnalysisChapterFiles(config = loadWorkflowConfig()) {
-  return getAnalysisArtifacts(config).map((c) => c.file);
 }
 
 export function getCoreArtifacts(config = loadWorkflowConfig()) {

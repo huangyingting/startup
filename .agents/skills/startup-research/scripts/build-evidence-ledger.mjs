@@ -19,13 +19,13 @@
 // namespace. This makes chapter generation fully parallel-safe.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { EXIT, canonicalSourceUrl, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
-import { FRESHNESS_THRESHOLDS, EVIDENCE_QUALITY_TIERS, REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS } from './validation-catalog.mjs';
+import { EXIT, canonicalSourceUrl, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, registrableDomain, writeYaml } from './utils.mjs';
+import { FRESHNESS_THRESHOLDS, EVIDENCE_QUALITY_TIERS } from './validation-catalog.mjs';
 
-// Local: collapse all whitespace runs to single spaces and trim. Used only by
-// textKey() below for source/claim deduplication keys; not worth a public export.
-function compactText(value) {
-  return String(value ?? '').trim().replace(/\s+/g, ' ');
+// Local: collapse all whitespace runs to single spaces, trim, and lowercase
+// for source/claim deduplication keys.
+function textKey(value) {
+  return String(value ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
@@ -80,10 +80,6 @@ function loadAnalysisDocs(folder) {
 function sourceKey(source) {
   return canonicalSourceUrl(source?.url)
     || ['fallback', source?.publisher, source?.title, source?.date].map(textKey).join('|');
-}
-
-function textKey(value) {
-  return compactText(value).toLowerCase();
 }
 
 function claimKey(claim) {
@@ -213,7 +209,7 @@ function buildCoverageMatrix(docs, sources, claims) {
     const unresolvedQuestions = localQuestions.filter((q) => q?.status && q.status !== 'answered').length;
     const distinctDomains = new Set(
       localSources
-        .map((s) => normalizedDomain(s?.url))
+        .map((s) => registrableDomain(s?.url))
         .filter(Boolean),
     );
     byChapter[file] = {
@@ -245,7 +241,7 @@ function buildCoverageMatrix(docs, sources, claims) {
     const key = claim?.type ?? 'unknown';
     byClaimType[key] = (byClaimType[key] ?? 0) + 1;
   }
-  const distinctDomains = new Set(sources.map((s) => normalizedDomain(s?.url)).filter(Boolean));
+  const distinctDomains = new Set(sources.map((s) => registrableDomain(s?.url)).filter(Boolean));
   return {
     totalDistinctDomains: distinctDomains.size,
     byChapter,
@@ -254,20 +250,6 @@ function buildCoverageMatrix(docs, sources, claims) {
     byAccessStatus,
     byClaimType,
   };
-}
-
-function normalizedDomain(value) {
-  try {
-    const raw = String(value ?? '').trim();
-    if (!raw) return '';
-    const host = new URL(raw.startsWith('http') ? raw : `https://${raw}`).hostname.replace(/^www\./, '').toLowerCase();
-    const parts = host.split('.');
-    if (parts.length <= REGISTRABLE_DOMAIN_MAX_PARTS) return host;
-    const lastTwo = parts.slice(-2).join('.');
-    return MULTI_PART_TLDS.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
-  } catch {
-    return '';
-  }
 }
 
 function inferEvidenceQuality(sources, claims) {

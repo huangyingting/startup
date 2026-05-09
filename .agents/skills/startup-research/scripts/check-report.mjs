@@ -51,6 +51,7 @@ import {
   checkTableSchema,
   checkUniqueIds,
 } from './artifact-checks.mjs';
+import { OBSOLETE_SUMMARY_ROOT_FIELDS } from './contracts/report-artifacts.schema.mjs';
 import {
   BLOCK_TYPES,
   CALLOUT_TYPES,
@@ -76,8 +77,11 @@ const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 const FULL_REPORT_FILE = FINAL_ARTIFACTS.fullReport.file;
 const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
-const failures = [];
-const fail = (message) => failures.push(message);
+// Per-call failure collector. checkRun() swaps in a fresh array for each
+// report it processes and returns the captured failures, so callers (single
+// folder mode and runAll) don't share state and don't need a manual reset.
+let currentFailures = [];
+const fail = (message) => currentFailures.push(message);
 
 // ---------------------------------------------------------------------------
 // ledger schema
@@ -342,7 +346,7 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
       if (!Array.isArray(summary[field])) fail(`${cardPath}: summary.${field} must be an array`);
     }
   }
-  for (const field of ['headline', 'recommendation', 'confidence', 'riskRating', 'valuationStance', 'overallScore', 'keyMetrics', 'topStrengths', 'topRisks', 'unresolvedGaps']) {
+  for (const field of OBSOLETE_SUMMARY_ROOT_FIELDS) {
     if (card?.[field] !== undefined) fail(`${cardPath}: top-level field '${field}' is obsolete; nest under 'summary'`);
   }
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
@@ -460,13 +464,14 @@ function checkRevisionConsistency(run, parsed) {
 
 function checkRun(run, { contentGates = true } = {}) {
   const dir = join(REPORTS_DIR, run);
-  if (!existsSync(join(dir, SUMMARY_CARD_FILE))) return false;
+  currentFailures = [];
+  if (!existsSync(join(dir, SUMMARY_CARD_FILE))) return { checked: false, failures: [] };
 
-  const beforeMissing = failures.length;
+  const beforeMissing = currentFailures.length;
   for (const file of REQUIRED_ENGLISH_FILES) {
     if (!existsSync(join(dir, file))) fail(`${run}/${file}: missing required v2 artifact`);
   }
-  if (failures.length > beforeMissing) return true;
+  if (currentFailures.length > beforeMissing) return { checked: true, failures: [...currentFailures] };
 
   const parsed = parseRunArtifacts(run, dir);
   const ledger = parsed.get(EVIDENCE_FILE);
@@ -493,7 +498,7 @@ function checkRun(run, { contentGates = true } = {}) {
   }
 
   checkCardConsistency(run, card, reportDoc, ledger);
-  return true;
+  return { checked: true, failures: [...currentFailures] };
 }
 
 // ---------------------------------------------------------------------------
@@ -533,12 +538,12 @@ function parseArgs(argv) {
   return args;
 }
 
-function failureEnvelope(run, args, checked) {
+function failureEnvelope(run, args, runFailures, checked) {
   return validationEnvelope({
     ok: false,
     validator: 'check-report',
     artifact: run,
-    issues: failures.map((message) => validationIssue({
+    issues: runFailures.map((message) => validationIssue({
       path: String(message).split(':')[0] || run,
       message,
       dimension: args.contract ? 'reportContract' : 'reportGate',
@@ -549,9 +554,9 @@ function failureEnvelope(run, args, checked) {
   });
 }
 
-function emitSingle(args, run, checked) {
-  if (failures.length) {
-    const result = failureEnvelope(run, args, checked);
+function emitSingle(args, run, runFailures, checked) {
+  if (runFailures.length) {
+    const result = failureEnvelope(run, args, runFailures, checked);
     if (args.format === 'json') console.log(JSON.stringify(result, null, 2));
     else if (args.format === 'compact') console.log(formatValidationCompact(result));
     else console.error(formatValidationText(result, { failureMessage: '[check:report] failures' }));
@@ -586,19 +591,19 @@ function emitSingle(args, run, checked) {
 function runAll(args) {
   // Walk every reports/<runId>/ folder, filter to finalized v2 reports,
   // run the per-folder contract check, and aggregate failures into one
-  // exit code. `failures` is reset between runs because it is module-level.
+  // exit code. checkRun() returns its own failures array per call, so no
+  // shared state is touched between iterations.
   const collected = [];
   let passCount = 0;
   for (const runId of listDirs(REPORTS_DIR).sort()) {
     if (!isRunId(runId)) continue;
     const folder = join(REPORTS_DIR, runId);
     if (!isFinalizedReportFolder(folder)) continue;
-    failures.length = 0;
-    const checked = checkRun(runId, { contentGates: false });
-    if (checked && failures.length === 0) {
+    const { checked, failures: runFailures } = checkRun(runId, { contentGates: false });
+    if (checked && runFailures.length === 0) {
       passCount += 1;
     } else {
-      collected.push({ runId, checked, failures: [...failures] });
+      collected.push({ runId, checked, failures: runFailures });
     }
   }
   if (collected.length) {
@@ -660,8 +665,8 @@ try {
     process.exit(EXIT.failure);
   }
 
-  const checked = checkRun(run, { contentGates: !args.contract });
-  process.exit(emitSingle(args, run, checked));
+  const { checked, failures: runFailures } = checkRun(run, { contentGates: !args.contract });
+  process.exit(emitSingle(args, run, runFailures, checked));
 } catch (err) {
   console.error(`[check:report] fatal error: ${err.message}`);
   process.exit(EXIT.failure);

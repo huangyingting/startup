@@ -3,7 +3,9 @@
 // Validators should return one envelope shape so agents can triage failures
 // without learning each script's bespoke prose format.
 
-export function pathToString(path) {
+// Internal: only validationIssue() consumes this. No external caller has a
+// raw zod path that needs the same coercion, so keep it module-local.
+function pathToString(path) {
   if (path === undefined || path === null || path === '' || path === '/') return '/';
   if (Array.isArray(path)) return path.length ? path.map(String).join('.') : '/';
   return String(path);
@@ -64,6 +66,10 @@ export function validationEnvelope({
   retryOrder = [],
   suppressedDimensions = [],
   globalHints = [],
+  // Optional richer surfaces used by check-chapter.mjs. Other validators
+  // omit them and they stay out of the JSON shape entirely.
+  counts = null,
+  objectFailures = [],
 }) {
   const normalizedIssues = issues.map((entry) => validationIssue(entry));
   const normalizedWarnings = warnings.map((entry) => validationWarning(entry));
@@ -79,6 +85,8 @@ export function validationEnvelope({
     ...(retryOrder.length ? { retryOrder } : {}),
     ...(suppressedDimensions.length ? { suppressedDimensions } : {}),
     ...(globalHints.length ? { globalHints } : {}),
+    ...(counts ? { counts } : {}),
+    ...(objectFailures.length ? { objectFailures } : {}),
     summary,
   };
 }

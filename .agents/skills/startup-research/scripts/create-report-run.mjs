@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import yaml from 'js-yaml';
 import {
   EXIT,
-  FINAL_ARTIFACTS,
+  SUMMARY_CARD_FILE,
   isFinalizedReportFolder,
   listDirs,
   loadWorkflowConfig,
@@ -20,8 +20,6 @@ import {
   researchCacheDir,
   slugify,
 } from './utils.mjs';
-
-const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 function volatileFactRefreshInstruction() {
   const facts = loadWorkflowConfig().agentPolicy?.volatileFacts ?? [];

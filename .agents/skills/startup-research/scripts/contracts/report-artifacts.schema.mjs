@@ -31,6 +31,15 @@ import { validationIssue, zodIssues } from './validation-result.mjs';
 
 export const SCHEMA_VERSION = 'report-v2';
 
+// Fields that used to live at the top level of report-meta.yaml / summary-card.yaml
+// but must now be nested under `summary`. check-report-meta.mjs flags them on
+// report-meta.yaml; check-report.mjs flags them on summary-card.yaml. Single
+// source so the two checkers cannot drift.
+export const OBSOLETE_SUMMARY_ROOT_FIELDS = Object.freeze([
+  'headline', 'recommendation', 'confidence', 'riskRating', 'valuationStance',
+  'overallScore', 'keyMetrics', 'topStrengths', 'topRisks', 'unresolvedGaps',
+]);
+
 const nonEmptyString = z.string().trim().min(1, 'must be a non-empty string');
 const nullableString = z.string().nullable();
 const dateLike = z.union([

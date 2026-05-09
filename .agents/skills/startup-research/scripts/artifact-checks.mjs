@@ -23,17 +23,11 @@ import {
   CalloutSchema,
   ClaimSchema,
   DocumentHeadSchema,
-  SCHEMA_VERSION as REPORT_SCHEMA_VERSION,
   SourceSchema,
   TableSchema,
   schemaErrors,
 } from './contracts/report-artifacts.schema.mjs';
 import { TONE_VALUES, formatEnumChoices } from './validation-catalog.mjs';
-
-// Single source of truth for the report schema version. Imported by both
-// check-chapter (per-file head check) and check-report (cross-file head
-// + cross-artifact identity checks).
-export const SCHEMA_VERSION = REPORT_SCHEMA_VERSION;
 
 const FIGURE_TYPE_SET = new Set(FIGURE_TYPES);
 const FIGURE_LAYOUT_SET = new Set(FIGURE_LAYOUTS);

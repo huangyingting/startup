@@ -10,13 +10,8 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, FINAL_ARTIFACTS, REPORT_META_FILE, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
-import { SCHEMA_VERSION } from './artifact-checks.mjs';
-import {
-  CARD_CONFIDENCES,
-  CARD_RECOMMENDATIONS,
-  CARD_RISK_RATINGS,
-  CARD_VALUATION_STANCES,
-} from './validation-catalog.mjs';
+import { ReportMetaSchema, SCHEMA_VERSION, schemaErrors } from './contracts/report-artifacts.schema.mjs';
+
 const DEFAULT_DISCLAIMER = 'This report is a public-evidence diligence snapshot, not investment advice. Important financial, legal, technical, and contractual facts remain non-public and should be verified directly with management and primary documents before any investment decision.';
 const CLAIM_ID_RE = /^C[A-Z]\d{3}$/;
 const LEGACY_CLAIM_ID_RE = /^C\d{3}$/;
@@ -38,6 +33,7 @@ function parseArgs(argv) {
   return args;
 }
 
+function main() {
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
   abort('Usage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run]');
@@ -74,17 +70,21 @@ const chapterDocs = chapters.map((spec) => {
 // ---------------------------------------------------------------------------
 // guardrails on report-meta.yaml shape
 // ---------------------------------------------------------------------------
-function requireField(obj, path) {
-  const segments = path.split('.');
-  let cursor = obj;
-  for (const segment of segments) {
-    if (cursor == null || typeof cursor !== 'object' || !(segment in cursor)) {
-      abort(`${REPORT_META_FILE} is missing required field: ${path}`);
-    }
-    cursor = cursor[segment];
+// All shape and enum guarantees come from ReportMetaSchema (single source of
+// truth shared with check-report-meta.mjs). build-report runs the same Zod
+// schema so it can be invoked standalone without first running check-report-meta.
+function enforceReportMetaShape(metaDoc) {
+  const issues = schemaErrors(ReportMetaSchema, metaDoc, {
+    path: REPORT_META_FILE,
+    dimension: 'reportMetaShape',
+    source: 'scripts/contracts/report-artifacts.schema.mjs',
+    fix: 'Run check-report-meta.mjs and fix the reported issues before re-running build-report.',
+  });
+  if (issues.length) {
+    const lines = issues.slice(0, 8).map((issue) => `  - ${issue.path}: ${issue.message}`);
+    const trailer = issues.length > 8 ? `\n  - ... and ${issues.length - 8} more (run check-report-meta.mjs for the full list)` : '';
+    abort(`${REPORT_META_FILE} fails ReportMetaSchema:\n${lines.join('\n')}${trailer}`);
   }
-  if (cursor == null || cursor === '') abort(`${REPORT_META_FILE} field is empty: ${path}`);
-  return cursor;
 }
 
 function collectReportMetaClaimRefs(value, path = REPORT_META_FILE, out = []) {
@@ -132,44 +132,12 @@ function checkReportMetaClaimRefs(metaDoc, evidenceLedger) {
   }
 }
 
+enforceReportMetaShape(meta);
 checkReportMetaClaimRefs(meta, evidence);
 
-const slug = requireField(meta, 'slug');
-const runDate = requireField(meta, 'runDate');
-const companyName = requireField(meta, 'company.name');
-requireField(meta, 'summary.recommendation');
-requireField(meta, 'summary.confidence');
-requireField(meta, 'summary.riskRating');
-requireField(meta, 'summary.valuationStance');
-requireField(meta, 'companyProfile.summary');
-requireField(meta, 'companyProfile.productSummary');
-requireField(meta, 'summary.headline');
-requireField(meta, 'summary.overallScore');
-requireField(meta, 'summary.topStrengths');
-requireField(meta, 'summary.topRisks');
-requireField(meta, 'summary.unresolvedGaps');
-
-// Enum gates: catch typos in judgment fields here so the agent fixes
-// report-meta.yaml before bad values land in summary-card.yaml. The card
-// enum sets live in validation-catalog.mjs (single source of truth shared with
-// check-report); we just unwrap them into ordered arrays so the abort
-// message lists allowed values in a stable order.
-const SUMMARY_ENUMS = {
-  recommendation: [...CARD_RECOMMENDATIONS],
-  confidence: [...CARD_CONFIDENCES],
-  riskRating: [...CARD_RISK_RATINGS],
-  valuationStance: [...CARD_VALUATION_STANCES],
-};
-for (const [field, allowed] of Object.entries(SUMMARY_ENUMS)) {
-  const value = meta.summary?.[field];
-  if (!allowed.includes(value)) {
-    abort(`${REPORT_META_FILE} summary.${field}="${value}" is not one of ${allowed.join('|')}`);
-  }
-}
-const overallScore = meta.summary.overallScore;
-if (typeof overallScore !== 'number' || overallScore < 0 || overallScore > 10) {
-  abort(`${REPORT_META_FILE} summary.overallScore must be a number between 0 and 10 (got ${overallScore})`);
-}
+const slug = meta.slug;
+const runDate = meta.runDate;
+const companyName = meta.company.name;
 
 // ---------------------------------------------------------------------------
 // chapter → 91 chapter object
@@ -416,3 +384,6 @@ function computeSourceStats(evidenceLedger, chapters, runDateStr) {
     averageSourceAgeDays,
   };
 }
+} // end main
+
+main();

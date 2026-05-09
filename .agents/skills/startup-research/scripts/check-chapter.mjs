@@ -49,6 +49,7 @@ import {
   makeIdPattern,
   resolveFixHint,
 } from './validation-catalog.mjs';
+import { validationEnvelope } from './contracts/validation-result.mjs';
 
 // Loaded eagerly so the chapter-id `spec` is available for the per-chapter
 // ID patterns built immediately after argv parsing. Wrapped so a broken
@@ -154,10 +155,6 @@ function figureTypeSet(doc) {
   return new Set((doc?.figures ?? []).map((figure) => figure?.type).filter(Boolean));
 }
 
-function wordCount(value) {
-  return String(value ?? '').trim().split(/\s+/).filter(Boolean).length;
-}
-
 function figureDataPointCount(figure) {
   const data = figure?.data ?? {};
   return Math.max(
@@ -173,7 +170,7 @@ function figureDataPointCount(figure) {
 }
 
 function detailStats(doc) {
-  const sectionWords = (doc.sections ?? []).map((section) => wordCount(section?.body));
+  const sectionWords = (doc.sections ?? []).map((section) => String(section?.body ?? '').trim().split(/\s+/).filter(Boolean).length);
   const tableRows = (doc.tables ?? []).map((table) => table?.rows?.length ?? 0);
   const figureDataPoints = (doc.figures ?? []).map(figureDataPointCount);
   return {
@@ -935,24 +932,48 @@ const failedDimensions = [...new Set(visibleFailures.map((entry) => entry.dimens
 const retryOrder = sortByPrecedence(failedDimensions);
 
 if (args.format === 'json') {
-  const report = {
+  // Wrap in the shared validation envelope so agents can parse JSON output
+  // from every check-* validator with one schema. Each check-chapter "failure"
+  // becomes an issue with its file path under `path` and dimension/fix/extras
+  // preserved via spread.
+  const issues = visibleFailures.map(({ file, message, dimension, fix, ...extra }) => ({
+    path: file,
+    message,
+    dimension,
+    code: dimension,
+    fix,
+    ...extra,
+  }));
+  const warningEntries = warnings.map(({ file, message, dimension, fix, ...extra }) => ({
+    path: file,
+    message,
+    dimension,
+    code: dimension,
+    fix,
+    ...extra,
+  }));
+  const envelope = validationEnvelope({
     ok,
+    validator: 'check-chapter',
     artifact: spec.file,
-    chapterKey: spec.key,
     reportFolder,
+    issues,
+    warnings: warningEntries,
     counts,
-    globalHints,
     objectFailures,
-    failures: visibleFailures,
-    warnings,
-    failedDimensions,
-    warningDimensions: [...new Set(warnings.map((entry) => entry.dimension))],
-    acknowledgedWarnings: [...ackByDim.keys()],
-    unackedWarningDimensions: unackedWarningDims,
-    suppressedDimensions,
+    globalHints,
     retryOrder,
-  };
-  console.log(JSON.stringify(report, null, 2));
+    suppressedDimensions,
+    summary: {
+      chapterKey: spec.key,
+      strict: args.strict,
+      failedDimensions,
+      warningDimensions: [...new Set(warnings.map((entry) => entry.dimension))],
+      acknowledgedWarnings: [...ackByDim.keys()],
+      unackedWarningDimensions: unackedWarningDims,
+    },
+  });
+  console.log(JSON.stringify(envelope, null, 2));
 } else if (args.format === 'compact') {
   // Single-stream, lossless line format. Callers should keep the full output
   // and process exit code intact instead of piping through preview/filter tools
