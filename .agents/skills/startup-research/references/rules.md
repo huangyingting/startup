@@ -195,7 +195,6 @@ Precedence `—` marks **warning-class** dimensions: they never appear in `retry
 | 48 | `contentRequirementCoverage` | Add researchQuestions whose targets[] cover the un-targeted contentRequirements. | `yamlParse`, `localEvidenceMissing` |
 | 49 | `unverifiedSource` | One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess. | — |
 | — | `tableNotes` | Write tables[].notes (one line: data source / estimation / partial coverage / what null means), or acknowledge dimension "tableNotes" for pure factual snapshot tables. | — |
-| — | `acknowledgedWarnings` | Each acknowledgedWarnings entry must (1) target a warning-class dimension (paywallRisk, sectionsMax, tablesMax, figuresMax, figureType, tableNotes, unverifiedSource) and (2) carry a >=30-char reason. Failure-class dimensions cannot be acknowledged. | — |
 
 ### `acknowledgedWarnings` opt-out
 

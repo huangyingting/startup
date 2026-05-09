@@ -474,6 +474,15 @@ export function resolveFixHint(dimension, extra) {
 // entry pairs a dimension with its precedence rank, the suppressors that
 // could mask it, and a baseline fix string (function fixes are called with
 // {} so the agent sees the generic form before it has concrete extras).
+//
+// `acknowledgedWarnings` is intentionally excluded: it is a meta-warning
+// emitted by check-chapter when an ack entry targets a non-warning-class
+// dimension, NOT a validation dimension agents can fail or fix. Its
+// semantics live in the `### acknowledgedWarnings opt-out` prose section of
+// rules.md, generated separately by build-rules-doc.mjs. Keeping it in
+// FIX_HINTS lets resolveFixHint() still attach a friendly hint to the
+// runtime warning.
+const CATALOG_EXCLUDED_DIMENSIONS = new Set(['acknowledgedWarnings']);
 export function dimensionCatalog() {
   const rankByDim = new Map(RETRY_PRECEDENCE.map((dim, i) => [dim, i]));
   const suppressedByMap = new Map();
@@ -484,6 +493,7 @@ export function dimensionCatalog() {
     }
   }
   return Object.keys(FIX_HINTS)
+    .filter((dimension) => !CATALOG_EXCLUDED_DIMENSIONS.has(dimension))
     .map((dimension) => ({
       dimension,
       precedenceRank: rankByDim.get(dimension) ?? null,

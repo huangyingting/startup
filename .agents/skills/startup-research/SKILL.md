@@ -42,7 +42,7 @@ For each chapter from the `--list` roster:
 1. Load its per-chapter delta:
    `node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order <n> --include-context --report-folder <reportFolder>`
    - The loader always emits JSON to stdout; do not pass `--format`.
-   - Omit `--include-context` for the first chapter (no earlier rollups exist yet) or when drafting chapters in parallel (`--include-context` would project a stale rollup of unfinished sibling chapters).
+   - Omit `--include-context` when drafting chapters in parallel (it would project a stale rollup of unfinished sibling chapters). On the first chapter the flag is harmless — the rollup is just empty — so keep it for consistency unless you are also drafting later chapters concurrently.
 2. Author the chapter YAML at `reportFolder/<runtimeContext.chapter.file>` using:
    - `runtimeContext.chapter` for mission, content requirements, planned tables/figures, quality bar, and gate.
    - [`references/rules.md`](references/rules.md) for agent policy, gates, the **ID system** (mint every `S/C/T/F/Q` id with this chapter's `runtimeContext.chapter.letter`), validator dimensions, and renderer contracts.
