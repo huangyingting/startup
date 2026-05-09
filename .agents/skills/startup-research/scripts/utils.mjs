@@ -19,12 +19,14 @@ export const FINAL_ARTIFACTS = Object.freeze({
   fullReport: { file: 'full-report.yaml', artifact: 'full-report' },
   summaryCard: { file: 'summary-card.yaml', artifact: 'summary-card' },
 });
-export const GENERATED_REPORT_FILES = Object.freeze(Object.values(FINAL_ARTIFACTS).map((artifact) => artifact.file));
 // summary-card.yaml is the cross-run revision-graph anchor (current/superseded
 // pointers live here). Several scripts reference it by filename outside the
 // FINAL_ARTIFACTS map, so expose it as a named constant.
 export const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
-const FINAL_REPORT_FILES = Object.freeze([...GENERATED_REPORT_FILES, REPORT_META_FILE]);
+const FINAL_REPORT_FILES = Object.freeze([
+  ...Object.values(FINAL_ARTIFACTS).map((artifact) => artifact.file),
+  REPORT_META_FILE,
+]);
 
 // Single contract for non-zero exit codes used across skill scripts. Callers
 // (CI, finalize-report) switch on these to distinguish recoverable

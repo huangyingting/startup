@@ -27,7 +27,7 @@ import {
   SOURCE_STANCES,
   SOURCE_TYPES,
 } from '../validation-catalog.mjs';
-import { validationIssue, zodIssues } from './validation-result.mjs';
+import { zodIssues } from './validation-result.mjs';
 
 export const SCHEMA_VERSION = 'report-v2';
 
@@ -369,13 +369,4 @@ export function schemaErrors(schema, value, { path = '/', dimension = 'schema', 
     ...issue,
     path: issue.path === '/' ? path : `${path}.${issue.path}`.replace(/\.\//g, ''),
   }));
-}
-
-export function requiredFieldIssue(path, field) {
-  return validationIssue({
-    path: `${path}.${field}`,
-    message: `${path} missing ${field}`,
-    dimension: 'schema',
-    field,
-  });
 }
