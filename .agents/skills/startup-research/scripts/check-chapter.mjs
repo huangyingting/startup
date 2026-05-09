@@ -23,7 +23,7 @@
 // `retryOrder[]`, and `suppressedDimensions[]` drive root-cause-first repair.
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
-import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
+import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, loadWorkflowConfig, registrableDomain, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
 import {
   checkArtifactRefs,
@@ -59,8 +59,17 @@ import { validationEnvelope } from './contracts/validation-result.mjs';
 // workflow-config.yaml surfaces as a friendly error instead of a raw stack trace
 // before the user even sees the usage line.
 let ANALYSIS_ARTIFACTS;
+// Lowercased substring tokens that mark a search query as volatile-fact-shaped.
+// Sourced from agentPolicy.volatileFactQueryTokens; consumed by
+// checkSearchQueryFreshness() to decide which queries must include a year
+// token derived from doc.runDate.
+let VOLATILE_FACT_QUERY_TOKENS;
 try {
-  ANALYSIS_ARTIFACTS = getAnalysisArtifacts();
+  const config = loadWorkflowConfig();
+  ANALYSIS_ARTIFACTS = getAnalysisArtifacts(config);
+  VOLATILE_FACT_QUERY_TOKENS = (config.agentPolicy?.volatileFactQueryTokens ?? [])
+    .map((token) => String(token).toLowerCase())
+    .filter((token) => token.length > 0);
 } catch (err) {
   console.error(`[check:chapter] failed to load workflow config: ${err.message}`);
   console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose workflow-config.yaml.');
@@ -361,6 +370,50 @@ function checkSearchQueries(file, doc) {
     if (typeof q !== 'object' || q === null || typeof q.query !== 'string' || !q.query.trim()) {
       fail('searchQueriesMissing', `${file}: localEvidence.searchQueries[${index}] must have a non-empty query string`);
     }
+  }
+}
+
+// Per-query freshness anchor: every query whose lowercased text contains a
+// volatileFactQueryTokens substring must also contain the runDate's year (or
+// the prior year for trailing windows) as a literal 4-digit token. This
+// pushes the search engine toward fresh sources for the volatile facts the
+// agent is supposed to re-fetch every run (rules.md → researchRules). Warn
+// only by default so a single un-anchored query doesn't break the chapter;
+// --strict and finalize-report promote the warning to a failure.
+//
+// Skipped when:
+//   - searchQueries is not an array (searchQueriesMissing already fired);
+//   - doc.runDate is missing/malformed (documentHead already fires);
+//   - VOLATILE_FACT_QUERY_TOKENS is empty (workflow-config drift; the
+//     check-workflow-config gate also flags this).
+// Cascade-suppressed by yamlParse and localEvidenceMissing.
+function checkSearchQueryFreshness(file, doc) {
+  if (!Array.isArray(VOLATILE_FACT_QUERY_TOKENS) || VOLATILE_FACT_QUERY_TOKENS.length === 0) return;
+  const queries = doc?.localEvidence?.searchQueries;
+  if (!Array.isArray(queries) || queries.length === 0) return;
+  const yearMatch = typeof doc?.runDate === 'string' ? doc.runDate.match(/^(\d{4})-\d{2}-\d{2}$/) : null;
+  if (!yearMatch) return;
+  const currentYear = Number.parseInt(yearMatch[1], 10);
+  const priorYear = currentYear - 1;
+  const yearRegex = new RegExp(`\\b(?:${currentYear}|${priorYear})\\b`);
+  for (const [index, qe] of queries.entries()) {
+    const text = typeof qe?.query === 'string' ? qe.query.trim() : '';
+    if (!text) continue;
+    const lower = text.toLowerCase();
+    const matchedToken = VOLATILE_FACT_QUERY_TOKENS.find((token) => {
+      // Word-ish substring: the token is treated as a literal substring.
+      // Cheap and good enough for this list ("raise", "ipo", "ceo"); the
+      // alternative \\b-based regex is fragile around punctuation like
+      // "S-1" and adds no precision the agent can act on.
+      return lower.includes(token);
+    });
+    if (!matchedToken) continue;
+    if (yearRegex.test(text)) continue;
+    warn(
+      'searchQueryFreshness',
+      `${file}: localEvidence.searchQueries[${index}].query "${text}" matches volatile-fact token "${matchedToken}" but contains neither ${currentYear} nor ${priorYear}; volatile-fact queries must include the current year (and optionally the prior year) as a literal token so the search engine biases toward fresh sources.`,
+      { index, query: text, currentYear, priorYear, matchedToken },
+    );
   }
 }
 
@@ -819,6 +872,7 @@ if (doc) {
   checkResearchQuestions(spec.file, doc, gate, plannedTablesByName, plannedFiguresByName, (spec.contentRequirements ?? []).length);
   checkClaimAnswerRefs(spec.file, doc);
   checkSearchQueries(spec.file, doc);
+  checkSearchQueryFreshness(spec.file, doc);
   const earlierUrls = loadEarlierChapterUrls(reportFolder, spec, ANALYSIS_ARTIFACTS);
   checkSources(spec.file, doc, gate, earlierUrls);
   // Cross-check cited URLs against the fetch-url trail file. The trail is

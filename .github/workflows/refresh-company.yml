@@ -235,8 +235,8 @@ jobs:
           set -euo pipefail
           shopt -s nullglob
           mapfile -t required_inputs < <(
-            node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list --format json |
-              node --input-type=module -e 'import fs from "node:fs"; const ctx = JSON.parse(fs.readFileSync(0, "utf8")); const allowed = ctx.workflow?.allowedReportFiles ?? {}; const files = [...(allowed.chapterArtifacts ?? []), ...(allowed.handAuthored ?? [])]; for (const file of files) console.log(file);'
+            node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list |
+              node --input-type=module -e 'import fs from "node:fs"; const ctx = JSON.parse(fs.readFileSync(0, "utf8")); const chapters = (ctx.chapters ?? []).map((c) => c.file).filter(Boolean); for (const file of [...chapters, "report-meta.yaml"]) console.log(file);'
           )
           if [ "${#required_inputs[@]}" -eq 0 ]; then
             echo "No required report inputs found in runtime context." >&2
@@ -296,8 +296,8 @@ jobs:
           set -euo pipefail
           shopt -s nullglob
           mapfile -t required_files < <(
-            node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list --format json |
-              node --input-type=module -e 'import fs from "node:fs"; const ctx = JSON.parse(fs.readFileSync(0, "utf8")); const allowed = ctx.workflow?.allowedReportFiles ?? {}; const files = [...(allowed.handAuthored ?? []), ...(allowed.generated ?? [])]; for (const file of files) console.log(file);'
+            node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list |
+              node --input-type=module -e 'import fs from "node:fs"; for (const file of ["report-meta.yaml", "evidence.yaml", "full-report.yaml", "summary-card.yaml"]) console.log(file);'
           )
           if [ "${#required_files[@]}" -eq 0 ]; then
             echo "No required finalized report files found in runtime context." >&2

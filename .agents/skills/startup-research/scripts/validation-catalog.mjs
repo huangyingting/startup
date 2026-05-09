@@ -222,6 +222,7 @@ export const WARNING_DIMENSIONS = new Set([
   'tableNotes',
   'unverifiedSource',
   'fetchTrailMissing',
+  'searchQueryFreshness',
 ]);
 
 // Derived once for messaging consistency. Sorted so the printed order is
@@ -265,6 +266,10 @@ export const FIX_HINTS = {
   researchQuestionClosure: ({ id } = {}) =>
     `Add an evidenceGap whose relatedQuestionRefs[] includes ${id ?? 'the still-open question'}.`,
   searchQueriesMissing: 'Append the actual queries you ran into localEvidence.searchQueries[] ({query, engine, hits, retainedSourceRefs}).',
+  searchQueryFreshness: ({ query, currentYear, priorYear, matchedToken } = {}) =>
+    query && currentYear
+      ? `Re-issue the query with the current year (and prior year for trailing windows): "${query} ${currentYear}" or "${query} ${priorYear} ${currentYear}". The volatile-fact token "${matchedToken}" triggered this check; if the query is genuinely historical, rephrase it so it no longer matches a volatile-fact token. Default gate warns; --strict and finalize-report fail.`
+      : 'For volatile-fact queries (funding/ARR/headcount/customers/leadership/regulatory/launches), append the current year — and prior year for trailing windows — derived from runDate; the searchQueryFreshness validator (warning by default, --strict promotes to failure) reads agentPolicy.volatileFactQueryTokens to decide which queries are volatile-fact-shaped.',
   sourceShape: ({ id } = {}) =>
     id ? `Fill the missing required field on source ${id} (see message for which one).` : 'Fill accessStatus and stance (and other required fields) on each source.',
   sourceDomains: ({ actual, required } = {}) =>
@@ -391,7 +396,7 @@ export const CASCADE_SUPPRESSORS = {
     'researchQuestions', 'researchQuestionShape', 'researchQuestionTargets',
     'researchQuestionTypeMix', 'researchQuestionAdverse',
     'researchQuestionAnswerCoverage', 'researchQuestionClosure',
-    'searchQueriesMissing',
+    'searchQueriesMissing', 'searchQueryFreshness',
     'sources', 'sourceShape', 'sourceDomains', 'sourceTypeSpread',
     'requiredSourceTypes', 'netNewSources', 'paywallRisk',
     'sourceStanceSpread',
@@ -411,7 +416,7 @@ export const CASCADE_SUPPRESSORS = {
     'researchQuestions', 'researchQuestionShape', 'researchQuestionTargets',
     'researchQuestionTypeMix', 'researchQuestionAdverse',
     'researchQuestionAnswerCoverage', 'researchQuestionClosure',
-    'searchQueriesMissing',
+    'searchQueriesMissing', 'searchQueryFreshness',
     'sources', 'sourceShape', 'sourceDomains', 'sourceTypeSpread',
     'requiredSourceTypes', 'netNewSources', 'paywallRisk',
     'sourceStanceSpread',
@@ -448,7 +453,7 @@ export const RETRY_PRECEDENCE = [
   'calloutShape',
   'sectionsMin', 'sectionsMax', 'artifactsMin', 'tablesMax', 'figuresMax',
   'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
-  'contentRequirementCoverage', 'unverifiedSource', 'fetchTrailMissing',
+  'contentRequirementCoverage', 'searchQueryFreshness', 'unverifiedSource', 'fetchTrailMissing',
 ];
 
 // ---------------------------------------------------------------------------
