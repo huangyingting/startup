@@ -680,7 +680,8 @@ if (doc) {
       fail('slugConsistency', `${spec.file}: slug "${doc.slug}" does not match folder slug "${canonical}"`, { actual: doc.slug, required: canonical });
     }
   }
-  // Chapter-local table/figure id uniqueness (T### / F###). Duplicate or
+  // Chapter-local table/figure id uniqueness (T<ChapterLetter>### /
+  // F<ChapterLetter>###). Duplicate or
   // malformed ids would otherwise blow up at build-evidence-ledger/build-report time.
   {
     const { errors } = checkUniqueIds(doc.tables, { label: 'table', pattern: ID_PATTERN_CHAPTER_TABLE, path: spec.file });

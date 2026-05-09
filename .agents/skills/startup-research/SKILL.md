@@ -48,6 +48,7 @@ For each chapter from the `--list` roster:
    - [`references/rules.md`](references/rules.md) for agent policy, gates, the **ID system** (mint every `S/C/T/F/Q` id with this chapter's `runtimeContext.chapter.letter`), validator dimensions, and renderer contracts.
    - [`references/contracts.md`](references/contracts.md) for the chapter YAML field shapes and inline allowed enum values.
 3. Search → fetch → record (in this order):
+   - Use the host agent's approved web/search capability (or an approved search API/tool provided by the runtime) to discover candidate sources. If no source-discovery capability is available in the current environment, stop before authoring YAML and ask the user for a source pack or enabled search tool rather than inventing sources.
    - Run searches to discover candidate sources; record each query you actually issued in `localEvidence.searchQueries[]`.
    - For each retained URL, retrieve it with the [`fetch-url`](../fetch-url/SKILL.md) skill (with `STARTUP_FETCH_LOG_PATH` set, this also writes the fetch trail that `unverifiedSource` audits against).
    - Store reviewed sources, atomic claims, typed research questions, and typed evidence gaps in `localEvidence`.
@@ -107,8 +108,8 @@ When `finalize-report` exits 0, summarize the run for the user using every field
 | confidence | `summary-card.yaml` → `summary.confidence` |
 | risks | `summary-card.yaml` → `summary.topRisks[]` |
 | valuation stance | `summary-card.yaml` → `summary.valuationStance` |
-| table count | `full-report.yaml` → sum of `chapters[].tables[].length` |
-| figure count | `full-report.yaml` → sum of `chapters[].figures[].length` |
+| table count | `full-report.yaml` → `tables.length` |
+| figure count | `full-report.yaml` → `figures.length` |
 | finalize result | the exit-0 line printed by `finalize-report` |
 | main gaps | `summary-card.yaml` → `summary.unresolvedGaps[]` |
 

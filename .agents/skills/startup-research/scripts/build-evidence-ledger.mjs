@@ -10,7 +10,7 @@
 //   - Sources: deduped by canonical URL. The first occurrence wins as
 //     `canonical`; subsequent duplicates are kept in the ledger but tagged
 //     with `canonical: <firstId>` so the website can resolve to one entry.
-//   - Claims: same treatment, keyed by statement+topic+canonical sourceRefs.
+//   - Claims: same treatment, keyed by statement+topic+canonicalized sourceRefs.
 //   - evidenceGaps: aggregated from all chapters as-is (no dedup needed
 //     because each gap carries chapter-letter-scoped relatedQuestionRefs).
 //
@@ -82,9 +82,10 @@ function sourceKey(source) {
     || ['fallback', source?.publisher, source?.title, source?.date].map(textKey).join('|');
 }
 
-function claimKey(claim) {
+function claimKey(claim, canonicalIdBySourceId = new Map()) {
   const sourceRefs = claim.sourceRefs ?? [];
-  return [textKey(claim?.statement), textKey(claim?.topic), [...sourceRefs].sort().join(',')].join('|');
+  const canonicalRefs = sourceRefs.map((ref) => canonicalIdBySourceId.get(ref) ?? ref);
+  return [textKey(claim?.statement), textKey(claim?.topic), [...canonicalRefs].sort().join(',')].join('|');
 }
 
 // Aggregate sources from every chapter, preserving original chapter-letter
@@ -95,6 +96,7 @@ function claimKey(claim) {
 function consolidateSources(docs) {
   const sources = [];
   const canonicalByKey = new Map(); // urlKey -> first id seen
+  const canonicalIdBySourceId = new Map(); // source id -> canonical source id
   let duplicateCount = 0;
   for (const [, doc] of docs) {
     for (const source of doc.localEvidence?.sources ?? []) {
@@ -103,19 +105,21 @@ function consolidateSources(docs) {
       if (existingCanonical && existingCanonical !== source.id) {
         // Keep the duplicate but tag it as canonical-of the first id.
         sources.push({ ...source, canonical: existingCanonical });
+        if (source?.id) canonicalIdBySourceId.set(source.id, existingCanonical);
         duplicateCount += 1;
       } else {
         if (!existingCanonical) canonicalByKey.set(key, source.id);
+        if (source?.id) canonicalIdBySourceId.set(source.id, source.id);
         sources.push({ ...source });
       }
     }
   }
-  return { sources, duplicateCount };
+  return { sources, duplicateCount, canonicalIdBySourceId };
 }
 
 // Aggregate claims from every chapter, preserving original chapter-letter
 // IDs (CO001, CM045, ...). Same canonical-tagging strategy as sources.
-function consolidateClaims(docs) {
+function consolidateClaims(docs, canonicalIdBySourceId) {
   const claims = [];
   const evidenceGaps = [];
   const canonicalByKey = new Map();
@@ -126,7 +130,7 @@ function consolidateClaims(docs) {
     for (const claim of local.claims ?? []) {
       // `corroboration` is derived from sourceRefs.length; do not persist it.
       const { corroboration: _drop, ...rest } = claim;
-      const key = claimKey(claim);
+      const key = claimKey(claim, canonicalIdBySourceId);
       const existingCanonical = canonicalByKey.get(key);
       if (existingCanonical && existingCanonical !== claim.id) {
         claims.push({ ...rest, canonical: existingCanonical });
@@ -165,7 +169,7 @@ function summarizeRecency(runDate, sources, claims) {
 
 function consolidate(docs) {
   const sourceResult = consolidateSources(docs);
-  const claimResult = consolidateClaims(docs);
+  const claimResult = consolidateClaims(docs, sourceResult.canonicalIdBySourceId);
   return {
     sources: sourceResult.sources,
     claims: claimResult.claims,
@@ -188,7 +192,7 @@ function buildLedger(docs, sources, claims, evidenceGaps) {
     coverage: {
       evidenceQuality: inferEvidenceQuality(sources, claims),
       sourceDiversityNotes: null,
-      deduplicationNotes: `Consolidated from ${docs.size} artifacts; sources deduplicated by canonical URL or publisher/title/date fallback.`,
+      deduplicationNotes: `Consolidated from ${docs.size} artifacts; sources deduplicated by canonical URL or publisher/title/date fallback; claims deduplicated by statement, topic, and canonicalized sourceRefs.`,
       recencyNotes,
       coverageGaps: [],
     },

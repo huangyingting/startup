@@ -166,12 +166,36 @@ function writeRefreshContext({ base, companyName, website, refreshTarget, refres
       'Use the previous report only as background and diff context; do not copy stale claims without re-verifying them.',
       volatileFactRefreshInstruction(),
       'Generate a full report covering every configured analysis chapter and run the normal chapter gates before finalizing.',
-      'Set report-meta.yaml revision.status=current, revision.refreshOfRunId to the previous run id, revision.supersededByRunId=null, and revision.refreshReason to the reason above.',
+      'Do not author report-meta.yaml revision fields unless disambiguation is required; finalize-report/link-refresh writes revision.status, refreshOfRunId, supersededByRunId, and refreshReason automatically.',
     ],
   };
   const path = join(cacheDir, 'refresh-context.yaml');
   writeFileSync(path, yaml.dump(context, { lineWidth: 120, noRefs: true, sortKeys: false }), 'utf8');
   console.error(`[create-report-run] wrote refresh context: ${path}`);
+}
+
+function fetchLogExportLine(base) {
+  return `export STARTUP_FETCH_LOG_PATH=.research-cache/${base}/_fetch-log.jsonl`;
+}
+
+function writeFetchEnvSnippet(base) {
+  const cacheDir = researchCacheDir(base);
+  mkdirSync(cacheDir, { recursive: true });
+  const path = join(cacheDir, 'env.sh');
+  const body = [
+    '# Source this file before running fetch-url for this startup-research run.',
+    '# check-chapter --strict audits cited URLs against this JSONL trail.',
+    fetchLogExportLine(base),
+    '',
+  ].join('\n');
+  writeFileSync(path, body, 'utf8');
+  return path;
+}
+
+function printFetchTrailHint(base) {
+  const envPath = writeFetchEnvSnippet(base);
+  console.error(`[create-report-run] wrote fetch env snippet: ${envPath}`);
+  console.error(`[create-report-run] hint: source ${envPath} before running fetch-url, or run ${fetchLogExportLine(base)}, so check-chapter can audit cited URLs.`);
 }
 
 const args = parseArgs(process.argv.slice(2));
@@ -199,8 +223,8 @@ if (existsSync(path)) {
   // refresh context here.
   mkdirSync(researchCacheDir(base), { recursive: true });
   writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
+  printFetchTrailHint(base);
   console.error(`[create-report-run] resume: ${path}`);
-  console.error(`[create-report-run] hint: export STARTUP_FETCH_LOG_PATH=.research-cache/${base}/_fetch-log.jsonl before running fetch-url so check-chapter can audit cited URLs.`);
   console.log(path);
   process.exit(EXIT.ok);
 }
@@ -217,11 +241,11 @@ mkdirSync(path, { recursive: true });
 // "scratch lives under .research-cache/<runId>/" invariant explicit.
 mkdirSync(researchCacheDir(base), { recursive: true });
 writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
+printFetchTrailHint(base);
 
 // Final hint: the fetch-url skill only writes its audit trail when
-// STARTUP_FETCH_LOG_PATH is set. Without it, check-chapter silently treats
-// every cited URL as verified — the most dangerous failure mode for an
-// autonomous subagent. Stay on stderr so stdout still emits only the path.
-console.error(`[create-report-run] hint: export STARTUP_FETCH_LOG_PATH=.research-cache/${base}/_fetch-log.jsonl before running fetch-url so check-chapter can audit cited URLs.`);
+// STARTUP_FETCH_LOG_PATH is set. Without it, check-chapter warns by default
+// and fails under --strict once sources are cited. Stay on stderr so stdout
+// still emits only the path.
 
 console.log(path);

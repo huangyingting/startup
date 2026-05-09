@@ -160,7 +160,7 @@ Precedence `—` marks **warning-class** dimensions: they never appear in `retry
 | 13 | `sourceStanceSpread` | Add at least one source with stance: adverse (regulator complaint, short report, skeptical analyst note, FT Alphaville-style critique, FOS/CFPB record). Mark a genuinely critical existing source as stance: adverse instead of inventing one. | `yamlParse`, `localEvidenceMissing` |
 | 14 | `requiredSourceTypes` | Pull at least one source of each missing type listed in gate.requiredSourceTypes. | `yamlParse`, `localEvidenceMissing` |
 | 15 | `netNewSources` | Run new searches to add URLs not seen in earlier chapters; reusing the global pool will not satisfy this gate. | `yamlParse`, `localEvidenceMissing` |
-| 16 | `paywallRisk` | Swap restricted (paywall\|js-only\|broken\|rate-limited) sources for ok ones to stay under the report-level 30% ceiling. | `yamlParse`, `localEvidenceMissing` |
+| — | `paywallRisk` | Swap restricted (paywall\|js-only\|broken\|rate-limited) sources for ok ones to stay under the report-level 30% ceiling. | `yamlParse`, `localEvidenceMissing` |
 | 17 | `researchQuestions` | Add more researchQuestion entries until you hit the per-chapter floor. | `yamlParse`, `localEvidenceMissing` |
 | 18 | `sources` | Add more sources until you hit the per-chapter floor. | `yamlParse`, `localEvidenceMissing` |
 | 19 | `claims` | Add more claims until you hit the per-chapter floor. | `yamlParse`, `localEvidenceMissing` |
@@ -178,23 +178,23 @@ Precedence `—` marks **warning-class** dimensions: they never appear in `retry
 | 31 | `enumerationRowCorroboration` | Add sources from additional registrable domains backing the table's claimRefs. | `yamlParse`, `localEvidenceMissing` |
 | 32 | `tableShape` | Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present. | `yamlParse` |
 | 33 | `figureShape` | Fix the figure data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows). | `yamlParse` |
-| 34 | `figureType` | Render at least one of the planned figure types or document the substitution in evidenceGaps. | `yamlParse` |
-| 35 | `duplicateIds` | Renumber the duplicate or malformed table/figure id; ids must match T### / F### and be unique within the chapter. | `yamlParse` |
+| — | `figureType` | Render at least one of the planned figure types or document the substitution in evidenceGaps. | `yamlParse` |
+| 35 | `duplicateIds` | Renumber the duplicate or malformed table/figure id; ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter. | `yamlParse` |
 | 36 | `artifactRefs` | Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter's figures[] / tables[]. | `yamlParse` |
 | 37 | `duplicateAnalysis` | Either give the figure at least one claimRef the table does not have (a distinct slice/lens), rename it to reflect that lens, or merge it into the table. | `yamlParse` |
 | 38 | `calloutShape` | Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength\|risk\|recommendation\|insight\|assumption). | `yamlParse` |
 | 39 | `sectionsMin` | Add the missing section(s) to reach minSections. | `yamlParse` |
-| 40 | `sectionsMax` | Reduce or merge sections; the chapter looks over-fragmented. | `yamlParse` |
+| — | `sectionsMax` | Reduce or merge sections; the chapter looks over-fragmented. | `yamlParse` |
 | 41 | `artifactsMin` | Add the missing table or figure (or substitute a planned figure with an extra table when data shape does not fit). | `yamlParse` |
-| 42 | `tablesMax` | Reduce or merge tables; the chapter looks over-fragmented. | `yamlParse` |
-| 43 | `figuresMax` | Reduce or merge figures; the chapter looks over-fragmented. | `yamlParse` |
+| — | `tablesMax` | Reduce or merge tables; the chapter looks over-fragmented. | `yamlParse` |
+| — | `figuresMax` | Reduce or merge figures; the chapter looks over-fragmented. | `yamlParse` |
 | 44 | `depthSection` | Expand the prose of the shortest section(s) only; leave the others untouched. | `yamlParse` |
 | 45 | `depthSectionTotal` | Expand prose across short sections to reach minSectionWordsTotal. | `yamlParse` |
 | 46 | `depthTableRows` | Add rows to existing tables to reach minTableRowsTotal. | `yamlParse` |
 | 47 | `depthFigureData` | Add data points to existing figures to reach minFigureDataPointsTotal. | `yamlParse` |
 | 48 | `contentRequirementCoverage` | Add researchQuestions whose targets[] cover the un-targeted contentRequirements. | `yamlParse`, `localEvidenceMissing` |
-| 49 | `unverifiedSource` | One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess. | — |
-| 50 | `fetchTrailMissing` | Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; without the trail every cited URL is silently treated as verified. | — |
+| — | `unverifiedSource` | One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess. | — |
+| — | `fetchTrailMissing` | Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; the default gate warns and --strict fails when the trail is missing. | — |
 | — | `tableNotes` | Write tables[].notes (one line: data source / estimation / partial coverage / what null means), or acknowledge dimension "tableNotes" for pure factual snapshot tables. | — |
 
 ### `acknowledgedWarnings` opt-out
@@ -202,7 +202,7 @@ Precedence `—` marks **warning-class** dimensions: they never appear in `retry
 You may opt out of intentional `--strict` warnings by listing them under a top-level `acknowledgedWarnings: [{ dimension, reason }]` entry on the chapter YAML. Each entry must satisfy:
 
 - **dimension** is one of the warning-class dimensions above (precedence `—`): `fetchTrailMissing`, `figureType`, `figuresMax`, `paywallRisk`, `sectionsMax`, `tableNotes`, `tablesMax`, `unverifiedSource`. Acks against any other dimension surface as a non-blocking `acknowledgedWarnings` warning so the misuse is visible without breaking historical reports.
-- **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons are silently ignored (the ack does not take effect).
+- **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons do not take effect and produce a non-blocking `acknowledgedWarnings` warning.
 
 Acks never silence a real failure; the `failures.length === 0` gate is checked unconditionally. Use this only for genuinely non-actionable warnings (e.g. `tableNotes` on a pure factual snapshot whose `defaultFix` explicitly tells you to acknowledge it).
 

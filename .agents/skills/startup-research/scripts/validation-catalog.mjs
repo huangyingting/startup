@@ -7,9 +7,9 @@
 //     individual sources, claims, callouts, and enumeration tables.
 //   - check-chapter.mjs imports the same enum Sets plus the FIX_HINTS table
 //     and the precedence/suppressor metadata to drive its retry loop.
-//   - load-chapter-runtime-context.mjs imports the JSON-friendly bundles (`VOCABULARIES`,
-//     `dimensionCatalog()`) and ships them inside the chapter runtime context so the
-//     agent learns the vocabulary BEFORE writing, not after a failed check.
+//   - build-rules-doc.mjs imports `dimensionCatalog()` and projects the retry
+//     catalog into references/rules.md; enum vocabularies are projected into
+//     references/contracts.md next to the fields that use them.
 //
 // Add a new enum or dimension here exactly once; every consumer reads from
 // this file.
@@ -207,9 +207,8 @@ export const DUPLICATE_TITLE_THRESHOLD = 0.5;
 // agents may opt out of them in --strict mode with a 30+ char rationale.
 // Failure-class dimensions are excluded; SKILL.md is explicit that
 // acknowledgedWarnings must never be used to silence real failures, and
-// check-chapter only consults `ackByDim` against the warning list anyway,
-// so an ack against a failure dimension is silently a no-op. Adding any
-// dimension here makes it acknowledgeable; verify the underlying check is
+// check-chapter emits a non-blocking `acknowledgedWarnings` warning when an
+// ack targets a failure dimension. Adding any dimension here makes it acknowledgeable; verify the underlying check is
 // emitted via warn() in check-chapter.mjs (or strict-promoted there) before
 // extending the set.
 export const WARNING_DIMENSIONS = new Set([
@@ -346,7 +345,7 @@ export const FIX_HINTS = {
   slugConsistency: ({ required } = {}) =>
     required ? `Set slug: to "${required}".` : 'Set slug: to the company slug only (the report folder basename with the leading <timestamp>- stripped).',
   duplicateIds: ({ id } = {}) =>
-    id ? `Renumber ${id}: ids must match T### / F### and be unique within the chapter.` : 'Renumber the duplicate or malformed table/figure id; ids must match T### / F### and be unique within the chapter.',
+    id ? `Renumber ${id}: ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter.` : 'Renumber the duplicate or malformed table/figure id; ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter.',
   artifactRefs: "Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter's figures[] / tables[].",
   sectionsMin: ({ actual, required } = {}) =>
     required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more section(s) (currently ${actual}, need ${required}).` : 'Add the missing section(s) to reach minSections.',
@@ -376,7 +375,7 @@ export const FIX_HINTS = {
     id || url
       ? `Source ${id ?? ''}${url ? ` (${url})` : ''} was cited but never went through fetch-url during this run; pull the URL with .agents/skills/fetch-url/scripts/fetch.mjs (or remove the citation if the source cannot be retrieved).`
       : 'One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess.',
-  fetchTrailMissing: 'Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; without the trail every cited URL is silently treated as verified.',
+  fetchTrailMissing: 'Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; the default gate warns and --strict fails when the trail is missing.',
   acknowledgedWarnings: ({ ackDimension } = {}) =>
     ackDimension
       ? `acknowledgedWarnings entry targets dimension "${ackDimension}", which is not a warning-class dimension. Only warnings (${WARNING_DIMENSIONS_LIST_TEXT}) may be acknowledged; failures must be fixed. Each acknowledgedWarnings entry also requires a >=30-char reason. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`

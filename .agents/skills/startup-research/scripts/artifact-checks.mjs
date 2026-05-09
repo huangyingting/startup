@@ -322,7 +322,8 @@ export function checkDocumentHeadSchema(doc, { path, expected }) {
 // ---- unique IDs -----------------------------------------------------------
 
 // Validates that every row in a list has an id matching `pattern` and that
-// no id repeats. Used for chapter-local table/figure ids (T### / F###) and
+// no id repeats. Used for chapter-local table/figure ids
+// (T<ChapterLetter>### / F<ChapterLetter>###) and
 // for ledger-level source/claim ids (S### / C###).
 export function checkUniqueIds(rows, { label, pattern, path }) {
   const c = makeCollector();
@@ -341,7 +342,7 @@ export function checkUniqueIds(rows, { label, pattern, path }) {
 // ---- artifact (figure / table) refs --------------------------------------
 
 // Walks any value recursively and collects every embedded
-//   { figureRef: 'F###' } / { tableRef: 'T###' }
+//   { figureRef: 'F<ChapterLetter>###' } / { tableRef: 'T<ChapterLetter>###' }
 // occurrence, returning [['figure', id], ['table', id], ...]. Internal helper
 // for checkArtifactRefs.
 function collectArtifactRefs(value, out = []) {

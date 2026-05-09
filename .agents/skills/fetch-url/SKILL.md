@@ -16,6 +16,10 @@ node .agents/skills/fetch-url/scripts/fetch.mjs <url>
 
 Use this default for normal source review. It is the preferred agent path: URL in, readable content out.
 
+## Startup-research audit trail
+
+When this skill is used inside the `startup-research` workflow, preserve the `STARTUP_FETCH_LOG_PATH` environment variable that `create-report-run.mjs` printed for the run (or source `.research-cache/<runId>/env.sh` if it exists). Every fetch appends one JSONL entry to that trail; `check-chapter --strict` uses it to verify that cited URLs were actually retrieved during the run. If the variable is missing, fetches still work, but startup-research strict validation will fail with `fetchTrailMissing` once sources are cited.
+
 ## Common parameters
 
 - `--json`: use when another script/agent step needs structured fields such as status, final URL, source/cache state, title/PDF metadata, extraction mode, and output text.

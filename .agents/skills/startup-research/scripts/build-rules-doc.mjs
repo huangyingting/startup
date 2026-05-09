@@ -110,9 +110,10 @@ function idSystemSection() {
 function dimensionsSection() {
   const dims = dimensionCatalog();
   const rows = dims.map((d) => {
+    const precedence = WARNING_DIMENSIONS.has(d.dimension) ? '—' : (d.precedenceRank ?? '—');
     const fix = (d.defaultFix ?? '—').replace(/\|/g, '\\|');
     const suppressed = d.suppressedBy.length ? d.suppressedBy.map((s) => `\`${s}\``).join(', ') : '—';
-    return `| ${d.precedenceRank ?? '—'} | \`${d.dimension}\` | ${fix} | ${suppressed} |`;
+    return `| ${precedence} | \`${d.dimension}\` | ${fix} | ${suppressed} |`;
   });
   const warningList = [...WARNING_DIMENSIONS].sort().map((d) => `\`${d}\``).join(', ');
   return [
@@ -131,7 +132,7 @@ function dimensionsSection() {
     'You may opt out of intentional `--strict` warnings by listing them under a top-level `acknowledgedWarnings: [{ dimension, reason }]` entry on the chapter YAML. Each entry must satisfy:',
     '',
     `- **dimension** is one of the warning-class dimensions above (precedence \`—\`): ${warningList}. Acks against any other dimension surface as a non-blocking \`acknowledgedWarnings\` warning so the misuse is visible without breaking historical reports.`,
-    '- **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons are silently ignored (the ack does not take effect).',
+    '- **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons do not take effect and produce a non-blocking `acknowledgedWarnings` warning.',
     '',
     'Acks never silence a real failure; the `failures.length === 0` gate is checked unconditionally. Use this only for genuinely non-actionable warnings (e.g. `tableNotes` on a pure factual snapshot whose `defaultFix` explicitly tells you to acknowledge it).',
   ].join('\n');

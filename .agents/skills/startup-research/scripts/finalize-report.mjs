@@ -5,17 +5,18 @@
 // website discovers reports by walking reports/<runId>/summary-card.yaml.
 //
 // Pipeline:
-//   1. check-report-meta.mjs -> shape + enum check on report-meta.yaml
+//   1. check-chapter.mjs --strict -> strict pre-finalization sweep for every configured chapter
+//   2. check-report-meta.mjs -> shape + enum check on report-meta.yaml
 //                                   (runs first so every missing/invalid field
 //                                   surfaces in one shot, instead of one per
 //                                   finalize-loop iteration)
-//   2. (refresh only) link-refresh.mjs --prepare-current
+//   3. (refresh only) link-refresh.mjs --prepare-current
 //                       -> mark the new report as revision.status=current
-//   3. build-evidence-ledger.mjs -> evidence.yaml + chapter claimRef consolidation
-//   4. check-cross-chapter.mjs -> drift checks across chapters
-//   5. build-report.mjs -> full-report.yaml + summary-card.yaml
-//   6. check-report.mjs -> schema/contract validation and publishability gate
-//   7. (refresh only) link-refresh.mjs
+//   4. build-evidence-ledger.mjs -> evidence.yaml + chapter claimRef consolidation
+//   5. check-cross-chapter.mjs -> drift checks across chapters
+//   6. build-report.mjs -> full-report.yaml + summary-card.yaml
+//   7. check-report.mjs -> schema/contract validation and publishability gate
+//   8. (refresh only) link-refresh.mjs
 //                       -> mark the previous report as revision.status=superseded
 //                          and reassemble it
 //
@@ -112,7 +113,7 @@ function strictCheckEveryChapter() {
     runStep({
       name: `check-chapter:${spec.key}:strict`,
       script: 'check-chapter.mjs',
-      argv: [reportFolder, spec.file, '--strict'],
+      argv: [reportFolder, spec.file, '--strict', '--format', 'compact'],
     });
   }
 }
