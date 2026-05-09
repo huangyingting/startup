@@ -222,7 +222,15 @@ if (existsSync(path)) {
   // pruned between runs); the agent and fetch-url co-locate fetch logs and
   // refresh context here.
   mkdirSync(researchCacheDir(base), { recursive: true });
-  writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
+  // Preserve any refresh-context.yaml authored by the original
+  // create-report-run invocation. Overwriting it on --resume would let a
+  // second invocation with a different (or empty) --refresh-reason silently
+  // mutate the cached audit value, which finalize-report later compares
+  // against the CLI value. Only write when the cache is missing.
+  const resumeRefreshCtxPath = join(researchCacheDir(base), 'refresh-context.yaml');
+  if (!existsSync(resumeRefreshCtxPath)) {
+    writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
+  }
   printFetchTrailHint(base);
   console.error(`[create-report-run] resume: ${path}`);
   console.log(path);

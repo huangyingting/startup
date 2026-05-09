@@ -31,9 +31,13 @@ If any prose in this file disagrees with a runtime/script output, trust the runt
    - Exit `3`: rerun the same command with `--resume`; do not create suffixed duplicate folders.
    - Exit `4`: a required target does not exist. From `create-report-run.mjs --resume`, the in-progress folder you tried to resume is missing — rerun **without** `--resume` to create a fresh one. From `finalize-report.mjs`, `report-meta.yaml` is missing — author it under the report folder and rerun.
 3. Use the created folder as `<reportFolder>` for every later command. The runId is the folder basename, and `runtimeContext.run.runDate` (emitted by the per-chapter loader call below whenever `--report-folder` is supplied) is the canonical `runDate` for chapter YAML heads — derive every head's `runDate` from it instead of the model clock.
-4. Make sure `STARTUP_FETCH_LOG_PATH` is exported before any later `fetch-url` invocation in this run.
-   - First check whether it is already set (`printenv STARTUP_FETCH_LOG_PATH` or `[ -n "$STARTUP_FETCH_LOG_PATH" ]`); if it has a value (CI exports a workflow-wide trail at `.research-cache/_fetch-log.jsonl`), keep that value — `check-chapter` only needs every cited URL to appear in the trail at least once.
-   - Otherwise export `STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl` so the trail is co-located with the run (where `<runId>` is the `<reportFolder>` basename). `create-report-run.mjs` prints this exact line on stderr right after creating the folder; copy it into your shell. `fetch-url` creates the parent directory on first write and appends one JSON line per fetch; `check-chapter` reads the trail and emits an `unverifiedSource` **warning** for each cited URL not found in it. The warning only blocks the gate when `check-chapter` is run with `--strict` (recommended as a pre-finalization sweep). When the env var is unset and no trail file exists at any candidate path, `check-chapter` instead emits a single `fetchTrailMissing` warning so the disabled-audit case is visible rather than silent.
+4. Export `STARTUP_FETCH_LOG_PATH` before any `fetch-url` invocation:
+
+   ```sh
+   source .research-cache/<runId>/env.sh
+   ```
+
+   `create-report-run.mjs` writes this snippet automatically; sourcing it sets `STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl`. If the env var is already set (e.g. CI exports a workflow-wide trail at `.research-cache/_fetch-log.jsonl`), keep that value — `check-chapter` only needs each cited URL to appear in the trail at least once. `fetch-url` appends one JSON line per fetch; `check-chapter` emits an `unverifiedSource` **warning** for each cited URL absent from the trail (promoted to a failure under `--strict`). When the env var is unset and no trail file exists at any candidate path, `check-chapter` instead emits a single `fetchTrailMissing` warning so the disabled-audit case is visible rather than silent.
 
 ## Chapter generation
 
@@ -88,13 +92,17 @@ Finalization is a sequential pipeline; it stops at the first failing step and ex
 | `check-report-meta` | `check-report-meta.mjs` | `report-meta.yaml` shape/enum issues |
 | `prepare-refresh` (refresh only) | `link-refresh.mjs --prepare-current` | ensure the prior `current` report exists, is finalized, and its `summary-card.yaml` carries the matching `company.name` / `company.website` |
 | `build-evidence-ledger` | `build-evidence-ledger.mjs` | a chapter `localEvidence` block (the script names the chapter and offending id) |
-| `check-cross-chapter` | `check-cross-chapter.mjs` | metric drift, key-fact overlap, or duplicate analysis across chapter YAMLs |
+| `check-cross-chapter` | `check-cross-chapter.mjs` | metric drift, key-fact overlap, or duplicate analysis across chapter YAMLs; after editing chapters, rerun `finalize-report` (it auto-rebuilds the ledger when chapter mtimes are newer and re-runs the strict sweep) |
 | `build-report` | `build-report.mjs` | a chapter or `report-meta.yaml` field that the assembler could not project |
 | `check-report` | `check-report.mjs` | report-level gates (domain diversity, adverse-source distribution, paywall ceiling) |
 | `link-refresh` (refresh only) | `link-refresh.mjs` | only fires after publishability passes; usually a stale `summary-card.yaml` on the prior run |
 
 `finalize-report` also fails early (before any subprocess) when:
 - `--refresh` is set, `--refresh-reason` is also passed on the CLI, and the value does not match the one cached in `.research-cache/<runId>/refresh-context.yaml`. Omit `--refresh-reason` on `finalize-report` to reuse the cached value (recommended).
+
+> **Tip:** When `finalize-report` aborts at `check-chapter:<key>:strict`, the inner sweep uses `--format compact` so the message is human-readable but lacks structured fields. Rerun the failing chapter directly with `--format json` to get the same `retryOrder[]`, `globalHints[]`, and per-issue `fix` data the chapter-generation loop relies on:
+>
+> `node .agents/skills/startup-research/scripts/check-chapter.mjs <reportFolder> <chapter.file> --strict --format json`
 
 When `finalize-report` exits 0, summarize the run for the user using every field listed in [`rules.md`](references/rules.md) → *Agent policy (binding)* → `finalResponseFields`. Pull the values straight from the produced files; do not paraphrase or omit fields:
 

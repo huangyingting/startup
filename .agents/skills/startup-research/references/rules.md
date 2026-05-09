@@ -175,7 +175,7 @@ Precedence `—` marks **warning-class** dimensions: they never appear in `retry
 | 28 | `enumerationScope` | Add enumerationScope { coverage, basis(>=20 chars) } to the matching enumeration table. | `yamlParse`, `localEvidenceMissing` |
 | 29 | `enumerationRows` | Add rows to reach expectedMinRows or set coverage to partial/sample with rationale. | `yamlParse`, `localEvidenceMissing` |
 | 30 | `enumerationCoverageGap` | Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it. | `yamlParse`, `localEvidenceMissing` |
-| 31 | `enumerationRowCorroboration` | Add sources from additional registrable domains backing the table's claimRefs. | `yamlParse`, `localEvidenceMissing` |
+| 31 | `enumerationRowCorroboration` | Extend the enumeration table's table-level claimRefs[] so the underlying sources span more registrable domains (table-level, not per-row). | `yamlParse`, `localEvidenceMissing` |
 | 32 | `tableShape` | Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present. | `yamlParse` |
 | 33 | `figureShape` | Fix the figure data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows). | `yamlParse` |
 | — | `figureType` | Render at least one of the planned figure types or document the substitution in evidenceGaps. | `yamlParse` |

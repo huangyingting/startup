@@ -334,7 +334,19 @@ export function normalizeWorkflowConfig(config) {
 
   const adverseRequiredKeys = new Set(parsed.adverseDistribution?.requireAtLeastOneAdverseSource ?? []);
   for (const chapter of chapters) {
-    chapter.gate = { ...chapter.gate, minAdverseSources: adverseRequiredKeys.has(chapter.key) ? 1 : 0 };
+    // Effective per-chapter floors. Both are derived once here so the runtime
+    // context emitted to the agent and the gate enforced by check-chapter
+    // reference the same numbers — no Math.max() recomputation downstream.
+    //   minAdverseSources: 1 when the chapter is listed under
+    //     adverseDistribution.requireAtLeastOneAdverseSource, else 0.
+    //   minArtifacts: at least the planned table+figure count, so a chapter
+    //     with 10 planned artifacts cannot pass with the defaultGate floor of 6.
+    const plannedArtifacts = (chapter.plannedTables?.length ?? 0) + (chapter.plannedFigures?.length ?? 0);
+    chapter.gate = {
+      ...chapter.gate,
+      minAdverseSources: adverseRequiredKeys.has(chapter.key) ? 1 : 0,
+      minArtifacts: Math.max(chapter.gate.minArtifacts, plannedArtifacts),
+    };
   }
 
   return { ...parsed, chapters, adverseDistribution: parsed.adverseDistribution ?? null, reportGate: parsed.reportGate ?? null };

@@ -79,7 +79,7 @@ localEvidence:
       targets: [string]  # reference items in runtimeContext.chapter.contentRequirements/<index>, .plannedTables/<slug>, or .plannedFigures/<slug>
       status: answered|partial|unresolved  # answered=a claim cites this via answersQuestionRefs; partial=some evidence but unresolved; unresolved=open (must have an evidenceGap citing it).
   sources:
-    - id?: string  # S<ChapterLetter>### (e.g. SO001). Schema-optional, but always required in practice: any sourceRefs[] entry that does not match a sources[].id becomes a dangling reference.
+    - id?: string  # S<ChapterLetter>### (e.g. SO001). Schema-optional so partial drafts validate, but in practice mandatory — every sourceRefs[] entry resolves against sources[].id, so a missing id makes the source unreferenceable and yields a dangling-reference error at build time.
       publisher: string  # publishing organization (e.g. "Securities and Exchange Commission", "Financial Times")
       title: string  # article / filing / page title
       url: string  # canonical URL fetched via the fetch-url skill
@@ -93,7 +93,7 @@ localEvidence:
       topics: [string]  # free-form topic tags used for cross-chapter de-dupe and ledger consolidation
       keyQuote?: string|null  # verbatim quote backing the strongest claim this source supports (recommended for adverse and high-confidence sources)
   claims:
-    - id?: string  # C<ChapterLetter>### (e.g. CO045). Schema-optional, but always required in practice: any claimRefs[] entry that does not match a claims[].id becomes a dangling reference.
+    - id?: string  # C<ChapterLetter>### (e.g. CO045). Schema-optional so partial drafts validate, but in practice mandatory — every claimRefs[] entry resolves against claims[].id, so a missing id makes the claim unreferenceable and yields a dangling-reference error at build time.
       statement: string  # single-fact statement (one sentence). Split compound facts into multiple atomic claims.
       type: observed|company-claimed|third-party-reported|estimated|inferred|open-question|conflicting  # observed=directly seen by author, third-party-reported=cited from another source, company-claimed=company's own statement, inferred=derived, estimated=numerical estimate, conflicting=contradicted by another claim (requires contradictsClaimRefs), open-question=unverified hypothesis (sourceRefs may be empty).
       topic: string  # topic tag for grouping. Reuse topics across claims that cover the same angle.

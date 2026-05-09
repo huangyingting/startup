@@ -9,7 +9,9 @@
 //     and the precedence/suppressor metadata to drive its retry loop.
 //   - build-rules-doc.mjs imports `dimensionCatalog()` and projects the retry
 //     catalog into references/rules.md; enum vocabularies are projected into
-//     references/contracts.md next to the fields that use them.
+//     references/contracts.md next to the fields that use them via the
+//     `.describe()` annotations on the Zod schemas (no aggregate VOCABULARIES
+//     bundle is exported because nothing consumes it programmatically).
 //
 // Add a new enum or dimension here exactly once; every consumer reads from
 // this file.
@@ -227,35 +229,6 @@ export const WARNING_DIMENSIONS = new Set([
 // automatically wherever this list is referenced.
 const WARNING_DIMENSIONS_LIST_TEXT = [...WARNING_DIMENSIONS].sort().join(', ');
 
-// JSON-friendly bundle shipped in the chapter runtime context so the agent never
-// has to grep source code to learn the vocabulary. Sorted arrays keep diffs
-// stable.
-export const VOCABULARIES = Object.freeze({
-  sourceType: [...SOURCE_TYPES].sort(),
-  sourceStance: [...SOURCE_STANCES].sort(),
-  sourceAccessStatus: [...SOURCE_ACCESS_STATUSES].sort(),
-  sourceReputationTier: [...SOURCE_REPUTATION_TIERS].sort(),
-  sourceIndependence: [...SOURCE_INDEPENDENCE].sort(),
-  claimType: [...CLAIM_TYPES].sort(),
-  claimConfidence: [...CLAIM_CONFIDENCES].sort(),
-  claimFreshness: [...CLAIM_FRESHNESS].sort(),
-  questionType: [...QUESTION_TYPES].sort(),
-  questionStatus: [...QUESTION_STATUSES].sort(),
-  calloutType: [...CALLOUT_TYPES].sort(),
-  enumerationCoverage: [...ENUMERATION_COVERAGE].sort(),
-  evidenceGapType: [...EVIDENCE_GAP_TYPES].sort(),
-  severity: [...EVIDENCE_GAP_SEVERITIES].sort(),
-  evidenceQuality: [...EVIDENCE_QUALITIES].sort(),
-  tone: [...TONE_VALUES].sort(),
-  blockType: [...BLOCK_TYPES].sort(),
-  primaryTierSourceTypes: [...PRIMARY_TIER_TYPES].sort(),
-  restrictedAccessStatuses: [...RESTRICTED_ACCESS_STATUSES].sort(),
-  cardRecommendation: [...CARD_RECOMMENDATIONS].sort(),
-  cardConfidence: [...CARD_CONFIDENCES].sort(),
-  cardRiskRating: [...CARD_RISK_RATINGS].sort(),
-  cardValuationStance: [...CARD_VALUATION_STANCES].sort(),
-});
-
 // ---------------------------------------------------------------------------
 // Per-dimension fix hints
 // ---------------------------------------------------------------------------
@@ -333,7 +306,7 @@ export const FIX_HINTS = {
   enumerationCoverageGap: ({ tableId } = {}) =>
     tableId ? `Open an evidenceGap whose topic mentions ${tableId} or whose relatedTableRefs[] includes ${tableId}.` : 'Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it.',
   enumerationRowCorroboration: ({ tableId, actual, required } = {}) =>
-    required != null ? `On table ${tableId}: add sources from ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}).` : "Add sources from additional registrable domains backing the table's claimRefs.",
+    required != null ? `On table ${tableId}: extend the table's claimRefs[] so the underlying sources span ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}). Check is table-level (claimRefs live on the table, not per row).` : "Extend the enumeration table's table-level claimRefs[] so the underlying sources span more registrable domains (table-level, not per-row).",
   claimShape: ({ id } = {}) =>
     id ? `Fix claim ${id}: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.` : 'Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.',
   calloutShape: 'Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength|risk|recommendation|insight|assumption).',

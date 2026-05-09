@@ -102,7 +102,7 @@ const topicEntry = z.preprocess(
 );
 
 export const SourceSchema = z.object({
-  id: z.string().optional().describe('S<ChapterLetter>### (e.g. SO001). Schema-optional, but always required in practice: any sourceRefs[] entry that does not match a sources[].id becomes a dangling reference.'),
+  id: z.string().optional().describe('S<ChapterLetter>### (e.g. SO001). Schema-optional so partial drafts validate, but in practice mandatory — every sourceRefs[] entry resolves against sources[].id, so a missing id makes the source unreferenceable and yields a dangling-reference error at build time.'),
   publisher: nonEmptyString.describe('publishing organization (e.g. "Securities and Exchange Commission", "Financial Times")'),
   title: nonEmptyString.describe('article / filing / page title'),
   url: nonEmptyString.describe('canonical URL fetched via the fetch-url skill'),
@@ -118,7 +118,7 @@ export const SourceSchema = z.object({
 }).passthrough();
 
 export const ClaimSchema = z.object({
-  id: z.string().optional().describe('C<ChapterLetter>### (e.g. CO045). Schema-optional, but always required in practice: any claimRefs[] entry that does not match a claims[].id becomes a dangling reference.'),
+  id: z.string().optional().describe('C<ChapterLetter>### (e.g. CO045). Schema-optional so partial drafts validate, but in practice mandatory — every claimRefs[] entry resolves against claims[].id, so a missing id makes the claim unreferenceable and yields a dangling-reference error at build time.'),
   statement: nonEmptyString.describe('single-fact statement (one sentence). Split compound facts into multiple atomic claims.'),
   type: enumMember(CLAIM_TYPES, 'type').describe('observed=directly seen by author, third-party-reported=cited from another source, company-claimed=company\'s own statement, inferred=derived, estimated=numerical estimate, conflicting=contradicted by another claim (requires contradictsClaimRefs), open-question=unverified hypothesis (sourceRefs may be empty).'),
   topic: nonEmptyString.describe('topic tag for grouping. Reuse topics across claims that cover the same angle.'),

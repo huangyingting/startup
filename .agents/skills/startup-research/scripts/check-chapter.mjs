@@ -484,7 +484,13 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
         fail('enumerationCoverageGap', `${file}: table ${table.id} coverage=${scope.coverage} requires an evidenceGap entry whose topic mentions the table or whose relatedTableRefs[] includes ${table.id}`, { tableId: table.id, coverage: scope.coverage });
       }
     }
-    // Per-row corroboration: each row must be supported by claims pointing to >= minSourcesPerEnumerationRow distinct registrable domains.
+    // Table-level corroboration: the enumeration table's table-level
+    // claimRefs must reference sources spanning at least
+    // gate.minSourcesPerEnumerationRow distinct registrable domains. The
+    // YAML schema attaches claimRefs to the table, not to individual rows,
+    // so this check is necessarily table-level — the dimension name
+    // (`enumerationRowCorroboration`) is kept for backward compatibility
+    // with historical reports and JSON consumers.
     const tableClaimRefs = new Set(table.claimRefs ?? []);
     const tableDomains = new Set();
     for (const ref of tableClaimRefs) {
@@ -497,7 +503,7 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
       }
     }
     if (rowCount > 0 && tableDomains.size < gate.minSourcesPerEnumerationRow) {
-      fail('enumerationRowCorroboration', `${file}: table ${table.id} backed by sources from only ${tableDomains.size} distinct domains (need >= ${gate.minSourcesPerEnumerationRow}); enumeration tables must be cross-checked across independent sources`, { tableId: table.id, actual: tableDomains.size, required: gate.minSourcesPerEnumerationRow });
+      fail('enumerationRowCorroboration', `${file}: table ${table.id} table-level claimRefs reference sources from only ${tableDomains.size} distinct registrable domain(s) (need >= ${gate.minSourcesPerEnumerationRow}); enumeration tables must be cross-checked across independent domains`, { tableId: table.id, actual: tableDomains.size, required: gate.minSourcesPerEnumerationRow });
     }
   }
 }
@@ -508,7 +514,6 @@ function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFig
   const typeCounts = new Map();
   let answeredCount = 0;
   const targetedReqIndices = new Set();
-  const gapTopics = new Set((doc.localEvidence?.evidenceGaps ?? []).map((gap) => String(gap?.topic ?? '').toLowerCase()).filter(Boolean));
 
   for (const [index, question] of questions.entries()) {
     if (typeof question !== 'object' || question === null) {
@@ -535,8 +540,12 @@ function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFig
       fail('researchQuestionShape', `${file}: ${question.id} status must be one of ${formatEnumChoices(QUESTION_STATUSES)}`, { id: question.id, actual: question.status });
     } else if (question.status === 'answered') {
       answeredCount += 1;
-    } else if (!gapTopics.has(String(question.question).toLowerCase().slice(0, 80)) && !(doc.localEvidence?.evidenceGaps ?? []).some((gap) => (gap?.relatedQuestionRefs ?? []).includes(question.id))) {
-      fail('researchQuestionClosure', `${file}: ${question.id} status=${question.status} but no evidenceGap entry references it via relatedQuestionRefs[] or matching topic`, { id: question.id });
+    } else if (!(doc.localEvidence?.evidenceGaps ?? []).some((gap) => (gap?.relatedQuestionRefs ?? []).includes(question.id))) {
+      // Closure is gated on an explicit evidenceGap.relatedQuestionRefs[]
+      // pointer; topic-string heuristics were unreliable (a full question
+      // sentence rarely equals a short topic tag) and gave the impression
+      // that fuzzy matching could substitute for a proper ref.
+      fail('researchQuestionClosure', `${file}: ${question.id} status=${question.status} but no evidenceGap entry lists it under relatedQuestionRefs[]`, { id: question.id });
     }
     if (!Array.isArray(question.targets) || question.targets.length === 0) {
       fail('researchQuestionShape', `${file}: ${question.id} targets[] must be a non-empty array`, { id: question.id });
@@ -715,16 +724,17 @@ if (doc) {
   const gate = spec.gate;
   // Tables and figures are interchangeable artifact slots: agents may swap a
   // planned figure for an additional table when the collected data does not
-  // fit the planned figure type. Enforce the combined floor so a substitution
-  // does not fail the gate. Per-type ceilings remain soft warnings.
-  const plannedTotal = spec.plannedTables.length + spec.plannedFigures.length;
-  const minArtifacts = Math.max(gate.minArtifacts, plannedTotal);
+  // fit the planned figure type. Per-type ceilings remain soft warnings.
+  // gate.minArtifacts is already the effective floor (max of defaultGate and
+  // the chapter's planned table+figure count) — normalizeWorkflowConfig in
+  // contracts/workflow-config.schema.mjs computes it once so the runtime
+  // context the agent receives and the gate check-chapter enforces match.
   const totalArtifacts = counts.tables + counts.figures;
   if (counts.sections < gate.minSections) {
     fail('sectionsMin', `${spec.file}: ${counts.sections} sections, expected at least ${gate.minSections}`, { actual: counts.sections, required: gate.minSections });
   }
-  if (totalArtifacts < minArtifacts) {
-    fail('artifactsMin', `${spec.file}: ${counts.tables} tables + ${counts.figures} figures = ${totalArtifacts} artifacts, expected at least ${minArtifacts} (plannedTables=${spec.plannedTables.length}, plannedFigures=${spec.plannedFigures.length}; figures may be substituted with tables when data shape does not fit)`, { actual: totalArtifacts, required: minArtifacts });
+  if (totalArtifacts < gate.minArtifacts) {
+    fail('artifactsMin', `${spec.file}: ${counts.tables} tables + ${counts.figures} figures = ${totalArtifacts} artifacts, expected at least ${gate.minArtifacts} (plannedTables=${spec.plannedTables.length}, plannedFigures=${spec.plannedFigures.length}; figures may be substituted with tables when data shape does not fit)`, { actual: totalArtifacts, required: gate.minArtifacts });
   }
   if (counts.sections > gate.maxSections) {
     warn('sectionsMax', `${spec.file}: ${counts.sections} sections exceeds target range maximum ${gate.maxSections}; verify the chapter is not over-fragmented or duplicative`, { actual: counts.sections, ceiling: gate.maxSections });
