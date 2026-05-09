@@ -19,7 +19,7 @@ import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   EXIT,
-  FINAL_ARTIFACTS,
+  SUMMARY_CARD_FILE,
   isFinalizedReportFolder,
   isRunId,
   listDirs,
@@ -33,7 +33,6 @@ import {
 } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/link-refresh.mjs <new-report-folder> [--refresh-reason <text>] [--prepare-current]');
@@ -212,7 +211,7 @@ if (args.prepareCurrent) {
 }
 
 if (currentChanged) {
-  runScript('assemble-report.mjs', [newFolder]);
+  runScript('build-report.mjs', [newFolder]);
   runScript('check-report.mjs', [newFolder]);
 }
 
@@ -221,7 +220,7 @@ const oldChanged = setOldRevision({ oldRunId, newRunId, refreshReason: args.refr
 console.log(`[refresh] previous report ${oldRunId} supersededByRunId=${newRunId}${oldChanged ? ' (updated)' : ' (already set)'}`);
 if (oldChanged || !oldArtifactsAreInSync(oldRunId, newRunId)) {
   const oldFolder = join(reportsDir, oldRunId);
-  runScript('assemble-report.mjs', [oldFolder]);
+  runScript('build-report.mjs', [oldFolder]);
   runScript('check-report.mjs', [oldFolder]);
 }
 console.log(`[refresh] ✓ linked ${oldRunId} -> ${newRunId}`);

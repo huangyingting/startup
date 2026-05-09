@@ -5,17 +5,18 @@
 // website discovers reports by walking reports/<runId>/summary-card.yaml.
 //
 // Pipeline:
-//   1. validate-report-meta.mjs -> shape + enum check on report-meta.yaml
+//   1. check-chapter.mjs --strict -> strict pre-finalization sweep for every configured chapter
+//   2. check-report-meta.mjs -> shape + enum check on report-meta.yaml
 //                                   (runs first so every missing/invalid field
 //                                   surfaces in one shot, instead of one per
 //                                   finalize-loop iteration)
-//   2. (refresh only) link-refresh.mjs --prepare-current
+//   3. (refresh only) link-refresh.mjs --prepare-current
 //                       -> mark the new report as revision.status=current
-//   3. build-evidence-ledger.mjs -> evidence.yaml + chapter claimRef consolidation
-//   4. check-cross-chapter-consistency.mjs -> drift checks across chapters
-//   5. assemble-report.mjs -> full-report.yaml + summary-card.yaml
-//   6. check-report.mjs -> schema/contract validation and publishability gate
-//   7. (refresh only) link-refresh.mjs
+//   4. build-evidence-ledger.mjs -> evidence.yaml + chapter claimRef consolidation
+//   5. check-cross-chapter.mjs -> drift checks across chapters
+//   6. build-report.mjs -> full-report.yaml + summary-card.yaml
+//   7. check-report.mjs -> schema/contract validation and publishability gate
+//   8. (refresh only) link-refresh.mjs
 //                       -> mark the previous report as revision.status=superseded
 //                          and reassemble it
 //
@@ -23,10 +24,18 @@
 // evidence.yaml; pass --rebuild to force a full ledger consolidation (which
 // reassigns canonical claim IDs).
 import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { existsSync, statSync } from 'node:fs';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EXIT, FINAL_ARTIFACTS, REPORT_META_FILE } from './utils.mjs';
+import {
+  EXIT,
+  FINAL_ARTIFACTS,
+  REPORT_META_FILE,
+  getAnalysisArtifacts,
+  isRunId,
+  researchCacheDir,
+  tryReadYaml,
+} from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -54,7 +63,11 @@ const parsedArgs = parseArgs(args);
 const folderArg = parsedArgs.folder;
 const rebuild = parsedArgs.rebuild;
 const refresh = parsedArgs.refresh;
-const refreshReason = parsedArgs.refreshReason;
+// Mutable so ensureRefreshReasonMatchesCache() can backfill from the cached
+// refresh-context.yaml when the caller did not pass --refresh-reason. SKILL.md
+// used to require the same reason on both create-report-run and finalize-report;
+// the backfill removes that footgun and keeps both code paths in sync.
+let refreshReason = parsedArgs.refreshReason;
 
 if (!folderArg) {
   usage();
@@ -82,11 +95,101 @@ function runStep(step) {
   }
 }
 
+// Pre-finalization sweep: run check-chapter --strict on every configured
+// chapter file. SKILL.md mandates this sweep, but agents can forget it; the
+// pipeline enforces it here so unverifiedSource / tableNotes warnings cannot
+// silently slip past finalize. Missing files become finalize failures so the
+// agent fixes the chapter before the ledger and assembler run on partial
+// inputs.
+function strictCheckEveryChapter() {
+  const chapters = getAnalysisArtifacts();
+  const missing = chapters.filter((spec) => !existsSync(join(reportFolder, spec.file)));
+  if (missing.length) {
+    console.error(`[finalize-report] missing chapter file(s) before strict sweep: ${missing.map((m) => m.file).join(', ')}`);
+    console.error('[finalize-report] author every configured chapter and pass check-chapter --strict before finalizing.');
+    process.exit(EXIT.notFound);
+  }
+  for (const spec of chapters) {
+    runStep({
+      name: `check-chapter:${spec.key}:strict`,
+      script: 'check-chapter.mjs',
+      argv: [reportFolder, spec.file, '--strict', '--format', 'compact'],
+    });
+  }
+}
+
+// Stale-evidence detection: when finalize is rerun without --rebuild, the
+// pipeline reuses the existing evidence.yaml. If any chapter file is newer
+// than evidence.yaml, the ledger and downstream checks would otherwise see
+// the stale ledger and the agent's edits get silently ignored. We compare
+// mtimes (cheap; not content-aware) and trigger an automatic rebuild — the
+// previous behaviour exited with `evidence.yaml is older than N chapter
+// file(s)…` which forced the agent to remember to pass --rebuild after every
+// edit (including prose-only ones like chapter.summary or sections[].body).
+// build-report runs after the rebuild and surfaces dangling report-meta
+// claimRefs if a canonical id pointer shifted, so safety is preserved.
+function detectStaleEvidence() {
+  const evidencePath = join(reportFolder, FINAL_ARTIFACTS.evidence.file);
+  if (!existsSync(evidencePath)) return [];
+  const evidenceMtime = statSync(evidencePath).mtimeMs;
+  const newer = [];
+  for (const spec of getAnalysisArtifacts()) {
+    const chapterPath = join(reportFolder, spec.file);
+    if (!existsSync(chapterPath)) continue;
+    if (statSync(chapterPath).mtimeMs > evidenceMtime) newer.push(spec.file);
+  }
+  return newer;
+}
+
+// Refresh-reason consistency: SKILL.md asks the agent to pass the same
+// --refresh-reason string to create-report-run and finalize-report so the
+// audit trail (refresh-context cache vs. report-meta revision) stays in
+// sync. We make the second pass optional: when finalize-report receives no
+// --refresh-reason, we backfill from the cached refresh-context.yaml so the
+// agent only has to remember the string once. When the caller does pass a
+// value, we still enforce the original consistency check.
+function ensureRefreshReasonMatchesCache() {
+  if (!refresh) return;
+  const runId = basename(reportFolder);
+  if (!isRunId(runId)) return;
+  const ctxPath = join(researchCacheDir(runId), 'refresh-context.yaml');
+  const result = tryReadYaml(ctxPath);
+  if (!result.ok) return; // create-report-run --refresh always writes it; absent means a refresh started without create-report-run, leave it to link-refresh
+  const cached = result.value?.refreshReason ?? null;
+  if (!refreshReason && cached) {
+    refreshReason = cached;
+    console.error(`[finalize-report] using cached --refresh-reason from refresh-context.yaml: ${JSON.stringify(cached)}`);
+    return;
+  }
+  const provided = refreshReason || null;
+  if ((cached ?? '') !== (provided ?? '')) {
+    console.error(`[finalize-report] --refresh-reason mismatch: refresh-context.yaml has ${JSON.stringify(cached)} but finalize-report was given ${JSON.stringify(provided)}.`);
+    console.error('[finalize-report] omit --refresh-reason to reuse the cached value, or pass the same string both times.');
+    process.exit(EXIT.failure);
+  }
+}
+
+// Strict sweep first so we never advance to the expensive ledger/assembler
+// steps with unverified sources or missing table notes outstanding.
+strictCheckEveryChapter();
+
+// Refresh audit-trail consistency must hold before we touch report-meta.
+ensureRefreshReasonMatchesCache();
+
+// Detect stale evidence so the ledger decision below can rebuild it. Skipped
+// when --rebuild was passed (we are going to rebuild anyway) so the noisy
+// notice is not printed twice.
+const staleChapters = parsedArgs.rebuild ? [] : detectStaleEvidence();
+if (staleChapters.length > 0) {
+  console.error(`[finalize-report] auto-rebuild: evidence.yaml is older than ${staleChapters.length} chapter file(s): ${staleChapters.join(', ')}`);
+  console.error('[finalize-report] note: rebuilding the ledger may shift canonical claim id pointers; build-report will surface dangling report-meta claimRefs if any.');
+}
+
 // Fast pre-flight: surface every shape/enum problem in report-meta.yaml
-// before any expensive step runs. The full assemble-report.mjs check still
+// before any expensive step runs. The full build-report.mjs check still
 // runs later as defense-in-depth (it also covers cross-refs against
 // evidence.yaml, which this step intentionally does not load).
-runStep({ name: 'validate-report-meta', script: 'validate-report-meta.mjs', argv: [reportFolder] });
+runStep({ name: 'check-report-meta', script: 'check-report-meta.mjs', argv: [reportFolder] });
 
 if (refresh) {
   const refreshArgs = [reportFolder, '--prepare-current'];
@@ -95,20 +198,21 @@ if (refresh) {
 }
 
 // Per-report pipeline. Build the evidence ledger only when there is no evidence.yaml yet (or when
-// --rebuild forces a fresh consolidation). evidence.yaml is preserved across
+// --rebuild forces a fresh consolidation, or when chapter files are newer
+// than evidence.yaml — auto-rebuild). evidence.yaml is preserved across
 // re-runs so canonical claim IDs stay stable; the chapter source of truth
 // (localEvidence) is preserved by build-evidence-ledger so the agent always has a place to
 // fix evidence-shape problems.
 const hasExistingEvidence = existsSync(join(reportFolder, FINAL_ARTIFACTS.evidence.file));
-const needsLedger = !hasExistingEvidence || rebuild;
+const needsLedger = !hasExistingEvidence || rebuild || staleChapters.length > 0;
 const steps = [];
 if (needsLedger) {
   steps.push({ name: 'build-evidence-ledger', script: 'build-evidence-ledger.mjs', argv: [reportFolder] });
 } else {
   console.log('[finalize-report] reusing existing evidence.yaml; pass --rebuild to force a full evidence-ledger rebuild.');
 }
-steps.push({ name: 'check-cross-chapter-consistency', script: 'check-cross-chapter-consistency.mjs', argv: [reportFolder] });
-steps.push({ name: 'assemble-report', script: 'assemble-report.mjs', argv: [reportFolder] });
+steps.push({ name: 'check-cross-chapter', script: 'check-cross-chapter.mjs', argv: [reportFolder] });
+steps.push({ name: 'build-report', script: 'build-report.mjs', argv: [reportFolder] });
 steps.push({ name: 'check-report', script: 'check-report.mjs', argv: [reportFolder] });
 
 // link-refresh runs after the publishability gate so we never mark a prior

@@ -1,7 +1,7 @@
 ---
 name: fetch-url
 description: "Use when: fetching raw HTML or readable text from a URL/link/page, extracting text from a PDF (10-K, S-1, prospectus, investor deck, white paper, court filing, regulatory report), saving a body to disk, extracting a page title, or inspecting official website pages. Keywords: fetch URL, fetch link, HTTP GET, scrape HTML, html to text, plain text, strip tags, page title, sitemap, PDF, pdf to text, parse PDF, extract PDF text, 10-K, S-1, prospectus, SEC filing."
-argument-hint: "<url> [--json] [--out <file>] [--max-chars N] [--full-text]"
+argument-hint: "<url> [--json] [--out <file>] [--full-text]"
 ---
 
 # Fetch URL
@@ -16,18 +16,20 @@ node .agents/skills/fetch-url/scripts/fetch.mjs <url>
 
 Use this default for normal source review. It is the preferred agent path: URL in, readable content out.
 
+## Startup-research audit trail
+
+When this skill is used inside the `startup-research` workflow, preserve the `STARTUP_FETCH_LOG_PATH` environment variable that `create-report-run.mjs` printed for the run (or source `.research-cache/<runId>/env.sh` if it exists). Every fetch appends one JSONL entry to that trail; `check-chapter --strict` uses it to verify that cited URLs were actually retrieved during the run. If the variable is missing, fetches still work, but startup-research strict validation will fail with `fetchTrailMissing` once sources are cited.
+
 ## Common parameters
 
 - `--json`: use when another script/agent step needs structured fields such as status, final URL, source/cache state, title/PDF metadata, extraction mode, and output text.
 - `--out <file>` / `-o <file>`: use when the output is long, should be grepped later, or should be kept as a diagnostic artifact. By default this saves the same readable text that would be printed.
-- `--max-chars <n>`: use to protect context on long pages, filings, reports, or PDFs. The output says when it was truncated.
 - `--full-text` / `--no-main-content`: use only when the default output looks suspiciously short or misses important page sections. This keeps more page chrome and is useful for product/home pages, pricing pages, feature grids, docs tables, customer logos, or navigation context. It is not a cleaner mode.
 - `--raw` / `--raw-html`: use only for diagnostics or archival when you need original HTML or raw PDF bytes. For PDFs, pair it with `--out`, e.g. `--raw --out report.pdf`.
 
 ## PDF scenarios
 
 - Normal PDF review: `node .agents/skills/fetch-url/scripts/fetch.mjs <pdf-url>`
-- Long filing/report: add `--max-chars 50000` or another cap.
 - Save extracted text: add `--out report.txt`.
 - Save the original PDF file: add `--raw --out report.pdf`.
 

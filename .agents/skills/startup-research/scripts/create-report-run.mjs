@@ -2,12 +2,12 @@
 // Create or resume a report folder under reports/<timestamp>-<slug>/ after
 // walking existing reports/<runId>/summary-card.yaml files for duplicate
 // company name or website/domain risk.
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import yaml from 'js-yaml';
 import {
   EXIT,
-  FINAL_ARTIFACTS,
+  SUMMARY_CARD_FILE,
   isFinalizedReportFolder,
   listDirs,
   loadWorkflowConfig,
@@ -21,8 +21,6 @@ import {
   slugify,
 } from './utils.mjs';
 
-const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
-
 function volatileFactRefreshInstruction() {
   const facts = loadWorkflowConfig().agentPolicy?.volatileFacts ?? [];
   return facts.length
@@ -31,32 +29,34 @@ function volatileFactRefreshInstruction() {
 }
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website <url>] [--refresh] [--refresh-reason <text>] [--resume] [--timestamp <YYYYMMDDHHmmss>]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website <url>] [--refresh] [--refresh-reason <text>] [--resume]');
   process.exit(EXIT.failure);
 }
 
-// `--timestamp` is intentionally undocumented in SKILL.md: it exists only so
-// the refresh smoke test (test-refresh-pipeline.mjs) can pin a deterministic
-// runId for snapshot/cleanup tracking. Production callers omit it and let the
-// script anchor the run with the system clock.
 function parseArgs(argv) {
-  const args = { timestamp: '', nameParts: [], website: '', refresh: false, refreshReason: '', resume: false };
+  const args = { nameParts: [], website: '', refresh: false, refreshReason: '', resume: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--website' || arg === '--url' || arg === '--domain') args.website = argv[++i] ?? '';
     else if (arg === '--refresh') args.refresh = true;
     else if (arg === '--refresh-reason') args.refreshReason = argv[++i] ?? '';
     else if (arg === '--resume') args.resume = true;
-    else if (arg === '--timestamp') args.timestamp = argv[++i] ?? '';
     else if (arg.startsWith('--')) usage();
     else args.nameParts.push(arg);
   }
-  if (!args.timestamp) args.timestamp = nowRunTimestamp();
-  if (!/^\d{14}$/.test(args.timestamp)) {
-    console.error(`[create-report-run] invalid --timestamp value: ${args.timestamp} (must be 14 digits YYYYMMDDHHmmss)`);
+  args.timestamp = nowRunTimestamp();
+  if (!args.nameParts.length) usage();
+  // Refresh runs must record a reason: link-refresh writes it to
+  // revision.refreshReason on both the new and prior reports, and
+  // finalize-report reuses the cached value when --refresh-reason is
+  // omitted on its CLI. Without enforcement here a refresh run silently
+  // ends with revision.refreshReason: null. Resume invocations are
+  // exempt because the cached refresh-context.yaml from the original
+  // create-report-run already carries the reason.
+  if (args.refresh && !args.resume && !args.refreshReason.trim()) {
+    console.error('[create-report-run] --refresh requires --refresh-reason "<text>" so revision.refreshReason is recorded on the new and prior reports.');
     process.exit(EXIT.failure);
   }
-  if (!args.nameParts.length) usage();
   return args;
 }
 
@@ -177,12 +177,44 @@ function writeRefreshContext({ base, companyName, website, refreshTarget, refres
       'Use the previous report only as background and diff context; do not copy stale claims without re-verifying them.',
       volatileFactRefreshInstruction(),
       'Generate a full report covering every configured analysis chapter and run the normal chapter gates before finalizing.',
-      'Set report-meta.yaml revision.status=current, revision.refreshOfRunId to the previous run id, revision.supersededByRunId=null, and revision.refreshReason to the reason above.',
+      'Do not author report-meta.yaml revision fields unless disambiguation is required; finalize-report/link-refresh writes revision.status, refreshOfRunId, supersededByRunId, and refreshReason automatically.',
     ],
   };
   const path = join(cacheDir, 'refresh-context.yaml');
   writeFileSync(path, yaml.dump(context, { lineWidth: 120, noRefs: true, sortKeys: false }), 'utf8');
   console.error(`[create-report-run] wrote refresh context: ${path}`);
+}
+
+function fetchLogExportLine(base) {
+  return `export STARTUP_FETCH_LOG_PATH=.research-cache/${base}/_fetch-log.jsonl`;
+}
+
+function writeFetchEnvSnippet(base) {
+  const cacheDir = researchCacheDir(base);
+  mkdirSync(cacheDir, { recursive: true });
+  const path = join(cacheDir, 'env.sh');
+  const body = [
+    '# Source this file before running fetch-url for this startup-research run.',
+    '# check-chapter --strict audits cited URLs against this JSONL trail.',
+    fetchLogExportLine(base),
+    '',
+  ].join('\n');
+  // Skip the rewrite when the file already matches the intended body so
+  // --resume does not stomp on hand-edits (e.g. an operator pointing at a
+  // CI-shared trail) when the canonical content is already correct.
+  if (existsSync(path)) {
+    try {
+      if (readFileSync(path, 'utf8') === body) return path;
+    } catch { /* fall through to overwrite */ }
+  }
+  writeFileSync(path, body, 'utf8');
+  return path;
+}
+
+function printFetchTrailHint(base) {
+  const envPath = writeFetchEnvSnippet(base);
+  console.error(`[create-report-run] wrote fetch env snippet: ${envPath}`);
+  console.error(`[create-report-run] hint: source ${envPath} before running fetch-url, or run ${fetchLogExportLine(base)}, so check-chapter can audit cited URLs.`);
 }
 
 const args = parseArgs(process.argv.slice(2));
@@ -205,7 +237,20 @@ if (existsSync(path)) {
     console.error('[create-report-run] rerun the same command with --resume to continue it; duplicate suffix folders are not created.');
     process.exit(EXIT.inProgress);
   }
-  writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
+  // Ensure the per-run scratch dir exists on resume too (it may have been
+  // pruned between runs); the agent and fetch-url co-locate fetch logs and
+  // refresh context here.
+  mkdirSync(researchCacheDir(base), { recursive: true });
+  // Preserve any refresh-context.yaml authored by the original
+  // create-report-run invocation. Overwriting it on --resume would let a
+  // second invocation with a different (or empty) --refresh-reason silently
+  // mutate the cached audit value, which finalize-report later compares
+  // against the CLI value. Only write when the cache is missing.
+  const resumeRefreshCtxPath = join(researchCacheDir(base), 'refresh-context.yaml');
+  if (!existsSync(resumeRefreshCtxPath)) {
+    writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
+  }
+  printFetchTrailHint(base);
   console.error(`[create-report-run] resume: ${path}`);
   console.log(path);
   process.exit(EXIT.ok);
@@ -216,6 +261,18 @@ if (args.resume) {
   process.exit(EXIT.notFound);
 }
 mkdirSync(path, { recursive: true });
+// Always create the per-run scratch dir even for non-refresh runs. SKILL.md
+// expects agents to be able to set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl
+// immediately after this command without an extra mkdir step. fetch-url's
+// own mkdir-on-write is only a fallback; pre-creating the dir keeps the
+// "scratch lives under .research-cache/<runId>/" invariant explicit.
+mkdirSync(researchCacheDir(base), { recursive: true });
 writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
+printFetchTrailHint(base);
+
+// Final hint: the fetch-url skill only writes its audit trail when
+// STARTUP_FETCH_LOG_PATH is set. Without it, check-chapter warns by default
+// and fails under --strict once sources are cited. Stay on stderr so stdout
+// still emits only the path.
 
 console.log(path);

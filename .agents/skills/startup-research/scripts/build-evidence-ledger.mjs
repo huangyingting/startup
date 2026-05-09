@@ -10,7 +10,7 @@
 //   - Sources: deduped by canonical URL. The first occurrence wins as
 //     `canonical`; subsequent duplicates are kept in the ledger but tagged
 //     with `canonical: <firstId>` so the website can resolve to one entry.
-//   - Claims: same treatment, keyed by statement+topic+canonical sourceRefs.
+//   - Claims: same treatment, keyed by statement+topic+canonicalized sourceRefs.
 //   - evidenceGaps: aggregated from all chapters as-is (no dedup needed
 //     because each gap carries chapter-letter-scoped relatedQuestionRefs).
 //
@@ -19,52 +19,119 @@
 // namespace. This makes chapter generation fully parallel-safe.
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { EXIT, canonicalSourceUrl, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, writeYaml } from './utils.mjs';
-import { FRESHNESS_THRESHOLDS, EVIDENCE_QUALITY_TIERS, REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS } from './validation-catalog.mjs';
+import { EXIT, canonicalSourceUrl, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, registrableDomain, writeYaml } from './utils.mjs';
+import { FRESHNESS_THRESHOLDS, EVIDENCE_QUALITY_TIERS } from './validation-catalog.mjs';
+import { formatValidationCompact, formatValidationText, validationEnvelope, validationIssue } from './contracts/validation-result.mjs';
 
-// Local: collapse all whitespace runs to single spaces and trim. Used only by
-// textKey() below for source/claim deduplication keys; not worth a public export.
-function compactText(value) {
-  return String(value ?? '').trim().replace(/\s+/g, ' ');
+// Local: collapse all whitespace runs to single spaces, trim, and lowercase
+// for source/claim deduplication keys.
+function textKey(value) {
+  return String(value ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
 const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 
+// The agent-facing finalize pipeline runs this script and surfaces failures
+// in the same envelope shape every check-* validator emits, so retry loops
+// can read issues[].dimension/.fix without learning a per-script prose
+// format. abort() routes every error through a dimension-tagged envelope;
+// `text` keeps the legacy human-readable line for direct CLI use.
+let outputFormat = 'text';
+let reportFolderForEnvelope = null;
+
+function usageAbort(message) {
+  abort({
+    message: `${message}\nUsage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder> [--format text|json|compact]`,
+    dimension: 'usage',
+    code: 'evidenceLedger.usage',
+    fix: 'Pass exactly one report folder and an optional --format value (text|json|compact).',
+    path: 'cli',
+  });
+}
+
+function abort({ message, dimension = 'evidenceLedger', code = 'evidenceLedger.failure', fix = null, path = EVIDENCE_FILE, exitCode = EXIT.failure }) {
+  const envelope = validationEnvelope({
+    ok: false,
+    validator: 'build-evidence-ledger',
+    artifact: EVIDENCE_FILE,
+    reportFolder: reportFolderForEnvelope,
+    issues: [validationIssue({ path, message, dimension, code, fix })],
+    summary: { stage: 'build-evidence-ledger' },
+  });
+  if (outputFormat === 'json') console.log(JSON.stringify(envelope, null, 2));
+  else if (outputFormat === 'compact') console.log(formatValidationCompact(envelope));
+  else console.error(`[evidence-ledger] ${message}`);
+  process.exit(exitCode);
+}
+
 function parseArgs(argv) {
-  const args = { folder: null };
-  for (const arg of argv) {
-    if (arg.startsWith('-')) {
-      console.error(`[evidence-ledger] unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder>`);
-      process.exit(EXIT.failure);
-    } else if (!args.folder) args.folder = arg;
-    else {
-      console.error(`[evidence-ledger] unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder>`);
-      process.exit(EXIT.failure);
+  const args = { folder: null, format: 'text' };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--format') {
+      const next = argv[++i];
+      if (next === undefined || next.startsWith('-')) usageAbort('--format requires a value (text|json|compact)');
+      args.format = next;
+    } else if (arg === '-h' || arg === '--help') {
+      usageAbort('help requested');
+    } else if (arg.startsWith('-')) {
+      usageAbort(`unknown flag: ${arg}`);
+    } else if (!args.folder) {
+      args.folder = arg;
+    } else {
+      usageAbort(`unexpected positional argument: ${arg}`);
     }
   }
+  if (!args.folder) usageAbort('missing <report-folder>');
+  if (!['text', 'json', 'compact'].includes(args.format)) usageAbort(`invalid --format: ${args.format} (expected text|json|compact)`);
   return args;
 }
 
 const args = parseArgs(process.argv.slice(2));
-if (!args.folder) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder>');
-  process.exit(EXIT.failure);
-}
+outputFormat = args.format;
 
 const reportFolder = resolve(args.folder);
+reportFolderForEnvelope = reportFolder;
 const docs = loadAnalysisDocs(reportFolder);
 if (!docs.size) {
-  console.error(`[evidence-ledger] no report artifacts found in ${reportFolder}`);
-  process.exit(EXIT.notFound);
+  abort({
+    message: `no report artifacts found in ${reportFolder}`,
+    dimension: 'missingArtifact',
+    code: 'evidenceLedger.noArtifacts',
+    fix: 'Author every configured chapter YAML under the report folder before building the evidence ledger.',
+    path: reportFolder,
+    exitCode: EXIT.notFound,
+  });
 }
 
 const { sources, claims, evidenceGaps, duplicateSourceCount, duplicateClaimCount } = consolidate(docs);
 const ledger = buildLedger(docs, sources, claims, evidenceGaps);
 
-writeYaml(join(reportFolder, EVIDENCE_FILE), ledger);
-console.log(`[evidence-ledger] wrote ${join(reportFolder, EVIDENCE_FILE)} (${sources.length} sources [${duplicateSourceCount} duplicates], ${claims.length} claims [${duplicateClaimCount} duplicates])`);
+const evidencePath = join(reportFolder, EVIDENCE_FILE);
+writeYaml(evidencePath, ledger);
+const summaryFields = {
+  evidencePath,
+  sources: sources.length,
+  duplicateSources: duplicateSourceCount,
+  claims: claims.length,
+  duplicateClaims: duplicateClaimCount,
+  evidenceGaps: evidenceGaps.length,
+};
+if (outputFormat === 'text') {
+  console.log(`[evidence-ledger] wrote ${evidencePath} (${sources.length} sources [${duplicateSourceCount} duplicates], ${claims.length} claims [${duplicateClaimCount} duplicates])`);
+} else {
+  const envelope = validationEnvelope({
+    ok: true,
+    validator: 'build-evidence-ledger',
+    artifact: EVIDENCE_FILE,
+    reportFolder,
+    summary: { stage: 'build-evidence-ledger', ...summaryFields },
+  });
+  if (outputFormat === 'json') console.log(JSON.stringify(envelope, null, 2));
+  else console.log(formatValidationCompact(envelope));
+}
 
 // ---------------------------------------------------------------------------
 
@@ -82,13 +149,10 @@ function sourceKey(source) {
     || ['fallback', source?.publisher, source?.title, source?.date].map(textKey).join('|');
 }
 
-function textKey(value) {
-  return compactText(value).toLowerCase();
-}
-
-function claimKey(claim) {
+function claimKey(claim, canonicalIdBySourceId = new Map()) {
   const sourceRefs = claim.sourceRefs ?? [];
-  return [textKey(claim?.statement), textKey(claim?.topic), [...sourceRefs].sort().join(',')].join('|');
+  const canonicalRefs = sourceRefs.map((ref) => canonicalIdBySourceId.get(ref) ?? ref);
+  return [textKey(claim?.statement), textKey(claim?.topic), [...canonicalRefs].sort().join(',')].join('|');
 }
 
 // Aggregate sources from every chapter, preserving original chapter-letter
@@ -99,6 +163,7 @@ function claimKey(claim) {
 function consolidateSources(docs) {
   const sources = [];
   const canonicalByKey = new Map(); // urlKey -> first id seen
+  const canonicalIdBySourceId = new Map(); // source id -> canonical source id
   let duplicateCount = 0;
   for (const [, doc] of docs) {
     for (const source of doc.localEvidence?.sources ?? []) {
@@ -107,19 +172,21 @@ function consolidateSources(docs) {
       if (existingCanonical && existingCanonical !== source.id) {
         // Keep the duplicate but tag it as canonical-of the first id.
         sources.push({ ...source, canonical: existingCanonical });
+        if (source?.id) canonicalIdBySourceId.set(source.id, existingCanonical);
         duplicateCount += 1;
       } else {
         if (!existingCanonical) canonicalByKey.set(key, source.id);
+        if (source?.id) canonicalIdBySourceId.set(source.id, source.id);
         sources.push({ ...source });
       }
     }
   }
-  return { sources, duplicateCount };
+  return { sources, duplicateCount, canonicalIdBySourceId };
 }
 
 // Aggregate claims from every chapter, preserving original chapter-letter
 // IDs (CO001, CM045, ...). Same canonical-tagging strategy as sources.
-function consolidateClaims(docs) {
+function consolidateClaims(docs, canonicalIdBySourceId) {
   const claims = [];
   const evidenceGaps = [];
   const canonicalByKey = new Map();
@@ -130,7 +197,7 @@ function consolidateClaims(docs) {
     for (const claim of local.claims ?? []) {
       // `corroboration` is derived from sourceRefs.length; do not persist it.
       const { corroboration: _drop, ...rest } = claim;
-      const key = claimKey(claim);
+      const key = claimKey(claim, canonicalIdBySourceId);
       const existingCanonical = canonicalByKey.get(key);
       if (existingCanonical && existingCanonical !== claim.id) {
         claims.push({ ...rest, canonical: existingCanonical });
@@ -169,7 +236,7 @@ function summarizeRecency(runDate, sources, claims) {
 
 function consolidate(docs) {
   const sourceResult = consolidateSources(docs);
-  const claimResult = consolidateClaims(docs);
+  const claimResult = consolidateClaims(docs, sourceResult.canonicalIdBySourceId);
   return {
     sources: sourceResult.sources,
     claims: claimResult.claims,
@@ -192,7 +259,7 @@ function buildLedger(docs, sources, claims, evidenceGaps) {
     coverage: {
       evidenceQuality: inferEvidenceQuality(sources, claims),
       sourceDiversityNotes: null,
-      deduplicationNotes: `Consolidated from ${docs.size} artifacts; sources deduplicated by canonical URL or publisher/title/date fallback.`,
+      deduplicationNotes: `Consolidated from ${docs.size} artifacts; sources deduplicated by canonical URL or publisher/title/date fallback; claims deduplicated by statement, topic, and canonicalized sourceRefs.`,
       recencyNotes,
       coverageGaps: [],
     },
@@ -213,7 +280,7 @@ function buildCoverageMatrix(docs, sources, claims) {
     const unresolvedQuestions = localQuestions.filter((q) => q?.status && q.status !== 'answered').length;
     const distinctDomains = new Set(
       localSources
-        .map((s) => normalizedDomain(s?.url))
+        .map((s) => registrableDomain(s?.url))
         .filter(Boolean),
     );
     byChapter[file] = {
@@ -245,7 +312,7 @@ function buildCoverageMatrix(docs, sources, claims) {
     const key = claim?.type ?? 'unknown';
     byClaimType[key] = (byClaimType[key] ?? 0) + 1;
   }
-  const distinctDomains = new Set(sources.map((s) => normalizedDomain(s?.url)).filter(Boolean));
+  const distinctDomains = new Set(sources.map((s) => registrableDomain(s?.url)).filter(Boolean));
   return {
     totalDistinctDomains: distinctDomains.size,
     byChapter,
@@ -254,20 +321,6 @@ function buildCoverageMatrix(docs, sources, claims) {
     byAccessStatus,
     byClaimType,
   };
-}
-
-function normalizedDomain(value) {
-  try {
-    const raw = String(value ?? '').trim();
-    if (!raw) return '';
-    const host = new URL(raw.startsWith('http') ? raw : `https://${raw}`).hostname.replace(/^www\./, '').toLowerCase();
-    const parts = host.split('.');
-    if (parts.length <= REGISTRABLE_DOMAIN_MAX_PARTS) return host;
-    const lastTwo = parts.slice(-2).join('.');
-    return MULTI_PART_TLDS.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
-  } catch {
-    return '';
-  }
 }
 
 function inferEvidenceQuality(sources, claims) {

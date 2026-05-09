@@ -203,7 +203,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/copilot-logs"
           COPILOT_LOG="$RUNNER_TEMP/copilot-logs/run.log"
           set +e
-          copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
+          copilot --yolo --no-ask-user --excluded-tools "web_fetch" --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
           status=${PIPESTATUS[0]}
           set -e
           {

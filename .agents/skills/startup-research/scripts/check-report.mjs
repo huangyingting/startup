@@ -1,8 +1,11 @@
 #!/usr/bin/env node
-// Schema and renderer-contract checks for a single report folder.
+// Schema and renderer-contract checks for a single report folder, or every
+// finalized report under ./reports/ when invoked with --all.
+//
 // Usage:
 //   node .agents/skills/startup-research/scripts/check-report.mjs <report-folder>
 //   node .agents/skills/startup-research/scripts/check-report.mjs <report-folder> --contract
+//   node .agents/skills/startup-research/scripts/check-report.mjs --all
 //
 // `<report-folder>` may be an absolute path, a path relative to the repo
 // root, or a bare run id (e.g. `20260505063138-cyberhaven`) which is
@@ -12,9 +15,13 @@
 // `--contract` keeps schema / renderer / reference checks but skips current
 // content-quality gates (source diversity and adverse-source distribution),
 // which makes it suitable for re-checking historical reports after renderer
-// or schema-contract changes. To re-check a single report by hand:
+// or schema-contract changes. `--all` walks every finalized report folder in
+// ./reports/ and runs the contract checks on each (used by `npm run
+// check:reports-contract`); historical reports are not forced to satisfy
+// content gates added after they were produced.
 //   node .agents/skills/startup-research/scripts/check-report.mjs <folder>
 //   node .agents/skills/startup-research/scripts/check-report.mjs <folder> --contract
+//   node .agents/skills/startup-research/scripts/check-report.mjs --all
 // Chapter content readiness is checked by the other startup-research scripts.
 import { existsSync, statSync } from 'node:fs';
 import { basename, isAbsolute, join, resolve, dirname } from 'node:path';
@@ -29,6 +36,7 @@ import {
   hasText,
   isFinalizedReportFolder,
   isRunId,
+  listDirs,
   loadWorkflowConfig,
   REVISION_STATUSES,
   tryReadYaml,
@@ -42,7 +50,8 @@ import {
   checkSourceSchema,
   checkTableSchema,
   checkUniqueIds,
-} from './report-artifact-schema.mjs';
+} from './artifact-checks.mjs';
+import { OBSOLETE_SUMMARY_ROOT_FIELDS } from './contracts/report-artifacts.schema.mjs';
 import {
   BLOCK_TYPES,
   CALLOUT_TYPES,
@@ -56,6 +65,7 @@ import {
   ID_PATTERN_TABLE,
   formatEnumChoices,
 } from './validation-catalog.mjs';
+import { formatValidationCompact, formatValidationText, validationEnvelope, validationIssue } from './contracts/validation-result.mjs';
 const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../reports');
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts(WORKFLOW_CONFIG);
@@ -67,34 +77,46 @@ const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 const FULL_REPORT_FILE = FINAL_ARTIFACTS.fullReport.file;
 const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 
-const failures = [];
-const fail = (message) => failures.push(message);
+// Per-call failure collector. checkRun() swaps in a fresh array for each
+// report it processes and returns the captured failures, so callers (single
+// folder mode and runAll) don't share state and don't need a manual reset.
+//
+// Each entry is `{ message, dimension?, code?, fix?, path? }`. fail() accepts
+// either `(message)` (legacy callers default to the generic reportContract /
+// reportGate dimension) or `(message, opts)` where opts carries the precise
+// dimension/code/fix. failureEnvelope() projects each entry onto a
+// validationIssue, falling back to the generic dimension only when no
+// specific tag was attached.
+let currentFailures = [];
+const fail = (message, opts = {}) => currentFailures.push({ message, ...opts });
 
 // ---------------------------------------------------------------------------
 // ledger schema
 // ---------------------------------------------------------------------------
 
 function checkLedgerSources(run, sources) {
-  // Schema rules live in report-artifact-schema.mjs so check-chapter and check-report
+  // Schema rules live in artifact-checks.mjs so check-chapter and check-report
   // can never drift. We just route the per-source errors into our flat
-  // failure list with the same path prefix this checker has always used.
+  // failure list with the same path prefix this checker has always used,
+  // preserving the per-error dimension (sourceShape/...) so the JSON envelope
+  // surfaces the real triage signal.
   for (const source of sources) {
     const path = `${run}/${EVIDENCE_FILE}: source ${source?.id ?? '?'}`;
     const { errors } = checkSourceSchema(source, { path });
-    for (const err of errors) fail(err.message);
+    for (const err of errors) fail(err.message, err);
   }
 }
 
 function checkLedgerCoverage(run, coverage) {
   const path = `${run}/${EVIDENCE_FILE}: coverage`;
-  if (coverage?.evidenceQuality === undefined) fail(`${path} missing evidenceQuality`);
+  if (coverage?.evidenceQuality === undefined) fail(`${path} missing evidenceQuality`, { path, dimension: 'reportContract', code: 'reportContract.coverageMissingEvidenceQuality', fix: 'Re-run build-evidence-ledger.mjs so evidence.yaml.coverage.evidenceQuality is populated.' });
 }
 
 function checkLedgerClaims(run, claims) {
   for (const claim of claims) {
     const path = `${run}/${EVIDENCE_FILE}: claim ${claim?.id ?? '?'}`;
     const { errors } = checkClaimSchema(claim, { path });
-    for (const err of errors) fail(err.message);
+    for (const err of errors) fail(err.message, err);
   }
 }
 
@@ -120,37 +142,37 @@ function checkReportBlocks(run, reportDoc) {
   for (const [location, block] of blocks) {
     const path = `${run}/${FULL_REPORT_FILE}:${location}`;
     if (!BLOCK_TYPES.has(block.type)) {
-      fail(`${path} block.type="${block.type}" must be one of ${formatEnumChoices(BLOCK_TYPES)}`);
+      fail(`${path} block.type="${block.type}" must be one of ${formatEnumChoices(BLOCK_TYPES)}`, { path, dimension: 'documentHead', code: 'reportBlock.invalidType', fix: `Set block.type to one of ${formatEnumChoices(BLOCK_TYPES)}.` });
       continue;
     }
-    if (block.type === 'paragraph' && !hasText(block.body)) fail(`${path} paragraph block requires body`);
+    if (block.type === 'paragraph' && !hasText(block.body)) fail(`${path} paragraph block requires body`, { path, dimension: 'documentHead', code: 'reportBlock.paragraphBody', fix: 'Add a non-empty body string to the paragraph block.' });
     if (block.type === 'list' && (!Array.isArray(block.items) || block.items.length === 0)) {
-      fail(`${path} list block requires non-empty items`);
+      fail(`${path} list block requires non-empty items`, { path, dimension: 'documentHead', code: 'reportBlock.listItems', fix: 'Add at least one item to the list block.' });
     }
-    if (block.type === 'equation' && !hasText(block.equation)) fail(`${path} equation block requires equation`);
+    if (block.type === 'equation' && !hasText(block.equation)) fail(`${path} equation block requires equation`, { path, dimension: 'documentHead', code: 'reportBlock.equation', fix: 'Add a non-empty equation string to the equation block.' });
     if (block.type === 'callout') {
-      if (!hasText(block.body)) fail(`${path} callout block requires body`);
+      if (!hasText(block.body)) fail(`${path} callout block requires body`, { path, dimension: 'calloutShape', code: 'reportBlock.calloutBody', fix: 'Add a non-empty body string to the callout block.' });
       if (block.calloutType != null && !CALLOUT_TYPES.has(block.calloutType)) {
-        fail(`${path} callout block calloutType="${block.calloutType}" must be one of ${formatEnumChoices(CALLOUT_TYPES)}`);
+        fail(`${path} callout block calloutType="${block.calloutType}" must be one of ${formatEnumChoices(CALLOUT_TYPES)}`, { path, dimension: 'calloutShape', code: 'reportBlock.calloutType', fix: `Set callout.calloutType to one of ${formatEnumChoices(CALLOUT_TYPES)} (or omit it).` });
       }
     }
-    if (block.type === 'table' && !hasText(block.tableRef)) fail(`${path} table block requires tableRef`);
-    if (block.type === 'figure' && !hasText(block.figureRef)) fail(`${path} figure block requires figureRef`);
+    if (block.type === 'table' && !hasText(block.tableRef)) fail(`${path} table block requires tableRef`, { path, dimension: 'artifactRefs', code: 'reportBlock.tableRef', fix: 'Set block.tableRef to a top-level tables[].id.' });
+    if (block.type === 'figure' && !hasText(block.figureRef)) fail(`${path} figure block requires figureRef`, { path, dimension: 'artifactRefs', code: 'reportBlock.figureRef', fix: 'Set block.figureRef to a top-level figures[].id.' });
   }
 }
 
 function checkCallouts(run, file, doc) {
   if (!ANALYSIS_FILES.includes(file)) return;
   if (doc?.analysisCallouts !== undefined) {
-    fail(`${run}/${file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`);
+    fail(`${run}/${file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`, { path: `${run}/${file}`, dimension: 'documentHead', code: 'analysisCalloutsObsolete', fix: 'Rename the top-level field analysisCallouts to callouts.' });
   }
   if (doc?.analysisCallout !== undefined) {
-    fail(`${run}/${file}: top-level field "analysisCallout" (singular) is obsolete; rename to "callouts" and wrap the object in a list`);
+    fail(`${run}/${file}: top-level field "analysisCallout" (singular) is obsolete; rename to "callouts" and wrap the object in a list`, { path: `${run}/${file}`, dimension: 'documentHead', code: 'analysisCalloutObsolete', fix: 'Rename analysisCallout to callouts and wrap the object in a list.' });
   }
   for (const [index, callout] of (doc?.callouts ?? []).entries()) {
     const path = `${run}/${file}: callout ${index + 1}`;
     const { errors } = checkCalloutSchema(callout, { path });
-    for (const err of errors) fail(err.message);
+    for (const err of errors) fail(err.message, err);
   }
 }
 
@@ -159,10 +181,10 @@ function checkCallouts(run, file, doc) {
 // ---------------------------------------------------------------------------
 
 function checkFigure(path, figure) {
-  // All figure deep-schema rules now live in report-artifact-schema.mjs so the
+  // All figure deep-schema rules now live in artifact-checks.mjs so the
   // chapter-time gate and post-finalize gate enforce the same contract.
   const { errors } = checkFigureDeep(figure, { path });
-  for (const err of errors) fail(err.message);
+  for (const err of errors) fail(err.message, err);
 }
 
 // ---------------------------------------------------------------------------
@@ -173,7 +195,7 @@ function checkTables(run, file, doc) {
   for (const table of doc?.tables ?? []) {
     const path = `${run}/${file}: table ${table?.id ?? '?'}`;
     const { errors } = checkTableSchema(table, { path });
-    for (const err of errors) fail(err.message);
+    for (const err of errors) fail(err.message, err);
   }
 }
 
@@ -189,9 +211,9 @@ function checkRefs(run, reportDoc) {
   const tableIds = new Set((reportDoc?.tables ?? []).map((table) => table.id));
   const path = `${run}/${FULL_REPORT_FILE}`;
   const { errors: chapterErrors } = checkArtifactRefs(reportDoc?.chapters ?? [], { path, figureIds, tableIds, requireUniqueHome: true });
-  for (const err of chapterErrors) fail(err.message);
+  for (const err of chapterErrors) fail(err.message, err);
   const { errors: appendixErrors } = checkArtifactRefs(reportDoc?.appendices ?? [], { path, figureIds, tableIds, requireUniqueHome: true });
-  for (const err of appendixErrors) fail(err.message);
+  for (const err of appendixErrors) fail(err.message, err);
 }
 
 // ---------------------------------------------------------------------------
@@ -204,15 +226,15 @@ function parseRunArtifacts(run, dir) {
   for (const file of REQUIRED_ENGLISH_FILES.filter((name) => name.endsWith('.yaml'))) {
     const result = tryReadYaml(join(dir, file));
     if (!result.ok) {
-      fail(`${run}/${file}: YAML parse failed: ${result.error}`);
+      fail(`${run}/${file}: YAML parse failed: ${result.error}`, { path: `${run}/${file}`, dimension: 'yamlParse', code: 'yamlParse', fix: `Fix YAML syntax in ${file}.` });
       continue;
     }
     parsed.set(file, result.value);
     const expected = ARTIFACT_BY_FILE.get(file);
     const { errors } = checkDocumentHeadSchema(result.value, { path: `${run}/${file}`, expected });
-    for (const err of errors) fail(err.message);
+    for (const err of errors) fail(err.message, err);
     if (result.value?.slug && result.value.slug !== canonicalSlug) {
-      fail(`${run}/${file}: slug "${result.value.slug}" does not match folder slug "${canonicalSlug}"`);
+      fail(`${run}/${file}: slug "${result.value.slug}" does not match folder slug "${canonicalSlug}"`, { path: `${run}/${file}`, dimension: 'slugConsistency', code: 'slugFolderMismatch', fix: `Set slug: to "${canonicalSlug}".` });
     }
   }
   return parsed;
@@ -225,17 +247,17 @@ function checkLedgerCrossReferences(run, ledger, parsed, { contentGates }) {
   checkLedgerCoverage(run, ledger.coverage ?? {});
   checkLedgerSources(run, ledger.sources ?? []);
   checkLedgerClaims(run, ledger.claims ?? []);
-  for (const err of checkUniqueIds(ledger.sources, { label: 'source', pattern: ID_PATTERN_SOURCE, path: run }).errors) fail(err.message);
-  for (const err of checkUniqueIds(ledger.claims, { label: 'claim', pattern: ID_PATTERN_CLAIM, path: run }).errors) fail(err.message);
+  for (const err of checkUniqueIds(ledger.sources, { label: 'source', pattern: ID_PATTERN_SOURCE, path: run }).errors) fail(err.message, { ...err, dimension: err.dimension ?? 'duplicateIds' });
+  for (const err of checkUniqueIds(ledger.claims, { label: 'claim', pattern: ID_PATTERN_CLAIM, path: run }).errors) fail(err.message, { ...err, dimension: err.dimension ?? 'duplicateIds' });
   for (const claim of ledger.claims ?? []) {
     for (const ref of claim.sourceRefs ?? []) {
-      if (!sourceIds.has(ref)) fail(`${run}: claim ${claim.id} references missing source ${ref}`);
+      if (!sourceIds.has(ref)) fail(`${run}: claim ${claim.id} references missing source ${ref}`, { path: `${run}/${EVIDENCE_FILE}`, dimension: 'claimRefs', code: 'ledgerClaimSourceRef', fix: `Resolve sourceRef ${ref} on claim ${claim.id} (rebuild the ledger after the chapter sources are corrected).` });
     }
   }
   for (const [file, doc] of parsed) {
     if (file === EVIDENCE_FILE) continue;
     for (const ref of collectClaimRefs(doc)) {
-      if (!claimIds.has(ref)) fail(`${run}/${file}: missing claimRef ${ref}`);
+      if (!claimIds.has(ref)) fail(`${run}/${file}: missing claimRef ${ref}`, { path: `${run}/${file}`, dimension: 'claimRefs', code: 'ledgerClaimRefMissing', fix: `Resolve claimRef ${ref}: it must exist in evidence.yaml after build-evidence-ledger.` });
     }
   }
   if (contentGates) checkReportLevelDiversity(run, ledger);
@@ -250,7 +272,7 @@ function checkReportLevelDiversity(run, ledger) {
 
   const matrix = ledger.coverageMatrix;
   if (!matrix) {
-    fail(`${run}/${EVIDENCE_FILE}: coverageMatrix missing — re-run build-evidence-ledger.mjs`);
+    fail(`${run}/${EVIDENCE_FILE}: coverageMatrix missing — re-run build-evidence-ledger.mjs`, { path: `${run}/${EVIDENCE_FILE}`, dimension: 'reportContract', code: 'coverageMatrixMissing', fix: 'Re-run build-evidence-ledger.mjs so evidence.yaml carries coverageMatrix.' });
     return;
   }
 
@@ -259,13 +281,13 @@ function checkReportLevelDiversity(run, ledger) {
   // not more than maxPaywallPercent of paywall/broken sources.
   const minDistinctDomains = gate.minDistinctDomains ?? 30;
   if ((matrix.totalDistinctDomains ?? 0) < minDistinctDomains) {
-    fail(`${run}/${EVIDENCE_FILE}: report-wide totalDistinctDomains=${matrix.totalDistinctDomains ?? 0}, expected at least ${minDistinctDomains}`);
+    fail(`${run}/${EVIDENCE_FILE}: report-wide totalDistinctDomains=${matrix.totalDistinctDomains ?? 0}, expected at least ${minDistinctDomains}`, { path: `${run}/${EVIDENCE_FILE}`, dimension: 'sourceDomains', code: 'reportDomainFloor', fix: `Add sources from new registrable domains until totalDistinctDomains ≥ ${minDistinctDomains}.` });
   }
 
   if (gate.requireAdverseSource ?? true) {
     const adverseTotal = matrix.byStance?.adverse ?? 0;
     if (adverseTotal === 0) {
-      fail(`${run}/${EVIDENCE_FILE}: no adverse-stance sources across the entire report (risks chapter must contribute at least one)`);
+      fail(`${run}/${EVIDENCE_FILE}: no adverse-stance sources across the entire report (risks chapter must contribute at least one)`, { path: `${run}/${EVIDENCE_FILE}`, dimension: 'sourceStanceSpread', code: 'reportNoAdverseSource', fix: 'Add at least one adverse-stance source to the risks chapter (regulator complaint, short report, skeptical analyst note, FOS/CFPB filing, FT Alphaville-style critique).' });
     }
   }
 
@@ -275,7 +297,7 @@ function checkReportLevelDiversity(run, ledger) {
     const blockedTotal = (matrix.byAccessStatus?.broken ?? 0) + (matrix.byAccessStatus?.paywall ?? 0) + (matrix.byAccessStatus?.['rate-limited'] ?? 0);
     if (blockedTotal / totalSources > maxPaywallPercent) {
       const pct = (blockedTotal / totalSources * 100).toFixed(0);
-      fail(`${run}/${EVIDENCE_FILE}: ${blockedTotal}/${totalSources} sources are paywall/broken/rate-limited (${pct}%, max ${Math.round(maxPaywallPercent * 100)}%); replace blocked sources with accessible alternatives`);
+      fail(`${run}/${EVIDENCE_FILE}: ${blockedTotal}/${totalSources} sources are paywall/broken/rate-limited (${pct}%, max ${Math.round(maxPaywallPercent * 100)}%); replace blocked sources with accessible alternatives`, { path: `${run}/${EVIDENCE_FILE}`, dimension: 'paywallRisk', code: 'reportPaywallCeiling', fix: `Swap restricted (paywall|js-only|broken|rate-limited) sources for ok ones until the share is ≤ ${Math.round(maxPaywallPercent * 100)}%.` });
     }
   }
 }
@@ -300,7 +322,7 @@ function checkAdverseDistribution(run, parsed) {
   }
   for (const requiredKey of config.requireAtLeastOneAdverseSource ?? []) {
     if ((adverseByKey.get(requiredKey) ?? 0) < 1) {
-      fail(`${run}/${EVIDENCE_FILE}: chapter "${requiredKey}" has 0 adverse-stance sources; adverseDistribution.requireAtLeastOneAdverseSource requires at least one`);
+      fail(`${run}/${EVIDENCE_FILE}: chapter "${requiredKey}" has 0 adverse-stance sources; adverseDistribution.requireAtLeastOneAdverseSource requires at least one`, { path: `${run}/${EVIDENCE_FILE}`, dimension: 'sourceStanceSpread', code: 'adverseDistributionPerChapter', fix: `Add at least one adverse-stance source to the ${requiredKey} chapter.` });
     }
   }
   const threshold = config.warnIfChaptersWithAdverseSourceAtMost;
@@ -310,7 +332,7 @@ function checkAdverseDistribution(run, parsed) {
       // Concentration is a fail, not a warn: reports that pass with adverse
       // evidence in only 1-2 chapters look "green" but are structurally
       // unbalanced. The threshold is operator-tunable in workflow-config.yaml.
-      fail(`${run}/${EVIDENCE_FILE}: adverse-stance sources appear in only ${chaptersWithAdverse} chapter(s) (<= ${threshold}); spread adverse evidence across more chapters`);
+      fail(`${run}/${EVIDENCE_FILE}: adverse-stance sources appear in only ${chaptersWithAdverse} chapter(s) (<= ${threshold}); spread adverse evidence across more chapters`, { path: `${run}/${EVIDENCE_FILE}`, dimension: 'sourceStanceSpread', code: 'adverseDistributionConcentration', fix: `Spread adverse-stance sources across more chapters (currently ${chaptersWithAdverse}, must exceed ${threshold}).` });
     }
   }
 }
@@ -319,40 +341,40 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
   const cardPath = `${run}/${SUMMARY_CARD_FILE}`;
   const summary = card?.summary;
   if (!summary || typeof summary !== 'object') {
-    fail(`${cardPath}: summary block is required`);
+    fail(`${cardPath}: summary block is required`, { path: cardPath, dimension: 'reportMetaShape', code: 'card.summaryMissing', fix: 'Add the summary: block to summary-card.yaml (it mirrors report-meta.summary).' });
   } else {
     if (typeof summary.overallScore !== 'number' || summary.overallScore < 0 || summary.overallScore > 10) {
-      fail(`${cardPath}: summary.overallScore must be a number between 0 and 10 (got ${JSON.stringify(summary.overallScore)})`);
+      fail(`${cardPath}: summary.overallScore must be a number between 0 and 10 (got ${JSON.stringify(summary.overallScore)})`, { path: cardPath, dimension: 'reportMetaShape', code: 'card.overallScore', fix: 'Set summary.overallScore to a number between 0 and 10 in report-meta.yaml.' });
     }
-    if (!hasText(summary.headline)) fail(`${cardPath}: summary.headline is required`);
-    if (!CARD_RECOMMENDATIONS.has(summary.recommendation)) fail(`${cardPath}: summary.recommendation="${summary.recommendation}" must be one of ${formatEnumChoices(CARD_RECOMMENDATIONS)}`);
-    if (!CARD_CONFIDENCES.has(summary.confidence)) fail(`${cardPath}: summary.confidence="${summary.confidence}" must be one of ${formatEnumChoices(CARD_CONFIDENCES)}`);
-    if (!CARD_RISK_RATINGS.has(summary.riskRating)) fail(`${cardPath}: summary.riskRating="${summary.riskRating}" must be one of ${formatEnumChoices(CARD_RISK_RATINGS)}`);
-    if (!CARD_VALUATION_STANCES.has(summary.valuationStance)) fail(`${cardPath}: summary.valuationStance="${summary.valuationStance}" must be one of ${formatEnumChoices(CARD_VALUATION_STANCES)}`);
+    if (!hasText(summary.headline)) fail(`${cardPath}: summary.headline is required`, { path: cardPath, dimension: 'reportMetaShape', code: 'card.headline', fix: 'Add a non-empty summary.headline to report-meta.yaml.' });
+    if (!CARD_RECOMMENDATIONS.has(summary.recommendation)) fail(`${cardPath}: summary.recommendation="${summary.recommendation}" must be one of ${formatEnumChoices(CARD_RECOMMENDATIONS)}`, { path: cardPath, dimension: 'reportMetaShape', code: 'card.recommendation', fix: `Set summary.recommendation to one of ${formatEnumChoices(CARD_RECOMMENDATIONS)} in report-meta.yaml.` });
+    if (!CARD_CONFIDENCES.has(summary.confidence)) fail(`${cardPath}: summary.confidence="${summary.confidence}" must be one of ${formatEnumChoices(CARD_CONFIDENCES)}`, { path: cardPath, dimension: 'reportMetaShape', code: 'card.confidence', fix: `Set summary.confidence to one of ${formatEnumChoices(CARD_CONFIDENCES)} in report-meta.yaml.` });
+    if (!CARD_RISK_RATINGS.has(summary.riskRating)) fail(`${cardPath}: summary.riskRating="${summary.riskRating}" must be one of ${formatEnumChoices(CARD_RISK_RATINGS)}`, { path: cardPath, dimension: 'reportMetaShape', code: 'card.riskRating', fix: `Set summary.riskRating to one of ${formatEnumChoices(CARD_RISK_RATINGS)} in report-meta.yaml.` });
+    if (!CARD_VALUATION_STANCES.has(summary.valuationStance)) fail(`${cardPath}: summary.valuationStance="${summary.valuationStance}" must be one of ${formatEnumChoices(CARD_VALUATION_STANCES)}`, { path: cardPath, dimension: 'reportMetaShape', code: 'card.valuationStance', fix: `Set summary.valuationStance to one of ${formatEnumChoices(CARD_VALUATION_STANCES)} in report-meta.yaml.` });
     for (const field of ['topStrengths', 'topRisks', 'unresolvedGaps']) {
-      if (!Array.isArray(summary[field])) fail(`${cardPath}: summary.${field} must be an array`);
+      if (!Array.isArray(summary[field])) fail(`${cardPath}: summary.${field} must be an array`, { path: cardPath, dimension: 'reportMetaShape', code: `card.${field}`, fix: `Set summary.${field} to an array in report-meta.yaml.` });
     }
   }
-  for (const field of ['headline', 'recommendation', 'confidence', 'riskRating', 'valuationStance', 'overallScore', 'keyMetrics', 'topStrengths', 'topRisks', 'unresolvedGaps']) {
-    if (card?.[field] !== undefined) fail(`${cardPath}: top-level field '${field}' is obsolete; nest under 'summary'`);
+  for (const field of OBSOLETE_SUMMARY_ROOT_FIELDS) {
+    if (card?.[field] !== undefined) fail(`${cardPath}: top-level field '${field}' is obsolete; nest under 'summary'`, { path: cardPath, dimension: 'reportMetaShape', code: 'card.obsoleteRootField', fix: `Move ${field} under summary: in report-meta.yaml.` });
   }
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
-    fail(`${cardPath}: claimsReviewed exceeds ledger claims`);
+    fail(`${cardPath}: claimsReviewed exceeds ledger claims`, { path: cardPath, dimension: 'reportContract', code: 'card.claimsReviewedOverflow', fix: 'Re-run build-report.mjs after build-evidence-ledger.mjs so sourceStats is recomputed from the current ledger.' });
   }
   for (const field of ['sourcesRetained', 'claimsReviewed', 'domainCount', 'adverseSourceCount', 'openQuestionCount', 'documentedGapQuestionCount', 'blockingQuestionCount']) {
-    if (typeof card?.sourceStats?.[field] !== 'number') fail(`${cardPath}: sourceStats.${field} is required and must be a number`);
+    if (typeof card?.sourceStats?.[field] !== 'number') fail(`${cardPath}: sourceStats.${field} is required and must be a number`, { path: cardPath, dimension: 'reportContract', code: 'card.sourceStatsMissing', fix: 'Re-run build-report.mjs to repopulate summary-card.sourceStats.' });
   }
   if (card?.sourceStats?.unresolvedQuestionCount !== undefined) {
-    fail(`${cardPath}: sourceStats.unresolvedQuestionCount is obsolete; use sourceStats.openQuestionCount`);
+    fail(`${cardPath}: sourceStats.unresolvedQuestionCount is obsolete; use sourceStats.openQuestionCount`, { path: cardPath, dimension: 'reportContract', code: 'card.unresolvedQuestionCountObsolete', fix: 'Re-run build-report.mjs; the assembler emits openQuestionCount.' });
   }
   // Invariant: every open question must be closed out by an evidenceGap
   // (the chapter gate enforces this). A nonzero blockingQuestionCount means
   // a chapter slipped through with an undocumented unanswered question.
   if (typeof card?.sourceStats?.blockingQuestionCount === 'number' && card.sourceStats.blockingQuestionCount > 0) {
-    fail(`${cardPath}: sourceStats.blockingQuestionCount=${card.sourceStats.blockingQuestionCount} > 0; every open question must be referenced by some evidenceGap.relatedQuestionRefs`);
+    fail(`${cardPath}: sourceStats.blockingQuestionCount=${card.sourceStats.blockingQuestionCount} > 0; every open question must be referenced by some evidenceGap.relatedQuestionRefs`, { path: cardPath, dimension: 'researchQuestionClosure', code: 'card.blockingQuestion', fix: 'Add an evidenceGap entry whose relatedQuestionRefs[] cites every open question, then re-run finalize-report.' });
   }
   if (card?.sourceStats && card.sourceStats.averageSourceAgeDays != null && typeof card.sourceStats.averageSourceAgeDays !== 'number') {
-    fail(`${cardPath}: sourceStats.averageSourceAgeDays must be a number or null`);
+    fail(`${cardPath}: sourceStats.averageSourceAgeDays must be a number or null`, { path: cardPath, dimension: 'reportContract', code: 'card.averageSourceAge', fix: 'Re-run build-report.mjs to recompute sourceStats.averageSourceAgeDays.' });
   }
   // The full-report figure/table arrays carry the authoritative counts; the
   // card no longer mirrors them (cf. schema simplification).
@@ -362,24 +384,24 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
 function checkReportConsistency(run, reportDoc) {
   const reportPath = `${run}/${FULL_REPORT_FILE}`;
   if (reportDoc?.startupIntroduction !== undefined) {
-    fail(`${reportPath}: uses obsolete field 'startupIntroduction'; rename to 'companyProfile'`);
+    fail(`${reportPath}: uses obsolete field 'startupIntroduction'; rename to 'companyProfile'`, { path: reportPath, dimension: 'reportContract', code: 'report.startupIntroductionObsolete', fix: 'Rename meta.startupIntroduction to companyProfile in report-meta.yaml and re-run build-report.mjs.' });
   }
   if (reportDoc?.coverMetrics !== undefined) {
-    fail(`${reportPath}: uses obsolete field 'coverMetrics'; rename to 'coverFacts'`);
+    fail(`${reportPath}: uses obsolete field 'coverMetrics'; rename to 'coverFacts'`, { path: reportPath, dimension: 'reportContract', code: 'report.coverMetricsObsolete', fix: 'Rename meta.coverMetrics to coverFacts in report-meta.yaml and re-run build-report.mjs.' });
   }
   if (!reportDoc?.companyProfile || typeof reportDoc.companyProfile !== 'object') {
-    fail(`${reportPath}: missing companyProfile object`);
+    fail(`${reportPath}: missing companyProfile object`, { path: reportPath, dimension: 'displayCompleteness', code: 'report.companyProfileMissing', fix: 'Add a companyProfile block to report-meta.yaml (summary, foundedDate, founders, ...).' });
   } else if (typeof reportDoc.companyProfile.summary !== 'string' || !reportDoc.companyProfile.summary.trim()) {
-    fail(`${reportPath}: companyProfile.summary is required`);
+    fail(`${reportPath}: companyProfile.summary is required`, { path: reportPath, dimension: 'displayCompleteness', code: 'report.companyProfileSummary', fix: 'Add a non-empty companyProfile.summary string to report-meta.yaml.' });
   }
 }
 
 function checkCrossArtifactIdentity(run, parsed) {
   const docs = [...parsed.values()];
   const names = new Set(docs.map((doc) => doc?.company?.name).filter(Boolean));
-  if (names.size > 1) fail(`${run}: company.name is inconsistent across artifacts (found: ${[...names].map((n) => `"${n}"`).join(', ')})`);
+  if (names.size > 1) fail(`${run}: company.name is inconsistent across artifacts (found: ${[...names].map((n) => `"${n}"`).join(', ')})`, { path: run, dimension: 'documentHead', code: 'crossArtifact.companyName', fix: 'Make company.name identical across every chapter, evidence.yaml, full-report.yaml, and summary-card.yaml.' });
   const slugs = new Set(docs.map((doc) => doc?.slug).filter(Boolean));
-  if (slugs.size > 1) fail(`${run}: slug is inconsistent across artifacts (found: ${[...slugs].map((s) => `"${s}"`).join(', ')})`);
+  if (slugs.size > 1) fail(`${run}: slug is inconsistent across artifacts (found: ${[...slugs].map((s) => `"${s}"`).join(', ')})`, { path: run, dimension: 'slugConsistency', code: 'crossArtifact.slug', fix: 'Make slug identical across every chapter, evidence.yaml, full-report.yaml, and summary-card.yaml.' });
 }
 
 const REVISION_RELATION_FIELDS = ['refreshOfRunId', 'supersededByRunId'];
@@ -399,40 +421,40 @@ function checkRevisionShape(run, file, doc) {
   const path = `${run}/${file}: revision`;
   const revision = doc.revision;
   if (!revision || typeof revision !== 'object' || Array.isArray(revision)) {
-    fail(`${path} must be an object when present`);
+    fail(`${path} must be an object when present`, { path, dimension: 'revisionGraph', code: 'revision.shape', fix: 'Set revision: to an object (or omit it). link-refresh.mjs writes the canonical shape.' });
     return;
   }
   const status = revision.status ?? 'current';
-  if (!REVISION_STATUSES.has(status)) fail(`${path}.status="${status}" must be one of ${formatEnumChoices(REVISION_STATUSES)}`);
+  if (!REVISION_STATUSES.has(status)) fail(`${path}.status="${status}" must be one of ${formatEnumChoices(REVISION_STATUSES)}`, { path, dimension: 'revisionGraph', code: 'revision.status', fix: `Set revision.status to one of ${formatEnumChoices(REVISION_STATUSES)} (link-refresh.mjs writes this automatically).` });
   if (revision.refreshReason != null && typeof revision.refreshReason !== 'string') {
-    fail(`${path}.refreshReason must be a string or null`);
+    fail(`${path}.refreshReason must be a string or null`, { path, dimension: 'revisionGraph', code: 'revision.refreshReason', fix: 'Set revision.refreshReason to a string (or null when not a refresh).' });
   }
   for (const field of REVISION_RELATION_FIELDS) {
     const value = revision[field];
     if (value == null) continue;
     if (typeof value !== 'string' || !value.trim()) {
-      fail(`${path}.${field} must be a non-empty runId string or null`);
+      fail(`${path}.${field} must be a non-empty runId string or null`, { path, dimension: 'revisionGraph', code: `revision.${field}`, fix: `Set revision.${field} to a finalized report's runId (or null).` });
       continue;
     }
-    if (!isRunId(value)) fail(`${path}.${field}=${value} is not a valid report run id`);
-    if (value === run) fail(`${path}.${field} cannot reference the same report run`);
+    if (!isRunId(value)) fail(`${path}.${field}=${value} is not a valid report run id`, { path, dimension: 'revisionGraph', code: `revision.${field}.format`, fix: `Set revision.${field} to a YYYYMMDDhhmmss-<slug> runId.` });
+    if (value === run) fail(`${path}.${field} cannot reference the same report run`, { path, dimension: 'revisionGraph', code: `revision.${field}.selfRef`, fix: `Point revision.${field} at a different report's runId.` });
     const targetDir = join(REPORTS_DIR, value);
-    if (!isFinalizedReportFolder(targetDir)) fail(`${path}.${field} references a missing or unfinalized report: ${value}`);
+    if (!isFinalizedReportFolder(targetDir)) fail(`${path}.${field} references a missing or unfinalized report: ${value}`, { path, dimension: 'revisionGraph', code: `revision.${field}.targetMissing`, fix: `Verify ${value} exists under reports/ and is finalized; otherwise pick a valid finalized runId.` });
   }
   if (status === 'current' && hasText(revision.supersededByRunId)) {
-    fail(`${path}: current reports must not set supersededByRunId`);
+    fail(`${path}: current reports must not set supersededByRunId`, { path, dimension: 'revisionGraph', code: 'revision.currentHasSupersededBy', fix: 'Clear revision.supersededByRunId on current reports (link-refresh.mjs sets it only on superseded reports).' });
   }
   if (status === 'superseded' && !hasText(revision.supersededByRunId)) {
-    fail(`${path}: superseded reports must set supersededByRunId`);
+    fail(`${path}: superseded reports must set supersededByRunId`, { path, dimension: 'revisionGraph', code: 'revision.supersededMissingTarget', fix: 'Set revision.supersededByRunId on superseded reports (link-refresh.mjs writes it).' });
   }
   if (hasText(revision.refreshOfRunId) && revision.refreshOfRunId === revision.supersededByRunId) {
-    fail(`${path}: refreshOfRunId and supersededByRunId cannot point to the same run`);
+    fail(`${path}: refreshOfRunId and supersededByRunId cannot point to the same run`, { path, dimension: 'revisionGraph', code: 'revision.relationCollision', fix: 'Distinct refreshOfRunId / supersededByRunId; a report cannot supersede the same run it refreshes.' });
   }
   if (status === 'superseded' && hasText(revision.supersededByRunId)) {
     const target = tryReadYaml(join(REPORTS_DIR, revision.supersededByRunId, SUMMARY_CARD_FILE));
     const targetRefreshOf = target.ok ? target.value?.revision?.refreshOfRunId : null;
     if (target.ok && targetRefreshOf !== run) {
-      fail(`${path}: supersededByRunId=${revision.supersededByRunId} must point to a report whose revision.refreshOfRunId is ${run}`);
+      fail(`${path}: supersededByRunId=${revision.supersededByRunId} must point to a report whose revision.refreshOfRunId is ${run}`, { path, dimension: 'revisionGraph', code: 'revision.backPointer', fix: 'Re-run finalize-report.mjs --refresh on the new report so link-refresh.mjs writes consistent back-pointers.' });
     }
   }
 }
@@ -445,19 +467,20 @@ function checkRevisionConsistency(run, parsed) {
   const reportRevision = revisionComparable(reportDoc);
   const cardRevision = revisionComparable(card);
   if (JSON.stringify(reportRevision) !== JSON.stringify(cardRevision)) {
-    fail(`${run}: revision is inconsistent between ${FULL_REPORT_FILE} and ${SUMMARY_CARD_FILE}`);
+    fail(`${run}: revision is inconsistent between ${FULL_REPORT_FILE} and ${SUMMARY_CARD_FILE}`, { path: run, dimension: 'revisionGraph', code: 'revision.crossArtifactDrift', fix: `Re-run build-report.mjs (or finalize-report.mjs) so revision is rewritten consistently into both ${FULL_REPORT_FILE} and ${SUMMARY_CARD_FILE}.` });
   }
 }
 
 function checkRun(run, { contentGates = true } = {}) {
   const dir = join(REPORTS_DIR, run);
-  if (!existsSync(join(dir, SUMMARY_CARD_FILE))) return false;
+  currentFailures = [];
+  if (!existsSync(join(dir, SUMMARY_CARD_FILE))) return { checked: false, failures: [] };
 
-  const beforeMissing = failures.length;
+  const beforeMissing = currentFailures.length;
   for (const file of REQUIRED_ENGLISH_FILES) {
-    if (!existsSync(join(dir, file))) fail(`${run}/${file}: missing required v2 artifact`);
+    if (!existsSync(join(dir, file))) fail(`${run}/${file}: missing required v2 artifact`, { path: `${run}/${file}`, dimension: 'missingArtifact', code: 'report.missingArtifact', fix: 'Re-run finalize-report.mjs after every configured chapter passes check-chapter --strict.' });
   }
-  if (failures.length > beforeMissing) return true;
+  if (currentFailures.length > beforeMissing) return { checked: true, failures: [...currentFailures] };
 
   const parsed = parseRunArtifacts(run, dir);
   const ledger = parsed.get(EVIDENCE_FILE);
@@ -471,8 +494,8 @@ function checkRun(run, { contentGates = true } = {}) {
 
   if (reportDoc) {
     checkReportBlocks(run, reportDoc);
-    for (const err of checkUniqueIds(reportDoc.figures, { label: 'figure', pattern: ID_PATTERN_FIGURE, path: run }).errors) fail(err.message);
-    for (const err of checkUniqueIds(reportDoc.tables, { label: 'table', pattern: ID_PATTERN_TABLE, path: run }).errors) fail(err.message);
+    for (const err of checkUniqueIds(reportDoc.figures, { label: 'figure', pattern: ID_PATTERN_FIGURE, path: run }).errors) fail(err.message, { ...err, dimension: err.dimension ?? 'duplicateIds' });
+    for (const err of checkUniqueIds(reportDoc.tables, { label: 'table', pattern: ID_PATTERN_TABLE, path: run }).errors) fail(err.message, { ...err, dimension: err.dimension ?? 'duplicateIds' });
     checkRefs(run, reportDoc);
     checkReportConsistency(run, reportDoc);
   }
@@ -484,7 +507,7 @@ function checkRun(run, { contentGates = true } = {}) {
   }
 
   checkCardConsistency(run, card, reportDoc, ledger);
-  return true;
+  return { checked: true, failures: [...currentFailures] };
 }
 
 // ---------------------------------------------------------------------------
@@ -498,25 +521,146 @@ function resolveReportDir(arg) {
 }
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/check-report.mjs <report-folder> [--contract]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/check-report.mjs (<report-folder> [--contract] | --all) [--format text|json|compact]');
   process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
-  const args = { folder: null, contract: false };
-  for (const arg of argv) {
+  const args = { folder: null, contract: false, format: 'text', all: false };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
     if (arg === '--contract') args.contract = true;
+    else if (arg === '--all') args.all = true;
+    else if (arg === '--format') args.format = argv[++i] ?? 'text';
     else if (arg === '-h' || arg === '--help') usage();
     else if (arg.startsWith('-')) usage();
     else if (!args.folder) args.folder = arg;
     else usage();
   }
-  if (!args.folder) usage();
+  if (args.all) {
+    if (args.folder) usage();
+    args.contract = true;       // historical reports always run in contract mode
+  } else if (!args.folder) {
+    usage();
+  }
+  if (!['text', 'json', 'compact'].includes(args.format)) usage();
   return args;
+}
+
+function failureEnvelope(run, args, runFailures, checked) {
+  const fallbackDimension = args.contract ? 'reportContract' : 'reportGate';
+  return validationEnvelope({
+    ok: false,
+    validator: 'check-report',
+    artifact: run,
+    issues: runFailures.map((entry) => validationIssue({
+      path: entry.path ?? String(entry.message).split(':')[0] ?? run,
+      message: entry.message,
+      dimension: entry.dimension ?? fallbackDimension,
+      code: entry.code ?? 'checkReport.failure',
+      fix: entry.fix ?? 'Fix the reported artifact, then rerun check-report.mjs.',
+    })),
+    summary: { mode: args.contract ? 'contract' : 'full', checked },
+  });
+}
+
+function emitSingle(args, run, runFailures, checked) {
+  if (runFailures.length) {
+    const result = failureEnvelope(run, args, runFailures, checked);
+    if (args.format === 'json') console.log(JSON.stringify(result, null, 2));
+    else if (args.format === 'compact') console.log(formatValidationCompact(result));
+    else console.error(formatValidationText(result, { failureMessage: '[check:report] failures' }));
+    return EXIT.failure;
+  }
+  if (!checked) {
+    const result = validationEnvelope({
+      ok: false,
+      validator: 'check-report',
+      artifact: run,
+      issues: [validationIssue({
+        path: `${run}/${SUMMARY_CARD_FILE}`,
+        message: `${run}: not a finalized v2 report (no ${SUMMARY_CARD_FILE})`,
+        dimension: 'missingArtifact',
+        code: 'checkReport.notFinalized',
+        fix: 'Run finalize-report.mjs after every configured chapter passes check-chapter.',
+      })],
+    });
+    if (args.format === 'json') console.log(JSON.stringify(result, null, 2));
+    else if (args.format === 'compact') console.log(formatValidationCompact(result));
+    else console.error(formatValidationText(result, { failureMessage: '[check:report] failures' }));
+    return EXIT.failure;
+  }
+  const mode = args.contract ? 'contract verified' : 'verified';
+  const result = validationEnvelope({ ok: true, validator: 'check-report', artifact: run, summary: { mode } });
+  if (args.format === 'json') console.log(JSON.stringify(result, null, 2));
+  else if (args.format === 'compact') console.log(formatValidationCompact(result));
+  else console.log(`[check:report] ✓ ${run} ${mode}.`);
+  return EXIT.ok;
+}
+
+function runAll(args) {
+  // Walk every reports/<runId>/ folder, filter to finalized v2 reports,
+  // run the per-folder contract check, and aggregate failures into one
+  // exit code. checkRun() returns its own failures array per call, so no
+  // shared state is touched between iterations.
+  const collected = [];
+  let passCount = 0;
+  for (const runId of listDirs(REPORTS_DIR).sort()) {
+    if (!isRunId(runId)) continue;
+    const folder = join(REPORTS_DIR, runId);
+    if (!isFinalizedReportFolder(folder)) continue;
+    const { checked, failures: runFailures } = checkRun(runId, { contentGates: false });
+    if (checked && runFailures.length === 0) {
+      passCount += 1;
+    } else {
+      collected.push({ runId, checked, failures: runFailures });
+    }
+  }
+  if (collected.length) {
+    if (args.format === 'json') {
+      const result = validationEnvelope({
+        ok: false,
+        validator: 'check-report',
+        issues: collected.flatMap(({ runId, failures: list }) => list.map((entry) => validationIssue({
+          path: entry.path ?? String(entry.message).split(':')[0] ?? runId,
+          message: entry.message,
+          dimension: entry.dimension ?? 'reportContract',
+          code: entry.code ?? 'checkReport.failure',
+          fix: entry.fix ?? 'Fix the reported artifact, then rerun check-report.mjs.',
+        }))),
+        summary: { mode: 'contract', checkedReports: passCount + collected.length, failedReports: collected.length },
+      });
+      console.log(JSON.stringify(result, null, 2));
+    } else {
+      console.error('[check:report] failures across reports:');
+      for (const { runId, failures: list, checked } of collected) {
+        console.error(`\n--- ${runId} ---`);
+        if (!checked) {
+          console.error(`  - ${runId}: not a finalized v2 report (no ${SUMMARY_CARD_FILE})`);
+        }
+        for (const entry of list) console.error(`  - ${entry.message}`);
+      }
+    }
+    return EXIT.failure;
+  }
+  if (args.format === 'json') {
+    const result = validationEnvelope({
+      ok: true,
+      validator: 'check-report',
+      summary: { mode: 'contract', checkedReports: passCount },
+    });
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(`[check:report] ✓ ${passCount} finalized report(s); contract checks passed.`);
+  }
+  return EXIT.ok;
 }
 
 try {
   const args = parseArgs(process.argv.slice(2));
+  if (args.all) {
+    process.exit(runAll(args));
+  }
   const folderArg = args.folder;
   const dir = resolveReportDir(folderArg);
   if (!existsSync(dir) || !statSync(dir).isDirectory()) {
@@ -531,17 +675,8 @@ try {
     process.exit(EXIT.failure);
   }
 
-  const checked = checkRun(run, { contentGates: !args.contract });
-  if (failures.length) {
-    console.error('[check:report] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
-    process.exit(EXIT.failure);
-  }
-  if (!checked) {
-    console.error(`[check:report] ${run}: not a finalized v2 report (no ${SUMMARY_CARD_FILE}).`);
-    process.exit(EXIT.failure);
-  }
-  const mode = args.contract ? 'contract verified' : 'verified';
-  console.log(`[check:report] ✓ ${run} ${mode}.`);
+  const { checked, failures: runFailures } = checkRun(run, { contentGates: !args.contract });
+  process.exit(emitSingle(args, run, runFailures, checked));
 } catch (err) {
   console.error(`[check:report] fatal error: ${err.message}`);
   process.exit(EXIT.failure);

@@ -14,11 +14,13 @@
 // globalHints[] (when the same dimension fails on many objects, hinting at a
 // chapter-wide root cause).
 //
-// `--format compact` is the recommended default for shell loops: one line per
-// finding, no truncation, no preamble. The first line is `STATUS: OK` or
-// `STATUS: FAIL`; subsequent lines carry stable labels such as
-// `failedDimensions`, `retryOrder`, `suppressed`, `GLOBAL`, `FAIL`, and `WARN`
-// so callers can read the complete output while preserving the process exit code.
+// `--format compact` emits one line per finding (no truncation, no preamble);
+// the first line is `STATUS: OK` or `STATUS: FAIL` followed by stable labels
+// such as `failedDimensions`, `retryOrder`, `suppressed`, `GLOBAL`, `FAIL`,
+// and `WARN`. Use it for human-readable shell loops where the structured
+// fields are not needed. Note: SKILL.md's chapter retry loop recommends
+// `--format json` because `issues[].fix`, `objectFailures[]`, `globalHints[]`,
+// `retryOrder[]`, and `suppressedDimensions[]` drive root-cause-first repair.
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';
@@ -32,7 +34,7 @@ import {
   checkSourceSchema,
   checkTableSchema,
   checkUniqueIds,
-} from './report-artifact-schema.mjs';
+} from './artifact-checks.mjs';
 import {
   TITLE_TOKEN_STOP_WORDS,
   CASCADE_SUPPRESSORS,
@@ -45,10 +47,12 @@ import {
   QUESTION_STATUSES,
   QUESTION_TYPES,
   RETRY_PRECEDENCE,
+  WARNING_DIMENSIONS,
   formatEnumChoices,
   makeIdPattern,
   resolveFixHint,
 } from './validation-catalog.mjs';
+import { validationEnvelope } from './contracts/validation-result.mjs';
 
 // Loaded eagerly so the chapter-id `spec` is available for the per-chapter
 // ID patterns built immediately after argv parsing. Wrapped so a broken
@@ -154,10 +158,6 @@ function figureTypeSet(doc) {
   return new Set((doc?.figures ?? []).map((figure) => figure?.type).filter(Boolean));
 }
 
-function wordCount(value) {
-  return String(value ?? '').trim().split(/\s+/).filter(Boolean).length;
-}
-
 function figureDataPointCount(figure) {
   const data = figure?.data ?? {};
   return Math.max(
@@ -173,7 +173,7 @@ function figureDataPointCount(figure) {
 }
 
 function detailStats(doc) {
-  const sectionWords = (doc.sections ?? []).map((section) => wordCount(section?.body));
+  const sectionWords = (doc.sections ?? []).map((section) => String(section?.body ?? '').trim().split(/\s+/).filter(Boolean).length);
   const tableRows = (doc.tables ?? []).map((table) => table?.rows?.length ?? 0);
   const figureDataPoints = (doc.figures ?? []).map(figureDataPointCount);
   return {
@@ -453,7 +453,6 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
   if (enumerationPlans.length === 0) return;
   const sourceById = new Map((doc.localEvidence?.sources ?? []).map((s) => [s?.id, s]));
   const claimById = new Map((doc.localEvidence?.claims ?? []).map((c) => [c?.id, c]));
-  const gapTopics = new Set((doc.localEvidence?.evidenceGaps ?? []).map((gap) => String(gap?.topic ?? '').toLowerCase()).filter(Boolean));
   for (const plan of enumerationPlans) {
     const planSlug = titleSlug(plan.name);
     const table = (doc.tables ?? []).find((t) => titleSlug(t?.title) === planSlug);
@@ -486,7 +485,13 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
         fail('enumerationCoverageGap', `${file}: table ${table.id} coverage=${scope.coverage} requires an evidenceGap entry whose topic mentions the table or whose relatedTableRefs[] includes ${table.id}`, { tableId: table.id, coverage: scope.coverage });
       }
     }
-    // Per-row corroboration: each row must be supported by claims pointing to >= minSourcesPerEnumerationRow distinct registrable domains.
+    // Table-level corroboration: the enumeration table's table-level
+    // claimRefs must reference sources spanning at least
+    // gate.minSourcesPerEnumerationRow distinct registrable domains. The
+    // YAML schema attaches claimRefs to the table, not to individual rows,
+    // so this check is necessarily table-level — the dimension name
+    // (`enumerationRowCorroboration`) is kept for backward compatibility
+    // with historical reports and JSON consumers.
     const tableClaimRefs = new Set(table.claimRefs ?? []);
     const tableDomains = new Set();
     for (const ref of tableClaimRefs) {
@@ -499,7 +504,7 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
       }
     }
     if (rowCount > 0 && tableDomains.size < gate.minSourcesPerEnumerationRow) {
-      fail('enumerationRowCorroboration', `${file}: table ${table.id} backed by sources from only ${tableDomains.size} distinct domains (need >= ${gate.minSourcesPerEnumerationRow}); enumeration tables must be cross-checked across independent sources`, { tableId: table.id, actual: tableDomains.size, required: gate.minSourcesPerEnumerationRow });
+      fail('enumerationRowCorroboration', `${file}: table ${table.id} table-level claimRefs reference sources from only ${tableDomains.size} distinct registrable domain(s) (need >= ${gate.minSourcesPerEnumerationRow}); enumeration tables must be cross-checked across independent domains`, { tableId: table.id, actual: tableDomains.size, required: gate.minSourcesPerEnumerationRow });
     }
   }
 }
@@ -510,7 +515,6 @@ function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFig
   const typeCounts = new Map();
   let answeredCount = 0;
   const targetedReqIndices = new Set();
-  const gapTopics = new Set((doc.localEvidence?.evidenceGaps ?? []).map((gap) => String(gap?.topic ?? '').toLowerCase()).filter(Boolean));
 
   for (const [index, question] of questions.entries()) {
     if (typeof question !== 'object' || question === null) {
@@ -537,8 +541,12 @@ function checkResearchQuestions(file, doc, gate, plannedTablesByName, plannedFig
       fail('researchQuestionShape', `${file}: ${question.id} status must be one of ${formatEnumChoices(QUESTION_STATUSES)}`, { id: question.id, actual: question.status });
     } else if (question.status === 'answered') {
       answeredCount += 1;
-    } else if (!gapTopics.has(String(question.question).toLowerCase().slice(0, 80)) && !(doc.localEvidence?.evidenceGaps ?? []).some((gap) => (gap?.relatedQuestionRefs ?? []).includes(question.id))) {
-      fail('researchQuestionClosure', `${file}: ${question.id} status=${question.status} but no evidenceGap entry references it via relatedQuestionRefs[] or matching topic`, { id: question.id });
+    } else if (!(doc.localEvidence?.evidenceGaps ?? []).some((gap) => (gap?.relatedQuestionRefs ?? []).includes(question.id))) {
+      // Closure is gated on an explicit evidenceGap.relatedQuestionRefs[]
+      // pointer; topic-string heuristics were unreliable (a full question
+      // sentence rarely equals a short topic tag) and gave the impression
+      // that fuzzy matching could substitute for a proper ref.
+      fail('researchQuestionClosure', `${file}: ${question.id} status=${question.status} but no evidenceGap entry lists it under relatedQuestionRefs[]`, { id: question.id });
     }
     if (!Array.isArray(question.targets) || question.targets.length === 0) {
       fail('researchQuestionShape', `${file}: ${question.id} targets[] must be a non-empty array`, { id: question.id });
@@ -682,8 +690,9 @@ if (doc) {
       fail('slugConsistency', `${spec.file}: slug "${doc.slug}" does not match folder slug "${canonical}"`, { actual: doc.slug, required: canonical });
     }
   }
-  // Chapter-local table/figure id uniqueness (T### / F###). Duplicate or
-  // malformed ids would otherwise blow up at build-evidence-ledger/assemble-report time.
+  // Chapter-local table/figure id uniqueness (T<ChapterLetter>### /
+  // F<ChapterLetter>###). Duplicate or
+  // malformed ids would otherwise blow up at build-evidence-ledger/build-report time.
   {
     const { errors } = checkUniqueIds(doc.tables, { label: 'table', pattern: ID_PATTERN_CHAPTER_TABLE, path: spec.file });
     for (const err of errors) fail('duplicateIds', err.message, err);
@@ -716,16 +725,17 @@ if (doc) {
   const gate = spec.gate;
   // Tables and figures are interchangeable artifact slots: agents may swap a
   // planned figure for an additional table when the collected data does not
-  // fit the planned figure type. Enforce the combined floor so a substitution
-  // does not fail the gate. Per-type ceilings remain soft warnings.
-  const plannedTotal = spec.plannedTables.length + spec.plannedFigures.length;
-  const minArtifacts = Math.max(gate.minArtifacts, plannedTotal);
+  // fit the planned figure type. Per-type ceilings remain soft warnings.
+  // gate.minArtifacts is already the effective floor (max of defaultGate and
+  // the chapter's planned table+figure count) — normalizeWorkflowConfig in
+  // contracts/workflow-config.schema.mjs computes it once so the runtime
+  // context the agent receives and the gate check-chapter enforces match.
   const totalArtifacts = counts.tables + counts.figures;
   if (counts.sections < gate.minSections) {
     fail('sectionsMin', `${spec.file}: ${counts.sections} sections, expected at least ${gate.minSections}`, { actual: counts.sections, required: gate.minSections });
   }
-  if (totalArtifacts < minArtifacts) {
-    fail('artifactsMin', `${spec.file}: ${counts.tables} tables + ${counts.figures} figures = ${totalArtifacts} artifacts, expected at least ${minArtifacts} (plannedTables=${spec.plannedTables.length}, plannedFigures=${spec.plannedFigures.length}; figures may be substituted with tables when data shape does not fit)`, { actual: totalArtifacts, required: minArtifacts });
+  if (totalArtifacts < gate.minArtifacts) {
+    fail('artifactsMin', `${spec.file}: ${counts.tables} tables + ${counts.figures} figures = ${totalArtifacts} artifacts, expected at least ${gate.minArtifacts} (plannedTables=${spec.plannedTables.length}, plannedFigures=${spec.plannedFigures.length}; figures may be substituted with tables when data shape does not fit)`, { actual: totalArtifacts, required: gate.minArtifacts });
   }
   if (counts.sections > gate.maxSections) {
     warn('sectionsMax', `${spec.file}: ${counts.sections} sections exceeds target range maximum ${gate.maxSections}; verify the chapter is not over-fragmented or duplicative`, { actual: counts.sections, ceiling: gate.maxSections });
@@ -771,7 +781,7 @@ if (doc) {
   // Per-callout schema (title, body, claimRefs[], optional calloutType enum).
   // The canonical key is `callouts:`; reject legacy `analysisCallouts` /
   // `analysisCallout` writes as documentHead failures so they never get
-  // silently dropped during assemble-report (which only reads `callouts`).
+  // silently dropped during build-report (which only reads `callouts`).
   if (doc.analysisCallouts !== undefined) {
     fail('documentHead', `${spec.file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`);
   }
@@ -811,10 +821,16 @@ if (doc) {
   checkSearchQueries(spec.file, doc);
   const earlierUrls = loadEarlierChapterUrls(reportFolder, spec, ANALYSIS_ARTIFACTS);
   checkSources(spec.file, doc, gate, earlierUrls);
-  // Optional: cross-check cited URLs against the fetch-url trail file. Soft
-  // warning (not a hard fail) so older reports without a trail file still
-  // pass cleanly. Trail file is written by the fetch-url skill when
-  // STARTUP_FETCH_LOG_PATH is set; see loadFetchTrailUrls() above.
+  // Cross-check cited URLs against the fetch-url trail file. The trail is
+  // written by the fetch-url skill when STARTUP_FETCH_LOG_PATH is set; see
+  // loadFetchTrailUrls() above. We emit two warning-class signals:
+  //   - unverifiedSource: trail exists but a cited URL never appeared in it.
+  //   - fetchTrailMissing: chapter cites sources but no trail file was found
+  //     anywhere check-chapter looked. Without it source verification is
+  //     silently disabled, which is the most dangerous failure mode for
+  //     subagent-driven runs (cited URLs are silently treated as verified).
+  // Both are warnings under the default gate so older reports without a
+  // trail file still pass; --strict promotes them to failures.
   const trail = loadFetchTrailUrls(reportFolder);
   if (trail) {
     for (const source of doc.localEvidence?.sources ?? []) {
@@ -828,6 +844,12 @@ if (doc) {
         );
       }
     }
+  } else if ((doc.localEvidence?.sources ?? []).length > 0) {
+    warn(
+      'fetchTrailMissing',
+      `${spec.file}: chapter cites ${counts.sources} source(s) but no fetch-url trail file was found at any candidate path (STARTUP_FETCH_LOG_PATH, .research-cache/${basename(reportFolder)}/_fetch-log.jsonl, .research-cache/_fetch-log.jsonl); source verification is disabled. Export STARTUP_FETCH_LOG_PATH=.research-cache/${basename(reportFolder)}/_fetch-log.jsonl in your shell BEFORE any fetch-url call so cited URLs can be audited.`,
+      { runId: basename(reportFolder) },
+    );
   }
   checkHighConfidenceCorroboration(spec.file, doc, gate);
   checkEnumerationTables(spec.file, doc, gate, plannedTablesByName);
@@ -835,12 +857,43 @@ if (doc) {
 
 // Acknowledged warnings: agent may opt out of --strict warnings by listing
 // `acknowledgedWarnings: [{ dimension, reason }]` at the top level of the
-// chapter YAML. Each acknowledged dimension must have at least 30 chars of
-// rationale and must match a warning dimension actually emitted by the gate.
+// chapter YAML. Each acknowledged dimension must:
+//   1. carry at least 30 chars of rationale (schema-enforced),
+//   2. name a warning-class dimension from WARNING_DIMENSIONS — failure-class
+//      dimensions cannot be acknowledged (SKILL.md is explicit: "Never use
+//      this to silence real failures"). Acks against unknown or failure-class
+//      dimensions surface as a non-blocking warning so agents catch the
+//      misuse without breaking historical reports. Malformed entries
+//      (missing fields or short reason) also warn rather than silently
+//      drop, otherwise an agent could think a warning was acknowledged
+//      when the ack never took effect.
 const acks = Array.isArray(doc?.acknowledgedWarnings) ? doc.acknowledgedWarnings : [];
 const ackByDim = new Map();
-for (const ack of acks) {
-  if (typeof ack?.dimension !== 'string' || typeof ack?.reason !== 'string' || ack.reason.trim().length < 30) continue;
+for (const [ackIndex, ack] of acks.entries()) {
+  if (typeof ack?.dimension !== 'string' || ack.dimension.trim().length === 0) {
+    warn(
+      'acknowledgedWarnings',
+      `acknowledgedWarnings[${ackIndex}] is missing a non-empty dimension string; the entry has no effect. Remove it or fill in dimension.`,
+      { ackIndex },
+    );
+    continue;
+  }
+  if (typeof ack?.reason !== 'string' || ack.reason.trim().length < 30) {
+    warn(
+      'acknowledgedWarnings',
+      `acknowledgedWarnings entry for dimension "${ack.dimension}" has reason of ${ack?.reason?.trim?.().length ?? 0} chars (need >= 30); the entry has no effect. Lengthen the reason or remove the entry.`,
+      { ackDimension: ack.dimension, reasonLength: ack?.reason?.trim?.().length ?? 0 },
+    );
+    continue;
+  }
+  if (!WARNING_DIMENSIONS.has(ack.dimension)) {
+    warn(
+      'acknowledgedWarnings',
+      `acknowledgedWarnings entry targets dimension "${ack.dimension}", which is not a warning-class dimension; allowed dimensions are: ${[...WARNING_DIMENSIONS].sort().join(', ')}. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`,
+      { ackDimension: ack.dimension },
+    );
+    continue;
+  }
   ackByDim.set(ack.dimension, ack);
 }
 const unackedWarningDims = [...new Set(warnings.map((w) => w.dimension))].filter((d) => !ackByDim.has(d));
@@ -935,24 +988,48 @@ const failedDimensions = [...new Set(visibleFailures.map((entry) => entry.dimens
 const retryOrder = sortByPrecedence(failedDimensions);
 
 if (args.format === 'json') {
-  const report = {
+  // Wrap in the shared validation envelope so agents can parse JSON output
+  // from every check-* validator with one schema. Each check-chapter "failure"
+  // becomes an issue with its file path under `path` and dimension/fix/extras
+  // preserved via spread.
+  const issues = visibleFailures.map(({ file, message, dimension, fix, ...extra }) => ({
+    path: file,
+    message,
+    dimension,
+    code: dimension,
+    fix,
+    ...extra,
+  }));
+  const warningEntries = warnings.map(({ file, message, dimension, fix, ...extra }) => ({
+    path: file,
+    message,
+    dimension,
+    code: dimension,
+    fix,
+    ...extra,
+  }));
+  const envelope = validationEnvelope({
     ok,
+    validator: 'check-chapter',
     artifact: spec.file,
-    chapterKey: spec.key,
     reportFolder,
+    issues,
+    warnings: warningEntries,
     counts,
-    globalHints,
     objectFailures,
-    failures: visibleFailures,
-    warnings,
-    failedDimensions,
-    warningDimensions: [...new Set(warnings.map((entry) => entry.dimension))],
-    acknowledgedWarnings: [...ackByDim.keys()],
-    unackedWarningDimensions: unackedWarningDims,
-    suppressedDimensions,
+    globalHints,
     retryOrder,
-  };
-  console.log(JSON.stringify(report, null, 2));
+    suppressedDimensions,
+    summary: {
+      chapterKey: spec.key,
+      strict: args.strict,
+      failedDimensions,
+      warningDimensions: [...new Set(warnings.map((entry) => entry.dimension))],
+      acknowledgedWarnings: [...ackByDim.keys()],
+      unackedWarningDimensions: unackedWarningDims,
+    },
+  });
+  console.log(JSON.stringify(envelope, null, 2));
 } else if (args.format === 'compact') {
   // Single-stream, lossless line format. Callers should keep the full output
   // and process exit code intact instead of piping through preview/filter tools

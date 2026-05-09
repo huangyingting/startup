@@ -1,5 +1,144 @@
 schemaVersion: workflow-config-v1
 reportSchemaVersion: report-v2
+workflow:
+  inputs:
+    companyName:
+      type: string
+      required: true
+      description: Company name to research and use when creating the report run.
+    companyUrl:
+      type: url
+      required: false
+      description: Optional official website or identity anchor for duplicate checks and source discovery.
+    refresh:
+      type: boolean
+      required: false
+      default: false
+      description: When true, create a fresh run linked to the current finalized report for the same company/domain.
+    refreshReason:
+      type: string
+      required: false
+      description: Optional human reason recorded in refresh metadata.
+  conditions:
+    - key: report-run-created
+      description: create-report-run.mjs returned a report folder path or --resume reopened the matching in-progress folder.
+      checkedBy: create-report-run.mjs
+    - key: runtime-contract-loaded
+      description: load-chapter-runtime-context.mjs returned the chapter list (--list) or chapter delta (--order <n>); the static frame (agent policy, gates, ID system, validator dimensions, renderer contracts) lives in references/rules.md.
+      checkedBy: load-chapter-runtime-context.mjs
+    - key: all-chapters-exist
+      description: Every file in workflow.allowedReportFiles.chapterArtifacts exists under the report folder.
+      checkedBy: shell filesystem check
+    - key: all-chapters-pass-gate
+      description: Every configured chapter file passes check-chapter.mjs after the final on-disk edit.
+      checkedBy: check-chapter.mjs
+    - key: report-meta-authored
+      description: report-meta.yaml exists and passes check-report-meta.mjs shape and enum checks.
+      checkedBy: check-report-meta.mjs
+    - key: final-artifacts-generated
+      description: evidence.yaml, full-report.yaml, and summary-card.yaml exist and pass check-report.mjs.
+      checkedBy: finalize-report.mjs
+  phases:
+    - key: setup
+      title: Setup runtime contract
+      objective: Resolve inputs, create or resume the report folder, and load the workflow/runtime contract before writing artifacts.
+      entryConditions: []
+      exitConditions: [report-run-created, runtime-contract-loaded]
+      steps:
+        - key: create-run
+          title: Create or resume report run
+          command: create-report-run.mjs
+          requires: [companyName]
+          produces: [reportFolder, run.runDate]
+          gate: create-report-run exit code
+          notes:
+            - Pass companyUrl when provided; pass refresh and refreshReason only for explicit refresh runs.
+            - On exit 3, rerun the exact command with --resume; do not create suffixed duplicate folders.
+        - key: load-runtime
+          title: List configured chapters
+          command: load-chapter-runtime-context.mjs --list
+          requires: [report-run-created]
+          produces: [runtimeContext.chapters]
+          gate: runtimeContext list schema
+          notes:
+            - The static frame (agent policy, gates, ID system, validator dimensions, renderer contracts) is generated into references/rules.md; read it once at session start instead of reloading per chapter.
+            - Treat loader JSON as the per-chapter delta; do not hardcode chapter names or gates from prose.
+    - key: chapter-generation
+      title: Generate configured chapters
+      objective: Author each configured chapter from its runtime context, collect audited evidence, and clear check-chapter.
+      entryConditions: [report-run-created, runtime-contract-loaded]
+      exitConditions: [all-chapters-exist, all-chapters-pass-gate]
+      steps:
+        - key: load-chapter-context
+          title: Load chapter context
+          command: load-chapter-runtime-context.mjs --order <n> --include-context --report-folder <reportFolder>
+          requires: [report-run-created, runtime-contract-loaded]
+          produces: [runtimeContext.chapter]
+          gate: runtimeContext schema
+          notes:
+            - Omit --include-context when drafting chapters in parallel (it would project a stale rollup of unfinished sibling chapters); it is harmless on the first chapter in serial mode (the rollup is just empty), so keep it for consistency unless drafting later chapters concurrently.
+            - Always pass --report-folder so runtimeContext.run.runDate is emitted; copy that value into every chapter doc head's runDate.
+        - key: author-chapter
+          title: Author chapter YAML
+          command: null
+          requires: [runtimeContext.chapter, rules.md, contracts.md]
+          produces: [chapter.yaml]
+          gate: report artifact schema
+          notes:
+            - Use runtimeContext.chapter.gate as the binding floor; use the Validator dimensions table in references/rules.md for retry triage.
+            - Use fetch-url for every retained URL and record search queries, sources, claims, questions, and evidence gaps in localEvidence.
+        - key: check-chapter
+          title: Validate chapter gate
+          command: check-chapter.mjs <reportFolder> <chapter.file> --format json
+          requires: [chapter.yaml]
+          produces: [validationResult]
+          gate: check-chapter exit code
+          notes:
+            - Fix retryOrder dimensions first; use issues[].fix and objectFailures[].fixes rather than guessing.
+        - key: check-chapter-strict
+          title: Strict pre-finalization sweep
+          command: check-chapter.mjs <reportFolder> <chapter.file> --strict --format json
+          requires: [chapter.yaml]
+          produces: [validationResult]
+          gate: check-chapter --strict exit code
+          notes:
+            - Run after the normal pass clears; --strict promotes warnings (e.g. unverifiedSource, tableNotes) to failures.
+            - For genuinely non-actionable warnings, opt out via top-level acknowledgedWarnings[{dimension, reason>=30 chars}] (warning-class dimensions only).
+            - finalize-report.mjs reruns this strict sweep automatically, so resolving it here avoids late finalize aborts.
+            - After parallel drafting, rerun this step (and check-chapter) once on every chapter so netNewSources / crossChapterRefLeak see the final on-disk siblings.
+    - key: finalization
+      title: Finalize report artifacts
+      objective: Validate report-meta, consolidate evidence, assemble final artifacts, and run publishability checks.
+      entryConditions: [all-chapters-exist, all-chapters-pass-gate]
+      exitConditions: [report-meta-authored, final-artifacts-generated]
+      steps:
+        - key: author-report-meta
+          title: Author report-meta.yaml
+          command: null
+          requires: [all-chapters-pass-gate]
+          produces: [report-meta.yaml]
+          gate: report-meta schema
+          notes:
+            - report-meta owns recommendation, profile, cover facts, and summary-card judgment fields.
+        - key: check-report-meta
+          title: Validate report-meta shape
+          command: check-report-meta.mjs <reportFolder> --format json
+          requires: [report-meta.yaml]
+          produces: [validationResult]
+          gate: check-report-meta exit code
+          notes:
+            - Fix all returned shape and enum issues before finalization.
+        - key: finalize-report
+          title: Build final report artifacts
+          command: finalize-report.mjs <reportFolder>
+          requires: [report-meta-authored, all-chapters-pass-gate]
+          produces: [evidence.yaml, full-report.yaml, summary-card.yaml]
+          gate: finalize-report exit code
+          notes:
+            - Pass --refresh for explicit refresh runs. --refresh-reason on finalize-report is optional; it defaults to the value cached in .research-cache/<runId>/refresh-context.yaml by create-report-run.mjs. Re-pass it on finalize-report only when overriding the cache, in which case both values must match (finalize-report exits with a mismatch error otherwise).
+            - --rebuild is no longer required after chapter edits. finalize-report auto-rebuilds the ledger when any chapter file's mtime is newer than evidence.yaml; pass --rebuild only to force a fresh consolidation regardless of mtimes.
+            - finalize-report internally runs check-chapter --strict on every chapter as the first step; resolve those warnings via the chapter-generation strict sweep to avoid late aborts.
+
 # Tables cite their backing claims via the table-level `claimRefs` field, never
 # as a column whose cells hold raw `Cxxx` ids. Avoid columns whose only purpose
 # is citation (`evidence`, `evidence quality`, `claim refs`, etc.). Columns
@@ -7,10 +146,10 @@ reportSchemaVersion: report-v2
 # institution or document* (e.g. "Gartner", "SEC 10-K"), not for claim ids.
 
 # === agent-facing workflow policy ===
-# Surfaced as runtimeContext.workflow.agentPolicy by load-chapter-runtime-context.mjs. Keep here the
-# skill execution rules that are workflow policy, not executable schema or
-# renderer logic. SKILL.md should point agents to the runtime context instead of
-# re-declaring these literals in prose.
+# Surfaced verbatim into references/rules.md by build-rules-doc.mjs.
+# Keep here the skill execution rules that are workflow policy, not executable
+# schema or renderer logic. SKILL.md should point agents to rules.md
+# instead of re-declaring these literals in prose.
 agentPolicy:
   volatileFacts:
     - funding
@@ -33,9 +172,8 @@ agentPolicy:
     - "Anchor freshness to runtimeContext.run.runDate, not the model's training cutoff: include the current year (and the prior year for trailing windows) in queries for volatile facts (funding, ARR, headcount, customers, leadership, regulatory) and prefer sources dated within ~12 months of runDate."
   chapterAuthoringRules:
     - "Use runtimeContext.chapter as the chapter brief and runtimeContext.chapter.gate as the binding per-chapter gate."
-    - "Use runtimeContext.vocabularies for enums and runtimeContext.checkDimensions/defaultFix for retry triage."
-    - "Use runtimeContext.rendererContracts before writing figures; substitute a table when the evidence does not fit the figure contract."
-    - "Use only the current chapter letter for S/C/T/F/Q ids; restate cross-chapter facts as local claims when needed."
+    - "Use the *Validator dimensions* section below for dimension precedence/suppressors and the inline allowed enum values in references/contracts.md for each field; trust the per-issue `fix` in check-chapter JSON output (`issues[].fix`) for concrete repair."
+    - "Use the *Renderer contracts* section below before writing figures; substitute a table when the evidence does not fit the figure contract."
     - "Cite tables through table-level claimRefs, never through evidence-only columns that hold raw claim ids."
     - "Populate tables[].notes whenever the table contains estimates, partial coverage, computed/derived cells, or any caveat the reader needs (data-source convention, units, vintage, what null means). Leave notes null only for pure factual snapshot tables where every cell is a primary-source fact with no qualifier."
   hardRules:
@@ -104,7 +242,7 @@ reportGate:
   minDistinctDomains: 30          # distinct registrable domains across all sources in evidence.yaml
   requireAdverseSource: true      # at least one stance:adverse source must be present
   maxPaywallPercent: 0.3          # fail if >30% of sources are paywall/broken/rate-limited
-  # Cross-chapter tolerances (used by check-cross-chapter-consistency.mjs for drift detection).
+  # Cross-chapter tolerances (used by check-cross-chapter.mjs for drift detection).
   # Metric drift: relative tolerance for numeric values across chapters (e.g., 0.1 = 10%).
   # Key-fact overlap: Jaccard threshold for matching identity facts across chapters (≥ threshold = match).
   # Duplicate overlap: Jaccard threshold for table/figure title+structure across chapters (both must meet threshold).
@@ -283,7 +421,7 @@ chapters:
       - GTM motion and sales efficiency proxies (cycle, CAC/payback or proxy, channel economics).
       - Cost structure, gross margin drivers, working capital, capex, and service-delivery costs.
       - Public traction (revenue, ARR, GMV, units, locations, utilization, active users) versus private-metric gaps.
-      - Capital adequacy and financing dependency — cash on hand, burn, runway, planned use of funds, next-round trigger, and debt/project-finance obligations. Historical round-by-round chronology lives in Company Overview; reuse it via claimRefs instead of restating dates and participants.
+      - Capital adequacy and financing dependency — cash on hand, burn, runway, planned use of funds, next-round trigger, and debt/project-finance obligations. Historical round-by-round chronology lives in Company Overview; refer to that chronology in prose, but do not copy Company Overview claim ids; if Financials needs a funding fact, mint a local Financials claim with its own sourceRefs.
       - Financial verdict on revenue quality, margin path, capital intensity, and diligence blockers.
     plannedTables:
       - name: Revenue streams table
@@ -293,7 +431,7 @@ chapters:
       - name: Unit economics table
         requirement: metric, value/null, confidence, why it matters, diligence ask.
       - name: Capital adequacy table
-        requirement: cash on hand, monthly burn, runway months, planned use of funds, next-round trigger, debt/project-finance obligations; reference Company Overview funding chronology via claimRefs instead of restating round history.
+        requirement: cash on hand, monthly burn, runway months, planned use of funds, next-round trigger, debt/project-finance obligations; refer to the Company Overview funding chronology without copying its claim ids, and mint local Financials claims only for financing facts needed in this table.
       - name: Public financial gaps table
         requirement: missing private metrics, impact, exact diligence path.
     plannedFigures:
@@ -311,7 +449,7 @@ chapters:
         requirement: Capex, inventory, project finance, manufacturing scale-up, or credit exposure.
     evidenceStrategy:
       - Revenue/pricing from official pricing, customer contracts/examples, filings, investor announcements, channel data.
-      - Capital adequacy from latest reported cash position, burn signals, hiring/layoffs, debt/credit facilities, and credible investor coverage. Reuse the funding chronology from Company Overview via claimRefs.
+      - Capital adequacy from latest reported cash position, burn signals, hiring/layoffs, debt/credit facilities, and credible investor coverage. Use Company Overview as background for the funding chronology, but do not copy its claim ids across chapters.
       - Unit economics from public-company comps, customer case studies, cost benchmarks, partner terms, channel fees.
       - Adverse checks for burn, margin compression, pricing pressure, defaults, inventory issues, customer concentration.
     qualityBar:
@@ -365,6 +503,7 @@ chapters:
       - Technical proof from patents, papers, clinical/trial records, certifications, regulatory databases, benchmarks, status pages.
       - External proof from reviews, customer deployments, partner announcements, regulator filings, recalls/incidents.
       - Developer-signal (sourceType `developer-signal`) is required — GitHub repo activity (stars, releases, contributors), Hacker News threads, Stack Overflow tag traffic, public Discord/Slack metrics, package registry downloads, npm/PyPI/HuggingFace hub stats, API forums.
+      - For companies without a public developer surface (hardware, manufacturing, clinical, regulated industries), satisfy `developer-signal` via the closest practitioner-community proxy — industry forums, professional-society discussions, integration partner posts, public engineer recruiting / talks, or a documented note in `evidenceGaps[]` explaining why no proxy exists.
       - Do not infer architecture, approvals, certifications, throughput, or safety from vague marketing copy.
     qualityBar:
       - Distinguish verified maturity, roadmap claims, integrations, and certifications from marketing.

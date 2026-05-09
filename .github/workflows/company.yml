@@ -179,13 +179,13 @@ jobs:
           Generate and finalize a complete startup diligence research report for this company.
           Treat completion as an on-disk contract: if you create a report folder, it must end with all required chapter, metadata, and generated artifacts; otherwise skip before creating a folder. If you fan out chapter work, join every task, inspect failures, and never exit successfully with partial report folders.
 
-          Run the diligence workflow end-to-end yourself; do not delegate to another agent. Write the full required English YAML set under reports/<run>/. Follow the startup-research skill's source-verification rules; this workflow provides STARTUP_FETCH_LOG_PATH so fetch-url calls are auditable. Do not run git add or git commit.
+          Run the diligence workflow. Write the full required English YAML set under reports/<run>/. Follow the startup-research skill's source-verification rules; this workflow provides STARTUP_FETCH_LOG_PATH so fetch-url calls are auditable. Do not run git add or git commit.
           EOF
           )
           mkdir -p "$RUNNER_TEMP/copilot-logs"
           COPILOT_LOG="$RUNNER_TEMP/copilot-logs/run.log"
           set +e
-          copilot --yolo --no-ask-user --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
+          copilot --yolo --no-ask-user --excluded-tools "web_fetch" --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
           status=${PIPESTATUS[0]}
           set -e
           {

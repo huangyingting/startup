@@ -3,13 +3,15 @@
 // together (FIX_HINTS, RETRY_PRECEDENCE, CASCADE_SUPPRESSORS).
 //
 // Three consumer roles:
-//   - report-artifact-schema.mjs imports the field-level enum Sets to validate
+//   - artifact-checks.mjs imports the field-level enum Sets to validate
 //     individual sources, claims, callouts, and enumeration tables.
 //   - check-chapter.mjs imports the same enum Sets plus the FIX_HINTS table
 //     and the precedence/suppressor metadata to drive its retry loop.
-//   - load-chapter-runtime-context.mjs imports the JSON-friendly bundles (`VOCABULARIES`,
-//     `dimensionCatalog()`) and ships them inside the chapter runtime context so the
-//     agent learns the vocabulary BEFORE writing, not after a failed check.
+//   - build-rules-doc.mjs imports `dimensionCatalog()` and projects the retry
+//     catalog into references/rules.md; enum vocabularies are projected into
+//     references/contracts.md next to the fields that use them via the
+//     `.describe()` annotations on the Zod schemas (no aggregate VOCABULARIES
+//     bundle is exported because nothing consumes it programmatically).
 //
 // Add a new enum or dimension here exactly once; every consumer reads from
 // this file.
@@ -134,7 +136,7 @@ export const FRESHNESS_THRESHOLDS = {
 // Title tokenization stop words: ignored when comparing table/figure titles
 // to detect cross-artifact and cross-chapter duplicates. Shared by
 // check-chapter.mjs (per-chapter duplicateAnalysis) and
-// check-cross-chapter-consistency.mjs (report-level cross-chapter duplicates).
+// check-cross-chapter.mjs (report-level cross-chapter duplicates).
 export const TITLE_TOKEN_STOP_WORDS = new Set([
   'table', 'figure', 'fig', 'chart', 'graph', 'matrix', 'map',
   'kpi', 'kpis', 'scorecard', 'analysis', 'overview', 'summary',
@@ -142,7 +144,7 @@ export const TITLE_TOKEN_STOP_WORDS = new Set([
 
 // Minimum token length for title tokenization. Tokens shorter than this are
 // ignored during duplicate detection and similarity comparisons. Shared by
-// check-chapter.mjs and check-cross-chapter-consistency.mjs.
+// check-chapter.mjs and check-cross-chapter.mjs.
 export const MIN_TITLE_TOKEN_LENGTH = 4;
 
 // Evidence quality tier thresholds. Used by build-evidence-ledger.mjs to classify the
@@ -177,7 +179,7 @@ export const MULTI_PART_TLDS = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'c
 
 // Key-fact pattern matching: regex patterns that identify identity facts
 // (founders, founding date, funding, valuation, headcount, customers) in
-// claim statements. Used by check-cross-chapter-consistency.mjs keyFactDrift check to ensure
+// claim statements. Used by check-cross-chapter.mjs keyFactDrift check to ensure
 // these canonical facts reference company-overview claims instead of being
 // duplicated in later chapters.
 export const KEY_FACT_TOPICS = [
@@ -202,34 +204,30 @@ export const PAYWALL_RISK_WARNING_THRESHOLD = 0.25;
 // Used by check-chapter.mjs checkDuplicateAnalysis().
 export const DUPLICATE_TITLE_THRESHOLD = 0.5;
 
-// JSON-friendly bundle shipped in the chapter runtime context so the agent never
-// has to grep source code to learn the vocabulary. Sorted arrays keep diffs
-// stable.
-export const VOCABULARIES = Object.freeze({
-  sourceType: [...SOURCE_TYPES].sort(),
-  sourceStance: [...SOURCE_STANCES].sort(),
-  sourceAccessStatus: [...SOURCE_ACCESS_STATUSES].sort(),
-  sourceReputationTier: [...SOURCE_REPUTATION_TIERS].sort(),
-  sourceIndependence: [...SOURCE_INDEPENDENCE].sort(),
-  claimType: [...CLAIM_TYPES].sort(),
-  claimConfidence: [...CLAIM_CONFIDENCES].sort(),
-  claimFreshness: [...CLAIM_FRESHNESS].sort(),
-  questionType: [...QUESTION_TYPES].sort(),
-  questionStatus: [...QUESTION_STATUSES].sort(),
-  calloutType: [...CALLOUT_TYPES].sort(),
-  enumerationCoverage: [...ENUMERATION_COVERAGE].sort(),
-  evidenceGapType: [...EVIDENCE_GAP_TYPES].sort(),
-  severity: [...EVIDENCE_GAP_SEVERITIES].sort(),
-  evidenceQuality: [...EVIDENCE_QUALITIES].sort(),
-  tone: [...TONE_VALUES].sort(),
-  blockType: [...BLOCK_TYPES].sort(),
-  primaryTierSourceTypes: [...PRIMARY_TIER_TYPES].sort(),
-  restrictedAccessStatuses: [...RESTRICTED_ACCESS_STATUSES].sort(),
-  cardRecommendation: [...CARD_RECOMMENDATIONS].sort(),
-  cardConfidence: [...CARD_CONFIDENCES].sort(),
-  cardRiskRating: [...CARD_RISK_RATINGS].sort(),
-  cardValuationStance: [...CARD_VALUATION_STANCES].sort(),
-});
+// Warning-class dimensions that may legitimately appear in
+// `acknowledgedWarnings[].dimension`. Only these are non-blocking by design:
+// agents may opt out of them in --strict mode with a 30+ char rationale.
+// Failure-class dimensions are excluded; SKILL.md is explicit that
+// acknowledgedWarnings must never be used to silence real failures, and
+// check-chapter emits a non-blocking `acknowledgedWarnings` warning when an
+// ack targets a failure dimension. Adding any dimension here makes it acknowledgeable; verify the underlying check is
+// emitted via warn() in check-chapter.mjs (or strict-promoted there) before
+// extending the set.
+export const WARNING_DIMENSIONS = new Set([
+  'paywallRisk',
+  'sectionsMax',
+  'tablesMax',
+  'figuresMax',
+  'figureType',
+  'tableNotes',
+  'unverifiedSource',
+  'fetchTrailMissing',
+]);
+
+// Derived once for messaging consistency. Sorted so the printed order is
+// stable across reports and any new warning-class dimension shows up
+// automatically wherever this list is referenced.
+const WARNING_DIMENSIONS_LIST_TEXT = [...WARNING_DIMENSIONS].sort().join(', ');
 
 // ---------------------------------------------------------------------------
 // Per-dimension fix hints
@@ -248,6 +246,8 @@ export const VOCABULARIES = Object.freeze({
 // it from the surrounding message.
 export const FIX_HINTS = {
   missingArtifact: 'Create the chapter YAML at the expected path.',
+  missingChapter: ({ chapter } = {}) =>
+    chapter ? `Author the missing chapter file ${chapter} (run check-chapter on it once it exists).` : 'Author the missing chapter file flagged in the message before re-running finalize.',
   yamlParse: 'Fix the YAML syntax error reported in the message.',
   localEvidenceMissing: 'Add the entire localEvidence block (researchQuestions, searchQueries, sources, claims, evidenceGaps).',
   researchQuestionShape: ({ id, actual } = {}) =>
@@ -268,16 +268,16 @@ export const FIX_HINTS = {
   sourceShape: ({ id } = {}) =>
     id ? `Fill the missing required field on source ${id} (see message for which one).` : 'Fill accessStatus and stance (and other required fields) on each source.',
   sourceDomains: ({ actual, required } = {}) =>
-    required != null ? `Add sources from ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}).` : 'Add sources from new registrable domains; do not duplicate publishers.',
+    required != null ? `Add sources from ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}). Same dimension also fires at report scope from check-report when totalDistinctDomains across the entire ledger falls below reportGate.minDistinctDomains; add new domains in any chapter, not necessarily the one being checked.` : 'Add sources from new registrable domains; do not duplicate publishers. Same dimension also fires at report scope (check-report) against reportGate.minDistinctDomains across the consolidated ledger.',
   sourceTypeSpread: ({ actual, required } = {}) =>
     required != null ? `Add sources with ${Math.max(required - (actual ?? 0), 1)} more sourceType value(s) you have not used yet (currently ${actual}, need ${required}).` : 'Add sources with sourceType values you have not used yet.',
   sourceStanceSpread: ({ actual, required } = {}) =>
-    required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more stance:adverse source(s) (currently ${actual}, need ${required}). Mark a regulator complaint, short report, FT Alphaville-style critique, FOS/CFPB filing, or skeptical analyst note as stance: adverse — do not invent sources.` : 'Add at least one source with stance: adverse (regulator complaint, short report, skeptical analyst note, FT Alphaville-style critique, FOS/CFPB record). Mark a genuinely critical existing source as stance: adverse instead of inventing one.',
+    required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more stance:adverse source(s) (currently ${actual}, need ${required}). Mark a regulator complaint, short report, FT Alphaville-style critique, FOS/CFPB filing, or skeptical analyst note as stance: adverse — do not invent sources. Same dimension also fires at report scope from check-report when no chapter contributes an adverse-stance source; the risks chapter is the canonical owner.` : 'Add at least one source with stance: adverse (regulator complaint, short report, skeptical analyst note, FT Alphaville-style critique, FOS/CFPB record). Mark a genuinely critical existing source as stance: adverse instead of inventing one. Same dimension also fires at report scope (check-report) when the entire report has no adverse-stance source; the risks chapter is the canonical owner.',
   requiredSourceTypes: ({ missing } = {}) =>
     missing ? `Pull at least one source with sourceType: ${missing}.` : 'Pull at least one source of each missing type listed in gate.requiredSourceTypes.',
   netNewSources: ({ actual, required } = {}) =>
     required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more URL(s) not seen in earlier chapters (currently ${actual}, need ${required}).` : 'Run new searches to add URLs not seen in earlier chapters; reusing the global pool will not satisfy this gate.',
-  paywallRisk: 'Swap restricted (paywall|js-only|broken|rate-limited) sources for ok ones to stay under the report-level 30% ceiling.',
+  paywallRisk: 'At chapter scope (warning, ack-able): swap restricted (paywall|js-only|broken|rate-limited) sources for ok ones to stay under the report-level 30% ceiling. At report scope (failure from check-report, NOT ack-able): the per-report restricted share already exceeds the 30% ceiling and must be brought back below it before finalize-report can pass.',
   researchQuestions: 'Add more researchQuestion entries until you hit the per-chapter floor.',
   sources: 'Add more sources until you hit the per-chapter floor.',
   claims: 'Add more claims until you hit the per-chapter floor.',
@@ -286,7 +286,7 @@ export const FIX_HINTS = {
       ? `On claim ${claimId}: either downgrade confidence:high to medium, or add ${Math.max(required - actual, 1)} more sourceRef(s) including a primary-tier one (filing|regulatory|legal|official or reputationTier:high).`
       : claimId
         ? `On claim ${claimId}: either downgrade confidence:high to medium, or add a primary-tier sourceRef (filing|regulatory|legal|official or reputationTier:high).`
-        : 'Either downgrade confidence:high to medium, or add a primary-tier source (filing|regulatory|legal|official or reputationTier:high).',
+        : 'Either downgrade confidence:high to medium, or ensure the claim has at least gate.minHighConfidenceCorroboration sourceRefs with at least one primary-tier source (filing|regulatory|legal|official or reputationTier:high).',
   claimAnswerRefs: ({ claimId, ref } = {}) =>
     claimId ? `On claim ${claimId}: remove answersQuestionRefs entry ${ref ?? ''}, or add the missing Q<ChapterLetter>### locally.` : 'Resolve dangling answersQuestionRefs entries; do not duplicate evidence.',
   claimContradictRefs: ({ claimId, ref } = {}) =>
@@ -308,7 +308,7 @@ export const FIX_HINTS = {
   enumerationCoverageGap: ({ tableId } = {}) =>
     tableId ? `Open an evidenceGap whose topic mentions ${tableId} or whose relatedTableRefs[] includes ${tableId}.` : 'Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it.',
   enumerationRowCorroboration: ({ tableId, actual, required } = {}) =>
-    required != null ? `On table ${tableId}: add sources from ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}).` : "Add sources from additional registrable domains backing the table's claimRefs.",
+    required != null ? `On table ${tableId}: extend the table's claimRefs[] so the underlying sources span ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}). Check is table-level (claimRefs live on the table, not per row).` : "Extend the enumeration table's table-level claimRefs[] so the underlying sources span more registrable domains (table-level, not per-row).",
   claimShape: ({ id } = {}) =>
     id ? `Fix claim ${id}: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.` : 'Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.',
   calloutShape: 'Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength|risk|recommendation|insight|assumption).',
@@ -320,7 +320,7 @@ export const FIX_HINTS = {
   slugConsistency: ({ required } = {}) =>
     required ? `Set slug: to "${required}".` : 'Set slug: to the company slug only (the report folder basename with the leading <timestamp>- stripped).',
   duplicateIds: ({ id } = {}) =>
-    id ? `Renumber ${id}: ids must match T### / F### and be unique within the chapter.` : 'Renumber the duplicate or malformed table/figure id; ids must match T### / F### and be unique within the chapter.',
+    id ? `Renumber ${id}: ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter.` : 'Renumber the duplicate or malformed table/figure id; ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter.',
   artifactRefs: "Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter's figures[] / tables[].",
   sectionsMin: ({ actual, required } = {}) =>
     required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more section(s) (currently ${actual}, need ${required}).` : 'Add the missing section(s) to reach minSections.',
@@ -342,7 +342,7 @@ export const FIX_HINTS = {
     tableId && figureId
       ? `Figure ${figureId} re-renders the same claims as table ${tableId} (${sharedRefs}/${figureRefs} of the figure's claimRefs are also on the table). Either give the figure at least one claimRef the table does not have (a distinct slice/lens), rename it to reflect that lens, or merge it into the table.`
       : 'Either give the figure at least one claimRef the table does not have (a distinct slice/lens), rename it to reflect that lens, or merge it into the table.',
-  figureType: 'Render at least one of the planned figure types or document the substitution in evidenceGaps.',
+  figureType: 'Render at least one of the planned figure types, or add an acknowledgedWarnings entry for dimension "figureType" with a >=30-char reason when the substitution is intentional.',
   sectionsMax: 'Reduce or merge sections; the chapter looks over-fragmented.',
   tablesMax: 'Reduce or merge tables; the chapter looks over-fragmented.',
   figuresMax: 'Reduce or merge figures; the chapter looks over-fragmented.',
@@ -350,6 +350,26 @@ export const FIX_HINTS = {
     id || url
       ? `Source ${id ?? ''}${url ? ` (${url})` : ''} was cited but never went through fetch-url during this run; pull the URL with .agents/skills/fetch-url/scripts/fetch.mjs (or remove the citation if the source cannot be retrieved).`
       : 'One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess.',
+  fetchTrailMissing: 'Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; the default gate warns and --strict fails when the trail is missing.',
+  displayCompleteness: 'Populate the report-meta field that drives the display surface (companyProfile.<field>, coverFacts items, claimRefs); when a field is genuinely unavailable, leave it null only for fields that document a null path. check-report-meta emits this only as a warning and has no acknowledgedWarnings opt-out.',
+  metricDrift: ({ metric } = {}) =>
+    metric ? `Reconcile metric "${metric}" across chapters: pick the canonical numeric value (usually from the chapter that owns the topic) and update the other chapters' tables/figures/coverFacts to match, or restate them as a clearly different lens (e.g. "Q4 ARR" vs "FY ARR") so they no longer normalize to the same metric label.` : 'Reconcile the conflicting metric values across chapters: pick the canonical numeric value and update the other chapters to match, or restate them as a clearly different lens so they no longer normalize to the same label.',
+  metricDriftSmall: ({ metric } = {}) =>
+    metric ? `Metric "${metric}" varies slightly across chapters but stays within tolerance; harmonize the value or document the rounding source so the next refresh does not drift further.` : 'Slight metric drift across chapters within tolerance; harmonize values or document the rounding source.',
+  keyFactDrift: ({ canonicalId, claimId } = {}) =>
+    canonicalId && claimId ? `Drop the parallel claim ${claimId} and reference the canonical company-overview claim ${canonicalId} instead (mint a local claim that cites the same sources rather than restating the fact).` : 'Reference the canonical company-overview claim instead of restating the key fact as a new local claim.',
+  duplicateAnalysisCrossChapter: ({ a, b } = {}) =>
+    a && b ? `${a.id ?? '?'} in ${a.chapter} duplicates ${b.id ?? '?'} in ${b.chapter}: merge into the chapter that owns the topic, or sharpen one to answer a distinct question (different lens, different time slice, or different cohort) so titles and structure no longer overlap.` : 'Merge the duplicated artifact into the chapter that owns the topic, or sharpen one to a distinct lens.',
+  duplicateLocalClaim: ({ claimId } = {}) =>
+    claimId ? `Local claim id ${claimId} appears in multiple chapter ledgers; remove the duplicate and reference the original via cross-chapter consolidation, or renumber so each chapter ledger owns its own ids.` : 'Remove duplicated local claim ids across chapter ledgers; each chapter has its own C### namespace.',
+  reportContract: 'Re-run the upstream assembler the message names (usually build-evidence-ledger.mjs then build-report.mjs) so the consolidated artifact (evidence.yaml.coverageMatrix, summary-card.sourceStats, full-report references) matches the current chapter sources. The dimension fires from check-report against shape contracts the assemblers own — fixing chapters then re-running finalize-report is usually enough.',
+  reportMetaShape: 'Edit report-meta.yaml to match the report-meta shape in references/contracts.md (or summary-card.yaml when the message names that file). check-report-meta is the focused validator for this dimension; check-report and build-report also surface it when an assembler refuses to project a malformed field. Run check-report-meta directly with --format json for the per-issue fix.',
+  revisionGraph: 'Do NOT hand-edit revision: in report-meta.yaml — link-refresh.mjs (run automatically by finalize-report --refresh in the prepare-refresh and link-refresh steps) writes every revision field on both runs. If the graph is inconsistent, re-run finalize-report.mjs --refresh on the affected report and let link-refresh resync; for one-off cases the message names the exact field (status / refreshOfRunId / supersededByRunId / refreshReason) that is wrong.',
+  usage: 'Fix the CLI invocation per the message: pass exactly one report folder argument plus the optional flags listed in the script header (e.g. --format text|json|compact, --strict, --refresh).',
+  acknowledgedWarnings: ({ ackDimension } = {}) =>
+    ackDimension
+      ? `acknowledgedWarnings entry targets dimension "${ackDimension}", which is not a warning-class dimension. Only warnings (${WARNING_DIMENSIONS_LIST_TEXT}) may be acknowledged; failures must be fixed. Each acknowledgedWarnings entry also requires a >=30-char reason. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`
+      : `Each acknowledgedWarnings entry must (1) target a warning-class dimension (${WARNING_DIMENSIONS_LIST_TEXT}) and (2) carry a >=30-char reason. Failure-class dimensions cannot be acknowledged.`,
 };
 
 // ---------------------------------------------------------------------------
@@ -428,7 +448,8 @@ export const RETRY_PRECEDENCE = [
   'calloutShape',
   'sectionsMin', 'sectionsMax', 'artifactsMin', 'tablesMax', 'figuresMax',
   'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
-  'contentRequirementCoverage',  'unverifiedSource',];
+  'contentRequirementCoverage', 'unverifiedSource', 'fetchTrailMissing',
+];
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -450,6 +471,61 @@ export function resolveFixHint(dimension, extra) {
 // entry pairs a dimension with its precedence rank, the suppressors that
 // could mask it, and a baseline fix string (function fixes are called with
 // {} so the agent sees the generic form before it has concrete extras).
+//
+// `acknowledgedWarnings` is intentionally excluded: it is a meta-warning
+// emitted by check-chapter when an ack entry targets a non-warning-class
+// dimension, NOT a validation dimension agents can fail or fix. Its
+// semantics live in the `### acknowledgedWarnings opt-out` prose section of
+// rules.md, generated separately by build-rules-doc.mjs. Keeping it in
+// FIX_HINTS lets resolveFixHint() still attach a friendly hint to the
+// runtime warning.
+const CATALOG_EXCLUDED_DIMENSIONS = new Set(['acknowledgedWarnings']);
+
+// Class membership for the four `precedence: —` cohorts used by
+// build-rules-doc.mjs to group the dimensions table by class instead of by
+// FIX_HINTS insertion order. Failure-class chapter dimensions (those with a
+// numeric precedenceRank) are reported as 'chapter-failure' and sort first
+// by their rank. WARNING_DIMENSIONS members are 'chapter-warning'.
+// Membership for the other three buckets is enumerated explicitly so a new
+// dimension cannot silently land in the wrong group.
+const CROSS_CHAPTER_DIMENSIONS = new Set([
+  'duplicateAnalysisCrossChapter',
+  'duplicateLocalClaim',
+  'keyFactDrift',
+  'metricDrift',
+  'metricDriftSmall',
+  'missingChapter',
+]);
+const FINALIZE_STEP_DIMENSIONS = new Set([
+  'reportContract',
+  'reportMetaShape',
+  'revisionGraph',
+  'usage',
+]);
+const REPORT_META_WARNING_DIMENSIONS = new Set([
+  'displayCompleteness',
+]);
+
+export function classifyDimension(dimension, precedenceRank) {
+  if (WARNING_DIMENSIONS.has(dimension)) return 'chapter-warning';
+  if (CROSS_CHAPTER_DIMENSIONS.has(dimension)) return 'cross-chapter';
+  if (FINALIZE_STEP_DIMENSIONS.has(dimension)) return 'finalize-step';
+  if (REPORT_META_WARNING_DIMENSIONS.has(dimension)) return 'report-meta-warning';
+  if (precedenceRank != null) return 'chapter-failure';
+  return 'chapter-failure';
+}
+
+// Stable display order for grouped tables: chapter-failure first (by rank),
+// then chapter-warning, cross-chapter, finalize-step, report-meta-warning.
+// Within each non-failure group, sort alphabetically for deterministic output.
+const CLASS_ORDER = [
+  'chapter-failure',
+  'chapter-warning',
+  'cross-chapter',
+  'finalize-step',
+  'report-meta-warning',
+];
+
 export function dimensionCatalog() {
   const rankByDim = new Map(RETRY_PRECEDENCE.map((dim, i) => [dim, i]));
   const suppressedByMap = new Map();
@@ -460,11 +536,25 @@ export function dimensionCatalog() {
     }
   }
   return Object.keys(FIX_HINTS)
-    .map((dimension) => ({
-      dimension,
-      precedenceRank: rankByDim.get(dimension) ?? null,
-      defaultFix: resolveFixHint(dimension, {}) ?? null,
-      suppressedBy: suppressedByMap.get(dimension) ?? [],
-    }))
-    .sort((a, b) => (a.precedenceRank ?? 999) - (b.precedenceRank ?? 999));
+    .filter((dimension) => !CATALOG_EXCLUDED_DIMENSIONS.has(dimension))
+    .map((dimension) => {
+      const precedenceRank = rankByDim.get(dimension) ?? null;
+      return {
+        dimension,
+        precedenceRank,
+        dimensionClass: classifyDimension(dimension, precedenceRank),
+        defaultFix: resolveFixHint(dimension, {}) ?? null,
+        suppressedBy: suppressedByMap.get(dimension) ?? [],
+      };
+    })
+    .sort((a, b) => {
+      const classDelta = CLASS_ORDER.indexOf(a.dimensionClass) - CLASS_ORDER.indexOf(b.dimensionClass);
+      if (classDelta !== 0) return classDelta;
+      // Within chapter-failure: sort by precedence rank. Within other
+      // buckets (which have no precedence rank): sort alphabetically.
+      if (a.dimensionClass === 'chapter-failure') {
+        return (a.precedenceRank ?? 999) - (b.precedenceRank ?? 999);
+      }
+      return a.dimension.localeCompare(b.dimension);
+    });
 }
