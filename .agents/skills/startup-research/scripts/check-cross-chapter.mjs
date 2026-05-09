@@ -29,7 +29,7 @@ const args = (() => {
       parsed.format = next;
     } else if (arg.startsWith('-')) {
       console.error(`[cross-chapter] unknown flag: ${arg}`);
-      console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter-consistency.mjs <report-folder> [--strict] [--format text|json]');
+      console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
       process.exit(EXIT.failure);
     } else if (!parsed.folder) parsed.folder = arg;
     else {
@@ -41,7 +41,7 @@ const args = (() => {
 })();
 
 if (!args.folder) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter-consistency.mjs <report-folder> [--strict] [--format text|json]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/check-cross-chapter.mjs <report-folder> [--strict] [--format text|json]');
   process.exit(EXIT.failure);
 }
 if (!['text', 'json'].includes(args.format)) {

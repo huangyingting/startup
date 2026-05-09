@@ -3,15 +3,17 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:contracts": "node .agents/skills/startup-research/scripts/build-contract-docs.mjs",
     "check:workflow-config": "node .agents/skills/startup-research/scripts/check-workflow-config.mjs",
     "check:revision-graph": "node .agents/skills/startup-research/scripts/check-revision-graph.mjs",
-    "check:reports-contract": "node .agents/skills/startup-research/scripts/check-reports-contract.mjs",
+    "check:reports-contract": "node .agents/skills/startup-research/scripts/check-report.mjs --all",
     "validate": "npm run check:workflow-config && npm run check:revision-graph && npm run check:reports-contract && npm --prefix website run build"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
     "js-yaml": "^4.1.0",
     "jsdom": "^29.1.1",
-    "pdfjs-dist": "^5.7.284"
+    "pdfjs-dist": "^5.7.284",
+    "zod": "^4.4.3"
   }
 }

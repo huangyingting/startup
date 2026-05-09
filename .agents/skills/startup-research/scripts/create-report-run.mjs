@@ -31,31 +31,22 @@ function volatileFactRefreshInstruction() {
 }
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website <url>] [--refresh] [--refresh-reason <text>] [--resume] [--timestamp <YYYYMMDDHHmmss>]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website <url>] [--refresh] [--refresh-reason <text>] [--resume]');
   process.exit(EXIT.failure);
 }
 
-// `--timestamp` is intentionally undocumented in SKILL.md: it exists only so
-// the refresh smoke test (test-refresh-pipeline.mjs) can pin a deterministic
-// runId for snapshot/cleanup tracking. Production callers omit it and let the
-// script anchor the run with the system clock.
 function parseArgs(argv) {
-  const args = { timestamp: '', nameParts: [], website: '', refresh: false, refreshReason: '', resume: false };
+  const args = { nameParts: [], website: '', refresh: false, refreshReason: '', resume: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--website' || arg === '--url' || arg === '--domain') args.website = argv[++i] ?? '';
     else if (arg === '--refresh') args.refresh = true;
     else if (arg === '--refresh-reason') args.refreshReason = argv[++i] ?? '';
     else if (arg === '--resume') args.resume = true;
-    else if (arg === '--timestamp') args.timestamp = argv[++i] ?? '';
     else if (arg.startsWith('--')) usage();
     else args.nameParts.push(arg);
   }
-  if (!args.timestamp) args.timestamp = nowRunTimestamp();
-  if (!/^\d{14}$/.test(args.timestamp)) {
-    console.error(`[create-report-run] invalid --timestamp value: ${args.timestamp} (must be 14 digits YYYYMMDDHHmmss)`);
-    process.exit(EXIT.failure);
-  }
+  args.timestamp = nowRunTimestamp();
   if (!args.nameParts.length) usage();
   return args;
 }

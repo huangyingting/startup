@@ -5,15 +5,15 @@
 // website discovers reports by walking reports/<runId>/summary-card.yaml.
 //
 // Pipeline:
-//   1. validate-report-meta.mjs -> shape + enum check on report-meta.yaml
+//   1. check-report-meta.mjs -> shape + enum check on report-meta.yaml
 //                                   (runs first so every missing/invalid field
 //                                   surfaces in one shot, instead of one per
 //                                   finalize-loop iteration)
 //   2. (refresh only) link-refresh.mjs --prepare-current
 //                       -> mark the new report as revision.status=current
 //   3. build-evidence-ledger.mjs -> evidence.yaml + chapter claimRef consolidation
-//   4. check-cross-chapter-consistency.mjs -> drift checks across chapters
-//   5. assemble-report.mjs -> full-report.yaml + summary-card.yaml
+//   4. check-cross-chapter.mjs -> drift checks across chapters
+//   5. build-report.mjs -> full-report.yaml + summary-card.yaml
 //   6. check-report.mjs -> schema/contract validation and publishability gate
 //   7. (refresh only) link-refresh.mjs
 //                       -> mark the previous report as revision.status=superseded
@@ -83,10 +83,10 @@ function runStep(step) {
 }
 
 // Fast pre-flight: surface every shape/enum problem in report-meta.yaml
-// before any expensive step runs. The full assemble-report.mjs check still
+// before any expensive step runs. The full build-report.mjs check still
 // runs later as defense-in-depth (it also covers cross-refs against
 // evidence.yaml, which this step intentionally does not load).
-runStep({ name: 'validate-report-meta', script: 'validate-report-meta.mjs', argv: [reportFolder] });
+runStep({ name: 'check-report-meta', script: 'check-report-meta.mjs', argv: [reportFolder] });
 
 if (refresh) {
   const refreshArgs = [reportFolder, '--prepare-current'];
@@ -107,8 +107,8 @@ if (needsLedger) {
 } else {
   console.log('[finalize-report] reusing existing evidence.yaml; pass --rebuild to force a full evidence-ledger rebuild.');
 }
-steps.push({ name: 'check-cross-chapter-consistency', script: 'check-cross-chapter-consistency.mjs', argv: [reportFolder] });
-steps.push({ name: 'assemble-report', script: 'assemble-report.mjs', argv: [reportFolder] });
+steps.push({ name: 'check-cross-chapter', script: 'check-cross-chapter.mjs', argv: [reportFolder] });
+steps.push({ name: 'build-report', script: 'build-report.mjs', argv: [reportFolder] });
 steps.push({ name: 'check-report', script: 'check-report.mjs', argv: [reportFolder] });
 
 // link-refresh runs after the publishability gate so we never mark a prior

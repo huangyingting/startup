@@ -18,26 +18,22 @@ import {
   FIGURE_LAYOUTS,
   FIGURE_TYPES,
 } from '../../../../website/src/lib/figures.mjs';
-import { asDateString, hasText } from './utils.mjs';
+import { hasText } from './utils.mjs';
 import {
-  CALLOUT_TYPES,
-  CLAIM_CONFIDENCES,
-  CLAIM_FRESHNESS,
-  CLAIM_TYPES,
-  ENUMERATION_COVERAGE,
-  SOURCE_ACCESS_STATUSES,
-  SOURCE_INDEPENDENCE,
-  SOURCE_REPUTATION_TIERS,
-  SOURCE_STANCES,
-  SOURCE_TYPES,
-  TONE_VALUES,
-  formatEnumChoices,
-} from './validation-catalog.mjs';
+  CalloutSchema,
+  ClaimSchema,
+  DocumentHeadSchema,
+  SCHEMA_VERSION as REPORT_SCHEMA_VERSION,
+  SourceSchema,
+  TableSchema,
+  schemaErrors,
+} from './contracts/report-artifacts.schema.mjs';
+import { TONE_VALUES, formatEnumChoices } from './validation-catalog.mjs';
 
 // Single source of truth for the report schema version. Imported by both
 // check-chapter (per-file head check) and check-report (cross-file head
 // + cross-artifact identity checks).
-export const SCHEMA_VERSION = 'report-v2';
+export const SCHEMA_VERSION = REPORT_SCHEMA_VERSION;
 
 const FIGURE_TYPE_SET = new Set(FIGURE_TYPES);
 const FIGURE_LAYOUT_SET = new Set(FIGURE_LAYOUTS);
@@ -54,10 +50,6 @@ const MATRIX_FIGURE_TYPES = new Set(['matrix', 'cohort']);
 
 function isFiniteNumber(value) {
   return typeof value === 'number' && Number.isFinite(value);
-}
-
-function isTableCellScalar(value) {
-  return value == null || typeof value === 'string' || typeof value === 'number';
 }
 
 function hasPopulatedField(data, key) {
@@ -96,106 +88,34 @@ function makeCollector() {
   };
 }
 
+function legacySchemaErrors(schema, value, { path, dimension = 'schema' }) {
+  return schemaErrors(schema, value, { path, dimension }).map((issue) => ({
+    ...issue,
+    message: `${issue.path}: ${issue.message}`,
+  }));
+}
+
 // ---- source schema --------------------------------------------------------
 
 // Validates one source object's shape. `path` is a human-readable prefix
 // included in every message (e.g. "01-company-overview.yaml: source S001").
 // `id` is also surfaced as `extra.id` for callers that want to group failures.
 export function checkSourceSchema(source, { path }) {
-  const c = makeCollector();
   const id = source?.id;
-
-  // Required fields. Each missing field becomes its own error so the agent
-  // sees the full list, not just the first.
-  const REQUIRED = ['publisher', 'title', 'accessDate', 'url', 'sourceType', 'reputationTier', 'independence', 'topics', 'accessStatus', 'stance'];
-  for (const field of REQUIRED) {
-    if (source?.[field] === undefined) c.fail(`${path} missing ${field}`, { id, field });
-  }
-
-  if (source?.date != null && !/^\d{4}-\d{2}-\d{2}$/.test(asDateString(source.date))) {
-    c.fail(`${path} date must be YYYY-MM-DD or null`, { id });
-  }
-  if (source?.accessDate !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(asDateString(source?.accessDate))) {
-    c.fail(`${path} accessDate must be YYYY-MM-DD`, { id });
-  }
-  if (source?.topics !== undefined && (!Array.isArray(source.topics) || source.topics.length === 0)) {
-    c.fail(`${path} topics must be a non-empty array`, { id });
-  }
-  if (source?.accessStatus && !SOURCE_ACCESS_STATUSES.has(source.accessStatus)) {
-    c.fail(`${path} accessStatus must be one of ${formatEnumChoices(SOURCE_ACCESS_STATUSES)}`, { id, actual: source.accessStatus });
-  }
-  if (source?.stance && !SOURCE_STANCES.has(source.stance)) {
-    c.fail(`${path} stance must be one of ${formatEnumChoices(SOURCE_STANCES)}`, { id, actual: source.stance });
-  }
-  if (source?.sourceType && !SOURCE_TYPES.has(source.sourceType)) {
-    c.fail(`${path} sourceType must be one of ${formatEnumChoices(SOURCE_TYPES)}`, { id, actual: source.sourceType });
-  }
-  if (source?.reputationTier && !SOURCE_REPUTATION_TIERS.has(source.reputationTier)) {
-    c.fail(`${path} reputationTier must be one of ${formatEnumChoices(SOURCE_REPUTATION_TIERS)}`, { id, actual: source.reputationTier });
-  }
-  if (source?.independence && !SOURCE_INDEPENDENCE.has(source.independence)) {
-    c.fail(`${path} independence must be one of ${formatEnumChoices(SOURCE_INDEPENDENCE)}`, { id, actual: source.independence });
-  }
-  return { errors: c.errors };
+  return { errors: legacySchemaErrors(SourceSchema, source, { path, dimension: 'sourceShape' }).map((err) => ({ id, ...err })) };
 }
 
 // ---- claim schema ---------------------------------------------------------
 
 export function checkClaimSchema(claim, { path }) {
-  const c = makeCollector();
   const id = claim?.id;
-
-  const REQUIRED = ['statement', 'type', 'topic', 'sourceRefs', 'confidence', 'freshness'];
-  for (const field of REQUIRED) {
-    if (claim?.[field] === undefined) c.fail(`${path} missing ${field}`, { id, field });
-  }
-  if (claim?.statement !== undefined && !hasText(claim.statement)) {
-    c.fail(`${path} statement must be non-empty`, { id });
-  }
-  if (claim?.sourceRefs !== undefined && !Array.isArray(claim.sourceRefs)) {
-    c.fail(`${path} sourceRefs must be an array`, { id });
-  }
-  if (claim?.claimType !== undefined) {
-    c.fail(`${path} uses obsolete field 'claimType'; rename to 'type'`, { id });
-  }
-  if (claim?.corroboration !== undefined) {
-    c.fail(`${path} must not store corroboration; it is derived from sourceRefs.length and contradictsClaimRefs`, { id });
-  }
-  if (claim?.answersQuestionRefs !== undefined && !Array.isArray(claim.answersQuestionRefs)) {
-    c.fail(`${path} answersQuestionRefs must be an array when present`, { id });
-  }
-  if (claim?.contradictsClaimRefs !== undefined && !Array.isArray(claim.contradictsClaimRefs)) {
-    c.fail(`${path} contradictsClaimRefs must be an array when present`, { id });
-  }
-  if (claim?.type === 'conflicting' && !(claim.contradictsClaimRefs ?? []).length) {
-    c.fail(`${path} type=conflicting requires non-empty contradictsClaimRefs`, { id });
-  }
-  if (claim?.type && !CLAIM_TYPES.has(claim.type)) {
-    c.fail(`${path} type must be one of ${formatEnumChoices(CLAIM_TYPES)}`, { id, actual: claim.type });
-  }
-  if (claim?.confidence && !CLAIM_CONFIDENCES.has(claim.confidence)) {
-    c.fail(`${path} confidence must be one of ${formatEnumChoices(CLAIM_CONFIDENCES)}`, { id, actual: claim.confidence });
-  }
-  if (claim?.freshness && !CLAIM_FRESHNESS.has(claim.freshness)) {
-    c.fail(`${path} freshness must be one of ${formatEnumChoices(CLAIM_FRESHNESS)}`, { id, actual: claim.freshness });
-  }
-  if (claim?.type !== 'open-question' && Array.isArray(claim?.sourceRefs) && claim.sourceRefs.length === 0) {
-    c.fail(`${path} sourceRefs must be non-empty unless type is open-question`, { id });
-  }
-  return { errors: c.errors };
+  return { errors: legacySchemaErrors(ClaimSchema, claim, { path, dimension: 'claimShape' }).map((err) => ({ id, ...err })) };
 }
 
 // ---- callout schema -------------------------------------------------------
 
 export function checkCalloutSchema(callout, { path }) {
-  const c = makeCollector();
-  if (!hasText(callout?.title)) c.fail(`${path} requires title`);
-  if (!hasText(callout?.body)) c.fail(`${path} requires body`);
-  if (!Array.isArray(callout?.claimRefs)) c.fail(`${path} requires claimRefs array`);
-  if (callout?.calloutType !== undefined && !CALLOUT_TYPES.has(callout.calloutType)) {
-    c.fail(`${path} calloutType must be one of ${formatEnumChoices(CALLOUT_TYPES)}`, { actual: callout.calloutType });
-  }
-  return { errors: c.errors };
+  return { errors: legacySchemaErrors(CalloutSchema, callout, { path, dimension: 'calloutShape' }) };
 }
 
 // ---- table schema ---------------------------------------------------------
@@ -205,41 +125,8 @@ export function checkCalloutSchema(callout, { path }) {
 // for partial/sample) live in check-chapter; those need source/claim context
 // the helper does not have.
 export function checkTableSchema(table, { path }) {
-  const c = makeCollector();
   const id = table?.id;
-  if (!Array.isArray(table?.columns) || table.columns.length === 0) {
-    c.fail(`${path} requires non-empty data.columns`, { tableId: id });
-    return { errors: c.errors };
-  }
-  const expectedCols = table.columns.length;
-  for (const [index, row] of (table.rows ?? []).entries()) {
-    if (!Array.isArray(row)) {
-      c.fail(`${path} row ${index + 1} must be an array`, { tableId: id, rowIndex: index });
-      continue;
-    }
-    if (row.length !== expectedCols) {
-      c.fail(`${path} row ${index + 1} has ${row.length} cells but columns declares ${expectedCols}`, { tableId: id, rowIndex: index, actual: row.length, expected: expectedCols });
-    }
-    for (const [cellIndex, cell] of row.entries()) {
-      if (!isTableCellScalar(cell)) {
-        c.fail(`${path} row ${index + 1} cell ${cellIndex + 1} must be a string, number, or null; object cells like {label: ...} are only valid in matrix figures, and table strings containing ':' must be quoted`, { tableId: id, rowIndex: index, cellIndex, actual: Array.isArray(cell) ? 'array' : typeof cell });
-      }
-    }
-  }
-  if (table.enumerationScope !== undefined) {
-    const scope = table.enumerationScope;
-    if (!scope || typeof scope !== 'object') {
-      c.fail(`${path} enumerationScope must be an object`, { tableId: id });
-    } else {
-      if (!ENUMERATION_COVERAGE.has(scope.coverage)) {
-        c.fail(`${path} enumerationScope.coverage must be one of ${formatEnumChoices(ENUMERATION_COVERAGE)}`, { tableId: id, actual: scope.coverage });
-      }
-      if (typeof scope.basis !== 'string' || scope.basis.trim().length < 20) {
-        c.fail(`${path} enumerationScope.basis must be a non-empty string (>=20 chars)`, { tableId: id });
-      }
-    }
-  }
-  return { errors: c.errors };
+  return { errors: legacySchemaErrors(TableSchema, table, { path, dimension: 'tableShape' }).map((err) => ({ tableId: id, ...err })) };
 }
 
 // ---- figure deep schema ---------------------------------------------------
@@ -426,20 +313,11 @@ export function checkFigureDeep(figure, { path }) {
 //   - expected.chapter:  optional 1-based chapter number (only analysis chs)
 export function checkDocumentHeadSchema(doc, { path, expected }) {
   const c = makeCollector();
-  if (doc?.schemaVersion !== SCHEMA_VERSION) {
-    c.fail(`${path}: expected schemaVersion ${SCHEMA_VERSION}, got ${doc?.schemaVersion}`);
+  for (const err of legacySchemaErrors(DocumentHeadSchema, doc, { path, dimension: 'documentHead' })) {
+    c.fail(err.message, err);
   }
-  if (!doc?.artifact) c.fail(`${path}: missing document head field artifact`);
-  else if (expected?.artifact && doc.artifact !== expected.artifact) {
+  if (doc?.artifact && expected?.artifact && doc.artifact !== expected.artifact) {
     c.fail(`${path}: expected artifact ${expected.artifact}, got ${doc.artifact}`);
-  }
-  if (!doc?.slug) c.fail(`${path}: missing document head field slug`);
-  if (!doc?.runDate) c.fail(`${path}: missing document head field runDate`);
-  else if (!/^\d{4}-\d{2}-\d{2}$/.test(asDateString(doc.runDate))) {
-    c.fail(`${path}: runDate must be YYYY-MM-DD`);
-  }
-  if (!doc?.company || typeof doc.company !== 'object' || !doc.company.name) {
-    c.fail(`${path}: missing document head field company.name`);
   }
   if (expected?.chapter && doc?.chapter?.number !== expected.chapter) {
     c.fail(`${path}: expected chapter.number ${expected.chapter}`);

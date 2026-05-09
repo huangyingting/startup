@@ -16,10 +16,10 @@ import {
 
 const CONTRACT_SOURCES = Object.freeze({
   workflowConfig: 'references/workflow-config.yaml',
-  workflowConfigSchema: 'references/workflow-config-schema-v1.md',
-  reportSchema: 'references/report-schema-v2.md',
-  runtimeContextSchema: 'references/chapter-runtime-context-schema-v2.md',
-  yamlRules: 'references/yaml-rules.md',
+  workflowSchema: 'scripts/contracts/workflow-config.schema.mjs',
+  reportSchema: 'scripts/contracts/report-artifacts.schema.mjs',
+  runtimeContextSchema: 'scripts/contracts/runtime-context.schema.mjs',
+  generatedContracts: 'references/contracts.md',
   vocabularies: 'scripts/validation-catalog.mjs',
   checkDimensions: 'scripts/validation-catalog.mjs',
   rendererContracts: 'website/src/lib/figures.mjs',
@@ -213,6 +213,9 @@ function runCacheContext(reportFolder) {
 function workflowSummary(config, { includeTotalChapters = false } = {}) {
   const summary = {
     reportSchemaVersion: config.reportSchemaVersion,
+    inputs: config.workflow?.inputs ?? {},
+    phases: config.workflow?.phases ?? [],
+    conditions: config.workflow?.conditions ?? [],
     finalArtifacts: FINAL_ARTIFACTS,
     allowedReportFiles: {
       chapterArtifacts: config.chapters.map((chapter) => chapter.file),
@@ -246,7 +249,7 @@ function buildRuntimeContext(config, chapter) {
     // Single source of truth for enum vocab and validator dimensions. Agents
     // and the SKILL.md should reference runtimeContext.vocabularies / runtimeContext.checkDimensions
     // rather than re-declaring these literals in prose; the same module backs
-    // report-artifact-schema validation and check-chapter retry hints, so the runtime context
+    // artifact-checks validation and check-chapter retry hints, so the runtime context
     // and the gate cannot drift.
     vocabularies: VOCABULARIES,
     checkDimensions: dimensionCatalog(),

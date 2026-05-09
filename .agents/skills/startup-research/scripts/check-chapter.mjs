@@ -32,7 +32,7 @@ import {
   checkSourceSchema,
   checkTableSchema,
   checkUniqueIds,
-} from './report-artifact-schema.mjs';
+} from './artifact-checks.mjs';
 import {
   TITLE_TOKEN_STOP_WORDS,
   CASCADE_SUPPRESSORS,
@@ -683,7 +683,7 @@ if (doc) {
     }
   }
   // Chapter-local table/figure id uniqueness (T### / F###). Duplicate or
-  // malformed ids would otherwise blow up at build-evidence-ledger/assemble-report time.
+  // malformed ids would otherwise blow up at build-evidence-ledger/build-report time.
   {
     const { errors } = checkUniqueIds(doc.tables, { label: 'table', pattern: ID_PATTERN_CHAPTER_TABLE, path: spec.file });
     for (const err of errors) fail('duplicateIds', err.message, err);
@@ -771,7 +771,7 @@ if (doc) {
   // Per-callout schema (title, body, claimRefs[], optional calloutType enum).
   // The canonical key is `callouts:`; reject legacy `analysisCallouts` /
   // `analysisCallout` writes as documentHead failures so they never get
-  // silently dropped during assemble-report (which only reads `callouts`).
+  // silently dropped during build-report (which only reads `callouts`).
   if (doc.analysisCallouts !== undefined) {
     fail('documentHead', `${spec.file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`);
   }

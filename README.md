@@ -21,12 +21,10 @@ cloudflare/                       # Cloudflare Worker scheduler for GitHub Actio
 
 Important files:
 
-- `.agents/skills/startup-research/SKILL.md` — canonical end-to-end report workflow.
-- `.agents/skills/startup-research/references/workflow-config.yaml` — workflow policy, chapter order, artifacts, gates, and requirements.
-- `.agents/skills/startup-research/references/workflow-config-schema-v1.md` — schema and field semantics for the workflow config.
-- `.agents/skills/startup-research/references/report-schema-v2.md` — report-v2 YAML field shapes (the artifacts written under `reports/<runId>/`).
-- `.agents/skills/startup-research/references/chapter-runtime-context-schema-v2.md` — runtime projection contract for the JSON the chapter loader emits.
-- `.agents/skills/startup-research/references/yaml-rules.md` — YAML syntax constraints shared by every artifact.
+- `.agents/skills/startup-research/SKILL.md` — thin end-to-end workflow entry point that loads runtime contracts.
+- `.agents/skills/startup-research/references/workflow-config.yaml` — workflow inputs, conditions, phases, policy, chapter order, artifacts, gates, and requirements.
+- `.agents/skills/startup-research/references/contracts.md` — generated agent-readable contract reference.
+- `.agents/skills/startup-research/scripts/contracts/` — executable Zod schemas for workflow config, report artifacts, and runtime context.
 - `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts (chapter loader, gate checks, ledger consolidation, report assembly, validators).
 - `website/src/lib/` — rendering contracts shared between the renderer and the chapter/report validators.
 - `cloudflare/worker.js` — Cloudflare Cron Trigger that dispatches scheduled GitHub Actions workflows.

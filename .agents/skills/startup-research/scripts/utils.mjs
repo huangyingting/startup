@@ -2,8 +2,8 @@ import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from '
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
-import { FIGURE_TYPES } from '../../../../website/src/lib/figures.mjs';
-import { REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS, RESERVED_TYPE_LETTERS } from './validation-catalog.mjs';
+import { REGISTRABLE_DOMAIN_MAX_PARTS, MULTI_PART_TLDS } from './validation-catalog.mjs';
+import { normalizeWorkflowConfig as normalizeWorkflowConfigFromSchema } from './contracts/workflow-config.schema.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const reportsDir = join(repoRoot, 'reports');
@@ -12,7 +12,7 @@ export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-r
 export const RUN_ID_RE = /^\d{14}-[a-z0-9-]+$/;
 export const REVISION_STATUSES = new Set(['current', 'superseded']);
 export const REPORT_META_FILE = 'report-meta.yaml';
-// Final-stage artifact filenames are fixed by report-schema-v2 ("Literal value; do not rename").
+// Final-stage artifact filenames are fixed by report-v2 artifact contracts.
 // Keep this object shape — chapter runtime contexts and downstream tooling iterate by camelCase key.
 export const FINAL_ARTIFACTS = Object.freeze({
   evidence: { file: 'evidence.yaml', artifact: 'evidence' },
@@ -23,7 +23,7 @@ export const GENERATED_REPORT_FILES = Object.freeze(Object.values(FINAL_ARTIFACT
 const FINAL_REPORT_FILES = Object.freeze([...GENERATED_REPORT_FILES, REPORT_META_FILE]);
 
 // Single contract for non-zero exit codes used across skill scripts. Callers
-// (CI, test-refresh-pipeline, finalize-report) switch on these to distinguish recoverable
+// (CI, finalize-report) switch on these to distinguish recoverable
 // state errors from validation failures. Keep stable; SKILL.md references
 // some of these by number.
 //
@@ -40,7 +40,7 @@ export const EXIT = Object.freeze({
 });
 
 // Per-run scratch dir under .research-cache/ (gitignored). Single source of
-// truth so create-report-run.mjs, test-refresh-pipeline.mjs, load-chapter-runtime-context.mjs, and any
+// truth so create-report-run.mjs, load-chapter-runtime-context.mjs, and any
 // future consumer never hand-build the path. The folder name under
 // .research-cache/ is the run id (`<timestamp>-<companySlug>`) — the same
 // name as the report folder.
@@ -72,7 +72,7 @@ export function isRunId(value) {
 }
 
 // UTC YYYYMMDDHHmmss for the leading 14 chars of a runId. Single source of
-// truth so create-report-run.mjs and test-refresh-pipeline.mjs never re-implement the
+// truth so create-report-run.mjs and any other caller never re-implement the
 // formatting — both must agree on UTC and zero-padding so the same Date can
 // reproduce the same runId.
 export function nowRunTimestamp(date = new Date()) {
@@ -188,7 +188,7 @@ export function hasText(value) {
 
 // Parses a YYYY-MM-DD-ish value into a Date (UTC midnight) or null. Tolerates
 // Date objects and strings; returns null on anything unparseable. Used by
-// build-evidence-ledger and assemble-report for source/claim freshness anchoring.
+// build-evidence-ledger and build-report for source/claim freshness anchoring.
 export function parseDate(value) {
   const text = asDateString(value);
   if (!text) return null;
@@ -231,229 +231,11 @@ export function tryReadYaml(path) {
   }
 }
 
-function assertConfig(condition, message) {
-  if (!condition) throw new Error(`[workflow-config] ${message}`);
-}
-
-function assertUnique(values, label) {
-  const seen = new Set();
-  for (const value of values) {
-    assertConfig(value !== undefined && value !== null && value !== '', `${label} contains an empty value`);
-    assertConfig(!seen.has(value), `${label} contains duplicate value ${value}`);
-    seen.add(value);
-  }
-}
-
-function deepClone(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
-
-function mergeGate(defaultGate, chapterGate) {
-  return {
-    ...deepClone(defaultGate),
-    ...deepClone(chapterGate ?? {}),
-    depthFloor: {
-      ...(defaultGate?.depthFloor ?? {}),
-      ...(chapterGate?.depthFloor ?? {}),
-    },
-  };
-}
-
-const AGENT_POLICY_STRING_ARRAY_FIELDS = [
-  'volatileFacts',
-  'researchRules',
-  'chapterAuthoringRules',
-  'hardRules',
-  'finalResponseFields',
-];
-
-function assertStringArray(value, scope) {
-  assertConfig(Array.isArray(value), `${scope} must be an array (use [] for none)`);
-  for (const [index, item] of value.entries()) {
-    assertConfig(typeof item === 'string' && item.trim().length > 0, `${scope}[${index}] must be a non-empty string`);
-  }
-}
-
-function normalizeAgentPolicy(policy = {}) {
-  assertConfig(policy && typeof policy === 'object' && !Array.isArray(policy), 'agentPolicy must be an object');
-  const out = deepClone(policy);
-  for (const field of AGENT_POLICY_STRING_ARRAY_FIELDS) {
-    if (out[field] === undefined) out[field] = [];
-    assertStringArray(out[field], `agentPolicy.${field}`);
-  }
-  if (out.retryPolicy === undefined) out.retryPolicy = {};
-  assertConfig(out.retryPolicy && typeof out.retryPolicy === 'object' && !Array.isArray(out.retryPolicy), 'agentPolicy.retryPolicy must be an object');
-  if (out.retryPolicy.maxChapterRetries !== undefined) {
-    const value = out.retryPolicy.maxChapterRetries;
-    assertConfig(Number.isInteger(value) && value > 0, 'agentPolicy.retryPolicy.maxChapterRetries must be a positive integer');
-  }
-  if (out.retryPolicy.requireMonotonicFailureDecrease !== undefined) {
-    assertConfig(typeof out.retryPolicy.requireMonotonicFailureDecrease === 'boolean', 'agentPolicy.retryPolicy.requireMonotonicFailureDecrease must be a boolean');
-  }
-  return out;
-}
-
-// Gate field shapes shared between defaultGate (validated as a complete spec)
-// and chapter.gate overrides (validated post-merge with the merged value).
-const GATE_NUMERIC_FIELDS = [
-  'minSections', 'maxSections', 'minArtifacts', 'maxTables', 'maxFigures',
-  'minResearchQuestions', 'minLocalSources', 'minLocalClaims',
-  'minQuestionTypeSpread', 'minAdverseQuestions',
-  'minSourceDomains', 'minNetNewSources', 'minSourceTypeSpread',
-  'minHighConfidenceCorroboration', 'minSourcesPerEnumerationRow',
-];
-const GATE_RATE_FIELDS = ['minQuestionAnswerRate', 'minContentRequirementCoverage'];
-const GATE_DEPTH_FIELDS = ['minSectionBodyWords', 'minSectionWordsTotal', 'minTableRowsTotal', 'minFigureDataPointsTotal'];
-
-// Validate one gate object's shape. `scope` is "defaultGate" or
-// "<chapterKey>: gate" so the error points at the right source. Used both for
-// defaultGate (called once before merging) and for each chapter's merged gate.
-function assertGateShape(gate, scope) {
-  for (const field of GATE_NUMERIC_FIELDS) {
-    assertConfig(Number.isFinite(gate?.[field]), `${scope}.${field} must be a number`);
-  }
-  for (const field of GATE_RATE_FIELDS) {
-    const value = gate?.[field];
-    assertConfig(Number.isFinite(value) && value >= 0 && value <= 1, `${scope}.${field} must be a number between 0 and 1`);
-  }
-  assertConfig(Array.isArray(gate?.requiredSourceTypes), `${scope}.requiredSourceTypes must be an array (use [] for none)`);
-  for (const field of GATE_DEPTH_FIELDS) {
-    assertConfig(Number.isFinite(gate?.depthFloor?.[field]), `${scope}.depthFloor.${field} must be a number`);
-  }
-}
-
-function normalizeWorkflowConfig(config) {
-  assertConfig(config && typeof config === 'object', `${workflowConfigPath} must contain a YAML object`);
-  assertConfig(config.schemaVersion === 'workflow-config-v1', `expected schemaVersion workflow-config-v1, got ${config.schemaVersion}`);
-  assertConfig(config.reportSchemaVersion === 'report-v2', 'reportSchemaVersion must be report-v2');
-  const agentPolicy = normalizeAgentPolicy(config.agentPolicy ?? {});
-  assertConfig(config.defaultGate && typeof config.defaultGate === 'object', 'defaultGate must be an object');
-  assertGateShape(config.defaultGate, 'defaultGate');
-  assertConfig(Array.isArray(config.chapters) && config.chapters.length > 0, 'chapters[] must be a non-empty array');
-
-  const figureTypes = new Set(FIGURE_TYPES);
-  // Chapter identity is (key, order, letter); the file name is derived as
-  // `<order:02>-<key>.yaml`. The `letter` is the chapter's ID-space letter
-  // (per validation-catalog.mjs) used by source/claim/table/figure/question IDs
-  // generated within the chapter (e.g. SO001, CO045, TA008).
-  const chapters = config.chapters
-    .map((chapter) => {
-      assertConfig(chapter && typeof chapter === 'object', 'each chapter entry must be an object');
-      assertConfig(chapter.key, 'chapter is missing key');
-      assertConfig(/^[a-z][a-z0-9-]*$/.test(chapter.key), `${chapter.key}: key must be kebab-case (a-z, 0-9, -)`);
-      assertConfig(Number.isInteger(Number(chapter.order)) && Number(chapter.order) > 0, `${chapter.key}: order must be a positive integer`);
-      assertConfig(typeof chapter.letter === 'string' && /^[A-Z]$/.test(chapter.letter), `${chapter.key}: letter must be a single uppercase A-Z`);
-      assertConfig(!RESERVED_TYPE_LETTERS.has(chapter.letter), `${chapter.key}: letter "${chapter.letter}" collides with a reserved type letter (${[...RESERVED_TYPE_LETTERS].join(', ')})`);
-      const order = Number(chapter.order);
-      const key = String(chapter.key);
-      return {
-        key,
-        order,
-        letter: chapter.letter,
-        file: `${String(order).padStart(2, '0')}-${key}.yaml`,
-        title: chapter.title,
-        mission: chapter.mission,
-        optionalContext: chapter.optionalContext ?? [],
-        contentRequirements: chapter.contentRequirements ?? [],
-        plannedTables: chapter.plannedTables ?? [],
-        plannedFigures: chapter.plannedFigures ?? [],
-        evidenceStrategy: chapter.evidenceStrategy ?? [],
-        qualityBar: chapter.qualityBar ?? [],
-        gate: mergeGate(config.defaultGate, chapter.gate ?? {}),
-      };
-    })
-    .sort((a, b) => a.order - b.order);
-
-  assertUnique(chapters.map((chapter) => chapter.order), 'chapters[].order');
-  assertUnique(chapters.map((chapter) => chapter.key), 'chapters[].key');
-  assertUnique(chapters.map((chapter) => chapter.letter), 'chapters[].letter');
-
-  const knownKeys = new Set(chapters.map((chapter) => chapter.key));
-  for (const chapter of chapters) {
-    assertConfig(chapter.title, `${chapter.key}: title is required`);
-    for (const ref of chapter.optionalContext) {
-      assertConfig(knownKeys.has(ref), `${chapter.key}: optionalContext references unknown chapter key "${ref}"`);
-    }
-    assertGateShape(chapter.gate, `${chapter.key}: gate`);
-    for (const planned of chapter.plannedTables ?? []) {
-      if (planned.enumeration === true) {
-        assertConfig(Number.isInteger(planned.expectedMinRows) && planned.expectedMinRows > 0, `${chapter.key}: plannedTables[${planned.name}] enumeration:true requires positive integer expectedMinRows`);
-      }
-    }
-    for (const figure of chapter.plannedFigures ?? []) {
-      for (const type of figure.acceptedTypes ?? []) {
-        assertConfig(figureTypes.has(type), `${chapter.key}: planned figure ${figure.name ?? '?'} references unknown type ${type}`);
-      }
-    }
-  }
-
-  // Report-level gate (hard floors across the entire report, not per-chapter).
-  const reportGate = config.reportGate ?? null;
-  if (reportGate) {
-    assertConfig(typeof reportGate === 'object', 'reportGate must be an object');
-    if (reportGate.minDistinctDomains !== undefined) {
-      const value = reportGate.minDistinctDomains;
-      assertConfig(Number.isInteger(value) && value > 0, 'reportGate.minDistinctDomains must be a positive integer');
-    }
-    if (reportGate.requireAdverseSource !== undefined) {
-      assertConfig(typeof reportGate.requireAdverseSource === 'boolean', 'reportGate.requireAdverseSource must be a boolean');
-    }
-    if (reportGate.maxPaywallPercent !== undefined) {
-      const value = reportGate.maxPaywallPercent;
-      assertConfig(typeof value === 'number' && value >= 0 && value <= 1, 'reportGate.maxPaywallPercent must be a number between 0 and 1');
-    }
-    if (reportGate.crossChapterTolerances !== undefined) {
-      const ct = reportGate.crossChapterTolerances;
-      assertConfig(typeof ct === 'object', 'reportGate.crossChapterTolerances must be an object');
-      if (ct.metricDrift !== undefined) {
-        const v = ct.metricDrift;
-        assertConfig(typeof v === 'number' && v >= 0 && v <= 1, 'reportGate.crossChapterTolerances.metricDrift must be a number between 0 and 1');
-      }
-      if (ct.keyFactOverlap !== undefined) {
-        const v = ct.keyFactOverlap;
-        assertConfig(typeof v === 'number' && v >= 0 && v <= 1, 'reportGate.crossChapterTolerances.keyFactOverlap must be a number between 0 and 1');
-      }
-      if (ct.duplicateOverlap !== undefined) {
-        const v = ct.duplicateOverlap;
-        assertConfig(typeof v === 'number' && v >= 0 && v <= 1, 'reportGate.crossChapterTolerances.duplicateOverlap must be a number between 0 and 1');
-      }
-    }
-  }
-
-  // Optional report-level adverse-evidence distribution gate. Default is no
-  // floor / no concentration warning; workflow-config.yaml opts in.
-  const adverseDistribution = config.adverseDistribution ?? null;
-  if (adverseDistribution) {
-    assertConfig(typeof adverseDistribution === 'object', 'adverseDistribution must be an object');
-    const required = adverseDistribution.requireAtLeastOneAdverseSource ?? [];
-    assertConfig(Array.isArray(required), 'adverseDistribution.requireAtLeastOneAdverseSource must be an array (use [] for none)');
-    for (const ref of required) {
-      assertConfig(knownKeys.has(ref), `adverseDistribution.requireAtLeastOneAdverseSource references unknown chapter key "${ref}"`);
-    }
-    if (adverseDistribution.warnIfChaptersWithAdverseSourceAtMost !== undefined) {
-      const value = adverseDistribution.warnIfChaptersWithAdverseSourceAtMost;
-      assertConfig(Number.isInteger(value) && value >= 0, 'adverseDistribution.warnIfChaptersWithAdverseSourceAtMost must be a non-negative integer');
-    }
-  }
-
-  // Inject report-level adverse-distribution requirements into each chapter's
-  // gate as gate.minAdverseSources. Single source of truth so every consumer
-  // of loadWorkflowConfig (chapter runtime contexts, getAnalysisArtifacts, the
-  // check-chapter retry loop) sees the same gate — the agent must receive
-  // every constraint the gate will enforce.
-  const adverseRequiredKeys = new Set(adverseDistribution?.requireAtLeastOneAdverseSource ?? []);
-  for (const chapter of chapters) {
-    chapter.gate = { ...chapter.gate, minAdverseSources: adverseRequiredKeys.has(chapter.key) ? 1 : 0 };
-  }
-
-  return { ...config, agentPolicy, chapters, adverseDistribution, reportGate };
-}
-
 export function loadWorkflowConfig() {
   if (!existsSync(workflowConfigPath)) {
     throw new Error(`[workflow-config] missing ${workflowConfigPath}`);
   }
-  return normalizeWorkflowConfig(readYaml(workflowConfigPath));
+  return normalizeWorkflowConfigFromSchema(readYaml(workflowConfigPath));
 }
 
 export function getAnalysisArtifacts(config = loadWorkflowConfig()) {

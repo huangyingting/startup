@@ -1,5 +1,128 @@
 schemaVersion: workflow-config-v1
 reportSchemaVersion: report-v2
+workflow:
+  inputs:
+    companyName:
+      type: string
+      required: true
+      description: Company name to research and use when creating the report run.
+    companyUrl:
+      type: url
+      required: false
+      description: Optional official website or identity anchor for duplicate checks and source discovery.
+    refresh:
+      type: boolean
+      required: false
+      default: false
+      description: When true, create a fresh run linked to the current finalized report for the same company/domain.
+    refreshReason:
+      type: string
+      required: false
+      description: Optional human reason recorded in refresh metadata.
+  conditions:
+    - key: report-run-created
+      description: create-report-run.mjs returned a report folder path or --resume reopened the matching in-progress folder.
+      checkedBy: create-report-run.mjs
+    - key: runtime-contract-loaded
+      description: load-chapter-runtime-context.mjs emitted workflow, chapter, vocabularies, validator dimensions, and renderer contracts.
+      checkedBy: load-chapter-runtime-context.mjs
+    - key: all-chapters-exist
+      description: Every file in workflow.allowedReportFiles.chapterArtifacts exists under the report folder.
+      checkedBy: shell filesystem check
+    - key: all-chapters-pass-gate
+      description: Every configured chapter file passes check-chapter.mjs after the final on-disk edit.
+      checkedBy: check-chapter.mjs
+    - key: report-meta-authored
+      description: report-meta.yaml exists and passes check-report-meta.mjs shape and enum checks.
+      checkedBy: check-report-meta.mjs
+    - key: final-artifacts-generated
+      description: evidence.yaml, full-report.yaml, and summary-card.yaml exist and pass check-report.mjs.
+      checkedBy: finalize-report.mjs
+  phases:
+    - key: setup
+      title: Setup runtime contract
+      objective: Resolve inputs, create or resume the report folder, and load the workflow/runtime contract before writing artifacts.
+      entryConditions: []
+      exitConditions: [report-run-created, runtime-contract-loaded]
+      steps:
+        - key: create-run
+          title: Create or resume report run
+          command: create-report-run.mjs
+          requires: [companyName]
+          produces: [reportFolder, run.runDate]
+          gate: create-report-run exit code
+          notes:
+            - Pass companyUrl when provided; pass refresh and refreshReason only for explicit refresh runs.
+            - On exit 3, rerun the exact command with --resume; do not create suffixed duplicate folders.
+        - key: load-runtime
+          title: Load workflow runtime context
+          command: load-chapter-runtime-context.mjs --list --format json
+          requires: [report-run-created]
+          produces: [runtimeContext.workflow, runtimeContext.vocabularies, runtimeContext.checkDimensions, runtimeContext.rendererContracts]
+          gate: runtimeContext schema
+          notes:
+            - Treat loader JSON as the runtime contract; do not hardcode chapter names, gates, enums, or renderer contracts.
+    - key: chapter-generation
+      title: Generate configured chapters
+      objective: Author each configured chapter from its runtime context, collect audited evidence, and clear check-chapter.
+      entryConditions: [report-run-created, runtime-contract-loaded]
+      exitConditions: [all-chapters-exist, all-chapters-pass-gate]
+      steps:
+        - key: load-chapter-context
+          title: Load chapter context
+          command: load-chapter-runtime-context.mjs --order <n> --format json --include-context --report-folder <reportFolder>
+          requires: [report-run-created, runtime-contract-loaded]
+          produces: [runtimeContext.chapter]
+          gate: runtimeContext schema
+          notes:
+            - Omit --include-context for the first chapter or when drafting chapters in parallel.
+        - key: author-chapter
+          title: Author chapter YAML
+          command: null
+          requires: [runtimeContext.chapter, runtimeContext.workflow.agentPolicy, runtimeContext.vocabularies, runtimeContext.rendererContracts]
+          produces: [chapter.yaml]
+          gate: report artifact schema
+          notes:
+            - Use runtimeContext.chapter.gate as the binding floor and runtimeContext.checkDimensions for retry triage.
+            - Use fetch-url for every retained URL and record search queries, sources, claims, questions, and evidence gaps in localEvidence.
+        - key: check-chapter
+          title: Validate chapter gate
+          command: check-chapter.mjs <reportFolder> <chapter.file> --format json
+          requires: [chapter.yaml]
+          produces: [validationResult]
+          gate: check-chapter exit code
+          notes:
+            - Fix retryOrder dimensions first; use failure.fix and objectFailures[].fixes rather than guessing.
+    - key: finalization
+      title: Finalize report artifacts
+      objective: Validate report-meta, consolidate evidence, assemble final artifacts, and run publishability checks.
+      entryConditions: [all-chapters-exist, all-chapters-pass-gate]
+      exitConditions: [report-meta-authored, final-artifacts-generated]
+      steps:
+        - key: author-report-meta
+          title: Author report-meta.yaml
+          command: null
+          requires: [all-chapters-pass-gate]
+          produces: [report-meta.yaml]
+          gate: report-meta schema
+          notes:
+            - report-meta owns recommendation, profile, cover facts, and summary-card judgment fields.
+        - key: check-report-meta
+          title: Validate report-meta shape
+          command: check-report-meta.mjs <reportFolder> --format json
+          requires: [report-meta.yaml]
+          produces: [validationResult]
+          gate: check-report-meta exit code
+          notes:
+            - Fix all returned shape and enum issues before finalization.
+        - key: finalize-report
+          title: Build final report artifacts
+          command: finalize-report.mjs <reportFolder>
+          requires: [report-meta-authored, all-chapters-pass-gate]
+          produces: [evidence.yaml, full-report.yaml, summary-card.yaml]
+          gate: finalize-report exit code
+          notes:
+            - Pass --refresh and --refresh-reason only for explicit refresh runs; pass --rebuild only to force ledger reconstruction.
 # Tables cite their backing claims via the table-level `claimRefs` field, never
 # as a column whose cells hold raw `Cxxx` ids. Avoid columns whose only purpose
 # is citation (`evidence`, `evidence quality`, `claim refs`, etc.). Columns
@@ -104,7 +227,7 @@ reportGate:
   minDistinctDomains: 30          # distinct registrable domains across all sources in evidence.yaml
   requireAdverseSource: true      # at least one stance:adverse source must be present
   maxPaywallPercent: 0.3          # fail if >30% of sources are paywall/broken/rate-limited
-  # Cross-chapter tolerances (used by check-cross-chapter-consistency.mjs for drift detection).
+  # Cross-chapter tolerances (used by check-cross-chapter.mjs for drift detection).
   # Metric drift: relative tolerance for numeric values across chapters (e.g., 0.1 = 10%).
   # Key-fact overlap: Jaccard threshold for matching identity facts across chapters (≥ threshold = match).
   # Duplicate overlap: Jaccard threshold for table/figure title+structure across chapters (both must meet threshold).

@@ -1,8 +1,11 @@
 #!/usr/bin/env node
-// Schema and renderer-contract checks for a single report folder.
+// Schema and renderer-contract checks for a single report folder, or every
+// finalized report under ./reports/ when invoked with --all.
+//
 // Usage:
 //   node .agents/skills/startup-research/scripts/check-report.mjs <report-folder>
 //   node .agents/skills/startup-research/scripts/check-report.mjs <report-folder> --contract
+//   node .agents/skills/startup-research/scripts/check-report.mjs --all
 //
 // `<report-folder>` may be an absolute path, a path relative to the repo
 // root, or a bare run id (e.g. `20260505063138-cyberhaven`) which is
@@ -12,9 +15,13 @@
 // `--contract` keeps schema / renderer / reference checks but skips current
 // content-quality gates (source diversity and adverse-source distribution),
 // which makes it suitable for re-checking historical reports after renderer
-// or schema-contract changes. To re-check a single report by hand:
+// or schema-contract changes. `--all` walks every finalized report folder in
+// ./reports/ and runs the contract checks on each (used by `npm run
+// check:reports-contract`); historical reports are not forced to satisfy
+// content gates added after they were produced.
 //   node .agents/skills/startup-research/scripts/check-report.mjs <folder>
 //   node .agents/skills/startup-research/scripts/check-report.mjs <folder> --contract
+//   node .agents/skills/startup-research/scripts/check-report.mjs --all
 // Chapter content readiness is checked by the other startup-research scripts.
 import { existsSync, statSync } from 'node:fs';
 import { basename, isAbsolute, join, resolve, dirname } from 'node:path';
@@ -29,6 +36,7 @@ import {
   hasText,
   isFinalizedReportFolder,
   isRunId,
+  listDirs,
   loadWorkflowConfig,
   REVISION_STATUSES,
   tryReadYaml,
@@ -42,7 +50,7 @@ import {
   checkSourceSchema,
   checkTableSchema,
   checkUniqueIds,
-} from './report-artifact-schema.mjs';
+} from './artifact-checks.mjs';
 import {
   BLOCK_TYPES,
   CALLOUT_TYPES,
@@ -56,6 +64,7 @@ import {
   ID_PATTERN_TABLE,
   formatEnumChoices,
 } from './validation-catalog.mjs';
+import { formatValidationCompact, formatValidationText, validationEnvelope, validationIssue } from './contracts/validation-result.mjs';
 const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../reports');
 const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_ARTIFACTS = getAnalysisArtifacts(WORKFLOW_CONFIG);
@@ -75,7 +84,7 @@ const fail = (message) => failures.push(message);
 // ---------------------------------------------------------------------------
 
 function checkLedgerSources(run, sources) {
-  // Schema rules live in report-artifact-schema.mjs so check-chapter and check-report
+  // Schema rules live in artifact-checks.mjs so check-chapter and check-report
   // can never drift. We just route the per-source errors into our flat
   // failure list with the same path prefix this checker has always used.
   for (const source of sources) {
@@ -159,7 +168,7 @@ function checkCallouts(run, file, doc) {
 // ---------------------------------------------------------------------------
 
 function checkFigure(path, figure) {
-  // All figure deep-schema rules now live in report-artifact-schema.mjs so the
+  // All figure deep-schema rules now live in artifact-checks.mjs so the
   // chapter-time gate and post-finalize gate enforce the same contract.
   const { errors } = checkFigureDeep(figure, { path });
   for (const err of errors) fail(err.message);
@@ -498,25 +507,145 @@ function resolveReportDir(arg) {
 }
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/check-report.mjs <report-folder> [--contract]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/check-report.mjs (<report-folder> [--contract] | --all) [--format text|json|compact]');
   process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
-  const args = { folder: null, contract: false };
-  for (const arg of argv) {
+  const args = { folder: null, contract: false, format: 'text', all: false };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
     if (arg === '--contract') args.contract = true;
+    else if (arg === '--all') args.all = true;
+    else if (arg === '--format') args.format = argv[++i] ?? 'text';
     else if (arg === '-h' || arg === '--help') usage();
     else if (arg.startsWith('-')) usage();
     else if (!args.folder) args.folder = arg;
     else usage();
   }
-  if (!args.folder) usage();
+  if (args.all) {
+    if (args.folder) usage();
+    args.contract = true;       // historical reports always run in contract mode
+  } else if (!args.folder) {
+    usage();
+  }
+  if (!['text', 'json', 'compact'].includes(args.format)) usage();
   return args;
+}
+
+function failureEnvelope(run, args, checked) {
+  return validationEnvelope({
+    ok: false,
+    validator: 'check-report',
+    artifact: run,
+    issues: failures.map((message) => validationIssue({
+      path: String(message).split(':')[0] || run,
+      message,
+      dimension: args.contract ? 'reportContract' : 'reportGate',
+      code: 'checkReport.failure',
+      fix: 'Fix the reported artifact, then rerun check-report.mjs.',
+    })),
+    summary: { mode: args.contract ? 'contract' : 'full', checked },
+  });
+}
+
+function emitSingle(args, run, checked) {
+  if (failures.length) {
+    const result = failureEnvelope(run, args, checked);
+    if (args.format === 'json') console.log(JSON.stringify(result, null, 2));
+    else if (args.format === 'compact') console.log(formatValidationCompact(result));
+    else console.error(formatValidationText(result, { failureMessage: '[check:report] failures' }));
+    return EXIT.failure;
+  }
+  if (!checked) {
+    const result = validationEnvelope({
+      ok: false,
+      validator: 'check-report',
+      artifact: run,
+      issues: [validationIssue({
+        path: `${run}/${SUMMARY_CARD_FILE}`,
+        message: `${run}: not a finalized v2 report (no ${SUMMARY_CARD_FILE})`,
+        dimension: 'missingArtifact',
+        code: 'checkReport.notFinalized',
+        fix: 'Run finalize-report.mjs after every configured chapter passes check-chapter.',
+      })],
+    });
+    if (args.format === 'json') console.log(JSON.stringify(result, null, 2));
+    else if (args.format === 'compact') console.log(formatValidationCompact(result));
+    else console.error(formatValidationText(result, { failureMessage: '[check:report] failures' }));
+    return EXIT.failure;
+  }
+  const mode = args.contract ? 'contract verified' : 'verified';
+  const result = validationEnvelope({ ok: true, validator: 'check-report', artifact: run, summary: { mode } });
+  if (args.format === 'json') console.log(JSON.stringify(result, null, 2));
+  else if (args.format === 'compact') console.log(formatValidationCompact(result));
+  else console.log(`[check:report] ✓ ${run} ${mode}.`);
+  return EXIT.ok;
+}
+
+function runAll(args) {
+  // Walk every reports/<runId>/ folder, filter to finalized v2 reports,
+  // run the per-folder contract check, and aggregate failures into one
+  // exit code. `failures` is reset between runs because it is module-level.
+  const collected = [];
+  let passCount = 0;
+  for (const runId of listDirs(REPORTS_DIR).sort()) {
+    if (!isRunId(runId)) continue;
+    const folder = join(REPORTS_DIR, runId);
+    if (!isFinalizedReportFolder(folder)) continue;
+    failures.length = 0;
+    const checked = checkRun(runId, { contentGates: false });
+    if (checked && failures.length === 0) {
+      passCount += 1;
+    } else {
+      collected.push({ runId, checked, failures: [...failures] });
+    }
+  }
+  if (collected.length) {
+    if (args.format === 'json') {
+      const result = validationEnvelope({
+        ok: false,
+        validator: 'check-report',
+        issues: collected.flatMap(({ runId, failures: list }) => list.map((message) => validationIssue({
+          path: String(message).split(':')[0] || runId,
+          message,
+          dimension: 'reportContract',
+          code: 'checkReport.failure',
+          fix: 'Fix the reported artifact, then rerun check-report.mjs.',
+        }))),
+        summary: { mode: 'contract', checkedReports: passCount + collected.length, failedReports: collected.length },
+      });
+      console.log(JSON.stringify(result, null, 2));
+    } else {
+      console.error('[check:report] failures across reports:');
+      for (const { runId, failures: list, checked } of collected) {
+        console.error(`\n--- ${runId} ---`);
+        if (!checked) {
+          console.error(`  - ${runId}: not a finalized v2 report (no ${SUMMARY_CARD_FILE})`);
+        }
+        for (const message of list) console.error(`  - ${message}`);
+      }
+    }
+    return EXIT.failure;
+  }
+  if (args.format === 'json') {
+    const result = validationEnvelope({
+      ok: true,
+      validator: 'check-report',
+      summary: { mode: 'contract', checkedReports: passCount },
+    });
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(`[check:report] ✓ ${passCount} finalized report(s); contract checks passed.`);
+  }
+  return EXIT.ok;
 }
 
 try {
   const args = parseArgs(process.argv.slice(2));
+  if (args.all) {
+    process.exit(runAll(args));
+  }
   const folderArg = args.folder;
   const dir = resolveReportDir(folderArg);
   if (!existsSync(dir) || !statSync(dir).isDirectory()) {
@@ -532,16 +661,7 @@ try {
   }
 
   const checked = checkRun(run, { contentGates: !args.contract });
-  if (failures.length) {
-    console.error('[check:report] failures:\n' + failures.map((message) => `  - ${message}`).join('\n'));
-    process.exit(EXIT.failure);
-  }
-  if (!checked) {
-    console.error(`[check:report] ${run}: not a finalized v2 report (no ${SUMMARY_CARD_FILE}).`);
-    process.exit(EXIT.failure);
-  }
-  const mode = args.contract ? 'contract verified' : 'verified';
-  console.log(`[check:report] ✓ ${run} ${mode}.`);
+  process.exit(emitSingle(args, run, checked));
 } catch (err) {
   console.error(`[check:report] fatal error: ${err.message}`);
   process.exit(EXIT.failure);

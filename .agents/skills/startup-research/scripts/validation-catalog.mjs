@@ -3,7 +3,7 @@
 // together (FIX_HINTS, RETRY_PRECEDENCE, CASCADE_SUPPRESSORS).
 //
 // Three consumer roles:
-//   - report-artifact-schema.mjs imports the field-level enum Sets to validate
+//   - artifact-checks.mjs imports the field-level enum Sets to validate
 //     individual sources, claims, callouts, and enumeration tables.
 //   - check-chapter.mjs imports the same enum Sets plus the FIX_HINTS table
 //     and the precedence/suppressor metadata to drive its retry loop.
@@ -134,7 +134,7 @@ export const FRESHNESS_THRESHOLDS = {
 // Title tokenization stop words: ignored when comparing table/figure titles
 // to detect cross-artifact and cross-chapter duplicates. Shared by
 // check-chapter.mjs (per-chapter duplicateAnalysis) and
-// check-cross-chapter-consistency.mjs (report-level cross-chapter duplicates).
+// check-cross-chapter.mjs (report-level cross-chapter duplicates).
 export const TITLE_TOKEN_STOP_WORDS = new Set([
   'table', 'figure', 'fig', 'chart', 'graph', 'matrix', 'map',
   'kpi', 'kpis', 'scorecard', 'analysis', 'overview', 'summary',
@@ -142,7 +142,7 @@ export const TITLE_TOKEN_STOP_WORDS = new Set([
 
 // Minimum token length for title tokenization. Tokens shorter than this are
 // ignored during duplicate detection and similarity comparisons. Shared by
-// check-chapter.mjs and check-cross-chapter-consistency.mjs.
+// check-chapter.mjs and check-cross-chapter.mjs.
 export const MIN_TITLE_TOKEN_LENGTH = 4;
 
 // Evidence quality tier thresholds. Used by build-evidence-ledger.mjs to classify the
@@ -177,7 +177,7 @@ export const MULTI_PART_TLDS = new Set(['co.uk', 'co.jp', 'com.cn', 'com.hk', 'c
 
 // Key-fact pattern matching: regex patterns that identify identity facts
 // (founders, founding date, funding, valuation, headcount, customers) in
-// claim statements. Used by check-cross-chapter-consistency.mjs keyFactDrift check to ensure
+// claim statements. Used by check-cross-chapter.mjs keyFactDrift check to ensure
 // these canonical facts reference company-overview claims instead of being
 // duplicated in later chapters.
 export const KEY_FACT_TOPICS = [

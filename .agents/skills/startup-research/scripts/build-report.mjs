@@ -10,7 +10,7 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, FINAL_ARTIFACTS, REPORT_META_FILE, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
-import { SCHEMA_VERSION } from './report-artifact-schema.mjs';
+import { SCHEMA_VERSION } from './artifact-checks.mjs';
 import {
   CARD_CONFIDENCES,
   CARD_RECOMMENDATIONS,
@@ -23,7 +23,7 @@ const LEGACY_CLAIM_ID_RE = /^C\d{3}$/;
 const INLINE_CLAIM_REF_RE = /\[(C[A-Z]\d{3}|C\d{3})\]/g;
 
 function abort(message) {
-  console.error(`[assemble-report] ${message}`);
+  console.error(`[build-report] ${message}`);
   process.exit(EXIT.failure);
 }
 
@@ -31,16 +31,16 @@ function parseArgs(argv) {
   const args = { folder: null, dryRun: false };
   for (const arg of argv) {
     if (arg === '--dry-run') args.dryRun = true;
-    else if (arg.startsWith('-')) abort(`unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/assemble-report.mjs <report-folder> [--dry-run]`);
+    else if (arg.startsWith('-')) abort(`unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run]`);
     else if (!args.folder) args.folder = arg;
-    else abort(`unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/assemble-report.mjs <report-folder> [--dry-run]`);
+    else abort(`unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run]`);
   }
   return args;
 }
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder) {
-  abort('Usage: node .agents/skills/startup-research/scripts/assemble-report.mjs <report-folder> [--dry-run]');
+  abort('Usage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run]');
 }
 
 const reportFolder = resolve(args.folder);
@@ -118,7 +118,7 @@ function collectReportMetaClaimRefs(value, path = REPORT_META_FILE, out = []) {
 
 function checkReportMetaClaimRefs(metaDoc, evidenceLedger) {
   const claimIds = new Set((evidenceLedger.claims ?? []).map((claim) => claim?.id).filter(Boolean));
-  if (!claimIds.size) abort(`${evidenceFile} has no claims; run build-evidence-ledger.mjs before assemble-report.mjs`);
+  if (!claimIds.size) abort(`${evidenceFile} has no claims; run build-evidence-ledger.mjs before build-report.mjs`);
   for (const { ref, path } of collectReportMetaClaimRefs(metaDoc)) {
     if (LEGACY_CLAIM_ID_RE.test(ref)) {
       abort(`${path} uses legacy claim ref ${ref}; use the chapter-letter id from ${evidenceFile} (for example CO001)`);
@@ -363,15 +363,15 @@ const fullReportPath = join(reportFolder, fullReportFile);
 const summaryCardPath = join(reportFolder, summaryCardFile);
 
 if (args.dryRun) {
-  console.log(`[assemble-report] dry-run: would write ${fullReportPath}`);
-  console.log(`[assemble-report] dry-run: would write ${summaryCardPath}`);
-  console.log(`[assemble-report] chapters=${chapterDocs.length} tables=${tables.length} figures=${figures.length} sources=${sourceRefs.length}`);
+  console.log(`[build-report] dry-run: would write ${fullReportPath}`);
+  console.log(`[build-report] dry-run: would write ${summaryCardPath}`);
+  console.log(`[build-report] chapters=${chapterDocs.length} tables=${tables.length} figures=${figures.length} sources=${sourceRefs.length}`);
   process.exit(EXIT.ok);
 }
 
 writeYaml(fullReportPath, fullReport);
 writeYaml(summaryCardPath, summaryCard);
-console.log(`[assemble-report] ✓ wrote ${fullReportFile} (${tables.length} tables, ${figures.length} figures) and ${summaryCardFile}`);
+console.log(`[build-report] ✓ wrote ${fullReportFile} (${tables.length} tables, ${figures.length} figures) and ${summaryCardFile}`);
 
 function computeSourceStats(evidenceLedger, chapters, runDateStr) {
   const sources = evidenceLedger.sources ?? [];
