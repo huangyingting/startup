@@ -214,6 +214,13 @@ Applies to `report-meta.yaml` — the hand-authored input that `assemble-report.
 
 > ⚠️ `recommendation`, `overallScore`, `riskRating`, `valuationStance`, `keyMetrics`, `topStrengths`, `topRisks`, and `unresolvedGaps` MUST be nested under the top-level `summary:` mapping shown below — putting them at the document root is the most common shape error and `validate-report-meta.mjs` will reject it.
 
+Display-field ownership:
+
+- `coverFacts` is the direct source for the detail-page **Cover facts** grid. It is not inferred from chapter prose or `summary.keyMetrics`; omit it only when a report truly has no concise headline facts to display. Mature reports should normally provide 6–8 evidence-backed facts with `claimRefs`.
+- `companyProfile` is the direct source for the detail-page **Company profile** section. `summary` and `productSummary` are required prose fields; the optional profile rows (`foundedDate`, `founders`, `foundingLocation`, `headquarters`, `customerFocus`, `businessModel`, `stage`, `fundingStatus`) should be populated when known and set to `null` only when genuinely unavailable.
+- `summary.keyMetrics` feeds summary-card / judgment surfaces, not the detail-page Cover facts grid. If a metric should appear in both places, write it in both `summary.keyMetrics` and `coverFacts` with the appropriate shape.
+- `summary-card.yaml` and `full-report.yaml` are generated artifacts. Fix missing cover/profile display data in `report-meta.yaml`, then rerun finalization.
+
 ```yaml
 slug: string
 runDate: YYYY-MM-DD
@@ -222,12 +229,12 @@ company:
   website: string | null
   sector: string | null
   stage: string | null
-  headquarters: string | null
+  headquarters: string | null      # Canonical headquarters field.
   shortDescription: string | null
 revision: revision | null          # Optional source of truth for refresh/version links; assemble emits it into full-report and summary-card.
 subtitle: string | null
 coverageNotes: string | null
-coverFacts: [coverFact] | null
+coverFacts: [coverFact] | null     # Drives the detail-page Cover facts grid.
 companyProfile: companyProfile
 summary:
   headline: string
@@ -340,27 +347,27 @@ coverFact:
   label: string
   value: number | string | null     # Numeric when sortable/chartable; string for textual values like "Series A".
   unit: string | null               # e.g. `USD M`, `%`, `employees`. Omit for textual values.
-  claimRefs: [CO001]
+  claimRefs: [CO001]                # Expected for evidence-backed display facts; validator warns when empty.
 
 companyProfile:
   summary: string                  # Non-empty.
-  foundedDate: YYYY-MM-DD | null
+  foundedDate: YYYY-MM-DD | null   # Rendered in detail-page Company profile when populated.
   founders:
     - name: string
       role: string | null
       background: string | null
       claimRefs: [CO001]
-  foundingLocation: string | null
-  headquarters: string | null
+  foundingLocation: string | null  # Rendered in detail-page Company profile when populated.
+  headquarters: string | null      # Rendered in detail-page Company profile when populated.
   productSummary: string           # Non-empty.
-  customerFocus: string | null
-  businessModel: string | null
-  stage: string | null
-  fundingStatus: string | null
+  customerFocus: string | null     # Rendered in detail-page Company profile when populated.
+  businessModel: string | null     # Rendered in detail-page Company profile when populated.
+  stage: string | null             # Rendered in detail-page Company profile when populated.
+  fundingStatus: string | null     # Rendered in detail-page Company profile when populated.
   disclosureProfile: public | private-disclosed | private-undisclosed | stealth | null
   # Optional. Evidence-backed classification of how much the company publicly
   # discloses; set after research. Default null = unspecified.
-  claimRefs: [CO001]
+  claimRefs: [CO001]               # Expected for profile-level evidence; validator warns when empty.
 
 keyMetrics:
   valuationUsdM: number | null

@@ -24,6 +24,18 @@ import {
 } from './validation-catalog.mjs';
 
 const DISCLOSURE_PROFILES = new Set(['public', 'private-disclosed', 'private-undisclosed', 'stealth']);
+const COMPANY_KEYS = new Set(['name', 'website', 'sector', 'stage', 'headquarters', 'shortDescription']);
+const RECOMMENDED_COMPANY_PROFILE_FIELDS = [
+  'foundedDate',
+  'founders',
+  'foundingLocation',
+  'headquarters',
+  'customerFocus',
+  'businessModel',
+  'stage',
+  'fundingStatus',
+  'claimRefs',
+];
 
 function usage() {
   console.error('Usage: node .agents/skills/startup-research/scripts/validate-report-meta.mjs <report-folder> [--format text|json]');
@@ -70,6 +82,17 @@ function pushIssue(issues, path, message, extra = {}) {
   issues.push({ path, message, ...extra });
 }
 
+function pushWarning(warnings, path, message, extra = {}) {
+  warnings.push({ path, message, severity: 'warning', ...extra });
+}
+
+function hasDisplayValue(value) {
+  if (value === undefined || value === null || value === '') return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === 'object') return Object.keys(value).length > 0;
+  return true;
+}
+
 function requireField(root, path, issues) {
   const value = lookupPath(root, path);
   if (value === undefined || value === null || value === '') {
@@ -108,10 +131,11 @@ function requireEnum(root, path, allowed, issues) {
 
 function validateReportMeta(meta) {
   const issues = [];
+  const warnings = [];
 
   if (!meta || typeof meta !== 'object') {
     pushIssue(issues, '/', 'report-meta.yaml is empty or not a YAML mapping');
-    return issues;
+    return { issues, warnings };
   }
 
   // Top-level required scalars.
@@ -124,6 +148,19 @@ function validateReportMeta(meta) {
   // company.* — name is required; the rest are optional but if present must
   // be strings (assemble-report serialises them verbatim into summary-card).
   requireField(meta, 'company.name', issues);
+  const company = lookupPath(meta, 'company');
+  if (company !== undefined && company !== null) {
+    if (typeof company !== 'object' || Array.isArray(company)) {
+      pushIssue(issues, 'company', `company must be a YAML mapping (got ${Array.isArray(company) ? 'array' : typeof company})`);
+    } else {
+      for (const key of Object.keys(company)) {
+        if (!COMPANY_KEYS.has(key)) {
+          const hint = key === 'hq' ? '; use company.headquarters instead of company.hq' : '';
+          pushIssue(issues, `company.${key}`, `unknown company field: company.${key}${hint}`);
+        }
+      }
+    }
+  }
 
   // companyProfile.* — required prose fields the cover page renders.
   requireField(meta, 'companyProfile.summary', issues);
@@ -132,6 +169,51 @@ function validateReportMeta(meta) {
   if (disclosureProfile != null && !DISCLOSURE_PROFILES.has(disclosureProfile)) {
     pushIssue(issues, 'companyProfile.disclosureProfile',
       `invalid value: "${disclosureProfile}" (expected one of ${[...DISCLOSURE_PROFILES].join('|')} or null)`);
+  }
+  const companyProfile = lookupPath(meta, 'companyProfile');
+  if (companyProfile !== undefined && companyProfile !== null) {
+    if (typeof companyProfile !== 'object' || Array.isArray(companyProfile)) {
+      pushIssue(issues, 'companyProfile', `companyProfile must be a YAML mapping (got ${Array.isArray(companyProfile) ? 'array' : typeof companyProfile})`);
+    } else {
+      for (const field of RECOMMENDED_COMPANY_PROFILE_FIELDS) {
+        if (!hasDisplayValue(companyProfile[field])) {
+          pushWarning(warnings, `companyProfile.${field}`, `${field} is empty; the detail-page Company profile section will omit this row`);
+        }
+      }
+      if (companyProfile.founders !== undefined && companyProfile.founders !== null && !Array.isArray(companyProfile.founders)) {
+        pushIssue(issues, 'companyProfile.founders', `companyProfile.founders must be an array when present (got ${typeof companyProfile.founders})`);
+      }
+      if (companyProfile.claimRefs !== undefined && companyProfile.claimRefs !== null && !Array.isArray(companyProfile.claimRefs)) {
+        pushIssue(issues, 'companyProfile.claimRefs', `companyProfile.claimRefs must be an array when present (got ${typeof companyProfile.claimRefs})`);
+      }
+    }
+  }
+
+  const coverFacts = lookupPath(meta, 'coverFacts');
+  if (coverFacts === undefined || coverFacts === null) {
+    pushWarning(warnings, 'coverFacts', 'coverFacts is missing; the detail-page Cover facts grid may be blank because summary.keyMetrics does not backfill it');
+  } else if (!Array.isArray(coverFacts)) {
+    pushIssue(issues, 'coverFacts', `coverFacts must be an array or null (got ${typeof coverFacts})`);
+  } else {
+    if (coverFacts.length === 0) {
+      pushWarning(warnings, 'coverFacts', 'coverFacts is empty; the detail-page Cover facts grid may be blank because summary.keyMetrics does not backfill it');
+    } else if (coverFacts.length < 4) {
+      pushWarning(warnings, 'coverFacts', `coverFacts has only ${coverFacts.length} item(s); mature reports should normally provide 6–8 headline facts`);
+    }
+    coverFacts.forEach((fact, index) => {
+      const path = `coverFacts/${index}`;
+      if (!fact || typeof fact !== 'object' || Array.isArray(fact)) {
+        pushIssue(issues, path, `${path} must be a YAML mapping`);
+        return;
+      }
+      if (!hasDisplayValue(fact.label)) pushIssue(issues, `${path}.label`, 'coverFact.label is required');
+      if (!('value' in fact)) pushIssue(issues, `${path}.value`, 'coverFact.value field is required; use null only when genuinely unavailable');
+      if (fact.claimRefs !== undefined && fact.claimRefs !== null && !Array.isArray(fact.claimRefs)) {
+        pushIssue(issues, `${path}.claimRefs`, `coverFact.claimRefs must be an array when present (got ${typeof fact.claimRefs})`);
+      } else if (!hasDisplayValue(fact.claimRefs)) {
+        pushWarning(warnings, `${path}.claimRefs`, 'coverFact has no claimRefs; evidence-backed cover facts should cite canonical claims');
+      }
+    });
   }
 
   // summary.* — the headline judgment block. This is the field most often
@@ -187,7 +269,7 @@ function validateReportMeta(meta) {
     }
   }
 
-  return issues;
+  return { issues, warnings };
 }
 
 const args = parseArgs(process.argv.slice(2));
@@ -208,21 +290,35 @@ if (!result.ok) {
   process.exit(EXIT.failure);
 }
 
-const issues = validateReportMeta(result.value);
+const { issues, warnings } = validateReportMeta(result.value);
 if (args.format === 'json') {
   console.log(JSON.stringify({
     ok: issues.length === 0,
     file: REPORT_META_FILE,
     reportFolder,
     issueCount: issues.length,
+    warningCount: warnings.length,
     issues,
+    warnings,
   }, null, 2));
 } else if (issues.length === 0) {
   console.log(`[validate-report-meta] ✓ ${REPORT_META_FILE} shape and enums OK.`);
+  if (warnings.length) {
+    console.warn(`[validate-report-meta] ${REPORT_META_FILE} has ${warnings.length} warning(s) (non-blocking display completeness checks):`);
+    for (const warning of warnings) {
+      console.warn(`  - ${warning.path}: ${warning.message}`);
+    }
+  }
 } else {
   console.error(`[validate-report-meta] ${REPORT_META_FILE} has ${issues.length} issue(s) (fix all before re-running):`);
   for (const issue of issues) {
     console.error(`  - ${issue.path}: ${issue.message}`);
+  }
+  if (warnings.length) {
+    console.error(`[validate-report-meta] plus ${warnings.length} warning(s):`);
+    for (const warning of warnings) {
+      console.error(`  - ${warning.path}: ${warning.message}`);
+    }
   }
   console.error('[validate-report-meta] schema: .agents/skills/startup-research/references/report-schema-v2.md §Report meta schema');
 }

@@ -9,19 +9,19 @@ coverage:
   sourceDiversityNotes: null
   deduplicationNotes: Consolidated from 8 artifacts; sources deduplicated by canonical URL or publisher/title/date fallback.
   recencyNotes: >-
-    Anchor date 2026-05-08; source dates current/recent/historical/unknown = 185/50/4/0; claim freshness
-    current/recent/historical/unknown = 178/102/40/1.
+    Anchor date 2026-05-08; source dates current/recent/historical/unknown = 187/52/4/0; claim freshness
+    current/recent/historical/unknown = 180/104/40/1.
   coverageGaps: []
 coverageMatrix:
   totalDistinctDomains: 113
   byChapter:
     01-company-overview.yaml:
-      sources: 26
-      claims: 37
-      researchQuestions: 30
+      sources: 30
+      claims: 41
+      researchQuestions: 32
       adverseQuestions: 4
       unresolvedQuestions: 6
-      distinctDomains: 15
+      distinctDomains: 16
     02-market-analysis.yaml:
       sources: 27
       claims: 39
@@ -72,30 +72,30 @@ coverageMatrix:
       unresolvedQuestions: 4
       distinctDomains: 28
   byType:
-    official: 42
-    news: 98
+    official: 43
+    news: 100
     legal: 7
     analyst-market-data: 58
     other: 5
-    regulatory: 9
+    regulatory: 10
     filing: 8
     technical-docs: 3
     developer-signal: 3
     review: 2
     customer-proof: 4
   byStance:
-    confirming: 90
+    confirming: 94
     adverse: 14
     neutral: 135
   byAccessStatus:
-    ok: 236
+    ok: 240
     paywall: 2
     broken: 1
   byClaimType:
     observed: 56
-    company-claimed: 73
+    company-claimed: 75
     inferred: 38
-    third-party-reported: 133
+    third-party-reported: 135
     estimated: 19
     conflicting: 2
 sources:
@@ -563,6 +563,91 @@ sources:
     keyQuote: >-
       Accolade has tripled its revenue in four years and is sitting on more than $200 million of cash, but the company's
       growth has slowed to a crawl.
+  - id: SO027
+    publisher: Fierce Healthcare
+    title: >-
+      Transcarent launches direct-to-employer solution in partnership with Advocate, Mount Sinai, other major health
+      systems
+    url: >-
+      https://www.fiercehealthcare.com/health-tech/transcarent-launches-direct-employer-solution-partnership-advocate-mount-sinai-other
+    date: '2023-09-19'
+    accessDate: '2026-05-08'
+    accessStatus: ok
+    stance: confirming
+    sourceType: news
+    reputationTier: high
+    independence: independent
+    topics:
+      - partnerships
+      - provider-network
+      - customers
+      - direct-contracting
+    keyQuote: >-
+      The 10 health systems that have joined the provider ecosystem are: Advocate Health, Atrium Health, Baylor Scott &
+      White Health, Corewell Health, Hackensack Meridian Health, Intermountain Healthcare, Mass General Brigham,
+      Memorial Hermann Health System, Mount Sinai Health System and Virginia Mason Franciscan Health.
+  - id: SO028
+    publisher: Oregon Health Authority
+    title: 'Achieving Significant ROI: How a West Coast Health Plan Achieved Savings with Transcarent Surgery Care'
+    url: https://www.oregon.gov/oha/HPA/HP/HCMOPageDocs/046-Transcarent-Health-Plan-Jan24_COE-Savings-CaseStudy-15b.pdf
+    date: '2024-01-01'
+    accessDate: '2026-05-08'
+    accessStatus: ok
+    stance: confirming
+    sourceType: regulatory
+    reputationTier: high
+    independence: independent
+    topics:
+      - customer-proof
+      - surgery-care
+      - ROI
+      - outcomes
+    keyQuote: >-
+      The Results: Financial gains with a 20.5 ROI... over 230 completed surgeries in 2023... Unit cost savings at $3.5
+      million... Long-term savings of over $11 million in surgery costs since 2020... Member satisfaction with an 83+
+      NPS.
+  - id: SO029
+    publisher: Fierce Healthcare
+    title: Transcarent builds out agentic AI features for benefits navigation, clinical guidance
+    url: >-
+      https://www.fiercehealthcare.com/ai-and-machine-learning/transcarent-builds-out-agentic-ai-features-benefits-navigation-clinical
+    date: '2025-01-07'
+    accessDate: '2026-05-08'
+    accessStatus: ok
+    stance: confirming
+    sourceType: news
+    reputationTier: high
+    independence: independent
+    topics:
+      - product
+      - AI
+      - WayFinding
+      - agentic-ai
+    keyQuote: >-
+      Transcarent has built out new agentic artificial intelligence capabilities, including voice AI scheduling and
+      advanced symptom-checking, to its WayFinding solution.
+  - id: SO030
+    publisher: Yahoo Finance / BusinessWire
+    title: >-
+      Transcarent Expands WayFinding Platform with SmithRx to Offer More Options for Pharmacy Pricing Transparency and
+      Lower Drug Costs to Employers
+    url: >-
+      https://finance.yahoo.com/sectors/healthcare/articles/transcarent-expands-wayfinding-platform-smithrx-130000762.html
+    date: '2026-04-24'
+    accessDate: '2026-05-08'
+    accessStatus: ok
+    stance: confirming
+    sourceType: official
+    reputationTier: medium
+    independence: company
+    topics:
+      - product
+      - pharmacy
+      - SmithRx
+      - pricing-transparency
+    keyQuote: >-
+      Transcarent announced an expansion of its Pharmacy Care Experience with the addition of SmithRx, a next-generation
+      pharmacy benefits management (PBM) company, as its newest integrated transparent pharmacy partner.
   - id: SM001
     publisher: KFF (Kaiser Family Foundation)
     title: 2024 Employer Health Benefits Survey
@@ -1047,6 +1132,7 @@ sources:
       - agentic AI healthcare navigation
       - Total Recall Memory Engine
     keyQuote: We've officially moved beyond the chat assistant era into the agentic action era in healthcare.
+    canonical: SO029
   - id: SP002
     publisher: The Healthcare Technology Report
     title: Transcarent Expands WayFinding 2.0 With Agentic AI for Scheduling and Personalized Care
@@ -2069,7 +2155,7 @@ sources:
     keyQuote: >-
       The company's advanced agentic AI platform blends clinical models, benefit rules, preferences and longitudinal
       memory to orchestrate multiple agents that actively manage tasks for members.
-    canonical: SP001
+    canonical: SO029
   - id: SE005
     publisher: HIT Consultant
     title: Transcarent Launches AI-Powered WayFinding for Personalized Healthcare Navigation
@@ -2576,6 +2662,7 @@ sources:
     keyQuote: >-
       Financial gains with a 20.5 ROI, demonstrating the financial effectiveness of a high-quality COE program.
       Long-term savings of over $11 million in surgery costs since 2020.
+    canonical: SO028
   - id: SU002
     publisher: Public Health Coalition
     title: Surgery Benefit — Transcarent Case Study
@@ -2680,6 +2767,7 @@ sources:
       - self-insured employers
       - direct-to-employer solution
     keyQuote: The company now works with more than 300 employer clients plus health plan clients.
+    canonical: SO027
   - id: SU007
     publisher: CNBC
     title: 14. Transcarent — 2025 CNBC Disruptor 50
@@ -3010,6 +3098,7 @@ sources:
     keyQuote: >-
       Transcarent expands WayFinding platform with SmithRx integration to provide pharmacy pricing transparency and
       lower drug costs for employer clients.
+    canonical: SO030
   - id: SU023
     publisher: BusinessWire
     title: >-
@@ -4866,17 +4955,19 @@ claims:
       - QO022
   - id: CO030
     statement: >-
-      Transcarent launched a National Independent Provider Ecosystem in 2023 with 12 leading health systems to enable
+      Transcarent launched a National Independent Provider Ecosystem in 2023 with 10 major health systems to enable
       direct contracting and value-based payment models, bypassing traditional insurance payer intermediaries.
     type: observed
     topic: partnerships
     sourceRefs:
       - SO002
       - SO024
+      - SO027
     confidence: high
     freshness: recent
     answersQuestionRefs:
       - QO017
+      - QO030
   - id: CO031
     statement: >-
       The BridgeHealth surgical platform (acquired October 2020) gave Transcarent 160+ Centers of Excellence, 300+
@@ -4970,6 +5061,64 @@ claims:
     freshness: historical
     answersQuestionRefs:
       - QO012
+  - id: CO038
+    statement: >-
+      By September 2023, Fierce Healthcare reported that Transcarent worked with more than 300 employer clients plus
+      health plan clients.
+    type: third-party-reported
+    topic: customers
+    sourceRefs:
+      - SO027
+    confidence: medium
+    freshness: recent
+    answersQuestionRefs:
+      - QO009
+      - QO031
+  - id: CO039
+    statement: >-
+      An Oregon Health Authority-hosted West Coast health plan case study covering approximately 10,000 lives reported
+      that Transcarent Surgery Care generated 20.5x ROI, over 230 completed surgeries in 2023, $3.5 million of unit cost
+      savings in 2023, over $11 million of cumulative surgery savings since 2020, an 83+ member NPS, and an 83% lower
+      complication rate than the national average.
+    type: third-party-reported
+    topic: customer-proof
+    sourceRefs:
+      - SO028
+    confidence: medium
+    freshness: recent
+    answersQuestionRefs:
+      - QO015
+      - QO031
+  - id: CO040
+    statement: >-
+      Transcarent expanded WayFinding with agentic AI features at CES 2025, including voice AI scheduling, advanced
+      symptom checking, a Total Recall Memory Engine, and coordinated agents for triage, provider search, appointment
+      scheduling, follow-ups, pharmacy options, and benefits information; Glen Tullman stated that more than one million
+      people had access to WayFinding.
+    type: company-claimed
+    topic: product
+    sourceRefs:
+      - SO029
+      - SO014
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QO003
+      - QO016
+      - QO032
+  - id: CO041
+    statement: >-
+      In April 2026, Transcarent added SmithRx as an integrated transparent PBM partner in its Pharmacy Care Experience,
+      extending WayFinding pharmacy navigation alongside options such as Amazon Pharmacy and Mark Cuban Cost Plus Drugs.
+    type: company-claimed
+    topic: product
+    sourceRefs:
+      - SO030
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QO003
+      - QO032
   - id: CM001
     statement: >-
       Approximately 154 million non-elderly Americans are covered by employer-sponsored health insurance in 2024, making
@@ -8825,11 +8974,16 @@ evidenceGaps:
   - type: enumeration-incomplete
     severity: material
     topic: customers
-    missingEvidence: Identity and size of employer customers for Transcarent standalone (pre-Accolade)
-    whyItMatters: Customer concentration risk, contract duration, and renewal rates are unknown without a customer list
-    diligencePath: Obtain customer list, contract terms, and renewal rates under NDA
+    missingEvidence: >-
+      Identity, size, renewal status, and revenue contribution of employer customers beyond a small set of public or
+      anonymized proof points
+    whyItMatters: >-
+      The OHA-hosted Surgery Care case study validates one deployment, but customer concentration risk, contract
+      duration, active utilization, and renewal rates remain unknown without a broader customer list
+    diligencePath: Obtain customer list, contract terms, renewal schedule, module attach rates, and reference calls under NDA
     relatedQuestionRefs:
       - QO026
+      - QO031
   - type: missing-source
     severity: minor
     topic: headcount
@@ -8873,9 +9027,15 @@ evidenceGaps:
   - type: missing-source
     severity: minor
     topic: provider-network
-    missingEvidence: Scale, geographic coverage, and specialty mix of Transcarent's contracted provider network
-    whyItMatters: Provider network adequacy is a key quality metric for health navigation and surgical benefit services
-    diligencePath: Request network adequacy report; review surgeon partner count from official Transcarent materials
+    missingEvidence: >-
+      Geographic coverage, specialty mix, exclusivity terms, and provider-count depth behind the 10-health-system
+      direct-contracting ecosystem
+    whyItMatters: >-
+      The named health-system partnerships validate national coverage ambitions, but provider network adequacy and
+      specialty depth are key quality metrics for health navigation and surgical benefit services
+    diligencePath: >-
+      Request network adequacy report, contracted-provider roster, specialty coverage map, and surgeon partner count
+      from Transcarent
     relatedQuestionRefs:
       - QO030
   - type: enumeration-incomplete
