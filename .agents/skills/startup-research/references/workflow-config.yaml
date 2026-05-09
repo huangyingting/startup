@@ -24,7 +24,7 @@ workflow:
       description: create-report-run.mjs returned a report folder path or --resume reopened the matching in-progress folder.
       checkedBy: create-report-run.mjs
     - key: runtime-contract-loaded
-      description: load-chapter-runtime-context.mjs emitted workflow, chapter, vocabularies, validator dimensions, and renderer contracts.
+      description: load-chapter-runtime-context.mjs returned the chapter list (--list) or chapter delta (--order <n>); the static frame (agent policy, gates, ID system, validator dimensions, renderer contracts) lives in references/rules.md.
       checkedBy: load-chapter-runtime-context.mjs
     - key: all-chapters-exist
       description: Every file in workflow.allowedReportFiles.chapterArtifacts exists under the report folder.
@@ -55,13 +55,14 @@ workflow:
             - Pass companyUrl when provided; pass refresh and refreshReason only for explicit refresh runs.
             - On exit 3, rerun the exact command with --resume; do not create suffixed duplicate folders.
         - key: load-runtime
-          title: Load workflow runtime context
+          title: List configured chapters
           command: load-chapter-runtime-context.mjs --list
           requires: [report-run-created]
-          produces: [runtimeContext.workflow, runtimeContext.vocabularies, runtimeContext.checkDimensions, runtimeContext.rendererContracts]
-          gate: runtimeContext schema
+          produces: [runtimeContext.chapters]
+          gate: runtimeContext list schema
           notes:
-            - Treat loader JSON as the runtime contract; do not hardcode chapter names, gates, enums, or renderer contracts.
+            - The static frame (agent policy, gates, ID system, validator dimensions, renderer contracts) is generated into references/rules.md; read it once at session start instead of reloading per chapter.
+            - Treat loader JSON as the per-chapter delta; do not hardcode chapter names or gates from prose.
     - key: chapter-generation
       title: Generate configured chapters
       objective: Author each configured chapter from its runtime context, collect audited evidence, and clear check-chapter.
@@ -79,11 +80,11 @@ workflow:
         - key: author-chapter
           title: Author chapter YAML
           command: null
-          requires: [runtimeContext.chapter, runtimeContext.workflow.agentPolicy, runtimeContext.vocabularies, runtimeContext.rendererContracts]
+          requires: [runtimeContext.chapter, rules.md, contracts.md]
           produces: [chapter.yaml]
           gate: report artifact schema
           notes:
-            - Use runtimeContext.chapter.gate as the binding floor and runtimeContext.checkDimensions for retry triage.
+            - Use runtimeContext.chapter.gate as the binding floor; use the Validator dimensions table in references/rules.md for retry triage.
             - Use fetch-url for every retained URL and record search queries, sources, claims, questions, and evidence gaps in localEvidence.
         - key: check-chapter
           title: Validate chapter gate
@@ -92,7 +93,7 @@ workflow:
           produces: [validationResult]
           gate: check-chapter exit code
           notes:
-            - Fix retryOrder dimensions first; use failure.fix and objectFailures[].fixes rather than guessing.
+            - Fix retryOrder dimensions first; use issues[].fix and objectFailures[].fixes rather than guessing.
     - key: finalization
       title: Finalize report artifacts
       objective: Validate report-meta, consolidate evidence, assemble final artifacts, and run publishability checks.
@@ -130,10 +131,10 @@ workflow:
 # institution or document* (e.g. "Gartner", "SEC 10-K"), not for claim ids.
 
 # === agent-facing workflow policy ===
-# Surfaced as runtimeContext.workflow.agentPolicy by load-chapter-runtime-context.mjs. Keep here the
-# skill execution rules that are workflow policy, not executable schema or
-# renderer logic. SKILL.md should point agents to the runtime context instead of
-# re-declaring these literals in prose.
+# Surfaced verbatim into references/rules.md by build-rules-doc.mjs.
+# Keep here the skill execution rules that are workflow policy, not executable
+# schema or renderer logic. SKILL.md should point agents to rules.md
+# instead of re-declaring these literals in prose.
 agentPolicy:
   volatileFacts:
     - funding
@@ -156,9 +157,8 @@ agentPolicy:
     - "Anchor freshness to runtimeContext.run.runDate, not the model's training cutoff: include the current year (and the prior year for trailing windows) in queries for volatile facts (funding, ARR, headcount, customers, leadership, regulatory) and prefer sources dated within ~12 months of runDate."
   chapterAuthoringRules:
     - "Use runtimeContext.chapter as the chapter brief and runtimeContext.chapter.gate as the binding per-chapter gate."
-    - "Use runtimeContext.vocabularies for enums and runtimeContext.checkDimensions/defaultFix for retry triage."
-    - "Use runtimeContext.rendererContracts before writing figures; substitute a table when the evidence does not fit the figure contract."
-    - "Use only the current chapter letter for S/C/T/F/Q ids; restate cross-chapter facts as local claims when needed."
+    - "Use the *Validator dimensions* section below for dimension precedence/suppressors and the inline allowed enum values in references/contracts.md for each field; trust the per-issue `fix` in check-chapter JSON output (`issues[].fix`) for concrete repair."
+    - "Use the *Renderer contracts* section below before writing figures; substitute a table when the evidence does not fit the figure contract."
     - "Cite tables through table-level claimRefs, never through evidence-only columns that hold raw claim ids."
     - "Populate tables[].notes whenever the table contains estimates, partial coverage, computed/derived cells, or any caveat the reader needs (data-source convention, units, vintage, what null means). Leave notes null only for pure factual snapshot tables where every cell is a primary-source fact with no qualifier."
   hardRules:

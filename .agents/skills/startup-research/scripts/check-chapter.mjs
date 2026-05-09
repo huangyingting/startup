@@ -45,6 +45,7 @@ import {
   QUESTION_STATUSES,
   QUESTION_TYPES,
   RETRY_PRECEDENCE,
+  WARNING_DIMENSIONS,
   formatEnumChoices,
   makeIdPattern,
   resolveFixHint,
@@ -832,12 +833,25 @@ if (doc) {
 
 // Acknowledged warnings: agent may opt out of --strict warnings by listing
 // `acknowledgedWarnings: [{ dimension, reason }]` at the top level of the
-// chapter YAML. Each acknowledged dimension must have at least 30 chars of
-// rationale and must match a warning dimension actually emitted by the gate.
+// chapter YAML. Each acknowledged dimension must:
+//   1. carry at least 30 chars of rationale (schema-enforced),
+//   2. name a warning-class dimension from WARNING_DIMENSIONS — failure-class
+//      dimensions cannot be acknowledged (SKILL.md is explicit: "Never use
+//      this to silence real failures"). Acks against unknown or failure-class
+//      dimensions surface as a non-blocking warning so agents catch the
+//      misuse without breaking historical reports.
 const acks = Array.isArray(doc?.acknowledgedWarnings) ? doc.acknowledgedWarnings : [];
 const ackByDim = new Map();
 for (const ack of acks) {
   if (typeof ack?.dimension !== 'string' || typeof ack?.reason !== 'string' || ack.reason.trim().length < 30) continue;
+  if (!WARNING_DIMENSIONS.has(ack.dimension)) {
+    warn(
+      'acknowledgedWarnings',
+      `acknowledgedWarnings entry targets dimension "${ack.dimension}", which is not a warning-class dimension; allowed dimensions are: ${[...WARNING_DIMENSIONS].sort().join(', ')}. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`,
+      { ackDimension: ack.dimension },
+    );
+    continue;
+  }
   ackByDim.set(ack.dimension, ack);
 }
 const unackedWarningDims = [...new Set(warnings.map((w) => w.dimension))].filter((d) => !ackByDim.has(d));

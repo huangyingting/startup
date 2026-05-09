@@ -339,13 +339,3 @@ export function normalizeWorkflowConfig(config) {
 
   return { ...parsed, chapters, adverseDistribution: parsed.adverseDistribution ?? null, reportGate: parsed.reportGate ?? null };
 }
-
-export function workflowContractSummary() {
-  return {
-    source: 'scripts/contracts/workflow-config.schema.mjs',
-    schemaVersion: 'workflow-config-v1',
-    topLevelFields: ['schemaVersion', 'reportSchemaVersion', 'workflow', 'agentPolicy', 'defaultGate', 'reportGate', 'adverseDistribution', 'chapters'],
-    generatedFields: ['chapters[].file', 'chapters[].gate.minAdverseSources', 'workflow.allowedReportFiles (runtime projection)'],
-    workflowFields: ['inputs', 'conditions', 'phases'],
-  };
-}

@@ -202,6 +202,26 @@ export const PAYWALL_RISK_WARNING_THRESHOLD = 0.25;
 // Used by check-chapter.mjs checkDuplicateAnalysis().
 export const DUPLICATE_TITLE_THRESHOLD = 0.5;
 
+// Warning-class dimensions that may legitimately appear in
+// `acknowledgedWarnings[].dimension`. Only these are non-blocking by design:
+// agents may opt out of them in --strict mode with a 30+ char rationale.
+// Failure-class dimensions are excluded; SKILL.md is explicit that
+// acknowledgedWarnings must never be used to silence real failures, and
+// check-chapter only consults `ackByDim` against the warning list anyway,
+// so an ack against a failure dimension is silently a no-op. Adding any
+// dimension here makes it acknowledgeable; verify the underlying check is
+// emitted via warn() in check-chapter.mjs (or strict-promoted there) before
+// extending the set.
+export const WARNING_DIMENSIONS = new Set([
+  'paywallRisk',
+  'sectionsMax',
+  'tablesMax',
+  'figuresMax',
+  'figureType',
+  'tableNotes',
+  'unverifiedSource',
+]);
+
 // JSON-friendly bundle shipped in the chapter runtime context so the agent never
 // has to grep source code to learn the vocabulary. Sorted arrays keep diffs
 // stable.
@@ -350,6 +370,10 @@ export const FIX_HINTS = {
     id || url
       ? `Source ${id ?? ''}${url ? ` (${url})` : ''} was cited but never went through fetch-url during this run; pull the URL with .agents/skills/fetch-url/scripts/fetch.mjs (or remove the citation if the source cannot be retrieved).`
       : 'One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess.',
+  acknowledgedWarnings: ({ ackDimension } = {}) =>
+    ackDimension
+      ? `acknowledgedWarnings entry targets dimension "${ackDimension}", which is not a warning-class dimension. Only warnings (paywallRisk, sectionsMax, tablesMax, figuresMax, figureType, tableNotes, unverifiedSource) may be acknowledged; failures must be fixed. Each acknowledgedWarnings entry also requires a >=30-char reason. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`
+      : 'Each acknowledgedWarnings entry must (1) target a warning-class dimension (paywallRisk, sectionsMax, tablesMax, figuresMax, figureType, tableNotes, unverifiedSource) and (2) carry a >=30-char reason. Failure-class dimensions cannot be acknowledged.',
 };
 
 // ---------------------------------------------------------------------------

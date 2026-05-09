@@ -194,6 +194,10 @@ if (existsSync(path)) {
     console.error('[create-report-run] rerun the same command with --resume to continue it; duplicate suffix folders are not created.');
     process.exit(EXIT.inProgress);
   }
+  // Ensure the per-run scratch dir exists on resume too (it may have been
+  // pruned between runs); the agent and fetch-url co-locate fetch logs and
+  // refresh context here.
+  mkdirSync(researchCacheDir(base), { recursive: true });
   writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
   console.error(`[create-report-run] resume: ${path}`);
   console.log(path);
@@ -205,6 +209,12 @@ if (args.resume) {
   process.exit(EXIT.notFound);
 }
 mkdirSync(path, { recursive: true });
+// Always create the per-run scratch dir even for non-refresh runs. SKILL.md
+// expects agents to be able to set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl
+// immediately after this command without an extra mkdir step. fetch-url's
+// own mkdir-on-write is only a fallback; pre-creating the dir keeps the
+// "scratch lives under .research-cache/<runId>/" invariant explicit.
+mkdirSync(researchCacheDir(base), { recursive: true });
 writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
 
 console.log(path);

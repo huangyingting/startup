@@ -1,233 +1,129 @@
 #!/usr/bin/env node
-// Generate the agent-readable contract reference from executable schemas.
+// Generate the agent-facing contract reference from executable schemas.
 //
-// The output intentionally summarizes the contract instead of trying to dump
-// raw Zod internals. Zod schemas remain the source of truth; this Markdown is
-// generated documentation for humans and agents.
+// Field shapes and inline descriptions come straight out of the Zod schemas in
+// scripts/contracts/report-artifacts.schema.mjs. Keep the schemas annotated
+// with `.describe(...)` and the rendered Markdown will stay in sync.
 
 import { writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { workflowContractSummary } from './contracts/workflow-config.schema.mjs';
-import { reportContractSummary, SCHEMA_VERSION } from './contracts/report-artifacts.schema.mjs';
-import { runtimeContextContractSummary } from './contracts/runtime-context.schema.mjs';
+import {
+  AnalysisArtifactSchema,
+  ReportMetaSchema,
+  SCHEMA_VERSION,
+} from './contracts/report-artifacts.schema.mjs';
+import {
+  ChapterRuntimeContextSchema,
+  ChapterRuntimeContextListSchema,
+} from './contracts/runtime-context.schema.mjs';
+import { renderSchemaAsYaml } from './contracts/contract-yaml-renderer.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const outPath = resolve(here, '../references/contracts.md');
 
 function yamlBlock(value) {
-  return ['```yaml', value.trim(), '```'].join('\n');
+  return ['```yaml', value.trimEnd(), '```'].join('\n');
 }
 
-function list(values) {
-  return values.map((value) => `- ${value}`).join('\n');
-}
-
-const workflow = workflowContractSummary();
-const report = reportContractSummary();
-const runtime = runtimeContextContractSummary();
-
-const text = `<!-- GENERATED FILE: edit scripts/contracts/*.schema.mjs or scripts/build-contract-docs.mjs, then run npm run build:contracts. -->
+const text = `<!-- GENERATED FILE: edit scripts/contracts/*.schema.mjs (use \`.describe()\` to annotate fields), then run npm run build:contracts. -->
 
 # startup-research contracts
 
-This file is generated from executable schemas and runtime catalogs. Do not hand-edit it.
+Schema version: \`${SCHEMA_VERSION}\`. Field shapes and inline comments are generated from the Zod schemas in \`scripts/contracts/report-artifacts.schema.mjs\`.
 
-## Workflow config contract
+## What you author vs. what is generated
 
-Schema version: \`${workflow.schemaVersion}\`
+You hand-write two kinds of YAML in each report folder:
 
-Top-level fields:
-${list(workflow.topLevelFields.map((field) => `\`${field}\``))}
+1. **Per-chapter analysis YAML** at \`<reportFolder>/<chapter.file>\` (one per configured chapter) — see *Analysis chapter shape* below.
+2. **\`<reportFolder>/report-meta.yaml\`** — see *Report meta shape* below.
 
-Workflow-specific fields:
-${list(workflow.workflowFields.map((field) => `\`workflow.${field}\``))}
+Authoring stops there. \`finalize-report.mjs\` produces every other artifact in the folder from those inputs:
 
-Derived fields emitted at runtime:
-${list(workflow.generatedFields.map((field) => `\`${field}\``))}
+- \`evidence.yaml\` is a **consolidated** ledger built from each chapter's \`localEvidence\` by \`build-evidence-ledger.mjs\`. It does not renumber: chapter ids stay as you wrote them, and duplicates across chapters get tagged with a \`canonical\` pointer to the first occurrence.
+- \`full-report.yaml\` and \`summary-card.yaml\` are assembled by \`build-report.mjs\` from the chapter YAMLs and \`report-meta.yaml\`.
 
-### Workflow config shape
+Vocabularies (enum value sets) are listed inline below at each enum field. Validator dimensions (with retry precedence and \`fix\` text), agent policy, gates, and figure renderer contracts live in [\`rules.md\`](rules.md) (also generated). Read both files once at session start.
 
-${yamlBlock(`schemaVersion: workflow-config-v1
-reportSchemaVersion: report-v2
-workflow:
-  inputs:
-    companyName: { type: string, required: true, description: string }
-    companyUrl: { type: url, required: false, description: string }
-  conditions:
-    - key: kebab-case
-      description: string
-      checkedBy: script-or-gate-name
-  phases:
-    - key: kebab-case
-      title: string
-      objective: string
-      entryConditions: [conditionKey]
-      exitConditions: [conditionKey]
-      steps:
-        - key: kebab-case
-          title: string
-          command: string | null
-          requires: [inputKey | conditionKey | artifact.token]
-          produces: [artifact.token]
-          gate: string | null
-          notes: [string]
-agentPolicy: {...}
-defaultGate: {...}
-reportGate: {...}
-adverseDistribution: {...}
-chapters:
-  - key: kebab-case
-    order: number
-    letter: A-Z, not S/C/T/F/Q
-    title: string
-    mission: string
-    optionalContext: [chapterKey]
-    contentRequirements: [string]
-    plannedTables: [{ name, requirement, enumeration?, expectedMinRows? }]
-    plannedFigures: [{ name, requirement, acceptedTypes }]
-    evidenceStrategy: [string]
-    qualityBar: [string]
-    gate: partial defaultGate override`)}
+### Reading conventions
 
-## Report artifact contract
+Field comments below reference \`runtimeContext.X\` paths. \`runtimeContext\` is the per-chapter JSON projection emitted by \`node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order <n> --include-context --report-folder <reportFolder>\`. It carries only the chapter brief, neighbouring chapters, run identity, refresh cache, and earlier-chapter rollups — no workflow/policy/vocabulary content. The id shorthand used throughout (\`S<L>###\`, \`C<L>###\`, …) is documented under *ID system* in [\`rules.md\`](rules.md).
 
-Schema version: \`${SCHEMA_VERSION}\`
+## Analysis chapter shape
 
-Artifacts:
-${list(report.artifacts.map((field) => `\`${field}\``))}
+One file per configured chapter at \`<reportFolder>/<chapter.file>\`. The first five fields (\`schemaVersion\` through \`company\`) are the shared document head reused by \`report-meta.yaml\` (without \`schemaVersion\` / \`artifact\`).
 
-Reusable objects:
-${list(report.reusableObjects.map((field) => `\`${field}\``))}
+${yamlBlock(renderSchemaAsYaml(AnalysisArtifactSchema))}
 
-Semantic validators that extend shape checks:
-${list(report.semanticValidators.map((field) => `\`${field}\``))}
+## Report meta shape
 
-### Common document head
+\`<reportFolder>/report-meta.yaml\` — owns the final judgment, cover facts, and company profile.
 
-${yamlBlock(`schemaVersion: report-v2
-artifact: string
-slug: string
-runDate: YYYY-MM-DD
-company:
-  name: string`)}
+${yamlBlock(renderSchemaAsYaml(ReportMetaSchema))}
 
-### Analysis chapter shape
+## Chapter runtime context shape
 
-${yamlBlock(`schemaVersion: report-v2
-artifact: chapterKey
-slug: companySlug
-runDate: YYYY-MM-DD
-company: { name: string }
-chapter: { number: number, title: string, summary: string }
-sections: [{ id, title, body, claimRefs }]
-tables: [{ id, title, columns, rows, notes, enumerationScope?, claimRefs }]
-figures: [{ id, title, type, layout, summary, data, approximationNotes, claimRefs }]
-callouts: [{ calloutType, title, body, claimRefs }]
-localEvidence:
-  searchQueries: [{ query, engine?, hits?, retainedSourceRefs }]
-  researchQuestions: [{ id, question, type, targets, status }]
-  sources: [{ id, publisher, title, url, date, accessDate, accessStatus, stance, sourceType, reputationTier, independence, topics, keyQuote }]
-  claims: [{ id, statement, type, topic, sourceRefs, confidence, freshness, answersQuestionRefs?, contradictsClaimRefs? }]
-  evidenceGaps: [{ type, severity, topic, missingEvidence, whyItMatters, diligencePath, relatedQuestionRefs?, relatedTableRefs? }]
-acknowledgedWarnings: [{ dimension, reason }]`)}
+The per-chapter projection produced by \`load-chapter-runtime-context.mjs --order <n> [--report-folder <path>] [--include-context]\`. Field availability:
 
-### Report meta shape
+- Always present: \`schemaVersion\`, \`generatedFrom\`, \`totalChapters\`, \`previousChapter\`, \`chapter\`, \`nextChapter\`.
+- Present whenever \`--report-folder\` is supplied (including the first chapter and parallel-drafting): \`run\`, \`runCache\`. \`run.runDate\` is the canonical clock anchor; copy it into every chapter doc head's \`runDate\`.
+- Present only with \`--include-context\` (omit during parallel drafting to avoid stale rollups): \`contextChapters\`, \`cumulativeContext\`.
 
-${yamlBlock(`slug: string
-runDate: YYYY-MM-DD
-company: { name, website?, sector?, stage?, headquarters?, shortDescription? }
-revision: { status, refreshOfRunId, supersededByRunId, refreshReason } | null
-subtitle: string | null
-coverageNotes: string | null
-coverFacts: [{ label, value, unit, claimRefs }] | null
-companyProfile:
-  summary: string
-  foundedDate: YYYY-MM-DD | null
-  founders: [{ name, role, background, claimRefs }]
-  foundingLocation: string | null
-  headquarters: string | null
-  productSummary: string
-  customerFocus: string | null
-  businessModel: string | null
-  stage: string | null
-  fundingStatus: string | null
-  disclosureProfile: public | private-disclosed | private-undisclosed | stealth | null
-  claimRefs: [claimId]
-summary:
-  headline: string
-  overallScore: number  # 0-10
-  recommendation: cardRecommendation
-  confidence: cardConfidence
-  riskRating: cardRiskRating
-  valuationStance: cardValuationStance
-  keyMetrics: keyMetrics
-  topStrengths: [string]
-  topRisks: [string]
-  unresolvedGaps: [string]
-appendices: [appendix] | null
-disclaimer: string | null`)}
+${yamlBlock(renderSchemaAsYaml(ChapterRuntimeContextSchema))}
 
-## Runtime context contract
+The list-mode projection (\`--list\`) emits the chapter roster only:
 
-Runtime schema versions:
-${list(runtime.schemaVersions.map((field) => `\`${field}\``))}
+${yamlBlock(renderSchemaAsYaml(ChapterRuntimeContextListSchema))}
 
-Projected authorities:
-${list(runtime.projectedAuthorities.map((field) => `\`${field}\``))}
+## Validation result envelope
 
-### Runtime context shape
+Every \`check-*.mjs --format json\` returns this envelope. Note that the schema shapes above are only one validation layer — \`check-chapter\` and \`check-report\` also enforce semantic gates (cross-references, source diversity, freshness, duplicate analysis, depth floors, …) listed in [\`rules.md\`](rules.md) under *Validator dimensions*. When a gate fails, read \`issues[].fix\`, \`globalHints[].fix\`, and \`retryOrder[]\` before guessing.
 
-${yamlBlock(`schemaVersion: chapter-runtime-context-v2
-generatedFrom: absolute path to references/workflow-config.yaml
-contractSources: { workflowConfig, workflowSchema, reportSchema, runtimeContextSchema, generatedContracts, vocabularies, checkDimensions, rendererContracts }
-workflow:
-  reportSchemaVersion: report-v2
-  inputs: {...}
-  phases: [...]
-  conditions: [...]
-  finalArtifacts: {...}
-  allowedReportFiles: { chapterArtifacts, handAuthored, generated }
-  agentPolicy: {...}
-  totalChapters: number
-vocabularies: {...}
-checkDimensions: [{ dimension, precedenceRank, defaultFix, suppressedBy }]
-rendererContracts: {...}
-previousChapter: compactChapter | null
-chapter: compactChapter
-nextChapter: compactChapter | null
-contextChapters: [...]       # only with --include-context
-cumulativeContext: {...}     # only with --include-context
-run: { runId, companySlug, runDate }       # only with --include-context
-runCache: { cacheDir, refreshContext }     # only with --include-context`)}
-
-## Validation result contract
-
-All validation scripts should prefer this envelope for JSON output:
+Conditional keys (marked optional below) are emitted by the envelope only when non-empty: \`retryOrder\`, \`suppressedDimensions\`, \`globalHints\`, \`counts\`, and \`objectFailures\` are all omitted from the JSON when their value is empty / null. Code that reads these keys must tolerate them being absent.
 
 ${yamlBlock(`ok: boolean
 validator: string
-artifact: string | null
-reportFolder: string | null
+artifact?: string                  # only emitted when set; null when validator is folder-scoped
+reportFolder?: string              # only emitted when set; absolute path to the report folder
 issueCount: number
 warningCount: number
 issues:
-  - path: string
+  - path: string                   # dot-joined location of the issue (e.g. tables.0.rows.2)
     message: string
-    dimension: string
-    code: string
+    dimension: string              # see references/rules.md → Validator dimensions
+    code: string                   # stable error code (often "<dimension>" or "<artifact>.<reason>")
     severity: error
-    fix: string | null
+    fix?: string                   # one-line concrete repair instruction
+    # plus any per-dimension extras (id, tableId, claimId, actual, required, …)
 warnings:
   - path: string
     message: string
     dimension: string
     code: string
     severity: warning
-retryOrder: [dimension]
-suppressedDimensions: [dimension]
-globalHints: [{ dimension, note, fix }]
-summary: object`)}
+    fix?: string
+retryOrder?: [dimension]           # only when failures exist; ordered root-cause-first per RETRY_PRECEDENCE
+suppressedDimensions?: [dimension] # only when CASCADE_SUPPRESSORS hid downstream noise
+globalHints?:                      # only when same dimension fails on >=3 distinct objects
+  - dimension: string
+    affectedObjects: [string]
+    fix: string|null
+    note: string
+counts?:                           # check-chapter only
+  sections: number
+  tables: number
+  figures: number
+  sources: number
+  claims: number
+  gaps: number
+  researchQuestions: number
+objectFailures?:                   # check-chapter only; failures grouped by the table/figure/claim/question/source they touch
+  - objectId: string
+    dimensions: [string]
+    fixes: [string]
+    messages: [string]
+summary: object                    # validator-specific (chapterKey, schema path, …)`)}
 
 ## YAML rules
 

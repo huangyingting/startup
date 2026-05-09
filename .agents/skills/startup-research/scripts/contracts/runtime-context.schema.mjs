@@ -1,25 +1,20 @@
 // Executable schema for the agent-facing chapter runtime context.
 //
-// The runtime context is a projection, not an authoring source. This schema is
-// intentionally permissive for projected nested objects whose authoritative
-// contracts live in workflow-config.schema.mjs, report-artifacts.schema.mjs,
-// validation-catalog.mjs, and website/src/lib/figures.mjs.
+// The runtime context emits per-chapter and per-run deltas only. The static
+// frame (agent policy, gates, ID system, validator dimensions, renderer
+// contracts) lives in references/rules.md (generated from workflow-config.yaml,
+// validation-catalog.mjs, and website/src/lib/figures.mjs). Field shapes for
+// chapter and report-meta YAML live in references/contracts.md (generated
+// from report-artifacts.schema.mjs). Read both once at session start.
+//
+// This schema is intentionally permissive for projected nested objects whose
+// authoritative contracts live in workflow-config.schema.mjs and
+// report-artifacts.schema.mjs.
 
 import { z } from 'zod';
 
 const nonEmptyString = z.string().trim().min(1, 'must be a non-empty string');
 const nullableString = z.string().nullable();
-
-export const ContractSourcesSchema = z.object({
-  workflowConfig: nonEmptyString,
-  workflowSchema: nonEmptyString,
-  reportSchema: nonEmptyString,
-  runtimeContextSchema: nonEmptyString,
-  generatedContracts: nonEmptyString,
-  vocabularies: nonEmptyString,
-  checkDimensions: nonEmptyString,
-  rendererContracts: nonEmptyString,
-}).strict();
 
 export const CompactChapterSchema = z.object({
   key: nonEmptyString,
@@ -38,21 +33,6 @@ export const CompactChapterSchema = z.object({
   gate: z.record(z.string(), z.any()),
 }).strict();
 
-export const RuntimeWorkflowProjectionSchema = z.object({
-  reportSchemaVersion: nonEmptyString,
-  inputs: z.record(z.string(), z.any()),
-  phases: z.array(z.record(z.string(), z.any())),
-  conditions: z.array(z.record(z.string(), z.any())),
-  finalArtifacts: z.record(z.string(), z.any()),
-  allowedReportFiles: z.object({
-    chapterArtifacts: z.array(nonEmptyString),
-    handAuthored: z.array(nonEmptyString),
-    generated: z.array(nonEmptyString),
-  }).strict(),
-  agentPolicy: z.record(z.string(), z.any()),
-  totalChapters: z.number().optional(),
-}).passthrough();
-
 export const ContextChapterSchema = z.object({
   key: nonEmptyString.optional(),
   file: nonEmptyString,
@@ -67,13 +47,9 @@ export const ContextChapterSchema = z.object({
 }).passthrough();
 
 export const ChapterRuntimeContextSchema = z.object({
-  schemaVersion: z.literal('chapter-runtime-context-v2'),
+  schemaVersion: z.literal('chapter-runtime-context-v3'),
   generatedFrom: nonEmptyString,
-  contractSources: ContractSourcesSchema,
-  workflow: RuntimeWorkflowProjectionSchema,
-  vocabularies: z.record(z.string(), z.any()),
-  checkDimensions: z.array(z.record(z.string(), z.any())),
-  rendererContracts: z.record(z.string(), z.any()),
+  totalChapters: z.number().int().positive(),
   previousChapter: CompactChapterSchema.nullable(),
   chapter: CompactChapterSchema,
   nextChapter: CompactChapterSchema.nullable(),
@@ -91,20 +67,8 @@ export const ChapterRuntimeContextSchema = z.object({
 }).strict();
 
 export const ChapterRuntimeContextListSchema = z.object({
-  schemaVersion: z.literal('chapter-runtime-context-list-v2'),
+  schemaVersion: z.literal('chapter-runtime-context-list-v3'),
   generatedFrom: nonEmptyString,
-  contractSources: ContractSourcesSchema,
-  workflow: RuntimeWorkflowProjectionSchema.omit({ totalChapters: true }).passthrough(),
-  vocabularies: z.record(z.string(), z.any()),
-  checkDimensions: z.array(z.record(z.string(), z.any())),
-  rendererContracts: z.record(z.string(), z.any()),
+  totalChapters: z.number().int().positive(),
   chapters: z.array(CompactChapterSchema),
 }).strict();
-
-export function runtimeContextContractSummary() {
-  return {
-    source: 'scripts/contracts/runtime-context.schema.mjs',
-    schemaVersions: ['chapter-runtime-context-v2', 'chapter-runtime-context-list-v2'],
-    projectedAuthorities: ['workflow config', 'report artifact schema', 'validation catalog', 'renderer contracts', 'run cache'],
-  };
-}

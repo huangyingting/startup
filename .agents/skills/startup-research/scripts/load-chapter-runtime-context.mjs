@@ -1,37 +1,27 @@
 #!/usr/bin/env node
-// Load the config-driven chapter runtime context used by the startup-research skill.
-// The CLI intentionally reads only workflow-config.yaml through utils so the
-// workflow has one machine-readable source of truth for chapter order, gates,
-// output files, and final artifact names.
+// Load the per-chapter runtime context used by the startup-research skill.
+//
+// This emits ONLY the per-chapter and per-run deltas: the chapter brief, the
+// neighbouring chapters, run identity, refresh cache, and earlier-chapter
+// rollups. The static frame (agent policy, gates, ID system, validator
+// dimensions, renderer contracts) lives in references/rules.md and
+// references/contracts.md and is generated from the same sources of truth —
+// read those once at session start instead of re-shipping them per chapter.
 import { join, basename } from 'node:path';
-import { EXIT, FINAL_ARTIFACTS, GENERATED_REPORT_FILES, REPORT_META_FILE, companySlugFromRunId, isRunId, loadWorkflowConfig, researchCacheDir, runDateFromRunId, tryReadYaml, workflowConfigPath } from './utils.mjs';
-import { RESTRICTED_ACCESS_STATUSES, VOCABULARIES, dimensionCatalog } from './validation-catalog.mjs';
-import {
-  FIGURE_ALLOWED_POPULATED_FIELDS,
-  FIGURE_CONTRACTS,
-  FIGURE_DATA_FIELDS,
-  FIGURE_LAYOUTS,
-  FIGURE_TYPES,
-} from '../../../../website/src/lib/figures.mjs';
-
-const CONTRACT_SOURCES = Object.freeze({
-  workflowConfig: 'references/workflow-config.yaml',
-  workflowSchema: 'scripts/contracts/workflow-config.schema.mjs',
-  reportSchema: 'scripts/contracts/report-artifacts.schema.mjs',
-  runtimeContextSchema: 'scripts/contracts/runtime-context.schema.mjs',
-  generatedContracts: 'references/contracts.md',
-  vocabularies: 'scripts/validation-catalog.mjs',
-  checkDimensions: 'scripts/validation-catalog.mjs',
-  rendererContracts: 'website/src/lib/figures.mjs',
-});
+import { EXIT, isRunId, loadWorkflowConfig, companySlugFromRunId, researchCacheDir, runDateFromRunId, tryReadYaml, workflowConfigPath } from './utils.mjs';
+import { RESTRICTED_ACCESS_STATUSES } from './validation-catalog.mjs';
 
 function usage() {
-  console.error(`Usage: node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--no-workflow] [--include-context --report-folder <path>]
+  console.error(`Usage: node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--report-folder <path>] [--include-context]
 
 Examples:
     node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list
-    node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 1
-    node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 4 --include-context --report-folder reports/20260503145959-openai`);
+    node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 1 --report-folder reports/20260503145959-openai
+    node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 4 --include-context --report-folder reports/20260503145959-openai
+
+  --report-folder alone projects run identity (run.runDate) and runCache.refreshContext.
+  Add --include-context to also project earlier-chapter rollups (contextChapters, cumulativeContext);
+  omit it for the first chapter or for parallel drafting to avoid stale rollups.`);
   process.exit(EXIT.failure);
 }
 
@@ -42,7 +32,6 @@ function parseArgs(argv) {
     file: null,
     list: false,
     all: false,
-    includeWorkflow: true,
     includeContext: false,
     reportFolder: null,
   };
@@ -55,8 +44,6 @@ function parseArgs(argv) {
     else if (arg === '--file') args.file = argv[++i] ?? null;
     else if (arg === '--list') args.list = true;
     else if (arg === '--all') args.all = true;
-    else if (arg === '--include-workflow') args.includeWorkflow = true;
-    else if (arg === '--no-workflow') args.includeWorkflow = false;
     else if (arg === '--include-context') args.includeContext = true;
     else if (arg === '--report-folder') args.reportFolder = argv[++i] ?? null;
     else usage();
@@ -207,50 +194,13 @@ function runCacheContext(reportFolder) {
   return out;
 }
 
-function workflowSummary(config, { includeTotalChapters = false } = {}) {
-  const summary = {
-    reportSchemaVersion: config.reportSchemaVersion,
-    inputs: config.workflow?.inputs ?? {},
-    phases: config.workflow?.phases ?? [],
-    conditions: config.workflow?.conditions ?? [],
-    finalArtifacts: FINAL_ARTIFACTS,
-    allowedReportFiles: {
-      chapterArtifacts: config.chapters.map((chapter) => chapter.file),
-      handAuthored: [REPORT_META_FILE],
-      generated: GENERATED_REPORT_FILES,
-    },
-    agentPolicy: config.agentPolicy ?? {},
-  };
-  if (includeTotalChapters) summary.totalChapters = config.chapters.length;
-  return summary;
-}
-
-function rendererContractCatalog() {
-  return {
-    figureTypes: FIGURE_TYPES,
-    figureLayouts: FIGURE_LAYOUTS,
-    figureDataFields: FIGURE_DATA_FIELDS,
-    figureContracts: FIGURE_CONTRACTS,
-    figureAllowedPopulatedFields: FIGURE_ALLOWED_POPULATED_FIELDS,
-  };
-}
-
 function buildRuntimeContext(config, chapter) {
   const chapters = config.chapters;
   const index = chapters.findIndex((item) => item.order === chapter.order);
   return {
-    schemaVersion: 'chapter-runtime-context-v2',
+    schemaVersion: 'chapter-runtime-context-v3',
     generatedFrom: workflowConfigPath,
-    contractSources: CONTRACT_SOURCES,
-    workflow: workflowSummary(config, { includeTotalChapters: true }),
-    // Single source of truth for enum vocab and validator dimensions. Agents
-    // and the SKILL.md should reference runtimeContext.vocabularies / runtimeContext.checkDimensions
-    // rather than re-declaring these literals in prose; the same module backs
-    // artifact-checks validation and check-chapter retry hints, so the runtime context
-    // and the gate cannot drift.
-    vocabularies: VOCABULARIES,
-    checkDimensions: dimensionCatalog(),
-    rendererContracts: rendererContractCatalog(),
+    totalChapters: chapters.length,
     previousChapter: index > 0 ? compactChapter(chapters[index - 1]) : null,
     chapter: compactChapter(chapter),
     nextChapter: index < chapters.length - 1 ? compactChapter(chapters[index + 1]) : null,
@@ -266,13 +216,9 @@ function selectChapter(config, args) {
 
 function orderedList(config) {
   return {
-    schemaVersion: 'chapter-runtime-context-list-v2',
+    schemaVersion: 'chapter-runtime-context-list-v3',
     generatedFrom: workflowConfigPath,
-    contractSources: CONTRACT_SOURCES,
-    workflow: workflowSummary(config),
-    vocabularies: VOCABULARIES,
-    checkDimensions: dimensionCatalog(),
-    rendererContracts: rendererContractCatalog(),
+    totalChapters: config.chapters.length,
     chapters: config.chapters.map(compactChapter),
   };
 }
@@ -301,12 +247,24 @@ function main() {
     console.error('[chapter] no chapter matched the provided selector');
     process.exit(EXIT.failure);
   }
+  if (args.includeContext && !args.reportFolder) {
+    console.error('[chapter] --include-context requires --report-folder <path>');
+    process.exit(EXIT.failure);
+  }
   const runtimeContext = buildRuntimeContext(config, chapter);
+  // run identity (run.runDate) and runCache (refresh-context) are always
+  // emitted when --report-folder is supplied, regardless of --include-context.
+  // The agent needs run.runDate as the canonical clock anchor for chapter
+  // doc heads even on the first chapter or during parallel drafting (when
+  // --include-context is intentionally omitted to avoid projecting a stale
+  // cumulative rollup of unfinished sibling chapters).
+  if (args.reportFolder) {
+    runtimeContext.run = runIdentity(args.reportFolder);
+    runtimeContext.runCache = runCacheContext(args.reportFolder);
+  }
+  // contextChapters and cumulativeContext aggregate sibling chapters and
+  // therefore go stale during parallel drafting; gate them on --include-context.
   if (args.includeContext) {
-    if (!args.reportFolder) {
-      console.error('[chapter] --include-context requires --report-folder <path>');
-      process.exit(EXIT.failure);
-    }
     const fileByKey = new Map(config.chapters.map((item) => [item.key, item.file]));
     runtimeContext.contextChapters = (chapter.optionalContext ?? []).map((key) => {
       const file = fileByKey.get(key);
@@ -314,11 +272,8 @@ function main() {
       return { key, ...compactContextChapter(args.reportFolder, file) };
     });
     runtimeContext.cumulativeContext = cumulativeContext(args.reportFolder, chapter.order, config.chapters);
-    runtimeContext.run = runIdentity(args.reportFolder);
-    runtimeContext.runCache = runCacheContext(args.reportFolder);
   }
-  const output = args.includeWorkflow ? runtimeContext : runtimeContext.chapter;
-  printJson(output);
+  printJson(runtimeContext);
 }
 
 main();
