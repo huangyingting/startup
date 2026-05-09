@@ -451,7 +451,6 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
   if (enumerationPlans.length === 0) return;
   const sourceById = new Map((doc.localEvidence?.sources ?? []).map((s) => [s?.id, s]));
   const claimById = new Map((doc.localEvidence?.claims ?? []).map((c) => [c?.id, c]));
-  const gapTopics = new Set((doc.localEvidence?.evidenceGaps ?? []).map((gap) => String(gap?.topic ?? '').toLowerCase()).filter(Boolean));
   for (const plan of enumerationPlans) {
     const planSlug = titleSlug(plan.name);
     const table = (doc.tables ?? []).find((t) => titleSlug(t?.title) === planSlug);

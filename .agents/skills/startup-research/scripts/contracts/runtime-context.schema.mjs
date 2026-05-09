@@ -34,7 +34,7 @@ export const CompactChapterSchema = z.object({
 }).strict();
 
 export const ContextChapterSchema = z.object({
-  key: nonEmptyString.optional(),
+  key: nonEmptyString,
   file: nonEmptyString,
   status: z.enum(['loaded', 'missing', 'parseError', 'unknownKey']),
   error: nullableString.optional(),
@@ -65,8 +65,8 @@ export const ChapterRuntimeContextSchema = z.object({
       message: z.string(),
       missingFiles: z.array(nonEmptyString).optional(),
     }).passthrough()).optional(),
-    cumulativeUnresolvedQuestions: z.number(),
-    cumulativeRestrictedAccessPct: z.number(),
+    cumulativeUnresolvedQuestions: z.number().describe('Sum of researchQuestions across all earlier loaded chapters whose status is not "answered". Advisory only; never gates this chapter.'),
+    cumulativeRestrictedAccessPct: z.number().describe('Share of localEvidence.sources across all earlier loaded chapters whose accessStatus is paywall|js-only|broken|rate-limited (the report-level paywall ceiling pool). Range 0..1, rounded to 3 decimals. Advisory only; never gates this chapter.'),
     earlierChapters: z.array(z.record(z.string(), z.any())),
   }).passthrough().optional(),
   run: z.object({

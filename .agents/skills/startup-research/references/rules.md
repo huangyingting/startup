@@ -178,7 +178,7 @@ Precedence `—` marks **warning-class** dimensions: they never appear in `retry
 | 31 | `enumerationRowCorroboration` | Extend the enumeration table's table-level claimRefs[] so the underlying sources span more registrable domains (table-level, not per-row). | `yamlParse`, `localEvidenceMissing` |
 | 32 | `tableShape` | Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present. | `yamlParse` |
 | 33 | `figureShape` | Fix the figure data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows). | `yamlParse` |
-| — | `figureType` | Render at least one of the planned figure types or document the substitution in evidenceGaps. | `yamlParse` |
+| — | `figureType` | Render at least one of the planned figure types, or add an acknowledgedWarnings entry for dimension "figureType" with a >=30-char reason when the substitution is intentional. | `yamlParse` |
 | 35 | `duplicateIds` | Renumber the duplicate or malformed table/figure id; ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter. | `yamlParse` |
 | 36 | `artifactRefs` | Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter's figures[] / tables[]. | `yamlParse` |
 | 37 | `duplicateAnalysis` | Either give the figure at least one claimRef the table does not have (a distinct slice/lens), rename it to reflect that lens, or merge it into the table. | `yamlParse` |
@@ -195,6 +195,7 @@ Precedence `—` marks **warning-class** dimensions: they never appear in `retry
 | 48 | `contentRequirementCoverage` | Add researchQuestions whose targets[] cover the un-targeted contentRequirements. | `yamlParse`, `localEvidenceMissing` |
 | — | `unverifiedSource` | One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess. | — |
 | — | `fetchTrailMissing` | Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; the default gate warns and --strict fails when the trail is missing. | — |
+| 51 | `displayCompleteness` | Populate the report-meta field that drives the display surface (companyProfile.<field>, coverFacts items, claimRefs); when a field is genuinely unavailable, leave it null only for fields that document a null path. report-meta has no acknowledgedWarnings opt-out. | — |
 | — | `tableNotes` | Write tables[].notes (one line: data source / estimation / partial coverage / what null means), or acknowledge dimension "tableNotes" for pure factual snapshot tables. | — |
 
 ### `acknowledgedWarnings` opt-out

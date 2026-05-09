@@ -340,7 +340,7 @@ export const FIX_HINTS = {
     tableId && figureId
       ? `Figure ${figureId} re-renders the same claims as table ${tableId} (${sharedRefs}/${figureRefs} of the figure's claimRefs are also on the table). Either give the figure at least one claimRef the table does not have (a distinct slice/lens), rename it to reflect that lens, or merge it into the table.`
       : 'Either give the figure at least one claimRef the table does not have (a distinct slice/lens), rename it to reflect that lens, or merge it into the table.',
-  figureType: 'Render at least one of the planned figure types or document the substitution in evidenceGaps.',
+  figureType: 'Render at least one of the planned figure types, or add an acknowledgedWarnings entry for dimension "figureType" with a >=30-char reason when the substitution is intentional.',
   sectionsMax: 'Reduce or merge sections; the chapter looks over-fragmented.',
   tablesMax: 'Reduce or merge tables; the chapter looks over-fragmented.',
   figuresMax: 'Reduce or merge figures; the chapter looks over-fragmented.',
@@ -349,6 +349,7 @@ export const FIX_HINTS = {
       ? `Source ${id ?? ''}${url ? ` (${url})` : ''} was cited but never went through fetch-url during this run; pull the URL with .agents/skills/fetch-url/scripts/fetch.mjs (or remove the citation if the source cannot be retrieved).`
       : 'One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess.',
   fetchTrailMissing: 'Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; the default gate warns and --strict fails when the trail is missing.',
+  displayCompleteness: 'Populate the report-meta field that drives the display surface (companyProfile.<field>, coverFacts items, claimRefs); when a field is genuinely unavailable, leave it null only for fields that document a null path. report-meta has no acknowledgedWarnings opt-out.',
   acknowledgedWarnings: ({ ackDimension } = {}) =>
     ackDimension
       ? `acknowledgedWarnings entry targets dimension "${ackDimension}", which is not a warning-class dimension. Only warnings (${WARNING_DIMENSIONS_LIST_TEXT}) may be acknowledged; failures must be fixed. Each acknowledgedWarnings entry also requires a >=30-char reason. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`
@@ -432,6 +433,7 @@ export const RETRY_PRECEDENCE = [
   'sectionsMin', 'sectionsMax', 'artifactsMin', 'tablesMax', 'figuresMax',
   'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
   'contentRequirementCoverage', 'unverifiedSource', 'fetchTrailMissing',
+  'displayCompleteness',
 ];
 
 // ---------------------------------------------------------------------------

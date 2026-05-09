@@ -253,7 +253,7 @@ nextChapter:  # (nullable)
   qualityBar: [string]
   gate: {...}
 contextChapters?:
-  - key?: string
+  - key: string
     file: string
     status: loaded|missing|parseError|unknownKey
     error?: string|null
@@ -270,8 +270,8 @@ cumulativeContext?:
     - code: string
       message: string
       missingFiles?: [string]
-  cumulativeUnresolvedQuestions: number
-  cumulativeRestrictedAccessPct: number
+  cumulativeUnresolvedQuestions: number  # Sum of researchQuestions across all earlier loaded chapters whose status is not "answered". Advisory only; never gates this chapter.
+  cumulativeRestrictedAccessPct: number  # Share of localEvidence.sources across all earlier loaded chapters whose accessStatus is paywall|js-only|broken|rate-limited (the report-level paywall ceiling pool). Range 0..1, rounded to 3 decimals. Advisory only; never gates this chapter.
   earlierChapters: [{...}]
 run?:
   runId: string

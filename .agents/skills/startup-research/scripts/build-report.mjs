@@ -11,36 +11,75 @@ import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, FINAL_ARTIFACTS, REPORT_META_FILE, getAnalysisArtifacts, loadWorkflowConfig, parseDate, tryReadYaml, writeYaml } from './utils.mjs';
 import { ReportMetaSchema, SCHEMA_VERSION, schemaErrors } from './contracts/report-artifacts.schema.mjs';
+import { formatValidationCompact, validationEnvelope, validationIssue } from './contracts/validation-result.mjs';
 
 const DEFAULT_DISCLAIMER = 'This report is a public-evidence diligence snapshot, not investment advice. Important financial, legal, technical, and contractual facts remain non-public and should be verified directly with management and primary documents before any investment decision.';
 const CLAIM_ID_RE = /^C[A-Z]\d{3}$/;
 const LEGACY_CLAIM_ID_RE = /^C\d{3}$/;
 const INLINE_CLAIM_REF_RE = /\[(C[A-Z]\d{3}|C\d{3})\]/g;
 
-function abort(message) {
-  console.error(`[build-report] ${message}`);
-  process.exit(EXIT.failure);
+// Module-scope envelope state. abort() routes every error through the shared
+// validation-result envelope when --format=json|compact, so finalize-report
+// agents can read issues[].dimension/.fix without learning a per-script
+// prose format. The text path keeps the legacy `[build-report] <message>`
+// stderr line for direct CLI use.
+let outputFormat = 'text';
+let reportFolderForEnvelope = null;
+
+function abort(messageOrOpts) {
+  const opts = typeof messageOrOpts === 'string' ? { message: messageOrOpts } : (messageOrOpts ?? {});
+  const {
+    message = 'unknown failure',
+    dimension = 'reportContract',
+    code = 'buildReport.failure',
+    fix = null,
+    path = null,
+    exitCode = EXIT.failure,
+  } = opts;
+  if (outputFormat === 'text') {
+    console.error(`[build-report] ${message}`);
+  } else {
+    const envelope = validationEnvelope({
+      ok: false,
+      validator: 'build-report',
+      reportFolder: reportFolderForEnvelope,
+      issues: [validationIssue({ path: path ?? 'build-report', message, dimension, code, fix })],
+      summary: { stage: 'build-report' },
+    });
+    if (outputFormat === 'json') console.log(JSON.stringify(envelope, null, 2));
+    else console.log(formatValidationCompact(envelope));
+  }
+  process.exit(exitCode);
 }
 
 function parseArgs(argv) {
-  const args = { folder: null, dryRun: false };
-  for (const arg of argv) {
+  const args = { folder: null, dryRun: false, format: 'text' };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
     if (arg === '--dry-run') args.dryRun = true;
-    else if (arg.startsWith('-')) abort(`unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run]`);
+    else if (arg === '--format') {
+      const next = argv[++i];
+      if (next === undefined || next.startsWith('-')) abort(`--format requires a value (text|json|compact)\nUsage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run] [--format text|json|compact]`);
+      args.format = next;
+    } else if (arg === '-h' || arg === '--help') abort(`Usage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run] [--format text|json|compact]`);
+    else if (arg.startsWith('-')) abort(`unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run] [--format text|json|compact]`);
     else if (!args.folder) args.folder = arg;
-    else abort(`unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run]`);
+    else abort(`unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run] [--format text|json|compact]`);
   }
+  if (!['text', 'json', 'compact'].includes(args.format)) abort(`invalid --format: ${args.format} (expected text|json|compact)`);
   return args;
 }
 
 function main() {
 const args = parseArgs(process.argv.slice(2));
+outputFormat = args.format;
 if (!args.folder) {
-  abort('Usage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run]');
+  abort('Usage: node .agents/skills/startup-research/scripts/build-report.mjs <report-folder> [--dry-run] [--format text|json|compact]');
 }
 
 const reportFolder = resolve(args.folder);
-if (!existsSync(reportFolder)) abort(`report folder not found: ${reportFolder}`);
+reportFolderForEnvelope = reportFolder;
+if (!existsSync(reportFolder)) abort({ message: `report folder not found: ${reportFolder}`, dimension: 'missingArtifact', code: 'buildReport.reportFolderMissing', fix: 'Create the report folder with create-report-run.mjs before running build-report.mjs.', path: reportFolder, exitCode: EXIT.notFound });
 
 const config = loadWorkflowConfig();
 const chapters = getAnalysisArtifacts(config);
@@ -52,7 +91,10 @@ function readRequiredYaml(file, label) {
   const path = join(reportFolder, file);
   const result = tryReadYaml(path);
   if (!result.ok) {
-    abort(result.error.startsWith('ENOENT') ? `missing ${label}: ${path}` : `failed to parse ${label} (${file}): ${result.error}`);
+    if (result.error.startsWith('ENOENT')) {
+      abort({ message: `missing ${label}: ${path}`, dimension: 'missingArtifact', code: 'buildReport.missingArtifact', fix: `Author ${file} (or run the upstream step that produces it) before re-running build-report.mjs.`, path: file, exitCode: EXIT.notFound });
+    }
+    abort({ message: `failed to parse ${label} (${file}): ${result.error}`, dimension: 'yamlParse', code: 'buildReport.yamlParse', fix: `Fix YAML syntax in ${file}.`, path: file });
   }
   return result.value;
 }
@@ -62,7 +104,7 @@ const evidence = readRequiredYaml(evidenceFile, 'evidence ledger');
 const chapterDocs = chapters.map((spec) => {
   const doc = readRequiredYaml(spec.file, `chapter ${spec.order}`);
   if (doc.artifact !== spec.artifact) {
-    abort(`${spec.file}: artifact "${doc.artifact}" does not match chapter key "${spec.artifact}"`);
+    abort({ message: `${spec.file}: artifact "${doc.artifact}" does not match chapter key "${spec.artifact}"`, dimension: 'documentHead', code: 'buildReport.artifactMismatch', fix: `Set artifact: "${spec.artifact}" at the head of ${spec.file}.`, path: spec.file });
   }
   return { spec, doc };
 });
@@ -83,7 +125,7 @@ function enforceReportMetaShape(metaDoc) {
   if (issues.length) {
     const lines = issues.slice(0, 8).map((issue) => `  - ${issue.path}: ${issue.message}`);
     const trailer = issues.length > 8 ? `\n  - ... and ${issues.length - 8} more (run check-report-meta.mjs for the full list)` : '';
-    abort(`${REPORT_META_FILE} fails ReportMetaSchema:\n${lines.join('\n')}${trailer}`);
+    abort({ message: `${REPORT_META_FILE} fails ReportMetaSchema:\n${lines.join('\n')}${trailer}`, dimension: 'reportMetaShape', code: 'buildReport.reportMetaShape', fix: 'Run check-report-meta.mjs and fix the reported issues before re-running build-report.', path: REPORT_META_FILE });
   }
 }
 
@@ -99,15 +141,15 @@ function collectReportMetaClaimRefs(value, path = REPORT_META_FILE, out = []) {
   if (!value || typeof value !== 'object') return out;
   for (const [key, child] of Object.entries(value)) {
     if (key === 'claimRefs') {
-      if (!Array.isArray(child)) abort(`${path}.claimRefs must be an array`);
+      if (!Array.isArray(child)) abort({ message: `${path}.claimRefs must be an array`, dimension: 'reportMetaShape', code: 'buildReport.claimRefsShape', fix: `Make ${path}.claimRefs an array of claim id strings.`, path });
       child.forEach((ref, index) => {
-        if (typeof ref !== 'string') abort(`${path}.claimRefs.${index} must be a claim id string`);
+        if (typeof ref !== 'string') abort({ message: `${path}.claimRefs.${index} must be a claim id string`, dimension: 'reportMetaShape', code: 'buildReport.claimRefStringRequired', fix: `Replace ${path}.claimRefs.${index} with a C<ChapterLetter>### string.`, path: `${path}.claimRefs.${index}` });
         out.push({ ref, path: `${path}.claimRefs.${index}` });
       });
       continue;
     }
     if (key === 'claimRef') {
-      if (typeof child !== 'string') abort(`${path}.claimRef must be a claim id string`);
+      if (typeof child !== 'string') abort({ message: `${path}.claimRef must be a claim id string`, dimension: 'reportMetaShape', code: 'buildReport.claimRefStringRequired', fix: `Replace ${path}.claimRef with a C<ChapterLetter>### string (or remove it).`, path: `${path}.claimRef` });
       out.push({ ref: child, path: `${path}.claimRef` });
       continue;
     }
@@ -118,16 +160,16 @@ function collectReportMetaClaimRefs(value, path = REPORT_META_FILE, out = []) {
 
 function checkReportMetaClaimRefs(metaDoc, evidenceLedger) {
   const claimIds = new Set((evidenceLedger.claims ?? []).map((claim) => claim?.id).filter(Boolean));
-  if (!claimIds.size) abort(`${evidenceFile} has no claims; run build-evidence-ledger.mjs before build-report.mjs`);
+  if (!claimIds.size) abort({ message: `${evidenceFile} has no claims; run build-evidence-ledger.mjs before build-report.mjs`, dimension: 'missingArtifact', code: 'buildReport.evidenceEmpty', fix: 'Run build-evidence-ledger.mjs to consolidate chapter localEvidence into evidence.yaml.', path: evidenceFile });
   for (const { ref, path } of collectReportMetaClaimRefs(metaDoc)) {
     if (LEGACY_CLAIM_ID_RE.test(ref)) {
-      abort(`${path} uses legacy claim ref ${ref}; use the chapter-letter id from ${evidenceFile} (for example CO001)`);
+      abort({ message: `${path} uses legacy claim ref ${ref}; use the chapter-letter id from ${evidenceFile} (for example CO001)`, dimension: 'claimRefs', code: 'buildReport.legacyClaimRef', fix: `Replace ${ref} at ${path} with the canonical chapter-letter claim id from ${evidenceFile}.`, path });
     }
     if (!CLAIM_ID_RE.test(ref)) {
-      abort(`${path} has invalid claim ref ${ref}; expected C<ChapterLetter><Seq3> (for example CO001)`);
+      abort({ message: `${path} has invalid claim ref ${ref}; expected C<ChapterLetter><Seq3> (for example CO001)`, dimension: 'claimRefs', code: 'buildReport.claimRefFormat', fix: `Replace ${ref} at ${path} with a C<ChapterLetter><Seq3> id (e.g. CO001).`, path });
     }
     if (!claimIds.has(ref)) {
-      abort(`${path} references missing claim ${ref} in ${evidenceFile}`);
+      abort({ message: `${path} references missing claim ${ref} in ${evidenceFile}`, dimension: 'claimRefs', code: 'buildReport.claimRefMissing', fix: `Either add ${ref} to a chapter's localEvidence.claims (then re-run build-evidence-ledger.mjs), or replace ${path}.${ref} with an existing claim id.`, path });
     }
   }
 }
@@ -223,7 +265,7 @@ function collectGlobalArtifacts(field) {
   for (const { doc } of chapterDocs) {
     for (const item of doc[field] ?? []) {
       if (!item?.id) continue;
-      if (seen.has(item.id)) abort(`duplicate ${field} id ${item.id} across chapters`);
+      if (seen.has(item.id)) abort({ message: `duplicate ${field} id ${item.id} across chapters`, dimension: 'duplicateIds', code: 'buildReport.duplicateArtifactId', fix: `Renumber the duplicate ${field.slice(0, -1)} id ${item.id} so it uses its chapter's letter and is unique within that chapter.`, path: field });
       seen.add(item.id);
       out.push(dropLocalEvidenceFields(item));
     }
@@ -331,15 +373,37 @@ const fullReportPath = join(reportFolder, fullReportFile);
 const summaryCardPath = join(reportFolder, summaryCardFile);
 
 if (args.dryRun) {
-  console.log(`[build-report] dry-run: would write ${fullReportPath}`);
-  console.log(`[build-report] dry-run: would write ${summaryCardPath}`);
-  console.log(`[build-report] chapters=${chapterDocs.length} tables=${tables.length} figures=${figures.length} sources=${sourceRefs.length}`);
+  if (outputFormat === 'text') {
+    console.log(`[build-report] dry-run: would write ${fullReportPath}`);
+    console.log(`[build-report] dry-run: would write ${summaryCardPath}`);
+    console.log(`[build-report] chapters=${chapterDocs.length} tables=${tables.length} figures=${figures.length} sources=${sourceRefs.length}`);
+  } else {
+    const envelope = validationEnvelope({
+      ok: true,
+      validator: 'build-report',
+      reportFolder,
+      summary: { stage: 'build-report', dryRun: true, fullReportPath, summaryCardPath, chapters: chapterDocs.length, tables: tables.length, figures: figures.length, sources: sourceRefs.length },
+    });
+    if (outputFormat === 'json') console.log(JSON.stringify(envelope, null, 2));
+    else console.log(formatValidationCompact(envelope));
+  }
   process.exit(EXIT.ok);
 }
 
 writeYaml(fullReportPath, fullReport);
 writeYaml(summaryCardPath, summaryCard);
-console.log(`[build-report] ✓ wrote ${fullReportFile} (${tables.length} tables, ${figures.length} figures) and ${summaryCardFile}`);
+if (outputFormat === 'text') {
+  console.log(`[build-report] ✓ wrote ${fullReportFile} (${tables.length} tables, ${figures.length} figures) and ${summaryCardFile}`);
+} else {
+  const envelope = validationEnvelope({
+    ok: true,
+    validator: 'build-report',
+    reportFolder,
+    summary: { stage: 'build-report', fullReportPath, summaryCardPath, chapters: chapterDocs.length, tables: tables.length, figures: figures.length, sources: sourceRefs.length },
+  });
+  if (outputFormat === 'json') console.log(JSON.stringify(envelope, null, 2));
+  else console.log(formatValidationCompact(envelope));
+}
 
 function computeSourceStats(evidenceLedger, chapters, runDateStr) {
   const sources = evidenceLedger.sources ?? [];

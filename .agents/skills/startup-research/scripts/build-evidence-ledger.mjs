@@ -21,6 +21,7 @@ import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, canonicalSourceUrl, FINAL_ARTIFACTS, getAnalysisArtifacts, loadWorkflowConfig, parseDate, readYaml, registrableDomain, writeYaml } from './utils.mjs';
 import { FRESHNESS_THRESHOLDS, EVIDENCE_QUALITY_TIERS } from './validation-catalog.mjs';
+import { formatValidationCompact, formatValidationText, validationEnvelope, validationIssue } from './contracts/validation-result.mjs';
 
 // Local: collapse all whitespace runs to single spaces, trim, and lowercase
 // for source/claim deduplication keys.
@@ -32,39 +33,105 @@ const WORKFLOW_CONFIG = loadWorkflowConfig();
 const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
 const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 
+// The agent-facing finalize pipeline runs this script and surfaces failures
+// in the same envelope shape every check-* validator emits, so retry loops
+// can read issues[].dimension/.fix without learning a per-script prose
+// format. abort() routes every error through a dimension-tagged envelope;
+// `text` keeps the legacy human-readable line for direct CLI use.
+let outputFormat = 'text';
+let reportFolderForEnvelope = null;
+
+function usageAbort(message) {
+  abort({
+    message: `${message}\nUsage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder> [--format text|json|compact]`,
+    dimension: 'usage',
+    code: 'evidenceLedger.usage',
+    fix: 'Pass exactly one report folder and an optional --format value (text|json|compact).',
+    path: 'cli',
+  });
+}
+
+function abort({ message, dimension = 'evidenceLedger', code = 'evidenceLedger.failure', fix = null, path = EVIDENCE_FILE, exitCode = EXIT.failure }) {
+  const envelope = validationEnvelope({
+    ok: false,
+    validator: 'build-evidence-ledger',
+    artifact: EVIDENCE_FILE,
+    reportFolder: reportFolderForEnvelope,
+    issues: [validationIssue({ path, message, dimension, code, fix })],
+    summary: { stage: 'build-evidence-ledger' },
+  });
+  if (outputFormat === 'json') console.log(JSON.stringify(envelope, null, 2));
+  else if (outputFormat === 'compact') console.log(formatValidationCompact(envelope));
+  else console.error(`[evidence-ledger] ${message}`);
+  process.exit(exitCode);
+}
+
 function parseArgs(argv) {
-  const args = { folder: null };
-  for (const arg of argv) {
-    if (arg.startsWith('-')) {
-      console.error(`[evidence-ledger] unknown flag: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder>`);
-      process.exit(EXIT.failure);
-    } else if (!args.folder) args.folder = arg;
-    else {
-      console.error(`[evidence-ledger] unexpected positional argument: ${arg}\nUsage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder>`);
-      process.exit(EXIT.failure);
+  const args = { folder: null, format: 'text' };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--format') {
+      const next = argv[++i];
+      if (next === undefined || next.startsWith('-')) usageAbort('--format requires a value (text|json|compact)');
+      args.format = next;
+    } else if (arg === '-h' || arg === '--help') {
+      usageAbort('help requested');
+    } else if (arg.startsWith('-')) {
+      usageAbort(`unknown flag: ${arg}`);
+    } else if (!args.folder) {
+      args.folder = arg;
+    } else {
+      usageAbort(`unexpected positional argument: ${arg}`);
     }
   }
+  if (!args.folder) usageAbort('missing <report-folder>');
+  if (!['text', 'json', 'compact'].includes(args.format)) usageAbort(`invalid --format: ${args.format} (expected text|json|compact)`);
   return args;
 }
 
 const args = parseArgs(process.argv.slice(2));
-if (!args.folder) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <report-folder>');
-  process.exit(EXIT.failure);
-}
+outputFormat = args.format;
 
 const reportFolder = resolve(args.folder);
+reportFolderForEnvelope = reportFolder;
 const docs = loadAnalysisDocs(reportFolder);
 if (!docs.size) {
-  console.error(`[evidence-ledger] no report artifacts found in ${reportFolder}`);
-  process.exit(EXIT.notFound);
+  abort({
+    message: `no report artifacts found in ${reportFolder}`,
+    dimension: 'missingArtifact',
+    code: 'evidenceLedger.noArtifacts',
+    fix: 'Author every configured chapter YAML under the report folder before building the evidence ledger.',
+    path: reportFolder,
+    exitCode: EXIT.notFound,
+  });
 }
 
 const { sources, claims, evidenceGaps, duplicateSourceCount, duplicateClaimCount } = consolidate(docs);
 const ledger = buildLedger(docs, sources, claims, evidenceGaps);
 
-writeYaml(join(reportFolder, EVIDENCE_FILE), ledger);
-console.log(`[evidence-ledger] wrote ${join(reportFolder, EVIDENCE_FILE)} (${sources.length} sources [${duplicateSourceCount} duplicates], ${claims.length} claims [${duplicateClaimCount} duplicates])`);
+const evidencePath = join(reportFolder, EVIDENCE_FILE);
+writeYaml(evidencePath, ledger);
+const summaryFields = {
+  evidencePath,
+  sources: sources.length,
+  duplicateSources: duplicateSourceCount,
+  claims: claims.length,
+  duplicateClaims: duplicateClaimCount,
+  evidenceGaps: evidenceGaps.length,
+};
+if (outputFormat === 'text') {
+  console.log(`[evidence-ledger] wrote ${evidencePath} (${sources.length} sources [${duplicateSourceCount} duplicates], ${claims.length} claims [${duplicateClaimCount} duplicates])`);
+} else {
+  const envelope = validationEnvelope({
+    ok: true,
+    validator: 'build-evidence-ledger',
+    artifact: EVIDENCE_FILE,
+    reportFolder,
+    summary: { stage: 'build-evidence-ledger', ...summaryFields },
+  });
+  if (outputFormat === 'json') console.log(JSON.stringify(envelope, null, 2));
+  else console.log(formatValidationCompact(envelope));
+}
 
 // ---------------------------------------------------------------------------
 

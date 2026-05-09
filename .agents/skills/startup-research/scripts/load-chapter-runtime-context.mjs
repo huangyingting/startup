@@ -12,12 +12,16 @@ import { EXIT, isRunId, loadWorkflowConfig, companySlugFromRunId, researchCacheD
 import { RESTRICTED_ACCESS_STATUSES } from './validation-catalog.mjs';
 
 function usage() {
-  console.error(`Usage: node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list | --all] [--report-folder <path>] [--include-context]
+  console.error(`Usage: node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs [--order <n> | --key <key> | --file <artifact.yaml> | --list] [--report-folder <path>] [--include-context]
 
 Examples:
     node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list
     node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 1 --report-folder reports/20260503145959-openai
     node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 4 --include-context --report-folder reports/20260503145959-openai
+
+  Selectors are interchangeable: --order matches by chapter.order (1-based), --key by chapter.key ("company-overview" / "market-analysis" / ...),
+  and --file by chapter.file ("01-company-overview.yaml" / ...). Pick whichever the loop already has on hand. SKILL.md uses --order in its narrative;
+  --key/--file are equivalent and useful in retry loops where the chapter key or file path is what failed.
 
   --report-folder alone projects run identity (run.runDate) and runCache.refreshContext.
   Add --include-context to also project earlier-chapter rollups (contextChapters, cumulativeContext);
@@ -31,7 +35,6 @@ function parseArgs(argv) {
     key: null,
     file: null,
     list: false,
-    all: false,
     includeContext: false,
     reportFolder: null,
   };
@@ -43,13 +46,12 @@ function parseArgs(argv) {
     else if (arg === '--key') args.key = argv[++i] ?? null;
     else if (arg === '--file') args.file = argv[++i] ?? null;
     else if (arg === '--list') args.list = true;
-    else if (arg === '--all') args.all = true;
     else if (arg === '--include-context') args.includeContext = true;
     else if (arg === '--report-folder') args.reportFolder = argv[++i] ?? null;
     else usage();
   }
 
-  const selectors = [Number.isFinite(args.order), Boolean(args.key), Boolean(args.file), args.list, args.all].filter(Boolean).length;
+  const selectors = [Number.isFinite(args.order), Boolean(args.key), Boolean(args.file), args.list].filter(Boolean).length;
   if (selectors > 1) usage();
   if (args.order !== null && !Number.isInteger(args.order)) usage();
   if (!selectors) args.list = true;
@@ -250,12 +252,6 @@ function main() {
 
   if (args.list) {
     printJson(orderedList(config));
-    return;
-  }
-
-  if (args.all) {
-    const runtimeContexts = config.chapters.map((chapter) => buildRuntimeContext(config, chapter));
-    printJson(runtimeContexts);
     return;
   }
 

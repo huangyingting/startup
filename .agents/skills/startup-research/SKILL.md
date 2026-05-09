@@ -46,6 +46,7 @@ For each chapter from the `--list` roster:
 1. Load its per-chapter delta:
    `node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order <n> --include-context --report-folder <reportFolder>`
    - The loader always emits JSON to stdout; do not pass `--format`.
+   - `--order <n>` is the canonical selector; `--key <chapter-key>` and `--file <chapter.file>` are equivalent and useful in retry loops where the failing chapter's key or file path is what you have on hand. Pick one.
    - Omit `--include-context` when drafting chapters in parallel (it would project a stale rollup of unfinished sibling chapters). On the first chapter the flag is harmless — the rollup is just empty — so keep it for consistency unless you are also drafting later chapters concurrently.
 2. Author the chapter YAML at `reportFolder/<runtimeContext.chapter.file>` using:
    - `runtimeContext.chapter` for mission, content requirements, planned tables/figures, quality bar, and gate.
@@ -100,7 +101,7 @@ Finalization is a sequential pipeline; it stops at the first failing step and ex
 `finalize-report` also fails early (before any subprocess) when:
 - `--refresh` is set, `--refresh-reason` is also passed on the CLI, and the value does not match the one cached in `.research-cache/<runId>/refresh-context.yaml`. Omit `--refresh-reason` on `finalize-report` to reuse the cached value (recommended).
 
-> **Tip:** When `finalize-report` aborts at `check-chapter:<key>:strict`, the inner sweep uses `--format compact` so the message is human-readable but lacks structured fields. Rerun the failing chapter directly with `--format json` to get the same `retryOrder[]`, `globalHints[]`, and per-issue `fix` data the chapter-generation loop relies on:
+> **Tip:** When `finalize-report` aborts at `check-chapter:<key>:strict`, the inner sweep uses `--format compact` so the message is human-readable but lacks structured fields. The sweep is sequential and exits at the first failing chapter, so chapters after the failure are never checked in that finalize run; rerun the failing chapter directly with `--format json` to get the same `retryOrder[]`, `globalHints[]`, and per-issue `fix` data the chapter-generation loop relies on, and re-run `finalize-report` after fixing it so the remaining chapters get their strict sweep too:
 >
 > `node .agents/skills/startup-research/scripts/check-chapter.mjs <reportFolder> <chapter.file> --strict --format json`
 

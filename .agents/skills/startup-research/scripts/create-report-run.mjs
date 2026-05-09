@@ -2,7 +2,7 @@
 // Create or resume a report folder under reports/<timestamp>-<slug>/ after
 // walking existing reports/<runId>/summary-card.yaml files for duplicate
 // company name or website/domain risk.
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import yaml from 'js-yaml';
 import {
@@ -46,6 +46,17 @@ function parseArgs(argv) {
   }
   args.timestamp = nowRunTimestamp();
   if (!args.nameParts.length) usage();
+  // Refresh runs must record a reason: link-refresh writes it to
+  // revision.refreshReason on both the new and prior reports, and
+  // finalize-report reuses the cached value when --refresh-reason is
+  // omitted on its CLI. Without enforcement here a refresh run silently
+  // ends with revision.refreshReason: null. Resume invocations are
+  // exempt because the cached refresh-context.yaml from the original
+  // create-report-run already carries the reason.
+  if (args.refresh && !args.resume && !args.refreshReason.trim()) {
+    console.error('[create-report-run] --refresh requires --refresh-reason "<text>" so revision.refreshReason is recorded on the new and prior reports.');
+    process.exit(EXIT.failure);
+  }
   return args;
 }
 
@@ -188,6 +199,14 @@ function writeFetchEnvSnippet(base) {
     fetchLogExportLine(base),
     '',
   ].join('\n');
+  // Skip the rewrite when the file already matches the intended body so
+  // --resume does not stomp on hand-edits (e.g. an operator pointing at a
+  // CI-shared trail) when the canonical content is already correct.
+  if (existsSync(path)) {
+    try {
+      if (readFileSync(path, 'utf8') === body) return path;
+    } catch { /* fall through to overwrite */ }
+  }
   writeFileSync(path, body, 'utf8');
   return path;
 }
