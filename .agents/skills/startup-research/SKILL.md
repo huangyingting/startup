@@ -25,16 +25,21 @@ If any prose in this file disagrees with a runtime/script output, trust the runt
    Output is the per-chapter delta only (chapter briefs, gates, neighbours); the static frame already lives in [`references/rules.md`](references/rules.md).
 2. Create a report folder:
    `node .agents/skills/startup-research/scripts/create-report-run.mjs <companyName> [--website <companyUrl>]`
+   - The script writes the **report folder path to stdout** (everything else — hints, refresh-context notices, env-snippet path — goes to stderr). Capture it into `REPORT_FOLDER` so subsequent commands have a stable handle:
+     ```sh
+     REPORT_FOLDER=$(node .agents/skills/startup-research/scripts/create-report-run.mjs <companyName> [--website <companyUrl>])
+     ```
    - For refresh: add `--refresh [--refresh-reason <refreshReason>]`.
    - Exit `1`: bad CLI arguments or a non-recoverable failure; read stderr (every script prefixes its messages with `[script-name]`) for the offending field, fix it, then rerun.
    - Exit `2`: a finalized duplicate already exists; stop.
    - Exit `3`: rerun the same command with `--resume`; do not create suffixed duplicate folders.
    - Exit `4`: a required target does not exist. From `create-report-run.mjs --resume`, the in-progress folder you tried to resume is missing — rerun **without** `--resume` to create a fresh one. From `finalize-report.mjs`, `report-meta.yaml` is missing — author it under the report folder and rerun.
-3. Use the created folder as `<reportFolder>` for every later command. The runId is the folder basename, and `runtimeContext.run.runDate` (emitted by the per-chapter loader call below whenever `--report-folder` is supplied) is the canonical `runDate` for chapter YAML heads — derive every head's `runDate` from it instead of the model clock.
+3. Use `$REPORT_FOLDER` (the path captured above, e.g. `reports/20260509143000-acme`) as `<reportFolder>` for every later command. The runId is the folder basename (`<runId>=20260509143000-acme`), and `runtimeContext.run.runDate` (emitted by the per-chapter loader call below whenever `--report-folder` is supplied) is the canonical `runDate` for chapter YAML heads — derive every head's `runDate` from it instead of the model clock.
 4. Export `STARTUP_FETCH_LOG_PATH` before any `fetch-url` invocation:
 
    ```sh
-   source .research-cache/<runId>/env.sh
+   RUN_ID=$(basename "$REPORT_FOLDER")
+   source ".research-cache/${RUN_ID}/env.sh"
    ```
 
    `create-report-run.mjs` writes this snippet automatically; sourcing it sets `STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl`. If the env var is already set (e.g. CI exports a workflow-wide trail at `.research-cache/_fetch-log.jsonl`), keep that value — `check-chapter` only needs each cited URL to appear in the trail at least once. `fetch-url` appends one JSON line per fetch; `check-chapter` emits an `unverifiedSource` **warning** for each cited URL absent from the trail (promoted to a failure under `--strict`). When the env var is unset and no trail file exists at any candidate path, `check-chapter` instead emits a single `fetchTrailMissing` warning so the disabled-audit case is visible rather than silent.
@@ -46,7 +51,7 @@ For each chapter from the `--list` roster:
 1. Load its per-chapter delta:
    `node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order <n> --include-context --report-folder <reportFolder>`
    - The loader always emits JSON to stdout; do not pass `--format`.
-   - `--order <n>` is the canonical selector; `--key <chapter-key>` and `--file <chapter.file>` are equivalent and useful in retry loops where the failing chapter's key or file path is what you have on hand. Pick one.
+   - `--order <n>` is the canonical selector; `--key <chapter-key>` and `--file <chapter.file>` are equivalent and useful in retry loops where the failing chapter's key or file path is what you have on hand. Pick one per invocation (parallel workers may use different selectors across invocations).
    - Omit `--include-context` when drafting chapters in parallel (it would project a stale rollup of unfinished sibling chapters). On the first chapter the flag is harmless — the rollup is just empty — so keep it for consistency unless you are also drafting later chapters concurrently.
 2. Author the chapter YAML at `reportFolder/<runtimeContext.chapter.file>` using:
    - `runtimeContext.chapter` for mission, content requirements, planned tables/figures, quality bar, and gate.
@@ -101,9 +106,15 @@ Finalization is a sequential pipeline; it stops at the first failing step and ex
 `finalize-report` also fails early (before any subprocess) when:
 - `--refresh` is set, `--refresh-reason` is also passed on the CLI, and the value does not match the one cached in `.research-cache/<runId>/refresh-context.yaml`. Omit `--refresh-reason` on `finalize-report` to reuse the cached value (recommended).
 
-> **Tip:** When `finalize-report` aborts at `check-chapter:<key>:strict`, the inner sweep uses `--format compact` so the message is human-readable but lacks structured fields. The sweep is sequential and exits at the first failing chapter, so chapters after the failure are never checked in that finalize run; rerun the failing chapter directly with `--format json` to get the same `retryOrder[]`, `globalHints[]`, and per-issue `fix` data the chapter-generation loop relies on, and re-run `finalize-report` after fixing it so the remaining chapters get their strict sweep too:
+> **Tip:** When `finalize-report` aborts, the failing inner step's output is whatever format that step uses by default — `check-chapter:<key>:strict` is invoked with `--format compact`, every other check/build step runs with the default `--format text`. Both are human-readable but lack structured `issues[].fix`, `objectFailures[]`, `globalHints[]`, `retryOrder[]`, etc. Rerun the failing step directly with `--format json` to get those structured fields, then re-run `finalize-report` so the remaining steps execute. Step coverage:
 >
-> `node .agents/skills/startup-research/scripts/check-chapter.mjs <reportFolder> <chapter.file> --strict --format json`
+> - `check-chapter:<key>:strict` → `node .agents/skills/startup-research/scripts/check-chapter.mjs <reportFolder> <chapter.file> --strict --format json`
+> - `check-report-meta` → `node .agents/skills/startup-research/scripts/check-report-meta.mjs <reportFolder> --format json`
+> - `build-evidence-ledger` → `node .agents/skills/startup-research/scripts/build-evidence-ledger.mjs <reportFolder> --format json`
+> - `check-cross-chapter` → `node .agents/skills/startup-research/scripts/check-cross-chapter.mjs <reportFolder> --format json`
+> - `build-report` → `node .agents/skills/startup-research/scripts/build-report.mjs <reportFolder> --format json`
+> - `check-report` → `node .agents/skills/startup-research/scripts/check-report.mjs <reportFolder> --format json`
+> - `prepare-refresh` / `link-refresh` (refresh only) → `link-refresh.mjs` does **not** support `--format`; triage from the `[refresh] ...` stderr lines (which name the offending file/field) and rerun `finalize-report.mjs --refresh` after the fix. Do NOT hand-edit `revision:` in `report-meta.yaml` to work around it — link-refresh owns those fields.
 
 When `finalize-report` exits 0, summarize the run for the user using every field listed in [`rules.md`](references/rules.md) → *Agent policy (binding)* → `finalResponseFields`. Pull the values straight from the produced files; do not paraphrase or omit fields:
 
@@ -128,6 +139,8 @@ When `finalize-report` exits 0, summarize the run for the user using every field
 
 1. `create-report-run.mjs --refresh` finds the most recent finalized `current` report for the same company/domain and writes `.research-cache/<runId>/refresh-context.yaml`.
 2. The chapter loader projects that file as `runtimeContext.runCache.refreshContext`. Read it for prior-run summary, score, recommendation, and key metrics — but treat every value listed in [`rules.md`](references/rules.md) → *Agent policy (binding)* → `volatileFacts` as stale and re-fetch it.
-3. `finalize-report.mjs --refresh` runs `link-refresh.mjs` twice: once before assembly to mark the new run `revision.status=current`, and once after `check-report` passes to flip the prior run's `revision.status` to `superseded` and reassemble its `summary-card.yaml`/`full-report.yaml` so cross-references stay consistent.
-4. You do not need to author `revision` in `report-meta.yaml`. `link-refresh.mjs` (run automatically by the `prepare-refresh` and `link-refresh` finalize steps) writes `revision.status: current`, `revision.refreshOfRunId` (resolved from a company/domain match against finalized `current` reports), `revision.supersededByRunId: null`, and `revision.refreshReason` onto the new `report-meta.yaml`, plus the back-pointer `supersededByRunId` on the prior run. Set `revision.refreshOfRunId` explicitly only to disambiguate when more than one finalized `current` report matches the same company/domain.
+3. `finalize-report.mjs --refresh` runs `link-refresh.mjs` in two distinct phases:
+   - **Pre-assembly (`prepare-refresh` step, `link-refresh.mjs --prepare-current`)** — only writes the *new* run's `revision.status: current`, `revision.refreshOfRunId`, `revision.supersededByRunId: null`, and `revision.refreshReason` onto its `report-meta.yaml`. Runs after `check-report-meta` passes and before `build-evidence-ledger`. The prior run is untouched at this point.
+   - **Post-publishability (`link-refresh` step, default mode)** — only fires after `check-report` passes. Flips the prior run's `revision.status` to `superseded`, sets its `supersededByRunId` back-pointer to the new runId, and reassembles its `summary-card.yaml` / `full-report.yaml` so cross-references stay consistent.
+4. You do not need to author `revision` in `report-meta.yaml` — omit the field entirely (canonical). The two `link-refresh` phases above own every revision field on both runs. Set `revision.refreshOfRunId` explicitly only to disambiguate when more than one finalized `current` report matches the same company/domain.
 5. Pass `--refresh-reason` to `create-report-run.mjs`. `finalize-report.mjs` reuses the cached value automatically; only re-pass it on `finalize-report` when you intentionally want to override the cache, in which case both values must match. `create-report-run` writes the reason to `.research-cache/<runId>/refresh-context.yaml`; `link-refresh.mjs` copies it onto `revision.refreshReason` of the new and prior `report-meta.yaml`.

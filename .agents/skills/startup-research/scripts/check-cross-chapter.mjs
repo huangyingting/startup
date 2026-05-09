@@ -10,7 +10,7 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
-import { TITLE_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_TITLE_TOKEN_LENGTH } from './validation-catalog.mjs';
+import { TITLE_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_TITLE_TOKEN_LENGTH, resolveFixHint } from './validation-catalog.mjs';
 import {
   formatValidationCompact,
   formatValidationText,
@@ -347,11 +347,18 @@ function toIssuePayload(entry) {
   // the canonical 'error'/'warning' severity itself. Keep the rest of the
   // entry's context fields (metric, occurrences, claimId, ...) as extras.
   const { severity, message, dimension, ...extra } = entry;
+  // Look up the per-dimension fix hint from validation-catalog so cross-chapter
+  // issues carry the same `issue.fix` shape that check-chapter / check-report
+  // emit. Falls back to undefined for dimensions without a registered hint
+  // (e.g. yamlParse rendered without extras), in which case validationIssue
+  // omits the field rather than serializing `null`.
+  const fix = resolveFixHint(dimension, extra);
   return {
     path: entry.chapter ?? entry.kind ?? 'cross-chapter',
     message,
     dimension,
     code: dimension,
+    ...(fix ? { fix } : {}),
     ...extra,
   };
 }

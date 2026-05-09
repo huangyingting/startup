@@ -107,31 +107,66 @@ function idSystemSection() {
   ].join('\n');
 }
 
+const CLASS_LABELS = {
+  'chapter-failure': 'chapter-failure',
+  'chapter-warning': 'chapter-warning',
+  'cross-chapter': 'cross-chapter',
+  'finalize-step': 'finalize-step',
+  'report-meta-warning': 'report-meta-warning',
+};
+const CLASS_HEADINGS = {
+  'chapter-failure': 'Chapter failure-class (numeric `precedence`, ordered root-cause first)',
+  'chapter-warning': 'Chapter warning-class (`precedence: —`, eligible for `acknowledgedWarnings` at chapter scope)',
+  'cross-chapter': 'Cross-chapter (`check-cross-chapter`, `precedence: —`, NOT ack-able)',
+  'finalize-step': 'Finalize-step (`check-report` / `build-evidence-ledger` / `build-report`, `precedence: —`, NOT ack-able)',
+  'report-meta-warning': 'Report-meta warnings (`check-report-meta`, `severity: warning` only, no opt-out)',
+};
+
 function dimensionsSection() {
   const dims = dimensionCatalog();
-  const rows = dims.map((d) => {
-    const precedence = WARNING_DIMENSIONS.has(d.dimension) ? '—' : (d.precedenceRank ?? '—');
+  const groups = new Map();
+  for (const d of dims) {
+    if (!groups.has(d.dimensionClass)) groups.set(d.dimensionClass, []);
+    groups.get(d.dimensionClass).push(d);
+  }
+  const renderRow = (d) => {
+    const precedence = d.dimensionClass === 'chapter-failure' ? (d.precedenceRank ?? '—') : '—';
     const fix = (d.defaultFix ?? '—').replace(/\|/g, '\\|');
     const suppressed = d.suppressedBy.length ? d.suppressedBy.map((s) => `\`${s}\``).join(', ') : '—';
-    return `| ${precedence} | \`${d.dimension}\` | ${fix} | ${suppressed} |`;
-  });
+    return `| ${precedence} | \`${CLASS_LABELS[d.dimensionClass] ?? d.dimensionClass}\` | \`${d.dimension}\` | ${fix} | ${suppressed} |`;
+  };
+  const groupSection = (cls) => {
+    const list = groups.get(cls) ?? [];
+    if (!list.length) return [];
+    return [
+      `#### ${CLASS_HEADINGS[cls]}`,
+      '',
+      '| Precedence | Class | Dimension | Default fix | Suppressed by |',
+      '|---|---|---|---|---|',
+      ...list.map(renderRow),
+      '',
+    ];
+  };
   const warningList = [...WARNING_DIMENSIONS].sort().map((d) => `\`${d}\``).join(', ');
   return [
-    '`check-chapter` and `check-report` emit failures tagged with these `dimension` keys. Fix in `precedence` order (lowest rank = root cause first); a suppressed dimension is masked while its upstream still fails, so the upstream fix usually clears the downstream too.',
+    'Six scripts emit issues/warnings tagged with these `dimension` keys: `check-chapter`, `check-cross-chapter`, `check-report-meta`, `build-evidence-ledger`, `build-report`, and `check-report`. The runtime `runtimeContext` object does NOT carry this catalog; trust the per-issue `fix` field in JSON output (and the tables below) for repair guidance.',
+    '',
+    'Within `check-chapter`, fix in `precedence` order (lowest rank = root cause first); a suppressed dimension is masked while its upstream still fails, so the upstream fix usually clears the downstream too. Other validators do not use precedence — fix what the message names.',
     '',
     '`defaultFix` is the generic guidance baked into the validator; concrete failures echo the same hint with the specific field/id filled in (e.g. "Add 3 more registrable domain(s)…"). Trust the per-failure `fix` in JSON output over the generic version below.',
     '',
-    'Precedence `—` marks **warning-class** dimensions: they never appear in `retryOrder[]`, never block `check-chapter` (default), and only block when `--strict` is set. They are the only dimensions that may appear in `acknowledgedWarnings[].dimension` (see below).',
+    'Dimensions are grouped by class. Only the **chapter-warning** class is acknowledgeable, and even there `paywallRisk` is acknowledgeable *only* at chapter scope — its report-scope failure (from `check-report` when the consolidated restricted share crosses the 30% ceiling) is NOT ack-able and must be fixed by swapping sources. Two chapter-failure dimensions also fire at report scope from `check-report` (NOT ack-able in that context): `sourceDomains` (`reportGate.minDistinctDomains`) and `sourceStanceSpread` (`requireAdverseSource` across the consolidated ledger).',
     '',
-    '| Precedence | Dimension | Default fix | Suppressed by |',
-    '|---|---|---|---|',
-    ...rows,
-    '',
+    ...groupSection('chapter-failure'),
+    ...groupSection('chapter-warning'),
+    ...groupSection('cross-chapter'),
+    ...groupSection('finalize-step'),
+    ...groupSection('report-meta-warning'),
     '### `acknowledgedWarnings` opt-out',
     '',
     'You may opt out of intentional `--strict` warnings by listing them under a top-level `acknowledgedWarnings: [{ dimension, reason }]` entry on the chapter YAML. Each entry must satisfy:',
     '',
-    `- **dimension** is one of the warning-class dimensions above (precedence \`—\`): ${warningList}. Acks against any other dimension surface as a non-blocking \`acknowledgedWarnings\` warning so the misuse is visible without breaking historical reports.`,
+    `- **dimension** is one of the chapter warning-class dimensions listed above: ${warningList}. (Reminder: \`paywallRisk\` is ack-able **only** at chapter scope — the report-scope failure cannot be acknowledged from a chapter file.) Acks against any other dimension (cross-chapter, finalize-step, report-meta warnings, the report-level instances of \`paywallRisk\` / \`sourceDomains\` / \`sourceStanceSpread\`, or any other failure-class dimension) surface as a non-blocking \`acknowledgedWarnings\` warning so the misuse is visible without breaking historical reports.`,
     '- **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons do not take effect and produce a non-blocking `acknowledgedWarnings` warning.',
     '',
     'Acks never silence a real failure; the `failures.length === 0` gate is checked unconditionally. Use this only for genuinely non-actionable warnings (e.g. `tableNotes` on a pure factual snapshot whose `defaultFix` explicitly tells you to acknowledge it).',

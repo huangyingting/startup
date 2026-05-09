@@ -14,11 +14,13 @@
 // globalHints[] (when the same dimension fails on many objects, hinting at a
 // chapter-wide root cause).
 //
-// `--format compact` is the recommended default for shell loops: one line per
-// finding, no truncation, no preamble. The first line is `STATUS: OK` or
-// `STATUS: FAIL`; subsequent lines carry stable labels such as
-// `failedDimensions`, `retryOrder`, `suppressed`, `GLOBAL`, `FAIL`, and `WARN`
-// so callers can read the complete output while preserving the process exit code.
+// `--format compact` emits one line per finding (no truncation, no preamble);
+// the first line is `STATUS: OK` or `STATUS: FAIL` followed by stable labels
+// such as `failedDimensions`, `retryOrder`, `suppressed`, `GLOBAL`, `FAIL`,
+// and `WARN`. Use it for human-readable shell loops where the structured
+// fields are not needed. Note: SKILL.md's chapter retry loop recommends
+// `--format json` because `issues[].fix`, `objectFailures[]`, `globalHints[]`,
+// `retryOrder[]`, and `suppressedDimensions[]` drive root-cause-first repair.
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, registrableDomain, tryReadYaml } from './utils.mjs';

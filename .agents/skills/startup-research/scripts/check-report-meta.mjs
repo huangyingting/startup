@@ -97,6 +97,7 @@ function displayWarnings(meta) {
         message: 'coverFacts is empty; the detail-page Cover facts grid may be blank because summary.keyMetrics does not backfill it',
         dimension: 'displayCompleteness',
         code: 'reportMeta.coverFactsEmpty',
+        fix: 'Add 6–8 concise evidence-backed cover facts when the report has displayable headline facts; remove the empty array only when the report deliberately has no headline facts to surface.',
       }));
     } else if (coverFacts.length < 4) {
       warnings.push(validationWarning({
@@ -104,6 +105,7 @@ function displayWarnings(meta) {
         message: `coverFacts has only ${coverFacts.length} item(s); mature reports should normally provide 6–8 headline facts`,
         dimension: 'displayCompleteness',
         code: 'reportMeta.coverFactsSparse',
+        fix: `Extend coverFacts toward the recommended 6–8 evidence-backed headline facts (currently ${coverFacts.length}); pull additional facts from the strongest claims across company-overview, financials, and customers.`,
       }));
     }
     coverFacts.forEach((fact, index) => {

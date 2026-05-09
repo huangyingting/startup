@@ -338,7 +338,7 @@ export const ReportMetaSchema = z.object({
   slug: nonEmptyString.describe('company slug (matches every chapter\'s slug)'),
   runDate: dateLike,
   company: CompanyMetaSchema,
-  revision: RevisionSchema.nullable().optional().describe('DO NOT AUTHOR — written automatically by link-refresh.mjs. Set explicitly only to disambiguate when more than one finalized current report matches the same company/domain.'),
+  revision: RevisionSchema.nullable().optional().describe('DO NOT AUTHOR — written automatically by link-refresh.mjs. Canonical: omit the field entirely (preferred over `revision: null` or `revision: {}`). Set explicitly only to disambiguate when more than one finalized current report matches the same company/domain.'),
   subtitle: nullableString.optional(),
   coverageNotes: nullableString.optional().describe('caveats about coverage / dating / scope'),
   coverFacts: z.array(CoverFactSchema).nullable().optional().describe('front-page fact strip'),

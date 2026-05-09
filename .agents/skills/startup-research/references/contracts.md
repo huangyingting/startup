@@ -130,7 +130,7 @@ company:
   stage?: string|null
   headquarters?: string|null
   shortDescription?: string|null
-revision?:  # (nullable) DO NOT AUTHOR — written automatically by link-refresh.mjs. Set explicitly only to disambiguate when more than one finalized current report matches the same company/domain.
+revision?:  # (nullable) DO NOT AUTHOR — written automatically by link-refresh.mjs. Canonical: omit the field entirely (preferred over `revision: null` or `revision: {}`). Set explicitly only to disambiguate when more than one finalized current report matches the same company/domain.
   status: current|superseded (default "current")  # current=this run is the live report; superseded=replaced by a newer refresh
   refreshOfRunId?: string|null  # runId of the report this refresh replaces (set automatically by link-refresh.mjs)
   supersededByRunId?: string|null  # runId of the newer refresh that replaced this report (set on the prior run after link-refresh)
