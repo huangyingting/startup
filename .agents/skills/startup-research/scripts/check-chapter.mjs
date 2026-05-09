@@ -839,11 +839,29 @@ if (doc) {
 //      dimensions cannot be acknowledged (SKILL.md is explicit: "Never use
 //      this to silence real failures"). Acks against unknown or failure-class
 //      dimensions surface as a non-blocking warning so agents catch the
-//      misuse without breaking historical reports.
+//      misuse without breaking historical reports. Malformed entries
+//      (missing fields or short reason) also warn rather than silently
+//      drop, otherwise an agent could think a warning was acknowledged
+//      when the ack never took effect.
 const acks = Array.isArray(doc?.acknowledgedWarnings) ? doc.acknowledgedWarnings : [];
 const ackByDim = new Map();
-for (const ack of acks) {
-  if (typeof ack?.dimension !== 'string' || typeof ack?.reason !== 'string' || ack.reason.trim().length < 30) continue;
+for (const [ackIndex, ack] of acks.entries()) {
+  if (typeof ack?.dimension !== 'string' || ack.dimension.trim().length === 0) {
+    warn(
+      'acknowledgedWarnings',
+      `acknowledgedWarnings[${ackIndex}] is missing a non-empty dimension string; the entry has no effect. Remove it or fill in dimension.`,
+      { ackIndex },
+    );
+    continue;
+  }
+  if (typeof ack?.reason !== 'string' || ack.reason.trim().length < 30) {
+    warn(
+      'acknowledgedWarnings',
+      `acknowledgedWarnings entry for dimension "${ack.dimension}" has reason of ${ack?.reason?.trim?.().length ?? 0} chars (need >= 30); the entry has no effect. Lengthen the reason or remove the entry.`,
+      { ackDimension: ack.dimension, reasonLength: ack?.reason?.trim?.().length ?? 0 },
+    );
+    continue;
+  }
   if (!WARNING_DIMENSIONS.has(ack.dimension)) {
     warn(
       'acknowledgedWarnings',

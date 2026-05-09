@@ -165,7 +165,7 @@ Precedence `—` marks **warning-class** dimensions: they never appear in `retry
 | 18 | `sources` | Add more sources until you hit the per-chapter floor. | `yamlParse`, `localEvidenceMissing` |
 | 19 | `claims` | Add more claims until you hit the per-chapter floor. | `yamlParse`, `localEvidenceMissing` |
 | 20 | `claimShape` | Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting. | `yamlParse`, `localEvidenceMissing` |
-| 21 | `highConfidenceCorroboration` | Either downgrade confidence:high to medium, or add a primary-tier source (filing\|regulatory\|legal\|official or reputationTier:high). | `yamlParse`, `localEvidenceMissing` |
+| 21 | `highConfidenceCorroboration` | Either downgrade confidence:high to medium, or ensure the claim has at least gate.minHighConfidenceCorroboration sourceRefs with at least one primary-tier source (filing\|regulatory\|legal\|official or reputationTier:high). | `yamlParse`, `localEvidenceMissing` |
 | 22 | `researchQuestionAnswerCoverage` | Convert questions from unresolved/partial to answered by adding the missing claim and citing it via claim.answersQuestionRefs. | `yamlParse`, `localEvidenceMissing` |
 | 23 | `researchQuestionClosure` | Add an evidenceGap whose relatedQuestionRefs[] includes the still-open question. | `yamlParse`, `localEvidenceMissing` |
 | 24 | `claimAnswerRefs` | Resolve dangling answersQuestionRefs entries; do not duplicate evidence. | `yamlParse`, `localEvidenceMissing` |

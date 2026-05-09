@@ -76,7 +76,8 @@ workflow:
           produces: [runtimeContext.chapter]
           gate: runtimeContext schema
           notes:
-            - Omit --include-context for the first chapter or when drafting chapters in parallel.
+            - Omit --include-context when drafting chapters in parallel (it would project a stale rollup of unfinished sibling chapters); it is harmless on the first chapter in serial mode (the rollup is just empty), so keep it for consistency unless drafting later chapters concurrently.
+            - Always pass --report-folder so runtimeContext.run.runDate is emitted; copy that value into every chapter doc head's runDate.
         - key: author-chapter
           title: Author chapter YAML
           command: null
@@ -94,6 +95,17 @@ workflow:
           gate: check-chapter exit code
           notes:
             - Fix retryOrder dimensions first; use issues[].fix and objectFailures[].fixes rather than guessing.
+        - key: check-chapter-strict
+          title: Strict pre-finalization sweep
+          command: check-chapter.mjs <reportFolder> <chapter.file> --strict --format json
+          requires: [chapter.yaml]
+          produces: [validationResult]
+          gate: check-chapter --strict exit code
+          notes:
+            - Run after the normal pass clears; --strict promotes warnings (e.g. unverifiedSource, tableNotes) to failures.
+            - For genuinely non-actionable warnings, opt out via top-level acknowledgedWarnings[{dimension, reason>=30 chars}] (warning-class dimensions only).
+            - finalize-report.mjs reruns this strict sweep automatically, so resolving it here avoids late finalize aborts.
+            - After parallel drafting, rerun this step (and check-chapter) once on every chapter so netNewSources / crossChapterRefLeak see the final on-disk siblings.
     - key: finalization
       title: Finalize report artifacts
       objective: Validate report-meta, consolidate evidence, assemble final artifacts, and run publishability checks.
@@ -123,7 +135,10 @@ workflow:
           produces: [evidence.yaml, full-report.yaml, summary-card.yaml]
           gate: finalize-report exit code
           notes:
-            - Pass --refresh and --refresh-reason only for explicit refresh runs; pass --rebuild only to force ledger reconstruction.
+            - Pass --refresh and --refresh-reason only for explicit refresh runs; the --refresh-reason value must match the one passed to create-report-run.mjs (finalize-report exits with a mismatch error otherwise).
+            - Pass --rebuild after any chapter file edit since the last successful finalize; the pre-flight stale-evidence guard is mtime-based and refuses to reuse a stale ledger.
+            - finalize-report internally runs check-chapter --strict on every chapter as the first step; resolve those warnings via the chapter-generation strict sweep to avoid late aborts.
+
 # Tables cite their backing claims via the table-level `claimRefs` field, never
 # as a column whose cells hold raw `Cxxx` ids. Avoid columns whose only purpose
 # is citation (`evidence`, `evidence quality`, `claim refs`, etc.). Columns

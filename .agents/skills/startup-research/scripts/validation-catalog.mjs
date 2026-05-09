@@ -306,7 +306,7 @@ export const FIX_HINTS = {
       ? `On claim ${claimId}: either downgrade confidence:high to medium, or add ${Math.max(required - actual, 1)} more sourceRef(s) including a primary-tier one (filing|regulatory|legal|official or reputationTier:high).`
       : claimId
         ? `On claim ${claimId}: either downgrade confidence:high to medium, or add a primary-tier sourceRef (filing|regulatory|legal|official or reputationTier:high).`
-        : 'Either downgrade confidence:high to medium, or add a primary-tier source (filing|regulatory|legal|official or reputationTier:high).',
+        : 'Either downgrade confidence:high to medium, or ensure the claim has at least gate.minHighConfidenceCorroboration sourceRefs with at least one primary-tier source (filing|regulatory|legal|official or reputationTier:high).',
   claimAnswerRefs: ({ claimId, ref } = {}) =>
     claimId ? `On claim ${claimId}: remove answersQuestionRefs entry ${ref ?? ''}, or add the missing Q<ChapterLetter>### locally.` : 'Resolve dangling answersQuestionRefs entries; do not duplicate evidence.',
   claimContradictRefs: ({ claimId, ref } = {}) =>
