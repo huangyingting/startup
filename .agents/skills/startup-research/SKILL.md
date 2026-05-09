@@ -16,13 +16,13 @@ If any prose in this file disagrees with a runtime/script output, trust the runt
 ## Execution contract
 
 - Treat validation commands as gates. Run them directly and preserve full stdout/stderr and nonzero exit codes. Do not pipe gate output through truncating filters.
-- Prefer `--format json` or `--format compact` on the `check-*` validators when machine-readable output helps. Use `issues[].fix`, `objectFailures[].fixes`, `globalHints[].fix`, `retryOrder[]`, and `suppressedDimensions[]` before guessing. The latter four are conditional keys — they only appear when non-empty (see [`references/contracts.md`](references/contracts.md) → *Validation result envelope*).
+- Prefer `--format json` or `--format compact` on the `check-*` validators **and** the `build-evidence-ledger` / `build-report` assemblers when machine-readable output helps. Use `issues[].fix`, `objectFailures[].fixes`, `globalHints[].fix`, `retryOrder[]`, and `suppressedDimensions[]` before guessing. The latter four are conditional keys — they only appear when non-empty (see [`references/contracts.md`](references/contracts.md) → *Validation result envelope*).
 
 ## Runtime bootstrap
 
 1. Get the configured chapter list:
    `node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --list`
-   Output is the per-chapter delta only (chapter briefs, gates, neighbours); the static frame already lives in [`references/rules.md`](references/rules.md).
+   Output is the ordered chapter index — each entry is the full chapter brief (`key`, `order`, `letter`, `file`, `mission`, `contentRequirements`, `plannedTables`, `plannedFigures`, `evidenceStrategy`, `qualityBar`, `gate`). The static frame (agent policy, ID system, dimension vocabulary) lives in [`references/rules.md`](references/rules.md). Per-chapter `previousChapter` / `nextChapter` neighbours and `runtimeContext.run.runDate` are emitted later by the per-chapter loader call (chapter generation step 1), not by `--list`.
 2. Create a report folder:
    `node .agents/skills/startup-research/scripts/create-report-run.mjs <companyName> [--website <companyUrl>]`
    - The script writes the **report folder path to stdout** (everything else — hints, refresh-context notices, env-snippet path — goes to stderr). Capture it into `REPORT_FOLDER` so subsequent commands have a stable handle:
@@ -34,15 +34,17 @@ If any prose in this file disagrees with a runtime/script output, trust the runt
    - Exit `2`: a finalized duplicate already exists; stop.
    - Exit `3`: rerun the same command with `--resume`; do not create suffixed duplicate folders.
    - Exit `4`: a required target does not exist. From `create-report-run.mjs --resume`, the in-progress folder you tried to resume is missing — rerun **without** `--resume` to create a fresh one. From `finalize-report.mjs`, `report-meta.yaml` is missing — author it under the report folder and rerun.
-3. Use `$REPORT_FOLDER` (the path captured above, e.g. `reports/20260509143000-acme`) as `<reportFolder>` for every later command. The runId is the folder basename (`<runId>=20260509143000-acme`), and `runtimeContext.run.runDate` (emitted by the per-chapter loader call below whenever `--report-folder` is supplied) is the canonical `runDate` for chapter YAML heads — derive every head's `runDate` from it instead of the model clock.
-4. Export `STARTUP_FETCH_LOG_PATH` before any `fetch-url` invocation:
+3. Use `$REPORT_FOLDER` (the path captured above, e.g. `reports/20260509143000-acme`) as `<reportFolder>` for every later command. The runId is the folder basename (`<runId>=20260509143000-acme`). When you reach **chapter generation step 2** (authoring chapter YAML heads), use `runtimeContext.run.runDate` from the per-chapter loader (it is emitted whenever `--report-folder` is supplied, including on the first chapter and during parallel drafting) as the canonical `runDate` for every head — never format a date from the model clock.
+4. Export `STARTUP_FETCH_LOG_PATH` before any `fetch-url` invocation. The default path:
 
    ```sh
    RUN_ID=$(basename "$REPORT_FOLDER")
    source ".research-cache/${RUN_ID}/env.sh"
    ```
 
-   `create-report-run.mjs` writes this snippet automatically; sourcing it sets `STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl`. If the env var is already set (e.g. CI exports a workflow-wide trail at `.research-cache/_fetch-log.jsonl`), keep that value — `check-chapter` only needs each cited URL to appear in the trail at least once. `fetch-url` appends one JSON line per fetch; `check-chapter` emits an `unverifiedSource` **warning** for each cited URL absent from the trail (promoted to a failure under `--strict`). When the env var is unset and no trail file exists at any candidate path, `check-chapter` instead emits a single `fetchTrailMissing` warning so the disabled-audit case is visible rather than silent.
+   - **Default**: source the snippet `create-report-run.mjs` wrote — it sets `STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl`.
+   - **CI exception**: if `STARTUP_FETCH_LOG_PATH` is already exported (e.g. a workflow-wide trail at `.research-cache/_fetch-log.jsonl`), do **NOT** source the snippet — keep the existing value. `check-chapter` only needs each cited URL to appear in the trail at least once.
+   - **What `check-chapter` enforces against the trail**: `fetch-url` appends one JSON line per fetch; `check-chapter` emits an `unverifiedSource` **warning** for each cited URL absent from the trail (promoted to a failure under `--strict`). When the env var is unset and no trail file exists at any candidate path, `check-chapter` instead emits a single `fetchTrailMissing` warning so the disabled-audit case is visible rather than silent.
 
 ## Chapter generation
 
@@ -52,7 +54,9 @@ For each chapter from the `--list` roster:
    `node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order <n> --include-context --report-folder <reportFolder>`
    - The loader always emits JSON to stdout; do not pass `--format`.
    - `--order <n>` is the canonical selector; `--key <chapter-key>` and `--file <chapter.file>` are equivalent and useful in retry loops where the failing chapter's key or file path is what you have on hand. Pick one per invocation (parallel workers may use different selectors across invocations).
-   - Omit `--include-context` when drafting chapters in parallel (it would project a stale rollup of unfinished sibling chapters). On the first chapter the flag is harmless — the rollup is just empty — so keep it for consistency unless you are also drafting later chapters concurrently.
+   - **`--include-context` rule (binary by drafting mode)**:
+     - **Sequential drafting** (each chapter starts only after the prior chapter's YAML has landed on disk): pass `--include-context` so the loader projects `contextChapters` and `cumulativeContext` from the already-written siblings.
+     - **Parallel drafting** (multiple chapters in flight at once): omit `--include-context` for **every** parallel chapter — including the first one — because any sibling rollup it projects would be stale relative to the in-flight peers. After all parallel chapters land, the post-convergence rerun in step 4/6 below re-validates against the now-complete on-disk sibling set.
 2. Author the chapter YAML at `reportFolder/<runtimeContext.chapter.file>` using:
    - `runtimeContext.chapter` for mission, content requirements, planned tables/figures, quality bar, and gate.
    - [`references/rules.md`](references/rules.md) for agent policy, gates, the **ID system** (mint every `S/C/T/F/Q` id with this chapter's `runtimeContext.chapter.letter`), validator dimensions, and renderer contracts.
@@ -142,5 +146,7 @@ When `finalize-report` exits 0, summarize the run for the user using every field
 3. `finalize-report.mjs --refresh` runs `link-refresh.mjs` in two distinct phases:
    - **Pre-assembly (`prepare-refresh` step, `link-refresh.mjs --prepare-current`)** — only writes the *new* run's `revision.status: current`, `revision.refreshOfRunId`, `revision.supersededByRunId: null`, and `revision.refreshReason` onto its `report-meta.yaml`. Runs after `check-report-meta` passes and before `build-evidence-ledger`. The prior run is untouched at this point.
    - **Post-publishability (`link-refresh` step, default mode)** — only fires after `check-report` passes. Flips the prior run's `revision.status` to `superseded`, sets its `supersededByRunId` back-pointer to the new runId, and reassembles its `summary-card.yaml` / `full-report.yaml` so cross-references stay consistent.
-4. You do not need to author `revision` in `report-meta.yaml` — omit the field entirely (canonical). The two `link-refresh` phases above own every revision field on both runs. Set `revision.refreshOfRunId` explicitly only to disambiguate when more than one finalized `current` report matches the same company/domain.
+4. **Revision authoring rule (default vs. disambiguation override)**:
+   - **Default (canonical)**: omit the `revision` block from `report-meta.yaml` entirely. The two `link-refresh` phases above own every revision field (`status`, `refreshOfRunId`, `supersededByRunId`, `refreshReason`) on both the new and prior runs.
+   - **Disambiguation override**: when more than one finalized `current` report matches the same company/domain, set **only** `revision.refreshOfRunId` to the intended prior runId. Leave `status`, `supersededByRunId`, and `refreshReason` to `link-refresh` — do not author them yourself.
 5. Pass `--refresh-reason` to `create-report-run.mjs`. `finalize-report.mjs` reuses the cached value automatically; only re-pass it on `finalize-report` when you intentionally want to override the cache, in which case both values must match. `create-report-run` writes the reason to `.research-cache/<runId>/refresh-context.yaml`; `link-refresh.mjs` copies it onto `revision.refreshReason` of the new and prior `report-meta.yaml`.
