@@ -11,8 +11,6 @@ import { fileURLToPath } from 'node:url';
 import { workflowContractSummary } from './contracts/workflow-config.schema.mjs';
 import { reportContractSummary, SCHEMA_VERSION } from './contracts/report-artifacts.schema.mjs';
 import { runtimeContextContractSummary } from './contracts/runtime-context.schema.mjs';
-import { VOCABULARIES, dimensionCatalog } from './validation-catalog.mjs';
-import { FIGURE_TYPES, FIGURE_LAYOUTS, FIGURE_DATA_FIELDS } from '../../../../website/src/lib/figures.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const outPath = resolve(here, '../references/contracts.md');
@@ -28,22 +26,12 @@ function list(values) {
 const workflow = workflowContractSummary();
 const report = reportContractSummary();
 const runtime = runtimeContextContractSummary();
-const dimensions = dimensionCatalog();
 
 const text = `<!-- GENERATED FILE: edit scripts/contracts/*.schema.mjs or scripts/build-contract-docs.mjs, then run npm run build:contracts. -->
 
 # startup-research contracts
 
 This file is generated from executable schemas and runtime catalogs. Do not hand-edit it.
-
-## Source-of-truth files
-
-- Workflow config schema: \`${workflow.source}\`
-- Report artifact schema: \`${report.source}\`
-- Runtime context schema: \`${runtime.source}\`
-- Vocabularies and retry dimensions: \`scripts/validation-catalog.mjs\`
-- Figure renderer contracts: \`website/src/lib/figures.mjs\`
-- Workflow config data: \`references/workflow-config.yaml\`
 
 ## Workflow config contract
 
@@ -213,16 +201,6 @@ cumulativeContext: {...}     # only with --include-context
 run: { runId, companySlug, runDate }       # only with --include-context
 runCache: { cacheDir, refreshContext }     # only with --include-context`)}
 
-## Canonical vocabularies
-
-${Object.entries(VOCABULARIES).map(([key, values]) => `- \`${key}\`: ${values.map((value) => `\`${value}\``).join(', ')}`).join('\n')}
-
-## Figure renderer summary
-
-- Figure types: ${FIGURE_TYPES.map((value) => `\`${value}\``).join(', ')}
-- Figure layouts: ${FIGURE_LAYOUTS.map((value) => `\`${value}\``).join(', ')}
-- Figure data fields: ${FIGURE_DATA_FIELDS.map((value) => `\`${value}\``).join(', ')}
-
 ## Validation result contract
 
 All validation scripts should prefer this envelope for JSON output:
@@ -250,9 +228,6 @@ retryOrder: [dimension]
 suppressedDimensions: [dimension]
 globalHints: [{ dimension, note, fix }]
 summary: object`)}
-
-Current retry dimensions:
-${dimensions.map((dim) => `- \`${dim.dimension}\` rank=${dim.precedenceRank}${dim.defaultFix ? ` — ${dim.defaultFix}` : ''}`).join('\n')}
 
 ## YAML rules
 
