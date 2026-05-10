@@ -52,7 +52,6 @@ import {
   checkTableSchema,
   checkUniqueIds,
 } from './artifact-checks.mjs';
-import { OBSOLETE_SUMMARY_ROOT_FIELDS } from './contracts/report-artifacts.schema.mjs';
 import {
   BLOCK_TYPES,
   CALLOUT_TYPES,
@@ -83,8 +82,8 @@ const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
 // folder mode and runAll) don't share state and don't need a manual reset.
 //
 // Each entry is `{ message, dimension?, code?, fix?, path? }`. fail() accepts
-// either `(message)` (legacy callers default to the generic reportContract /
-// reportGate dimension) or `(message, opts)` where opts carries the precise
+// either `(message)` (defaults to the generic reportContract / reportGate
+// dimension) or `(message, opts)` where opts carries the precise
 // dimension/code/fix. failureEnvelope() projects each entry onto a
 // validationIssue, falling back to the generic dimension only when no
 // specific tag was attached.
@@ -164,12 +163,6 @@ function checkReportBlocks(run, reportDoc) {
 
 function checkCallouts(run, file, doc) {
   if (!ANALYSIS_FILES.includes(file)) return;
-  if (doc?.analysisCallouts !== undefined) {
-    fail(`${run}/${file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`, { path: `${run}/${file}`, dimension: 'documentHead', code: 'analysisCalloutsObsolete', fix: 'Rename the top-level field analysisCallouts to callouts.' });
-  }
-  if (doc?.analysisCallout !== undefined) {
-    fail(`${run}/${file}: top-level field "analysisCallout" (singular) is obsolete; rename to "callouts" and wrap the object in a list`, { path: `${run}/${file}`, dimension: 'documentHead', code: 'analysisCalloutObsolete', fix: 'Rename analysisCallout to callouts and wrap the object in a list.' });
-  }
   for (const [index, callout] of (doc?.callouts ?? []).entries()) {
     const path = `${run}/${file}: callout ${index + 1}`;
     const { errors } = checkCalloutSchema(callout, { path });
@@ -360,17 +353,11 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
       if (!Array.isArray(summary[field])) fail(`${cardPath}: summary.${field} must be an array`, { path: cardPath, dimension: 'reportMetaShape', code: `card.${field}`, fix: `Set summary.${field} to an array in report-meta.yaml.` });
     }
   }
-  for (const field of OBSOLETE_SUMMARY_ROOT_FIELDS) {
-    if (card?.[field] !== undefined) fail(`${cardPath}: top-level field '${field}' is obsolete; nest under 'summary'`, { path: cardPath, dimension: 'reportMetaShape', code: 'card.obsoleteRootField', fix: `Move ${field} under summary: in report-meta.yaml.` });
-  }
   if (card?.sourceStats?.claimsReviewed !== undefined && ledger?.claims && card.sourceStats.claimsReviewed > ledger.claims.length) {
     fail(`${cardPath}: claimsReviewed exceeds ledger claims`, { path: cardPath, dimension: 'reportContract', code: 'card.claimsReviewedOverflow', fix: 'Re-run build-report.mjs after build-evidence-ledger.mjs so sourceStats is recomputed from the current ledger.' });
   }
   for (const field of ['sourcesRetained', 'claimsReviewed', 'domainCount', 'adverseSourceCount', 'openQuestionCount', 'documentedGapQuestionCount', 'blockingQuestionCount']) {
     if (typeof card?.sourceStats?.[field] !== 'number') fail(`${cardPath}: sourceStats.${field} is required and must be a number`, { path: cardPath, dimension: 'reportContract', code: 'card.sourceStatsMissing', fix: 'Re-run build-report.mjs to repopulate summary-card.sourceStats.' });
-  }
-  if (card?.sourceStats?.unresolvedQuestionCount !== undefined) {
-    fail(`${cardPath}: sourceStats.unresolvedQuestionCount is obsolete; use sourceStats.openQuestionCount`, { path: cardPath, dimension: 'reportContract', code: 'card.unresolvedQuestionCountObsolete', fix: 'Re-run build-report.mjs; the assembler emits openQuestionCount.' });
   }
   // Invariant: every open question must be closed out by an evidenceGap
   // (the chapter gate enforces this). A nonzero blockingQuestionCount means
@@ -388,12 +375,6 @@ function checkCardConsistency(run, card, reportDoc, ledger) {
 
 function checkReportConsistency(run, reportDoc) {
   const reportPath = `${run}/${FULL_REPORT_FILE}`;
-  if (reportDoc?.startupIntroduction !== undefined) {
-    fail(`${reportPath}: uses obsolete field 'startupIntroduction'; rename to 'companyProfile'`, { path: reportPath, dimension: 'reportContract', code: 'report.startupIntroductionObsolete', fix: 'Rename meta.startupIntroduction to companyProfile in report-meta.yaml and re-run build-report.mjs.' });
-  }
-  if (reportDoc?.coverMetrics !== undefined) {
-    fail(`${reportPath}: uses obsolete field 'coverMetrics'; rename to 'coverFacts'`, { path: reportPath, dimension: 'reportContract', code: 'report.coverMetricsObsolete', fix: 'Rename meta.coverMetrics to coverFacts in report-meta.yaml and re-run build-report.mjs.' });
-  }
   if (!reportDoc?.companyProfile || typeof reportDoc.companyProfile !== 'object') {
     fail(`${reportPath}: missing companyProfile object`, { path: reportPath, dimension: 'displayCompleteness', code: 'report.companyProfileMissing', fix: 'Add a companyProfile block to report-meta.yaml (summary, foundedDate, founders, ...).' });
   } else if (typeof reportDoc.companyProfile.summary !== 'string' || !reportDoc.companyProfile.summary.trim()) {

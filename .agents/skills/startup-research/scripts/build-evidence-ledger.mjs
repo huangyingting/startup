@@ -37,7 +37,7 @@ const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 // in the same envelope shape every check-* validator emits, so retry loops
 // can read issues[].dimension/.fix without learning a per-script prose
 // format. abort() routes every error through a dimension-tagged envelope;
-// `text` keeps the legacy human-readable line for direct CLI use.
+// `text` is the human-readable line for direct CLI use.
 let outputFormat = 'text';
 let reportFolderForEnvelope = null;
 

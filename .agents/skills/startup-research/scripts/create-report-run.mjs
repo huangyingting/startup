@@ -31,7 +31,7 @@ function volatileFactRefreshInstruction() {
 }
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website|--company-url <url>] [--refresh --refresh-reason <text> [--refresh-of <runId>]] [--resume [--resume-run <runId>]]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website <url>] [--refresh --refresh-reason <text> [--refresh-of <runId>]] [--resume [--resume-run <runId>]]');
   process.exit(EXIT.failure);
 }
 
@@ -39,12 +39,12 @@ function parseArgs(argv) {
   const args = { nameParts: [], website: '', refresh: false, refreshReason: '', refreshOfRunId: '', resume: false, resumeRunId: '' };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
-    if (arg === '--website' || arg === '--url' || arg === '--domain' || arg === '--company-url' || arg === '--companyUrl') args.website = argv[++i] ?? '';
+    if (arg === '--website') args.website = argv[++i] ?? '';
     else if (arg === '--refresh') args.refresh = true;
     else if (arg === '--refresh-reason') args.refreshReason = argv[++i] ?? '';
-    else if (arg === '--refresh-of' || arg === '--refreshOfRunId') args.refreshOfRunId = argv[++i] ?? '';
+    else if (arg === '--refresh-of') args.refreshOfRunId = argv[++i] ?? '';
     else if (arg === '--resume') args.resume = true;
-    else if (arg === '--resume-run' || arg === '--resumeRunId') args.resumeRunId = argv[++i] ?? '';
+    else if (arg === '--resume-run') args.resumeRunId = argv[++i] ?? '';
     else if (arg.startsWith('--')) usage();
     else args.nameParts.push(arg);
   }

@@ -31,15 +31,6 @@ import { zodIssues } from './validation-result.mjs';
 
 export const SCHEMA_VERSION = 'report-v2';
 
-// Fields that used to live at the top level of report-meta.yaml / summary-card.yaml
-// but must now be nested under `summary`. check-report-meta.mjs flags them on
-// report-meta.yaml; check-report.mjs flags them on summary-card.yaml. Single
-// source so the two checkers cannot drift.
-export const OBSOLETE_SUMMARY_ROOT_FIELDS = Object.freeze([
-  'headline', 'recommendation', 'confidence', 'riskRating', 'valuationStance',
-  'overallScore', 'keyMetrics', 'topStrengths', 'topRisks', 'unresolvedGaps',
-]);
-
 const nonEmptyString = z.string().trim().min(1, 'must be a non-empty string');
 const nullableString = z.string().nullable();
 
@@ -94,13 +85,6 @@ export const DocumentHeadSchema = z.object({
   company: CompanyHeadSchema,
 }).passthrough();
 
-// Topics historically allowed numbers (e.g. years) alongside strings; coerce
-// to a string so the contract accepts both old and new evidence files.
-const topicEntry = z.preprocess(
-  (value) => (typeof value === 'number' ? String(value) : value),
-  nonEmptyString,
-);
-
 export const SourceSchema = z.object({
   id: z.string().optional().describe('S<ChapterLetter>### (e.g. SO001). Schema-optional so partial drafts validate, but in practice mandatory — every sourceRefs[] entry resolves against sources[].id, so a missing id makes the source unreferenceable and yields a dangling-reference error at build time.'),
   publisher: nonEmptyString.describe('publishing organization (e.g. "Securities and Exchange Commission", "Financial Times")'),
@@ -113,7 +97,7 @@ export const SourceSchema = z.object({
   sourceType: enumMember(SOURCE_TYPES, 'sourceType').describe('artifact category. filing|regulatory|legal|official are primary-tier (count toward gate.requiredSourceTypes and high-confidence corroboration).'),
   reputationTier: enumMember(SOURCE_REPUTATION_TIERS, 'reputationTier').describe('publisher reputation. high=SEC/FT/NYT/top analyst etc.; low=anonymous blogs, paid PR; medium otherwise.'),
   independence: enumMember(SOURCE_INDEPENDENCE, 'independence').describe('relationship to the company. company=issued by company itself; partner|customer|competitor as labelled; independent=arms-length third party.'),
-  topics: z.array(topicEntry).min(1, 'topics must be a non-empty array').describe('free-form topic tags used for cross-chapter de-dupe and ledger consolidation'),
+  topics: z.array(nonEmptyString).min(1, 'topics must be a non-empty array').describe('free-form topic tags used for cross-chapter de-dupe and ledger consolidation. Quote bare numerics like years (- "2024") so YAML parses them as strings.'),
   keyQuote: nullableString.optional().describe('verbatim quote backing the strongest claim this source supports (recommended for adverse and high-confidence sources)'),
 }).passthrough();
 
@@ -127,15 +111,7 @@ export const ClaimSchema = z.object({
   freshness: enumMember(CLAIM_FRESHNESS, 'freshness').describe('current=valid as of runDate, recent=within volatileFacts horizon, historical=stable fact, unknown=time horizon unclear.'),
   answersQuestionRefs: z.array(questionRef).optional().describe('Q<ChapterLetter>### ids this claim answers. Drives researchQuestionAnswerCoverage.'),
   contradictsClaimRefs: z.array(claimRef).optional().describe('C<ChapterLetter>### ids this claim contradicts. Required when type=conflicting.'),
-  claimType: z.any().optional(),
-  corroboration: z.any().optional(),
 }).passthrough().superRefine((claim, ctx) => {
-  if (claim.claimType !== undefined) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['claimType'], message: "uses obsolete field 'claimType'; rename to 'type'" });
-  }
-  if (claim.corroboration !== undefined) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['corroboration'], message: 'must not store corroboration; it is derived from sourceRefs.length and contradictsClaimRefs' });
-  }
   if (claim.type !== 'open-question' && claim.sourceRefs.length === 0) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['sourceRefs'], message: 'sourceRefs must be non-empty unless type is open-question' });
   }
@@ -143,8 +119,6 @@ export const ClaimSchema = z.object({
     ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['contradictsClaimRefs'], message: 'type=conflicting requires non-empty contradictsClaimRefs' });
   }
 });
-ClaimSchema._def.shape.claimType._def.__renderHide = true;
-ClaimSchema._def.shape.corroboration._def.__renderHide = true;
 
 export const ResearchQuestionSchema = z.object({
   id: refType(/^Q[A-Z]\d{3}$/, 'Q<L>###', 'id must match Q<ChapterLetter>###').describe('Q<ChapterLetter>### (e.g. QO001). Letter must match this chapter\'s letter.'),
@@ -187,9 +161,9 @@ export const SectionSchema = z.object({
   claimRefs: z.array(claimRef).describe('C<ChapterLetter>### ids cited in this section\'s body'),
 }).passthrough();
 
-// enumerationScope historically carried optional descriptive fields
-// (rationale, boundaryNote, relatedTableRefs, ...). Allow passthrough so old
-// reports validate while still enforcing coverage and basis.
+// enumerationScope passthrough() lets reports keep optional descriptive
+// fields (rationale, boundaryNote, relatedTableRefs, ...) without forcing
+// the schema to enumerate every consumer. coverage and basis are required.
 export const EnumerationScopeSchema = z.object({
   coverage: enumMember(ENUMERATION_COVERAGE, 'enumerationScope.coverage').describe('exhaustive=full population, partial=most, sample=representative subset'),
   basis: z.string().trim().min(20, 'enumerationScope.basis must be a non-empty string (>=20 chars)').describe('describe the enumeration boundary in 20+ chars (data source, time window, geography, segment)'),

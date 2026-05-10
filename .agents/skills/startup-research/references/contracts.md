@@ -90,7 +90,7 @@ localEvidence:
       sourceType: official|filing|regulatory|news|analyst-market-data|technical-docs|customer-proof|partner-proof|developer-signal|review|legal|other  # artifact category. filing|regulatory|legal|official are primary-tier (count toward gate.requiredSourceTypes and high-confidence corroboration).
       reputationTier: high|medium|low  # publisher reputation. high=SEC/FT/NYT/top analyst etc.; low=anonymous blogs, paid PR; medium otherwise.
       independence: company|partner|customer|competitor|independent|unknown  # relationship to the company. company=issued by company itself; partner|customer|competitor as labelled; independent=arms-length third party.
-      topics: [string]  # free-form topic tags used for cross-chapter de-dupe and ledger consolidation
+      topics: [string]  # free-form topic tags used for cross-chapter de-dupe and ledger consolidation. Quote bare numerics like years (- "2024") so YAML parses them as strings.
       keyQuote?: string|null  # verbatim quote backing the strongest claim this source supports (recommended for adverse and high-confidence sources)
   claims:
     - id?: string  # C<ChapterLetter>### (e.g. CO045). Schema-optional so partial drafts validate, but in practice mandatory — every claimRefs[] entry resolves against claims[].id, so a missing id makes the claim unreferenceable and yields a dangling-reference error at build time.
@@ -212,7 +212,6 @@ previousChapter:  # (nullable)
   order: number
   letter: string
   file: string
-  artifact: string
   title: string
   mission: string
   optionalContext: [string]
@@ -227,7 +226,6 @@ chapter:
   order: number
   letter: string
   file: string
-  artifact: string
   title: string
   mission: string
   optionalContext: [string]
@@ -242,7 +240,6 @@ nextChapter:  # (nullable)
   order: number
   letter: string
   file: string
-  artifact: string
   title: string
   mission: string
   optionalContext: [string]
@@ -297,7 +294,6 @@ chapters:
     order: number
     letter: string
     file: string
-    artifact: string
     title: string
     mission: string
     optionalContext: [string]

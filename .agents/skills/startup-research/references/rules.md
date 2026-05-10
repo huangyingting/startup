@@ -187,7 +187,7 @@ Dimensions are grouped by class. Only the **chapter-warning** class is acknowled
 | 29 | `chapter-failure` | `enumerationScope` | Add enumerationScope { coverage, basis(>=20 chars) } to the matching enumeration table. | `yamlParse`, `localEvidenceMissing` |
 | 30 | `chapter-failure` | `enumerationRows` | Add rows to reach expectedMinRows or set coverage to partial/sample with rationale. | `yamlParse`, `localEvidenceMissing` |
 | 31 | `chapter-failure` | `enumerationCoverageGap` | Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it. | `yamlParse`, `localEvidenceMissing` |
-| 32 | `chapter-failure` | `enumerationRowCorroboration` | Extend the enumeration table's table-level claimRefs[] so the underlying sources span more registrable domains (table-level, not per-row). | `yamlParse`, `localEvidenceMissing` |
+| 32 | `chapter-failure` | `enumerationTableCorroboration` | Extend the enumeration table's table-level claimRefs[] so the underlying sources span more registrable domains (table-level, not per-row). | `yamlParse`, `localEvidenceMissing` |
 | 33 | `chapter-failure` | `tableShape` | Fix the table: non-empty columns, every row has the same number of cells as columns, enumerationScope { coverage, basis(>=20 chars) } when present. | `yamlParse` |
 | 34 | `chapter-failure` | `figureShape` | Fix the figure data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows). | `yamlParse` |
 | 36 | `chapter-failure` | `duplicateIds` | Renumber the duplicate or malformed table/figure id; ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter. | `yamlParse` |

@@ -72,9 +72,9 @@ export const AgentPolicySchema = z.object({
   // windows, but it does not replace the runDate year.
   volatileFactQueryTokens: stringArray.default([]),
   retryPolicy: z.object({
-    maxChapterRetries: positiveInteger.optional(),
-    requireMonotonicFailureDecrease: z.boolean().optional(),
-  }).strict().default({}),
+    maxChapterRetries: positiveInteger,
+    requireMonotonicFailureDecrease: z.boolean(),
+  }).strict(),
   researchRules: stringArray.default([]),
   chapterAuthoringRules: stringArray.default([]),
   hardRules: stringArray.default([]),

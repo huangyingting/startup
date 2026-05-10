@@ -82,7 +82,7 @@ function makeCollector() {
   };
 }
 
-function legacySchemaErrors(schema, value, { path, dimension = 'schema' }) {
+function formatSchemaErrors(schema, value, { path, dimension = 'schema' }) {
   return schemaErrors(schema, value, { path, dimension }).map((issue) => ({
     ...issue,
     message: `${issue.path}: ${issue.message}`,
@@ -96,20 +96,20 @@ function legacySchemaErrors(schema, value, { path, dimension = 'schema' }) {
 // `id` is also surfaced as `extra.id` for callers that want to group failures.
 export function checkSourceSchema(source, { path }) {
   const id = source?.id;
-  return { errors: legacySchemaErrors(SourceSchema, source, { path, dimension: 'sourceShape' }).map((err) => ({ id, ...err })) };
+  return { errors: formatSchemaErrors(SourceSchema, source, { path, dimension: 'sourceShape' }).map((err) => ({ id, ...err })) };
 }
 
 // ---- claim schema ---------------------------------------------------------
 
 export function checkClaimSchema(claim, { path }) {
   const id = claim?.id;
-  return { errors: legacySchemaErrors(ClaimSchema, claim, { path, dimension: 'claimShape' }).map((err) => ({ id, ...err })) };
+  return { errors: formatSchemaErrors(ClaimSchema, claim, { path, dimension: 'claimShape' }).map((err) => ({ id, ...err })) };
 }
 
 // ---- callout schema -------------------------------------------------------
 
 export function checkCalloutSchema(callout, { path }) {
-  return { errors: legacySchemaErrors(CalloutSchema, callout, { path, dimension: 'calloutShape' }) };
+  return { errors: formatSchemaErrors(CalloutSchema, callout, { path, dimension: 'calloutShape' }) };
 }
 
 // ---- table schema ---------------------------------------------------------
@@ -120,7 +120,7 @@ export function checkCalloutSchema(callout, { path }) {
 // the helper does not have.
 export function checkTableSchema(table, { path }) {
   const id = table?.id;
-  return { errors: legacySchemaErrors(TableSchema, table, { path, dimension: 'tableShape' }).map((err) => ({ tableId: id, ...err })) };
+  return { errors: formatSchemaErrors(TableSchema, table, { path, dimension: 'tableShape' }).map((err) => ({ tableId: id, ...err })) };
 }
 
 // ---- figure deep schema ---------------------------------------------------
@@ -307,7 +307,7 @@ export function checkFigureDeep(figure, { path }) {
 //   - expected.chapter:  optional 1-based chapter number (only analysis chs)
 export function checkDocumentHeadSchema(doc, { path, expected }) {
   const c = makeCollector();
-  for (const err of legacySchemaErrors(DocumentHeadSchema, doc, { path, dimension: 'documentHead' })) {
+  for (const err of formatSchemaErrors(DocumentHeadSchema, doc, { path, dimension: 'documentHead' })) {
     c.fail(err.message, err);
   }
   if (doc?.artifact && expected?.artifact && doc.artifact !== expected.artifact) {
