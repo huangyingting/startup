@@ -1,0 +1,18 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import DiligenceReport from '../../../components/DiligenceReport.astro';
+import { loadStageFiles, loadStageFilesZh } from '../../../content/reports-loader';
+
+export async function getStaticPaths() {
+  const reports = await getCollection('reports');
+  return reports.map((entry) => ({ params: { run: entry.data.folderSlug }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: CollectionEntry<'reports'> };
+const stages = loadStageFiles(entry.id) as any;
+const stagesZh = loadStageFilesZh(entry.id) as any;
+---
+<BaseLayout title={`${entry.data.company.name} — 初创公司尽调`} description={entry.data.headline} locale="zh">
+  <DiligenceReport entry={entry} data={entry.data} stages={stages} stagesZh={stagesZh} locale="zh" />
+</BaseLayout>

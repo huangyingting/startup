@@ -1,0 +1,93 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReportCard from '../ReportCard.astro';
+import { t } from '../../lib/i18n';
+import type { Locale } from '../../lib/locale';
+import { currentReports, sortTopRated } from '../../lib/reports';
+import { loadCardOverlayZh } from '../../content/reports-loader';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const reports = sortTopRated(currentReports(await getCollection('reports')));
+const leaders = reports.slice(0, 3);
+const rest = reports.slice(3);
+const topScore = reports[0]?.data.overallScore ?? 0;
+const avgScore = reports.length
+  ? reports.reduce((sum, entry) => sum + entry.data.overallScore, 0) / reports.length
+  : 0;
+const trackCalls = reports.filter((entry) => entry.data.recommendation === 'track').length;
+const totalSources = reports.reduce((sum, entry) => sum + entry.data.sourceStats.sourcesRetained, 0);
+const intlLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
+const formatNumber = (value: number) => value.toLocaleString(intlLocale);
+const overlayFor = (id: string) => (locale === 'zh' ? loadCardOverlayZh(id) : null);
+---
+<BaseLayout title={t('topRatedTitle', locale)} description={t('topRatedDescription', locale)} locale={locale}>
+  <section class="sr-container sr-hero top-hero">
+    <div>
+      <span class="sr-eyebrow">{t('topRatedEyebrow', locale)}</span>
+      <h1>{t('topRatedHeading', locale)}</h1>
+      <p class="sr-deck">{t('topRatedDeck', locale)}</p>
+    </div>
+    <dl class="top-summary" aria-label="Top-rated report summary">
+      <div><dt>{t('topRatedStatReports', locale)}</dt><dd>{formatNumber(reports.length)}</dd></div>
+      <div><dt>{t('topRatedStatTopScore', locale)}</dt><dd>{topScore.toFixed(1)}</dd></div>
+      <div><dt>{t('topRatedStatAvgScore', locale)}</dt><dd>{avgScore.toFixed(1)}</dd></div>
+      <div><dt>{t('topRatedStatTrack', locale)}</dt><dd>{formatNumber(trackCalls)}</dd></div>
+      <div><dt>{t('topRatedStatSources', locale)}</dt><dd>{formatNumber(totalSources)}</dd></div>
+    </dl>
+  </section>
+
+  {leaders.length > 0 && (
+    <section class="sr-container sr-section top-leaders">
+      <div class="top-section-head">
+        <div>
+          <h2>{t('topRatedLeadersHeading', locale)}</h2>
+          <p>{t('topRatedLeadersDeck', locale)}</p>
+        </div>
+      </div>
+      <div class="top-leader-grid">
+        {leaders.map((entry, index) => (
+          <article class={`top-leader top-leader--${index + 1}`}>
+            <div class="top-leader__rank" aria-label={`${t('topRatedRankAria', locale)} ${index + 1}`}>#{index + 1}</div>
+            <ReportCard entry={entry} locale={locale} overlay={overlayFor(entry.id)} />
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="sr-container sr-section top-ranking">
+    <div class="top-section-head">
+      <div>
+        <h2>{t('topRatedFullHeading', locale)}</h2>
+        <p>{rest.length ? t('topRatedFullDeckRest', locale) : t('topRatedFullDeckAll', locale)}</p>
+      </div>
+    </div>
+    <div class="sr-grid top-grid">{(rest.length ? rest : reports).map((entry) => <ReportCard entry={entry} locale={locale} overlay={overlayFor(entry.id)} />)}</div>
+  </section>
+
+  <style>
+    .top-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 520px); gap: var(--space-7); align-items: end; padding-bottom: var(--space-6); }
+    .top-summary { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-3); margin: 0; font-family: var(--font-sans); border-top: var(--rule-hard); padding-top: var(--space-4); }
+    .top-summary div { min-width: 0; }
+    .top-summary dt { color: var(--caption-gray); font-size: var(--fs-xs); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; }
+    .top-summary dd { margin: var(--space-1) 0 0; color: var(--ink-page); font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; line-height: 1.1; }
+    .top-section-head { display: flex; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); }
+    .top-section-head h2 { margin-bottom: var(--space-2); }
+    .top-section-head p { margin: 0; color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--fs-sm); line-height: 1.4; }
+    .top-leader-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); align-items: stretch; }
+    .top-leader { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+    .top-leader__rank { align-self: flex-start; display: inline-grid; place-items: center; min-width: 38px; height: 32px; border: 1px solid var(--claret); background: var(--claret); color: var(--paper); font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 800; line-height: 1; }
+    .top-leader :global(.report-card) { flex: 1 1 auto; }
+    .top-grid { row-gap: var(--space-5); }
+    @media (max-width: 960px) {
+      .top-hero { grid-template-columns: 1fr; align-items: start; gap: var(--space-5); }
+      .top-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .top-leader-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .top-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</BaseLayout>

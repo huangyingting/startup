@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReportCard from '../ReportCard.astro';
+import { t } from '../../lib/i18n';
+import type { Locale } from '../../lib/locale';
+import { localePath } from '../../lib/locale';
+import { currentReports, sortNewest } from '../../lib/reports';
+import { loadCardOverlayZh } from '../../content/reports-loader';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const reports = sortNewest(currentReports(await getCollection('reports')));
+const latest = reports.slice(0, 12);
+const newest = reports[0];
+const base = import.meta.env.BASE_URL;
+const archiveHref = localePath(base, locale, 'archive');
+const topRatedHref = localePath(base, locale, 'top-rated');
+const searchHref = localePath(base, locale, 'search');
+const trackCalls = reports.filter((entry) => entry.data.recommendation === 'track').length;
+const totalSources = reports.reduce((sum, entry) => sum + entry.data.sourceStats.sourcesRetained, 0);
+const avgRating = reports.length
+  ? reports.reduce((sum, entry) => sum + entry.data.overallScore, 0) / reports.length
+  : 0;
+const numberLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
+const formatNumber = (value: number) => value.toLocaleString(numberLocale);
+const overlayFor = (id: string) => (locale === 'zh' ? loadCardOverlayZh(id) : null);
+---
+<BaseLayout title={t('title', locale)} description={t('deck', locale)} locale={locale}>
+  <section class="sr-container sr-hero home-hero">
+    <div class="home-hero__copy">
+      <span class="sr-eyebrow">{t('homeEyebrow', locale)}</span>
+      <h1>{t('homeTitleLine1', locale)}<br />{t('homeTitleLine2', locale)}</h1>
+      <p class="sr-deck">{t('homeDeck', locale)}</p>
+      <nav class="home-actions" aria-label="Homepage shortcuts">
+        <a class="sr-pill" href={archiveHref}>{t('homeAllReports', locale)}</a>
+        <a class="sr-pill" href={topRatedHref}>{t('homeTopRated', locale)}</a>
+        <a class="sr-pill" href={searchHref}>{t('homeSearch', locale)}</a>
+      </nav>
+    </div>
+    <aside class="home-panel" aria-label="Report collection summary">
+      <p class="home-panel__eyebrow">{t('homeNewestReport', locale)}</p>
+      {newest ? (
+        <a class="home-panel__latest" href={localePath(base, locale, newest.data.folderSlug)}>
+          <strong>{newest.data.company.name}</strong>
+          <span>{newest.data.runDate} · {newest.data.sourceStats.sourcesRetained} {t('homeSources', locale)} · {t('homeRating', locale)} {newest.data.overallScore.toFixed(1)}</span>
+        </a>
+      ) : <p class="home-panel__empty">{t('homeNoReports', locale)}</p>}
+      <dl class="home-stats" aria-label="Homepage summary">
+        <div><dt>{t('homeStatReports', locale)}</dt><dd>{formatNumber(reports.length)}</dd></div>
+        <div><dt>{t('homeStatSources', locale)}</dt><dd>{formatNumber(totalSources)}</dd></div>
+        <div><dt>{t('homeStatTrack', locale)}</dt><dd>{formatNumber(trackCalls)}</dd></div>
+        <div><dt>{t('homeStatAvgRating', locale)}</dt><dd>{avgRating.toFixed(1)}</dd></div>
+      </dl>
+    </aside>
+  </section>
+
+  <section class="sr-container sr-section home-latest">
+    <div class="home-section-head">
+      <div>
+        <h2>{t('homeLatestReports', locale)}</h2>
+        <p>{t('homeLatestDeck', locale)}</p>
+      </div>
+      <a class="sr-pill" href={archiveHref}>{t('homeViewArchive', locale)}</a>
+    </div>
+    {latest.length ? <div class="sr-grid home-grid">{latest.map((entry) => <ReportCard entry={entry} locale={locale} overlay={overlayFor(entry.id)} />)}</div> : <p>{t('noReports', locale)}</p>}
+    {reports.length > latest.length && (
+      <div class="home-more">
+        <p>{t('homeShowing', locale)} {latest.length} {t('homeOf', locale)} {formatNumber(reports.length)} {t('reports', locale).toLowerCase()}.</p>
+        <a class="sr-pill" href={archiveHref}>{t('homeSeeAll', locale)} {formatNumber(reports.length)} {t('homeReportsArrow', locale)}</a>
+      </div>
+    )}
+  </section>
+
+  <style>
+    .home-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 420px); align-items: end; gap: var(--space-7); padding-bottom: var(--space-6); }
+    .home-hero__copy { min-width: 0; }
+    .home-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-5); }
+    .home-actions a, .home-section-head > a { text-decoration: none; }
+    .home-panel { border: var(--report-rule); background: var(--surface-paper); padding: var(--space-4); font-family: var(--font-sans); }
+    .home-panel__eyebrow { margin: 0 0 var(--space-3); color: var(--claret); font-size: var(--fs-sm); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; }
+    .home-panel__latest { display: block; color: inherit; text-decoration: none; padding-bottom: var(--space-4); border-bottom: var(--report-rule); }
+    .home-panel__latest:hover strong { color: var(--claret); }
+    .home-panel__latest strong { display: block; font-family: var(--font-display); font-size: var(--fs-lg); line-height: var(--lh-display-block); margin-bottom: var(--space-2); transition: color 120ms ease; }
+    .home-panel__latest span, .home-panel__empty { display: block; margin: 0; color: var(--caption-gray); font-size: var(--fs-sm); line-height: 1.4; }
+    .home-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3) var(--space-4); margin: var(--space-4) 0 0; }
+    .home-stats div { min-width: 0; }
+    .home-stats dt { color: var(--caption-gray); font-size: var(--fs-xs); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; }
+    .home-stats dd { margin: var(--space-1) 0 0; color: var(--ink-page); font-family: var(--font-display); font-size: var(--fs-md); font-weight: 700; line-height: 1.1; }
+    .home-section-head { display: flex; align-items: end; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); }
+    .home-section-head h2 { margin-bottom: var(--space-2); }
+    .home-section-head p { margin: 0; color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--fs-sm); line-height: 1.4; }
+    .home-grid { row-gap: var(--space-5); }
+    .home-more { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); padding-top: var(--space-4); border-top: var(--report-rule); }
+    .home-more p { margin: 0; color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--fs-sm); line-height: 1.4; }
+    .home-more a { text-decoration: none; }
+    @media (max-width: 880px) { .home-hero { grid-template-columns: 1fr; align-items: start; gap: var(--space-5); } .home-panel { max-width: 640px; } }
+    @media (max-width: 560px) { .home-section-head { align-items: flex-start; flex-direction: column; } .home-stats { grid-template-columns: 1fr; } }
+  </style>
+</BaseLayout>

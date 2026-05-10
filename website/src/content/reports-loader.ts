@@ -231,6 +231,13 @@ function readStageYaml(folder: string, basename: string): unknown | null {
   return readYaml(join(folder, `${basename}.yaml`));
 }
 
+// Locale overlay reader: looks for `<basename>.zh.yaml` next to the canonical
+// `<basename>.yaml`. Returns null when no overlay exists; pages then fall
+// back to the English data.
+function readLocaleStageYaml(folder: string, basename: string, locale: 'zh'): unknown | null {
+  return readYaml(join(folder, `${basename}.${locale}.yaml`));
+}
+
 // ---------------------------------------------------------------------------
 // public API
 // ---------------------------------------------------------------------------
@@ -258,12 +265,45 @@ export function reportsLoader(): Loader {
   };
 }
 
+// English stage files only — the English page detail loads via this.
 export function loadStageFiles(runId: string): Record<string, unknown> {
   const folder = join(REPORTS_DIR, runId);
   return {
     evidence: readStageYaml(folder, 'evidence'),
     fullReport: readStageYaml(folder, 'full-report'),
     summaryCard: loadReportCard(runId),
+  };
+}
+
+// Chinese overlay stage files. Each field is null when the corresponding
+// `*.zh.yaml` sibling has not been written yet — the Chinese detail page
+// merges these onto the English stages so untranslated fields fall through.
+export function loadStageFilesZh(runId: string): Record<string, unknown> {
+  const folder = join(REPORTS_DIR, runId);
+  return {
+    evidence: readLocaleStageYaml(folder, 'evidence', 'zh'),
+    fullReport: readLocaleStageYaml(folder, 'full-report', 'zh'),
+    summaryCard: readLocaleStageYaml(folder, 'summary-card', 'zh'),
+  };
+}
+
+// Chinese overlay for the report card metadata used on list pages
+// (homepage, archive, top-rated). Returns null when no overlay exists.
+export function loadCardOverlayZh(runId: string): Record<string, unknown> | null {
+  const folder = join(REPORTS_DIR, runId);
+  const raw = readLocaleStageYaml(folder, 'summary-card', 'zh');
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, any>;
+  const summary = (r.summary && typeof r.summary === 'object') ? r.summary : {};
+  const company = (r.company && typeof r.company === 'object') ? r.company : {};
+  return {
+    headline: typeof summary.headline === 'string' ? summary.headline : null,
+    topStrengths: Array.isArray(summary.topStrengths) ? summary.topStrengths : null,
+    topRisks: Array.isArray(summary.topRisks) ? summary.topRisks : null,
+    unresolvedGaps: Array.isArray(summary.unresolvedGaps) ? summary.unresolvedGaps : null,
+    companyShortDescription: typeof company.shortDescription === 'string' ? company.shortDescription : null,
+    companySector: typeof company.sector === 'string' ? company.sector : null,
+    companyStage: typeof company.stage === 'string' ? company.stage : null,
   };
 }
 
