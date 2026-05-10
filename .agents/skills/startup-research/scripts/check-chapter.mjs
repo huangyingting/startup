@@ -775,6 +775,39 @@ if (doc) {
     const tableIds = new Set((doc.tables ?? []).map((t) => t?.id).filter(Boolean));
     const { errors } = checkArtifactRefs(doc, { path: spec.file, figureIds, tableIds });
     for (const err of errors) fail('artifactRefs', err.message, err);
+    // Section-level tableRefs[] / figureRefs[] anchor exhibits inside a
+    // section's prose. Each id must resolve to a local table/figure and
+    // appear in at most one section across the chapter so build-report can
+    // emit it exactly once (anything left over still falls through to the
+    // trailing Exhibits section).
+    const sectionTableHome = new Map();
+    const sectionFigureHome = new Map();
+    for (const section of doc.sections ?? []) {
+      for (const ref of section?.tableRefs ?? []) {
+        if (!tableIds.has(ref)) {
+          fail('artifactRefs', `${spec.file}: section ${section.id} tableRefs entry ${ref} does not resolve to a local table`, { sectionId: section.id, ref });
+          continue;
+        }
+        const prior = sectionTableHome.get(ref);
+        if (prior && prior !== section.id) {
+          fail('artifactRefs', `${spec.file}: table ${ref} is listed in section ${prior} and section ${section.id}; each table must have exactly one section home`, { ref, sections: [prior, section.id] });
+        } else {
+          sectionTableHome.set(ref, section.id);
+        }
+      }
+      for (const ref of section?.figureRefs ?? []) {
+        if (!figureIds.has(ref)) {
+          fail('artifactRefs', `${spec.file}: section ${section.id} figureRefs entry ${ref} does not resolve to a local figure`, { sectionId: section.id, ref });
+          continue;
+        }
+        const prior = sectionFigureHome.get(ref);
+        if (prior && prior !== section.id) {
+          fail('artifactRefs', `${spec.file}: figure ${ref} is listed in section ${prior} and section ${section.id}; each figure must have exactly one section home`, { ref, sections: [prior, section.id] });
+        } else {
+          sectionFigureHome.set(ref, section.id);
+        }
+      }
+    }
   }
 
   counts = {
