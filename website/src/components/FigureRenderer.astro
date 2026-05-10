@@ -307,6 +307,53 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     const maxDepth = Math.max(0, ...depthByKey.values());
     const stages = Array.from({ length: maxDepth + 1 }, () => []);
     nodes.forEach((node) => stages[depthByKey.get(node._key) ?? 0].push(node));
+    // Barycenter pass: reorder nodes within each stage so that edges between
+    // adjacent stages cross less often. This makes far more edges qualify for
+    // the cheap directOrthogonalPaths route and keeps the visual layout tidy.
+    // Skip entirely when no stage has 2+ nodes (linear chains gain nothing).
+    if (stages.length > 1 && stages.some((stage) => stage.length >= 2)) {
+      const orderInStage = new Map();
+      const refreshOrder = () => {
+        orderInStage.clear();
+        for (const stage of stages) {
+          stage.forEach((node, index) => orderInStage.set(node._key, index));
+        }
+      };
+      refreshOrder();
+      const barycenter = (node, neighborKeys) => {
+        if (!neighborKeys.length) return orderInStage.get(node._key) ?? 0;
+        let sum = 0;
+        let count = 0;
+        for (const key of neighborKeys) {
+          const idx = orderInStage.get(key);
+          if (idx == null) continue;
+          sum += idx;
+          count += 1;
+        }
+        return count ? sum / count : (orderInStage.get(node._key) ?? 0);
+      };
+      const sweep = (direction) => {
+        const range = direction === 'down'
+          ? Array.from({ length: stages.length - 1 }, (_, i) => i + 1)
+          : Array.from({ length: stages.length - 1 }, (_, i) => stages.length - 2 - i);
+        for (const stageIndex of range) {
+          const stage = stages[stageIndex];
+          if (stage.length < 2) continue;
+          const decorated = stage.map((node, originalIndex) => {
+            const neighborGroup = direction === 'down'
+              ? arr(incoming.get(node._key)).map((edge) => edge.from)
+              : arr(outgoing.get(node._key)).map((edge) => edge.to);
+            return { node, originalIndex, b: barycenter(node, neighborGroup) };
+          });
+          decorated.sort((a, b) => (a.b - b.b) || (a.originalIndex - b.originalIndex));
+          stages[stageIndex] = decorated.map((entry) => entry.node);
+          refreshOrder();
+        }
+      };
+      sweep('down');
+      sweep('up');
+      sweep('down');
+    }
     /* Stage names: derive directly from the nodes that landed in each
      * column. This is more informative than generic "Stage N" / "Tier N"
      * labels because the reader sees the actual dependency name (e.g.
@@ -391,8 +438,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
      * gutter. */
     const portOffsetForSpan = (index, count, span) => {
       if (count <= 1) return 0;
-      const usable = Math.max(18, span - 34);
-      const step = Math.min(26, Math.max(10, usable / Math.max(1, count - 1)));
+      const usable = Math.max(24, span - 28);
+      // Spread parallel ports across the full usable span when reasonable, but
+      // hold a generous minimum gap so two edges from the same side stay
+      // visually distinct rather than collapsing into one stub line.
+      const step = Math.min(44, Math.max(16, usable / Math.max(1, count - 1)));
       return (index - (count - 1) / 2) * step;
     };
     const bySource = d3.group(routedEdges, (edge) => edge.source._key);
@@ -468,7 +518,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       const prev = points[index - 1];
       return Math.abs(point.x - prev.x) > 0.5 || Math.abs(point.y - prev.y) > 0.5;
     });
+    const simplifyCache = new WeakMap();
     const simplifyPath = (points) => {
+      if (!Array.isArray(points)) return [];
+      const cached = simplifyCache.get(points);
+      if (cached) return cached;
       const clean = dedupePoints(points);
       const simplified = [...clean];
       let changed = true;
@@ -487,8 +541,12 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
           }
         }
       }
+      simplifyCache.set(points, simplified);
+      simplifyCache.set(simplified, simplified);
       return simplified;
     };
+    const pathBoundsCache = new WeakMap();
+    const pathSegmentsCache = new WeakMap();
     const pathLength = (points) => {
       const clean = simplifyPath(points);
       return clean.slice(1).reduce((sum, p, index) => {
@@ -511,11 +569,29 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     };
     const pathHits = (points, edge) => {
       const clean = simplifyPath(points);
-      let hits = 0;
+      if (clean.length < 2) return 0;
+      const bounds = pathBounds(clean);
       const ignore = new Set([edge.source._key, edge.target._key]);
+      const candidates = [];
+      for (const rect of nodeRects.values()) {
+        if (ignore.has(rect.key)) continue;
+        if (rect.right < bounds.left - 0.5 || rect.left > bounds.right + 0.5) continue;
+        if (rect.bottom < bounds.top - 0.5 || rect.top > bounds.bottom + 0.5) continue;
+        candidates.push(rect);
+      }
+      if (!candidates.length) return 0;
+      let hits = 0;
       for (let i = 1; i < clean.length; i++) {
-        for (const rect of nodeRects.values()) {
-          if (!ignore.has(rect.key) && segmentHitsRect(clean[i - 1], clean[i], rect)) hits += 1;
+        const a = clean[i - 1];
+        const b = clean[i];
+        const segLeft = Math.min(a.x, b.x);
+        const segRight = Math.max(a.x, b.x);
+        const segTop = Math.min(a.y, b.y);
+        const segBottom = Math.max(a.y, b.y);
+        for (const rect of candidates) {
+          if (rect.right < segLeft - 0.5 || rect.left > segRight + 0.5) continue;
+          if (rect.bottom < segTop - 0.5 || rect.top > segBottom + 0.5) continue;
+          if (segmentHitsRect(a, b, rect)) hits += 1;
         }
       }
       return hits;
@@ -593,12 +669,21 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     };
     const pathBounds = (points) => {
       const clean = simplifyPath(points);
-      return {
-        left: Math.min(...clean.map((point) => point.x)),
-        right: Math.max(...clean.map((point) => point.x)),
-        top: Math.min(...clean.map((point) => point.y)),
-        bottom: Math.max(...clean.map((point) => point.y)),
-      };
+      const cached = pathBoundsCache.get(clean);
+      if (cached) return cached;
+      let left = Infinity;
+      let right = -Infinity;
+      let top = Infinity;
+      let bottom = -Infinity;
+      for (const point of clean) {
+        if (point.x < left) left = point.x;
+        if (point.x > right) right = point.x;
+        if (point.y < top) top = point.y;
+        if (point.y > bottom) bottom = point.y;
+      }
+      const bounds = { left, right, top, bottom };
+      pathBoundsCache.set(clean, bounds);
+      return bounds;
     };
     const createMinHeap = () => {
       const heap = [];
@@ -637,6 +722,12 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
         },
       };
     };
+    const edgeCount = routedEdges.length;
+    const routeProfile = edgeCount > 24
+      ? { offsets: [14, -14, 28, -28], segmentCap: 40, cellCap: 1500 }
+      : edgeCount > 12
+        ? { offsets: [12, -12, 24, -24, 36, -36], segmentCap: 60, cellCap: 1200 }
+        : { offsets: compact ? [12, -12, 24, -24, 36, -36] : [14, -14, 28, -28, 42, -42], segmentCap: 80, cellCap: 900 };
     const routeGrid = (start, end, edge, usedSegments = []) => {
       const ignore = new Set([edge.source._key, edge.target._key]);
       const sourceRect = nodeRects.get(edge.source._key);
@@ -655,11 +746,11 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       const bounds = compact
         ? { left: xBounds.left, right: xBounds.right, top: 12, bottom: height - 12 }
         : { left: xBounds.left, right: xBounds.right, top: Math.max(12, rawTop), bottom: Math.min(height - 12, rawBottom) };
-      const localUsedSegments = usedSegments.filter((segment) => segmentTouchesBounds(segment, bounds, routeGap * 2)).slice(-80);
+      const localUsedSegments = usedSegments.filter((segment) => segmentTouchesBounds(segment, bounds, routeGap * 2)).slice(-routeProfile.segmentCap);
       const xs = new Set([norm(bounds.left), norm(bounds.right), norm(start.x), norm(end.x)]);
       const ys = new Set([norm(bounds.top), norm(bounds.bottom), norm(start.y), norm(end.y)]);
       if (!compact) {
-        const laneOffset = ((edge._laneIndex ?? 0) - ((edge._laneCount ?? 1) - 1) / 2) * 14;
+        const laneOffset = ((edge._laneIndex ?? 0) - ((edge._laneCount ?? 1) - 1) / 2) * 22;
         for (let stageIndex = stageMin; stageIndex < stageMax; stageIndex++) {
           const gutterX = stageBoundaryX(stageIndex) + laneOffset;
           if (gutterX > bounds.left && gutterX < bounds.right) xs.add(norm(gutterX));
@@ -671,7 +762,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
         ys.add(norm(Math.max(bounds.top, rect.top - routeGap)));
         ys.add(norm(Math.min(bounds.bottom, rect.bottom + routeGap)));
       }
-      const parallelOffsets = compact ? [8, -8, 16, -16] : [9, -9, 18, -18];
+      const parallelOffsets = routeProfile.offsets;
       for (const segment of localUsedSegments) {
         const segLeft = Math.min(segment.a.x, segment.b.x);
         const segRight = Math.max(segment.a.x, segment.b.x);
@@ -696,7 +787,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       }
       const xList = Array.from(xs).sort((a, b) => a - b);
       const yList = Array.from(ys).sort((a, b) => a - b);
-      if (xList.length * yList.length > 900) return null;
+      if (xList.length * yList.length > routeProfile.cellCap) return null;
       const pointClear = (point) => {
         if (point.x < bounds.left - 0.001 || point.x > bounds.right + 0.001 || point.y < bounds.top - 0.001 || point.y > bounds.bottom + 0.001) return false;
         for (const rect of corridorRects) if (!ignore.has(rect.key) && pointInRect(point, rect)) return false;
@@ -736,7 +827,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
           const length = segmentOverlapLength(candidate, used);
           if (length > 0.5) { overlap += length; shared += 1; }
         }
-        const occupiedCost = overlap * 1200 + shared * 28000;
+        const occupiedCost = overlap * 2200 + shared * 48000;
         adj[aIndex].push({ to: bIndex, len, dir, occupiedCost });
         adj[bIndex].push({ to: aIndex, len, dir, occupiedCost });
       };
@@ -750,25 +841,34 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       }
       const startIndex = indexByKey.get(startKey);
       const endIndex = indexByKey.get(endKey);
+      const endPoint = points[endIndex];
+      // A*: Manhattan distance is admissible because grid moves are axis-aligned
+      // and bend / occupied penalties are strictly non-negative additions on top
+      // of edge length.
+      const heuristic = (nodeIndex) => {
+        const p = points[nodeIndex];
+        return Math.abs(p.x - endPoint.x) + Math.abs(p.y - endPoint.y);
+      };
       const dist = new Map();
       const prev = new Map();
       const open = createMinHeap();
-      open.push({ node: startIndex, dir: 'n', cost: 0, key: `${startIndex}|n` });
-      dist.set(`${startIndex}|n`, 0);
+      const startG = 0;
+      open.push({ node: startIndex, dir: 'n', g: startG, cost: startG + heuristic(startIndex), key: `${startIndex}|n` });
+      dist.set(`${startIndex}|n`, startG);
       let finalKey = null;
       while (open.length) {
         const state = open.pop();
         if (!state) break;
-        if (state.cost !== dist.get(state.key)) continue;
+        if (state.g !== dist.get(state.key)) continue;
         if (state.node === endIndex) { finalKey = state.key; break; }
         for (const stepEdge of adj[state.node]) {
           const nextKey = `${stepEdge.to}|${stepEdge.dir}`;
           const bendCost = state.dir !== 'n' && state.dir !== stepEdge.dir ? 70 : 0;
-          const cost = state.cost + stepEdge.len + bendCost + stepEdge.occupiedCost;
-          if (cost < (dist.get(nextKey) ?? Infinity)) {
-            dist.set(nextKey, cost);
+          const g = state.g + stepEdge.len + bendCost + stepEdge.occupiedCost;
+          if (g < (dist.get(nextKey) ?? Infinity)) {
+            dist.set(nextKey, g);
             prev.set(nextKey, state.key);
-            open.push({ node: stepEdge.to, dir: stepEdge.dir, cost, key: nextKey });
+            open.push({ node: stepEdge.to, dir: stepEdge.dir, g, cost: g + heuristic(stepEdge.to), key: nextKey });
           }
         }
       }
@@ -784,6 +884,8 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     };
     const pathSegments = (points) => {
       const clean = simplifyPath(points);
+      const cached = pathSegmentsCache.get(clean);
+      if (cached) return cached;
       const segments = [];
       for (let i = 1; i < clean.length; i++) {
         const a = clean[i - 1];
@@ -792,6 +894,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
         const dir = Math.abs(a.x - b.x) >= Math.abs(a.y - b.y) ? 'h' : 'v';
         segments.push({ dir, a, b });
       }
+      pathSegmentsCache.set(clean, segments);
       return segments;
     };
     const pathOverlapPenalty = (points, usedSegments) => {
@@ -805,7 +908,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
           if (length > 0.5) { overlap += length; shared += 1; }
         }
       }
-      return overlap * 900 + shared * 18000;
+      return overlap * 1600 + shared * 32000;
     };
     const candidatePortPairs = (edge) => {
       const pairs = [];
@@ -827,7 +930,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       const end = { x: targetPort.x, y: targetPort.y };
       const stageMin = Math.min(edge.source._stage, edge.target._stage);
       const stageMax = Math.max(edge.source._stage, edge.target._stage);
-      const laneOffset = ((edge._laneIndex ?? 0) - ((edge._laneCount ?? 1) - 1) / 2) * (compact ? 8 : 12);
+      const laneOffset = ((edge._laneIndex ?? 0) - ((edge._laneCount ?? 1) - 1) / 2) * (compact ? 18 : 22);
       const paths = [];
       const addViaX = (x) => paths.push(simplifyPath([start, sourceStub, { x, y: sourceStub.y }, { x, y: targetStub.y }, targetStub, end]));
       const addViaY = (y) => paths.push(simplifyPath([start, sourceStub, { x: sourceStub.x, y }, { x: targetStub.x, y }, targetStub, end]));
@@ -860,6 +963,10 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
           const score = hits * 100000 + pathOverlapPenalty(path, usedSegments) + portPenalty(edge, sourcePort, targetPort) + pathBends(path) * 48 + pathLength(path);
           if (score < bestScore) { bestScore = score; best = path; }
         }
+        // Pairs are sorted by ascending portPenalty; once we have a clean
+        // direct path the remaining (higher-penalty) pairs almost never win.
+        // Break to skip the expensive grid search on the rest.
+        if (directIsClean && bestScore < 100000) break;
       }
       return best ?? [];
     };
@@ -1939,19 +2046,33 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     return payloadByScript.get(script);
   };
 
+  const RESIZE_RERENDER_DELTA_PX = 32;
+  const RESIZE_RERENDER_DEBOUNCE_MS = 180;
+  const pendingResizeRenders = new WeakMap();
+  const flushResizeRender = (element) => {
+    const handle = pendingResizeRenders.get(element);
+    if (handle) {
+      window.clearTimeout(handle);
+      pendingResizeRenders.delete(element);
+    }
+    const script = scriptByChartId.get(element.id);
+    if (!script) return;
+    const payload = payloadForScript(script);
+    renderD3(element, payload);
+    script.dataset.rendered = 'true';
+    element.dataset.renderState = 'rendered';
+    element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || 0));
+  };
   const chartResizeObserver = 'ResizeObserver' in window ? new ResizeObserver((entries) => {
     for (const entry of entries) {
       const element = entry.target;
       const nextWidth = Math.round(entry.contentRect.width || 0);
       const prevWidth = Number(element.dataset.renderWidth || 0);
-      if (!nextWidth || (prevWidth && Math.abs(nextWidth - prevWidth) < 18)) continue;
-      const script = scriptByChartId.get(element.id);
-      if (!script) continue;
-      const payload = payloadForScript(script);
-      renderD3(element, payload);
-      script.dataset.rendered = 'true';
-      element.dataset.renderState = 'rendered';
-      element.dataset.renderWidth = String(Math.round(element.getBoundingClientRect().width || nextWidth));
+      if (!nextWidth || (prevWidth && Math.abs(nextWidth - prevWidth) < RESIZE_RERENDER_DELTA_PX)) continue;
+      const existing = pendingResizeRenders.get(element);
+      if (existing) window.clearTimeout(existing);
+      const handle = window.setTimeout(() => flushResizeRender(element), RESIZE_RERENDER_DEBOUNCE_MS);
+      pendingResizeRenders.set(element, handle);
     }
   }) : null;
 
