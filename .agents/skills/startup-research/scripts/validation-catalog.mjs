@@ -147,6 +147,30 @@ export const TITLE_TOKEN_STOP_WORDS = new Set([
 // check-chapter.mjs and check-cross-chapter.mjs.
 export const MIN_TITLE_TOKEN_LENGTH = 4;
 
+// Single source of truth for title/structure token normalization. Lowercase,
+// split on non-alphanumeric, drop short and stop-word tokens. Used for
+// duplicate-artifact detection (per-chapter duplicateAnalysis and the
+// cross-chapter duplicateAnalysisCrossChapter check) so the two validators
+// can never silently drift apart.
+export function tokenizeTitle(value) {
+  return new Set(String(value ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .split(/\s+/)
+    .filter((token) => token.length >= MIN_TITLE_TOKEN_LENGTH && !TITLE_TOKEN_STOP_WORDS.has(token)));
+}
+
+// Jaccard similarity over two pre-tokenized Sets (Set<string>). Returns 0
+// for empty inputs so partial-data callers don't have to special-case.
+// Pairs with tokenizeTitle(); pre-tokenizing avoids re-splitting strings
+// in O(n^2) similarity loops.
+export function jaccardTokenSimilarity(setA, setB) {
+  if (!setA?.size || !setB?.size) return 0;
+  const intersection = [...setA].filter((token) => setB.has(token)).length;
+  const union = new Set([...setA, ...setB]).size;
+  return intersection / union;
+}
+
 // Evidence quality tier thresholds. Used by build-evidence-ledger.mjs to classify the
 // overall quality of consolidated evidence based on source diversity,
 // reputation distribution, and claim corroboration patterns.
@@ -192,11 +216,22 @@ export const KEY_FACT_TOPICS = [
   /customer count|paid customers|paying users/,
 ];
 
-// Paywall risk warning threshold. When a chapter's restricted-access source
-// share (paywall/js-only/broken/rate-limited) exceeds this fraction, a warning
-// fires to surface the risk of breaching the report-level 30% paywall ceiling.
-// Used by check-chapter.mjs checkSources().
-export const PAYWALL_RISK_WARNING_THRESHOLD = 0.25;
+// Paywall risk warning buffer. The chapter-level early-warning threshold is
+// derived from the report-level ceiling (`reportGate.maxPaywallPercent` in
+// workflow-config.yaml) minus this buffer, so the warning fires before
+// chapters aggregate to a level that would breach the report ceiling.
+// Used by paywallWarningThreshold() below.
+export const PAYWALL_RISK_WARNING_BUFFER = 0.05;
+
+// Derive the chapter-level paywall warning threshold from the authoritative
+// report-level ceiling. Single source of truth: workflow-config.yaml
+// `reportGate.maxPaywallPercent`. Floors at 0 so a misconfigured
+// reportCeiling <= buffer doesn't yield a negative threshold (which would
+// fire the warning on every chapter).
+export function paywallWarningThreshold(reportCeiling) {
+  const ceiling = Number.isFinite(reportCeiling) ? reportCeiling : 0.3;
+  return Math.max(0, ceiling - PAYWALL_RISK_WARNING_BUFFER);
+}
 
 // Duplicate title similarity threshold. When a figure's and table's
 // normalized titles have Jaccard overlap >= this value, and the figure's
@@ -386,6 +421,14 @@ export const FIX_HINTS = {
       ? `acknowledgedWarnings entry targets dimension "${ackDimension}", which is not a warning-class dimension. Only warnings (${WARNING_DIMENSIONS_LIST_TEXT}) may be acknowledged; failures must be fixed. Each acknowledgedWarnings entry also requires a >=30-char reason. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`
       : `Each acknowledgedWarnings entry must (1) target a warning-class dimension (${WARNING_DIMENSIONS_LIST_TEXT}) and (2) carry a >=30-char reason. Failure-class dimensions cannot be acknowledged.`,
 };
+
+// Full catalog of dimensions that any validator may emit (warning-class +
+// failure-class + cross-chapter + finalize-step). Every entry has a fix
+// hint by convention, so FIX_HINTS keys are the source of truth. Used by
+// check-chapter to distinguish a typoed dimension in acknowledgedWarnings
+// (no such dimension) from a real failure-class dimension (cannot be
+// acknowledged) — the two cases need different remediation messages.
+export const KNOWN_DIMENSIONS = new Set(Object.keys(FIX_HINTS));
 
 // ---------------------------------------------------------------------------
 // Cascade suppressors

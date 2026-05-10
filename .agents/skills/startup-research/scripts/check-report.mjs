@@ -214,6 +214,42 @@ function checkRefs(run, reportDoc) {
   for (const err of appendixErrors) fail(err.message, err);
 }
 
+// Symmetric, post-finalize gate for the chapter-level unsectionedExhibits
+// warning. The chapter-time check fires per-id during check-chapter, so the
+// finalize sweep already catches anything reachable from that path. This
+// gate reads the assembled full-report and the chapter YAMLs together so a
+// hand-edit between the strict chapter sweep and the assemble step (which
+// `build-report` would happily roll into the trailing Exhibits section)
+// still surfaces. Honors per-chapter acknowledgedWarnings so an intentional
+// "cross-cutting Exhibits" chapter stays valid.
+function checkUnsectionedExhibitsInReport(run, reportDoc, parsed) {
+  const chapters = reportDoc?.chapters ?? [];
+  for (const [index, chapter] of chapters.entries()) {
+    const spec = ANALYSIS_ARTIFACTS[index];
+    if (!spec) continue;
+    const chapterDoc = parsed.get(spec.file);
+    const acks = Array.isArray(chapterDoc?.acknowledgedWarnings) ? chapterDoc.acknowledgedWarnings : [];
+    const acked = acks.some((ack) => ack?.dimension === 'unsectionedExhibits' && typeof ack?.reason === 'string' && ack.reason.trim().length >= 30);
+    if (acked) continue;
+    const orphanIds = [];
+    for (const section of chapter?.sections ?? []) {
+      if (section?.title !== 'Exhibits') continue;
+      for (const block of section?.blocks ?? []) {
+        if (block?.type === 'table' && hasText(block?.tableRef)) orphanIds.push(`table ${block.tableRef}`);
+        if (block?.type === 'figure' && hasText(block?.figureRef)) orphanIds.push(`figure ${block.figureRef}`);
+      }
+    }
+    if (orphanIds.length > 0) {
+      fail(`${run}/${FULL_REPORT_FILE}: chapter ${chapter.number} ("${chapter.title}", ${spec.file}) has ${orphanIds.length} orphan exhibit(s) in the trailing Exhibits section: ${orphanIds.join(', ')}. Anchor each id in a section.tableRefs[]/figureRefs[] and re-run finalize-report.mjs, or add an acknowledgedWarnings entry for "unsectionedExhibits" if these exhibits are intentionally cross-cutting.`, {
+        path: `${run}/${spec.file}`,
+        dimension: 'unsectionedExhibits',
+        code: 'reportRefs.unsectionedExhibits',
+        fix: `Edit ${spec.file}: add each orphan id to the tableRefs[]/figureRefs[] of the section whose prose introduces it, then re-run finalize-report.mjs. Use acknowledgedWarnings only when the chapter genuinely needs cross-cutting Exhibits (rare).`,
+      });
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // per-run pipeline
 // ---------------------------------------------------------------------------
@@ -498,6 +534,7 @@ function checkRun(run, { contentGates = true } = {}) {
     for (const err of checkUniqueIds(reportDoc.figures, { label: 'figure', pattern: ID_PATTERN_FIGURE, path: run }).errors) fail(err.message, { ...err, dimension: err.dimension ?? 'duplicateIds' });
     for (const err of checkUniqueIds(reportDoc.tables, { label: 'table', pattern: ID_PATTERN_TABLE, path: run }).errors) fail(err.message, { ...err, dimension: err.dimension ?? 'duplicateIds' });
     checkRefs(run, reportDoc);
+    checkUnsectionedExhibitsInReport(run, reportDoc, parsed);
     checkReportConsistency(run, reportDoc);
   }
 

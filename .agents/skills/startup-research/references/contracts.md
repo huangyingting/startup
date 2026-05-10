@@ -15,6 +15,7 @@ Authoring stops there. `finalize-report.mjs` produces every other artifact in th
 
 - `evidence.yaml` is a **consolidated** ledger built from each chapter's `localEvidence` by `build-evidence-ledger.mjs`. It does not renumber: chapter ids stay as you wrote them, and duplicates across chapters get tagged with a `canonical` pointer to the first occurrence.
 - `full-report.yaml` and `summary-card.yaml` are assembled by `build-report.mjs` from the chapter YAMLs and `report-meta.yaml`.
+- `.workflow-snapshot.yaml` is a verbatim freeze of `references/workflow-config.yaml` written by `finalize-report.mjs` on the first finalize. Every downstream validator (and re-run of finalize) loads this snapshot in preference to the head config, so later edits to the head config never retroactively re-judge this report. Never hand-edit it; pass `--refresh-snapshot` to finalize-report when you want the report re-judged against the **current** head config.
 
 Vocabularies (enum value sets) are listed inline below at each enum field. Validator dimensions (with retry precedence and `fix` text), agent policy, gates, and figure renderer contracts live in [`rules.md`](rules.md) (also generated). Read both files once at session start.
 

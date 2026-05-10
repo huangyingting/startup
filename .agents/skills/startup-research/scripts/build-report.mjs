@@ -236,13 +236,15 @@ function buildChapter({ spec, doc }) {
     const blocks = [paragraphBlock(section)];
     for (const ref of section.tableRefs ?? []) {
       const table = tablesById.get(ref);
-      if (!table || placedTables.has(ref)) continue;
+      if (!table) abort({ message: `${spec.file}: section "${section.title ?? `#${index + 1}`}" references missing table id ${ref}`, dimension: 'artifactRefs', code: 'buildReport.sectionTableRefMissing', fix: `Either add a table with id=${ref} to ${spec.file}, or remove ${ref} from sections[${index}].tableRefs.`, path: `${spec.file}.sections[${index}].tableRefs` });
+      if (placedTables.has(ref)) abort({ message: `${spec.file}: section "${section.title ?? `#${index + 1}`}" repeats tableRef ${ref} (already anchored to an earlier section)`, dimension: 'artifactRefs', code: 'buildReport.sectionTableRefDuplicate', fix: `Each table may be anchored in at most one section; remove ${ref} from sections[${index}].tableRefs.`, path: `${spec.file}.sections[${index}].tableRefs` });
       placedTables.add(ref);
       blocks.push(tableRefBlock(table));
     }
     for (const ref of section.figureRefs ?? []) {
       const figure = figuresById.get(ref);
-      if (!figure || placedFigures.has(ref)) continue;
+      if (!figure) abort({ message: `${spec.file}: section "${section.title ?? `#${index + 1}`}" references missing figure id ${ref}`, dimension: 'artifactRefs', code: 'buildReport.sectionFigureRefMissing', fix: `Either add a figure with id=${ref} to ${spec.file}, or remove ${ref} from sections[${index}].figureRefs.`, path: `${spec.file}.sections[${index}].figureRefs` });
+      if (placedFigures.has(ref)) abort({ message: `${spec.file}: section "${section.title ?? `#${index + 1}`}" repeats figureRef ${ref} (already anchored to an earlier section)`, dimension: 'artifactRefs', code: 'buildReport.sectionFigureRefDuplicate', fix: `Each figure may be anchored in at most one section; remove ${ref} from sections[${index}].figureRefs.`, path: `${spec.file}.sections[${index}].figureRefs` });
       placedFigures.add(ref);
       blocks.push(figureRefBlock(figure));
     }

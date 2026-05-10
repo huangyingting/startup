@@ -10,7 +10,7 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { EXIT, getAnalysisArtifacts, loadWorkflowConfig, tryReadYaml } from './utils.mjs';
-import { TITLE_TOKEN_STOP_WORDS, KEY_FACT_TOPICS, MIN_TITLE_TOKEN_LENGTH, resolveFixHint } from './validation-catalog.mjs';
+import { jaccardTokenSimilarity, KEY_FACT_TOPICS, resolveFixHint, tokenizeTitle } from './validation-catalog.mjs';
 import {
   formatValidationCompact,
   formatValidationText,
@@ -245,20 +245,21 @@ const overview = docs.find((d) => d.spec.key === 'company-overview');
 if (overview) {
   const overviewClaimStatements = new Map();
   for (const claim of overview.doc.localEvidence?.claims ?? []) {
-    const norm = String(claim?.statement ?? '').toLowerCase();
-    overviewClaimStatements.set(norm, claim.id);
+    overviewClaimStatements.set(claim.id, {
+      stmt: String(claim?.statement ?? ''),
+      tokens: tokenizeTitle(claim?.statement),
+    });
   }
   for (const { spec, doc } of docs) {
     if (spec.key === 'company-overview') continue;
     for (const claim of doc.localEvidence?.claims ?? []) {
       const stmt = String(claim?.statement ?? '');
-      const norm = stmt.toLowerCase();
-      const matchesKey = KEY_FACT_TOPICS.some((re) => re.test(norm));
+      const matchesKey = KEY_FACT_TOPICS.some((re) => re.test(stmt.toLowerCase()));
       if (!matchesKey) continue;
-      // Look for a near-match in overview claims (>=keyFactOverlap token overlap)
+      const claimTokens = tokenizeTitle(stmt);
       const keyFactOverlap = tolerances.keyFactOverlap ?? 0.7;
-      for (const [overviewNorm, overviewId] of overviewClaimStatements) {
-        const overlap = jaccardTokens(norm, overviewNorm);
+      for (const [overviewId, { tokens: overviewTokens }] of overviewClaimStatements) {
+        const overlap = jaccardTokenSimilarity(claimTokens, overviewTokens);
         if (overlap >= keyFactOverlap && claim.id !== overviewId) {
           flag('fail', 'keyFactDrift', `${spec.file}: claim ${claim.id} restates a key fact ("${stmt.slice(0, 80)}") that already exists in company-overview as ${overviewId}; reference the canonical claim instead of creating a parallel local claim`, { chapter: spec.file, claimId: claim.id, canonicalId: overviewId });
           break;
@@ -266,15 +267,6 @@ if (overview) {
       }
     }
   }
-}
-
-function jaccardTokens(a, b) {
-  const tokA = new Set(a.split(/[^a-z0-9]+/).filter((t) => t.length >= MIN_TITLE_TOKEN_LENGTH && !TITLE_TOKEN_STOP_WORDS.has(t)));
-  const tokB = new Set(b.split(/[^a-z0-9]+/).filter((t) => t.length >= MIN_TITLE_TOKEN_LENGTH && !TITLE_TOKEN_STOP_WORDS.has(t)));
-  if (!tokA.size || !tokB.size) return 0;
-  const inter = [...tokA].filter((t) => tokB.has(t)).length;
-  const union = new Set([...tokA, ...tokB]).size;
-  return inter / union;
 }
 
 // ---------------------------------------------------------------------------
@@ -286,16 +278,15 @@ function jaccardTokens(a, b) {
 // >=0.7 token overlap on both title and structure are flagged.
 // ---------------------------------------------------------------------------
 function tableFingerprint(table) {
-  const titleTokens = String(table?.title ?? '').toLowerCase();
-  const structureTokens = [
+  const titleTokens = tokenizeTitle(table?.title);
+  const structureTokens = tokenizeTitle([
     ...(table?.columns ?? []).map((c) => String(c ?? '')),
     ...(table?.rows ?? []).map((row) => Array.isArray(row) ? String(row[0] ?? '') : ''),
-  ].join(' ').toLowerCase();
+  ].join(' '));
   return { titleTokens, structureTokens };
 }
 
 function figureFingerprint(figure) {
-  const titleTokens = String(figure?.title ?? '').toLowerCase();
   const labelStrings = [];
   const collectLabels = (value) => {
     if (Array.isArray(value)) { value.forEach(collectLabels); return; }
@@ -306,7 +297,7 @@ function figureFingerprint(figure) {
     }
   };
   collectLabels(figure?.data);
-  return { titleTokens, structureTokens: labelStrings.join(' ').toLowerCase() };
+  return { titleTokens: tokenizeTitle(figure?.title), structureTokens: tokenizeTitle(labelStrings.join(' ')) };
 }
 
 const tableFingerprints = [];
@@ -327,8 +318,8 @@ function findCrossChapterDuplicates(items) {
       const a = items[i];
       const b = items[j];
       if (a.chapter === b.chapter) continue;
-      const titleOverlap = jaccardTokens(a.titleTokens, b.titleTokens);
-      const structureOverlap = jaccardTokens(a.structureTokens, b.structureTokens);
+      const titleOverlap = jaccardTokenSimilarity(a.titleTokens, b.titleTokens);
+      const structureOverlap = jaccardTokenSimilarity(a.structureTokens, b.structureTokens);
       if (titleOverlap >= duplicateOverlap && structureOverlap >= duplicateOverlap) {
         flag('fail', 'duplicateAnalysisCrossChapter', `${a.kind} ${a.id ?? '?'} in ${a.chapter} duplicates ${b.kind} ${b.id ?? '?'} in ${b.chapter} (title overlap ${(titleOverlap * 100).toFixed(0)}%, structure overlap ${(structureOverlap * 100).toFixed(0)}%); merge into one chapter or sharpen one to answer a distinct question`, { kind: a.kind, a: { chapter: a.chapter, id: a.id }, b: { chapter: b.chapter, id: b.id } });
       }

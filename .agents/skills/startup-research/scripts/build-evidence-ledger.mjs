@@ -172,16 +172,25 @@ function consolidateSources(docs) {
   let duplicateCount = 0;
   for (const [, doc] of docs) {
     for (const source of doc.localEvidence?.sources ?? []) {
+      // source.id is schema-optional but practically mandatory; without it
+      // we can't canonicalize duplicates (a `canonical: undefined` tag would
+      // poison every later duplicate of the same URL). Pass it through
+      // untagged and let check-chapter catch the missing id via its
+      // sources.id and dangling-ref dimensions.
+      if (!source?.id) {
+        sources.push({ ...source });
+        continue;
+      }
       const key = sourceKey(source);
       const existingCanonical = canonicalByKey.get(key);
       if (existingCanonical && existingCanonical !== source.id) {
         // Keep the duplicate but tag it as canonical-of the first id.
         sources.push({ ...source, canonical: existingCanonical });
-        if (source?.id) canonicalIdBySourceId.set(source.id, existingCanonical);
+        canonicalIdBySourceId.set(source.id, existingCanonical);
         duplicateCount += 1;
       } else {
         if (!existingCanonical) canonicalByKey.set(key, source.id);
-        if (source?.id) canonicalIdBySourceId.set(source.id, source.id);
+        canonicalIdBySourceId.set(source.id, source.id);
         sources.push({ ...source });
       }
     }
@@ -202,6 +211,12 @@ function consolidateClaims(docs, canonicalIdBySourceId) {
     for (const claim of local.claims ?? []) {
       // `corroboration` is derived from sourceRefs.length; do not persist it.
       const { corroboration: _drop, ...rest } = claim;
+      // claim.id is schema-optional but practically mandatory; same logic as
+      // consolidateSources — without it we can't tag duplicates safely.
+      if (!claim?.id) {
+        claims.push({ ...rest });
+        continue;
+      }
       const key = claimKey(claim, canonicalIdBySourceId);
       const existingCanonical = canonicalByKey.get(key);
       if (existingCanonical && existingCanonical !== claim.id) {

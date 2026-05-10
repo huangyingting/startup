@@ -36,17 +36,18 @@ import {
   checkUniqueIds,
 } from './artifact-checks.mjs';
 import {
-  TITLE_TOKEN_STOP_WORDS,
   CASCADE_SUPPRESSORS,
   DUPLICATE_TITLE_THRESHOLD,
   ENUMERATION_COVERAGE,
   FIX_HINTS,
-  MIN_TITLE_TOKEN_LENGTH,
-  PAYWALL_RISK_WARNING_THRESHOLD,
+  jaccardTokenSimilarity,
+  KNOWN_DIMENSIONS,
+  paywallWarningThreshold,
   PRIMARY_TIER_TYPES,
   QUESTION_STATUSES,
   QUESTION_TYPES,
   RETRY_PRECEDENCE,
+  tokenizeTitle,
   WARNING_DIMENSIONS,
   formatEnumChoices,
   makeIdPattern,
@@ -68,7 +69,7 @@ function parseArgs(argv) {
       args.format = next;
     } else if (arg.startsWith('-')) {
       console.error(`[check:chapter] unknown flag: ${arg}`);
-      console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <chapter-artifact.yaml> [--strict] [--format text|json|compact]');
+      console.error('[check:chapter] usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <chapter-artifact.yaml> [--strict] [--format text|json|compact]');
       process.exit(EXIT.failure);
     } else if (!args.folder) args.folder = arg;
     else if (!args.chapter) args.chapter = arg;
@@ -82,11 +83,11 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.folder || !args.chapter) {
-  console.error('Usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <chapter-artifact.yaml> [--strict] [--format text|json|compact]');
+  console.error('[check:chapter] usage: node .agents/skills/startup-research/scripts/check-chapter.mjs <report-folder> <chapter-artifact.yaml> [--strict] [--format text|json|compact]');
   process.exit(EXIT.failure);
 }
 if (!['text', 'json', 'compact'].includes(args.format)) {
-  console.error(`Invalid --format value: ${args.format}; expected text, json, or compact`);
+  console.error(`[check:chapter] invalid --format value: ${args.format}; expected text, json, or compact`);
   process.exit(EXIT.failure);
 }
 
@@ -102,12 +103,18 @@ let ANALYSIS_ARTIFACTS;
 // checkSearchQueryFreshness() to decide which queries must include a year
 // token derived from doc.runDate.
 let VOLATILE_FACT_QUERY_TOKENS;
+// Authoritative report-level paywall ceiling, sourced from
+// reportGate.maxPaywallPercent. The chapter early-warning threshold is
+// derived from this via paywallWarningThreshold(); checkSources() consumes
+// both so the warning text and the report-level fail message stay in sync.
+let REPORT_PAYWALL_CEILING;
 try {
   const config = loadWorkflowConfig({ reportFolder });
   ANALYSIS_ARTIFACTS = getAnalysisArtifacts(config);
   VOLATILE_FACT_QUERY_TOKENS = (config.agentPolicy?.volatileFactQueryTokens ?? [])
     .map((token) => String(token).toLowerCase())
     .filter((token) => token.length > 0);
+  REPORT_PAYWALL_CEILING = config.reportGate?.maxPaywallPercent ?? 0.3;
 } catch (err) {
   console.error(`[check:chapter] failed to load workflow config: ${err.message}`);
   console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose workflow-config.yaml.');
@@ -116,8 +123,8 @@ try {
 
 const spec = ANALYSIS_ARTIFACTS.find((item) => item.file === args.chapter);
 if (!spec) {
-  console.error(`Unknown chapter artifact: ${args.chapter}`);
-  console.error(`Expected one of: ${ANALYSIS_ARTIFACTS.map((item) => item.file).join(', ')}`);
+  console.error(`[check:chapter] unknown chapter artifact: ${args.chapter}`);
+  console.error(`[check:chapter] expected one of: ${ANALYSIS_ARTIFACTS.map((item) => item.file).join(', ')}`);
   process.exit(EXIT.failure);
 }
 
@@ -209,21 +216,6 @@ function checkDepthFloor(file, doc, floor) {
   }
 }
 
-function normalizeAnalysisTokens(value) {
-  return new Set(String(value ?? '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .split(/\s+/)
-    .filter((token) => token.length >= MIN_TITLE_TOKEN_LENGTH && !TITLE_TOKEN_STOP_WORDS.has(token)));
-}
-
-function jaccardSimilarity(a, b) {
-  if (!a.size || !b.size) return 0;
-  const intersection = [...a].filter((token) => b.has(token)).length;
-  const union = new Set([...a, ...b]).size;
-  return intersection / union;
-}
-
 function displayTitle(item) {
   return item?.title ?? item?.label ?? item?.name ?? item?.id ?? '';
 }
@@ -269,9 +261,9 @@ function checkTableFigureOverlap(file, doc) {
       if (figureRefs.size < 3) continue;
       const figureSubsetOfTable = [...figureRefs].every((ref) => tableRefs.has(ref));
       if (!figureSubsetOfTable) continue;
-      const titleSimilarity = jaccardSimilarity(
-        normalizeAnalysisTokens(tableTitle),
-        normalizeAnalysisTokens(figureTitle),
+      const titleSimilarity = jaccardTokenSimilarity(
+        tokenizeTitle(tableTitle),
+        tokenizeTitle(figureTitle),
       );
       if (titleSimilarity < DUPLICATE_TITLE_THRESHOLD) continue;
       const sharedRefs = figureRefs.size; // by construction (subset)
@@ -473,12 +465,16 @@ function checkSources(file, doc, gate, earlierUrls) {
     fail('netNewSources', `${file}: only ${netNew} sources are new vs earlier chapters, expected at least ${gate.minNetNewSources} (per-chapter research must add fresh sources, not reuse the global pool)`, { actual: netNew, required: gate.minNetNewSources });
   }
   // Soft early-warning: if a single chapter's restricted-access share exceeds
-  // 25 %, the report-level 30 % paywall ceiling becomes hard to clear without
+  // the warning threshold (derived from the report-level paywall ceiling
+  // minus a buffer), the report-level ceiling becomes hard to clear without
   // swapping sources. Advisory only — does not fail unless --strict is set
   // and the dimension is not in acknowledgedWarnings.
+  const warningThreshold = paywallWarningThreshold(REPORT_PAYWALL_CEILING);
   const restrictedPct = restrictedCount / sources.length;
-  if (restrictedPct > PAYWALL_RISK_WARNING_THRESHOLD) {
-    warn('paywallRisk', `${file}: ${restrictedCount}/${sources.length} sources have restricted accessStatus (paywall|js-only|broken|rate-limited) = ${(restrictedPct * 100).toFixed(0)}% (>25%). Risk of breaching the report-level 30% ceiling once chapters aggregate; swap restricted sources for ok ones where possible.`, { actual: +restrictedPct.toFixed(3), ceiling: 0.25 });
+  if (restrictedPct > warningThreshold) {
+    const warnPctLabel = (warningThreshold * 100).toFixed(0);
+    const ceilingPctLabel = (REPORT_PAYWALL_CEILING * 100).toFixed(0);
+    warn('paywallRisk', `${file}: ${restrictedCount}/${sources.length} sources have restricted accessStatus (paywall|js-only|broken|rate-limited) = ${(restrictedPct * 100).toFixed(0)}% (>${warnPctLabel}%). Risk of breaching the report-level ${ceilingPctLabel}% ceiling once chapters aggregate; swap restricted sources for ok ones where possible.`, { actual: +restrictedPct.toFixed(3), warningThreshold: +warningThreshold.toFixed(3), reportCeiling: +REPORT_PAYWALL_CEILING.toFixed(3) });
   }
   // adverse-source bookkeeping is informational; the binding constraint is on adverse questions (P1) and on risks chapter sourceType requirements above.
 }
@@ -525,6 +521,17 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
     }
     if (typeof scope.basis !== 'string' || scope.basis.trim().length < 20) {
       fail('enumerationScope', `${file}: table ${table.id} enumerationScope.basis must be at least 20 chars (explain how completeness was verified)`, { tableId: table.id });
+    } else {
+      // Defend against pathological strings that pass the char count but
+      // carry no meaning (e.g. 20 spaces, "aaaaaaaaaaaaaaaaaaaa", or the
+      // same word repeated). Require at least 4 distinct alphanumeric
+      // word tokens of >= 3 chars — a brief verifiable phrase like
+      // "Verified against SEC EDGAR 2024 filings" clears it; a wall of
+      // identical characters does not.
+      const distinctBasisTokens = new Set(String(scope.basis).toLowerCase().match(/[a-z0-9]{3,}/g) ?? []);
+      if (distinctBasisTokens.size < 4) {
+        fail('enumerationScope', `${file}: table ${table.id} enumerationScope.basis has only ${distinctBasisTokens.size} distinct alphanumeric word(s) of >=3 chars; rewrite the basis as a verifiable sentence (cite the source list, registry, or filter that establishes completeness)`, { tableId: table.id, distinctTokens: distinctBasisTokens.size, required: 4 });
+      }
     }
     const rowCount = Array.isArray(table.rows) ? table.rows.length : 0;
     if (rowCount < (plan.expectedMinRows ?? 0) && scope.coverage === 'exhaustive') {
@@ -993,11 +1000,19 @@ for (const [ackIndex, ack] of acks.entries()) {
     continue;
   }
   if (!WARNING_DIMENSIONS.has(ack.dimension)) {
-    warn(
-      'acknowledgedWarnings',
-      `acknowledgedWarnings entry targets dimension "${ack.dimension}", which is not a warning-class dimension; allowed dimensions are: ${[...WARNING_DIMENSIONS].sort().join(', ')}. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`,
-      { ackDimension: ack.dimension },
-    );
+    if (!KNOWN_DIMENSIONS.has(ack.dimension)) {
+      warn(
+        'acknowledgedWarnings',
+        `acknowledgedWarnings entry targets dimension "${ack.dimension}", which is not a recognized validator dimension (likely a typo). Allowed warning-class dimensions are: ${[...WARNING_DIMENSIONS].sort().join(', ')}. Either correct the dimension name or remove the entry.`,
+        { ackDimension: ack.dimension, reason: 'unknown' },
+      );
+    } else {
+      warn(
+        'acknowledgedWarnings',
+        `acknowledgedWarnings entry targets dimension "${ack.dimension}", which is not a warning-class dimension; allowed dimensions are: ${[...WARNING_DIMENSIONS].sort().join(', ')}. Remove the entry or rewrite the chapter so the underlying failure clears on its own.`,
+        { ackDimension: ack.dimension, reason: 'failure-class' },
+      );
+    }
     continue;
   }
   ackByDim.set(ack.dimension, ack);
