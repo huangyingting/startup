@@ -57,6 +57,12 @@ const formatNumber = (value: number) => value.toLocaleString('en-US');
       <a class="sr-pill" href={archiveHref}>View archive</a>
     </div>
     {latest.length ? <div class="sr-grid home-grid">{latest.map((entry) => <ReportCard entry={entry} />)}</div> : <p>{t('noReports')}</p>}
+    {reports.length > latest.length && (
+      <div class="home-more">
+        <p>Showing {latest.length} of {formatNumber(reports.length)} reports.</p>
+        <a class="sr-pill" href={archiveHref}>See all {formatNumber(reports.length)} reports →</a>
+      </div>
+    )}
   </section>
 
   <style>
@@ -154,6 +160,24 @@ const formatNumber = (value: number) => value.toLocaleString('en-US');
       line-height: 1.4;
     }
     .home-grid { row-gap: var(--space-5); }
+    .home-more {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-top: var(--space-5);
+      padding-top: var(--space-4);
+      border-top: var(--report-rule);
+    }
+    .home-more p {
+      margin: 0;
+      color: var(--caption-gray);
+      font-family: var(--font-sans);
+      font-size: var(--fs-sm);
+      line-height: 1.4;
+    }
+    .home-more a { text-decoration: none; }
     @media (max-width: 880px) {
       .home-hero { grid-template-columns: 1fr; align-items: start; gap: var(--space-5); }
       .home-panel { max-width: 640px; }
