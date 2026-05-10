@@ -34,6 +34,7 @@ Pairs with [SKILL.md](../SKILL.md) (the workflow narrative) and [contracts.md](c
 - Use the *Renderer contracts* section below before writing figures; substitute a table when the evidence does not fit the figure contract.
 - Cite tables through table-level claimRefs, never through evidence-only columns that hold raw claim ids.
 - Populate tables[].notes whenever the table contains estimates, partial coverage, computed/derived cells, or any caveat the reader needs (data-source convention, units, vintage, what null means). Leave notes null only for pure factual snapshot tables where every cell is a primary-source fact with no qualifier.
+- Place each table/figure under the section whose prose introduces or relies on it via section.tableRefs / section.figureRefs (each id may appear in at most one section across the chapter). The trailing Exhibits section is a fallback for genuinely cross-cutting artifacts, not the default landing place; the unsectionedExhibits warning fires when an exhibit lacks a section home.
 
 #### `retryPolicy`
 
@@ -192,16 +193,16 @@ Dimensions are grouped by class. Only the **chapter-warning** class is acknowled
 | 34 | `chapter-failure` | `figureShape` | Fix the figure data to satisfy its type contract (e.g. dag needs edges, range needs numeric low/high, matrix needs columns and rows). | `yamlParse` |
 | 36 | `chapter-failure` | `duplicateIds` | Renumber the duplicate or malformed table/figure id; ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter. | `yamlParse` |
 | 37 | `chapter-failure` | `artifactRefs` | Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter's figures[] / tables[]. | `yamlParse` |
-| 38 | `chapter-failure` | `duplicateAnalysis` | Either give the figure at least one claimRef the table does not have (a distinct slice/lens), rename it to reflect that lens, or merge it into the table. | `yamlParse` |
-| 39 | `chapter-failure` | `calloutShape` | Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength\|risk\|recommendation\|insight\|assumption). | `yamlParse` |
-| 40 | `chapter-failure` | `sectionsMin` | Add the missing section(s) to reach minSections. | `yamlParse` |
-| 42 | `chapter-failure` | `artifactsMin` | Add the missing table or figure (or substitute a planned figure with an extra table when data shape does not fit). | `yamlParse` |
-| 45 | `chapter-failure` | `depthSection` | Expand the prose of the shortest section(s) only; leave the others untouched. | `yamlParse` |
-| 46 | `chapter-failure` | `depthSectionTotal` | Expand prose across short sections to reach minSectionWordsTotal. | `yamlParse` |
-| 47 | `chapter-failure` | `depthTableRows` | Add rows to existing tables to reach minTableRowsTotal. | `yamlParse` |
-| 48 | `chapter-failure` | `depthFigureData` | Add data points to existing figures to reach minFigureDataPointsTotal. | `yamlParse` |
-| 49 | `chapter-failure` | `contentRequirementCoverage` | Add researchQuestions whose targets[] cover the un-targeted contentRequirements. | `yamlParse`, `localEvidenceMissing` |
-| 50 | `chapter-failure` | `searchQueryFreshness` | For volatile-fact queries (funding/ARR/headcount/customers/leadership/regulatory/launches), plan source discovery with year/month tokens derived from runDate before searching; the runDate year is required and the prior year may only supplement explicit trailing-window searches. The searchQueryFreshness validator fails stale query logs and cannot be acknowledged away. | `yamlParse`, `localEvidenceMissing`, `documentHead`, `runDateConsistency` |
+| 39 | `chapter-failure` | `duplicateAnalysis` | Either give the figure at least one claimRef the table does not have (a distinct slice/lens), rename it to reflect that lens, or merge it into the table. | `yamlParse` |
+| 40 | `chapter-failure` | `calloutShape` | Fix the callout: required title, body, claimRefs[], and optional calloutType in (strength\|risk\|recommendation\|insight\|assumption). | `yamlParse` |
+| 41 | `chapter-failure` | `sectionsMin` | Add the missing section(s) to reach minSections. | `yamlParse` |
+| 43 | `chapter-failure` | `artifactsMin` | Add the missing table or figure (or substitute a planned figure with an extra table when data shape does not fit). | `yamlParse` |
+| 46 | `chapter-failure` | `depthSection` | Expand the prose of the shortest section(s) only; leave the others untouched. | `yamlParse` |
+| 47 | `chapter-failure` | `depthSectionTotal` | Expand prose across short sections to reach minSectionWordsTotal. | `yamlParse` |
+| 48 | `chapter-failure` | `depthTableRows` | Add rows to existing tables to reach minTableRowsTotal. | `yamlParse` |
+| 49 | `chapter-failure` | `depthFigureData` | Add data points to existing figures to reach minFigureDataPointsTotal. | `yamlParse` |
+| 50 | `chapter-failure` | `contentRequirementCoverage` | Add researchQuestions whose targets[] cover the un-targeted contentRequirements. | `yamlParse`, `localEvidenceMissing` |
+| 51 | `chapter-failure` | `searchQueryFreshness` | For volatile-fact queries (funding/ARR/headcount/customers/leadership/regulatory/launches), plan source discovery with year/month tokens derived from runDate before searching; the runDate year is required and the prior year may only supplement explicit trailing-window searches. The searchQueryFreshness validator fails stale query logs and cannot be acknowledged away. | `yamlParse`, `localEvidenceMissing`, `documentHead`, `runDateConsistency` |
 
 #### Chapter warning-class (`precedence: —`, eligible for `acknowledgedWarnings` at chapter scope)
 
@@ -214,6 +215,7 @@ Dimensions are grouped by class. Only the **chapter-warning** class is acknowled
 | — | `chapter-warning` | `sectionsMax` | Reduce or merge sections; the chapter looks over-fragmented. | `yamlParse` |
 | — | `chapter-warning` | `tableNotes` | Write tables[].notes (one line: data source / estimation / partial coverage / what null means), or acknowledge dimension "tableNotes" for pure factual snapshot tables. | — |
 | — | `chapter-warning` | `tablesMax` | Reduce or merge tables; the chapter looks over-fragmented. | `yamlParse` |
+| — | `chapter-warning` | `unsectionedExhibits` | Add each table/figure to the section.tableRefs[] / section.figureRefs[] of the section that introduces or relies on it. The trailing Exhibits section is a fallback for cross-cutting artifacts, not the default landing place. Acknowledge dimension "unsectionedExhibits" only when an exhibit is intentionally orphaned. | `yamlParse` |
 | — | `chapter-warning` | `unverifiedSource` | One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess. | — |
 
 #### Cross-chapter (`check-cross-chapter`, `precedence: —`, NOT ack-able)
@@ -246,7 +248,7 @@ Dimensions are grouped by class. Only the **chapter-warning** class is acknowled
 
 You may opt out of intentional `--strict` warnings by listing them under a top-level `acknowledgedWarnings: [{ dimension, reason }]` entry on the chapter YAML. Each entry must satisfy:
 
-- **dimension** is one of the chapter warning-class dimensions listed above: `fetchTrailMissing`, `figureType`, `figuresMax`, `paywallRisk`, `sectionsMax`, `tableNotes`, `tablesMax`, `unverifiedSource`. (Reminder: `paywallRisk` is ack-able **only** at chapter scope — the report-scope failure cannot be acknowledged from a chapter file.) Acks against any other dimension (cross-chapter, finalize-step, report-meta warnings, the report-level instances of `paywallRisk` / `sourceDomains` / `sourceStanceSpread`, or any other failure-class dimension) surface as a non-blocking `acknowledgedWarnings` warning so the misuse is visible without breaking historical reports.
+- **dimension** is one of the chapter warning-class dimensions listed above: `fetchTrailMissing`, `figureType`, `figuresMax`, `paywallRisk`, `sectionsMax`, `tableNotes`, `tablesMax`, `unsectionedExhibits`, `unverifiedSource`. (Reminder: `paywallRisk` is ack-able **only** at chapter scope — the report-scope failure cannot be acknowledged from a chapter file.) Acks against any other dimension (cross-chapter, finalize-step, report-meta warnings, the report-level instances of `paywallRisk` / `sourceDomains` / `sourceStanceSpread`, or any other failure-class dimension) surface as a non-blocking `acknowledgedWarnings` warning so the misuse is visible without breaking historical reports.
 - **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons do not take effect and produce a non-blocking `acknowledgedWarnings` warning.
 
 Report-meta warnings (the `displayCompleteness` non-blocking signal emitted by `check-report-meta`) and the new chapter hard-failure dimension `searchQueryFreshness` are intentionally excluded from this opt-out: `displayCompleteness` is non-blocking and never gates the report (so there is nothing to opt out of), and `searchQueryFreshness` is a hard chapter failure that must be fixed by re-planning queries against `runDate` rather than acknowledged. Listing either dimension only emits an `acknowledgedWarnings` warning.

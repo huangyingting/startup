@@ -259,6 +259,7 @@ agentPolicy:
     - "Use the *Renderer contracts* section below before writing figures; substitute a table when the evidence does not fit the figure contract."
     - "Cite tables through table-level claimRefs, never through evidence-only columns that hold raw claim ids."
     - "Populate tables[].notes whenever the table contains estimates, partial coverage, computed/derived cells, or any caveat the reader needs (data-source convention, units, vintage, what null means). Leave notes null only for pure factual snapshot tables where every cell is a primary-source fact with no qualifier."
+    - "Place each table/figure under the section whose prose introduces or relies on it via section.tableRefs / section.figureRefs (each id may appear in at most one section across the chapter). The trailing Exhibits section is a fallback for genuinely cross-cutting artifacts, not the default landing place; the unsectionedExhibits warning fires when an exhibit lacks a section home."
   hardRules:
     - "Set slug to the company slug only: the report folder basename with the leading timestamp removed."
     - "Do not hand-write evidence.yaml, full-report.yaml, or summary-card.yaml; let finalization scripts assemble them."

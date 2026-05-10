@@ -808,6 +808,22 @@ if (doc) {
         }
       }
     }
+    // Coverage check (warning, ack-eligible, --strict promotes to failure):
+    // every table/figure should be claimed by some section so the renderer
+    // can place it inline. Anything left over still falls through to the
+    // trailing Exhibits section (build-report.mjs), but Exhibits is meant
+    // for genuinely cross-cutting artifacts, not the default landing place
+    // for forgotten ids.
+    for (const table of doc.tables ?? []) {
+      if (!table?.id) continue;
+      if (sectionTableHome.has(table.id)) continue;
+      warn('unsectionedExhibits', `${spec.file}: table ${table.id} is not referenced by any section.tableRefs[]; it falls through to the trailing Exhibits section. Add ${table.id} to the tableRefs[] of the section whose prose introduces or relies on it, or acknowledge dimension "unsectionedExhibits" if the table is intentionally orphaned.`, { id: table.id, kind: 'table' });
+    }
+    for (const figure of doc.figures ?? []) {
+      if (!figure?.id) continue;
+      if (sectionFigureHome.has(figure.id)) continue;
+      warn('unsectionedExhibits', `${spec.file}: figure ${figure.id} is not referenced by any section.figureRefs[]; it falls through to the trailing Exhibits section. Add ${figure.id} to the figureRefs[] of the section whose prose introduces or relies on it, or acknowledge dimension "unsectionedExhibits" if the figure is intentionally orphaned.`, { id: figure.id, kind: 'figure' });
+    }
   }
 
   counts = {

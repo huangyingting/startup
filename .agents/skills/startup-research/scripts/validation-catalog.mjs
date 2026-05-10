@@ -220,6 +220,7 @@ export const WARNING_DIMENSIONS = new Set([
   'figuresMax',
   'figureType',
   'tableNotes',
+  'unsectionedExhibits',
   'unverifiedSource',
   'fetchTrailMissing',
 ]);
@@ -332,6 +333,10 @@ export const FIX_HINTS = {
   duplicateIds: ({ id } = {}) =>
     id ? `Renumber ${id}: ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter.` : 'Renumber the duplicate or malformed table/figure id; ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter.',
   artifactRefs: "Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter's figures[] / tables[].",
+  unsectionedExhibits: ({ id, kind } = {}) =>
+    id && kind
+      ? `${kind} ${id} has no section home: add ${id} to the appropriate section's ${kind === 'table' ? 'tableRefs' : 'figureRefs'}[] (the section whose prose introduces or relies on it). The trailing Exhibits section is a fallback for genuinely cross-cutting artifacts, not the default. Acknowledge dimension "unsectionedExhibits" only when the artifact is intentionally orphaned.`
+      : 'Add each table/figure to the section.tableRefs[] / section.figureRefs[] of the section that introduces or relies on it. The trailing Exhibits section is a fallback for cross-cutting artifacts, not the default landing place. Acknowledge dimension "unsectionedExhibits" only when an exhibit is intentionally orphaned.',
   sectionsMin: ({ actual, required } = {}) =>
     required != null ? `Add ${Math.max(required - (actual ?? 0), 1)} more section(s) (currently ${actual}, need ${required}).` : 'Add the missing section(s) to reach minSections.',
   artifactsMin: ({ actual, required } = {}) =>
@@ -411,7 +416,7 @@ export const CASCADE_SUPPRESSORS = {
     'enumerationScope', 'enumerationRows', 'enumerationCoverageGap',
     'enumerationTableCorroboration',
     'contentRequirementCoverage',
-    'tableShape', 'figureShape', 'duplicateIds', 'artifactRefs',
+    'tableShape', 'figureShape', 'duplicateIds', 'artifactRefs', 'unsectionedExhibits',
     'calloutShape', 'duplicateAnalysis', 'figureType',
     'sectionsMin', 'sectionsMax', 'artifactsMin',
     'tablesMax', 'figuresMax',
@@ -469,7 +474,7 @@ export const RETRY_PRECEDENCE = [
   'claimAnswerRefs', 'claimContradictRefs', 'crossChapterRefLeak', 'claimRefs',
   'enumerationScope', 'enumerationRows', 'enumerationCoverageGap', 'enumerationTableCorroboration',
   'tableShape', 'figureShape', 'figureType',
-  'duplicateIds', 'artifactRefs', 'duplicateAnalysis',
+  'duplicateIds', 'artifactRefs', 'unsectionedExhibits', 'duplicateAnalysis',
   'calloutShape',
   'sectionsMin', 'sectionsMax', 'artifactsMin', 'tablesMax', 'figuresMax',
   'depthSection', 'depthSectionTotal', 'depthTableRows', 'depthFigureData',
