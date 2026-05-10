@@ -298,10 +298,19 @@ placeholders only where arrays need index alignment. Translate the bundle
 in place, then import that same updated file back into the applier.
 
 ```sh
+set -e
 RUN_ID=<runId>
-CACHE=".translate-cache/$RUN_ID"
+export CACHE=".translate-cache/$RUN_ID"
 mkdir -p "$CACHE"
 ```
+
+The parent agent owns every script command in this workflow: export, split,
+merge, import, apply, and validation. Do not delegate those commands to a
+translation subagent or a free-form helper that might reinterpret them.
+Subagents only edit their assigned sparse `parts/part.NNN.yaml` file in place.
+Keep `set -e` active whenever chaining merge/import/apply/check commands; if
+merge fails, stop there and repair the bundle before writing any final
+`*.zh.yaml` overlay.
 
 ### summary-card.yaml
 
@@ -373,7 +382,28 @@ node .agents/skills/translate-zh/scripts/bundle-translatable.mjs split \
 # in place, no other commands.
 
 # Wait for all part.*.yaml to be translated in place, then merge back into
-# the same full-report sparse bundle path.
+# the same full-report sparse bundle path. First verify that every part still
+# has the same number of string leaves as the split manifest.
+node --input-type=module <<'NODE'
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import yaml from 'js-yaml';
+const dir = `${process.env.CACHE}/parts`;
+const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
+function countLeaves(node) {
+  if (node == null) return 0;
+  if (typeof node === 'string') return 1;
+  if (Array.isArray(node)) return node.reduce((sum, item) => sum + countLeaves(item), 0);
+  if (typeof node === 'object') return Object.values(node).reduce((sum, item) => sum + countLeaves(item), 0);
+  return 0;
+}
+for (const part of manifest.parts) {
+  const doc = yaml.load(readFileSync(join(dir, part.file), 'utf8')) ?? {};
+  const actual = countLeaves(doc);
+  if (actual !== part.leaves) throw new Error(`${part.file}: expected ${part.leaves}, got ${actual}`);
+}
+console.log(`[bundle] part leaf counts verified (${manifest.parts.length} part(s))`);
+NODE
 node .agents/skills/translate-zh/scripts/bundle-translatable.mjs merge \
   "$CACHE"/parts/part.*.yaml --out "$CACHE/full-report.translate.yaml"
 
@@ -481,6 +511,15 @@ Always `cd` to the workspace root first; `js-yaml` lives in the root
 - **`merge input does not match split manifest`**: at least one split part
   is missing, unexpected, or not from the current manifest. Finish or restore
   the affected `parts/part.NNN.yaml` file, then merge again.
+- **`merged leaf count mismatch`**: a translated part changed sparse shape
+  while still parsing as YAML. Do not import/apply after this error. Compare
+  each `parts/part.NNN.yaml` string-leaf count against `parts/manifest.json`
+  and repair the mismatched part first. If the bad path is not obvious,
+  re-export the English report into a temporary cache, split it with the same
+  limits, and compare the original vs translated string-path sets for that
+  one part. Table rows are the common culprit: inspect exact whitespace with
+  `sed -n 'START,ENDl'` and parse the row to confirm each cell remains a
+  sibling array item rather than being folded into the previous cell.
 
 ## Common pitfalls
 
@@ -496,4 +535,9 @@ Always `cd` to the workspace root first; `js-yaml` lives in the root
 - Translating a mechanical table cell (number, currency, date, `n/a`).
   These are skipped by `bundle-translatable.mjs export` for a reason;
   the renderer falls back to the English source verbatim.
+- Leaving byte-identical short labels that include an English descriptor.
+  Proper nouns stay Latin, but the reader-facing descriptor still needs
+  Chinese: `U.S. federal courts` -> `美国联邦法院`, `Series E at $61.5B` ->
+  `Series E 轮，估值 $61.5B`, `Responsible Scaling Policy v3.2` ->
+  `Responsible Scaling Policy v3.2（负责任扩展政策）`.
 
