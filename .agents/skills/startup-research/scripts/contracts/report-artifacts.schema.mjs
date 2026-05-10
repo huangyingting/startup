@@ -155,7 +155,7 @@ export const ResearchQuestionSchema = z.object({
 }).passthrough();
 
 export const SearchQuerySchema = z.object({
-  query: nonEmptyString.describe('the actual query string you ran'),
+  query: nonEmptyString.describe('provenance/audit record of a source-discovery query you issued; not the search executor itself'),
   engine: nullableString.optional().describe('search engine identifier (google, bing, etc.)'),
   hits: z.number().nullable().optional().describe('count of returned results, if known'),
   retainedSourceRefs: z.array(sourceRef).default([]).describe('S<ChapterLetter>### ids retained from this query (subset of sources[])'),
@@ -173,7 +173,7 @@ export const EvidenceGapSchema = z.object({
 }).passthrough();
 
 export const LocalEvidenceSchema = z.object({
-  searchQueries: z.array(SearchQuerySchema),
+  searchQueries: z.array(SearchQuerySchema).describe('provenance/audit trail for source-discovery queries; plan and issue the searches before recording them here'),
   researchQuestions: z.array(ResearchQuestionSchema),
   sources: z.array(SourceSchema),
   claims: z.array(ClaimSchema),
@@ -338,7 +338,7 @@ export const ReportMetaSchema = z.object({
   slug: nonEmptyString.describe('company slug (matches every chapter\'s slug)'),
   runDate: dateLike,
   company: CompanyMetaSchema,
-  revision: RevisionSchema.nullable().optional().describe('DO NOT AUTHOR — written automatically by link-refresh.mjs. Canonical: omit the field entirely (preferred over `revision: null` or `revision: {}`). Set explicitly only to disambiguate when more than one finalized current report matches the same company/domain.'),
+  revision: RevisionSchema.nullable().optional().describe('DO NOT AUTHOR — written automatically by link-refresh.mjs. Canonical: omit the field entirely (preferred over `revision: null` or `revision: {}`). If more than one finalized current report matches the same company/domain, resolve it before folder creation with create-report-run.mjs --refresh-of <runId>.'),
   subtitle: nullableString.optional(),
   coverageNotes: nullableString.optional().describe('caveats about coverage / dating / scope'),
   coverFacts: z.array(CoverFactSchema).nullable().optional().describe('front-page fact strip'),

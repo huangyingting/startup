@@ -125,7 +125,6 @@ jobs:
           INDUSTRY="$(trim "$RAW_INDUSTRY")"
           COUNT="$(trim "$RAW_COUNT")"
           MODEL="$(trim "$RAW_MODEL")"
-          RUN_DATE="$(date -u +%F)"
           CUTOFF_DATE="$(date -u -d '2 years ago' +%F)"
           if [ -z "$INDUSTRY" ]; then
             INDUSTRY="Any"
@@ -166,7 +165,6 @@ jobs:
             echo "label=$LABEL"
             echo "safeLabel=$SAFE_LABEL"
             echo "model=$MODEL"
-            echo "runDate=$RUN_DATE"
             echo "cutoffDate=$CUTOFF_DATE"
           } >> "$GITHUB_OUTPUT"
 
@@ -180,7 +178,6 @@ jobs:
             echo "| Max reports | ${{ steps.inputs.outputs.count }} |"
             echo "| Industry | ${{ steps.inputs.outputs.industry }} |"
             echo "| Model | ${{ steps.inputs.outputs.model }} |"
-            echo "| Run date | ${{ steps.inputs.outputs.runDate }} UTC |"
             echo "| Unicorn cutoff | ${{ steps.inputs.outputs.cutoffDate }} |"
             echo "| Label | ${{ steps.inputs.outputs.label }} |"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -274,7 +271,6 @@ jobs:
           COUNT: ${{ steps.inputs.outputs.count }}
           INDUSTRY_RULE: ${{ steps.inputs.outputs.industryRule }}
           MODEL: ${{ steps.inputs.outputs.model }}
-          RUN_DATE: ${{ steps.inputs.outputs.runDate }}
           CUTOFF_DATE: ${{ steps.inputs.outputs.cutoffDate }}
           COVERAGE_HINT: ${{ steps.coverage.outputs.coverageHint }}
           # fetch-url's main() appends one JSON line per call to this file
@@ -291,14 +287,14 @@ jobs:
           PROMPT=$(cat <<EOF
           Produce full diligence reports for up to $COUNT private startup unicorns.
 
-          Use $RUN_DATE UTC as the research date. A company only qualifies as recent if its unicorn-confirming valuation or financing evidence is dated on or after $CUTOFF_DATE.
+          Do not use a workflow-provided report run date. For each selected company, after create-report-run.mjs use runtimeContext.run.runDate from load-chapter-runtime-context.mjs as the canonical research date, YAML runDate, and source-discovery freshness anchor. A company only qualifies as recent if its unicorn-confirming valuation or financing evidence is dated on or after $CUTOFF_DATE; use that cutoff only for candidate screening.
           $INDUSTRY_RULE
           Pick only companies with credible public evidence of a \$1B+ private valuation or unicorn-confirming financing in that window. Use this portfolio hint: $COVERAGE_HINT
           Skip duplicates already in reports/ (each finalized run lives in reports/<runId>/summary-card.yaml; the create-report-run.mjs duplicate guard checks the same set) unless there is materially new evidence. If fewer than $COUNT qualify, research only the actual qualifying companies. If none qualify, do not create report folders; print a short no-candidates note and exit successfully.
           For each selected company, generate and finalize a complete startup diligence research report.
           Treat completion as an on-disk contract: every selected company must either have a finalized report folder with all required chapter, metadata, and generated artifacts, or be skipped before creating a folder. If you fan out work, join every company/chapter task, inspect failures, and never exit successfully with partial report folders.
 
-          Follow the startup-research skill's source-verification rules; this workflow provides STARTUP_FETCH_LOG_PATH so fetch-url calls are auditable.
+          Follow the startup-research skill's source-verification rules; this workflow provides STARTUP_FETCH_LOG_PATH so fetch-url calls are auditable. Use the host search/source-discovery capability before fetch-url; if no source-discovery capability is available, stop before creating report folders, print a clear source-discovery-unavailable note, and do not invent sources. Do not run any git command (git add, git commit, git push, git stash, git checkout, etc.) at any point in the workflow — leave every generated and modified file unstaged in the working tree; the workflow itself owns commit/push decisions.
           EOF
           )
           # tee the Copilot CLI output so the next step can parse the trailing

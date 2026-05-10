@@ -9,10 +9,12 @@
 //                      old report. Intended to run inside finalize-report after the
 //                      new report already passed its publishable gate.
 //
-// The previous report is resolved automatically: the newest finalized
-// non-superseded report whose summary-card matches the new report's
-// company.name or company.website. Refusing to refresh anything other than
-// that single current report keeps the duplicate-guard invariants intact.
+// The previous report is resolved from the new report's revision.refreshOfRunId
+// (idempotent re-runs), then from .research-cache/<newRunId>/refresh-context.yaml
+// written by create-report-run.mjs --refresh, and only then by a single
+// unambiguous current summary-card match. Multiple fallback matches fail so the
+// agent reruns create-report-run.mjs --refresh-of before link-refresh mutates
+// revision state.
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
@@ -29,6 +31,8 @@ import {
   readYaml,
   REPORT_META_FILE,
   reportsDir,
+  researchCacheDir,
+  tryReadYaml,
   writeYaml,
 } from './utils.mjs';
 
@@ -96,6 +100,33 @@ function assertFinalizedRun(runId, label) {
   if (!isFinalizedReportFolder(folder)) abort(`${label} is not a finalized report: reports/${runId}`, EXIT.failure);
 }
 
+function cachedRefreshOfRunId(newRunId) {
+  if (!isRunId(newRunId)) return null;
+  const result = tryReadYaml(join(researchCacheDir(newRunId), 'refresh-context.yaml'));
+  const value = result.ok ? result.value?.refreshOfRunId : null;
+  return typeof value === 'string' && isRunId(value) ? value : null;
+}
+
+function reusablePriorRunId(runId, { newRunId, newMeta, label }) {
+  if (!runId) return null;
+  if (runId === newRunId) abort(`${label} cannot reference the new report itself.`, EXIT.failure);
+  if (!isRunId(runId)) abort(`${label} ${runId} is not a valid report run id.`, EXIT.failure);
+  const folder = join(reportsDir, runId);
+  if (!isFinalizedReportFolder(folder)) {
+    abort(`${label} ${runId} is not a finalized report.`, EXIT.failure);
+  }
+  const card = readSummaryCard(runId);
+  if (!matchesCompany(card, newMeta.company)) {
+    abort(`${label} ${runId} does not match the new report company/domain.`, EXIT.failure);
+  }
+  const revision = normalizeRevision(card?.revision);
+  const reusable = revision.status !== 'superseded' || revision.supersededByRunId === newRunId;
+  if (!reusable) {
+    abort(`${label} ${runId} is already superseded by ${revision.supersededByRunId}; refresh the current report instead.`, EXIT.alreadyExists);
+  }
+  return runId;
+}
+
 function resolvePreviousRunId({ newRunId, newMeta }) {
   // Idempotent re-runs of finalize-report --refresh: once link-refresh has marked the
   // old report superseded, no current candidate matches anymore. Honour the
@@ -103,17 +134,10 @@ function resolvePreviousRunId({ newRunId, newMeta }) {
   // finalized matching report that is either still current or already
   // superseded by this same new report.
   const declared = normalizeRevision(newMeta?.revision).refreshOfRunId;
-  if (declared && declared !== newRunId && isRunId(declared)) {
-    const folder = join(reportsDir, declared);
-    if (isFinalizedReportFolder(folder)) {
-      const card = readSummaryCard(declared);
-      if (matchesCompany(card, newMeta.company)) {
-        const revision = normalizeRevision(card?.revision);
-        const reusable = revision.status !== 'superseded' || revision.supersededByRunId === newRunId;
-        if (reusable) return declared;
-      }
-    }
-  }
+  if (declared) return reusablePriorRunId(declared, { newRunId, newMeta, label: 'report-meta revision.refreshOfRunId' });
+
+  const cached = cachedRefreshOfRunId(newRunId);
+  if (cached) return reusablePriorRunId(cached, { newRunId, newMeta, label: 'refresh-context refreshOfRunId' });
 
   const candidates = [];
   for (const runId of listDirs(reportsDir)) {
@@ -128,6 +152,11 @@ function resolvePreviousRunId({ newRunId, newMeta }) {
   }
   candidates.sort((a, b) => b.localeCompare(a));
   if (!candidates.length) abort('could not find a current finalized report matching the new report company/domain', EXIT.notFound);
+  if (candidates.length > 1) {
+    console.error('[refresh] multiple current finalized reports match the new report company/domain:');
+    for (const runId of candidates) console.error(`  - ${runId}`);
+    abort('ambiguous refresh target; edit .research-cache/<newRunId>/refresh-context.yaml to set refreshOfRunId: <intendedPriorRunId> and rerun finalize-report --refresh. (--refresh-of on create-report-run is honored only on the initial fresh invocation; --resume reuses the cached file unchanged.)', EXIT.failure);
+  }
   return candidates[0];
 }
 

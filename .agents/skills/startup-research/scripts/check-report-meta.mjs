@@ -5,8 +5,8 @@
 // for structure and enums. This script adds non-blocking display-completeness
 // warnings and returns the shared validation-result envelope for agents.
 import { existsSync } from 'node:fs';
-import { join, resolve } from 'node:path';
-import { EXIT, REPORT_META_FILE, tryReadYaml } from './utils.mjs';
+import { basename, join, resolve } from 'node:path';
+import { EXIT, isRunId, REPORT_META_FILE, runDateFromRunId, tryReadYaml } from './utils.mjs';
 import { OBSOLETE_SUMMARY_ROOT_FIELDS, ReportMetaSchema, schemaErrors } from './contracts/report-artifacts.schema.mjs';
 import {
   formatValidationCompact,
@@ -189,6 +189,23 @@ if (!existsSync(reportFolder)) {
         fix: 'Edit report-meta.yaml to match the report-meta shape in references/contracts.md.',
       }));
       issues.push(...obsoleteRootFieldIssues(result.value));
+      // runDate must equal the UTC YYYY-MM-DD derived from the runId
+      // timestamp prefix. Skipped when --report-folder is not a runId-named
+      // folder (developer pointing at a scratch folder) so the validator
+      // stays usable in ad-hoc setups.
+      const folderName = basename(reportFolder);
+      if (isRunId(folderName)) {
+        const canonicalRunDate = runDateFromRunId(folderName);
+        if (typeof result.value?.runDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(result.value.runDate) && result.value.runDate !== canonicalRunDate) {
+          issues.push(validationIssue({
+            path: 'runDate',
+            message: `runDate "${result.value.runDate}" does not match the runId-derived runDate "${canonicalRunDate}"`,
+            dimension: 'runDateConsistency',
+            code: 'reportMeta.runDateFolderMismatch',
+            fix: `Set runDate: to "${canonicalRunDate}" (UTC YYYY-MM-DD from the report folder runId timestamp prefix; use runtimeContext.run.runDate).`,
+          }));
+        }
+      }
       warnings.push(...displayWarnings(result.value));
     }
   }

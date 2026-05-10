@@ -23,7 +23,7 @@
 // `retryOrder[]`, and `suppressedDimensions[]` drive root-cause-first repair.
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
-import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, loadWorkflowConfig, registrableDomain, tryReadYaml } from './utils.mjs';
+import { canonicalSourceUrl, collectClaimRefs, companySlugFromRunId, EXIT, getAnalysisArtifacts, loadWorkflowConfig, registrableDomain, runDateFromRunId, tryReadYaml } from './utils.mjs';
 import { validateFigureShape } from '../../../../website/src/lib/figures.mjs';
 import {
   checkArtifactRefs,
@@ -374,12 +374,13 @@ function checkSearchQueries(file, doc) {
 }
 
 // Per-query freshness anchor: every query whose lowercased text contains a
-// volatileFactQueryTokens substring must also contain the runDate's year (or
-// the prior year for trailing windows) as a literal 4-digit token. This
-// pushes the search engine toward fresh sources for the volatile facts the
-// agent is supposed to re-fetch every run (rules.md → researchRules). Warn
-// only by default so a single un-anchored query doesn't break the chapter;
-// --strict and finalize-report promote the warning to a failure.
+// volatileFactQueryTokens substring must contain the runDate's year as a
+// literal 4-digit token. The prior year may also appear for trailing windows,
+// but it does not replace the runDate year. This pushes the search engine
+// toward fresh sources for the volatile facts the agent is supposed to
+// re-fetch every run (rules.md → researchRules). This is a hard gate: if the
+// query log shows stale planning, the agent must re-plan/re-search instead of
+// acknowledging the warning away.
 //
 // Skipped when:
 //   - searchQueries is not an array (searchQueriesMissing already fired);
@@ -393,9 +394,10 @@ function checkSearchQueryFreshness(file, doc) {
   if (!Array.isArray(queries) || queries.length === 0) return;
   const yearMatch = typeof doc?.runDate === 'string' ? doc.runDate.match(/^(\d{4})-\d{2}-\d{2}$/) : null;
   if (!yearMatch) return;
-  const currentYear = Number.parseInt(yearMatch[1], 10);
-  const priorYear = currentYear - 1;
-  const yearRegex = new RegExp(`\\b(?:${currentYear}|${priorYear})\\b`);
+  const runYear = Number.parseInt(yearMatch[1], 10);
+  const trailingYear = runYear - 1;
+  const runYearRegex = new RegExp(`\\b${runYear}\\b`);
+  const trailingYearRegex = new RegExp(`\\b${trailingYear}\\b`);
   for (const [index, qe] of queries.entries()) {
     const text = typeof qe?.query === 'string' ? qe.query.trim() : '';
     if (!text) continue;
@@ -408,11 +410,11 @@ function checkSearchQueryFreshness(file, doc) {
       return lower.includes(token);
     });
     if (!matchedToken) continue;
-    if (yearRegex.test(text)) continue;
-    warn(
+    if (runYearRegex.test(text)) continue;
+    fail(
       'searchQueryFreshness',
-      `${file}: localEvidence.searchQueries[${index}].query "${text}" matches volatile-fact token "${matchedToken}" but contains neither ${currentYear} nor ${priorYear}; volatile-fact queries must include the current year (and optionally the prior year) as a literal token so the search engine biases toward fresh sources.`,
-      { index, query: text, currentYear, priorYear, matchedToken },
+      `${file}: localEvidence.searchQueries[${index}].query "${text}" matches volatile-fact token "${matchedToken}" but does not contain runDate year ${runYear}; volatile-fact queries must include the runDate year as a literal token. The prior year ${trailingYear} is allowed only as an additional trailing-window token, not as a substitute.`,
+      { index, query: text, runYear, trailingYear, hasTrailingYear: trailingYearRegex.test(text), matchedToken },
     );
   }
 }
@@ -741,6 +743,18 @@ if (doc) {
     const canonical = companySlugFromRunId(basename(reportFolder));
     if (doc?.slug && doc.slug !== canonical) {
       fail('slugConsistency', `${spec.file}: slug "${doc.slug}" does not match folder slug "${canonical}"`, { actual: doc.slug, required: canonical });
+    }
+  }
+  // runDate must equal the UTC YYYY-MM-DD derived from the runId timestamp
+  // prefix. Without this, an agent that hand-formats a date from the model
+  // clock can drift to the wrong year, which then becomes the freshness
+  // anchor for searchQueryFreshness — silently bypassing the volatile-fact
+  // gate. Skipped when documentHead already failed (doc.runDate missing or
+  // malformed) so retry triage is not flooded with cascading noise.
+  {
+    const canonical = runDateFromRunId(basename(reportFolder));
+    if (typeof doc?.runDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(doc.runDate) && doc.runDate !== canonical) {
+      fail('runDateConsistency', `${spec.file}: runDate "${doc.runDate}" does not match the runId-derived runDate "${canonical}" (UTC YYYY-MM-DD from the report folder timestamp prefix)`, { actual: doc.runDate, required: canonical });
     }
   }
   // Chapter-local table/figure id uniqueness (T<ChapterLetter>### /

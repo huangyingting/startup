@@ -106,7 +106,6 @@ jobs:
           COMPANY="$(trim "$RAW_COMPANY")"
           URL="$(trim "$RAW_URL")"
           MODEL="$(trim "$RAW_MODEL")"
-          RUN_DATE="$(date -u +%F)"
           if [ -z "$COMPANY" ]; then
             echo "companyName is required" >&2
             exit 1
@@ -128,7 +127,6 @@ jobs:
             echo "label=$LABEL"
             echo "safeLabel=$SAFE_LABEL"
             echo "model=$MODEL"
-            echo "runDate=$RUN_DATE"
             echo "company<<EOF"
             echo "$COMPANY"
             echo "EOF"
@@ -147,7 +145,6 @@ jobs:
             echo "| Company | ${{ steps.inputs.outputs.company }} |"
             echo "| URL | ${{ steps.inputs.outputs.url || 'unknown' }} |"
             echo "| Model | ${{ steps.inputs.outputs.model }} |"
-            echo "| Run date | ${{ steps.inputs.outputs.runDate }} UTC |"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Snapshot reports before generation
@@ -160,7 +157,6 @@ jobs:
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
           MODEL: ${{ steps.inputs.outputs.model }}
-          RUN_DATE: ${{ steps.inputs.outputs.runDate }}
           # fetch-url appends one JSON line per call here when set; chapter
           # checks can use the trail to surface unverifiedSource warnings.
           STARTUP_FETCH_LOG_PATH: ${{ github.workspace }}/.research-cache/_fetch-log.jsonl
@@ -171,7 +167,7 @@ jobs:
           PROMPT=$(cat <<EOF
           Produce one complete startup diligence report for the company below.
 
-          Use $RUN_DATE UTC as the research date.
+          Do not use a workflow-provided run date. After create-report-run.mjs, use runtimeContext.run.runDate from load-chapter-runtime-context.mjs as the canonical research date, YAML runDate, and source-discovery freshness anchor.
           Company: $COMPANY
           Company URL: ${COMPANY_URL:-unknown}
 
@@ -179,7 +175,7 @@ jobs:
           Generate and finalize a complete startup diligence research report for this company.
           Treat completion as an on-disk contract: if you create a report folder, it must end with all required chapter, metadata, and generated artifacts; otherwise skip before creating a folder. If you fan out chapter work, join every task, inspect failures, and never exit successfully with partial report folders.
 
-          Run the diligence workflow. Write the full required English YAML set under reports/<run>/. Follow the startup-research skill's source-verification rules; this workflow provides STARTUP_FETCH_LOG_PATH so fetch-url calls are auditable. Do not run git add or git commit.
+          Run the diligence workflow. Write the full required English YAML set under reports/<run>/. Follow the startup-research skill's source-verification rules; this workflow provides STARTUP_FETCH_LOG_PATH so fetch-url calls are auditable. Use the host search/source-discovery capability before fetch-url; if no source-discovery capability is available, stop before creating a report folder, print a clear source-discovery-unavailable note, and do not invent sources. Do not run any git command (git add, git commit, git push, git stash, git checkout, etc.) at any point in the workflow — leave every generated and modified file unstaged in the working tree; the workflow itself owns commit/push decisions.
           EOF
           )
           mkdir -p "$RUNNER_TEMP/copilot-logs"

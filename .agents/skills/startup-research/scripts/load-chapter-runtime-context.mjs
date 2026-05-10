@@ -174,17 +174,19 @@ function cumulativeContext(reportFolder, currentOrder, allChapters) {
 
 // Run identity derived from the report folder name. Split out from runCache
 // because none of these come from `.research-cache/` — they are slices of the
-// runId itself. `runtimeContext.run.runDate` is the canonical clock anchor
-// chapter doc heads must copy as `runDate`, so the agent never formats a date.
+// runId itself. `runtimeContext.run.runDate` is the single canonical clock
+// anchor chapter doc heads must copy as `runDate`; source-discovery query
+// planning derives any year/month tokens from this value before searching.
 function runIdentity(reportFolder) {
   const runId = basename(reportFolder);
   if (!isRunId(runId)) {
     return { runId, companySlug: null, runDate: null };
   }
+  const runDate = runDateFromRunId(runId);
   return {
     runId,
     companySlug: companySlugFromRunId(runId),
-    runDate: runDateFromRunId(runId),
+    runDate,
   };
 }
 
@@ -216,7 +218,7 @@ function runCacheContext(reportFolder) {
 function buildRuntimeContext(config, chapter) {
   const chapters = config.chapters;
   const index = chapters.findIndex((item) => item.order === chapter.order);
-  return {
+  const out = {
     schemaVersion: 'chapter-runtime-context-v3',
     generatedFrom: workflowConfigPath,
     totalChapters: chapters.length,
@@ -224,6 +226,19 @@ function buildRuntimeContext(config, chapter) {
     chapter: compactChapter(chapter),
     nextChapter: index < chapters.length - 1 ? compactChapter(chapters[index + 1]) : null,
   };
+  // Project the per-chapter retry budget so subagent workers see the
+  // enforcement contract without re-reading rules.md. Skipped silently when
+  // workflow-config does not declare retryPolicy (older configs).
+  const retryPolicy = config.agentPolicy?.retryPolicy;
+  if (retryPolicy && Number.isInteger(retryPolicy.maxChapterRetries)) {
+    out.policy = {
+      retryPolicy: {
+        maxChapterRetries: retryPolicy.maxChapterRetries,
+        requireMonotonicFailureDecrease: Boolean(retryPolicy.requireMonotonicFailureDecrease),
+      },
+    };
+  }
+  return out;
 }
 
 function selectChapter(config, args) {
@@ -267,10 +282,11 @@ function main() {
   const runtimeContext = buildRuntimeContext(config, chapter);
   // run identity (run.runDate) and runCache (refresh-context) are always
   // emitted when --report-folder is supplied, regardless of --include-context.
-  // The agent needs run.runDate as the canonical clock anchor for chapter
-  // doc heads even on the first chapter or during parallel drafting (when
-  // --include-context is intentionally omitted to avoid projecting a stale
-  // cumulative rollup of unfinished sibling chapters).
+  // The agent needs run.runDate as the canonical clock anchor for chapter doc
+  // heads and source-discovery query planning even on the first chapter or
+  // during parallel drafting (when --include-context is intentionally omitted
+  // to avoid projecting a stale cumulative rollup of unfinished sibling
+  // chapters).
   if (args.reportFolder) {
     runtimeContext.run = runIdentity(args.reportFolder);
     runtimeContext.runCache = runCacheContext(args.reportFolder);
