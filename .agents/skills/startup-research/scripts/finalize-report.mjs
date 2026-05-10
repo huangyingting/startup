@@ -31,27 +31,30 @@ import {
   EXIT,
   FINAL_ARTIFACTS,
   REPORT_META_FILE,
+  WORKFLOW_SNAPSHOT_FILE,
   getAnalysisArtifacts,
   isRunId,
   researchCacheDir,
   tryReadYaml,
+  writeWorkflowSnapshot,
 } from './utils.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/finalize-report.mjs <report-folder> [--rebuild] [--refresh] [--refresh-reason <text>]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/finalize-report.mjs <report-folder> [--rebuild] [--refresh] [--refresh-reason <text>] [--refresh-snapshot]');
   process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
-  const parsed = { folder: null, rebuild: false, refresh: false, refreshReason: '' };
+  const parsed = { folder: null, rebuild: false, refresh: false, refreshReason: '', refreshSnapshot: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--rebuild') parsed.rebuild = true;
     else if (arg === '--refresh') parsed.refresh = true;
     else if (arg === '--refresh-reason') parsed.refreshReason = argv[++i] ?? '';
+    else if (arg === '--refresh-snapshot') parsed.refreshSnapshot = true;
     else if (arg.startsWith('-')) usage();
     else if (!parsed.folder) parsed.folder = arg;
     else usage();
@@ -178,6 +181,19 @@ function ensureRefreshReasonMatchesCache() {
 
 // Strict sweep first so we never advance to the expensive ledger/assembler
 // steps with unverified sources or missing table notes outstanding.
+// Before any sub-script runs, freeze the current head workflow-config.yaml
+// into reports/<runId>/.workflow-snapshot.yaml so every downstream check
+// validates this report against the config that produced it. Default is
+// no-op when a snapshot already exists; --refresh-snapshot overwrites it
+// (use when an authored repair on an old report should be re-judged under
+// the latest rules).
+const snapshotResult = writeWorkflowSnapshot(reportFolder, { force: parsedArgs.refreshSnapshot });
+if (snapshotResult.written) {
+  console.log(`[finalize-report] wrote ${WORKFLOW_SNAPSHOT_FILE} (${parsedArgs.refreshSnapshot ? 'refreshed from head config' : 'first finalize'})`);
+} else {
+  console.log(`[finalize-report] reusing existing ${WORKFLOW_SNAPSHOT_FILE}; pass --refresh-snapshot to re-freeze from the current head config.`);
+}
+
 strictCheckEveryChapter();
 
 // Refresh audit-trail consistency must hold before we touch report-meta.

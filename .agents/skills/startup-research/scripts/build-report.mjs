@@ -80,7 +80,7 @@ const reportFolder = resolve(args.folder);
 reportFolderForEnvelope = reportFolder;
 if (!existsSync(reportFolder)) abort({ message: `report folder not found: ${reportFolder}`, dimension: 'missingArtifact', code: 'buildReport.reportFolderMissing', fix: 'Create the report folder with create-report-run.mjs before running build-report.mjs.', path: reportFolder, exitCode: EXIT.notFound });
 
-const config = loadWorkflowConfig();
+const config = loadWorkflowConfig({ reportFolder });
 const chapters = getAnalysisArtifacts(config);
 const evidenceFile = FINAL_ARTIFACTS.evidence.file;
 const fullReportFile = FINAL_ARTIFACTS.fullReport.file;

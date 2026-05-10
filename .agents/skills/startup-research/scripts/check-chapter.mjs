@@ -54,28 +54,6 @@ import {
 } from './validation-catalog.mjs';
 import { validationEnvelope } from './contracts/validation-result.mjs';
 
-// Loaded eagerly so the chapter-id `spec` is available for the per-chapter
-// ID patterns built immediately after argv parsing. Wrapped so a broken
-// workflow-config.yaml surfaces as a friendly error instead of a raw stack trace
-// before the user even sees the usage line.
-let ANALYSIS_ARTIFACTS;
-// Lowercased substring tokens that mark a search query as volatile-fact-shaped.
-// Sourced from agentPolicy.volatileFactQueryTokens; consumed by
-// checkSearchQueryFreshness() to decide which queries must include a year
-// token derived from doc.runDate.
-let VOLATILE_FACT_QUERY_TOKENS;
-try {
-  const config = loadWorkflowConfig();
-  ANALYSIS_ARTIFACTS = getAnalysisArtifacts(config);
-  VOLATILE_FACT_QUERY_TOKENS = (config.agentPolicy?.volatileFactQueryTokens ?? [])
-    .map((token) => String(token).toLowerCase())
-    .filter((token) => token.length > 0);
-} catch (err) {
-  console.error(`[check:chapter] failed to load workflow config: ${err.message}`);
-  console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose workflow-config.yaml.');
-  process.exit(EXIT.failure);
-}
-
 function parseArgs(argv) {
   const args = { folder: null, chapter: null, strict: false, format: 'text' };
   for (let i = 0; i < argv.length; i += 1) {
@@ -112,6 +90,30 @@ if (!['text', 'json', 'compact'].includes(args.format)) {
   process.exit(EXIT.failure);
 }
 
+const reportFolder = resolve(args.folder);
+
+// Load the workflow config snapshot bound to this report folder when present
+// (finalize-report writes one for every finalized report); otherwise fall
+// back to the head config. Means editing the head workflow-config.yaml
+// never retroactively re-judges old reports.
+let ANALYSIS_ARTIFACTS;
+// Lowercased substring tokens that mark a search query as volatile-fact-shaped.
+// Sourced from agentPolicy.volatileFactQueryTokens; consumed by
+// checkSearchQueryFreshness() to decide which queries must include a year
+// token derived from doc.runDate.
+let VOLATILE_FACT_QUERY_TOKENS;
+try {
+  const config = loadWorkflowConfig({ reportFolder });
+  ANALYSIS_ARTIFACTS = getAnalysisArtifacts(config);
+  VOLATILE_FACT_QUERY_TOKENS = (config.agentPolicy?.volatileFactQueryTokens ?? [])
+    .map((token) => String(token).toLowerCase())
+    .filter((token) => token.length > 0);
+} catch (err) {
+  console.error(`[check:chapter] failed to load workflow config: ${err.message}`);
+  console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose workflow-config.yaml.');
+  process.exit(EXIT.failure);
+}
+
 const spec = ANALYSIS_ARTIFACTS.find((item) => item.file === args.chapter);
 if (!spec) {
   console.error(`Unknown chapter artifact: ${args.chapter}`);
@@ -126,8 +128,6 @@ if (!spec) {
 const ID_PATTERN_CHAPTER_TABLE = makeIdPattern('T', spec.letter);
 const ID_PATTERN_CHAPTER_FIGURE = makeIdPattern('F', spec.letter);
 const ID_PATTERN_CHAPTER_RESEARCH_QUESTION = makeIdPattern('Q', spec.letter);
-
-const reportFolder = resolve(args.folder);
 const failures = [];
 const warnings = [];
 

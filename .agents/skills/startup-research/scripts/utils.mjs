@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
@@ -9,6 +9,14 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..')
 export const reportsDir = join(repoRoot, 'reports');
 const researchCacheRoot = join(repoRoot, '.research-cache');
 export const workflowConfigPath = join(repoRoot, '.agents', 'skills', 'startup-research', 'references', 'workflow-config.yaml');
+// Per-report config snapshot. Written by finalize-report so every finalized
+// report carries the exact workflow-config.yaml that produced it; check-*
+// and build-* scripts then validate/assemble each report against its own
+// snapshot, so editing the head config never retroactively re-judges old
+// reports. Hidden filename keeps it out of the website loader and the
+// reports-contract artifact list.
+export const WORKFLOW_SNAPSHOT_FILE = '.workflow-snapshot.yaml';
+export const workflowSnapshotPathFor = (reportFolder) => join(reportFolder, WORKFLOW_SNAPSHOT_FILE);
 export const RUN_ID_RE = /^\d{14}-[a-z0-9-]+$/;
 export const REVISION_STATUSES = new Set(['current', 'superseded']);
 export const REPORT_META_FILE = 'report-meta.yaml';
@@ -239,11 +247,31 @@ export function tryReadYaml(path) {
   }
 }
 
-export function loadWorkflowConfig() {
+export function loadWorkflowConfig({ reportFolder } = {}) {
+  if (reportFolder) {
+    const snapshotPath = workflowSnapshotPathFor(reportFolder);
+    if (existsSync(snapshotPath)) {
+      return normalizeWorkflowConfigFromSchema(readYaml(snapshotPath));
+    }
+  }
   if (!existsSync(workflowConfigPath)) {
     throw new Error(`[workflow-config] missing ${workflowConfigPath}`);
   }
   return normalizeWorkflowConfigFromSchema(readYaml(workflowConfigPath));
+}
+
+// Copy the head workflow-config.yaml into <reportFolder>/.workflow-snapshot.yaml
+// so subsequent validations of this report use the config it was produced
+// against. By default a no-op when the snapshot already exists; pass
+// `force: true` (wired via finalize-report --refresh-snapshot) to overwrite.
+export function writeWorkflowSnapshot(reportFolder, { force = false } = {}) {
+  if (!existsSync(workflowConfigPath)) {
+    throw new Error(`[workflow-config] missing ${workflowConfigPath}`);
+  }
+  const target = workflowSnapshotPathFor(reportFolder);
+  if (!force && existsSync(target)) return { written: false, path: target };
+  copyFileSync(workflowConfigPath, target);
+  return { written: true, path: target };
 }
 
 export function getAnalysisArtifacts(config = loadWorkflowConfig()) {
