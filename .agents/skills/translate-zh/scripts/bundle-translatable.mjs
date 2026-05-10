@@ -8,21 +8,19 @@
 // alignment remains unambiguous.
 //
 // Usage:
-//   node bundle-translatable.mjs export <yamlPath> --out <bundle.yaml> [--include-mechanical] [--format sparse|list]
+//   node bundle-translatable.mjs export <yamlPath> --out <bundle.yaml> [--include-mechanical]
 //   node bundle-translatable.mjs import <yamlPath> <bundle.yaml> --out <translations.json>
-//   node bundle-translatable.mjs import <legacy-list-bundle.yaml> --out <translations.json>
 //   node bundle-translatable.mjs split <bundle.yaml> --out-dir <dir> [--max-chars 45000] [--max-items 400]
 //   node bundle-translatable.mjs merge <part.yaml...> --out <bundle.yaml>
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import yaml from 'js-yaml';
 import { isTranslatableLeaf, whitelistFor } from './whitelist.mjs';
 
 function usage(code) {
   console.error('Usage:');
-  console.error('  bundle-translatable.mjs export <yamlPath> --out <bundle.yaml> [--include-mechanical] [--format sparse|list]');
+  console.error('  bundle-translatable.mjs export <yamlPath> --out <bundle.yaml> [--include-mechanical]');
   console.error('  bundle-translatable.mjs import <yamlPath> <bundle.yaml> --out <translations.json>');
-  console.error('  bundle-translatable.mjs import <legacy-list-bundle.yaml> --out <translations.json>');
   console.error('  bundle-translatable.mjs split <bundle.yaml> --out-dir <dir> [--max-chars 45000] [--max-items 400]');
   console.error('  bundle-translatable.mjs merge <part.yaml...> --out <bundle.yaml>');
   process.exit(code);
@@ -54,22 +52,17 @@ function parsePositiveInt(value, name) {
 }
 
 function parseExportArgs(argv) {
-  const args = { input: null, out: null, includeMechanical: false, format: 'sparse' };
+  const args = { input: null, out: null, includeMechanical: false };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--out') args.out = argv[++i];
     else if (a === '--include-mechanical') args.includeMechanical = true;
-    else if (a === '--format') args.format = argv[++i];
     else if (a === '-h' || a === '--help') usage(0);
     else if (a.startsWith('-')) { console.error(`unknown flag: ${a}`); usage(1); }
     else if (!args.input) args.input = a;
     else { console.error(`unexpected arg: ${a}`); usage(1); }
   }
   if (!args.input || !args.out) usage(1);
-  if (!['sparse', 'list'].includes(args.format)) {
-    console.error('--format must be sparse|list');
-    process.exit(1);
-  }
   args.input = resolve(args.input);
   args.out = resolve(args.out);
   return args;
@@ -84,13 +77,9 @@ function parseImportArgs(argv) {
     else if (a.startsWith('-')) { console.error(`unknown flag: ${a}`); usage(1); }
     else args.positionals.push(a);
   }
-  if (!args.out || ![1, 2].includes(args.positionals.length)) usage(1);
-  if (args.positionals.length === 1) {
-    args.input = resolve(args.positionals[0]);
-  } else {
-    args.source = resolve(args.positionals[0]);
-    args.input = resolve(args.positionals[1]);
-  }
+  if (!args.out || args.positionals.length !== 2) usage(1);
+  args.source = resolve(args.positionals[0]);
+  args.input = resolve(args.positionals[1]);
   args.out = resolve(args.out);
   return args;
 }
@@ -127,11 +116,14 @@ function parseMergeArgs(argv) {
   return args;
 }
 
-function isMechanicalTableValue(path, value) {
-  if (!/^tables\/\d+\/rows\//.test(path.join('/'))) return false;
+function isMechanicalValue(path, value) {
+  const joined = path.join('/');
+  const inTableCell = /^tables\/\d+\/rows\//.test(joined);
+  const inFigureRowValue = /^figures\/\d+\/data\/rows\/\d+\/values\/\d+(?:\/(?:label|detail|note|text))?$/.test(joined);
+  if (!inTableCell && !inFigureRowValue) return false;
   const s = value.trim();
   if (!s) return true;
-  if (/^(?:n\/a|na|null|none|—|–|-|T\+\d+)$/i.test(s)) return true;
+  if (/^(?:n\/a|na|null|none|unknown|tbd|—|–|-|T\+\d+)$/i.test(s)) return true;
   if (!/[A-Za-z\u4e00-\u9fff]/.test(s)) return true;
   if (/^(?:Q[1-4]\s*)?\d{4}(?:[-/]\d{1,2})?(?:[-/]\d{1,2})?$/i.test(s)) return true;
   const numberish = /^[~≈<>≤≥]?\s*[$€£¥]?\d[\d,]*(?:\.\d+)?(?:\s*(?:%|x|bps?|K|M|B|T|bn|mm|USD|EUR|GBP|CNY))?(?:\s*[–-]\s*[~≈<>≤≥]?\s*[$€£¥]?\d[\d,]*(?:\.\d+)?(?:\s*(?:%|x|bps?|K|M|B|T|bn|mm|USD|EUR|GBP|CNY))?)*$/i;
@@ -142,7 +134,7 @@ function shouldExportLeaf(path, value, whitelist, options) {
   if (typeof value !== 'string') return false;
   if (!value.trim()) return false;
   if (!isTranslatableLeaf(path, whitelist)) return false;
-  if (!options.includeMechanical && isMechanicalTableValue(path, value)) return false;
+  if (!options.includeMechanical && isMechanicalValue(path, value)) return false;
   return true;
 }
 
@@ -265,42 +257,10 @@ function exportBundle(argv) {
   const whitelist = whitelistFor(doc);
   const options = { includeMechanical: args.includeMechanical };
 
-  if (args.format === 'list') {
-    const items = [];
-    walkList(doc, [], whitelist, items, options);
-    const bundle = {
-      schemaVersion: 'translate-zh-bundle-v1',
-      locale: 'zh',
-      sourceFile: args.input,
-      artifact: doc.artifact ?? null,
-      instructions: [
-        'Fill target with idiomatic Simplified Chinese. Keep path and source unchanged.',
-        'Preserve facts, numbers, dates, names, refs, URLs, and uncertainty qualifiers.',
-        'Leave target empty only when the source should intentionally fall back to English.',
-      ],
-      items,
-    };
-    writeYaml(args.out, bundle);
-    process.stderr.write(`[bundle] wrote ${args.out} (${items.length} item(s), list format)\n`);
-    return;
-  }
-
   const bundle = buildSparse(doc, [], whitelist, options) ?? {};
 
   writeYaml(args.out, bundle);
   process.stderr.write(`[bundle] wrote ${args.out} (sparse format)\n`);
-}
-
-function importLegacyListBundle(bundle) {
-  const translations = [];
-  for (const item of bundle.items) {
-    if (!item || typeof item.path !== 'string' || typeof item.target !== 'string') continue;
-    if (!item.target.trim()) continue;
-    const entry = { path: item.path, target: item.target };
-    if (typeof item.source === 'string') entry.source = item.source;
-    translations.push(entry);
-  }
-  return translations;
 }
 
 function collectSparseTranslations(sourceNode, translatedNode, path, whitelist, out, issues) {
@@ -357,25 +317,16 @@ function importBundle(argv) {
   const args = parseImportArgs(argv);
   const bundle = readYaml(args.input);
 
-  let translations;
-  if (Array.isArray(bundle.items)) {
-    translations = importLegacyListBundle(bundle);
-  } else {
-    if (!args.source) {
-      console.error('sparse bundle import requires the English source YAML path');
-      process.exit(1);
-    }
-    const source = readYaml(args.source);
-    const whitelist = whitelistFor(source);
-    const issues = [];
-    translations = [];
-    collectSparseTranslations(source, bundle, [], whitelist, translations, issues);
-    if (issues.length) {
-      console.error('sparse bundle shape/import error(s):');
-      for (const issue of issues.slice(0, 20)) console.error(`  - ${issue}`);
-      if (issues.length > 20) console.error(`  ... +${issues.length - 20} more`);
-      process.exit(1);
-    }
+  const source = readYaml(args.source);
+  const whitelist = whitelistFor(source);
+  const issues = [];
+  const translations = [];
+  collectSparseTranslations(source, bundle, [], whitelist, translations, issues);
+  if (issues.length) {
+    console.error('sparse bundle shape/import error(s):');
+    for (const issue of issues.slice(0, 20)) console.error(`  - ${issue}`);
+    if (issues.length > 20) console.error(`  ... +${issues.length - 20} more`);
+    process.exit(1);
   }
 
   if (!Array.isArray(translations)) {
@@ -434,9 +385,36 @@ function splitBundle(argv) {
 
 function mergeBundles(argv) {
   const args = parseMergeArgs(argv);
+  const partsDir = dirname(args.inputs[0]);
+  const manifestPath = resolve(partsDir, 'manifest.json');
+  if (existsSync(manifestPath)) {
+    const manifest = readYaml(manifestPath);
+    const expected = Array.isArray(manifest.parts)
+      ? manifest.parts.map((part) => resolve(partsDir, part.file))
+      : [];
+    const provided = new Set(args.inputs);
+    const missing = expected.filter((input) => !provided.has(input) || !existsSync(input));
+    const unexpected = args.inputs.filter((input) => !expected.includes(input));
+    if (missing.length || unexpected.length || args.inputs.length !== expected.length) {
+      console.error('merge input does not match split manifest:');
+      for (const input of missing.slice(0, 10)) console.error(`  - missing ${input}`);
+      for (const input of unexpected.slice(0, 10)) console.error(`  - unexpected ${input}`);
+      process.exit(1);
+    }
+    args.inputs = expected;
+  }
   let merged;
   for (const input of args.inputs) {
     merged = mergeSparse(merged, readYaml(input));
+  }
+  if (existsSync(manifestPath)) {
+    const manifest = readYaml(manifestPath);
+    const leaves = [];
+    collectStringLeaves(merged ?? {}, [], leaves);
+    if (leaves.length !== manifest.totalLeaves) {
+      console.error(`merged leaf count mismatch (manifest=${manifest.totalLeaves}, merged=${leaves.length})`);
+      process.exit(1);
+    }
   }
   writeYaml(args.out, merged ?? {});
   process.stderr.write(`[bundle] merged ${args.inputs.length} part(s) into ${args.out}\n`);

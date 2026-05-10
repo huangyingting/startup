@@ -9,7 +9,8 @@
     "check:workflow-config": "node .agents/skills/startup-research/scripts/check-workflow-config.mjs",
     "check:revision-graph": "node .agents/skills/startup-research/scripts/check-revision-graph.mjs",
     "check:reports-contract": "node .agents/skills/startup-research/scripts/check-report.mjs --all",
-    "validate": "npm run build:references && npm run check:workflow-config && npm run check:revision-graph && npm run check:reports-contract && npm --prefix website run build"
+    "check:translations-zh": "node .agents/skills/translate-zh/scripts/check-translation.mjs --all --strict",
+    "validate": "npm run build:references && npm run check:workflow-config && npm run check:revision-graph && npm run check:reports-contract && npm run check:translations-zh && npm --prefix website run build"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

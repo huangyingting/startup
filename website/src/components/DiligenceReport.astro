@@ -58,7 +58,7 @@ const supersededByHref = revision.supersededByFolderSlug
 const enDoc = stages.fullReport ?? null;
 const enLedger = stages.evidence ?? {};
 const doc = locale === 'zh' && stagesZh?.fullReport ? mergeI18n(enDoc, stagesZh.fullReport) : enDoc;
-const ledger = locale === 'zh' && stagesZh?.evidence ? mergeI18n(enLedger, stagesZh.evidence) : enLedger;
+const ledger = enLedger;
 const claims: any[] = Array.isArray(ledger.claims) ? ledger.claims : [];
 const sources: any[] = Array.isArray(ledger.sources) ? ledger.sources : [];
 const figures = new Map<string, any>((doc?.figures ?? []).map((figure: any) => [figure.id, figure]));

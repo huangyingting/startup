@@ -1,13 +1,12 @@
 // Field whitelist for the en→zh translation pipeline.
 //
-// Each entry maps an artifact (chapter | full-report | report-meta | summary-card | evidence)
+// Each entry maps an artifact (full-report | summary-card)
 // to a list of "leaf paths". A leaf path is a slash-separated sequence with
 // `[]` markers for arrays. The walker visits matching leaves and only those
 // leaves get translated. Everything else is passed through verbatim — ids,
-// refs, urls, dates, numerics, and the entire localEvidence.searchQueries[]
-// audit trail stay in English.
+// refs, urls, dates, numerics, and non-final report artifacts stay in English.
 //
-// Shared with bundle-translatable.mjs / apply-translation.mjs / check-translation.mjs / audit-translation.mjs.
+// Shared with bundle-translatable.mjs / apply-translation.mjs / check-translation.mjs.
 
 // Translatable leaf strings live at these paths. Anything not listed is
 // preserved as-is in the .zh.yaml mirror.
@@ -29,7 +28,9 @@
 // `displayValue`, `date`, `delta`, `from`, `to`, `source`, `target`,
 // `claimRefs[]`, `sourceRefs[]`, `captionSources[]`, `xAxis/high|low`,
 // `yAxis/high|low`) are intentionally excluded — they drive CSS classes,
-// chart geometry, or refer to other artifacts and must stay verbatim.
+// chart geometry, or refer to other artifacts and must stay verbatim. The
+// explicit `phase` / `stage` / `risk` / `segment` paths below are exceptions
+// for figure shapes where those fields are rendered as reader-visible labels.
 const FIGURE_PATHS = [
   // Top-level prose
   'figures/[]/title',
@@ -130,26 +131,6 @@ const FIGURE_PATHS = [
 ];
 
 export const TRANSLATE_PATHS = Object.freeze({
-  chapter: [
-    'chapter/title',
-    'chapter/summary',
-    'sections/[]/title',
-    'sections/[]/body',
-    'callouts/[]/title',
-    'callouts/[]/body',
-    'tables/[]/title',
-    'tables/[]/columns/[]',
-    'tables/[]/rows/[]/[]',
-    'tables/[]/notes',
-    ...FIGURE_PATHS,
-    'localEvidence/evidenceGaps/[]/topic',
-    'localEvidence/evidenceGaps/[]/note',
-    'localEvidence/researchQuestions/[]/question',
-    'localEvidence/researchQuestions/[]/notes',
-    // sources[]: only the prose-y fields. Publisher / title / keyQuote /
-    // url / topics / id / sourceType / stance / etc. stay English.
-    // (Per user: keyQuote stays English.)
-  ],
   fullReport: [
     'subtitle',
     'coverageNotes',
@@ -177,40 +158,11 @@ export const TRANSLATE_PATHS = Object.freeze({
     'appendices/[]/blocks/[]/items/[]',
     'disclaimer',
   ],
-  reportMeta: [
-    'subtitle',
-    'coverageNotes',
-    'coverFacts/[]/label',
-    'companyProfile/summary',
-    'companyProfile/productSummary',
-    'companyProfile/customerFocus',
-    'companyProfile/businessModel',
-    'companyProfile/fundingStatus',
-    'companyProfile/founders/[]/role',
-    'companyProfile/founders/[]/background',
-    'summary/headline',
-    'summary/topStrengths/[]',
-    'summary/topRisks/[]',
-    'summary/unresolvedGaps/[]',
-    'appendices/[]/title',
-    'appendices/[]/blocks/[]/title',
-    'appendices/[]/blocks/[]/body',
-    'appendices/[]/blocks/[]/items/[]',
-    'disclaimer',
-  ],
   summaryCard: [
     'summary/headline',
     'summary/topStrengths/[]',
     'summary/topRisks/[]',
     'summary/unresolvedGaps/[]',
-  ],
-  evidence: [
-    // The agreed policy keeps source quotes (keyQuote), titles, and
-    // publishers in English. Only the chapter-level claims and gap notes
-    // (which are author prose) get translated; sources[] is left alone.
-    'claims/[]/statement',
-    'evidenceGaps/[]/topic',
-    'evidenceGaps/[]/note',
   ],
 });
 
@@ -223,13 +175,8 @@ export const TRANSLATE_PATHS = Object.freeze({
 export function whitelistFor(doc) {
   const artifact = doc?.artifact;
   if (artifact === 'full-report') return TRANSLATE_PATHS.fullReport;
-  if (artifact === 'report-meta') return TRANSLATE_PATHS.reportMeta;
   if (artifact === 'summary-card') return TRANSLATE_PATHS.summaryCard;
-  if (artifact === 'evidence') return TRANSLATE_PATHS.evidence;
-  // Chapter artifacts use their key as their `artifact` value
-  // (e.g. "company-overview"), so anything that isn't one of the four
-  // final-stage artifacts is a chapter.
-  return TRANSLATE_PATHS.chapter;
+  return [];
 }
 
 // Match a path-segment list against a whitelist pattern. `path` is the

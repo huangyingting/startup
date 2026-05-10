@@ -46,10 +46,19 @@ translation-flavored*, and only the revision pass catches it.
    makes you pause is rewritten **as a whole sentence** — never patched
    word-by-word. Then re-open the English to spot-check that no fact, number,
    hedge, or qualifier was lost, strengthened, softened, or invented.
-4. **Final write.** Only after the revision pass is clean, write the
-   `*.zh.yaml` (or sparse part) file.
-5. **Lint and repair.** Run `check-translation.mjs` on the report folder
-   and the audit query under "Quality audit" below. Repair until both pass.
+4. **Final write.** Only after the revision pass is clean, update the
+  current sparse bundle or `parts/part.NNN.yaml` in place. The parent
+  workflow imports/applies that bundle to produce the final `*.zh.yaml`
+  mirror; do not edit the final mirror directly.
+5. **Quality gate.** Run `check-translation.mjs --strict` on the report
+  folder and repair until it passes. After both final overlays exist, the
+  final gate is `check-translation.mjs --strict --require-final`. Repository
+  validation also runs `npm run check:translations-zh`, which checks all
+  existing Chinese overlays with `--strict`. If the
+  gate fails, do an incremental repair: edit only the reported leaf/path in
+  the existing `*.translate.yaml` bundle or affected `parts/part.NNN.yaml`,
+  then re-import, re-apply, and re-run the gate. Do not re-export or redo
+  the whole translation unless the bundle shape was corrupted.
 
 ### Per-segment workflow
 
@@ -156,36 +165,6 @@ match is a rewrite, not a patch:
 
 If any of these survive, the leaf is not done.
 
-## Quality audit (run after every apply)
-
-`check-translation.mjs` only checks structural parity — not whether the
-Chinese is actually Chinese or actually fluent. After applying a translation,
-run the audit on the report folder. Anything it surfaces becomes a revision
-pass on the offending leaves.
-
-```sh
-node .agents/skills/translate-zh/scripts/audit-translation.mjs reports/$RUN_ID
-```
-
-The audit reports four counters per `*.zh.yaml`:
-
-- **`sameNonMechanical`** — a whitelisted leaf is byte-identical to English
-  and is not a number/currency/date cell. Translate it. If the value really
-  must stay English (e.g. a product name like `ChatGPT Enterprise`), leave
-  it; otherwise rewrite.
-- **`longNoCjk`** — a translated leaf longer than 30 chars contains zero CJK
-  characters. Almost always means the leaf was forgotten.
-- **`tooManyDe`** — a leaf has 4+ `的`. Run the per-segment workflow: split
-  into clauses or convert noun piles to verbs.
-- **`stockOpener`** — a leaf opens with `对于 / 随着 / 通过 / 此外，/ 然而，
-  / 而且，`. Almost always a translation-shaped opener; rewrite so the leaf
-  leads with the topic or the time/condition phrase instead.
-
-Repair the offending leaves in the sparse Chinese bundle
-(`$CACHE/full-report.translate.zh.yaml` or
-`$CACHE/summary-card.translate.zh.yaml`), re-import / re-apply, and re-run
-this audit until the four counters are within reason for the report's size.
-
 ## Hard rules
 
 1. **Schema-shape parity.** Same keys, array lengths, and field order
@@ -197,7 +176,8 @@ this audit until the four counters are within reason for the report's size.
      no parenthetical Chinese aliases ("OpenAI" stays "OpenAI", not
      "OpenAI（开放人工智能）").
    - URLs, dates, IDs, refs, enum values.
-   - Numbers and units: "8520 亿美元", not "$852B"; the number stays.
+   - In prose, localize units where it improves readability: "8520 亿美元",
+     not "$852B"; the number stays. Table cells have stricter rules below.
 3. **Whitelist is the gate.** `scripts/whitelist.mjs` defines which
    paths are translatable. The extractor only emits whitelisted leaves;
    the applier silently drops anything else; the validator
@@ -231,10 +211,20 @@ short cells, not sentences. They follow stricter rules than prose:
 - **Phrase cells (2–10 words)**: translate as natural Chinese noun
   phrases. Drop articles ("the", "a") and reorder modifiers as
   needed. Keep proper nouns in Latin spelling.
+- **Mixed proper nouns + descriptive English**: keep the proper noun,
+  translate the ordinary descriptor. Do not leave a whole cell in English
+  just because one token is a company, product, API, or market acronym.
+  "U.S. enterprise sample" → "美国企业样本"; "Global retail/CPG" →
+  "全球零售 / CPG"; "API platform / Responses API" →
+  "API 平台 / Responses API".
 - **Sentence cells**: apply the prose translation philosophy above.
 - **Cells that are mostly proper nouns + a small connector**: keep
   the proper nouns and translate only the connector. "Microsoft &
   Azure" → "Microsoft 与 Azure".
+- **Pure model / version / SKU lists**: keep Latin tokens and normalize
+  separators if useful. "GPT-5.x, GPT-4.1, o1, GPT-4o" →
+  "GPT-5.x、GPT-4.1、o1、GPT-4o" is acceptable because every token is a
+  model/version name.
 
 ## Figures
 
@@ -260,7 +250,8 @@ identifiers, enums, refs, and numerics alone.
   `data.items[].actor` / `actors[]` / `phase` / `stage` / `emotion` /
   `channel` / `channels[]` / `touchpoints[]`, plus
   `data.nodes[].risk` / `segment`.
-- **Never translate**: `id`, `key`, `slug`, `type`, `kind`, `layout`,
+- **Never translate unless the exact path is explicitly listed above as
+  visible chart text**: `id`, `key`, `slug`, `type`, `kind`, `layout`,
   `tone`, `status`, `sentiment`, `direction`, `trend`, `confidence`,
   `group`, `stage`, `phase`, `category`, `segment`, `unit`, `value`,
   `displayValue`, `date`, `delta`, `from`, `to`, `source`, `target`,
@@ -281,9 +272,15 @@ Style notes specific to figure text:
 - Node / column / row / phase **labels** are 2–6 character headings.
   Translate as short noun phrases; drop articles. "Foundation control"
   → "基金会控制"; "OpenAI Group PBC" → keep verbatim.
+- Mixed labels follow the same rule as table cells: keep brands/products,
+  translate ordinary descriptors. "Meta / open weights" →
+  "Meta / 开放权重"; do not keep the whole label English because it starts
+  with a proper noun.
 - `detail` / `description` / `note` are one-sentence captions that
   appear in tooltips. Apply the prose translation philosophy: lead
   with the topic, drop `对……来说`, prefer concrete verbs.
+- Pure model / version / SKU lists in figure details may stay Latin with
+  Chinese separators: "GPT-5.x、GPT-4.1、o1、GPT-4o" is fine.
 - Axis labels often carry a parenthetical unit hint
   ("Inference Speed (tokens/sec, mid-size LLMs)"). Translate the
   prose, keep the parenthetical units verbatim:
@@ -298,7 +295,7 @@ For one report folder (`reports/<runId>/`), translate `summary-card.yaml`
 and `full-report.yaml` using the sparse-bundle pipeline. The bundle keeps
 the source's nested shape, omits non-translatable keys, and uses `null`
 placeholders only where arrays need index alignment. Translate the bundle
-in place, then import it back into the applier.
+in place, then import that same updated file back into the applier.
 
 ```sh
 RUN_ID=<runId>
@@ -323,11 +320,11 @@ node .agents/skills/translate-zh/scripts/bundle-translatable.mjs export \
 
 # 3. Import + apply + check.
 node .agents/skills/translate-zh/scripts/bundle-translatable.mjs import \
-  reports/$RUN_ID/summary-card.yaml "$CACHE/summary-card.translate.zh.yaml" \
+  reports/$RUN_ID/summary-card.yaml "$CACHE/summary-card.translate.yaml" \
   --out "$CACHE/summary-card.zh.json"
 node .agents/skills/translate-zh/scripts/apply-translation.mjs \
   reports/$RUN_ID/summary-card.yaml "$CACHE/summary-card.zh.json"
-node .agents/skills/translate-zh/scripts/check-translation.mjs reports/$RUN_ID
+node .agents/skills/translate-zh/scripts/check-translation.mjs reports/$RUN_ID --strict
 ```
 
 Notes specific to this file:
@@ -345,7 +342,7 @@ Notes specific to this file:
   verbatim. Do not translate; do not even include in the bundle.
 - The `summaryCard` whitelist is a strict subset of `fullReport`, so any
   mistake here (translating an enum, dropping a hedge) shows up
-  immediately on the list page. Run the audit on the small bundle.
+  immediately on the list page.
 
 ### full-report.yaml
 
@@ -372,21 +369,21 @@ node .agents/skills/translate-zh/scripts/bundle-translatable.mjs split \
   --max-chars 45000 --max-items 400
 
 # Spawn one subagent per part.NNN.yaml. See "Subagent contract" below for
-# the verbatim prompt template — each subagent reads exactly one input and
-# writes exactly one output, no other commands.
+# the verbatim prompt template — each subagent edits exactly one part file
+# in place, no other commands.
 
-# Wait for all part.*.zh.yaml, then merge.
+# Wait for all part.*.yaml to be translated in place, then merge back into
+# the same full-report sparse bundle path.
 node .agents/skills/translate-zh/scripts/bundle-translatable.mjs merge \
-  "$CACHE"/parts/part.*.zh.yaml --out "$CACHE/full-report.translate.zh.yaml"
+  "$CACHE"/parts/part.*.yaml --out "$CACHE/full-report.translate.yaml"
 
-# 3. Import + apply + check + audit.
+# 3. Import + apply + check.
 node .agents/skills/translate-zh/scripts/bundle-translatable.mjs import \
-  reports/$RUN_ID/full-report.yaml "$CACHE/full-report.translate.zh.yaml" \
+  reports/$RUN_ID/full-report.yaml "$CACHE/full-report.translate.yaml" \
   --out "$CACHE/full-report.zh.json"
 node .agents/skills/translate-zh/scripts/apply-translation.mjs \
   reports/$RUN_ID/full-report.yaml "$CACHE/full-report.zh.json"
-node .agents/skills/translate-zh/scripts/check-translation.mjs reports/$RUN_ID
-node .agents/skills/translate-zh/scripts/audit-translation.mjs reports/$RUN_ID
+node .agents/skills/translate-zh/scripts/check-translation.mjs reports/$RUN_ID --strict --require-final
 ```
 
 Use `--include-mechanical` only when you want numeric-looking table cells
@@ -395,29 +392,28 @@ better — the renderer falls back to the source value verbatim.
 
 ### Subagent contract (concurrent part translation)
 
-Every translation subagent the parent spawns gets exactly one input file
-and must produce exactly one output file. Past failures: subagents invented
-helper scripts (`MODULE_NOT_FOUND`), wrote outputs to `/tmp/...` instead
-of `.translate-cache/<runId>/`, or used `require()` in this ESM repo
-(`require is not defined in ES module scope`). Pin the contract by
-spawning each subagent with this prompt verbatim, substituting only the
-bracketed values:
+Every translation subagent the parent spawns gets exactly one part file and
+must edit that file in place. Past failures: subagents invented helper
+scripts (`MODULE_NOT_FOUND`), wrote outputs to `/tmp/...` instead of the
+provided `.translate-cache/<runId>/parts/part.<NNN>.yaml`, or used
+`require()` in this ESM repo (`require is not defined in ES module scope`).
+Pin the contract by spawning each subagent with this prompt verbatim,
+substituting only the bracketed values:
 
 ```
 You are translating one part of a Chinese diligence-report overlay.
 
-INPUT  (read-only): /home/ythuang/workspace/startup/.translate-cache/<runId>/parts/part.<NNN>.yaml
-OUTPUT (write once): /home/ythuang/workspace/startup/.translate-cache/<runId>/parts/part.<NNN>.zh.yaml
+TARGET (read/write): /home/ythuang/workspace/startup/.translate-cache/<runId>/parts/part.<NNN>.yaml
 
 Workflow:
-1. Read the INPUT file in full.
+1. Read the TARGET file in full.
 2. Run the mandatory 3-pass workflow from .agents/skills/translate-zh/SKILL.md:
    pre-pass → draft → revision (cover English, walk soundcheck and
    anti-pattern table) → final write.
-3. Write OUTPUT with the same keys, the same array length and order, and
-   `null` placeholders left as `null`. Translate every non-null string
-   value in place. Do not add new keys, do not drop keys, do not change
-   the YAML shape.
+3. Update TARGET in place with the same keys, the same array length and
+  order, and `null` placeholders left as `null`. Translate every non-null
+  string value. Do not add new keys, do not drop keys, do not change the
+  YAML shape.
 
 Hard constraints — do NOT do any of these:
 - Do NOT run `node`, `npm`, or any other command. Subagents only read
@@ -425,13 +421,13 @@ Hard constraints — do NOT do any of these:
 - Do NOT invoke any script under `.agents/skills/translate-zh/scripts/`
   or any file you assume exists (`script.js`, `script_prose.js`, etc.).
   Those scripts are only for the parent agent.
-- Do NOT write anywhere except the single OUTPUT path above. No `/tmp`,
+- Do NOT write anywhere except the single TARGET path above. No `/tmp`,
   no extra `.json` / `.zh.json` files, no batch directories.
 - Do NOT touch the English source under `reports/<runId>/` and do NOT
   read or modify any other `parts/part.*.yaml` file.
 - Do NOT fetch URLs or invent facts.
 
-Return when OUTPUT is written. The parent will merge all parts.
+Return when TARGET has been updated in place. The parent will merge all parts.
 ```
 
 If the parent agent ever needs to run a one-off Node snippet for
@@ -454,15 +450,26 @@ Always `cd` to the workspace root first; `js-yaml` lives in the root
 
 `check-translation.mjs` failure modes and fixes:
 
+- **`missing` — required Chinese mirror is missing**: final completion now
+  requires both `summary-card.zh.yaml` and `full-report.zh.yaml`. Finish the
+  missing overlay, then re-run with `--require-final`.
 - **`shape` — key missing / extra in zh**: the sparse bundle was edited
-  in a way that changed object keys. Re-export the bundle and translate
-  values only; never add or remove keys.
+  in a way that changed object keys. Prefer repairing the affected object in
+  the current bundle or part. Re-export only that affected bundle/part if the
+  local shape is too corrupted to repair safely; do not restart the whole
+  report translation.
 - **`shape` — array length mismatch**: a part's array was reordered or
-  had entries added / removed during translation. Re-export the affected
-  sub-tree and re-translate without touching list shape.
+  had entries added / removed during translation. Restore the affected array
+  length/order in place. If needed, re-export only the affected part/subtree
+  and re-translate that slice without touching the rest of the report.
 - **`preserve` — non-translatable leaf changed**: a translation slipped
   past the whitelist (often an enum value or an ID). Find the offending
   path in the bundle, restore the original value, re-import, re-apply.
+- **`translate` — leaf still looks English**: `--strict` found a missing,
+  empty, byte-identical, or no-CJK translation leaf. Rewrite the value in the
+  existing `*.translate.yaml` bundle or affected `parts/part.NNN.yaml`, then
+  re-import and re-apply. This is a targeted leaf fix; do not redo unrelated
+  leaves.
 
 `bundle-translatable.mjs import` failure modes:
 
@@ -471,6 +478,9 @@ Always `cd` to the workspace root first; `js-yaml` lives in the root
 - **`key is not present in source`** / **`translated object does not
   match source shape`**: a part introduced new keys or changed shape.
   Re-export from the English source and try again.
+- **`merge input does not match split manifest`**: at least one split part
+  is missing, unexpected, or not from the current manifest. Finish or restore
+  the affected `parts/part.NNN.yaml` file, then merge again.
 
 ## Common pitfalls
 

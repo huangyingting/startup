@@ -269,19 +269,18 @@ export function reportsLoader(): Loader {
 export function loadStageFiles(runId: string): Record<string, unknown> {
   const folder = join(REPORTS_DIR, runId);
   return {
-    evidence: readStageYaml(folder, 'evidence'),
     fullReport: readStageYaml(folder, 'full-report'),
     summaryCard: loadReportCard(runId),
   };
 }
 
 // Chinese overlay stage files. Each field is null when the corresponding
-// `*.zh.yaml` sibling has not been written yet — the Chinese detail page
-// merges these onto the English stages so untranslated fields fall through.
+// final-artifact `*.zh.yaml` sibling has not been written yet — the Chinese
+// detail page merges these onto the English stages so untranslated fields
+// fall through.
 export function loadStageFilesZh(runId: string): Record<string, unknown> {
   const folder = join(REPORTS_DIR, runId);
   return {
-    evidence: readLocaleStageYaml(folder, 'evidence', 'zh'),
     fullReport: readLocaleStageYaml(folder, 'full-report', 'zh'),
     summaryCard: readLocaleStageYaml(folder, 'summary-card', 'zh'),
   };
