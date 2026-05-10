@@ -222,7 +222,6 @@ export const WARNING_DIMENSIONS = new Set([
   'tableNotes',
   'unverifiedSource',
   'fetchTrailMissing',
-  'searchQueryFreshness',
 ]);
 
 // Derived once for messaging consistency. Sorted so the printed order is
@@ -266,10 +265,14 @@ export const FIX_HINTS = {
   researchQuestionClosure: ({ id } = {}) =>
     `Add an evidenceGap whose relatedQuestionRefs[] includes ${id ?? 'the still-open question'}.`,
   searchQueriesMissing: 'Append the actual queries you ran into localEvidence.searchQueries[] ({query, engine, hits, retainedSourceRefs}).',
-  searchQueryFreshness: ({ query, runYear, trailingYear, matchedToken } = {}) =>
-    query && runYear
-      ? `Re-plan and re-issue the source-discovery query with date tokens derived from runDate: "${query} ${runYear}" or, for trailing windows, "${query} ${trailingYear} ${runYear}". The volatile-fact token "${matchedToken}" triggered this check; if the query is genuinely historical, rephrase it so it no longer matches a volatile-fact token. Default gate warns; --strict and finalize-report fail.`
-      : 'For volatile-fact queries (funding/ARR/headcount/customers/leadership/regulatory/launches), plan source discovery with year/month tokens derived from runDate before searching; the searchQueryFreshness validator (warning by default, --strict promotes to failure) audits localEvidence.searchQueries[] after the fact using agentPolicy.volatileFactQueryTokens.',
+  searchQueryFreshness: ({ query, runYear, trailingYear, hasTrailingYear, matchedToken } = {}) => {
+    if (!query || !runYear) {
+      return 'For volatile-fact queries (funding/ARR/headcount/customers/leadership/regulatory/launches), plan source discovery with year/month tokens derived from runDate before searching; the runDate year is required and the prior year may only supplement explicit trailing-window searches. The searchQueryFreshness validator fails stale query logs and cannot be acknowledged away.';
+    }
+    const currentExample = `"${query} ${runYear}"`;
+    const trailingExample = hasTrailingYear ? `keep the existing ${trailingYear} token and add ${runYear}` : `"${query} ${trailingYear} ${runYear}"`;
+    return `Re-plan and re-issue the source-discovery query with date tokens derived from runDate: ${currentExample}; for trailing windows, ${trailingExample}. The volatile-fact token "${matchedToken}" triggered this check; the runDate year ${runYear} is required, while ${trailingYear} is only an optional trailing-window supplement. If the query is genuinely historical, rephrase it so it no longer matches a volatile-fact token. This is a hard gate and cannot be acknowledged away.`;
+  },
   sourceShape: ({ id } = {}) =>
     id ? `Fill the missing required field on source ${id} (see message for which one).` : 'Fill accessStatus and stance (and other required fields) on each source.',
   sourceDomains: ({ actual, required } = {}) =>
@@ -324,6 +327,8 @@ export const FIX_HINTS = {
   documentHead: 'Fix the chapter document head: schemaVersion=report-v2, artifact matches the chapter key, slug, runDate=YYYY-MM-DD, company.name, and chapter.number matching the chapter order.',
   slugConsistency: ({ required } = {}) =>
     required ? `Set slug: to "${required}".` : 'Set slug: to the company slug only (the report folder basename with the leading <timestamp>- stripped).',
+  runDateConsistency: ({ required, actual } = {}) =>
+    required ? `Set runDate: to "${required}" (UTC YYYY-MM-DD derived from the report folder runId timestamp prefix; got "${actual ?? ''}"). Use runtimeContext.run.runDate from load-chapter-runtime-context.mjs --report-folder; never format a date from the model clock.` : 'Set runDate: to the UTC YYYY-MM-DD derived from the report folder runId timestamp prefix (use runtimeContext.run.runDate from the chapter-runtime-context loader; never format a date from the model clock).',
   duplicateIds: ({ id } = {}) =>
     id ? `Renumber ${id}: ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter.` : 'Renumber the duplicate or malformed table/figure id; ids must match T<ChapterLetter>### / F<ChapterLetter>### (e.g. TO001 / FO001) and be unique within the chapter.',
   artifactRefs: "Resolve the dangling figureRef/tableRef: it must point at an id that exists in this chapter's figures[] / tables[].",
@@ -392,7 +397,7 @@ export const FIX_HINTS = {
 //   source/claim/researchQuestion/enumeration failure is downstream noise.
 export const CASCADE_SUPPRESSORS = {
   yamlParse: new Set([
-    'documentHead', 'slugConsistency',
+    'documentHead', 'slugConsistency', 'runDateConsistency',
     'researchQuestions', 'researchQuestionShape', 'researchQuestionTargets',
     'researchQuestionTypeMix', 'researchQuestionAdverse',
     'researchQuestionAnswerCoverage', 'researchQuestionClosure',
@@ -427,6 +432,21 @@ export const CASCADE_SUPPRESSORS = {
     'enumerationRowCorroboration',
     'contentRequirementCoverage',
   ]),
+  // documentHead suppresses runDateConsistency and the freshness validator
+  // because both depend on a parseable doc.runDate; if the head failed,
+  // every downstream date check is noise.
+  documentHead: new Set([
+    'runDateConsistency',
+    'searchQueryFreshness',
+  ]),
+  // runDateConsistency suppresses the freshness validator: searchQueryFreshness
+  // checks that volatile-fact queries contain the runDate year as a literal
+  // 4-digit token, but if doc.runDate disagrees with the runId-derived
+  // canonical date, that comparison runs against the wrong year. Fix runDate
+  // first; the freshness check re-emits cleanly afterwards.
+  runDateConsistency: new Set([
+    'searchQueryFreshness',
+  ]),
 };
 
 // ---------------------------------------------------------------------------
@@ -437,7 +457,7 @@ export const CASCADE_SUPPRESSORS = {
 // dimensions fail, fix in this order; downstream dimensions often clear
 // once upstream is repaired.
 export const RETRY_PRECEDENCE = [
-  'missingArtifact', 'yamlParse', 'documentHead', 'slugConsistency', 'localEvidenceMissing',
+  'missingArtifact', 'yamlParse', 'documentHead', 'slugConsistency', 'runDateConsistency', 'localEvidenceMissing',
   'researchQuestionShape', 'researchQuestionTargets', 'researchQuestionTypeMix', 'researchQuestionAdverse',
   'searchQueriesMissing',
   'sourceShape', 'sourceDomains', 'sourceTypeSpread', 'sourceStanceSpread', 'requiredSourceTypes', 'netNewSources',

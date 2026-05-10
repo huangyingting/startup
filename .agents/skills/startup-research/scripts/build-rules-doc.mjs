@@ -72,7 +72,7 @@ function policySection(policy) {
   lines.push('');
   lines.push(`#### \`volatileFactQueryTokens\` (substring tokens that trigger \`searchQueryFreshness\`)`);
   lines.push('');
-  lines.push('Any `localEvidence.searchQueries[].query` whose lowercased text contains one of these substrings is classified as a volatile-fact query and must include the chapter `runDate`\'s year (or the prior year for trailing windows) as a literal 4-digit token. The `searchQueryFreshness` validator emits a warning per offending query (promoted to failure under `--strict` and at finalize-report). Edit this list (and rerun `npm run build:rules`) when you add a new volatile-fact vocabulary.');
+  lines.push('Any `localEvidence.searchQueries[].query` whose lowercased text contains one of these substrings is classified as a volatile-fact query and must include the chapter `runDate`\'s year as a literal 4-digit token. The prior year may also appear for explicit trailing-window queries, but it does not replace the `runDate` year. The `searchQueryFreshness` validator is a hard chapter gate and cannot be acknowledged away. Edit this list (and rerun `npm run build:rules`) when you add a new volatile-fact vocabulary.');
   lines.push('');
   lines.push((policy.volatileFactQueryTokens ?? []).map((t) => `\`${t}\``).join(', '));
   lines.push('');
@@ -174,6 +174,8 @@ function dimensionsSection() {
     '',
     `- **dimension** is one of the chapter warning-class dimensions listed above: ${warningList}. (Reminder: \`paywallRisk\` is ack-able **only** at chapter scope — the report-scope failure cannot be acknowledged from a chapter file.) Acks against any other dimension (cross-chapter, finalize-step, report-meta warnings, the report-level instances of \`paywallRisk\` / \`sourceDomains\` / \`sourceStanceSpread\`, or any other failure-class dimension) surface as a non-blocking \`acknowledgedWarnings\` warning so the misuse is visible without breaking historical reports.`,
     '- **reason** is a string of at least 30 characters explaining why the warning is non-actionable for this chapter. Shorter reasons do not take effect and produce a non-blocking `acknowledgedWarnings` warning.',
+    '',
+    'Report-meta warnings (the `displayCompleteness` non-blocking signal emitted by `check-report-meta`) and the new chapter hard-failure dimension `searchQueryFreshness` are intentionally excluded from this opt-out: `displayCompleteness` is non-blocking and never gates the report (so there is nothing to opt out of), and `searchQueryFreshness` is a hard chapter failure that must be fixed by re-planning queries against `runDate` rather than acknowledged. Listing either dimension only emits an `acknowledgedWarnings` warning.',
     '',
     'Acks never silence a real failure; the `failures.length === 0` gate is checked unconditionally. Use this only for genuinely non-actionable warnings (e.g. `tableNotes` on a pure factual snapshot whose `defaultFix` explicitly tells you to acknowledge it).',
   ].join('\n');

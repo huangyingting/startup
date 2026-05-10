@@ -8,7 +8,9 @@ import yaml from 'js-yaml';
 import {
   EXIT,
   SUMMARY_CARD_FILE,
+  companySlugFromRunId,
   isFinalizedReportFolder,
+  isRunId,
   listDirs,
   loadWorkflowConfig,
   normalizeCompanyName,
@@ -29,18 +31,20 @@ function volatileFactRefreshInstruction() {
 }
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website <url>] [--refresh] [--refresh-reason <text>] [--resume]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/create-report-run.mjs <company name> [--website|--company-url <url>] [--refresh --refresh-reason <text> [--refresh-of <runId>]] [--resume [--resume-run <runId>]]');
   process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
-  const args = { nameParts: [], website: '', refresh: false, refreshReason: '', resume: false };
+  const args = { nameParts: [], website: '', refresh: false, refreshReason: '', refreshOfRunId: '', resume: false, resumeRunId: '' };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
-    if (arg === '--website' || arg === '--url' || arg === '--domain') args.website = argv[++i] ?? '';
+    if (arg === '--website' || arg === '--url' || arg === '--domain' || arg === '--company-url' || arg === '--companyUrl') args.website = argv[++i] ?? '';
     else if (arg === '--refresh') args.refresh = true;
     else if (arg === '--refresh-reason') args.refreshReason = argv[++i] ?? '';
+    else if (arg === '--refresh-of' || arg === '--refreshOfRunId') args.refreshOfRunId = argv[++i] ?? '';
     else if (arg === '--resume') args.resume = true;
+    else if (arg === '--resume-run' || arg === '--resumeRunId') args.resumeRunId = argv[++i] ?? '';
     else if (arg.startsWith('--')) usage();
     else args.nameParts.push(arg);
   }
@@ -55,6 +59,22 @@ function parseArgs(argv) {
   // create-report-run already carries the reason.
   if (args.refresh && !args.resume && !args.refreshReason.trim()) {
     console.error('[create-report-run] --refresh requires --refresh-reason "<text>" so revision.refreshReason is recorded on the new and prior reports.');
+    process.exit(EXIT.failure);
+  }
+  if (args.refreshOfRunId && !args.refresh) {
+    console.error('[create-report-run] --refresh-of is only valid with --refresh.');
+    process.exit(EXIT.failure);
+  }
+  if (args.resumeRunId && !args.resume) {
+    console.error('[create-report-run] --resume-run is only valid with --resume.');
+    process.exit(EXIT.failure);
+  }
+  if (args.refreshOfRunId && !isRunId(args.refreshOfRunId)) {
+    console.error(`[create-report-run] --refresh-of must be a report runId (YYYYMMDDhhmmss-<slug>); got ${JSON.stringify(args.refreshOfRunId)}.`);
+    process.exit(EXIT.failure);
+  }
+  if (args.resumeRunId && !isRunId(args.resumeRunId)) {
+    console.error(`[create-report-run] --resume-run must be a report runId (YYYYMMDDhhmmss-<slug>); got ${JSON.stringify(args.resumeRunId)}.`);
     process.exit(EXIT.failure);
   }
   return args;
@@ -102,6 +122,25 @@ function currentMatches(matches) {
   return matches.filter((report) => (report.revisionStatus ?? 'current') !== 'superseded');
 }
 
+function inProgressRunsForSlug(companySlug) {
+  return listDirs(reportsDir)
+    .filter((runId) => {
+      if (!isRunId(runId)) return false;
+      try {
+        return companySlugFromRunId(runId) === companySlug && !isFinalizedReportFolder(join(reportsDir, runId));
+      } catch {
+        return false;
+      }
+    })
+    .sort((a, b) => String(b).localeCompare(String(a)));
+}
+
+function printInProgressCandidates(candidates) {
+  for (const runId of candidates) {
+    console.error(`  - reports/${runId}`);
+  }
+}
+
 function ensureFinalizedRun(runId, label) {
   const folder = join(reportsDir, runId);
   if (!isFinalizedReportFolder(folder)) {
@@ -110,7 +149,7 @@ function ensureFinalizedRun(runId, label) {
   }
 }
 
-function resolveRefreshTarget({ refresh, matches }) {
+function resolveRefreshTarget({ refresh, matches, refreshOfRunId }) {
   if (!refresh) return null;
   if (!matches.length) {
     console.error('[create-report-run] --refresh requested, but no matching finalized report exists for this company/domain.');
@@ -119,6 +158,23 @@ function resolveRefreshTarget({ refresh, matches }) {
   const candidates = currentMatches(matches).sort((a, b) => String(b.runId).localeCompare(String(a.runId)));
   if (!candidates.length) {
     console.error('[create-report-run] --refresh requested, but every matching report is already superseded.');
+    process.exit(EXIT.failure);
+  }
+  if (refreshOfRunId) {
+    const explicit = candidates.find((candidate) => candidate.runId === refreshOfRunId);
+    if (!explicit) {
+      console.error(`[create-report-run] --refresh-of ${refreshOfRunId} is not a current finalized report matching this company/domain.`);
+      console.error('[create-report-run] matching current candidates:');
+      for (const candidate of candidates) console.error(`  - ${candidate.runId} (${candidate.path})`);
+      process.exit(EXIT.failure);
+    }
+    ensureFinalizedRun(explicit.runId, '--refresh target');
+    return explicit;
+  }
+  if (candidates.length > 1) {
+    console.error('[create-report-run] --refresh is ambiguous: multiple current finalized reports match this company/domain.');
+    console.error('[create-report-run] rerun with --refresh-of <runId> using one of:');
+    for (const candidate of candidates) console.error(`  - ${candidate.runId} (${candidate.path})`);
     process.exit(EXIT.failure);
   }
   const target = candidates[0];
@@ -177,7 +233,7 @@ function writeRefreshContext({ base, companyName, website, refreshTarget, refres
       'Use the previous report only as background and diff context; do not copy stale claims without re-verifying them.',
       volatileFactRefreshInstruction(),
       'Generate a full report covering every configured analysis chapter and run the normal chapter gates before finalizing.',
-      'Do not author report-meta.yaml revision fields unless disambiguation is required; finalize-report/link-refresh writes revision.status, refreshOfRunId, supersededByRunId, and refreshReason automatically.',
+      'Do not author report-meta.yaml revision fields; create-report-run --refresh-of handles disambiguation before this context is cached, and finalize-report/link-refresh writes revision.status, refreshOfRunId, supersededByRunId, and refreshReason automatically.',
     ],
   };
   const path = join(cacheDir, 'refresh-context.yaml');
@@ -214,52 +270,105 @@ function writeFetchEnvSnippet(base) {
 function printFetchTrailHint(base) {
   const envPath = writeFetchEnvSnippet(base);
   console.error(`[create-report-run] wrote fetch env snippet: ${envPath}`);
+  // CI exception: a workflow-wide trail (e.g. .research-cache/_fetch-log.jsonl)
+  // may already be exported by an outer script. Sourcing the per-run snippet
+  // would clobber that path. Detect the already-exported case and surface a
+  // different hint so the agent does not blindly re-export.
+  const exported = process.env.STARTUP_FETCH_LOG_PATH;
+  if (exported && exported.trim()) {
+    console.error(`[create-report-run] note: STARTUP_FETCH_LOG_PATH already exported (${exported}); keep that value and do NOT source ${envPath} (sourcing would override the workflow-wide trail).`);
+    return;
+  }
   console.error(`[create-report-run] hint: source ${envPath} before running fetch-url, or run ${fetchLogExportLine(base)}, so check-chapter can audit cited URLs.`);
 }
 
 const args = parseArgs(process.argv.slice(2));
 const companyName = args.nameParts.join(' ') || 'startup';
+const companySlug = slugify(companyName);
 const reports = loadReportsFromDisk();
 const matches = duplicateMatches({ companyName, website: args.website, reports });
-const refreshTarget = resolveRefreshTarget({ refresh: args.refresh, matches });
-checkDuplicateRisk({ matches, refreshTarget });
 
-const base = `${args.timestamp}-${slugify(companyName)}`;
-const path = join(reportsDir, base);
-if (existsSync(path)) {
-  if (isFinalizedReportFolder(path)) {
-    console.error(`[create-report-run] finalized report folder already exists: ${path}`);
+if (args.resume) {
+  let resumeRunId = args.resumeRunId;
+  if (resumeRunId) {
+    if (companySlugFromRunId(resumeRunId) !== companySlug) {
+      console.error(`[create-report-run] --resume-run ${resumeRunId} does not match company slug "${companySlug}".`);
+      process.exit(EXIT.failure);
+    }
+  } else {
+    const candidates = inProgressRunsForSlug(companySlug);
+    if (!candidates.length) {
+      console.error(`[create-report-run] cannot resume: no in-progress report folder exists for company slug "${companySlug}".`);
+      console.error('[create-report-run] run without --resume to create a fresh in-progress report folder.');
+      process.exit(EXIT.notFound);
+    }
+    if (candidates.length > 1) {
+      console.error(`[create-report-run] --resume is ambiguous: multiple in-progress folders match company slug "${companySlug}".`);
+      console.error('[create-report-run] rerun with --resume-run <runId> using one of:');
+      printInProgressCandidates(candidates);
+      process.exit(EXIT.failure);
+    }
+    resumeRunId = candidates[0];
+  }
+  const resumePath = join(reportsDir, resumeRunId);
+  if (!existsSync(resumePath)) {
+    console.error(`[create-report-run] cannot resume missing report folder: ${resumePath}`);
+    console.error('[create-report-run] run without --resume to create a fresh in-progress report folder.');
+    process.exit(EXIT.notFound);
+  }
+  if (isFinalizedReportFolder(resumePath)) {
+    console.error(`[create-report-run] finalized report folder already exists: ${resumePath}`);
     console.error('[create-report-run] stop: use the existing official report instead of resuming.');
     process.exit(EXIT.alreadyExists);
-  }
-  if (!args.resume) {
-    console.error(`[create-report-run] in-progress report folder already exists: ${path}`);
-    console.error('[create-report-run] rerun the same command with --resume to continue it; duplicate suffix folders are not created.');
-    process.exit(EXIT.inProgress);
   }
   // Ensure the per-run scratch dir exists on resume too (it may have been
   // pruned between runs); the agent and fetch-url co-locate fetch logs and
   // refresh context here.
-  mkdirSync(researchCacheDir(base), { recursive: true });
-  // Preserve any refresh-context.yaml authored by the original
-  // create-report-run invocation. Overwriting it on --resume would let a
-  // second invocation with a different (or empty) --refresh-reason silently
-  // mutate the cached audit value, which finalize-report later compares
-  // against the CLI value. Only write when the cache is missing.
-  const resumeRefreshCtxPath = join(researchCacheDir(base), 'refresh-context.yaml');
-  if (!existsSync(resumeRefreshCtxPath)) {
-    writeRefreshContext({ base, companyName, website: args.website, refreshTarget, refreshReason: args.refreshReason });
+  mkdirSync(researchCacheDir(resumeRunId), { recursive: true });
+  // Refresh on --resume must match the original create-run mode; we never
+  // promote a fresh in-progress folder into a refresh half-way through, and
+  // we never demote a refresh folder into a fresh run on resume.
+  //   - cache present + --refresh: legitimate refresh resume; keep cache
+  //     intact (do NOT overwrite, so a different --refresh-reason cannot
+  //     silently mutate the cached audit value finalize-report compares).
+  //   - cache present + no --refresh: original was a refresh; resume must
+  //     also pass --refresh so the agent does not accidentally drop
+  //     refresh semantics mid-run.
+  //   - cache absent + --refresh: original was a fresh run; refusing here
+  //     prevents the silent fresh\u2192refresh promotion noted in SKILL.md.
+  //   - cache absent + no --refresh: legitimate fresh-run resume; nothing
+  //     to write.
+  const resumeRefreshCtxPath = join(researchCacheDir(resumeRunId), 'refresh-context.yaml');
+  const resumeRefreshCacheExists = existsSync(resumeRefreshCtxPath);
+  if (resumeRefreshCacheExists && !args.refresh) {
+    console.error(`[create-report-run] cannot resume refresh run ${resumeRunId} without --refresh; the original create-report-run was --refresh and refresh-context.yaml is cached.`);
+    console.error('[create-report-run] rerun with --resume --refresh (the cached --refresh-reason will be reused).');
+    process.exit(EXIT.failure);
   }
-  printFetchTrailHint(base);
-  console.error(`[create-report-run] resume: ${path}`);
-  console.log(path);
+  if (!resumeRefreshCacheExists && args.refresh) {
+    console.error(`[create-report-run] cannot promote in-progress run ${resumeRunId} into a refresh: refresh-context.yaml is missing, which means the original create-report-run was a fresh run, not --refresh.`);
+    console.error('[create-report-run] either resume the existing fresh run without --refresh, or finalize/discard it and start a new --refresh run separately.');
+    process.exit(EXIT.failure);
+  }
+  printFetchTrailHint(resumeRunId);
+  console.error(`[create-report-run] resume: ${resumePath}`);
+  console.log(resumePath);
   process.exit(EXIT.ok);
 }
-if (args.resume) {
-  console.error(`[create-report-run] cannot resume missing report folder: ${path}`);
-  console.error('[create-report-run] run without --resume to create a fresh in-progress report folder.');
-  process.exit(EXIT.notFound);
+
+const refreshTarget = resolveRefreshTarget({ refresh: args.refresh, matches, refreshOfRunId: args.refreshOfRunId });
+checkDuplicateRisk({ matches, refreshTarget });
+
+const inProgressCandidates = inProgressRunsForSlug(companySlug);
+if (inProgressCandidates.length) {
+  console.error(`[create-report-run] in-progress report folder already exists for company slug "${companySlug}":`);
+  printInProgressCandidates(inProgressCandidates);
+  console.error('[create-report-run] rerun with --resume (and --resume-run <runId> if more than one candidate is listed) to continue it; duplicate suffix folders are not created.');
+  process.exit(EXIT.inProgress);
 }
+
+const base = `${args.timestamp}-${companySlug}`;
+const path = join(reportsDir, base);
 mkdirSync(path, { recursive: true });
 // Always create the per-run scratch dir even for non-refresh runs. SKILL.md
 // expects agents to be able to set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl

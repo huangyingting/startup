@@ -41,7 +41,7 @@ export const WorkflowConditionSchema = z.object({
 export const WorkflowStepSchema = z.object({
   key: kebabKey,
   title: nonEmptyString,
-  command: nonEmptyString.nullable().optional(),
+  command: nonEmptyString.nullable().optional().describe('Shell command (with `<placeholders>`) the agent should run for this step. Set to null when the step is an agent-judgment preflight or planning action with no executable command (e.g. read references, decide whether to refresh); the agent must still satisfy the step\'s `produces` and `gate` before moving on.'),
   requires: stringArray.default([]),
   produces: stringArray.default([]),
   gate: nonEmptyString.nullable().optional(),
@@ -68,7 +68,8 @@ export const AgentPolicySchema = z.object({
   // Lowercased substring tokens that mark a search query as volatile-fact-shaped.
   // Read by check-chapter.mjs `searchQueryFreshness` validator at runtime; if
   // a query contains any of these (case-insensitive substring match) it must
-  // also contain the year from runDate (or the prior year for trailing windows).
+  // contain the year from runDate. The prior year may also appear for trailing
+  // windows, but it does not replace the runDate year.
   volatileFactQueryTokens: stringArray.default([]),
   retryPolicy: z.object({
     maxChapterRetries: positiveInteger.optional(),

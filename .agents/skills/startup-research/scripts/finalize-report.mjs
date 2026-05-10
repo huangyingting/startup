@@ -88,6 +88,13 @@ function runStep(step) {
   const result = spawnSync(process.execPath, [resolve(here, step.script), ...step.argv], { stdio: 'inherit' });
   if (result.status !== 0) {
     console.error(`[finalize-report] ${step.name} failed (exit ${result.status}); fix the reported issues and rerun this command.`);
+    if (step.script === 'check-chapter.mjs') {
+      const jsonArgv = [...step.argv];
+      const formatIndex = jsonArgv.indexOf('--format');
+      if (formatIndex >= 0) jsonArgv.splice(formatIndex, 2, '--format', 'json');
+      else jsonArgv.push('--format', 'json');
+      console.error(`[finalize-report] structured triage: node ${resolve(here, step.script)} ${jsonArgv.map((arg) => JSON.stringify(String(arg))).join(' ')}`);
+    }
     // Pass the subprocess exit code through as-is so callers see the same
     // semantic the underlying script emitted; only fall back to validation
     // when the subprocess died from a signal (status === null).

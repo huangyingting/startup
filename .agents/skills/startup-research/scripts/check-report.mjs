@@ -39,6 +39,7 @@ import {
   listDirs,
   loadWorkflowConfig,
   REVISION_STATUSES,
+  runDateFromRunId,
   tryReadYaml,
 } from './utils.mjs';
 import {
@@ -223,6 +224,7 @@ function checkRefs(run, reportDoc) {
 function parseRunArtifacts(run, dir) {
   const parsed = new Map();
   const canonicalSlug = companySlugFromRunId(run);
+  const canonicalRunDate = runDateFromRunId(run);
   for (const file of REQUIRED_ENGLISH_FILES.filter((name) => name.endsWith('.yaml'))) {
     const result = tryReadYaml(join(dir, file));
     if (!result.ok) {
@@ -235,6 +237,9 @@ function parseRunArtifacts(run, dir) {
     for (const err of errors) fail(err.message, err);
     if (result.value?.slug && result.value.slug !== canonicalSlug) {
       fail(`${run}/${file}: slug "${result.value.slug}" does not match folder slug "${canonicalSlug}"`, { path: `${run}/${file}`, dimension: 'slugConsistency', code: 'slugFolderMismatch', fix: `Set slug: to "${canonicalSlug}".` });
+    }
+    if (typeof result.value?.runDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(result.value.runDate) && result.value.runDate !== canonicalRunDate) {
+      fail(`${run}/${file}: runDate "${result.value.runDate}" does not match the runId-derived runDate "${canonicalRunDate}"`, { path: `${run}/${file}`, dimension: 'runDateConsistency', code: 'runDateFolderMismatch', fix: `Set runDate: to "${canonicalRunDate}" (UTC YYYY-MM-DD from the report folder runId timestamp prefix; use runtimeContext.run.runDate).` });
     }
   }
   return parsed;

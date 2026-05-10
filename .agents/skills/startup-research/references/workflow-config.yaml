@@ -18,8 +18,15 @@ workflow:
     refreshReason:
       type: string
       required: false
-      description: Optional human reason recorded in refresh metadata.
+      description: Human reason recorded in refresh metadata; required when refresh=true on a new create-report-run invocation.
+    refreshOfRunId:
+      type: string
+      required: false
+      description: Optional prior runId used only when refresh=true and create-report-run reports multiple current matching reports.
   conditions:
+    - key: source-discovery-ready
+      description: The runtime has an approved web/search/source-discovery capability, or the user supplied authoritative source-pack URLs with metadata before any report folder is created.
+      checkedBy: agent preflight
     - key: report-run-created
       description: create-report-run.mjs returned a report folder path or --resume reopened the matching in-progress folder.
       checkedBy: create-report-run.mjs
@@ -41,28 +48,40 @@ workflow:
   phases:
     - key: setup
       title: Setup runtime contract
-      objective: Resolve inputs, create or resume the report folder, and load the workflow/runtime contract before writing artifacts.
+      objective: Resolve inputs, confirm source discovery is possible, create or resume the report folder, and load the workflow/runtime contract before writing artifacts.
       entryConditions: []
-      exitConditions: [report-run-created, runtime-contract-loaded]
+      exitConditions: [source-discovery-ready, report-run-created, runtime-contract-loaded]
       steps:
-        - key: create-run
-          title: Create or resume report run
-          command: create-report-run.mjs
+        - key: preflight-source-discovery
+          title: Confirm source discovery capability
+          command: null
           requires: [companyName]
-          produces: [reportFolder, run.runDate]
-          gate: create-report-run exit code
+          produces: [source-discovery-ready]
+          gate: agent preflight
           notes:
-            - Pass companyUrl when provided; pass refresh and refreshReason only for explicit refresh runs.
-            - On exit 3, rerun the exact command with --resume; do not create suffixed duplicate folders.
+            - Run this before create-report-run.mjs. fetch-url reviews direct URLs but does not discover sources.
+            - If no source-discovery/search capability is available, stop before creating a report folder. In interactive mode request authoritative URLs; in non-interactive/no-ask automation print source-discovery-unavailable to stderr and exit non-zero (use exit code 2 for an intentional skip — no folder created) so the orchestrator does not record the run as a successful no-op. Do not invent sources.
+            - If the user supplies staged HTML/PDF/text files instead of URLs, require originalUrl/publisher/title/date metadata and cite the original URL.
         - key: load-runtime
           title: List configured chapters
           command: load-chapter-runtime-context.mjs --list
-          requires: [report-run-created]
+          requires: []
           produces: [runtimeContext.chapters]
           gate: runtimeContext list schema
           notes:
             - The static frame (agent policy, gates, ID system, validator dimensions, renderer contracts) is generated into references/rules.md; read it once at session start instead of reloading per chapter.
             - Treat loader JSON as the per-chapter delta; do not hardcode chapter names or gates from prose.
+        - key: create-run
+          title: Create or resume report run
+          command: create-report-run.mjs
+          requires: [companyName, source-discovery-ready]
+          produces: [reportFolder]
+          gate: create-report-run exit code
+          notes:
+            - Pass companyUrl when provided (CLI flag --website; aliases --company-url/--companyUrl are accepted).
+            - For explicit refresh runs, pass both --refresh and --refresh-reason <text>. If create-run reports multiple current matching reports, rerun with --refresh-of <priorRunId> before any folder is created; --resume reuses the cached reason from the original create-run invocation.
+            - run.runDate is not printed by create-report-run; the per-chapter loader derives and emits it from the report folder runId when --report-folder is supplied.
+            - On exit 3, rerun with --resume; if stderr lists multiple in-progress candidates, add --resume-run <runId>. Do not create suffixed duplicate folders.
     - key: chapter-generation
       title: Generate configured chapters
       objective: Author each configured chapter from its runtime context, collect audited evidence, and clear check-chapter.
@@ -71,12 +90,12 @@ workflow:
       steps:
         - key: load-chapter-context
           title: Load chapter context
-          command: load-chapter-runtime-context.mjs --order <n> --include-context --report-folder <reportFolder>
+          command: load-chapter-runtime-context.mjs --order <n> --report-folder <reportFolder> [--include-context only in sequential mode]
           requires: [report-run-created, runtime-contract-loaded]
           produces: [runtimeContext.chapter]
           gate: runtimeContext schema
           notes:
-            - Omit --include-context when drafting chapters in parallel (it would project a stale rollup of unfinished sibling chapters); it is harmless on the first chapter in serial mode (the rollup is just empty), so keep it for consistency unless drafting later chapters concurrently.
+            - Omit --include-context when drafting chapters in parallel (it would project a stale rollup of unfinished sibling chapters). In sequential mode, omit it on chapter 1 and pass it on later chapters only after prior siblings have landed on disk.
             - Always pass --report-folder so runtimeContext.run.runDate is emitted; copy runDate into every chapter doc head and derive any source-discovery query date tokens from it before searching.
         - key: author-chapter
           title: Author chapter YAML
@@ -135,7 +154,7 @@ workflow:
           produces: [evidence.yaml, full-report.yaml, summary-card.yaml]
           gate: finalize-report exit code
           notes:
-            - Pass --refresh for explicit refresh runs. --refresh-reason on finalize-report is optional; it defaults to the value cached in .research-cache/<runId>/refresh-context.yaml by create-report-run.mjs. Re-pass it on finalize-report only when overriding the cache, in which case both values must match (finalize-report exits with a mismatch error otherwise).
+            - Pass --refresh for explicit refresh runs. --refresh-reason on finalize-report is optional; it defaults to the value cached in .research-cache/<runId>/refresh-context.yaml by create-report-run.mjs. Re-pass it only as audit redundancy; the value must match the cache exactly (finalize-report exits with a mismatch error otherwise).
             - --rebuild is no longer required after chapter edits. finalize-report auto-rebuilds the ledger when any chapter file's mtime is newer than evidence.yaml; pass --rebuild only to force a fresh consolidation regardless of mtimes.
             - finalize-report internally runs check-chapter --strict on every chapter as the first step; resolve those warnings via the chapter-generation strict sweep to avoid late aborts.
 
@@ -162,10 +181,10 @@ agentPolicy:
     - partnerships
     - product launches
   # Tokens that mark a `localEvidence.searchQueries[].query` as targeting a
-  # volatile fact. The `searchQueryFreshness` validator (warning, --strict
-  # promotes to failure) requires any query whose lowercased text contains one
-  # of these substrings to also include the current year (or the prior year
-  # for a trailing window) derived from the chapter's `runDate`. Edit this
+  # volatile fact. The `searchQueryFreshness` validator requires any query
+  # whose lowercased text contains one of these substrings to include the year derived from the chapter's
+  # `runDate`. The prior year may also appear for a trailing window, but it
+  # does not replace the runDate year. Edit this
   # list (and rerun `npm run build:rules`) when adding a new volatile-fact
   # vocabulary; the validator reads from agentPolicy at runtime.
   volatileFactQueryTokens:
@@ -233,7 +252,7 @@ agentPolicy:
     - "Record reviewed sources, atomic claims, search queries, typed research questions, and typed evidence gaps in localEvidence."
     - "Re-fetch volatile facts every run; refresh context and earlier chapters are background only for those facts."
     - "Treat runtimeContext.run.runDate as the ONLY source of truth for \"today\"; the model's training cutoff is unreliable and may be years stale. Before issuing source-discovery searches, derive any date tokens from runDate (for example its year, Month YYYY for very recent coverage, or the prior year only for explicit trailing-window queries), and never use a year you remember from training as the freshness anchor."
-    - "Anchor volatile-fact source discovery to runDate before searching: every localEvidence.searchQueries[].query whose text matches a volatileFactQueryTokens substring (funding/ARR/headcount/customers/leadership/regulatory/launches/etc.) MUST contain the runDate year — and the prior year only for trailing-window queries — as a literal 4-digit token. Freshness words such as latest, updated, or announced may supplement, but not replace, literal runDate-derived date tokens. localEvidence.searchQueries[] is the provenance/audit trail for queries already issued, not the search executor; the searchQueryFreshness validator audits this log after the fact (warning by default, promoted to failure under --strict and at finalize-report). If a lookup is genuinely historical, rephrase the query so it no longer matches a volatile-fact token instead of adding a fake freshness year."
+    - "Anchor volatile-fact source discovery to runDate before searching: every localEvidence.searchQueries[].query whose text matches a volatileFactQueryTokens substring (funding/ARR/headcount/customers/leadership/regulatory/launches/etc.) MUST contain the runDate year as a literal 4-digit token. For explicit trailing-window queries, it may also contain the prior year, but the prior year never replaces the runDate year. Freshness words such as latest, updated, or announced may supplement, but not replace, literal runDate-derived date tokens. localEvidence.searchQueries[] is the provenance/audit trail for queries already issued, not the search executor; the searchQueryFreshness validator audits this log after the fact as a hard gate that cannot be acknowledged away. If a lookup is genuinely historical, rephrase it so it no longer matches a volatile-fact token instead of adding a fake freshness year."
   chapterAuthoringRules:
     - "Use runtimeContext.chapter as the chapter brief and runtimeContext.chapter.gate as the binding per-chapter gate."
     - "Use the *Validator dimensions* section below for dimension precedence/suppressors and the inline allowed enum values in references/contracts.md for each field; trust the per-issue `fix` in check-chapter JSON output (`issues[].fix`) for concrete repair."

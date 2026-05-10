@@ -78,6 +78,15 @@ export const ChapterRuntimeContextSchema = z.object({
     cacheDir: nullableString,
     refreshContext: z.record(z.string(), z.any()).nullable(),
   }).strict().optional(),
+  // Minimal slice of the workflow agentPolicy that workers must see even
+  // when they do not load references/rules.md. Keep this small — it is the
+  // delta a sub-orchestrator-spawned chapter worker cannot get any other way.
+  policy: z.object({
+    retryPolicy: z.object({
+      maxChapterRetries: z.number().int().nonnegative(),
+      requireMonotonicFailureDecrease: z.boolean(),
+    }).strict().describe('Per-chapter retry budget enforced by the agent (no script blocks a non-monotonic retry). Workers must surface a blocker once the budget is exhausted or the failure count fails to strictly decrease across retries.'),
+  }).strict().optional(),
 }).strict();
 
 export const ChapterRuntimeContextListSchema = z.object({

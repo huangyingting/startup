@@ -20,7 +20,7 @@ Vocabularies (enum value sets) are listed inline below at each enum field. Valid
 
 ### Reading conventions
 
-Field comments below reference `runtimeContext.X` paths. `runtimeContext` is the per-chapter JSON projection emitted by `node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order <n> --include-context --report-folder <reportFolder>`. It carries only the chapter brief, neighbouring chapters, run identity, refresh cache, and earlier-chapter rollups — no workflow/policy/vocabulary content. The id shorthand used throughout (`S<L>###`, `C<L>###`, …) is documented under *ID system* in [`rules.md`](rules.md).
+Field comments below reference `runtimeContext.X` paths. `runtimeContext` is the per-chapter JSON projection emitted by `node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order <n> --report-folder <reportFolder> [--include-context]`; omit `--include-context` during parallel drafting. It carries only the chapter brief, neighbouring chapters, run identity, refresh cache, and earlier-chapter rollups — no workflow/policy/vocabulary content. The id shorthand used throughout (`S<L>###`, `C<L>###`, …) is documented under *ID system* in [`rules.md`](rules.md).
 
 ## Analysis chapter shape
 
@@ -130,7 +130,7 @@ company:
   stage?: string|null
   headquarters?: string|null
   shortDescription?: string|null
-revision?:  # (nullable) DO NOT AUTHOR — written automatically by link-refresh.mjs. Canonical: omit the field entirely (preferred over `revision: null` or `revision: {}`). Set explicitly only to disambiguate when more than one finalized current report matches the same company/domain.
+revision?:  # (nullable) DO NOT AUTHOR — written automatically by link-refresh.mjs. Canonical: omit the field entirely (preferred over `revision: null` or `revision: {}`). If more than one finalized current report matches the same company/domain, resolve it before folder creation with create-report-run.mjs --refresh-of <runId>.
   status: current|superseded (default "current")  # current=this run is the live report; superseded=replaced by a newer refresh
   refreshOfRunId?: string|null  # runId of the report this refresh replaces (set automatically by link-refresh.mjs)
   supersededByRunId?: string|null  # runId of the newer refresh that replaced this report (set on the prior run after link-refresh)
@@ -199,7 +199,7 @@ disclaimer?: string|null  # legal / methodology disclaimer
 
 The per-chapter projection produced by `load-chapter-runtime-context.mjs --order <n> [--report-folder <path>] [--include-context]`. Field availability:
 
-- Always present: `schemaVersion`, `generatedFrom`, `totalChapters`, `previousChapter`, `chapter`, `nextChapter`.
+- Always present: `schemaVersion`, `generatedFrom`, `totalChapters`, `previousChapter`, `chapter`, `nextChapter`, `policy`. `policy.retryPolicy` carries the per-chapter retry budget (`maxChapterRetries`) and the monotonic-decrease rule that workers must enforce themselves; no script blocks a non-monotonic retry.
 - Present whenever `--report-folder` is supplied (including the first chapter and parallel-drafting): `run`, `runCache`. `run.runDate` is the single canonical clock anchor; copy it into every chapter doc head's `runDate` and derive any source-discovery query date tokens from it before searching.
 - Present only with `--include-context` (omit during parallel drafting to avoid stale rollups): `contextChapters`, `cumulativeContext`.
 
@@ -280,6 +280,10 @@ run?:
 runCache?:
   cacheDir: string|null
   refreshContext: {...}|null
+policy?:
+  retryPolicy:  # Per-chapter retry budget enforced by the agent (no script blocks a non-monotonic retry). Workers must surface a blocker once the budget is exhausted or the failure count fails to strictly decrease across retries.
+    maxChapterRetries: number
+    requireMonotonicFailureDecrease: boolean
 ```
 
 The list-mode projection (`--list`) emits the chapter roster only:
