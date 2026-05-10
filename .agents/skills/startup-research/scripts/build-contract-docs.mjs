@@ -67,7 +67,7 @@ ${yamlBlock(renderSchemaAsYaml(ReportMetaSchema))}
 The per-chapter projection produced by \`load-chapter-runtime-context.mjs --order <n> [--report-folder <path>] [--include-context]\`. Field availability:
 
 - Always present: \`schemaVersion\`, \`generatedFrom\`, \`totalChapters\`, \`previousChapter\`, \`chapter\`, \`nextChapter\`.
-- Present whenever \`--report-folder\` is supplied (including the first chapter and parallel-drafting): \`run\`, \`runCache\`. \`run.runDate\` is the canonical clock anchor; copy it into every chapter doc head's \`runDate\`.
+- Present whenever \`--report-folder\` is supplied (including the first chapter and parallel-drafting): \`run\`, \`runCache\`. \`run.runDate\` is the single canonical clock anchor; copy it into every chapter doc head's \`runDate\` and derive any source-discovery query date tokens from it before searching.
 - Present only with \`--include-context\` (omit during parallel drafting to avoid stale rollups): \`contextChapters\`, \`cumulativeContext\`.
 
 ${yamlBlock(renderSchemaAsYaml(ChapterRuntimeContextSchema))}

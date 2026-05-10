@@ -266,10 +266,10 @@ export const FIX_HINTS = {
   researchQuestionClosure: ({ id } = {}) =>
     `Add an evidenceGap whose relatedQuestionRefs[] includes ${id ?? 'the still-open question'}.`,
   searchQueriesMissing: 'Append the actual queries you ran into localEvidence.searchQueries[] ({query, engine, hits, retainedSourceRefs}).',
-  searchQueryFreshness: ({ query, currentYear, priorYear, matchedToken } = {}) =>
-    query && currentYear
-      ? `Re-issue the query with the current year (and prior year for trailing windows): "${query} ${currentYear}" or "${query} ${priorYear} ${currentYear}". The volatile-fact token "${matchedToken}" triggered this check; if the query is genuinely historical, rephrase it so it no longer matches a volatile-fact token. Default gate warns; --strict and finalize-report fail.`
-      : 'For volatile-fact queries (funding/ARR/headcount/customers/leadership/regulatory/launches), append the current year — and prior year for trailing windows — derived from runDate; the searchQueryFreshness validator (warning by default, --strict promotes to failure) reads agentPolicy.volatileFactQueryTokens to decide which queries are volatile-fact-shaped.',
+  searchQueryFreshness: ({ query, runYear, trailingYear, matchedToken } = {}) =>
+    query && runYear
+      ? `Re-plan and re-issue the source-discovery query with date tokens derived from runDate: "${query} ${runYear}" or, for trailing windows, "${query} ${trailingYear} ${runYear}". The volatile-fact token "${matchedToken}" triggered this check; if the query is genuinely historical, rephrase it so it no longer matches a volatile-fact token. Default gate warns; --strict and finalize-report fail.`
+      : 'For volatile-fact queries (funding/ARR/headcount/customers/leadership/regulatory/launches), plan source discovery with year/month tokens derived from runDate before searching; the searchQueryFreshness validator (warning by default, --strict promotes to failure) audits localEvidence.searchQueries[] after the fact using agentPolicy.volatileFactQueryTokens.',
   sourceShape: ({ id } = {}) =>
     id ? `Fill the missing required field on source ${id} (see message for which one).` : 'Fill accessStatus and stance (and other required fields) on each source.',
   sourceDomains: ({ actual, required } = {}) =>

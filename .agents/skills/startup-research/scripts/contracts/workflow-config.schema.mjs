@@ -68,7 +68,7 @@ export const AgentPolicySchema = z.object({
   // Lowercased substring tokens that mark a search query as volatile-fact-shaped.
   // Read by check-chapter.mjs `searchQueryFreshness` validator at runtime; if
   // a query contains any of these (case-insensitive substring match) it must
-  // also contain the current year (or prior year) derived from runDate.
+  // also contain the year from runDate (or the prior year for trailing windows).
   volatileFactQueryTokens: stringArray.default([]),
   retryPolicy: z.object({
     maxChapterRetries: positiveInteger.optional(),

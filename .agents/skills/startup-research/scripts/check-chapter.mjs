@@ -393,9 +393,9 @@ function checkSearchQueryFreshness(file, doc) {
   if (!Array.isArray(queries) || queries.length === 0) return;
   const yearMatch = typeof doc?.runDate === 'string' ? doc.runDate.match(/^(\d{4})-\d{2}-\d{2}$/) : null;
   if (!yearMatch) return;
-  const currentYear = Number.parseInt(yearMatch[1], 10);
-  const priorYear = currentYear - 1;
-  const yearRegex = new RegExp(`\\b(?:${currentYear}|${priorYear})\\b`);
+  const runYear = Number.parseInt(yearMatch[1], 10);
+  const trailingYear = runYear - 1;
+  const yearRegex = new RegExp(`\\b(?:${runYear}|${trailingYear})\\b`);
   for (const [index, qe] of queries.entries()) {
     const text = typeof qe?.query === 'string' ? qe.query.trim() : '';
     if (!text) continue;
@@ -411,8 +411,8 @@ function checkSearchQueryFreshness(file, doc) {
     if (yearRegex.test(text)) continue;
     warn(
       'searchQueryFreshness',
-      `${file}: localEvidence.searchQueries[${index}].query "${text}" matches volatile-fact token "${matchedToken}" but contains neither ${currentYear} nor ${priorYear}; volatile-fact queries must include the current year (and optionally the prior year) as a literal token so the search engine biases toward fresh sources.`,
-      { index, query: text, currentYear, priorYear, matchedToken },
+      `${file}: localEvidence.searchQueries[${index}].query "${text}" matches volatile-fact token "${matchedToken}" but contains neither runDate year ${runYear} nor trailing-window year ${trailingYear}; volatile-fact queries must include runDate-derived literal date tokens so the search engine biases toward fresh sources.`,
+      { index, query: text, runYear, trailingYear, matchedToken },
     );
   }
 }

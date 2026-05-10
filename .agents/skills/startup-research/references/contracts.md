@@ -67,8 +67,8 @@ callouts:
     body: string
     claimRefs: [C<L>###]  # C<ChapterLetter>### ids the callout cites
 localEvidence:
-  searchQueries:
-    - query: string  # the actual query string you ran
+  searchQueries:  # provenance/audit trail for source-discovery queries; plan and issue the searches before recording them here
+    - query: string  # provenance/audit record of a source-discovery query you issued; not the search executor itself
       engine?: string|null  # search engine identifier (google, bing, etc.)
       hits?: number|null  # count of returned results, if known
       retainedSourceRefs: [S<L>###] (default [])  # S<ChapterLetter>### ids retained from this query (subset of sources[])
@@ -200,7 +200,7 @@ disclaimer?: string|null  # legal / methodology disclaimer
 The per-chapter projection produced by `load-chapter-runtime-context.mjs --order <n> [--report-folder <path>] [--include-context]`. Field availability:
 
 - Always present: `schemaVersion`, `generatedFrom`, `totalChapters`, `previousChapter`, `chapter`, `nextChapter`.
-- Present whenever `--report-folder` is supplied (including the first chapter and parallel-drafting): `run`, `runCache`. `run.runDate` is the canonical clock anchor; copy it into every chapter doc head's `runDate`.
+- Present whenever `--report-folder` is supplied (including the first chapter and parallel-drafting): `run`, `runCache`. `run.runDate` is the single canonical clock anchor; copy it into every chapter doc head's `runDate` and derive any source-discovery query date tokens from it before searching.
 - Present only with `--include-context` (omit during parallel drafting to avoid stale rollups): `contextChapters`, `cumulativeContext`.
 
 ```yaml
