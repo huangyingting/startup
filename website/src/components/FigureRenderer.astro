@@ -1176,9 +1176,25 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     const textX = railX + 44;
     const textW = Math.max(80, cardW - 36);
     const measureText = svg.append('text').attr('visibility', 'hidden').attr('x', -9999).attr('y', -9999);
+    const measureNode = measureText.node();
+    let activeFontSize = null;
+    let activeFontWeight = null;
+    const setFont = (fontSize, fontWeight) => {
+      if (fontSize === activeFontSize && fontWeight === activeFontWeight) return;
+      measureText.attr('font-size', fontSize).attr('font-weight', fontWeight).attr('font-family', chartFont.family);
+      activeFontSize = fontSize;
+      activeFontWeight = fontWeight;
+    };
+    const widthCache = new Map();
     const measuredWidth = (value) => {
-      measureText.text(String(value ?? ''));
-      return measureText.node()?.getComputedTextLength?.() ?? String(value ?? '').length * 8;
+      const str = String(value ?? '');
+      const key = `${activeFontSize}|${activeFontWeight}|${str}`;
+      const cached = widthCache.get(key);
+      if (cached !== undefined) return cached;
+      measureText.text(str);
+      const w = measureNode?.getComputedTextLength?.() ?? str.length * 8;
+      widthCache.set(key, w);
+      return w;
     };
     const splitTokenBySvgWidth = (token) => {
       const chunks = [];
@@ -1195,10 +1211,18 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
       if (chunk) chunks.push(chunk);
       return chunks;
     };
+    const wrapCache = new Map();
     const wrapWithSvgMeasure = (text, { fontSize, fontWeight }) => {
-      measureText.attr('font-size', fontSize).attr('font-weight', fontWeight).attr('font-family', chartFont.family);
-      const tokens = String(text ?? '').split(/\s+/).filter(Boolean);
-      if (!tokens.length) return [''];
+      const str = String(text ?? '');
+      const cacheKey = `${fontSize}|${fontWeight}|${textW}|${str}`;
+      const cached = wrapCache.get(cacheKey);
+      if (cached) return cached;
+      setFont(fontSize, fontWeight);
+      const tokens = str.split(/\s+/).filter(Boolean);
+      if (!tokens.length) {
+        wrapCache.set(cacheKey, ['']);
+        return [''];
+      }
       const lines = [];
       let line = '';
       tokens.flatMap((token) => measuredWidth(token) > textW ? splitTokenBySvgWidth(token) : token).forEach((token) => {
@@ -1211,6 +1235,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
         }
       });
       if (line) lines.push(line);
+      wrapCache.set(cacheKey, lines);
       return lines;
     };
     const rowGap = 24;
