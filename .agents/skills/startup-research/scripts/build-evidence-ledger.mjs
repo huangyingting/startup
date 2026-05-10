@@ -29,8 +29,9 @@ function textKey(value) {
   return String(value ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
-const WORKFLOW_CONFIG = loadWorkflowConfig();
-const ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
+const WORKFLOW_CONFIG_DEFAULT = loadWorkflowConfig();
+let WORKFLOW_CONFIG = WORKFLOW_CONFIG_DEFAULT;
+let ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG_DEFAULT).map((item) => item.file);
 const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 
 // The agent-facing finalize pipeline runs this script and surfaces failures
@@ -94,6 +95,10 @@ outputFormat = args.format;
 
 const reportFolder = resolve(args.folder);
 reportFolderForEnvelope = reportFolder;
+// Switch to this report's snapshot if one was written by finalize-report;
+// otherwise the head config (already loaded) stands.
+WORKFLOW_CONFIG = loadWorkflowConfig({ reportFolder });
+ANALYSIS_FILES = getAnalysisArtifacts(WORKFLOW_CONFIG).map((item) => item.file);
 const docs = loadAnalysisDocs(reportFolder);
 if (!docs.size) {
   abort({

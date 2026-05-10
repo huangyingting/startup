@@ -42,6 +42,8 @@ sections:
     title: string
     body: string  # section prose; expanded by the depthSection gate if too short
     claimRefs: [C<L>###]  # C<ChapterLetter>### ids cited in this section's body
+    tableRefs?: [T<L>###]  # T<ChapterLetter>### ids of tables that belong inside this section (rendered after the prose, in listed order). Each table id may appear in at most one section across the chapter; unreferenced tables fall back to the trailing Exhibits section.
+    figureRefs?: [F<L>###]  # F<ChapterLetter>### ids of figures that belong inside this section (rendered after the prose and any sectioned tables, in listed order). Each figure id may appear in at most one section across the chapter; unreferenced figures fall back to the trailing Exhibits section.
 tables:
   - id?: string  # T<ChapterLetter>### (e.g. TO008)
     title?: string

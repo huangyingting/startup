@@ -19,8 +19,6 @@ import {
   validationWarning,
 } from './contracts/validation-result.mjs';
 
-const WORKFLOW_CONFIG = loadWorkflowConfig();
-
 function parseArgs(argv) {
   const parsed = { folder: null, strict: false, format: 'text' };
   for (let i = 0; i < argv.length; i += 1) {
@@ -62,13 +60,16 @@ if (!existsSync(reportFolder)) {
   process.exit(EXIT.notFound);
 }
 
+// Bind config to this report's snapshot when present (else head config).
+const WORKFLOW_CONFIG = loadWorkflowConfig({ reportFolder });
+
 const conflicts = [];
 const warnings = [];
 const flag = (severity, dimension, message, extra = {}) => {
   (severity === 'fail' ? conflicts : warnings).push({ severity, dimension, message, ...extra });
 };
 
-const chapters = getAnalysisArtifacts();
+const chapters = getAnalysisArtifacts(WORKFLOW_CONFIG);
 const docs = [];
 for (const spec of chapters) {
   const path = join(reportFolder, spec.file);

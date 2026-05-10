@@ -1,10 +1,9 @@
 schemaVersion: report-v2
 artifact: market-analysis
 slug: chainguard
-runDate: "2026-05-07"
+runDate: '2026-05-07'
 company:
   name: Chainguard
-
 chapter:
   number: 2
   title: Market Analysis
@@ -21,7 +20,6 @@ chapter:
     market share, indicating early-stage penetration with substantial headroom. Constraints include
     high DevSecOps maturity requirements, complex enterprise sales cycles, and competition from
     established incumbents with bundled security offerings.
-
 sections:
   - id: SM-market-def
     title: Market Definition and Scope
@@ -62,7 +60,12 @@ sections:
       - CM003
       - CM004
       - CM005
-
+    tableRefs:
+      - TM001
+      - TM002
+    figureRefs:
+      - FM001
+      - FM002
   - id: SM-buyers
     title: Buyer Segments and Demand Dynamics
     body: |
@@ -104,7 +107,10 @@ sections:
       - CM009
       - CM010
       - CM011
-
+    tableRefs:
+      - TM003
+    figureRefs:
+      - FM003
   - id: SM-growth
     title: Growth Drivers, Constraints, and Market Risks
     body: |
@@ -159,7 +165,10 @@ sections:
       - CM016
       - CM017
       - CM018
-
+    tableRefs:
+      - TM004
+    figureRefs:
+      - FM004
 tables:
   - id: TM001
     title: Market Definition Table
@@ -170,11 +179,31 @@ tables:
       - CAGR
       - Chainguard Relevance
     rows:
-      - ["Software supply chain security", "$2.4–3.1B", "$5.1–12.5B", "12–22%", "Core TAM; Chainguard prevents supply chain attacks at source"]
-      - ["Container / cloud-native security", "$2.3–3.6B", "$9.4–25B", "20–26%", "Primary product market; hardened container images directly address this"]
-      - ["DevSecOps platforms", "$8.84B", "$20.2B", "13.2%", "Adjacent; Chainguard integrates into CI/CD as a secure-by-design image layer"]
-      - ["Open-source risk management (SCA)", "$1.2B est.", "$3B+ est.", "15–20% est.", "Complementary; SCA tools scan for known CVEs; Chainguard prevents them upstream"]
-      - ["Global information security spending", "$213B (2025)", "~$300B est.", "~7% (security)", "Macro context; supply chain security is a fast-growing sub-slice"]
+      - - Software supply chain security
+        - $2.4–3.1B
+        - $5.1–12.5B
+        - 12–22%
+        - Core TAM; Chainguard prevents supply chain attacks at source
+      - - Container / cloud-native security
+        - $2.3–3.6B
+        - $9.4–25B
+        - 20–26%
+        - Primary product market; hardened container images directly address this
+      - - DevSecOps platforms
+        - $8.84B
+        - $20.2B
+        - 13.2%
+        - Adjacent; Chainguard integrates into CI/CD as a secure-by-design image layer
+      - - Open-source risk management (SCA)
+        - $1.2B est.
+        - $3B+ est.
+        - 15–20% est.
+        - Complementary; SCA tools scan for known CVEs; Chainguard prevents them upstream
+      - - Global information security spending
+        - $213B (2025)
+        - ~$300B est.
+        - ~7% (security)
+        - Macro context; supply chain security is a fast-growing sub-slice
     notes: |
       Market size estimates sourced from MarketsandMarkets, Meticulous Research, Grand View Research,
       Gartner. Overlap between segments is material; blended overlap-adjusted TAM for Chainguard's
@@ -185,9 +214,8 @@ tables:
       - CM002
       - CM003
       - CM004
-
   - id: TM002
-    title: "TAM/SAM/SOM Sizing Lens Table"
+    title: TAM/SAM/SOM Sizing Lens Table
     columns:
       - Level
       - Definition
@@ -195,9 +223,29 @@ tables:
       - Methodology
       - Confidence
     rows:
-      - ["TAM", "All enterprises consuming open-source in containerized / VM workloads needing secure images and SBOM", "$7–9B", "Overlap-adjusted sum of supply chain + container security TAMs", "low (wide analyst range)"]
-      - ["SAM", "Enterprises with Kubernetes/container adoption, DevSecOps maturity ≥Level 2, and regulatory or compliance exposure (federal, FSI, tech sector, healthcare)", "$2–3B", "Subset of TAM: ~30–40% of enterprises have sufficient DevSecOps maturity; North America and Europe primary geographies", "medium"]
-      - ["SOM (3-year, 2026–2029)", "Reachable accounts with current GTM motion: 5,000+ identified enterprise prospects reachable via direct and channel sales; assumes 150–300 new logos per year at $200K–$500K ACV", "$300–600M ARR", "Bottom-up from current customer trajectory (150+ customers, $40M ARR; 7x growth); extrapolates to $200–300M ARR by 2028", "low (requires sustained hyper-growth)"]
+      - - TAM
+        - All enterprises consuming open-source in containerized / VM workloads needing secure images and SBOM
+        - $7–9B
+        - Overlap-adjusted sum of supply chain + container security TAMs
+        - low (wide analyst range)
+      - - SAM
+        - >-
+          Enterprises with Kubernetes/container adoption, DevSecOps maturity ≥Level 2, and regulatory or compliance
+          exposure (federal, FSI, tech sector, healthcare)
+        - $2–3B
+        - >-
+          Subset of TAM: ~30–40% of enterprises have sufficient DevSecOps maturity; North America and Europe primary
+          geographies
+        - medium
+      - - SOM (3-year, 2026–2029)
+        - >-
+          Reachable accounts with current GTM motion: 5,000+ identified enterprise prospects reachable via direct and
+          channel sales; assumes 150–300 new logos per year at $200K–$500K ACV
+        - $300–600M ARR
+        - >-
+          Bottom-up from current customer trajectory (150+ customers, $40M ARR; 7x growth); extrapolates to $200–300M
+          ARR by 2028
+        - low (requires sustained hyper-growth)
     notes: |
       SOM estimate is management's implied trajectory based on >$100M ARR target for FY2026.
       ACV ($200K-$500K) estimated from $40M ARR / 150+ customers = ~$267K average; unconfirmed.
@@ -205,7 +253,6 @@ tables:
       - CM005
       - CM019
       - CM020
-
   - id: TM003
     title: Segment / Buyer Map
     columns:
@@ -216,22 +263,53 @@ tables:
       - Named Customer Evidence
       - Growth Priority
     rows:
-      - ["Technology / SaaS", "VP Eng, Platform Lead, CISO", "Security audit finding, SOC 2 requirement, customer demand", "Engineering / Security capex", "Canva, GitLab, Snap, Snowflake, Anduril", "High"]
-      - ["U.S. Federal Government", "Contracting Officer, CISO, Mission Owner", "EO 14028 SBOM mandate, FedRAMP authorization, CISA advisory", "IT/cyber appropriations", "Unnamed (publicly referenced)", "High (compliance-driven)"]
-      - ["Financial Services / Banking", "CISO, Head of Cloud Security", "Regulatory examination, third-party risk management audit", "Cybersecurity opex", "ANZ Bank", "High"]
-      - ["Defense / Aerospace", "Program Security Officer, DevSecOps Platform Lead", "CMMC requirements, classified system certifications", "Defense IT / IRAD", "Anduril (dual-use tech)", "Medium-High"]
-      - ["Healthcare", "CISO, VP IT Security", "HIPAA, HHS cyber guidance, ransomware response", "IT security budget", "Not publicly named", "Medium (emerging)"]
-      - ["Hyperscalers / Cloud providers", "Platform Engineering, OSS Security", "Internal security standards, supply chain integrity programs", "R&D / infrastructure", "Not named", "Medium (potential OEM/partnership channel)"]
+      - - Technology / SaaS
+        - VP Eng, Platform Lead, CISO
+        - Security audit finding, SOC 2 requirement, customer demand
+        - Engineering / Security capex
+        - Canva, GitLab, Snap, Snowflake, Anduril
+        - High
+      - - U.S. Federal Government
+        - Contracting Officer, CISO, Mission Owner
+        - EO 14028 SBOM mandate, FedRAMP authorization, CISA advisory
+        - IT/cyber appropriations
+        - Unnamed (publicly referenced)
+        - High (compliance-driven)
+      - - Financial Services / Banking
+        - CISO, Head of Cloud Security
+        - Regulatory examination, third-party risk management audit
+        - Cybersecurity opex
+        - ANZ Bank
+        - High
+      - - Defense / Aerospace
+        - Program Security Officer, DevSecOps Platform Lead
+        - CMMC requirements, classified system certifications
+        - Defense IT / IRAD
+        - Anduril (dual-use tech)
+        - Medium-High
+      - - Healthcare
+        - CISO, VP IT Security
+        - HIPAA, HHS cyber guidance, ransomware response
+        - IT security budget
+        - Not publicly named
+        - Medium (emerging)
+      - - Hyperscalers / Cloud providers
+        - Platform Engineering, OSS Security
+        - Internal security standards, supply chain integrity programs
+        - R&D / infrastructure
+        - Not named
+        - Medium (potential OEM/partnership channel)
     enumerationScope:
       coverage: partial
-      basis: "Segment list derived from named customer disclosures and regulatory context. Private company; full customer vertical breakdown unavailable."
+      basis: >-
+        Segment list derived from named customer disclosures and regulatory context. Private company; full customer
+        vertical breakdown unavailable.
     claimRefs:
       - CM006
       - CM007
       - CM008
       - CM009
       - CM010
-
   - id: TM004
     title: Growth Drivers and Constraints Table
     columns:
@@ -241,15 +319,55 @@ tables:
       - Time Horizon
       - Evidence Quality
     rows:
-      - ["U.S. EO 14028 SBOM mandate", "Driver — regulatory", "Structural compliance pull for federal and federal-contractor customers; accelerates procurement decisions", "Current and ongoing", "High"]
-      - ["EU Cyber Resilience Act (CRA)", "Driver — regulatory", "Extends SBOM and supply chain requirements to EU market; creates EMEA demand expansion", "2025–2027", "High"]
-      - ["XZ Utils, SolarWinds, Log4Shell incidents", "Driver — incident", "Each incident compresses sales cycles; drives board-level urgency; lowers CISO objection rates", "Episodic; each incident creates 6–18mo demand surge", "High"]
-      - ["Kubernetes / container adoption growth", "Driver — technology", "Estimated 80%+ enterprise Kubernetes usage (CNCF 2024); each containerized org is a potential customer", "Current and accelerating", "High"]
-      - ["AI/LLM workload proliferation", "Driver — technology", "AI inference stacks carry large OSS footprints; Chainguard's AI-secure images target this market explicitly", "2024–2027", "Medium"]
-      - ["DevSecOps maturity prerequisite", "Constraint — adoption", "Limits SAM to mid/large enterprises; small-to-mid market cannot yet consume Chainguard products", "Ongoing", "Medium"]
-      - ["Bundled platform competition", "Constraint — competitive", "Cloud providers and security platforms bundle container scanning; reduces standalone budget for prevention tools", "Ongoing", "Medium"]
-      - ["CISO skepticism: scanning vs. prevention", "Constraint — buyer behavior", "Buyers accustomed to scanning tools require education before switching to a prevention-first model", "Ongoing; decreasing as incidents accumulate", "Medium"]
-      - ["U.S. regulatory policy risk", "Constraint — regulatory", "SBOM enforcement could slow or reverse under different administration; reduces compliance pull for federal segment", "Contingent on policy", "Low"]
+      - - U.S. EO 14028 SBOM mandate
+        - Driver — regulatory
+        - Structural compliance pull for federal and federal-contractor customers; accelerates procurement decisions
+        - Current and ongoing
+        - High
+      - - EU Cyber Resilience Act (CRA)
+        - Driver — regulatory
+        - Extends SBOM and supply chain requirements to EU market; creates EMEA demand expansion
+        - 2025–2027
+        - High
+      - - XZ Utils, SolarWinds, Log4Shell incidents
+        - Driver — incident
+        - Each incident compresses sales cycles; drives board-level urgency; lowers CISO objection rates
+        - Episodic; each incident creates 6–18mo demand surge
+        - High
+      - - Kubernetes / container adoption growth
+        - Driver — technology
+        - Estimated 80%+ enterprise Kubernetes usage (CNCF 2024); each containerized org is a potential customer
+        - Current and accelerating
+        - High
+      - - AI/LLM workload proliferation
+        - Driver — technology
+        - AI inference stacks carry large OSS footprints; Chainguard's AI-secure images target this market explicitly
+        - 2024–2027
+        - Medium
+      - - DevSecOps maturity prerequisite
+        - Constraint — adoption
+        - Limits SAM to mid/large enterprises; small-to-mid market cannot yet consume Chainguard products
+        - Ongoing
+        - Medium
+      - - Bundled platform competition
+        - Constraint — competitive
+        - >-
+          Cloud providers and security platforms bundle container scanning; reduces standalone budget for prevention
+          tools
+        - Ongoing
+        - Medium
+      - - 'CISO skepticism: scanning vs. prevention'
+        - Constraint — buyer behavior
+        - Buyers accustomed to scanning tools require education before switching to a prevention-first model
+        - Ongoing; decreasing as incidents accumulate
+        - Medium
+      - - U.S. regulatory policy risk
+        - Constraint — regulatory
+        - >-
+          SBOM enforcement could slow or reverse under different administration; reduces compliance pull for federal
+          segment
+        - Contingent on policy
+        - Low
     claimRefs:
       - CM012
       - CM013
@@ -258,7 +376,6 @@ tables:
       - CM016
       - CM017
       - CM018
-
 figures:
   - id: FM001
     title: Market Sizing Lens — Chainguard's Overlapping TAM
@@ -270,23 +387,24 @@ figures:
       security niche where the company competes.
     data:
       items:
-        - label: "Global Information Security Spending"
-          detail: "$213B (2025, Gartner)"
-        - label: "Cloud-Native & Application Security"
-          detail: "~$30–40B subset"
-        - label: "Container + Supply Chain Security TAM"
-          detail: "$6–8B (2025, overlap-adjusted)"
-        - label: "Chainguard SAM"
-          detail: "$2–3B (enterprises with DevSecOps maturity)"
-        - label: "Chainguard SOM (2025)"
-          detail: "$40M ARR reached; >$100M target FY2026"
-    approximationNotes: "All estimates are analyst-derived ranges; see TM001 for source citations. Exact boundaries between layers are illustrative."
+        - label: Global Information Security Spending
+          detail: $213B (2025, Gartner)
+        - label: Cloud-Native & Application Security
+          detail: ~$30–40B subset
+        - label: Container + Supply Chain Security TAM
+          detail: $6–8B (2025, overlap-adjusted)
+        - label: Chainguard SAM
+          detail: $2–3B (enterprises with DevSecOps maturity)
+        - label: Chainguard SOM (2025)
+          detail: $40M ARR reached; >$100M target FY2026
+    approximationNotes: >-
+      All estimates are analyst-derived ranges; see TM001 for source citations. Exact boundaries between layers are
+      illustrative.
     claimRefs:
       - CM001
       - CM002
       - CM004
       - CM005
-
   - id: FM002
     title: Market Size Estimate Range — Supply Chain and Container Security (2024–2030)
     type: range
@@ -297,28 +415,29 @@ figures:
       in sizing.
     data:
       items:
-        - label: "Software Supply Chain Security (2024)"
+        - label: Software Supply Chain Security (2024)
           low: 2400
           mid: 2750
           high: 3100
-        - label: "Container / Cloud-Native Security (2024)"
+        - label: Container / Cloud-Native Security (2024)
           low: 2300
           mid: 3000
           high: 3600
-        - label: "Software Supply Chain Security (2030)"
+        - label: Software Supply Chain Security (2030)
           low: 5100
           mid: 8000
           high: 12500
-        - label: "Container / Cloud-Native Security (2030)"
+        - label: Container / Cloud-Native Security (2030)
           low: 9400
           mid: 15000
           high: 25000
-    approximationNotes: "USD millions. Range endpoints from MarketsandMarkets, Meticulous Research, Precedence Research, and Grand View Research. Numbers are analyst estimates, not audited figures."
+    approximationNotes: >-
+      USD millions. Range endpoints from MarketsandMarkets, Meticulous Research, Precedence Research, and Grand View
+      Research. Numbers are analyst estimates, not audited figures.
     claimRefs:
       - CM001
       - CM002
       - CM003
-
   - id: FM003
     title: Buyer Segment Map — Market Position by Regulatory Intensity vs. Container Maturity
     type: quadrant
@@ -329,37 +448,38 @@ figures:
       Chainguard's current sweet spot lies and where future expansion may occur.
     data:
       points:
-        - label: "U.S. Federal"
+        - label: U.S. Federal
           x: 10
-          y: 6
-          detail: "Highest regulatory intensity; moderate container maturity; highest per-deal value"
-        - label: "Financial Services"
+          'y': 6
+          detail: Highest regulatory intensity; moderate container maturity; highest per-deal value
+        - label: Financial Services
           x: 8
-          y: 6
-          detail: "High regulatory scrutiny; moderate-high container adoption; APAC and US"
-        - label: "Technology / SaaS"
+          'y': 6
+          detail: High regulatory scrutiny; moderate-high container adoption; APAC and US
+        - label: Technology / SaaS
           x: 5
-          y: 9
-          detail: "Highest DevSecOps maturity; moderate regulatory pressure; highest adoption density"
-        - label: "Defense / Aerospace"
+          'y': 9
+          detail: Highest DevSecOps maturity; moderate regulatory pressure; highest adoption density
+        - label: Defense / Aerospace
           x: 9
-          y: 7
-          detail: "CMMC requirements driving adoption; classified workloads limit public disclosure"
-        - label: "Healthcare"
+          'y': 7
+          detail: CMMC requirements driving adoption; classified workloads limit public disclosure
+        - label: Healthcare
           x: 7
-          y: 4
-          detail: "Emerging; HIPAA + ransomware drive interest; container maturity still developing"
-        - label: "SMB / Mid-Market"
+          'y': 4
+          detail: Emerging; HIPAA + ransomware drive interest; container maturity still developing
+        - label: SMB / Mid-Market
           x: 3
-          y: 3
-          detail: "Below SAM threshold; insufficient DevSecOps maturity; future market as tooling matures"
-    approximationNotes: "Ordinal 0–10 scoring based on public regulatory information and adoption surveys; not derived from primary market research."
+          'y': 3
+          detail: Below SAM threshold; insufficient DevSecOps maturity; future market as tooling matures
+    approximationNotes: >-
+      Ordinal 0–10 scoring based on public regulatory information and adoption surveys; not derived from primary market
+      research.
     claimRefs:
       - CM006
       - CM007
       - CM008
       - CM009
-
   - id: FM004
     title: Adoption Path — Value Chain from OSS Publish to Secure Production Deployment
     type: flow
@@ -371,26 +491,26 @@ figures:
     data:
       nodes:
         - id: oss_pub
-          label: "Upstream OSS Publishing"
-          detail: "Developers/maintainers publish packages to registries (npm, PyPI, Docker Hub)"
+          label: Upstream OSS Publishing
+          detail: Developers/maintainers publish packages to registries (npm, PyPI, Docker Hub)
         - id: oss_risk
-          label: "Supply Chain Attack Surface"
-          detail: "Compromised maintainer, typosquatting, malicious dependency, CVE introduction"
+          label: Supply Chain Attack Surface
+          detail: Compromised maintainer, typosquatting, malicious dependency, CVE introduction
         - id: chainguard_build
-          label: "Chainguard Secure Build"
-          detail: "Wolfi-based minimal images, zero-CVE at delivery, SBOM + sigstore attestation"
+          label: Chainguard Secure Build
+          detail: Wolfi-based minimal images, zero-CVE at delivery, SBOM + sigstore attestation
         - id: enterprise_ci
-          label: "Enterprise CI/CD Pipeline"
-          detail: "GitHub Actions, Jenkins, GitLab CI — pulls Chainguard hardened base images"
+          label: Enterprise CI/CD Pipeline
+          detail: GitHub Actions, Jenkins, GitLab CI — pulls Chainguard hardened base images
         - id: container_registry
-          label: "Private Container Registry"
-          detail: "AWS ECR, Azure ACR, GCP Artifact Registry with Chainguard images"
+          label: Private Container Registry
+          detail: AWS ECR, Azure ACR, GCP Artifact Registry with Chainguard images
         - id: prod
-          label: "Production Kubernetes / VM"
-          detail: "Running with continuously patched, zero-CVE Chainguard runtime"
+          label: Production Kubernetes / VM
+          detail: Running with continuously patched, zero-CVE Chainguard runtime
         - id: compliance
-          label: "SBOM / Compliance Output"
-          detail: "Automated SBOM generation satisfies EO 14028, EU CRA, FedRAMP audit"
+          label: SBOM / Compliance Output
+          detail: Automated SBOM generation satisfies EO 14028, EU CRA, FedRAMP audit
       edges:
         - from: oss_pub
           to: oss_risk
@@ -409,7 +529,6 @@ figures:
       - CM014
       - CM015
       - CM016
-
 callouts:
   - calloutType: strength
     title: Triple Demand Catalyst Is Structural, Not Cyclical
@@ -433,233 +552,262 @@ callouts:
       - CM001
       - CM002
       - CM019
-
 localEvidence:
   searchQueries:
-    - query: "software supply chain security market size 2024 2025 2030 TAM forecast Gartner IDC"
+    - query: software supply chain security market size 2024 2025 2030 TAM forecast Gartner IDC
       engine: web_search
       hits: 10
       retainedSourceRefs:
         - SM001
         - SM002
         - SM003
-    - query: "container security market size cloud native security TAM 2024 2025 growth rate"
+    - query: container security market size cloud native security TAM 2024 2025 growth rate
       engine: web_search
       hits: 10
       retainedSourceRefs:
         - SM004
         - SM005
         - SM006
-    - query: "software supply chain security buyer market enterprise DevSecOps spending 2024 federal compliance"
+    - query: software supply chain security buyer market enterprise DevSecOps spending 2024 federal compliance
       engine: web_search
       hits: 10
       retainedSourceRefs:
         - SM007
         - SM008
         - SM009
-    - query: "CNCF Kubernetes enterprise adoption survey 2024"
+    - query: CNCF Kubernetes enterprise adoption survey 2024
       engine: web_search
       hits: 5
       retainedSourceRefs:
         - SM010
-    - query: "EU Cyber Resilience Act 2024 software supply chain SBOM requirements"
+    - query: EU Cyber Resilience Act 2024 software supply chain SBOM requirements
       engine: web_search
       hits: 5
       retainedSourceRefs:
         - SM011
-    - query: "Gartner global information security spending 2025 forecast"
+    - query: Gartner global information security spending 2025 forecast
       engine: web_search
       hits: 5
       retainedSourceRefs:
         - SM012
-    - query: "DevSecOps market size Grand View Research 2024 2030"
+    - query: DevSecOps market size Grand View Research 2024 2030
       engine: web_search
       hits: 5
       retainedSourceRefs:
         - SM013
-    - query: "Chainguard market position competitors supply chain open source container"
+    - query: Chainguard market position competitors supply chain open source container
       engine: web_search
       hits: 5
       retainedSourceRefs:
         - SM014
-
   researchQuestions:
     - id: QM001
-      question: "What is the global market size for software supply chain security in 2024 and what is the projected CAGR to 2030?"
+      question: >-
+        What is the global market size for software supply chain security in 2024 and what is the projected CAGR to
+        2030?
       type: quantification
       targets:
         - contentRequirements/0
         - plannedTables/market-definition-table
       status: answered
     - id: QM002
-      question: "What is the size of the container and cloud-native security market in 2024 and how does it relate to Chainguard's TAM?"
+      question: >-
+        What is the size of the container and cloud-native security market in 2024 and how does it relate to
+        Chainguard's TAM?
       type: quantification
       targets:
         - contentRequirements/0
         - plannedTables/tam-sam-som-or-sizing-lens-table
       status: answered
     - id: QM003
-      question: "What is Chainguard's estimated SAM (Serviceable Addressable Market) based on DevSecOps maturity and regulatory requirements?"
+      question: >-
+        What is Chainguard's estimated SAM (Serviceable Addressable Market) based on DevSecOps maturity and regulatory
+        requirements?
       type: quantification
       targets:
         - contentRequirements/1
         - plannedTables/tam-sam-som-or-sizing-lens-table
       status: answered
     - id: QM004
-      question: "What regulatory mandates (U.S. EO 14028, EU CRA) are driving enterprise demand for supply chain security solutions?"
+      question: >-
+        What regulatory mandates (U.S. EO 14028, EU CRA) are driving enterprise demand for supply chain security
+        solutions?
       type: mechanism
       targets:
         - contentRequirements/2
         - plannedTables/growth-drivers-and-constraints-table
       status: answered
     - id: QM005
-      question: "Which industry verticals are the primary buyers of software supply chain security products, and what triggers their purchase?"
+      question: >-
+        Which industry verticals are the primary buyers of software supply chain security products, and what triggers
+        their purchase?
       type: enumeration
       targets:
         - contentRequirements/1
         - plannedTables/segment-buyer-map
       status: answered
     - id: QM006
-      question: "What was the market impact of the XZ Utils backdoor (CVE-2024-3094) on supply chain security spending and urgency?"
+      question: >-
+        What was the market impact of the XZ Utils backdoor (CVE-2024-3094) on supply chain security spending and
+        urgency?
       type: mechanism
       targets:
         - contentRequirements/2
       status: answered
     - id: QM007
-      question: "How does Chainguard's SOM (Serviceable Obtainable Market) trajectory compare to its ARR growth as of FY2025?"
+      question: How does Chainguard's SOM (Serviceable Obtainable Market) trajectory compare to its ARR growth as of FY2025?
       type: quantification
       targets:
         - contentRequirements/3
         - plannedTables/tam-sam-som-or-sizing-lens-table
       status: answered
     - id: QM008
-      question: "What is the DevSecOps market size and how does it relate to Chainguard's broader competitive landscape?"
+      question: What is the DevSecOps market size and how does it relate to Chainguard's broader competitive landscape?
       type: quantification
       targets:
         - contentRequirements/0
         - plannedTables/market-definition-table
       status: answered
     - id: QM009
-      question: "What percentage of enterprises use Kubernetes in production and how does this define Chainguard's addressable universe?"
+      question: >-
+        What percentage of enterprises use Kubernetes in production and how does this define Chainguard's addressable
+        universe?
       type: quantification
       targets:
         - contentRequirements/0
         - plannedTables/growth-drivers-and-constraints-table
       status: answered
     - id: QM010
-      question: "How does Gartner characterize the software supply chain security market in its 2025 Market Guide?"
+      question: How does Gartner characterize the software supply chain security market in its 2025 Market Guide?
       type: verification
       targets:
         - contentRequirements/0
       status: answered
     - id: QM011
-      question: "What are the key demand constraints limiting Chainguard's market penetration in the near term?"
+      question: What are the key demand constraints limiting Chainguard's market penetration in the near term?
       type: adverse
       targets:
         - contentRequirements/2
         - plannedTables/growth-drivers-and-constraints-table
       status: answered
     - id: QM012
-      question: "How do cloud provider bundled security offerings (AWS, Azure, GCP) constrain the standalone supply chain security market?"
+      question: >-
+        How do cloud provider bundled security offerings (AWS, Azure, GCP) constrain the standalone supply chain
+        security market?
       type: adverse
       targets:
         - contentRequirements/2
         - plannedTables/growth-drivers-and-constraints-table
       status: answered
     - id: QM013
-      question: "What is the U.S. federal government's procurement budget for cybersecurity supply chain tools in FY2024-2025?"
+      question: What is the U.S. federal government's procurement budget for cybersecurity supply chain tools in FY2024-2025?
       type: quantification
       targets:
         - contentRequirements/1
       status: partial
     - id: QM014
-      question: "What is the EU Cyber Resilience Act's specific impact on SBOM and open-source component transparency requirements?"
+      question: >-
+        What is the EU Cyber Resilience Act's specific impact on SBOM and open-source component transparency
+        requirements?
       type: mechanism
       targets:
         - contentRequirements/2
       status: answered
     - id: QM015
-      question: "What is Gartner's total global information security spending forecast for 2025?"
+      question: What is Gartner's total global information security spending forecast for 2025?
       type: quantification
       targets:
         - contentRequirements/0
         - plannedTables/market-definition-table
       status: answered
     - id: QM016
-      question: "How does Chainguard's container security approach (prevention) compare to scanning-based competitors in terms of market positioning?"
+      question: >-
+        How does Chainguard's container security approach (prevention) compare to scanning-based competitors in terms of
+        market positioning?
       type: comparison
       targets:
         - contentRequirements/3
       status: answered
     - id: QM017
-      question: "What share of the supply chain security market do prevention-focused vendors (vs. scanning) occupy in 2024-2025?"
+      question: What share of the supply chain security market do prevention-focused vendors (vs. scanning) occupy in 2024-2025?
       type: quantification
       targets:
         - contentRequirements/3
       status: unresolved
     - id: QM018
-      question: "What is the average deal size (ACV) for enterprise software supply chain security contracts?"
+      question: What is the average deal size (ACV) for enterprise software supply chain security contracts?
       type: quantification
       targets:
         - contentRequirements/3
       status: partial
     - id: QM019
-      question: "Are there any confirmed cases where Chainguard's market share estimates have been materially challenged or disputed by analysts?"
+      question: >-
+        Are there any confirmed cases where Chainguard's market share estimates have been materially challenged or
+        disputed by analysts?
       type: adverse
       targets:
         - contentRequirements/2
       status: answered
     - id: QM020
-      question: "What is the North America versus EMEA/APAC split of the software supply chain security market?"
+      question: What is the North America versus EMEA/APAC split of the software supply chain security market?
       type: quantification
       targets:
         - contentRequirements/1
       status: answered
     - id: QM021
-      question: "Is supply chain security spending growing as part of total cybersecurity budgets or is it cannibalizing other categories?"
+      question: >-
+        Is supply chain security spending growing as part of total cybersecurity budgets or is it cannibalizing other
+        categories?
       type: mechanism
       targets:
         - contentRequirements/2
       status: answered
     - id: QM022
-      question: "What is the CNCF 2024 annual survey finding on Kubernetes enterprise production adoption rates?"
+      question: What is the CNCF 2024 annual survey finding on Kubernetes enterprise production adoption rates?
       type: quantification
       targets:
         - contentRequirements/0
       status: answered
     - id: QM023
-      question: "How does the Open Source Security Foundation (OpenSSF) budget and initiatives affect demand for commercial supply chain security products?"
+      question: >-
+        How does the Open Source Security Foundation (OpenSSF) budget and initiatives affect demand for commercial
+        supply chain security products?
       type: mechanism
       targets:
         - contentRequirements/2
       status: partial
     - id: QM024
-      question: "What analyst firm (Gartner, Forrester, IDC) coverage exists specifically for the software supply chain security market in 2024-2025?"
+      question: >-
+        What analyst firm (Gartner, Forrester, IDC) coverage exists specifically for the software supply chain security
+        market in 2024-2025?
       type: enumeration
       targets:
         - contentRequirements/0
       status: answered
     - id: QM025
-      question: "Are there signs of market saturation or commoditization in any sub-segment of supply chain security that could reduce Chainguard's pricing power?"
+      question: >-
+        Are there signs of market saturation or commoditization in any sub-segment of supply chain security that could
+        reduce Chainguard's pricing power?
       type: adverse
       targets:
         - contentRequirements/2
         - plannedTables/growth-drivers-and-constraints-table
       status: answered
     - id: QM026
-      question: "What is the forecast for AI/LLM workload security spending and how does it relate to Chainguard's AI-secure images product?"
+      question: >-
+        What is the forecast for AI/LLM workload security spending and how does it relate to Chainguard's AI-secure
+        images product?
       type: freshness
       targets:
         - contentRequirements/2
       status: answered
-
   sources:
     - id: SM001
       publisher: MarketsandMarkets
-      title: "Supply Chain Security Market Size, Share and Forecast to 2030"
+      title: Supply Chain Security Market Size, Share and Forecast to 2030
       url: https://www.marketsandmarkets.com/Market-Reports/supply-chain-security-market-123703201.html
-      date: "2024-09-01"
-      accessDate: "2026-05-07"
+      date: '2024-09-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -670,13 +818,12 @@ localEvidence:
         - market size 2024
         - CAGR forecast
       keyQuote: null
-
     - id: SM002
       publisher: Research and Markets
-      title: "Supply Chain Security Market Size, Share and Forecast to 2030"
+      title: Supply Chain Security Market Size, Share and Forecast to 2030
       url: https://www.researchandmarkets.com/report/supply-chain-security
-      date: "2024-10-01"
-      accessDate: "2026-05-07"
+      date: '2024-10-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -687,13 +834,12 @@ localEvidence:
         - 2024 market size
         - forecast
       keyQuote: null
-
     - id: SM003
       publisher: Gartner
-      title: "Market Guide for Software Supply Chain Security 2025"
+      title: Market Guide for Software Supply Chain Security 2025
       url: https://www.gartner.com/en/documents/6326447
-      date: "2025-01-01"
-      accessDate: "2026-05-07"
+      date: '2025-01-01'
+      accessDate: '2026-05-07'
       accessStatus: paywall
       stance: neutral
       sourceType: analyst-market-data
@@ -704,13 +850,12 @@ localEvidence:
         - supply chain security
         - SDLC security
       keyQuote: null
-
     - id: SM004
       publisher: Meticulous Research
-      title: "Container Security Market Size, Share, Forecasts and Trends Analysis"
+      title: Container Security Market Size, Share, Forecasts and Trends Analysis
       url: https://www.meticulousresearch.com/product/container-security-market-6070
-      date: "2024-08-01"
-      accessDate: "2026-05-07"
+      date: '2024-08-01'
+      accessDate: '2026-05-07'
       accessStatus: paywall
       stance: neutral
       sourceType: analyst-market-data
@@ -722,13 +867,12 @@ localEvidence:
         - CAGR
         - cloud native security
       keyQuote: null
-
     - id: SM005
       publisher: Precedence Research
-      title: "Container Security Market Size to Hit USD 25.51 Bn by 2034"
+      title: Container Security Market Size to Hit USD 25.51 Bn by 2034
       url: https://www.precedenceresearch.com/container-security-market
-      date: "2024-11-01"
-      accessDate: "2026-05-07"
+      date: '2024-11-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -739,13 +883,12 @@ localEvidence:
         - 2034 forecast
         - CAGR 23-26%
       keyQuote: null
-
     - id: SM006
       publisher: Market Research Future
-      title: "Container Security Market Size, Global Report 2035"
+      title: Container Security Market Size, Global Report 2035
       url: https://www.marketresearchfuture.com/reports/container-security-market-11906
-      date: "2024-10-01"
-      accessDate: "2026-05-07"
+      date: '2024-10-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -756,13 +899,12 @@ localEvidence:
         - growth rate
         - 2030 forecast
       keyQuote: null
-
     - id: SM007
       publisher: Grand View Research
-      title: "DevSecOps Market Size and Share — Industry Report 2030"
+      title: DevSecOps Market Size and Share — Industry Report 2030
       url: https://www.grandviewresearch.com/industry-analysis/development-security-operation-market-report
-      date: "2024-07-01"
-      accessDate: "2026-05-07"
+      date: '2024-07-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -774,13 +916,12 @@ localEvidence:
         - CAGR 13.2%
         - 2030 forecast
       keyQuote: null
-
     - id: SM008
       publisher: Dataintelo
-      title: "Software Supply Chain Security Market Research Report 2033"
+      title: Software Supply Chain Security Market Research Report 2033
       url: https://dataintelo.com/report/software-supply-chain-security-market
-      date: "2024-08-01"
-      accessDate: "2026-05-07"
+      date: '2024-08-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -791,13 +932,12 @@ localEvidence:
         - North America market share
         - CAGR
       keyQuote: null
-
     - id: SM009
       publisher: IDC
-      title: "DevSecOps and Software Supply Chain Security Survey 2024"
+      title: DevSecOps and Software Supply Chain Security Survey 2024
       url: https://my.idc.com/getdoc.jsp?containerId=US52698824
-      date: "2024-06-01"
-      accessDate: "2026-05-07"
+      date: '2024-06-01'
+      accessDate: '2026-05-07'
       accessStatus: paywall
       stance: neutral
       sourceType: analyst-market-data
@@ -808,13 +948,12 @@ localEvidence:
         - supply chain security
         - enterprise adoption survey
       keyQuote: null
-
     - id: SM010
       publisher: CNCF (Cloud Native Computing Foundation)
-      title: "CNCF Annual Survey 2024"
+      title: CNCF Annual Survey 2024
       url: https://www.cncf.io/reports/cncf-annual-survey-2024/
-      date: "2025-02-01"
-      accessDate: "2026-05-07"
+      date: '2025-02-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: confirming
       sourceType: analyst-market-data
@@ -825,13 +964,12 @@ localEvidence:
         - enterprise container usage
         - cloud native maturity
       keyQuote: null
-
     - id: SM011
       publisher: European Parliament / EUR-Lex
-      title: "Regulation (EU) 2024 — Cyber Resilience Act"
+      title: Regulation (EU) 2024 — Cyber Resilience Act
       url: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R2847
-      date: "2024-10-23"
-      accessDate: "2026-05-07"
+      date: '2024-10-23'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
@@ -843,13 +981,12 @@ localEvidence:
         - SBOM requirements
         - open-source security
       keyQuote: null
-
     - id: SM012
       publisher: Gartner via National CIO Review
-      title: "Gartner Forecasts $213 Billion in 2025 Security Spending"
+      title: Gartner Forecasts $213 Billion in 2025 Security Spending
       url: https://nationalcioreview.com/articles-insights/gartner-forecasts-213-billion-in-2025-security-spending/
-      date: "2024-10-01"
-      accessDate: "2026-05-07"
+      date: '2024-10-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -859,13 +996,13 @@ localEvidence:
         - global cybersecurity spending 2025
         - Gartner forecast $213B
       keyQuote: null
-
     - id: SM013
       publisher: Security Boulevard
-      title: "Gartner Market Guide for Supply Chain Security: Why You Need a Comprehensive Solution"
-      url: https://securityboulevard.com/2025/05/gartner-market-guide-for-supply-chain-security-why-you-need-a-comprehensive-solution/
-      date: "2025-05-01"
-      accessDate: "2026-05-07"
+      title: 'Gartner Market Guide for Supply Chain Security: Why You Need a Comprehensive Solution'
+      url: >-
+        https://securityboulevard.com/2025/05/gartner-market-guide-for-supply-chain-security-why-you-need-a-comprehensive-solution/
+      date: '2025-05-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -877,13 +1014,12 @@ localEvidence:
         - SDLC visibility
         - market trends
       keyQuote: null
-
     - id: SM014
       publisher: ReversingLabs
-      title: "2025 Gartner Market Guide to Software Supply Chain Security"
+      title: 2025 Gartner Market Guide to Software Supply Chain Security
       url: https://www.reversinglabs.com/gartner-market-guide-to-software-supply-chain-security
-      date: "2025-03-01"
-      accessDate: "2026-05-07"
+      date: '2025-03-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -894,13 +1030,13 @@ localEvidence:
         - software supply chain security
         - market vendors
       keyQuote: null
-
     - id: SM015
       publisher: Chainguard (Series C announcement)
-      title: "Chainguard Raises $140 Million in Series C Funding — AI workloads framing"
-      url: https://www.chainguard.dev/unchained/chainguard-raises-140-million-in-series-c-funding-to-secure-the-next-frontier-of-ai-workloads
-      date: "2024-07-25"
-      accessDate: "2026-05-07"
+      title: Chainguard Raises $140 Million in Series C Funding — AI workloads framing
+      url: >-
+        https://www.chainguard.dev/unchained/chainguard-raises-140-million-in-series-c-funding-to-secure-the-next-frontier-of-ai-workloads
+      date: '2024-07-25'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: confirming
       sourceType: official
@@ -911,13 +1047,13 @@ localEvidence:
         - market framing
         - Series C
       keyQuote: null
-
     - id: SM016
       publisher: Forrester
-      title: "Cloud Security Provider Wiz Raises $1B In VC Funding — Market Context"
-      url: https://www.forrester.com/blogs/cloud-security-provider-wiz-raises-1b-in-vc-funding-passes-on-lacework-acquisition/
-      date: "2024-05-08"
-      accessDate: "2026-05-07"
+      title: Cloud Security Provider Wiz Raises $1B In VC Funding — Market Context
+      url: >-
+        https://www.forrester.com/blogs/cloud-security-provider-wiz-raises-1b-in-vc-funding-passes-on-lacework-acquisition/
+      date: '2024-05-08'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -928,13 +1064,12 @@ localEvidence:
         - DevSecOps investment trends
         - supply chain security market
       keyQuote: null
-
     - id: SM017
       publisher: MarketsandMarkets
-      title: "Verified Market Research — Supply Chain Security Market Size, Share and Scope Forecast"
+      title: Verified Market Research — Supply Chain Security Market Size, Share and Scope Forecast
       url: https://www.verifiedmarketresearch.com/product/supply-chain-security-market/
-      date: "2024-09-01"
-      accessDate: "2026-05-07"
+      date: '2024-09-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -945,13 +1080,12 @@ localEvidence:
         - Asia-Pacific growth
         - CAGR
       keyQuote: null
-
     - id: SM018
       publisher: CISA (Cybersecurity and Infrastructure Security Agency)
-      title: "Securing the Software Supply Chain — Recommended Practices Guide 2024"
+      title: Securing the Software Supply Chain — Recommended Practices Guide 2024
       url: https://www.cisa.gov/resources-tools/resources/securing-software-supply-chain-recommended-practices-guide
-      date: "2024-03-01"
-      accessDate: "2026-05-07"
+      date: '2024-03-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
@@ -963,13 +1097,12 @@ localEvidence:
         - federal guidance
         - recommended practices
       keyQuote: null
-
     - id: SM019
       publisher: Forgepoint Capital
-      title: "Margin of Safety #12 — 2025 RSA Takeaways: Supply Chain Security Landscape"
+      title: 'Margin of Safety #12 — 2025 RSA Takeaways: Supply Chain Security Landscape'
       url: https://forgepointcap.com/perspectives/margin-of-safety-12-2025-rsa-takeaways/
-      date: "2025-05-01"
-      accessDate: "2026-05-07"
+      date: '2025-05-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -981,13 +1114,12 @@ localEvidence:
         - buyer dynamics
         - RSA 2025
       keyQuote: null
-
     - id: SM020
       publisher: Growth Market Reports
-      title: "Software Supply Chain Security Market Research Report 2033"
+      title: Software Supply Chain Security Market Research Report 2033
       url: https://growthmarketreports.com/report/software-supply-chain-security-market-global-industry-analysis
-      date: "2024-09-01"
-      accessDate: "2026-05-07"
+      date: '2024-09-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -999,13 +1131,12 @@ localEvidence:
         - segment analysis
         - North America dominance
       keyQuote: null
-
     - id: SM021
       publisher: Zion Market Research
-      title: "Software Supply Chain Security Market Size, Trend, Growth, Analysis 2034"
+      title: Software Supply Chain Security Market Size, Trend, Growth, Analysis 2034
       url: https://www.zionmarketresearch.com/report/software-supply-chain-security-market
-      date: "2024-11-01"
-      accessDate: "2026-05-07"
+      date: '2024-11-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -1016,13 +1147,12 @@ localEvidence:
         - 2034 forecast
         - growth drivers
       keyQuote: null
-
     - id: SM022
       publisher: Technavio
-      title: "Container Security Market Growth Analysis — Size and Forecast 2025-2029"
+      title: Container Security Market Growth Analysis — Size and Forecast 2025-2029
       url: https://www.technavio.com/report/container-security-market-analysis
-      date: "2024-09-01"
-      accessDate: "2026-05-07"
+      date: '2024-09-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -1034,13 +1164,12 @@ localEvidence:
         - market size
         - 2029 forecast
       keyQuote: null
-
     - id: SM023
       publisher: Strategic Market Research
-      title: "Container Security Market Report — Industry and Market Size and Revenue"
+      title: Container Security Market Report — Industry and Market Size and Revenue
       url: https://www.strategicmarketresearch.com/market-report/container-security-market
-      date: "2024-10-01"
-      accessDate: "2026-05-07"
+      date: '2024-10-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -1051,13 +1180,12 @@ localEvidence:
         - TAM $3.6B 2024
         - growth rate
       keyQuote: null
-
     - id: SM024
       publisher: Emergen Research
-      title: "DevSecOps Market Size, Share and Future Opportunities 2024-2034"
+      title: DevSecOps Market Size, Share and Future Opportunities 2024-2034
       url: https://www.emergenresearch.com/industry-report/development-security-and-operations-market
-      date: "2024-10-01"
-      accessDate: "2026-05-07"
+      date: '2024-10-01'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: analyst-market-data
@@ -1069,13 +1197,12 @@ localEvidence:
         - CAGR
         - 2034 forecast
       keyQuote: null
-
     - id: SM025
       publisher: White House / OMB
-      title: "OMB M-22-18 — Enhancing the Security of the Software Supply Chain"
+      title: OMB M-22-18 — Enhancing the Security of the Software Supply Chain
       url: https://www.whitehouse.gov/wp-content/uploads/2022/09/M-22-18.pdf
-      date: "2022-09-14"
-      accessDate: "2026-05-07"
+      date: '2022-09-14'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
@@ -1087,13 +1214,12 @@ localEvidence:
         - supply chain security
         - EO 14028 implementation
       keyQuote: null
-
     - id: SM026
       publisher: TechCrunch
-      title: "The XZ Utils backdoor: How a near-miss shook the open source world and supply chain security"
+      title: 'The XZ Utils backdoor: How a near-miss shook the open source world and supply chain security'
       url: https://techcrunch.com/2024/04/04/xz-utils-backdoor-open-source-supply-chain/
-      date: "2024-04-04"
-      accessDate: "2026-05-07"
+      date: '2024-04-04'
+      accessDate: '2026-05-07'
       accessStatus: ok
       stance: adverse
       sourceType: news
@@ -1105,10 +1231,11 @@ localEvidence:
         - open-source risk
         - market impact
       keyQuote: null
-
   claims:
     - id: CM001
-      statement: "The global software supply chain security market was estimated at $2.4–3.1B in 2024, growing at a 12–22% CAGR toward $5.1–12.5B by 2030–2033, per multiple analyst estimates."
+      statement: >-
+        The global software supply chain security market was estimated at $2.4–3.1B in 2024, growing at a 12–22% CAGR
+        toward $5.1–12.5B by 2030–2033, per multiple analyst estimates.
       type: third-party-reported
       topic: market size
       sourceRefs:
@@ -1120,9 +1247,10 @@ localEvidence:
       answersQuestionRefs:
         - QM001
         - QM024
-
     - id: CM002
-      statement: "The global container and cloud-native application security market was estimated at $2.3–3.6B in 2024, growing at a 20–26% CAGR toward $9.4–25B by 2030–2035, per multiple analyst estimates."
+      statement: >-
+        The global container and cloud-native application security market was estimated at $2.3–3.6B in 2024, growing at
+        a 20–26% CAGR toward $9.4–25B by 2030–2035, per multiple analyst estimates.
       type: third-party-reported
       topic: market size
       sourceRefs:
@@ -1134,9 +1262,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM002
-
     - id: CM003
-      statement: "The DevSecOps market was estimated at $8.84B globally in 2024, projected to reach $20.2B by 2030 at a 13.2% CAGR, per Grand View Research."
+      statement: >-
+        The DevSecOps market was estimated at $8.84B globally in 2024, projected to reach $20.2B by 2030 at a 13.2%
+        CAGR, per Grand View Research.
       type: third-party-reported
       topic: market size
       sourceRefs:
@@ -1146,9 +1275,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM008
-
     - id: CM004
-      statement: "Gartner forecasts global information security and risk management spending at $213 billion in 2025, of which software supply chain security represents a fast-growing but sub-5% share."
+      statement: >-
+        Gartner forecasts global information security and risk management spending at $213 billion in 2025, of which
+        software supply chain security represents a fast-growing but sub-5% share.
       type: third-party-reported
       topic: cybersecurity spending
       sourceRefs:
@@ -1158,9 +1288,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM015
-
     - id: CM005
-      statement: "Chainguard's combined overlap-adjusted TAM (container security + supply chain security) is estimated at $6–8B in 2025, with a SAM of $2–3B for enterprises with sufficient DevSecOps maturity; Chainguard's $40M ARR represents less than 0.7% market penetration."
+      statement: >-
+        Chainguard's combined overlap-adjusted TAM (container security + supply chain security) is estimated at $6–8B in
+        2025, with a SAM of $2–3B for enterprises with sufficient DevSecOps maturity; Chainguard's $40M ARR represents
+        less than 0.7% market penetration.
       type: estimated
       topic: TAM/SAM
       sourceRefs:
@@ -1173,9 +1305,11 @@ localEvidence:
         - QM002
         - QM003
         - QM007
-
     - id: CM006
-      statement: "Technology and SaaS companies — including Chainguard customers Canva, GitLab, Snap, Snowflake, and Anduril — represent the highest-volume buyer segment for supply chain security due to high DevSecOps maturity and SOC 2/ISO 27001 requirements."
+      statement: >-
+        Technology and SaaS companies — including Chainguard customers Canva, GitLab, Snap, Snowflake, and Anduril —
+        represent the highest-volume buyer segment for supply chain security due to high DevSecOps maturity and SOC
+        2/ISO 27001 requirements.
       type: observed
       topic: buyer segment
       sourceRefs:
@@ -1185,9 +1319,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM005
-
     - id: CM007
-      statement: "U.S. federal government agencies and contractors are the highest-value per-deal buyer segment for Chainguard, driven by EO 14028 and OMB M-22-18 SBOM mandates that make procurement of SBOM-generating secure software a compliance requirement."
+      statement: >-
+        U.S. federal government agencies and contractors are the highest-value per-deal buyer segment for Chainguard,
+        driven by EO 14028 and OMB M-22-18 SBOM mandates that make procurement of SBOM-generating secure software a
+        compliance requirement.
       type: observed
       topic: buyer segment
       sourceRefs:
@@ -1197,9 +1333,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM005
-
     - id: CM008
-      statement: "ANZ Bank is a publicly named Chainguard enterprise customer in the financial services sector, representing regulatory-driven adoption where APAC financial institutions face increasing cyber risk management scrutiny."
+      statement: >-
+        ANZ Bank is a publicly named Chainguard enterprise customer in the financial services sector, representing
+        regulatory-driven adoption where APAC financial institutions face increasing cyber risk management scrutiny.
       type: observed
       topic: buyer segment
       sourceRefs:
@@ -1209,9 +1346,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM005
-
     - id: CM009
-      statement: "Buying decisions for enterprise supply chain security tools typically involve Platform Engineering, DevSecOps, and Cloud Security teams, with CISO approval for large deals and Contracting Officer approval for federal purchases."
+      statement: >-
+        Buying decisions for enterprise supply chain security tools typically involve Platform Engineering, DevSecOps,
+        and Cloud Security teams, with CISO approval for large deals and Contracting Officer approval for federal
+        purchases.
       type: inferred
       topic: buyer behavior
       sourceRefs:
@@ -1221,9 +1360,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM005
-
     - id: CM010
-      statement: "Healthcare and critical infrastructure represent emerging buyer segments for supply chain security, driven by HHS cybersecurity guidance and CISA critical infrastructure advisories, though container maturity in these sectors lags technology and financial services."
+      statement: >-
+        Healthcare and critical infrastructure represent emerging buyer segments for supply chain security, driven by
+        HHS cybersecurity guidance and CISA critical infrastructure advisories, though container maturity in these
+        sectors lags technology and financial services.
       type: inferred
       topic: buyer segment
       sourceRefs:
@@ -1233,9 +1374,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM005
-
     - id: CM011
-      statement: "North America is the largest regional market for software supply chain security, accounting for an estimated 40–50% of global spend, driven by U.S. federal compliance mandates and the concentration of major technology companies."
+      statement: >-
+        North America is the largest regional market for software supply chain security, accounting for an estimated
+        40–50% of global spend, driven by U.S. federal compliance mandates and the concentration of major technology
+        companies.
       type: third-party-reported
       topic: geography
       sourceRefs:
@@ -1245,9 +1388,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM020
-
     - id: CM012
-      statement: "U.S. Executive Order 14028 (May 2021) and OMB M-22-18 (September 2022) mandated that federal agencies and their software suppliers provide SBOMs and adopt secure development frameworks, creating structural procurement pull for supply chain security vendors."
+      statement: >-
+        U.S. Executive Order 14028 (May 2021) and OMB M-22-18 (September 2022) mandated that federal agencies and their
+        software suppliers provide SBOMs and adopt secure development frameworks, creating structural procurement pull
+        for supply chain security vendors.
       type: observed
       topic: regulatory driver
       sourceRefs:
@@ -1257,9 +1402,11 @@ localEvidence:
       freshness: historical
       answersQuestionRefs:
         - QM004
-
     - id: CM013
-      statement: "The EU Cyber Resilience Act (CRA), adopted October 2024, introduces mandatory cybersecurity requirements for products with digital elements sold in the EU market, including requirements for SBOM and ongoing vulnerability management that expand regulatory pull to European markets."
+      statement: >-
+        The EU Cyber Resilience Act (CRA), adopted October 2024, introduces mandatory cybersecurity requirements for
+        products with digital elements sold in the EU market, including requirements for SBOM and ongoing vulnerability
+        management that expand regulatory pull to European markets.
       type: observed
       topic: regulatory driver
       sourceRefs:
@@ -1270,9 +1417,11 @@ localEvidence:
       answersQuestionRefs:
         - QM004
         - QM014
-
     - id: CM014
-      statement: "The XZ Utils backdoor (CVE-2024-3094, March 2024) — a near-miss nation-state supply chain attack on a Linux compression library — dramatically increased CISO urgency for supply chain security solutions and compressed enterprise sales cycles in the immediate aftermath."
+      statement: >-
+        The XZ Utils backdoor (CVE-2024-3094, March 2024) — a near-miss nation-state supply chain attack on a Linux
+        compression library — dramatically increased CISO urgency for supply chain security solutions and compressed
+        enterprise sales cycles in the immediate aftermath.
       type: third-party-reported
       topic: incident driver
       sourceRefs:
@@ -1283,9 +1432,11 @@ localEvidence:
       freshness: recent
       answersQuestionRefs:
         - QM006
-
     - id: CM015
-      statement: "CNCF's 2024 Annual Survey found that over 80% of enterprises run Kubernetes in production, establishing the container runtime as the dominant cloud-native execution environment and defining the addressable universe for Chainguard's hardened container image products."
+      statement: >-
+        CNCF's 2024 Annual Survey found that over 80% of enterprises run Kubernetes in production, establishing the
+        container runtime as the dominant cloud-native execution environment and defining the addressable universe for
+        Chainguard's hardened container image products.
       type: third-party-reported
       topic: technology adoption
       sourceRefs:
@@ -1295,9 +1446,11 @@ localEvidence:
       answersQuestionRefs:
         - QM009
         - QM022
-
     - id: CM016
-      statement: "The proliferation of AI and LLM production workloads introduces large open-source software dependency footprints (PyTorch, HuggingFace, CUDA wrappers), creating a new demand vector for secure-by-design images specifically optimized for AI infrastructure."
+      statement: >-
+        The proliferation of AI and LLM production workloads introduces large open-source software dependency footprints
+        (PyTorch, HuggingFace, CUDA wrappers), creating a new demand vector for secure-by-design images specifically
+        optimized for AI infrastructure.
       type: inferred
       topic: market driver
       sourceRefs:
@@ -1307,9 +1460,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM026
-
     - id: CM017
-      statement: "Demand constraints for Chainguard's near-term growth include: (a) DevSecOps maturity prerequisite that limits the SAM to mid-large enterprises; (b) enterprise buyer familiarity with scanning tools creating switching friction; (c) cloud providers bundling container scanning into platform offerings."
+      statement: >-
+        Demand constraints for Chainguard's near-term growth include: (a) DevSecOps maturity prerequisite that limits
+        the SAM to mid-large enterprises; (b) enterprise buyer familiarity with scanning tools creating switching
+        friction; (c) cloud providers bundling container scanning into platform offerings.
       type: inferred
       topic: market constraints
       sourceRefs:
@@ -1320,9 +1475,11 @@ localEvidence:
       answersQuestionRefs:
         - QM011
         - QM012
-
     - id: CM018
-      statement: "Supply chain security spending in 2024 is growing as an incremental budget category rather than cannibalizing other cybersecurity line items, as it addresses a newly recognized attack vector rather than replacing existing point tools."
+      statement: >-
+        Supply chain security spending in 2024 is growing as an incremental budget category rather than cannibalizing
+        other cybersecurity line items, as it addresses a newly recognized attack vector rather than replacing existing
+        point tools.
       type: inferred
       topic: budget dynamics
       sourceRefs:
@@ -1332,9 +1489,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM021
-
     - id: CM019
-      statement: "Chainguard's implied average contract value is approximately $267K annually ($40M ARR / 150+ customers), suggesting mid-market to large-enterprise deal sizes consistent with platform-engineering tool purchases."
+      statement: >-
+        Chainguard's implied average contract value is approximately $267K annually ($40M ARR / 150+ customers),
+        suggesting mid-market to large-enterprise deal sizes consistent with platform-engineering tool purchases.
       type: estimated
       topic: deal economics
       sourceRefs:
@@ -1344,9 +1502,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM018
-
     - id: CM020
-      statement: "If Chainguard sustains its 7x ARR growth trajectory, it would reach approximately $280M ARR by fiscal year 2027, capturing roughly 3–4% of its estimated SAM of $2–3B, an achievable but highly ambitious target."
+      statement: >-
+        If Chainguard sustains its 7x ARR growth trajectory, it would reach approximately $280M ARR by fiscal year 2027,
+        capturing roughly 3–4% of its estimated SAM of $2–3B, an achievable but highly ambitious target.
       type: estimated
       topic: market penetration trajectory
       sourceRefs:
@@ -1356,9 +1515,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM007
-
     - id: CM021
-      statement: "No credible analyst has materially challenged the supply chain security market growth thesis as of May 2026; the main uncertainty is definitional boundaries between sub-segments, not whether the market exists and is growing."
+      statement: >-
+        No credible analyst has materially challenged the supply chain security market growth thesis as of May 2026; the
+        main uncertainty is definitional boundaries between sub-segments, not whether the market exists and is growing.
       type: observed
       topic: analyst consensus
       sourceRefs:
@@ -1369,9 +1529,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM019
-
     - id: CM022
-      statement: "The prevention-first container image segment (Chainguard, Wolfi-based tools) is small relative to the scanning-dominated container security market; the majority of the $2.3–3.6B container security market is still served by scanning tools (Snyk, Trivy, Aqua, Docker Scout)."
+      statement: >-
+        The prevention-first container image segment (Chainguard, Wolfi-based tools) is small relative to the
+        scanning-dominated container security market; the majority of the $2.3–3.6B container security market is still
+        served by scanning tools (Snyk, Trivy, Aqua, Docker Scout).
       type: estimated
       topic: market segmentation
       sourceRefs:
@@ -1382,9 +1544,11 @@ localEvidence:
       answersQuestionRefs:
         - QM016
         - QM017
-
     - id: CM023
-      statement: "Gartner identified Software Supply Chain Security as a critical emerging market in 2025, emphasizing end-to-end visibility, artifact integrity, and SBOM as key purchasing criteria, consistent with Chainguard's product positioning."
+      statement: >-
+        Gartner identified Software Supply Chain Security as a critical emerging market in 2025, emphasizing end-to-end
+        visibility, artifact integrity, and SBOM as key purchasing criteria, consistent with Chainguard's product
+        positioning.
       type: third-party-reported
       topic: analyst validation
       sourceRefs:
@@ -1395,9 +1559,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM010
-
     - id: CM024
-      statement: "Asia-Pacific is projected to be the fastest-growing region for supply chain security spending, driven by government mandates in Singapore, Australia, and South Korea, and the concentration of major manufacturing and technology supply chains in the region."
+      statement: >-
+        Asia-Pacific is projected to be the fastest-growing region for supply chain security spending, driven by
+        government mandates in Singapore, Australia, and South Korea, and the concentration of major manufacturing and
+        technology supply chains in the region.
       type: third-party-reported
       topic: geography
       sourceRefs:
@@ -1407,9 +1573,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM020
-
     - id: CM025
-      statement: "OpenSSF (Open Source Security Foundation) has invested over $10M in open-source security tools and education since 2020, including Sigstore and SLSA — projects directly enabling Chainguard's product. This reduces Chainguard's R&D cost on foundational tooling while increasing market awareness."
+      statement: >-
+        OpenSSF (Open Source Security Foundation) has invested over $10M in open-source security tools and education
+        since 2020, including Sigstore and SLSA — projects directly enabling Chainguard's product. This reduces
+        Chainguard's R&D cost on foundational tooling while increasing market awareness.
       type: inferred
       topic: market ecosystem
       sourceRefs:
@@ -1419,9 +1587,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM023
-
     - id: CM026
-      statement: "Point scanning vendors like Snyk and Trivy have over 10 million developer downloads, indicating broad market acceptance of developer-centric vulnerability scanning that Chainguard must displace or complement with its prevention-first approach."
+      statement: >-
+        Point scanning vendors like Snyk and Trivy have over 10 million developer downloads, indicating broad market
+        acceptance of developer-centric vulnerability scanning that Chainguard must displace or complement with its
+        prevention-first approach.
       type: inferred
       topic: competitive market dynamics
       sourceRefs:
@@ -1431,9 +1601,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM025
-
     - id: CM027
-      statement: "The CISA Recommended Practices Guide for Securing the Software Supply Chain (2024) recommends SBOM adoption, secure coding standards, and artifact signing — all directly addressed by Chainguard's product suite."
+      statement: >-
+        The CISA Recommended Practices Guide for Securing the Software Supply Chain (2024) recommends SBOM adoption,
+        secure coding standards, and artifact signing — all directly addressed by Chainguard's product suite.
       type: observed
       topic: regulatory alignment
       sourceRefs:
@@ -1443,9 +1614,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM004
-
     - id: CM028
-      statement: "Market fragmentation — with analyst size estimates for the supply chain security segment varying by 2x–3x across research firms — reflects definitional inconsistency rather than market weakness; all major analyst firms agree on double-digit growth rates."
+      statement: >-
+        Market fragmentation — with analyst size estimates for the supply chain security segment varying by 2x–3x across
+        research firms — reflects definitional inconsistency rather than market weakness; all major analyst firms agree
+        on double-digit growth rates.
       type: inferred
       topic: market sizing risk
       sourceRefs:
@@ -1456,9 +1629,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM001
-
     - id: CM029
-      statement: "The EU Cyber Resilience Act (CRA), adopted in October 2024, applies to all digital products placed on the EU market including software components, creating a new requirement for manufacturers to identify and address software vulnerabilities throughout the product lifecycle."
+      statement: >-
+        The EU Cyber Resilience Act (CRA), adopted in October 2024, applies to all digital products placed on the EU
+        market including software components, creating a new requirement for manufacturers to identify and address
+        software vulnerabilities throughout the product lifecycle.
       type: observed
       topic: regulatory driver
       sourceRefs:
@@ -1468,9 +1643,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM014
-
     - id: CM030
-      statement: "Supply chain security spending growth is driven by a combination of proactive compliance investment and reactive post-incident remediation; the XZ Utils incident prompted an estimated 20–30% budget increase in supply chain tooling for affected Fortune 1000 companies in Q2 2024."
+      statement: >-
+        Supply chain security spending growth is driven by a combination of proactive compliance investment and reactive
+        post-incident remediation; the XZ Utils incident prompted an estimated 20–30% budget increase in supply chain
+        tooling for affected Fortune 1000 companies in Q2 2024.
       type: estimated
       topic: spending dynamics
       sourceRefs:
@@ -1480,9 +1657,11 @@ localEvidence:
       freshness: recent
       answersQuestionRefs:
         - QM021
-
     - id: CM031
-      statement: "OMB M-22-18, issued September 2022, requires that agencies obtain SBOMs from software vendors for all software used by the federal government, creating a hard procurement requirement Chainguard's SBOM-generating products directly satisfy."
+      statement: >-
+        OMB M-22-18, issued September 2022, requires that agencies obtain SBOMs from software vendors for all software
+        used by the federal government, creating a hard procurement requirement Chainguard's SBOM-generating products
+        directly satisfy.
       type: observed
       topic: regulatory driver
       sourceRefs:
@@ -1492,9 +1671,10 @@ localEvidence:
       freshness: historical
       answersQuestionRefs:
         - QM004
-
     - id: CM032
-      statement: "No confirmed evidence of supply chain security market saturation or commoditization exists as of May 2026; the market remains fragmented with no dominant vendor holding more than 5% market share."
+      statement: >-
+        No confirmed evidence of supply chain security market saturation or commoditization exists as of May 2026; the
+        market remains fragmented with no dominant vendor holding more than 5% market share.
       type: inferred
       topic: competitive saturation
       sourceRefs:
@@ -1504,9 +1684,11 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM025
-
     - id: CM033
-      statement: "The financial services sector represents a high-value, high-barrier buyer for supply chain security, requiring vendors to meet FedRAMP (for government-related work), SOC 2, ISO 27001, and sector-specific compliance standards before being included in approved vendor lists."
+      statement: >-
+        The financial services sector represents a high-value, high-barrier buyer for supply chain security, requiring
+        vendors to meet FedRAMP (for government-related work), SOC 2, ISO 27001, and sector-specific compliance
+        standards before being included in approved vendor lists.
       type: inferred
       topic: buyer dynamics
       sourceRefs:
@@ -1516,9 +1698,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM005
-
     - id: CM034
-      statement: "The global cybersecurity software market is projected at $213B in 2025 according to Gartner, with supply chain and infrastructure security being among the fastest-growing sub-categories."
+      statement: >-
+        The global cybersecurity software market is projected at $213B in 2025 according to Gartner, with supply chain
+        and infrastructure security being among the fastest-growing sub-categories.
       type: third-party-reported
       topic: cybersecurity market
       sourceRefs:
@@ -1528,9 +1711,10 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM015
-
     - id: CM035
-      statement: "No public evidence indicates Chainguard has pursued or received FedRAMP authorization as of May 2026; the absence of FedRAMP may limit direct penetration into some federal agency segments that require it."
+      statement: >-
+        No public evidence indicates Chainguard has pursued or received FedRAMP authorization as of May 2026; the
+        absence of FedRAMP may limit direct penetration into some federal agency segments that require it.
       type: inferred
       topic: federal market constraint
       sourceRefs:
@@ -1540,57 +1724,75 @@ localEvidence:
       freshness: current
       answersQuestionRefs:
         - QM013
-
   evidenceGaps:
     - type: access-blocked
       severity: material
       topic: Gartner and IDC primary market research access
-      missingEvidence: "Full text of Gartner's 2025 Market Guide for Software Supply Chain Security and IDC's DevSecOps survey are paywalled; market size estimates sourced from secondary summaries."
-      whyItMatters: "Primary analyst data would provide more precise and authoritative TAM/SAM estimates and vendor quadrant positioning."
-      diligencePath: "Obtain Gartner and IDC reports through enterprise subscriptions; cross-reference with Forrester Wave for supply chain security."
+      missingEvidence: >-
+        Full text of Gartner's 2025 Market Guide for Software Supply Chain Security and IDC's DevSecOps survey are
+        paywalled; market size estimates sourced from secondary summaries.
+      whyItMatters: >-
+        Primary analyst data would provide more precise and authoritative TAM/SAM estimates and vendor quadrant
+        positioning.
+      diligencePath: >-
+        Obtain Gartner and IDC reports through enterprise subscriptions; cross-reference with Forrester Wave for supply
+        chain security.
       relatedQuestionRefs: []
-
     - type: missing-source
       severity: material
       topic: U.S. federal procurement budget for supply chain security in FY2024-2025
-      missingEvidence: "Specific federal cybersecurity appropriations earmarked for software supply chain security and SBOM compliance tools are not itemized in public budget documents."
-      whyItMatters: "Federal segment is highest-value for Chainguard; without specific budget data, the size of this demand channel cannot be precisely quantified."
-      diligencePath: "Review CISA budget justifications, OMB IT spend data, and USASpending.gov for relevant contract categories."
+      missingEvidence: >-
+        Specific federal cybersecurity appropriations earmarked for software supply chain security and SBOM compliance
+        tools are not itemized in public budget documents.
+      whyItMatters: >-
+        Federal segment is highest-value for Chainguard; without specific budget data, the size of this demand channel
+        cannot be precisely quantified.
+      diligencePath: Review CISA budget justifications, OMB IT spend data, and USASpending.gov for relevant contract categories.
       relatedQuestionRefs:
         - QM013
-
     - type: missing-source
       severity: minor
       topic: Market share by vendor within the supply chain security market
-      missingEvidence: "No publicly available vendor market-share breakdown identifies the relative positions of Chainguard, Snyk, Aqua Security, RapidFort, or other competitors in the supply chain security niche."
-      whyItMatters: "Without vendor market share data, it is impossible to verify Chainguard's claimed leadership position and assess competitive risk from incumbents."
-      diligencePath: "Request Gartner Magic Quadrant or Forrester Wave data for CNAPP / supply chain security; review IDC MarketScape."
+      missingEvidence: >-
+        No publicly available vendor market-share breakdown identifies the relative positions of Chainguard, Snyk, Aqua
+        Security, RapidFort, or other competitors in the supply chain security niche.
+      whyItMatters: >-
+        Without vendor market share data, it is impossible to verify Chainguard's claimed leadership position and assess
+        competitive risk from incumbents.
+      diligencePath: Request Gartner Magic Quadrant or Forrester Wave data for CNAPP / supply chain security; review IDC MarketScape.
       relatedQuestionRefs:
         - QM017
-
     - type: missing-source
       severity: minor
       topic: Average contract value for enterprise supply chain security deals
-      missingEvidence: "No public benchmark data on ACV for supply chain security or container security enterprise SaaS contracts; Chainguard ACV is estimated ($267K) but not confirmed."
-      whyItMatters: "ACV affects revenue concentration and customer dependency risk; also validates market pricing assumptions."
-      diligencePath: "Request ACV and ARR distribution from management; compare to public company peers (Snyk, Aqua) if available."
+      missingEvidence: >-
+        No public benchmark data on ACV for supply chain security or container security enterprise SaaS contracts;
+        Chainguard ACV is estimated ($267K) but not confirmed.
+      whyItMatters: ACV affects revenue concentration and customer dependency risk; also validates market pricing assumptions.
+      diligencePath: Request ACV and ARR distribution from management; compare to public company peers (Snyk, Aqua) if available.
       relatedQuestionRefs:
         - QM018
-
     - type: missing-source
       severity: minor
       topic: OpenSSF investment in open-source security tools and market impact
-      missingEvidence: "Specific OpenSSF budget figures for sigstore and SLSA investment, and any commercialization friction with Chainguard's products, are not publicly detailed."
-      whyItMatters: "OpenSSF-funded tools compete with and complement Chainguard; understanding the dynamic affects competitive analysis."
-      diligencePath: "Review OpenSSF annual reports and budget transparency; consult Linux Foundation financial disclosures."
+      missingEvidence: >-
+        Specific OpenSSF budget figures for sigstore and SLSA investment, and any commercialization friction with
+        Chainguard's products, are not publicly detailed.
+      whyItMatters: >-
+        OpenSSF-funded tools compete with and complement Chainguard; understanding the dynamic affects competitive
+        analysis.
+      diligencePath: Review OpenSSF annual reports and budget transparency; consult Linux Foundation financial disclosures.
       relatedQuestionRefs:
         - QM023
-
     - type: enumeration-incomplete
       severity: minor
       topic: Segment / Buyer Map — buyer-vertical share of Chainguard's current customer base
-      missingEvidence: "Specific revenue or customer count breakdown by vertical (federal, FSI, tech) is not publicly disclosed by Chainguard."
-      whyItMatters: "Customer vertical concentration affects revenue stability and TAM addressability assessment."
-      diligencePath: "Request ARR-by-vertical breakdown from Chainguard management; review customer case studies for vertical inference."
+      missingEvidence: >-
+        Specific revenue or customer count breakdown by vertical (federal, FSI, tech) is not publicly disclosed by
+        Chainguard.
+      whyItMatters: Customer vertical concentration affects revenue stability and TAM addressability assessment.
+      diligencePath: >-
+        Request ARR-by-vertical breakdown from Chainguard management; review customer case studies for vertical
+        inference.
       relatedTableRefs:
         - TM003

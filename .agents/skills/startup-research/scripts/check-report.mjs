@@ -67,12 +67,16 @@ import {
 } from './validation-catalog.mjs';
 import { formatValidationCompact, formatValidationText, validationEnvelope, validationIssue } from './contracts/validation-result.mjs';
 const REPORTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../reports');
-const WORKFLOW_CONFIG = loadWorkflowConfig();
-const ANALYSIS_ARTIFACTS = getAnalysisArtifacts(WORKFLOW_CONFIG);
-const CORE_ARTIFACTS = getCoreArtifacts(WORKFLOW_CONFIG);
-const ANALYSIS_FILES = ANALYSIS_ARTIFACTS.map((item) => item.file);
-const REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);
-const ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item]));
+// These bindings are rebound per-report inside checkRun() so each report is
+// validated against its own .workflow-snapshot.yaml (when present), not the
+// current head workflow-config.yaml. The initial values come from the head
+// config so anything imported/used at module top still has sane defaults.
+let WORKFLOW_CONFIG = loadWorkflowConfig();
+let ANALYSIS_ARTIFACTS = getAnalysisArtifacts(WORKFLOW_CONFIG);
+let CORE_ARTIFACTS = getCoreArtifacts(WORKFLOW_CONFIG);
+let ANALYSIS_FILES = ANALYSIS_ARTIFACTS.map((item) => item.file);
+let REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);
+let ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item]));
 const EVIDENCE_FILE = FINAL_ARTIFACTS.evidence.file;
 const FULL_REPORT_FILE = FINAL_ARTIFACTS.fullReport.file;
 const SUMMARY_CARD_FILE = FINAL_ARTIFACTS.summaryCard.file;
@@ -461,6 +465,17 @@ function checkRun(run, { contentGates = true } = {}) {
   const dir = join(REPORTS_DIR, run);
   currentFailures = [];
   if (!existsSync(join(dir, SUMMARY_CARD_FILE))) return { checked: false, failures: [] };
+
+  // Per-report snapshot: load the workflow-config.yaml that was frozen with
+  // this report at finalize time so changing the head config never
+  // retroactively re-judges old reports. Falls back to the head config when
+  // no snapshot exists (e.g. a half-built folder before finalize-report).
+  WORKFLOW_CONFIG = loadWorkflowConfig({ reportFolder: dir });
+  ANALYSIS_ARTIFACTS = getAnalysisArtifacts(WORKFLOW_CONFIG);
+  CORE_ARTIFACTS = getCoreArtifacts(WORKFLOW_CONFIG);
+  ANALYSIS_FILES = ANALYSIS_ARTIFACTS.map((item) => item.file);
+  REQUIRED_ENGLISH_FILES = CORE_ARTIFACTS.map((item) => item.file);
+  ARTIFACT_BY_FILE = new Map(CORE_ARTIFACTS.map((item) => [item.file, item]));
 
   const beforeMissing = currentFailures.length;
   for (const file of REQUIRED_ENGLISH_FILES) {

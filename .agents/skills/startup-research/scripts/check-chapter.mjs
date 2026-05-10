@@ -54,28 +54,6 @@ import {
 } from './validation-catalog.mjs';
 import { validationEnvelope } from './contracts/validation-result.mjs';
 
-// Loaded eagerly so the chapter-id `spec` is available for the per-chapter
-// ID patterns built immediately after argv parsing. Wrapped so a broken
-// workflow-config.yaml surfaces as a friendly error instead of a raw stack trace
-// before the user even sees the usage line.
-let ANALYSIS_ARTIFACTS;
-// Lowercased substring tokens that mark a search query as volatile-fact-shaped.
-// Sourced from agentPolicy.volatileFactQueryTokens; consumed by
-// checkSearchQueryFreshness() to decide which queries must include a year
-// token derived from doc.runDate.
-let VOLATILE_FACT_QUERY_TOKENS;
-try {
-  const config = loadWorkflowConfig();
-  ANALYSIS_ARTIFACTS = getAnalysisArtifacts(config);
-  VOLATILE_FACT_QUERY_TOKENS = (config.agentPolicy?.volatileFactQueryTokens ?? [])
-    .map((token) => String(token).toLowerCase())
-    .filter((token) => token.length > 0);
-} catch (err) {
-  console.error(`[check:chapter] failed to load workflow config: ${err.message}`);
-  console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose workflow-config.yaml.');
-  process.exit(EXIT.failure);
-}
-
 function parseArgs(argv) {
   const args = { folder: null, chapter: null, strict: false, format: 'text' };
   for (let i = 0; i < argv.length; i += 1) {
@@ -112,6 +90,30 @@ if (!['text', 'json', 'compact'].includes(args.format)) {
   process.exit(EXIT.failure);
 }
 
+const reportFolder = resolve(args.folder);
+
+// Load the workflow config snapshot bound to this report folder when present
+// (finalize-report writes one for every finalized report); otherwise fall
+// back to the head config. Means editing the head workflow-config.yaml
+// never retroactively re-judges old reports.
+let ANALYSIS_ARTIFACTS;
+// Lowercased substring tokens that mark a search query as volatile-fact-shaped.
+// Sourced from agentPolicy.volatileFactQueryTokens; consumed by
+// checkSearchQueryFreshness() to decide which queries must include a year
+// token derived from doc.runDate.
+let VOLATILE_FACT_QUERY_TOKENS;
+try {
+  const config = loadWorkflowConfig({ reportFolder });
+  ANALYSIS_ARTIFACTS = getAnalysisArtifacts(config);
+  VOLATILE_FACT_QUERY_TOKENS = (config.agentPolicy?.volatileFactQueryTokens ?? [])
+    .map((token) => String(token).toLowerCase())
+    .filter((token) => token.length > 0);
+} catch (err) {
+  console.error(`[check:chapter] failed to load workflow config: ${err.message}`);
+  console.error('[check:chapter] run `node .agents/skills/startup-research/scripts/check-workflow-config.mjs` to diagnose workflow-config.yaml.');
+  process.exit(EXIT.failure);
+}
+
 const spec = ANALYSIS_ARTIFACTS.find((item) => item.file === args.chapter);
 if (!spec) {
   console.error(`Unknown chapter artifact: ${args.chapter}`);
@@ -126,8 +128,6 @@ if (!spec) {
 const ID_PATTERN_CHAPTER_TABLE = makeIdPattern('T', spec.letter);
 const ID_PATTERN_CHAPTER_FIGURE = makeIdPattern('F', spec.letter);
 const ID_PATTERN_CHAPTER_RESEARCH_QUESTION = makeIdPattern('Q', spec.letter);
-
-const reportFolder = resolve(args.folder);
 const failures = [];
 const warnings = [];
 
@@ -775,6 +775,39 @@ if (doc) {
     const tableIds = new Set((doc.tables ?? []).map((t) => t?.id).filter(Boolean));
     const { errors } = checkArtifactRefs(doc, { path: spec.file, figureIds, tableIds });
     for (const err of errors) fail('artifactRefs', err.message, err);
+    // Section-level tableRefs[] / figureRefs[] anchor exhibits inside a
+    // section's prose. Each id must resolve to a local table/figure and
+    // appear in at most one section across the chapter so build-report can
+    // emit it exactly once (anything left over still falls through to the
+    // trailing Exhibits section).
+    const sectionTableHome = new Map();
+    const sectionFigureHome = new Map();
+    for (const section of doc.sections ?? []) {
+      for (const ref of section?.tableRefs ?? []) {
+        if (!tableIds.has(ref)) {
+          fail('artifactRefs', `${spec.file}: section ${section.id} tableRefs entry ${ref} does not resolve to a local table`, { sectionId: section.id, ref });
+          continue;
+        }
+        const prior = sectionTableHome.get(ref);
+        if (prior && prior !== section.id) {
+          fail('artifactRefs', `${spec.file}: table ${ref} is listed in section ${prior} and section ${section.id}; each table must have exactly one section home`, { ref, sections: [prior, section.id] });
+        } else {
+          sectionTableHome.set(ref, section.id);
+        }
+      }
+      for (const ref of section?.figureRefs ?? []) {
+        if (!figureIds.has(ref)) {
+          fail('artifactRefs', `${spec.file}: section ${section.id} figureRefs entry ${ref} does not resolve to a local figure`, { sectionId: section.id, ref });
+          continue;
+        }
+        const prior = sectionFigureHome.get(ref);
+        if (prior && prior !== section.id) {
+          fail('artifactRefs', `${spec.file}: figure ${ref} is listed in section ${prior} and section ${section.id}; each figure must have exactly one section home`, { ref, sections: [prior, section.id] });
+        } else {
+          sectionFigureHome.set(ref, section.id);
+        }
+      }
+    }
   }
 
   counts = {

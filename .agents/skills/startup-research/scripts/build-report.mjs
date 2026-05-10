@@ -80,7 +80,7 @@ const reportFolder = resolve(args.folder);
 reportFolderForEnvelope = reportFolder;
 if (!existsSync(reportFolder)) abort({ message: `report folder not found: ${reportFolder}`, dimension: 'missingArtifact', code: 'buildReport.reportFolderMissing', fix: 'Create the report folder with create-report-run.mjs before running build-report.mjs.', path: reportFolder, exitCode: EXIT.notFound });
 
-const config = loadWorkflowConfig();
+const config = loadWorkflowConfig({ reportFolder });
 const chapters = getAnalysisArtifacts(config);
 const evidenceFile = FINAL_ARTIFACTS.evidence.file;
 const fullReportFile = FINAL_ARTIFACTS.fullReport.file;
@@ -220,22 +220,48 @@ function buildChapter({ spec, doc }) {
   // Chapter numbering matches the configured source order: the first analysis
   // chapter is numbered 1, with no cover placeholder.
   const reportChapterNumber = spec.order;
-  const sections = (doc.sections ?? []).map((section, index) => ({
-    number: `${reportChapterNumber}.${index + 1}`,
-    title: section.title,
-    blocks: [paragraphBlock(section)],
-  }));
-  const callouts = doc.callouts ?? [];
   const tables = doc.tables ?? [];
   const figures = doc.figures ?? [];
-  if (callouts.length || tables.length || figures.length) {
+  const callouts = doc.callouts ?? [];
+  const tablesById = new Map(tables.filter((t) => t?.id).map((t) => [t.id, t]));
+  const figuresById = new Map(figures.filter((f) => f?.id).map((f) => [f.id, f]));
+  // Sections may declare tableRefs[] / figureRefs[] to anchor specific
+  // exhibits inside their prose. Each id may appear in at most one section
+  // across the chapter (validated by check-chapter); anything left over
+  // lands in the trailing Exhibits section so legacy chapters that author
+  // no per-section refs still render every artifact.
+  const placedTables = new Set();
+  const placedFigures = new Set();
+  const sections = (doc.sections ?? []).map((section, index) => {
+    const blocks = [paragraphBlock(section)];
+    for (const ref of section.tableRefs ?? []) {
+      const table = tablesById.get(ref);
+      if (!table || placedTables.has(ref)) continue;
+      placedTables.add(ref);
+      blocks.push(tableRefBlock(table));
+    }
+    for (const ref of section.figureRefs ?? []) {
+      const figure = figuresById.get(ref);
+      if (!figure || placedFigures.has(ref)) continue;
+      placedFigures.add(ref);
+      blocks.push(figureRefBlock(figure));
+    }
+    return {
+      number: `${reportChapterNumber}.${index + 1}`,
+      title: section.title,
+      blocks,
+    };
+  });
+  const trailingTables = tables.filter((t) => !t?.id || !placedTables.has(t.id));
+  const trailingFigures = figures.filter((f) => !f?.id || !placedFigures.has(f.id));
+  if (callouts.length || trailingTables.length || trailingFigures.length) {
     sections.push({
       number: `${reportChapterNumber}.${sections.length + 1}`,
       title: 'Exhibits',
       blocks: [
         ...callouts.map(calloutBlock),
-        ...tables.map(tableRefBlock),
-        ...figures.map(figureRefBlock),
+        ...trailingTables.map(tableRefBlock),
+        ...trailingFigures.map(figureRefBlock),
       ],
     });
   }

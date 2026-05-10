@@ -265,7 +265,7 @@ agentPolicy:
     - "Do not invent facts, metrics, customers, funding, valuation, or dates."
     - "Do not edit another chapter artifact while working on the current chapter."
     - "Keep scratch files under .research-cache/<runId>/, never under reports/<runId>/."
-    - "Only chapter YAMLs, report-meta.yaml, and assembled final artifacts belong under reports/<runId>/."
+    - "Only chapter YAMLs, report-meta.yaml, assembled final artifacts, and the finalize-written .workflow-snapshot.yaml belong under reports/<runId>/. Never hand-edit .workflow-snapshot.yaml; finalize-report writes it from the head workflow-config so each report stays validated against the config it was produced under."
     - "Do not run any git command (git add, git commit, git push, git stash, git checkout, etc.) at any point in the workflow — including after finalize-report exits 0. Leave every generated and modified file unstaged in the working tree; the caller owns commit decisions. The only exception is when the invocation prompt explicitly instructs the agent to commit."
   finalResponseFields:
     - report folder

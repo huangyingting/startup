@@ -159,6 +159,8 @@ export const SectionSchema = z.object({
   title: nonEmptyString,
   body: nonEmptyString.describe('section prose; expanded by the depthSection gate if too short'),
   claimRefs: z.array(claimRef).describe('C<ChapterLetter>### ids cited in this section\'s body'),
+  tableRefs: z.array(tableRef).optional().describe('T<ChapterLetter>### ids of tables that belong inside this section (rendered after the prose, in listed order). Each table id may appear in at most one section across the chapter; unreferenced tables fall back to the trailing Exhibits section.'),
+  figureRefs: z.array(figureRef).optional().describe('F<ChapterLetter>### ids of figures that belong inside this section (rendered after the prose and any sectioned tables, in listed order). Each figure id may appear in at most one section across the chapter; unreferenced figures fall back to the trailing Exhibits section.'),
 }).passthrough();
 
 // enumerationScope passthrough() lets reports keep optional descriptive
