@@ -16,6 +16,7 @@ Pairs with [SKILL.md](../SKILL.md) (the workflow narrative) and [contracts.md](c
 - Do not edit another chapter artifact while working on the current chapter.
 - Keep scratch files under .research-cache/<runId>/, never under reports/<runId>/.
 - Only chapter YAMLs, report-meta.yaml, and assembled final artifacts belong under reports/<runId>/.
+- Do not run any git command (git add, git commit, git push, git stash, git checkout, etc.) at any point in the workflow — including after finalize-report exits 0. Leave every generated and modified file unstaged in the working tree; the caller owns commit decisions. The only exception is when the invocation prompt explicitly instructs the agent to commit.
 
 #### `researchRules`
 
@@ -23,7 +24,8 @@ Pairs with [SKILL.md](../SKILL.md) (the workflow narrative) and [contracts.md](c
 - Prefer primary, official, independent, customer, regulatory, legal, and adverse sources over summary pages.
 - Record reviewed sources, atomic claims, search queries, typed research questions, and typed evidence gaps in localEvidence.
 - Re-fetch volatile facts every run; refresh context and earlier chapters are background only for those facts.
-- Anchor freshness to runtimeContext.run.runDate, not the model's training cutoff: every query in localEvidence.searchQueries[] whose text matches a volatileFactQueryTokens substring (funding/ARR/headcount/customers/leadership/regulatory/launches/etc.) MUST contain the current year — and the prior year for trailing windows — as a literal 4-digit token. The searchQueryFreshness validator emits a warning per offending query (promoted to failure under --strict and at finalize-report); rewrite the query to include the year, or rephrase it so it no longer matches a volatile-fact token if the lookup is genuinely historical.
+- Treat runtimeContext.run.runDate as the ONLY source of truth for "today"; the model's training cutoff is unreliable and may be years stale. Derive the current year from runDate before issuing any search call, and never use a year you remember from training as the freshness anchor.
+- Anchor freshness to runtimeContext.run.runDate, not the model's training cutoff: every query in localEvidence.searchQueries[] whose text matches a volatileFactQueryTokens substring (funding/ARR/headcount/customers/leadership/regulatory/launches/etc.) MUST contain the current year — and the prior year for trailing windows — as a literal 4-digit token. The same year token MUST also appear in the live search engine call you actually issued; the recorded query in localEvidence.searchQueries[].query is the verbatim text you sent to the engine, not a retrofit added only to satisfy the validator. The searchQueryFreshness validator emits a warning per offending query (promoted to failure under --strict and at finalize-report); rewrite the query to include the year, or rephrase it so it no longer matches a volatile-fact token if the lookup is genuinely historical.
 
 #### `chapterAuthoringRules`
 
