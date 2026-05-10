@@ -7,7 +7,7 @@
 import { existsSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { EXIT, isRunId, REPORT_META_FILE, runDateFromRunId, tryReadYaml } from './utils.mjs';
-import { OBSOLETE_SUMMARY_ROOT_FIELDS, ReportMetaSchema, schemaErrors } from './contracts/report-artifacts.schema.mjs';
+import { ReportMetaSchema, schemaErrors } from './contracts/report-artifacts.schema.mjs';
 import {
   formatValidationCompact,
   formatValidationText,
@@ -123,31 +123,6 @@ function displayWarnings(meta) {
   return warnings;
 }
 
-function obsoleteRootFieldIssues(meta) {
-  const issues = [];
-  for (const field of OBSOLETE_SUMMARY_ROOT_FIELDS) {
-    if (meta?.[field] !== undefined) {
-      issues.push(validationIssue({
-        path: field,
-        message: `top-level field '${field}' is obsolete; nest it under summary.${field}`,
-        dimension: 'reportMetaShape',
-        code: 'reportMeta.obsoleteRootField',
-        fix: `Move ${field} under the top-level summary: mapping.`,
-      }));
-    }
-  }
-  if (meta?.company?.hq !== undefined) {
-    issues.push(validationIssue({
-      path: 'company.hq',
-      message: 'unknown company field: company.hq; use company.headquarters instead',
-      dimension: 'reportMetaShape',
-      code: 'reportMeta.companyHqObsolete',
-      fix: 'Rename company.hq to company.headquarters.',
-    }));
-  }
-  return issues;
-}
-
 const args = parseArgs(process.argv.slice(2));
 const reportFolder = resolve(args.folder);
 const issues = [];
@@ -188,7 +163,6 @@ if (!existsSync(reportFolder)) {
         source: 'scripts/contracts/report-artifacts.schema.mjs',
         fix: 'Edit report-meta.yaml to match the report-meta shape in references/contracts.md.',
       }));
-      issues.push(...obsoleteRootFieldIssues(result.value));
       // runDate must equal the UTC YYYY-MM-DD derived from the runId
       // timestamp prefix. Skipped when --report-folder is not a runId-named
       // folder (developer pointing at a scratch folder) so the validator

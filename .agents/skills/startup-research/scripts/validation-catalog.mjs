@@ -315,7 +315,7 @@ export const FIX_HINTS = {
     required != null ? `On table ${tableId}: add ${Math.max(required - (actual ?? 0), 1)} more rows (currently ${actual}, need ${required}) or set enumerationScope.coverage to partial/sample with rationale.` : 'Add rows to reach expectedMinRows or set coverage to partial/sample with rationale.',
   enumerationCoverageGap: ({ tableId } = {}) =>
     tableId ? `Open an evidenceGap whose topic mentions ${tableId} or whose relatedTableRefs[] includes ${tableId}.` : 'Open an evidenceGap whose topic mentions the table or whose relatedTableRefs[] cites it.',
-  enumerationRowCorroboration: ({ tableId, actual, required } = {}) =>
+  enumerationTableCorroboration: ({ tableId, actual, required } = {}) =>
     required != null ? `On table ${tableId}: extend the table's claimRefs[] so the underlying sources span ${Math.max(required - (actual ?? 0), 1)} more registrable domain(s) (currently ${actual}, need ${required}). Check is table-level (claimRefs live on the table, not per row).` : "Extend the enumeration table's table-level claimRefs[] so the underlying sources span more registrable domains (table-level, not per-row).",
   claimShape: ({ id } = {}) =>
     id ? `Fix claim ${id}: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.` : 'Fix the claim object: required fields (statement, type, topic, sourceRefs, confidence, freshness), valid enum values, non-empty sourceRefs unless type is open-question, and contradictsClaimRefs when type is conflicting.',
@@ -409,7 +409,7 @@ export const CASCADE_SUPPRESSORS = {
     'crossChapterRefLeak',
     'highConfidenceCorroboration',
     'enumerationScope', 'enumerationRows', 'enumerationCoverageGap',
-    'enumerationRowCorroboration',
+    'enumerationTableCorroboration',
     'contentRequirementCoverage',
     'tableShape', 'figureShape', 'duplicateIds', 'artifactRefs',
     'calloutShape', 'duplicateAnalysis', 'figureType',
@@ -429,7 +429,7 @@ export const CASCADE_SUPPRESSORS = {
     'crossChapterRefLeak',
     'highConfidenceCorroboration',
     'enumerationScope', 'enumerationRows', 'enumerationCoverageGap',
-    'enumerationRowCorroboration',
+    'enumerationTableCorroboration',
     'contentRequirementCoverage',
   ]),
   // documentHead suppresses runDateConsistency and the freshness validator
@@ -467,7 +467,7 @@ export const RETRY_PRECEDENCE = [
   'highConfidenceCorroboration',
   'researchQuestionAnswerCoverage', 'researchQuestionClosure',
   'claimAnswerRefs', 'claimContradictRefs', 'crossChapterRefLeak', 'claimRefs',
-  'enumerationScope', 'enumerationRows', 'enumerationCoverageGap', 'enumerationRowCorroboration',
+  'enumerationScope', 'enumerationRows', 'enumerationCoverageGap', 'enumerationTableCorroboration',
   'tableShape', 'figureShape', 'figureType',
   'duplicateIds', 'artifactRefs', 'duplicateAnalysis',
   'calloutShape',

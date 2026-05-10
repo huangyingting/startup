@@ -21,7 +21,6 @@ export const CompactChapterSchema = z.object({
   order: z.number().int().positive(),
   letter: z.string().regex(/^[A-Z]$/),
   file: nonEmptyString,
-  artifact: nonEmptyString,
   title: nonEmptyString,
   mission: nonEmptyString,
   optionalContext: z.array(nonEmptyString),

@@ -15,13 +15,12 @@ import { formatValidationCompact, validationEnvelope, validationIssue } from './
 
 const DEFAULT_DISCLAIMER = 'This report is a public-evidence diligence snapshot, not investment advice. Important financial, legal, technical, and contractual facts remain non-public and should be verified directly with management and primary documents before any investment decision.';
 const CLAIM_ID_RE = /^C[A-Z]\d{3}$/;
-const LEGACY_CLAIM_ID_RE = /^C\d{3}$/;
 const INLINE_CLAIM_REF_RE = /\[(C[A-Z]\d{3}|C\d{3})\]/g;
 
 // Module-scope envelope state. abort() routes every error through the shared
 // validation-result envelope when --format=json|compact, so finalize-report
 // agents can read issues[].dimension/.fix without learning a per-script
-// prose format. The text path keeps the legacy `[build-report] <message>`
+// prose format. The text path emits the human-readable `[build-report] <message>`
 // stderr line for direct CLI use.
 let outputFormat = 'text';
 let reportFolderForEnvelope = null;
@@ -162,9 +161,6 @@ function checkReportMetaClaimRefs(metaDoc, evidenceLedger) {
   const claimIds = new Set((evidenceLedger.claims ?? []).map((claim) => claim?.id).filter(Boolean));
   if (!claimIds.size) abort({ message: `${evidenceFile} has no claims; run build-evidence-ledger.mjs before build-report.mjs`, dimension: 'missingArtifact', code: 'buildReport.evidenceEmpty', fix: 'Run build-evidence-ledger.mjs to consolidate chapter localEvidence into evidence.yaml.', path: evidenceFile });
   for (const { ref, path } of collectReportMetaClaimRefs(metaDoc)) {
-    if (LEGACY_CLAIM_ID_RE.test(ref)) {
-      abort({ message: `${path} uses legacy claim ref ${ref}; use the chapter-letter id from ${evidenceFile} (for example CO001)`, dimension: 'claimRefs', code: 'buildReport.legacyClaimRef', fix: `Replace ${ref} at ${path} with the canonical chapter-letter claim id from ${evidenceFile}.`, path });
-    }
     if (!CLAIM_ID_RE.test(ref)) {
       abort({ message: `${path} has invalid claim ref ${ref}; expected C<ChapterLetter><Seq3> (for example CO001)`, dimension: 'claimRefs', code: 'buildReport.claimRefFormat', fix: `Replace ${ref} at ${path} with a C<ChapterLetter><Seq3> id (e.g. CO001).`, path });
     }

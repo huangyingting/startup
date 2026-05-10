@@ -60,7 +60,7 @@ workflow:
           gate: agent preflight
           notes:
             - Run this before create-report-run.mjs. fetch-url reviews direct URLs but does not discover sources.
-            - If no source-discovery/search capability is available, stop before creating a report folder. In interactive mode request authoritative URLs; in non-interactive/no-ask automation print source-discovery-unavailable to stderr and exit non-zero (use exit code 2 for an intentional skip — no folder created) so the orchestrator does not record the run as a successful no-op. Do not invent sources.
+            - If no source-discovery/search capability is available, stop before creating a report folder. In interactive mode request authoritative URLs; in non-interactive/no-ask automation print source-discovery-unavailable to stderr and surface the abort to the orchestrator using whatever signal the host runtime uses for an intentional skip. No script runs at this stage, so no script exit code applies; do not reuse exit codes 1–4 reserved by create-report-run.mjs (1=failure, 2=duplicate finalized, 3=in-progress, 4=not-found). Do not invent sources.
             - If the user supplies staged HTML/PDF/text files instead of URLs, require originalUrl/publisher/title/date metadata and cite the original URL.
         - key: load-runtime
           title: List configured chapters
@@ -78,7 +78,7 @@ workflow:
           produces: [reportFolder]
           gate: create-report-run exit code
           notes:
-            - Pass companyUrl when provided (CLI flag --website; aliases --company-url/--companyUrl are accepted).
+            - Pass companyUrl when provided via the --website CLI flag.
             - For explicit refresh runs, pass both --refresh and --refresh-reason <text>. If create-run reports multiple current matching reports, rerun with --refresh-of <priorRunId> before any folder is created; --resume reuses the cached reason from the original create-run invocation.
             - run.runDate is not printed by create-report-run; the per-chapter loader derives and emits it from the report folder runId when --report-folder is supplied.
             - On exit 3, rerun with --resume; if stderr lists multiple in-progress candidates, add --resume-run <runId>. Do not create suffixed duplicate folders.
@@ -90,7 +90,7 @@ workflow:
       steps:
         - key: load-chapter-context
           title: Load chapter context
-          command: load-chapter-runtime-context.mjs --order <n> --report-folder <reportFolder> [--include-context only in sequential mode]
+          command: load-chapter-runtime-context.mjs --order <n> --report-folder <reportFolder> [--include-context]
           requires: [report-run-created, runtime-contract-loaded]
           produces: [runtimeContext.chapter]
           gate: runtimeContext schema

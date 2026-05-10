@@ -544,9 +544,7 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
     // claimRefs must reference sources spanning at least
     // gate.minSourcesPerEnumerationRow distinct registrable domains. The
     // YAML schema attaches claimRefs to the table, not to individual rows,
-    // so this check is necessarily table-level — the dimension name
-    // (`enumerationRowCorroboration`) is kept for backward compatibility
-    // with historical reports and JSON consumers.
+    // so this check is necessarily table-level.
     const tableClaimRefs = new Set(table.claimRefs ?? []);
     const tableDomains = new Set();
     for (const ref of tableClaimRefs) {
@@ -559,7 +557,7 @@ function checkEnumerationTables(file, doc, gate, plannedTablesByName) {
       }
     }
     if (rowCount > 0 && tableDomains.size < gate.minSourcesPerEnumerationRow) {
-      fail('enumerationRowCorroboration', `${file}: table ${table.id} table-level claimRefs reference sources from only ${tableDomains.size} distinct registrable domain(s) (need >= ${gate.minSourcesPerEnumerationRow}); enumeration tables must be cross-checked across independent domains`, { tableId: table.id, actual: tableDomains.size, required: gate.minSourcesPerEnumerationRow });
+      fail('enumerationTableCorroboration', `${file}: table ${table.id} table-level claimRefs reference sources from only ${tableDomains.size} distinct registrable domain(s) (need >= ${gate.minSourcesPerEnumerationRow}); enumeration tables must be cross-checked across independent domains`, { tableId: table.id, actual: tableDomains.size, required: gate.minSourcesPerEnumerationRow });
     }
   }
 }
@@ -846,15 +844,6 @@ if (doc) {
   }
 
   // Per-callout schema (title, body, claimRefs[], optional calloutType enum).
-  // The canonical key is `callouts:`; reject legacy `analysisCallouts` /
-  // `analysisCallout` writes as documentHead failures so they never get
-  // silently dropped during build-report (which only reads `callouts`).
-  if (doc.analysisCallouts !== undefined) {
-    fail('documentHead', `${spec.file}: top-level field "analysisCallouts" is obsolete; rename to "callouts"`);
-  }
-  if (doc.analysisCallout !== undefined) {
-    fail('documentHead', `${spec.file}: top-level field "analysisCallout" (singular) is obsolete; rename to "callouts" and wrap the object in a list`);
-  }
   for (const [index, callout] of (doc.callouts ?? []).entries()) {
     const path = `${spec.file}: callout ${index + 1}`;
     const { errors } = checkCalloutSchema(callout, { path });

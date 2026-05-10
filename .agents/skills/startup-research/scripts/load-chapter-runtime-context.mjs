@@ -65,7 +65,6 @@ function compactChapter(chapter) {
     order: chapter.order,
     letter: chapter.letter,
     file: chapter.file,
-    artifact: chapter.key,
     title: chapter.title,
     mission: chapter.mission,
     optionalContext: chapter.optionalContext ?? [],
@@ -227,17 +226,15 @@ function buildRuntimeContext(config, chapter) {
     nextChapter: index < chapters.length - 1 ? compactChapter(chapters[index + 1]) : null,
   };
   // Project the per-chapter retry budget so subagent workers see the
-  // enforcement contract without re-reading rules.md. Skipped silently when
-  // workflow-config does not declare retryPolicy (older configs).
-  const retryPolicy = config.agentPolicy?.retryPolicy;
-  if (retryPolicy && Number.isInteger(retryPolicy.maxChapterRetries)) {
-    out.policy = {
-      retryPolicy: {
-        maxChapterRetries: retryPolicy.maxChapterRetries,
-        requireMonotonicFailureDecrease: Boolean(retryPolicy.requireMonotonicFailureDecrease),
-      },
-    };
-  }
+  // enforcement contract without re-reading rules.md. workflow-config.schema
+  // makes both fields required, so we emit the policy block unconditionally.
+  const retryPolicy = config.agentPolicy.retryPolicy;
+  out.policy = {
+    retryPolicy: {
+      maxChapterRetries: retryPolicy.maxChapterRetries,
+      requireMonotonicFailureDecrease: retryPolicy.requireMonotonicFailureDecrease,
+    },
+  };
   return out;
 }
 
