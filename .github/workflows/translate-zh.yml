@@ -1,6 +1,6 @@
 # Scheduled/manual Chinese translation run.
 #
-# Every two hours, selects up to 5 finalized report folders under reports/
+# Every hour, selects up to 5 finalized report folders under reports/
 # that do not yet have both Chinese overlays, asks Copilot to translate them
 # with the translate-zh skill, validates the result, and commits the overlays.
 #
@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       reportCount:
-        description: "Max reports to translate."
+        description: "Max reports to translate (capped at 5)."
         required: false
         default: "5"
         type: string
@@ -77,6 +77,9 @@ jobs:
           COUNT="$(trim "$RAW_COUNT")"
           MODEL="$(trim "$RAW_MODEL")"
           if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
+            COUNT=5
+          fi
+          if [ "$COUNT" -gt 5 ]; then
             COUNT=5
           fi
           case "$MODEL" in
@@ -199,38 +202,45 @@ jobs:
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Stage translated files artifact
+      - name: Stage new translated files artifact
         if: always() && steps.targets.outputs.count != '0'
-        env:
-          REPORT_IDS: ${{ steps.targets.outputs.reportIds }}
         run: |
           set -euo pipefail
           ARTIFACT_DIR="$RUNNER_TEMP/translated-zh-artifact"
           rm -rf "$ARTIFACT_DIR"
-          mkdir -p "$ARTIFACT_DIR/reports"
+          mkdir -p "$ARTIFACT_DIR"
+
+          if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1 || [ ! -d reports ]; then
+            echo "No reports directory was available to package."
+            exit 0
+          fi
+
           copied=0
-          while IFS= read -r report; do
-            [ -z "$report" ] && continue
-            printf '%s\n' "$report" >> "$ARTIFACT_DIR/selected-reports.txt"
-            mkdir -p "$ARTIFACT_DIR/reports/$report"
-            for file in summary-card.zh.yaml full-report.zh.yaml; do
-              source="reports/$report/$file"
-              if [ -f "$source" ]; then
-                cp "$source" "$ARTIFACT_DIR/reports/$report/$file"
-                copied=$((copied + 1))
-              else
-                echo "::warning::Missing translated file: $source"
-              fi
-            done
-          done <<< "$REPORT_IDS"
+          while IFS= read -r -d '' entry; do
+            status="${entry:0:2}"
+            path="${entry:3}"
+            case "$status" in
+              '??'|A*) ;;
+              *) continue ;;
+            esac
+            case "$path" in
+              reports/*/summary-card.zh.yaml|reports/*/full-report.zh.yaml) ;;
+              *) continue ;;
+            esac
+            [ -f "$path" ] || continue
+            mkdir -p "$ARTIFACT_DIR/$(dirname "$path")"
+            cp "$path" "$ARTIFACT_DIR/$path"
+            copied=$((copied + 1))
+          done < <(git status --porcelain=v1 -z --untracked-files=all -- reports/)
+
           if [ "$copied" -eq 0 ]; then
-            echo "No translated zh overlay files were found for the selected reports." > "$ARTIFACT_DIR/README.txt"
+            echo "No newly-created translated zh overlay files were found."
           fi
           {
             echo
             echo "### Preserved translated files artifact"
             echo "- Artifact: translated-zh-${{ github.run_id }}"
-            echo "- Files copied: $copied"
+            echo "- New translated files copied: $copied"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload translated files artifact

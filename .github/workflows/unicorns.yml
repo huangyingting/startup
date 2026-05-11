@@ -40,7 +40,7 @@ on:
           - consumer / education
           - industrial / logistics
       unicornCount:
-        description: "Max reports."
+        description: "Max reports (capped at 3)."
         required: false
         default: "3"
         type: string
@@ -73,6 +73,15 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.STARTUP_PAT }}
+
+      - name: Sync to latest branch head
+        run: |
+          set -euo pipefail
+          BRANCH="${{ github.ref_name }}"
+          # Queued workflow_dispatch runs are created from the dispatch SHA;
+          # refresh before generation so prior committed reports count.
+          git fetch origin "$BRANCH:refs/remotes/origin/$BRANCH"
+          git checkout --force -B "$BRANCH" "origin/$BRANCH"
 
       - name: Set up Node.js with npm cache
         uses: actions/setup-node@v6
@@ -136,6 +145,9 @@ jobs:
               ;;
           esac
           if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
+            COUNT=3
+          fi
+          if [ "$COUNT" -gt 3 ]; then
             COUNT=3
           fi
           case "$MODEL" in
@@ -373,14 +385,51 @@ jobs:
             echo "::endgroup::"
           done
 
+      - name: Stage new report files artifact
+        # Capture only newly-created report files, including partial outputs,
+        # before pruning. Available even on failure for offline recovery.
+        if: always()
+        run: |
+          set -euo pipefail
+          ARTIFACT_DIR="$RUNNER_TEMP/generated-reports-artifact"
+          rm -rf "$ARTIFACT_DIR"
+          mkdir -p "$ARTIFACT_DIR"
+
+          if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1 || [ ! -d reports ]; then
+            echo "No reports directory was available to package."
+            exit 0
+          fi
+
+          copied=0
+          while IFS= read -r -d '' entry; do
+            status="${entry:0:2}"
+            path="${entry:3}"
+            case "$status" in
+              '??'|A*) ;;
+              *) continue ;;
+            esac
+            [ -f "$path" ] || continue
+            mkdir -p "$ARTIFACT_DIR/$(dirname "$path")"
+            cp "$path" "$ARTIFACT_DIR/$path"
+            copied=$((copied + 1))
+          done < <(git status --porcelain=v1 -z --untracked-files=all -- reports/)
+
+          if [ "$copied" -eq 0 ]; then
+            echo "No newly-created report files were found."
+          fi
+          {
+            echo
+            echo "### Preserved generated files artifact"
+            echo "- Artifact: research-reports-${{ steps.inputs.outputs.safeLabel }}"
+            echo "- New report files copied: $copied"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Preserve generated reports artifact
-        # Capture the full Copilot output (including any partial folders) before
-        # we prune. Available even on failure for offline recovery.
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: research-reports-${{ steps.inputs.outputs.safeLabel }}
-          path: reports/
+          path: ${{ runner.temp }}/generated-reports-artifact/
           retention-days: 14
           if-no-files-found: ignore
 

@@ -62,6 +62,15 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.STARTUP_PAT }}
 
+      - name: Sync to latest branch head
+        run: |
+          set -euo pipefail
+          BRANCH="${{ github.ref_name }}"
+          # Queued workflow_dispatch runs are created from the dispatch SHA;
+          # refresh before generation so prior committed reports count.
+          git fetch origin "$BRANCH:refs/remotes/origin/$BRANCH"
+          git checkout --force -B "$BRANCH" "origin/$BRANCH"
+
       - name: Set up Node.js with npm cache
         uses: actions/setup-node@v6
         with:
@@ -280,14 +289,51 @@ jobs:
             echo "::endgroup::"
           done
 
-      - name: Preserve refreshed reports artifact
-        # Capture the full Copilot output, including any partial folders,
+      - name: Stage changed report files artifact
+        # Capture newly-created and modified report files, including partial outputs,
         # before pruning. Available even on failure for offline recovery.
+        if: always()
+        run: |
+          set -euo pipefail
+          ARTIFACT_DIR="$RUNNER_TEMP/generated-reports-artifact"
+          rm -rf "$ARTIFACT_DIR"
+          mkdir -p "$ARTIFACT_DIR"
+
+          if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1 || [ ! -d reports ]; then
+            echo "No reports directory was available to package."
+            exit 0
+          fi
+
+          copied=0
+          while IFS= read -r -d '' entry; do
+            status="${entry:0:2}"
+            path="${entry:3}"
+            case "$status" in
+              '??'|A*|M*|?M) ;;
+              *) continue ;;
+            esac
+            [ -f "$path" ] || continue
+            mkdir -p "$ARTIFACT_DIR/$(dirname "$path")"
+            cp "$path" "$ARTIFACT_DIR/$path"
+            copied=$((copied + 1))
+          done < <(git status --porcelain=v1 -z --untracked-files=all -- reports/)
+
+          if [ "$copied" -eq 0 ]; then
+            echo "No newly-created or modified report files were found."
+          fi
+          {
+            echo
+            echo "### Preserved changed files artifact"
+            echo "- Artifact: refresh-company-${{ steps.inputs.outputs.safeLabel }}"
+            echo "- New/modified report files copied: $copied"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Preserve refreshed reports artifact
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: refresh-company-${{ steps.inputs.outputs.safeLabel }}
-          path: reports/
+          path: ${{ runner.temp }}/generated-reports-artifact/
           retention-days: 14
           if-no-files-found: ignore
 
