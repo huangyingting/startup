@@ -1,5 +1,6 @@
 ---
 import '../styles/tokens.css';
+import monaSansLatinWghtUrl from '@fontsource-variable/mona-sans/files/mona-sans-latin-wght-normal.woff2?url';
 import { t } from '../lib/i18n';
 import type { Locale } from '../lib/locale';
 import { HTML_LANG, localeFile, localePath } from '../lib/locale';
@@ -33,6 +34,7 @@ const htmlLang = HTML_LANG[locale];
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="preload" href={monaSansLatinWghtUrl} as="font" type="font/woff2" crossorigin />
     <link rel="alternate" type="application/rss+xml" title={`${brandLabel} RSS`} href={rssHref} />
   </head>
   <body>

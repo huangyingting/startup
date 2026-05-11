@@ -1,5 +1,14 @@
 @import '@fontsource-variable/mona-sans/wght.css';
 
+@font-face {
+  font-family: 'Mona Sans Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Segoe UI'), local('Liberation Sans');
+  ascent-override: 109%;
+  descent-override: 32%;
+  line-gap-override: 0%;
+  size-adjust: 100%;
+}
+
 /* FT.com-inspired design tokens (mirrored from the BizIdea website).
  *
  * Signature moves:
@@ -39,9 +48,9 @@
   --shadow: none;
 
   /* Type stack */
-  --font-display: 'Mona Sans Variable', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
-  --font-serif:   'Mona Sans Variable', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
-  --font-sans:    'Mona Sans Variable', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-display: 'Mona Sans Variable', 'Mona Sans Fallback', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-serif:   'Mona Sans Variable', 'Mona Sans Fallback', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-sans:    'Mona Sans Variable', 'Mona Sans Fallback', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
   --font-mono:    ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
   --lh-display-hero: 1.02;
