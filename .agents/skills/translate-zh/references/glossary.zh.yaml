@@ -1,0 +1,141 @@
+schemaVersion: glossary-v1
+locale: zh
+note: >-
+  Canonical en→zh translations for recurring terminology in startup
+  diligence reports. Use these exact strings whenever a term appears in
+  prose. Match the website's chrome (DiligenceReport / display.ts /
+  i18n.ts zh bundle) so heading vs body vs label all read the same.
+  When you encounter a recurring term that is missing here, add it before
+  finishing the translation.
+
+# Chapter titles. The chapter `title` field appears in the toc / sidebar.
+chapterTitles:
+  Company Overview: 公司概况
+  Market Analysis: 市场分析
+  Competitors: 竞争格局
+  Financials: 财务情况
+  Product & Technology: 产品与技术
+  Customers: 客户情况
+  Risks: 风险
+  Valuation: 估值
+
+# Recommendation / confidence / risk / valuation enums.
+# (DO NOT translate these in the YAML — the renderer maps the English
+# enum string to the Chinese label via lib/display.ts. These mappings are
+# included here only so prose that refers to the recommendation reads the
+# same as the badge.)
+recommendation:
+  buy: 买入
+  pass: 放弃
+  track: 观察
+  avoid: 回避
+  research-more: 继续研究
+confidence:
+  high: 高
+  medium: 中
+  low: 低
+riskRating:
+  high: 高
+  medium: 中
+  low: 低
+valuationStance:
+  stretched: 偏高
+  fair: 合理
+  expensive: 昂贵
+  cheap: 便宜
+  unknown: 未知
+
+# Common metric labels (use these whenever the prose references the metric
+# rather than the YAML field name).
+metrics:
+  ARR: 年经常性收入（ARR）
+  NRR: 净留存率（NRR）
+  GRR: 总留存率（GRR）
+  TAM: 总可用市场（TAM）
+  SAM: 可服务市场（SAM）
+  SOM: 可获取市场（SOM）
+  GMV: 商品交易总额（GMV）
+  CAC: 获客成本（CAC）
+  LTV: 客户终身价值（LTV）
+  payback: 回本周期
+  burn: 烧钱速度
+  runway: 现金跑道
+  gross margin: 毛利率
+  revenue run-rate: 收入运行率
+  valuation: 估值
+  total raised: 累计融资
+  headcount: 员工数
+  customer count: 客户数
+
+# Diligence vocabulary — keep these consistent across reports.
+diligence:
+  thesis: 投资逻辑
+  anti-thesis: 反向逻辑
+  bull case: 乐观情景
+  base case: 基准情景
+  bear case: 悲观情景
+  evidence gap: 证据缺口
+  evidence quality: 证据质量
+  research question: 研究问题
+  adverse evidence: 反向证据
+  cap table: 股权结构表
+  liquidation preference: 清算优先权
+  preference stack: 优先股堆叠
+  secondary: 老股交易
+  primary: 新股
+  IPO: 首次公开募股（IPO）
+  filing: 监管文件
+  S-1: S-1 招股说明书
+  10-K: 10-K 年度报告
+  cohort: 队列
+  retention: 留存
+  churn: 流失
+  expansion: 扩张
+  upsell: 增购
+  cross-sell: 交叉销售
+  net-new ARR: 新增 ARR
+  pilot: 试点
+  proof of concept: 概念验证（PoC）
+  procurement: 采购
+  channel partner: 渠道合作伙伴
+  hyperscaler: 超大规模云厂商
+  switching cost: 切换成本
+  moat: 护城河
+  lock-in: 锁定效应
+
+# Recurring product / market terms.
+domain:
+  generative AI: 生成式 AI
+  foundation model: 基础模型
+  large language model: 大语言模型
+  agentic: 智能体
+  inference: 推理
+  training: 训练
+  fine-tuning: 微调
+  embedding: 向量嵌入
+  vector database: 向量数据库
+  on-premise: 本地部署
+  cloud-native: 云原生
+  multi-cloud: 多云
+  edge computing: 边缘计算
+  zero-trust: 零信任
+  observability: 可观测性
+  data lineage: 数据血缘
+  data mesh: 数据网格
+  data lake: 数据湖
+  data warehouse: 数据仓库
+  workflow orchestration: 工作流编排
+  feature flag: 功能开关
+  developer experience: 开发者体验
+  open-source: 开源
+  proprietary: 自研
+
+# Style notes that the translator should keep in mind (these are not
+# substitutable terms; they are reminders).
+style:
+  - "数字、日期、单位、币种、ID、URL 一律保持原文。"
+  - "公司名、产品名保留原文 Latin 拼写，不加括注的中文别名。"
+  - "缩写首次出现在中文括注中给出全称，例如 “年经常性收入（ARR）”，之后段落沿用 ARR 即可。"
+  - "中文句子内部用全角标点；夹杂英文单词时，前后保留半角空格以提升可读性。"
+  - "翻译尽调结论保持评估口吻：避免“革命性/世界领先/颠覆”等营销化措辞。"
+  - "“estimate / estimated / approximately / roughly / reportedly”等不确定性词必须保留并译为“估计 / 大约 / 据报道 / 据称”等对应限定语。"

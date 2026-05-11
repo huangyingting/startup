@@ -4,39 +4,129 @@ import ClaimRefs from './ClaimRefs.astro';
 import ReportBlock from './ReportBlock.astro';
 import DataTable from './DataTable.astro';
 import { displayLabel } from '../lib/display';
+import { t } from '../lib/i18n';
+import type { Locale } from '../lib/locale';
+import { localePath } from '../lib/locale';
 import { splitClaimRefsText, stripTrailingClaimRefs } from '../lib/claim-refs.mjs';
 
 interface Props {
   entry: CollectionEntry<'reports'>;
   data: any;
   stages: any;
+  locale?: Locale;
+  // Optional Chinese overlay produced by loadStageFilesZh(). Each field is
+  // null when the corresponding `*.zh.yaml` sibling has not been written yet;
+  // mergeI18n() then falls back to the English text per leaf string.
+  stagesZh?: any;
 }
 
-const { data, stages } = Astro.props;
+const { data, stages, locale = 'en', stagesZh = null } = Astro.props;
+
+// Recursive overlay: prefer the Chinese leaf when it is a non-empty string;
+// otherwise keep the English original. Arrays and objects walk by index/key
+// so a partial translation (e.g. only some sections translated) renders the
+// translated parts in Chinese and the rest in English.
+function mergeI18n(en: any, zh: any): any {
+  if (zh === null || zh === undefined) return en;
+  if (typeof en === 'string') {
+    return typeof zh === 'string' && zh.trim() ? zh : en;
+  }
+  if (Array.isArray(en)) {
+    if (!Array.isArray(zh)) return en;
+    return en.map((item, i) => mergeI18n(item, zh[i]));
+  }
+  if (en && typeof en === 'object' && zh && typeof zh === 'object' && !Array.isArray(zh)) {
+    const out: Record<string, any> = Array.isArray(en) ? [...en] : { ...en };
+    for (const key of Object.keys(en)) out[key] = mergeI18n(en[key], (zh as any)[key]);
+    return out;
+  }
+  return en;
+}
+
 const base = import.meta.env.BASE_URL;
 const revision = data.revision ?? { status: 'current', refreshOfFolderSlug: null, supersededByFolderSlug: null, refreshReason: null };
-const refreshOfHref = revision.refreshOfFolderSlug ? `${base}${revision.refreshOfFolderSlug}/` : null;
-const supersededByHref = revision.supersededByFolderSlug ? `${base}${revision.supersededByFolderSlug}/` : null;
+// Locale-aware cross-report links: from the zh detail page, point at the zh
+// sibling of the related report. The folderSlug stays the same in both
+// locales because it is derived from the runId, not the locale.
+const refreshOfHref = revision.refreshOfFolderSlug
+  ? (locale === 'zh' ? localePath(base, 'zh', revision.refreshOfFolderSlug) : `${base}${revision.refreshOfFolderSlug}/`)
+  : null;
+const supersededByHref = revision.supersededByFolderSlug
+  ? (locale === 'zh' ? localePath(base, 'zh', revision.supersededByFolderSlug) : `${base}${revision.supersededByFolderSlug}/`)
+  : null;
 
-const doc = stages.fullReport ?? null;
-const ledger = stages.evidence ?? {};
+const enDoc = stages.fullReport ?? null;
+const enLedger = stages.evidence ?? {};
+const doc = locale === 'zh' && stagesZh?.fullReport ? mergeI18n(enDoc, stagesZh.fullReport) : enDoc;
+const ledger = enLedger;
 const claims: any[] = Array.isArray(ledger.claims) ? ledger.claims : [];
 const sources: any[] = Array.isArray(ledger.sources) ? ledger.sources : [];
 const figures = new Map<string, any>((doc?.figures ?? []).map((figure: any) => [figure.id, figure]));
 const tables = new Map<string, any>((doc?.tables ?? []).map((table: any) => [table.id, table]));
 
 const labels = {
-  recommendation: 'Recommendation', confidence: 'Confidence', riskRating: 'Risk rating',
-  valuationStance: 'Valuation stance', score: 'Score', sources: 'sources', claims: 'claims',
-  figures: 'figures', tables: 'tables',
-  coverMetrics: 'Cover facts', startupIntro: 'Company profile',
-  website: 'Website',
-  founded: 'Founded', founders: 'Founders', foundingLocation: 'Founding location',
-  headquarters: 'Headquarters', product: 'Product', customers: 'Customers',
-  businessModel: 'Business model', stage: 'Stage', fundingStatus: 'Funding status',
-  strengths: 'Top strengths', risks: 'Top risks', gaps: 'Open gaps',
-  contents: 'Contents', appendix: 'Appendix', disclaimer: 'Disclaimer',
-  evidence: 'Evidence index', showRefs: 'Show refs', hideRefs: 'Hide refs',
+  recommendation: t('reportRecommendation', locale),
+  confidence: t('reportConfidence', locale),
+  riskRating: t('reportRiskRating', locale),
+  valuationStance: t('reportValuationStance', locale),
+  score: t('reportScore', locale),
+  sources: t('reportSources', locale),
+  claims: t('reportClaims', locale),
+  figures: t('reportFigures', locale),
+  tables: t('reportTables', locale),
+  coverMetrics: t('reportCoverMetrics', locale),
+  startupIntro: t('reportStartupIntro', locale),
+  website: t('reportWebsite', locale),
+  founded: t('reportFounded', locale),
+  founders: t('reportFounders', locale),
+  foundingLocation: t('reportFoundingLocation', locale),
+  headquarters: t('reportHeadquarters', locale),
+  product: t('reportProduct', locale),
+  customers: t('reportCustomers', locale),
+  businessModel: t('reportBusinessModel', locale),
+  stage: t('reportStage', locale),
+  fundingStatus: t('reportFundingStatus', locale),
+  strengths: t('reportStrengths', locale),
+  risks: t('reportRisks', locale),
+  gaps: t('reportGaps', locale),
+  contents: t('reportContents', locale),
+  appendix: t('reportAppendix', locale),
+  disclaimer: t('reportDisclaimer', locale),
+  evidence: t('reportEvidence', locale),
+  showRefs: t('reportShowRefs', locale),
+  hideRefs: t('reportHideRefs', locale),
+  executiveSummary: t('reportExecutiveSummary', locale),
+  diligenceTag: t('reportDiligenceTag', locale),
+  supersededBanner: t('reportSupersededBanner', locale),
+  supersededFallback: t('reportSupersededFallback', locale),
+  supersededLink: t('reportSupersededLink', locale),
+  refreshedBanner: t('reportRefreshedBanner', locale),
+  refreshedFallback: t('reportRefreshedFallback', locale),
+  previousLink: t('reportPreviousLink', locale),
+  downloadPdf: t('reportDownloadPdf', locale),
+  printTooltip: t('reportPrintTooltip', locale),
+  backToTop: t('reportBackToTop', locale),
+  claimsCol: t('reportClaimsCol', locale),
+  sourcesCol: t('reportSourcesCol', locale),
+  claimIdCol: t('reportClaimIdCol', locale),
+  claimStatementCol: t('reportClaimStatementCol', locale),
+  claimConfidenceCol: t('reportClaimConfidenceCol', locale),
+  claimSourcesCol: t('reportClaimSourcesCol', locale),
+  sourceIdCol: t('reportSourceIdCol', locale),
+  sourcePublisherCol: t('reportSourcePublisherCol', locale),
+  sourceTitleCol: t('reportSourceTitleCol', locale),
+  sourceQuoteCol: t('reportSourceQuoteCol', locale),
+};
+
+const fallbackMetricLabels = {
+  valuation: t('cardValuation', locale),
+  revenueRunRate: t('cardRevenue', locale),
+  arr: t('cardArr', locale),
+  growth: t('cardGrowth', locale),
+  nrr: t('cardNrr', locale),
+  totalRaised: locale === 'zh' ? '累计融资' : 'Total raised',
+  customers: locale === 'zh' ? '客户数' : 'Customers',
+  headcount: locale === 'zh' ? '员工数' : 'Headcount',
 };
 
 function arr<T = unknown>(value: T[] | undefined | null): T[] {
@@ -79,56 +169,75 @@ const appendices = arr<any>(doc?.appendices);
 
 const keyMetrics = data.keyMetrics ?? {};
 const fallbackMetrics = [
-  ['Valuation', moneyM(keyMetrics.valuationUsdM)],
-  ['Revenue run rate', moneyM(keyMetrics.revenueRunRateUsdM)],
-  ['ARR', moneyM(keyMetrics.arrUsdM)],
-  ['Growth', metric(keyMetrics.revenueGrowthYoYPct, '%')],
-  ['NRR', metric(keyMetrics.nrrPct, '%')],
-  ['Total raised', moneyM(keyMetrics.totalRaisedUsdM)],
-  ['Customers', metric(keyMetrics.customerCount)],
-  ['Headcount', metric(keyMetrics.headcount)],
+  [fallbackMetricLabels.valuation, moneyM(keyMetrics.valuationUsdM)],
+  [fallbackMetricLabels.revenueRunRate, moneyM(keyMetrics.revenueRunRateUsdM)],
+  [fallbackMetricLabels.arr, moneyM(keyMetrics.arrUsdM)],
+  [fallbackMetricLabels.growth, metric(keyMetrics.revenueGrowthYoYPct, '%')],
+  [fallbackMetricLabels.nrr, metric(keyMetrics.nrrPct, '%')],
+  [fallbackMetricLabels.totalRaised, moneyM(keyMetrics.totalRaisedUsdM)],
+  [fallbackMetricLabels.customers, metric(keyMetrics.customerCount)],
+  [fallbackMetricLabels.headcount, metric(keyMetrics.headcount)],
 ].filter(([, value]) => value !== '—');
+
+// Card-level overlay: data.headline / topStrengths / topRisks /
+// unresolvedGaps / company.shortDescription / company.sector come from the
+// English summary-card.yaml (the Astro collection entry). When a Chinese
+// summary-card.zh.yaml overlay is present, prefer its values per leaf and
+// fall back to English for anything missing.
+const zhCard = locale === 'zh' ? (stagesZh?.summaryCard ?? null) : null;
+const zhSummary = zhCard?.summary ?? {};
+const zhCompany = zhCard?.company ?? {};
+const pickStr = (z, e) => (typeof z === 'string' && z.trim() ? z : e);
+const pickArr = (z, e) => (Array.isArray(z) && z.length ? e.map((item, i) => (typeof z[i] === 'string' && z[i].trim() ? z[i] : item)) : e);
+const card = {
+  headline: pickStr(zhSummary.headline, data.headline),
+  topStrengths: pickArr(zhSummary.topStrengths, arr<string>(data.topStrengths)),
+  topRisks: pickArr(zhSummary.topRisks, arr<string>(data.topRisks)),
+  unresolvedGaps: pickArr(zhSummary.unresolvedGaps, arr<string>(data.unresolvedGaps)),
+  companySector: pickStr(zhCompany.sector, data.company?.sector),
+  companyStage: pickStr(zhCompany.stage, data.company?.stage),
+};
 ---
 <section class="report-shell sr-container">
   {revision.status === 'superseded' && (
     <aside class="version-banner version-banner--superseded" aria-label="Superseded report notice">
-      <strong>This report has been refreshed.</strong>
-      <span>{revision.refreshReason ?? 'A newer diligence run is available for this company.'}</span>
-      {supersededByHref && <a href={supersededByHref}>View the current report</a>}
+      <strong>{labels.supersededBanner}</strong>
+      <span>{revision.refreshReason ?? labels.supersededFallback}</span>
+      {supersededByHref && <a href={supersededByHref}>{labels.supersededLink}</a>}
     </aside>
   )}
   {revision.status !== 'superseded' && refreshOfHref && (
     <aside class="version-banner version-banner--current" aria-label="Report refresh notice">
-      <strong>Refreshed report.</strong>
-      <span>{revision.refreshReason ?? 'This diligence run updates a previous report with newer public evidence.'}</span>
-      <a href={refreshOfHref}>View previous version</a>
+      <strong>{labels.refreshedBanner}</strong>
+      <span>{revision.refreshReason ?? labels.refreshedFallback}</span>
+      <a href={refreshOfHref}>{labels.previousLink}</a>
     </aside>
   )}
   <header class="report-cover">
     <div class="report-cover-main">
       <div class="cover-eyebrow">
-        <span class="cover-eyebrow-tag">Diligence report</span>
-        {data.company?.sector && <span class="cover-eyebrow-meta">{data.company.sector}</span>}
-        {data.company?.stage && <span class="cover-eyebrow-meta">{data.company.stage}</span>}
+        <span class="cover-eyebrow-tag">{labels.diligenceTag}</span>
+        {card.companySector && <span class="cover-eyebrow-meta">{card.companySector}</span>}
+        {card.companyStage && <span class="cover-eyebrow-meta">{card.companyStage}</span>}
         <span class="cover-eyebrow-meta">{data.runDate}</span>
       </div>
       <h1>{doc?.company?.name ?? data.company?.name ?? data.slug}</h1>
       {(doc?.subtitle ?? null) && <p class="report-subtitle">{doc?.subtitle}</p>}
-      <p class="report-headline">{cleanHeadline(data.headline)}</p>
+      <p class="report-headline">{cleanHeadline(card.headline)}</p>
     </div>
     <aside class={`decision-card decision-${String(data.recommendation ?? 'unknown').replace(/[^a-z0-9-]/gi, '-')}`}>
       <div class="decision-headline">
         <span class="decision-eyebrow">{labels.recommendation}</span>
-        <strong class="decision-rec">{displayLabel(data.recommendation)}</strong>
+        <strong class="decision-rec">{displayLabel(data.recommendation, locale)}</strong>
       </div>
       <div class="decision-score">
         <span class="decision-score-value">{data.overallScore.toFixed(1)}</span>
         <span class="decision-score-label">{labels.score} / 10</span>
       </div>
       <dl class="decision-grid">
-        <div><dt>{labels.confidence}</dt><dd>{displayLabel(data.confidence)}</dd></div>
-        <div><dt>{labels.riskRating}</dt><dd>{displayLabel(data.riskRating)}</dd></div>
-        <div><dt>{labels.valuationStance}</dt><dd>{displayLabel(data.valuationStance)}</dd></div>
+        <div><dt>{labels.confidence}</dt><dd>{displayLabel(data.confidence, locale)}</dd></div>
+        <div><dt>{labels.riskRating}</dt><dd>{displayLabel(data.riskRating, locale)}</dd></div>
+        <div><dt>{labels.valuationStance}</dt><dd>{displayLabel(data.valuationStance, locale)}</dd></div>
       </dl>
       <div class="decision-actions">
         <button
@@ -142,8 +251,8 @@ const fallbackMetrics = [
           type="button"
           class="print-pdf"
           data-print-pdf
-          title="Print as A4 PDF. In the print dialog uncheck ‘Headers and footers’ to remove the URL/date strip."
-        >Download PDF</button>
+          title={labels.printTooltip}
+        >{labels.downloadPdf}</button>
       </div>
     </aside>
   </header>
@@ -207,14 +316,14 @@ const fallbackMetrics = [
     </section>
   )}
 
-  {(data.topStrengths.length > 0 || data.topRisks.length > 0 || data.unresolvedGaps.length > 0) && (
+  {(card.topStrengths.length > 0 || card.topRisks.length > 0 || card.unresolvedGaps.length > 0) && (
     <section class="report-section executive-summary">
-      <h2>Executive summary</h2>
+      <h2>{labels.executiveSummary}</h2>
       <div class="three-col">
         <article class="summary-card summary-strengths">
           <h2>{labels.strengths}</h2>
           <ul>
-            {arr(data.topStrengths).map((item) => (
+            {arr(card.topStrengths).map((item) => (
               <li>{splitClaimRefsText(item).map((part) => part.ref
                 ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
                 : part.text)}</li>
@@ -224,7 +333,7 @@ const fallbackMetrics = [
         <article class="summary-card summary-risks">
           <h2>{labels.risks}</h2>
           <ul>
-            {arr(data.topRisks).map((item) => (
+            {arr(card.topRisks).map((item) => (
               <li>{splitClaimRefsText(item).map((part) => part.ref
                 ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
                 : part.text)}</li>
@@ -234,7 +343,7 @@ const fallbackMetrics = [
         <article class="summary-card summary-gaps">
           <h2>{labels.gaps}</h2>
           <ul>
-            {arr(data.unresolvedGaps).map((item) => (
+            {arr(card.unresolvedGaps).map((item) => (
               <li>{splitClaimRefsText(item).map((part) => part.ref
                 ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
                 : part.text)}</li>
@@ -299,12 +408,12 @@ const fallbackMetrics = [
     <section class="report-section evidence-index">
       <h2>{labels.evidence}</h2>
       {claims.length > 0 && (
-        <DataTable title="Claims" columns={['ID', 'Statement', 'Confidence', 'Sources']}>
+        <DataTable title={labels.claimsCol} columns={[labels.claimIdCol, labels.claimStatementCol, labels.claimConfidenceCol, labels.claimSourcesCol]}>
           {claims.map((claim: any) => (
             <tr id={`claim-${claim.id}`}>
               <td><a class="evidence-id" href={`#claim-${claim.id}`}>{claim.id}</a></td>
               <td>{claim.statement}</td>
-              <td>{displayLabel(claim.confidence)}</td>
+              <td>{displayLabel(claim.confidence, locale)}</td>
               <td>
                 {(claim.sourceRefs ?? []).map((ref: string, index: number, list: string[]) => (
                   <>
@@ -317,7 +426,7 @@ const fallbackMetrics = [
         </DataTable>
       )}
       {sources.length > 0 && (
-        <DataTable title="Sources" columns={['ID', 'Publisher', 'Title', 'Quote']}>
+        <DataTable title={labels.sourcesCol} columns={[labels.sourceIdCol, labels.sourcePublisherCol, labels.sourceTitleCol, labels.sourceQuoteCol]}>
           {sources.map((source: any) => (
             <tr id={`source-${source.id}`}>
               <td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td>
@@ -335,8 +444,8 @@ const fallbackMetrics = [
     type="button"
     class="back-to-top"
     data-back-to-top
-    aria-label="Back to top"
-    title="Back to top"
+    aria-label={labels.backToTop}
+    title={labels.backToTop}
     hidden
   >
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" focusable="false">

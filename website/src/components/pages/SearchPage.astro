@@ -1,0 +1,182 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { t, tFormat } from '../../lib/i18n';
+import type { Locale } from '../../lib/locale';
+import { localeFile } from '../../lib/locale';
+import { currentReports, sortNewest, sortTopRated } from '../../lib/reports';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const reports = currentReports(await getCollection('reports'));
+const newest = sortNewest(reports)[0];
+const suggestions = sortTopRated(reports).slice(0, 5).map((entry) => entry.data.company.name);
+const totalSources = reports.reduce((sum, entry) => sum + entry.data.sourceStats.sourcesRetained, 0);
+const intlLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
+const formatNumber = (value: number) => value.toLocaleString(intlLocale);
+const base = import.meta.env.BASE_URL;
+const indexUrl = localeFile(base, locale, 'search-index.json');
+
+const i18nLabels = {
+  hint: t('searchHint', locale),
+  hintReadyTemplate: t('searchHintReady', locale),
+  resultSingular: t('searchHintResultSingular', locale),
+  resultPlural: t('searchHintResultPlural', locale),
+  emptyTemplate: t('searchEmpty', locale),
+  overallRating: t('searchOverallRating', locale),
+  unavailable: t('searchUnavailable', locale),
+};
+const i18nLabelsJson = JSON.stringify(i18nLabels);
+---
+<BaseLayout title={t('searchTitle', locale)} locale={locale}>
+  <section class="sr-container sr-hero search-hero">
+    <div>
+      <span class="sr-eyebrow">{t('searchEyebrow', locale)}</span>
+      <h1>{t('searchHeading', locale)}</h1>
+      <p class="sr-deck">{t('searchDeck', locale)}</p>
+    </div>
+    <dl class="search-summary" aria-label="Search summary">
+      <div><dt>{t('searchStatReports', locale)}</dt><dd>{formatNumber(reports.length)}</dd></div>
+      <div><dt>{t('searchStatSources', locale)}</dt><dd>{formatNumber(totalSources)}</dd></div>
+      <div><dt>{t('searchStatNewest', locale)}</dt><dd>{newest?.data.runDate ?? '—'}</dd></div>
+    </dl>
+  </section>
+  <section class="sr-container sr-section search-section" data-search-root data-index-url={indexUrl} data-i18n={i18nLabelsJson}>
+    <div class="search-section-head">
+      <div>
+        <h2>{t('searchSectionHeading', locale)}</h2>
+        <p>{t('searchSectionDeck', locale)}</p>
+      </div>
+    </div>
+    {suggestions.length > 0 && (
+      <div class="search-examples" aria-label="Example searches">
+        <span>{t('searchTry', locale)}</span>
+        {suggestions.map((name) => <button type="button" data-search-suggestion={name}>{name}</button>)}
+      </div>
+    )}
+    <div class="search-field">
+      <span class="search-field-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="9" r="6" />
+          <line x1="13.5" y1="13.5" x2="17" y2="17" />
+        </svg>
+      </span>
+      <input class="search-field-input" type="search" placeholder={t('searchPlaceholder', locale)} autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-search-input />
+      <button type="button" class="search-field-clear" aria-label={t('searchClear', locale)} data-search-clear hidden>×</button>
+    </div>
+    <div class="search-status" data-search-status-row>
+      <span class="search-count" data-search-count hidden></span>
+      <span class="search-hint" data-search-status>{i18nLabels.hint}</span>
+    </div>
+    <div class="search-results" data-search-results></div>
+  </section>
+  <script>
+    const root = document.querySelector('[data-search-root]');
+    const input = root?.querySelector('[data-search-input]');
+    const clearButton = root?.querySelector('[data-search-clear]');
+    const statusEl = root?.querySelector('[data-search-status]');
+    const countEl = root?.querySelector('[data-search-count]');
+    const results = root?.querySelector('[data-search-results]');
+    const suggestions = root?.querySelectorAll('[data-search-suggestion]') ?? [];
+    const i18n = JSON.parse(root?.dataset.i18n || '{}');
+    const state = { docs: [] };
+    const norm = (v) => String(v ?? '').toLowerCase().trim();
+    const escapeHtml = (v) => String(v ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    const fmt = (template, vars) => String(template || '').replace(/\{(\w+)\}/g, (_, key) => String(vars[key] ?? ''));
+    const highlight = (text, query) => {
+      if (!query) return escapeHtml(text);
+      const safe = escapeHtml(text);
+      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return safe.replace(new RegExp(`(${escaped})`, 'ig'), '<mark>$1</mark>');
+    };
+    const render = () => {
+      if (!root || !input || !statusEl || !countEl || !results || !clearButton) return;
+      const raw = input.value;
+      const query = norm(raw);
+      clearButton.hidden = raw.length === 0;
+      if (!query) {
+        statusEl.textContent = state.docs.length ? fmt(i18n.hintReadyTemplate, { count: state.docs.length }) : i18n.hint;
+        countEl.hidden = true;
+        results.replaceChildren();
+        return;
+      }
+      const matches = state.docs.filter((doc) => doc.searchText.includes(query)).slice(0, 30);
+      countEl.hidden = false;
+      countEl.textContent = String(matches.length);
+      statusEl.textContent = matches.length === 1 ? i18n.resultSingular : i18n.resultPlural;
+      if (matches.length === 0) {
+        results.innerHTML = `<p class="search-empty">${escapeHtml(fmt(i18n.emptyTemplate, { query: raw }))}</p>`;
+        return;
+      }
+      results.innerHTML = '';
+      for (const doc of matches) {
+        const link = document.createElement('a');
+        link.className = 'search-result';
+        link.href = doc.href;
+        link.innerHTML = `
+          <span class="search-result-meta">${escapeHtml(doc.sector || 'Other')}</span>
+          <span class="search-result-title">${highlight(doc.title, query)}</span>
+          <span class="search-result-foot"><strong>${Number(doc.rating).toFixed(1)}</strong> ${escapeHtml(i18n.overallRating)} · ${escapeHtml(doc.date)}</span>
+        `;
+        results.appendChild(link);
+      }
+    };
+    fetch(root?.dataset.indexUrl || '').then((r) => r.json()).then((docs) => { state.docs = Array.isArray(docs) ? docs : []; render(); }).catch(() => { if (statusEl) statusEl.textContent = i18n.unavailable; });
+    input?.addEventListener('input', render);
+    clearButton?.addEventListener('click', () => { if (!input) return; input.value = ''; input.focus(); render(); });
+    input?.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && input.value) { event.preventDefault(); input.value = ''; render(); }
+    });
+    suggestions.forEach((button) => button.addEventListener('click', () => {
+      if (!input) return;
+      input.value = button.dataset.searchSuggestion || '';
+      input.focus();
+      render();
+    }));
+    setTimeout(() => input?.focus(), 0);
+  </script>
+  <style>
+    .search-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 420px); gap: var(--space-7); align-items: end; padding-bottom: var(--space-6); }
+    .search-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin: 0; border-top: var(--rule-hard); padding-top: var(--space-4); font-family: var(--font-sans); }
+    .search-summary dt { color: var(--caption-gray); font-size: var(--fs-xs); font-variant-caps: all-small-caps; font-weight: 800; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; }
+    .search-summary dd { margin: var(--space-1) 0 0; color: var(--ink-page); font-family: var(--font-display); font-size: var(--fs-md); font-weight: 700; line-height: 1.1; }
+    .search-section { display: flex; flex-direction: column; gap: var(--space-4); }
+    .search-section-head h2 { margin-bottom: var(--space-2); }
+    .search-section-head p { margin: 0; color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--fs-sm); line-height: 1.4; }
+    .search-examples { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--caption-gray); font-family: var(--font-sans); font-size: var(--fs-sm); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); }
+    .search-examples button { appearance: none; border: var(--report-rule); background: transparent; color: var(--ink-page); cursor: pointer; font: inherit; padding: 2px var(--space-3); line-height: 1.6; }
+    .search-examples button:hover, .search-examples button:focus-visible { border-color: var(--claret); color: var(--claret); outline: none; }
+    .search-field { position: relative; display: flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-3); border: 2px solid var(--hairline); background: var(--surface-paper); transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .search-field:focus-within { border-color: var(--claret); box-shadow: 0 0 0 3px color-mix(in srgb, var(--claret) 14%, transparent); }
+    .search-field-icon { display: inline-flex; align-items: center; justify-content: center; color: var(--caption-gray); flex: none; }
+    .search-field:focus-within .search-field-icon { color: var(--claret); }
+    .search-field-input { flex: 1 1 auto; min-width: 0; border: 0; background: transparent; padding: var(--space-3) 0; font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 600; color: var(--ink-page); letter-spacing: var(--tracking-display-snug); }
+    .search-field-input:focus { outline: none; }
+    .search-field-input::-webkit-search-decoration, .search-field-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+    .search-field-input::placeholder { color: var(--caption-gray); }
+    .search-field-clear { flex: none; appearance: none; border: 0; background: transparent; padding: 0 var(--space-2); font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 700; color: var(--caption-gray); cursor: pointer; line-height: 1; }
+    .search-field-clear:hover, .search-field-clear:focus-visible { color: var(--claret); outline: none; }
+    .search-status { display: flex; align-items: center; gap: var(--space-2); font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); font-size: var(--fs-sm); color: var(--caption-gray); }
+    .search-count { display: inline-grid; place-items: center; min-width: 1.6rem; height: 1.6rem; padding: 0 0.45rem; border-radius: 999px; background: var(--claret); color: #fff7ef; font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 800; line-height: 1; }
+    .search-results { display: flex; flex-direction: column; gap: 0; border-top: 2px solid var(--claret); border-bottom: var(--report-rule); }
+    .search-results:empty { border-top: 0; border-bottom: 0; }
+    .search-result { display: grid; grid-template-columns: minmax(7rem, 11rem) minmax(0, 1fr) auto; align-items: baseline; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: var(--report-rule); background: var(--surface-paper); color: var(--ink-page); text-decoration: none; transition: background-color 120ms ease, color 120ms ease; }
+    .search-result:last-child { border-bottom: 0; }
+    .search-result:hover, .search-result:focus-visible { background: color-mix(in srgb, var(--claret) 6%, var(--surface-paper)); outline: none; }
+    .search-result-meta { font-family: var(--font-sans); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); font-size: var(--fs-sm); color: var(--claret); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .search-result-title { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; line-height: 1.15; color: var(--ink-page); min-width: 0; overflow-wrap: anywhere; }
+    .search-result-title :global(mark) { background: color-mix(in srgb, var(--gold) 35%, transparent); color: inherit; padding: 0 0.1em; }
+    .search-result-foot { font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--caption-gray); white-space: nowrap; }
+    .search-result-foot strong { font-family: var(--font-display); color: var(--claret); font-weight: 800; }
+    .search-empty { margin: 0; padding: var(--space-5) var(--space-4); border-top: 2px solid var(--claret); border-bottom: var(--report-rule); background: var(--surface-paper); font-family: var(--font-sans); color: var(--caption-gray); text-align: center; }
+    @media (max-width: 840px) {
+      .search-hero { grid-template-columns: 1fr; align-items: start; gap: var(--space-5); }
+      .search-summary { max-width: 640px; }
+    }
+    @media (max-width: 600px) {
+      .search-summary { grid-template-columns: 1fr; }
+      .search-result { grid-template-columns: 1fr auto; row-gap: var(--space-1); }
+      .search-result-meta { grid-column: 1 / -1; }
+    }
+  </style>
+</BaseLayout>

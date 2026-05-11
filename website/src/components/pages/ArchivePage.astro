@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReportCard from '../ReportCard.astro';
+import { t } from '../../lib/i18n';
+import type { Locale } from '../../lib/locale';
+import { currentReports, sortNewest } from '../../lib/reports';
+import { loadCardOverlayZh } from '../../content/reports-loader';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const reports = sortNewest(currentReports(await getCollection('reports')));
+const byMonth = new Map<string, typeof reports>();
+for (const report of reports) {
+  const month = report.data.runDate.slice(0, 7);
+  byMonth.set(month, [...(byMonth.get(month) ?? []), report]);
+}
+
+const intlLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
+const monthFormatter = new Intl.DateTimeFormat(intlLocale, { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const formatMonth = (month: string) => {
+  const [year, monthIndex] = month.split('-').map(Number);
+  return monthFormatter.format(new Date(Date.UTC(year, (monthIndex || 1) - 1, 1)));
+};
+const formatNumber = (value: number) => value.toLocaleString(intlLocale);
+const groups = [...byMonth.entries()].map(([month, entries]) => {
+  const totalSources = entries.reduce((sum, entry) => sum + entry.data.sourceStats.sourcesRetained, 0);
+  const avgRating = entries.length
+    ? entries.reduce((sum, entry) => sum + entry.data.overallScore, 0) / entries.length
+    : 0;
+  return { month, label: formatMonth(month), entries, totalSources, avgRating };
+});
+const totalSources = reports.reduce((sum, entry) => sum + entry.data.sourceStats.sourcesRetained, 0);
+const latestMonth = groups[0]?.label ?? '—';
+const overlayFor = (id: string) => (locale === 'zh' ? loadCardOverlayZh(id) : null);
+---
+<BaseLayout title={t('archiveTitle', locale)} description={t('archiveDescription', locale)} locale={locale}>
+  <section class="sr-container sr-hero archive-hero">
+    <span class="sr-eyebrow">{t('archiveEyebrow', locale)}</span>
+    <h1>{t('archiveHeading', locale)}</h1>
+    <p class="sr-deck">{t('archiveDeck', locale)}</p>
+    <dl class="archive-summary" aria-label="Archive summary">
+      <div><dt>{t('archiveStatReports', locale)}</dt><dd>{formatNumber(reports.length)}</dd></div>
+      <div><dt>{t('archiveStatSources', locale)}</dt><dd>{formatNumber(totalSources)}</dd></div>
+      <div><dt>{t('archiveStatMonths', locale)}</dt><dd>{formatNumber(groups.length)}</dd></div>
+      <div><dt>{t('archiveStatLatest', locale)}</dt><dd>{latestMonth}</dd></div>
+    </dl>
+  </section>
+
+  {groups.length > 1 && (
+    <nav class="sr-container archive-jump" aria-label="Archive months">
+      {groups.map(({ month, label, entries }) => (
+        <a class="sr-pill" href={`#month-${month}`}>{label}<span>{entries.length}</span></a>
+      ))}
+    </nav>
+  )}
+
+  {groups.length ? groups.map(({ month, label, entries, totalSources, avgRating }) => (
+    <section class="sr-container sr-section archive-month" id={`month-${month}`} aria-labelledby={`month-${month}-title`}>
+      <div class="archive-month__header">
+        <div>
+          <p class="archive-month__eyebrow">{t('archiveGenerated', locale)} {month}</p>
+          <h2 id={`month-${month}-title`}>{label}</h2>
+        </div>
+        <dl class="archive-month__stats" aria-label={`${label} summary`}>
+          <div><dt>{t('archiveStatReports', locale)}</dt><dd>{entries.length}</dd></div>
+          <div><dt>{t('archiveStatSources', locale)}</dt><dd>{formatNumber(totalSources)}</dd></div>
+          <div><dt>{t('archiveAvgRating', locale)}</dt><dd>{avgRating.toFixed(1)}</dd></div>
+        </dl>
+      </div>
+      <div class="sr-grid archive-grid">{entries.map((entry) => <ReportCard entry={entry} locale={locale} overlay={overlayFor(entry.id)} />)}</div>
+    </section>
+  )) : <section class="sr-container sr-section"><p>{t('noReports', locale)}</p></section>}
+
+  <style>
+    .archive-hero { padding-bottom: var(--space-5); }
+    .archive-summary, .archive-month__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--space-3); margin: var(--space-5) 0 0; font-family: var(--font-sans); }
+    .archive-summary div, .archive-month__stats div { border-top: var(--report-rule); padding-top: var(--space-3); min-width: 0; }
+    .archive-summary dt, .archive-month__stats dt { color: var(--caption-gray); font-size: var(--fs-sm); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; }
+    .archive-summary dd, .archive-month__stats dd { margin: var(--space-1) 0 0; color: var(--ink-page); font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; line-height: 1.1; }
+    .archive-jump { display: flex; flex-wrap: wrap; gap: var(--space-2); padding-block: 0 var(--space-4); }
+    .archive-jump a { text-decoration: none; gap: var(--space-2); }
+    .archive-jump span { color: var(--caption-gray); }
+    .archive-month { border-top: var(--report-rule); padding-block: var(--space-6) var(--space-2); scroll-margin-top: var(--space-7); }
+    .archive-month__header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr); align-items: end; gap: var(--space-6); margin-bottom: var(--space-5); }
+    .archive-month__eyebrow { margin: 0 0 var(--space-2); color: var(--claret); font-family: var(--font-sans); font-size: var(--fs-sm); font-variant-caps: all-small-caps; font-weight: 700; letter-spacing: var(--tracking-eyebrow); line-height: 1.2; }
+    .archive-month h2 { margin: 0; color: var(--ink-page); font-family: var(--font-display); font-size: var(--fs-2xl); font-variant-caps: normal; font-weight: 700; letter-spacing: var(--tracking-display-tight); line-height: var(--lh-display-block); }
+    .archive-month__stats { margin: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .archive-month__stats dd { font-size: var(--fs-base); }
+    .archive-grid { row-gap: var(--space-5); }
+    @media (max-width: 760px) {
+      .archive-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .archive-month__header { grid-template-columns: 1fr; align-items: start; gap: var(--space-4); }
+      .archive-month__stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 460px) {
+      .archive-summary, .archive-month__stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</BaseLayout>

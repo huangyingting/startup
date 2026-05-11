@@ -1,0 +1,258 @@
+# Scheduled/manual Chinese translation run.
+#
+# Every two hours, selects up to 5 finalized report folders under reports/
+# that do not yet have both Chinese overlays, asks Copilot to translate them
+# with the translate-zh skill, validates the result, and commits the overlays.
+#
+# Required secrets:
+# - COPILOT_PAT — PAT for a Copilot-licensed account; consumed by the Copilot CLI.
+# - STARTUP_PAT — PAT with repo write access for checkout/push.
+
+name: Translate reports to Chinese
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
+    inputs:
+      reportCount:
+        description: "Max reports to translate."
+        required: false
+        default: "5"
+        type: string
+      model:
+        description: "Model."
+        required: false
+        default: "claude-sonnet-4.6"
+        type: choice
+        options:
+          - gpt-5.5
+          - gpt-5.4
+          - claude-sonnet-4.6
+          - claude-opus-4.6
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: startup-translate-zh
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    name: Translate untranslated reports to Chinese
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.STARTUP_PAT }}
+
+      - name: Set up Node.js with npm cache
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            website/package-lock.json
+
+      - name: Normalize translation inputs
+        id: inputs
+        env:
+          RAW_COUNT: ${{ github.event.inputs.reportCount }}
+          RAW_MODEL: ${{ github.event.inputs.model }}
+        run: |
+          set -euo pipefail
+          trim() { printf '%s' "${1//$'\n'/ }" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//'; }
+          COUNT="$(trim "$RAW_COUNT")"
+          MODEL="$(trim "$RAW_MODEL")"
+          if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
+            COUNT=5
+          fi
+          case "$MODEL" in
+            claude-sonnet-4.6|claude-opus-4.6|gpt-5.5|gpt-5.4) ;;
+            "") MODEL="claude-sonnet-4.6" ;;
+            *)
+              echo "Unsupported model: $MODEL (allowed: claude-sonnet-4.6, claude-opus-4.6, gpt-5.5, gpt-5.4)" >&2
+              exit 1
+              ;;
+          esac
+          {
+            echo "count=$COUNT"
+            echo "model=$MODEL"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Select untranslated reports
+        id: targets
+        env:
+          LIMIT: ${{ steps.inputs.outputs.count }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { appendFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+          import { join, resolve } from 'node:path';
+
+          const reportsDir = resolve('reports');
+          const limit = Number.isInteger(Number(process.env.LIMIT)) && Number(process.env.LIMIT) > 0
+            ? Number(process.env.LIMIT)
+            : 5;
+
+          function hasFile(folder, file) {
+            return existsSync(join(reportsDir, folder, file));
+          }
+
+          const untranslated = existsSync(reportsDir)
+            ? readdirSync(reportsDir)
+                .filter((name) => !name.startsWith('.'))
+                .filter((name) => statSync(join(reportsDir, name)).isDirectory())
+                .sort()
+                .filter((name) => hasFile(name, 'summary-card.yaml') && hasFile(name, 'full-report.yaml'))
+                .filter((name) => !hasFile(name, 'summary-card.zh.yaml') || !hasFile(name, 'full-report.zh.yaml'))
+            : [];
+
+          const selected = untranslated.slice(0, limit);
+          appendFileSync(process.env.GITHUB_OUTPUT, `count=${selected.length}\n`);
+          appendFileSync(process.env.GITHUB_OUTPUT, `total=${untranslated.length}\n`);
+          appendFileSync(process.env.GITHUB_OUTPUT, 'reportIds<<EOF\n');
+          appendFileSync(process.env.GITHUB_OUTPUT, `${selected.join('\n')}\n`);
+          appendFileSync(process.env.GITHUB_OUTPUT, 'EOF\n');
+
+          console.log(`Selected ${selected.length}/${untranslated.length} untranslated report(s).`);
+          for (const reportId of selected) console.log(`- ${reportId}`);
+          NODE
+
+      - name: Write selection summary
+        run: |
+          {
+            echo "## Chinese translation batch"
+            echo
+            echo "Selected ${{ steps.targets.outputs.count }} of ${{ steps.targets.outputs.total }} untranslated report(s)."
+            echo
+            if [ "${{ steps.targets.outputs.count }}" = "0" ]; then
+              echo "No untranslated reports found; exiting successfully."
+            else
+              echo "### Reports"
+              while IFS= read -r report; do
+                [ -z "$report" ] && continue
+                echo "- $report"
+              done <<'REPORTS'
+          ${{ steps.targets.outputs.reportIds }}
+          REPORTS
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install dependencies and Copilot CLI
+        if: steps.targets.outputs.count != '0'
+        run: |
+          npm ci || npm install --no-audit --no-fund
+          npm --prefix website ci || npm --prefix website install --no-audit --no-fund
+          npm install -g @github/copilot
+
+      - name: Translate selected reports
+        if: steps.targets.outputs.count != '0'
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
+          MODEL: ${{ steps.inputs.outputs.model }}
+          REPORT_IDS: ${{ steps.targets.outputs.reportIds }}
+        run: |
+          set -euo pipefail
+          PROMPT=$(cat <<EOF
+          Translate the selected finalized startup diligence reports into Simplified Chinese overlays.
+
+          Selected report folders under reports/:
+          $REPORT_IDS
+
+          Requirements:
+          - Translate exactly these selected folders. If fewer than the requested batch size were selected, translate only the selected folders. If a selected folder already has both Chinese overlays by the time you inspect it, run `npm run translate:zh -- verify <runId>` and skip rewriting it.
+          - For each folder, produce reports/<runId>/summary-card.zh.yaml and reports/<runId>/full-report.zh.yaml using .agents/skills/translate-zh/SKILL.md.
+          - Use the single orchestration entrypoint instead of assembling the sparse-bundle pipeline inline: `npm run translate:zh -- preflight <runId>`, `npm run translate:zh -- init <runId>`, `npm run translate:zh -- finalize-summary <runId>`, `npm run translate:zh -- finalize-full <runId>`, and `npm run translate:zh -- verify <runId>`.
+          - Keep all intermediate artifacts under `.translate-cache/<runId>/`. Do not create ad-hoc temp folders under `reports/<runId>/` or elsewhere. Successful runs must leave no cache behind.
+          - If finalization fails, repair only the offending cached leaf or part under `.translate-cache/<runId>/`, then rerun the narrowest finalize command. Do not re-export the whole report unless the cache is structurally corrupted.
+          - Do not edit English source YAML, report metadata, evidence files, workflow snapshots, website files, package files, or any report folder outside the selected list.
+          - Do not fetch URLs, do not invent facts, and do not add new diligence content; this is translation only.
+          - Do not run any git command (git add, git commit, git push, git stash, git checkout, etc.) at any point; leave generated Chinese overlays unstaged. The workflow itself owns commit/push decisions.
+          EOF
+          )
+          mkdir -p "$RUNNER_TEMP/copilot-logs"
+          COPILOT_LOG="$RUNNER_TEMP/copilot-logs/translate-zh.log"
+          copilot --yolo --no-ask-user --autopilot --excluded-tools "web_fetch" --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
+          {
+            echo
+            echo "### Copilot run stats"
+            if [ -s "$COPILOT_LOG" ]; then
+              tail -n 20 "$COPILOT_LOG" | grep -iE '^(changes?|requests?|tokens?)\b' | sed 's/^/- /' || echo "- (no stats line emitted)"
+            else
+              echo "- (no Copilot output captured)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify selected translations
+        if: steps.targets.outputs.count != '0'
+        env:
+          REPORT_IDS: ${{ steps.targets.outputs.reportIds }}
+        run: |
+          set -euo pipefail
+          while IFS= read -r report; do
+            [ -z "$report" ] && continue
+            node .agents/skills/translate-zh/scripts/check-translation.mjs "reports/$report" --strict --require-final
+          done <<'REPORTS'
+          $REPORT_IDS
+          REPORTS
+
+      - name: Validate reports and website build
+        if: steps.targets.outputs.count != '0'
+        run: npm run validate
+
+      - name: Commit and publish Chinese translations
+        if: steps.targets.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.STARTUP_PAT }}
+          REPORT_IDS: ${{ steps.targets.outputs.reportIds }}
+        run: |
+          set -euo pipefail
+          git config user.name "startup-research-bot"
+          git config user.email "startup-research-bot@users.noreply.github.com"
+          BRANCH="${{ github.ref_name }}"
+          STAMP="$(date -u +%F)"
+          COUNT="${{ steps.targets.outputs.count }}"
+          MESSAGE="chore(reports): translate zh batch $STAMP"
+
+          while IFS= read -r report; do
+            [ -z "$report" ] && continue
+            git add "reports/$report/summary-card.zh.yaml" "reports/$report/full-report.zh.yaml"
+          done <<'REPORTS'
+          $REPORT_IDS
+          REPORTS
+
+          if git diff --cached --quiet; then
+            echo "No new or updated Chinese translations."
+            exit 0
+          fi
+          git commit -m "$MESSAGE"
+
+          for attempt in 1 2 3; do
+            echo "Push attempt $attempt/3 to $BRANCH"
+            git fetch origin "$BRANCH"
+            if ! git rebase --autostash "origin/$BRANCH"; then
+              echo "Rebase failed; aborting and retrying." >&2
+              git rebase --abort || true
+              sleep $((attempt * 5))
+              continue
+            fi
+            if git push origin "HEAD:$BRANCH"; then
+              echo "Pushed to $BRANCH on attempt $attempt."
+              exit 0
+            fi
+            sleep $((attempt * 5))
+          done
+
+          PR_BRANCH="auto/translate-zh-${STAMP}-$(date -u +%H%M%S)"
+          echo "Direct push to $BRANCH failed; pushing to $PR_BRANCH and opening PR." >&2
+          git push origin "HEAD:$PR_BRANCH"
+          GH_TOKEN="${{ secrets.GITHUB_TOKEN }}" gh pr create --base "$BRANCH" --head "$PR_BRANCH" \
+            --title "$MESSAGE" \
+            --body "Automated Chinese translation batch for $COUNT report(s). Direct push to \`$BRANCH\` failed after 3 attempts; merging via PR instead."
