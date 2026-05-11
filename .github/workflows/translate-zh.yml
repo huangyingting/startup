@@ -48,6 +48,15 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.STARTUP_PAT }}
 
+      - name: Sync to latest branch head
+        run: |
+          set -euo pipefail
+          BRANCH="${{ github.ref_name }}"
+          # Queued workflow_dispatch runs are created from the dispatch SHA;
+          # refresh before target selection so prior translation batches count.
+          git fetch origin "$BRANCH:refs/remotes/origin/$BRANCH"
+          git checkout --force -B "$BRANCH" "origin/$BRANCH"
+
       - name: Set up Node.js with npm cache
         uses: actions/setup-node@v6
         with:
