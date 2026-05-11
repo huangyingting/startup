@@ -1,27 +1,22 @@
 #!/usr/bin/env node
-// Schema and renderer-contract checks for a single report folder, or every
-// finalized report under ./reports/ when invoked with --all.
+// Schema and renderer-contract checks for a single finalized v2 report folder.
+// Batch-mode sweeps across every report live in check-reports.mjs, which
+// imports checkRun() from this file.
 //
 // Usage:
 //   node .agents/skills/startup-research/scripts/check-report.mjs <report-folder>
 //   node .agents/skills/startup-research/scripts/check-report.mjs <report-folder> --contract
-//   node .agents/skills/startup-research/scripts/check-report.mjs --all
 //
 // `<report-folder>` may be an absolute path, a path relative to the repo
 // root, or a bare run id (e.g. `20260505063138-cyberhaven`) which is
 // resolved against ./reports/. Exits 0 on success, non-zero on failures.
 //
-// Invoked automatically as the last step of finalize-report.mjs in full gate mode.
-// `--contract` keeps schema / renderer / reference checks but skips current
-// content-quality gates (source diversity and adverse-source distribution),
-// which makes it suitable for re-checking historical reports after renderer
-// or schema-contract changes. `--all` walks every finalized report folder in
-// ./reports/ and runs the contract checks on each (used by `npm run
-// check:reports-contract`); historical reports are not forced to satisfy
-// content gates added after they were produced.
-//   node .agents/skills/startup-research/scripts/check-report.mjs <folder>
-//   node .agents/skills/startup-research/scripts/check-report.mjs <folder> --contract
-//   node .agents/skills/startup-research/scripts/check-report.mjs --all
+// Invoked automatically as the last step of finalize-report.mjs in full gate
+// mode. `--contract` keeps schema / renderer / reference checks but skips
+// current content-quality gates (source diversity and adverse-source
+// distribution), which makes it suitable for re-checking historical reports
+// after renderer or schema-contract changes.
+//
 // Chapter content readiness is checked by the other startup-research scripts.
 import { existsSync, statSync } from 'node:fs';
 import { basename, isAbsolute, join, resolve, dirname } from 'node:path';
@@ -36,7 +31,6 @@ import {
   hasText,
   isFinalizedReportFolder,
   isRunId,
-  listDirs,
   loadWorkflowConfig,
   REVISION_STATUSES,
   runDateFromRunId,
@@ -559,28 +553,22 @@ function resolveReportDir(arg) {
 }
 
 function usage() {
-  console.error('Usage: node .agents/skills/startup-research/scripts/check-report.mjs (<report-folder> [--contract] | --all) [--format text|json|compact]');
+  console.error('Usage: node .agents/skills/startup-research/scripts/check-report.mjs <report-folder> [--contract] [--format text|json|compact]');
   process.exit(EXIT.failure);
 }
 
 function parseArgs(argv) {
-  const args = { folder: null, contract: false, format: 'text', all: false };
+  const args = { folder: null, contract: false, format: 'text' };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--contract') args.contract = true;
-    else if (arg === '--all') args.all = true;
     else if (arg === '--format') args.format = argv[++i] ?? 'text';
     else if (arg === '-h' || arg === '--help') usage();
     else if (arg.startsWith('-')) usage();
     else if (!args.folder) args.folder = arg;
     else usage();
   }
-  if (args.all) {
-    if (args.folder) usage();
-    args.contract = true;       // historical reports always run in contract mode
-  } else if (!args.folder) {
-    usage();
-  }
+  if (!args.folder) usage();
   if (!['text', 'json', 'compact'].includes(args.format)) usage();
   return args;
 }
@@ -636,86 +624,32 @@ function emitSingle(args, run, runFailures, checked) {
   return EXIT.ok;
 }
 
-function runAll(args) {
-  // Walk every reports/<runId>/ folder, filter to finalized v2 reports,
-  // run the per-folder contract check, and aggregate failures into one
-  // exit code. checkRun() returns its own failures array per call, so no
-  // shared state is touched between iterations.
-  const collected = [];
-  let passCount = 0;
-  for (const runId of listDirs(REPORTS_DIR).sort()) {
-    if (!isRunId(runId)) continue;
-    const folder = join(REPORTS_DIR, runId);
-    if (!isFinalizedReportFolder(folder)) continue;
-    const { checked, failures: runFailures } = checkRun(runId, { contentGates: false });
-    if (checked && runFailures.length === 0) {
-      passCount += 1;
-    } else {
-      collected.push({ runId, checked, failures: runFailures });
-    }
-  }
-  if (collected.length) {
-    if (args.format === 'json') {
-      const result = validationEnvelope({
-        ok: false,
-        validator: 'check-report',
-        issues: collected.flatMap(({ runId, failures: list }) => list.map((entry) => validationIssue({
-          path: entry.path ?? String(entry.message).split(':')[0] ?? runId,
-          message: entry.message,
-          dimension: entry.dimension ?? 'reportContract',
-          code: entry.code ?? 'checkReport.failure',
-          fix: entry.fix ?? 'Fix the reported artifact, then rerun check-report.mjs.',
-        }))),
-        summary: { mode: 'contract', checkedReports: passCount + collected.length, failedReports: collected.length },
-      });
-      console.log(JSON.stringify(result, null, 2));
-    } else {
-      console.error('[check:report] failures across reports:');
-      for (const { runId, failures: list, checked } of collected) {
-        console.error(`\n--- ${runId} ---`);
-        if (!checked) {
-          console.error(`  - ${runId}: not a finalized v2 report (no ${SUMMARY_CARD_FILE})`);
-        }
-        for (const entry of list) console.error(`  - ${entry.message}`);
-      }
-    }
-    return EXIT.failure;
-  }
-  if (args.format === 'json') {
-    const result = validationEnvelope({
-      ok: true,
-      validator: 'check-report',
-      summary: { mode: 'contract', checkedReports: passCount },
-    });
-    console.log(JSON.stringify(result, null, 2));
-  } else {
-    console.log(`[check:report] ✓ ${passCount} finalized report(s); contract checks passed.`);
-  }
-  return EXIT.ok;
-}
+// Exposed for check-reports.mjs (the batch-mode wrapper).
+export { checkRun };
 
-try {
-  const args = parseArgs(process.argv.slice(2));
-  if (args.all) {
-    process.exit(runAll(args));
-  }
-  const folderArg = args.folder;
-  const dir = resolveReportDir(folderArg);
-  if (!existsSync(dir) || !statSync(dir).isDirectory()) {
-    console.error(`[check:report] not a directory: ${dir}`);
-    process.exit(EXIT.notFound);
-  }
-  const run = basename(dir);
-  // checkRun() resolves the folder via REPORTS_DIR; reject anything outside
-  // it instead of silently misbehaving.
-  if (resolve(REPORTS_DIR, run) !== dir) {
-    console.error(`[check:report] folder must live under ${REPORTS_DIR}; got ${dir}`);
+// Only run the CLI when this file is executed directly (not when imported
+// by check-reports.mjs).
+if (import.meta.url === `file://${process.argv[1]}`) {
+  try {
+    const args = parseArgs(process.argv.slice(2));
+    const folderArg = args.folder;
+    const dir = resolveReportDir(folderArg);
+    if (!existsSync(dir) || !statSync(dir).isDirectory()) {
+      console.error(`[check:report] not a directory: ${dir}`);
+      process.exit(EXIT.notFound);
+    }
+    const run = basename(dir);
+    // checkRun() resolves the folder via REPORTS_DIR; reject anything outside
+    // it instead of silently misbehaving.
+    if (resolve(REPORTS_DIR, run) !== dir) {
+      console.error(`[check:report] folder must live under ${REPORTS_DIR}; got ${dir}`);
+      process.exit(EXIT.failure);
+    }
+
+    const { checked, failures: runFailures } = checkRun(run, { contentGates: !args.contract });
+    process.exit(emitSingle(args, run, runFailures, checked));
+  } catch (err) {
+    console.error(`[check:report] fatal error: ${err.message}`);
     process.exit(EXIT.failure);
   }
-
-  const { checked, failures: runFailures } = checkRun(run, { contentGates: !args.contract });
-  process.exit(emitSingle(args, run, runFailures, checked));
-} catch (err) {
-  console.error(`[check:report] fatal error: ${err.message}`);
-  process.exit(EXIT.failure);
 }

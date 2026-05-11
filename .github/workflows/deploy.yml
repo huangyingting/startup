@@ -38,6 +38,16 @@ jobs:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: website/package-lock.json
+      - name: Restore incremental build caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            website/.astro
+            .cache
+          key: startup-incremental-${{ runner.os }}-node22-${{ hashFiles('website/src/**', 'website/package-lock.json', '.agents/skills/startup-research/scripts/**', '.agents/skills/translate-zh/scripts/**') }}-${{ hashFiles('reports/**/*.yaml') }}
+          restore-keys: |
+            startup-incremental-${{ runner.os }}-node22-${{ hashFiles('website/src/**', 'website/package-lock.json', '.agents/skills/startup-research/scripts/**', '.agents/skills/translate-zh/scripts/**') }}-
+            startup-incremental-${{ runner.os }}-node22-
       - name: Install website dependencies
         run: npm ci
       - name: Build static report website

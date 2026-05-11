@@ -263,6 +263,7 @@ agentPolicy:
   hardRules:
     - "Set slug to the company slug only: the report folder basename with the leading timestamp removed."
     - "Do not hand-write evidence.yaml, full-report.yaml, or summary-card.yaml; let finalization scripts assemble them."
+    - "Do not hand-author the `revision` block in report-meta.yaml; finalize-report's link-refresh phases own every revision field (status, refreshOfRunId, supersededByRunId, refreshReason). Disambiguate prior matches at create time with create-report-run --refresh-of <priorRunId>; if the new report is already finalized, edit `.research-cache/<newRunId>/refresh-context.yaml` (scratch) to set refreshOfRunId, preserving the file's other keys."
     - "Do not invent facts, metrics, customers, funding, valuation, or dates."
     - "Do not edit another chapter artifact while working on the current chapter."
     - "Keep scratch files under .research-cache/<runId>/, never under reports/<runId>/."

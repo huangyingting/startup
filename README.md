@@ -160,6 +160,16 @@ npm run check:reports-contract
 
 For normal report generation, prefer the full startup-research workflow and `finalize-report.mjs`; use `build-report.mjs` only when maintaining existing finalized reports and the chapter/evidence ledger is already current.
 
+### Incremental builds
+
+Both `--all` validators and the website loader are digest-keyed, so unchanged report folders are skipped on rebuild:
+
+- [.agents/skills/startup-research/scripts/check-reports.mjs](.agents/skills/startup-research/scripts/check-reports.mjs) hashes every YAML in each `reports/<run>/` folder (plus `CHECK_VERSION`) and persists `.cache/check-reports.json`. Failures are never cached. Bump `CHECK_VERSION` when validation rules change. Set `CHECK_REPORT_NO_CACHE=1` to bypass.
+- [.agents/skills/translate-zh/scripts/check-translations.mjs](.agents/skills/translate-zh/scripts/check-translations.mjs) hashes both `*.yaml` and `*.zh.yaml` per folder (plus `CHECK_VERSION` and the `--strict` / `--require-final` flags) and persists `.cache/check-translations.json`. Same failure / version semantics. Set `CHECK_TRANSLATION_NO_CACHE=1` to bypass.
+- [website/src/content/reports-loader.ts](website/src/content/reports-loader.ts) hashes each `summary-card.yaml` (plus `LOADER_VERSION`) and reuses Astro's persistent content store at `website/.astro/data-store.json`. Bump `LOADER_VERSION` when the loader's parsing surface or the Zod schema in [content.config.ts](website/src/content.config.ts) changes.
+
+In CI, [`deploy.yml`](.github/workflows/deploy.yml) restores `website/.astro` and `.cache/` via `actions/cache@v4`, keyed by the hash of `website/src/**`, the validator scripts, and `reports/**/*.yaml` so any source / report change re-keys the cache automatically.
+
 From `website/`:
 
 ```bash

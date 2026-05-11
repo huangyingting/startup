@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import yaml from 'js-yaml';
@@ -6,6 +6,10 @@ import type { Loader } from 'astro/loaders';
 
 const REPORTS_DIR = resolve(process.cwd(), '..', 'reports');
 const SCHEMA_VERSION = 'report-v2' as const;
+// Bump when the loader's parsing surface (loadReportCard / parseData inputs /
+// Zod schema in content.config.ts) changes so cached digests in
+// .astro/data-store.json invalidate everywhere.
+const LOADER_VERSION = '1' as const;
 
 export type YamlRecord = Record<string, unknown>;
 
@@ -357,19 +361,73 @@ function readLocaleStageYaml(folder: string, basename: string, locale: 'zh'): Ya
 // public API
 // ---------------------------------------------------------------------------
 
+// Digest a single file alongside LOADER_VERSION so any change to either the
+// file bytes or the loader's parsing surface (via the version constant)
+// re-keys the entry in Astro's persistent content store.
+function fileDigest(path: string): string {
+  return createHash('sha1').update(LOADER_VERSION).update('\0').update(readFileSync(path)).digest('hex');
+}
+
 export function reportsLoader(): Loader {
   return {
     name: 'startup-reports-v2-loader',
     load: async ({ store, parseData, logger }) => {
-      store.clear();
       const runs = listRuns();
-      logger.info(`[reports-loader] Loading ${runs.length} report run(s) from ${REPORTS_DIR}`);
-      for (const runId of runs) {
-        const dataForRun = loadReportCard(runId);
-        if (!dataForRun) continue;
-        const data = await parseData({ id: runId, data: dataForRun });
-        store.set({ id: runId, data });
+      if (runs.length === 0) {
+        logger.info(`[reports-loader] No report runs found in ${REPORTS_DIR}`);
+        for (const id of Array.from(store.keys())) store.delete(id);
+        return;
       }
+      logger.info(`[reports-loader] Loading ${runs.length} report run(s) from ${REPORTS_DIR}`);
+
+      let loaded = 0;
+      let reused = 0;
+      let skipped = 0;
+      const seen = new Set<string>();
+
+      for (const runId of runs) {
+        const cardPath = reportCardPath(join(REPORTS_DIR, runId));
+        if (!existsSync(cardPath)) {
+          skipped += 1;
+          continue;
+        }
+        seen.add(runId);
+
+        let digest: string;
+        try {
+          digest = fileDigest(cardPath);
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          logger.error(`[reports-loader] ${runId}: failed to read summary-card.yaml — ${message}`);
+          skipped += 1;
+          continue;
+        }
+
+        const existing = store.get(runId);
+        if (existing && existing.digest === digest) {
+          reused += 1;
+          continue;
+        }
+
+        const dataForRun = loadReportCard(runId);
+        if (!dataForRun) {
+          skipped += 1;
+          continue;
+        }
+        const data = await parseData({ id: runId, data: dataForRun });
+        store.set({ id: runId, data, digest });
+        loaded += 1;
+      }
+
+      let pruned = 0;
+      for (const id of Array.from(store.keys())) {
+        if (!seen.has(id)) {
+          store.delete(id);
+          pruned += 1;
+        }
+      }
+
+      logger.info(`[reports-loader] ✓ ${loaded} new/changed, ${reused} cached, ${pruned} pruned, ${skipped} skipped (of ${runs.length})`);
     },
   };
 }

@@ -1,56 +1,44 @@
 #!/usr/bin/env node
 // check-translation.mjs
 //
-// Validate that a `*.zh.yaml` mirror is structurally identical to its
-// English source: same keys at every level, same array lengths, same
-// numerics/booleans/IDs/refs/URLs verbatim. Only whitelisted leaves may
-// differ from the English original. With `--strict`, also fail whitelisted
-// leaves that still look untranslated.
+// Validate that one report folder's `*.zh.yaml` mirrors are structurally
+// identical to their English sources: same keys at every level, same array
+// lengths, same numerics/booleans/IDs/refs/URLs verbatim. Only whitelisted
+// leaves may differ from the English original. With `--strict`, also fail
+// whitelisted leaves that still look untranslated.
 //
-// Walks one report folder by default; with `--all` walks every finalized
-// report under reports/.
+// Batch-mode sweeps across every report live in check-translations.mjs,
+// which imports checkFolder() from this file.
 //
 // Usage:
 //   node check-translation.mjs <reportFolder> [--strict] [--require-final]
-//   node check-translation.mjs --all [--strict] [--require-final]
 //
 // Exit code: 0 ok, 1 failures present.
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 import { isTranslatableLeaf, whitelistFor } from './whitelist.mjs';
 
-const REPORTS_DIR = resolve(fileURLToPath(import.meta.url), '..', '..', '..', '..', '..', 'reports');
 const REQUIRED_FINAL_BASENAMES = ['summary-card', 'full-report'];
 
 function parseArgs(argv) {
-  const args = { folder: null, all: false, strict: false, requireFinal: false };
+  const args = { folder: null, strict: false, requireFinal: false };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
-    if (a === '--all') args.all = true;
-    else if (a === '--strict') args.strict = true;
+    if (a === '--strict') args.strict = true;
     else if (a === '--require-final') args.requireFinal = true;
     else if (a === '-h' || a === '--help') usage(0);
     else if (a.startsWith('-')) { console.error(`unknown flag: ${a}`); usage(1); }
     else if (!args.folder) args.folder = a;
     else { console.error(`unexpected arg: ${a}`); usage(1); }
   }
-  if (!args.folder && !args.all) usage(1);
+  if (!args.folder) usage(1);
   return args;
 }
 
 function usage(code) {
-  console.error('Usage: check-translation.mjs (<reportFolder> | --all) [--strict] [--require-final]');
+  console.error('Usage: check-translation.mjs <reportFolder> [--strict] [--require-final]');
   process.exit(code);
-}
-
-function listReportFolders() {
-  if (!existsSync(REPORTS_DIR)) return [];
-  return readdirSync(REPORTS_DIR)
-    .filter((name) => !name.startsWith('.') && !name.startsWith('_'))
-    .map((name) => join(REPORTS_DIR, name))
-    .filter((p) => { try { return statSync(p).isDirectory(); } catch { return false; } });
 }
 
 function loadYaml(path) { return yaml.load(readFileSync(path, 'utf8')) ?? {}; }
@@ -224,20 +212,21 @@ function checkFolder(folder, options) {
   return { pairs, failures };
 }
 
-const args = parseArgs(process.argv.slice(2));
-const folders = args.all ? listReportFolders() : [resolve(args.folder)];
+// Exposed for check-translations.mjs (the batch-mode wrapper).
+export { checkFolder, valueExcerpt };
 
-let totalPairs = 0;
-let totalFailures = 0;
-for (const folder of folders) {
+// Only run the CLI when this file is executed directly (not when imported
+// by check-translations.mjs).
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const args = parseArgs(process.argv.slice(2));
+  const folder = resolve(args.folder);
   if (!existsSync(folder)) {
     console.error(`[check-translation] folder not found: ${folder}`);
     process.exit(1);
   }
-  const { pairs, failures } = checkFolder(folder, { strict: args.strict, requireFinal: args.requireFinal });
-  totalPairs += pairs;
+  const options = { strict: args.strict, requireFinal: args.requireFinal };
+  const { pairs, failures } = checkFolder(folder, options);
   if (failures.length) {
-    totalFailures += failures.length;
     for (const fail of failures) {
       console.error(`FAIL ${fail.zhPath}`);
       for (const issue of fail.issues.slice(0, 20)) {
@@ -249,15 +238,12 @@ for (const folder of folders) {
       }
       if (fail.issues.length > 20) console.error(`  ... +${fail.issues.length - 20} more`);
     }
+    console.error(`[check-translation] ${failures.length} file(s) failed across ${pairs} translated pair(s).`);
+    process.exit(1);
   }
+  if (pairs === 0) {
+    console.log('[check-translation] no .zh.yaml pairs found; nothing to check.');
+    process.exit(0);
+  }
+  console.log(`[check-translation] \u2713 ${pairs} translated pair(s) verified.`);
 }
-
-if (totalFailures) {
-  console.error(`[check-translation] ${totalFailures} file(s) failed across ${totalPairs} translated pair(s).`);
-  process.exit(1);
-}
-if (totalPairs === 0) {
-  console.log('[check-translation] no .zh.yaml pairs found; nothing to check.');
-  process.exit(0);
-}
-console.log(`[check-translation] \u2713 ${totalPairs} translated pair(s) verified.`);
