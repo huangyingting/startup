@@ -55,6 +55,13 @@ function listReportFolders() {
 
 function loadYaml(path) { return yaml.load(readFileSync(path, 'utf8')) ?? {}; }
 
+function valueExcerpt(value) {
+  if (value === undefined) return 'undefined';
+  const json = JSON.stringify(value);
+  const text = (json ?? String(value)).replace(/\s+/g, ' ');
+  return text.length <= 180 ? text : `${text.slice(0, 177)}...`;
+}
+
 function latinWords(value) {
   return value.match(/[A-Za-z][A-Za-z0-9'+-]*/g) ?? [];
 }
@@ -154,16 +161,16 @@ function diff(en, zh, path, whitelist, issues, options) {
   const translatable = typeof en === 'string' && isTranslatableLeaf(path, whitelist);
   if (translatable) {
     if (zh === null || zh === undefined) {
-      if (options.strict) issues.push({ path: path.join('/'), kind: 'translate', message: 'missing translation leaf; renderer would fall back to English' });
+      if (options.strict) issues.push({ path: path.join('/'), kind: 'translate', message: 'missing translation leaf; renderer would fall back to English', en, zh });
       return;
     }
     if (typeof zh !== 'string') {
-      issues.push({ path: path.join('/'), kind: 'shape', message: `translatable leaf must be a string, got ${typeof zh}` });
+      issues.push({ path: path.join('/'), kind: 'shape', message: `translatable leaf must be a string, got ${typeof zh}`, en, zh });
       return;
     }
     if (options.strict) {
       const message = untranslatedMessage(en, zh);
-      if (message) issues.push({ path: path.join('/'), kind: 'translate', message });
+      if (message) issues.push({ path: path.join('/'), kind: 'translate', message, en, zh });
     }
     return;
   }
@@ -172,7 +179,7 @@ function diff(en, zh, path, whitelist, issues, options) {
   if (Object.is(en, zh)) return;
   // Allow null vs undefined parity for optional fields.
   if (en == null && zh == null) return;
-  issues.push({ path: path.join('/'), kind: 'preserve', message: `non-translatable leaf changed (en=${JSON.stringify(en)}, zh=${JSON.stringify(zh)})` });
+  issues.push({ path: path.join('/'), kind: 'preserve', message: 'non-translatable leaf changed', en, zh });
 }
 
 function checkPair(enPath, zhPath, options) {
@@ -235,6 +242,10 @@ for (const folder of folders) {
       console.error(`FAIL ${fail.zhPath}`);
       for (const issue of fail.issues.slice(0, 20)) {
         console.error(`  - [${issue.kind}] ${issue.path || '(root)'}: ${issue.message}`);
+        if ('en' in issue || 'zh' in issue) {
+          console.error(`      EN: ${valueExcerpt(issue.en)}`);
+          console.error(`      ZH: ${valueExcerpt(issue.zh)}`);
+        }
       }
       if (fail.issues.length > 20) console.error(`  ... +${fail.issues.length - 20} more`);
     }

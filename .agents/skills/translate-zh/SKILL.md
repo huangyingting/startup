@@ -48,6 +48,7 @@ one fluent Chinese conclusion. Keep `topStrengths`, `topRisks`, and
 Then finalize through the runner:
 
 ```sh
+npm run translate:zh -- lint-parts "$REPORT"
 npm run translate:zh -- finalize-summary "$REPORT"
 npm run translate:zh -- finalize-full "$REPORT"
 ```
@@ -59,14 +60,20 @@ npm run translate:zh -- verify "$REPORT"
 ```
 
 `run-translation.mjs` owns preflight, cache paths, sparse export,
-splitting, merge/import/apply/check, and successful cache cleanup. Final
-deliverables are only `reports/$RUN_ID/summary-card.zh.yaml` and
+splitting, part linting, merge/import/apply/check, and successful cache
+cleanup. Final deliverables are only `reports/$RUN_ID/summary-card.zh.yaml` and
 `reports/$RUN_ID/full-report.zh.yaml`.
 
 If finalization fails, repair only the offending cached leaf or part,
 then rerun the narrowest finalize command. Re-run `init` only when the
 cache is structurally corrupted; it refuses to overwrite a non-empty
 cache unless `--force` is supplied.
+
+Run `lint-parts` after all `parts/part.NNN.yaml` files have been
+translated and before `finalize-full`. It parses every part, verifies the
+manifest leaf count, and compares each part's string-leaf paths with the
+source bundle so shape drift is caught before any final zh file is
+written.
 
 ## Subagent contract
 
@@ -85,6 +92,19 @@ Workflow:
 3. Update TARGET in place. Same keys, same array length and order.
    Translate every non-null string value. Leave `null` as `null`.
    Do not add or drop keys. Do not change YAML shape.
+
+Structural guardrails:
+- `null` is an index placeholder, not a translation task. Never replace it
+  with guessed text, and never write the string `"null"` unless the source
+  leaf itself is the string `"null"`.
+- Translate table cells cell-by-cell from the source text. Do not fill an
+  empty-looking cell from neighboring rows, column expectations, or domain
+  knowledge.
+- When a block scalar such as `notes: >-` is followed by the next table or
+  figure item, keep the next `- title:` aligned with its sibling list item;
+  do not indent it under `notes`.
+- Preserve `- text: null`, `- label: null`, and similar sparse placeholders
+  exactly as `null`.
 
 Hard constraints — do NOT:
 - run `node`, `npm`, or any other command;
@@ -363,14 +383,18 @@ path or part is already known.
 - `check-translation.mjs` `shape`: a bundle or part changed object/array shape.
 - `check-translation.mjs` `preserve`: a non-translatable leaf was changed.
 - `check-translation.mjs` `translate`: a leaf is still empty or too English.
+- `check-part-leaf-counts.mjs`: a translated part changed string-leaf count
+  or paths. Use the reported extra/missing paths to restore `null`
+  placeholders or list indentation before rerunning.
 - `bundle-translatable.mjs import`: the edited bundle no longer matches source shape.
 - `bundle-translatable.mjs merge`: a part is missing, stale, or changed sparse shape.
 
 Common repair order:
 
 1. Fix the offending leaf or part in `.translate-cache/<runId>`.
-2. Rerun `finalize-summary` or `finalize-full`.
-3. Only if shape is badly corrupted, rerun `init` and re-translate the
+2. For full-report part edits, rerun `lint-parts` until it passes.
+3. Rerun `finalize-summary` or `finalize-full`.
+4. Only if shape is badly corrupted, rerun `init` and re-translate the
    affected bundle or part.
 
 ## Common pitfalls

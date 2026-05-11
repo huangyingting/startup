@@ -7,6 +7,8 @@ import { spawnSync } from 'node:child_process';
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '..', '..', '..', '..');
 const scriptsDir = resolve(repoRoot, '.agents', 'skills', 'translate-zh', 'scripts');
+const FULL_SPLIT_MAX_CHARS = '45000';
+const FULL_SPLIT_MAX_ITEMS = '300';
 
 function usage(code = 0) {
   console.error('Usage: run-translation.mjs <command> <runId-or-company-name> [--keep-cache] [--force]');
@@ -14,6 +16,7 @@ function usage(code = 0) {
   console.error('Commands:');
   console.error('  preflight         Validate repo, dependency, report, and cache paths');
   console.error('  init              Export summary/full bundles and split full-report into parts');
+  console.error('  lint-parts        Validate translated full-report parts without writing outputs');
   console.error('  finalize-summary  Import/apply/check summary-card.zh.yaml');
   console.error('  finalize-full     Merge parts when present, import/apply/check full-report.zh.yaml');
   console.error('  verify            Strictly verify final summary/full zh overlays');
@@ -164,10 +167,19 @@ function init(runId, options = {}) {
   ensureDir(paths.partsDir);
   runNodeScript('bundle-translatable.mjs', ['export', paths.summarySource, '--out', paths.summaryBundle]);
   runNodeScript('bundle-translatable.mjs', ['export', paths.fullSource, '--out', paths.fullBundle]);
-  runNodeScript('bundle-translatable.mjs', ['split', paths.fullBundle, '--out-dir', paths.partsDir, '--max-chars', '45000', '--max-items', '400']);
+  runNodeScript('bundle-translatable.mjs', ['split', paths.fullBundle, '--out-dir', paths.partsDir, '--max-chars', FULL_SPLIT_MAX_CHARS, '--max-items', FULL_SPLIT_MAX_ITEMS]);
   console.log('[translate-zh] init complete');
   console.log(`[translate-zh] edit summary bundle: ${relative(repoRoot, paths.summaryBundle)}`);
   console.log(`[translate-zh] edit full-report parts under: ${relative(repoRoot, paths.partsDir)}`);
+}
+
+function lintParts(runId) {
+  const paths = ensurePreflight(runId);
+  if (!existsSync(paths.partsDir)) {
+    fail(`parts directory not found: ${relative(repoRoot, paths.partsDir)}; run init first`);
+  }
+  runNodeScript('check-part-leaf-counts.mjs', [paths.partsDir]);
+  console.log('[translate-zh] full-report parts linted');
 }
 
 function finalizeSummary(runId) {
@@ -211,6 +223,7 @@ function verify(runId) {
 function cleanup(runId) {
   const { cacheDir } = pathsFor(runId);
   rmSync(cacheDir, { recursive: true, force: true });
+  if (existsSync(cacheDir)) fail(`failed to remove cache: ${relative(repoRoot, cacheDir)}`);
   console.log(`[translate-zh] removed cache: ${relative(repoRoot, cacheDir)}`);
 }
 
@@ -222,6 +235,9 @@ switch (args.command) {
     break;
   case 'init':
     init(args.runId, { force: args.force });
+    break;
+  case 'lint-parts':
+    lintParts(args.runId);
     break;
   case 'finalize-summary':
     finalizeSummary(args.runId);
