@@ -26,6 +26,9 @@ const altLocale: Locale = locale === 'zh' ? 'en' : 'zh';
 const altLabel = altLocale === 'zh' ? t('switchToChinese', locale) : t('switchToEnglish', locale);
 const altHref = alternateLocaleHref ?? localePath(base, altLocale);
 const htmlLang = HTML_LANG[locale];
+const rawGaId = import.meta.env.PUBLIC_GA_ID;
+const gaId = typeof rawGaId === 'string' && /^G-[A-Z0-9]+$/i.test(rawGaId.trim()) ? rawGaId.trim() : '';
+const enableGa = Boolean(gaId) && import.meta.env.PROD;
 ---
 <!doctype html>
 <html lang={htmlLang}>
@@ -37,6 +40,12 @@ const htmlLang = HTML_LANG[locale];
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
     <link rel="preload" href={monaSansLatinWghtUrl} as="font" type="font/woff2" crossorigin />
     <link rel="alternate" type="application/rss+xml" title={`${brandLabel} RSS`} href={rssHref} />
+    {enableGa && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+        <script is:inline set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`} />
+      </>
+    )}
   </head>
   <body>
     <header class="bz-utility">
