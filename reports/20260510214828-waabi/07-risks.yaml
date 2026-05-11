@@ -1,0 +1,1859 @@
+schemaVersion: report-v2
+artifact: risks
+slug: waabi
+runDate: "2026-05-10"
+company:
+  name: Waabi
+chapter:
+  number: 7
+  title: Risks
+  summary: >-
+    Waabi's risk profile is dominated by five interconnected categories: technology execution
+    (driverless launch delayed from Q4 2025 to "next few quarters" as of January 2026),
+    regulatory fragmentation (California AB 316 effectively bans driverless heavy trucks while
+    federal rules remain incomplete), competitive pressure (Aurora Innovation is 3+ years ahead
+    commercially with 250,000+ driverless miles logged), financial dependency (pre-revenue with
+    $1.28B raised and $250M Uber milestone exposure), and adverse precedent from multiple sector
+    failures. The highest composite risk is the convergence of an ongoing driverless launch delay
+    with Aurora's accelerating commercial lead on the same Dallas–Houston corridor, creating
+    a widening competitive gap at precisely the moment Waabi is attempting to transition from
+    supervised pilot to full commercial deployment.
+
+sections:
+  - id: technology-risk
+    title: Technology Risk
+    body: |
+      Waabi's technology risk centres on four principal vulnerabilities: driverless launch delay,
+      the simulation-to-real-world gap, single AI model systemic exposure, and hardware cost
+      headwinds. The most acute near-term risk is the missed Q4 2025 driverless launch target.
+      As of January 2026, Waabi management cited Volvo VNL Autonomous truck validation as the
+      remaining gate and guided to "the next few quarters." This delay has enabled Aurora Innovation
+      to achieve a commercially driverless milestone on the same Dallas–Houston corridor in April
+      2026 while Waabi continues to operate with safety drivers.
+
+      Waabi's simulation-first approach — training the Waabi Driver AI in a closed-loop simulation
+      environment (UniSim) rather than accumulating primarily physical miles — is the company's
+      core technological differentiation. However, this architecture introduces the sim-to-real gap:
+      the simulation cannot exhaustively replicate the long tail of rare real-world edge cases —
+      unexpected pedestrian behaviour, sensor occlusion patterns, novel road surface conditions,
+      and adversarial scenarios — that only emerge at scale in physical operation. Aurora has now
+      logged 250,000+ commercially driverless miles, building an empirical edge case library that
+      is difficult to replicate in simulation alone.
+
+      The unified Physical AI model, intended to power both autonomous trucks and robotaxis from a
+      single training pipeline, creates systemic risk: a latent bug or distributional failure in the
+      core model could affect all product lines simultaneously. This is structurally different from
+      a modular architecture where trucking and robotaxi software are decoupled. Surface street
+      capability, unlocked only in November 2025, is the least-tested domain within the Waabi
+      Driver's operating envelope, increasing the probability of edge-case failures as driverless
+      commercial operations approach.
+
+      LiDAR and multi-sensor hardware costs remain a structural headwind for all AV trucking
+      programmes. Until commodity pricing reduces sensor suite costs substantially, the unit
+      economics of driverless trucking depend heavily on achieving fleet scale that no AV
+      company has yet demonstrated.
+    claimRefs:
+      - CR001
+      - CR002
+      - CR003
+      - CR004
+      - CR005
+      - CR006
+      - CR009
+      - CR010
+    tableRefs:
+      - TR001
+    figureRefs:
+      - FR003
+
+  - id: regulatory-risk
+    title: Regulatory Risk
+    body: |
+      Waabi faces a complex and fragmented regulatory landscape that could materially delay or
+      constrain commercialisation. The most consequential near-term risk is California AB 316,
+      signed into law and effective in 2025, which requires a human safety operator in any
+      driverless heavy-duty vehicle (over 26,001 lbs) operating in California. This effectively
+      bans fully driverless Class 8 truck operations in California — the largest freight market
+      in the United States by volume — and forecloses a significant addressable revenue pool
+      from Waabi's near-term commercial planning.
+
+      At the federal level, FMCSA was finalising its autonomous vehicle framework in 2026 with
+      compliance deadlines of January 1, 2026 for certain AV operational requirements. However,
+      no comprehensive Level 4 autonomous trucking rule has been finalised. The AMERICA DRIVES
+      Act, under consideration in the 119th Congress, would create a national framework for
+      autonomous vehicles — but its passage timeline is uncertain and its content could either
+      harmonise the current state patchwork or introduce new federal requirements that conflict
+      with Waabi's existing Texas operational model.
+
+      The American Association of Motor Vehicle Administrators (AAMVA), which coordinates state
+      DMV policy, has been developing autonomous vehicle standards that may diverge from FMCSA
+      federal requirements, creating additional jurisdictional complexity. Texas, Arizona, and
+      New Mexico remain permissive for autonomous trucking operations, enabling Waabi's current
+      Dallas–Houston corridor. But a single adverse regulatory event — a high-profile accident,
+      federal rule change, or contagion from California's approach — could rapidly restrict
+      Waabi's principal operating geography.
+
+      Federal liability frameworks for Level 4 autonomous trucks remain absent. Without statutory
+      clarity on liability assignment — between the AV developer, OEM manufacturer, and motor
+      carrier — Waabi and its commercial partners carry uninsured or underinsured tail-risk
+      exposure in the event of a serious accident.
+    claimRefs:
+      - CR011
+      - CR012
+      - CR013
+      - CR014
+      - CR015
+      - CR016
+      - CR017
+      - CR018
+      - CR019
+      - CR020
+    tableRefs:
+      - TR002
+    figureRefs:
+      - FR002
+
+  - id: competitive-risk
+    title: Competitive Risk
+    body: |
+      Aurora Innovation is the defining competitive benchmark for Waabi's risk assessment. Aurora
+      achieved commercially driverless operations on the Dallas–Houston corridor in April 2026
+      with confirmed customers including FedEx, Werner Enterprises, and Schneider National. As of
+      Q1 2026, Aurora reported $1.6 billion in cash and short-term investments, funded through
+      at least H2 2027. Against this, Waabi has zero commercially driverless miles, one confirmed
+      channel partner (Uber Freight), and an undisclosed cash position. The competitive gap is not
+      merely temporal — it is being compounded daily as Aurora accumulates driverless operational
+      experience and carrier customer relationships on the same geographic corridor.
+
+      Kodiak Robotics represents a differentiated competitive risk: driverless operations in the
+      Permian Basin with JB Hunt and US Army contracts, and a DaaS subscription model that locks
+      in institutional customers ahead of Waabi's commercial launch. Torc Robotics (wholly owned
+      by Daimler) has OEM backing and a different commercialisation path — integrated into
+      Mercedes-Benz truck manufacturing — that sidesteps the independent capital-raise cycle
+      Waabi depends upon.
+
+      Gatik achieved fully driverless commercial scale in the middle-mile segment in January 2026,
+      demonstrating that Level 4 commercial viability is achievable. This strengthens investor
+      confidence in the sector — but also raises the threshold Waabi must clear to be considered
+      commercially relevant. Tesla Semi with FSD-like driver assistance could erode the
+      addressable market for supervised autonomy, compressing the runway for Waabi's transitional
+      safety-driver phase without generating commercial revenue.
+
+      The broader sector failure pattern — TuSimple, Embark, Ike, and Waymo's trucking exit —
+      demonstrates that AV trucking is an extremely capital-intensive and execution-dependent
+      market in which even well-funded companies with credible technology have failed to achieve
+      commercial scale. New entrants from Chinese AV companies with lower cost structures could
+      further intensify competition if US market access regulations permit.
+    claimRefs:
+      - CR021
+      - CR022
+      - CR023
+      - CR024
+      - CR025
+      - CR026
+      - CR027
+      - CR028
+    tableRefs:
+      - TR003
+
+  - id: financial-risk
+    title: Financial Risk
+    body: |
+      Waabi is a pre-revenue company that has raised $1.28 billion in total equity financing with
+      no publicly disclosed commercial revenue as of May 2026. The financial risk profile is
+      characterised by three interlocking vulnerabilities: burn rate opacity, Uber milestone
+      concentration, and the AV sector's historical failure pattern.
+
+      Waabi has not publicly disclosed its burn rate or cash position. Based on sector benchmarks
+      for AV trucking companies at comparable scale (250–400 engineers, fleet operations, compute
+      infrastructure), annual cash consumption is estimated at $150–300 million. At the midpoint
+      ($225M), a $1.28B raise would imply roughly 5–6 years of theoretical runway — but timing
+      of tranches, milestone conditions, and accelerating spend in a commercialisation phase mean
+      the actual runway is likely shorter and the next capital event is probable within 18–24 months.
+
+      The $250M Uber milestone investment, separated from the base $750M raise in the January 2026
+      Series C, creates financial dependency on specific robotaxi deployment milestones. If these
+      milestones are delayed — which is plausible given that Waabi has not announced any launch city,
+      pilot timeline, or vehicle count for the Uber robotaxi partnership — the conditional capital
+      tranche could be deferred or renegotiated, creating a funding cliff. Canadian institutional
+      investors (BDC Capital, OMERS Ventures) represent a disproportionate share of the cap table,
+      concentrating financial risk in a single national LP base.
+
+      The AV sector track record provides a sobering precedent: TuSimple raised approximately $1.4
+      billion before collapsing amid a CEO firing and SEC fraud investigation; Embark raised
+      approximately $200 million before shutting down; Ike Robotics was acquired at an undisclosed
+      sum. Each failure erodes the credibility of the category with institutional investors and
+      raises the bar for Waabi to demonstrate commercial progress.
+    claimRefs:
+      - CR029
+      - CR030
+      - CR031
+      - CR032
+      - CR033
+      - CR034
+    tableRefs:
+      - TR005
+
+  - id: adverse-events
+    title: Adverse Events and Key-Person Risk
+    body: |
+      The most significant adverse event specific to Waabi is the missed Q4 2025 driverless truck
+      launch target. This was acknowledged in January 2026 and attributed to Volvo VNL Autonomous
+      truck validation as the remaining gate. While management framed the delay as a near-term
+      technical milestone, it has structural consequences: Aurora achieved commercial driverless
+      launch in April 2026, creating a first-mover gap on the same Dallas–Houston corridor that
+      Waabi occupies. Each additional month of safety-driver-only operations widens the driverless
+      mileage gap with Aurora and delays revenue onset.
+
+      At the sector level, the TuSimple collapse is the most instructive adverse precedent. The
+      company raised approximately $1.4 billion, went public, fired its co-founder CEO, attracted
+      an SEC fraud investigation, and ultimately ceased US operations — all within a four-year
+      window. TuSimple's arc — well-capitalised, credible technology, partnership-heavy commercial
+      model, then catastrophic governance failure — is the canonical risk scenario investors apply
+      to all private AV trucking companies, including Waabi. The Embark shutdown (2023) and Ike
+      acquisition add weight to the pattern.
+
+      Key-person risk is acute at Waabi. Raquel Urtasun is simultaneously the company's chief
+      scientist, CEO, primary fundraiser, and most recognisable public face. Her departure from
+      Uber ATG and University of Toronto to found Waabi was the primary catalyst for the company's
+      initial funding. No CTO has been publicly announced; technical leadership beyond Urtasun and
+      COO Lior Ron (who joined from Uber Freight in August 2025 and has no deep AI research
+      background) is not publicly visible. An Urtasun departure — voluntary or otherwise — would
+      likely trigger investor notification rights, trigger material-adverse-change provisions in
+      key commercial agreements, and create a leadership vacuum with no obvious internal successor.
+    claimRefs:
+      - CR001
+      - CR035
+      - CR036
+      - CR037
+      - CR038
+      - CR039
+      - CR040
+      - CR041
+      - CR042
+    tableRefs:
+      - TR004
+    figureRefs:
+      - FR001
+
+tables:
+  - id: TR001
+    title: Waabi Risk Register
+    notes: >-
+      Severity and likelihood scores are assessor estimates on a 1–5 scale based on public information
+      through May 2026; they are not company-disclosed ratings. Mitigation strategies reflect publicly
+      signalled management priorities, not confirmed internal plans.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Principal risks to Waabi's commercialisation trajectory as assessed from public information
+        through May 2026, spanning technology, regulatory, competitive, financial, and operational
+        categories. Severity and likelihood are assessor estimates on a 1–5 scale.
+    columns:
+      - Risk ID
+      - Risk Name
+      - Category
+      - Severity (1-5)
+      - Likelihood (1-5)
+      - Mitigation
+      - Owner
+    rows:
+      - ["R001", "Driverless Launch Delay", "Technology", 5, 4, "Accelerate Volvo VNL validation; target driverless launch Q3 2026", "Engineering / CEO"]
+      - ["R002", "Simulation-to-Real Gap", "Technology", 3, 3, "Expand real-world edge-case library; increase Texas pilot mileage before driverless launch", "AI Research"]
+      - ["R003", "Aurora Commercial Lead", "Competitive", 4, 5, "Differentiate via Physical AI scalability; accelerate robotaxi optionality as second vector", "CEO / BD"]
+      - ["R004", "California AB 316 Regulatory Ban", "Regulatory", 4, 5, "Focus near-term ops on Texas, Arizona, New Mexico; engage CA legislature for framework review", "Legal / Policy"]
+      - ["R005", "Financial Runway / Burn Rate Opacity", "Financial", 5, 3, "Convert Uber milestones; extend runway via early commercial DaaS revenue in 2026", "CFO"]
+      - ["R006", "Federal AV Regulatory Patchwork", "Regulatory", 3, 4, "Participate in FMCSA rulemaking; maintain multi-state permit portfolio", "Policy"]
+      - ["R007", "Uber Milestone Concentration", "Financial", 3, 3, "Diversify customer pipeline; close second anchor freight carrier in 2026", "BD / CEO"]
+      - ["R008", "Key-Person Risk (Urtasun)", "Operational", 4, 2, "Document technical IP; develop second-tier technical leadership; establish succession plan", "Board"]
+      - ["R009", "Single AI Model Systemic Bug", "Technology", 3, 2, "Redundancy and isolation layers; extensive simulation regression testing before fleet rollout", "Engineering"]
+      - ["R010", "New Entrant Disruption (Tesla, Chinese OEMs)", "Competitive", 2, 3, "Maintain SAE Level 4 leadership; deepen Volvo OEM integration for hardware moat", "CEO / BD"]
+    claimRefs:
+      - CR001
+      - CR002
+      - CR011
+      - CR021
+      - CR029
+      - CR035
+
+  - id: TR002
+    title: Regulatory / Legal Risk Register
+    notes: >-
+      Regulatory posture and timeline are based on public legislative records, FMCSA filings, and
+      industry reporting through May 2026; rule status and enforcement timelines may change without
+      notice as federal rulemaking progresses.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Autonomous heavy-duty trucking regulatory posture in major US states and federal framework
+        as of May 2026, based on public legislative and regulatory records. Covers jurisdictions
+        material to Waabi's current and planned commercial operations.
+    columns:
+      - Jurisdiction
+      - AV Heavy-Duty Rule
+      - Status
+      - Timeline
+      - Waabi Implication
+    rows:
+      - ["Federal (FMCSA)", "AV Policy Task Force framework; no comprehensive Level 4 rule finalised", "In progress", "Compliance deadlines Jan 1, 2026; final comprehensive rule TBD", "Regulatory uncertainty for driverless certification; patchwork persists"]
+      - ["Texas", "Permissive; autonomous trucks allowed without state-level special permit under HB 1791", "Active / Permissive", "No imminent adverse change", "Primary operating corridor; enables driverless launch without additional state approval"]
+      - ["California", "AB 316: requires human safety operator in driverless heavy-duty trucks over 26,001 lbs", "Enacted; Effective 2025", "Enforcement ongoing", "Effectively bans Waabi driverless operations; forecloses largest US freight market"]
+      - ["Arizona", "Permissive; autonomous trucking allowed under ARS Title 28 AV framework", "Active / Permissive", "No imminent adverse change", "Viable expansion state for I-10 corridor extension south of Texas"]
+      - ["New Mexico", "Permissive framework; no heavy-duty AV restriction enacted", "Active / Permissive", "Under periodic legislative review", "Secondary expansion corridor for I-10 / I-40 freight lanes"]
+      - ["Congress (AMERICA DRIVES Act)", "Federal legislation under consideration in 119th Congress; would harmonise AV rules nationally", "Pending", "Passage timeline uncertain; introduced 2025", "Could open additional states OR impose new federal requirements on Texas operations"]
+    claimRefs:
+      - CR011
+      - CR012
+      - CR013
+      - CR014
+      - CR015
+      - CR016
+
+  - id: TR003
+    title: Competitor Risk Comparison
+    notes: >-
+      Comparative data drawn from public filings (Aurora), press releases, and analyst coverage through
+      May 2026. Aurora financial data from Q1 2026 earnings. Kodiak and Waabi cash positions not publicly
+      disclosed. Assessment reflects analyst inferences from available public information.
+    columns:
+      - Risk Dimension
+      - Waabi Status
+      - Aurora Status
+      - Kodiak Status
+      - Assessment
+    rows:
+      - ["Commercial Driverless Miles", "0 (safety-driver only as of May 2026)", "250,000+ driverless miles (commercial since Apr 2026)", "Driverless in Permian Basin; exact mileage undisclosed", "Aurora 3+ years ahead empirically; Kodiak established niche advantage"]
+      - ["Driverless Trucks Deployed (Commercial)", "0 commercial driverless trucks", "Multiple trucks on 10+ commercial routes", "Driverless fleet in Permian Basin", "Waabi has not crossed the driverless commercial threshold"]
+      - ["Funding / Cash Runway", "$1.28B raised; cash position undisclosed", "$1.6B cash; funded through at least H2 2027", "Private; Daimler-backed; cash undisclosed", "Aurora has best-disclosed runway; Waabi runway is opaque"]
+      - ["Customer Diversification", "1 channel partner (Uber Freight) for trucking", "FedEx, Werner Enterprises, Schneider National", "JB Hunt, US Army (Permian)", "Waabi carries highest customer concentration risk across all peers"]
+      - ["Regulatory Readiness", "Texas only; driverless launch pending", "Texas operational driverless; multi-state expansion", "Texas (Permian Basin) operational", "Aurora furthest along; Waabi and Kodiak limited to Texas"]
+      - ["OEM Integration", "Volvo VNL Autonomous (single OEM, validation pending)", "Multiple OEM partners", "Peterbilt / PACCAR", "Waabi single-OEM risk constrains fleet scale and validation speed"]
+      - ["Geographic Coverage", "Dallas–Houston corridor only", "10+ commercial freight routes", "Permian Basin (Texas)", "Waabi narrowest geographic footprint; highest corridor-concentration risk"]
+    claimRefs:
+      - CR021
+      - CR022
+      - CR023
+
+  - id: TR004
+    title: Adverse Events and Precedent Analysis
+    notes: >-
+      Adverse event descriptions drawn from public press, regulatory filings, and analyst reporting
+      through May 2026. TuSimple, Embark, and Ike data are based on publicly available reporting;
+      exact capital figures may differ from undisclosed internal records.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Known adverse events in the autonomous trucking sector and specific adverse events for Waabi,
+        drawn from public reporting and regulatory records through May 2026. Ordered by materiality
+        to Waabi's investment thesis.
+    columns:
+      - Company / Event
+      - Type
+      - Year
+      - Description
+      - Implication for Waabi
+    rows:
+      - ["Waabi Driverless Launch Delay", "Commercial milestone miss", "2025–2026", "Driverless truck launch targeted Q4 2025; delayed to 'next few quarters' per Jan 2026 announcement; Volvo VNL validation cited as remaining gate", "Demonstrates technology or validation execution risk; delays revenue; widens gap vs. Aurora on same corridor"]
+      - ["TuSimple", "Company collapse / SEC fraud investigation", "2023–2024", "TuSimple fired co-founder CEO, failed to execute driverless operations at scale, and attracted an SEC fraud investigation; ceased US operations", "Sector credibility damage; raises investor due-diligence bar; establishes regulatory scrutiny precedent for the category"]
+      - ["Embark Trucks", "Company shutdown", "2023", "Embark raised approximately $200M before shutting down; failed to bridge technology development to commercial revenue within capital constraints", "Demonstrates that AV trucking has high failure rate; technology-to-revenue bridge is extremely difficult without OEM or carrier anchoring"]
+      - ["Ike Robotics", "Acquisition (undisclosed terms)", "2022", "Ike acquired by Nuro for undisclosed sum; failed to achieve standalone commercialisation despite initial investor enthusiasm", "Outcome precedent for underfunded AV trucking startups; sub-scale positions risk fire-sale acquisition outcomes"]
+      - ["Waymo Via (Class 8 trucking)", "Product line exit", "2023", "Waymo exited Class 8 autonomous trucking to focus on robotaxi; despite Alphabet (Google) backing and credible technology", "Even well-funded, technology-leading AV companies exit trucking; commercial difficulty confirmed even at Waymo-level funding"]
+      - ["California AB 316", "Regulatory adverse action", "2025", "California enacted AB 316 requiring human safety operator for all driverless heavy-duty trucks, effectively banning Level 4 commercial operations in California", "Forecloses California (largest US freight market); establishes adverse regulatory pattern that could spread to other high-volume freight states"]
+    claimRefs:
+      - CR001
+      - CR007
+      - CR040
+      - CR041
+      - CR042
+
+  - id: TR005
+    title: Financial Risk Assessment
+    notes: >-
+      Burn rate is an analyst estimate based on sector benchmarks for AV trucking companies of comparable
+      scale; Waabi has not disclosed cash position or burn rate. All severity scores are assessor estimates
+      on a 1–5 scale. Mitigation scenarios reflect plausible but unconfirmed management options.
+    columns:
+      - Risk Factor
+      - Current Position
+      - Risk Severity (1-5)
+      - Mitigation Scenario
+    rows:
+      - ["Pre-Revenue Status", "No disclosed commercial revenue as of May 2026; all operations are pilot-phase with safety drivers", 5, "Close first paid DaaS contract with Uber Freight upon driverless launch; monetise robotaxi milestones in 2026"]
+      - ["Burn Rate Unknown / Estimated High", "Estimated $150–300M annually based on AV sector benchmarks at comparable scale; not publicly disclosed", 4, "Reduce burn via OEM cost-sharing arrangements with Volvo; milestone-linked Uber tranches reduce near-term capital need"]
+      - ["Uber Milestone Concentration ($250M)", "$250M conditional investment tied to robotaxi deployment milestones; full terms and milestone definitions are private", 4, "Diversify investor base before milestone deadline; negotiate milestone timeline extensions if robotaxi launch delayed"]
+      - ["AV Sector Failure Pattern", "TuSimple, Embark, Ike, Waymo trucking all failed or exited; sector VC appetite has declined; institutional investor caution elevated", 3, "Demonstrate driverless miles in 2026 to re-signal sector viability; publish safety metrics to differentiate from failed peers"]
+      - ["Canadian Institutional Concentration", "BDC Capital, OMERS Ventures, and other Canadian institutional investors represent a disproportionate share of the cap table", 3, "Attract US strategic investors (OEMs, carriers, freight platforms); pursue downstream US institutional LP base in next round"]
+    claimRefs:
+      - CR029
+      - CR030
+      - CR031
+      - CR032
+      - CR033
+
+figures:
+  - id: FR001
+    title: Waabi Risk Matrix (Severity × Likelihood)
+    type: matrix
+    summary: Each cell entry identifies the risk ID plotted at the intersection of severity (row) and likelihood (column); blank cells contain no assessed risk at that position.
+    layout: wide
+    data:
+      columns:
+        - "L1: Very Low"
+        - "L2: Low"
+        - "L3: Medium"
+        - "L4: High"
+        - "L5: Very High"
+      rows:
+        - label: "Severity 5 (Critical)"
+          values:
+            - null
+            - null
+            - "R005: Financial Runway"
+            - "R001: Driverless Launch Delay"
+            - null
+        - label: "Severity 4 (High)"
+          values:
+            - null
+            - "R008: Key-Person Risk"
+            - null
+            - null
+            - "R004: CA AB316 / R003: Aurora Lead"
+        - label: "Severity 3 (Medium)"
+          values:
+            - null
+            - null
+            - "R002: Sim-to-Real / R007: Uber Concentration"
+            - "R006: Federal AV Patchwork"
+            - null
+        - label: "Severity 2 (Low)"
+          values:
+            - null
+            - "R009: Single Model Bug"
+            - null
+            - null
+            - null
+        - label: "Severity 1 (Very Low)"
+          values:
+            - null
+            - "R010: New Entrant Disruption"
+            - null
+            - null
+            - null
+    claimRefs:
+      - CR001
+      - CR003
+      - CR011
+      - CR021
+      - CR029
+      - CR035
+
+  - id: FR002
+    title: Regulatory and Risk Event Timeline
+    type: timeline
+    summary: Key regulatory milestones, sector adverse events, and Waabi-specific risk events from founding through projected 2027 horizon.
+    data:
+      items:
+        - label: "Waabi launches with $83.5M seed funding"
+          date: "2021-06-16"
+        - label: "Waabi raises $200M Series B"
+          date: "2024-06-11"
+        - label: "California AB 316 signed into law (human-operator requirement for driverless heavy trucks)"
+          date: "2024-09-01"
+        - label: "California AB 316 becomes effective"
+          date: "2025-01-01"
+        - label: "Lior Ron (Uber Freight CEO) joins Waabi as COO"
+          date: "2025-08-12"
+        - label: "Waabi surface-street driving capability unlocked"
+          date: "2025-11-01"
+        - label: "Driverless truck commercial launch deadline missed (Q4 2025 target)"
+          date: "2025-12-31"
+        - label: "FMCSA AV compliance deadlines take effect"
+          date: "2026-01-01"
+        - label: "Waabi raises $1B Series C; driverless delay to 'next few quarters' acknowledged"
+          date: "2026-01-28"
+        - label: "Aurora Innovation begins driverless commercial operations on Dallas–Houston corridor"
+          date: "2026-04-01"
+        - label: "Analysis date: Waabi still operating with safety drivers"
+          date: "2026-05-10"
+        - label: "Projected Waabi driverless launch window ('next few quarters' from Jan 2026)"
+          date: "2026-09-30"
+        - label: "AMERICA DRIVES Act projected Congressional action horizon"
+          date: "2027-01-01"
+    claimRefs:
+      - CR001
+      - CR011
+      - CR012
+      - CR013
+      - CR038
+
+  - id: FR003
+    title: Risk Severity Scores by Category
+    type: bar
+    summary: Composite risk score per category computed as Severity × Likelihood using the highest-scoring risk in each category from TR001 (scale 1–25).
+    approximationNotes: Scores reflect highest risk within each category; all scores are assessor estimates on public information through May 2026.
+    data:
+      items:
+        - label: "Technology Risk (Driverless Delay: Sev 5 × Like 4)"
+          value: 20
+        - label: "Regulatory Risk (CA AB316: Sev 4 × Like 5)"
+          value: 20
+        - label: "Competitive Risk (Aurora Lead: Sev 4 × Like 5)"
+          value: 20
+        - label: "Financial Risk (Pre-Revenue: Sev 5 × Like 3)"
+          value: 15
+        - label: "Operational / Key-Person Risk (Urtasun: Sev 4 × Like 2)"
+          value: 8
+        - label: "New Entrant Risk (Tesla / Chinese OEMs: Sev 2 × Like 3)"
+          value: 6
+    claimRefs:
+      - CR001
+      - CR011
+      - CR021
+      - CR029
+      - CR035
+
+callouts: []
+
+localEvidence:
+  searchQueries:
+    - query: "California AB 316 autonomous trucks driverless human operator requirement 2025"
+      engine: google
+      hits: 42
+      retainedSourceRefs:
+        - SR001
+        - SR018
+
+    - query: "AMERICA DRIVES Act federal autonomous vehicle legislation 119th Congress"
+      engine: google
+      hits: 18
+      retainedSourceRefs:
+        - SR002
+
+    - query: "Waabi driverless truck launch delay 2026 Aurora competition"
+      engine: google
+      hits: 35
+      retainedSourceRefs:
+        - SR010
+        - SR011
+        - SR012
+        - SR023
+
+    - query: "TuSimple SEC fraud investigation collapse autonomous trucking sector failure 2026"
+      engine: google
+      hits: 27
+      retainedSourceRefs:
+        - SR019
+        - SR026
+
+    - query: "Aurora Innovation driverless commercial operations 2026 financial results"
+      engine: google
+      hits: 31
+      retainedSourceRefs:
+        - SR029
+        - SR020
+        - SR022
+
+  researchQuestions:
+    - id: QR001
+      question: Has Waabi disclosed any safety incidents or near-misses in its Texas pilot operations as of 2026, and are these accessible through public regulatory filings?
+      type: adverse
+      status: unresolved
+      targets:
+        - contentRequirements/1
+
+    - id: QR002
+      question: Has the driverless truck commercial launch delay from Q4 2025 been confirmed by multiple independent sources in 2026?
+      type: verification
+      status: answered
+      targets:
+        - contentRequirements/0
+
+    - id: QR003
+      question: What is the full scope and enforcement mechanism of California AB 316 and how does it restrict Waabi's 2026 addressable market in California?
+      type: adverse
+      status: answered
+      targets:
+        - contentRequirements/1
+        - plannedTables/regulatory-legal-risk-register
+
+    - id: QR004
+      question: What enforcement actions has FMCSA taken against AV operators for non-compliance with autonomous vehicle regulations in 2026?
+      type: adverse
+      status: answered
+      targets:
+        - contentRequirements/1
+
+    - id: QR005
+      question: Which US jurisdictions have enacted permissive or restrictive driverless heavy-duty truck regulations as of 2026?
+      type: enumeration
+      status: answered
+      targets:
+        - contentRequirements/1
+        - plannedTables/regulatory-legal-risk-register
+
+    - id: QR006
+      question: What is Waabi's estimated burn rate and cash runway as of 2026 based on available public disclosures and sector benchmarks?
+      type: quantification
+      status: unresolved
+      targets:
+        - contentRequirements/4
+
+    - id: QR007
+      question: How does Waabi's commercially driverless mileage compare to Aurora Innovation's logged miles in 2026?
+      type: comparison
+      status: answered
+      targets:
+        - contentRequirements/0
+        - plannedTables/operational-quality-security-risk-register
+
+    - id: QR008
+      question: How does the simulation-to-real-world gap manifest as a specific technical risk in Waabi's simulation-first AI training approach?
+      type: mechanism
+      status: answered
+      targets:
+        - contentRequirements/0
+
+    - id: QR009
+      question: What is the current legislative status of the AMERICA DRIVES Act in the 119th Congress as of 2026?
+      type: freshness
+      status: answered
+      targets:
+        - contentRequirements/1
+
+    - id: QR010
+      question: What are all known adverse events — company failures, regulatory bans, and safety incidents — in the autonomous trucking sector from 2021 through 2026?
+      type: enumeration
+      status: answered
+      targets:
+        - contentRequirements/0
+        - plannedTables/operational-quality-security-risk-register
+
+    - id: QR011
+      question: Has Waabi confirmed and explained the driverless launch delay from the original Q4 2025 target in its 2026 public statements?
+      type: verification
+      status: answered
+      targets:
+        - contentRequirements/0
+
+    - id: QR012
+      question: What was the combined capital raised by TuSimple, Embark, and Ike before their respective failures, and what does this imply for AV sector investment risk in 2026?
+      type: quantification
+      status: answered
+      targets:
+        - contentRequirements/4
+
+    - id: QR013
+      question: How does Waabi's regulatory readiness and state-level permit status compare to Aurora Innovation's operational footprint in 2026?
+      type: comparison
+      status: answered
+      targets:
+        - contentRequirements/1
+        - plannedTables/regulatory-legal-risk-register
+
+    - id: QR014
+      question: How does a unified Physical AI model architecture create systemic vulnerability when a critical bug affects both trucking and robotaxi products simultaneously?
+      type: mechanism
+      status: answered
+      targets:
+        - contentRequirements/2
+
+    - id: QR015
+      question: Has FMCSA published comprehensive final rules for Level 4 autonomous heavy vehicle commercial operation in 2026?
+      type: verification
+      status: answered
+      targets:
+        - contentRequirements/1
+
+    - id: QR016
+      question: What are Waabi's disclosed and inferred risk factors spanning technology, regulatory, competitive, financial, and operational dimensions as of 2026?
+      type: enumeration
+      status: answered
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
+
+    - id: QR017
+      question: What is Waabi's implied revenue outlook through 2026–2028 based on the announced Uber Freight commercial agreement structure?
+      type: quantification
+      status: partial
+      targets:
+        - contentRequirements/4
+
+    - id: QR018
+      question: Is there any active litigation or legal enforcement action against AV companies in 2026 that could set liability precedent affecting Waabi?
+      type: adverse
+      status: answered
+      targets:
+        - contentRequirements/1
+
+    - id: QR019
+      question: What is the latest status of Waabi's driverless truck commercial launch as of May 2026?
+      type: freshness
+      status: answered
+      targets:
+        - contentRequirements/0
+
+    - id: QR020
+      question: How does the $250M Uber milestone investment structure create financial dependency and potential funding cliff risk for Waabi?
+      type: mechanism
+      status: answered
+      targets:
+        - contentRequirements/4
+        - contentRequirements/3
+
+    - id: QR021
+      question: How does Kodiak Robotics' customer diversification and DaaS subscription model compare to Waabi's single-partner channel concentration as of 2026?
+      type: comparison
+      status: answered
+      targets:
+        - contentRequirements/3
+        - plannedTables/partner-dependency-risk-register
+
+    - id: QR022
+      question: Who are the principal investors in Waabi's cap table and what risks arise from Canadian institutional investor concentration in the funding structure?
+      type: enumeration
+      status: answered
+      targets:
+        - contentRequirements/4
+
+    - id: QR023
+      question: Has Raquel Urtasun made any public statements about her continued leadership role at Waabi in 2026?
+      type: verification
+      status: answered
+      targets:
+        - contentRequirements/0
+        - plannedTables/people-execution-risk-register
+
+    - id: QR024
+      question: How many commercial driverless truck-miles has Aurora Innovation accumulated compared to Waabi's zero miles through May 2026?
+      type: quantification
+      status: answered
+      targets:
+        - contentRequirements/0
+
+    - id: QR025
+      question: What is the current liability assignment framework under US federal law for accidents involving Level 4 autonomous trucks in commercial operation?
+      type: mechanism
+      status: answered
+      targets:
+        - contentRequirements/1
+
+    - id: QR026
+      question: What is the current operational status of Waabi's robotaxi partnership with Uber and any announced launch cities or timelines in 2026?
+      type: freshness
+      status: answered
+      targets:
+        - contentRequirements/3
+
+    - id: QR027
+      question: How does Waabi's insurance coverage and liability framework compare to Aurora's established AV operator policies for commercial driverless operations?
+      type: comparison
+      status: answered
+      targets:
+        - contentRequirements/1
+
+    - id: QR028
+      question: What regulatory approvals and safety certifications are required before Waabi can commercially operate driverless trucks in Texas in 2026?
+      type: enumeration
+      status: answered
+      targets:
+        - contentRequirements/1
+        - plannedTables/regulatory-legal-risk-register
+
+    - id: QR029
+      question: Has Waabi announced any new customer partnerships beyond Uber Freight and Volvo Group in 2026?
+      type: verification
+      status: answered
+      targets:
+        - contentRequirements/3
+        - plannedTables/partner-dependency-risk-register
+
+    - id: QR030
+      question: What runway remains for Waabi given its $1.28B total raised and estimated $150–300M annual burn rate as of 2026?
+      type: quantification
+      status: answered
+      targets:
+        - contentRequirements/4
+
+    - id: QR031
+      question: How would California's AB 316 human-operator requirement affect Waabi's ability to expand into California freight lanes if it were adopted by other states?
+      type: mechanism
+      status: answered
+      targets:
+        - contentRequirements/1
+        - plannedTables/regulatory-legal-risk-register
+
+    - id: QR032
+      question: Has the TuSimple SEC fraud investigation resulted in criminal charges or enforcement actions affecting the autonomous trucking sector in 2026?
+      type: adverse
+      status: answered
+      targets:
+        - contentRequirements/0
+
+    - id: QR033
+      question: What is Waabi's current hiring trajectory and headcount growth rate in 2026?
+      type: freshness
+      status: answered
+      targets:
+        - contentRequirements/0
+
+    - id: QR034
+      question: How does Waabi's single Physical AI model risk profile differ from Aurora's software architecture approach and Kodiak's risk mitigation strategies?
+      type: comparison
+      status: answered
+      targets:
+        - contentRequirements/0
+        - plannedTables/operational-quality-security-risk-register
+
+    - id: QR035
+      question: What mitigations, monitoring indicators, and thesis-break triggers should investors apply to Waabi's principal risk categories as of 2026?
+      type: enumeration
+      status: answered
+      targets:
+        - contentRequirements/5
+        - plannedTables/mitigation-and-kill-criteria-table
+
+  sources:
+    - id: SR001
+      publisher: "California State Legislature — AB 316"
+      title: "California Assembly Bill 316 — Autonomous Vehicle Safety: Driverless Heavy-Duty Trucks"
+      url: https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240AB316
+      date: "2024-09-01"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: adverse
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      keyQuote: "No person shall operate a driverless heavy-duty commercial motor vehicle on a public road unless the vehicle has a natural person physically present in the vehicle."
+      topics:
+        - regulatory-risk
+        - california-ab316
+
+    - id: SR002
+      publisher: "U.S. Congress — AMERICA DRIVES Act"
+      title: "AMERICA DRIVES Act — Senate Bill 119th Congress"
+      url: https://www.congress.gov/bill/119th-congress/senate-bill/america-drives-act
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-risk
+        - federal-av-framework
+
+    - id: SR003
+      publisher: "Cornell Law School — U.S. Code Title 49 Motor Vehicles"
+      title: "U.S. Code Title 49 — Transportation: Motor Vehicles and Motor Carriers"
+      url: https://law.cornell.edu/uscode/text/49/subtitle-VI
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: legal
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-risk
+        - liability-framework
+
+    - id: SR004
+      publisher: "American Association of Motor Vehicle Administrators"
+      title: "AAMVA — Autonomous Vehicles: State and Jurisdictional Guidance"
+      url: https://www.aamva.org/topics/autonomous-vehicles
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-risk
+        - state-av-standards
+
+    - id: SR005
+      publisher: "FMCSA — Driver Licensing and Compliance"
+      title: "FMCSA Driver Licensing, Commercial Drivers License, and AV Compliance"
+      url: https://www.fmcsa.dot.gov/registration/commercial-drivers-license/drivers
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-risk
+        - federal-av-framework
+
+    - id: SR006
+      publisher: "Kodiak Robotics Company"
+      title: "Kodiak Robotics — Company Overview and Technology"
+      url: https://kodiak.ai/company
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: medium
+      independence: competitor
+      topics:
+        - competitive-risk
+        - competitor-profile
+
+    - id: SR007
+      publisher: "OpenAI Research — Sora"
+      title: "Sora: Creating Video from Text — OpenAI Research"
+      url: https://openai.com/research/sora
+      date: "2024-02-15"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: independent
+      topics:
+        - technology-risk
+        - simulation-generative-ai
+
+    - id: SR008
+      publisher: "Crunchbase — Raquel Urtasun Profile"
+      title: "Raquel Urtasun — Founder and CEO, Waabi | Crunchbase"
+      url: https://www.crunchbase.com/person/raquel-urtasun
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: other
+      reputationTier: medium
+      independence: independent
+      topics:
+        - key-person-risk
+        - leadership
+
+    - id: SR009
+      publisher: Waabi
+      title: "Waabi — Official Company Website"
+      url: https://waabi.ai/
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - technology-risk
+        - company-overview
+
+    - id: SR010
+      publisher: TechCrunch
+      title: "Waabi raises $1B and expands into robotaxis with Uber"
+      url: https://techcrunch.com/2026/01/28/waabi-raises-1b-and-expands-into-robotaxis-with-uber/
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      keyQuote: "Waabi said it expects to have trucks operating without safety drivers in the next few quarters."
+      topics:
+        - technology-risk
+        - financial-risk
+
+    - id: SR011
+      publisher: Forbes
+      title: "Robot Trucker Waabi Wades Into Robotaxi Battle With Billion-Dollar Raise"
+      url: https://www.forbes.com/sites/alanohnsman/2026/01/28/robot-trucker-waabi-wades-into-robotaxi-battle-with-billion-dollar-raise/
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - technology-risk
+        - financial-risk
+
+    - id: SR012
+      publisher: CNBC
+      title: "Autonomous startup Waabi raises $750 million to expand into robotaxis"
+      url: https://www.cnbc.com/2026/01/28/autonomous-startup-waabi-raises-750-million-to-expand-into-robotaxis.html
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - financial-risk
+        - competitive-risk
+
+    - id: SR013
+      publisher: Waabi
+      title: "Waabi Secures $1 Billion in New Funding to Lead Physical AI Revolution"
+      url: https://waabi.ai/insights/waabi-secures-1-billion-in-new-funding-to-lead-physical-ai-revolution
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - financial-risk
+        - technology-risk
+
+    - id: SR014
+      publisher: Waabi
+      title: "Waabi and Uber Freight Partnership Announcement"
+      url: https://waabi.ai/insights/waabi-uber-freight
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - competitive-risk
+        - financial-risk
+
+    - id: SR015
+      publisher: "NHTSA — Automated Vehicles Safety"
+      title: "NHTSA: Automated Vehicles for Safety"
+      url: https://www.nhtsa.gov/technology-innovation/automated-vehicles-safety
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-risk
+        - federal-av-framework
+
+    - id: SR016
+      publisher: "U.S. Department of Transportation"
+      title: "DOT — Automated Vehicles"
+      url: https://www.dot.gov/av
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-risk
+        - federal-av-framework
+
+    - id: SR017
+      publisher: "FMCSA"
+      title: "FMCSA — Large Truck and Bus Crash Facts"
+      url: https://www.fmcsa.dot.gov/safety/data-and-statistics/large-truck-and-bus-crash-facts
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-risk
+        - safety-data
+
+    - id: SR018
+      publisher: "Highway Driver Leasing"
+      title: "Autonomous Trucking Regulation Updates 2026"
+      url: https://highwaydriverleasing.com/2026/05/05/autonomous-trucking-regulation-updates-2026/
+      date: "2026-05-05"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: low
+      independence: independent
+      topics:
+        - regulatory-risk
+        - california-ab316
+
+    - id: SR019
+      publisher: "The Daily Perspective"
+      title: "The Race to Driverless Trucking: More Than Technology at Stake"
+      url: https://thedailyperspective.org/article/2026-03-21-the-race-to-driverless-trucking-more-than-technology-at-stake-026bc922
+      date: "2026-03-21"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: adverse
+      sourceType: news
+      reputationTier: low
+      independence: independent
+      keyQuote: "AV companies including Waabi have yet to demonstrate they possess the customer pipeline, regulatory readiness, or operational depth to achieve commercial scale in 2026 — driverless launch delays and absent carrier customer bases are risk indicators that investors should weigh carefully."
+      topics:
+        - technology-risk
+        - competitive-risk
+        - adverse-events
+      notes: >-
+        This article questions whether AV companies including Waabi have the customer pipeline,
+        regulatory readiness, and public trust to achieve commercial scale in 2026, noting
+        driverless launch delays and the absence of broad carrier customer bases as adverse
+        risk indicators.
+
+    - id: SR020
+      publisher: "Aurora Innovation Newsroom"
+      title: "Driverless, Not Ruleless: Why 2026 Is the Year for Federal AV Standards"
+      url: https://aurora.tech/newsroom/driverless-not-ruleless-why-2026-is-the-year-for-federal-av-standards
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: competitor
+      topics:
+        - regulatory-risk
+        - competitive-risk
+
+    - id: SR021
+      publisher: AInvest
+      title: "Aurora Innovation 2026 Inflection Point — Autonomous Trucking Profitability"
+      url: https://www.ainvest.com/news/aurora-innovation-2026-inflection-point-autonomous-trucking-profitability-2601/
+      date: "2026-01-01"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: low
+      independence: independent
+      topics:
+        - competitive-risk
+        - financial-risk
+
+    - id: SR022
+      publisher: "ACT News"
+      title: "Aurora Expands Driverless Operations"
+      url: https://www.act-news.com/news/aurora-expands-driverless-operations/
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - competitive-risk
+
+    - id: SR023
+      publisher: "Robotics and Automation News"
+      title: "Waabi Secures $1 Billion Funding to Accelerate Commercialization in Autonomous Trucking"
+      url: https://roboticsandautomationnews.com/2026/02/02/waabi-secures-1-billion-funding-to-accelerate-commercialization-in-autonomous-trucking-and-expand-into-robotaxis/98561/
+      date: "2026-02-02"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - technology-risk
+        - financial-risk
+
+    - id: SR024
+      publisher: "American Trucking Associations"
+      title: "ATA Economics and Industry Data"
+      url: https://www.trucking.org/economics-and-industry-data
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-risk
+        - market-context
+
+    - id: SR025
+      publisher: "Mordor Intelligence"
+      title: "Autonomous Truck Market Report"
+      url: https://www.mordorintelligence.com/industry-reports/autonomous-truck-market
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics:
+        - competitive-risk
+        - market-context
+
+    - id: SR026
+      publisher: "The Robot Report"
+      title: "The Robot Report — Autonomous Vehicles Coverage"
+      url: https://www.therobotreport.com/category/autonomous-vehicles/
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - adverse-events
+        - competitive-risk
+
+    - id: SR027
+      publisher: PitchBook
+      title: "Autonomous Trucking VC Funding 2026"
+      url: https://pitchbook.com/news/articles/autonomous-trucking-vc-funding-2026
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - financial-risk
+        - adverse-events
+
+    - id: SR028
+      publisher: McKinsey and Company
+      title: "Distraction or Disruption: Autonomous Trucks Gain Ground in US Logistics"
+      url: https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights/distraction-or-disruption-autonomous-trucks-gain-ground-in-us-logistics
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - competitive-risk
+        - market-context
+
+    - id: SR029
+      publisher: "Aurora Innovation Investor Relations"
+      title: "Aurora Innovation Reports Fourth Quarter and Full Year 2025 Financial Results"
+      url: https://ir.aurora.tech/news-events/press-releases/detail/62/aurora-innovation-reports-fourth-quarter-and-full-year-2025
+      date: "2026-02-01"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: filing
+      reputationTier: high
+      independence: competitor
+      topics:
+        - competitive-risk
+        - financial-risk
+
+    - id: SR030
+      publisher: CBC News
+      title: "Waabi raises $1-billion, launches robotaxi plans with Uber"
+      url: https://www.cbc.ca/news/business/waabi-1-billion-funding-uber-robotaxi-1.7097888
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - financial-risk
+        - key-person-risk
+
+    - id: SR031
+      publisher: "TechFunding News"
+      title: "Waabi $1B Funding Round — Uber Robotaxi Series C Coverage"
+      url: https://techfundingnews.com/waabi-1b-funding-uber-robotaxi-series-c/
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - financial-risk
+
+    - id: SR032
+      publisher: Forbes
+      title: "Uber Freight CEO Joins Waabi as Robot Truck Startup Plans Commercial Launch"
+      url: https://www.forbes.com/sites/alanohnsman/2025/08/12/uber-freight-ceo-joins-waabi-as-robot-truck-startup-plans-commercial-launch/
+      date: "2025-08-12"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - key-person-risk
+        - adverse-events
+
+  claims:
+    - id: CR001
+      statement: Waabi missed its Q4 2025 driverless truck commercial launch target; as of January 2026 management guided to "the next few quarters" with Volvo VNL Autonomous truck validation cited as the remaining gate.
+      type: third-party-reported
+      topic: technology-risk
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SR010
+        - SR011
+        - SR012
+      answersQuestionRefs:
+        - QR002
+        - QR011
+        - QR019
+
+    - id: CR002
+      statement: Aurora Innovation had accumulated over 250,000 commercially driverless miles by May 2026, while Waabi has zero commercially driverless miles.
+      type: third-party-reported
+      topic: competitive-risk
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SR029
+        - SR022
+        - SR020
+      answersQuestionRefs:
+        - QR007
+        - QR024
+
+    - id: CR003
+      statement: The simulation-to-real-world gap is an acknowledged technical challenge for simulation-first autonomous vehicle programs; no simulation can exhaustively replicate the long tail of rare real-world edge cases.
+      type: inferred
+      topic: technology-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR009
+        - SR007
+      answersQuestionRefs:
+        - QR008
+
+    - id: CR004
+      statement: Waabi's unified Physical AI model architecture — shared across autonomous trucks and robotaxis — means a latent critical bug or distributional failure would affect all product lines simultaneously rather than being isolated to one vehicle type.
+      type: inferred
+      topic: technology-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR009
+        - SR013
+      answersQuestionRefs:
+        - QR014
+
+    - id: CR005
+      statement: Waabi unlocked full surface street driving capability in November 2025; this domain is less tested than highway operations and increases edge-case failure probability in the early driverless commercial phase.
+      type: third-party-reported
+      topic: technology-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR010
+        - SR023
+
+    - id: CR006
+      statement: LiDAR and multi-sensor hardware costs remain a structural headwind for autonomous trucking unit economics across all AV programmes, including Waabi.
+      type: inferred
+      topic: technology-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR025
+        - SR028
+
+    - id: CR007
+      statement: TuSimple, Embark Trucks, Ike Robotics, and Waymo's Class 8 trucking programme all failed or exited the autonomous trucking sector after collectively raising hundreds of millions of dollars.
+      type: third-party-reported
+      topic: adverse-events
+      confidence: medium
+      freshness: historical
+      sourceRefs:
+        - SR019
+        - SR026
+        - SR027
+      answersQuestionRefs:
+        - QR010
+        - QR012
+
+    - id: CR008
+      statement: Aurora Innovation is estimated to be 3+ years ahead of Waabi in commercial driverless truck deployment, having launched driverless commercial operations on the Dallas–Houston corridor in April 2026.
+      type: inferred
+      topic: competitive-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR022
+        - SR029
+
+    - id: CR009
+      statement: Waabi's simulation-first approach trains its AI driver in a closed-loop generative simulation environment (UniSim) rather than primarily through physical miles, which accelerates iteration speed but concentrates risk in simulation fidelity.
+      type: company-claimed
+      topic: technology-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR013
+        - SR009
+
+    - id: CR010
+      statement: Waabi's simulation training environment cannot yet fully replicate rare real-world sensor occlusion patterns, adversarial road surface conditions, and novel traffic actor behaviours that only emerge at fleet scale.
+      type: inferred
+      topic: technology-risk
+      confidence: low
+      freshness: current
+      sourceRefs:
+        - SR009
+
+    - id: CR011
+      statement: California Assembly Bill 316, enacted in 2024 and effective in 2025, requires a human safety operator to be physically present in any driverless heavy-duty commercial vehicle (over 26,001 lbs) operating in California, effectively banning Level 4 autonomous Class 8 truck operations in California.
+      type: third-party-reported
+      topic: regulatory-risk
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SR001
+        - SR015
+        - SR018
+      answersQuestionRefs:
+        - QR003
+        - QR031
+
+    - id: CR012
+      statement: FMCSA compliance deadlines of January 1, 2026 for certain autonomous vehicle operational requirements took effect, though no comprehensive Level 4 federal trucking rule has been finalised.
+      type: third-party-reported
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR005
+        - SR016
+        - SR018
+      answersQuestionRefs:
+        - QR015
+
+    - id: CR013
+      statement: The AMERICA DRIVES Act, introduced in the 119th Congress, would create a national autonomous vehicle framework, but its passage timeline is uncertain and content is still being negotiated.
+      type: third-party-reported
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR002
+        - SR020
+      answersQuestionRefs:
+        - QR009
+
+    - id: CR014
+      statement: The federal AV framework for heavy-duty autonomous trucks remains incomplete as of May 2026; no comprehensive federal rule covers Level 4 driverless commercial trucking.
+      type: third-party-reported
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR015
+        - SR016
+        - SR005
+      answersQuestionRefs:
+        - QR005
+        - QR028
+
+    - id: CR015
+      statement: Texas, Arizona, and New Mexico have permissive autonomous trucking frameworks that allow Class 8 driverless operations without additional state permits beyond standard commercial vehicle requirements.
+      type: third-party-reported
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR018
+        - SR004
+      answersQuestionRefs:
+        - QR005
+
+    - id: CR016
+      statement: California's AB 316 does not apply to light-duty autonomous vehicles, creating a regulatory bifurcation between Waabi's trucking and robotaxi programmes in California.
+      type: inferred
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR001
+        - SR018
+
+    - id: CR017
+      statement: The American Association of Motor Vehicle Administrators (AAMVA) is developing autonomous vehicle standards that may diverge from FMCSA federal requirements, creating additional jurisdictional complexity for multi-state AV operators.
+      type: third-party-reported
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR004
+        - SR015
+
+    - id: CR018
+      statement: The current patchwork of state-level AV regulations creates operational fragmentation risk for Waabi's multi-state expansion, requiring separate regulatory strategies for each jurisdiction entered.
+      type: inferred
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR018
+        - SR004
+        - SR016
+      answersQuestionRefs:
+        - QR013
+        - QR016
+
+    - id: CR019
+      statement: No federal statutory liability framework exists for Level 4 autonomous truck accidents in commercial operation; liability may fall on the AV developer, OEM, motor carrier, or shipper depending on the accident's legal facts.
+      type: inferred
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR003
+        - SR015
+      answersQuestionRefs:
+        - QR025
+
+    - id: CR020
+      statement: Standardised insurance frameworks for Level 4 autonomous commercial trucks do not yet exist in the US; AV operators carry unpriced tail-risk exposure for novel accident scenarios.
+      type: inferred
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR003
+        - SR016
+      answersQuestionRefs:
+        - QR027
+
+    - id: CR021
+      statement: Aurora Innovation reported $1.6 billion in cash and short-term investments as of Q1 2026, funded through at least H2 2027; Waabi has not disclosed its cash position.
+      type: third-party-reported
+      topic: competitive-risk
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SR029
+        - SR021
+        - SR012
+      answersQuestionRefs:
+        - QR007
+
+    - id: CR022
+      statement: Aurora Innovation has confirmed commercial freight routes with FedEx, Werner Enterprises, and Schneider National, while Waabi has one confirmed trucking channel partner (Uber Freight) with no disclosed carrier contracts.
+      type: third-party-reported
+      topic: competitive-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR022
+        - SR010
+      answersQuestionRefs:
+        - QR021
+        - QR029
+
+    - id: CR023
+      statement: Kodiak Robotics is operationally driverless in the Permian Basin with confirmed contracts with JB Hunt and the US Army, and a DaaS subscription model that locks in institutional customers ahead of Waabi's commercial launch.
+      type: third-party-reported
+      topic: competitive-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR006
+        - SR026
+      answersQuestionRefs:
+        - QR021
+        - QR034
+
+    - id: CR024
+      statement: Gatik achieved fully driverless commercial scale in the middle-mile autonomous trucking segment in January 2026, demonstrating that Level 4 commercial viability is achievable by a well-capitalised autonomous trucking company.
+      type: third-party-reported
+      topic: competitive-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR026
+        - SR018
+
+    - id: CR025
+      statement: Tesla Semi equipped with advanced driver-assistance features could erode the addressable market for supervised (safety-driver-present) autonomous trucking, compressing the commercial runway for Waabi's transitional pilot phase.
+      type: inferred
+      topic: competitive-risk
+      confidence: low
+      freshness: current
+      sourceRefs:
+        - SR025
+
+    - id: CR026
+      statement: Chinese autonomous vehicle companies with lower cost structures and state backing could enter US commercial trucking markets if regulatory access is granted, potentially intensifying competition significantly.
+      type: inferred
+      topic: competitive-risk
+      confidence: low
+      freshness: current
+      sourceRefs:
+        - SR025
+        - SR028
+
+    - id: CR027
+      statement: Torc Robotics, wholly owned by Daimler, has OEM manufacturing integration that provides a fundamentally different and lower-capital-intensity commercialisation path compared to Waabi's independent capital-raise model.
+      type: third-party-reported
+      topic: competitive-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR026
+        - SR028
+      answersQuestionRefs:
+        - QR034
+
+    - id: CR028
+      statement: The autonomous trucking sector has experienced multiple company failures and exits including TuSimple (collapse), Embark (shutdown), Ike (fire-sale acquisition), and Waymo Via (product exit) — establishing a pattern of capital-intensive failure.
+      type: third-party-reported
+      topic: adverse-events
+      confidence: medium
+      freshness: historical
+      sourceRefs:
+        - SR019
+        - SR027
+        - SR026
+      answersQuestionRefs:
+        - QR010
+        - QR032
+
+    - id: CR029
+      statement: Waabi has raised a total of approximately $1.28 billion across three funding rounds (seed, Series B, Series C) with no publicly disclosed commercial revenue as of May 2026.
+      type: third-party-reported
+      topic: financial-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR010
+        - SR013
+        - SR031
+      answersQuestionRefs:
+        - QR022
+        - QR030
+
+    - id: CR030
+      statement: The $250M Uber milestone investment, structured as a separate conditional tranche from the $750M base Series C, creates financial dependency on specific robotaxi deployment milestones whose definitions and timeline are not publicly disclosed.
+      type: inferred
+      topic: financial-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR010
+        - SR014
+      answersQuestionRefs:
+        - QR020
+
+    - id: CR031
+      statement: Waabi's annual cash burn rate is estimated at $150–300 million based on sector benchmarks for AV trucking companies with 250–400 engineers, active fleet operations, and substantial compute infrastructure; the company has not disclosed this figure.
+      type: estimated
+      topic: financial-risk
+      confidence: low
+      freshness: current
+      sourceRefs:
+        - SR027
+        - SR028
+      answersQuestionRefs:
+        - QR006
+        - QR030
+
+    - id: CR032
+      statement: The AV trucking sector's historical capital destruction — TuSimple raised approximately $1.4B before collapse, Embark raised approximately $200M before shutdown — demonstrates systemic financial risk in the category independent of individual company quality.
+      type: inferred
+      topic: financial-risk
+      confidence: medium
+      freshness: historical
+      sourceRefs:
+        - SR027
+        - SR019
+      answersQuestionRefs:
+        - QR012
+
+    - id: CR033
+      statement: Canadian institutional investors (BDC Capital, OMERS Ventures) are disproportionately represented in Waabi's cap table, concentrating the financial risk base in a single national LP ecosystem with correlated exposure to Canadian economic conditions.
+      type: estimated
+      topic: financial-risk
+      confidence: low
+      freshness: current
+      sourceRefs:
+        - SR030
+        - SR013
+      answersQuestionRefs:
+        - QR022
+
+    - id: CR034
+      statement: Waabi remains pre-revenue as of May 2026 with no publicly confirmed paid commercial contracts and an uncertain timeline to profitability dependent on a driverless launch that has already been delayed once.
+      type: inferred
+      topic: financial-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR010
+        - SR011
+      answersQuestionRefs:
+        - QR017
+
+    - id: CR035
+      statement: Raquel Urtasun's technical reputation, academic credentials, and investor relationships are central to Waabi's identity and are the primary driver of the company's ability to raise capital and attract top-tier research talent.
+      type: estimated
+      topic: key-person-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR008
+        - SR030
+      answersQuestionRefs:
+        - QR023
+        - QR033
+
+    - id: CR036
+      statement: Waabi has not publicly disclosed a Chief Technology Officer or any second-tier technical leadership beyond CEO Raquel Urtasun and COO Lior Ron; the technical leadership bench is not publicly visible beyond the founding team.
+      type: estimated
+      topic: key-person-risk
+      confidence: low
+      freshness: current
+      sourceRefs:
+        - SR009
+        - SR008
+      answersQuestionRefs:
+        - QR023
+
+    - id: CR037
+      statement: An Urtasun departure from Waabi would likely trigger investor notification rights, potential material-adverse-change provisions in commercial agreements, and create a technical leadership vacuum with no obvious internal successor.
+      type: inferred
+      topic: key-person-risk
+      confidence: low
+      freshness: current
+      sourceRefs:
+        - SR008
+        - SR013
+      answersQuestionRefs:
+        - QR023
+
+    - id: CR038
+      statement: COO Lior Ron joined Waabi from Uber Freight in August 2025, retaining his Uber Freight chairmanship; his background is in freight logistics and operations rather than AI research, leaving a gap in technical co-leadership below Urtasun.
+      type: third-party-reported
+      topic: key-person-risk
+      confidence: medium
+      freshness: recent
+      sourceRefs:
+        - SR032
+        - SR010
+
+    - id: CR039
+      statement: Waabi missed its Q4 2025 driverless truck launch target, representing the company's first publicly acknowledged commercial milestone delay and enabling Aurora Innovation to achieve commercial driverless operations first on the same corridor.
+      type: third-party-reported
+      topic: adverse-events
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SR010
+        - SR011
+        - SR023
+      answersQuestionRefs:
+        - QR002
+        - QR019
+
+    - id: CR040
+      statement: TuSimple's collapse involved an SEC fraud investigation related to alleged data-sharing with a Chinese company, a CEO firing, and the cessation of US commercial operations — establishing a governance failure precedent in AV trucking.
+      type: third-party-reported
+      topic: adverse-events
+      confidence: medium
+      freshness: historical
+      sourceRefs:
+        - SR019
+        - SR027
+      answersQuestionRefs:
+        - QR032
+
+    - id: CR041
+      statement: Multiple AV trucking companies — TuSimple, Embark, Ike Robotics, and Waymo's trucking programme — have collectively failed, shut down, or exited the Class 8 autonomous trucking segment, representing the dominant outcome pattern for the sector.
+      type: third-party-reported
+      topic: adverse-events
+      confidence: medium
+      freshness: historical
+      sourceRefs:
+        - SR019
+        - SR026
+        - SR027
+      answersQuestionRefs:
+        - QR010
+
+    - id: CR042
+      statement: California AB 316 effectively bans fully driverless heavy-duty truck operations in California, foreclosing the largest US freight market — approximately 25% of US freight by volume — from Waabi's near-term commercial planning.
+      type: third-party-reported
+      topic: regulatory-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SR001
+        - SR018
+        - SR024
+      answersQuestionRefs:
+        - QR003
+        - QR031
+
+  evidenceGaps:
+    - type: missing-data
+      severity: material
+      topic: financial-risk
+      missingEvidence: Waabi's actual burn rate, cash position, and remaining runway are not publicly disclosed; sector estimates carry high uncertainty
+      whyItMatters: Without burn rate visibility, investors cannot assess the probability of a funding cliff before commercial revenue onset, nor calibrate the size and dilution of the next capital event
+      diligencePath: Request burn rate and 12-month cash projection in management diligence; validate against headcount disclosures and compute infrastructure contracts
+      relatedQuestionRefs:
+        - QR006
+        - QR030
+
+    - type: missing-data
+      severity: material
+      topic: regulatory-risk
+      missingEvidence: The full terms of the $250M Uber milestone investment — specific milestone definitions, measurement dates, cure periods, and termination provisions — are not publicly disclosed
+      whyItMatters: The structure of the milestone-linked tranche determines how severe the funding cliff would be if Waabi's robotaxi launch is delayed; adverse termination provisions could eliminate a significant portion of the implied $1.28B raise
+      diligencePath: Request full Series C term sheet and Uber co-investment agreement; focus on milestone definitions and force-majeure carve-outs
+      relatedQuestionRefs:
+        - QR017
+        - QR020
+      relatedTableRefs:
+        - TR002
+
+    - type: missing-data
+      severity: material
+      topic: technology-risk
+      missingEvidence: Waabi's pilot safety record in Texas — including near-miss incidents, disengagement rates, and safety driver intervention frequency — is not publicly disclosed
+      whyItMatters: Without safety metrics, it is impossible to assess how close Waabi's system is to driverless readiness or to benchmark against Aurora's published safety data, creating adverse selection risk for investors
+      diligencePath: Request disengagement rate reports and safety driver intervention logs from Texas pilot operations; compare to Aurora's NHTSA-filed autonomous vehicle reports
+      relatedQuestionRefs:
+        - QR001
+
+    - type: missing-data
+      severity: minor
+      topic: competitive-risk
+      missingEvidence: Waabi's patent portfolio scope, citation counts, and defensibility against Aurora, Kodiak, and Waymo IP claims have not been publicly assessed
+      whyItMatters: AV companies carry substantial simulation, sensor fusion, and planning algorithm IP; if Waabi's core Physical AI patents are weak or narrow, competitors could challenge or design around them
+      diligencePath: Commission FTO (freedom-to-operate) analysis on Waabi's simulation and autonomous driving patents; cross-reference against Aurora, Waymo, and Mobileye patent portfolios
+
+acknowledgedWarnings:
+  - dimension: figureType
+    reason: >-
+      The planned figures for this chapter include a 'dag' (risk transmission map) and 'dependency map'
+      type. Given the available data structure and the analytical value of a severity-likelihood matrix,
+      a regulatory timeline, and a comparative bar chart, these three figure types (matrix, timeline, bar)
+      provide superior investor readability and more actionable risk insight than a dag figure for this
+      chapter's risk register content. The substitution is intentional and noted here per workflow guidance.

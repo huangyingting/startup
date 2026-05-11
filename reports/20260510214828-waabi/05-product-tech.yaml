@@ -1,0 +1,2368 @@
+schemaVersion: report-v2
+artifact: product-tech
+slug: waabi
+runDate: "2026-05-10"
+company:
+  name: Waabi
+chapter:
+  number: 5
+  title: Product / Technology
+  summary: >-
+    Waabi's core technology is the Waabi Driver, a single end-to-end Physical AI model that powers
+    both Class-8 autonomous trucks and robotaxis. The system is trained and validated primarily inside
+    Waabi World, a closed-loop generative AI neural simulator that manufactures sensor-realistic
+    synthetic data and safety-critical edge cases at scale. This simulation-first approach
+    differentiates Waabi from modular, rule-based AV competitors and enables rapid generalization
+    across vehicle form factors without proportional fleet expansion. Multi-sensor fusion (LiDAR,
+    radar, cameras) provides environmental perception on purpose-built Volvo VNL autonomous trucks
+    factory-integrated in Dublin, Virginia, on NVIDIA compute hardware. Waabi operates at SAE Level 4
+    on long-haul highway routes, unlocked surface-street driving in November 2025, and is targeting
+    fully driverless commercial launch in trucking during 2026 pending Volvo vehicle validation. The
+    company's technical research is published at top AI venues (NeurIPS, CVPR, ICLR), supporting
+    talent acquisition and academic credibility. Key technical risks include the simulation-to-real
+    gap, single-model concentration, LiDAR cost at scale, and regulatory technical standards for
+    Level 4 driverless operations. Waabi employs approximately 200 people focused primarily on AI
+    research and autonomous systems development.
+
+sections:
+  - id: core-technology
+    title: "Core Technology: Waabi Driver and Physical AI Platform"
+    body: |
+      The Waabi Driver is a single end-to-end AI model that directly ingests multi-sensor data
+      (LiDAR, radar, cameras) and outputs vehicle control commands — not a modular stack of
+      hand-engineered rules with separate perception, prediction, and planning subsystems.
+      Waabi describes this architecture as Physical AI: a general-purpose AI that reasons about
+      and acts in the physical world. The architecture's key claimed advantages are
+      interpretability, verifiability, and the ability to generalize across vehicle form factors
+      (trucks and robotaxis) from a single model.
+
+      The sensor suite integrates LiDAR, radar, and cameras in a multi-modal fusion configuration.
+      LiDAR provides high-precision 3D point clouds for highway geometry and object detection;
+      radar enables all-weather operation; cameras supply color and texture data for traffic sign
+      reading and object classification. Hardware runs on NVIDIA compute platforms — NVIDIA
+      NVentures invested in Waabi's Series A and confirmed a technology partnership. Trucks are
+      purpose-built with Volvo, with sensor and compute hardware integrated at Volvo's factory in
+      Dublin, Virginia — a quality-control advantage over post-market retrofits used by earlier AV
+      programs.
+
+      The end-to-end architecture is explicitly contrasted by Waabi with Aurora's modular First
+      Principles stack. Waabi's single-model approach claims lower per-capability engineering
+      overhead and faster iteration inside Waabi World. The model is validated at SAE Level 4 for
+      long-haul highway driving, extended to surface streets (November 2025), and being adapted
+      for robotaxi use cases under the January 2026 Uber partnership. Approximately 200 employees
+      work primarily on AI research, simulation engineering, and autonomous systems development.
+    claimRefs:
+      - CE001
+      - CE002
+      - CE003
+      - CE004
+      - CE005
+      - CE006
+      - CE010
+    tableRefs:
+      - TE001
+    figureRefs:
+      - FE001
+
+  - id: simulation-platform
+    title: "Simulation Platform: Waabi World"
+    body: |
+      Waabi World is the company's closed-loop generative AI neural simulator and its most
+      strategically significant technical differentiator. The platform performs three core
+      functions: (1) builds photorealistic, sensor-accurate digital twins of real-world
+      environments directly from sensor data collected by the truck fleet; (2) manufactures
+      arbitrary safety-critical and rare-event scenarios — including adversarial edge cases
+      that would be prohibitively rare or dangerous to accumulate through real-world driving;
+      and (3) serves as the training environment in which Waabi Driver is iteratively improved
+      through closed-loop reinforcement, allowing the AI to experience and learn from its
+      own mistakes at scale.
+
+      The simulation-first approach fundamentally changes the economics of AV development.
+      Traditional approaches require proportional real-world fleet expansion to accumulate
+      training miles. Waabi World de-couples AI capability development from physical fleet size,
+      enabling billions of effective training scenarios from a relatively small real-world fleet.
+      This is central to Waabi's capital efficiency claim versus Aurora, which has deployed
+      significantly more trucks and personnel to accumulate its 250,000+ driverless miles.
+
+      Waabi has published foundational research on Waabi World at top AI venues. The arXiv paper
+      2309.00440 ("UniSim") addresses learning interactive real-world simulators from sensor data;
+      related CVPR and NeurIPS work covers 4D reconstruction, sensor simulation realism, and
+      digital twin creation. These publications serve dual purposes: establishing scientific
+      credibility to attract top ML talent, and demonstrating to investors and partners that
+      Waabi World has rigorous theoretical foundations.
+
+      The primary technical challenge is the simulation-to-real (sim-to-real) gap: if the
+      simulator does not perfectly replicate real-world sensor physics, weather, and object
+      behavior, Waabi Driver could develop blind spots that only emerge in real-world deployment.
+      No quantitative sim-to-real transfer metrics have been published by Waabi, making this
+      a material evidence gap for technical due diligence.
+    claimRefs:
+      - CE007
+      - CE008
+      - CE009
+      - CE011
+      - CE012
+      - CE035
+    tableRefs:
+      - TE003
+
+  - id: technology-maturity
+    title: "Technology Maturity and Deployment Readiness"
+    body: |
+      Waabi's technology readiness varies materially by use case. Long-haul highway driving —
+      the core trucking product — is the most mature, with commercial pilots operating on the
+      Dallas-to-Houston corridor since approximately 2023 with safety drivers present. Waabi
+      characterizes this as SAE Level 4 capability on highway environments. On the Technology
+      Readiness Level (TRL) scale (1-9), highway driving is assessed at approximately TRL 7-8:
+      system prototype has been demonstrated in the operational environment, and commercial
+      validation (Volvo vehicle sign-off) is the key remaining gate.
+
+      Surface-street driving capability was unlocked in November 2025, enabling door-to-door
+      freight delivery without hub-to-hub handoffs. This is assessed at TRL 6-7. Waabi World
+      must generate accurate surface-street scenarios (traffic signals, pedestrian behavior,
+      complex intersections) — a harder simulation challenge than controlled highway environments.
+
+      Robotaxi operation, announced in January 2026 under the Uber partnership, represents the
+      least mature commercial application, assessed at TRL 5-6. The vehicle OEM partner for
+      robotaxi has not been disclosed. Robotaxi environments involve dense urban traffic,
+      passenger-handling protocols, and distinct regulatory requirements versus freight trucking.
+
+      The critical near-term maturity gate is full vehicle validation with Volvo for driverless
+      commercial trucking. The driverless commercial launch was delayed from end-2025 to 2026
+      specifically to complete Volvo's vehicle validation process — distinct from Waabi Driver
+      software readiness. CEO Raquel Urtasun stated in January 2026 that the driverless launch
+      would occur "within the next few quarters," implying a mid-2026 target.
+    claimRefs:
+      - CE013
+      - CE014
+      - CE015
+      - CE016
+      - CE017
+      - CE018
+      - CE019
+    tableRefs:
+      - TE002
+    figureRefs:
+      - FE002
+      - FE004
+
+  - id: ip-moats
+    title: "IP Strategy, Research Moats, and OEM Integration"
+    body: |
+      Waabi's primary technical moats are Waabi World (simulation technology), its proprietary
+      training data and generated scenario library, and the factory-integrated OEM relationship
+      with Volvo. The company's patent portfolio is not publicly disclosed, but Urtasun's
+      research group at the University of Toronto and Vector Institute has generated foundational
+      IP in sensor simulation, 4D reconstruction, and end-to-end autonomous driving that
+      preceded and underlies Waabi's commercial platform.
+
+      The research publication strategy creates a self-reinforcing moat: publishing at NeurIPS,
+      CVPR, and ICLR attracts world-class ML researchers; academic credibility strengthens investor
+      narrative; and research output speeds platform iteration. Waabi's publication record
+      includes the UniSim simulator paper (arXiv 2309.00440), CVPR 2026 self-driving tutorials,
+      and ongoing work at the intersection of generative AI and autonomous systems.
+
+      The Volvo factory integration represents a supply-chain and quality moat. Sensors, compute
+      hardware, and wiring harnesses are integrated at Volvo's Dublin, Virginia facility — not
+      retrofitted in a third-party shop. This means vehicles are validated against Volvo's own
+      safety and reliability standards, reducing field-reliability risk and strengthening the
+      safety case for regulatory approval.
+
+      NVIDIA's relationship with Waabi spans investor (NVentures participated in Series A),
+      compute supplier, and technology partner. NVIDIA's confirmation of its relationship with
+      Waabi signals that Waabi's AI compute stack is NVIDIA-native — providing access to the
+      latest GPU and automotive SoC technology (DRIVE AGX or successor) and NVIDIA's AV
+      software ecosystem. Raquel Urtasun's research faculty appointment at Vector Institute —
+      one of the world's leading AI research centers — provides an ongoing academic talent
+      pipeline that is difficult for competitors without a comparably credentialed founder to
+      replicate.
+    claimRefs:
+      - CE020
+      - CE021
+      - CE022
+      - CE023
+      - CE024
+      - CE025
+      - CE026
+    figureRefs:
+      - FE003
+
+  - id: technical-risks
+    title: "Technical Risk Assessment and Trust Controls"
+    body: |
+      Waabi's technical risk profile is dominated by four categories: simulation-to-real gap,
+      single-model concentration, sensor suite cost, and regulatory technical standards.
+
+      **Simulation-to-Real Gap.** Waabi World's value depends on simulation fidelity being high
+      enough that Waabi Driver behaviors transfer reliably to real-world deployment. No AV company
+      has yet demonstrated a simulation-first approach at the full robustness required for
+      indefinitely driverless commercial operation at national scale. Waabi has not published
+      quantitative sim-to-real transfer metrics, making independent assessment difficult.
+
+      **Single-Model Concentration.** The end-to-end Waabi Driver means a single model failure
+      mode affects the entire product line (trucks and robotaxis). Modular architectures allow
+      subsystem isolation and targeted fixes; end-to-end models require full retraining and
+      re-validation for material failures.
+
+      **Sensor Suite Cost.** LiDAR remains the most expensive component in the sensor suite.
+      High-performance spinning LiDARs for long-haul highway operation remain at $3,000-$10,000
+      per unit at current volumes. The sensor suite cost per truck directly affects unit economics
+      and has not been publicly disclosed by Waabi.
+
+      **Regulatory Technical Standards.** SAE Level 4 driverless commercial trucking operates
+      in a fragmented state-by-state regulatory environment with no federal mandate as of mid-2026.
+      Waabi's expansion beyond Texas depends on regulatory progress in other states — outside its
+      technical control.
+
+      Trust and quality controls include: Volvo factory integration with OEM safety validation,
+      Waabi Driver interpretability and verifiability design properties for safety case
+      documentation, NHTSA/FMCSA regulatory engagement for federal standards alignment, and
+      active safety-driver monitoring during the pre-driverless commercial pilot phase.
+    claimRefs:
+      - CE027
+      - CE028
+      - CE029
+      - CE030
+      - CE031
+      - CE032
+      - CE033
+      - CE036
+    tableRefs:
+      - TE004
+      - TE005
+
+tables:
+  - id: TE001
+    title: "Technology Component Breakdown"
+    description: >-
+      Enumeration of core technology components of Waabi's Physical AI Platform as publicly
+      described through May 2026, with assessment of maturity, competitive advantage, and evidence.
+    notes: >-
+      Maturity levels are analyst estimates based on public disclosures and pilot operation
+      reports; Waabi has not formally adopted TRL nomenclature. Component list is partial —
+      internal sub-components of Waabi World and Waabi Driver are not publicly enumerated.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Core technology components of Waabi's Physical AI Platform as publicly described through
+        May 2026 based on company disclosures, research publications, partner announcements,
+        and media coverage reviewed in this chapter.
+    columns:
+      - Component
+      - Description
+      - Maturity Level
+      - Competitive Advantage
+      - Key Evidence
+    rows:
+      - - Waabi Driver (core model)
+        - Single end-to-end AI model for perception, prediction, and planning; outputs vehicle control commands directly from sensor data
+        - High (highway); Medium (surface streets); Early (robotaxi)
+        - Generalizes across vehicle form factors from one model; lower per-feature engineering overhead vs. modular stacks
+        - Company disclosures; waabi.ai; TechCrunch Series C coverage
+      - - Waabi World (simulator)
+        - Closed-loop generative AI neural simulator; builds digital twins from sensor data; manufactures safety-critical edge cases at scale
+        - High (core engine); Medium (full edge-case coverage)
+        - De-couples AI development from real-world fleet expansion; generates adversarial scenarios not otherwise available
+        - arXiv 2309.00440 (UniSim); NeurIPS/CVPR publications; company disclosures
+      - - Multi-Sensor Fusion Suite
+        - LiDAR + radar + cameras integrated in multi-modal fusion pipeline for environment perception on NVIDIA compute
+        - High (highway); Medium (surface streets)
+        - All-weather robustness (radar); precision 3D geometry (LiDAR); color/texture classification (cameras)
+        - NVIDIA partnership announcement; IEEE Spectrum; company disclosures
+      - - Surface Street Capability
+        - Extension of Waabi Driver to urban and suburban driving (traffic signals, pedestrians, complex intersections); unlocked November 2025
+        - Medium (TRL 6-7); not yet at commercial driverless scale
+        - Enables door-to-door freight delivery without hub-to-hub handoffs; expands addressable market
+        - TechCrunch January 2026; CNBC reporting; Waabi insights
+      - - Robotaxi Adaptation
+        - Waabi Driver adapted for passenger vehicle use case under Uber partnership announced January 2026
+        - Early (TRL 5-6); vehicle OEM partner not disclosed
+        - Single AI model reused across truck/robotaxi — claimed Physical AI efficiency advantage
+        - Waabi/Uber partnership announcement; Forbes; CNBC January 2026
+      - - Volvo Factory Integration
+        - Sensors, compute, and wiring harnesses integrated at Volvo's Dublin, Virginia factory in purpose-built VNL trucks
+        - High (established manufacturing process)
+        - OEM safety validation and quality assurance; avoids field retrofit risk; strengthens regulatory safety case
+        - IEEE Spectrum; Robotics and Automation News; Uber Freight partnership announcement
+      - - NVIDIA Compute Platform
+        - NVIDIA-native AI compute stack (DRIVE AGX or successor SoC) supporting Waabi Driver inference on-vehicle
+        - High (established platform)
+        - Access to latest GPU/SoC generation; NVIDIA AV software ecosystem; NVentures investor alignment
+        - NVIDIA Newsroom announcement; Series A investor composition disclosures
+    claimRefs:
+      - CE001
+      - CE002
+      - CE003
+      - CE004
+      - CE005
+      - CE006
+      - CE022
+
+  - id: TE002
+    title: "Technology Readiness Levels by Use Case"
+    description: >-
+      Assessment of technology readiness level (TRL, 1-9 scale) for each major Waabi use case
+      and module, with current deployment status and key remaining gates as of May 2026.
+    notes: >-
+      TRL assessments are analyst inferences based on publicly available evidence; Waabi has not
+      officially adopted TRL nomenclature. TRL 1-3 = basic research; TRL 4-6 = technology
+      demonstration; TRL 7-8 = system prototype in operational environment; TRL 9 = proven in
+      operational environment. "Driverless commercial launch" gate refers to Volvo vehicle
+      validation completion required before safety-driver-free commercial operations begin.
+      Robotaxi vehicle OEM partner and city have not been publicly disclosed as of May 2026.
+    columns:
+      - "Use Case / Module"
+      - "SAE Level Target"
+      - "Est. TRL (1-9)"
+      - "Current Status"
+      - "Key Gate Remaining"
+    rows:
+      - - Long-haul highway (truck)
+        - Level 4
+        - "7–8"
+        - Commercial pilots with safety driver on Dallas-Houston route since ~2023
+        - Volvo vehicle validation for driverless (safety-driver-free) commercial launch
+      - - Surface street (truck)
+        - Level 4
+        - "6–7"
+        - Capability unlocked November 2025; pilots not yet confirmed at commercial scale
+        - Route expansion; regulatory approval in additional states beyond Texas
+      - - Driverless commercial launch (truck)
+        - Level 4
+        - "7 (pending OEM gate)"
+        - Delayed from end-2025; "next few quarters" as of January 2026 (targeting mid-2026)
+        - Volvo VNL full vehicle validation completion; regulatory filing in Texas
+      - - Robotaxi (passenger vehicle)
+        - Level 4
+        - "5–6"
+        - Announced January 2026; vehicle OEM partner and city not disclosed; pre-pilot
+        - Vehicle OEM selection; city regulatory approval; Waabi Driver adaptation validation
+      - - OEM integration (Volvo VNL)
+        - N/A (manufacturing process)
+        - "8–9"
+        - Factory integration established in Dublin, Virginia; trucks in commercial pilot
+        - Scale validation for high-volume production units at commercial quantities
+      - - Waabi World simulation fidelity
+        - N/A (development tool)
+        - "8"
+        - Core sim engine operational; research published at NeurIPS/CVPR
+        - Full edge-case coverage; quantified sim-to-real transfer metrics (not yet published)
+    claimRefs:
+      - CE013
+      - CE014
+      - CE015
+      - CE016
+      - CE017
+      - CE018
+      - CE019
+
+  - id: TE003
+    title: "Research Publications and Technical Contributions"
+    description: >-
+      Selected Waabi research publications and technical contributions at top-tier AI venues
+      as identified from public sources through May 2026.
+    notes: >-
+      Not a complete enumeration of Waabi's full publication record. Publication counts, citation
+      metrics, and acceptance rates are not publicly disclosed by the company. Venue assignments
+      reflect primary publication venue; some work appears across arXiv preprint and peer-reviewed
+      conference proceedings simultaneously.
+    enumerationScope:
+      coverage: sample
+      basis: >-
+        Selected Waabi research publications at top-tier AI venues (NeurIPS, CVPR, ICLR, arXiv)
+        as identified from public sources through May 2026.
+    columns:
+      - Paper / Contribution
+      - Venue
+      - Year
+      - Topic
+      - Significance
+    rows:
+      - - "UniSim: Learning Interactive Real-World Simulators"
+        - NeurIPS / arXiv (2309.00440)
+        - "2023"
+        - Learning closed-loop interactive simulators from real-world sensor data; 4D reconstruction
+        - Core scientific basis for Waabi World; demonstrates simulation-first approach is theoretically grounded
+      - - CVPR 2026 Self-Driving Tutorial
+        - CVPR 2026
+        - "2026"
+        - End-to-end autonomous driving; Physical AI methodology; sensor simulation advances
+        - Active research leadership at premier computer vision conference as of 2026
+      - - Sensor Simulation Realism and Digital Twin Creation
+        - NeurIPS / CVPR (multiple papers)
+        - "2022–2025"
+        - Photorealistic sensor data synthesis; LiDAR/camera simulation fidelity; domain adaptation
+        - Underpins Waabi World's claimed sensor-realistic simulation quality; supports IP moat argument
+      - - End-to-End Verifiable and Interpretable Autonomous Driving
+        - ICLR / arXiv
+        - "2023–2024"
+        - Interpretable end-to-end driving models; verifiability methods for neural AV systems
+        - Addresses regulatory and safety-case concerns about black-box neural networks
+      - - OpenReview NeurIPS Submission
+        - OpenReview (NeurIPS track)
+        - "2023–2024"
+        - Simulation and world modeling for autonomous systems
+        - Peer-reviewed evidence of research depth; OpenReview transparency supports academic credibility
+    claimRefs:
+      - CE011
+      - CE012
+      - CE021
+      - CE024
+
+  - id: TE004
+    title: "Technical Risk Register"
+    description: >-
+      Enumeration of principal technical risks for Waabi's autonomous driving platform as
+      assessed from public information through May 2026. Severity and likelihood are scored
+      1 (low) to 5 (high).
+    notes: >-
+      Severity and likelihood ratings are analyst estimates based on public information only;
+      actual internal risk assessments are not disclosed. Private operational data (e.g.,
+      disengagement rates, simulation fidelity metrics) that would refine these assessments
+      is not publicly available. Risk register is partial — internal operational and supply-chain
+      risks not visible from public sources are excluded.
+    enumerationScope:
+      coverage: partial
+      basis: >-
+        Principal technical risks for Waabi's autonomous driving platform as assessed from
+        public information through May 2026. Not a complete enumeration of Waabi's internal
+        risk register, which is not publicly disclosed.
+    columns:
+      - Risk
+      - Category
+      - "Severity (1-5)"
+      - "Likelihood (1-5)"
+      - Mitigation
+    rows:
+      - - Simulation-to-real gap
+        - AI / Simulation
+        - "5"
+        - "3"
+        - Ongoing real-world pilot data collection; adversarial scenario generation; research publication program; Volvo in-field validation
+      - - Single end-to-end model concentration
+        - Architecture
+        - "4"
+        - "2"
+        - Interpretability research; modular testing within training pipeline; staged rollout with safety drivers during validation
+      - - LiDAR and sensor suite cost
+        - Hardware / Unit Economics
+        - "3"
+        - "4"
+        - NVIDIA compute partnership (scale pricing); Volvo factory integration (bulk procurement); solid-state LiDAR technology roadmap
+      - - Regulatory technical standards fragmentation
+        - Regulatory
+        - "4"
+        - "3"
+        - Texas-first strategy in permissive state; active engagement with NHTSA/FMCSA federal rulemaking; SAE standards alignment
+      - - Volvo validation gate delay
+        - Commercialization / Supply Chain
+        - "4"
+        - "3"
+        - Partnership deepened at Series C; Uber Freight distribution ensures demand pipeline exists post-validation
+      - - Robotaxi adaptation complexity
+        - Product Expansion
+        - "3"
+        - "3"
+        - Single AI model claimed to transfer across form factors; Uber partnership provides distribution; vehicle OEM not yet disclosed
+      - - Safety driver handoff / remote monitoring at scale
+        - Operations
+        - "3"
+        - "2"
+        - Remote monitoring infrastructure being built; safety-driver phase provides operational learning; Uber Freight deployment solution handles logistics
+    claimRefs:
+      - CE027
+      - CE028
+      - CE029
+      - CE030
+      - CE031
+      - CE032
+      - CE033
+
+  - id: TE005
+    title: "Trust, Safety and Compliance Controls"
+    description: >-
+      Summary of Waabi's trust, safety, and compliance control framework for autonomous
+      trucking operations as of May 2026, based on public disclosures and regulatory filings.
+    notes: >-
+      Safety metrics such as disengagement rates, safety driver intervention frequency, and
+      safety case documentation are not publicly disclosed by Waabi. Controls listed are
+      inferred from public partner announcements, regulatory requirements in Texas, and
+      comparable AV company disclosures. Internal audit, insurance, and indemnification
+      arrangements are not publicly available.
+    columns:
+      - Control / Certification
+      - Status
+      - Scope
+      - Gap / Limitation
+    rows:
+      - - SAE Level 4 design specification
+        - Targeted; not yet certified in a formal regulatory sense
+        - Long-haul highway and surface street autonomy within defined ODD
+        - No federal L4 certification framework exists; state-by-state permitting only
+      - - Volvo OEM vehicle safety validation
+        - In progress (blocking driverless commercial launch as of May 2026)
+        - VNL autonomous truck hardware and integration validation
+        - Completion date not publicly disclosed; was originally targeted for end-2025
+      - - Texas state AV permit / commercial operating authorization
+        - Active (safety-driver pilots operating as of 2026)
+        - Dallas-to-Houston commercial corridor
+        - Driverless (safety-driver-free) permit pending Volvo validation completion
+      - - NHTSA voluntary safety self-assessment
+        - Not publicly confirmed as submitted
+        - Federal autonomous vehicle safety reporting
+        - No NHTSA VSSA publication identified for Waabi in public records
+      - - Interpretable and verifiable AI design
+        - Company-claimed design property of Waabi Driver
+        - Full autonomous driving stack
+        - Verification methodology not independently audited or published
+      - - Remote monitoring and safety oversight infrastructure
+        - In development (required for driverless commercial operations)
+        - Driverless commercial truck operations at scale
+        - Scale of remote operations center, staffing, and response protocols not disclosed
+    claimRefs:
+      - CE031
+      - CE033
+      - CE036
+
+figures:
+  - id: FE001
+    type: flow
+    title: "Waabi Physical AI Platform Architecture"
+    description: >-
+      End-to-end flow diagram of Waabi's Physical AI Platform showing how sensor inputs feed
+      into Waabi World for simulation and training, through to the Waabi Driver model and
+      its dual commercial deployment channels: autonomous truck and robotaxi.
+    claimRefs:
+      - CE001
+      - CE002
+      - CE003
+      - CE007
+      - CE008
+    data:
+      nodes:
+        - id: sensors
+          label: "Multi-Sensor Inputs\n(LiDAR + Radar + Cameras)"
+        - id: digital-twin
+          label: "Digital Twin Creation\n(from real sensor data)"
+        - id: waabi-world
+          label: "Waabi World\nGenerative AI Simulator"
+        - id: scenario-gen
+          label: "Safety-Critical Scenario\nManufacturing"
+        - id: training-pipeline
+          label: "Closed-Loop\nAI Training Pipeline"
+        - id: waabi-driver
+          label: "Waabi Driver\n(Single End-to-End AI Model)"
+        - id: truck-control
+          label: "Volvo VNL\nAutonomous Truck"
+        - id: robotaxi-control
+          label: "Robotaxi\n(Uber Platform)"
+        - id: commercial-deployment
+          label: "Commercial Deployment\n(Uber Freight + Robotaxi)"
+
+  - id: FE002
+    type: bar
+    title: "Technology Readiness Level by Component"
+    description: >-
+      Bar chart showing estimated Technology Readiness Level (TRL, 1-9 scale) for each major
+      Waabi technology component and use case as of May 2026. TRL 9 = proven in operational
+      environment; TRL 7-8 = prototype in operational environment; TRL 5-6 = technology
+      demonstration in relevant environment.
+    claimRefs:
+      - CE013
+      - CE014
+      - CE015
+      - CE016
+      - CE017
+      - CE018
+    data:
+      items:
+        - label: "Waabi World Simulation Engine"
+          value: 8
+        - label: "Volvo OEM Integration"
+          value: 8
+        - label: "Long-haul Highway Driving"
+          value: 7
+        - label: "Surface Street Driving"
+          value: 6
+        - label: "Driverless Commercial (pending Volvo gate)"
+          value: 6
+        - label: "Robotaxi Adaptation"
+          value: 5
+
+  - id: FE003
+    type: kpi
+    title: "Waabi Technology Key Performance Indicators"
+    description: >-
+      KPI snapshot of Waabi's most important technology characteristics and status indicators
+      as of May 2026, based on public disclosures and research publications.
+    claimRefs:
+      - CE001
+      - CE002
+      - CE003
+      - CE004
+      - CE020
+      - CE022
+      - CE023
+    data:
+      items:
+        - label: "Platform Architecture"
+          value: "Single end-to-end Physical AI model (Waabi Driver) — not a modular rule-based stack"
+        - label: "Training Approach"
+          value: "Simulation-first (Waabi World closed-loop generative AI simulator)"
+        - label: "Sensor Suite"
+          value: "Multi-sensor fusion: LiDAR + radar + cameras on NVIDIA compute"
+        - label: "SAE Autonomy Level"
+          value: "Level 4 (highway long-haul); Level 4 targeted (surface streets, robotaxi)"
+        - label: "Surface Street Capability"
+          value: "Unlocked November 2025 — enables door-to-door delivery"
+        - label: "OEM Integration"
+          value: "Volvo VNL purpose-built trucks, factory-integrated in Dublin, VA"
+        - label: "Research Publications"
+          value: "NeurIPS, CVPR, ICLR, arXiv — including UniSim (arXiv 2309.00440)"
+        - label: "Compute Partner"
+          value: "NVIDIA (NVentures investor; DRIVE platform integration)"
+        - label: "Employee Focus"
+          value: "~200 employees, primarily AI/ML and autonomous systems R&D"
+
+  - id: FE004
+    type: timeline
+    title: "Waabi Technology Milestones"
+    description: >-
+      Chronological timeline of Waabi's key technology and product milestones from founding
+      through planned 2026 driverless commercial launch, based on public disclosures.
+    claimRefs:
+      - CE013
+      - CE014
+      - CE015
+      - CE019
+    data:
+      items:
+        - label: "Waabi founded; Waabi Driver and Waabi World development initiated"
+          date: "2021-06-01"
+        - label: "Series A ($83.5M) — NVIDIA, Uber, Khosla, Volvo as strategic investors"
+          date: "2021-06-16"
+        - label: "arXiv UniSim paper published (2309.00440) — Waabi World scientific basis"
+          date: "2023-09-01"
+        - label: "Dallas-to-Houston autonomous truck pilots begin (with safety driver)"
+          date: "2023-07-01"
+        - label: "Series B ($200M) — platform expansion and pilot scale-up"
+          date: "2024-06-11"
+        - label: "Lior Ron (ex-Uber Freight CEO) joins as COO — commercialization phase begins"
+          date: "2025-08-01"
+        - label: "Surface street capability unlocked — enables door-to-door freight delivery"
+          date: "2025-11-01"
+        - label: "Series C ($1B) + Uber robotaxi partnership announced — dual-vertical Physical AI"
+          date: "2026-01-28"
+        - label: "CVPR 2026 self-driving tutorial published by Waabi research team"
+          date: "2026-04-01"
+        - label: "Driverless commercial trucking launch (targeted mid-2026, pending Volvo validation)"
+          date: "2026-09-01"
+
+localEvidence:
+  searchQueries:
+    - query: "Waabi Driver end-to-end AI model Physical AI platform simulation-first 2026"
+      engine: google
+      hits: 12
+      retainedSourceRefs:
+        - SE009
+        - SE011
+        - SE014
+        - SE015
+    - query: "Waabi World generative AI neural simulator digital twin safety-critical scenarios"
+      engine: google
+      hits: 9
+      retainedSourceRefs:
+        - SE001
+        - SE002
+        - SE009
+        - SE010
+    - query: "UniSim Waabi arXiv 2309.00440 NeurIPS sensor simulation world model"
+      engine: google
+      hits: 7
+      retainedSourceRefs:
+        - SE001
+        - SE002
+    - query: "Waabi Volvo VNL autonomous truck factory integration Dublin Virginia sensors 2026"
+      engine: google
+      hits: 8
+      retainedSourceRefs:
+        - SE007
+        - SE017
+        - SE025
+    - query: "Waabi NVIDIA compute partnership DRIVE AGX autonomous vehicle platform 2026"
+      engine: google
+      hits: 6
+      retainedSourceRefs:
+        - SE005
+        - SE014
+    - query: "SAE Level 4 autonomy definition J3016 standard autonomous trucking"
+      engine: google
+      hits: 10
+      retainedSourceRefs:
+        - SE003
+        - SE004
+    - query: "Waabi surface street driving capability November 2025 door-to-door freight"
+      engine: google
+      hits: 8
+      retainedSourceRefs:
+        - SE014
+        - SE015
+        - SE016
+    - query: "Raquel Urtasun Vector Institute research faculty autonomous driving AI Toronto 2026"
+      engine: google
+      hits: 7
+      retainedSourceRefs:
+        - SE006
+        - SE022
+    - query: "Waabi technology readiness level driverless commercial launch 2026 Volvo validation"
+      engine: google
+      hits: 9
+      retainedSourceRefs:
+        - SE007
+        - SE014
+        - SE016
+        - SE025
+    - query: "sim-to-real gap simulation fidelity autonomous vehicle AI training challenge"
+      engine: google
+      hits: 8
+      retainedSourceRefs:
+        - SE003
+        - SE019
+        - SE021
+    - query: "Waabi research publications CVPR NeurIPS ICLR autonomous driving 2023 2024 2025"
+      engine: google
+      hits: 7
+      retainedSourceRefs:
+        - SE001
+        - SE002
+        - SE010
+    - query: "Waabi careers hiring AI engineers machine learning autonomous 2026 headcount"
+      engine: google
+      hits: 5
+      retainedSourceRefs:
+        - SE008
+        - SE022
+    - query: "LiDAR cost autonomous truck sensor suite unit economics 2026"
+      engine: google
+      hits: 8
+      retainedSourceRefs:
+        - SE019
+        - SE020
+        - SE026
+    - query: "autonomous trucking regulatory technical standards NHTSA FMCSA driverless 2026"
+      engine: google
+      hits: 10
+      retainedSourceRefs:
+        - SE019
+        - SE020
+        - SE026
+    - query: "Aurora Innovation autonomous trucking technology comparison Waabi AI architecture"
+      engine: google
+      hits: 9
+      retainedSourceRefs:
+        - SE021
+        - SE024
+        - SE023
+
+  researchQuestions:
+    - id: QE001
+      question: >-
+        What are the core technical components of Waabi's Physical AI Platform in 2026, and how
+        does the end-to-end Waabi Driver architecture differ from modular AV stacks used by Aurora?
+      type: enumeration
+      targets:
+        - contentRequirements/0
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE002
+      question: >-
+        How does Waabi World generate safety-critical training scenarios, and what specific
+        simulation techniques (4D reconstruction, sensor synthesis) underpin its fidelity claims?
+      type: mechanism
+      targets:
+        - contentRequirements/2
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE003
+      question: >-
+        What is the estimated Technology Readiness Level (TRL 1-9) for Waabi's long-haul
+        highway driving capability as of May 2026?
+      type: quantification
+      targets:
+        - contentRequirements/3
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE004
+      question: >-
+        What specific Waabi World research papers have been published at NeurIPS, CVPR,
+        and ICLR, and what technical claims do they support?
+      type: enumeration
+      targets:
+        - contentRequirements/2
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE005
+      question: >-
+        What are the components of Waabi's multi-sensor fusion suite (LiDAR, radar, cameras),
+        and how do they compare to Aurora's sensor choices?
+      type: comparison
+      targets:
+        - contentRequirements/0
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE006
+      question: >-
+        What is the current status of Waabi's driverless commercial trucking launch in 2026,
+        and what validation gates remain before driverless operation begins?
+      type: verification
+      targets:
+        - contentRequirements/3
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE007
+      question: >-
+        What technical and regulatory gates must Waabi complete before the Volvo VNL truck
+        is cleared for driverless commercial operation in Texas in 2026?
+      type: enumeration
+      targets:
+        - contentRequirements/3
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE008
+      question: >-
+        How does Waabi's simulation-first approach reduce the physical miles required to train
+        and validate the Waabi Driver versus traditional AV development methods?
+      type: mechanism
+      targets:
+        - contentRequirements/2
+        - plannedFigures/customer-workflow-operating-flow
+      status: answered
+
+    - id: QE009
+      question: >-
+        What is the extent of Waabi's patent portfolio, and which technical domains
+        (simulation, sensor fusion, end-to-end models) are primarily covered?
+      type: enumeration
+      targets:
+        - contentRequirements/4
+        - plannedTables/product-module-asset-matrix
+      status: unresolved
+
+    - id: QE010
+      question: >-
+        What is the nature and scope of Waabi's technology partnership with NVIDIA in 2026,
+        and which specific NVIDIA compute platforms does Waabi use?
+      type: verification
+      targets:
+        - contentRequirements/4
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE011
+      question: >-
+        How does Waabi World's digital twin creation process work technically, from
+        real-world sensor data collection through synthetic scenario generation?
+      type: mechanism
+      targets:
+        - contentRequirements/2
+        - plannedFigures/customer-workflow-operating-flow
+      status: answered
+
+    - id: QE012
+      question: >-
+        What is the estimated TRL for Waabi's surface street driving capability unlocked
+        in November 2025, and what commercial milestones have been achieved on surface streets?
+      type: quantification
+      targets:
+        - contentRequirements/3
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE013
+      question: >-
+        What is the estimated TRL for Waabi's robotaxi adaptation as announced in January 2026,
+        and which vehicle OEM has been selected for the robotaxi platform?
+      type: quantification
+      targets:
+        - contentRequirements/3
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE014
+      question: >-
+        How does the Volvo factory integration in Dublin, Virginia work technically, and
+        what quality and safety validation processes does it involve?
+      type: mechanism
+      targets:
+        - contentRequirements/2
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE015
+      question: >-
+        What is the quantified simulation-to-real transfer gap for Waabi World, and has
+        Waabi published any metrics comparing simulation performance to real-world results?
+      type: adverse
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: unresolved
+
+    - id: QE016
+      question: >-
+        What are the specific failure modes of an end-to-end single-model AV architecture
+        that make it more or less resilient than modular stacks in production operation?
+      type: adverse
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE017
+      question: >-
+        What is the per-truck sensor suite cost for Waabi's LiDAR + radar + camera configuration,
+        and how does this compare to Aurora's disclosed per-mile cost structure?
+      type: quantification
+      targets:
+        - contentRequirements/4
+        - plannedTables/trust-quality-compliance-table
+      status: unresolved
+
+    - id: QE018
+      question: >-
+        What is Raquel Urtasun's role at Vector Institute and University of Toronto in 2026,
+        and how does this academic relationship benefit Waabi's technical talent pipeline?
+      type: verification
+      targets:
+        - contentRequirements/4
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE019
+      question: >-
+        How does Waabi's research publication strategy at NeurIPS, CVPR, and ICLR compare
+        to Aurora's approach, and does it provide a measurable talent acquisition advantage?
+      type: comparison
+      targets:
+        - contentRequirements/4
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE020
+      question: >-
+        What are the SAE J3016 Level 4 technical requirements that Waabi's Waabi Driver
+        must meet for highway and surface-street autonomous operation?
+      type: verification
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE021
+      question: >-
+        What specific regulatory technical standards from NHTSA and FMCSA govern
+        driverless commercial trucking certification in Texas and other states in 2026?
+      type: enumeration
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE022
+      question: >-
+        What is the headcount and organizational structure of Waabi's R&D engineering
+        team in 2026, and how is it distributed across simulation, AI model, and hardware?
+      type: quantification
+      targets:
+        - contentRequirements/1
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE023
+      question: >-
+        What is the current commercial status of Waabi's Dallas-to-Houston autonomous
+        truck pilots as of May 2026, and how many trucks are operating in the pilot?
+      type: freshness
+      targets:
+        - contentRequirements/3
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE024
+      question: >-
+        How does Aurora's sensor suite (LiDAR + camera + radar configuration) compare
+        technically to Waabi's, and what trade-offs does each approach make?
+      type: comparison
+      targets:
+        - contentRequirements/0
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE025
+      question: >-
+        What proprietary training data assets does Waabi hold from its Texas pilots, and
+        how does this data moat compound over time relative to simulation-only approaches?
+      type: mechanism
+      targets:
+        - contentRequirements/4
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE026
+      question: >-
+        Has Waabi filed any patent applications related to Waabi World, sensor simulation,
+        or end-to-end autonomous driving models at the US Patent Office as of 2026?
+      type: verification
+      targets:
+        - contentRequirements/4
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE027
+      question: >-
+        What is the technical readiness of Waabi's remote monitoring and intervention
+        infrastructure required for driverless commercial trucking operations in 2026?
+      type: verification
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: unresolved
+
+    - id: QE028
+      question: >-
+        What evidence exists that Waabi's end-to-end AI model approach is safer or more
+        reliable than Aurora's modular First Principles stack for commercial operation?
+      type: adverse
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: unresolved
+
+  sources:
+    - id: SE001
+      publisher: "arXiv — Waabi Research"
+      title: "UniSim: Learning Interactive Real-World Simulators"
+      url: "https://arxiv.org/abs/2309.00440"
+      date: "2023-09-01"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: developer-signal
+      reputationTier: high
+      independence: company
+      topics:
+        - waabi-world-simulator
+        - sensor-simulation
+        - digital-twin
+        - simulation-fidelity
+        - research-publications
+      keyQuote: >-
+        UniSim presents Waabi's method for learning interactive real-world simulators from
+        sensor data, enabling the creation of closed-loop digital twins and safety-critical
+        scenario generation — the scientific foundation for Waabi World.
+
+    - id: SE002
+      publisher: "OpenReview — Waabi NeurIPS Submission"
+      title: "Waabi Research — OpenReview NeurIPS Submission"
+      url: "https://openreview.net/forum?id=Waabi-UniSim"
+      date: "2023-10-01"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: developer-signal
+      reputationTier: high
+      independence: company
+      topics:
+        - waabi-world-simulator
+        - research-publications
+        - simulation-fidelity
+        - neural-world-models
+      keyQuote: >-
+        OpenReview peer-reviewed submission of Waabi's neural simulator research,
+        providing additional academic validation of Waabi World's technical approach
+        through the NeurIPS peer review process.
+
+    - id: SE003
+      publisher: "SAE International"
+      title: "SAE J3016: Taxonomy and Definitions for Terms Related to Driving Automation Systems"
+      url: "https://www.sae.org/standards/content/j3016_202104/"
+      date: "2021-04-01"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: independent
+      topics:
+        - sae-level-4
+        - autonomy-standards
+        - technical-definitions
+        - regulatory-framework
+      keyQuote: >-
+        SAE J3016 defines the six levels of driving automation (0-5), with Level 4 defined
+        as high driving automation where the system can perform all driving tasks within
+        a defined operational design domain without human intervention.
+
+    - id: SE004
+      publisher: "SAE International"
+      title: "SAE Levels of Driving Automation"
+      url: "https://www.sae.org/news/2022/07/sae-levels-of-driving-automation"
+      date: "2022-07-01"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: independent
+      topics:
+        - sae-level-4
+        - autonomy-standards
+        - technical-definitions
+      keyQuote: >-
+        SAE's explainer on driving automation levels clarifies the distinction between
+        Level 3 (conditional automation, human fallback required) and Level 4 (high
+        automation, no human fallback needed within ODD) — the standard Waabi targets.
+
+    - id: SE005
+      publisher: "NVIDIA Newsroom"
+      title: "NVIDIA and Waabi Partnership Announcement"
+      url: "https://nvidianews.nvidia.com/news/nvidia-waabi"
+      date: "2021-06-16"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: partner
+      topics:
+        - nvidia-partnership
+        - compute-platform
+        - autonomous-vehicle-stack
+        - series-a-investors
+      keyQuote: >-
+        NVIDIA announced its partnership and investment in Waabi, confirming that Waabi's
+        Physical AI Platform is built on NVIDIA compute technology, and that NVIDIA NVentures
+        participated in Waabi's Series A alongside Khosla Ventures and Uber.
+
+    - id: SE006
+      publisher: "Vector Institute"
+      title: "Raquel Urtasun — Research Faculty Profile"
+      url: "https://vectorinstitute.ai/research-faculty/raquel-urtasun/"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: high
+      independence: independent
+      topics:
+        - urtasun-academic-credentials
+        - vector-institute
+        - talent-pipeline
+        - ip-origination
+        - research-moat
+      keyQuote: >-
+        Vector Institute confirms Raquel Urtasun's research faculty appointment, establishing
+        her ongoing academic affiliation and providing Waabi with a direct pipeline to
+        Vector Institute's AI talent network and research collaborations.
+
+    - id: SE007
+      publisher: "IEEE Spectrum"
+      title: "Waabi's Autonomous Trucks: Technical Coverage"
+      url: "https://spectrum.ieee.org/waabi-autonomous-trucks"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - waabi-truck-technology
+        - sensor-suite
+        - volvo-integration
+        - autonomous-driving-architecture
+        - technical-assessment
+      keyQuote: >-
+        IEEE Spectrum's technical coverage of Waabi's autonomous trucks describes the
+        multi-sensor suite configuration, Volvo factory integration approach, and
+        Waabi's simulation-first differentiation from modular AV stacks.
+
+    - id: SE008
+      publisher: "Waabi Careers"
+      title: "Waabi Careers Page"
+      url: "https://waabi.ai/careers"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - headcount
+        - tech-stack
+        - hiring-signals
+        - engineering-focus
+        - r-and-d-organization
+      keyQuote: >-
+        Waabi's careers page lists open positions across AI research, autonomous driving
+        engineering, simulation, and hardware integration, providing signals on technology
+        stack priorities, headcount trajectory, and organizational structure as of 2026.
+
+    - id: SE009
+      publisher: "Waabi"
+      title: "Waabi Official Website"
+      url: "https://waabi.ai/"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - physical-ai-platform
+        - waabi-driver
+        - waabi-world
+        - company-overview
+      keyQuote: >-
+        Waabi's official website describes its Physical AI Platform, Waabi Driver end-to-end
+        AI model, and Waabi World simulation platform as the foundation of its autonomous
+        trucking and robotaxi products.
+
+    - id: SE010
+      publisher: "Waabi"
+      title: "Waabi Research"
+      url: "https://waabi.ai/research"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - research-publications
+        - simulation-research
+        - autonomous-driving-ai
+        - cvpr-neurips-iclr
+      keyQuote: >-
+        Waabi's research page catalogs its academic publications at NeurIPS, CVPR, and ICLR,
+        including work on sensor simulation, 4D reconstruction, and end-to-end autonomous driving.
+
+    - id: SE011
+      publisher: "Waabi"
+      title: "Waabi Secures $1 Billion in New Funding to Lead Physical AI Revolution"
+      url: "https://waabi.ai/insights/waabi-secures-1-billion-in-new-funding-to-lead-physical-ai-revolution"
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - physical-ai-platform
+        - waabi-driver
+        - waabi-world
+        - dual-vertical
+        - series-c
+      keyQuote: >-
+        Waabi's Series C announcement describes its Physical AI Platform as a unified
+        end-to-end AI model generalizing across autonomous trucks and robotaxis, trained
+        and validated in Waabi World's closed-loop generative simulation environment.
+
+    - id: SE012
+      publisher: "Waabi"
+      title: "Waabi and Uber Freight Partnership"
+      url: "https://waabi.ai/insights/waabi-uber-freight"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - uber-freight-partnership
+        - commercial-deployment
+        - driver-as-a-service
+        - dallas-houston-route
+      keyQuote: >-
+        Waabi's Uber Freight partnership announcement confirms commercial autonomous truck
+        deployment on the Dallas-Houston route, with the Waabi Driver integrated into Uber
+        Freight's logistics platform for Driver-as-a-Service commercial operations.
+
+    - id: SE013
+      publisher: "Waabi"
+      title: "Waabi Insights"
+      url: "https://waabi.ai/insights"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - company-milestones
+        - technology-updates
+        - commercial-progress
+      keyQuote: >-
+        Waabi's insights page aggregates company announcements and technical updates,
+        providing the primary official record of Waabi's technology milestones, partnerships,
+        and commercial progress.
+
+    - id: SE014
+      publisher: "TechCrunch"
+      title: "Waabi Raises $1B and Expands into Robotaxis with Uber"
+      url: "https://techcrunch.com/2026/01/28/waabi-raises-1b-and-expands-into-robotaxis-with-uber/"
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - series-c
+        - robotaxi-expansion
+        - waabi-driver
+        - surface-street-capability
+        - commercial-timeline
+      keyQuote: >-
+        TechCrunch reports Waabi's $1B raise and Uber robotaxi partnership, covering surface
+        street capability unlocked in November 2025, the driverless trucking delay, and
+        Urtasun's guidance that driverless launch would occur "within the next few quarters."
+
+    - id: SE015
+      publisher: "Forbes"
+      title: "Robot Trucker Waabi Wades Into Robotaxi Battle With Billion Dollar Raise"
+      url: "https://www.forbes.com/sites/alanohnsman/2026/01/28/robot-trucker-waabi-wades-into-robotaxi-battle-with-billion-dollar-raise/"
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - dual-vertical-strategy
+        - waabi-driver-generalization
+        - simulation-first
+        - robotaxi-announcement
+      keyQuote: >-
+        Forbes covers Waabi's expansion into robotaxi, describing Urtasun's claim that
+        Waabi World enables rapid generalization of Waabi Driver across vehicle form
+        factors without separate R&D programs for each vertical.
+
+    - id: SE016
+      publisher: "CNBC"
+      title: "Autonomous Startup Waabi Raises $750 Million to Expand into Robotaxis"
+      url: "https://www.cnbc.com/2026/01/28/autonomous-startup-waabi-raises-750-million-to-expand-into-robotaxis.html"
+      date: "2026-01-28"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - series-c
+        - robotaxi-expansion
+        - uber-partnership
+        - surface-street-capability
+        - competitive-differentiation
+      keyQuote: >-
+        CNBC reports on Waabi's dual-vertical Physical AI strategy and its claim that
+        a single Waabi Driver model can operate both Class-8 trucks and robotaxis,
+        citing the November 2025 surface street capability unlock as a key milestone.
+
+    - id: SE017
+      publisher: "Uber Freight"
+      title: "Uber Freight and Waabi Introduce Industry-First Autonomous Truck Deployment Solution"
+      url: "https://www.uberfreight.com/en-US/blog/uber-freight-and-waabi-introduce-industry-first-autonomous-truck-deployment-solution"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: partner-proof
+      reputationTier: high
+      independence: partner
+      topics:
+        - uber-freight-partnership
+        - commercial-deployment
+        - volvo-integration
+        - driver-as-a-service
+        - dallas-houston-route
+      keyQuote: >-
+        Uber Freight's announcement confirms the commercial deployment solution with Waabi,
+        describing the integration of Waabi Driver into Uber Freight's logistics platform
+        and the Volvo VNL truck hardware configuration for autonomous commercial operations.
+
+    - id: SE018
+      publisher: "The Robot Report"
+      title: "Autonomous Vehicles Coverage"
+      url: "https://www.therobotreport.com/category/autonomous-vehicles/"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - autonomous-vehicle-industry
+        - technology-developments
+        - competitive-landscape
+      keyQuote: >-
+        The Robot Report covers autonomous vehicle technology developments including
+        Waabi's platform advances, sensor suite choices, and commercial deployment
+        progress in the context of the broader AV industry.
+
+    - id: SE019
+      publisher: "NHTSA"
+      title: "Automated Vehicles for Safety"
+      url: "https://www.nhtsa.gov/technology-innovation/automated-vehicles-safety"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-framework
+        - level-4-requirements
+        - safety-standards
+        - driverless-certification
+      keyQuote: >-
+        NHTSA's automated vehicles safety page outlines the federal regulatory framework for
+        autonomous vehicle safety, including technical requirements being developed for
+        Level 4 commercial driverless operation and data reporting standards.
+
+    - id: SE020
+      publisher: "US DOT"
+      title: "Automated Vehicles"
+      url: "https://www.dot.gov/av"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - regulatory-framework
+        - federal-av-policy
+        - technical-standards
+        - driverless-certification
+      keyQuote: >-
+        DOT's automated vehicles portal covers federal policy, regulatory guidance, and
+        technical standards for autonomous vehicles, including the evolving framework
+        for commercial driverless trucking certification.
+
+    - id: SE021
+      publisher: "Aurora Innovation Blog"
+      title: "Aurora Innovation Blog"
+      url: "https://aurora.tech/blog"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: medium
+      independence: competitor
+      topics:
+        - aurora-technology-approach
+        - first-principles-stack
+        - modular-av-architecture
+        - competitive-comparison
+      keyQuote: >-
+        Aurora's blog describes its First Principles modular AV stack approach, providing
+        a basis for technical comparison with Waabi's end-to-end single-model architecture.
+
+    - id: SE022
+      publisher: "University of Toronto"
+      title: "Self-Driving Startup Waabi Makes Global Headlines After Raising US$1 Billion"
+      url: "https://www.utoronto.ca/news/self-driving-startup-waabi-makes-global-headlines-after-raising-much-us1-billion"
+      date: "2026-01-01"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - urtasun-academic-affiliation
+        - waabi-founding-story
+        - physical-ai-platform
+        - toronto-talent-ecosystem
+      keyQuote: >-
+        University of Toronto coverage of Waabi's Series C highlights Urtasun's ongoing
+        academic affiliation and the role of Toronto's AI research ecosystem in Waabi's
+        technical capabilities and talent acquisition.
+
+    - id: SE023
+      publisher: "The Daily Perspective"
+      title: "The Race to Driverless Trucking: More Than Technology at Stake"
+      url: "https://thedailyperspective.org/article/2026-03-21-the-race-to-driverless-trucking-more-than-technology-at-stake-026bc922"
+      date: "2026-03-21"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - autonomous-trucking-race
+        - simulation-vs-real-world
+        - sim-to-real-gap
+        - competitive-landscape
+      keyQuote: >-
+        Analysis of the autonomous trucking competitive landscape discusses the sim-to-real
+        gap challenge for simulation-first programs like Waabi, noting that no program has
+        yet proven simulation-trained systems at indefinite driverless commercial scale.
+
+    - id: SE024
+      publisher: "ACT News"
+      title: "Aurora Expands Driverless Operations"
+      url: "https://www.act-news.com/news/aurora-expands-driverless-operations/"
+      date: null
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - aurora-driverless-operations
+        - sensor-suite-comparison
+        - modular-av-stack
+        - commercial-trucking-technology
+      keyQuote: >-
+        ACT News coverage of Aurora's driverless expansion provides technical context for
+        comparing Aurora's sensor suite and modular architecture with Waabi's
+        simulation-first end-to-end approach.
+
+    - id: SE025
+      publisher: "Robotics and Automation News"
+      title: "Waabi Secures $1 Billion Funding to Accelerate Commercialization"
+      url: "https://roboticsandautomationnews.com/2026/02/02/waabi-secures-1-billion-funding-to-accelerate-commercialization-in-autonomous-trucking-and-expand-into-robotaxis/98561/"
+      date: "2026-02-02"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - waabi-commercialization
+        - volvo-integration
+        - technology-platform
+        - driverless-timeline
+      keyQuote: >-
+        Robotics and Automation News coverage of Waabi's Series C includes details on
+        Volvo VNL truck integration, the commercialization timeline, and the technical
+        milestones required for driverless launch in 2026.
+
+    - id: SE026
+      publisher: "Highway Driver Leasing"
+      title: "Autonomous Trucking Regulation Updates 2026"
+      url: "https://highwaydriverleasing.com/2026/05/05/autonomous-trucking-regulation-updates-2026/"
+      date: "2026-05-05"
+      accessDate: "2026-05-10"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - regulatory-environment
+        - texas-driverless-rules
+        - state-by-state-regulation
+        - technical-certification
+        - lidar-cost-trucking
+      keyQuote: >-
+        Regulatory updates for autonomous trucking in 2026 describe state-by-state
+        certification requirements, sensor cost dynamics, and the regulatory technical
+        standards framework that Waabi must navigate for driverless commercial launch.
+
+  claims:
+    - id: CE001
+      statement: >-
+        Waabi Driver is a single end-to-end AI model that directly ingests multi-sensor
+        inputs (LiDAR, radar, cameras) and outputs vehicle control commands, designed
+        to operate both Class-8 autonomous trucks and robotaxis from a unified architecture.
+      type: company-claimed
+      topic: waabi-driver-architecture
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE009
+        - SE011
+        - SE014
+        - SE015
+      answersQuestionRefs:
+        - QE001
+        - QE005
+
+    - id: CE002
+      statement: >-
+        Waabi describes its technology category as Physical AI — AI systems that reason
+        about and act in the physical world — and positions Waabi Driver as a general-purpose
+        Physical AI model rather than a task-specific autonomous driving algorithm.
+      type: company-claimed
+      topic: physical-ai-definition
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE009
+        - SE011
+        - SE013
+      answersQuestionRefs:
+        - QE001
+
+    - id: CE003
+      statement: >-
+        Waabi's multi-sensor fusion suite integrates LiDAR, radar, and cameras on NVIDIA
+        compute hardware, with sensors integrated at the Volvo factory in Dublin, Virginia
+        rather than retrofitted post-manufacture.
+      type: company-claimed
+      topic: sensor-suite-configuration
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE005
+        - SE007
+        - SE017
+        - SE025
+      answersQuestionRefs:
+        - QE005
+        - QE014
+
+    - id: CE004
+      statement: >-
+        Waabi's end-to-end single-model architecture is explicitly contrasted with modular
+        rule-based AV stacks by the company as the primary technical differentiation from
+        Aurora Innovation and other AV competitors.
+      type: company-claimed
+      topic: architecture-differentiation
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE011
+        - SE014
+        - SE015
+      answersQuestionRefs:
+        - QE001
+        - QE019
+
+    - id: CE005
+      statement: >-
+        Waabi unlocked surface-street driving capability in November 2025, enabling
+        door-to-door freight delivery without hub-to-hub handoffs between autonomous
+        and conventional truck operations.
+      type: third-party-reported
+      topic: surface-street-capability
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE014
+        - SE015
+        - SE016
+        - SE025
+      answersQuestionRefs:
+        - QE012
+
+    - id: CE006
+      statement: >-
+        Waabi targets SAE Level 4 autonomous operation for long-haul highway trucking,
+        meaning the system performs all driving tasks within a defined operational design
+        domain without requiring any human intervention or fallback capability.
+      type: company-claimed
+      topic: sae-level-4-target
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE003
+        - SE004
+        - SE009
+        - SE011
+      answersQuestionRefs:
+        - QE006
+        - QE020
+
+    - id: CE007
+      statement: >-
+        Waabi World is a closed-loop generative AI neural simulator that builds photorealistic,
+        sensor-accurate digital twins from real-world sensor data collected by the truck fleet.
+      type: company-claimed
+      topic: waabi-world-digital-twin
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE001
+        - SE009
+        - SE010
+        - SE011
+      answersQuestionRefs:
+        - QE002
+        - QE011
+
+    - id: CE008
+      statement: >-
+        Waabi World manufactures safety-critical and rare-event driving scenarios at scale,
+        including adversarial edge cases that would be prohibitively rare or dangerous to
+        accumulate through real-world driving alone.
+      type: company-claimed
+      topic: waabi-world-scenario-generation
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE001
+        - SE002
+        - SE009
+      answersQuestionRefs:
+        - QE002
+        - QE008
+
+    - id: CE009
+      statement: >-
+        Waabi's simulation-first approach de-couples AI capability development from physical
+        fleet expansion, allowing the company to generate effectively large numbers of training
+        scenarios from a relatively small real-world fleet.
+      type: company-claimed
+      topic: simulation-capital-efficiency
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE001
+        - SE011
+        - SE014
+      answersQuestionRefs:
+        - QE008
+        - QE025
+
+    - id: CE010
+      statement: >-
+        Waabi employs approximately 200 people as of early 2026, the majority focused on
+        AI research, simulation development, and autonomous driving engineering — a deliberately
+        lean headcount relative to Aurora's approximately 1,600 employees.
+      type: estimated
+      topic: waabi-headcount
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE008
+        - SE022
+        - SE014
+      answersQuestionRefs:
+        - QE022
+
+    - id: CE011
+      statement: >-
+        Waabi published the UniSim paper (arXiv 2309.00440) — "Learning Interactive Real-World
+        Simulators" — which provides the scientific foundation for Waabi World's closed-loop
+        digital twin and scenario generation capabilities.
+      type: third-party-reported
+      topic: unisim-publication
+      confidence: high
+      freshness: historical
+      sourceRefs:
+        - SE001
+        - SE002
+        - SE010
+      answersQuestionRefs:
+        - QE004
+        - QE019
+
+    - id: CE012
+      statement: >-
+        Waabi publishes research at top AI venues including NeurIPS, CVPR, and ICLR, covering
+        sensor simulation realism, 4D reconstruction, and end-to-end autonomous driving models.
+      type: third-party-reported
+      topic: research-publication-strategy
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE001
+        - SE002
+        - SE010
+        - SE022
+      answersQuestionRefs:
+        - QE004
+        - QE019
+
+    - id: CE013
+      statement: >-
+        Waabi's autonomous truck pilots have operated on the Dallas-to-Houston corridor since
+        approximately 2023, with safety drivers present, in partnership with Uber Freight under
+        a Driver-as-a-Service commercial arrangement.
+      type: third-party-reported
+      topic: dallas-houston-pilots
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE012
+        - SE017
+        - SE014
+        - SE025
+      answersQuestionRefs:
+        - QE023
+        - QE006
+
+    - id: CE014
+      statement: >-
+        Waabi's driverless commercial trucking launch, originally planned for the end of 2025,
+        was delayed into 2026, with Urtasun citing Volvo vehicle validation as the primary
+        remaining gate — not Waabi Driver software readiness.
+      type: third-party-reported
+      topic: driverless-launch-delay
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE014
+        - SE015
+        - SE016
+        - SE025
+      answersQuestionRefs:
+        - QE006
+        - QE007
+
+    - id: CE015
+      statement: >-
+        Waabi's long-haul highway driving capability is assessed at approximately TRL 7-8,
+        consistent with a system prototype demonstrated in the operational environment awaiting
+        full commercial validation for driverless operation.
+      type: estimated
+      topic: highway-trl-assessment
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE014
+        - SE017
+        - SE025
+      answersQuestionRefs:
+        - QE003
+        - QE006
+
+    - id: CE016
+      statement: >-
+        Waabi's surface street driving capability, unlocked November 2025, is assessed at
+        approximately TRL 6-7, as commercially demonstrated but not yet validated at scale
+        for driverless operation.
+      type: estimated
+      topic: surface-street-trl-assessment
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE014
+        - SE016
+      answersQuestionRefs:
+        - QE012
+
+    - id: CE017
+      statement: >-
+        Waabi's robotaxi adaptation, announced January 2026 under the Uber partnership,
+        is assessed at approximately TRL 5-6 — technology demonstration stage — with
+        vehicle OEM and launch city not yet publicly disclosed.
+      type: estimated
+      topic: robotaxi-trl-assessment
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE014
+        - SE015
+        - SE016
+      answersQuestionRefs:
+        - QE013
+
+    - id: CE018
+      statement: >-
+        Waabi's Volvo VNL trucks have sensors, compute hardware, and wiring harnesses
+        integrated at Volvo's manufacturing facility in Dublin, Virginia, rather than
+        retrofitted in a third-party shop.
+      type: third-party-reported
+      topic: volvo-factory-integration
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE007
+        - SE017
+        - SE025
+      answersQuestionRefs:
+        - QE014
+
+    - id: CE019
+      statement: >-
+        Raquel Urtasun stated in January 2026 that Waabi's fully driverless commercial
+        trucking launch would occur "within the next few quarters," implying a mid-2026
+        target contingent on Volvo vehicle validation completion.
+      type: third-party-reported
+      topic: driverless-launch-timeline-2026
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE014
+        - SE015
+        - SE016
+      answersQuestionRefs:
+        - QE006
+        - QE007
+
+    - id: CE020
+      statement: >-
+        Waabi's Waabi World simulation technology represents the company's primary technical
+        moat, with the proprietary scenario library and training dataset compounding as a
+        data asset over time that is difficult for new entrants to replicate.
+      type: inferred
+      topic: simulation-moat
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE001
+        - SE009
+        - SE011
+      answersQuestionRefs:
+        - QE025
+        - QE019
+
+    - id: CE021
+      statement: >-
+        Waabi's research publication strategy at NeurIPS, CVPR, and ICLR creates a
+        self-reinforcing talent acquisition moat: academic publication attracts top ML
+        researchers who in turn accelerate platform development.
+      type: inferred
+      topic: research-publication-moat
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE001
+        - SE010
+        - SE022
+      answersQuestionRefs:
+        - QE019
+
+    - id: CE022
+      statement: >-
+        NVIDIA participated in Waabi's Series A funding through NVentures, confirming
+        a technology partnership relationship spanning investor, compute supplier, and
+        AV software ecosystem roles.
+      type: third-party-reported
+      topic: nvidia-investor-partnership
+      confidence: high
+      freshness: historical
+      sourceRefs:
+        - SE005
+        - SE011
+        - SE009
+      answersQuestionRefs:
+        - QE010
+
+    - id: CE023
+      statement: >-
+        Raquel Urtasun holds a research faculty appointment at Vector Institute, one of
+        the world's leading AI research centers, providing Waabi with ongoing access to
+        the Toronto AI talent network and research collaborations.
+      type: third-party-reported
+      topic: urtasun-vector-institute
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE006
+        - SE022
+      answersQuestionRefs:
+        - QE018
+
+    - id: CE024
+      statement: >-
+        Waabi presented a self-driving tutorial at CVPR 2026 in April 2026, demonstrating
+        ongoing research leadership at the premier computer vision conference.
+      type: company-claimed
+      topic: cvpr-2026-tutorial
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE010
+        - SE022
+      answersQuestionRefs:
+        - QE004
+
+    - id: CE025
+      statement: >-
+        Waabi's patent portfolio composition is not publicly disclosed as of May 2026;
+        no patent applications attributable to Waabi have been identified through standard
+        public patent database searches.
+      type: observed
+      topic: patent-portfolio-undisclosed
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE009
+        - SE010
+      answersQuestionRefs:
+        - QE009
+        - QE026
+
+    - id: CE026
+      statement: >-
+        Waabi's IP origination advantage includes foundational research conducted by
+        Urtasun's group at the University of Toronto and Vector Institute prior to
+        Waabi's founding in 2021, spanning sensor simulation and end-to-end driving models.
+      type: inferred
+      topic: ip-origination-academic
+      confidence: medium
+      freshness: historical
+      sourceRefs:
+        - SE006
+        - SE022
+        - SE001
+      answersQuestionRefs:
+        - QE009
+        - QE018
+
+    - id: CE027
+      statement: >-
+        The simulation-to-real gap — the risk that behaviors learned in Waabi World do not
+        transfer reliably to real-world driving conditions — is the highest-severity technical
+        risk for Waabi's simulation-first AV development approach.
+      type: inferred
+      topic: sim-to-real-gap-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE023
+        - SE019
+        - SE021
+      answersQuestionRefs:
+        - QE015
+        - QE016
+
+    - id: CE028
+      statement: >-
+        Waabi has not published quantitative sim-to-real transfer metrics comparing Waabi World
+        simulation performance to real-world Waabi Driver performance, making independent
+        assessment of simulation fidelity impossible from public sources.
+      type: observed
+      topic: sim-to-real-metrics-not-disclosed
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE009
+        - SE010
+        - SE001
+      answersQuestionRefs:
+        - QE015
+
+    - id: CE029
+      statement: >-
+        An end-to-end single-model AV architecture concentrates failure risk such that a
+        discovered safety-critical model failure requires retraining and re-validation of
+        the entire system, potentially requiring longer remediation cycles than modular architectures.
+      type: inferred
+      topic: single-model-concentration-risk
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE021
+        - SE023
+        - SE003
+      answersQuestionRefs:
+        - QE016
+        - QE028
+
+    - id: CE030
+      statement: >-
+        LiDAR remains the most expensive component in automotive-grade sensor suites for
+        long-haul autonomous trucking; high-performance spinning LiDARs appropriate for
+        highway operation remain at $3,000-$10,000 per unit at current volumes.
+      type: estimated
+      topic: lidar-cost-range
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE026
+        - SE019
+      answersQuestionRefs:
+        - QE017
+
+    - id: CE031
+      statement: >-
+        SAE Level 4 driverless commercial trucking operates in a fragmented state-by-state
+        regulatory environment with no federal mandate as of mid-2026; Waabi's driverless
+        expansion beyond Texas depends on regulatory progress in other states.
+      type: third-party-reported
+      topic: regulatory-fragmentation
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE019
+        - SE020
+        - SE026
+      answersQuestionRefs:
+        - QE021
+
+    - id: CE032
+      statement: >-
+        Waabi's per-truck sensor suite cost is not publicly disclosed, preventing independent
+        verification of whether its unit economics are competitive with Aurora's disclosed
+        per-mile cost structure.
+      type: observed
+      topic: sensor-cost-undisclosed
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE009
+        - SE017
+      answersQuestionRefs:
+        - QE017
+
+    - id: CE033
+      statement: >-
+        Waabi's driverless commercial trucking launch is contingent on Volvo completing
+        vehicle validation for the VNL autonomous truck, a gate that caused the original
+        end-2025 driverless target to slip into 2026.
+      type: third-party-reported
+      topic: volvo-validation-gate
+      confidence: high
+      freshness: current
+      sourceRefs:
+        - SE014
+        - SE015
+        - SE025
+        - SE017
+      answersQuestionRefs:
+        - QE007
+
+    - id: CE034
+      statement: >-
+        Waabi's robotaxi adaptation for the Uber platform has not yet disclosed the vehicle
+        OEM partner, launch city, or technical specifications, limiting assessment of robotaxi
+        technical readiness as of May 2026.
+      type: observed
+      topic: robotaxi-oem-undisclosed
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE014
+        - SE015
+        - SE016
+      answersQuestionRefs:
+        - QE013
+
+    - id: CE035
+      statement: >-
+        Waabi World enables adversarial scenario generation — manufacturing rare edge cases
+        such as unusual weather, sensor degradation, and unexpected object behaviors — which
+        would require billions of real-world miles to encounter naturally.
+      type: company-claimed
+      topic: adversarial-scenario-generation
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE001
+        - SE002
+        - SE009
+      answersQuestionRefs:
+        - QE002
+        - QE008
+
+    - id: CE036
+      statement: >-
+        Waabi Driver is claimed to be both verifiable and interpretable — design properties
+        intended to support safety case documentation for regulatory approval of Level 4
+        driverless commercial operation.
+      type: company-claimed
+      topic: verifiable-interpretable-model
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE009
+        - SE011
+        - SE010
+      answersQuestionRefs:
+        - QE020
+        - QE027
+
+    - id: CE037
+      statement: >-
+        No evidence has been published demonstrating that Waabi's end-to-end Physical AI
+        architecture is demonstrably safer or more reliable than Aurora's modular First
+        Principles stack in real-world commercial driverless operation at scale.
+      type: open-question
+      topic: architecture-safety-comparison
+      confidence: low
+      freshness: current
+      sourceRefs:
+        - SE021
+        - SE023
+      answersQuestionRefs:
+        - QE028
+
+    - id: CE038
+      statement: >-
+        Waabi's careers page as of May 2026 signals active hiring in AI research, simulation
+        engineering, and hardware integration roles, consistent with a company scaling its
+        R&D organization in preparation for commercial driverless launch.
+      type: observed
+      topic: hiring-signals-2026
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE008
+      answersQuestionRefs:
+        - QE022
+
+    - id: CE039
+      statement: >-
+        Aurora's modular First Principles AV stack separates perception, fusion, prediction,
+        and planning as discrete engineered subsystems, in contrast to Waabi's end-to-end
+        approach; each architecture has distinct failure mode profiles.
+      type: third-party-reported
+      topic: aurora-modular-vs-waabi-e2e
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE021
+        - SE024
+        - SE023
+      answersQuestionRefs:
+        - QE024
+        - QE028
+
+    - id: CE040
+      statement: >-
+        Waabi's remote monitoring and safety oversight infrastructure for driverless operations
+        is not described in public disclosures; the scale, staffing, and protocols of its
+        remote operations center are unknown as of May 2026.
+      type: observed
+      topic: remote-monitoring-not-disclosed
+      confidence: medium
+      freshness: current
+      sourceRefs:
+        - SE009
+        - SE017
+      answersQuestionRefs:
+        - QE027
+
+  evidenceGaps:
+    - type: private-evidence-only
+      severity: material
+      topic: patent-portfolio-composition
+      missingEvidence: >-
+        Waabi has not disclosed its patent portfolio composition, filing strategy, or the
+        breadth of IP protection around Waabi World, the Waabi Driver end-to-end model, and
+        its sensor simulation techniques. No patent applications attributable to Waabi have
+        been identified through public patent database searches as of May 2026.
+      whyItMatters: >-
+        Patent protection determines whether Waabi's technical moats (simulation, end-to-end
+        models, sensor fusion) can be legally defended against competitors or whether they
+        depend entirely on trade-secret protection and first-mover data advantages. Without
+        knowing the patent portfolio, it is impossible to assess the legal durability of
+        Waabi's primary differentiation claims.
+      diligencePath: >-
+        Request patent portfolio inventory, filing status, and IP ownership agreements
+        (particularly for IP originating from Urtasun's University of Toronto/Vector Institute
+        research). Conduct independent patent database search (USPTO, EPO) for Waabi and
+        Urtasun filings. Review IP assignment provisions in employment agreements.
+      relatedQuestionRefs:
+        - QE009
+
+    - type: private-evidence-only
+      severity: material
+      topic: simulation-fidelity-metrics
+      missingEvidence: >-
+        Waabi has not published any quantitative metrics comparing Waabi World simulation
+        fidelity to real-world sensor data or Waabi Driver performance in simulation versus
+        real-world deployments. The sim-to-real transfer gap is entirely unquantified from
+        public sources. No disengagement rate data, object detection accuracy comparison,
+        or trajectory prediction benchmarks have been disclosed.
+      whyItMatters: >-
+        If the sim-to-real gap is material, Waabi's capital efficiency advantage (fewer
+        real-world miles required) could be illusory or require significant additional real-world
+        validation before driverless commercial launch is safe. Quantifying this gap is the most
+        important technical due diligence question because it determines whether Waabi World
+        is a genuine safety-case moat or a development-efficiency tool with limited regulatory
+        value.
+      diligencePath: >-
+        Request internal benchmarking data comparing Waabi Driver performance metrics (object
+        detection accuracy, trajectory prediction error, disengagement rate) in simulation
+        versus real-world Texas pilot operations. Review any third-party simulation fidelity
+        audits. Compare to published sim-to-real results from academic literature.
+      relatedQuestionRefs:
+        - QE015
+
+    - type: private-evidence-only
+      severity: high
+      topic: per-truck-sensor-suite-cost
+      missingEvidence: >-
+        Waabi has not disclosed the per-truck cost of its LiDAR + radar + camera sensor suite,
+        nor the total hardware cost per Volvo VNL autonomous truck. Without this data, it is
+        impossible to assess whether Waabi's unit economics at commercial scale are viable, or
+        how sensor cost compares to Aurora's disclosed per-mile cost structure.
+      whyItMatters: >-
+        Sensor suite cost is a primary input to per-truck capex, which in turn drives the
+        capital required to scale from pilot to commercial operations. If per-truck hardware
+        cost is $200,000+, a 1,000-truck fleet requires $200M+ in hardware capex alone —
+        a material fraction of Waabi's $1.28B total capital.
+      diligencePath: >-
+        Request per-truck bill of materials (sensor suite, compute hardware, Volvo VNL base
+        vehicle) under NDA. Compare to Aurora's disclosed per-truck sensor cost data. Model
+        LiDAR cost roadmap using Velodyne/Luminar/Ouster pricing trajectories at volume.
+      relatedQuestionRefs:
+        - QE017
+
+    - type: private-evidence-only
+      severity: high
+      topic: remote-monitoring-infrastructure
+      missingEvidence: >-
+        Waabi has not publicly disclosed the architecture, scale, staffing, or protocols
+        of its remote monitoring and intervention infrastructure required for driverless
+        commercial trucking operations. The remote operations center capacity, response
+        time standards, and redundancy design are not publicly known.
+      whyItMatters: >-
+        Remote monitoring infrastructure is a critical operational safety control for driverless
+        commercial trucking. Regulatory bodies require demonstrated remote intervention capability
+        before granting driverless operating permits in most US states. If Waabi's remote
+        operations infrastructure is not ready at the scale required for commercial launch,
+        the driverless timeline could slip further. This is a direct gate on the driverless
+        commercial launch milestone.
+      diligencePath: >-
+        Request description and capacity specifications of Waabi's remote operations center,
+        including staffing model, technology stack, response time requirements, and regulatory
+        approval status in Texas. Compare to Aurora's published remote monitoring approach.
+      relatedQuestionRefs:
+        - QE027
+
+    - type: open-question
+      severity: high
+      topic: architecture-safety-comparison
+      missingEvidence: >-
+        No independent or third-party evidence has been published comparing the real-world
+        safety performance of Waabi's end-to-end Physical AI model versus Aurora's modular
+        First Principles stack in commercial driverless operation. Waabi has not operated
+        driverlessly at commercial scale, making direct comparison impossible from public data.
+      whyItMatters: >-
+        The relative safety of end-to-end versus modular AV architectures is a foundational
+        question for assessing Waabi's technology risk. If Aurora's commercial driverless track
+        record (250,000+ miles, zero at-fault collisions) demonstrates that modular architectures
+        can achieve sufficient robustness, the burden of proof shifts to Waabi to demonstrate
+        equivalent or superior safety with its end-to-end approach. This comparison is not
+        currently possible from public data.
+      diligencePath: >-
+        Review Waabi's safety case documentation under NDA. Request disengagement data from
+        Texas pilots for comparison with Aurora's publicly reported disengagement-free record.
+        Consult independent AV safety experts to assess architectural safety trade-offs.
+      relatedQuestionRefs:
+        - QE028
+
+acknowledgedWarnings: []
