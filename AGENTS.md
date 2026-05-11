@@ -14,6 +14,7 @@ This repository generates startup diligence reports as structured YAML and rende
 - Install website dependencies: `npm --prefix website install`
 - Run full validation: `npm run validate`
 - Run historical report contract checks only: `npm run check:reports-contract`
+- Run Simplified Chinese overlay checks only: `npm run check:translations-zh`
 - Run website locally: `npm --prefix website run dev`
 
 ## Testing instructions
@@ -21,6 +22,8 @@ This repository generates startup diligence reports as structured YAML and rende
 - Before finishing code, schema, report, loader, renderer, or script changes, run `npm run validate` unless the user asked for a narrower edit.
 - For workflow config/revision-graph checks only, run `npm run check:workflow-config` and `npm run check:revision-graph`.
 - For schema/renderer contract changes that should not re-score historical content gates, run `npm run check:reports-contract`.
+- For Simplified Chinese overlay changes, run `npm run check:translations-zh` or `npm run translate:zh -- verify <run-id>` for the touched report.
+- When fixing finalized report orphan exhibits, anchor each table/figure in the source chapter's `tableRefs`/`figureRefs`, rebuild that report with `node .agents/skills/startup-research/scripts/build-report.mjs reports/<run-id>`, then run `npm run check:reports-contract`.
 
 ## Core philosophy
 

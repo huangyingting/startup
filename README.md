@@ -14,6 +14,7 @@ Startup is a diligence report generator for startup companies. It produces evide
 ```text
 .agents/skills/startup-research/  # report-generation workflow skill
 .agents/skills/fetch-url/         # direct URL fetch helper skill
+.agents/skills/translate-zh/      # Simplified Chinese overlay workflow skill
 reports/                          # generated report runs (one folder per finalized run)
 website/                          # Astro static site and website-owned validation
 cloudflare/                       # Cloudflare Worker scheduler for GitHub Actions
@@ -26,10 +27,12 @@ Important files:
 - `.agents/skills/startup-research/references/contracts.md` — generated agent-readable contract reference.
 - `.agents/skills/startup-research/scripts/contracts/` — executable Zod schemas for workflow config, report artifacts, and runtime context.
 - `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts (chapter loader, gate checks, ledger consolidation, report assembly, validators).
+- `.agents/skills/translate-zh/SKILL.md` — Simplified Chinese sparse-overlay workflow for finalized reports.
 - `website/src/lib/` — rendering contracts shared between the renderer and the chapter/report validators.
 - `cloudflare/worker.js` — Cloudflare Cron Trigger that dispatches scheduled GitHub Actions workflows.
 - `AGENTS.md` — repo-development conventions (working rules, core philosophy). Read before touching skills, scripts, or schemas.
 - `.agents/skills/README.md` — skills index and skill-folder conventions.
+
 ## Quick start
 
 Install dependencies from the repository root:
@@ -97,11 +100,40 @@ report-meta.yaml
 summary-card.yaml
 ```
 
+Some finalized runs also contain Simplified Chinese overlay artifacts:
+
+```text
+summary-card.zh.yaml
+full-report.zh.yaml
+```
+
+The `*.zh.yaml` files are sparse overlays for whitelisted translatable text, not full copies of the English YAML. They must be produced and checked through the translation workflow, not hand-assembled.
+
 After generation, run:
 
 ```bash
 npm run validate
 ```
+
+## Chinese overlays
+
+Use the translate-zh workflow for Simplified Chinese report overlays:
+
+```bash
+npm run translate:zh -- preflight <run-id-or-company-name>
+npm run translate:zh -- init <run-id-or-company-name>
+npm run translate:zh -- finalize-summary <run-id-or-company-name>
+npm run translate:zh -- finalize-full <run-id-or-company-name>
+npm run translate:zh -- verify <run-id-or-company-name>
+```
+
+Check all existing Chinese overlays with:
+
+```bash
+npm run check:translations-zh
+```
+
+The root `npm run validate` command includes this translation check.
 
 ## Validation commands
 
@@ -111,8 +143,18 @@ From the repository root:
 npm run check:workflow-config
 npm run check:revision-graph
 npm run check:reports-contract
+npm run check:translations-zh
 npm run validate
 ```
+
+For finalized report maintenance, `npm run check:reports-contract` verifies the assembled report artifacts. If it reports orphan exhibits, fix the source chapter YAML by anchoring each affected table or figure under the section whose prose introduces it via `section.tableRefs` or `section.figureRefs`, then rebuild the assembled artifacts for that report:
+
+```bash
+node .agents/skills/startup-research/scripts/build-report.mjs reports/<run-id>
+npm run check:reports-contract
+```
+
+For normal report generation, prefer the full startup-research workflow and `finalize-report.mjs`; use `build-report.mjs` only when maintaining existing finalized reports and the chapter/evidence ledger is already current.
 
 From `website/`:
 
@@ -125,5 +167,5 @@ npm run preview
 
 - Skill workflow scripts live under `.agents/skills/*/scripts/` and are called directly with `node` by the skills.
 - Website code and website validators live under `website/`.
-- The root `package.json` only exposes repository-level checks; it does not alias skill-internal workflow steps.
+- The root `package.json` exposes repository-level checks and the `translate:zh` runner; other skill-internal workflow steps are called directly by their skills.
 - Report workflow details belong in `.agents/skills/startup-research/SKILL.md`, not in this README.
