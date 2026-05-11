@@ -167,9 +167,11 @@ jobs:
           $REPORT_IDS
 
           Requirements:
-          - Translate exactly these selected folders. If fewer than the requested batch size were selected, translate only the selected folders. If a selected folder already has both Chinese overlays by the time you inspect it, run the per-report translation check and skip rewriting it.
+          - Translate exactly these selected folders. If fewer than the requested batch size were selected, translate only the selected folders. If a selected folder already has both Chinese overlays by the time you inspect it, run `npm run translate:zh -- verify <runId>` and skip rewriting it.
           - For each folder, produce reports/<runId>/summary-card.zh.yaml and reports/<runId>/full-report.zh.yaml using .agents/skills/translate-zh/SKILL.md.
-          - Follow the translate-zh parent-agent workflow: export sparse bundles, split full-report when needed, keep set -e for merge/import/apply/check chains, verify part leaf counts before merge, and run check-translation.mjs reports/<runId> --strict --require-final for each completed report.
+          - Use the single orchestration entrypoint instead of assembling the sparse-bundle pipeline inline: `npm run translate:zh -- preflight <runId>`, `npm run translate:zh -- init <runId>`, `npm run translate:zh -- finalize-summary <runId>`, `npm run translate:zh -- finalize-full <runId>`, and `npm run translate:zh -- verify <runId>`.
+          - Keep all intermediate artifacts under `.translate-cache/<runId>/`. Do not create ad-hoc temp folders under `reports/<runId>/` or elsewhere. Successful runs must leave no cache behind.
+          - If finalization fails, repair only the offending cached leaf or part under `.translate-cache/<runId>/`, then rerun the narrowest finalize command. Do not re-export the whole report unless the cache is structurally corrupted.
           - Do not edit English source YAML, report metadata, evidence files, workflow snapshots, website files, package files, or any report folder outside the selected list.
           - Do not fetch URLs, do not invent facts, and do not add new diligence content; this is translation only.
           - Do not run any git command (git add, git commit, git push, git stash, git checkout, etc.) at any point; leave generated Chinese overlays unstaged. The workflow itself owns commit/push decisions.
