@@ -146,9 +146,9 @@ When you need to reference a fact established in another chapter, restate it as 
 
 ## Validator dimensions
 
-Six scripts emit issues/warnings tagged with these `dimension` keys: `check-chapter`, `check-cross-chapter`, `check-report-meta`, `build-evidence-ledger`, `build-report`, and `check-report`. The runtime `runtimeContext` object does NOT carry this catalog; trust the per-issue `fix` field in JSON output (and the tables below) for repair guidance.
+Eight scripts emit issues/warnings tagged with these `dimension` keys: `check-chapter`, `check-cross-chapter`, `check-report-meta`, `build-evidence-ledger`, `build-report`, `check-report`, `check-revision-graph`, and `check-workflow-config`. The runtime `runtimeContext` object does NOT carry this catalog; trust the per-issue `fix` field in JSON output (and the tables below) for repair guidance.
 
-Within `check-chapter`, fix in `precedence` order (lowest rank = root cause first); a suppressed dimension is masked while its upstream still fails, so the upstream fix usually clears the downstream too. Other validators do not use precedence — fix what the message names.
+Within `check-chapter`, fix in `precedence` order (lowest rank = root cause first); a suppressed dimension is masked while its upstream still fails, so the upstream fix usually clears the downstream too. Failure-class and warning-class chapter dimensions share one ordered list (`RETRY_PRECEDENCE`), which is why the failure table's rank column has gaps — the missing numbers are warning dimensions that show their rank in the warning-class table below. Other validators do not use precedence — fix what the message names.
 
 `defaultFix` is the generic guidance baked into the validator; concrete failures echo the same hint with the specific field/id filled in (e.g. "Add 3 more registrable domain(s)…"). Trust the per-failure `fix` in JSON output over the generic version below.
 
@@ -205,30 +205,35 @@ Dimensions are grouped by class. Only the **chapter-warning** class is acknowled
 | 50 | `chapter-failure` | `contentRequirementCoverage` | Add researchQuestions whose targets[] cover the un-targeted contentRequirements. | `yamlParse`, `localEvidenceMissing` |
 | 51 | `chapter-failure` | `searchQueryFreshness` | For volatile-fact queries (funding/ARR/headcount/customers/leadership/regulatory/launches), plan source discovery with year/month tokens derived from runDate before searching; the runDate year is required and the prior year may only supplement explicit trailing-window searches. The searchQueryFreshness validator fails stale query logs and cannot be acknowledged away. | `yamlParse`, `localEvidenceMissing`, `documentHead`, `runDateConsistency` |
 
-#### Chapter warning-class (`precedence: —`, eligible for `acknowledgedWarnings` at chapter scope)
+#### Chapter warning-class (numeric `precedence` shared with the failure list — fills the gaps in the failure table's rank column; eligible for `acknowledgedWarnings` at chapter scope, except `tableNotes` which has no precedence rank)
 
 | Precedence | Class | Dimension | Default fix | Suppressed by |
 |---|---|---|---|---|
-| — | `chapter-warning` | `fetchTrailMissing` | Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; the default gate warns and --strict fails when the trail is missing. | — |
-| — | `chapter-warning` | `figuresMax` | Reduce or merge figures; the chapter looks over-fragmented. | `yamlParse` |
-| — | `chapter-warning` | `figureType` | Render at least one of the planned figure types, or add an acknowledgedWarnings entry for dimension "figureType" with a >=30-char reason when the substitution is intentional. | `yamlParse` |
-| — | `chapter-warning` | `paywallRisk` | At chapter scope (warning, ack-able): swap restricted (paywall\|js-only\|broken\|rate-limited) sources for ok ones to stay under the report-level 30% ceiling. At report scope (failure from check-report, NOT ack-able): the per-report restricted share already exceeds the 30% ceiling and must be brought back below it before finalize-report can pass. | `yamlParse`, `localEvidenceMissing` |
-| — | `chapter-warning` | `sectionsMax` | Reduce or merge sections; the chapter looks over-fragmented. | `yamlParse` |
+| 17 | `chapter-warning` | `paywallRisk` | At chapter scope (warning, ack-able): swap restricted (paywall\|js-only\|broken\|rate-limited) sources for ok ones to stay under the report-level 30% ceiling. At report scope (failure from check-report, NOT ack-able): the per-report restricted share already exceeds the 30% ceiling and must be brought back below it before finalize-report can pass. | `yamlParse`, `localEvidenceMissing` |
+| 35 | `chapter-warning` | `figureType` | Render at least one of the planned figure types, or add an acknowledgedWarnings entry for dimension "figureType" with a >=30-char reason when the substitution is intentional. | `yamlParse` |
+| 38 | `chapter-warning` | `unsectionedExhibits` | Add each table/figure to the section.tableRefs[] / section.figureRefs[] of the section that introduces or relies on it. The trailing Exhibits section is a fallback for cross-cutting artifacts, not the default landing place. Acknowledge dimension "unsectionedExhibits" only when an exhibit is intentionally orphaned. | `yamlParse` |
+| 42 | `chapter-warning` | `sectionsMax` | Reduce or merge sections; the chapter looks over-fragmented. | `yamlParse` |
+| 44 | `chapter-warning` | `tablesMax` | Reduce or merge tables; the chapter looks over-fragmented. | `yamlParse` |
+| 45 | `chapter-warning` | `figuresMax` | Reduce or merge figures; the chapter looks over-fragmented. | `yamlParse` |
+| 52 | `chapter-warning` | `unverifiedSource` | One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess. | — |
+| 53 | `chapter-warning` | `fetchTrailMissing` | Set STARTUP_FETCH_LOG_PATH=.research-cache/<runId>/_fetch-log.jsonl in your shell BEFORE running fetch-url so check-chapter can audit cited URLs against actual retrievals; the default gate warns and --strict fails when the trail is missing. | — |
 | — | `chapter-warning` | `tableNotes` | Write tables[].notes (one line: data source / estimation / partial coverage / what null means), or acknowledge dimension "tableNotes" for pure factual snapshot tables. | — |
-| — | `chapter-warning` | `tablesMax` | Reduce or merge tables; the chapter looks over-fragmented. | `yamlParse` |
-| — | `chapter-warning` | `unsectionedExhibits` | Add each table/figure to the section.tableRefs[] / section.figureRefs[] of the section that introduces or relies on it. The trailing Exhibits section is a fallback for cross-cutting artifacts, not the default landing place. Acknowledge dimension "unsectionedExhibits" only when an exhibit is intentionally orphaned. | `yamlParse` |
-| — | `chapter-warning` | `unverifiedSource` | One or more cited sources never went through fetch-url during this run; re-pull them so accessStatus, sourceType, and stance are based on the actual page rather than a guess. | — |
 
-#### Cross-chapter (`check-cross-chapter`, `precedence: —`, NOT ack-able)
+#### Cross-chapter failure-class (`check-cross-chapter`, `precedence: —`, blocks `finalize-report`, NOT ack-able)
 
 | Precedence | Class | Dimension | Default fix | Suppressed by |
 |---|---|---|---|---|
-| — | `cross-chapter` | `duplicateAnalysisCrossChapter` | Merge the duplicated artifact into the chapter that owns the topic, or sharpen one to a distinct lens. | — |
-| — | `cross-chapter` | `duplicateLocalClaim` | Remove duplicated local claim ids across chapter ledgers; each chapter has its own C### namespace. | — |
-| — | `cross-chapter` | `keyFactDrift` | Reference the canonical company-overview claim instead of restating the key fact as a new local claim. | — |
-| — | `cross-chapter` | `metricDrift` | Reconcile the conflicting metric values across chapters: pick the canonical numeric value and update the other chapters to match, or restate them as a clearly different lens so they no longer normalize to the same label. | — |
-| — | `cross-chapter` | `metricDriftSmall` | Slight metric drift across chapters within tolerance; harmonize values or document the rounding source. | — |
-| — | `cross-chapter` | `missingChapter` | Author the missing chapter file flagged in the message before re-running finalize. | — |
+| — | `cross-chapter-failure` | `duplicateAnalysisCrossChapter` | Merge the duplicated artifact into the chapter that owns the topic, or sharpen one to a distinct lens. | — |
+| — | `cross-chapter-failure` | `keyFactDrift` | Reference the canonical company-overview claim instead of restating the key fact as a new local claim. | — |
+| — | `cross-chapter-failure` | `metricDrift` | Reconcile the conflicting metric values across chapters: pick the canonical numeric value and update the other chapters to match, or restate them as a clearly different lens so they no longer normalize to the same label. | — |
+| — | `cross-chapter-failure` | `missingChapter` | Author the missing chapter file flagged in the message before re-running finalize. | — |
+
+#### Cross-chapter warning-class (`check-cross-chapter`, `precedence: —`, non-blocking outside `--strict` and `finalize-report` does not pass `--strict`; advisory only, NOT ack-able)
+
+| Precedence | Class | Dimension | Default fix | Suppressed by |
+|---|---|---|---|---|
+| — | `cross-chapter-warning` | `duplicateLocalClaim` | (advisory; non-blocking outside --strict) Remove duplicated local claim ids across chapter ledgers; each chapter has its own C### namespace. | — |
+| — | `cross-chapter-warning` | `metricDriftSmall` | (advisory; non-blocking outside --strict) Slight metric drift across chapters within tolerance; harmonize values or document the rounding source. | — |
 
 #### Finalize-step (`check-report` / `build-evidence-ledger` / `build-report`, `precedence: —`, NOT ack-able)
 
@@ -238,6 +243,7 @@ Dimensions are grouped by class. Only the **chapter-warning** class is acknowled
 | — | `finalize-step` | `reportMetaShape` | Edit report-meta.yaml to match the report-meta shape in references/contracts.md (or summary-card.yaml when the message names that file). check-report-meta is the focused validator for this dimension; check-report and build-report also surface it when an assembler refuses to project a malformed field. Run check-report-meta directly with --format json for the per-issue fix. | — |
 | — | `finalize-step` | `revisionGraph` | Do NOT hand-edit revision: in report-meta.yaml — link-refresh.mjs (run automatically by finalize-report --refresh in the prepare-refresh and link-refresh steps) writes every revision field on both runs. If the graph is inconsistent, re-run finalize-report.mjs --refresh on the affected report and let link-refresh resync; for one-off cases the message names the exact field (status / refreshOfRunId / supersededByRunId / refreshReason) that is wrong. | — |
 | — | `finalize-step` | `usage` | Fix the CLI invocation per the message: pass exactly one report folder argument plus the optional flags listed in the script header (e.g. --format text\|json\|compact, --strict, --refresh). | — |
+| — | `finalize-step` | `workflowConfigShape` | Edit `.agents/skills/startup-research/workflow-config.yaml` to satisfy the schema in `scripts/contracts/workflow-config.schema.mjs` (chapter count, finalArtifacts list, agentPolicy.volatileFacts / volatileFactQueryTokens / finalResponseFields, etc.). This is a meta-validator on the skill’s own config and is repo-maintainer facing — report agents do not author this file. | — |
 
 #### Report-meta warnings (`check-report-meta`, `severity: warning` only, no opt-out)
 

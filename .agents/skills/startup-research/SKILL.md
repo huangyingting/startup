@@ -50,7 +50,7 @@ Workflow narrative: what to run, in what order, with which flags. Two generated 
 
 ## Chapter generation
 
-**Default mode: parallel** — spawn every chapter concurrently; step 7's convergence rerun reconciles the per-chapter dimensions that depend on sibling state (`netNewSources`, `crossChapterRefLeak`). Fall back to **sequential** (each chapter starts only after the prior chapter's YAML is on disk) when the runtime cannot spawn concurrent workers, or when chapter coupling is so tight that parallel would force multiple convergence cycles. Sequential reads prior siblings via `--include-context` and avoids `crossChapterRefLeak` / `netNewSources` up front, so step 7 is unnecessary.
+**Default mode: parallel** — spawn every chapter concurrently; step 7's convergence rerun reconciles the per-chapter dimensions that depend on sibling state (`netNewSources`, `crossChapterRefLeak`). Fall back to **sequential** (each chapter starts only after the prior chapter's YAML is on disk) when the runtime cannot spawn concurrent workers, or when chapter coupling is so tight that parallel would force multiple convergence cycles. Sequential gives the agent the full sibling context up front via `--include-context`, so it authors chapters that don't trigger `crossChapterRefLeak` / `netNewSources` (the validators still run — they just have nothing to flag), and step 7 is unnecessary.
 
 For each chapter from the `--list` roster:
 
@@ -155,5 +155,5 @@ When `finalize-report` exits 0 (`[finalize-report] ✓ pipeline complete; report
 
 `--refresh` rewires the revision graph in addition to producing a normal report. The CLI flow lives in *Runtime bootstrap* step 3 and *Finalization* step 3; the pipeline table covers the two `link-refresh` steps. Runtime-visible behavior the agent must know:
 
-1. **Detecting refresh mode at runtime:** the loader emits `runtimeContext.runCache` whenever `--report-folder` is supplied — `{ refreshContext: null }` for fresh runs, `{ refreshContext: {…} }` when a prior summary was cached. Test `runtimeContext.runCache?.refreshContext != null`; do not infer refresh from folder name or argv. Read the cached prior summary for context, but treat every value listed in [`rules.md`](references/rules.md) → `volatileFacts` as stale and re-fetch it.
+1. **Detecting refresh mode at runtime:** the loader emits `runtimeContext.runCache` whenever `--report-folder` is supplied; `runtimeContext.runCache.refreshContext` is `null` for fresh runs and an object (the cached prior summary) when a refresh-context cache exists. Test `runtimeContext.runCache?.refreshContext != null`; do not infer refresh from folder name or argv. Read the cached prior summary for context, but treat every value listed in [`rules.md`](references/rules.md) → `volatileFacts` as stale and re-fetch it.
 2. **Revision authoring rule:** omit the `revision` block from `report-meta.yaml` entirely. The two `link-refresh` phases own every revision field (`status`, `refreshOfRunId`, `supersededByRunId`, `refreshReason`) on both runs. Disambiguate prior matches at create time with `create-report-run --refresh-of <priorRunId>`, never by hand-authoring `revision.refreshOfRunId`.

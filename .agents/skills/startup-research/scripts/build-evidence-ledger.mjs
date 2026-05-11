@@ -52,7 +52,7 @@ function usageAbort(message) {
   });
 }
 
-function abort({ message, dimension = 'evidenceLedger', code = 'evidenceLedger.failure', fix = null, path = EVIDENCE_FILE, exitCode = EXIT.failure }) {
+function abort({ message, dimension = 'reportContract', code = 'reportContract.failure', fix = null, path = EVIDENCE_FILE, exitCode = EXIT.failure }) {
   const envelope = validationEnvelope({
     ok: false,
     validator: 'build-evidence-ledger',

@@ -405,16 +405,17 @@ export const FIX_HINTS = {
   metricDrift: ({ metric } = {}) =>
     metric ? `Reconcile metric "${metric}" across chapters: pick the canonical numeric value (usually from the chapter that owns the topic) and update the other chapters' tables/figures/coverFacts to match, or restate them as a clearly different lens (e.g. "Q4 ARR" vs "FY ARR") so they no longer normalize to the same metric label.` : 'Reconcile the conflicting metric values across chapters: pick the canonical numeric value and update the other chapters to match, or restate them as a clearly different lens so they no longer normalize to the same label.',
   metricDriftSmall: ({ metric } = {}) =>
-    metric ? `Metric "${metric}" varies slightly across chapters but stays within tolerance; harmonize the value or document the rounding source so the next refresh does not drift further.` : 'Slight metric drift across chapters within tolerance; harmonize values or document the rounding source.',
+    metric ? `(advisory; non-blocking outside --strict) Metric "${metric}" varies slightly across chapters but stays within tolerance; harmonize the value or document the rounding source so the next refresh does not drift further.` : '(advisory; non-blocking outside --strict) Slight metric drift across chapters within tolerance; harmonize values or document the rounding source.',
   keyFactDrift: ({ canonicalId, claimId } = {}) =>
     canonicalId && claimId ? `Drop the parallel claim ${claimId} and reference the canonical company-overview claim ${canonicalId} instead (mint a local claim that cites the same sources rather than restating the fact).` : 'Reference the canonical company-overview claim instead of restating the key fact as a new local claim.',
   duplicateAnalysisCrossChapter: ({ a, b } = {}) =>
     a && b ? `${a.id ?? '?'} in ${a.chapter} duplicates ${b.id ?? '?'} in ${b.chapter}: merge into the chapter that owns the topic, or sharpen one to answer a distinct question (different lens, different time slice, or different cohort) so titles and structure no longer overlap.` : 'Merge the duplicated artifact into the chapter that owns the topic, or sharpen one to a distinct lens.',
   duplicateLocalClaim: ({ claimId } = {}) =>
-    claimId ? `Local claim id ${claimId} appears in multiple chapter ledgers; remove the duplicate and reference the original via cross-chapter consolidation, or renumber so each chapter ledger owns its own ids.` : 'Remove duplicated local claim ids across chapter ledgers; each chapter has its own C### namespace.',
+    claimId ? `(advisory; non-blocking outside --strict) Local claim id ${claimId} appears in multiple chapter ledgers; remove the duplicate and reference the original via cross-chapter consolidation, or renumber so each chapter ledger owns its own ids.` : '(advisory; non-blocking outside --strict) Remove duplicated local claim ids across chapter ledgers; each chapter has its own C### namespace.',
   reportContract: 'Re-run the upstream assembler the message names (usually build-evidence-ledger.mjs then build-report.mjs) so the consolidated artifact (evidence.yaml.coverageMatrix, summary-card.sourceStats, full-report references) matches the current chapter sources. The dimension fires from check-report against shape contracts the assemblers own — fixing chapters then re-running finalize-report is usually enough.',
   reportMetaShape: 'Edit report-meta.yaml to match the report-meta shape in references/contracts.md (or summary-card.yaml when the message names that file). check-report-meta is the focused validator for this dimension; check-report and build-report also surface it when an assembler refuses to project a malformed field. Run check-report-meta directly with --format json for the per-issue fix.',
   revisionGraph: 'Do NOT hand-edit revision: in report-meta.yaml — link-refresh.mjs (run automatically by finalize-report --refresh in the prepare-refresh and link-refresh steps) writes every revision field on both runs. If the graph is inconsistent, re-run finalize-report.mjs --refresh on the affected report and let link-refresh resync; for one-off cases the message names the exact field (status / refreshOfRunId / supersededByRunId / refreshReason) that is wrong.',
+  workflowConfigShape: 'Edit `.agents/skills/startup-research/workflow-config.yaml` to satisfy the schema in `scripts/contracts/workflow-config.schema.mjs` (chapter count, finalArtifacts list, agentPolicy.volatileFacts / volatileFactQueryTokens / finalResponseFields, etc.). This is a meta-validator on the skill’s own config and is repo-maintainer facing — report agents do not author this file.',
   usage: 'Fix the CLI invocation per the message: pass exactly one report folder argument plus the optional flags listed in the script header (e.g. --format text|json|compact, --strict, --refresh).',
   acknowledgedWarnings: ({ ackDimension } = {}) =>
     ackDimension
@@ -559,20 +560,26 @@ const CATALOG_EXCLUDED_DIMENSIONS = new Set(['acknowledgedWarnings']);
 // FIX_HINTS insertion order. Failure-class chapter dimensions (those with a
 // numeric precedenceRank) are reported as 'chapter-failure' and sort first
 // by their rank. WARNING_DIMENSIONS members are 'chapter-warning'.
-// Membership for the other three buckets is enumerated explicitly so a new
+// Cross-chapter dimensions split by emit severity in check-cross-chapter.mjs:
+// the failure set blocks finalize-report; the warning set is non-blocking
+// outside `--strict` (and finalize-report does not pass --strict here).
+// Membership for the other buckets is enumerated explicitly so a new
 // dimension cannot silently land in the wrong group.
-const CROSS_CHAPTER_DIMENSIONS = new Set([
+const CROSS_CHAPTER_FAILURE_DIMENSIONS = new Set([
   'duplicateAnalysisCrossChapter',
-  'duplicateLocalClaim',
   'keyFactDrift',
   'metricDrift',
-  'metricDriftSmall',
   'missingChapter',
+]);
+const CROSS_CHAPTER_WARNING_DIMENSIONS = new Set([
+  'duplicateLocalClaim',
+  'metricDriftSmall',
 ]);
 const FINALIZE_STEP_DIMENSIONS = new Set([
   'reportContract',
   'reportMetaShape',
   'revisionGraph',
+  'workflowConfigShape',
   'usage',
 ]);
 const REPORT_META_WARNING_DIMENSIONS = new Set([
@@ -581,7 +588,8 @@ const REPORT_META_WARNING_DIMENSIONS = new Set([
 
 export function classifyDimension(dimension, precedenceRank) {
   if (WARNING_DIMENSIONS.has(dimension)) return 'chapter-warning';
-  if (CROSS_CHAPTER_DIMENSIONS.has(dimension)) return 'cross-chapter';
+  if (CROSS_CHAPTER_FAILURE_DIMENSIONS.has(dimension)) return 'cross-chapter-failure';
+  if (CROSS_CHAPTER_WARNING_DIMENSIONS.has(dimension)) return 'cross-chapter-warning';
   if (FINALIZE_STEP_DIMENSIONS.has(dimension)) return 'finalize-step';
   if (REPORT_META_WARNING_DIMENSIONS.has(dimension)) return 'report-meta-warning';
   if (precedenceRank != null) return 'chapter-failure';
@@ -589,12 +597,15 @@ export function classifyDimension(dimension, precedenceRank) {
 }
 
 // Stable display order for grouped tables: chapter-failure first (by rank),
-// then chapter-warning, cross-chapter, finalize-step, report-meta-warning.
-// Within each non-failure group, sort alphabetically for deterministic output.
+// then chapter-warning, then cross-chapter (failure before warning), then
+// finalize-step, then report-meta-warning. Within each non-failure group,
+// sort alphabetically (or by rank for the chapter classes) for deterministic
+// output.
 const CLASS_ORDER = [
   'chapter-failure',
   'chapter-warning',
-  'cross-chapter',
+  'cross-chapter-failure',
+  'cross-chapter-warning',
   'finalize-step',
   'report-meta-warning',
 ];
@@ -623,10 +634,13 @@ export function dimensionCatalog() {
     .sort((a, b) => {
       const classDelta = CLASS_ORDER.indexOf(a.dimensionClass) - CLASS_ORDER.indexOf(b.dimensionClass);
       if (classDelta !== 0) return classDelta;
-      // Within chapter-failure: sort by precedence rank. Within other
-      // buckets (which have no precedence rank): sort alphabetically.
-      if (a.dimensionClass === 'chapter-failure') {
-        return (a.precedenceRank ?? 999) - (b.precedenceRank ?? 999);
+      // chapter-failure and chapter-warning share RETRY_PRECEDENCE indices,
+      // so sort both by rank (rank-less entries like tableNotes fall to the
+      // end via the 999 sentinel). Other buckets have no rank: alphabetical.
+      if (a.dimensionClass === 'chapter-failure' || a.dimensionClass === 'chapter-warning') {
+        const rankDelta = (a.precedenceRank ?? 999) - (b.precedenceRank ?? 999);
+        if (rankDelta !== 0) return rankDelta;
+        return a.dimension.localeCompare(b.dimension);
       }
       return a.dimension.localeCompare(b.dimension);
     });

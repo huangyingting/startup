@@ -116,14 +116,16 @@ function idSystemSection() {
 const CLASS_LABELS = {
   'chapter-failure': 'chapter-failure',
   'chapter-warning': 'chapter-warning',
-  'cross-chapter': 'cross-chapter',
+  'cross-chapter-failure': 'cross-chapter-failure',
+  'cross-chapter-warning': 'cross-chapter-warning',
   'finalize-step': 'finalize-step',
   'report-meta-warning': 'report-meta-warning',
 };
 const CLASS_HEADINGS = {
   'chapter-failure': 'Chapter failure-class (numeric `precedence`, ordered root-cause first)',
-  'chapter-warning': 'Chapter warning-class (`precedence: —`, eligible for `acknowledgedWarnings` at chapter scope)',
-  'cross-chapter': 'Cross-chapter (`check-cross-chapter`, `precedence: —`, NOT ack-able)',
+  'chapter-warning': 'Chapter warning-class (numeric `precedence` shared with the failure list — fills the gaps in the failure table\'s rank column; eligible for `acknowledgedWarnings` at chapter scope, except `tableNotes` which has no precedence rank)',
+  'cross-chapter-failure': 'Cross-chapter failure-class (`check-cross-chapter`, `precedence: —`, blocks `finalize-report`, NOT ack-able)',
+  'cross-chapter-warning': 'Cross-chapter warning-class (`check-cross-chapter`, `precedence: —`, non-blocking outside `--strict` and `finalize-report` does not pass `--strict`; advisory only, NOT ack-able)',
   'finalize-step': 'Finalize-step (`check-report` / `build-evidence-ledger` / `build-report`, `precedence: —`, NOT ack-able)',
   'report-meta-warning': 'Report-meta warnings (`check-report-meta`, `severity: warning` only, no opt-out)',
 };
@@ -136,7 +138,10 @@ function dimensionsSection() {
     groups.get(d.dimensionClass).push(d);
   }
   const renderRow = (d) => {
-    const precedence = d.dimensionClass === 'chapter-failure' ? (d.precedenceRank ?? '—') : '—';
+    // chapter-failure and chapter-warning both share RETRY_PRECEDENCE indices,
+    // so render the rank for either class. Other classes have no rank.
+    const showRank = d.dimensionClass === 'chapter-failure' || d.dimensionClass === 'chapter-warning';
+    const precedence = showRank ? (d.precedenceRank ?? '—') : '—';
     const fix = (d.defaultFix ?? '—').replace(/\|/g, '\\|');
     const suppressed = d.suppressedBy.length ? d.suppressedBy.map((s) => `\`${s}\``).join(', ') : '—';
     return `| ${precedence} | \`${CLASS_LABELS[d.dimensionClass] ?? d.dimensionClass}\` | \`${d.dimension}\` | ${fix} | ${suppressed} |`;
@@ -155,9 +160,9 @@ function dimensionsSection() {
   };
   const warningList = [...WARNING_DIMENSIONS].sort().map((d) => `\`${d}\``).join(', ');
   return [
-    'Six scripts emit issues/warnings tagged with these `dimension` keys: `check-chapter`, `check-cross-chapter`, `check-report-meta`, `build-evidence-ledger`, `build-report`, and `check-report`. The runtime `runtimeContext` object does NOT carry this catalog; trust the per-issue `fix` field in JSON output (and the tables below) for repair guidance.',
+    'Eight scripts emit issues/warnings tagged with these `dimension` keys: `check-chapter`, `check-cross-chapter`, `check-report-meta`, `build-evidence-ledger`, `build-report`, `check-report`, `check-revision-graph`, and `check-workflow-config`. The runtime `runtimeContext` object does NOT carry this catalog; trust the per-issue `fix` field in JSON output (and the tables below) for repair guidance.',
     '',
-    'Within `check-chapter`, fix in `precedence` order (lowest rank = root cause first); a suppressed dimension is masked while its upstream still fails, so the upstream fix usually clears the downstream too. Other validators do not use precedence — fix what the message names.',
+    'Within `check-chapter`, fix in `precedence` order (lowest rank = root cause first); a suppressed dimension is masked while its upstream still fails, so the upstream fix usually clears the downstream too. Failure-class and warning-class chapter dimensions share one ordered list (`RETRY_PRECEDENCE`), which is why the failure table\'s rank column has gaps — the missing numbers are warning dimensions that show their rank in the warning-class table below. Other validators do not use precedence — fix what the message names.',
     '',
     '`defaultFix` is the generic guidance baked into the validator; concrete failures echo the same hint with the specific field/id filled in (e.g. "Add 3 more registrable domain(s)…"). Trust the per-failure `fix` in JSON output over the generic version below.',
     '',
@@ -165,7 +170,8 @@ function dimensionsSection() {
     '',
     ...groupSection('chapter-failure'),
     ...groupSection('chapter-warning'),
-    ...groupSection('cross-chapter'),
+    ...groupSection('cross-chapter-failure'),
+    ...groupSection('cross-chapter-warning'),
     ...groupSection('finalize-step'),
     ...groupSection('report-meta-warning'),
     '### `acknowledgedWarnings` opt-out',
