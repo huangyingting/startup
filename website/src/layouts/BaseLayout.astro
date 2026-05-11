@@ -8,8 +8,9 @@ interface Props {
   title: string;
   description?: string;
   locale?: Locale;
+  alternateLocaleHref?: string;
 }
-const { title, locale = 'en', description = t('deck', locale) } = Astro.props;
+const { title, locale = 'en', description = t('deck', locale), alternateLocaleHref } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const homeHref = localePath(base, locale);
 const archiveHref = localePath(base, locale, 'archive');
@@ -22,8 +23,7 @@ const aiNote = t('aiNote', locale);
 const copyright = `© ${new Date().getUTCFullYear()} Yingting Huang`;
 const altLocale: Locale = locale === 'zh' ? 'en' : 'zh';
 const altLabel = altLocale === 'zh' ? t('switchToChinese', locale) : t('switchToEnglish', locale);
-// Switch link points to the equivalent landing page in the alternate locale.
-const altHomeHref = localePath(base, altLocale);
+const altHref = alternateLocaleHref ?? localePath(base, altLocale);
 const htmlLang = HTML_LANG[locale];
 ---
 <!doctype html>
@@ -50,7 +50,7 @@ const htmlLang = HTML_LANG[locale];
           <a href={searchHref}>{t('search', locale)}</a>
         </nav>
         <div class="bz-utility__right">
-          <a class="bz-utility__link bz-mono" href={altHomeHref} hreflang={HTML_LANG[altLocale]} aria-label={t('languageSwitcher', locale)}>{altLabel}</a>
+          <a class="bz-utility__link bz-mono" href={altHref} hreflang={HTML_LANG[altLocale]} aria-label={t('languageSwitcher', locale)}>{altLabel}</a>
           <a class="bz-utility__link bz-mono" href={rssHref} aria-label="RSS">RSS</a>
         </div>
       </div>
