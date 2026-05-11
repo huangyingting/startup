@@ -190,6 +190,49 @@ jobs:
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Stage translated files artifact
+        if: always() && steps.targets.outputs.count != '0'
+        env:
+          REPORT_IDS: ${{ steps.targets.outputs.reportIds }}
+        run: |
+          set -euo pipefail
+          ARTIFACT_DIR="$RUNNER_TEMP/translated-zh-artifact"
+          rm -rf "$ARTIFACT_DIR"
+          mkdir -p "$ARTIFACT_DIR/reports"
+          copied=0
+          while IFS= read -r report; do
+            [ -z "$report" ] && continue
+            printf '%s\n' "$report" >> "$ARTIFACT_DIR/selected-reports.txt"
+            mkdir -p "$ARTIFACT_DIR/reports/$report"
+            for file in summary-card.zh.yaml full-report.zh.yaml; do
+              source="reports/$report/$file"
+              if [ -f "$source" ]; then
+                cp "$source" "$ARTIFACT_DIR/reports/$report/$file"
+                copied=$((copied + 1))
+              else
+                echo "::warning::Missing translated file: $source"
+              fi
+            done
+          done <<< "$REPORT_IDS"
+          if [ "$copied" -eq 0 ]; then
+            echo "No translated zh overlay files were found for the selected reports." > "$ARTIFACT_DIR/README.txt"
+          fi
+          {
+            echo
+            echo "### Preserved translated files artifact"
+            echo "- Artifact: translated-zh-${{ github.run_id }}"
+            echo "- Files copied: $copied"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload translated files artifact
+        if: always() && steps.targets.outputs.count != '0'
+        uses: actions/upload-artifact@v7
+        with:
+          name: translated-zh-${{ github.run_id }}
+          path: ${{ runner.temp }}/translated-zh-artifact/
+          retention-days: 14
+          if-no-files-found: ignore
+
       - name: Verify selected translations
         if: steps.targets.outputs.count != '0'
         env:
