@@ -149,16 +149,21 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Write company run summary
+        env:
+          COMPANY: ${{ steps.inputs.outputs.company }}
+          COMPANY_URL: ${{ steps.inputs.outputs.url }}
+          MODEL: ${{ steps.inputs.outputs.model }}
+          EFFORT: ${{ steps.inputs.outputs.effort }}
         run: |
           {
             echo "## Startup company research run"
             echo
             echo "| Field | Value |"
             echo "| --- | --- |"
-            echo "| Company | ${{ steps.inputs.outputs.company }} |"
-            echo "| URL | ${{ steps.inputs.outputs.url || 'unknown' }} |"
-            echo "| Model | ${{ steps.inputs.outputs.model }} |"
-            echo "| Effort | ${{ steps.inputs.outputs.effort }} |"
+            echo "| Company | ${COMPANY:-unknown} |"
+            echo "| URL | ${COMPANY_URL:-unknown} |"
+            echo "| Model | ${MODEL:-unknown} |"
+            echo "| Effort | ${EFFORT:-unknown} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Snapshot reports before generation

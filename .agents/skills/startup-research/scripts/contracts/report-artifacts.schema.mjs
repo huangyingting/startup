@@ -32,6 +32,14 @@ import { zodIssues } from './validation-result.mjs';
 export const SCHEMA_VERSION = 'report-v2';
 
 const nonEmptyString = z.string().trim().min(1, 'must be a non-empty string');
+const httpUrlString = nonEmptyString.refine((value) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}, 'must be an http(s) URL');
 const nullableString = z.string().nullable();
 
 function labelType(schema, label) {
@@ -89,7 +97,7 @@ export const SourceSchema = z.object({
   id: z.string().optional().describe('S<ChapterLetter>### (e.g. SO001). Schema-optional so partial drafts validate, but in practice mandatory — every sourceRefs[] entry resolves against sources[].id, so a missing id makes the source unreferenceable and yields a dangling-reference error at build time.'),
   publisher: nonEmptyString.describe('publishing organization (e.g. "Securities and Exchange Commission", "Financial Times")'),
   title: nonEmptyString.describe('article / filing / page title'),
-  url: nonEmptyString.describe('canonical URL fetched via the fetch-url skill'),
+  url: httpUrlString.describe('canonical http(s) URL fetched via the fetch-url skill'),
   date: nullableDateLike.optional().describe('publication date YYYY-MM-DD if known'),
   accessDate: dateLike.describe('the date you fetched the URL'),
   accessStatus: enumMember(SOURCE_ACCESS_STATUSES, 'accessStatus').describe('how the fetch went. ok=normal page; paywall|js-only|broken|rate-limited count toward the report-level paywall ceiling.'),

@@ -175,6 +175,16 @@ function cleanHeadline(value: unknown): string {
   return stripTrailingClaimRefs(value);
 }
 
+function safeHttpUrl(value: unknown): string | null {
+  if (typeof value !== 'string' || !/^https?:\/\//i.test(value)) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
 function blockRefs(value: unknown): string[] {
   return claimRefs(value);
 }
@@ -459,14 +469,17 @@ const card = {
       )}
       {sources.length > 0 && (
         <DataTable title={labels.sourcesCol} columns={[labels.sourceIdCol, labels.sourcePublisherCol, labels.sourceTitleCol, labels.sourceQuoteCol]}>
-          {sources.map((source) => (
-            <tr id={`source-${source.id}`}>
-              <td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td>
-              <td>{source.publisher}</td>
-              <td>{source.url ? <a href={source.url}>{source.title}</a> : source.title}</td>
-              <td>{source.keyQuote}</td>
-            </tr>
-          ))}
+          {sources.map((source) => {
+            const sourceHref = safeHttpUrl(source.url);
+            return (
+              <tr id={`source-${source.id}`}>
+                <td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td>
+                <td>{source.publisher}</td>
+                <td>{sourceHref ? <a href={sourceHref}>{source.title}</a> : source.title}</td>
+                <td>{source.keyQuote}</td>
+              </tr>
+            );
+          })}
         </DataTable>
       )}
     </section>

@@ -17,6 +17,9 @@ const chartTypes = new Set(RENDERED_FIGURE_TYPES);
 const usesD3Chart = chartTypes.has(type);
 const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
 const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? { layout } : {}), data } : null;
+const chartPayloadJson = chartPayload
+  ? JSON.stringify(chartPayload).replace(/[<>&\u2028\u2029]/g, (char) => ({ '<': '\\u003c', '>': '\\u003e', '&': '\\u0026', '\u2028': '\\u2028', '\u2029': '\\u2029' }[char] ?? char))
+  : null;
 ---
 
 <figure class:list={['native-figure', `figure-${type}`, `layout-${layout}`]}>
@@ -35,7 +38,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
 
   {figure.approximationNotes && <p class="figure-note">{figure.approximationNotes}</p>}
   <ClaimRefs refs={claimRefs(figure)} claims={claims} sources={sources} />
-  {chartPayload && <script type="application/json" class="figure-chart-data" set:html={JSON.stringify(chartPayload)}></script>}
+  {chartPayloadJson && <script type="application/json" class="figure-chart-data" set:html={chartPayloadJson}></script>}
 </figure>
 
 <script>

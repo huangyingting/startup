@@ -85,7 +85,7 @@ localEvidence:
     - id?: string  # S<ChapterLetter>### (e.g. SO001). Schema-optional so partial drafts validate, but in practice mandatory — every sourceRefs[] entry resolves against sources[].id, so a missing id makes the source unreferenceable and yields a dangling-reference error at build time.
       publisher: string  # publishing organization (e.g. "Securities and Exchange Commission", "Financial Times")
       title: string  # article / filing / page title
-      url: string  # canonical URL fetched via the fetch-url skill
+      url: string  # canonical http(s) URL fetched via the fetch-url skill
       date?: YYYY-MM-DD  # publication date YYYY-MM-DD if known
       accessDate: YYYY-MM-DD  # the date you fetched the URL
       accessStatus: ok|paywall|js-only|broken|rate-limited  # how the fetch went. ok=normal page; paywall|js-only|broken|rate-limited count toward the report-level paywall ceiling.

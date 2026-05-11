@@ -185,18 +185,25 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Write unicorn run summary
+        env:
+          COUNT: ${{ steps.inputs.outputs.count }}
+          INDUSTRY: ${{ steps.inputs.outputs.industry }}
+          MODEL: ${{ steps.inputs.outputs.model }}
+          EFFORT: ${{ steps.inputs.outputs.effort }}
+          CUTOFF_DATE: ${{ steps.inputs.outputs.cutoffDate }}
+          LABEL: ${{ steps.inputs.outputs.label }}
         run: |
           {
             echo "## Startup research run"
             echo
             echo "| Field | Value |"
             echo "| --- | --- |"
-            echo "| Max reports | ${{ steps.inputs.outputs.count }} |"
-            echo "| Industry | ${{ steps.inputs.outputs.industry }} |"
-            echo "| Model | ${{ steps.inputs.outputs.model }} |"
-            echo "| Effort | ${{ steps.inputs.outputs.effort }} |"
-            echo "| Unicorn cutoff | ${{ steps.inputs.outputs.cutoffDate }} |"
-            echo "| Label | ${{ steps.inputs.outputs.label }} |"
+            echo "| Max reports | ${COUNT:-unknown} |"
+            echo "| Industry | ${INDUSTRY:-unknown} |"
+            echo "| Model | ${MODEL:-unknown} |"
+            echo "| Effort | ${EFFORT:-unknown} |"
+            echo "| Unicorn cutoff | ${CUTOFF_DATE:-unknown} |"
+            echo "| Label | ${LABEL:-unknown} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Summarize portfolio coverage gaps
