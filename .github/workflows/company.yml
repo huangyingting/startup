@@ -35,7 +35,6 @@ on:
           - gpt-5.4
           - claude-sonnet-4.6
           - claude-opus-4.6
-
 permissions:
   contents: write
   pull-requests: write
@@ -118,6 +117,10 @@ jobs:
               exit 1
               ;;
           esac
+          case "$MODEL" in
+            gpt-5.5|gpt-5.4) EFFORT="xhigh" ;;
+            claude-sonnet-4.6|claude-opus-4.6) EFFORT="high" ;;
+          esac
           LABEL="$COMPANY"
           SAFE_LABEL="$(printf '%s' "$LABEL" | tr -c '[:alnum:]' '-' | tr '[:upper:]' '[:lower:]' | sed 's/-\+/-/g; s/^-//; s/-$//' | cut -c1-60)"
           if [ -z "$SAFE_LABEL" ]; then
@@ -127,6 +130,7 @@ jobs:
             echo "label=$LABEL"
             echo "safeLabel=$SAFE_LABEL"
             echo "model=$MODEL"
+            echo "effort=$EFFORT"
             echo "company<<EOF"
             echo "$COMPANY"
             echo "EOF"
@@ -145,6 +149,7 @@ jobs:
             echo "| Company | ${{ steps.inputs.outputs.company }} |"
             echo "| URL | ${{ steps.inputs.outputs.url || 'unknown' }} |"
             echo "| Model | ${{ steps.inputs.outputs.model }} |"
+            echo "| Effort | ${{ steps.inputs.outputs.effort }} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Snapshot reports before generation
@@ -157,6 +162,7 @@ jobs:
           COMPANY: ${{ steps.inputs.outputs.company }}
           COMPANY_URL: ${{ steps.inputs.outputs.url }}
           MODEL: ${{ steps.inputs.outputs.model }}
+          EFFORT: ${{ steps.inputs.outputs.effort }}
           # fetch-url appends one JSON line per call here when set; chapter
           # checks can use the trail to surface unverifiedSource warnings.
           STARTUP_FETCH_LOG_PATH: ${{ github.workspace }}/.research-cache/_fetch-log.jsonl
@@ -181,7 +187,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/copilot-logs"
           COPILOT_LOG="$RUNNER_TEMP/copilot-logs/run.log"
           set +e
-          copilot --yolo --no-ask-user --excluded-tools "web_fetch" --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
+          copilot --yolo --excluded-tools "web_fetch" --model "$MODEL" --effort "$EFFORT" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
           status=${PIPESTATUS[0]}
           set -e
           {

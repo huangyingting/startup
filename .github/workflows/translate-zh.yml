@@ -11,8 +11,6 @@
 name: Translate reports to Chinese
 
 on:
-  schedule:
-    - cron: "0 */2 * * *"
   workflow_dispatch:
     inputs:
       reportCount:
@@ -30,7 +28,6 @@ on:
           - gpt-5.4
           - claude-sonnet-4.6
           - claude-opus-4.6
-
 permissions:
   contents: write
   pull-requests: write
@@ -81,9 +78,14 @@ jobs:
               exit 1
               ;;
           esac
+          case "$MODEL" in
+            gpt-5.5|gpt-5.4) EFFORT="xhigh" ;;
+            claude-sonnet-4.6|claude-opus-4.6) EFFORT="high" ;;
+          esac
           {
             echo "count=$COUNT"
             echo "model=$MODEL"
+            echo "effort=$EFFORT"
           } >> "$GITHUB_OUTPUT"
 
       - name: Select untranslated reports
@@ -130,6 +132,9 @@ jobs:
           {
             echo "## Chinese translation batch"
             echo
+            echo "Model: ${{ steps.inputs.outputs.model }}"
+            echo "Effort: ${{ steps.inputs.outputs.effort }}"
+            echo
             echo "Selected ${{ steps.targets.outputs.count }} of ${{ steps.targets.outputs.total }} untranslated report(s)."
             echo
             if [ "${{ steps.targets.outputs.count }}" = "0" ]; then
@@ -157,6 +162,7 @@ jobs:
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
           MODEL: ${{ steps.inputs.outputs.model }}
+          EFFORT: ${{ steps.inputs.outputs.effort }}
           REPORT_IDS: ${{ steps.targets.outputs.reportIds }}
         run: |
           set -euo pipefail
@@ -168,18 +174,12 @@ jobs:
 
           Requirements:
           - Translate exactly these selected folders. If fewer than the requested batch size were selected, translate only the selected folders. If a selected folder already has both Chinese overlays by the time you inspect it, run `npm run translate:zh -- verify <runId>` and skip rewriting it.
-          - For each folder, produce reports/<runId>/summary-card.zh.yaml and reports/<runId>/full-report.zh.yaml using .agents/skills/translate-zh/SKILL.md.
-          - Use the single orchestration entrypoint instead of assembling the sparse-bundle pipeline inline: `npm run translate:zh -- preflight <runId>`, `npm run translate:zh -- init <runId>`, `npm run translate:zh -- finalize-summary <runId>`, `npm run translate:zh -- finalize-full <runId>`, and `npm run translate:zh -- verify <runId>`.
-          - Keep all intermediate artifacts under `.translate-cache/<runId>/`. Do not create ad-hoc temp folders under `reports/<runId>/` or elsewhere. Successful runs must leave no cache behind.
-          - If finalization fails, repair only the offending cached leaf or part under `.translate-cache/<runId>/`, then rerun the narrowest finalize command. Do not re-export the whole report unless the cache is structurally corrupted.
-          - Do not edit English source YAML, report metadata, evidence files, workflow snapshots, website files, package files, or any report folder outside the selected list.
-          - Do not fetch URLs, do not invent facts, and do not add new diligence content; this is translation only.
           - Do not run any git command (git add, git commit, git push, git stash, git checkout, etc.) at any point; leave generated Chinese overlays unstaged. The workflow itself owns commit/push decisions.
           EOF
           )
           mkdir -p "$RUNNER_TEMP/copilot-logs"
           COPILOT_LOG="$RUNNER_TEMP/copilot-logs/translate-zh.log"
-          copilot --yolo --no-ask-user --autopilot --excluded-tools "web_fetch" --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
+          copilot --yolo --autopilot --model "$MODEL" --effort "$EFFORT" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
           {
             echo
             echo "### Copilot run stats"

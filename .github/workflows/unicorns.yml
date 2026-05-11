@@ -54,7 +54,6 @@ on:
           - gpt-5.4
           - claude-sonnet-4.6
           - claude-opus-4.6
-
 permissions:
   contents: write
   pull-requests: write
@@ -147,6 +146,10 @@ jobs:
               exit 1
               ;;
           esac
+          case "$MODEL" in
+            gpt-5.5|gpt-5.4) EFFORT="xhigh" ;;
+            claude-sonnet-4.6|claude-opus-4.6) EFFORT="high" ;;
+          esac
           if [ "$INDUSTRY" = "Any" ]; then
             LABEL="recent-unicorns"
             INDUSTRY_RULE="Choose across different sectors, preferring underrepresented sectors/geographies."
@@ -165,6 +168,7 @@ jobs:
             echo "label=$LABEL"
             echo "safeLabel=$SAFE_LABEL"
             echo "model=$MODEL"
+            echo "effort=$EFFORT"
             echo "cutoffDate=$CUTOFF_DATE"
           } >> "$GITHUB_OUTPUT"
 
@@ -178,6 +182,7 @@ jobs:
             echo "| Max reports | ${{ steps.inputs.outputs.count }} |"
             echo "| Industry | ${{ steps.inputs.outputs.industry }} |"
             echo "| Model | ${{ steps.inputs.outputs.model }} |"
+            echo "| Effort | ${{ steps.inputs.outputs.effort }} |"
             echo "| Unicorn cutoff | ${{ steps.inputs.outputs.cutoffDate }} |"
             echo "| Label | ${{ steps.inputs.outputs.label }} |"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -271,6 +276,7 @@ jobs:
           COUNT: ${{ steps.inputs.outputs.count }}
           INDUSTRY_RULE: ${{ steps.inputs.outputs.industryRule }}
           MODEL: ${{ steps.inputs.outputs.model }}
+          EFFORT: ${{ steps.inputs.outputs.effort }}
           CUTOFF_DATE: ${{ steps.inputs.outputs.cutoffDate }}
           COVERAGE_HINT: ${{ steps.coverage.outputs.coverageHint }}
           # fetch-url's main() appends one JSON line per call to this file
@@ -302,7 +308,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/copilot-logs"
           COPILOT_LOG="$RUNNER_TEMP/copilot-logs/run.log"
           set +e
-          copilot --yolo --no-ask-user --autopilot --excluded-tools "web_fetch" --model "$MODEL" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
+          copilot --yolo --autopilot --excluded-tools "web_fetch" --model "$MODEL" --effort "$EFFORT" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
           status=${PIPESTATUS[0]}
           set -e
           # Per-step stats summary (best-effort: copilot CLI prints these on
