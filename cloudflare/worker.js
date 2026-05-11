@@ -1,8 +1,8 @@
 /**
  * Startup Scheduler - Cloudflare Worker
  *
- * One Cron Trigger (`30 *\/4 * * *`) fires every four hours at :30 UTC,
- * matching the previous GitHub Actions schedule for unicorn discovery.
+ * One Cron Trigger (`*\/30 * * * *`) wakes every 30 minutes. The worker
+ * dispatches the matching GitHub Actions workflow(s) based on UTC time.
  *
  * Required secrets (set via `wrangler secret put`):
  *   GITHUB_TOKEN - Fine-grained PAT with Actions: Read & Write on the target repo
@@ -12,16 +12,28 @@
  *   GITHUB_REF   - Dispatch target ref; defaults to "main"
  *
  * Schedule reference:
- *   unicorns.yml 30 *\/4 * * * inputs: industry=Any, unicornCount=3, model=claude-sonnet-4.6
+ *   unicorns.yml     30 *\/4 * * * inputs: industry=Any, unicornCount=3, model=claude-sonnet-4.6
+ *   translate-zh.yml 0 * * * *     inputs: reportCount=5, model=gpt-5.5
  */
 
 const WORKFLOW_DISPATCHES = [
   {
+    schedule: "every four hours at :30 UTC",
+    shouldDispatch: (date) => date.getUTCMinutes() === 30 && date.getUTCHours() % 4 === 0,
     workflow: "unicorns.yml",
     inputs: {
       industry: "Any",
       unicornCount: "3",
       model: "claude-sonnet-4.6",
+    },
+  },
+  {
+    schedule: "hourly at :00 UTC",
+    shouldDispatch: (date) => date.getUTCMinutes() === 0,
+    workflow: "translate-zh.yml",
+    inputs: {
+      reportCount: "5",
+      model: "gpt-5.5",
     },
   },
 ];
@@ -38,18 +50,23 @@ export default {
       throw new Error("Missing GITHUB_REPO secret.");
     }
 
-    console.log(
-      `[${now.toISOString()}] Dispatching on ${ref}: ${WORKFLOW_DISPATCHES.map((dispatch) => dispatch.workflow).join(", ")}`,
-    );
+    const dispatches = WORKFLOW_DISPATCHES.filter((dispatch) => dispatch.shouldDispatch(now));
+
+    if (dispatches.length === 0) {
+      console.log(`[${now.toISOString()}] No workflow dispatches due for cron ${event.cron}.`);
+      return;
+    }
+
+    console.log(`[${now.toISOString()}] Dispatching on ${ref}: ${dispatches.map((dispatch) => dispatch.workflow).join(", ")}`);
 
     const results = await Promise.allSettled(
-      WORKFLOW_DISPATCHES.map((dispatch) => dispatchWorkflow(env.GITHUB_TOKEN, env.GITHUB_REPO, ref, dispatch)),
+      dispatches.map((dispatch) => dispatchWorkflow(env.GITHUB_TOKEN, env.GITHUB_REPO, ref, dispatch)),
     );
 
     let failureCount = 0;
     for (let index = 0; index < results.length; index++) {
       const result = results[index];
-      const workflow = WORKFLOW_DISPATCHES[index].workflow;
+      const workflow = dispatches[index].workflow;
       if (result.status === "rejected") {
         failureCount += 1;
         console.error(`Failed to dispatch ${workflow}: ${result.reason}`);

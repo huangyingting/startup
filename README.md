@@ -29,7 +29,7 @@ Important files:
 - `.agents/skills/startup-research/scripts/` — skill-owned workflow scripts (chapter loader, gate checks, ledger consolidation, report assembly, validators).
 - `.agents/skills/translate-zh/SKILL.md` — Simplified Chinese sparse-overlay workflow for finalized reports.
 - `website/src/lib/` — rendering contracts shared between the renderer and the chapter/report validators.
-- `cloudflare/worker.js` — Cloudflare Cron Trigger that dispatches scheduled GitHub Actions workflows.
+- `cloudflare/worker.js` — Cloudflare Worker scheduler that dispatches due GitHub Actions workflows.
 - `AGENTS.md` — repo-development conventions (working rules, core philosophy). Read before touching skills, scripts, or schemas.
 - `.agents/skills/README.md` — skills index and skill-folder conventions.
 
@@ -56,7 +56,11 @@ npm --prefix website run dev
 
 ## Cloudflare scheduler
 
-The GitHub Actions cron for `unicorns.yml` is disabled in favor of the Worker in `cloudflare/`. It fires every four hours at `:30` UTC and dispatches the `Research unicorns` workflow on `main` with the same default inputs as the former scheduled run.
+GitHub Actions cron schedules are disabled in favor of the Worker in `cloudflare/`. Cloudflare has a small cron-trigger limit, so Wrangler config uses a single every-30-minutes trigger and `worker.js` decides which GitHub Actions workflows are due from the UTC timestamp:
+
+- Every hour at `:00` UTC, dispatch `translate-zh.yml` on `main` with `reportCount=5` and `model=gpt-5.5`.
+- Every four hours at `:30` UTC, dispatch `unicorns.yml` on `main` with `industry=Any`, `unicornCount=3`, and `model=claude-sonnet-4.6`.
+- Other half-hour wakeups exit without dispatching a workflow.
 
 Set the required Worker secrets from `cloudflare/`:
 

@@ -2,9 +2,9 @@ name = "startup-scheduler"
 main = "worker.js"
 compatibility_date = "2024-09-23"
 
-# Fire every four hours at :30 UTC, matching the former unicorns.yml schedule.
+# Wake every 30 minutes; worker.js decides which GitHub workflow dispatches are due.
 [triggers]
-crons = ["30 */4 * * *"]
+crons = ["*/30 * * * *"]
 
 [vars]
 GITHUB_REF = "main"
