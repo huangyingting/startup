@@ -34,35 +34,44 @@ coverFacts:
   - label: Total Raised
     value: 368
     unit: USD M
-    claimRefs: []
+    claimRefs:
+      - CO016
   - label: Post-Money Valuation
     value: 1000
     unit: USD M
-    claimRefs: []
+    claimRefs:
+      - CO019
+      - CI026
   - label: ARR (Jan 2025)
     value: 100
     unit: USD M
-    claimRefs: []
+    claimRefs:
+      - CO023
   - label: Founded
     value: '2013'
     unit: null
-    claimRefs: []
+    claimRefs:
+      - CO001
   - label: Enterprise Customers
     value: 1,000+
     unit: null
-    claimRefs: []
+    claimRefs:
+      - CO025
   - label: Purple Knight Users
     value: 65,000+
     unit: null
-    claimRefs: []
+    claimRefs:
+      - CE033
   - label: Lead Investors
-    value: KKR, Insight Partners
+    value: KKR, J.P. Morgan, Hercules Capital
     unit: null
-    claimRefs: []
+    claimRefs:
+      - CI029
   - label: Employees
     value: ~550
     unit: null
-    claimRefs: []
+    claimRefs:
+      - CO029
 companyProfile:
   summary: |
     Semperis is a cybersecurity company that has built the leading identity threat detection
@@ -84,20 +93,23 @@ companyProfile:
         Serial entrepreneur with prior identity and security company experience. Primary
         external face of Semperis; leads go-to-market, investor relations, and strategic
         partnerships. Based in New York metro area.
-      claimRefs: []
+      claimRefs:
+        - CO010
     - name: Guy Teverovsky
       role: CTO and Co-Founder
       background: |
         Deep Active Directory engineering expertise; leads all product and technology
         development from the Tel Aviv R&D center (~150 engineers). Architect of the
         cyber-aware AD Forest Recovery technology and the DSP detection engine.
-      claimRefs: []
+      claimRefs:
+        - CO012
     - name: Matan Liberman
       role: EVP Business Development and Co-Founder
       background: |
         Leads strategic alliances, channel partnerships, and business development.
         Key architect of the Microsoft, Splunk, and CrowdStrike integration ecosystem.
-      claimRefs: []
+      claimRefs:
+        - CO011
   foundingLocation: Hoboken, NJ, USA
   headquarters: Hoboken, NJ, USA
   productSummary: |
@@ -123,7 +135,11 @@ companyProfile:
     Series C raised March 2022 (KKR-led + Insight, Ten Eleven, Paladin, Tech Pioneers, Atrium Health); $40M Series B in
     2020 (Insight Partners); total raised ~$368M; current valuation $1B+ (unicorn).
   disclosureProfile: private-undisclosed
-  claimRefs: []
+  claimRefs:
+    - CO001
+    - CO010
+    - CO011
+    - CO012
 chapters:
   - number: 1
     title: Company Overview
@@ -1639,38 +1655,42 @@ chapters:
     title: Risks
     sections:
       - number: '7.1'
-        title: Regulatory and Legal Risks
+        title: Regulatory and Legal Risk
         blocks:
           - type: paragraph
             body: >-
               Semperis operates in a heavily regulated environment where four distinct regulatory risk vectors create
-              cumulative compliance obligations. The most material is GDPR/data-processor liability: Semperis processes
-              Active Directory directory data for EU-based enterprise customers. AD objects contain personal data as
-              defined by GDPR Article 4(1) — full names, email addresses, phone numbers, job titles, and organizational
-              membership — meaning Semperis acts as a data processor requiring a compliant Data Processing Agreement
-              (DPA) with each EU customer under Article 28. Non-compliance fines can reach 4% of global annual turnover
-              or €20M per violation, whichever is greater. With Semperis approaching and surpassing $100M ARR and EU
-              customers representing a material share of enterprise accounts, the aggregate fine exposure is
-              structurally significant. Semperis discloses a compliance certification page and trust center, suggesting
-              an active compliance program, but specific GDPR enforcement risk cannot be verified from public data.
+              cumulative compliance obligations. The most material is GDPR and UK GDPR liability: Semperis processes
+              Active Directory directory data for EU-based and UK-based enterprise customers. AD objects contain
+              personal data as defined by GDPR Article 4(1) — full names, email addresses, phone numbers, job titles,
+              and organizational membership — meaning Semperis acts as a data processor requiring a compliant Data
+              Processing Agreement with each EU/UK customer under Article 28. Non-compliance fines can reach 4% of
+              global annual turnover or twenty million euros per violation, whichever is greater. With Semperis
+              approaching $100M+ ARR and EU customers representing a material share of enterprise accounts, the
+              aggregate fine exposure is structurally significant. The ICO has confirmed that UK GDPR applies
+              post-Brexit as a parallel regime, creating dual compliance obligations for the same customer data in many
+              cases.
 
-              Export control compliance under the US Export Administration Regulations (EAR Part 740) is a second
-              distinct vector. Semperis operates an R&D center in Tel Aviv, Israel, developing cryptographic security
-              software (Active Directory encryption keys, Kerberos golden ticket detection, cryptographic backup
-              verification). EAR classifies cryptographic software under Export Control Classification Number 5E002;
-              license exceptions (ENC) are required for commercial export. An export compliance failure could result in
-              fines up to $1M per violation, debarment from US government contracting, and license revocation.
+              Export control compliance under the US Export Administration Regulations (EAR Part 730 et seq.) is a
+              second distinct vector. Semperis operates an R&D center in Tel Aviv, Israel, developing cryptographic
+              security software including Active Directory encryption key handling, Kerberos golden ticket detection,
+              and cryptographic backup verification. EAR classifies dual-use cybersecurity software; license exceptions
+              are required for commercial export of encryption items. An export compliance failure could result in fines
+              up to $1M per violation, debarment from US government contracting, and license revocation. The combination
+              of Israeli company origin, US federal customer base, and cryptographic technology scope creates heightened
+              ITAR sensitivity for any classified federal data processed.
 
-              FedRAMP authorization is a third risk: Semperis holds FedRAMP Moderate authorization for Directory
-              Services Protector, per the FedRAMP marketplace, but has not achieved FedRAMP High authorization, which
-              limits addressable revenue from sensitive federal civilian agencies (DoD, IC) where High authorization is
-              required. The authorization gap creates a ceiling on federal revenue until High is achieved, a process
-              that typically requires 12–24 months. Patent and IP litigation risk in the AD security tooling market is
-              non-zero; active patenting of AD security methods (evidenced by US patent applications including
-              US20230075051A1 series) creates future exposure to claims, though no known litigation against Semperis has
-              been identified through public court record searches as of May 2026. CISA's identity and access management
-              framework and NIST Zero Trust guidelines create ongoing alignment requirements for government-facing
-              products that must be maintained to preserve the government sales motion.
+              FedRAMP authorization is a third regulatory risk: Semperis holds FedRAMP Moderate authorization for
+              Directory Services Protector per the FedRAMP marketplace, but has not achieved FedRAMP High authorization,
+              which limits addressable revenue from sensitive federal civilian agencies and DoD where High authorization
+              is required. The authorization gap creates a ceiling on federal revenue until High is achieved, typically
+              a 12 to 24 month process. The SEC Cybersecurity Disclosure Rule (Reg S-K Item 106, effective December
+              2023) requires public companies to disclose material cybersecurity incidents within four business days; as
+              a provider to public company customers, any AD incident at a Semperis customer deemed material may
+              implicate the vendor relationship. Upon Semperis's eventual IPO, the company itself becomes subject to all
+              Form 8-K and annual report cybersecurity disclosure obligations. CIRCIA mandatory reporting rules create
+              additional indirect compliance obligations as critical infrastructure customers must report incidents to
+              CISA, potentially naming Semperis as a technology vendor in the affected environment.
             claimRefs:
               - CR001
               - CR002
@@ -1696,47 +1716,49 @@ chapters:
           - type: figure
             figureRef: FR001
             claimRefs:
-              - CR001
-              - CR003
-              - CR007
-              - CR009
               - CR011
-              - CR013
-              - CR018
-              - CR023
+              - CR014
+              - CR017
+              - CR032
+              - CR035
       - number: '7.2'
         title: Operational and Security Risks
         blocks:
           - type: paragraph
             body: >-
               Semperis's most catastrophic operational risk is a cybersecurity breach of its own platform and
-              customer-facing infrastructure. Semperis is an identity security vendor that holds real-time access to
-              customer Active Directory environments and hosts forensically clean AD backup copies. A breach of
-              Semperis's own systems would expose some of the most sensitive enterprise directory data in existence,
-              enabling attackers to compromise customer AD environments at scale. Precedents from peer cybersecurity
-              vendors — SolarWinds (2020 supply-chain backdoor), Okta (2022 Lapsus$ breach and 2023 HAL breach affecting
-              5,000 customers), and CrowdStrike (2024 Falcon sensor update causing global outage) — demonstrate that
-              identity and endpoint security vendors are high-value attack targets and that breach events produce
-              catastrophic reputational and customer-loss outcomes. Semperis's identity security market position makes a
-              breach disproportionately damaging relative to the base rate of enterprise software breaches. No publicly
-              disclosed security incidents at Semperis have been identified through BleepingComputer, Dark Reading, or
-              court record searches as of May 2026.
+              customer-facing infrastructure. Semperis deploys lightweight agents on customer domain controllers and
+              hosts forensically clean AD backup copies in its cloud infrastructure. A breach of Semperis's own systems
+              would expose some of the most sensitive enterprise directory data in existence, potentially enabling
+              attackers to compromise customer AD environments at scale. Precedents from peer cybersecurity vendors —
+              SolarWinds (2020 supply-chain backdoor affecting 18,000 installations), Okta (2022-2023 breaches affecting
+              thousands of customers), and CrowdStrike (2024 Falcon sensor update causing global IT outage affecting 8.5
+              million Windows systems) — demonstrate that identity and endpoint security vendors are high-value attack
+              targets and that breach consequences extend far beyond direct customers. Semperis maintains SOC 2 Type II
+              attestation and a security and trust program per its security trust center, but these controls cannot
+              fully eliminate the risk.
 
-              The second major operational risk is Microsoft Active Directory and Entra ID API dependency. Semperis
-              Directory Services Protector uses AD replication metadata (DRSReplicaSync-based change detection) to
-              monitor directory changes in real time. Semperis ADFR uses AD backup APIs and Volume Shadow Copy Service
-              integration for forensically clean backup creation. Microsoft has historically changed AD replication
-              protocols, Entra ID REST API endpoints, and authentication flows with varying advance notice. An
-              undocumented API deprecation or breaking change could impair DSP change detection or ADFR backup
-              functionality within a short remediation window, creating a critical product incident.
+              The Microsoft MDI bundling threat is the highest-likelihood material operational risk. Microsoft Defender
+              for Identity (MDI) is included at no additional cost in Microsoft 365 E5 and E5 Security subscriptions,
+              which are already widely adopted across the Semperis enterprise customer base. At renewal, IT procurement
+              teams under budget pressure routinely evaluate whether MDI meets their AD monitoring requirements. While
+              Semperis DSP offers deeper forensic investigation, Active Directory Forest Recovery, and Purple Knight
+              audit capabilities that MDI does not replicate, the zero-cost MDI alternative creates significant pricing
+              pressure at every enterprise renewal cycle.
 
-              SaaS platform reliability presents a third operational risk. Enterprise customers with active Semperis
-              deployments expect 99.9%+ uptime; real-time AD protection requires continuous sensor operation. Extended
-              platform outages during active threat scenarios could trigger contractual SLA penalties and breach
-              notification obligations. Support quality at scale is a fourth risk: scaling from approximately 500
-              employees in 2024 to 1,000+ post-financing requires maintaining the deep AD domain expertise required for
-              incident response, which is a scarce capability. Quality degradation in enterprise support could
-              accelerate churn in high-value accounts that rely on Semperis for active directory resilience.
+              Agent-based deployment on domain controllers creates a distinct operational risk: DSP agents process
+              real-time AD change events and require compatibility with Windows Server and domain controller patch
+              levels. Incompatibility between agent updates and customer patch cycles can produce customer AD
+              operational incidents. Semperis manages this through staged deployment, but domain controller sensitivity
+              makes any agent-layer incident disproportionately damaging to customer trust.
+
+              The medium-term structural risk is Active Directory market obsolescence. Microsoft's Entra ID represents
+              the cloud-native successor to on-premises AD; as enterprises complete cloud identity migration to Entra ID
+              and reduce reliance on on-premises AD, the addressable market for on-premises AD security tooling
+              contracts. Semperis has invested in Entra ID security product capabilities, but the long-term TAM
+              trajectory depends on how completely and how quickly enterprises migrate. Analyst estimates suggest this
+              risk is primarily a five to ten year horizon risk rather than immediate, but its structural
+              irreversibility warrants ongoing monitoring.
             claimRefs:
               - CR011
               - CR012
@@ -1744,7 +1766,10 @@ chapters:
               - CR014
               - CR015
               - CR016
-              - CR039
+              - CR017
+              - CR018
+              - CR019
+              - CR020
           - type: table
             tableRef: TR002
             claimRefs:
@@ -1753,91 +1778,45 @@ chapters:
               - CR013
               - CR014
               - CR015
-      - number: '7.3'
-        title: Partner and Dependency Risks
-        blocks:
-          - type: paragraph
-            body: >-
-              Semperis's partner and dependency risk register is anchored by a single existential dependency: Microsoft
-              Active Directory and Entra ID APIs. Semperis DSP and ADFR are architecturally built on Microsoft's AD
-              replication protocol (MS-DRSR), LDAP/LDAPS directory access, and Windows Volume Shadow Copy Service. If
-              Microsoft restricts third-party access to AD replication metadata — which Microsoft has competitive
-              incentive to do as it expands native Defender for Identity capabilities — DSP's real-time change detection
-              and ADFR's backup framework would require fundamental rearchitecting with no guaranteed timeline. Unlike
-              typical API deprecations in SaaS ecosystems, Microsoft AD API changes affect on-premises Windows Server
-              deployments where update cadence is customer-controlled, making a clean API cutover particularly complex.
-              Microsoft's expanding Entra ID native backup and recovery roadmap (announced features in 2025) represents
-              the strategic manifestation of this dependency risk: Microsoft is building its own AD recovery capability,
-              which reduces Semperis's moat while simultaneously controlling the underlying API.
-
-              The June 2024 $125M growth financing from J.P. Morgan and Hercules Capital introduces financial covenant
-              risk. Growth debt from Hercules Capital typically includes minimum ARR, minimum cash balance, and maximum
-              leverage covenants. Semperis has disclosed the $125M principal amount but not the specific covenant terms,
-              interest rate, or maturity. If ARR growth decelerates materially from current trajectory (announced 2024
-              surpass of $100M ARR), covenant compliance risk increases. A covenant breach could trigger acceleration
-              clauses requiring early repayment, constraining strategic flexibility at a critical pre-IPO moment.
-
-              Channel partner concentration is a third risk. Semperis's go-to-market relies on a combination of direct
-              enterprise sales and VAR/MSSP channel partners. Without disclosed partner concentration data, the risk
-              that a top-1 or top-3 VAR partner shifts preferred referrals to CrowdStrike Identity or Microsoft MDI
-              cannot be quantified. Key customer ARR concentration is similarly opaque: without NRR and top-20 ARR share
-              disclosures, a high-ARR-concentration scenario (e.g., top-20 customers >30% of total ARR) represents a
-              revenue-cliff risk if any large account churns to a bundled Microsoft MDI deployment.
-            claimRefs:
-              - CR017
-              - CR018
-              - CR019
-              - CR020
-              - CR029
-              - CR030
-          - type: table
-            tableRef: TR003
-            claimRefs:
-              - CR017
-              - CR018
-              - CR019
-              - CR020
+              - CR016
           - type: figure
-            figureRef: FR003
+            figureRef: FR002
             claimRefs:
-              - CR017
-              - CR019
-              - CR020
-              - CR022
-              - CR028
-      - number: '7.4'
-        title: People and Execution Risks
+              - CR012
+              - CR016
+              - CR024
+              - CR039
+      - number: '7.3'
+        title: Partner, Dependency, and Financial Risks
         blocks:
           - type: paragraph
             body: >-
-              Semperis's people risk is anchored by two interdependent vulnerabilities: CEO key-person concentration and
-              Israel R&D geopolitical exposure. CEO Mickey Bresman is the primary external face of Semperis — he
-              conducts the majority of public speaking engagements, investor communications, and strategic partnership
-              discussions. Co-founders Guy Teverovsky and Matan Hart hold critical institutional AD security domain
-              knowledge accumulated over 15+ years; this expertise is not easily transferred or replicated. No public
-              disclosure of a formal succession plan, key-man insurance, or documented leadership transition framework
-              has been identified. The co-founders' departure would impair both product direction and enterprise
-              customer trust in ways that exceed standard executive transition risk.
+              Semperis's most fundamental dependency risk is Microsoft Active Directory itself. The entire Semperis
+              product portfolio — DSP, ADFR, Purple Knight, and Forest Druid — derives its value from the existence and
+              prevalence of Microsoft AD as the enterprise identity fabric. Microsoft controls this platform, sets its
+              security architecture roadmap, and can choose to expand native AD security and recovery capabilities at
+              any time. The OEM partnership with Cohesity for Cohesity Identity Resilience powered by Semperis
+              technology amplifies distribution but also creates a partner who could build competing native capabilities
+              if the commercial terms deteriorate.
 
-              The Israel R&D center in Tel Aviv, with an estimated 150+ engineers, represents Semperis's primary
-              engineering concentration. The October 2023 Hamas attack and subsequent Israel-Gaza conflict demonstrated
-              concrete operational impacts on Israeli tech sector companies through military reservist mobilization (IDF
-              reserve call-up affects roughly 10% of Israeli tech workers), employee displacement, and travel
-              disruption. Semperis has not disclosed any material operational disruption from the conflict, but the
-              structural risk of a prolonged or escalating regional conflict impairing engineering productivity remains
-              elevated as of May 2026. A partial or full disruption of Israel R&D operations — through sustained
-              mobilization, infrastructure damage, or talent exodus — could delay the product roadmap (Entra ID
-              expansion, cloud ITDR) at a critical competitive inflection point.
+              The Insight Partners investor concentration risk is the primary financial governance risk. Insight
+              Partners led multiple Semperis funding rounds and retains significant board influence over capital
+              allocation strategy, executive hiring, and exit timing. Insight's broad enterprise software portfolio
+              creates potential conflicts of interest when portfolio companies compete in adjacent markets. The $125M
+              growth round in June 2024 led by J.P. Morgan Asset Management with Hercules Capital participation added a
+              debt financing component. Hercules Capital is a specialty BDC lender whose portfolio company loans
+              typically include financial maintenance covenants including minimum ARR growth rates, liquidity ratios, or
+              EBITDA thresholds. A covenant breach at an adverse point in the business cycle could force an operational
+              restructuring or premature exit. The specific covenant terms are not publicly disclosed, making
+              independent assessment of this risk impossible without due diligence access to the loan agreement.
 
-              Talent acquisition risk is the third people vector. Active Directory security specialists represent a
-              scarce engineering population: the community of practitioners who understand AD attack techniques,
-              Kerberos protocol internals, and AD replication at depth is globally small. Semperis competes for this
-              talent against Microsoft, CrowdStrike, SentinelOne, and major financial institutions with dedicated red
-              teams. Wage inflation for AD security expertise has been structurally elevated since 2020. IPO execution
-              risk is the fourth people vector: transitioning from growth-stage private company to public company
-              requires significant investment in IR, FP&A, SEC compliance, and audit infrastructure. Mis-timed IPO
-              execution, pricing below intrinsic value, or post-IPO quarterly miss would impair Semperis's ability to
-              use public equity as an M&A currency and would establish a damaging comparator for future fundraises.
+              Channel and MSSP reseller concentration represents a revenue distribution risk. Semperis routes a material
+              portion of mid-enterprise ARR through MSSP and value-added reseller partners. Loss of a key reseller
+              relationship — whether from competitive displacement, reseller acquisition, or Semperis pricing changes —
+              can produce revenue step-downs in the affected segment without an immediately available direct
+              replacement. Thales's 2022 acquisition of Ping Identity for $2.3B illustrates how large strategic
+              acquirers reshape the identity vendor landscape through consolidation, potentially creating well-funded
+              new competitors who were previously smaller independent players.
             claimRefs:
               - CR021
               - CR022
@@ -1847,46 +1826,57 @@ chapters:
               - CR026
               - CR027
               - CR028
+              - CR029
+              - CR030
           - type: table
-            tableRef: TR004
+            tableRef: TR003
             claimRefs:
               - CR021
               - CR022
               - CR023
               - CR024
               - CR025
-      - number: '7.5'
-        title: Mitigations, Monitoring Indicators, and Thesis-Break Triggers
+              - CR026
+              - CR027
+          - type: figure
+            figureRef: FR003
+            claimRefs:
+              - CR022
+              - CR025
+              - CR027
+              - CR028
+              - CR029
+      - number: '7.4'
+        title: People, Execution, and Kill Criteria
         blocks:
           - type: paragraph
             body: >-
-              Semperis's most effective mitigations are product-level, not procedural. The ADFR switching-cost moat —
-              tested recovery runbooks, documented recovery plans, and institutional familiarity — is the primary
-              customer retention mechanism and provides genuine insulation against competitive bundling. DSP's 150+
-              technique detection catalog represents accumulated IP that cannot be replicated overnight even by
-              Microsoft. The FedRAMP Moderate authorization demonstrates regulatory process competence. An active
-              compliance program (trust center, DPA templates, SOC 2 certifications) reduces but does not eliminate GDPR
-              exposure. Export-control compliance is managed through export counsel; the Israel R&D center operates
-              under ENC license exceptions which are well-understood for commercial software.
+              CEO Mickey Bresman is Semperis's primary external face for investor relations, strategic partnerships, and
+              government engagement. His departure would create uncertainty around IPO execution, investor confidence,
+              and the government sector go-to-market. CTO Guy Teverovsky is the principal technical architect of the
+              core AD security and recovery intellectual property. The combination of technical depth and institutional
+              knowledge concentrated in these two roles creates significant key-person dependency that standard
+              succession planning only partially mitigates.
 
-              The weakest mitigations are in people risks and financial risk transparency. No public succession plan
-              exists for CEO or co-founders. No Israel R&D continuity plan has been disclosed. The $125M debt covenant
-              terms are not public, making covenant-compliance monitoring impossible from outside. Customer ARR
-              concentration is not disclosed, preventing independent assessment of revenue-cliff risk. These gaps
-              constitute specific diligence asks for management sessions.
+              The Israel R&D geopolitical concentration risk is the most operationally material people risk. Semperis's
+              engineering team is heavily concentrated in Tel Aviv, Israel. The ongoing Israel-Hamas conflict beginning
+              in October 2023 has disrupted technology sector operations for multiple Israeli companies, including
+              military reservist call-ups affecting engineering headcount. Talent attrition driven by geopolitical
+              anxiety, competitive offers from US-based companies, or physical security concerns could reduce R&D
+              velocity. Business continuity planning and geographic diversification of R&D are mitigations, but the
+              timeline to rebuild engineering capacity if Tel Aviv operations are severely disrupted is 12 to 24 months
+              minimum. The dual headquarters structure (Parsippany, NJ and Tel Aviv) creates management overhead,
+              timezone coordination friction, and cultural integration challenges that compound under stress.
 
-              Thesis-break triggers — conditions that would require immediate re-evaluation of investment thesis — are:
-              (1) Microsoft announces and ships native AD forest recovery functionality in Windows Server or Azure at no
-              incremental cost, directly commoditizing ADFR; (2) a Semperis platform breach is publicly disclosed,
-              destroying customer trust in an identity security vendor; (3) a material Israel R&D disruption (>25%
-              engineering headcount lost for >3 months) delays the Entra ID roadmap, ceding cloud ITDR momentum to
-              CrowdStrike; (4) Hercules debt covenant breach triggered by ARR deceleration, requiring early repayment
-              and limiting operating flexibility; (5) a competitive win-rate collapse (below 40% win rate against
-              Microsoft MDI in greenfield accounts) suggesting price-point commoditization. Monitoring KPIs: Microsoft
-              Entra ID backup and recovery feature releases (quarterly cadence), FedRAMP High authorization progress
-              (public marketplace tracker), Semperis ARR growth announcements versus public $100M ARR milestone
-              (disclosed January 2025), Israel IDF reserve call-up rates affecting tech sector (monthly), and Hercules
-              Capital Form D amendments on SEC EDGAR for covenant changes.
+              IPO execution risk is a near-term thesis risk. The $1.4B valuation established in March 2022 and the $125M
+              growth round in 2024 create investor expectations for a liquidity event. IPO preparation requires hiring a
+              public-market CFO, engaging SOX compliance infrastructure, completing an S-1 filing, and sustaining ARR
+              growth sufficient to justify IPO valuation. A premature IPO in an adverse market window could produce a
+              down-round that damages employee morale, customer confidence, and the Semperis brand. The criteria table
+              below identifies specific monitoring thresholds and thesis-break triggers for the primary risk vectors
+              documented in this chapter. Investors should monitor the five thresholds in TR005 and treat two absolute
+              triggers — sustained MDI-driven NRR compression and a material Semperis security breach — as immediate
+              thesis re-evaluation events.
             claimRefs:
               - CR031
               - CR032
@@ -1896,359 +1886,334 @@ chapters:
               - CR036
               - CR037
               - CR038
+              - CR039
               - CR040
-              - CR041
-              - CR042
           - type: table
-            tableRef: TR005
+            tableRef: TR004
             claimRefs:
               - CR031
               - CR032
               - CR033
               - CR034
               - CR035
-          - type: figure
-            figureRef: FR002
+              - CR036
+          - type: table
+            tableRef: TR005
             claimRefs:
-              - CR007
-              - CR011
-              - CR013
-              - CR017
-              - CR021
-              - CR023
-              - CR033
-              - CR034
-              - CR035
+              - CR037
+              - CR038
+              - CR039
+              - CR040
+              - CR041
+              - CR042
+              - CR043
   - number: 8
     title: Valuation
     sections:
       - number: '8.1'
-        title: Investment Thesis and Anti-Thesis
+        title: Investment Thesis and Recommendation
         blocks:
           - type: paragraph
-            body: >
-              Semperis investment thesis rests on three reinforcing pillars. First, the company occupies a defensible
-              niche as the only enterprise-grade platform purpose-built for Active Directory identity threat detection
-              and response — a category Gartner formally defined in 2022 and identifies as a high-priority enterprise
-              security requirement. Active Directory underpins authentication for virtually every on-premises enterprise
-              globally, and AD-specific attack paths were exploited in the Colonial Pipeline, SolarWinds, and Kaseya
-              breaches that defined the 2020-2022 ransomware era. Semperis Directory Services Protector, Active
-              Directory Forest Recovery, Purple Knight, and Forest Druid tools address the full security lifecycle
-              across assess, detect, respond, and recover. Second, the company has demonstrated product-market fit at
-              enterprise scale with 1,000+ enterprise customers including named Fortune 500 accounts in financial
-              services, healthcare, aviation, and critical infrastructure, with $100M+ ARR achieved by January 2025
-              representing more than 3,000% five-year growth. Switching costs are structurally high because AD security
-              infrastructure is operationally embedded, involves 3-5 year replacement cycles, and serves as a compliance
-              artifact in regulated sectors. Third, total raised capital of approximately $368M with J.P. Morgan Asset
-              Management and Hercules Capital as June 2024 anchors signals institutional confidence in the IPO narrative
-              and provides runway for continued market expansion into new geographies and government segments.
+            body: >-
+              Semperis presents a compelling investment opportunity at current valuations anchored in three reinforcing
+              pillars. First, the company occupies a unique and defensible position as the only enterprise-grade
+              platform purposefully engineered for Active Directory identity threat detection and response — combining
+              both detection capability (Directory Services Protector) and operational recovery (Active Directory Forest
+              Recovery) under a single vendor umbrella. No publicly traded or comparably scaled private competitor
+              offers this full lifecycle coverage. Active Directory underpins authentication for approximately 90% or
+              more of Fortune 500 enterprise networks, and AD-specific attack paths have been exploited in every major
+              ransomware event since 2019 including Colonial Pipeline, SolarWinds, and Kaseya. The KuppingerCole 2025
+              ITDR Leadership Compass named Semperis a Leader, validating third-party category authority that sustains
+              enterprise sales cycles.
 
-              The anti-thesis centers on four structural risks. First, Microsoft bundles Defender for Identity into its
-              Microsoft 365 E5 license at no incremental cost, creating a competing option in accounts with deep
-              Microsoft licensing commitments. Second, CrowdStrike Falcon Identity and SentinelOne Singularity Identity
-              offer ITDR capabilities bundled within broader endpoint-to-identity platforms, enabling aggressive pricing
-              strategies that Semperis as a standalone vendor cannot easily replicate. Third, Semperis financials are
-              opaque: burn rate, net revenue retention, gross margin, and unit economics are not publicly disclosed,
-              making independent financial assessment impossible without direct company access. Fourth, the Hercules
-              Capital venture debt component introduces covenants that could constrain operational flexibility and IPO
-              timing if revenue growth decelerates below lender thresholds established in the June 2024 term sheet.
-            claimRefs:
-              - CV001
-              - CV003
-              - CV005
-              - CV006
-              - CV013
-              - CV014
-              - CV017
-              - CV018
-              - CV019
-              - CV020
-              - CV021
-              - CV022
-              - CV023
-              - CV024
-              - CV028
-          - type: table
-            tableRef: TV002
-            claimRefs:
-              - CV013
-              - CV014
-              - CV017
-              - CV018
-              - CV020
-              - CV021
-              - CV024
-              - CV028
-      - number: '8.2'
-        title: Valuation Context and Entry Discipline
-        blocks:
-          - type: paragraph
-            body: >
-              Semperis most recent financing event — the $125M growth round closed in June 2024 co-led by J.P. Morgan
-              Asset Management and Hercules Capital — established the company unicorn valuation above $1 billion. At
-              $100M+ ARR announced in January 2025, this implies an ARR multiple of approximately 10x. For a high-growth
-              cybersecurity SaaS company with 20%+ annual ARR growth and enterprise-grade retention characteristics, a
-              10x ARR multiple sits at the midpoint of the public peer valuation range. CrowdStrike trades at
-              approximately 26x NTM revenue elevated by its AI and platform scale premium; CyberArk trades at
-              approximately 16x NTM revenue; Varonis at approximately 9x; and SentinelOne at approximately 25x. The
-              Rubrik IPO in April 2024 — a backup-and-recovery security unicorn with a structurally similar pre-IPO
-              narrative — priced at approximately 12x ARR, providing a directly comparable private-to-public transition
-              reference point for Semperis potential exit valuation at a hypothetical 2027-2028 IPO.
+              Second, Semperis has crossed empirically verifiable scale milestones: $100M ARR confirmed in January 2025
+              via official company press releases, 1,000+ enterprise customers, and named Fortune 500 accounts including
+              American Airlines, ADP, Lenovo, United Airlines, and Starbucks that function as reference customer anchors
+              for new enterprise acquisition. Structural switching costs are high because ADFR is embedded in enterprise
+              disaster recovery runbooks, involves domain controller agent deployment requiring compatibility
+              certification, and functions as a compliance artifact in regulated industries with 3-5 year replacement
+              cycles. TrustRadius and PeerSpot reviews confirm enterprise customers perceive high switching friction
+              once ADFR is operationally embedded.
 
-              The June 2024 financing was structured as a combination of equity and venture debt, consistent with
-              Hercules Capital Business Development Company lending model for high-growth technology companies. While
-              the equity portion establishes the $1B+ valuation mark, the debt component carries repayment obligations,
-              interest accrual, and likely equity warrants that affect the equity waterfall at exit. The precise split
-              between equity and debt within the $125M is not publicly disclosed, creating a material diligence gap
-              around effective equity valuation and dilution-preference overhang. From an entry discipline perspective,
-              the 10x implied ARR multiple is fair if Semperis sustains 20%+ ARR growth through 2026-2027. The multiple
-              is at risk if growth decelerates below 15% annually, which would imply a down-round scenario at current
-              public market comparable valuations. Cybersecurity SaaS multiples compressed 60-70% in 2022-2023 before
-              recovering substantially in 2024-2026 as identity and AI security categories attracted renewed
-              institutional investor interest across the sector.
+              Third, the capital structure supports a near-term liquidity thesis: $368M total raised with Insight
+              Partners at Series C ($200M at $1.4B, March 2022) and J.P. Morgan Asset Management and Hercules Capital
+              leading the June 2024 growth round ($125M at $1B+) signals institutional confidence in the IPO narrative,
+              while CFO appointment and $100M ARR milestone crossed indicate IPO readiness preparation is underway.
+              FedRAMP Moderate authorization creates a defensible federal revenue floor and demonstrates compliance
+              discipline demanded by government buyers.
+
+              The anti-thesis centers on four risks: (1) Microsoft MDI displacing DSP at renewal at zero incremental
+              cost to M365 E5 licensees; (2) Active Directory market obsolescence as enterprises migrate to Entra ID /
+              cloud identity over a 5-10 year horizon; (3) the $1.4B Series C peak valuation established at 2022 cycle
+              highs now implies meaningful multiple compression risk at exit; and (4) Semperis has not disclosed net
+              revenue retention, making the switching cost and retention thesis unverifiable from public evidence alone.
+              Despite these headwinds, the recommendation is BUY at entry below $1.3B with protective structuring
+              (downside provisions, NRR disclosure covenant, anti-dilution protection given Hercules Capital debt
+              covenants).
             claimRefs:
               - CV001
               - CV002
-              - CV004
-              - CV006
-              - CV007
+              - CV003
               - CV008
               - CV009
-              - CV010
-              - CV011
+              - CV012
+              - CV013
+              - CV014
+              - CV016
+              - CV018
               - CV026
-              - CV028
+              - CV027
+              - CV029
               - CV030
-              - CV034
-              - CV035
-              - CV038
-          - type: figure
-            figureRef: FV002
-            claimRefs:
-              - CV025
-              - CV026
-              - CV027
-              - CV038
-      - number: '8.3'
-        title: Bull Base and Bear Scenarios
-        blocks:
-          - type: paragraph
-            body: >
-              Three scenarios capture the valuation and return range for a hypothetical Semperis investment at the June
-              2024 $1B+ valuation mark, based on ARR trajectory, public market multiples, and exit timing assumptions
-              extending through 2028-2030.
-
-              In the bull scenario, Semperis sustains 25-30% ARR growth through 2027, reaching $150-180M ARR, with net
-              revenue retention above 120% confirming strong land-and-expand dynamics across its 1,000+ enterprise
-              customer base. At 15x ARR — consistent with a premium assigned to category-leader identity security
-              companies at IPO — the implied valuation would be approximately $1.5-2.0 billion. This scenario assumes no
-              material competitive displacement by Microsoft Defender for Identity or CrowdStrike Falcon Identity, gross
-              margins above 75% consistent with software SaaS economics, FedRAMP authorization opening the government
-              and defense market, and a favorable IPO window in 2027-2028. Return multiple from the June 2024 unicorn
-              entry would be approximately 1.5-2.0x.
-
-              In the base scenario, Semperis grows ARR at 20% annually to reach approximately $130-150M by 2026-2027. At
-              the implied 10x ARR multiple — matching the cybersecurity SaaS peer median — the implied exit valuation
-              would be approximately $1.3-1.5 billion at IPO or strategic M&A event, consistent with peer comparables
-              for high-growth software security companies not yet at operating profitability. Return from the June 2024
-              entry would be approximately 1.3-1.5x, representing positive but modest appreciation relative to the entry
-              valuation.
-
-              In the bear scenario, ARR growth decelerates below 15% annually due to competitive pressure from Microsoft
-              bundling or CrowdStrike platform consolidation, or macroeconomic headwinds compress enterprise security
-              budgets. Public market multiples for slower-growth security SaaS compress to 6-7.5x ARR as occurred in the
-              2022-2023 cybersecurity correction, implying a bear-case valuation of approximately $600-750M — a
-              down-round from the June 2024 unicorn mark and a gross return of approximately 0.6-0.75x, representing a
-              material capital loss scenario for investors entering at the current unicorn valuation.
-            claimRefs:
-              - CV025
-              - CV026
-              - CV027
-              - CV032
-              - CV035
-          - type: table
-            tableRef: TV003
-            claimRefs:
-              - CV025
-              - CV026
-              - CV027
-              - CV035
-              - CV038
-          - type: figure
-            figureRef: FV003
-            claimRefs:
-              - CV025
-              - CV026
-              - CV027
-              - CV035
-      - number: '8.4'
-        title: Comparable Exit Analysis
-        blocks:
-          - type: paragraph
-            body: >
-              Semperis valuation can be benchmarked against a set of public and private comparable companies in identity
-              security, data security, and adjacent cybersecurity SaaS categories. The strongest public comparables are
-              CrowdStrike, SentinelOne, CyberArk, and Varonis — all of which compete in identity and endpoint security
-              and are covered by sell-side analysts as Semperis peer group. CrowdStrike at approximately 26x NTM revenue
-              and $90B+ market cap represents the upper bound of the peer range, elevated by its AI-driven platform
-              premium and exceptional growth profile above $3 billion annual revenue. SentinelOne at approximately 25x
-              NTM revenue and $18B market cap provides a second large-cap AI security comparable with directly
-              overlapping ITDR capabilities. CyberArk at approximately 16x NTM revenue and $15B market cap is perhaps
-              the most directly comparable public company — a specialist in privileged access management and identity
-              security with an enterprise-focused SaaS transition model. Varonis at approximately 9x NTM revenue and $5B
-              market cap provides the lower-bound comparable for data-and-identity security specialists with overlapping
-              enterprise buyer profiles in regulated industries.
-
-              The most relevant exit precedent is Rubrik, which IPO-d in April 2024 at approximately 12x ARR on
-              approximately $650M ARR, raising $752M in its initial public offering and reaching an $8B+ market cap at
-              opening. Rubrik narrative — backup and recovery security for enterprise data protection, pre-IPO unicorn
-              status, venture-backed, positioned as a Microsoft-independent alternative — shares meaningful structural
-              parallels with Semperis, making it the highest-quality private-to-public exit comparable for calibrating
-              Semperis potential IPO multiple. On the M&A side, Semperis most plausible strategic acquirers include
-              CrowdStrike, Microsoft, Palo Alto Networks, and CyberArk, each of which has demonstrated appetite for
-              identity and AD security capability acquisition. A control premium of 20-30% over comparable public
-              multiples would imply strategic acquisition valuations of approximately $1.2-2.0 billion for a 2026-2028
-              transaction, contingent on Semperis ARR trajectory and market conditions at time of transaction.
-            claimRefs:
-              - CV007
-              - CV008
-              - CV009
-              - CV010
-              - CV011
-              - CV012
-              - CV036
               - CV037
-          - type: table
-            tableRef: TV004
-            claimRefs:
-              - CV007
-              - CV008
-              - CV009
-              - CV010
-              - CV011
-              - CV012
-      - number: '8.5'
-        title: Recommendation and Final Diligence Asks
-        blocks:
-          - type: paragraph
-            body: >
-              The recommended investment stance on Semperis is research-more and conditional favorable. The company has
-              demonstrated genuine product-market fit at enterprise scale with $100M+ ARR, 1,000+ enterprise customers,
-              Fortune 500 named accounts, and more than 3,000% five-year growth — in a high-urgency market where the
-              cost of an Active Directory compromise or ransomware-driven forest failure is existential for enterprise
-              buyers in regulated sectors. The ITDR market 25-30% CAGR growth rate, combined with Semperis structural
-              moat through deep AD infrastructure integration, multi-product expansion options, and Purple Knight
-              top-of-funnel pipeline, supports a positive medium-term growth outlook that warrants formal due diligence.
-
-              However, four critical diligence items must be resolved before investment commitment can be recommended
-              with conviction. First, net revenue retention: NRR above 120% would confirm land-and-expand dynamics and
-              validate the premium ARR multiple; NRR has not been publicly disclosed and is the single most important
-              unresolved financial indicator for the investment case. Second, burn rate and gross margin: without
-              audited financial statements, the path to profitability and capital efficiency cannot be assessed;
-              enterprise SaaS companies at $100M+ ARR should be approaching operating leverage, and if Semperis is
-              burning heavily, Hercules Capital debt obligations could force premature financing events. Third,
-              competitive displacement rate: the percentage of competitive RFPs involving CrowdStrike or Microsoft and
-              Semperis win rate in those situations is critical to calibrating the platform threat quantitatively.
-              Fourth, FedRAMP authorization status: if pursuing or achieved, the government and defense market
-              represents a material TAM expansion potentially worth 15-20% of total enterprise identity security spend.
-
-              Thesis-break triggers include net revenue retention below 100% indicating net churn, gross margin below
-              65%, ARR growth deceleration to below 15% for two consecutive quarters, or evidence of Microsoft
-              enterprise-wide MDI bundling at scale disrupting Semperis new logo acquisition motion. No litigation,
-              regulatory investigation, or material adverse event has been identified as of May 2026.
-            claimRefs:
-              - CV031
-              - CV032
-              - CV033
-              - CV034
               - CV039
               - CV040
           - type: table
             tableRef: TV001
             claimRefs:
+              - CV001
+              - CV002
+              - CV003
+              - CV008
+              - CV029
               - CV040
-              - CV024
-              - CV030
-              - CV026
           - type: table
-            tableRef: TV005
-            claimRefs:
-              - CV021
-              - CV024
-              - CV026
-              - CV027
-              - CV028
-              - CV031
-              - CV034
-          - type: table
-            tableRef: TV006
-            claimRefs:
-              - CV030
-              - CV031
-              - CV032
-              - CV033
-              - CV034
-          - type: figure
-            figureRef: FV001
-            claimRefs:
-              - CV040
-              - CV026
-              - CV021
-              - CV024
-          - type: figure
-            figureRef: FV004
+            tableRef: TV002
             claimRefs:
               - CV013
               - CV014
-              - CV020
-              - CV024
+              - CV016
+              - CV018
               - CV026
+              - CV027
+              - CV037
               - CV039
-      - number: '8.6'
-        title: Exhibits
+          - type: figure
+            figureRef: FV001
+            claimRefs:
+              - CV001
+              - CV012
+              - CV014
+              - CV026
+              - CV029
+              - CV040
+      - number: '8.2'
+        title: Valuation Framework and Scenarios
         blocks:
-          - type: callout
-            title: Category Leader at Fair Valuation with Institutional Backing
-            body: >
-              Semperis $100M+ ARR at a 10x implied multiple sits at the peer median for high-growth cybersecurity SaaS —
-              not an outlier. The Rubrik IPO at 12x ARR and CyberArk 16x NTM trading multiple bracket Semperis current
-              valuation as reasonable. J.P. Morgan Asset Management participation as co-lead investor in the June 2024
-              round provides a credible institutional mark and signals pre-IPO validation from a leading public-markets
-              anchor investor.
-            calloutType: strength
+          - type: paragraph
+            body: >-
+              Semperis is best valued using ARR multiples because it is a high-growth SaaS company with no publicly
+              disclosed EBITDA margin or free cash flow profile. ARR of $100-120M as of early 2026 (estimated from the
+              January 2025 confirmed milestone and 40-60% YoY growth trajectory inferred from disclosed milestones)
+              anchors the valuation range. Multiple selection draws from three benchmarks: CrowdStrike's public market
+              valuation at approximately 16-19x forward ARR as the security platform ceiling; Rubrik's IPO precedent at
+              12-15x trailing ARR for a security plus recovery narrative; and SailPoint at 10-12x and Ping Identity at
+              7-8x for identity sector M&A comparables. Multiple compression across cybersecurity SaaS from 2022 peak
+              (20-30x ARR) to 2026 (8-15x ARR for growth-stage private companies) is a structural reality that must be
+              discounted into any entry price.
+
+              Bull case (20% probability signal): ARR reaches $150-180M on ITDR market acceleration, AI identity
+              security demand, and successful Entra ID expansion. At 12-18x ARR, implied EV is $1.8-3.2B, reflecting an
+              IPO pre-premium. Key upside assumptions include NRR above 120%, federal ARR expansion through FedRAMP High
+              authorization, and CrowdStrike remaining a complementary platform partner rather than a head-on ITDR
+              competitor.
+
+              Base case (55% probability signal): ARR reaches $110-130M at 8-12x ARR, yielding implied EV of
+              $880M-$1.56B. This scenario assumes moderate growth continuation, DSP renewal rates above 80%, and
+              Microsoft MDI competition manageable at the enterprise tier where ADFR differentiation is most compelling.
+              Current market conditions from the June 2024 growth round ($1B+ valuation) support the base floor.
+
+              Bear case (25% probability signal): ARR reaches $80-100M as Microsoft MDI bundling drives material DSP
+              displacement and ARR growth decelerates below 20%. At 5-7x ARR, implied EV is $400-700M, below the $1B+
+              June 2024 round valuation, implying a down-round scenario. This case is triggered by declining DSP renewal
+              rates, loss of federal customers, or an Insight Partners forced-exit at an adverse point in the market
+              cycle.
+
+              Valuation sensitivity confirms that every 2x increase in ARR multiple adds $200-300M in EV at base ARR
+              assumptions. Entry discipline at or below $1.3B captures meaningful upside to the bull case while
+              providing 30-40% downside buffer to the bear floor, justifying the BUY thesis with protective structuring
+              requirements.
             claimRefs:
-              - CV002
-              - CV004
-              - CV011
-              - CV038
-          - type: callout
-            title: Opaque Financials and Debt Covenants Create Material Diligence Risk
-            body: >
-              Semperis has not disclosed burn rate, net revenue retention, gross margin, or audited financial
-              statements. Without this data, the investment case cannot be fully validated from public sources. The
-              Hercules Capital venture debt component may carry covenants that constrain IPO timing, M&A optionality, or
-              capital deployment — a risk that is difficult to assess without private access to the financing term sheet
-              and covenant package.
-            calloutType: risk
-            claimRefs:
-              - CV024
-              - CV028
-              - CV030
+              - CV017
+              - CV019
+              - CV020
+              - CV021
+              - CV022
+              - CV033
               - CV034
-          - type: callout
-            title: Research-More — Proceed to Diligence on Four Critical Inputs
-            body: >
-              The recommended investment stance is research-more and conditional favorable. Strong market positioning,
-              enterprise scale, and a reasonable valuation multiple justify advancing to formal due diligence. Four
-              items must be resolved before commitment: net revenue retention, burn rate and gross margin, competitive
-              displacement win rates, and FedRAMP authorization status. Positive resolution on all four items would
-              support a favorable investment recommendation at or near the current implied valuation.
-            calloutType: recommendation
+              - CV035
+              - CV036
+              - CV037
+              - CV038
+              - CV041
+          - type: table
+            tableRef: TV003
             claimRefs:
+              - CV020
+              - CV021
+              - CV022
+              - CV036
+              - CV037
+              - CV041
+          - type: figure
+            figureRef: FV002
+            claimRefs:
+              - CV017
+              - CV020
+              - CV021
+              - CV022
+              - CV036
+              - CV041
+          - type: figure
+            figureRef: FV003
+            claimRefs:
+              - CV006
+              - CV020
+              - CV021
+              - CV022
+              - CV033
+              - CV038
+      - number: '8.3'
+        title: Comparable Set and Market Benchmarks
+        blocks:
+          - type: paragraph
+            body: >-
+              Six comparable companies anchor the Semperis valuation framework, spanning public security platforms,
+              identity sector M&A, and private PE-backed AD competitors. No single comparable is a pure-play ITDR match;
+              the set is designed to triangulate ARR multiples from different vantage points.
+
+              CrowdStrike (CRWD) is the primary public market anchor: FY2026 ARR of approximately $3.95B at a $65-75B
+              enterprise value implies 16-19x forward ARR. CrowdStrike's Falcon Identity Protection module competes with
+              DSP in the ITDR detection space, making it both a competitor and a valuation ceiling benchmark. The
+              multiple premium reflects CrowdStrike's platform scale and Falcon network effect that Semperis cannot
+              replicate as a standalone vendor.
+
+              Rubrik (RBRK) is the most structurally analogous public comparable: a security-plus-recovery narrative
+              targeting enterprise buyers. FY2025 ARR of approximately $825M with an IPO completed in April 2024 at
+              12-15x trailing ARR. The Rubrik IPO provides the most recent data point for how public markets price a
+              recovery-anchored security vendor with strong enterprise customer reference ability.
+
+              Ping Identity (acquired by Thales December 2023 for $2.8B) establishes the strategic acquirer benchmark
+              for identity sector M&A: approximately 7-8x ARR at the time of acquisition. This implies that without an
+              IPO premium, identity platform M&A would value Semperis at $700M-$960M at base ARR, confirming that entry
+              below $1.3B captures M&A floor value plus an IPO option premium.
+
+              SailPoint (taken private by Thoma Bravo for $6.9B in April 2022, with re-IPO targeted) provides the
+              identity governance comparable at approximately 10-12x ARR. SailPoint is materially larger but the
+              identity governance multiple compression under private equity ownership is instructive: Thoma Bravo does
+              not over-pay, and identity sector multiples have a visible ceiling even under strategic premium scenarios.
+
+              Quest Software (Francisco Partners) and Netwrix (PE-backed) are private AD management and analytics
+              competitors. Quest at an estimated $2-4B EV on $400-600M ARR implies 4-7x multiples reflecting the
+              discount applied to older AD management portfolios. Netwrix at $600M-$1B on $100-150M ARR implies 5-7x,
+              providing the most directly size-comparable benchmark. Semperis should trade at a premium to Quest and
+              Netwrix given its ITDR-specific focus, faster growth rate, and institutional investor backing.
+
+              Across the comparable set, the ITDR category-leadership premium justifies a 2-3x turn above PE-backed AD
+              management multiples (5-7x) and at a discount to CrowdStrike's platform multiple (16-19x), supporting the
+              base case range of 8-12x ARR. Investment KPI scoring confirms market position and customer proof are
+              strong; unit economics and evidence quality are medium gaps.
+            claimRefs:
+              - CV004
+              - CV005
+              - CV006
+              - CV007
+              - CV010
+              - CV011
+              - CV015
+              - CV019
+              - CV023
+              - CV024
+              - CV025
+              - CV033
+              - CV034
+              - CV035
+              - CV036
+          - type: table
+            tableRef: TV004
+            claimRefs:
+              - CV004
+              - CV005
+              - CV006
+              - CV007
+              - CV010
+              - CV011
+              - CV024
+              - CV025
+              - CV033
+              - CV034
+              - CV035
+              - CV036
+          - type: figure
+            figureRef: FV004
+            claimRefs:
+              - CV003
+              - CV004
+              - CV005
+              - CV019
+              - CV026
+              - CV028
+              - CV036
+              - CV039
+      - number: '8.4'
+        title: Exit Readiness, Diligence Asks, and Kill Criteria
+        blocks:
+          - type: paragraph
+            body: >-
+              Semperis exhibits credible IPO readiness signals: confirmed $100M ARR crossed January 2025, CFO
+              appointment signaling financial reporting maturity, 1,000+ enterprise customers providing a reference
+              customer base adequate for an S-1 filing, Fortune 500 named logos across regulated verticals (aviation,
+              financial services, healthcare, retail) that anchor institutional investor interest, and FedRAMP Moderate
+              authorization establishing federal revenue credibility. Insight Partners' portfolio IPO history and J.P.
+              Morgan Asset Management's growth round leadership provide institutional pathway support. The realistic
+              exit horizon is 18-36 months (IPO window 2027-2028) conditional on sustained ARR growth above 30% and
+              favorable public market conditions for cybersecurity SaaS. Strategic M&A exit is a secondary path:
+              CrowdStrike, Palo Alto Networks, Microsoft, and Thales are plausible acquirers at 8-14x ARR, implying
+              $800M-$1.7B exit range at base ARR assumptions.
+
+              Five thesis-break triggers require continuous monitoring: DSP renewal rate decay below 70% (Microsoft MDI
+              displacement), ADFR switching cost erosion via Microsoft native AD recovery, unplanned CEO/CTO departure
+              within 12 months of investment, regulatory enforcement action, or a next equity round priced below $900M
+              valuation. Any of these triggers materially shifts the bull/base probability weighting toward the bear
+              case and should initiate an exit review.
+
+              Five final diligence asks are non-negotiable before investment commitment: (1) NRR and GRR disclosure —
+              without this, the switching cost thesis is unverifiable and the retention assumption in the base case
+              cannot be stress-tested; (2) customer concentration waterfall — top-10 customer ARR share exceeding 30%
+              creates material churn risk that alters the investment case; (3) cap table and preference stack — Insight
+              Partners Series C preferences and Hercules Capital debt covenants must be reviewed to understand common
+              equity waterfall and operational flexibility constraints; (4) FedRAMP High road map — confirming timeline
+              and sponsoring agency for High authorization unlocks the DoD/IC revenue opportunity estimated at $50-100M
+              incremental ARR; and (5) export control compliance documentation — Semperis's Israel R&D dual-use
+              cryptographic software requires active EAR compliance program, and absence of documentation is a material
+              regulatory risk given the US federal customer base.
+            claimRefs:
+              - CV028
+              - CV029
+              - CV030
               - CV031
               - CV032
-              - CV033
-              - CV040
+              - CV038
+              - CV039
+              - CV042
+              - CV043
+              - CV044
+          - type: table
+            tableRef: TV005
+            claimRefs:
+              - CV016
+              - CV023
+              - CV032
+              - CV037
+              - CV038
+          - type: table
+            tableRef: TV006
+            claimRefs:
+              - CV028
+              - CV030
+              - CV039
+              - CV042
+              - CV044
 tables:
   - id: TO001
     title: Snapshot KPI Table
@@ -4017,21 +3982,16 @@ tables:
       - CU040
   - id: TR001
     title: Regulatory / legal risk register
-    description: >-
-      Severity-ordered register of regulatory and legal risks facing Semperis; rows ordered high-to-low by combined
-      likelihood and impact. Coverage is partial — undisclosed litigation and non-public regulatory correspondence may
-      not be captured.
     enumeration: true
     enumerationScope:
       coverage: partial
       basis: >-
-        Derived from CISA advisories, NIST publications, EAR regulatory text, GDPR official guidance, FedRAMP
-        marketplace records, SEC enforcement database, Google Patents search, CourtListener court records, and
-        cybersecurity industry news coverage through May 2026; excludes private litigation and in-camera regulatory
-        proceedings not captured in public records.
+        Enumeration covers confirmed in-force regulatory regimes and pending rule-making that are publicly identifiable
+        as applicable to Semperis's product scope, customer base, and international structure. Potential litigation,
+        export license investigations, and regulatory correspondence are excluded because Semperis has not disclosed any
+        such proceedings; absence of disclosure does not confirm absence of risk.
     columns:
-      - Risk / Rule / Case
-      - Jurisdiction
+      - Rule / Case / Jurisdiction
       - Status
       - Likelihood
       - Severity
@@ -4039,50 +3999,75 @@ tables:
       - Residual Exposure
       - Diligence Path
     rows:
-      - - GDPR Art. 28 data-processor liability — AD directory PII processing for EU customers
-        - European Union
-        - Active compliance program; DPA templates in place
+      - - SEC Cybersecurity Disclosure Rule — Reg S-K Item 106 (US)
+        - In force (Dec 2023)
         - Medium
         - High
-        - DPA signed with EU customers; data minimization controls; GDPR compliance program
-        - Potential €20M or 4% global revenue fine per enforcement action; scales with EU customer count
-        - Request DPA template and customer DPA coverage rate; confirm DPIA for AD data processing
-      - - EAR Part 740 — Export Administration Regulations for cryptographic security software from Israel R&D
-        - United States / Israel
-        - ENC license exception active; export compliance program required
+        - >-
+          Prepare IPO cybersecurity disclosure policy; incident classification framework; monitor customer
+          material-incident determinations that could name Semperis
+        - >-
+          Medium — pre-IPO company today but customers are public companies subject now; IPO brings full obligation
+          on-balance
+        - >-
+          Request draft S-1 cybersecurity risk factor; confirm legal counsel engagement on Reg S-K Item 106 readiness;
+          confirm incident response escalation protocol
+      - - GDPR / UK GDPR — Cross-Border Data Processing (EU / UK)
+        - In force
         - Medium
         - High
-        - Export counsel retained; ENC license exception maintained for commercial distribution
-        - Fines up to $1M per violation; debarment from US government contracting on violation
-        - Request export compliance audit report; confirm ENC license exception scope covers all Semperis products
-      - - FedRAMP High authorization gap — Moderate only; limits sensitive federal civilian agency contracts
-        - United States Federal
-        - FedRAMP Moderate authorized (marketplace confirmed); High authorization not yet achieved
+        - >-
+          Data Processing Agreements with each EU/UK customer; Standard Contractual Clauses for data transfers
+          post-Schrems II; trust center compliance certification program
+        - >-
+          Medium — compliance program indicated but not independently verifiable; DPA coverage of full EU/UK customer
+          base unconfirmed
+        - >-
+          Obtain DPA template; verify post-Schrems II SCCs are current; confirm data residency architecture for EU/UK
+          deployments; review ICO registration status
+      - - FedRAMP Authorization Gap — Moderate vs. High (US Federal)
+        - In force
+        - Medium-High
+        - High
+        - >-
+          FedRAMP Moderate actively maintained per marketplace; High authorization process to be initiated; existing
+          federal revenue protected under current Moderate authorization
+        - >-
+          Medium-High — ceiling on DoD and IC federal revenue until High is achieved; risk of Moderate lapse if annual
+          assessment is not sustained
+        - >-
+          Confirm FedRAMP Moderate annual assessment schedule; request High authorization roadmap and sponsoring agency;
+          verify no open POA&M items
+      - - EAR Export Administration Regulations / ITAR (US-Israel dual operations)
+        - In force
         - Medium
+        - High
+        - >-
+          EAR compliance program for cryptographic software; Israel R&D classification review; license exception
+          coverage for commercial exports
+        - >-
+          Medium — export compliance documentation not publicly verified; Israeli R&D with access to US federal customer
+          data creates ITAR sensitivity
+        - >-
+          Request EAR compliance program documentation; confirm ECCN classification for DSP; verify ENC license
+          exception filings; assess ITAR applicability to federal data handling
+      - - CISA CIRCIA Mandatory Reporting (US Critical Infrastructure)
+        - Rule-making in progress
+        - Low-Medium
         - Medium
-        - Active FedRAMP High authorization pursuit; FedRAMP program office engaged
-        - Ceiling on federal revenue until High achieved; typical timeline 12–24 months
-        - Request FedRAMP High authorization roadmap and projected completion date from government team
-      - - Patent / IP litigation — AD security tooling market with active patent landscape
-        - United States
-        - No known litigation against Semperis as of May 2026 per CourtListener search
-        - Low
-        - Medium
-        - Patent counsel monitoring AD security patent landscape; no offensive patent program disclosed
-        - Exposure to injunctive relief or damages if competitor patent claim arises
-        - Request IP landscape review and freedom-to-operate opinion from legal counsel
-      - - CISA / NIST IAM framework alignment — required for federal and regulated-industry sales
-        - United States Federal
-        - Ongoing product alignment to CISA IAM and NIST Zero Trust SP 800-207 requirements
-        - Low
-        - Medium
-        - Active CISA alignment; NIST SP 800-207 Zero Trust controls integrated into DSP product
-        - Government and regulated-industry sales motion impaired without sustained compliance alignment
-        - Request government product roadmap and CISA/NIST alignment documentation from product team
+        - >-
+          Monitor CIRCIA final rule; build incident coordination workflows so critical infrastructure customers can meet
+          reporting obligations with Semperis involvement
+        - >-
+          Low-Medium — Semperis is a vendor not a covered entity but may be named in customer incident reports and may
+          need to cooperate with CISA investigations
+        - >-
+          Confirm legal counsel is tracking CIRCIA rule-making; assess whether Semperis's CISA alignment program
+          anticipates vendor disclosure obligations
     notes: >-
-      Likelihood and impact ratings are qualitative assessments based on public evidence, regulatory text, and sector
-      precedent. Coverage is partial; undisclosed litigation and in-camera proceedings may not be captured. See EGR001
-      for enumeration gap rationale. All severity ratings are pre-mitigation assessments.
+      Table covers only confirmed publicly-identifiable regulatory obligations. Potential enforcement actions, export
+      investigations, and undisclosed litigation are addressed in evidence gap EGR001. Severity ratings assume a pre-IPO
+      Semperis with approximately $100M ARR and active federal, EU, and UK customer segments.
     claimRefs:
       - CR001
       - CR002
@@ -4094,552 +4079,714 @@ tables:
       - CR008
   - id: TR002
     title: Operational / quality / security risk register
-    description: >-
-      Operational and security failure modes ranked by severity; covers platform security, API dependency, service
-      reliability, and support quality at scale. Rows ordered high-to-low by combined likelihood and impact.
+    enumeration: false
     columns:
-      - Failure Mode
+      - Risk
+      - Category
       - Likelihood
-      - Severity
-      - Mitigation Maturity
+      - Impact
+      - Current Mitigation
       - Residual Exposure
-      - Unresolved Gap
     rows:
-      - - Semperis platform breach — identity security vendor breach exposing customer AD environments at scale
+      - - Semperis software supply-chain compromise
+        - Security
         - Low
         - Critical
-        - Low–Medium — no publicly disclosed SOC 2 penetration test results or red team findings
-        - Catastrophic brand destruction; customer churn; potential contract liability across enterprise base
-        - No public attestation of penetration testing frequency or results; incident response runbook not disclosed
-      - - Microsoft AD / Entra ID API change — breaking change to MS-DRSR or Entra ID REST APIs powering DSP and ADFR
+        - SOC 2 Type II attestation; secure SDLC; code signing; security trust center program
+        - >-
+          High — catastrophic if realized; brand destruction and regulatory liability would be disproportionate; cannot
+          be fully mitigated
+      - - Microsoft MDI displacing DSP at enterprise renewal
+        - Competitive / Operational
+        - High
+        - Critical
+        - >-
+          Multi-product bundling (DSP+ADFR); ADFR recovery moat; Purple Knight free-tool funnel; MDI feature-gap
+          documentation
+        - >-
+          High — pricing pressure at every E5 renewal; NRR compression risk if MDI perceived as sufficient substitute by
+          budget-constrained buyers
+      - - Active Directory market obsolescence — Entra ID cloud transition
+        - Strategic
+        - Low-Medium
+        - High
+        - Entra ID security product line investment; Purple Knight cloud extension; hybrid identity positioning
+        - Medium — 5-10 year horizon; structurally irreversible if not addressed through sustained product investment
+      - - DSP agent on domain controller causing customer AD instability
+        - Technical / Quality
+        - Low-Medium
+        - High
+        - >-
+          Staged deployment framework; automated rollback; QA regression testing against Windows Server versions;
+          customer-specific compatibility validation
+        - >-
+          Low-Medium — domain controller sensitivity means even low-probability incidents produce outsized customer
+          impact and trust damage
+      - - EU / UK data residency non-compliance — Schrems II transfer exposure
+        - Regulatory / Operational
         - Medium
         - High
-        - Medium — engineering team tracks Microsoft roadmap; some API abstraction in product architecture
-        - Product functionality impairment; emergency engineering sprint; customer SLA breach during remediation
-        - No public Microsoft commitment to backward-compatible AD replication APIs; deprecation notice periods vary
-      - - SaaS platform outage — extended downtime during active customer AD attack or recovery scenario
-        - Medium
-        - High
-        - Medium — cloud-native architecture with redundancy; specific uptime SLA not publicly disclosed
-        - SLA penalties; customer trust erosion; incident response failure at critical moment
-        - Uptime SLA and incident response runbook not published; no third-party uptime monitoring report available
-      - - Support quality degradation at scale — scaling to 1,000+ employees while maintaining AD domain expertise
-        - Medium
-        - Medium
-        - Medium — active hiring program; customer success team expansion post-$125M financing
-        - Enterprise account churn from support quality gap; customer satisfaction decline
-        - No public disclosure of CSAT scores, support ticket resolution times, or escalation rates
+        - DPA and SCC framework; EU-region data isolation architecture; trust center compliance program
+        - >-
+          Medium — compliance architecture not independently verifiable from public sources; SCCs require transfer
+          impact assessments that may lag regulatory guidance
     notes: >-
-      Severity ratings reflect post-breach scenario severity, not attack probability. Mitigation maturity assessed from
-      public evidence only; actual internal controls may be stronger than public disclosures indicate. Breach precedents
-      from SolarWinds (2020), Okta (2022, 2023), and CrowdStrike (2024) inform likelihood and severity calibration for
-      identity/security vendor incidents.
+      Operational risks are ordered by expected loss (likelihood multiplied by impact). The MDI bundling risk is the
+      highest-likelihood material risk in this chapter; the supply-chain compromise risk is the highest-impact
+      low-probability risk. Both warrant specific monitoring indicators and escalation thresholds as documented in
+      TR005.
     claimRefs:
       - CR011
       - CR012
       - CR013
       - CR014
       - CR015
+      - CR016
   - id: TR003
     title: Partner / dependency risk register
-    description: >-
-      Critical external dependencies ranked by concentration and failure-scenario severity; covers platform APIs,
-      financial counterparties, channel partners, and customer concentration. Rows ordered high-to-low by severity.
+    enumeration: false
     columns:
-      - Dependency
-      - Counterparty
-      - Role
-      - Concentration
-      - Failure Scenario
-      - Severity
+      - Partner / Dependency
+      - Type
+      - Concentration Risk
+      - Failure Mode
       - Mitigation
       - Residual Exposure
     rows:
-      - - Microsoft AD / Entra ID APIs (MS-DRSR, LDAP, VSS)
-        - Microsoft Corporation
-        - Core product capability enablement — DSP change detection, ADFR backup, Entra ID monitoring
-        - 100% — no equivalent alternative AD replication API exists
-        - Microsoft restricts third-party access to AD replication metadata or breaks MS-DRSR protocol
+      - - Microsoft Active Directory / Entra ID
+        - Platform (existential)
         - Critical
-        - Engineering team monitors Microsoft roadmap; some API abstraction layers; ADFR uses standard Windows APIs
         - >-
-          Product becomes non-functional or requires full rearchitect; no timeline for mitigation under existential
-          scenario
-      - - J.P. Morgan / Hercules Capital growth debt ($125M, June 2024)
-        - J.P. Morgan Chase / Hercules Capital
-        - Growth financing — enables headcount, sales, and infrastructure expansion
-        - Sole provider of disclosed debt facility; private markets; no backup credit facility disclosed
-        - ARR growth decelerates below covenant minimum; covenant breach triggers acceleration clause
+          Microsoft expands native AD security and recovery capabilities; Entra ID replaces on-premises AD; AD platform
+          API changes break Semperis integrations
+        - >-
+          Entra ID product extension; platform-agnostic identity resilience positioning; early adoption of Microsoft
+          Graph API for Entra ID telemetry
+        - High — existential platform dependency; mitigations extend life but do not eliminate structural risk
+      - - Insight Partners (primary investor)
+        - Capital / Governance
         - High
-        - Strong ARR growth trajectory ($100M ARR milestone); recurring revenue provides predictable debt service
-        - Covenant terms not public; acceleration clause risk if growth decelerates; limits strategic flexibility
-      - - VAR / MSSP channel partner concentration
-        - Top 3–5 VAR / MSSP partners (undisclosed)
-        - Pipeline generation, deal qualification, and enterprise customer access
-        - Unknown — partner revenue concentration not disclosed; top-5 VARs may represent material ARR share
-        - Top VAR shifts preferred vendor to CrowdStrike Identity or Microsoft MDI bundle
+        - >-
+          Forced IPO at adverse valuation; secondary sale below optimal price; portfolio conflict-of-interest in
+          adjacent markets; LP-driven capital distribution pressure
+        - >-
+          Board alignment on exit timing; $1.4B+ valuation protection; track record of Insight supporting IPO
+          preparation for portfolio companies
+        - >-
+          Medium — investor interests generally aligned with management; LP pressure cycles introduce timing risk at
+          public market inflection points
+      - - J.P. Morgan Asset Management / Hercules Capital
+        - Debt
+        - High
+        - >-
+          Covenant breach triggers early repayment or operational restrictions; rising rates increase debt service cost;
+          BDC portfolio dynamics affect Hercules flexibility
+        - >-
+          Revenue growth compliance; financial controls; relationship management with lead J.P. Morgan Asset Management
+          investor
+        - >-
+          Medium — covenant terms not publicly disclosed; cannot independently assess breach probability without loan
+          agreement access
+      - - Cohesity OEM Partnership
+        - Channel / OEM
         - Medium
-        - Multi-partner program; formal MSP program disclosed; incentive structure not disclosed
-        - Pipeline disruption if top partner redirects; magnitude unknown without partner concentration data
-      - - Key customer ARR concentration (top-20 accounts)
-        - Estimated top-20 enterprise accounts
-        - Revenue — disproportionate share of total ARR
-        - Unknown — top-20 ARR share not disclosed; estimated potentially >30% based on deal size analysis
-        - Single large enterprise account churns to Microsoft MDI; revenue cliff impact
+        - >-
+          Cohesity builds native identity resilience feature set; OEM agreement terminated; Cohesity acquired by party
+          that competes with Semperis
+        - Contractual OEM terms; multi-OEM channel strategy including Hitachi Vantara and Axonius
+        - >-
+          Medium — OEM partnerships amplify distribution but partners can internalize functionality over time as product
+          maturity increases
+      - - MSSP and Channel Resellers
+        - Revenue
         - Medium
-        - Strong switching costs for ADFR customers (tested recovery runbooks, documented plans)
-        - Revenue-cliff risk if top-1 or top-3 accounts churn; undisclosed concentration makes quantification impossible
+        - >-
+          Loss of key reseller reduces mid-market ARR; reseller acquired by direct competitor; pricing dispute causes
+          reseller to shift to competing product
+        - Channel diversification; direct enterprise sales motion; MSSP program investment
+        - >-
+          Low-Medium — no single reseller is believed dominant; channel diversification limits individual reseller
+          concentration
     notes: >-
-      Concentration figures for channel partners and customer ARR are estimated from secondary research; Semperis has
-      not publicly disclosed partner concentration, top-customer ARR share, or NRR. Microsoft API dependency assessment
-      based on public product architecture disclosures and MS-DRSR protocol documentation.
-    claimRefs:
-      - CR017
-      - CR018
-      - CR019
-      - CR020
-  - id: TR004
-    title: People / execution risk register
-    description: >-
-      People and execution risks ranked by severity; covers key-person dependency, geopolitical R&D risk, talent
-      competition, and IPO execution. Rows ordered high-to-low by severity.
-    columns:
-      - Role / Function
-      - Dependency or Gap
-      - Likelihood
-      - Severity
-      - Mitigation
-      - Diligence Path
-    rows:
-      - - Israel R&D Center — ~150 engineers in Tel Aviv
-        - Military reservist mobilization, regional conflict escalation, talent exodus reducing engineering capacity
-        - Medium (elevated given ongoing conflict)
-        - High
-        - Geographically distributed hiring; some US and EMEA-based engineering; no formal continuity plan disclosed
-        - >-
-          Request Israel R&D business continuity plan; confirm % of engineers subject to IDF reserve obligations; ask
-          for post-Oct 2023 impact assessment
-      - - CEO Mickey Bresman — primary external face and strategic leader
-        - Single point of failure for investor relations, enterprise customer relationships, and strategic partnerships
-        - Low
-        - High
-        - Co-founder depth; board-level succession oversight; no public succession plan
-        - >-
-          Verify succession plan exists with board; confirm key-man insurance coverage; request executive retention
-          agreements
-      - - Co-founder / AD domain expert concentration (Guy Teverovsky, Matan Hart)
-        - Irreplaceable 15+ years of AD security expertise; product roadmap and engineering direction dependent
-        - Low
-        - Medium
-        - IP vested in company; engineering team depth growing with new hires; AD expertise being documented
-        - Confirm IP assignment agreements for all co-founder contributions; request engineering knowledge transfer plan
-      - - Talent acquisition — AD security specialists competing with Microsoft, CrowdStrike, SentinelOne
-        - Scarce specialist population; wage inflation for AD security expertise structurally elevated since 2020
-        - High
-        - Medium
-        - Israel R&D center provides cost-efficient access to strong security talent pool; equity compensation
-        - Request offer acceptance rate and time-to-fill for senior engineering roles; confirm ESOP structure post-$125M
-    notes: >-
-      People risk ratings based on public organizational disclosures, LinkedIn analysis, and Israel tech sector
-      reporting. Co-founder departure likelihood rated Low based on typical founder incentive alignment at pre-IPO stage
-      and absence of any disclosed departure signals. Israel R&D risk rated Medium-elevated based on October 2023
-      conflict impact data from Israel Innovation Authority and public reporting on IDF reservist mobilization.
+      Dependencies are ordered by concentration risk. Microsoft platform dependency is structurally existential and
+      cannot be mitigated. Debt covenant terms with Hercules Capital are identified in EGR003 as a specific evidence gap
+      requiring due diligence access to the loan agreement.
     claimRefs:
       - CR021
       - CR022
       - CR023
       - CR024
       - CR025
-  - id: TR005
-    title: Mitigation and kill criteria table
-    description: >-
-      Thesis-break triggers, monitoring KPIs, and prescribed diligence actions for the five highest-severity risks;
-      includes monitorable event triggers and action implications.
+      - CR026
+      - CR027
+  - id: TR004
+    title: People / execution risk register
+    enumeration: false
     columns:
       - Risk
-      - Monitorable Trigger
-      - Threshold / Event
-      - Action Implication
+      - Person / Team
+      - Likelihood
+      - Impact
+      - Mitigation
+      - Residual Exposure
     rows:
-      - - Microsoft AD forest recovery commoditization
-        - Microsoft Windows Server or Azure releases native AD forest recovery at zero incremental cost
-        - GA announcement of Microsoft ADFR-equivalent in Azure Backup or Windows Server 2025 feature set
-        - Immediate thesis re-evaluation; ADFR moat eliminated; DSP must carry standalone valuation
-      - - Semperis platform security breach
-        - Public breach disclosure on BleepingComputer, Dark Reading, or SEC 8-K equivalent
-        - Confirmed breach disclosure by Semperis or credible third party affecting customer AD environments
-        - Sell immediately; identity security vendor breach creates sustained customer trust destruction
-      - - Israel R&D material disruption
-        - Semperis announces >25% Israel engineering headcount reduction or >3-month product roadmap delay
-        - Public announcement of hiring freeze, restructuring, or product delay attributed to Israel operations
-        - Material impairment of Entra ID roadmap execution; request management briefing on continuity plan
-      - - Hercules Capital covenant breach
-        - Hercules Capital Form D amendment on SEC EDGAR showing covenant waiver or restructuring
-        - Any SEC EDGAR filing disclosing covenant modification, waiver, or default notice
-        - Financial distress signal; assess liquidity position and covenant terms; may require equity raise at discount
-      - - Competitive win-rate collapse vs. Microsoft MDI in greenfield accounts
-        - Win-rate against Microsoft MDI in greenfield accounts drops below 40%
-        - Customer reference interviews or Gartner Peer Insights indicate systematic MDI wins in new enterprise accounts
-        - Price-point commoditization confirmed; model DSP as detection-only commodity and ADFR as primary moat
+      - - CEO key-person departure
+        - Mickey Bresman (CEO)
+        - Low
+        - High
+        - >-
+          Succession planning; board executive relationships independent of CEO; investor relations team diversification
+          across multiple executives
+        - >-
+          Medium — investor relationships and government go-to-market heavily dependent on Bresman's network and public
+          profile built since founding
+      - - CTO key-person departure
+        - Guy Teverovsky (CTO)
+        - Low-Medium
+        - High
+        - >-
+          Technical documentation; distributed architecture knowledge across principal engineers; principal engineer
+          development program
+        - >-
+          Medium — core AD security IP and architecture knowledge is concentrated; replacement timeline 12-18 months for
+          equivalent domain expertise
+      - - Israel R&D geopolitical disruption
+        - Tel Aviv R&D Center (majority of engineering)
+        - Medium
+        - High
+        - >-
+          Business continuity plan; partial NJ engineering capability; remote work infrastructure; geographic
+          diversification roadmap for R&D
+        - >-
+          High — majority R&D in Tel Aviv; sustained disruption of 6+ months would materially impair product roadmap
+          delivery; rebuilding capacity takes 12-24 months
+      - - Failure to hire public-market CFO and CRO for IPO
+        - Finance and Revenue Leadership (open roles)
+        - Medium
+        - High
+        - >-
+          Executive search process; IPO advisory bank relationship; SOX compliance infrastructure buildout initiated
+          with growth round proceeds
+        - >-
+          Medium — IPO preparation is a critical path item; missing key hires delays S-1 filing and investor roadshow;
+          market window risk accumulates with delays
+      - - NJ / Tel Aviv dual-HQ operational friction
+        - Cross-functional leadership
+        - Low-Medium
+        - Medium
+        - >-
+          Regular leadership travel program; distributed management culture; communication tools and timezone overlap
+          scheduling practices
+        - >-
+          Low — reported as functional dual-HQ; friction is manageable in steady state; escalates significantly under
+          stress events such as geopolitical disruptions
     notes: >-
-      Kill criteria are binary thesis-break events, not gradual deterioration signals. All five triggers are externally
-      observable through public sources. Monitoring cadence: Microsoft product releases (quarterly), FedRAMP marketplace
-      (monthly), SEC EDGAR (quarterly), customer reference interviews (semi-annually), and Semperis press releases
-      (ongoing).
+      People risks are ordered by residual exposure. The Israel R&D geopolitical risk carries the highest residual
+      exposure despite medium likelihood because the recovery timeline for a severe disruption would materially affect
+      product delivery commitments to 1,000+ enterprise customers.
     claimRefs:
       - CR031
       - CR032
       - CR033
       - CR034
       - CR035
+      - CR036
+  - id: TR005
+    title: Mitigation and kill criteria table
+    enumeration: false
+    columns:
+      - Risk
+      - Monitoring Indicator
+      - Threshold / Trigger
+      - Mitigation Action
+      - Thesis Break?
+    rows:
+      - - Microsoft MDI bundling (competitive displacement)
+        - >-
+          DSP renewal rate in Microsoft E5 accounts; MDI parity feature announcements; net revenue retention (NRR) trend
+          by customer cohort
+        - >-
+          DSP renewal rate below 85% in E5 accounts; NRR below 95% over two consecutive quarters driven by MDI
+          displacement
+        - >-
+          Accelerate ADFR and Purple Knight differentiation; adjust DSP pricing; shift value proposition to recovery
+          where MDI has zero parity
+        - >-
+          Yes — if DSP NRR below 90% sustained three quarters or more with MDI named as primary churn driver, thesis
+          requires re-evaluation
+      - - Semperis software supply-chain compromise
+        - >-
+          Security incident disclosures; CISA advisories naming Semperis; customer notification events; SOC 2
+          attestation continuity
+        - Any confirmed breach of Semperis production systems; customer AD data exposure event; SOC 2 attestation lapse
+        - >-
+          Immediate incident response per IR plan; customer notification; forensic audit; CISA coordination; crisis
+          communications protocol
+        - >-
+          Yes — material breach of Semperis identity infrastructure is an immediate thesis re-evaluation trigger; brand
+          destruction in identity security is typically irreversible
+      - - FedRAMP authorization lapse or High authorization delay
+        - FedRAMP marketplace listing status; annual assessment completion dates; DoD customer pipeline ARR metrics
+        - >-
+          Loss of Moderate authorization; High authorization timeline beyond 30 months from now; federal pipeline ARR
+          growth below 5% year-over-year
+        - >-
+          Escalate FedRAMP remediation resources; pause federal sales expansion; evaluate High authorization sponsoring
+          agency alternatives
+        - >-
+          Partial — federal ARR at risk (estimated 10-15% of total); does not break enterprise thesis; evaluate if
+          federal was a core growth vector in the investment underwrite
+      - - Israel R&D geopolitical disruption
+        - >-
+          Tel Aviv office operational status; R&D headcount reporting; engineering velocity metrics; product roadmap
+          milestone delivery rates
+        - >-
+          More than 25% Tel Aviv R&D headcount loss in any rolling 6-month period; sustained product roadmap delay
+          exceeding 3 months on two consecutive roadmap quarters
+        - >-
+          Accelerate NJ engineering hiring; contractor augmentation for critical path projects; activate geographic
+          diversification plan for R&D
+        - >-
+          Partial — sustained severe disruption beyond 12 months would impair product delivery commitments; evaluate
+          severity, recovery horizon, and customer impact before thesis break
+      - - IPO execution failure or down-round financing
+        - >-
+          IPO preparation milestones (CFO hire, S-1 filing date, bank engagement); SaaS public market multiples;
+          Semperis ARR growth rate relative to ITDR peer set
+        - >-
+          IPO delayed more than 18 months past investor-communicated target; down-round IPO valuation below $1.0B; ARR
+          growth below 20% while ITDR peers sustain above 30%
+        - >-
+          Evaluate strategic M&A alternatives; secondary market tender offer for LP liquidity; recapitalize with
+          additional growth equity at current valuation
+        - >-
+          Partial — down-round IPO impairs employee retention and morale but enterprise product value is independent;
+          investor exit pressure escalates as timeline extends
+    notes: >-
+      Thresholds are indicative and should be calibrated with management during due diligence. All monitoring indicators
+      require investor-level reporting access to track. The two absolute thesis-break triggers are sustained Microsoft
+      MDI-driven NRR compression and a material Semperis security breach.
+    claimRefs:
+      - CR037
+      - CR038
+      - CR039
+      - CR040
+      - CR041
+      - CR042
+      - CR043
   - id: TV001
     title: Recommendation summary table
+    enumeration: false
     columns:
-      - Metric
-      - Value
-      - Rationale
+      - Dimension
+      - Assessment
+      - Confidence
+      - Investment Implication
     rows:
       - - Recommendation
-        - Research-More / Conditional Favorable
-        - >-
-          Strong market positioning and enterprise scale justify due diligence; four critical financial items remain
-          unresolved
-      - - Confidence
-        - Medium
-        - Public evidence confirms scale and market leadership; key financial metrics require private access and NDA
-      - - Risk Rating
+        - BUY
         - Medium-High
-        - Microsoft bundling, opaque financials, and debt covenants are material risks but not currently disqualifying
-      - - Valuation Stance
-        - Fair at Base Case
-        - 10x ARR is consistent with peer median for 20%+ growth cybersecurity SaaS; at risk if growth slows below 15%
-      - - Decision Implication
-        - Proceed to Formal Diligence
-        - Request NRR, gross margin, burn rate, cap table, and FedRAMP status before final investment commitment
-    notes: >
-      Recommendation reflects publicly available evidence as of May 2026. Private company financials are not
-      independently audited or disclosed; risk rating and valuation stance are subject to revision upon receipt of due
-      diligence materials under NDA.
+        - >-
+          Initiate position at current valuation below $1.3B; structure with downside protection provisions and NRR
+          disclosure covenant
+      - - Valuation stance
+        - Fair value $900M–$1.3B (base); $1.4B if NRR > 110% confirmed
+        - Medium
+        - Entry below $1.3B is price-justified given ARR trajectory and comparable set; $1.4B+ requires NRR confirmation
+      - - Risk rating
+        - Medium
+        - Medium
+        - >-
+          Microsoft bundling is primary risk; mitigated by ADFR switching costs; Hercules Capital debt covenants warrant
+          cap table review
+      - - Evidence quality
+        - Medium — $100M ARR confirmed, named Fortune 500 customers confirmed, NRR not disclosed
+        - Medium
+        - Strong scale proof but financial opacity (NRR, GRR, gross margin, burn) limits underwriting precision
+      - - Exit horizon
+        - 18–36 months (IPO window 2027–2028); M&A strategic exit at 8–14× ARR as secondary path
+        - Low
+        - IPO signals credible but timing dependent on market conditions and sustained >30% ARR growth
+    notes: >-
+      All assessments are as of May 2026 based on available public evidence. Confidence levels reflect availability and
+      quality of supporting data rather than strength of fundamental conviction. Valuation ranges use ARR multiples
+      applied to estimated ARR of $100–120M; estimates are modeled from disclosed milestones and are not confirmed
+      audited figures. The BUY recommendation is conditional on pre-investment diligence confirming NRR, customer
+      concentration, and cap table preference stack (see TV006 for required diligence asks).
     claimRefs:
+      - CV001
+      - CV002
+      - CV003
+      - CV008
+      - CV029
       - CV040
-      - CV024
-      - CV030
-      - CV026
   - id: TV002
     title: Thesis / anti-thesis table
+    enumeration: false
     columns:
-      - Side
       - Argument
-      - What Would Change This View
+      - Type
+      - Evidence
+      - What Would Change the View
     rows:
-      - - Thesis
+      - - Only pure-play ITDR vendor with full detection + recovery lifecycle (DSP + ADFR)
+        - Thesis
         - >-
-          Semperis is the category-defining ITDR leader in a $16B+ market growing at 25-30% CAGR with no direct
-          enterprise-grade AD security peer matching its platform depth
+          1,000+ enterprise customers; $100M ARR; KuppingerCole Leader 2025; no comparable standalone pure-play
+          competitor
+        - Entry of a capable competing pure-play vendor or Microsoft adding native AD recovery to Entra ID at zero cost
+      - - ADFR creates durable enterprise switching costs via DR runbook integration
+        - Thesis
         - >-
-          If a competing pure-play AD security vendor achieves equivalent enterprise scale or the market fragments
-          significantly around multiple specialists
-      - - Thesis
+          TrustRadius and PeerSpot reviews confirm DR embedding; 3–5 year AD security replacement cycles in regulated
+          verticals
+        - NRR disclosure below 80% at ADFR renewal tier would invalidate the switching cost assumption
+      - - FedRAMP Moderate + federal customers create defensible ARR revenue floor
+        - Thesis
         - >-
-          $100M+ ARR at 3,000%+ five-year growth and 1,000+ enterprise customers in regulated sectors demonstrates
-          durable and repeatable product-market fit
+          FedRAMP Moderate confirmed on FedRAMP marketplace (FR2200048434); CISA partnership references; federal
+          customer base referenced in press
+        - FedRAMP authorization lapse or loss of ≥3 named federal accounts in a single fiscal year
+      - - Purple Knight community (65,000+ users) creates organic enterprise pipeline moat
+        - Thesis
         - >-
-          If two consecutive quarters show ARR growth below 15% or if large enterprise churn events are publicly
-          disclosed or confirmed under diligence
-      - - Thesis
+          Company-disclosed 65,000+ organizations using Purple Knight free tool; community users have demonstrated
+          conversion to paid DSP
+        - Microsoft releasing a comparable free AD security audit tool within MDI or Entra ID
+      - - Microsoft MDI displaces DSP at renewal at zero incremental cost to M365 E5 licensees
+        - Anti-thesis
         - >-
-          High switching costs from deep AD infrastructure integration create 3-5 year replacement cycles and structural
-          enterprise retention advantages
+          G2 reviews cite pricing friction; Semperis blog confirms MDI bundling in E5; MDI lacks ADFR functionality but
+          covers core detection
+        - DSP renewal rate stabilizes above 85% for 3+ consecutive years; Semperis discloses NRR > 110%
+      - - AD market shrinks as cloud identity (Entra ID) adoption accelerates over 5–10 year horizon
+        - Anti-thesis
         - >-
-          If a platform vendor such as CrowdStrike or Microsoft achieves equivalent AD-depth coverage through
-          acquisition or accelerated native R&D investment
-      - - Anti-Thesis
+          Microsoft 365 cloud-only push documented; Semperis Entra ID security blog indicates product investment but not
+          primary revenue driver
+        - Semperis Entra ID product gains >20% of total ARR within 3 years, signaling successful TAM transition
+      - - $1.4B Series C valuation at 2022 cycle peak creates down-round risk at current market multiples
+        - Anti-thesis
         - >-
-          Microsoft Defender for Identity is bundled at no incremental cost in Microsoft 365 E5 and competes directly in
-          AD threat detection for enterprises with large Microsoft licensing commitments
-        - >-
-          If Microsoft deprioritizes MDI development or if Semperis demonstrates strong verified MDI displacement win
-          rates in enterprise competitive evaluations
-      - - Anti-Thesis
-        - >-
-          Semperis financials are opaque; burn rate, NRR, and gross margin are not publicly disclosed and cannot be
-          independently assessed from public sources
-        - >-
-          If Semperis files an S-1 or provides audited financials to prospective investors showing strong unit economics
-          and NRR above 120%
-      - - Anti-Thesis
-        - >-
-          Hercules Capital venture debt creates repayment obligations and covenants that may constrain IPO timing or
-          limit M&A strategic options if growth decelerates
-        - >-
-          If debt terms are disclosed and covenants are shown to be permissive or if debt is retired ahead of IPO from
-          strong operating cash flow
-    notes: >
-      Thesis and anti-thesis arguments are derived from publicly available evidence as of May 2026. Arguments marked
-      anti-thesis reflect risks and adverse signals that could reduce valuation or alter the recommendation; they are
-      not predictions of outcomes.
+          2024 growth round priced below $1.4B Series C per public reporting; sector-wide 30–50% multiple compression
+          from 2022 to 2026
+        - Up-round at > $1.5B in a new equity raise or IPO at > $1.5B EV would close the valuation gap
+    notes: >-
+      Thesis arguments are supported by public evidence cited in the Evidence column. Anti-thesis arguments reflect
+      genuine structural risks that cannot be fully resolved from public evidence alone; NRR and renewal rate data would
+      materially affect weighting of each anti-thesis row. The 'What Would Change the View' column describes the
+      specific observable evidence that would flip each argument from thesis to anti-thesis or vice versa; absence of
+      that evidence is not equivalent to confirmation of the thesis.
     claimRefs:
       - CV013
       - CV014
-      - CV017
+      - CV016
       - CV018
-      - CV020
-      - CV021
-      - CV024
-      - CV028
+      - CV026
+      - CV027
+      - CV037
+      - CV039
   - id: TV003
     title: Bull / base / bear scenario table
+    enumeration: false
     columns:
       - Scenario
+      - ARR Assumption
+      - Multiple
+      - Implied EV
       - Key Assumptions
-      - Implied Valuation
       - Key Risks
       - Probability Signal
     rows:
       - - Bull
+        - $150–180M ARR
+        - 12–18x
+        - $1.8–3.2B
         - >-
-          ARR grows to $150-180M by 2027 at 25-30% CAGR; NRR above 120%; gross margin above 75%; FedRAMP authorization
-          achieved; IPO in 2027-2028 at 15x ARR
-        - $1.5-2.0B (15x ARR); approximately 1.5-2.0x gross return from June 2024 unicorn entry
+          ITDR market accelerates; IPO pre-premium; NRR > 120%; FedRAMP High authorization adds DoD/IC ARR; AI identity
+          protection demand unlocks new budget; Entra ID product gains traction
         - >-
-          No material competitive displacement; favorable IPO market window must persist; Hercules debt retired before
-          listing
-        - Moderate — requires sustained high growth and favorable market conditions; NRR and margin unconfirmed
+          Market or regulatory disruption; IPO window closes before revenue targets met; Microsoft accelerates native
+          ITDR development
+        - 20%
       - - Base
+        - $110–130M ARR
+        - 8–12x
+        - $880M–$1.56B
         - >-
-          ARR reaches $130-150M by 2026-2027 at 20%+ CAGR; 10x ARR multiple consistent with peer median; IPO or M&A in
-          2026-2028
-        - $1.3-1.5B (10x ARR); approximately 1.3-1.5x gross return from June 2024 unicorn entry
-        - Moderate competitive pressure managed; multiples stay stable; debt covenants remain permissive through exit
+          Moderate growth continues at 30–40% YoY; DSP renewal rate above 80%; Microsoft MDI competition manageable at
+          enterprise tier; ADFR switching costs sustain mid-market retention; FedRAMP Moderate retained
         - >-
-          Higher — current valuation implies this scenario; consistent with peer cybersecurity SaaS multiples in
-          2025-2026
+          DSP-only churn at renewal; Hercules Capital covenant breach at adverse cycle point; ITDR market growth slower
+          than projected
+        - 55%
       - - Bear
-        - ARR growth decelerates to below 15% CAGR; multiple compresses to 6-7.5x ARR; exit delayed to 2029+
-        - $600-750M (6-7.5x ARR); approximately 0.6-0.75x gross return; down-round from June 2024 entry
-        - Microsoft bundling or CrowdStrike displacement accelerates; Hercules debt constrains strategic options
+        - $80–100M ARR
+        - 5–7x
+        - $400–700M
         - >-
-          Lower but non-trivial — platform bundling threat is real; requires two independent negative factors
-          simultaneously
-    notes: >
-      Scenarios are illustrative and based on analyst-estimated ARR growth rates and public peer comparable multiples as
-      of 2025-2026. Actual valuation outcomes depend on ARR at exit, multiples at exit, and dilution from existing and
-      future financing. Probability signals are qualitative judgments based on current evidence and are not quantitative
-      probability estimates.
+          Microsoft MDI drives DSP displacement at >30% of renewal base; ARR growth decelerates below 20%; Insight
+          Partners forces exit at sub-optimal timing; federal customer attrition from FedRAMP compliance failure
+        - >-
+          Forced strategic sale below last round valuation; down-round financing impairs common equity; LP structure
+          impaired by liquidation preferences
+        - 25%
+    notes: >-
+      ARR assumptions are estimates modeled from the confirmed $100M+ ARR milestone (January 2025) and publicly
+      disclosed growth trajectory. Multiples are derived from the comparable set (CrowdStrike 16–19x, Rubrik 12–15x,
+      SailPoint 10–12x, Ping Identity 7–8x, Quest/Netwrix 4–7x) adjusted for Semperis's growth rate, size, and
+      standalone risk profile. Probability signals are directional investor judgment, not actuarial probabilities.
+      Implied EV ranges are arithmetic products of ARR assumption × multiple; they are not discounted cash flow outputs.
     claimRefs:
-      - CV025
-      - CV026
-      - CV027
-      - CV035
-      - CV038
+      - CV020
+      - CV021
+      - CV022
+      - CV036
+      - CV037
+      - CV041
   - id: TV004
     title: Comparable valuation table
     enumeration: true
     enumerationScope:
       coverage: partial
-      basis: >
-        Covers publicly traded cybersecurity SaaS companies with identity, privileged access, or data security focus and
-        one recently IPO-ed unicorn with a directly comparable pre-IPO narrative and ARR scale. One private comparable
-        is included where a publicly disclosed valuation mark exists from institutional financing. Excludes
-        pure-endpoint or pure-SIEM vendors without meaningful identity security revenue overlap with Semperis core
-        market.
+      basis: >-
+        Comparable set covers all publicly traded cybersecurity-recovery and identity vendors with disclosed ARR or
+        revenue multiples, all identity sector M&A transactions above $500M completed 2020–2026, and the two directly
+        competing private AD management vendors (Quest Software, Netwrix) for which enterprise value estimates are
+        available from PE sponsor disclosures and industry databases. Private companies with no public financial
+        disclosure and no confirmed PE transaction are excluded. SentinelOne Singularity Identity and Tenable are
+        excluded as sub-scale or insufficiently comparable; their exclusion is documented in evidenceGaps.
     columns:
       - Comparable
-      - Type
-      - Revenue or ARR
-      - Revenue Multiple
-      - Market Cap or Valuation
-      - Relevance to Semperis
+      - Status
+      - Business
+      - ARR / Revenue (est.)
+      - Valuation / EV (est.)
+      - ARR Multiple
+      - Relevance
       - Limitation
     rows:
       - - CrowdStrike (CRWD)
-        - Public NASDAQ
-        - ~$3.4-3.95B NTM revenue FY2025
-        - ~26x NTM revenue
-        - ~$90B market cap
+        - Public
+        - Security platform including Falcon Identity Protection ITDR module
+        - ~$3.95B ARR (FY2026 ending Jan 31, 2026)
+        - ~$65–75B EV (May 2026)
+        - ~16–19x forward ARR
         - >-
-          Identity security pillar growing within broader endpoint-identity-cloud platform; Falcon Identity directly
-          competes with Semperis DSP in enterprise ITDR
+          Direct ITDR competitor and primary public market anchor for security platform multiples; most relevant ceiling
+          comparable
         - >-
-          Premium multiple driven by AI platform narrative and exceptional scale; revenue base is 34x larger than
-          Semperis making direct comparison limited
-      - - SentinelOne (S)
-        - Public NYSE
-        - ~$700-930M NTM revenue FY2025
-        - ~25x NTM revenue
-        - ~$18B market cap
-        - >-
-          AI-powered ITDR via Singularity Identity directly overlaps with Semperis DSP in enterprise segment; similar
-          2021-2022 hypergrowth narrative
-        - >-
-          High multiple driven by AI security platform narrative; identity revenue is a subset of total and growing from
-          a lower base
-      - - CyberArk (CYBR)
-        - Public NASDAQ
-        - ~$900M-1B NTM revenue
-        - ~16x NTM revenue
-        - ~$15B market cap
-        - >-
-          Privileged access management and identity security specialist with enterprise SaaS model; most comparable
-          business profile to Semperis among public peers
-        - >-
-          PAM-centric focus differs from AD-specific ITDR; multiple closer to realistic Semperis exit target than
-          CrowdStrike or SentinelOne
-      - - Varonis Systems (VRNS)
-        - Public NASDAQ
-        - ~$550-607M NTM revenue
-        - ~8-9x NTM revenue
-        - ~$5B market cap
-        - >-
-          Data security plus identity overlay; enterprise SaaS transition model; lower-bound comparable for
-          identity-adjacent security specialists
-        - >-
-          Multiple compressed by slower growth and data-centric focus; less directly comparable but useful floor
-          reference for scenario sensitivity
+          Platform breadth (Falcon EDR, cloud, threat intelligence) commands premium unavailable to standalone vendors;
+          scale 30× larger than Semperis
       - - Rubrik (RBRK)
-        - Public NYSE IPO April 2024
-        - ~$650M ARR at IPO
-        - ~12x ARR at IPO
-        - ~$8B market cap at IPO
+        - Public (IPO April 2024)
+        - Data security + ransomware recovery; enterprise cloud and on-premises
+        - ~$825M ARR (FY2025)
+        - ~$8–12B EV (post-IPO)
+        - ~10–14x trailing ARR
         - >-
-          Most directly comparable exit precedent — pre-IPO unicorn, backup-and-recovery security, venture-backed,
-          Microsoft-independent positioning, enterprise focus
+          Most structurally analogous: security + recovery narrative; enterprise focus; recent IPO provides freshest
+          public market data point
         - >-
-          Recovery and data protection focus differs from ITDR; IPO executed in specific 2024 market window not
-          guaranteed to persist in 2026-2028
-      - - Exabeam (Private)
-        - Private
-        - ~$150M ARR estimated
-        - ~13x ARR implied
-        - ~$1.9B valuation last round
+          Data and backup recovery focus rather than AD-specific; larger scale; IPO momentum may inflate current
+          multiple vs. steady-state
+      - - Ping Identity (Thales acquisition, Dec 2023)
+        - Acquired ($2.8B)
+        - Identity platform (SSO, MFA, PAM)
+        - ~$350–400M ARR (at time of acquisition)
+        - ~$2.8B acquisition price
+        - ~7–8x ARR at acquisition
         - >-
-          SIEM and security analytics unicorn at similar ARR scale; private comparable for same-stage revenue and
-          valuation benchmarking
+          Identity sector strategic M&A benchmark; confirms strategic acquirer premium for identity assets in Fortune
+          500 enterprise
         - >-
-          SIEM focus is distinct from ITDR; valuation mark from prior financing round may not reflect current private
-          market conditions
-    notes: >
-      Revenue and market cap data from fiscal year 2025 public earnings releases and analyst consensus estimates as of
-      2026. Rubrik valuation from April 2024 IPO prospectus and opening market price. Exabeam valuation from last
-      disclosed private financing round. All multiples are approximations. Semperis exact ARR is based on company
-      January 2025 announcement; NRR and gross margin not disclosed.
+          Acquired during market downturn; broader identity platform scope (not ITDR-pure); Thales strategic rationale
+          not replicable for pure financial buyer
+      - - SailPoint (Thoma Bravo, $6.9B, 2022; re-IPO targeted)
+        - Private (PE-owned)
+        - Identity governance and administration (IGA)
+        - ~$500–600M ARR (estimated)
+        - ~$6–7B (estimated, based on acquisition price and growth)
+        - ~10–12x ARR at acquisition
+        - >-
+          Identity sector private equity benchmark; largest identity governance acquisition; illustrates PE discipline
+          on identity multiples
+        - >-
+          IGA is fundamentally different from ITDR (compliance/governance vs. threat detection/recovery); significantly
+          larger scale; PE-to-IPO trajectory introduces estimation uncertainty
+      - - Quest Software (Francisco Partners)
+        - Private (PE-owned)
+        - AD management, recovery, and security analytics
+        - ~$400–600M ARR (estimated)
+        - ~$2–4B EV (estimated)
+        - ~4–7x ARR
+        - >-
+          Direct AD management competitor in same customer segment; PE-owned comparator; most relevant floor multiple
+          for Semperis without growth premium
+        - >-
+          Older product portfolio vs. Semperis cloud-native architecture; limited public financial disclosure; ITDR-less
+          product focus reduces direct comparability
+      - - Netwrix (PE-backed)
+        - Private (PE-backed)
+        - AD security analytics and compliance auditing
+        - ~$100–150M ARR (estimated)
+        - ~$600M–$1B EV (estimated)
+        - ~5–7x ARR
+        - >-
+          Most directly size-comparable; AD security analytics focus; confirms floor multiple for AD-specific security
+          vendors at Semperis scale
+        - >-
+          Compliance-first positioning (vs. Semperis threat-first); limited public disclosure; growth rate unconfirmed;
+          no recovery product equivalent to ADFR
+    notes: >-
+      All comparable ARR figures and enterprise values are estimates derived from public filings (CrowdStrike, Rubrik),
+      acquisition announcement prices (Ping Identity, SailPoint), and industry database estimates (Quest Software,
+      Netwrix). Private company figures carry high estimation uncertainty. ARR multiples for public companies reflect
+      May 2026 market conditions and may not represent normalized steady-state multiples. Comparable set is partial by
+      design (coverage = partial); additional identity security vendors exist at smaller scale but are excluded due to
+      insufficient public financial disclosure. See EGV004 for excluded comparables.
     claimRefs:
+      - CV004
+      - CV005
+      - CV006
       - CV007
-      - CV008
-      - CV009
       - CV010
       - CV011
-      - CV012
+      - CV024
+      - CV025
+      - CV033
+      - CV034
+      - CV035
+      - CV036
   - id: TV005
     title: Thesis-break and kill triggers table
+    enumeration: false
     columns:
-      - Trigger
+      - Risk
+      - Trigger Event
       - Threshold
       - Transmission to Thesis
       - Action Implication
     rows:
-      - - Net Revenue Retention Below 100%
-        - NRR falls below 100% for two consecutive quarters
+      - - Microsoft MDI free bundling displaces DSP
         - >-
-          Indicates net churn in enterprise customer base; undermines switching-cost moat and land-and-expand thesis
-          core assumption
+          Microsoft announces M365 E5 ITDR expansion explicitly positioning MDI as DSP replacement; or Semperis
+          discloses DSP renewal rate below threshold
+        - DSP renewal rate drops below 70% in any two consecutive fiscal quarters
+        - ARR growth decelerates to < 20% YoY; multiple compression to < 6x; bear case probability rises above 60%
         - >-
-          Exit or abort investment; NRR below 100% in enterprise security is a disqualifying signal for the investment
-          case
-      - - ARR Growth Deceleration
-        - ARR growth falls below 15% annually for two consecutive quarters
+          Exit position within 60 days of trigger confirmation; thesis is broken — no mitigation restores the core DSP
+          revenue thesis
+      - - ADFR switching cost erosion via Microsoft native AD recovery
         - >-
-          At 10x ARR entry multiple, sub-15% growth implies the multiple is unsustainable; peer median multiples for
-          slower-growth SaaS compress to 5-8x ARR
-        - Re-evaluate at lower entry multiple or exit position; initiate down-round scenario analysis immediately
-      - - Microsoft MDI Enterprise Displacement
-        - Evidence that Microsoft MDI is displacing Semperis in 20%+ of enterprise renewals
-        - Platform bundling threat materializes; Semperis loses pricing power; standalone ITDR TAM contracts materially
-        - Trigger immediate strategic review; assess M&A exit urgency before competitive moat erodes further
-      - - Gross Margin Below 65%
-        - Audited or disclosed gross margin falls below 65%
+          Microsoft releases native Active Directory forest recovery in Entra ID or Windows Server Update with
+          equivalent forensically clean restore capability
+        - ≥ 2 publicly named Semperis enterprise customers cite ADFR displacement in any 12-month window
+        - Retention moat thesis fails; bear case probability rises above 60%; ADFR premium revenue at risk
+        - Exit or hedge position; re-evaluate Entra ID product revenue contribution before any continued hold
+      - - Key-person departure (CEO or CTO)
+        - CEO Mickey Bresman or CTO Guy Teverovsky announces departure without planned 6-month successor overlap
+        - Unplanned departure announced within 24 months of initial investment; no successor named within 90 days
+        - Investor confidence shock; IPO delay likely; R&D continuity risk given CTO concentration of AD security IP
         - >-
-          Inconsistent with software SaaS positioning; indicates services or hardware diluting economics; compresses
-          achievable exit multiple
+          Place hold on follow-on investment; await succession clarity and new leadership 180-day track record before
+          resuming
+      - - Regulatory enforcement action
         - >-
-          Reduce target valuation multiple to 6-8x ARR; reassess return scenario; request detailed cost structure
-          breakdown
-      - - Hercules Debt Covenant Breach or Stress
-        - Evidence of covenant breach, forced amendment, or accelerated repayment demand in Hercules Capital debt terms
+          CISA, BIS, or SEC formal investigation, notice of violation, or enforcement action issued against Semperis or
+          its Israel R&D operations
+        - Any formal written regulatory notice or announced investigation
         - >-
-          Signals financial stress or revenue underperformance; could trigger dilutive equity issuance or forced M&A at
-          unfavorable terms
+          Federal customer attrition; FedRAMP authorization review risk; reputation damage accelerates enterprise sales
+          cycle extension
+        - Initiate exit review within 30 days; convene legal counsel assessment before further capital commitment
+      - - Down-round or financing failure
         - >-
-          Immediate diligence escalation; assess runway and renegotiation options; potential for material equity
-          dilution at next event
-    notes: >
-      Thesis-break triggers are illustrative thresholds based on judgment about evidence that would materially weaken or
-      invalidate the investment thesis. Thresholds are not derived from Semperis management disclosure. Actual Hercules
-      Capital covenant thresholds are not publicly known.
+          Next Semperis equity round priced below $900M post-money valuation, or announced financing fails to close
+          within 90 days of announcement
+        - Confirmed term sheet below $900M or failed financing close
+        - >-
+          Signals operating underperformance vs. disclosed milestones; liquidation preference overhang likely impairs
+          common equity value
+        - Exit position immediately if confirmed; do not participate in down-round without full cap table restructuring
+    notes: >-
+      Trigger thresholds are set to detect material deterioration in the thesis drivers, not normal business volatility.
+      DSP renewal rate and ADFR displacement data are not publicly disclosed and must be obtained via management
+      disclosure in the diligence process or through investor reporting rights post-investment. Regulatory triggers
+      apply to both US (SEC, BIS) and Israeli-US dual-operation compliance events. All action implications assume a
+      minority investment position without board control; majority investors may have additional remedies.
     claimRefs:
-      - CV021
-      - CV024
-      - CV026
-      - CV027
-      - CV028
-      - CV031
-      - CV034
+      - CV016
+      - CV023
+      - CV032
+      - CV037
+      - CV038
   - id: TV006
     title: Final diligence asks table
+    enumeration: false
     columns:
       - Topic
       - Missing Evidence
       - Why It Matters
-      - Diligence Path
+      - Owner / Diligence Path
     rows:
-      - - Net Revenue Retention
-        - NRR has not been publicly disclosed by Semperis at any point
+      - - Net Revenue Retention (NRR) and Gross Revenue Retention (GRR)
+        - NRR and GRR not publicly disclosed for any period; no proxy available from public sources
         - >-
-          NRR above 120% validates land-and-expand dynamics and justifies premium multiple; NRR below 110% would
-          compress the achievable multiple significantly
-        - Request from management under NDA; compare against CyberArk and SentinelOne peer NRR benchmarks above 120%
-      - - Burn Rate and Cash Runway
-        - Monthly burn rate and cash runway are not publicly disclosed
+          Primary empirical test of the switching cost thesis; without NRR, the ADFR retention moat is asserted but
+          unverified; base case ARR growth assumes > 100% NRR
         - >-
-          Determines whether Semperis requires additional financing before IPO or M&A; Hercules debt obligations may
-          accelerate effective burn
+          Request directly from Semperis CFO in management meeting; require disclosure of trailing-4-quarter NRR and GRR
+          by product line (DSP vs. ADFR)
+      - - Customer Concentration and ARR Waterfall
+        - Top-10 customer ARR share and contract expiration schedule not publicly disclosed
         - >-
-          Request 24-month cash flow model; confirm Hercules repayment schedule and remaining runway under base-case ARR
-          growth assumptions
-      - - Gross Margin Profile
-        - Gross margin not disclosed; enterprise SaaS peers range from 70-85% gross margin
+          Customer concentration above 30% in top-10 creates material churn risk in any 12-month window; contract
+          renewal schedule affects IPO revenue predictability narrative
         - >-
-          Gross margin below 70% would compress achievable revenue multiple and indicate services or hardware diluting
-          software economics
+          Request ARR concentration waterfall, contract expiration schedule, and top-10 customer industry and renewal
+          status from Semperis finance team
+      - - Cap Table, Preference Stack, and Debt Covenants
         - >-
-          Request GAAP income statement or management accounts under NDA; decompose software versus professional
-          services revenue
-      - - FedRAMP Authorization Status
-        - No public disclosure of FedRAMP Moderate or High authorization progress or timeline
+          Insight Partners Series C liquidation preference terms and Hercules Capital debt covenant structure not
+          publicly disclosed
         - >-
-          Government and DoD segment represents 15-20% of enterprise identity security spending; FedRAMP authorization
-          unlocks this TAM materially
+          Preference overhang may materially reduce common equity value at exit; Hercules Capital covenants may restrict
+          operational flexibility and trigger forced events
         - >-
-          Confirm with Semperis management; check fedramp.gov marketplace for listing; assess cost and timeline if
-          authorization not yet achieved
-      - - Full Cap Table and Liquidation Preferences
-        - Full cap table from seed through June 2024 including liquidation preferences is not public
+          Request from Insight Partners lead partner; review Hercules Capital loan agreement, including financial
+          maintenance covenants, minimum liquidity thresholds, and cross-default provisions
+      - - FedRAMP High Authorization Roadmap
+        - No public disclosure of FedRAMP High authorization timeline, sponsoring agency, or progress milestones
         - >-
-          Liquidation preferences from $200M Series C and $125M growth round could significantly affect equity waterfall
-          at various exit scenarios
+          FedRAMP High unlocks DoD and Intelligence Community opportunity estimated at $50–100M incremental ARR; absence
+          of a confirmed roadmap suggests this revenue is speculative over the investment horizon
         - >-
-          Request cap table under NDA; model equity waterfall at $750M, $1B, $1.5B, and $2B exit scenarios to assess
-          actual investor return
-    notes: >
-      Diligence asks are prioritized by investment-decision relevance. NRR and gross margin are most critical and should
-      be resolved first. FedRAMP status is an upside catalyst rather than a downside risk. Cap table diligence is
-      standard practice and should run in parallel with financial diligence.
+          Request FedRAMP High authorization roadmap, confirmed sponsoring agency, and estimated authorization timeline
+          from Semperis CISO and federal sales team
+      - - Export Control and EAR Compliance Program
+        - >-
+          No public disclosure of EAR Part 730 compliance posture, license exception coverage, or active compliance
+          program for Israel-developed cryptographic software
+        - >-
+          Semperis's Israel R&D developing cryptographic AD security software for US federal customers creates material
+          EAR compliance obligation; non-compliance fines up to $1M per violation and debarment risk
+        - >-
+          Request export control compliance documentation from Semperis General Counsel; confirm active classification
+          reviews, license exception elections, and ITAR assessment for classified federal data processing
+    notes: >-
+      All five diligence asks represent information that is structurally unavailable from public sources due to
+      Semperis's private company status. Items 1 (NRR) and 2 (concentration) are investment-blocking asks: absence of
+      satisfactory responses should pause commitment. Items 3 (cap table), 4 (FedRAMP High), and 5 (export control) are
+      material risk qualifiers that affect terms and structuring but do not independently block commitment if adequately
+      mitigated. Negotiated information rights post-investment should include quarterly ARR and NRR reporting, FedRAMP
+      milestone reporting, and notification of any regulatory inquiry within 10 business days.
     claimRefs:
+      - CV028
       - CV030
-      - CV031
-      - CV032
-      - CV033
-      - CV034
+      - CV039
+      - CV042
+      - CV044
 figures:
   - id: FO001
     title: Company Milestone Timeline
@@ -5818,408 +5965,495 @@ figures:
     type: matrix
     layout: wide
     summary: >-
-      Two-dimensional risk heatmap mapping likelihood (rows, increasing downward) against impact (columns, increasing
-      rightward) for Semperis's principal risks as of May 2026. Cell values name the specific risk within each
-      likelihood-impact bucket. Blank cells indicate no primary risk assessed at that intersection.
+      Risk heatmap plotting eight primary Semperis risks across likelihood and severity dimensions. Microsoft MDI
+      bundling is the highest-likelihood risk and sits at Critical severity under medium and high likelihood scenarios.
+      Security vendor compromise sits at Critical even at low likelihood due to catastrophic impact magnitude.
+      Regulatory risks (SEC disclosure, FedRAMP lapse) cluster at High severity under medium likelihood. Israel
+      geopolitical risk escalates to Critical at high likelihood. AD market obsolescence is the longest-horizon risk
+      beginning at Low severity under low likelihood reflecting the 5-10 year transition timeline.
     data:
       columns:
-        - Low Impact
-        - Medium Impact
-        - High Impact
-        - Critical Impact
+        - Low Likelihood
+        - Medium Likelihood
+        - High Likelihood
       rows:
-        - label: Low Likelihood
+        - label: Microsoft MDI Bundling
           values:
             - ''
-            - Patent / IP litigation
-            - FedRAMP High authorization gap
+            - Critical
+            - Critical
+        - label: Security Vendor Compromise
+          values:
+            - High
+            - Critical
+            - Critical
+        - label: SEC Disclosure Rules
+          values:
+            - Medium
+            - High
+            - High
+        - label: EAR/ITAR Export Control
+          values:
+            - Medium
+            - High
             - ''
-        - label: Medium Likelihood
+        - label: FedRAMP Authorization Lapse
+          values:
+            - Medium
+            - High
+            - High
+        - label: Israel Geopolitical Risk
           values:
             - ''
-            - Customer ARR concentration
-            - GDPR data-processor enforcement
-            - Semperis platform breach
-        - label: High Likelihood
+            - High
+            - Critical
+        - label: Key-Person Departure
           values:
+            - Medium
+            - High
             - ''
-            - EAR export control compliance
-            - Israel R&D geopolitical disruption
-            - Microsoft API breaking change
-        - label: Very High Likelihood
+        - label: AD Market Obsolescence
           values:
-            - ''
-            - Talent acquisition risk
-            - Microsoft MDI bundling commoditization
-            - ''
+            - Low
+            - Medium
+            - High
     approximationNotes: >-
-      Likelihood and impact ratings are qualitative ordinal assessments derived from regulatory text, public
-      disclosures, industry precedents, and cybersecurity incident data. Ratings reflect pre-mitigation exposure.
-      Microsoft API dependency is rated Very High likelihood in the long run because Microsoft has historical pattern of
-      API changes, but the immediate short-term (12-month) probability is Medium.
+      Likelihood and severity assignments represent diligence-team judgment informed by public evidence. Microsoft MDI
+      bundling likelihood is set to Medium-High based on observed M365 E5 penetration in Semperis's customer segment and
+      analyst market data. Israel geopolitical risk likelihood is set to Medium based on ongoing regional conflict as of
+      May 2026. All severity ratings bias toward higher severity under uncertainty.
     claimRefs:
-      - CR001
-      - CR003
-      - CR007
-      - CR009
       - CR011
-      - CR013
-      - CR018
-      - CR023
+      - CR014
+      - CR017
+      - CR032
+      - CR035
   - id: FR002
     title: Risk transmission map
     type: dag
     layout: wide
-    description: >-
-      Directed acyclic graph showing how five primary risk events propagate through operational and financial channels
-      to produce revenue, customer, and valuation impact at Semperis. Each risk node is an independent initiating event;
-      process nodes show intermediate impact mechanisms; output nodes show financial and strategic consequences.
+    summary: >-
+      Directed acyclic graph showing how primary risk events propagate to investment-relevant outcomes at Semperis.
+      Microsoft MDI bundling and FedRAMP authorization lapse both flow through ARR compression to eventual valuation
+      multiple compression. Semperis software compromise flows through customer trust erosion to valuation impact and
+      IPO disruption. Control nodes partially intercept specific risk vectors. All paths ultimately converge on IPO
+      delay or disruption as the investor exit risk outcome.
     data:
       nodes:
-        - id: r1
-          label: Microsoft Bundles Native AD Recovery
-          type: input
-          detail: Microsoft ships ADFR-equivalent in Azure Backup or Windows Server at zero incremental cost
-        - id: r2
-          label: Semperis Platform Breach
-          type: input
-          detail: Security breach exposing Semperis infrastructure or customer AD backup data
-        - id: r3
-          label: Israel R&D Disruption (>25% headcount)
-          type: input
-          detail: IDF mobilization, conflict escalation, or talent exodus reduces engineering capacity
-        - id: r4
-          label: CEO / Co-Founder Departure
-          type: input
-          detail: Unplanned departure of Mickey Bresman or founding AD domain experts
-        - id: r5
-          label: Hercules Covenant Breach
-          type: input
-          detail: ARR deceleration triggers minimum-ARR or leverage covenant violation
-        - id: r6
-          label: Customer Win Rate Decline
-          type: process
-          detail: New logo wins drop; competitive losses to MDI increase in greenfield accounts
-        - id: r7
-          label: ARR Growth Deceleration
-          type: process
-          detail: Net new ARR drops below investor expectations set at $100M+ ARR milestone
-        - id: r8
-          label: Engineering / Product Roadmap Delay
-          type: process
-          detail: Entra ID and cloud ITDR expansion delayed; competitive gap to CrowdStrike widens
-        - id: r9
-          label: Revenue Impact
-          type: output
-          detail: Direct ARR shortfall; NRR compression below 100%; customer churn acceleration
-        - id: r10
-          label: Valuation / IPO Compression
-          type: output
-          detail: Multiple compression; IPO pricing impaired; down-round risk if private
+        - id: risk-microsoft
+          label: Microsoft MDI Bundling
+          detail: >-
+            Free MDI in M365 E5 displaces DSP at renewal; most probable ARR compression vector for Semperis enterprise
+            segment
+          type: risk
+        - id: risk-security-breach
+          label: Semperis Software Compromise
+          detail: >-
+            Agent deployed on domain controllers; supply-chain compromise would enable catastrophic customer AD access
+            and produce regulatory liability and brand destruction
+          type: risk
+        - id: risk-export-control
+          label: EAR/ITAR Export Exposure
+          detail: >-
+            Israel-US dual operations; cybersecurity dual-use technology classification; US federal customer base
+            creates ITAR sensitivity for classified data handling scenarios
+          type: risk
+        - id: risk-fedramp
+          label: FedRAMP Authorization Lapse
+          detail: >-
+            Loss of FedRAMP Moderate authorization eliminates civilian federal procurement eligibility; government ARR
+            at risk; High authorization gap limits DoD and IC revenue
+          type: risk
+        - id: risk-israel
+          label: Israel R&D Geopolitical Risk
+          detail: >-
+            Majority engineering concentrated in Tel Aviv; sustained conflict-driven disruption impairs product delivery
+            velocity and roadmap execution for all Semperis products
+          type: risk
+        - id: impact-arr
+          label: ARR Compression
+          detail: >-
+            Renewal losses from Microsoft bundling, FedRAMP lapse, or platform consolidation reduce topline growth rate
+            below investor expectations and IPO comparables
+          type: impact
+        - id: impact-trust
+          label: Customer Trust Erosion
+          detail: >-
+            Security vendor breach or regulatory enforcement action damages brand credibility in enterprise identity
+            security market; customer churn accelerates on renewals
+          type: impact
+        - id: impact-valuation
+          label: Valuation Multiple Compression
+          detail: >-
+            Revenue growth deceleration and trust erosion compress ITDR multiples toward commodity infrastructure
+            levels; IPO pricing window narrows
+          type: impact
+        - id: impact-ipo
+          label: IPO Delay or Disruption
+          detail: >-
+            Material regulatory action, breach, revenue miss, or R&D disruption forces IPO delay or down-round; Insight
+            Partners exit pressure increases with each delay cycle
+          type: impact
+        - id: control-fedramp
+          label: FedRAMP Compliance Controls
+          detail: >-
+            Existing Moderate authorization actively maintained; High authorization process to be initiated; annual
+            assessment calendar managed by dedicated compliance team
+          type: control
+        - id: control-sdlc
+          label: Secure SDLC and Code Signing
+          detail: >-
+            SOC 2 Type II attestation; code signing pipeline; security trust center program; partially intercepts
+            supply-chain compromise risk vector but cannot eliminate it
+          type: control
       edges:
-        - from: r1
-          to: r6
-          label: ADFR moat eliminated; DSP commoditized by free bundled alternative
-        - from: r2
-          to: r6
-          label: Customer trust destroyed; enterprise accounts initiate emergency vendor review
-        - from: r3
-          to: r8
-          label: Engineering capacity reduced; roadmap timeline extended
-        - from: r4
-          to: r6
-          label: Pipeline and partnership relationships impaired without CEO continuity
-        - from: r5
-          to: r7
-          label: Covenant acceleration limits operating spend; growth investment constrained
-        - from: r6
-          to: r7
-          label: New logo wins decline; net new ARR misses guidance
-        - from: r8
-          to: r7
-          label: Product delays allow CrowdStrike and Microsoft to close capability gap
-        - from: r7
-          to: r9
-          label: Revenue misses investor expectations; NRR compresses
-        - from: r9
-          to: r10
-          label: Revenue shortfall translates to multiple compression and IPO headwind
+        - from: risk-microsoft
+          to: impact-arr
+          label: MDI displaces DSP at renewal
+        - from: risk-fedramp
+          to: impact-arr
+          label: FedRAMP lapse eliminates federal revenue
+        - from: risk-israel
+          to: impact-arr
+          label: R&D disruption delays product delivery
+        - from: risk-security-breach
+          to: impact-trust
+          label: Breach destroys brand credibility
+        - from: risk-export-control
+          to: impact-trust
+          label: Enforcement action damages customer confidence
+        - from: impact-arr
+          to: impact-valuation
+          label: Growth deceleration compresses multiples
+        - from: impact-trust
+          to: impact-valuation
+          label: Trust erosion reduces pricing power
+        - from: impact-valuation
+          to: impact-ipo
+          label: Multiple compression narrows IPO window
+        - from: control-fedramp
+          to: risk-fedramp
+          label: Compliance controls reduce lapse risk
+        - from: control-sdlc
+          to: risk-security-breach
+          label: Secure SDLC partially intercepts compromise
+    approximationNotes: >-
+      DAG edges are implied by causal logic documented in section prose; exact causal weights are judgment-based. All
+      five primary risk nodes can independently trigger valuation multiple compression; the most likely transmission
+      path is Microsoft MDI to ARR compression to valuation compression to IPO delay.
     claimRefs:
-      - CR007
-      - CR011
-      - CR013
-      - CR017
-      - CR021
-      - CR023
-      - CR033
-      - CR034
-      - CR035
+      - CR012
+      - CR016
+      - CR024
+      - CR039
   - id: FR003
     title: Dependency map
     type: dag
     layout: wide
-    description: >-
-      Map of Semperis's critical external dependencies showing counterparty relationships and the internal capabilities
-      each dependency enables. Each input node is an external counterparty or platform; process nodes show internal
-      capabilities dependent on the input; the output node is Semperis ARR.
+    summary: >-
+      Dependency map showing critical inputs to the Semperis platform and the customer segments it serves. Microsoft
+      Active Directory is the foundational platform dependency. Investor dependencies (Insight Partners, J.P. Morgan and
+      Hercules Capital) govern capital availability and exit timing. The FedRAMP Authorization Body controls access to
+      the US federal customer segment. The Israel R&D Center provides engineering capacity. OEM partner Cohesity
+      provides amplified distribution to data infrastructure buyers.
     data:
       nodes:
-        - id: d1
-          label: Microsoft AD / Entra ID Platform
-          type: input
-          detail: MS-DRSR, LDAP/S, VSS, Entra ID APIs; all core product capabilities depend on these APIs
-        - id: d2
+        - id: dep-microsoft
+          label: Microsoft Active Directory
+          detail: >-
+            Core market exists because AD dominates enterprise authentication; Microsoft controls the platform Semperis
+            depends on for product relevance; Entra ID migration trajectory is the long-term existential dependency risk
+          type: dependency
+        - id: dep-insight
+          label: Insight Partners
+          detail: >-
+            Primary financial backer across multiple funding rounds; board influence over capital allocation, executive
+            hiring, and exit timing; LP dynamics affect secondary market pressure
+          type: dependency
+        - id: dep-jpmorgan
           label: J.P. Morgan / Hercules Capital
-          type: input
-          detail: $125M growth financing; funds headcount expansion, sales investment, and infrastructure
-        - id: d3
-          label: VAR / MSSP Channel Partners
-          type: input
-          detail: Top VAR partners drive enterprise pipeline qualification and deal sourcing
-        - id: d4
-          label: Israel R&D Engineering Center
-          type: input
-          detail: ~150 engineers in Tel Aviv; primary engineering resource for DSP, ADFR, Forest Druid
-        - id: d5
-          label: AWS / Azure Cloud Infrastructure
-          type: input
-          detail: Cloud hosting for SaaS DSP platform, backup storage, and customer-facing services
-        - id: d6
-          label: DSP + ADFR Product Capability
+          detail: >-
+            $125M 2024 growth round lead investors; debt component from Hercules Capital includes financial maintenance
+            covenants; specific covenant terms not publicly disclosed
+          type: dependency
+        - id: dep-cohesity
+          label: Cohesity OEM Partnership
+          detail: >-
+            Cohesity Identity Resilience powered by Semperis technology; co-marketed data and identity resilience
+            solution amplifies distribution to Cohesity enterprise customer base
+          type: dependency
+        - id: dep-fedramp-body
+          label: FedRAMP Authorization Body
+          detail: >-
+            FedRAMP Moderate authorization governs federal civilian procurement eligibility; annual re-assessment
+            required to maintain status; High authorization required for DoD and IC segments
+          type: dependency
+        - id: dep-israel-rnd
+          label: Israel R&D Center
+          detail: >-
+            Majority of core engineering concentrated in Tel Aviv; delivers DSP, ADFR, Purple Knight, and Forest Druid
+            product development; geopolitical risk affects delivery continuity
+          type: dependency
+        - id: semperis-core
+          label: Semperis Platform
+          detail: >-
+            DSP, ADFR, Purple Knight, and Forest Druid delivered to 1,000+ enterprise customers; multi-product suite
+            with increasing cross-sell penetration
           type: process
-          detail: Core identity threat detection and forest recovery product capabilities
-        - id: d7
-          label: Go-to-Market Revenue Engine
-          type: process
-          detail: Direct enterprise sales + channel pipeline; targets F500 and government accounts
-        - id: d8
-          label: Semperis ARR (>$100M, 2025)
-          type: output
-          detail: Total annual recurring revenue base; primary valuation driver for IPO
+        - id: customer-federal
+          label: US Federal Agencies
+          detail: >-
+            FedRAMP-dependent government customer segment; estimated 10-15% of ARR; CISA-aligned use cases for critical
+            infrastructure protection
+          type: actor
+        - id: customer-enterprise
+          label: Fortune 500 Enterprise
+          detail: >-
+            Primary revenue base; 1,000+ enterprise customers; DSP plus ADFR multi-product expansion is the primary ARR
+            growth motion
+          type: actor
       edges:
-        - from: d1
-          to: d6
-          label: AD APIs power all DSP change detection and ADFR backup functionality
-        - from: d4
-          to: d6
-          label: R&D engineers build and maintain DSP, ADFR, and Forest Druid products
-        - from: d5
-          to: d6
-          label: Cloud infrastructure hosts SaaS DSP platform and customer backup storage
-        - from: d2
-          to: d7
-          label: Growth financing funds headcount expansion and enterprise sales capacity
-        - from: d3
-          to: d7
-          label: Channel partners qualify and source enterprise pipeline opportunities
-        - from: d6
-          to: d7
-          label: Product capabilities enable competitive win rate and enterprise deal closure
-        - from: d7
-          to: d8
-          label: Sales execution converts pipeline to ARR; NRR expansion from upsell
+        - from: dep-microsoft
+          to: semperis-core
+          label: AD platform provides product market
+        - from: dep-insight
+          to: semperis-core
+          label: Equity capital and governance
+        - from: dep-jpmorgan
+          to: semperis-core
+          label: Debt financing and IPO alignment
+        - from: dep-cohesity
+          to: semperis-core
+          label: OEM distribution amplification
+        - from: dep-fedramp-body
+          to: customer-federal
+          label: Authorization gates federal procurement
+        - from: dep-israel-rnd
+          to: semperis-core
+          label: Engineering capacity and product delivery
+        - from: semperis-core
+          to: customer-federal
+          label: Platform delivered to federal agencies
+        - from: semperis-core
+          to: customer-enterprise
+          label: Platform delivered to enterprise customers
+    approximationNotes: >-
+      Dependency types reflect publicly observable relationships from press releases, FedRAMP marketplace, and product
+      documentation. Financial covenant specifics for Hercules Capital are estimated as typical for BDC portfolio
+      company loans; actual terms require due diligence access to confirm.
     claimRefs:
-      - CR017
-      - CR019
-      - CR020
       - CR022
+      - CR025
+      - CR027
       - CR028
+      - CR029
   - id: FV001
     title: Recommendation logic
     type: flow
     layout: standard
     summary: >-
-      Decision chain from market signal, product proof, risk assessment, and valuation context to the final
-      research-more investment recommendation for Semperis as of May 2026 based on public evidence.
+      Decision chain from Semperis's verified scale and moat strength through risk assessment and valuation check to the
+      BUY recommendation with protective structuring requirements. Each node represents a distinct diligence gate that
+      must pass before proceeding to the next decision stage. The flow confirms that despite the Microsoft bundling
+      risk, the combination of ADFR switching costs, FedRAMP credibility, and entry price discipline supports a
+      conditional BUY.
     data:
       nodes:
-        - id: n1
-          label: Market Signal
+        - id: scale-proof
+          label: Scale & Proof
           detail: >-
-            ITDR market $16B+ growing at 25-30% CAGR; Semperis leads niche with durable AD-specific moat and no direct
-            enterprise-grade peer
-          type: input
-        - id: n2
-          label: Product and Proof
+            $100M+ ARR confirmed January 2025; 1,000+ enterprise customers; Fortune 500 named accounts (AA, ADP, Lenovo,
+            United, Starbucks) — scale threshold confirmed at unicorn-class level
+          type: process
+        - id: moat-strength
+          label: Moat Durability
           detail: >-
-            $100M+ ARR; 1,000+ enterprise customers; DSP, ADFR, Purple Knight, Forest Druid differentiation; no public
-            audit of financials
-          type: input
-        - id: n3
+            ADFR switching costs embedded in DR runbooks; Purple Knight 65K+ community users create organic pipeline
+            moat; FedRAMP Moderate barrier to federal competitor entry
+          type: process
+        - id: market-position
+          label: Market Position
+          detail: >-
+            Only pure-play ITDR vendor with detection (DSP) + recovery (ADFR); KuppingerCole Leader 2025; $6–8B TAM
+            growing 25–30% CAGR; no directly comparable standalone pure-play at enterprise scale
+          type: process
+        - id: risk-assessment
           label: Risk Assessment
           detail: >-
-            Microsoft bundling threat medium; CrowdStrike platform consolidation risk present; burn rate and NRR
-            unknown; Israel R&D geopolitical exposure
-          type: input
-        - id: n4
-          label: Valuation Context
-          detail: >-
-            $1B+ valuation at $100M+ ARR implies approximately 10x ARR multiple; consistent with peer median for 20%+
-            growth cybersecurity SaaS in 2026
+            Microsoft MDI bundling is primary structural threat; ADFR DR integration partially mitigates; Israel R&D
+            geopolitical risk is real but manageable; NRR non-disclosure is the primary evidence gap
           type: process
-        - id: n5
-          label: Recommendation
+        - id: valuation-check
+          label: Valuation Check
           detail: >-
-            Research-more and conditional positive; proceed to due diligence on burn rate, NRR, gross margin,
-            competitive win rate, and FedRAMP authorization
-          type: output
-      edges:
-        - from: n1
-          to: n4
-          label: Market supports multiple
-        - from: n2
-          to: n4
-          label: Scale validates thesis
-        - from: n3
-          to: n4
-          label: Risks calibrate downside
-        - from: n4
-          to: n5
-          label: Evidence-weighted recommendation
-    approximationNotes: >
-      Recommendation is based on publicly available evidence as of May 2026. Private financial data including NRR, burn
-      rate, and gross margin are not available from public sources; resolution of these items would refine the
-      recommendation toward positive or negative depending on outcomes.
+            Base case $880M–$1.56B (8–12x ARR of $110–130M); 2024 growth round at $1B+ confirms floor; down from $1.4B
+            2022 peak reflecting 30–50% sector multiple compression
+          type: process
+        - id: recommendation
+          label: 'Recommendation: BUY'
+          detail: >-
+            Initiate at entry below $1.3B with protective structuring (NRR covenant, anti-dilution, downside
+            provisions); identity security is critical infrastructure investment theme with 18–36 month IPO exit window
+          type: process
+    approximationNotes: >-
+      Flow logic is an analytic construct synthesizing evidence from multiple sources; individual node assertions are
+      supported by claims CV001–CV044. Node sequence reflects diligence priority order, not causal temporal sequence.
+      The BUY recommendation is conditional on pre-investment satisfaction of the five diligence asks in TV006.
     claimRefs:
-      - CV040
+      - CV001
+      - CV012
+      - CV014
       - CV026
-      - CV021
-      - CV024
+      - CV029
+      - CV040
   - id: FV002
     title: Valuation sensitivity
     type: bar
     layout: standard
     summary: >-
-      Implied Semperis valuation in millions of dollars across bear, base, and bull scenarios and the public market IPO
-      window reference range, based on ARR multiples applied to $100M+ ARR base.
+      Implied enterprise value at eight ARR multiple scenarios applied to Semperis estimated ARR, ranging from the bear
+      floor (5x on $100M ARR = $500M EV) to the bull ceiling (18x on $150M ARR = $2.7B EV). The chart illustrates that
+      every 2–3x increase in ARR multiple adds $200–450M to EV at base ARR assumptions, confirming that multiple
+      selection — not just ARR growth — is the primary valuation lever at this stage.
     data:
       items:
-        - label: 'Bear: 6x ARR'
-          value: 600
-          detail: >-
-            If ARR growth decelerates to below 15% annually; peer multiple compression to 2022-2023 correction levels
-            materializes
-        - label: 'Base: 10x ARR'
-          value: 1000
-          detail: >-
-            Current implied valuation at June 2024 round; consistent with high-growth SaaS cybersecurity peer median in
-            2025-2026
-        - label: 'Bull: 15x ARR'
-          value: 1500
-          detail: >-
-            If ARR grows to $150M+ with NRR above 120% and IPO premium; consistent with CyberArk and Rubrik IPO
-            reference range
-        - label: 'IPO Window: 8-12x ARR midpoint'
-          value: 1000
-          detail: >-
-            Public market comparable range for cybersecurity SaaS at IPO in 2024-2026; Rubrik priced at 12x ARR; Varonis
-            trades at approximately 9x
-    approximationNotes: >
-      Valuations apply ARR multiples to $100M+ ARR baseline from January 2025 company announcement. Actual ARR at time
-      of exit will differ from the current baseline; multiples reflect 2025-2026 public market conditions and may
-      compress or expand depending on conditions at IPO or M&A.
+        - label: Bear 5x ARR ($100M base)
+          value: 500
+        - label: Bear 7x ARR ($100M base)
+          value: 700
+        - label: Base 8x ARR ($120M est.)
+          value: 960
+        - label: Base 10x ARR ($120M est.)
+          value: 1200
+        - label: Base 12x ARR ($120M est.)
+          value: 1440
+        - label: Bull 15x ARR ($150M est.)
+          value: 2250
+        - label: Bull 18x ARR ($150M est.)
+          value: 2700
+        - label: CrowdStrike public analog 17x
+          value: 2040
+    approximationNotes: >-
+      ARR figures are estimates: $100M is the confirmed floor (January 2025 announcement); $120M is the base estimate
+      for early 2026 based on 20–30% growth applied to confirmed floor; $150M is the bull estimate based on 40–60%
+      growth YoY. Multiples are derived from comparable set (TV004). The CrowdStrike analog applies CrowdStrike's
+      approximate 17x forward multiple to Semperis $120M ARR as an illustrative ceiling. All values are in USD millions.
     claimRefs:
-      - CV025
-      - CV026
-      - CV027
-      - CV038
+      - CV017
+      - CV020
+      - CV021
+      - CV022
+      - CV036
+      - CV041
   - id: FV003
     title: Valuation / return range
     type: range
     layout: standard
     summary: >-
-      Low-to-high valuation ranges for Semperis across current, bear, and bull scenarios plus the implied 5-year return
-      multiple range from the June 2024 $1B+ unicorn entry valuation.
+      Enterprise value ranges across six reference points spanning Semperis bear scenario, base scenario, bull scenario,
+      the 2022 Series C valuation anchor, the June 2024 growth round floor, and the Ping Identity strategic M&A
+      comparable. The chart confirms that entry below $1.3B captures meaningful upside to base and bull scenarios while
+      providing buffer to the bear floor of $400–700M.
     data:
       items:
-        - label: Current Valuation ($M)
-          low: 900
-          high: 1200
-          detail: >-
-            Company-disclosed $1B+ unicorn status June 2024; range reflects uncertainty around exact post-money
-            valuation and debt versus equity split within $125M
-        - label: Bear Case Valuation ($M)
-          low: 500
-          high: 750
-          detail: >-
-            6-7.5x ARR; assumes market multiple compression, ARR growth deceleration below 15%, and platform competitive
-            threat materializes in 2026-2028
-        - label: Bull Case Valuation ($M)
+        - label: Bear scenario EV range
+          low: 400
+          high: 700
+        - label: Base scenario EV range
+          low: 880
+          high: 1560
+        - label: Bull scenario EV range
+          low: 1800
+          high: 3200
+        - label: 2022 Series C valuation anchor
           low: 1400
-          high: 2000
-          detail: >-
-            12-16x ARR; assumes strong NRR above 120%, IPO premium, FedRAMP authorization achieved, and 25-30% ARR
-            growth sustained through 2027-2028
-        - label: Return Multiple (5-Year)
-          low: 1.2
-          high: 4
-          detail: >-
-            Bear 0.6-0.75x down-round; base 1.3-1.5x modest positive; bull 1.5-2.0x at IPO; 4.0x represents exceptional
-            bull-within-bull extended scenario
-    approximationNotes: >
-      Return multiples are gross returns from the June 2024 unicorn entry valuation and do not account for dilution from
-      future financing rounds, option pool expansion, or Hercules Capital debt obligations and warrants. Actual net
-      returns to investors will be lower due to dilution and preference waterfall effects at exit.
+          high: 1400
+        - label: 2024 growth round anchor
+          low: 1000
+          high: 1200
+        - label: Identity sector M&A comp (Ping Identity)
+          low: 1500
+          high: 3000
+    approximationNotes: >-
+      All ranges are estimates derived from ARR multiple sensitivity analysis (TV003) and comparable transaction values
+      (TV004). The 2022 Series C anchor is the confirmed post-money valuation of $1.4B per SEC Form D and GlobeNewsWire
+      reporting. The 2024 growth round anchor is publicly reported as "$1B+" — low end is $1.0B, high end of $1.2B is an
+      estimate reflecting typical growth round valuation step-up from prior round. Ping Identity comparable range
+      represents Thales acquisition price ($2.8B) at low end and implied bull scenario for an equivalent company at
+      comparable ITDR market multiples. All values in USD millions.
     claimRefs:
-      - CV025
-      - CV026
-      - CV027
-      - CV035
+      - CV006
+      - CV020
+      - CV021
+      - CV022
+      - CV033
+      - CV038
   - id: FV004
     title: Investment KPIs
     type: kpi
     layout: standard
     summary: >-
-      Investment committee scorecard for Semperis across seven key dimensions scored on a 1-5 scale based on publicly
-      available evidence as of May 2026. Score of 3 indicates adequate evidence or neutral assessment; scores of 4-5
-      indicate strength; scores of 1-2 indicate weakness or risk.
+      Investment committee scoring across seven dimensions — market position, customer proof, moat strength, unit
+      economics, primary risk, valuation stance, and evidence quality — provides an IC-ready snapshot of Semperis
+      investment readiness. Strengths dominate at market, proof, and moat; unit economics and evidence quality are the
+      gap dimensions that diligence asks must resolve before commitment.
     data:
-      items:
-        - label: Market Opportunity
-          value: 4/5
+      nodes:
+        - id: kpi-market
+          label: Market Position
           detail: >-
-            ITDR market $16B+ in 2025 growing at 25-30% CAGR; strong TAM expansion driven by rising AD attack surface
-            and regulatory mandates
-        - label: Customer Proof
-          value: 4/5
+            Only pure-play ITDR with detection + recovery; $6–8B TAM growing 25–30% CAGR; FedRAMP Moderate;
+            KuppingerCole Leader 2025; Gartner ITDR recognition
+          type: strength
+        - id: kpi-proof
+          label: Customer Proof
           detail: >-
-            1,000+ enterprise customers; named Fortune 500 logos in financial services, healthcare, and aviation; $100M+
-            ARR milestone confirmed January 2025
-        - label: Competitive Moat
-          value: 3/5
+            1,000+ enterprise customers; Fortune 500 named accounts confirmed; $100M ARR milestone crossed January 2025;
+            confirmed US federal customer base
+          type: strength
+        - id: kpi-moat
+          label: Moat Strength
           detail: >-
-            AD-specific depth is durable short-term; Microsoft MDI bundling and CrowdStrike platform consolidation
-            reduce long-term moat confidence meaningfully
-        - label: Financial Quality
-          value: 3/5
+            ADFR DR runbook switching costs; Purple Knight 65K+ community creates organic enterprise pipeline; FedRAMP
+            Moderate barrier to federal competitor entry; 3–5 year replacement cycle in regulated verticals
+          type: strength
+        - id: kpi-economics
+          label: Unit Economics
           detail: >-
-            ARR disclosed and growing; burn rate, NRR, and gross margin are opaque; SaaS model assumed but private
-            financial data is severely limited
-        - label: Risk Profile
-          value: 3/5
+            ARR ~$100–120M estimated; growth 40–60% YoY estimated; NRR not disclosed (key gap); gross margin estimated >
+            70% (SaaS comparable) but unconfirmed; burn rate unknown
+          type: risk
+        - id: kpi-risk
+          label: Primary Risk
           detail: >-
-            No known litigation or regulatory investigation; Hercules debt covenants add operational risk; Israel R&D
-            geopolitical exposure is manageable but present
-        - label: Valuation Attractiveness
-          value: 3/5
+            Microsoft MDI bundled in M365 E5 creates zero-cost DSP alternative; AD market obsolescence on 5–10 year
+            cloud migration horizon; Israel R&D geopolitical concentration; Hercules Capital debt covenants
+          type: risk
+        - id: kpi-valuation
+          label: Valuation Stance
           detail: >-
-            10x ARR is fair at 20%+ growth; peer median supports current mark; at-risk if growth decelerates
-            significantly or multiples compress
-        - label: Evidence Quality
-          value: 3/5
+            Fair value $880M–$1.56B (base 8–12x ARR); last round at $1.0B+ June 2024; entry discipline critical at or
+            below $1.3B; down from $1.4B 2022 peak on sector multiple compression
+          type: neutral
+        - id: kpi-evidence
+          label: Evidence Quality
           detail: >-
-            Strong official and news evidence confirms scale and funding; no audited financials; NRR and gross margin
-            opaque; recommendation is evidence-limited
-    approximationNotes: >
-      KPI scores are qualitative assessments based on publicly available evidence as of May 2026. Scores for financial
-      quality and evidence quality would improve materially upon receipt of audited financials, NRR disclosure, and
-      gross margin data under NDA from Semperis management.
+            Medium — $100M ARR confirmed, named Fortune 500 customers confirmed; NRR not disclosed, gross margin not
+            disclosed, cap table opaque, export control posture unknown
+          type: neutral
+    approximationNotes: >-
+      Strength / risk / neutral ratings are analytic judgments based on the totality of public evidence; they do not
+      represent numerical scores. Unit economics node is rated risk not because the economics are definitively poor, but
+      because absence of NRR and margin data makes independent verification impossible from public evidence. Valuation
+      stance reflects base case range only; bull and bear case ranges are in TV003 and FV003.
     claimRefs:
-      - CV013
-      - CV014
-      - CV020
-      - CV024
+      - CV003
+      - CV004
+      - CV005
+      - CV019
       - CV026
+      - CV028
+      - CV036
       - CV039
 appendices: []
 bibliography:
