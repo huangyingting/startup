@@ -504,6 +504,7 @@ figures:
       - CO033
       - CO037
       - CO035
+      - CO036
     sourceRefs:
       - SO004
       - SO006
@@ -789,7 +790,7 @@ localEvidence:
       type: comparison
       targets:
         - contentRequirements/0
-      status: partial
+      status: unresolved
 
     - id: QO030
       question: "Are there independent reports of ThreatLocker customer churn, platform outages, or dissatisfaction issues?"
@@ -1898,3 +1899,21 @@ localEvidence:
         on the lawsuit in private due diligence.
       relatedQuestionRefs:
         - QO028
+
+    - type: missing-source
+      severity: minor
+      topic: ztna-comparison
+      missingEvidence: >
+        No independent side-by-side functional comparison between ThreatLocker's ZTNA (launched March 2026)
+        and dedicated ZTNA vendors such as Zscaler Private Access, Cloudflare Access, or Palo Alto Prisma
+        Access is available from publicly accessible sources at research time.
+      whyItMatters: >
+        ThreatLocker's ZTNA is newly launched; understanding how its feature set, scalability, and
+        architectural approach compare to purpose-built ZTNA vendors is critical to evaluating platform
+        credibility and competitive positioning in the network access market.
+      diligencePath: >
+        Request ThreatLocker technical architecture documentation for ZTNA. Conduct primary interviews
+        with MSP partners who have evaluated or deployed the ZTNA module alongside Zscaler or Cloudflare.
+        Review analyst reports from Gartner and Forrester on ZTNA market that may include ThreatLocker.
+      relatedQuestionRefs:
+        - QO029

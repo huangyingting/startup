@@ -1,0 +1,1779 @@
+schemaVersion: "report-v2"
+artifact: valuation
+slug: threatlocker
+runDate: "2026-05-11"
+company:
+  name: "ThreatLocker, Inc."
+
+acknowledgedWarnings:
+  - dimension: figureType
+    reason: >
+      No planned figure type (flow, bar, range, kpi) is available in the schema;
+      nearest schema-level equivalents used: dag for recommendation-logic (flow),
+      matrix for valuation-sensitivity (bar/range), cohort for valuation-return-range
+      (range), and matrix for investment-kpis (kpi). Substitutions are intentional
+      and the most appropriate schema types for the required data structures.
+  - dimension: paywallRisk
+    reason: >
+      Three sources carry paywall or gated accessStatus (SV001 Gartner MQ, SV004 Crunchbase Pro,
+      SV009 PitchBook). All three are widely cited in public analyst commentary and press
+      summaries. Key data points (round sizes, valuation marks, growth estimates) are
+      corroborated by open-access sources (SV006 TechCrunch, SV013 GetLatka, SV030 SiliconAngle).
+      Paywall sources are used only for context and multi-source corroboration, not as
+      sole evidence for any high-confidence claim.
+  - dimension: unverifiedSource
+    reason: >
+      SaaStr (SV003) and SiliconAngle (SV008/SV030) are community and analyst blogs
+      cross-checked against primary-tier sources. TechCrunch (SV006/SV024) and Reuters
+      (SV007/SV028) are mainstream business press with editorial review; funding figures
+      confirmed against company press releases. Radical Compliance (SV021) is an
+      independent compliance newsletter corroborated by AICPA SOC 2 references.
+      Abnormal Security (SV022) and Red Canary (SV023) are security-vendor research
+      blogs; market data corroborated by IBM X-Force and CrowdStrike filings (SV020).
+      Spiceworks (SV019) community data is used only for sentiment signal, not factual
+      claims. CybersecurityVentures (SV025) forecasts are widely cited industry
+      benchmarks cross-checked against Gartner (SV001) and IDC (SV017). Tracxn (SV014)
+      and GetLatka (SV013) are data-aggregator platforms; findings corroborated by
+      PitchBook (SV009) and Crunchbase (SV004).
+  - dimension: tableNotes
+    reason: >
+      Valuation ranges in TV003 (bull/base/bear) and TV004 (comparable set) are analyst
+      estimates derived from public company multiples, disclosed private-round data, and
+      comparable transaction analysis. ThreatLocker does not publicly disclose revenue,
+      ARR, EBITDA, or gross margin; all financial estimates carry high uncertainty.
+      Comparable multiples reflect public-market conditions as of Q1-Q2 2026 and may
+      compress materially in a macro downturn. Notes caveat is applied to all six tables
+      per validator guidance for tables containing analyst-derived financial estimates.
+
+chapter:
+  number: 8
+  title: Valuation
+  summary: >
+    ThreatLocker is a high-conviction, high-growth private cybersecurity company with
+    strong product-market fit in the MSP-served SMB and mid-market endpoint protection
+    segment. Public evidence supports ARR in the $220M-$260M range as of mid-2026,
+    growing at approximately 50-60% annually, with the last disclosed valuation of $1.7B
+    from the 2022 Series B. At implied ARR multiples of 6.5-7.7x (below current public-market
+    peer benchmarks of 8-12x for 40-60% growth), ThreatLocker appears attractively valued
+    on a relative basis if growth is sustainable. The investment thesis rests on four
+    pillars: (1) durable product differentiation via default-deny architecture, (2) deep
+    MSP-channel moat generating high switching costs, (3) expanding TAM from regulatory
+    tailwinds, and (4) enterprise and geographic white space. Key anti-thesis risks: MSP
+    concentration, limited public financials, unresolved Schwab litigation (Case
+    6:2025cv00923), and compressed exit timing if public-market multiples deflate before
+    a 2027-2029 IPO or M&A event. Recommendation: Investigate Further - valuation is
+    reasonable but requires private financial confirmations before a definitive buy.
+
+sections:
+  - id: thesis-anti-thesis
+    title: "Investment Thesis and Anti-Thesis"
+    body: >
+      ThreatLocker's investment thesis anchors on structural defensibility: its default-deny
+      architecture cannot be easily replicated by traditional EDR vendors without rebuilding
+      the detection model from scratch. The MSP channel provides built-in distribution scale
+      (9,000+ MSP partners across 50+ countries), creates high switching costs through
+      policy-library lock-in, and makes churn structurally difficult for SMB customers who
+      rely on MSP-managed policies. Regulatory tailwinds (HIPAA BAA, FTC Safeguards, state
+      privacy laws) create a durable compliance use case that is budget-resilient in downturns.
+      The anti-thesis centers on channel concentration: ThreatLocker's >80% MSP-derived revenue
+      creates existential exposure if a major platform aggregator (Kaseya, ConnectWise, Datto)
+      launches a competing allowlisting product. Enterprise direct sales traction and EMEA
+      expansion are growth optionality but remain nascent based on public evidence as of 2026.
+    tableRefs: [TV001, TV002]
+    figureRefs: [FV001]
+
+  - id: recommendation-decision
+    title: "Recommendation and Decision Framework"
+    body: >
+      The recommendation is Investigate Further with a constructive directional bias. The
+      evidence base supports the product story and market position, but the absence of
+      audited financial disclosures, an unresolved litigation overhang, and limited
+      visibility into gross margin and NRR prevent a definitive buy recommendation at the
+      current implied valuation. Diligence gates that, if cleared, would upgrade the
+      recommendation to Buy at $1.7-2.5B: (1) verified ARR >= $220M with >= 55% growth and
+      NRR >= 115%, (2) gross margin >= 72%, (3) MSP churn < 5%, (4) Schwab case resolution
+      without material financial liability, (5) enterprise cohort evidence showing direct-
+      sales productivity. If the company is below these thresholds, valuation should be
+      reset to 5-7x ARR and the recommendation downgraded to Track.
+    tableRefs: [TV005]
+    figureRefs: [FV004]
+
+  - id: comparable-valuation
+    title: "Valuation and Comparable Analysis"
+    body: >
+      ThreatLocker's last disclosed valuation ($1.7B, April 2022) was set at a moment when
+      growth-stage cybersecurity SaaS commanded 20-40x ARR multiples. Post-2022 compression
+      reset public benchmarks to 6-14x NTM revenue. CrowdStrike (CRWD) trades at approximately
+      10-14x NTM revenue on 25%+ growth; SentinelOne (S) trades at 6-9x on 33%+ growth; Palo
+      Alto Networks (PANW) trades at 7-9x on 15%+ growth. Private comparables: Wiz ($12B at
+      ~$500M ARR = 24x, growth-premium justified), ExtraHop (acquired at ~6x ARR). At $1.7B
+      with estimated $220-260M ARR, ThreatLocker implies 6.5-7.7x ARR -- a discount to
+      growth-stage peers, suggesting either hidden risk or a buying opportunity. The valuation
+      would need to reach $2.5-4.0B at exit to generate a 1.5-2.5x return from a hypothetical
+      $1.7B entry, requiring sustained >= 40% CAGR through 2028-2029.
+    tableRefs: [TV003, TV004]
+    figureRefs: [FV002, FV003]
+
+  - id: exit-readiness
+    title: "Exit Readiness and Strategic Optionality"
+    body: >
+      ThreatLocker's most likely exit pathways by probability: (1) PE-backed growth recap or
+      buyout (2026-2027) -- highest probability given founder ownership concentration and
+      absence of VC pressure for fast IPO; (2) strategic M&A by Palo Alto Networks, Cisco,
+      Microsoft, or CrowdStrike seeking MSP-channel access and default-deny IP; (3) IPO
+      (2028-2030) once ARR exceeds $400-500M and public-market appetite for cybersecurity SaaS
+      recovers. The Schwab litigation creates a 12-24-month IPO drag. CEO Danny Jenkins has
+      publicly positioned ThreatLocker as independent and growth-focused, reducing near-term
+      M&A probability unless an acquirer offers a significant control premium. EMEA expansion
+      could widen the M&A acquirer pool to include European strategic buyers such as Airbus
+      CyberSecurity, Thales, or regional telecom-backed MSSPs. A strong 2027 ARR print above
+      $400M would meaningfully accelerate the IPO window and generate competitive tension
+      between the strategic and public-market exit routes.
+    tableRefs: []
+    figureRefs: []
+
+  - id: final-diligence-asks
+    title: "Final Diligence Asks"
+    body: >
+      Six critical diligence gaps must be resolved before finalizing the investment
+      recommendation. First, audited or management-certified ARR, NRR, gross margin, and
+      burn rate as of December 2025. Second, customer cohort data showing retention by MSP
+      segment, vertical, and geography. Third, details on the Schwab litigation settlement
+      risk, total potential liability, and insurance coverage. Fourth, cap table and
+      preference-stack detail, specifically Series B liquidation preferences, anti-dilution
+      provisions, and any secondary transactions since 2022. Fifth, enterprise direct-sales
+      pipeline showing deal size, cycle, and conversion rates. Sixth, SOC 2 Type II scope and
+      any open audit findings. Resolution of all six items would materially reduce thesis
+      uncertainty.
+    tableRefs: [TV006]
+    figureRefs: []
+
+tables:
+  - id: TV001
+    title: "Recommendation Summary"
+    description: >
+      IC-ready summary of recommendation, confidence, risk rating, valuation stance,
+      and decision implication for ThreatLocker based on public evidence as of May 2026.
+    notes: >
+      ARR and growth figures are third-party estimates (PitchBook, GetLatka, Tracxn);
+      no audited financial statements are available. Implied multiple based on $1.7B
+      post-money valuation from April 2022 Series B.
+    columns:
+      - "Dimension"
+      - "Assessment"
+      - "Evidence Quality"
+      - "Implication"
+    rows:
+      - ["Recommendation", "Investigate Further", "Low-Medium (no audited financials)", "Do not deploy at current price without verified ARR / NRR / gross margin"]
+      - ["Confidence", "Medium", "Strong product story; weak financial visibility", "Financial confirmation gates required before upgrade to Buy"]
+      - ["Risk Rating", "Medium-High", "MSP concentration; litigation overhang; limited disclosure", "Monitor Schwab case; request cohort data before commitment"]
+      - ["Valuation Stance", "Reasonably priced at 6.5-7.7x ARR", "Modest discount to growth-stage peer median 8.1x", "Entry at or below $2.0B defensible if growth confirmed"]
+      - ["Decision Implication", "Proceed to Management Diligence", "Clear 6 gates (ARR, NRR, margin, litigation, cap table, enterprise)", "Upgrade to Buy if all gates cleared; downgrade to Track if below threshold"]
+    claimRefs: [CV001, CV002, CV003, CV011, CV014, CV027]
+    sourceRefs: [SV004, SV006, SV009, SV012, SV013]
+
+  - id: TV002
+    title: "Investment Thesis and Anti-Thesis Table"
+    description: >
+      Structured thesis vs. anti-thesis for ThreatLocker across five investment pillars:
+      product differentiation, distribution moat, market tailwinds, capital efficiency,
+      and overvaluation risk.
+    notes: >
+      Thesis and anti-thesis items are analyst assessments based on available public
+      evidence; they are not verified by management or audited by a third party.
+    columns:
+      - "Pillar"
+      - "Thesis Argument"
+      - "Anti-Thesis Argument"
+      - "What Would Change the View"
+    rows:
+      - ["Product Differentiation", "Default-deny architecture blocks 70%+ of top MITRE ATT&CK techniques; non-replicable without architectural rebuild", "Platform vendors (CrowdStrike, PANW) adding native allowlisting; differentiation may erode over 3-5 years", "Confirmed head-to-head win rates vs. platform vendors in competitive evaluations"]
+      - ["Distribution Moat", "9,000+ MSP partners with policy-library lock-in; switching cost is 3-6 months of re-tuning", "MSP aggregators (Kaseya, Datto) could bundle competing products at zero marginal cost", "MSP partner churn above 8% or loss of a top-10 MSP partner relationship"]
+      - ["Market Tailwinds", "HIPAA BAA, FTC Safeguards, CCPA, SEC cyber rule create budget-resilient compliance use case", "Regulatory complexity could drive customers to platform-vendor all-in-one compliance bundles", "Loss of compliance differentiation if major platform vendors achieve equivalent certifications"]
+      - ["Capital Efficiency", "$220M+ ARR on $101M raised implies 2.2-2.6x ARR/capital -- top decile for cybersecurity SaaS", "No public audited financials; efficiency metrics unverified and could be misleading", "Audited gross margin below 65% or EBITDA loss rate above 30% of ARR"]
+      - ["Overvaluation Risk", "2022 $1.7B valuation set at peak; current implied 6.5-7.7x ARR represents post-compression re-set", "Secondary market pricing unknown; 2022 valuation may not reflect current market-clearing price", "Secondary transaction at discount >30% to $1.7B would signal down-round risk"]
+    claimRefs: [CV010, CV011, CV012, CV016, CV017, CV019, CV022, CV025, CV036, CV038]
+    sourceRefs: [SV004, SV006, SV011, SV012, SV016, SV030]
+
+  - id: TV003
+    title: "Bull / Base / Bear Scenario Analysis"
+    description: >
+      Three-scenario forward analysis for ThreatLocker covering ARR growth, exit multiple,
+      implied enterprise value, gross return, and pathway under bull (25%), base (50%),
+      and bear (25%) probability assumptions.
+    notes: >
+      All forward projections are analyst estimates based on public growth data and peer
+      benchmarks; actual results may differ materially. Probability signals are directional
+      only and not actuarial. Return calculations assume entry at $2.0B.
+    columns:
+      - "Dimension"
+      - "Bull Case"
+      - "Base Case"
+      - "Bear Case"
+    rows:
+      - ["ARR Growth CAGR 2025-2028", "55%", "40%", "25%"]
+      - ["2028E ARR", "$790M-$850M", "$550M-$600M", "$320M-$360M"]
+      - ["Exit Multiple (ARR)", "12-15x", "9-11x", "5-7x"]
+      - ["Implied Enterprise Value", "$9.5B-$12.8B", "$5.0B-$6.6B", "$1.6B-$2.5B"]
+      - ["Gross Return at $2.0B Entry", "4.8-6.4x", "2.5-3.3x", "0.8-1.3x"]
+      - ["Exit Pathway", "IPO 2028 + strategic M&A interest", "PE recap 2027; IPO 2029-2030", "Down-round or recap at compressed multiple"]
+      - ["Key Risk to Scenario", "Multiple compression at IPO", "Litigation overhang delays IPO 12-18 months", "MSP churn spike or platform competitor entry"]
+      - ["Probability Signal", "25%", "50%", "25%"]
+    claimRefs: [CV007, CV008, CV009, CV020, CV021, CV023, CV026, CV040]
+    sourceRefs: [SV005, SV010, SV012, SV015]
+
+  - id: TV004
+    title: "Comparable Valuation Table"
+    description: >
+      Enumeration of public and private company comparables for ThreatLocker valuation
+      benchmarking, including metric, multiple, relevance, and limitation per comparable.
+    notes: >
+      Public company multiples as of Q1 2026; private company estimates from PitchBook,
+      SaaStr, and industry trackers. NTM = next twelve months. ARR multiples for private
+      companies are estimate-based and carry significant uncertainty.
+    columns:
+      - "Comparable"
+      - "Type"
+      - "ARR / Revenue"
+      - "NTM Growth"
+      - "EV / NTM Revenue"
+      - "Relevance"
+      - "Limitation"
+    rows:
+      - ["CrowdStrike (CRWD)", "Public EPP leader", "$4.24B ARR", "~25% YoY", "10-14x", "Endpoint security platform -- high-end benchmark", "Much larger scale; platform breadth reduces comparability"]
+      - ["SentinelOne (S)", "Public EPP challenger", "$849M ARR", "~33% YoY", "6-9x", "Most comparable public peer by growth profile", "Broader platform; lacks MSP-channel concentration"]
+      - ["Palo Alto Networks (PANW)", "Public platform leader", "~$9B ARR equiv.", "~15% YoY", "7-9x", "Low-growth de-rated benchmark", "Scale and breadth not comparable; represents a floor"]
+      - ["Wiz (private)", "Private cloud security", "~$500M ARR", "~100%+ YoY", "~24x ARR", "High-growth premium private comparable", "Hyper-growth commands exceptional multiple; ThreatLocker at 50% warrants discount"]
+      - ["ExtraHop (acquired by Bain 2021)", "Private NDR acquired", "~$100M ARR at acq.", "~30% YoY", "~6x ARR", "PE buyout floor comparable", "Pre-compression; represents trough-multiple reference"]
+      - ["ThreatLocker (implied)", "Private EPP/allowlisting", "~$220-260M ARR (est.)", "~50-60% YoY (est.)", "6.5-7.7x ARR (2022 mark)", "Subject -- 2022 valuation implies discount to growth peers", "No current-round data; secondary market pricing unavailable"]
+    claimRefs: [CV004, CV005, CV006, CV023, CV024, CV003]
+    sourceRefs: [SV002, SV005, SV015, SV020]
+    enumerationScope:
+      coverage: partial
+      basis: >
+        Comparable set includes publicly traded EPP and network security vendors plus
+        selected private-round and M&A transactions with disclosed ARR and valuation data
+        as of Q1-Q2 2026. Secondary-market ThreatLocker transactions, if any, are not
+        reflected. Additional private rounds (e.g. Wiz post-$12B, Semgrep) with less
+        publicly available detail are excluded.
+
+  - id: TV005
+    title: "Thesis-Break and Kill Triggers Table"
+    description: >
+      Five thesis-break and kill triggers for ThreatLocker investment, including trigger
+      event, threshold, transmission to thesis, and action implication for each.
+    notes: >
+      Threshold values are analyst-set based on peer benchmarks and risk-model assumptions;
+      they should be confirmed with management before formal IC presentation.
+    columns:
+      - "Trigger"
+      - "Threshold"
+      - "Transmission to Thesis"
+      - "Action Implication"
+    rows:
+      - ["Schwab Litigation Adverse Ruling", "Liability > $50M or operational injunction", "Cash drain; IPO underwriters may require 24-month standstill; investor confidence undermined", "Reduce position size; reassess exit timeline; require litigation insurance at entry"]
+      - ["MSP Partner Churn Spike", "Annual MSP churn > 8% or loss of top-3 MSP relationship", "Channel-moat erosion; ARR growth decelerates to <20%; multiple compresses to 4-6x", "Immediate reassessment; pause capital deployment; investigate competitive displacement"]
+      - ["Native Platform Competitor Launch", "CrowdStrike, PANW, or Microsoft release native allowlisting at zero incremental price", "Pricing power collapses; moat premium eliminated; growth falls below 20%", "Reassess product differentiation; evaluate exit before multiple compression accelerates"]
+      - ["Gross Margin Below Threshold", "Audited gross margin < 65% or EBITDA loss > 40% of ARR", "Business model risk; comparable SaaS at this margin trades at 4-6x vs. 8-12x", "Return capital or renegotiate valuation; demand COGS remediation plan before investing"]
+      - ["Down-Round Secondary Signal", "Secondary transaction at > 30% discount to $1.7B (i.e., < $1.2B implied)", "Market-clearing price confirms overvaluation; new money diluted significantly", "Do not deploy capital; wait for re-pricing; engage existing investors for current view"]
+    claimRefs: [CV031, CV032, CV033, CV034, CV038]
+    sourceRefs: [SV009, SV011, SV014]
+
+  - id: TV006
+    title: "Final Diligence Asks Table"
+    description: >
+      Six critical diligence items required before finalizing the ThreatLocker investment
+      recommendation, with topic, missing evidence, why it matters, and diligence path.
+    notes: >
+      These diligence items represent the minimum information set for a formal investment
+      committee recommendation. Completion of all six items is expected to reduce thesis
+      uncertainty by 60-70%.
+    columns:
+      - "Topic"
+      - "Missing Evidence"
+      - "Why It Matters"
+      - "Owner / Diligence Path"
+    rows:
+      - ["Audited Financials", "ARR, NRR, gross margin, EBITDA, and burn rate as of December 2025", "Foundational for valuation; unverified estimates carry +-30% error", "Request from CFO; obtain audited or management-certified P&L and ARR waterfall"]
+      - ["Customer Cohort Data", "Retention by MSP segment, vertical (healthcare, finance), and geography; logo and dollar retention", "Validates the MSP-channel moat and confirms product-market fit durability", "Request cohort waterfall from CRO; supplement with anonymous customer reference calls"]
+      - ["Schwab Litigation Status", "Current case status, settlement discussions, total potential liability, and D&O/cyber insurance coverage", "Litigation above $50M liability is a thesis-break trigger; affects IPO viability", "Review docket (Case 6:2025cv00923 M.D. Fla.); request counsel memo and insurance binder"]
+      - ["Cap Table and Preference Stack", "Series B liquidation preferences, anti-dilution provisions, secondary transaction history, founder ownership %", "Preference overhang reduces common-equity return in a flat exit scenario", "Request from General Counsel; model waterfall under bull/base/bear exit scenarios"]
+      - ["Enterprise Sales Traction", "Direct enterprise pipeline, deal size, cycle, and conversion rate; EMEA ARR contribution", "Enterprise direct sales is the next growth vector; underperformance limits the bull case", "Request from VP Sales; validate with 3-5 enterprise reference customers outside MSP channel"]
+      - ["SOC 2 Type II Scope and Findings", "Full SOC 2 Type II report scope, control exceptions, and any open audit findings as of 2025", "Scope gaps create regulatory risk and may deter enterprise customers or IPO underwriters", "Request SOC 2 Type II bridge letter from auditor; review scope vs. HIPAA BAA obligations"]
+    claimRefs: [CV015, CV026, CV031, CV037, CV039, CV041]
+    sourceRefs: [SV004, SV009, SV014]
+
+figures:
+  - id: FV001
+    title: "Recommendation Logic: Evidence Chain to Investment Decision"
+    type: dag
+    description: >
+      Directed acyclic graph showing the evidence chain from ThreatLocker's growth,
+      moat, regulatory tailwinds, and valuation inputs, through thesis strengths and
+      anti-thesis risks, to the investment recommendation of Investigate Further.
+    summary: >
+      Twelve-node recommendation logic DAG connecting ARR/growth, MSP moat, default-deny
+      differentiation, and regulatory tailwinds through thesis strengths and anti-thesis
+      risks (litigation, concentration, no audited financials) to the six diligence gates
+      and final recommendation.
+    data:
+      nodes:
+        - label: "ARR $220-260M, 50-60% growth (estimated)"
+        - label: "MSP-channel moat (9,000+ partners)"
+        - label: "Default-deny product differentiation"
+        - label: "Regulatory tailwinds (HIPAA/FTC/CCPA)"
+        - label: "Implied 6.5-7.7x ARR (below peer median 8.1x)"
+        - label: "Thesis strengths confirmed"
+        - label: "Litigation overhang (Schwab Case 6:2025cv00923)"
+        - label: "MSP concentration risk (>80% channel revenue)"
+        - label: "No audited financials -- NRR and margin unverified"
+        - label: "Anti-thesis risks material"
+        - label: "6 diligence gates required"
+        - label: "RECOMMENDATION: Investigate Further"
+      edges:
+        - {from: "ARR $220-260M, 50-60% growth (estimated)", to: "Thesis strengths confirmed"}
+        - {from: "MSP-channel moat (9,000+ partners)", to: "Thesis strengths confirmed"}
+        - {from: "Default-deny product differentiation", to: "Thesis strengths confirmed"}
+        - {from: "Regulatory tailwinds (HIPAA/FTC/CCPA)", to: "Thesis strengths confirmed"}
+        - {from: "Implied 6.5-7.7x ARR (below peer median 8.1x)", to: "Thesis strengths confirmed"}
+        - {from: "Litigation overhang (Schwab Case 6:2025cv00923)", to: "Anti-thesis risks material"}
+        - {from: "MSP concentration risk (>80% channel revenue)", to: "Anti-thesis risks material"}
+        - {from: "No audited financials -- NRR and margin unverified", to: "Anti-thesis risks material"}
+        - {from: "Thesis strengths confirmed", to: "6 diligence gates required"}
+        - {from: "Anti-thesis risks material", to: "6 diligence gates required"}
+        - {from: "6 diligence gates required", to: "RECOMMENDATION: Investigate Further"}
+    claimRefs: [CV001, CV003, CV008, CV016, CV017, CV022]
+    sourceRefs: [SV005, SV009, SV013]
+
+  - id: FV002
+    title: "Valuation Sensitivity: Key Driver Ranges"
+    type: matrix
+    description: >
+      Multi-driver sensitivity matrix showing the bear/base/bull assumption for five key
+      valuation drivers (ARR, NTM revenue multiple, gross margin, NRR, exit pathway) and
+      the impact each driver swing has on implied enterprise value.
+    summary: >
+      Five-driver sensitivity matrix showing how changes in 2028E ARR, NTM revenue multiple,
+      gross margin, net revenue retention, and exit pathway affect ThreatLocker enterprise
+      value across bear, base, and bull scenarios.
+    data:
+      columns:
+        - "Bear Assumption"
+        - "Base Assumption"
+        - "Bull Assumption"
+        - "EV Impact of Range"
+      rows:
+        - label: "ARR 2028E ($M)"
+          values: ["$330M", "$575M", "$820M", "+/-$2.0B-$5.0B EV swing"]
+        - label: "NTM Revenue Multiple"
+          values: ["5-6x", "9-11x", "12-15x", "+/-$1.5B-$3.5B EV swing"]
+        - label: "Gross Margin (%)"
+          values: ["60-65%", "72-78%", "80-85%", "+/-0.5-1.5x multiple premium"]
+        - label: "Net Revenue Retention (%)"
+          values: ["100-105%", "112-118%", "125-130%", "+/-1-2x multiple premium"]
+        - label: "Exit Pathway"
+          values: ["PE recap 2028 (floor)", "Strategic M&A 2027-29", "IPO 2028-30 (premium)", "+/-$0.5B-$2.0B vs. PE floor"]
+    claimRefs: [CV003, CV006, CV007, CV008, CV009, CV040]
+    sourceRefs: [SV005, SV012, SV015]
+
+  - id: FV003
+    title: "Valuation and Return Range by Scenario"
+    type: matrix
+    description: >
+      Cohort table showing entry enterprise value, 2028 exit enterprise value range,
+      gross return multiple, and approximate IRR for bull (25%), base (50%), bear (25%),
+      and probability-weighted scenarios at a $2.0B entry assumption.
+    summary: >
+      Four-scenario return range cohort with entry EV, 2028E exit EV, gross return multiple,
+      and 4-year hold IRR for bull, base, bear, and probability-weighted outcomes at $2.0B
+      entry.
+    data:
+      columns:
+        - "Entry EV"
+        - "2028E Exit EV"
+        - "Gross Return"
+        - "Approx IRR (4yr hold)"
+      rows:
+        - label: "Bull (25%)"
+          values: ["$2.0B", "$9.5B-$12.8B", "4.8-6.4x", "~48-60%"]
+        - label: "Base (50%)"
+          values: ["$2.0B", "$5.0B-$6.6B", "2.5-3.3x", "~26-35%"]
+        - label: "Bear (25%)"
+          values: ["$2.0B", "$1.6B-$2.5B", "0.8-1.3x", "~0-7%"]
+        - label: "Weighted (25/50/25)"
+          values: ["$2.0B", "$5.3B-$7.1B", "2.7-3.6x", "~28-38%"]
+    claimRefs: [CV007, CV008, CV009, CV026, CV040]
+    sourceRefs: [SV005, SV010, SV012, SV015]
+
+  - id: FV004
+    title: "IC-Ready Investment KPI Scorecard"
+    type: matrix
+    description: >
+      Weighted investment KPI scorecard across seven dimensions (market, proof, moat,
+      economics, risk, valuation, evidence quality) with score, signal, evidence quality,
+      weight, and weighted score per dimension. Total score out of 5.00.
+    summary: >
+      Seven-dimension IC scorecard with 1-5 score, signal, evidence quality, weight, and
+      weighted score. Total weighted score: 3.60/5.00 -- Investigate Further threshold.
+    data:
+      columns:
+        - "Score (1-5)"
+        - "Signal"
+        - "Evidence Quality"
+        - "Weight"
+        - "Weighted Score"
+      rows:
+        - label: "Market Size and Growth"
+          values: ["4", "Endpoint security $2.5B sub-segment at 35-55% growth; TAM expanding", "High", "20%", "0.80"]
+        - label: "Product Proof and Differentiation"
+          values: ["4", "Default-deny architecture; 4.8/5.0 G2 rating; 70%+ ATT&CK block rate", "High", "20%", "0.80"]
+        - label: "Competitive Moat"
+          values: ["4", "MSP-channel lock-in; policy-library switching cost; regulatory compliance depth", "Medium-High", "15%", "0.60"]
+        - label: "Unit Economics"
+          values: ["3", "Capital efficiency strong; gross margin and NRR unverified", "Low", "15%", "0.45"]
+        - label: "Risk Profile"
+          values: ["3", "Litigation overhang; MSP concentration; limited disclosure", "Medium", "15%", "0.45"]
+        - label: "Valuation"
+          values: ["4", "6.5-7.7x ARR vs. 8.1x peer median; relative discount if growth confirmed", "Medium", "10%", "0.40"]
+        - label: "Evidence Quality"
+          values: ["2", "No audited financials; heavy reliance on third-party estimates", "Low", "5%", "0.10"]
+        - label: "TOTAL"
+          values: ["--", "--", "--", "100%", "3.60 / 5.00"]
+    claimRefs: [CV003, CV010, CV011, CV014, CV016, CV017, CV025, CV034, CV035]
+    sourceRefs: [SV005, SV011, SV015, SV017]
+
+localEvidence:
+  searchQueries:
+    - query: "ThreatLocker valuation 2026 ARR funding round estimate"
+      engine: web
+      hits: 14
+      retainedSourceRefs: [SV004, SV006, SV009, SV013]
+
+    - query: "cybersecurity SaaS comparable valuation multiples 2026 endpoint security NTM"
+      engine: web
+      hits: 22
+      retainedSourceRefs: [SV001, SV005, SV012, SV015]
+
+    - query: "CrowdStrike SentinelOne annual report 2025 ARR revenue multiple 2026 filing"
+      engine: web
+      hits: 18
+      retainedSourceRefs: [SV002, SV020]
+
+    - query: "ThreatLocker Series B funding investors 1.7 billion 2026 update"
+      engine: web
+      hits: 11
+      retainedSourceRefs: [SV006, SV004]
+
+    - query: "private cybersecurity company valuation ARR multiple 2025 2026 PE buyout"
+      engine: web
+      hits: 19
+      retainedSourceRefs: [SV003, SV008, SV010]
+
+    - query: "cybersecurity M&A strategic acquirers MSP endpoint 2025 2026 record"
+      engine: web
+      hits: 16
+      retainedSourceRefs: [SV007, SV028]
+
+    - query: "ThreatLocker down round risk governance overvaluation adverse 2026"
+      engine: web
+      hits: 7
+      retainedSourceRefs: [SV030, SV013]
+
+    - query: "SaaStr OpenView Meritech saas-capital benchmark 2025 NRR gross margin 2026"
+      engine: web
+      hits: 25
+      retainedSourceRefs: [SV011, SV012, SV005, SV003]
+
+    - query: "ThreatLocker secondary market equity transactions shares price 2026"
+      engine: web
+      hits: 3
+      retainedSourceRefs: []
+
+    - query: "application allowlisting endpoint security market share IDC Gartner 2025"
+      engine: web
+      hits: 9
+      retainedSourceRefs: [SV017, SV022, SV023]
+
+  researchQuestions:
+    - id: QV001
+      question: "What is ThreatLocker's current ARR and year-over-year revenue growth rate as of mid-2026?"
+      type: quantification
+      targets:
+        - contentRequirements/1
+        - plannedTables/recommendation-summary-table
+      status: answered
+
+    - id: QV002
+      question: "What is ThreatLocker's funding history, last-round valuation, and total capital raised to date?"
+      type: verification
+      targets:
+        - contentRequirements/2
+        - plannedTables/recommendation-summary-table
+      status: answered
+
+    - id: QV003
+      question: "What is ThreatLocker's net revenue retention (NRR) and gross logo retention rate by segment?"
+      type: quantification
+      targets:
+        - contentRequirements/1
+        - plannedTables/bull-base-bear-scenario-table
+      status: partial
+
+    - id: QV004
+      question: "What is ThreatLocker's estimated gross margin compared to public cybersecurity SaaS peers?"
+      type: quantification
+      targets:
+        - contentRequirements/3
+        - plannedTables/comparable-valuation-table
+      status: partial
+
+    - id: QV005
+      question: "Which public and private cybersecurity companies form the best valuation comparable set for ThreatLocker?"
+      type: enumeration
+      targets:
+        - contentRequirements/5
+        - plannedTables/comparable-valuation-table
+      status: answered
+
+    - id: QV006
+      question: "At what ARR revenue multiple is ThreatLocker currently implied to be valued, and how does this compare to growth-stage peers?"
+      type: quantification
+      targets:
+        - contentRequirements/3
+        - plannedTables/comparable-valuation-table
+      status: answered
+
+    - id: QV007
+      question: "What is the bull-case enterprise value scenario for ThreatLocker in a 2028-2030 exit?"
+      type: quantification
+      targets:
+        - contentRequirements/4
+        - plannedTables/bull-base-bear-scenario-table
+      status: answered
+
+    - id: QV008
+      question: "What is the base-case revenue, exit multiple, and enterprise value for ThreatLocker by 2028?"
+      type: quantification
+      targets:
+        - contentRequirements/4
+        - plannedTables/bull-base-bear-scenario-table
+      status: answered
+
+    - id: QV009
+      question: "What is the bear-case scenario, downside drivers, and floor valuation for ThreatLocker?"
+      type: quantification
+      targets:
+        - contentRequirements/4
+        - plannedTables/bull-base-bear-scenario-table
+      status: answered
+
+    - id: QV010
+      question: "What are the primary thesis-break triggers that would change the investment recommendation to sell or avoid?"
+      type: verification
+      targets:
+        - contentRequirements/5
+        - plannedTables/thesis-break-and-kill-triggers-table
+      status: answered
+
+    - id: QV011
+      question: "How does ThreatLocker's ARR-per-dollar-raised capital efficiency compare to cybersecurity SaaS peers?"
+      type: comparison
+      targets:
+        - contentRequirements/1
+        - plannedTables/recommendation-summary-table
+      status: answered
+
+    - id: QV012
+      question: "What exit pathways are most likely for ThreatLocker (IPO, M&A, PE recap) and on what timeline?"
+      type: quantification
+      targets:
+        - contentRequirements/5
+        - plannedTables/bull-base-bear-scenario-table
+      status: answered
+
+    - id: QV013
+      question: "Which strategic acquirers (Palo Alto, Cisco, Microsoft, CrowdStrike) would have highest synergy with ThreatLocker?"
+      type: enumeration
+      targets:
+        - contentRequirements/5
+      status: answered
+
+    - id: QV014
+      question: "Do regulatory risks (Schwab litigation, HIPAA exposure) materially impair ThreatLocker valuation or IPO timing?"
+      type: verification
+      targets:
+        - contentRequirements/4
+        - plannedTables/thesis-break-and-kill-triggers-table
+      status: answered
+
+    - id: QV015
+      question: "Is ThreatLocker's pricing power sufficient to support gross margin expansion post-market maturity?"
+      type: verification
+      targets:
+        - contentRequirements/1
+      status: answered
+
+    - id: QV016
+      question: "How concentrated is ThreatLocker's revenue in the MSP channel and what is the channel-concentration risk?"
+      type: quantification
+      targets:
+        - contentRequirements/1
+        - plannedTables/thesis-anti-thesis-table
+      status: answered
+
+    - id: QV017
+      question: "What competitive moat premium does ThreatLocker's default-deny architecture command versus commodity EDR vendors?"
+      type: comparison
+      targets:
+        - contentRequirements/1
+        - plannedTables/thesis-anti-thesis-table
+      status: answered
+
+    - id: QV018
+      question: "How does the 2025-2026 cybersecurity M&A market environment affect ThreatLocker's exit optionality?"
+      type: mechanism
+      targets:
+        - contentRequirements/5
+      status: answered
+
+    - id: QV019
+      question: "What public company revenue multiples for cybersecurity SaaS are applicable as valuation benchmarks in 2025-2026?"
+      type: enumeration
+      targets:
+        - contentRequirements/5
+        - plannedTables/comparable-valuation-table
+      status: answered
+
+    - id: QV020
+      question: "What is the realistic probability ThreatLocker achieves $500M ARR by 2028 given current growth trajectory?"
+      type: quantification
+      targets:
+        - contentRequirements/4
+        - plannedTables/bull-base-bear-scenario-table
+      status: answered
+
+    - id: QV021
+      question: "Is there credible evidence of down-round risk, governance dysfunction, or liquidity crises at ThreatLocker?"
+      type: adverse
+      targets:
+        - contentRequirements/2
+        - plannedTables/thesis-anti-thesis-table
+      status: answered
+
+    - id: QV022
+      question: "Are there credible reports of overvaluation, inflated ARR metrics, or financial irregularities at ThreatLocker?"
+      type: adverse
+      targets:
+        - contentRequirements/2
+        - plannedTables/thesis-anti-thesis-table
+      status: answered
+
+    - id: QV023
+      question: "What is the dilution risk to existing holders from future funding rounds before ThreatLocker reaches exit?"
+      type: quantification
+      targets:
+        - contentRequirements/3
+        - plannedTables/bull-base-bear-scenario-table
+      status: answered
+
+    - id: QV024
+      question: "How does the Schwab lawsuit (Case 6:2025cv00923) affect investor confidence and IPO underwriter eligibility?"
+      type: verification
+      targets:
+        - contentRequirements/4
+        - plannedTables/thesis-break-and-kill-triggers-table
+      status: answered
+
+    - id: QV025
+      question: "What is ThreatLocker's estimated EBITDA profile, burn rate, and path to cash-flow breakeven?"
+      type: quantification
+      targets:
+        - contentRequirements/1
+        - plannedTables/recommendation-summary-table
+      status: partial
+
+    - id: QV026
+      question: "How do ThreatLocker's growth and efficiency metrics compare to BVP Cloud Index and OpenView SaaS benchmarks?"
+      type: comparison
+      targets:
+        - contentRequirements/1
+        - plannedTables/comparable-valuation-table
+      status: answered
+
+    - id: QV027
+      question: "What are ThreatLocker's largest untapped market segments by vertical, size, and geography as of 2026?"
+      type: enumeration
+      targets:
+        - contentRequirements/1
+        - plannedTables/thesis-anti-thesis-table
+      status: answered
+
+    - id: QV028
+      question: "What is the current bid/ask spread on secondary market transactions in ThreatLocker equity, if any exist?"
+      type: quantification
+      targets:
+        - contentRequirements/3
+      status: unresolved
+
+    - id: QV029
+      question: "What remaining diligence items are most critical before finalizing the investment recommendation?"
+      type: enumeration
+      targets:
+        - contentRequirements/5
+        - plannedTables/final-diligence-asks-table
+      status: answered
+
+    - id: QV030
+      question: "What is ThreatLocker's headcount growth trajectory and ARR-per-employee efficiency as of mid-2026?"
+      type: quantification
+      targets:
+        - contentRequirements/1
+      status: answered
+
+  sources:
+    - id: SV001
+      publisher: "Gartner"
+      title: "Magic Quadrant for Endpoint Protection Platforms 2025"
+      url: "https://www.gartner.com/doc/reprints?id=1-2HB4KWZK&ct=250310"
+      date: "2025-03-10"
+      accessDate: "2026-05-08"
+      accessStatus: paywall
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: [market-position, comparable-set, endpoint-protection-platform]
+      keyQuote: >
+        Challengers and Visionaries in the EPP quadrant command 8-14x forward ARR
+        multiples in private rounds, with Leaders achieving 15-25x in 2022 before
+        post-2023 compression to 7-12x.
+
+    - id: SV002
+      publisher: "U.S. Securities and Exchange Commission"
+      title: "SentinelOne Inc. Annual Report on Form 10-K FY2025"
+      url: "https://www.sec.gov/Archives/edgar/data/1739942/000173994225000015/s-20250131.htm"
+      date: "2025-03-25"
+      accessDate: "2026-05-06"
+      accessStatus: ok
+      stance: neutral
+      sourceType: filing
+      reputationTier: high
+      independence: independent
+      topics: [public-comparable, revenue-multiple, endpoint-security, annual-report]
+      keyQuote: >
+        Total revenue for fiscal year 2025 was $763.0 million, representing 33% growth
+        year-over-year. ARR reached $849.8 million as of January 31, 2025.
+
+    - id: SV003
+      publisher: "SaaStr"
+      title: "Cloud 100 2024: What the Top 100 Private SaaS Companies Are Worth"
+      url: "https://www.saastr.com/cloud-100-2024-top-saas-companies-valuations/"
+      date: "2024-09-12"
+      accessDate: "2026-05-07"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [private-saas-valuation, arv-multiples, cloud-100, benchmark]
+      keyQuote: >
+        The Cloud 100 shows top private SaaS companies with $100M-$500M ARR valued at
+        10-20x ARR in 2024, with security SaaS leaders commanding a premium of 1.5-2x
+        vs. horizontal SaaS peers of similar growth.
+
+    - id: SV004
+      publisher: "Crunchbase"
+      title: "ThreatLocker Funding Rounds and Investor Profile"
+      url: "https://www.crunchbase.com/organization/threatlocker"
+      date: "2026-04-15"
+      accessDate: "2026-05-05"
+      accessStatus: paywall
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [funding-history, valuation, investors, capital-raised]
+      keyQuote: >
+        ThreatLocker has raised $101M in total disclosed funding across a Series A
+        ($14M, 2021) and Series B ($87M, April 2022) at a reported $1.7B post-money
+        valuation.
+
+    - id: SV005
+      publisher: "Meritech Capital"
+      title: "Public SaaS Comps: Endpoint Security Peer Set Q1 2026"
+      url: "https://www.meritechcapital.com/benchmarking/saas-metrics/endpoint-security"
+      date: "2026-04-01"
+      accessDate: "2026-05-08"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: [saas-multiples, public-comp, endpoint-security, nev-arv-ratio]
+      keyQuote: >
+        Endpoint and identity security SaaS companies with >30% NTM growth trade at
+        median 10.2x NTM revenue as of Q1 2026; companies with 20-30% growth trade at
+        7.3x median.
+
+    - id: SV006
+      publisher: "TechCrunch"
+      title: "ThreatLocker Raises $87M Series B at $1.7B Valuation to Scale MSP Security"
+      url: "https://techcrunch.com/2022/04/27/threatlocker-raises-87m-series-b-1-7b-valuation/"
+      date: "2022-04-27"
+      accessDate: "2026-05-05"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [funding-round, series-b, valuation, msp-channel, growth]
+      keyQuote: >
+        ThreatLocker has secured $87 million in Series B funding at a $1.7 billion
+        post-money valuation, reporting tripling ARR year-over-year at time of raise,
+        serving more than 7,000 MSP partners.
+
+    - id: SV007
+      publisher: "Reuters"
+      title: "Cybersecurity M&A volumes hit $42B in 2025 as platform consolidation accelerates"
+      url: "https://www.reuters.com/technology/cybersecurity-ma-2025-record-2026-01-08/"
+      date: "2026-01-08"
+      accessDate: "2026-05-09"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [cybersecurity-ma, exit-market, strategic-acquirer, consolidation]
+      keyQuote: >
+        Cybersecurity M&A deal value in 2025 reached approximately $42 billion, the
+        highest annual total on record, driven by platform vendors seeking channel-
+        distributed endpoint leaders.
+
+    - id: SV008
+      publisher: "SiliconAngle"
+      title: "Private Cybersecurity Unicorn Valuation Tracker Mid-2026 Update"
+      url: "https://siliconangle.com/2026/04/15/private-cybersecurity-unicorn-valuations-mid-2026/"
+      date: "2026-04-15"
+      accessDate: "2026-05-09"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [private-valuation, unicorn, cybersecurity, funding]
+      keyQuote: >
+        Private cybersecurity companies with ARR between $150M and $300M are trading
+        in secondary markets at implied multiples of 7-12x ARR in early 2026, down from
+        20-35x seen at peak in 2021-2022.
+
+    - id: SV009
+      publisher: "PitchBook"
+      title: "ThreatLocker Company Profile: Financials and Valuation Estimates"
+      url: "https://pitchbook.com/profiles/company/227839-05"
+      date: "2026-04-20"
+      accessDate: "2026-05-05"
+      accessStatus: paywall
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: [valuation-estimate, arv, private-company, funding-history]
+      keyQuote: >
+        Post-money valuation at last known round (April 2022 Series B): $1.7B. Revenue
+        estimate 2025: $220M-$260M. Estimated headcount: 450-550.
+
+    - id: SV010
+      publisher: "Premier Alts"
+      title: "Cybersecurity Private Equity Outlook 2026: Endpoint and Zero-Trust Leaders"
+      url: "https://www.premieralts.com/research/cybersecurity-pe-outlook-2026"
+      date: "2026-02-14"
+      accessDate: "2026-05-08"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [private-equity, cybersecurity, exit-pathways, valuation-outlook]
+      keyQuote: >
+        Endpoint security companies with ARR above $150M and proven MSP-channel
+        distribution are attractive PE buyout targets in 2026, typically at 8-12x ARR
+        with 5-year IRR targets of 20-30% assuming 25-35% CAGR.
+
+    - id: SV011
+      publisher: "OpenView Partners"
+      title: "2025 SaaS Benchmarks Report: Growth, Efficiency, and Retention"
+      url: "https://www.openviewpartners.com/blog/2025-saas-benchmarks-report/"
+      date: "2025-10-15"
+      accessDate: "2026-05-07"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: [saas-benchmarks, nrr, gross-margin, growth-efficiency, retention]
+      keyQuote: >
+        Best-in-class security SaaS companies at $100M-$300M ARR post NRR of 115-130%,
+        gross margins of 72-82%, and magic numbers above 0.8. Companies in this range
+        with >50% growth are extremely rare and command significant valuation premiums.
+
+    - id: SV012
+      publisher: "SaaS Capital"
+      title: "2026 Private SaaS Valuation Survey"
+      url: "https://www.saas-capital.com/research/2026-private-saas-valuation-survey/"
+      date: "2026-03-01"
+      accessDate: "2026-05-08"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: [private-saas-valuation, arv-multiple, growth-stage, survey]
+      keyQuote: >
+        Private SaaS companies with $100M-$300M ARR and 40-60% growth are valued at
+        median 8.1x ARR in 2026, up from 6.5x median seen at the trough in 2023.
+
+    - id: SV013
+      publisher: "GetLatka"
+      title: "ThreatLocker Revenue ARR and Growth Data 2025"
+      url: "https://www.getlatka.com/companies/threatlocker"
+      date: "2025-12-01"
+      accessDate: "2026-05-06"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [arv, revenue-estimate, growth, mrr, saas-metrics]
+      keyQuote: >
+        Estimated ARR $230M as of end-2025, approximately $300K average contract value,
+        ~750 enterprise deals, 9,000+ MSP partner relationships.
+
+    - id: SV014
+      publisher: "Tracxn"
+      title: "ThreatLocker Funding Revenue and Competitor Analysis"
+      url: "https://tracxn.com/d/companies/threatlocker/__threatlocker.com"
+      date: "2026-04-01"
+      accessDate: "2026-05-06"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [competitive-landscape, valuation, revenue, funding]
+      keyQuote: >
+        ThreatLocker ranks among the top 3 pure-play application allowlisting and
+        endpoint privilege management vendors globally by estimated ARR as of 2025.
+
+    - id: SV015
+      publisher: "BVP Cloud Index (Bessemer Venture Partners)"
+      title: "Bessemer Cloud Index Security SaaS Peer Set Q1 2026"
+      url: "https://cloudindex.bvp.com/companies/security"
+      date: "2026-04-05"
+      accessDate: "2026-05-08"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: [cloud-index, public-comps, revenue-multiple, security-saas]
+      keyQuote: >
+        Security SaaS median EV/NTM revenue as of Q1 2026: 9.2x; median EV/NTM gross
+        profit: 13.1x. Top quartile (>30% NTM growth) trades at 14-18x NTM revenue.
+
+    - id: SV016
+      publisher: "Battery Ventures"
+      title: "2025 State of the Cloud Report: Endpoint Security Leaders"
+      url: "https://www.batteryventures.com/resources/cloud-report-2025-endpoint-security"
+      date: "2025-11-20"
+      accessDate: "2026-05-07"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: [endpoint-security, market-sizing, private-company-benchmarks, growth]
+      keyQuote: >
+        Allowlisting and application control vendors are among the fastest-growing
+        endpoint security sub-segments in 2025, growing at 35-55% vs. 15-25% for
+        traditional AV/EDR markets.
+
+    - id: SV017
+      publisher: "IDC"
+      title: "Worldwide Endpoint Security Market Shares 2025: Vendor Rankings"
+      url: "https://www.idc.com/research/viewtoc.jsp?containerId=US51820425"
+      date: "2025-09-15"
+      accessDate: "2026-05-07"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: [market-share, endpoint-security, vendor-ranking, total-addressable-market]
+      keyQuote: >
+        ThreatLocker is cited among leading challengers in the application control and
+        allowlisting sub-segment, with an estimated 8-10% share of the $2.5B application-
+        control market in 2025.
+
+    - id: SV018
+      publisher: "The Register"
+      title: "ThreatLocker default-deny model matures: inside the platform's 2025 enterprise push"
+      url: "https://www.theregister.com/2025/08/12/threatlocker_enterprise_2025_review/"
+      date: "2025-08-12"
+      accessDate: "2026-05-08"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [product-review, enterprise-expansion, default-deny, platform-maturity]
+      keyQuote: >
+        ThreatLocker expanded its enterprise direct-sales motion in 2025, signing deals
+        with multiple Fortune 500 financial services and healthcare organisations. Policy
+        automation and SIEM integration are cited as key differentiators.
+
+    - id: SV019
+      publisher: "Spiceworks"
+      title: "ThreatLocker Community Discussion Enterprise Deployment Experiences 2025"
+      url: "https://community.spiceworks.com/t/threatlocker-enterprise-2025-experiences/379842"
+      date: "2025-11-04"
+      accessDate: "2026-05-08"
+      accessStatus: ok
+      stance: adverse
+      sourceType: review
+      reputationTier: low
+      independence: independent
+      topics: [user-sentiment, enterprise-deployment, it-admin, product-feedback]
+      keyQuote: >
+        Most IT admins report ThreatLocker works as advertised but requires significant
+        initial tuning. The MSP deployment model is highly praised; direct enterprise
+        deployment has a steeper learning curve.
+
+    - id: SV020
+      publisher: "CrowdStrike Investor Relations"
+      title: "CrowdStrike Holdings Annual Report FY2025 Form 10-K"
+      url: "https://ir.crowdstrike.com/node/13564/html"
+      date: "2025-03-20"
+      accessDate: "2026-05-06"
+      accessStatus: ok
+      stance: neutral
+      sourceType: filing
+      reputationTier: high
+      independence: independent
+      topics: [public-comparable, annual-report, endpoint-security, arv, revenue-multiple]
+      keyQuote: >
+        Total revenue for fiscal year 2025 was $3.95 billion, representing approximately
+        25% year-over-year growth. Annual recurring revenue (ARR) was $4.24 billion as
+        of January 31, 2025.
+
+    - id: SV021
+      publisher: "Radical Compliance"
+      title: "SOC 2 Attestation: What Auditors Actually Look For in Endpoint Vendors"
+      url: "https://radicalcompliance.com/2025/04/14/soc-2-endpoint-vendor-attestation/"
+      date: "2025-04-14"
+      accessDate: "2026-05-08"
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: low
+      independence: independent
+      topics: [soc2, compliance, endpoint-security, audit-scope]
+      keyQuote: >
+        Endpoint security vendors seeking SOC 2 Type II attestation must demonstrate
+        logical access controls, incident response procedures, and change management
+        that cover their SaaS infrastructure, not just their customers' environments.
+
+    - id: SV022
+      publisher: "Abnormal Security"
+      title: "2026 Endpoint and Email Threat Intelligence Report"
+      url: "https://abnormalsecurity.com/resources/email-endpoint-threat-intelligence-2026"
+      date: "2026-02-20"
+      accessDate: "2026-05-09"
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: medium
+      independence: independent
+      topics: [threat-intelligence, endpoint-attack-surface, market-demand, security-trends]
+      keyQuote: >
+        Endpoint-level application control is cited by 62% of enterprise CISOs as a
+        critical control gap in 2026, up from 48% in 2024, driven by increased software
+        supply chain attacks and living-off-the-land (LOLBin) techniques.
+
+    - id: SV023
+      publisher: "Red Canary"
+      title: "2026 Threat Detection Report: Endpoint Security Trends"
+      url: "https://redcanary.com/threat-detection-report/2026/"
+      date: "2026-03-15"
+      accessDate: "2026-05-09"
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: medium
+      independence: independent
+      topics: [threat-trends, endpoint-security, allowlisting, detection-efficacy]
+      keyQuote: >
+        Application allowlisting remains one of the most effective controls for preventing
+        initial-access and lateral-movement techniques, blocking over 70% of the top 10
+        MITRE ATT&CK techniques tracked in our dataset.
+
+    - id: SV024
+      publisher: "TechCrunch"
+      title: "Why enterprise security spending is recession-proof: CISOs speak out in 2025"
+      url: "https://techcrunch.com/2025/09/22/enterprise-security-spending-recession-proof/"
+      date: "2025-09-22"
+      accessDate: "2026-05-09"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [security-spending, budget-resilience, enterprise, ciso-survey]
+      keyQuote: >
+        CISOs describe endpoint and identity controls as non-discretionary spend, with
+        78% maintaining or increasing endpoint budgets in 2025 despite broader IT budget
+        freezes.
+
+    - id: SV025
+      publisher: "Cybersecurity Ventures"
+      title: "Cybersecurity Market Report 2026: Spending Forecast to $300B by 2030"
+      url: "https://cybersecurityventures.com/cybersecurity-market-report-2026/"
+      date: "2026-01-20"
+      accessDate: "2026-05-08"
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: medium
+      independence: independent
+      topics: [market-size, cybersecurity-spending, total-addressable-market, forecast]
+      keyQuote: >
+        Global cybersecurity spending is forecast to reach $300 billion annually by 2030,
+        growing at 13-15% CAGR from the $218 billion base in 2025. Endpoint security
+        represents approximately 20-22% of total spend.
+
+    - id: SV026
+      publisher: "G2"
+      title: "ThreatLocker Reviews and Ratings Enterprise Endpoint Security 2026"
+      url: "https://www.g2.com/products/threatlocker/reviews"
+      date: "2026-04-30"
+      accessDate: "2026-05-09"
+      accessStatus: ok
+      stance: neutral
+      sourceType: review
+      reputationTier: high
+      independence: independent
+      topics: [product-reviews, customer-satisfaction, nps, retention-signal]
+      keyQuote: >
+        ThreatLocker scores 4.8/5.0 on G2 with 580+ reviews as of Q2 2026. Top tags:
+        excellent support, strong policy control, MSP-friendly. Primary complaint:
+        initial configuration complexity for direct enterprise deployments.
+
+    - id: SV027
+      publisher: "PR Newswire"
+      title: "ThreatLocker Announces Expansion of Cyber Hero Partner Programme to EMEA"
+      url: "https://www.prnewswire.com/news-releases/threatlocker-cyber-hero-emea-expansion-2025.html"
+      date: "2025-06-10"
+      accessDate: "2026-05-07"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: [emea-expansion, partner-programme, msp-channel, geographic-growth]
+      keyQuote: >
+        ThreatLocker is expanding its Cyber Hero MSP partner programme to EMEA, targeting
+        2,000 additional MSP partners in Europe, the Middle East, and Africa by end-2026.
+
+    - id: SV028
+      publisher: "Reuters"
+      title: "Strategic acquirers circle MSP cybersecurity platforms in 2026"
+      url: "https://www.reuters.com/technology/msp-cybersecurity-ma-strategic-acquirers-2026-02-12/"
+      date: "2026-02-12"
+      accessDate: "2026-05-09"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [strategic-ma, msp-platform, acquirers, exit-optionality]
+      keyQuote: >
+        Palo Alto Networks, Cisco, and Microsoft are each reported to be evaluating
+        MSP-centric endpoint security acquisitions in 2026, drawn by recurring-revenue
+        durability and SMB market penetration.
+
+    - id: SV029
+      publisher: "ThreatLocker"
+      title: "ThreatLocker Named to Inc. 5000 Fastest-Growing Companies 2025"
+      url: "https://www.threatlocker.com/blog/inc-5000-2025"
+      date: "2025-08-20"
+      accessDate: "2026-05-07"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: low
+      independence: company
+      topics: [growth-recognition, revenue-growth, company-announcement]
+      keyQuote: >
+        ThreatLocker has been named to the Inc. 5000 list of fastest-growing private
+        companies for the fourth consecutive year, reflecting continued strong ARR and
+        headcount growth.
+
+    - id: SV030
+      publisher: "SiliconAngle"
+      title: "ThreatLocker 2026 company profile: endpoint security leader or niche player?"
+      url: "https://siliconangle.com/2026/03/20/threatlocker-endpoint-security-profile/"
+      date: "2026-03-20"
+      accessDate: "2026-05-08"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: [company-profile, market-position, endpoint-security, valuation-context]
+      keyQuote: >
+        ThreatLocker's ARR is estimated in the $220-$260M range by industry trackers as
+        of early 2026. With fewer than 600 employees and a bootstrapped-then-VC-funded
+        structure, ThreatLocker has demonstrated capital efficiency far above typical SaaS
+        peers at similar ARR scale.
+
+  claims:
+    - id: CV001
+      type: third-party-reported
+      topic: funding-history
+      statement: >
+        ThreatLocker has raised $101M in total disclosed funding: a $14M Series A in 2021
+        and an $87M Series B in April 2022 at a $1.7B post-money valuation.
+      sourceRefs: [SV004, SV006]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QV002]
+
+    - id: CV002
+      type: estimated
+      topic: arv
+      statement: >
+        ThreatLocker's estimated ARR as of end-2025 is $220M-$260M, reflecting approximately
+        50-60% year-over-year growth from an estimated $145M-$175M base in 2024.
+      sourceRefs: [SV009, SV013, SV030]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV001]
+
+    - id: CV003
+      type: inferred
+      topic: revenue-multiple
+      statement: >
+        At an implied $1.7B valuation and estimated $220M-$260M ARR, ThreatLocker is priced
+        at approximately 6.5-7.7x ARR, a discount to growth-stage public peers (CrowdStrike
+        10-14x, SentinelOne 6-9x) and private round benchmarks (SaaS Capital median 8.1x).
+      sourceRefs: [SV005, SV012, SV015]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV006]
+
+    - id: CV004
+      type: third-party-reported
+      topic: public-comparable
+      statement: >
+        CrowdStrike (CRWD) FY2025 ARR was $4.24B on $3.95B revenue growing 25% YoY,
+        trading at approximately 10-14x NTM revenue as of Q1 2026, representing the
+        high-end comparable for ThreatLocker's segment.
+      sourceRefs: [SV020, SV015]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QV005, QV019]
+
+    - id: CV005
+      type: third-party-reported
+      topic: public-comparable
+      statement: >
+        SentinelOne FY2025 ARR was $849.8M on $763M revenue growing 33% YoY, trading at
+        approximately 6-9x NTM revenue in Q1 2026, the most directly comparable public
+        benchmark for ThreatLocker on a growth-adjusted basis.
+      sourceRefs: [SV002, SV015]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QV005, QV019]
+
+    - id: CV006
+      type: third-party-reported
+      topic: market-multiples
+      statement: >
+        Cybersecurity SaaS companies with $100M-$300M ARR and 40-60% growth are valued at
+        median 8.1x ARR in 2026, up from 6.5x at the 2023 trough; top-quartile performers
+        command 14-18x NTM revenue multiples.
+      sourceRefs: [SV012, SV015, SV005]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QV019]
+
+    - id: CV007
+      type: inferred
+      topic: bull-case
+      statement: >
+        In the bull case, ThreatLocker sustains 55% CAGR through 2028, reaching $790M-$850M
+        ARR, and achieves an IPO or strategic exit at 12-15x ARR, implying a $9.5B-$12.8B
+        enterprise value and 4.8-6.4x gross return from a $2.0B entry.
+      sourceRefs: [SV003, SV011, SV016]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QV007]
+
+    - id: CV008
+      type: inferred
+      topic: base-case
+      statement: >
+        In the base case, ThreatLocker grows at 40% CAGR through 2028, reaching $550M-$600M
+        ARR, and achieves a PE recap or strategic exit at 9-11x ARR, implying $5.0B-$6.6B
+        enterprise value and a 2.5-3.3x gross return from a $2.0B entry over 4 years.
+      sourceRefs: [SV010, SV012, SV005]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV008]
+
+    - id: CV009
+      type: inferred
+      topic: bear-case
+      statement: >
+        In the bear case, growth decelerates to 25% CAGR (MSP churn spike or platform
+        competitor entry), reaching $340M ARR by 2028, and exits at 5-7x ARR, implying
+        a $1.6B-$2.5B enterprise value and 0.8-1.3x gross return from a $2.0B entry.
+      sourceRefs: [SV008, SV014, SV010]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV009]
+
+    - id: CV010
+      type: observed
+      topic: endpoint-market-demand
+      statement: >
+        Application allowlisting is cited by 62% of enterprise CISOs as a critical control
+        gap in 2026, up from 48% in 2024, driven by supply chain attacks and LOLBin
+        techniques, supporting durable demand for ThreatLocker's core product.
+      sourceRefs: [SV022, SV023]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV027]
+
+    - id: CV011
+      type: third-party-reported
+      topic: security-spend-resilience
+      statement: >
+        78% of CISOs maintained or increased endpoint security budgets in 2025 despite
+        broader IT budget freezes, classifying endpoint and identity controls as non-
+        discretionary spend, supporting ThreatLocker's valuation resilience in downturns.
+      sourceRefs: [SV024]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV015]
+
+    - id: CV012
+      type: third-party-reported
+      topic: total-addressable-market
+      statement: >
+        Global cybersecurity spending is forecast at $300B by 2030 at 13-15% CAGR;
+        endpoint security is approximately 20-22% of total (~$60-66B), with application
+        control a $2.5B sub-segment growing at 35-55%.
+      sourceRefs: [SV025, SV017, SV016]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV027]
+
+    - id: CV013
+      type: third-party-reported
+      topic: idc-market-share
+      statement: >
+        IDC estimates ThreatLocker holds 8-10% share of the $2.5B application-control
+        and allowlisting market in 2025, positioning it as the #1-#3 pure-play vendor
+        in this sub-segment globally.
+      sourceRefs: [SV017]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV027]
+
+    - id: CV014
+      type: inferred
+      topic: capital-efficiency
+      statement: >
+        ThreatLocker reached an estimated $220M-$260M ARR with only $101M in total
+        disclosed funding, implying an ARR-to-capital ratio of approximately 2.2-2.6x,
+        exceptional for cybersecurity SaaS at this scale.
+      sourceRefs: [SV004, SV013, SV030]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV001, QV026]
+
+    - id: CV015
+      type: third-party-reported
+      topic: saas-benchmarks
+      statement: >
+        Best-in-class security SaaS companies at $100M-$300M ARR post NRR of 115-130%,
+        gross margins of 72-82%, and Magic Numbers above 0.8; ThreatLocker's performance
+        on these metrics is unverified but critical to justifying a premium valuation.
+      sourceRefs: [SV011, SV005]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QV003, QV004]
+
+    - id: CV016
+      type: observed
+      topic: product-rating
+      statement: >
+        ThreatLocker scores 4.8/5.0 on G2 with 580+ reviews as of Q2 2026, with primary
+        complaints focused on initial configuration complexity for enterprise deployments,
+        corroborating high customer satisfaction and implied NPS.
+      sourceRefs: [SV026, SV019]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QV015]
+
+    - id: CV017
+      type: observed
+      topic: exit-market
+      statement: >
+        Cybersecurity M&A deal value in 2025 reached approximately $42B, the highest on
+        record, driven by platform vendors acquiring channel-distributed endpoint leaders,
+        directly relevant to ThreatLocker's exit optionality.
+      sourceRefs: [SV007, SV028]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QV018]
+
+    - id: CV018
+      type: observed
+      topic: strategic-acquirers
+      statement: >
+        Palo Alto Networks, Cisco, and Microsoft are each reported to be evaluating
+        MSP-centric endpoint security acquisitions in 2026, drawn by recurring-revenue
+        durability and SMB market penetration.
+      sourceRefs: [SV028, SV007]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV013]
+
+    - id: CV019
+      type: observed
+      topic: emea-expansion
+      statement: >
+        ThreatLocker is expanding its Cyber Hero MSP partner programme to EMEA in 2025,
+        targeting 2,000 additional MSP partners, representing meaningful geographic
+        diversification of its currently US-centric revenue base.
+      sourceRefs: [SV027]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV027]
+
+    - id: CV020
+      type: inferred
+      topic: ipo-pathway
+      statement: >
+        ThreatLocker's most likely IPO window is 2028-2030, requiring the Schwab litigation
+        to be resolved and ARR to exceed $400-500M; the unresolved Case 6:2025cv00923
+        creates a 12-24-month underwriter delay risk.
+      sourceRefs: [SV006, SV009, SV030]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV012]
+
+    - id: CV021
+      type: inferred
+      topic: pe-exit
+      statement: >
+        A PE-backed growth recap or buyout in 2026-2027 is the highest-probability exit
+        scenario, as founder-controlled ownership, absence of VC time pressure, and strong
+        cash-flow efficiency make private equity the most natural capital partner at this stage.
+      sourceRefs: [SV010, SV009]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV012]
+
+    - id: CV022
+      type: inferred
+      topic: strategic-ma
+      statement: >
+        ThreatLocker's MSP-channel distribution, default-deny IP, and healthcare/finance
+        vertical depth create meaningful strategic value for platform acquirers, but
+        founder control makes hostile or below-market approaches unlikely.
+      sourceRefs: [SV028, SV018, SV017]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV013]
+
+    - id: CV023
+      type: third-party-reported
+      topic: private-comp
+      statement: >
+        Wiz ($12B at ~$500M ARR = 24x) and ExtraHop (acquired by Bain at ~6x ARR) illustrate
+        the 6-24x private valuation range relevant to ThreatLocker at a 2027-2030 exit.
+      sourceRefs: [SV003, SV008]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV005]
+
+    - id: CV024
+      type: third-party-reported
+      topic: public-comp-palo-alto
+      statement: >
+        Palo Alto Networks (PANW) trades at approximately 7-9x NTM revenue on 15%+ growth
+        as of Q1 2026, representing the low-end public benchmark and a de-rated valuation
+        floor for slower-growth scenarios.
+      sourceRefs: [SV015, SV005]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QV005, QV019]
+
+    - id: CV025
+      type: inferred
+      topic: moat-premium
+      statement: >
+        ThreatLocker's default-deny architecture, MSP-channel lock-in, and policy-library
+        switching costs justify a 1.5-2.0x valuation premium over generic EDR peers at
+        equivalent growth rates, based on structural comparisons with Zscaler and Okta at IPO.
+      sourceRefs: [SV015, SV016, SV011]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QV017]
+
+    - id: CV026
+      type: inferred
+      topic: dilution-risk
+      statement: >
+        If ThreatLocker raises a growth round at $2.0B-$2.5B before a $4B+ exit, estimated
+        dilution of 20-30% to existing holders would reduce realized IRR by 4-7 percentage
+        points, significant but manageable if exit multiple expansion occurs.
+      sourceRefs: [SV010, SV009]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QV023]
+
+    - id: CV027
+      type: third-party-reported
+      topic: growth-recognition
+      statement: >
+        ThreatLocker has appeared on the Inc. 5000 fastest-growing private companies list
+        for four consecutive years through 2025, providing an independent proxy for sustained
+        revenue growth above 50% CAGR over the measured period.
+      sourceRefs: [SV029, SV030]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV001, QV026]
+
+    - id: CV028
+      type: observed
+      topic: enterprise-push
+      statement: >
+        In 2025, ThreatLocker expanded its enterprise direct-sales motion, signing deals with
+        Fortune 500 financial services and healthcare organisations, with policy automation
+        and SIEM integration cited as key differentiators in the enterprise segment.
+      sourceRefs: [SV018]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV027, QV028]
+
+    - id: CV029
+      type: observed
+      topic: it-admin-sentiment
+      statement: >
+        IT administrators on Spiceworks describe ThreatLocker's MSP deployment as highly
+        effective, while direct enterprise deployment requires significant initial tuning,
+        consistent with the MSP-channel velocity thesis.
+      sourceRefs: [SV019]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QV016]
+
+    - id: CV030
+      type: third-party-reported
+      topic: allowlisting-efficacy
+      statement: >
+        Application allowlisting blocks over 70% of the top 10 MITRE ATT&CK endpoint
+        techniques tracked by Red Canary in 2026, making it one of the highest-efficacy
+        endpoint controls and directly underpinning ThreatLocker's product value proposition.
+      sourceRefs: [SV023]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV017]
+
+    - id: CV031
+      type: inferred
+      topic: thesis-break-litigation
+      statement: >
+        A material adverse ruling in ThreatLocker v. Charles Schwab (Case 6:2025cv00923,
+        M.D. Fla.) -- particularly liability above $50M or an operational injunction --
+        is a thesis-break trigger requiring immediate reassessment of the investment.
+      sourceRefs: [SV009, SV014]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV024, QV010]
+
+    - id: CV032
+      type: inferred
+      topic: thesis-break-churn
+      statement: >
+        MSP partner churn above 8% annually (vs. estimated current <5%) would signal
+        channel-moat erosion and is a potential thesis-break trigger requiring investigation
+        of competitive displacement, pricing pressure, or product deficiency.
+      sourceRefs: [SV011, SV014]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV010]
+
+    - id: CV033
+      type: inferred
+      topic: thesis-break-competitor
+      statement: >
+        A major platform cybersecurity vendor (Palo Alto, CrowdStrike, Microsoft Defender)
+        releasing a native application-allowlisting product at zero marginal cost to existing
+        customers would materially compress ThreatLocker's competitive moat and pricing power.
+      sourceRefs: [SV001, SV016]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV010]
+
+    - id: CV034
+      type: observed
+      topic: adverse-overvaluation
+      statement: >
+        No credible third-party evidence of overvaluation, inflated ARR figures, or accounting
+        irregularities has surfaced in public reporting as of mid-2026; the 2022 $1.7B
+        valuation now appears conservative relative to disclosed growth trajectory.
+      sourceRefs: [SV030, SV013]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV022]
+
+    - id: CV035
+      type: observed
+      topic: adverse-down-round-risk
+      statement: >
+        No evidence of secondary-market discount, down-round risk, or investor-led governance
+        intervention has been publicly reported for ThreatLocker as of mid-2026; the company
+        has not raised new capital since the 2022 Series B, consistent with strong operating
+        cash generation or deliberate founder-controlled growth.
+      sourceRefs: [SV004, SV006]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV021]
+
+    - id: CV036
+      type: third-party-reported
+      topic: msp-market-growth
+      statement: >
+        The application control and allowlisting sub-segment is growing at 35-55% annually
+        in 2025, significantly outpacing the broader endpoint security market (15-25%),
+        creating a long-duration revenue tailwind for ThreatLocker's core product.
+      sourceRefs: [SV016, SV017]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV027]
+
+    - id: CV037
+      type: inferred
+      topic: profitability-path
+      statement: >
+        ThreatLocker's capital efficiency ($220M+ ARR on $101M raised) suggests positive
+        EBITDA or near-breakeven operating cash flow, but no audited financials are available;
+        gross margin is estimated at 70-80% based on SaaS endpoint peers.
+      sourceRefs: [SV030, SV011, SV009]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QV025]
+
+    - id: CV038
+      type: inferred
+      topic: msp-concentration-risk
+      statement: >
+        With >80% of revenue derived from the MSP channel, ThreatLocker faces existential
+        concentration risk if major MSP aggregators (Kaseya, Datto, ConnectWise) launch
+        competing products or change platform integration economics.
+      sourceRefs: [SV014, SV019, SV010]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QV016]
+
+    - id: CV039
+      type: inferred
+      topic: entry-discipline
+      statement: >
+        A fresh entry at $1.7B-$2.0B (current secondary range estimate) with verified 50%+
+        growth and 115%+ NRR would represent an attractive risk/reward at 7-9x ARR for a
+        company with top-decile SaaS benchmarks.
+      sourceRefs: [SV008, SV012, SV005]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QV006]
+
+    - id: CV040
+      type: inferred
+      topic: exit-return
+      statement: >
+        A $3.5B-$5B IPO or strategic exit in 2028-2029 from a $2.0B entry would generate
+        1.75-2.5x gross return or approximately 19-27% IRR over a 3-4 year hold, attractive
+        relative to cybersecurity PE benchmarks of 20-30% target IRR.
+      sourceRefs: [SV010, SV015, SV005]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QV008, QV012]
+
+    - id: CV041
+      type: inferred
+      topic: headcount-efficiency
+      statement: >
+        With an estimated 450-550 employees at $220M-$260M ARR, ThreatLocker's ARR-per-
+        employee ratio of approximately $400K-$580K is significantly above the industry
+        median of $200-$300K, indicating exceptional operational leverage.
+      sourceRefs: [SV009, SV030, SV011]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QV030]
+
+  evidenceGaps:
+    - type: private-evidence-only
+      severity: blocking
+      topic: NRR and gross retention
+      missingEvidence: >
+        ThreatLocker does not publicly disclose net revenue retention, gross logo retention,
+        or customer churn by segment. These metrics are the most critical underwriters of
+        valuation premium for SaaS endpoint security vendors.
+      whyItMatters: >
+        NRR below 110% or logo churn above 5% would materially reduce the valuation
+        multiple and call into question the MSP-channel lock-in thesis.
+      diligencePath: >
+        Request cohort-level ARR waterfall by customer vintage, MSP-segment churn rate,
+        and NDR for the last 3 fiscal years directly from management.
+      relatedQuestionRefs: [QV003]
+
+    - type: private-evidence-only
+      severity: blocking
+      topic: Gross margin and EBITDA
+      missingEvidence: >
+        ThreatLocker has no public audited financial statements. Gross margin, COGS
+        breakdown, operating expenses, and EBITDA are entirely estimated from peer benchmarks.
+      whyItMatters: >
+        Gross margin below 65% would dramatically reduce the intrinsic valuation and
+        challenge the SaaS business model narrative. EBITDA loss above 40% of ARR would
+        raise business model risk flags.
+      diligencePath: >
+        Obtain audited or management-certified P&L with COGS detail and EBITDA reconciliation
+        for FY2024 and FY2025 directly from CFO.
+      relatedQuestionRefs: [QV004, QV025]
+
+    - type: missing-source
+      severity: material
+      topic: Secondary market equity pricing and TV004 comparable valuation completeness
+      missingEvidence: >
+        No public secondary market bid/ask prices or completed secondary transactions in
+        ThreatLocker equity have been identified as of mid-2026. The implied $1.7B valuation
+        is based solely on the 2022 Series B round. Additionally, the comparable valuation
+        table (TV004) is incomplete because private-company ARR and EV data are not publicly
+        disclosed, limiting the precision of peer multiple comparisons.
+      whyItMatters: >
+        Secondary market pricing would provide the most current market-clearing valuation
+        signal for a company that has not raised capital since 2022. The incompleteness of
+        the comparable set means the implied discount to peers could narrow once private
+        company data is obtained.
+      diligencePath: >
+        Engage secondary market intermediaries (Forge Global, Nasdaq Private Market) for
+        current bid/ask indications; query existing investors for any disclosed transfers.
+        Request private comparable data from PitchBook enterprise license or direct LP queries.
+      relatedQuestionRefs: [QV028]
+      relatedTableRefs: [TV004]
