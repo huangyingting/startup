@@ -1,11 +1,12 @@
 ---
 import ClaimRefs from './ClaimRefs.astro';
 import { RENDERED_FIGURE_TYPES } from '../lib/figures.mjs';
+import { claimRefs, type Claim, type ReportFigure, type Source } from '../lib/report-types';
 
 interface Props {
-  figure: any;
-  claims?: any[];
-  sources?: any[];
+  figure: ReportFigure;
+  claims?: Claim[];
+  sources?: Source[];
 }
 
 const { figure, claims = [], sources = [] } = Astro.props;
@@ -15,8 +16,6 @@ const data = figure?.data ?? {};
 const chartTypes = new Set(RENDERED_FIGURE_TYPES);
 const usesD3Chart = chartTypes.has(type);
 const chartId = `chart-${String(figure?.id ?? 'figure').replace(/[^a-z0-9_-]/gi, '-')}-${Math.random().toString(36).slice(2, 9)}`;
-const arr = <T = any>(value: T[] | undefined | null): T[] => Array.isArray(value) ? value : [];
-const blockRefs = (block: any) => arr<string>(block?.claimRefs).slice(0, 6);
 const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? { layout } : {}), data } : null;
 ---
 
@@ -35,7 +34,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
   )}
 
   {figure.approximationNotes && <p class="figure-note">{figure.approximationNotes}</p>}
-  <ClaimRefs refs={blockRefs(figure)} claims={claims} sources={sources} />
+  <ClaimRefs refs={claimRefs(figure)} claims={claims} sources={sources} />
   {chartPayload && <script type="application/json" class="figure-chart-data" set:html={JSON.stringify(chartPayload)}></script>}
 </figure>
 
@@ -70,7 +69,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
   const numberValue = (value) => Number(value) || 0;
   const valueLabel = (item) => item?.displayValue ?? item?.value ?? '';
   const fullValueLabel = (item) => item?.displayValue ?? item?.value ?? item?.score ?? item?.label ?? '';
-  // Safely render any cell-like value (string, number, or object) as text.
+  // Safely render cell-like values (string, number, or object) as text.
   // Object cells use canonical display fields (`label`, `displayValue`,
   // `value`, `score`); blindly stringifying an object produces
   // "[object Object]". Always route cell text through this helper.
@@ -1907,7 +1906,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
     // plus the HTML legend below for identification; tooltips handle hover.
     dots.each(function(d) { addTitle(d3.select(this), `${d.label}: ${xAxisLabel} ${d._valueX}; ${yAxisLabel} ${d._valueY}`); });
     withTooltip(dots, (d) => tooltipHtml(d.label, [`${xAxisLabel}: ${d._valueX}`, `${yAxisLabel}: ${d._valueY}`, d.detail]));
-    // HTML legend: responsive flow grid, wraps cleanly at any width.
+    // HTML legend: responsive flow grid, wraps cleanly across widths.
     const legendHost = d3.select(element).append('div').attr('class', 'quadrant-legend');
     const legendItems = legendHost.selectAll('div.quadrant-legend-item').data(plotPoints).join('div')
       .attr('class', 'quadrant-legend-item');
@@ -2148,7 +2147,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
   /*
    * CSS scoping caveat: Astro adds [data-astro-cid-XXX] to every selector in
    * this <style> block at build time, but elements created at runtime by d3
-   * (`d3.select(...).append('div')`) do NOT receive that attribute. Any rule
+  * (`d3.select(...).append('div')`) do NOT receive that attribute. Rules
    * targeting d3-created DOM MUST be wrapped in :global(...) — see the
    * .chart-kpi rules below for the canonical pattern.
    */
@@ -2156,7 +2155,7 @@ const chartPayload = usesD3Chart ? { id: chartId, type, ...(layout === 'wide' ? 
   /* All figures share one canonical width regardless of layout/type so the
    * report has a consistent figure column. The legacy compact/standard/wide
    * and matrix/range overrides are intentionally collapsed into a single
-   * width — keep the classes for any non-width styling that may rely on
+  * width — keep the classes for non-width styling that may rely on
    * them, but neutralize their --figure-width overrides. */
   .layout-compact,
   .layout-standard,

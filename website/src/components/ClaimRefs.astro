@@ -1,9 +1,11 @@
 ---
-interface Props { refs?: string[]; claims?: any[]; sources?: any[]; }
+import type { Claim, Source } from '../lib/report-types';
+
+interface Props { refs?: string[]; claims?: Claim[]; sources?: Source[]; }
 const { refs = [], claims = [] } = Astro.props;
-const claimById = new Map(claims.map((claim: any) => [claim.id, claim]));
+const claimById = new Map(claims.map((claim) => [claim.id, claim]));
 function linkFor(ref: string) {
-  const claim = claimById.get(ref) as any;
+  const claim = claimById.get(ref);
   return {
     href: `#claim-${ref}`,
     title: claim?.statement ?? ref,

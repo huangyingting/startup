@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import yaml from 'js-yaml';
@@ -7,7 +7,9 @@ import type { Loader } from 'astro/loaders';
 const REPORTS_DIR = resolve(process.cwd(), '..', 'reports');
 const SCHEMA_VERSION = 'report-v2' as const;
 
-interface ReportCardData extends Record<string, unknown> {
+export type YamlRecord = Record<string, unknown>;
+
+export interface ReportCardData extends YamlRecord {
   schemaVersion: typeof SCHEMA_VERSION;
   artifact: 'summary-card';
   slug: string;
@@ -53,6 +55,50 @@ interface ReportCardData extends Record<string, unknown> {
   folderSlug: string;
 }
 
+export interface ReportStageFiles {
+  fullReport: YamlRecord | null;
+  summaryCard: ReportCardData | null;
+}
+
+export interface ReportStageFilesZh {
+  fullReport: YamlRecord | null;
+  summaryCard: YamlRecord | null;
+}
+
+export interface CardOverlayZh {
+  headline: string | null;
+  topStrengths: string[] | null;
+  topRisks: string[] | null;
+  unresolvedGaps: string[] | null;
+  companyShortDescription: string | null;
+  companySector: string | null;
+  companyStage: string | null;
+}
+
+interface FileFingerprint {
+  mtimeMs: number;
+  size: number;
+}
+
+interface YamlCacheEntry {
+  fingerprint: FileFingerprint;
+  value: YamlRecord | null;
+}
+
+interface ReportCardCacheEntry {
+  fingerprint: FileFingerprint;
+  value: ReportCardData | null;
+}
+
+interface CardOverlayZhCacheEntry {
+  fingerprint: FileFingerprint;
+  value: CardOverlayZh | null;
+}
+
+const yamlCache = new Map<string, YamlCacheEntry>();
+const reportCardCache = new Map<string, ReportCardCacheEntry>();
+const cardOverlayZhCache = new Map<string, CardOverlayZhCacheEntry>();
+
 const RUN_ID_RE = /^(\d{14})-(.+)$/;
 
 // ---------------------------------------------------------------------------
@@ -60,19 +106,99 @@ const RUN_ID_RE = /^(\d{14})-(.+)$/;
 // ---------------------------------------------------------------------------
 
 function listRuns(): string[] {
-  if (!existsSync(REPORTS_DIR)) return [];
-  return readdirSync(REPORTS_DIR)
-    .filter((name) => !name.startsWith('.') && !name.startsWith('_'))
-    .filter((name) => isDirectory(join(REPORTS_DIR, name)))
-    .sort()
-    .reverse();
+  try {
+    return readdirSync(REPORTS_DIR, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .filter((name) => !name.startsWith('.') && !name.startsWith('_'))
+      .sort()
+      .reverse();
+  } catch (err) {
+    if (isNodeError(err) && err.code === 'ENOENT') return [];
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[reports-loader] Failed to list ${REPORTS_DIR}: ${message}`);
+    return [];
+  }
 }
 
-function isDirectory(path: string): boolean {
+function fileFingerprint(path: string): FileFingerprint | null {
   try {
-    return statSync(path).isDirectory();
-  } catch {
-    return false;
+    const stat = statSync(path);
+    if (!stat.isFile()) return null;
+    return { mtimeMs: stat.mtimeMs, size: stat.size };
+  } catch (err) {
+    if (isNodeError(err) && err.code === 'ENOENT') return null;
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[reports-loader] Failed to stat ${path}: ${message}`);
+    return null;
+  }
+}
+
+function sameFingerprint(a: FileFingerprint | null | undefined, b: FileFingerprint | null | undefined): boolean {
+  return !!a && !!b && a.mtimeMs === b.mtimeMs && a.size === b.size;
+}
+
+function isNodeError(err: unknown): err is NodeJS.ErrnoException {
+  return err instanceof Error && 'code' in err;
+}
+
+function isRecord(value: unknown): value is YamlRecord {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function asRecord(value: unknown): YamlRecord {
+  return isRecord(value) ? value : {};
+}
+
+function stringOr(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim() ? value : fallback;
+}
+
+function stringOrNull(value: unknown): string | null {
+  return typeof value === 'string' && value.trim() ? value : null;
+}
+
+function numberOr(value: unknown, fallback: number): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
+function numberOrNull(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function stringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+}
+
+function readYamlCacheEntry(path: string): YamlCacheEntry | null {
+  const fingerprint = fileFingerprint(path);
+  if (!fingerprint) {
+    yamlCache.delete(path);
+    return null;
+  }
+
+  const cached = yamlCache.get(path);
+  if (sameFingerprint(cached?.fingerprint, fingerprint)) return cached!;
+
+  const value = parseYamlFile(path);
+  const entry = { fingerprint, value };
+  yamlCache.set(path, entry);
+  return entry;
+}
+
+function parseYamlFile(path: string): YamlRecord | null {
+  try {
+    const raw: unknown = yaml.load(readFileSync(path, 'utf8'));
+    const normalized = normalizeDates(repairCollapsedKey(raw));
+    if (!isRecord(normalized)) {
+      console.warn(`[reports-loader] YAML root is not an object for ${path}`);
+      return null;
+    }
+    return normalized;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[reports-loader] YAML parse failed for ${path}: ${message}`);
+    return null;
   }
 }
 
@@ -91,10 +217,10 @@ function relatedFolderSlug(runId: unknown): string | null {
   return parseRunId(runId).folderSlug;
 }
 
-function normalizeRevision(raw: Record<string, any>): ReportCardData['revision'] {
-  const revision = raw.revision && typeof raw.revision === 'object' ? raw.revision : {};
+function normalizeRevision(raw: YamlRecord): ReportCardData['revision'] {
+  const revision = asRecord(raw.revision);
   const status = revision.status === 'superseded' ? 'superseded' : 'current';
-  const nullable = (field: string) => (typeof revision[field] === 'string' && revision[field].trim() ? revision[field].trim() : null);
+  const nullable = (field: string) => stringOrNull(revision[field]);
   const refreshOfRunId = nullable('refreshOfRunId');
   const supersededByRunId = nullable('supersededByRunId');
   return {
@@ -141,71 +267,65 @@ function normalizeDates(value: unknown): unknown {
   return out;
 }
 
-function readYaml(path: string): Record<string, any> | null {
-  if (!existsSync(path)) return null;
-  try {
-    const raw = yaml.load(readFileSync(path, 'utf8'));
-    return normalizeDates(repairCollapsedKey(raw)) as Record<string, any>;
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.warn(`[reports-loader] YAML parse failed for ${path}: ${message}`);
-    return null;
-  }
+function readYaml(path: string): YamlRecord | null {
+  return readYamlCacheEntry(path)?.value ?? null;
 }
 
 // ---------------------------------------------------------------------------
 // report card normalization
 // ---------------------------------------------------------------------------
 
-function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCardData {
+function normalizeReportCard(raw: YamlRecord, runId: string): ReportCardData {
   const { runTimestamp, folderSlug } = parseRunId(runId);
-  const company = raw.company ?? {};
-  const summary = raw.summary ?? {};
-  const metrics = summary.keyMetrics ?? {};
+  const company = asRecord(raw.company);
+  const summary = asRecord(raw.summary);
+  const metrics = asRecord(summary.keyMetrics);
+  const sourceStats = asRecord(raw.sourceStats);
+  const companyName = stringOr(company.name, 'Unknown company');
   return {
     schemaVersion: SCHEMA_VERSION,
     artifact: 'summary-card',
-    slug: raw.slug ?? runId,
-    runDate: raw.runDate ?? '1970-01-01',
+    slug: stringOr(raw.slug, runId),
+    runDate: stringOr(raw.runDate, '1970-01-01'),
     company: {
-      name: company.name ?? 'Unknown company',
-      website: company.website ?? null,
-      sector: company.sector ?? null,
-      stage: company.stage ?? null,
-      headquarters: company.headquarters ?? null,
-      shortDescription: company.shortDescription ?? null,
+      name: companyName,
+      website: stringOrNull(company.website),
+      sector: stringOrNull(company.sector),
+      stage: stringOrNull(company.stage),
+      headquarters: stringOrNull(company.headquarters),
+      shortDescription: stringOrNull(company.shortDescription),
     },
     revision: normalizeRevision(raw),
-    headline: summary.headline ?? `${company.name ?? 'Startup'} diligence report`,
+    headline: stringOr(summary.headline, `${companyName} diligence report`),
     recommendation: typeof summary.recommendation === 'string' ? summary.recommendation : 'research-more',
-    confidence: summary.confidence ?? 'low',
-    riskRating: summary.riskRating ?? 'unknown',
-    valuationStance: summary.valuationStance ?? 'unknown',
-    overallScore: typeof summary.overallScore === 'number' ? summary.overallScore : 0,
+    confidence: stringOr(summary.confidence, 'low'),
+    riskRating: stringOr(summary.riskRating, 'unknown'),
+    valuationStance: stringOr(summary.valuationStance, 'unknown'),
+    overallScore: numberOr(summary.overallScore, 0),
     sourceStats: {
-      sourcesRetained: raw.sourceStats?.sourcesRetained ?? 0,
-      claimsReviewed: raw.sourceStats?.claimsReviewed ?? 0,
-      domainCount: raw.sourceStats?.domainCount ?? 0,
-      adverseSourceCount: raw.sourceStats?.adverseSourceCount ?? 0,
-      openQuestionCount: raw.sourceStats?.openQuestionCount ?? 0,
-      documentedGapQuestionCount: raw.sourceStats?.documentedGapQuestionCount ?? 0,
-      blockingQuestionCount: raw.sourceStats?.blockingQuestionCount ?? 0,
-      averageSourceAgeDays: raw.sourceStats?.averageSourceAgeDays ?? null,
+      sourcesRetained: numberOr(sourceStats.sourcesRetained, 0),
+      claimsReviewed: numberOr(sourceStats.claimsReviewed, 0),
+      domainCount: numberOr(sourceStats.domainCount, 0),
+      adverseSourceCount: numberOr(sourceStats.adverseSourceCount, 0),
+      openQuestionCount: numberOr(sourceStats.openQuestionCount, 0),
+      documentedGapQuestionCount: numberOr(sourceStats.documentedGapQuestionCount, 0),
+      blockingQuestionCount: numberOr(sourceStats.blockingQuestionCount, 0),
+      averageSourceAgeDays: numberOrNull(sourceStats.averageSourceAgeDays),
     },
     keyMetrics: {
-      valuationUsdM: metrics.valuationUsdM ?? null,
-      revenueRunRateUsdM: metrics.revenueRunRateUsdM ?? null,
-      arrUsdM: metrics.arrUsdM ?? null,
-      revenueGrowthYoYPct: metrics.revenueGrowthYoYPct ?? null,
-      grossMarginPct: metrics.grossMarginPct ?? null,
-      nrrPct: metrics.nrrPct ?? null,
-      totalRaisedUsdM: metrics.totalRaisedUsdM ?? null,
-      customerCount: metrics.customerCount ?? null,
-      headcount: metrics.headcount ?? null,
+      valuationUsdM: numberOrNull(metrics.valuationUsdM),
+      revenueRunRateUsdM: numberOrNull(metrics.revenueRunRateUsdM),
+      arrUsdM: numberOrNull(metrics.arrUsdM),
+      revenueGrowthYoYPct: numberOrNull(metrics.revenueGrowthYoYPct),
+      grossMarginPct: numberOrNull(metrics.grossMarginPct),
+      nrrPct: numberOrNull(metrics.nrrPct),
+      totalRaisedUsdM: numberOrNull(metrics.totalRaisedUsdM),
+      customerCount: numberOrNull(metrics.customerCount),
+      headcount: numberOrNull(metrics.headcount),
     },
-    topStrengths: Array.isArray(summary.topStrengths) ? summary.topStrengths : [],
-    topRisks: Array.isArray(summary.topRisks) ? summary.topRisks : [],
-    unresolvedGaps: Array.isArray(summary.unresolvedGaps) ? summary.unresolvedGaps : [],
+    topStrengths: stringList(summary.topStrengths),
+    topRisks: stringList(summary.topRisks),
+    unresolvedGaps: stringList(summary.unresolvedGaps),
     runId,
     runTimestamp,
     folderSlug,
@@ -218,23 +338,18 @@ function normalizeReportCard(raw: Record<string, any>, runId: string): ReportCar
 
 const SUMMARY_CARD_FILE = 'summary-card.yaml';
 
-function isPublishableRun(folder: string): boolean {
-  return existsSync(join(folder, SUMMARY_CARD_FILE));
-}
-
-function reportCardPath(folder: string): string | null {
-  if (!isPublishableRun(folder)) return null;
+function reportCardPath(folder: string): string {
   return join(folder, SUMMARY_CARD_FILE);
 }
 
-function readStageYaml(folder: string, basename: string): unknown | null {
+function readStageYaml(folder: string, basename: string): YamlRecord | null {
   return readYaml(join(folder, `${basename}.yaml`));
 }
 
 // Locale overlay reader: looks for `<basename>.zh.yaml` next to the canonical
 // `<basename>.yaml`. Returns null when no overlay exists; pages then fall
 // back to the English data.
-function readLocaleStageYaml(folder: string, basename: string, locale: 'zh'): unknown | null {
+function readLocaleStageYaml(folder: string, basename: string, locale: 'zh'): YamlRecord | null {
   return readYaml(join(folder, `${basename}.${locale}.yaml`));
 }
 
@@ -250,15 +365,9 @@ export function reportsLoader(): Loader {
       const runs = listRuns();
       logger.info(`[reports-loader] Loading ${runs.length} report run(s) from ${REPORTS_DIR}`);
       for (const runId of runs) {
-        const folder = join(REPORTS_DIR, runId);
-        const path = reportCardPath(folder);
-        if (!path) continue;
-        const raw = readYaml(path);
-        if (!raw) {
-          logger.error(`[reports-loader] ${runId}: failed to parse ${path}`);
-          continue;
-        }
-        const data = await parseData({ id: runId, data: normalizeReportCard(raw, runId) });
+        const dataForRun = loadReportCard(runId);
+        if (!dataForRun) continue;
+        const data = await parseData({ id: runId, data: dataForRun });
         store.set({ id: runId, data });
       }
     },
@@ -266,7 +375,7 @@ export function reportsLoader(): Loader {
 }
 
 // English stage files only — the English page detail loads via this.
-export function loadStageFiles(runId: string): Record<string, unknown> {
+export function loadStageFiles(runId: string): ReportStageFiles {
   const folder = join(REPORTS_DIR, runId);
   return {
     fullReport: readStageYaml(folder, 'full-report'),
@@ -278,7 +387,7 @@ export function loadStageFiles(runId: string): Record<string, unknown> {
 // final-artifact `*.zh.yaml` sibling has not been written yet — the Chinese
 // detail page merges these onto the English stages so untranslated fields
 // fall through.
-export function loadStageFilesZh(runId: string): Record<string, unknown> {
+export function loadStageFilesZh(runId: string): ReportStageFilesZh {
   const folder = join(REPORTS_DIR, runId);
   return {
     fullReport: readLocaleStageYaml(folder, 'full-report', 'zh'),
@@ -288,28 +397,56 @@ export function loadStageFilesZh(runId: string): Record<string, unknown> {
 
 // Chinese overlay for the report card metadata used on list pages
 // (homepage, archive, top-rated). Returns null when no overlay exists.
-export function loadCardOverlayZh(runId: string): Record<string, unknown> | null {
+export function loadCardOverlayZh(runId: string): CardOverlayZh | null {
   const folder = join(REPORTS_DIR, runId);
-  const raw = readLocaleStageYaml(folder, 'summary-card', 'zh');
-  if (!raw || typeof raw !== 'object') return null;
-  const r = raw as Record<string, any>;
-  const summary = (r.summary && typeof r.summary === 'object') ? r.summary : {};
-  const company = (r.company && typeof r.company === 'object') ? r.company : {};
-  return {
-    headline: typeof summary.headline === 'string' ? summary.headline : null,
-    topStrengths: Array.isArray(summary.topStrengths) ? summary.topStrengths : null,
-    topRisks: Array.isArray(summary.topRisks) ? summary.topRisks : null,
-    unresolvedGaps: Array.isArray(summary.unresolvedGaps) ? summary.unresolvedGaps : null,
-    companyShortDescription: typeof company.shortDescription === 'string' ? company.shortDescription : null,
-    companySector: typeof company.sector === 'string' ? company.sector : null,
-    companyStage: typeof company.stage === 'string' ? company.stage : null,
-  };
+  const path = join(folder, 'summary-card.zh.yaml');
+  const rawEntry = readYamlCacheEntry(path);
+  if (!rawEntry) {
+    cardOverlayZhCache.delete(runId);
+    return null;
+  }
+
+  const cached = cardOverlayZhCache.get(runId);
+  if (sameFingerprint(cached?.fingerprint, rawEntry.fingerprint)) return cached!.value;
+
+  const summary = asRecord(rawEntry.value?.summary);
+  const company = asRecord(rawEntry.value?.company);
+  const value: CardOverlayZh | null = rawEntry.value
+    ? {
+        headline: stringOrNull(summary.headline),
+        topStrengths: stringList(summary.topStrengths),
+        topRisks: stringList(summary.topRisks),
+        unresolvedGaps: stringList(summary.unresolvedGaps),
+        companyShortDescription: stringOrNull(company.shortDescription),
+        companySector: stringOrNull(company.sector),
+        companyStage: stringOrNull(company.stage),
+      }
+    : null;
+  const normalized: CardOverlayZh | null = value
+    ? {
+        ...value,
+        topStrengths: value.topStrengths?.length ? value.topStrengths : null,
+        topRisks: value.topRisks?.length ? value.topRisks : null,
+        unresolvedGaps: value.unresolvedGaps?.length ? value.unresolvedGaps : null,
+      }
+    : null;
+  cardOverlayZhCache.set(runId, { fingerprint: rawEntry.fingerprint, value: normalized });
+  return normalized;
 }
 
 function loadReportCard(runId: string): ReportCardData | null {
   const folder = join(REPORTS_DIR, runId);
   const path = reportCardPath(folder);
-  if (!path) return null;
-  const raw = readYaml(path);
-  return raw ? normalizeReportCard(raw, runId) : null;
+  const rawEntry = readYamlCacheEntry(path);
+  if (!rawEntry) {
+    reportCardCache.delete(runId);
+    return null;
+  }
+
+  const cached = reportCardCache.get(runId);
+  if (sameFingerprint(cached?.fingerprint, rawEntry.fingerprint)) return cached!.value;
+
+  const value = rawEntry.value ? normalizeReportCard(rawEntry.value, runId) : null;
+  reportCardCache.set(runId, { fingerprint: rawEntry.fingerprint, value });
+  return value;
 }

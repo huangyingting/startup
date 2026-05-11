@@ -8,16 +8,33 @@ import { t } from '../lib/i18n';
 import type { Locale } from '../lib/locale';
 import { localePath } from '../lib/locale';
 import { splitClaimRefsText, stripTrailingClaimRefs } from '../lib/claim-refs.mjs';
+import type { ReportStageFiles, ReportStageFilesZh } from '../content/reports-loader';
+import { asArray, asRecord, claimRefs, isRecord } from '../lib/report-types';
+import type {
+  Claim,
+  CompanyProfile,
+  CoverFact,
+  EvidenceLedger,
+  Founder,
+  FullReport,
+  ReportAppendix,
+  ReportBlock as ReportBlockData,
+  ReportChapter,
+  ReportFigure,
+  ReportSection,
+  ReportTable,
+  Source,
+} from '../lib/report-types';
 
 interface Props {
   entry: CollectionEntry<'reports'>;
-  data: any;
-  stages: any;
+  data: CollectionEntry<'reports'>['data'];
+  stages: ReportStageFiles;
   locale?: Locale;
   // Optional Chinese overlay produced by loadStageFilesZh(). Each field is
   // null when the corresponding `*.zh.yaml` sibling has not been written yet;
   // mergeI18n() then falls back to the English text per leaf string.
-  stagesZh?: any;
+  stagesZh?: ReportStageFilesZh | null;
 }
 
 const { data, stages, locale = 'en', stagesZh = null } = Astro.props;
@@ -26,7 +43,7 @@ const { data, stages, locale = 'en', stagesZh = null } = Astro.props;
 // otherwise keep the English original. Arrays and objects walk by index/key
 // so a partial translation (e.g. only some sections translated) renders the
 // translated parts in Chinese and the rest in English.
-function mergeI18n(en: any, zh: any): any {
+function mergeI18n(en: unknown, zh: unknown): unknown {
   if (zh === null || zh === undefined) return en;
   if (typeof en === 'string') {
     return typeof zh === 'string' && zh.trim() ? zh : en;
@@ -35,9 +52,9 @@ function mergeI18n(en: any, zh: any): any {
     if (!Array.isArray(zh)) return en;
     return en.map((item, i) => mergeI18n(item, zh[i]));
   }
-  if (en && typeof en === 'object' && zh && typeof zh === 'object' && !Array.isArray(zh)) {
-    const out: Record<string, any> = Array.isArray(en) ? [...en] : { ...en };
-    for (const key of Object.keys(en)) out[key] = mergeI18n(en[key], (zh as any)[key]);
+  if (isRecord(en) && isRecord(zh)) {
+    const out: Record<string, unknown> = { ...en };
+    for (const key of Object.keys(en)) out[key] = mergeI18n(en[key], zh[key]);
     return out;
   }
   return en;
@@ -55,14 +72,20 @@ const supersededByHref = revision.supersededByFolderSlug
   ? (locale === 'zh' ? localePath(base, 'zh', revision.supersededByFolderSlug) : `${base}${revision.supersededByFolderSlug}/`)
   : null;
 
-const enDoc = stages.fullReport ?? null;
-const enLedger = stages.evidence ?? {};
-const doc = locale === 'zh' && stagesZh?.fullReport ? mergeI18n(enDoc, stagesZh.fullReport) : enDoc;
+const enDoc = stages.fullReport as FullReport | null;
+const enLedger = asRecord(stages.evidence) as EvidenceLedger;
+const doc = (locale === 'zh' && stagesZh?.fullReport ? mergeI18n(enDoc, stagesZh.fullReport) : enDoc) as FullReport | null;
 const ledger = enLedger;
-const claims: any[] = Array.isArray(ledger.claims) ? ledger.claims : [];
-const sources: any[] = Array.isArray(ledger.sources) ? ledger.sources : [];
-const figures = new Map<string, any>((doc?.figures ?? []).map((figure: any) => [figure.id, figure]));
-const tables = new Map<string, any>((doc?.tables ?? []).map((table: any) => [table.id, table]));
+const claims: Claim[] = asArray<Claim>(ledger.claims);
+const sources: Source[] = asArray<Source>(ledger.sources);
+const figureEntries: [string, ReportFigure][] = asArray<ReportFigure>(doc?.figures)
+  .filter((figure): figure is ReportFigure & { id: string } => typeof figure.id === 'string' && !!figure.id)
+  .map((figure) => [figure.id, figure]);
+const tableEntries: [string, ReportTable][] = asArray<ReportTable>(doc?.tables)
+  .filter((table): table is ReportTable & { id: string } => typeof table.id === 'string' && !!table.id)
+  .map((table) => [table.id, table]);
+const figures = new Map<string, ReportFigure>(figureEntries);
+const tables = new Map<string, ReportTable>(tableEntries);
 
 const labels = {
   recommendation: t('reportRecommendation', locale),
@@ -129,8 +152,8 @@ const fallbackMetricLabels = {
   headcount: locale === 'zh' ? '员工数' : 'Headcount',
 };
 
-function arr<T = unknown>(value: T[] | undefined | null): T[] {
-  return Array.isArray(value) ? value : [];
+function arr<T = unknown>(value: unknown): T[] {
+  return asArray<T>(value);
 }
 
 function metric(value: unknown, suffix = ''): string {
@@ -152,20 +175,29 @@ function cleanHeadline(value: unknown): string {
   return stripTrailingClaimRefs(value);
 }
 
-function blockRefs(value: any): string[] {
-  return arr<string>(value?.claimRefs).slice(0, 6);
+function blockRefs(value: unknown): string[] {
+  return claimRefs(value);
 }
 
-const coverFacts = arr(doc?.coverFacts);
+const coverFacts = arr<CoverFact>(doc?.coverFacts);
 const companyProfile = doc?.companyProfile
   ? {
       ...doc.companyProfile,
       summary: doc.companyProfile.summary ?? doc.companyProfile.body ?? null,
-    }
+    } satisfies CompanyProfile
   : null;
 
-const chapters = arr<any>(doc?.chapters);
-const appendices = arr<any>(doc?.appendices);
+const chapters = arr<ReportChapter>(doc?.chapters);
+const appendices = arr<ReportAppendix>(doc?.appendices);
+const founders = companyProfile ? arr<Founder>(companyProfile.founders) : [];
+
+function sectionsFor(chapter: ReportChapter): ReportSection[] {
+  return arr<ReportSection>(chapter.sections);
+}
+
+function blocksFor(container: ReportSection | ReportAppendix): ReportBlockData[] {
+  return arr<ReportBlockData>(container.blocks);
+}
 
 const keyMetrics = data.keyMetrics ?? {};
 const fallbackMetrics = [
@@ -185,10 +217,10 @@ const fallbackMetrics = [
 // summary-card.zh.yaml overlay is present, prefer its values per leaf and
 // fall back to English for anything missing.
 const zhCard = locale === 'zh' ? (stagesZh?.summaryCard ?? null) : null;
-const zhSummary = zhCard?.summary ?? {};
-const zhCompany = zhCard?.company ?? {};
-const pickStr = (z, e) => (typeof z === 'string' && z.trim() ? z : e);
-const pickArr = (z, e) => (Array.isArray(z) && z.length ? e.map((item, i) => (typeof z[i] === 'string' && z[i].trim() ? z[i] : item)) : e);
+const zhSummary = asRecord(zhCard?.summary);
+const zhCompany = asRecord(zhCard?.company);
+const pickStr = (z: unknown, e: string | null | undefined) => (typeof z === 'string' && z.trim() ? z : e);
+const pickArr = (z: unknown, e: string[]) => (Array.isArray(z) && z.length ? e.map((item, i) => (typeof z[i] === 'string' && z[i].trim() ? z[i] : item)) : e);
 const card = {
   headline: pickStr(zhSummary.headline, data.headline),
   topStrengths: pickArr(zhSummary.topStrengths, arr<string>(data.topStrengths)),
@@ -261,7 +293,7 @@ const card = {
     <h2>{labels.coverMetrics}</h2>
     <div class="metric-grid">
       {coverFacts.length
-        ? coverFacts.map((item: any, index: number) => (
+        ? coverFacts.map((item, index) => (
             <article>
               <div class="metric-topline">
                 <span class="metric-label">{item.label}</span>
@@ -301,8 +333,8 @@ const card = {
         {companyProfile.foundedDate && (
           <div><dt>{labels.founded}</dt><dd>{companyProfile.foundedDate}</dd></div>
         )}
-        {arr(companyProfile.founders).length > 0 && (
-          <div><dt>{labels.founders}</dt><dd>{arr(companyProfile.founders).map((founder: any) => founder.name).join(', ')}</dd></div>
+        {founders.length > 0 && (
+          <div><dt>{labels.founders}</dt><dd>{founders.map((founder) => founder.name).filter(Boolean).join(', ')}</dd></div>
         )}
         {companyProfile.foundingLocation && <div><dt>{labels.foundingLocation}</dt><dd>{companyProfile.foundingLocation}</dd></div>}
         {companyProfile.headquarters && <div><dt>{labels.headquarters}</dt><dd>{companyProfile.headquarters}</dd></div>}
@@ -362,7 +394,7 @@ const card = {
   {chapters.length > 0 && (
     <nav class="toc-sticky" aria-label={labels.contents} data-toc>
       <ol class="toc-list" id="toc-list">
-        {chapters.map((chapter: any) => (
+        {chapters.map((chapter) => (
           <li class="toc-item" data-toc-target={`chapter-${chapter.number}`}>
             <a href={`#chapter-${chapter.number}`}>
               <span class="toc-number">{String(chapter.number).padStart(2, '0')}</span>
@@ -374,16 +406,16 @@ const card = {
     </nav>
   )}
 
-  {chapters.map((chapter: any) => (
+  {chapters.map((chapter) => (
     <article class="report-chapter" id={`chapter-${chapter.number}`}>
       <header class="chapter-header">
         <span class="chapter-eyebrow">Chapter {String(chapter.number).padStart(2, '0')}</span>
         <h2><span class="chapter-number">{String(chapter.number).padStart(2, '0')}</span><span class="chapter-title">{chapter.title}</span></h2>
       </header>
-      {arr(chapter.sections).map((section: any) => (
+      {sectionsFor(chapter).map((section) => (
         <section class="chapter-section">
           <h3>{section.number} {section.title}</h3>
-          {arr(section.blocks).map((block: any) => (
+          {blocksFor(section).map((block) => (
             <ReportBlock block={block} tables={tables} figures={figures} claims={claims} sources={sources} />
           ))}
         </section>
@@ -391,10 +423,10 @@ const card = {
     </article>
   ))}
 
-  {appendices.map((appendix: any) => (
+  {appendices.map((appendix) => (
     <section class="report-section appendix" id={`appendix-${appendix.id}`}>
       <h2>{labels.appendix} {appendix.id}: {appendix.title}</h2>
-      {arr(appendix.blocks).map((block: any) => (
+      {blocksFor(appendix).map((block) => (
         <ReportBlock block={block} tables={tables} figures={figures} claims={claims} sources={sources} />
       ))}
     </section>
@@ -409,7 +441,7 @@ const card = {
       <h2>{labels.evidence}</h2>
       {claims.length > 0 && (
         <DataTable title={labels.claimsCol} columns={[labels.claimIdCol, labels.claimStatementCol, labels.claimConfidenceCol, labels.claimSourcesCol]}>
-          {claims.map((claim: any) => (
+          {claims.map((claim) => (
             <tr id={`claim-${claim.id}`}>
               <td><a class="evidence-id" href={`#claim-${claim.id}`}>{claim.id}</a></td>
               <td>{claim.statement}</td>
@@ -427,7 +459,7 @@ const card = {
       )}
       {sources.length > 0 && (
         <DataTable title={labels.sourcesCol} columns={[labels.sourceIdCol, labels.sourcePublisherCol, labels.sourceTitleCol, labels.sourceQuoteCol]}>
-          {sources.map((source: any) => (
+          {sources.map((source) => (
             <tr id={`source-${source.id}`}>
               <td><a class="evidence-id" href={`#source-${source.id}`}>{source.id}</a></td>
               <td>{source.publisher}</td>
@@ -768,7 +800,7 @@ const card = {
       margin-top: 12mm;
     }
 
-    /* Hide site chrome and any in-report controls. */
+    /* Hide site chrome and in-report controls. */
     :global(.bz-utility),
     :global(.bz-footer),
     .evidence-toggle,

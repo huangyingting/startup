@@ -4,6 +4,7 @@ import { displayLabel } from '../lib/display';
 import { t } from '../lib/i18n';
 import type { Locale } from '../lib/locale';
 import { localePath } from '../lib/locale';
+import type { CardOverlayZh } from '../content/reports-loader';
 
 interface Props {
   entry: CollectionEntry<'reports'>;
@@ -11,7 +12,7 @@ interface Props {
   // Optional Chinese overlay produced by loadCardOverlayZh(). When set and
   // locale === 'zh', individual fields fall back to English when the overlay
   // does not provide them.
-  overlay?: Record<string, any> | null;
+  overlay?: CardOverlayZh | null;
 }
 const { entry, locale = 'en', overlay = null } = Astro.props;
 const data = entry.data;
@@ -35,9 +36,9 @@ const labels = {
   other: t('cardOther', locale),
 };
 
-const headline = (overlay?.headline as string | null) ?? data.headline;
-const sector = (overlay?.companySector as string | null) ?? data.company.sector ?? labels.other;
-const stage = (overlay?.companyStage as string | null) ?? data.company.stage;
+const headline = overlay?.headline ?? data.headline;
+const sector = overlay?.companySector ?? data.company.sector ?? labels.other;
+const stage = overlay?.companyStage ?? data.company.stage;
 
 function metric(value: number | null | undefined, suffix = '') {
   if (value === null || value === undefined) return null;

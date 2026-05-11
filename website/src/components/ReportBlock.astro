@@ -5,32 +5,38 @@ import ClaimRefs from './ClaimRefs.astro';
 import DataTable from './DataTable.astro';
 import FigureRenderer from './FigureRenderer.astro';
 import { hasInlineClaimRefs, splitClaimRefsText } from '../lib/claim-refs.mjs';
+import { asArray, claimRefs } from '../lib/report-types';
+import type { Claim, ReportBlock as ReportBlockData, ReportFigure, ReportTable, Source } from '../lib/report-types';
 
 interface Props {
-  block: any;
-  tables: Map<string, any>;
-  figures: Map<string, any>;
-  claims: any[];
-  sources: any[];
+  block: ReportBlockData;
+  tables: Map<string, ReportTable>;
+  figures: Map<string, ReportFigure>;
+  claims: Claim[];
+  sources: Source[];
 }
 
 const { block, tables, figures, claims, sources } = Astro.props;
-
-function arr<T = unknown>(value: T[] | undefined | null): T[] {
-  return Array.isArray(value) ? value : [];
-}
-
-function blockRefs(value: any): string[] {
-  return arr<string>(value?.claimRefs).slice(0, 6);
-}
 
 function blockClass(type: string | null | undefined): string {
   return `report-callout callout-${String(type ?? 'insight').replace(/[^a-z0-9-]/gi, '-')}`;
 }
 
+function tableColumns(value: ReportTable): unknown[] {
+  return asArray(value.columns);
+}
+
+function tableRows(value: ReportTable): unknown[][] {
+  return asArray<unknown[]>(value.rows);
+}
+
+function rowCells(row: unknown[]): unknown[] {
+  return asArray(row);
+}
+
 const refsForFooter = (() => {
-  const inline = hasInlineClaimRefs(block?.body) || arr(block?.items).some((item) => hasInlineClaimRefs(item));
-  return inline ? [] : blockRefs(block);
+  const inline = hasInlineClaimRefs(block?.body) || asArray(block?.items).some((item) => hasInlineClaimRefs(item));
+  return inline ? [] : claimRefs(block);
 })();
 
 const table = block.type === 'table' && block.tableRef ? tables.get(block.tableRef) : null;
@@ -48,7 +54,7 @@ const figure = block.type === 'figure' && block.figureRef ? figures.get(block.fi
 {block.type === 'list' && (
   <>
     <ul>
-      {arr(block.items).map((item) => (
+      {asArray(block.items).map((item) => (
         <li>
           {splitClaimRefsText(item).map((part) => part.ref
             ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
@@ -76,10 +82,10 @@ const figure = block.type === 'figure' && block.figureRef ? figures.get(block.fi
 )}
 
 {block.type === 'table' && table && (
-  <DataTable title={table.title} columns={arr(table.columns)}>
-    {arr(table.rows).map((row: any[]) => (
+  <DataTable title={table.title} columns={tableColumns(table)}>
+    {tableRows(table).map((row) => (
       <tr>
-        {arr(row).map((cell) => (
+        {rowCells(row).map((cell) => (
           <td>
             {splitClaimRefsText(cell).map((part) => part.ref
               ? <ClaimRefs refs={[part.ref]} claims={claims} sources={sources} />
@@ -95,7 +101,7 @@ const figure = block.type === 'figure' && block.figureRef ? figures.get(block.fi
           : part.text)}
       </Fragment>
     )}
-    <ClaimRefs slot="footer" refs={blockRefs(table)} claims={claims} sources={sources} />
+    <ClaimRefs slot="footer" refs={claimRefs(table)} claims={claims} sources={sources} />
   </DataTable>
 )}
 

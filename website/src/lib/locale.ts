@@ -1,6 +1,6 @@
 // Locale plumbing for the bilingual site. The English path is `/`
 // (canonical), the Chinese mirror is `/zh/`. `localePath()` joins the
-// Astro base URL, the locale prefix (empty for `en`), and any extra
+// Astro base URL, the locale prefix (empty for `en`), and extra
 // segments so callers never assemble strings by hand.
 export type Locale = 'en' | 'zh';
 
