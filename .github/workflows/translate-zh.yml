@@ -173,7 +173,7 @@ jobs:
           $REPORT_IDS
 
           Requirements:
-          - Translate exactly these selected folders. If fewer than the requested batch size were selected, translate only the selected folders. If a selected folder already has both Chinese overlays by the time you inspect it, run `npm run translate:zh -- verify <runId>` and skip rewriting it.
+          - Translate exactly these selected folders. If fewer than the requested batch size were selected, translate only the selected folders. If a selected folder already has both Chinese overlays by the time you inspect it, skip rewriting it.
           - Do not run any git command (git add, git commit, git push, git stash, git checkout, etc.) at any point; leave generated Chinese overlays unstaged. The workflow itself owns commit/push decisions.
           EOF
           )
@@ -199,9 +199,7 @@ jobs:
           while IFS= read -r report; do
             [ -z "$report" ] && continue
             node .agents/skills/translate-zh/scripts/check-translation.mjs "reports/$report" --strict --require-final
-          done <<'REPORTS'
-          $REPORT_IDS
-          REPORTS
+          done <<< "$REPORT_IDS"
 
       - name: Validate reports and website build
         if: steps.targets.outputs.count != '0'
@@ -224,9 +222,7 @@ jobs:
           while IFS= read -r report; do
             [ -z "$report" ] && continue
             git add "reports/$report/summary-card.zh.yaml" "reports/$report/full-report.zh.yaml"
-          done <<'REPORTS'
-          $REPORT_IDS
-          REPORTS
+          done <<< "$REPORT_IDS"
 
           if git diff --cached --quiet; then
             echo "No new or updated Chinese translations."
