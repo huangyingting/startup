@@ -24,7 +24,7 @@ const WORKFLOW_DISPATCHES = [
     inputs: {
       industry: "Any",
       unicornCount: "3",
-      model: "gpt-5.5",
+      model: "claude-sonnet-4.6",
     },
   },
   {
