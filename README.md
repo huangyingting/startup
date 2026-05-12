@@ -87,17 +87,10 @@ The workflow writes a new run under:
 reports/<YYYYMMDDHHmmss>-<company-slug>/
 ```
 
-A complete report run contains:
+A complete report run contains one chapter artifact per analysis chapter defined in `.agents/skills/startup-research/references/workflow-config.yaml`, plus the core assembled artifacts:
 
 ```text
-01-company-overview.yaml
-02-market-analysis.yaml
-03-competitors.yaml
-04-financials.yaml
-05-product-tech.yaml
-06-customers.yaml
-07-risks.yaml
-08-valuation.yaml
+<NN>-<chapter-key>.yaml
 evidence.yaml
 full-report.yaml
 report-meta.yaml

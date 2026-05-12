@@ -52,9 +52,19 @@ if (issues.length === 0) {
   const core = getCoreArtifacts(config);
   const finalFiles = Object.values(FINAL_ARTIFACTS).map((artifact) => artifact.file);
   const policy = config.agentPolicy ?? {};
+  const chapterSourceIndexByKey = new Map((rawConfig?.chapters ?? []).map((chapter, index) => [chapter.key, index]));
 
-  if (analysis.length !== 8) {
-    issues.push(validationIssue({ path: 'chapters', message: `expected 8 analysis chapters, found ${analysis.length}`, dimension: 'workflowConfigShape' }));
+  for (const [index, artifact] of analysis.entries()) {
+    const expectedOrder = index + 1;
+    if (artifact.order !== expectedOrder) {
+      const sourceIndex = chapterSourceIndexByKey.get(artifact.key) ?? index;
+      issues.push(validationIssue({
+        path: `chapters.${sourceIndex}.order`,
+        message: `analysis chapter orders must be contiguous starting at 1; expected ${expectedOrder} for ${artifact.key}, found ${artifact.order}`,
+        dimension: 'workflowConfigShape',
+        fix: 'Edit chapters[].order in workflow-config.yaml so configured analysis chapters are numbered 1..N without gaps.',
+      }));
+    }
   }
   if (finalFiles.length !== 3) {
     issues.push(validationIssue({ path: 'finalArtifacts', message: `expected 3 final artifacts, found ${finalFiles.length}`, dimension: 'workflowConfigShape' }));
