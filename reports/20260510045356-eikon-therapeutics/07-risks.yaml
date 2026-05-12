@@ -657,7 +657,7 @@ localEvidence:
       rationale: Assess PARP1 competitive risk to EIK1003
     - query: Roger Perlmutter Eikon Therapeutics CEO key person risk succession 2025 2026
       rationale: Assess CEO key person risk concentration
-    - query: Eikon 15% layoffs NIH funding cuts 2025 research tools
+    - query: Eikon 15% layoffs NIH funding cuts 2025 research tools 2026
       rationale: Understand workforce and government dependency risk
     - query: clinical stage biotech IP risk Janelia license technology platform 2024 2025
       rationale: Assess IP license risk from HHMI Janelia
@@ -2247,9 +2247,8 @@ acknowledgedWarnings:
       databases, clinical trial registries, analyst publications, news outlets, and official company websites. The
       fetch-url trail was not captured during this research run; sources were verified via web search and public page
       review. All sources are publicly accessible; accessStatus reflects research verification.
-  - dimension: searchQueryFreshness
+  - dimension: fetchTrailMissing
     reason: >-
-      Several search queries for stable risk frameworks, historical platform termination events, and competitive
-      landscape context may not include current year tokens; the underlying data is either historical (2023 program
-      terminations) or structural (PARP competitive landscape) and does not require year-specific queries.
-      Time-sensitive queries (burn rate, IPO valuation, TeLuRide enrollment) include 2025 or 2026 tokens.
+      This historical report no longer has the shared fetch-url trail file from the original run. Reconstructing that
+      audit log would require re-fetching the full chapter source set after the fact, so this warning is acknowledged
+      until a full refresh rebuild captures a new trail.

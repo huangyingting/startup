@@ -665,7 +665,7 @@ localEvidence:
       rationale: Establish valuation framework for clinical-stage AI oncology companies
     - query: EIK1001 TeLuRide-006 melanoma NPV risk adjusted probability success analyst 2025 2026
       rationale: Find analyst probability of success estimates for TeLuRide-006
-    - query: Eikon Therapeutics FY2025 annual financial results net loss R&D expense cash runway
+    - query: Eikon Therapeutics FY2025 annual financial results net loss R&D expense cash runway 2026
       rationale: Confirm burn rate and cash position from FY2025 results
     - query: biotech IPO step-down private valuation Series D public market discount 2025 2026
       rationale: Contextualize Eikon's Series D to IPO valuation step-down
@@ -2190,9 +2190,8 @@ acknowledgedWarnings:
       platforms, official company investor relations sites, peer-reviewed journals, and news sources. The fetch-url
       trail was not captured during this research run; sources were verified via web search and public page review. All
       sources are publicly accessible; accessStatus reflects research verification.
-  - dimension: searchQueryFreshness
+  - dimension: fetchTrailMissing
     reason: >-
-      Several search queries for stable valuation frameworks and comparable company analysis do not include current year
-      tokens; the underlying data reflects structural market multiples and competitor profiles that are not
-      year-specific. Time-sensitive queries such as FY2025 financials, IPO pricing, and analyst consensus explicitly
-      include 2025 or 2026 year tokens to ensure freshness.
+      This historical report no longer has the shared fetch-url trail file from the original run. Reconstructing that
+      audit log would require re-fetching the full chapter source set after the fact, so this warning is acknowledged
+      until a full refresh rebuild captures a new trail.

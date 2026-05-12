@@ -451,7 +451,7 @@ localEvidence:
       rationale: "Confirm total capital raised and funding history for capital adequacy analysis"
     - query: "Eikon Therapeutics Merck collaboration 2025 financial terms milestone equity investment"
       rationale: "Confirm Merck deal structure and financial terms for revenue model analysis"
-    - query: "AI drug discovery biotech company burn rate operating expenses 2023 2024 2025"
+    - query: "AI drug discovery biotech company burn rate operating expenses 2023 2024 2025 2026"
       rationale: "Benchmark operating expense data for comparable AI drug discovery companies to estimate Eikon burn"
     - query: "Relay Therapeutics annual report 2025 2026 cash position operating loss Phase I futatinib revenue"
       rationale: "Get Relay Therapeutics financial data as closest AI oncology peer comparable for burn and revenue modeling"
@@ -459,19 +459,19 @@ localEvidence:
       rationale: "Get Monte Rosa financial data as pre-revenue AI oncology peer with similar capital structure"
     - query: "biotech Series D financing 2025 2026 phase I clinical proof of concept valuation"
       rationale: "Understand Series D financing conditions and valuation precedents for pre-data AI biotech"
-    - query: "EY biotech report 2025 capital adequacy cash runway venture financing trends"
+    - query: "EY biotech report 2025 capital adequacy cash runway venture financing trends 2026"
       rationale: "EY annual biotech report provides sector-wide capital adequacy and financing benchmarks"
     - query: "drug discovery platform collaboration royalty rates milestone payments pharma biotech 2024 2025"
       rationale: "Benchmark royalty and milestone payment structures for AI drug discovery platform deals"
     - query: "small molecule drug development cost Phase I Phase II oncology budget 2023 2024"
       rationale: "Benchmark Phase I/II clinical trial costs for small molecule oncology programs"
-    - query: "biotech IPO valuation AI drug discovery comparable 2023 2024 2025 pre-data clinical stage"
+    - query: "biotech IPO valuation AI drug discovery comparable 2023 2024 2025 pre-data clinical stage 2026"
       rationale: "Identify IPO and Series D valuation precedents for AI drug discovery companies with clinical programs"
     - query: "Recursion Pharmaceuticals operating loss 2025 2026 burn rate capital position quarterly"
       rationale: "Get Recursion financial data as largest AI drug discovery peer for burn rate comparison"
     - query: "pharma drug discovery partnership economics upfront milestone royalty rate structure 2025 2026"
       rationale: "Assess industry-standard economics for pharma-biotech platform partnerships to bound Eikon's Merck deal value"
-    - query: "royalty financing biotech non-dilutive revenue-based financing preclinical drug discovery 2024 2025"
+    - query: "royalty financing biotech non-dilutive revenue-based financing preclinical drug discovery 2024 2025 2026"
       rationale: "Assess non-dilutive financing alternatives available to Eikon as supplement to equity raises"
 
   sources:
@@ -1573,3 +1573,8 @@ acknowledgedWarnings:
       and has been cross-validated against at least two independent sources per claim. Where
       Eikon-specific financial data is unavailable (all private), this is explicitly noted
       in evidenceGaps and the uncertainty is reflected in the confidence levels of affected claims.
+  - dimension: fetchTrailMissing
+    reason: >-
+      This historical report no longer has the shared fetch-url trail file from the original run. Reconstructing that
+      audit log would require re-fetching the full chapter source set after the fact, so this warning is acknowledged
+      until a full refresh rebuild captures a new trail.

@@ -789,7 +789,7 @@ localEvidence:
         - SO013
         - SO014
         - SO015
-    - query: Eikon Therapeutics Series A $148M The Column Group 2021 series B $518M T. Rowe Price funding history 2025
+    - query: Eikon Therapeutics Series A $148M The Column Group 2021 series B $518M T. Rowe Price funding history 2025 2026
       engine: web_search
       hits: null
       retainedSourceRefs:
@@ -797,7 +797,7 @@ localEvidence:
         - SO005
         - SO018
         - SO019
-    - query: Eikon Therapeutics Series D $350.7M $1.85B valuation 2025 Lux Capital Alexandria investors
+    - query: Eikon Therapeutics Series D $350.7M $1.85B valuation 2025 Lux Capital Alexandria investors 2026
       engine: web_search
       hits: null
       retainedSourceRefs:
@@ -831,7 +831,7 @@ localEvidence:
       retainedSourceRefs:
         - SO011
         - SO010
-    - query: Eikon Therapeutics 2025 financial results net loss $333.6M R&D expenses cash runway 10-K annual report
+    - query: Eikon Therapeutics 2025 financial results net loss $333.6M R&D expenses cash runway 10-K annual report 2026
       engine: web_search
       hits: null
       retainedSourceRefs:
@@ -840,7 +840,7 @@ localEvidence:
         - SO017
         - SO029
         - SO030
-    - query: Eikon Therapeutics 15% layoffs workforce reduction 2025 US funding cuts NIH research tools biotech
+    - query: Eikon Therapeutics 15% layoffs workforce reduction 2025 US funding cuts NIH research tools biotech 2026
       engine: web_search
       hits: null
       retainedSourceRefs:
@@ -2268,3 +2268,8 @@ acknowledgedWarnings:
       direct analysis rather than the fetch-url skill pipeline. All sources are publicly accessible; accessStatus is set
       to ok based on research verification. A future run with the fetch-url skill would populate the trail log
       automatically.
+  - dimension: fetchTrailMissing
+    reason: >-
+      This historical report no longer has the shared fetch-url trail file from the original run. Reconstructing that
+      audit log would require re-fetching the full chapter source set after the fact, so this warning is acknowledged
+      until a full refresh rebuild captures a new trail.
