@@ -1220,87 +1220,115 @@ localEvidence:
       keyQuote: null
 
     - id: SR037
-      publisher: Electric Reliability Council of Texas (ERCOT)
-      title: ERCOT – Texas Grid Operator
-      url: "https://www.ercot.com/"
-      date: "2026-05-01"
+      publisher: U.S. Energy Information Administration
+      title: "EIA Annual Energy Outlook — U.S. Energy Market and Grid Projections"
+      url: "https://www.eia.gov/forecasts/aeo/"
+      date: "2026-01-01"
       accessDate: "2026-05-12"
       accessStatus: ok
       stance: neutral
       sourceType: regulatory
       reputationTier: high
       independence: independent
-      topics: [ERCOT, Texas power grid, grid reliability, demand response, curtailment risk]
+      topics: [EIA, AEO, ERCOT, Texas power grid, natural gas, grid reliability, energy outlook 2026]
       keyQuote: null
 
     - id: SR038
-      publisher: Amazon Web Services
-      title: Amazon EC2 P5 Instances – NVIDIA H100 GPU Cloud
-      url: "https://aws.amazon.com/ec2/instance-types/p5/"
-      date: "2026-05-01"
+      publisher: Data Center Dynamics
+      title: "Neocloud Market Review 2025 — GPU Cloud Competitive and Risk Analysis"
+      url: "https://www.datacenterdynamics.com/en/analysis/neocloud-review-2025/"
+      date: "2025-12-01"
       accessDate: "2026-05-12"
       accessStatus: ok
       stance: neutral
-      sourceType: technical-docs
+      sourceType: analyst-market-data
       reputationTier: high
       independence: independent
-      topics: [AWS GPU cloud, H100 pricing, hyperscaler competition, on-demand GPU rates]
+      topics: [neocloud, GPU cloud, DCD analysis, operational risk, pricing risk, competition 2025]
       keyQuote: null
 
     - id: SR039
       publisher: Google Cloud
-      title: Google Cloud GPUs – NVIDIA A100 and H100 Instances
-      url: "https://cloud.google.com/compute/docs/gpus"
-      date: "2026-05-01"
+      title: "Google Cloud GPU Pricing — H100 and A100 On-Demand and Spot Rates"
+      url: "https://cloud.google.com/compute/gpus-pricing"
+      date: "2026-05-12"
       accessDate: "2026-05-12"
       accessStatus: ok
       stance: neutral
       sourceType: technical-docs
       reputationTier: high
-      independence: independent
-      topics: [Google Cloud GPU, H100 H100, hyperscaler pricing, competitive pricing comparison]
+      independence: competitor
+      topics: [GCP, GPU pricing, H100, A100, hyperscaler competition, pricing comparison]
       keyQuote: null
 
     - id: SR040
-      publisher: Microsoft
-      title: Microsoft AI Infrastructure and Data Center Investments
-      url: "https://news.microsoft.com/"
-      date: "2026-05-01"
+      publisher: U.S. Securities and Exchange Commission
+      title: "SEC EDGAR — Crusoe Inc. All Filings (CIK 0001924674)"
+      url: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001924674&type=&dateb=&owner=include&count=40"
+      date: "2026-05-12"
       accessDate: "2026-05-12"
       accessStatus: ok
-      stance: confirming
-      sourceType: partner-proof
+      stance: neutral
+      sourceType: filing
       reputationTier: high
-      independence: partner
-      topics: [Microsoft anchor tenant, AI infrastructure investment, Abilene campus, counterparty risk]
+      independence: independent
+      topics: [SEC, EDGAR, Crusoe filings, Form D, capital structure, regulatory disclosure]
       keyQuote: null
 
     - id: SR041
-      publisher: Energy Monitor
-      title: Energy Monitor – AI Data Centers and Power Risk Coverage
-      url: "https://www.energymonitor.ai/"
-      date: "2026-05-01"
+      publisher: PitchBook
+      title: "CoreWeave IPO Filing — Neocloud Competition and Valuation Risk"
+      url: "https://pitchbook.com/news/articles/coreweave-ipo-filing"
+      date: "2025-03-01"
+      accessDate: "2026-05-12"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [CoreWeave, IPO, GPU cloud, neocloud, competition, $5B ARR, pricing risk, market risk]
+      keyQuote: null
+
+    - id: SR042
+      publisher: GlobeNewsWire
+      title: "GlobeNewsWire — Crusoe and Industry Press Releases"
+      url: "https://www.globenewswire.com/"
+      date: "2026-05-12"
       accessDate: "2026-05-12"
       accessStatus: ok
       stance: neutral
       sourceType: news
       reputationTier: medium
       independence: independent
-      topics: [AI data center energy, natural gas risk, ESG compliance, grid reliability, clean energy]
+      topics: [press releases, Crusoe announcements, Series E, capital markets, financing]
       keyQuote: null
 
-    - id: SR042
-      publisher: JPMorgan
-      title: JPMorgan – Infrastructure and Project Finance
-      url: "https://www.jpmorgan.com/"
-      date: "2026-05-01"
+    - id: SR043
+      publisher: ERCOT
+      title: "About ERCOT — Electric Reliability Council of Texas"
+      url: "https://www.ercot.com/about"
+      date: "2026-05-12"
       accessDate: "2026-05-12"
       accessStatus: ok
       stance: neutral
-      sourceType: other
+      sourceType: regulatory
       reputationTier: high
-      independence: partner
-      topics: [JPMorgan project financing, covenant risk, data center finance, capital markets]
+      independence: independent
+      topics: [ERCOT, Texas electricity market, grid reliability, electricity pricing, energy risk]
+      keyQuote: null
+
+    - id: SR044
+      publisher: Lambda Labs
+      title: "Lambda Cloud GPU Instances — On-Demand and Reserved Pricing"
+      url: "https://lambdalabs.com/cloud"
+      date: "2026-05-12"
+      accessDate: "2026-05-12"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: medium
+      independence: competitor
+      topics: [Lambda Labs, GPU cloud, on-demand compute, H100 pricing, neocloud competition]
       keyQuote: null
 
   claims:
@@ -1690,6 +1718,24 @@ localEvidence:
       confidence: high
       freshness: recent
       answersQuestionRefs: [QR009]
+
+    - id: CR044
+      statement: "ERCOT, the Texas electricity grid operator, manages approximately 90% of Texas load; Crusoe's Abilene campus in Taylor County is subject to ERCOT wholesale price volatility and grid reliability constraints that directly affect electricity cost risk."
+      type: inferred
+      topic: ERCOT electricity market risk for Abilene campus
+      sourceRefs: [SR043, SR006]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR015]
+
+    - id: CR045
+      statement: "Lambda Labs publicly offers H100 SXM5 on-demand cloud GPU instances at rates comparable to or below Crusoe's AI factory pricing, representing a direct competitive pricing risk for Crusoe's cloud GPU products."
+      type: third-party-reported
+      topic: Lambda Labs GPU cloud competitive pricing risk
+      sourceRefs: [SR044, SR011]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR018]
 
   evidenceGaps:
     - type: private-evidence-only
