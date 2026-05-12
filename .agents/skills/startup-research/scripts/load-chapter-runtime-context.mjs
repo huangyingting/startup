@@ -20,7 +20,7 @@ Examples:
     node .agents/skills/startup-research/scripts/load-chapter-runtime-context.mjs --order 4 --include-context --report-folder reports/20260503145959-openai
 
   Selectors are interchangeable: --order matches by chapter.order (1-based), --key by chapter.key ("company-overview" / "market-analysis" / ...),
-  and --file by chapter.file ("01-company-overview.yaml" / ...). Pick whichever the loop already has on hand. SKILL.md uses --order in its narrative;
+  and --file by chapter.file ("<NN>-<chapter-key>.yaml"). Pick whichever the loop already has on hand. SKILL.md uses --order in its narrative;
   --key/--file are equivalent and useful in retry loops where the chapter key or file path is what failed.
 
   --report-folder alone projects run identity (run.runDate) and runCache.refreshContext.

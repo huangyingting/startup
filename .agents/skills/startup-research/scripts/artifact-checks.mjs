@@ -92,7 +92,7 @@ function formatSchemaErrors(schema, value, { path, dimension = 'schema' }) {
 // ---- source schema --------------------------------------------------------
 
 // Validates one source object's shape. `path` is a human-readable prefix
-// included in every message (e.g. "01-company-overview.yaml: source S001").
+// included in every message (e.g. "<chapter-file>: source S001").
 // `id` is also surfaced as `extra.id` for callers that want to group failures.
 export function checkSourceSchema(source, { path }) {
   const id = source?.id;
