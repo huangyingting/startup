@@ -311,6 +311,34 @@ jobs:
           fi
 
           copied=0
+          declare -A copied_paths=()
+          copy_report_file() {
+            local path="$1"
+            [ -f "$path" ] || return 0
+            if [ -n "${copied_paths[$path]+x}" ]; then
+              return 0
+            fi
+            mkdir -p "$ARTIFACT_DIR/$(dirname "$path")"
+            cp "$path" "$ARTIFACT_DIR/$path"
+            copied_paths[$path]=1
+            copied=$((copied + 1))
+          }
+
+          # Prefer the report-folder snapshot as the durable source of truth:
+          # Git porcelain can be empty even when the generator created valid
+          # folders, but reports-before.txt records what existed pre-run.
+          if [ -f "$RUNNER_TEMP/reports-before.txt" ]; then
+            find reports -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort > "$RUNNER_TEMP/reports-for-artifact.txt"
+            comm -13 "$RUNNER_TEMP/reports-before.txt" "$RUNNER_TEMP/reports-for-artifact.txt" > "$RUNNER_TEMP/reports-created-for-artifact.txt" || true
+            while IFS= read -r folder_name; do
+              [ -n "$folder_name" ] || continue
+              [ -d "reports/$folder_name" ] || continue
+              while IFS= read -r -d '' path; do
+                copy_report_file "$path"
+              done < <(find "reports/$folder_name" -type f -print0)
+            done < "$RUNNER_TEMP/reports-created-for-artifact.txt"
+          fi
+
           while IFS= read -r -d '' entry; do
             status="${entry:0:2}"
             path="${entry:3}"
@@ -318,10 +346,7 @@ jobs:
               '??'|A*|M*|?M) ;;
               *) continue ;;
             esac
-            [ -f "$path" ] || continue
-            mkdir -p "$ARTIFACT_DIR/$(dirname "$path")"
-            cp "$path" "$ARTIFACT_DIR/$path"
-            copied=$((copied + 1))
+            copy_report_file "$path"
           done < <(git status --porcelain=v1 -z --untracked-files=all -- reports/)
 
           if [ "$copied" -eq 0 ]; then
