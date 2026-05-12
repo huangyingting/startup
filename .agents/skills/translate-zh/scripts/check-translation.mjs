@@ -94,6 +94,9 @@ function isModelVersionList(value) {
 function untranslatedMessage(en, zh) {
   const source = en.trim();
   const target = zh.trim();
+  // Empty source (e.g. blank cells in a sparse heatmap) is preserved verbatim;
+  // bundle-translatable.mjs skips it, and an empty ZH here is a faithful mirror.
+  if (!source) return null;
   if (!target) return 'empty translation leaf; renderer would fall back to English';
   if (!/[A-Za-z]/.test(target)) return null;
   if (isTokenLike(target) || isProperNounPhrase(target) || isModelVersionList(target)) return null;
