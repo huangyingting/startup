@@ -62,6 +62,7 @@ export interface ReportCardData extends YamlRecord {
 export interface ReportStageFiles {
   fullReport: YamlRecord | null;
   summaryCard: ReportCardData | null;
+  evidence: YamlRecord | null;
 }
 
 export interface ReportStageFilesZh {
@@ -438,6 +439,7 @@ export function loadStageFiles(runId: string): ReportStageFiles {
   return {
     fullReport: readStageYaml(folder, 'full-report'),
     summaryCard: loadReportCard(runId),
+    evidence: readStageYaml(folder, 'evidence'),
   };
 }
 
