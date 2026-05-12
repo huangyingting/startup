@@ -1,8 +1,8 @@
 /**
  * Startup Scheduler - Cloudflare Worker
  *
- * One Cron Trigger (`*\/30 * * * *`) wakes every 30 minutes. The worker
- * dispatches the matching GitHub Actions workflow(s) based on UTC time.
+ * One Cron Trigger (`0 * * * *`) wakes hourly. The worker dispatches the
+ * matching GitHub Actions workflow(s) based on UTC time.
  *
  * Required secrets (set via `wrangler secret put`):
  *   GITHUB_TOKEN - Fine-grained PAT with Actions: Read & Write on the target repo
@@ -12,24 +12,24 @@
  *   GITHUB_REF   - Dispatch target ref; defaults to "main"
  *
  * Schedule reference:
- *   unicorns.yml     30 *\/4 * * * inputs: industry=Any, unicornCount=3, model=claude-sonnet-4.6
- *   translate-zh.yml 0 * * * *     inputs: reportCount=5, model=gpt-5.5
+ *   unicorns.yml     0 *\/4 * * *  inputs: industry=Any, unicornCount=3, model=gpt-5.5
+ *   translate-zh.yml 0 1-23/4 * * * inputs: reportCount=5, model=gpt-5.5
  */
 
 const WORKFLOW_DISPATCHES = [
   {
-    schedule: "every four hours at :30 UTC",
-    shouldDispatch: (date) => date.getUTCMinutes() === 30 && date.getUTCHours() % 4 === 0,
+    schedule: "every four hours at :00 UTC",
+    shouldDispatch: (date) => date.getUTCMinutes() === 0 && date.getUTCHours() % 4 === 0,
     workflow: "unicorns.yml",
     inputs: {
       industry: "Any",
       unicornCount: "3",
-      model: "claude-sonnet-4.6",
+      model: "gpt-5.5",
     },
   },
   {
-    schedule: "hourly at :00 UTC",
-    shouldDispatch: (date) => date.getUTCMinutes() === 0,
+    schedule: "every four hours at :00 UTC starting 01:00",
+    shouldDispatch: (date) => date.getUTCMinutes() === 0 && date.getUTCHours() % 4 === 1,
     workflow: "translate-zh.yml",
     inputs: {
       reportCount: "5",
