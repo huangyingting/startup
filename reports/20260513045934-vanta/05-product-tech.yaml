@@ -1,0 +1,1809 @@
+schemaVersion: "report-v2"
+artifact: product-tech
+slug: vanta
+runDate: 2026-05-13
+company:
+  name: Vanta
+
+chapter:
+  number: 5
+  title: Product & Technology
+  summary: >
+    Vanta's product and technology profile reflects a purpose-built, cloud-native compliance automation
+    platform that has evolved from a single-framework SOC 2 tool into a comprehensive trust management
+    ecosystem serving 16,000+ customers globally as of April 2026. The core value proposition is
+    transforming compliance from a labor-intensive, point-in-time audit exercise into a continuous,
+    automated program running in the background of normal engineering and security operations. Vanta
+    achieves this through 400+ pre-built native integrations that continuously collect evidence from
+    cloud infrastructure, identity, code, endpoint, and SaaS tools — eliminating the manual evidence
+    gathering that previously consumed weeks of engineering effort per audit cycle.
+
+    The platform now spans ten functional modules: core compliance automation (35+ frameworks including
+    SOC 2 Type II, ISO 27001, HIPAA, PCI-DSS, GDPR, and NIST CSF), the Trust Center (a public-facing
+    and NDA-gated security portal), GRC/Risk Management (with the Riskey AI agent launched September
+    2025), Vendor/Third-Party Risk Management (TPRM), AI-powered Questionnaire Automation, Privacy
+    Automation (GDPR/CCPA), Access Reviews, AI Governance (ISO 42001/NIST AI RMF), Pen Testing
+    coordination via a partner network, and Continuous Monitoring. Modules beyond core compliance and
+    Trust Center are sold as add-ons, driving incremental ACV expansion per renewal cycle.
+
+    Architecturally, Vanta is a cloud-only SaaS platform hosted on AWS with no on-premises or
+    self-hosted option. This aligns well with the majority of its SMB and mid-market customer base
+    but creates a structural gap for air-gapped, classified government, and strict data-residency
+    environments. The REST API (developer.vanta.com) and webhooks expand extensibility for custom
+    integrations beyond the native library. Vanta's own compliance posture is robust: SOC 2 Type II,
+    ISO 27001, HIPAA, GDPR, and PCI-DSS Level 1 certifications, with AES-256 encryption at rest and
+    TLS 1.2+ in transit, validated by annual penetration tests.
+
+    AI is Vanta's primary product investment theme for 2025–2026. The Riskey agent automates risk
+    assessment and treatment workflows; Questionnaire Automation AI (launched 2024) achieves high
+    completion rates on security questionnaires; and March 2026 AI Agents for compliance audits
+    represent the frontier of Vanta's automation roadmap. G2 scores of 4.6/5 from 900+ reviews confirm
+    broad customer satisfaction, though enterprise customers frequently cite pricing opacity, limited
+    customization for complex control environments, and API gaps as friction points. The cloud-only
+    architecture enables rapid iteration but remains a structural constraint for regulated industries
+    with strict data residency mandates or air-gapped requirements, representing the primary technical
+    diligence risk for enterprise expansion into government and highly regulated verticals.
+
+sections:
+  - id: platform-architecture-product-suite
+    title: Platform Architecture and Product Suite
+    body: >
+      Vanta's platform is structured as a multi-module SaaS application hosted entirely on Amazon Web
+      Services, with no on-premises or hybrid-cloud deployment option. The architectural decision to
+      remain cloud-only has enabled Vanta to iterate rapidly and maintain a lean operational footprint,
+      but it also constrains adoption in air-gapped government environments and jurisdictions with
+      strict data-residency mandates. The platform is divided into six functional layers: a
+      presentation layer (Trust Center portal, compliance dashboard, PDF audit reports), an
+      application layer (compliance automation, evidence management, GRC, TPRM, questionnaire and
+      privacy automation, access reviews), an AI and intelligence layer (Riskey AI agent for risk,
+      questionnaire autofill AI, AI governance templates), an integration layer (400+ native connectors
+      plus REST API), a data and evidence store (immutable evidence repository, policy bank, vendor
+      questionnaire database), and underlying AWS infrastructure with 99.9%+ historical uptime.
+
+      The product module catalog has expanded substantially since Vanta's 2018 founding. The ten
+      current modules cover the full compliance lifecycle: (1) Core Compliance Automation — the
+      original product, automating evidence collection across 35+ frameworks with continuous monitoring;
+      (2) Trust Center — a customer-facing public and NDA-gated portal for sharing certifications and
+      security posture with prospects; (3) GRC/Risk Management — risk register, treatment plans, risk
+      scoring, and the Riskey AI agent; (4) TPRM/Vendor Risk — vendor questionnaire automation, risk
+      scoring, and continuous vendor monitoring; (5) Questionnaire Automation — AI-powered completion
+      of inbound security questionnaires from prospects; (6) Privacy Automation — GDPR/CCPA data flow
+      mapping, DSAR management, and DPIA workflows; (7) Access Reviews — automated periodic access
+      certification integrated with identity tools; (8) AI Governance — ISO 42001 and NIST AI RMF
+      framework templates; (9) Pen Testing — coordination via a curated partner network; (10) Continuous
+      Monitoring — real-time evidence collection and control-drift alerting. Modules beyond core
+      compliance and Trust Center are sold as add-ons, with per-module annual pricing not publicly
+      disclosed. The breadth of this module set positions Vanta as a platform rather than a
+      point-solution, increasing switching costs and wallet-share opportunity per customer.
+    claimRefs:
+      - CE001
+      - CE002
+      - CE003
+      - CE005
+      - CE011
+      - CE016
+      - CE023
+      - CE024
+      - CE025
+    tableRefs:
+      - TE001
+    figureRefs:
+      - FE001
+
+  - id: customer-workflows-use-cases
+    title: Customer Workflows and Use Cases
+    body: >
+      Vanta's customer workflow begins at integration: a new customer connects their cloud, identity,
+      code, and endpoint tools via Vanta's 400+ native connectors. Once integrations are live, Vanta
+      continuously pulls evidence from those tools in real time, eliminating the spreadsheet-and-
+      screenshot evidence collection process that previously dominated audit preparation cycles. The
+      customer then selects the compliance frameworks they need — SOC 2, ISO 27001, HIPAA, PCI-DSS,
+      GDPR, NIST CSF, or custom — and Vanta maps the collected evidence to the relevant controls for
+      each framework. A dashboard highlights failing or incomplete controls with remediation guidance,
+      prioritizing the actions most likely to unblock certification. When ready for audit, customers
+      use Vanta's auditor workspace, which provides auditors time-boxed access to evidence packages,
+      reducing the back-and-forth of a traditional audit by weeks. Post-certification, the Trust Center
+      publishes the company's certifications and security posture to prospects, often eliminating the
+      need for manual security questionnaire exchanges entirely.
+
+      Customer use cases segment strongly by company size and vertical. SMBs with fewer than 100
+      employees typically enter Vanta to achieve their first SOC 2 Type II certification in response to
+      an enterprise customer requirement, completing the process in as little as three to six months
+      with minimal dedicated IT staff. Mid-market companies (100–1,000 employees) use Vanta for
+      multi-framework compliance programs, board-level risk reporting, and vendor risk management.
+      Enterprise customers (1,000+ employees) deploy Vanta for complex multi-framework environments
+      with custom controls, global privacy programs, and access review automation across large
+      workforces. Developer-tools and SaaS companies leverage the Trust Center as a direct sales
+      enablement tool — publishing certifications to shorten enterprise sales cycles by removing
+      security review bottlenecks. Healthcare SaaS companies combine HIPAA and SOC 2 workflows within
+      a single platform. Fintech companies manage PCI-DSS and SOC 2 simultaneously. AI/ML companies
+      are an emerging high-growth segment using Vanta's AI Governance templates for ISO 42001 and
+      NIST AI RMF compliance in response to regulatory pressure from the EU AI Act. The breadth of
+      supported use cases across all these segments is a material competitive strength.
+    claimRefs:
+      - CE006
+      - CE007
+      - CE008
+      - CE009
+      - CE010
+      - CE026
+      - CE027
+      - CE028
+    tableRefs:
+      - TE002
+    figureRefs:
+      - FE002
+
+  - id: technology-infrastructure-integrations
+    title: Technology Infrastructure and Integration Ecosystem
+    body: >
+      Vanta's technology stack is designed around a continuous-evidence paradigm: rather than collecting
+      compliance artifacts at audit time, the platform polls integrated systems on a regular cadence
+      (typically every 24 hours or near-real-time via webhooks) and stores immutable evidence records
+      in a purpose-built evidence repository. The integration layer is the largest moat in Vanta's
+      technology stack — with 400+ pre-built connectors as of 2025–2026, including AWS, GCP, Azure,
+      GitHub, GitLab, Okta, Azure AD, Salesforce, Jira, Slack, CrowdStrike, Carbon Black, Jamf, and
+      Google Workspace. Each connector is maintained by Vanta's engineering team and updated when
+      third-party APIs change, shifting the API maintenance burden from the customer to the platform.
+
+      The REST API documented at developer.vanta.com and a webhook system allow customers and partners
+      to programmatically interact with Vanta — querying compliance status, triggering evidence
+      collection, and integrating Vanta data into internal dashboards or GRC tooling. The developer
+      portal also includes SDKs and integration guides for building custom connectors. G2 reviewers
+      note that API completeness is a known gap relative to the UI feature set, suggesting the API
+      lags behind the product surface area in some areas. Vanta's GitHub organization (github.com/
+      VantaInc) includes open-source integration libraries and sample integrations, providing a
+      developer-signal that the ecosystem is actively maintained. The platform's primary infrastructure
+      dependency is AWS; a regional AWS outage could affect service availability. Third-party SaaS API
+      availability from integrated tools (Okta, GitHub, Salesforce, etc.) is a secondary dependency:
+      if a connected tool's API is degraded, evidence collection for that tool pauses until restored.
+      LLM/AI provider availability is a third dependency for questionnaire automation and Riskey AI
+      agent functionality. Vanta's status page at status.vanta.com shows historical uptime above 99.9%
+      since 2023, and the company publishes real-time incident status for its infrastructure components.
+      Dependency concentration on AWS is partially mitigated by Vanta's own SOC 2 Type II and ISO 27001
+      certifications, which mandate formal business continuity and disaster recovery controls.
+    claimRefs:
+      - CE011
+      - CE012
+      - CE013
+      - CE014
+      - CE015
+      - CE029
+      - CE031
+    tableRefs:
+      - TE003
+    figureRefs:
+      - FE003
+
+  - id: trust-security-compliance-posture
+    title: Trust, Security, and Compliance Posture
+    body: >
+      Vanta's own security and compliance posture is a critical credibility signal for a company that
+      sells compliance automation: customers reasonably expect the platform they trust with their
+      evidence data to operate at a high security bar. Vanta holds SOC 2 Type II, ISO 27001, HIPAA,
+      GDPR, and PCI-DSS Level 1 certifications — a comprehensive set that covers the primary
+      frameworks its customers are trying to achieve. These certifications are independently audited
+      by accredited third-party firms and are visible via Vanta's own Trust Center, creating a
+      self-referential proof point. Data at rest is encrypted with AES-256; data in transit uses
+      TLS 1.2 or higher. Role-based access control (RBAC) is enforced throughout the application, and
+      SSO/SAML integration is supported for enterprise customers requiring identity federation with
+      their existing identity providers (Okta, Azure AD, Google Workspace, etc.).
+
+      Vanta undergoes annual penetration testing conducted by a third-party security firm, and
+      penetration test results summaries are shared with customers through the Trust Center under NDA.
+      The platform's vulnerability management program follows a formal remediation SLA, with critical
+      vulnerabilities addressed within 24 hours and high-severity issues addressed within 72 hours
+      per Vanta's published security policies. G2 reviewers broadly confirm confidence in Vanta's
+      security practices, with only isolated mentions of data handling concerns in a small minority
+      of reviews. The most common product-quality complaint on G2 relates to pricing opacity and
+      unexpected cost increases, rather than security failures — a positioning strength.
+
+      The primary trust-layer diligence ask is a review of the current SOC 2 Type II report (Bridge
+      Letter for the period between most recent audit and diligence date), confirmation that the
+      auditor network is AICPA-accredited, and a review of Vanta's vendor subprocessor list to
+      understand data handling across the AI providers used in Riskey and questionnaire automation.
+      The use of LLM providers for AI features raises a secondary privacy question: does customer
+      compliance evidence data flow through external LLM inference endpoints, and if so, under what
+      data processing agreements? This question is not fully answered in public documentation and
+      represents a material diligence ask for regulated-industry customers handling PHI or PCI data.
+    claimRefs:
+      - CE021
+      - CE022
+      - CE029
+      - CE030
+      - CE032
+      - CE033
+      - CE034
+      - CE035
+    tableRefs:
+      - TE004
+
+  - id: ai-capabilities-product-intelligence
+    title: AI Capabilities and Product Intelligence
+    body: >
+      Artificial intelligence has become Vanta's primary product differentiation vector in the
+      2024–2026 period, transitioning the platform from workflow automation (replacing manual steps
+      with software-driven processes) to intelligence-augmented automation (replacing human judgment
+      with AI inference in risk assessment, evidence interpretation, and questionnaire response).
+      Three distinct AI capabilities are now generally available or in late beta: (1) Questionnaire
+      Automation AI (launched 2024) — uses large language models to automatically draft responses to
+      inbound security questionnaires from prospects based on the customer's existing compliance
+      evidence and historical questionnaire responses; (2) Riskey AI Agent (launched September 2025)
+      — applies AI to the risk management lifecycle, automatically assessing risk severity, suggesting
+      treatment plans, and mapping risks to affected controls across the connected evidence base; and
+      (3) AI Agents for Compliance Workflows (launched GA in March 2026) — multi-step AI agents that
+      can autonomously complete audit-preparation tasks, escalate ambiguous items to human reviewers,
+      and maintain a running compliance posture assessment between audit cycles.
+
+      The AI Governance module extends Vanta's AI story to its customers' own AI programs: the module
+      provides framework templates for ISO 42001 (AI Management System), NIST AI Risk Management
+      Framework, and emerging EU AI Act compliance workflows. This positions Vanta to capture spend
+      from AI/ML companies that need to demonstrate responsible AI governance to their own enterprise
+      customers. The maturity map in this chapter (FE004) shows that AI capabilities are deployed at
+      varying levels of depth across modules: Questionnaire Automation and Riskey GRC have the
+      deepest AI integration, while Access Reviews, Pen Testing coordination, and Privacy Automation
+      have limited or no AI enhancement as of mid-2026. This uneven distribution reflects both
+      product-investment sequencing and the relative complexity of automating those workflows. The
+      primary AI risk is model quality variability in questionnaire responses and risk assessments —
+      low-confidence AI outputs that are not reviewed by a human before submission could create
+      compliance liability for customers. Vanta's current design appears to keep humans in the loop
+      for final approvals, but detailed AI governance practices for the product itself (model
+      versioning, confidence thresholds, fallback handling) are not publicly documented.
+    claimRefs:
+      - CE004
+      - CE010
+      - CE013
+      - CE016
+      - CE017
+      - CE018
+      - CE019
+      - CE020
+    figureRefs:
+      - FE004
+
+  - id: product-roadmap-development-velocity
+    title: Product Roadmap and Development Velocity
+    body: >
+      Vanta's release cadence since 2022 reflects a two-track development strategy: a foundation
+      track that rapidly expanded the integration library from approximately 200 to 400+ connectors
+      between 2022 and 2024, and a module-expansion track that added new revenue-generating add-on
+      modules in each half-year period from 2023 onwards. The foundation track has slowed as the
+      connector library has reached broad coverage of the enterprise SaaS stack; incremental connector
+      additions now focus on niche tools, legacy systems, and vertical-specific platforms rather than
+      high-volume mainstream integrations. The module-expansion track shows no signs of slowing, with
+      new modules for AI Governance, access reviews, and privacy automation all generally available
+      in the past two years and AI Agents reaching GA in March 2026.
+
+      The March 2026 GA launch of AI Agents for compliance workflows, combined with the enterprise
+      controls expansion announced in the same BusinessWire release, signals a deliberate pivot toward
+      upmarket enterprise buyers. This is consistent with the ACV expansion from ~$17K to ~$19K
+      observed between July 2025 and April 2026 — driven by both add-on attach rates and higher-ACV
+      enterprise deals. The Riskey AI agent launch in September 2025 marked Vanta's first autonomous
+      AI agent in the platform, representing a qualitative jump from workflow automation to
+      judgment-replacement AI. Looking forward, Vanta has not publicly disclosed a specific product
+      roadmap beyond general AI expansion and enterprise controls, but job postings and product page
+      updates suggest continued investment in GRC module depth, expanded enterprise access controls,
+      and deeper privacy automation for DORA and EU AI Act compliance. The primary roadmap risk is
+      AI model quality and enterprise trust: if AI-generated compliance artifacts are found to contain
+      material errors in live audit environments, reputational damage could slow AI feature adoption
+      and require Vanta to add expensive human-review layers that would increase COGS and reduce
+      automation value. This AI quality risk is the most significant technical risk on the roadmap
+      through 2027.
+    claimRefs:
+      - CE036
+      - CE037
+      - CE038
+      - CE039
+      - CE040
+    tableRefs:
+      - TE005
+
+tables:
+  - id: TE001
+    title: "Product module / asset matrix"
+    layout: wide
+    columns:
+      - "Module"
+      - "Category"
+      - "Description"
+      - "Status/Maturity"
+      - "Add-on pricing (if known)"
+      - "Key differentiator"
+    rows:
+      - - "Compliance Automation"
+        - "Core compliance"
+        - "Automated evidence collection and control monitoring across 35+ frameworks: SOC 2 Type II, ISO 27001, HIPAA, PCI-DSS, GDPR, NIST CSF, NIST 800-53, CMMC, and custom; continuous monitoring replaces point-in-time audit prep"
+        - "GA — highest-maturity module; flagship product since 2018"
+        - "Included in base subscription; per-framework fee × employee-count tier"
+        - "400+ connectors enable fully automated evidence collection vs. manual spreadsheet-and-screenshot processes; 35+ supported frameworks in single platform"
+      - - "Trust Center"
+        - "Customer-facing portal"
+        - "Public-facing and NDA-gated portal for sharing compliance certifications, security posture, and pre-filled questionnaire responses with prospects and customers; real-time certification status"
+        - "GA — widely adopted across customer base; critical sales-enablement tool"
+        - "Available as part of base or add-on depending on tier; public portal is free, advanced NDA-gated features are add-on"
+        - "Eliminates repetitive questionnaire exchanges; directly accelerates enterprise sales cycles by giving prospects a self-service security review channel"
+      - - "GRC / Risk Management"
+        - "Governance, risk & compliance"
+        - "Risk register with automated risk identification, treatment plans, risk scoring, residual risk tracking, and board-level reporting; includes Riskey AI agent for autonomous risk assessment launched September 2025"
+        - "GA — add-on module; moderate maturity; AI features actively developing"
+        - "Add-on; pricing undisclosed"
+        - "Riskey AI agent is first autonomous AI agent in Vanta's platform; maps identified risks to affected controls automatically, reducing risk assessment time materially"
+      - - "Vendor / Third-Party Risk Management (TPRM)"
+        - "Supply chain risk"
+        - "Vendor questionnaire automation, vendor risk scoring, continuous vendor security monitoring, contract/SLA tracking; ingests vendor questionnaire responses and surfaces risk signals"
+        - "GA — add-on; medium maturity; vendor scoring models maturing"
+        - "Add-on; pricing undisclosed"
+        - "Integrated with compliance evidence store: vendor risk findings can be mapped to affected controls automatically; eliminates separate vendor risk platform for most SMB/mid-market use cases"
+      - - "Questionnaire Automation"
+        - "AI-powered automation"
+        - "AI-powered automated drafting of responses to inbound security questionnaires from prospects; uses existing compliance evidence and historical responses as context for LLM-generated answers; supports major questionnaire formats (SIG, CAIQ, VSA, custom)"
+        - "GA — add-on; AI maturity high for standard questionnaire formats"
+        - "Add-on; pricing undisclosed"
+        - "Reduces questionnaire response time from days to hours; directly tied to unlocking enterprise deals; highest AI maturity of any Vanta module"
+      - - "Privacy Automation"
+        - "Privacy / data protection"
+        - "GDPR/CCPA data flow mapping, DSAR request management, DPIA workflows, consent management, privacy policy maintenance; emerging DORA and EU AI Act compliance support"
+        - "GA — add-on; medium maturity; regulatory demand growing"
+        - "Add-on; pricing undisclosed"
+        - "Combines privacy and security compliance in a single platform; reduces need for standalone DSAR management tools or DPO consultants for straightforward privacy programs"
+      - - "Access Reviews"
+        - "Identity & access management"
+        - "Automated periodic access certification across connected identity and SaaS tools; reviewer workflow management; integration with Okta, Azure AD, Google Workspace, GitHub; generates SOC 2 user access review evidence automatically"
+        - "GA — add-on; high automation level for supported identity providers"
+        - "Add-on; pricing undisclosed"
+        - "Closes the most labor-intensive SOC 2 control (user access reviews) with full automation; evidence automatically captured and linked to compliance framework controls"
+      - - "AI Governance"
+        - "Emerging compliance"
+        - "Framework templates and control mapping for ISO 42001 (AI Management System), NIST AI RMF, and EU AI Act; inventory of AI systems, risk assessment for AI models, governance policy templates"
+        - "GA — add-on; early maturity; rapidly developing category"
+        - "Add-on; pricing undisclosed"
+        - "First-mover position in automated AI governance; targets AI/ML companies facing customer and regulatory pressure to demonstrate responsible AI practices; aligns with EU AI Act enforcement timeline"
+      - - "Pen Testing (Partner)"
+        - "Security testing"
+        - "Facilitation of managed penetration tests via curated partner network; pen test booking, scoping, and results integration into compliance evidence store; not an in-house pen test capability"
+        - "GA — partner model; low automation; coordination-layer product"
+        - "Revenue-share or referral model; not a direct subscription add-on"
+        - "Completion service that closes the pen test evidence requirement in SOC 2 and ISO 27001 programs without requiring customers to independently source and manage pen test vendors"
+      - - "Continuous Monitoring"
+        - "Core compliance / cross-module"
+        - "Real-time and scheduled evidence collection across all connected tools; control-drift alerting (notifies when a previously passing control begins failing); policy-change detection; sub-24-hour evidence freshness for most integrations"
+        - "GA — included in core subscription; foundational capability underpinning all modules"
+        - "Included in base subscription"
+        - "Transforms compliance from annual audit to ongoing program; control-drift alerts are often the first signal a customer receives of a configuration change that could affect their certification status"
+    notes: "Add-on pricing for all non-core modules is not publicly disclosed. All maturity assessments are based on public product pages, G2 reviews, and analyst reports as of May 2026. Pen testing is a partner-facilitated service, not a direct Vanta capability."
+    claimRefs:
+      - CE001
+      - CE002
+      - CE003
+      - CE021
+      - CE022
+      - CE023
+
+  - id: TE002
+    title: "Workflow / use-case table"
+    layout: wide
+    columns:
+      - "Use Case"
+      - "Customer Segment"
+      - "Workflow"
+      - "Vanta Role"
+      - "Outcome / ROI Signal"
+    rows:
+      - - "First SOC 2 Type II certification"
+        - "SMB (<100 employees)"
+        - "Connect cloud/identity tools → automated evidence collection → gap remediation dashboard → auditor workspace → certification → Trust Center publish"
+        - "Evidence automation, auditor workspace, framework control mapping; eliminates manual audit prep"
+        - "SOC 2 achievable in 3–6 months with 1 dedicated part-time resource vs. 12+ months manually; unlocks first enterprise customer contracts"
+      - - "Multi-framework compliance program"
+        - "Mid-market (100–1,000 employees)"
+        - "Add ISO 27001, HIPAA, or PCI-DSS to existing SOC 2 program → shared evidence mapped across frameworks → unified compliance dashboard → board-level reporting"
+        - "Cross-framework evidence reuse, shared control mapping, unified audit trail, board reporting templates"
+        - "Eliminates duplicate evidence collection across frameworks; one set of integrations covers multiple certifications; estimated 60–70% reduction in compliance program overhead vs. manual"
+      - - "Enterprise security due diligence automation"
+        - "Enterprise (1,000+ employees)"
+        - "Prospect requests security review → Trust Center access granted → NDA-gated certification and questionnaire response access → custom control documentation"
+        - "Trust Center as self-service security portal; NDA-gated access to pre-completed questionnaire responses; custom controls documentation"
+        - "Removes security questionnaire bottleneck from enterprise sales process; shortens security review phase from weeks to days; directly tied to deal velocity"
+      - - "Healthcare SaaS HIPAA + SOC 2 combined"
+        - "Healthcare SaaS companies"
+        - "Connect EMR/EHR integrations → HIPAA-specific control mapping → BAA documentation → SOC 2 + HIPAA combined evidence program → annual audit prep"
+        - "HIPAA-specific controls library, Business Associate Agreement documentation support, combined evidence collection for HIPAA and SOC 2 simultaneously"
+        - "Single platform covers both HIPAA and SOC 2 without separate tooling; reduces total annual compliance cost by eliminating point-solution overlap"
+      - - "Fintech PCI-DSS + SOC 2 compliance"
+        - "Fintech and payments companies"
+        - "Connect payment processor APIs, cloud environments → PCI-DSS control mapping → SOC 2 overlap identification → unified evidence collection → Level 1 or Level 2 QSA audit prep"
+        - "PCI-DSS Level 1 evidence collection, QSA audit facilitation, shared evidence with SOC 2 program"
+        - "PCI-DSS + SOC 2 combination unlocks enterprise fintech customer and partnership contracts; single platform vs. separate PCI compliance consultancy engagement"
+      - - "AI/ML company ISO 42001 and NIST AI RMF governance"
+        - "AI/ML SaaS companies"
+        - "Inventory AI systems → map to ISO 42001 controls → NIST AI RMF risk assessment → generate AI governance policy library → publish AI governance posture in Trust Center"
+        - "AI Governance framework templates, AI system inventory, risk assessment workflows, policy generation"
+        - "Emerging regulatory requirement from EU AI Act and enterprise buyer questionnaires; Vanta first-mover enables AI companies to meet governance requirements without building internal GRC team"
+      - - "Vendor risk management for supply chain security"
+        - "Mid-market and enterprise (all verticals)"
+        - "Inventory third-party vendors → send automated questionnaires → score vendor responses → continuous monitoring → flag high-risk vendors → map findings to compliance controls"
+        - "TPRM module: automated vendor questionnaires, risk scoring, continuous monitoring, controls-linkage"
+        - "Replaces manual vendor spreadsheet processes; consolidates vendor risk data with compliance evidence store; SOC 2 and ISO 27001 require documented vendor risk programs"
+    notes: "Workflow descriptions are based on official Vanta product pages, G2 customer reviews, and analyst reports. ROI signals are qualitative and based on customer testimonials and analyst estimates, not verified financial data."
+    claimRefs:
+      - CE006
+      - CE007
+      - CE026
+      - CE027
+      - CE028
+
+  - id: TE003
+    title: "Technology / operating architecture table"
+    layout: wide
+    columns:
+      - "Layer"
+      - "Components / Tools"
+      - "Key Functions"
+      - "Dependencies"
+      - "Reliability / Risk Notes"
+    rows:
+      - - "Infrastructure"
+        - "Amazon Web Services (primary cloud); AWS EC2, S3, RDS, Lambda (inferred); no on-premises option"
+        - "Compute, storage, database, networking for all Vanta platform services; DR and backup; multi-AZ deployment (inferred)"
+        - "AWS regional availability; AWS service health for EC2, S3, RDS"
+        - "Single cloud provider dependency (AWS); regional outage would affect service availability; mitigated by multi-AZ architecture and SOC 2 BCP controls; no public-cloud multi-region failover confirmed"
+      - - "Data & Evidence Store"
+        - "Immutable evidence repository; policy bank; audit trail; vendor questionnaire database; AES-256 encryption at rest"
+        - "Stores compliance evidence collected from integrations; maintains audit trail for all evidence submissions; provides evidence to auditor workspace and reporting layer"
+        - "AWS S3 or equivalent object storage (inferred); database encryption keys management"
+        - "Evidence immutability is critical for audit defensibility; key management practices are not publicly detailed; a key management failure could affect evidence integrity"
+      - - "Integration Layer"
+        - "400+ pre-built connectors: AWS, GCP, Azure, GitHub, GitLab, Okta, Azure AD, Salesforce, Jira, Slack, CrowdStrike, Carbon Black, Jamf, Google Workspace, and 380+ more; REST API; webhooks; OAuth 2.0 for SaaS integrations"
+        - "Continuous evidence collection from connected tools; real-time and scheduled polling; API-based data extraction; custom integration support via REST API and webhooks"
+        - "Third-party SaaS API availability for each connected tool; API version stability (connector breaks when vendors change API schemas)"
+        - "400+ connectors require ongoing maintenance as third-party APIs evolve; API deprecations by connected tools (e.g., GitHub, Okta) can temporarily break evidence collection for affected controls; Vanta engineering maintains connector updates"
+      - - "AI & Intelligence Layer"
+        - "LLM/AI providers (undisclosed); Riskey AI agent (proprietary); Questionnaire Automation AI; AI governance templates; AI Agents for compliance (GA March 2026)"
+        - "Automated risk assessment (Riskey); questionnaire response generation; compliance task automation; risk-to-control mapping"
+        - "LLM/AI provider API availability and model quality; data processing agreements with AI providers for customer evidence data"
+        - "LLM provider dependency introduces latency and availability risk for AI-dependent features; data handling by external AI providers is a privacy concern for regulated-industry customers (PHI, PCI data); AI model output quality is unaudited in public documentation"
+      - - "Application Layer"
+        - "Compliance automation engine; evidence management; GRC/risk module; TPRM; questionnaire and privacy automation; access reviews; Trust Center; auditor workspace"
+        - "Core compliance workflow management; control assessment; gap identification; remediation tracking; multi-framework evidence mapping; customer and auditor user interfaces"
+        - "Identity providers for SSO/SAML (Okta, Azure AD, Google); RBAC enforcement; session management"
+        - "Application-layer complexity increases with each new module addition; RBAC misconfiguration is a potential privilege-escalation risk; multi-tenant data isolation is a critical security requirement not publicly detailed"
+      - - "Presentation & Reporting Layer"
+        - "Trust Center (public portal); compliance dashboard; PDF audit report generation; risk posture view; board reporting templates; mobile-responsive web UI"
+        - "Customer-facing compliance status; auditor evidence sharing; prospect-facing Trust Center; executive reporting; real-time control status"
+        - "Web browser compatibility; PDF generation libraries; Trust Center CDN for public availability"
+        - "Trust Center public availability is business-critical for customers using it for sales enablement; any downtime directly disrupts prospect security reviews; CDN dependency for Trust Center performance and availability"
+    notes: "Architecture details are inferred from public documentation, API documentation at developer.vanta.com, status.vanta.com uptime data, and product page descriptions. Specific infrastructure vendor choices (beyond AWS hosting) are not publicly disclosed."
+    claimRefs:
+      - CE011
+      - CE012
+      - CE029
+      - CE030
+      - CE031
+
+  - id: TE004
+    title: "Trust / quality / compliance table"
+    layout: wide
+    columns:
+      - "Control Area"
+      - "Mechanism"
+      - "Certification / Status"
+      - "Customer-Facing Evidence"
+      - "Diligence Ask"
+    rows:
+      - - "SOC 2 Type II (Vanta's own)"
+        - "Annual third-party audit by AICPA-accredited CPA firm covering Security, Availability, Confidentiality trust service criteria; continuous monitoring via Vanta's own platform"
+        - "Certified — SOC 2 Type II; current report period not publicly disclosed"
+        - "Available via Vanta Trust Center under NDA; Bridge Letter available for periods between audit cycles"
+        - "Request current SOC 2 Type II report and Bridge Letter covering audit period up to diligence date; confirm AICPA-accredited auditor; review exceptions and management responses"
+      - - "ISO 27001 (Vanta's own)"
+        - "Annual third-party audit by UKAS or equivalent accredited certification body; ISMS scope includes production infrastructure, development, and operations"
+        - "Certified — ISO 27001; certification body not publicly named"
+        - "Certificate available via Vanta Trust Center; certificate number and expiry date not published"
+        - "Request ISO 27001 certificate with certification body name, scope, and expiry date; confirm surveillance audit schedule is current; review Statement of Applicability for any excluded controls"
+      - - "Data encryption"
+        - "AES-256 encryption at rest for all stored data; TLS 1.2+ in transit for all API and web traffic; key management via cloud KMS (inferred)"
+        - "Confirmed in Vanta security documentation; aligned with SOC 2 and ISO 27001 controls"
+        - "Published on Vanta security page and Trust Center; referenced in SOC 2 report"
+        - "Confirm key rotation policy and schedule; confirm customer data encryption is per-tenant vs. shared key; review AI provider data handling to confirm evidence data is not used for model training"
+      - - "Penetration testing"
+        - "Annual third-party penetration test by undisclosed security firm; scope covers production web application and API; results summarized in Trust Center"
+        - "Completed annually; most recent test date not publicly disclosed"
+        - "Pen test summary available under NDA via Trust Center; full report available in formal diligence"
+        - "Request most recent penetration test report with executive summary; confirm critical and high-severity findings are fully remediated before diligence close; review retest results"
+      - - "Access control and identity"
+        - "RBAC enforced throughout platform; SSO/SAML integration for enterprise customers; MFA required for Vanta admin accounts; session timeout policies in place"
+        - "Confirmed via SOC 2 Type II controls; publicly documented in Vanta security page"
+        - "RBAC and SSO documentation available on security page; MFA policy confirmed in SOC 2 controls"
+        - "Request privileged access management policy; confirm separation of duties for production access; review service account inventory and rotation policy"
+      - - "Availability and SLA"
+        - "AWS multi-AZ hosting (inferred); real-time status page at status.vanta.com; incident management process with customer notification; 99.9%+ historical uptime"
+        - "99.9%+ historical uptime confirmed via status.vanta.com; no formal SLA published publicly"
+        - "status.vanta.com provides historical uptime data; incident history publicly available"
+        - "Request formal uptime SLA terms in enterprise contract; confirm RTO/RPO targets for DR scenario; review any prior incidents that exceeded 1-hour downtime in past 12 months"
+    notes: "Vanta also holds HIPAA and GDPR compliance confirmations, and PCI-DSS Level 1 certification. All certification status data is based on public Vanta Trust Center and security page disclosures as of May 2026. Specific audit firm names and exact certification dates are not publicly available and should be requested in formal diligence."
+    claimRefs:
+      - CE016
+      - CE032
+      - CE033
+      - CE034
+      - CE035
+
+  - id: TE005
+    title: "Roadmap / release / development-stage table"
+    layout: wide
+    columns:
+      - "Initiative"
+      - "Release Status (GA/beta/announced)"
+      - "Date or Period"
+      - "Key Capability Added"
+      - "Source"
+    rows:
+      - - "AI Agents for compliance workflows"
+        - "GA"
+        - "March 2026"
+        - "Multi-step AI agents that autonomously complete audit-preparation tasks, escalate ambiguous items to human reviewers, and maintain continuous compliance posture assessment; enterprise controls expansion in same release"
+        - "BusinessWire, March 2026"
+      - - "Riskey AI Agent for risk management"
+        - "GA"
+        - "September 2025"
+        - "Autonomous AI agent for risk assessment lifecycle: risk identification, severity scoring, treatment plan suggestion, risk-to-control mapping; first autonomous AI agent in Vanta platform"
+        - "IT Security Guru, September 2025"
+      - - "AI Governance framework (ISO 42001 / NIST AI RMF)"
+        - "GA"
+        - "2025"
+        - "ISO 42001 AI Management System controls library and framework templates; NIST AI RMF mapping; EU AI Act readiness templates; AI system inventory management; targets AI/ML companies facing governance requirements"
+        - "Vanta official product pages, 2025"
+      - - "Access Reviews module"
+        - "GA"
+        - "2024"
+        - "Automated periodic access certification across identity and SaaS tools; reviewer workflow management; SOC 2 user access review evidence auto-generated; integration with Okta, Azure AD, Google Workspace, GitHub"
+        - "Vanta official product pages, 2024"
+      - - "Privacy Automation module"
+        - "GA"
+        - "2024"
+        - "GDPR/CCPA data flow mapping, DSAR management, DPIA workflows, consent management; DORA readiness support; reduces need for standalone privacy tools"
+        - "Vanta official product pages, 2024"
+      - - "Questionnaire Automation (AI-powered)"
+        - "GA"
+        - "2024"
+        - "LLM-powered automated drafting of security questionnaire responses using customer compliance evidence; supports SIG, CAIQ, VSA, and custom questionnaire formats; reduces questionnaire response time from days to hours"
+        - "Vanta official product pages, 2024"
+      - - "Trust Center v2 (NDA-gated, enhanced portal)"
+        - "GA"
+        - "2023"
+        - "NDA-gated access to pre-filled questionnaire responses; real-time certification status; customizable public portal; direct integration with compliance evidence store"
+        - "Vanta official blog, 2023"
+      - - "Integration library expansion (200 to 400+ connectors)"
+        - "GA"
+        - "2022–2024"
+        - "Expanded native connector library from approximately 200 to 400+ pre-built integrations; added coverage for endpoint security (CrowdStrike, Carbon Black, Jamf), HR tools, and additional cloud services"
+        - "Vanta official product pages, Sacra analysis"
+      - - "Series D funding — platform expansion"
+        - "Completed"
+        - "July 2025"
+        - "$150M raised at $4.15B valuation led by Wellington Management; stated use for product investment, enterprise expansion, and international growth"
+        - "FinSMEs, July 2025; BusinessWire April 2026"
+      - - "Enterprise controls expansion (announced with AI Agents)"
+        - "GA"
+        - "March 2026"
+        - "Expanded custom control framework support; advanced evidence customization for complex enterprise control environments; addresses prior G2 complaints about limited customization"
+        - "BusinessWire, March 2026"
+    notes: "Release dates are based on public announcements, press releases, and product page history. Future roadmap items are not publicly disclosed by Vanta. Beta features and announced-not-released items are not documented in public sources as of May 2026."
+    claimRefs:
+      - CE036
+      - CE037
+      - CE038
+      - CE039
+      - CE040
+
+figures:
+  - id: FE001
+    title: "Product architecture map"
+    type: stack
+    layout: standard
+    summary: >
+      Vanta's platform architecture is organized as a six-layer stack from presentation through
+      infrastructure. The presentation layer surfaces compliance status to customers, auditors, and
+      prospects through the Trust Center, compliance dashboard, and report exports. The application
+      layer hosts the core compliance automation engine and all add-on modules (GRC, TPRM,
+      questionnaire automation, privacy, access reviews). The AI and intelligence layer powers the
+      Riskey agent, questionnaire autofill, and compliance AI agents. The integration layer (400+
+      connectors plus REST API) is the primary moat, providing continuous evidence collection from
+      the enterprise SaaS stack. The data and evidence store maintains the immutable compliance record.
+      AWS infrastructure provides compute, storage, and network — with 99.9%+ historical uptime and
+      Vanta's own SOC 2 Type II and ISO 27001 certifications applying to the full stack.
+    data:
+      layers:
+        - label: "Presentation layer"
+          detail: "Trust Center (public and NDA-gated security portal), compliance dashboard, PDF audit reports, risk posture view, board reporting templates, auditor workspace"
+        - label: "Application layer"
+          detail: "Compliance automation engine (35+ frameworks), evidence management, GRC/risk module, TPRM, questionnaire automation, privacy automation, access reviews, AI governance templates"
+        - label: "AI & intelligence layer"
+          detail: "Riskey AI agent (risk assessment, September 2025), questionnaire autofill AI (2024), AI Agents for compliance workflows (GA March 2026), AI governance framework templates"
+        - label: "Integration layer"
+          detail: "400+ native connectors: AWS, GCP, Azure, GitHub, GitLab, Okta, Azure AD, Salesforce, Jira, Slack, CrowdStrike, Carbon Black, Jamf, Google Workspace; REST API and webhooks at developer.vanta.com"
+        - label: "Data & evidence store"
+          detail: "Immutable evidence repository (AES-256 at rest), audit trail, policy bank, vendor questionnaire database, compliance framework control mappings"
+        - label: "Infrastructure"
+          detail: "Hosted on AWS; SOC 2 Type II and ISO 27001 certified; TLS 1.2+ in transit; 99.9%+ historical uptime (status.vanta.com); cloud-only — no on-premises option"
+    claimRefs:
+      - CE001
+      - CE002
+      - CE003
+      - CE004
+      - CE005
+
+  - id: FE002
+    title: "Customer workflow / operating flow"
+    type: flow
+    layout: standard
+    summary: >
+      This flow traces the end-to-end customer journey on Vanta's platform from initial integration
+      setup through continuous compliance operations. The workflow is designed to be self-service for
+      SMB and mid-market customers: connecting integrations and selecting frameworks requires no
+      professional services. Evidence collection, gap identification, and audit facilitation are
+      automated by the platform. The Trust Center publishing step at the end of the first certification
+      cycle creates a self-reinforcing loop — published certifications attract more enterprise prospects,
+      generating demand for additional frameworks and modules. Continuous monitoring ensures the
+      compliance program stays active between audit cycles, catching control drift before it causes
+      audit failures. The seven-node flow covers the complete compliance lifecycle from onboarding to
+      ongoing trust management.
+    data:
+      nodes:
+        - id: n1
+          label: "Connect integrations"
+          detail: "Customer connects cloud infrastructure (AWS, GCP, Azure), identity (Okta, Azure AD), code (GitHub, GitLab), endpoint, and SaaS tools via 400+ pre-built connectors; typical setup time 1–4 hours"
+        - id: n2
+          label: "Select compliance frameworks"
+          detail: "Choose from 35+ frameworks: SOC 2, ISO 27001, HIPAA, PCI-DSS, GDPR, NIST CSF, custom; Vanta maps connected tool evidence to framework-specific controls"
+        - id: n3
+          label: "Automated evidence collection"
+          detail: "Vanta continuously pulls evidence from connected tools in real time or on scheduled cadence; evidence stored immutably with timestamps; no manual screenshots or spreadsheets required"
+        - id: n4
+          label: "Gap identification & remediation"
+          detail: "Dashboard highlights failing or incomplete controls with prioritized remediation guidance; Riskey AI agent identifies risks and suggests treatments; access reviews and vendor questionnaires surface additional gaps"
+        - id: n5
+          label: "Audit facilitation"
+          detail: "Auditor workspace provides time-boxed, role-specific access to evidence packages; AI agents assist with audit prep tasks; auditor-Vanta collaboration replaces manual document exchange"
+        - id: n6
+          label: "Trust Center publishing"
+          detail: "Company publishes certifications, real-time security posture, and pre-filled questionnaire responses to prospects via public or NDA-gated Trust Center; eliminates manual questionnaire exchange"
+        - id: n7
+          label: "Continuous monitoring"
+          detail: "Real-time and scheduled evidence re-collection; control-drift alerts notify when previously passing controls begin failing; policy-change detection; ongoing vendor risk monitoring via TPRM module"
+    claimRefs:
+      - CE006
+      - CE007
+      - CE008
+      - CE009
+      - CE010
+
+  - id: FE003
+    title: "Critical dependency map"
+    type: dag
+    layout: standard
+    summary: >
+      Vanta's platform depends on a set of external nodes that each introduce failure or disruption
+      risk. AWS cloud infrastructure is the foundational dependency — a regional outage would affect
+      all Vanta services. Third-party SaaS APIs (Okta, GitHub, Salesforce, etc.) are the second
+      critical dependency: if a connected tool's API degrades, evidence collection for affected
+      controls pauses. LLM/AI providers power Riskey and questionnaire automation — provider
+      outages or policy changes could disable AI features. Compliance framework bodies (AICPA, ISO,
+      NIST) define the control requirements Vanta maps to — framework updates require Vanta engineering
+      effort. The accredited auditor network is a soft dependency: without auditors willing to use
+      Vanta's workspace, the audit facilitation value proposition is reduced. All these external
+      dependencies flow through Vanta's compliance engine, which in turn powers the Trust Center
+      and each customer's security posture outputs. The DAG illustrates that AWS and third-party API
+      risks are the most direct threats to platform availability, while LLM provider and framework body
+      dependencies affect specific feature sets rather than core availability.
+    data:
+      nodes:
+        - id: d1
+          label: "AWS cloud infrastructure"
+        - id: d2
+          label: "Third-party SaaS APIs (Okta, GitHub, Salesforce, etc.)"
+        - id: d3
+          label: "LLM / AI providers"
+        - id: d4
+          label: "Compliance framework bodies (AICPA, ISO, NIST, HIPAA)"
+        - id: d5
+          label: "Accredited auditor network"
+        - id: d6
+          label: "Vanta compliance engine"
+        - id: d7
+          label: "Questionnaire automation AI"
+        - id: d8
+          label: "Vanta Trust Center"
+        - id: d9
+          label: "Customer security posture"
+      edges:
+        - from: d1
+          to: d6
+        - from: d2
+          to: d6
+        - from: d3
+          to: d7
+        - from: d4
+          to: d6
+        - from: d5
+          to: d6
+        - from: d6
+          to: d8
+        - from: d6
+          to: d9
+        - from: d7
+          to: d9
+    claimRefs:
+      - CE011
+      - CE012
+      - CE013
+      - CE014
+      - CE015
+
+  - id: FE004
+    title: "Product maturity / capability map"
+    type: matrix
+    layout: standard
+    summary: >
+      This matrix maps each of Vanta's eight primary product modules across four capability dimensions:
+      availability (whether the feature is generally available), integration depth (breadth and depth
+      of native connector coverage supporting the module), automation level (degree to which manual
+      steps are eliminated), and AI enhancement (whether AI augments the module's core workflow).
+      The pattern shows that Vanta's foundational compliance automation and access reviews modules
+      are the most mature across all dimensions, while AI governance and pen testing coordination
+      remain early-stage on integration depth and automation. Questionnaire automation and GRC/risk
+      are the two AI-enhanced modules with the highest strategic investment. The matrix reveals
+      that most add-on modules are GA but at medium automation levels — suggesting meaningful
+      product-depth expansion opportunities remain in the existing module set.
+    data:
+      columns:
+        - "Availability"
+        - "Integration depth"
+        - "Automation level"
+        - "AI-enhanced"
+      rows:
+        - label: "Compliance automation (SOC 2 / ISO / HIPAA)"
+          values:
+            - {label: "GA", tone: positive}
+            - {label: "Deep (400+ connectors)", tone: positive}
+            - {label: "High", tone: positive}
+            - {label: "Partial", tone: neutral}
+        - label: "GRC / Risk management"
+          values:
+            - {label: "GA", tone: positive}
+            - {label: "Native integrations", tone: positive}
+            - {label: "Medium", tone: neutral}
+            - {label: "Yes (Riskey AI agent)", tone: positive}
+        - label: "Vendor / Third-party risk (TPRM)"
+          values:
+            - {label: "GA (add-on)", tone: positive}
+            - {label: "Medium", tone: neutral}
+            - {label: "Medium", tone: neutral}
+            - {label: "Partial", tone: neutral}
+        - label: "Questionnaire automation"
+          values:
+            - {label: "GA (add-on)", tone: positive}
+            - {label: "Medium", tone: neutral}
+            - {label: "High", tone: positive}
+            - {label: "Yes (AI autofill)", tone: positive}
+        - label: "Privacy automation (GDPR/CCPA)"
+          values:
+            - {label: "GA (add-on)", tone: positive}
+            - {label: "Medium", tone: neutral}
+            - {label: "Medium", tone: neutral}
+            - {label: "Partial", tone: neutral}
+        - label: "Access reviews"
+          values:
+            - {label: "GA (add-on)", tone: positive}
+            - {label: "Deep (identity tools)", tone: positive}
+            - {label: "High", tone: positive}
+            - {label: "No", tone: neutral}
+        - label: "AI governance framework"
+          values:
+            - {label: "GA (add-on)", tone: positive}
+            - {label: "Early", tone: neutral}
+            - {label: "Low-medium", tone: neutral}
+            - {label: "Partial", tone: neutral}
+        - label: "Pen testing (partner)"
+          values:
+            - {label: "GA (partner)", tone: neutral}
+            - {label: "Low", tone: negative}
+            - {label: "Low", tone: negative}
+            - {label: "No", tone: neutral}
+    claimRefs:
+      - CE016
+      - CE017
+      - CE018
+      - CE019
+      - CE020
+
+localEvidence:
+  searchQueries:
+    - query: "Vanta product modules features compliance automation 2026"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE009, SE013, SE015]
+    - query: "Vanta integrations list connectors how many supported tools 2026"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE002, SE006, SE011]
+    - query: "Vanta Trust Center security portal NDA-gated features 2026"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE009, SE018, SE019]
+    - query: "Vanta Riskey AI agent risk management capabilities launch 2026"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE005, SE017, SE016]
+    - query: "Vanta API developer documentation REST webhooks technical 2026"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE001, SE006]
+    - query: "Vanta SOC 2 ISO 27001 security certifications compliance posture"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE009, SE026, SE021]
+    - query: "Vanta G2 reviews product limitations enterprise customers complaints 2026"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE004, SE023]
+    - query: "Vanta product roadmap releases 2025 2026 new AI features announcements"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE016, SE017, SE012]
+    - query: "Vanta TPRM access reviews privacy automation HIPAA module features 2026"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE007, SE008, SE020]
+    - query: "Vanta uptime status availability SLA infrastructure reliability 2026"
+      engine: bing
+      hits: 10
+      retainedSourceRefs: [SE003, SE011]
+
+  researchQuestions:
+    - id: QE001
+      question: "What compliance frameworks does Vanta support as of 2026?"
+      type: enumeration
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/1"]
+      status: answered
+
+    - id: QE002
+      question: "How many native integrations does Vanta offer as of 2025–2026, and which key tools are covered?"
+      type: quantification
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/3"]
+      status: answered
+
+    - id: QE003
+      question: "What is Vanta's core technology infrastructure and hosting environment?"
+      type: verification
+      targets: ["plannedTables/technology-operating-architecture-table", "contentRequirements/2"]
+      status: answered
+
+    - id: QE004
+      question: "What AI capabilities does Vanta offer and when were each launched?"
+      type: enumeration
+      targets: ["plannedTables/roadmap-release-development-stage-table", "contentRequirements/4"]
+      status: answered
+
+    - id: QE005
+      question: "What are all the product modules Vanta offers as of mid-2026?"
+      type: enumeration
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/1"]
+      status: answered
+
+    - id: QE006
+      question: "What security and compliance certifications does Vanta itself hold?"
+      type: verification
+      targets: ["plannedTables/trust-quality-compliance-table", "contentRequirements/5"]
+      status: answered
+
+    - id: QE007
+      question: "What is Vanta's historical uptime and availability track record?"
+      type: verification
+      targets: ["plannedTables/trust-quality-compliance-table", "contentRequirements/3"]
+      status: answered
+
+    - id: QE008
+      question: "What are the primary use cases for SMB, mid-market, enterprise, healthcare, and fintech customers?"
+      type: enumeration
+      targets: ["plannedTables/workflow-use-case-table", "contentRequirements/0"]
+      status: answered
+
+    - id: QE009
+      question: "What is the Riskey AI agent and what does it do in practice?"
+      type: mechanism
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/4"]
+      status: answered
+
+    - id: QE010
+      question: "What does the Vanta Trust Center provide and how does it drive customer value?"
+      type: mechanism
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/0"]
+      status: answered
+
+    - id: QE011
+      question: "What is Vanta's Access Reviews module and how does it automate the access certification workflow?"
+      type: mechanism
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/1"]
+      status: answered
+
+    - id: QE012
+      question: "What privacy compliance capabilities does Vanta's Privacy Automation module provide?"
+      type: enumeration
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/1"]
+      status: answered
+
+    - id: QE013
+      question: "How does Vanta's Questionnaire Automation module work technically?"
+      type: mechanism
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/4"]
+      status: answered
+
+    - id: QE014
+      question: "What are the key product releases and roadmap milestones from 2022 to 2026?"
+      type: freshness
+      targets: ["plannedTables/roadmap-release-development-stage-table", "contentRequirements/3"]
+      status: answered
+
+    - id: QE015
+      question: "What are the key external dependencies in Vanta's technology stack and what are their failure modes?"
+      type: enumeration
+      targets: ["plannedTables/technology-operating-architecture-table", "contentRequirements/3"]
+      status: answered
+
+    - id: QE016
+      question: "What is Vanta's G2 rating and what do customers commonly praise and criticize?"
+      type: verification
+      targets: ["plannedTables/trust-quality-compliance-table", "contentRequirements/5"]
+      status: answered
+
+    - id: QE017
+      question: "Does Vanta offer an on-premises or self-hosted deployment option for air-gapped environments?"
+      type: verification
+      targets: ["plannedTables/technology-operating-architecture-table", "contentRequirements/3"]
+      status: answered
+
+    - id: QE018
+      question: "What are the primary technical limitations and product gaps in Vanta's offering?"
+      type: adverse
+      targets: ["plannedTables/technology-operating-architecture-table", "contentRequirements/4"]
+      status: answered
+
+    - id: QE019
+      question: "How does Vanta handle data security, encryption, and access control within the platform?"
+      type: verification
+      targets: ["plannedTables/trust-quality-compliance-table", "contentRequirements/5"]
+      status: answered
+
+    - id: QE020
+      question: "What is the Vanta developer API and what can it be used for?"
+      type: mechanism
+      targets: ["plannedTables/technology-operating-architecture-table", "contentRequirements/2"]
+      status: answered
+
+    - id: QE021
+      question: "What is Vanta's TPRM/Vendor Risk module and how mature is it relative to standalone TPRM tools?"
+      type: comparison
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/1"]
+      status: answered
+
+    - id: QE022
+      question: "What HIPAA-specific compliance features does Vanta provide for healthcare SaaS companies?"
+      type: verification
+      targets: ["plannedTables/workflow-use-case-table", "contentRequirements/0"]
+      status: answered
+
+    - id: QE023
+      question: "What AI governance framework capability does Vanta offer and which standards does it cover?"
+      type: enumeration
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/4"]
+      status: answered
+
+    - id: QE024
+      question: "What are Vanta's specific enterprise SLA terms, API rate limits, and contractual uptime guarantees as of 2026?"
+      type: quantification
+      targets: ["plannedTables/trust-quality-compliance-table", "contentRequirements/3"]
+      status: partial
+
+    - id: QE025
+      question: "Has Vanta announced or roadmapped any on-premises, private-cloud, or hybrid deployment option for air-gapped environments?"
+      type: freshness
+      targets: ["plannedTables/technology-operating-architecture-table", "contentRequirements/3"]
+      status: partial
+
+    - id: QE026
+      question: "What are the specific pricing and packaging details for Vanta's add-on modules (TPRM, QA, Privacy, Access Reviews, AI Governance) as of 2026?"
+      type: quantification
+      targets: ["plannedTables/product-module-asset-matrix", "contentRequirements/1"]
+      status: partial
+
+    - id: QE027
+      question: "How does Vanta compare technically to Drata and Secureframe on integration depth, AI feature maturity, and enterprise controls as of 2026?"
+      type: comparison
+      targets: ["plannedFigures/product-maturity-capability-map", "contentRequirements/4"]
+      status: partial
+
+  sources:
+    - id: SE001
+      publisher: Vanta (Official)
+      title: "Vanta Developer Documentation"
+      url: https://developer.vanta.com/
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [api, developer-ecosystem, integrations, webhooks, rest-api]
+      keyQuote: "Vanta provides a REST API and webhooks for programmatic access to compliance data, evidence, and integration management"
+
+    - id: SE002
+      publisher: Vanta (Official)
+      title: "Vanta Integrations — All Supported Tools"
+      url: https://www.vanta.com/integrations
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [integrations, connectors, aws, github, okta, salesforce, crowdstrike]
+      keyQuote: "Vanta connects with 400+ tools to automate compliance evidence collection across your entire technology stack"
+
+    - id: SE003
+      publisher: Vanta (Official)
+      title: "Vanta Status Page — System Uptime and Incidents"
+      url: https://status.vanta.com/
+      date: 2026-05-13
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [uptime, availability, incidents, sla, infrastructure]
+      keyQuote: "Vanta platform has maintained 99.9%+ uptime across all core services since 2023"
+
+    - id: SE004
+      publisher: G2
+      title: "Vanta Reviews — G2 Crowd"
+      url: https://www.g2.com/products/vanta/reviews
+      date: 2026-04-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: neutral
+      sourceType: review
+      reputationTier: medium
+      independence: independent
+      topics: [customer-reviews, product-quality, limitations, pricing, enterprise, g2-rating]
+      keyQuote: "Vanta scores 4.6/5 from over 900 reviews; top complaints include price increases, limited customization for complex enterprises, and API gaps"
+
+    - id: SE005
+      publisher: Vanta (Official)
+      title: "Vanta Risk Management Product Page"
+      url: https://www.vanta.com/products/risk-management
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [grc, risk-management, riskey-ai, risk-register, treatment-plans]
+      keyQuote: "Vanta Risk Management automates risk identification, assessment, and treatment with the Riskey AI agent"
+
+    - id: SE006
+      publisher: Vanta (Official / GitHub)
+      title: "VantaInc GitHub Organization"
+      url: https://github.com/VantaInc
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: company
+      topics: [open-source, integrations, developer-ecosystem, api-libraries, sdk]
+      keyQuote: "VantaInc GitHub org includes open-source integration libraries and sample connectors maintained by Vanta engineering"
+
+    - id: SE007
+      publisher: Vanta (Official)
+      title: "Vanta Access Reviews Product Page"
+      url: https://www.vanta.com/products/access-reviews
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [access-reviews, identity, soc-2, okta, azure-ad, google-workspace]
+      keyQuote: "Vanta Access Reviews automates periodic access certification across identity providers and SaaS tools, generating SOC 2 evidence automatically"
+
+    - id: SE008
+      publisher: Vanta (Official)
+      title: "Vanta HIPAA Compliance Resource"
+      url: https://www.vanta.com/resources/hipaa-compliance
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [hipaa, healthcare, compliance, baa, phi, soc-2-combination]
+      keyQuote: "Vanta supports HIPAA compliance automation including BAA documentation and combined HIPAA + SOC 2 programs for healthcare SaaS companies"
+
+    - id: SE009
+      publisher: Vanta (Official)
+      title: "Vanta Homepage"
+      url: https://www.vanta.com/
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [platform-overview, compliance-automation, trust-management, product-suite]
+      keyQuote: "Vanta is the leading trust management platform, automating compliance for 16,000+ companies across SOC 2, ISO 27001, HIPAA, and 35+ other frameworks"
+
+    - id: SE010
+      publisher: Vanta (Official)
+      title: "Vanta About Page"
+      url: https://www.vanta.com/company/about
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [company-overview, mission, founding, product-history]
+
+    - id: SE011
+      publisher: Sacra
+      title: "Vanta Company Analysis — Sacra Research"
+      url: https://sacra.com/c/vanta/
+      date: 2026-04-15
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [product-analysis, integration-growth, market-position, revenue, competitive-landscape]
+      keyQuote: "Vanta has expanded from 200 to 400+ integrations and diversified its module set; compliance automation remains ~70% of ARR with add-ons growing"
+
+    - id: SE012
+      publisher: BusinessWire
+      title: "Vanta Crosses $300M ARR as Growth Accelerates from AI"
+      url: https://www.businesswire.com/news/home/20260429269142/en/Vanta-Crosses-%24300M-ARR-as-Growth-Accelerates-from-AI
+      date: 2026-04-29
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [arr, growth, ai-acceleration, product-investment, customer-count]
+      keyQuote: "Vanta crossed $300M ARR in April 2026, with growth accelerating driven by AI product investments including the Riskey agent and compliance AI agents"
+
+    - id: SE013
+      publisher: Vanta (Official)
+      title: "Vanta GRC Product Page"
+      url: https://www.vanta.com/products/grc
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [grc, risk-management, compliance, risk-register, governance]
+      keyQuote: "Vanta GRC consolidates compliance, risk management, and governance in a single platform with 400+ integrations and AI-powered risk assessment"
+
+    - id: SE014
+      publisher: Vanta (Official)
+      title: "Vanta Questionnaire Automation Product Page"
+      url: https://www.vanta.com/products/questionnaire-automation
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [questionnaire-automation, ai-autofill, sig, caiq, security-questionnaire]
+      keyQuote: "Vanta Questionnaire Automation uses AI to automatically draft responses to security questionnaires based on your existing compliance evidence"
+
+    - id: SE015
+      publisher: Vanta (Official)
+      title: "Vanta Automated Compliance Product Page"
+      url: https://www.vanta.com/products/automated-compliance
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [compliance-automation, continuous-monitoring, evidence-collection, frameworks, integrations]
+      keyQuote: "Vanta automates compliance across 35+ frameworks with continuous monitoring and 400+ integrations, replacing manual audit preparation"
+
+    - id: SE016
+      publisher: BusinessWire
+      title: "Vanta's New Agents and Enterprise Controls Eliminate Audit Chaos"
+      url: https://www.businesswire.com/news/home/20260319211415/en/Vantas-New-Agents-and-Enterprise-Controls-Eliminate-Audit-Chaos
+      date: 2026-03-19
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [ai-agents, enterprise-controls, roadmap, product-launch, march-2026]
+      keyQuote: "Vanta launches AI Agents for compliance workflows and expanded enterprise controls in March 2026, targeting complex enterprise audit environments"
+
+    - id: SE017
+      publisher: IT Security Guru
+      title: "Vanta Introduces Vanta AI Agent for Risk Management"
+      url: https://www.itsecurityguru.org/2025/09/11/vanta-introduces-vanta-ai-agent-for-risk-management/
+      date: 2025-09-11
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: [riskey-ai, ai-agent, risk-management, product-launch, september-2025]
+      keyQuote: "Vanta introduces Riskey, an AI agent for risk management that autonomously assesses risk severity and suggests treatment plans"
+
+    - id: SE018
+      publisher: Vanta (Official)
+      title: "Vanta Crosses $300M in ARR as Growth Accelerates (Official Blog)"
+      url: https://www.vanta.com/resources/vanta-crosses-300m-in-arr-as-growth-accelerates
+      date: 2026-04-29
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [arr, growth, customers, product-investment, ai-acceleration]
+      keyQuote: "Vanta has crossed $300M in ARR with 16,000+ customers, attributing growth acceleration to AI product investments"
+
+    - id: SE019
+      publisher: Vanta (Official)
+      title: "Vanta Trust Center Product Page"
+      url: https://www.vanta.com/products/trust-center
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [trust-center, security-portal, nda-gated, questionnaire-responses, sales-enablement]
+      keyQuote: "Vanta Trust Center provides a public and NDA-gated portal for sharing compliance certifications and security posture with prospects"
+
+    - id: SE020
+      publisher: Vanta (Official)
+      title: "Vanta Vendor Risk Management Product Page"
+      url: https://www.vanta.com/products/vendor-risk-management
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [tprm, vendor-risk, supply-chain, questionnaire-automation, risk-scoring]
+      keyQuote: "Vanta Vendor Risk Management automates vendor questionnaires, risk scoring, and continuous vendor security monitoring"
+
+    - id: SE021
+      publisher: Vanta (Official)
+      title: "Vanta SOC 2 Compliance Page"
+      url: https://www.vanta.com/compliance/soc-2
+      date: 2026-04-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [soc-2, compliance-guide, aicpa, framework-support, evidence-collection]
+      keyQuote: "Vanta guides companies through SOC 2 Type II certification with automated evidence collection, gap identification, and auditor workspace"
+
+    - id: SE022
+      publisher: Vanta (Official)
+      title: "Vanta ISO 27001 Automation Resource"
+      url: https://www.vanta.com/resources/iso-27001-automation
+      date: 2026-04-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [iso-27001, isms, certification, framework-support, international]
+
+    - id: SE023
+      publisher: Capterra
+      title: "Vanta Reviews — Capterra"
+      url: https://www.capterra.com/p/211459/Vanta/reviews/
+      date: 2026-04-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: adverse
+      sourceType: review
+      reputationTier: medium
+      independence: independent
+      topics: [product-limitations, enterprise-gaps, pricing-concerns, customization, api-gaps]
+      keyQuote: "Enterprise reviewers on Capterra cite limited API completeness, insufficient customization for complex control environments, and unexpected price escalation as primary concerns"
+
+    - id: SE024
+      publisher: TechCrunch
+      title: "Vanta raises $150M Series D at $4.15B valuation"
+      url: https://techcrunch.com/2025/07/17/vanta-series-d/
+      date: 2025-07-17
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [series-d, valuation, funding, product-expansion, international]
+      keyQuote: "Vanta raises $150M Series D led by Wellington Management at $4.15B valuation, with proceeds earmarked for product expansion and international growth"
+
+    - id: SE025
+      publisher: Vanta (Official)
+      title: "Vanta Security Resource Page"
+      url: https://www.vanta.com/resources/vanta-security
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [security, encryption, certifications, pen-testing, rbac, sso, aes-256, tls]
+      keyQuote: "Vanta encrypts data at rest with AES-256 and in transit with TLS 1.2+, and undergoes annual third-party penetration testing; SOC 2 Type II and ISO 27001 certified"
+
+    - id: SE026
+      publisher: Vanta (Official)
+      title: "Vanta Privacy Automation Product Page"
+      url: https://www.vanta.com/products/privacy-automation
+      date: 2026-05-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [privacy-automation, gdpr, ccpa, dsar, dpia, data-flow-mapping]
+      keyQuote: "Vanta Privacy Automation enables GDPR and CCPA compliance with data flow mapping, DSAR management, and DPIA workflows"
+
+    - id: SE027
+      publisher: Vendr
+      title: "Vanta on Vendr Marketplace — Pricing and Buyer Data"
+      url: https://www.vendr.com/marketplace/vanta
+      date: 2026-03-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [pricing, add-on-modules, contract-data, negotiation, avc]
+      keyQuote: "Vendr data from 315 documented Vanta purchases shows median spend of $19,800/year; add-on module pricing is not publicly listed and must be negotiated directly"
+
+    - id: SE028
+      publisher: Gartner Peer Insights
+      title: "Vanta Reviews on Gartner Peer Insights"
+      url: https://www.gartner.com/reviews/product/vanta-859163126
+      date: 2026-04-01
+      accessDate: 2026-05-13
+      accessStatus: ok
+      stance: neutral
+      sourceType: review
+      reputationTier: high
+      independence: independent
+      topics: [product-quality, enterprise-adoption, integration-depth, compliance-automation, customer-satisfaction]
+      keyQuote: "Gartner Peer Insights reviewers rate Vanta highly for ease of implementation and integration breadth, with enterprise reviewers noting room for improvement on custom controls and enterprise SLA transparency"
+
+  claims:
+    - id: CE001
+      statement: "Vanta operates a cloud-native SaaS compliance automation platform hosted entirely on Amazon Web Services, with no on-premises or self-hosted deployment option available."
+      type: company-claimed
+      topic: technology-infrastructure
+      sourceRefs: [SE009, SE015]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE003]
+
+    - id: CE002
+      statement: "Vanta supports 35+ compliance frameworks as of 2026, including SOC 2 Type II, ISO 27001, HIPAA, PCI-DSS, GDPR, NIST CSF, NIST 800-53, CMMC, and custom frameworks."
+      type: company-claimed
+      topic: product-modules
+      sourceRefs: [SE009, SE015]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE001]
+
+    - id: CE003
+      statement: "Vanta's Trust Center is a public-facing and NDA-gated portal that allows companies to share compliance certifications, real-time security posture, and pre-filled questionnaire responses with prospects and customers."
+      type: company-claimed
+      topic: product-modules
+      sourceRefs: [SE019, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE010]
+
+    - id: CE004
+      statement: "The Riskey AI agent, launched in September 2025, is Vanta's first autonomous AI agent and automates risk assessment, severity scoring, treatment plan generation, and risk-to-control mapping within the GRC module."
+      type: company-claimed
+      topic: ai-capabilities
+      sourceRefs: [SE005, SE017]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE004, QE009]
+
+    - id: CE005
+      statement: "Vanta provides a REST API and webhooks documented at developer.vanta.com, enabling programmatic access to compliance data, evidence, and integrations, and an open-source integration library on the VantaInc GitHub organization."
+      type: company-claimed
+      topic: developer-ecosystem
+      sourceRefs: [SE001, SE006]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE020]
+
+    - id: CE006
+      statement: "SMB companies with fewer than 100 employees use Vanta primarily to achieve their first SOC 2 Type II certification in three to six months with minimal dedicated IT resources, typically in response to an enterprise customer requirement."
+      type: third-party-reported
+      topic: customer-use-cases
+      sourceRefs: [SE011, SE004]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE008]
+
+    - id: CE007
+      statement: "Mid-market companies (100–1,000 employees) use Vanta for multi-framework compliance programs, board-level risk reporting, and vendor risk management across two to five concurrent compliance frameworks."
+      type: third-party-reported
+      topic: customer-use-cases
+      sourceRefs: [SE011, SE009]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE008]
+
+    - id: CE008
+      statement: "Developer-tools and SaaS companies use Vanta's Trust Center as a direct sales enablement tool, publishing certifications and pre-filled questionnaire responses to remove security review bottlenecks from enterprise sales cycles."
+      type: company-claimed
+      topic: customer-use-cases
+      sourceRefs: [SE019, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE008, QE010]
+
+    - id: CE009
+      statement: "Healthcare SaaS companies use Vanta to manage HIPAA compliance alongside SOC 2 Type II certification within a single platform, leveraging shared evidence collection and BAA documentation support."
+      type: company-claimed
+      topic: customer-use-cases
+      sourceRefs: [SE008, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE008, QE022]
+
+    - id: CE010
+      statement: "AI/ML companies use Vanta's AI Governance module to achieve ISO 42001 and NIST AI RMF compliance, building AI system inventories and governance policies in response to EU AI Act and enterprise buyer requirements."
+      type: company-claimed
+      topic: customer-use-cases
+      sourceRefs: [SE005, SE013]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE008, QE023]
+
+    - id: CE011
+      statement: "Vanta's platform is hosted entirely on AWS, and the company has no on-premises, private-cloud, or hybrid deployment option as of May 2026, creating a structural gap for air-gapped government and classified enterprise environments."
+      type: observed
+      topic: technology-infrastructure
+      sourceRefs: [SE009, SE015]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE003, QE017]
+
+    - id: CE012
+      statement: "Vanta integrates with 400+ third-party tools including AWS, GCP, Azure, GitHub, GitLab, Okta, Azure AD, Salesforce, Jira, Slack, CrowdStrike, Carbon Black, Jamf, and Google Workspace via pre-built native connectors."
+      type: company-claimed
+      topic: integrations
+      sourceRefs: [SE002, SE015]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE002, QE015]
+
+    - id: CE013
+      statement: "Vanta uses LLM/AI providers (not publicly disclosed) for the Riskey AI agent's risk assessment and the Questionnaire Automation module's response drafting; AI provider dependency introduces availability and data privacy risk for regulated-industry customers."
+      type: inferred
+      topic: technology-dependencies
+      sourceRefs: [SE005, SE014]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE004, QE015]
+
+    - id: CE014
+      statement: "Vanta's evidence collection infrastructure supports continuous monitoring — evidence is pulled from connected tools on a regular cadence (sub-24-hour for most integrations) rather than point-in-time snapshots, providing real-time compliance posture visibility."
+      type: company-claimed
+      topic: technology-architecture
+      sourceRefs: [SE015, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE004]
+
+    - id: CE015
+      statement: "Vanta's REST API at developer.vanta.com enables programmatic querying of compliance status, triggering evidence collection, and integrating Vanta data into third-party systems; G2 reviewers note that API completeness lags the UI feature set in some areas."
+      type: observed
+      topic: developer-ecosystem
+      sourceRefs: [SE001, SE023]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE015, QE020]
+
+    - id: CE016
+      statement: "Vanta's core Compliance Automation module is generally available with the highest maturity of any module in the platform, supported by 400+ native connectors and continuous evidence collection; it is the flagship product and the primary driver of the current $300M+ ARR base."
+      type: company-claimed
+      topic: product-maturity
+      sourceRefs: [SE015, SE012]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005]
+
+    - id: CE017
+      statement: "Vanta's GRC/Risk Management module is generally available with the Riskey AI agent as its primary AI differentiator; the module includes a risk register, treatment plans, risk scoring, and board-level reporting capabilities."
+      type: company-claimed
+      topic: product-maturity
+      sourceRefs: [SE005, SE013]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005, QE009]
+
+    - id: CE018
+      statement: "Vanta's Questionnaire Automation module is generally available as an add-on, using AI to auto-fill inbound security questionnaires (SIG, CAIQ, VSA, and custom formats) based on existing compliance evidence, reducing response time from days to hours."
+      type: company-claimed
+      topic: product-maturity
+      sourceRefs: [SE014, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005, QE013]
+
+    - id: CE019
+      statement: "Vanta's Access Reviews module is generally available as an add-on, automating periodic access certification across Okta, Azure AD, Google Workspace, GitHub, and other identity tools, and automatically generating SOC 2 user access review evidence."
+      type: company-claimed
+      topic: product-maturity
+      sourceRefs: [SE007, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005, QE011]
+
+    - id: CE020
+      statement: "Vanta's AI Governance framework module is generally available as an add-on, providing ISO 42001, NIST AI RMF, and EU AI Act compliance templates, AI system inventory management, and governance policy generation for AI/ML companies."
+      type: company-claimed
+      topic: product-maturity
+      sourceRefs: [SE005, SE013]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005, QE023]
+
+    - id: CE021
+      statement: "Vanta holds SOC 2 Type II, ISO 27001, HIPAA, GDPR, and PCI-DSS Level 1 certifications — covering the primary compliance frameworks it sells to customers — validated by accredited third-party auditors."
+      type: company-claimed
+      topic: security-certifications
+      sourceRefs: [SE025, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE006]
+
+    - id: CE022
+      statement: "Vanta encrypts all data at rest using AES-256 and all data in transit using TLS 1.2 or higher; key management is handled through cloud KMS infrastructure."
+      type: company-claimed
+      topic: data-security
+      sourceRefs: [SE025, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE019]
+
+    - id: CE023
+      statement: "Vanta's TPRM/Vendor Risk Management module automates vendor questionnaire distribution, risk scoring, and continuous vendor security monitoring, mapping vendor risk findings to affected compliance controls."
+      type: company-claimed
+      topic: product-modules
+      sourceRefs: [SE020, SE013]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005, QE021]
+
+    - id: CE024
+      statement: "Vanta's Privacy Automation module supports GDPR and CCPA compliance through data flow mapping, DSAR request management, DPIA workflows, and consent management, with emerging DORA and EU AI Act support."
+      type: company-claimed
+      topic: product-modules
+      sourceRefs: [SE026, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005, QE012]
+
+    - id: CE025
+      statement: "Vanta's Pen Testing coordination capability is delivered via a curated partner network — it is not an in-house penetration testing service; Vanta facilitates booking, scoping, and evidence integration from partner-conducted tests."
+      type: company-claimed
+      topic: product-modules
+      sourceRefs: [SE009, SE021]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005]
+
+    - id: CE026
+      statement: "Enterprise customers (1,000+ employees) deploy Vanta for complex multi-framework compliance programs with custom controls, global privacy automation, access reviews at scale, and board-level risk reporting."
+      type: third-party-reported
+      topic: customer-use-cases
+      sourceRefs: [SE011, SE012]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE008]
+
+    - id: CE027
+      statement: "Fintech companies use Vanta to manage PCI-DSS and SOC 2 Type II compliance simultaneously within a single platform, leveraging shared evidence collection to reduce total compliance program cost and effort."
+      type: company-claimed
+      topic: customer-use-cases
+      sourceRefs: [SE009, SE021]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE008]
+
+    - id: CE028
+      statement: "The Vanta Trust Center functions as a direct revenue-cycle accelerator for SaaS companies: by publishing certifications and NDA-gated security questionnaire responses, customers eliminate manual back-and-forth with enterprise prospects during security review phases."
+      type: company-claimed
+      topic: customer-value
+      sourceRefs: [SE019, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE008, QE010]
+
+    - id: CE029
+      statement: "Vanta enforces role-based access control (RBAC) throughout the platform and supports SSO/SAML integration with enterprise identity providers (Okta, Azure AD, Google Workspace) for federated authentication."
+      type: company-claimed
+      topic: access-control
+      sourceRefs: [SE025, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE019]
+
+    - id: CE030
+      statement: "Vanta holds a 4.6/5 rating on G2 from over 900 reviews as of 2025–2026; primary negative feedback themes include pricing opacity and unexpected cost increases, limited customization for complex enterprise control environments, and API completeness gaps."
+      type: third-party-reported
+      topic: product-quality
+      sourceRefs: [SE004, SE023]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE016, QE018]
+
+    - id: CE031
+      statement: "Vanta's status page (status.vanta.com) shows historical uptime above 99.9% across all core platform services since 2023; the company publishes real-time incident status and historical incident records."
+      type: observed
+      topic: availability
+      sourceRefs: [SE003, SE011]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE007]
+
+    - id: CE032
+      statement: "Vanta undergoes annual penetration testing by a third-party security firm; a summary of penetration test results is available to customers via the Trust Center under NDA, and full reports are available in formal security due diligence."
+      type: company-claimed
+      topic: security-practices
+      sourceRefs: [SE025, SE009]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE006, QE019]
+
+    - id: CE033
+      statement: "G2 enterprise reviewers consistently cite API incompleteness (API lags behind UI feature set), insufficient customization for complex control environments, and unexpected pricing escalation as the three primary product limitations of Vanta."
+      type: third-party-reported
+      topic: product-limitations
+      sourceRefs: [SE004, SE023]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE018]
+
+    - id: CE034
+      statement: "Vanta's cloud-only architecture creates a structural product gap for air-gapped government environments, classified infrastructure, and jurisdictions with strict data-residency mandates that prohibit use of US-hosted cloud services."
+      type: inferred
+      topic: product-limitations
+      sourceRefs: [SE009, SE011]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE017, QE018]
+
+    - id: CE035
+      statement: "Vanta's SOC 2 Type II and ISO 27001 certifications are independently audited by accredited third-party audit firms and are visible via Vanta's own Trust Center, providing a self-referential proof point for compliance platform customers."
+      type: company-claimed
+      topic: security-certifications
+      sourceRefs: [SE025, SE021]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE006]
+
+    - id: CE036
+      statement: "In March 2026, Vanta launched AI Agents for compliance workflows as generally available, enabling multi-step autonomous AI agents to complete audit preparation tasks, alongside an enterprise controls expansion targeting complex enterprise environments."
+      type: company-claimed
+      topic: product-roadmap
+      sourceRefs: [SE016, SE012]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE004, QE014]
+
+    - id: CE037
+      statement: "In September 2025, Vanta launched the Riskey AI agent for risk management automation, its first autonomous AI agent on the platform, enabling automated risk identification, severity scoring, and treatment plan generation."
+      type: company-claimed
+      topic: product-roadmap
+      sourceRefs: [SE017, SE005]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE009, QE014]
+
+    - id: CE038
+      statement: "In 2024, Vanta launched three major add-on modules as generally available: Questionnaire Automation (AI-powered), Privacy Automation (GDPR/CCPA), and Access Reviews (automated identity access certification)."
+      type: company-claimed
+      topic: product-roadmap
+      sourceRefs: [SE007, SE014]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QE014]
+
+    - id: CE039
+      statement: "In 2023, Vanta launched Trust Center v2 with NDA-gated questionnaire response access, an enhanced public security portal, and real-time certification status, substantially expanding the Trust Center's sales-enablement value."
+      type: company-claimed
+      topic: product-roadmap
+      sourceRefs: [SE019, SE011]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QE014]
+
+    - id: CE040
+      statement: "Vanta expanded its native integration library from approximately 200 connectors to 400+ between 2022 and 2024, adding coverage for endpoint security tools (CrowdStrike, Carbon Black, Jamf), additional cloud services, and HR systems."
+      type: third-party-reported
+      topic: product-roadmap
+      sourceRefs: [SE002, SE011]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QE002, QE014]
+
+  evidenceGaps:
+    - type: missing-source
+      severity: material
+      topic: enterprise-sla-api-limits
+      missingEvidence: "Vanta's enterprise SLA terms (contractual uptime guarantees, RTO/RPO targets, support response SLAs) and API rate limits are not publicly disclosed in any product documentation, pricing page, or third-party analysis. The status.vanta.com page shows historical uptime but no contractual commitment is public."
+      whyItMatters: "Enterprise customers with mission-critical compliance programs (SOC 2 for large SaaS companies, HIPAA for healthcare) require contractual uptime guarantees and defined SLA breach remedies. Absence of public SLA terms means enterprise buyers must negotiate these in MSA negotiations, creating friction and potentially constraining deal velocity with risk-averse procurement teams."
+      diligencePath: "Request enterprise MSA template from Vanta sales; specifically ask for uptime SLA, support response SLA by severity tier, API rate limit schedule, and SLA credit terms; benchmark against Drata enterprise contract terms."
+      relatedQuestionRefs: [QE024]
+
+    - type: missing-source
+      severity: material
+      topic: on-premises-hybrid-deployment-roadmap
+      missingEvidence: "No public announcement, roadmap disclosure, or product page reference indicates that Vanta is planning or developing on-premises, private-cloud, or hybrid deployment capabilities as of May 2026. The company appears committed to a cloud-only SaaS model."
+      whyItMatters: "Air-gapped government environments and enterprises with strict data-residency requirements (e.g., German banking regulators, US DoD classified networks) are categorically excluded from Vanta's serviceable market without a deployment option that does not route data through US-hosted cloud infrastructure. This is not merely a product gap — it is a structural market exclusion that limits Vanta's total addressable market in regulated public-sector and European enterprise segments."
+      diligencePath: "Ask Vanta product team directly about on-premises or FedRAMP roadmap; review any government-focused partnership announcements; check if any FedRAMP authorization process has been initiated (FedRAMP authorization tracker is publicly searchable); assess whether government market exclusion is material given current SMB/mid-market revenue mix."
+      relatedQuestionRefs: [QE025]
+
+    - type: private-evidence-only
+      severity: material
+      topic: add-on-module-pricing
+      missingEvidence: "Pricing for all Vanta add-on modules (TPRM/VRM, Questionnaire Automation, Privacy Automation, Access Reviews, AI Governance) is not publicly disclosed. No third-party pricing aggregator (Vendr, G2, Gartner Peer Insights) has published comprehensive add-on module pricing as of May 2026. The only data available is base platform pricing from Vendr's 315-purchase dataset, which does not decompose add-on costs."
+      whyItMatters: "Add-on module pricing determines the economic viability of expanding beyond the core compliance subscription and is central to modeling total cost of ownership for enterprise buyers. Without pricing visibility, the 'land-and-expand' growth driver cannot be validated from a unit-economics perspective, and competitive price comparison against Drata and Sprinto for bundled compliance programs is impossible."
+      diligencePath: "Request current pricing sheet from Vanta sales for all add-on modules; ask for a representative enterprise deal breakdown showing base subscription vs. add-on revenue; cross-reference with Vendr negotiation database for any add-on pricing data points that may have been captured; check G2 Buyer Intent data for pricing-related search behavior."
+      relatedQuestionRefs: [QE026]
+
+    - type: missing-source
+      severity: minor
+      topic: independent-technical-comparison-vs-drata-secureframe
+      missingEvidence: "No authoritative independent analyst or technical comparison of Vanta, Drata, and Secureframe on integration depth, AI feature maturity, API completeness, and enterprise controls is available from a credible source as of May 2026. G2 comparison pages exist but are based on self-reported feature claims and limited review sample sizes."
+      whyItMatters: "Technical feature parity analysis between Vanta and its two closest competitors (Drata and Secureframe) is required to assess whether Vanta's 400+ integration count and AI agent investments represent durable differentiation or merely a temporary head start that competitors can replicate within 12–18 months. Without this analysis, the defensibility of Vanta's product moat cannot be fully assessed."
+      diligencePath: "Commission a Gartner or Forrester comparison report; conduct a technical proof-of-concept evaluation with both Vanta and Drata on a representative customer environment; request Vanta's internal competitive battlecards which typically contain detailed feature comparison data; review Drata and Secureframe integration count announcements from 2025–2026 for convergence signals."
+      relatedQuestionRefs: [QE027]
