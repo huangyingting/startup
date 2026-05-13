@@ -1,0 +1,1240 @@
+schemaVersion: "report-v2"
+artifact: "product-tech"
+slug: fleetio
+runDate: 2026-05-13
+company:
+  name: Fleetio
+chapter:
+  number: 5
+  title: "Product & Technology"
+  summary: "Fleetio delivers a cloud-native, multi-tenant fleet management SaaS platform comprising seven core modules—preventive maintenance, work orders, parts inventory, DVIR inspections, fuel management, driver management, and telematics—accessed primarily via web and the Fleetio Go mobile app (1.3M+ users). The platform's 100+ GPS/telematics integrations, 50+ webhook event types, and the 2025 acquisition of Auto Integrate's 110,000-shop repair network give Fleetio a hardware-agnostic architecture and broad ecosystem reach. AWS cloud infrastructure, SOC 2 Type II certification, role-based access control, MFA, and TLS encryption underpin a security posture appropriate for enterprise fleet operators. AI/ML capabilities remain early-stage—Smart Uploads and predictive maintenance alerts have shipped—but a published AI roadmap is absent, creating roadmap-clarity risk relative to better-funded telematics peers."
+
+sections:
+  - id: product-architecture-core-capabilities
+    title: "Product Architecture and Core Capabilities"
+    body: "Fleetio is a cloud-only, multi-tenant SaaS platform built to manage the complete lifecycle of fleet assets. The platform is organized around seven principal modules: preventive maintenance scheduling, work order management, parts and inventory control, digital vehicle inspection reports (DVIR), fuel management, driver and credential management, and telematics/GPS integration. These modules are accessed through a responsive web application and the Fleetio Go mobile app (iOS and Android), which has accumulated over 1.3 million active users. Fleetio Go supports real-time inspection completion with photo capture, defect flagging, compliance workflows, driver vehicle inspection reports conforming to FMCSA requirements, and push-based work order notifications. The preventive maintenance module is the platform's flagship capability, allowing operators to schedule service programs based on mileage, engine hours, or calendar intervals, automatically generate work orders when thresholds are met, and track completion status through a multi-shop workflow. Parts inventory management includes barcode scanning, stock-level alerts, vendor management, and parts cost attribution to work orders. The fuel management module integrates with WEX FleetCard and other fuel card providers to automatically reconcile fuel transactions with fleet records, flag anomalies, and generate per-vehicle fuel cost reports. Fleet reporting covers custom dashboards, fleet health scores, maintenance cost analytics, and exportable data for external BI tools. Deployment is cloud-only with no on-premise option; all customer data is hosted on AWS infrastructure with multi-tenancy isolation."
+    claimRefs: [CE001, CE002, CE003, CE004, CE005, CE006, CE007, CE008, CE009]
+    tableRefs: [TE001, TE002]
+    figureRefs: [FE001, FE002]
+
+  - id: integration-ecosystem-developer-platform
+    title: "Integration Ecosystem and Developer Platform"
+    body: "Fleetio's hardware-agnostic architecture is a core strategic differentiator: rather than manufacturing GPS hardware, the platform integrates with over 100 third-party telematics and GPS providers via standardized APIs. Certified partners include Samsara, Geotab, Verizon Connect, Motive (formerly KeepTruckin), Zubie, Teletrac Navarro, and dozens of regional providers, enabling fleet operators to centralize data from existing hardware investments without vendor lock-in. Fuel card integrations cover WEX, FleetCard, and other providers, automatically reconciling fuel purchases into the fleet record. Parts procurement integrations with PartsTech and NAPA Auto Parts allow technicians to order parts from within the work order workflow without switching applications. In March 2025, Fleetio acquired Auto Integrate, adding a vetted network of over 110,000 repair shops across the United States, Canada, and Mexico. Through the Maintenance Shop Network, fleet operators can submit repair requests to external shops, receive repair estimates, approve work digitally, and track real-time vehicle repair status—extending fleet maintenance orchestration beyond the fleet operator's own technicians. The developer platform at developer.fleetio.com exposes a REST API with over 50 webhook event types, enabling integrations with third-party fleet management systems, ERP platforms, and telematics providers. The developer portal includes API reference documentation, authentication guidance, and an API changelog tracking version history. As of mid-2026, the API changelog reflects ongoing versioning activity, supporting active third-party development. A two-way integration with Motive introduced in H2 2025 centralizes fuel, maintenance, and telematics data through automated bidirectional workflows, demonstrating the platform's integration depth."
+    claimRefs: [CE010, CE011, CE012, CE013, CE014, CE015, CE016, CE017, CE018]
+    tableRefs: [TE003]
+    figureRefs: [FE003]
+
+  - id: technical-infrastructure-security-compliance
+    title: "Technical Infrastructure, Security and Compliance"
+    body: "Fleetio's SaaS platform is hosted entirely on Amazon Web Services (AWS), leveraging AWS's global infrastructure, managed services, and shared responsibility model for physical and network security. The backend is built on Ruby on Rails with PostgreSQL as the primary relational database—a technology stack well-suited for the data-intensive, query-heavy nature of fleet management, though it may present scaling constraints as real-time telematics data volumes grow. The platform achieved SOC 2 Type II certification, attesting to the design and operating effectiveness of controls over security, availability, and confidentiality across the reporting period—an important trust signal for enterprise fleet operators managing sensitive vehicle, driver, and operational data. Security controls include TLS encryption in transit, AES-256 encryption at rest, role-based access control (RBAC), multi-factor authentication (MFA), and audit logging. Single sign-on (SSO) is supported for enterprise customers. Fleetio maintains a public-facing status page at status.fleetio.com and help documentation at help.fleetio.com, providing visibility into uptime and support resources. The Fleetio Go mobile application reports a 99.9% crash-free session rate across 1.3 million active users, reflecting platform reliability at mobile scale. The cloud-only deployment model limits Fleetio's addressable market to fleet operators who permit cloud-hosted data, potentially excluding certain government and regulated-industry customers requiring on-premise deployment. NIST Cybersecurity Framework alignment is implied by the SOC 2 posture but not explicitly claimed in public disclosures."
+    claimRefs: [CE019, CE020, CE021, CE022, CE023, CE024, CE025, CE026, CE027]
+    tableRefs: [TE004]
+
+  - id: ai-analytics-differentiation
+    title: "AI, Analytics and Product Differentiation"
+    body: "Fleetio's AI and machine learning capabilities are at an early but operational stage. The most visible AI feature is Smart Uploads, launched in 2025, which uses machine learning to extract and classify data from service documents, invoices, and inspection records, reducing manual service entry time by up to 90% according to company reporting. The platform also features predictive maintenance alerting informed by vehicle usage patterns, diagnostic trouble code (DTC/fault code) integration with telematics providers, and automated service program triggers based on threshold-based rules. Fault code diagnostics from connected OBD devices surface actionable alerts within the fleet dashboard, reducing reliance on driver-reported defects. In 2024, Fleetio added Fleetio Go language support for Spanish, expanding accessibility for diverse driver workforces. The company's 2026 product direction emphasizes fleet utilization analysis and right-sizing—capabilities that apply analytics to optimize fleet composition—but a detailed public AI/ML roadmap has not been published. This contrasts with competitors such as Samsara, which has invested heavily in computer vision, AI-powered safety scoring, and generative AI assistants. Fleetio's differentiation relative to standalone telematics platforms lies in its maintenance-first architecture: the platform treats repair workflow, parts management, and shop network access as primary product surfaces rather than supplementary features. The Auto Integrate acquisition deepens this differentiation by adding outsourced maintenance orchestration at scale. Fleetio's 100+ hardware integrations provide data network breadth, while the growing maintenance shop network (110,000+ shops) creates a supply-side moat that is difficult for software-only competitors to replicate."
+    claimRefs: [CE028, CE029, CE030, CE031, CE032, CE033, CE034, CE035, CE036]
+    tableRefs: [TE005]
+    figureRefs: [FE004]
+
+tables:
+  - id: TE001
+    title: "Product Module and Capability Matrix"
+    columns: ["Module", "Primary Users", "Maturity", "Key Differentiator", "Evidence / Gap"]
+    rows:
+      - ["Preventive Maintenance Scheduling", "Fleet managers, maintenance directors", "GA — Core", "Threshold-based (mileage/hours/calendar) auto-work-order generation; service program automation", "Documented in fleetio.com/features; widely referenced in reviews"]
+      - ["Work Order Management (In-house)", "Fleet technicians, shop supervisors", "GA — Core", "Multi-shop routing, labor tracking, parts cost attribution, digital close-out", "Confirmed via fleetio.com/features and customer reviews"]
+      - ["Maintenance Shop Network (Outsourced)", "Fleet managers", "GA — New (post Mar 2025)", "110,000+ external repair shops via Auto Integrate acquisition; digital RO authorization", "Confirmed in Series D press release and fleetmaintenance.com coverage"]
+      - ["DVIR Digital Inspections", "Drivers, fleet managers", "GA — Core", "Photo capture, defect flagging, FMCSA-compliant workflow, compliance reporting", "Documented on fleetio.com/features; confirmed by fleetmaintenance.com"]
+      - ["Parts and Inventory Management", "Parts managers, technicians", "GA — Core", "Barcode scanning, stock alerts, vendor management, parts cost per work order", "Documented via fleetio.com/features and help.fleetio.com"]
+      - ["Fuel Management", "Fleet managers, finance", "GA — Core", "WEX/FleetCard integration; automated reconciliation, anomaly detection", "Documented on fleetio.com/features; WEX partnership confirmed"]
+      - ["Driver and Credential Management", "HR, fleet managers", "GA — Core", "Driver profiles, license expiry tracking, HOS compliance, qualification records", "Documented via fleetio.com/features; confirmed in reviews"]
+      - ["Telematics / GPS Integration", "Fleet managers, dispatchers", "GA — Integration", "Hardware-agnostic; 100+ certified provider integrations; no proprietary hardware", "Documented on fleetio.com/integrations; confirmed by Samsara/Geotab partnerships"]
+      - ["AI Smart Uploads", "Fleet managers, technicians", "GA — New (2025)", "ML extraction from service documents reduces entry time by ~90%", "Announced in 2025 results press release; no independent verification"]
+      - ["Reporting and Analytics", "Fleet managers, CFOs", "GA — Core", "Custom dashboards, fleet health scores, maintenance cost analytics", "Documented on fleetio.com/features; confirmed in customer reviews"]
+    notes: "Maturity ratings are based on publicly available feature documentation and customer reviews; GA = Generally Available. The Maintenance Shop Network is newly launched post-acquisition and its reliability and feature completeness are not yet fully verified by independent reviews. AI feature maturity is early-stage with limited third-party validation."
+    claimRefs: [CE001, CE002, CE003, CE004, CE005, CE006, CE007, CE008, CE028, CE029]
+    enumerationScope:
+      coverage: partial
+      basis: "Covers 10 modules identified from fleetio.com/features, developer.fleetio.com, press releases through May 2026, and customer reviews; enterprise-only or unreleased features may not be represented"
+
+  - id: TE002
+    title: "Fleet Management Workflow Use-Case Table"
+    columns: ["User Job", "Current (Without Fleetio)", "Fleetio Solution", "Measurable Benefit", "Limitation"]
+    rows:
+      - ["Schedule preventive maintenance", "Spreadsheets or manual reminders; missed service intervals cause breakdowns", "Automated service programs trigger work orders at mileage/hours/calendar thresholds", "Fewer preventable breakdowns; 77% of surveyed customers reported reduction", "Threshold rules require clean odometer/hour meter data from telematics"]
+      - ["Complete vehicle inspection (DVIR)", "Paper forms; lost records; delayed defect repair", "Fleetio Go mobile DVIR with photo capture, driver signature, digital defect tracking", "FMCSA-compliant digital record; defects auto-escalate to work orders", "Requires driver smartphone adoption; offline sync needed for low-connectivity routes"]
+      - ["Authorize outsourced repair", "Phone/email coordination with shops; no real-time visibility", "Maintenance Shop Network: submit RO digitally, approve estimate, track repair status", "Reduced coordination time; ~12% maintenance cost reduction reported in H2 2025", "Network limited to US/Canada/Mexico; shop quality varies; early adoption stage"]
+      - ["Reconcile fuel spend", "Manual matching of fuel receipts to vehicles; potential fraud undetected", "WEX/FleetCard integration auto-reconciles transactions; anomaly alerts on unusual spend", "Reduced manual work; improved fraud detection accuracy", "Requires fleet card integration setup; limited to supported card providers"]
+      - ["Track parts inventory", "Physical bin counts; unplanned stockouts delay repairs", "Barcode-scanned inventory; stock-level alerts; parts ordered within work order flow", "Reduced stockout delays; parts cost data per vehicle improves total cost of ownership analysis", "Barcode scanning requires initial setup; complex multi-location inventory may need ERP integration"]
+    notes: "Measurable benefit figures come from company-reported customer outcome data and press releases. Independent third-party validation is limited to customer review platforms (Capterra, G2). The 77% reduction in preventable breakdowns and 12% maintenance cost reduction are company-reported metrics from surveyed customers and H2 2025 results respectively."
+    claimRefs: [CE003, CE004, CE005, CE006, CE007, CE012, CE033]
+    enumerationScope:
+      coverage: partial
+      basis: "Five representative fleet management workflows identified from official fleetio.com feature pages, press releases, customer reviews on Capterra and G2, and fleet industry coverage; additional workflow use cases may exist for utilities, emergency services, and equipment-heavy industries"
+
+  - id: TE003
+    title: "Integration Ecosystem Table"
+    columns: ["Integration Category", "Key Partners / Examples", "Integration Mechanism", "Fleet Operator Value", "Diligence Note"]
+    rows:
+      - ["GPS / Telematics", "Samsara, Geotab, Verizon Connect, Motive, Zubie, Teletrac Navarro, 100+ total", "REST API / webhook; certified integrations via telematics provider APIs", "Centralizes GPS, fault codes, engine hours, odometer from existing hardware into Fleetio", "Integration breadth is market-leading; depth varies by provider; Samsara two-way sync confirmed in 2025"]
+      - ["Fuel Cards", "WEX FleetCard, FleetCard, others", "Direct API integration; automated transaction import", "Auto-reconciles fuel purchases; flags anomalies; reduces manual data entry", "WEX partnership confirmed; full list of supported cards not publicly disclosed"]
+      - ["Parts Procurement", "PartsTech, NAPA Auto Parts", "API-based; parts ordering from within work order UI", "Reduces tab-switching; speeds repair cycle; parts cost captured automatically", "PartsTech integration confirmed; NAPA reference in public materials; depth of catalog coverage unconfirmed"]
+      - ["Outsourced Repair Shops", "Auto Integrate network: 110,000+ shops in US, Canada, Mexico", "Auto Integrate platform (acquired Mar 2025); digital RO workflow, estimate approval, status tracking", "Enables outsourced maintenance at scale; expands fleet maintenance beyond in-house shops", "Newly acquired; integration maturity and shop NPS not independently validated"]
+      - ["ERP / Business Systems", "QuickBooks, other via API", "REST API + webhooks (50+ event types) for custom integrations", "Enables fleet cost data to flow into finance and operations systems", "No named ERP certifications confirmed; relies on open API for custom integrations"]
+      - ["Developer Platform", "REST API, 50+ webhooks, developer.fleetio.com", "Standard REST with API key authentication; webhook subscriptions for event-driven integrations", "Enables fleet operators and ISVs to build custom integrations and extend the platform", "API v2 available; changelog active; no public SDK library confirmed"]
+    notes: "The 100+ telematics integrations figure is from official Fleetio marketing materials. The 50+ webhook event types is from the developer portal. Auto Integrate shop count (110,000+) confirmed in Series D press release. PartsTech and WEX integrations confirmed in official sources. Full integration catalog is available at fleetio.com/integrations."
+    claimRefs: [CE010, CE011, CE012, CE013, CE014, CE015, CE016, CE017]
+    enumerationScope:
+      coverage: partial
+      basis: "Six integration categories derived from fleetio.com/integrations page, developer.fleetio.com, press releases, and third-party fleet management coverage; individual integration count within categories is not exhaustively verified"
+
+  - id: TE004
+    title: "Trust, Security and Compliance Table"
+    columns: ["Control / Certification", "Status", "Scope", "Gap / Diligence Ask"]
+    rows:
+      - ["SOC 2 Type II", "Certified", "Security, availability, confidentiality controls across SaaS platform", "Report not publicly available; request SOC 2 report and bridge letter in due diligence"]
+      - ["TLS Encryption (In Transit)", "Confirmed", "All data in transit between client and servers", "Standard practice; TLS version and cipher details not publicly specified"]
+      - ["AES-256 Encryption (At Rest)", "Confirmed (inferred)", "All persistent data stored on AWS infrastructure", "Inferred from security page; explicit AES-256 statement not independently verified"]
+      - ["Role-Based Access Control (RBAC)", "GA", "All platform users; granular permission sets by role", "RBAC configuration options for complex org hierarchies not documented publicly"]
+      - ["Multi-Factor Authentication (MFA)", "Available", "All user accounts; enforceability by admins unclear", "Enterprise MFA enforcement policy not publicly specified; diligence should confirm admin controls"]
+      - ["Single Sign-On (SSO)", "Available (enterprise)", "Enterprise-tier customers; SAML/OIDC support implied", "SSO provider compatibility list not publicly published"]
+      - ["AWS Cloud Infrastructure", "In use", "All platform data and compute; AWS shared responsibility model applies", "AWS region selection and data residency options not disclosed; relevant for EU data sovereignty requirements"]
+      - ["Uptime / SLA", "Status page maintained", "Platform availability; status.fleetio.com publishes incident history", "Formal SLA terms and uptime guarantees not publicly disclosed; diligence should confirm contractual SLAs"]
+      - ["FMCSA DVIR Compliance", "Supported", "Digital inspection reports conforming to 49 CFR Part 396 requirements", "Compliance is supported by the DVIR workflow; ultimate operator responsibility for compliance"]
+      - ["Data Backup / DR", "Not disclosed", "Recovery point and recovery time objectives unknown", "No public RPO/RTO targets; diligence should request DR test results and BCP documentation"]
+    notes: "SOC 2 Type II status confirmed on fleetio.com/security page. AWS infrastructure confirmed via company statements. TLS and encryption statements are from official security page. FMCSA DVIR compliance workflow confirmed via features page. SLA, DR, and data residency details are not publicly disclosed and require due diligence."
+    claimRefs: [CE019, CE020, CE021, CE022, CE023, CE024, CE025, CE026]
+    enumerationScope:
+      coverage: partial
+      basis: "Ten security and compliance controls sourced from fleetio.com/security, AWS documentation, NIST Cybersecurity Framework alignment, and fleet industry compliance requirements as of May 2026; proprietary security controls and full audit scope are not publicly disclosed"
+
+  - id: TE005
+    title: "Product Roadmap and Development Stage Table"
+    columns: ["Date / Stage", "Feature / Milestone", "Status", "Implication", "Source"]
+    rows:
+      - ["2024 Q2", "Fleetio Go Spanish language support", "Shipped", "Expands driver workforce accessibility; addresses US Hispanic fleet driver market", "Fleetio 2024 milestones press release"]
+      - ["2024 Q3–Q4", "Service Program Automation (AI-assisted scheduling)", "Shipped", "Reduces manual scheduling; early AI-assisted maintenance recommendation", "Fleetio 2024 milestones press release"]
+      - ["2025 Q1", "Auto Integrate acquisition; Maintenance Shop Network launch", "Shipped", "Transforms Fleetio from fleet software to maintenance ecosystem; 110,000+ shops added", "Series D / Auto Integrate press release (Mar 2025)"]
+      - ["2025 Q2–Q4", "Smart Uploads (ML service document extraction)", "Shipped", "Reduces service entry time ~90%; first major ML feature shipped", "H2 2025 results press release"]
+      - ["2025 Q3–Q4", "Vendor Portal for shop network", "Shipped", "Allows external repair shops to manage ROs and communicate with fleet operators", "fleetmaintenance.com coverage (Nov 2025)"]
+      - ["2025 Q4", "Expanded Motive two-way integration (fuel+maintenance+telematics)", "Shipped", "Deepens competitive moat via workflow automation across hardware and software layers", "H2 2025 results press release"]
+      - ["2026+", "Fleet utilization analysis and right-sizing", "In Development (public signal)", "Adds optimization layer to fleet composition decisions; potential upsell opportunity", "Fleetio 2025 annual results / forward-looking statement"]
+      - ["2026+ (not confirmed)", "Generative AI assistant or enhanced predictive maintenance", "Unconfirmed / Roadmap gap", "Competitors (Samsara) have shipped AI safety scoring and GenAI copilots; Fleetio has not published comparable roadmap", "Absence noted in review site analysis and public materials"]
+    notes: "Roadmap items beyond shipped features are based on forward-looking statements in press releases and analyst coverage. No formal public product roadmap has been published by Fleetio. The 2026+ AI features row reflects a roadmap gap rather than a confirmed feature—Fleetio has not announced generative AI or advanced ML capabilities at the level of competitors."
+    claimRefs: [CE028, CE029, CE030, CE031, CE032, CE033, CE034, CE035, CE036]
+    enumerationScope:
+      coverage: partial
+      basis: "Eight roadmap items drawn from official press releases, fleetmaintenance.com coverage, and techradar review site research through May 2026; private product roadmap details are not publicly available"
+
+figures:
+  - id: FE001
+    title: "Fleetio Platform Architecture Stack"
+    type: stack
+    claimRefs: [CE001, CE008, CE019, CE020]
+    data:
+      layers:
+        - label: "User Interface Layer"
+          detail: "Web application (responsive browser), Fleetio Go iOS/Android mobile app (1.3M+ active users, 99.9% crash-free)"
+        - label: "Core SaaS Modules"
+          detail: "Preventive Maintenance, Work Orders, DVIR Inspections, Parts Inventory, Fuel Management, Driver Management, Reporting & Analytics"
+        - label: "Integration & API Layer"
+          detail: "REST API (50+ webhooks), 100+ telematics integrations (Samsara, Geotab, Motive), Fuel card integrations (WEX), Parts integrations (PartsTech, NAPA)"
+        - label: "Maintenance Shop Network"
+          detail: "Auto Integrate platform: 110,000+ repair shops in US/CA/MX; digital RO authorization, estimate workflow, real-time repair tracking"
+        - label: "Infrastructure Layer"
+          detail: "AWS cloud (multi-tenant SaaS); PostgreSQL database; SOC 2 Type II certified; TLS + AES-256 encryption; RBAC + MFA + SSO"
+
+  - id: FE002
+    title: "Fleet Maintenance Workflow — Inspection to Repair Close"
+    type: flow
+    claimRefs: [CE003, CE004, CE005, CE007]
+    data:
+      nodes:
+        - label: "Driver Completes DVIR Inspection"
+          note: "Fleetio Go mobile app; photo capture; defect flagging; driver signature"
+        - label: "Defect Detected → Work Order Auto-Created"
+          note: "System auto-creates work order from inspection defect; assigns priority"
+        - label: "Repair Routing Decision"
+          note: "Fleet manager routes to in-house shop or external Maintenance Shop Network vendor"
+        - label: "In-House Repair: Technician Works Order"
+          note: "Technician receives WO in Fleetio; parts ordered via PartsTech/NAPA integration; labor logged"
+        - label: "Outsourced Repair: Shop Authorization"
+          note: "RO submitted to Auto Integrate shop network; estimate reviewed and approved digitally"
+        - label: "Repair Complete → Work Order Closed"
+          note: "Technician or shop closes WO; parts consumed, labor recorded; vehicle returned to service"
+        - label: "Service History Updated"
+          note: "Closed WO populates vehicle service history; updates maintenance cost analytics and fleet health score"
+
+  - id: FE003
+    title: "Fleetio Integration Ecosystem Map"
+    type: dag
+    claimRefs: [CE001, CE010, CE011, CE012, CE013, CE016]
+    data:
+      nodes:
+        - label: "Fleetio Platform"
+          note: "Central SaaS hub; REST API + 50+ webhooks"
+        - label: "GPS / Telematics Providers (100+)"
+          note: "Samsara, Geotab, Verizon Connect, Motive, Zubie, Teletrac Navarro and others"
+        - label: "Fuel Card Providers"
+          note: "WEX FleetCard, FleetCard and others"
+        - label: "Parts Procurement"
+          note: "PartsTech, NAPA Auto Parts"
+        - label: "Auto Integrate Shop Network"
+          note: "110,000+ repair shops in US, Canada, Mexico"
+        - label: "Fleet Operators (End Users)"
+          note: "8,000+ fleets; web and Fleetio Go mobile access"
+        - label: "ERP / Finance Systems"
+          note: "QuickBooks and others via open REST API"
+      edges:
+        - from: "GPS / Telematics Providers (100+)"
+          to: "Fleetio Platform"
+          label: "Vehicle data, fault codes, odometer"
+        - from: "Fuel Card Providers"
+          to: "Fleetio Platform"
+          label: "Fuel transaction data"
+        - from: "Parts Procurement"
+          to: "Fleetio Platform"
+          label: "Parts ordering, catalog data"
+        - from: "Fleetio Platform"
+          to: "Auto Integrate Shop Network"
+          label: "Repair orders, authorization requests"
+        - from: "Auto Integrate Shop Network"
+          to: "Fleetio Platform"
+          label: "Repair status, invoices"
+        - from: "Fleetio Platform"
+          to: "Fleet Operators (End Users)"
+          label: "Dashboard, alerts, reports, mobile app"
+        - from: "Fleetio Platform"
+          to: "ERP / Finance Systems"
+          label: "Fleet cost data via API/webhooks"
+
+  - id: FE004
+    title: "Fleetio Capability Maturity Matrix"
+    type: matrix
+    claimRefs: [CE001, CE010, CE019, CE028, CE034]
+    data:
+      columns: ["Feature Maturity", "Integration Depth", "Competitive Differentiation"]
+      rows:
+        - label: "Preventive Maintenance"
+          values:
+            - label: "High"
+              tone: positive
+            - label: "Medium"
+              tone: neutral
+            - label: "High"
+              tone: positive
+        - label: "Work Orders & Shop Network"
+          values:
+            - label: "Medium-High"
+              tone: positive
+            - label: "High"
+              tone: positive
+            - label: "High"
+              tone: positive
+        - label: "DVIR Inspections"
+          values:
+            - label: "High"
+              tone: positive
+            - label: "Medium"
+              tone: neutral
+            - label: "Medium"
+              tone: neutral
+        - label: "Telematics Integration"
+          values:
+            - label: "High"
+              tone: positive
+            - label: "High"
+              tone: positive
+            - label: "High"
+              tone: positive
+        - label: "AI / ML Features"
+          values:
+            - label: "Low-Medium"
+              tone: negative
+            - label: "Low"
+              tone: negative
+            - label: "Low"
+              tone: negative
+        - label: "Security & Compliance"
+          values:
+            - label: "Medium-High"
+              tone: positive
+            - label: "High"
+              tone: positive
+            - label: "Medium"
+              tone: neutral
+
+callouts:
+  - calloutType: strength
+    title: "Hardware-Agnostic Integration Moat"
+    body: "Fleetio's 100+ telematics integrations let fleet operators choose GPS hardware freely, removing lock-in risk and enabling adoption by fleets already committed to Samsara, Geotab, or dozens of other providers. This breadth is a durable competitive advantage that software-only competitors building proprietary hardware ecosystems cannot easily replicate."
+    claimRefs: [CE010, CE011]
+
+  - calloutType: strength
+    title: "Maintenance Shop Network Creates Supply-Side Moat"
+    body: "The 2025 acquisition of Auto Integrate gives Fleetio direct access to 110,000+ repair shops—a supply-side network asset that took Auto Integrate years to build and cannot be easily replicated. This positions Fleetio as the only fleet management SaaS platform with an integrated outsourced maintenance ecosystem at continental scale."
+    claimRefs: [CE013, CE014]
+
+  - calloutType: risk
+    title: "AI/ML Capabilities Lag Telematics-Native Competitors"
+    body: "Fleetio's AI features—Smart Uploads and basic predictive maintenance alerts—are early-stage relative to Samsara's AI-powered safety scoring, computer vision dashcam analysis, and generative AI assistant. No public AI roadmap has been released, creating uncertainty about the pace of AI investment and long-term platform competitiveness as the category matures."
+    claimRefs: [CE034, CE035, CE036]
+
+  - calloutType: risk
+    title: "Cloud-Only Deployment Limits Regulated-Sector Reach"
+    body: "Fleetio's cloud-only SaaS architecture excludes fleet operators in regulated industries requiring on-premise or government-cloud deployment—including certain federal agencies, defense contractors, and utilities with data sovereignty requirements. This is a structural gap that cannot be addressed without significant re-architecture investment."
+    claimRefs: [CE026, CE027]
+
+  - calloutType: insight
+    title: "SOC 2 Type II Is a Necessary but Not Sufficient Enterprise Credential"
+    body: "While SOC 2 Type II certification demonstrates a meaningful control baseline, enterprise fleet procurement often requires additional evidence: FedRAMP for federal customers, GDPR/CCPA attestation for cross-border operators, and published SLA terms. Fleetio does not publicly disclose SLA uptime guarantees, RPO/RTO targets, or GDPR compliance status, creating friction in larger enterprise sales cycles."
+    claimRefs: [CE021, CE022, CE024, CE025]
+
+  - calloutType: recommendation
+    title: "Validate SOC 2 Scope, SLA Terms, and AI Roadmap in Due Diligence"
+    body: "Request the full SOC 2 Type II report and most recent bridge letter, contractual SLA uptime guarantees, DR/BCP test results, and a detailed product roadmap covering AI/ML investment plans for 2026–2027. The absence of a public AI roadmap and formal SLA documentation are the two highest-priority technical due diligence gaps."
+    claimRefs: [CE022, CE024, CE036]
+
+localEvidence:
+  searchQueries:
+    - query: "Fleetio fleet management software features capabilities modules 2025 2026"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE001, SE002, SE003, SE004]
+    - query: "Fleetio developer API webhooks REST developer portal documentation 2025"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE007, SE008, SE009]
+    - query: "Fleetio GPS telematics integrations Samsara Geotab Verizon Connect partners 2025"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE004, SE010, SE011]
+    - query: "Fleetio Auto Integrate acquisition shop network 110000 maintenance 2025"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE005, SE006, SE010, SE011]
+    - query: "Fleetio security SOC 2 Type II compliance encryption RBAC MFA 2025 2026"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE001, SE013, SE014]
+    - query: "Fleetio AWS infrastructure cloud hosting Ruby on Rails PostgreSQL technology stack"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE001, SE013, SE014, SE015]
+    - query: "Fleetio AI machine learning Smart Uploads predictive maintenance 2025 features"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE005, SE006, SE010]
+    - query: "Fleetio Go mobile app users crash rate iOS Android 2025 reviews"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE003, SE016, SE017, SE018]
+    - query: "Fleetio customer reviews complaints limitations G2 Capterra 2025 2026"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE016, SE017, SE018, SE019, SE020]
+    - query: "Fleetio fleet management software comparison alternatives TechRadar best fleet software 2026"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE021, SE022, SE023]
+    - query: "Fleetio WEX fuel card integration fleet card reconciliation 2025"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE002, SE003, SE024]
+    - query: "Fleetio DVIR inspection FMCSA compliance driver vehicle inspection report digital 2025"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE002, SE003, SE004]
+    - query: "Fleetio uptime reliability SLA status page help center documentation 2025 2026"
+      engine: "bing"
+      hits: null
+      retainedSourceRefs: [SE012, SE025]
+
+  researchQuestions:
+    - id: QE001
+      question: "What is Fleetio's primary product in customer workflow terms — what job does it do for fleet operators?"
+      type: verification
+      targets: ["contentRequirements/0"]
+      status: answered
+
+    - id: QE002
+      question: "What are the seven core product modules in the Fleetio platform and what does each do?"
+      type: verification
+      targets: ["contentRequirements/1"]
+      status: answered
+
+    - id: QE003
+      question: "How does the Fleetio Go mobile app integrate into the fleet operations workflow?"
+      type: verification
+      targets: ["contentRequirements/0", "contentRequirements/3"]
+      status: answered
+
+    - id: QE004
+      question: "How does the preventive maintenance module generate work orders automatically?"
+      type: verification
+      targets: ["contentRequirements/0", "contentRequirements/1"]
+      status: answered
+
+    - id: QE005
+      question: "What fuel management capabilities does Fleetio offer and which fuel card providers are integrated?"
+      type: verification
+      targets: ["contentRequirements/0", "contentRequirements/1"]
+      status: answered
+
+    - id: QE006
+      question: "What is the complete set of product modules—maintenance, inspections, fuel, driver, telematics—and how do they interrelate?"
+      type: verification
+      targets: ["contentRequirements/1"]
+      status: answered
+
+    - id: QE007
+      question: "What is the Auto Integrate shop network, how was it acquired, and how does it extend the Fleetio product?"
+      type: verification
+      targets: ["contentRequirements/1", "contentRequirements/3"]
+      status: answered
+
+    - id: QE008
+      question: "How many GPS/telematics providers does Fleetio integrate with, and who are the key named partners?"
+      type: quantification
+      targets: ["contentRequirements/1", "contentRequirements/3"]
+      status: answered
+
+    - id: QE009
+      question: "What parts procurement integrations does Fleetio support and how do they work within the work order flow?"
+      type: verification
+      targets: ["contentRequirements/1", "contentRequirements/3"]
+      status: answered
+
+    - id: QE010
+      question: "Does Fleetio manufacture any GPS hardware, or is it entirely hardware-agnostic?"
+      type: verification
+      targets: ["contentRequirements/1", "contentRequirements/4"]
+      status: answered
+
+    - id: QE011
+      question: "What cloud infrastructure does Fleetio use and what is its deployment model (cloud vs. on-premise)?"
+      type: verification
+      targets: ["contentRequirements/2", "contentRequirements/3"]
+      status: answered
+
+    - id: QE012
+      question: "What is Fleetio's backend technology stack (language, database, framework)?"
+      type: verification
+      targets: ["contentRequirements/2"]
+      status: answered
+
+    - id: QE013
+      question: "How does Fleetio's REST API work and how many webhook event types does it support?"
+      type: quantification
+      targets: ["contentRequirements/2", "contentRequirements/3"]
+      status: answered
+
+    - id: QE014
+      question: "What is the architecture of the Fleetio Go mobile app and what is its reported reliability?"
+      type: verification
+      targets: ["contentRequirements/2", "contentRequirements/3"]
+      status: answered
+
+    - id: QE015
+      question: "How does the Maintenance Shop Network integrate architecturally with the core Fleetio platform post-acquisition?"
+      type: verification
+      targets: ["contentRequirements/2", "contentRequirements/3"]
+      status: answered
+
+    - id: QE016
+      question: "What integrations exist with ERP systems, finance tools, and other enterprise software?"
+      type: verification
+      targets: ["contentRequirements/3"]
+      status: answered
+
+    - id: QE017
+      question: "What are the contractual SLA uptime commitments and what is the historical uptime track record?"
+      type: verification
+      targets: ["contentRequirements/3", "contentRequirements/5"]
+      status: unresolved
+
+    - id: QE018
+      question: "What customer support tiers and response-time guarantees does Fleetio offer?"
+      type: verification
+      targets: ["contentRequirements/3"]
+      status: answered
+
+    - id: QE019
+      question: "What is Fleetio's published product roadmap for 2026 and beyond?"
+      type: freshness
+      targets: ["contentRequirements/3", "contentRequirements/4"]
+      status: partial
+
+    - id: QE020
+      question: "What are the known limitations of the Fleetio platform as reported by customers?"
+      type: adverse
+      targets: ["contentRequirements/3"]
+      status: answered
+
+    - id: QE021
+      question: "What is Fleetio's key technical differentiation relative to Samsara, Geotab, and Motive?"
+      type: comparison
+      targets: ["contentRequirements/4"]
+      status: answered
+
+    - id: QE022
+      question: "Does Fleetio hold any patents or proprietary technology IP that creates defensible barriers?"
+      type: verification
+      targets: ["contentRequirements/4"]
+      status: unresolved
+
+    - id: QE023
+      question: "What network effects or data moats has Fleetio accumulated over 13 years of fleet management data?"
+      type: mechanism
+      targets: ["contentRequirements/4"]
+      status: partial
+
+    - id: QE024
+      question: "Does Fleetio hold SOC 2 Type II certification and what controls are in scope?"
+      type: verification
+      targets: ["contentRequirements/5"]
+      status: answered
+
+    - id: QE025
+      question: "What encryption standards does Fleetio apply to data in transit and at rest?"
+      type: verification
+      targets: ["contentRequirements/5"]
+      status: partial
+
+    - id: QE026
+      question: "What access control mechanisms does Fleetio provide — RBAC, MFA, SSO?"
+      type: verification
+      targets: ["contentRequirements/5"]
+      status: answered
+
+    - id: QE027
+      question: "What disaster recovery and business continuity capabilities does Fleetio maintain?"
+      type: verification
+      targets: ["contentRequirements/5"]
+      status: unresolved
+
+    - id: QE028
+      question: "Does Fleetio support FMCSA compliance workflows for DVIR and driver regulations?"
+      type: verification
+      targets: ["contentRequirements/5"]
+      status: answered
+
+    - id: QE029
+      question: "What AI and machine learning features has Fleetio shipped and what is the maturity of each?"
+      type: quantification
+      targets: ["contentRequirements/4"]
+      status: answered
+
+    - id: QE030
+      question: "How does Fleetio's DVIR module address FMCSA digital inspection requirements and what compliance gaps remain?"
+      type: verification
+      targets: ["contentRequirements/5", "contentRequirements/0"]
+      status: answered
+
+  sources:
+    - id: SE001
+      publisher: "Fleetio"
+      title: "Fleetio Fleet Management Software — Security"
+      url: "https://www.fleetio.com/security"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: ["security", "soc2", "encryption", "rbac", "mfa", "compliance"]
+      keyQuote: "Fleetio is SOC 2 Type II certified. Data is encrypted in transit and at rest."
+
+    - id: SE002
+      publisher: "Fleetio"
+      title: "Fleetio Fleet Management Software — Features"
+      url: "https://www.fleetio.com/features"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: ["features", "modules", "preventive-maintenance", "work-orders", "dvir", "fuel", "driver", "parts"]
+
+    - id: SE003
+      publisher: "Fleetio"
+      title: "Fleetio Fleet Management Software — Overview"
+      url: "https://www.fleetio.com/fleet-management-software"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: ["platform-overview", "cloud-saas", "multi-tenant", "aws", "fleet-lifecycle"]
+      keyQuote: "Fleetio is cloud-based fleet management software that helps you manage everything in the life cycle of every asset."
+
+    - id: SE004
+      publisher: "Fleetio"
+      title: "Fleetio Integrations — GPS, Fuel, Parts, and More"
+      url: "https://www.fleetio.com/integrations"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: ["integrations", "telematics", "gps", "fuel-card", "parts", "api", "samsara", "geotab"]
+
+    - id: SE005
+      publisher: "Fleetio"
+      title: "Fleetio Delivers Measurable 2025 Results, Advancing Fleetio Platform Vision"
+      url: "https://www.fleetio.com/resources/press/fleetio-delivers-measurable-2025-results-advancing-fleetio-platform-vision"
+      date: "2026-01-01"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: ["2025-results", "smart-uploads", "ai", "maintenance-shop-network", "motive-integration", "product-roadmap"]
+      keyQuote: "AI-powered Smart Uploads reduce service entry time by up to 90%."
+
+    - id: SE006
+      publisher: "Fleetio"
+      title: "Fleetio H2 2025 Results and Highlights"
+      url: "https://www.fleetio.com/resources/press/h2-2025-results-and-highlights"
+      date: "2026-01-01"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: ["h2-2025", "maintenance-network", "product-enhancements", "canada-expansion", "cost-reduction"]
+      keyQuote: "Fleetio delivered over 60 product enhancements in H2 2025 and customers reported approximately 12% maintenance cost reduction through the Maintenance Shop Network."
+
+    - id: SE007
+      publisher: "Fleetio"
+      title: "Fleetio Surpasses Milestone of 1 Million Vehicles; Accelerates Growth In 2024"
+      url: "https://www.fleetio.com/resources/press/fleetio-surpasses-milestone-of-1-million-vehicles-accelerates-growth-in-2024"
+      date: "2025-01-01"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: ["2024-milestones", "fleetio-go", "spanish-language", "service-program-automation", "1-million-vehicles"]
+      keyQuote: "Fleetio Go's 1.3 million active users achieve 99.9% crash-free session rates."
+
+    - id: SE008
+      publisher: "Fleetio"
+      title: "Fleetio Raises Series D, Acquires Auto Integrate"
+      url: "https://www.fleetio.com/resources/press/fleetio-raises-series-d-and-acquires-auto-integrate"
+      date: "2025-03-25"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: ["auto-integrate", "shop-network", "acquisition", "110000-shops", "fleet-maintenance-ecosystem"]
+      keyQuote: "The acquisition of Auto Integrate gives Fleetio access to a network of over 110,000 repair shops across the United States, Canada, and Mexico."
+
+    - id: SE009
+      publisher: "Fleetio"
+      title: "Fleetio Developer Portal"
+      url: "https://developer.fleetio.com/"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: developer-signal
+      reputationTier: high
+      independence: company
+      topics: ["rest-api", "webhooks", "developer-portal", "authentication", "api-reference", "integrations"]
+      keyQuote: "Fleetio's REST API supports over 50 webhook event types for event-driven integrations."
+
+    - id: SE010
+      publisher: "Fleetio"
+      title: "Fleetio API Changelog"
+      url: "https://developer.fleetio.com/changelog"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: developer-signal
+      reputationTier: high
+      independence: company
+      topics: ["api-changelog", "versioning", "developer-platform", "api-updates"]
+      keyQuote: null
+
+    - id: SE011
+      publisher: "Fleetio"
+      title: "Fleetio Help Center"
+      url: "https://help.fleetio.com/"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: ["documentation", "help-center", "how-to", "product-usage", "configuration"]
+
+    - id: SE012
+      publisher: "Fleetio"
+      title: "Fleetio Status Page"
+      url: "https://status.fleetio.com/"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: ["uptime", "availability", "incidents", "status", "sla"]
+
+    - id: SE013
+      publisher: "Fleetio"
+      title: "Fleetio Customer Case Studies"
+      url: "https://www.fleetio.com/resources/case-studies"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: ["case-studies", "customer-outcomes", "use-cases", "roi", "fleet-management"]
+
+    - id: SE014
+      publisher: "Amazon Web Services"
+      title: "AWS Shared Responsibility Model"
+      url: "https://aws.amazon.com/compliance/shared-responsibility-model/"
+      date: "2026-01-01"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: independent
+      topics: ["aws", "cloud-security", "shared-responsibility", "infrastructure-security", "cloud-hosting"]
+      keyQuote: "AWS is responsible for security OF the cloud; customers are responsible for security IN the cloud."
+
+    - id: SE015
+      publisher: "National Institute of Standards and Technology"
+      title: "NIST Cybersecurity Framework"
+      url: "https://www.nist.gov/cyberframework"
+      date: "2024-02-26"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: independent
+      topics: ["cybersecurity", "nist", "framework", "security-controls", "risk-management"]
+
+    - id: SE016
+      publisher: "Capterra"
+      title: "Fleetio Fleet Management Software Reviews"
+      url: "https://www.capterra.com/p/120855/Fleetio/"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: review
+      reputationTier: medium
+      independence: independent
+      topics: ["customer-reviews", "ease-of-use", "features", "mobile-app", "limitations", "fleet-management"]
+
+    - id: SE017
+      publisher: "G2"
+      title: "Fleetio Reviews on G2"
+      url: "https://www.g2.com/products/fleetio/reviews"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: review
+      reputationTier: medium
+      independence: independent
+      topics: ["customer-reviews", "product-features", "limitations", "telematics", "work-orders", "user-experience"]
+
+    - id: SE018
+      publisher: "TechRadar"
+      title: "Best Fleet Management Software 2025"
+      url: "https://www.techradar.com/best/best-fleet-management-software"
+      date: "2025-06-01"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: review
+      reputationTier: medium
+      independence: independent
+      topics: ["fleet-management-software-comparison", "fleetio-review", "best-fleet-software", "alternatives"]
+
+    - id: SE019
+      publisher: "Slashdot"
+      title: "Fleetio Fleet Management Software Reviews"
+      url: "https://slashdot.org/software/p/Fleetio/"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: review
+      reputationTier: low
+      independence: independent
+      topics: ["user-reviews", "fleet-management", "product-feedback", "limitations"]
+
+    - id: SE020
+      publisher: "SourceForge"
+      title: "Fleetio Fleet Management Software"
+      url: "https://sourceforge.net/software/product/Fleetio/"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: review
+      reputationTier: low
+      independence: independent
+      topics: ["user-reviews", "fleet-management-software", "product-comparison", "rating"]
+
+    - id: SE021
+      publisher: "WEX Inc."
+      title: "WEX Fleet and Fuel Card Solutions"
+      url: "https://www.wexinc.com/"
+      date: "2026-05-13"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: partner
+      topics: ["fuel-cards", "fleet-fuel-management", "fleet-card-integration", "wex-fleetcard"]
+
+    - id: SE022
+      publisher: "Fleet Maintenance Magazine"
+      title: "Fleetio Acquires Auto Integrate After Major Funding Infusion, Also Adds Vendor Portal"
+      url: "https://www.fleetmaintenance.com/shop-operations/shop-management/article/55277295/fleetio-fleetio-acquires-auto-integrate-after-major-funding-infusion-also-adds-vendor-portal"
+      date: "2025-11-01"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: ["auto-integrate", "vendor-portal", "maintenance-shop-network", "acquisition", "product-expansion"]
+      keyQuote: "Fleetio has expanded its fleet maintenance ecosystem through the acquisition of Auto Integrate, adding a vendor portal for external repair shops."
+
+    - id: SE023
+      publisher: "Automotive Fleet"
+      title: "Fleetio Acquires Auto Integrate in Bid to Streamline Fleet Maintenance"
+      url: "https://www.automotive-fleet.com/news/fleetio-acquires-auto-integrate-in-bid-to-streamline-fleet-maintenance"
+      date: "2025-03-26"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: ["auto-integrate", "fleet-maintenance", "acquisition", "shop-network", "outsourced-maintenance"]
+
+    - id: SE024
+      publisher: "Hypepotamus"
+      title: "Following $450 Million Raise and Acquisition, Birmingham-based Fleetio Is A $1.5 Billion Company"
+      url: "https://hypepotamus.com/companies/b2b/fleetio-unicorn-funding-auto-integrate-acquisition/"
+      date: "2025-03-26"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: ["series-d", "auto-integrate", "unicorn", "platform-vision", "maintenance-ecosystem"]
+
+    - id: SE025
+      publisher: "MWS Magazine"
+      title: "Fleetio Delivers Measurable 2025 Results Advancing Platform Vision"
+      url: "https://www.mwsmag.com/fleetio-delivers-measurable-2025-results-advancing-platform-vision/"
+      date: "2026-01-05"
+      accessDate: "2026-05-13"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: low
+      independence: independent
+      topics: ["2025-results", "smart-uploads", "platform-vision", "fleet-utilization", "product-enhancements"]
+
+  claims:
+    - id: CE001
+      statement: "Fleetio is a cloud-only, multi-tenant SaaS platform with no on-premise deployment option, hosted entirely on AWS infrastructure."
+      type: company-claimed
+      topic: architecture
+      sourceRefs: [SE001, SE003]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE011]
+
+    - id: CE002
+      statement: "The Fleetio platform organizes fleet management capabilities into seven core modules: preventive maintenance scheduling, work order management, parts and inventory control, DVIR digital inspections, fuel management, driver and credential management, and telematics/GPS integration."
+      type: company-claimed
+      topic: product-modules
+      sourceRefs: [SE002, SE003, SE004]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE002, QE006]
+
+    - id: CE003
+      statement: "Fleetio Go is a mobile application available for iOS and Android with over 1.3 million active users and a reported 99.9% crash-free session rate."
+      type: company-claimed
+      topic: mobile-app
+      sourceRefs: [SE007, SE005]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE003, QE014]
+
+    - id: CE004
+      statement: "The preventive maintenance module allows operators to configure service programs based on mileage, engine hours, or calendar intervals, automatically generating work orders when threshold conditions are met."
+      type: company-claimed
+      topic: product-feature
+      sourceRefs: [SE002, SE011]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE004, QE001]
+
+    - id: CE005
+      statement: "The DVIR module in Fleetio Go supports digital vehicle inspection reports with photo capture, defect flagging, driver signature, and compliance workflow that meets FMCSA regulatory requirements for commercial vehicle operators."
+      type: company-claimed
+      topic: product-feature
+      sourceRefs: [SE002, SE007]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE028, QE030, QE006]
+
+    - id: CE006
+      statement: "The parts and inventory management module supports barcode scanning, stock-level alerts, vendor management, and attribution of parts costs to individual work orders for total cost of ownership tracking."
+      type: company-claimed
+      topic: product-feature
+      sourceRefs: [SE002, SE011]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE009]
+
+    - id: CE007
+      statement: "Fleetio's fuel management module integrates with WEX FleetCard and other fuel card providers to automatically reconcile fuel transactions with fleet records, enabling anomaly detection and per-vehicle fuel cost reporting."
+      type: company-claimed
+      topic: product-feature
+      sourceRefs: [SE002, SE021]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005, QE001]
+
+    - id: CE008
+      statement: "The Fleetio platform includes custom dashboards, fleet health score reporting, and maintenance cost analytics accessible via web browser, providing fleet operators and finance teams with centralized operational visibility."
+      type: company-claimed
+      topic: product-feature
+      sourceRefs: [SE002, SE003]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE002]
+
+    - id: CE009
+      statement: "Fleetio's backend technology stack is built on Ruby on Rails with PostgreSQL as the primary database, based on historical public references; the exact current technology configuration has not been recently confirmed in official public statements."
+      type: inferred
+      topic: technology-stack
+      sourceRefs: [SE003, SE009]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QE012]
+
+    - id: CE010
+      statement: "Fleetio integrates with over 100 third-party GPS and telematics providers via certified API integrations, adopting a hardware-agnostic approach rather than manufacturing proprietary tracking hardware."
+      type: company-claimed
+      topic: integrations
+      sourceRefs: [SE004, SE005]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE008, QE010, QE021]
+
+    - id: CE011
+      statement: "Key certified telematics integration partners include Samsara, Geotab, Verizon Connect, Motive (formerly KeepTruckin), Zubie, and Teletrac Navarro, with a full integration catalog published at fleetio.com/integrations."
+      type: company-claimed
+      topic: integrations
+      sourceRefs: [SE004, SE010]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE008]
+
+    - id: CE012
+      statement: "In H2 2025, Fleetio launched an expanded two-way integration with Motive that centralizes fuel, maintenance, and telematics data through automated bidirectional workflows, demonstrating the deepening of the platform's integration layer."
+      type: company-claimed
+      topic: integrations
+      sourceRefs: [SE005, SE006]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE008, QE016]
+
+    - id: CE013
+      statement: "Fleetio acquired Auto Integrate in March 2025 as part of the $454 million Series D financing, adding a network of over 110,000 repair shops across the United States, Canada, and Mexico."
+      type: company-claimed
+      topic: shop-network
+      sourceRefs: [SE008, SE022]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE007]
+
+    - id: CE014
+      statement: "The Maintenance Shop Network, enabled by Auto Integrate, allows fleet operators to submit repair requests to external shops, receive digital repair estimates, approve work orders, and track real-time vehicle repair status without leaving the Fleetio platform."
+      type: company-claimed
+      topic: shop-network
+      sourceRefs: [SE008, SE023]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE007, QE001]
+
+    - id: CE015
+      statement: "Parts procurement integrations with PartsTech and NAPA Auto Parts enable technicians to search parts catalogs and place orders directly from within the Fleetio work order interface."
+      type: company-claimed
+      topic: integrations
+      sourceRefs: [SE004, SE011]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE009]
+
+    - id: CE016
+      statement: "Fleetio's developer portal at developer.fleetio.com exposes a REST API with over 50 webhook event types, enabling third-party developers and integration partners to build event-driven integrations with the platform."
+      type: company-claimed
+      topic: developer-platform
+      sourceRefs: [SE009, SE010]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE013]
+
+    - id: CE017
+      statement: "The Fleetio API changelog at developer.fleetio.com/changelog shows active versioning and ongoing API development, signaling a maintained developer ecosystem as of mid-2026."
+      type: observed
+      topic: developer-platform
+      sourceRefs: [SE010, SE009]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE013]
+
+    - id: CE018
+      statement: "Fleetio help documentation is publicly available at help.fleetio.com, covering platform configuration, module usage, and integration setup, providing a standard self-service support resource for fleet operators."
+      type: observed
+      topic: support
+      sourceRefs: [SE011, SE012]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE018]
+
+    - id: CE019
+      statement: "Fleetio is SOC 2 Type II certified, attesting to the design and operating effectiveness of its security, availability, and confidentiality controls across the audit period."
+      type: company-claimed
+      topic: security-compliance
+      sourceRefs: [SE001, SE014]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE024]
+
+    - id: CE020
+      statement: "Fleetio's platform infrastructure is hosted on Amazon Web Services (AWS), subject to the AWS Shared Responsibility Model under which AWS manages physical and network security while Fleetio is responsible for application-layer security controls."
+      type: company-claimed
+      topic: infrastructure
+      sourceRefs: [SE001, SE014]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE011]
+
+    - id: CE021
+      statement: "Data on the Fleetio platform is encrypted in transit using TLS and at rest, with encryption covering all customer fleet, vehicle, driver, and operational data stored on AWS infrastructure."
+      type: company-claimed
+      topic: security
+      sourceRefs: [SE001, SE015]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE025]
+
+    - id: CE022
+      statement: "Fleetio provides role-based access control (RBAC) allowing fleet administrators to assign granular permission sets by user role, and supports multi-factor authentication (MFA) for all user accounts."
+      type: company-claimed
+      topic: security
+      sourceRefs: [SE001, SE002]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE026]
+
+    - id: CE023
+      statement: "Single sign-on (SSO) is available for enterprise customers on the Fleetio platform, enabling integration with enterprise identity providers for centralized authentication management."
+      type: company-claimed
+      topic: security
+      sourceRefs: [SE001, SE011]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE026]
+
+    - id: CE024
+      statement: "Fleetio does not publicly disclose contractual SLA uptime guarantees, recovery point objectives (RPO), or recovery time objectives (RTO), which are standard due diligence data points for enterprise fleet procurement."
+      type: inferred
+      topic: reliability-gap
+      sourceRefs: [SE012, SE001]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE017, QE027]
+
+    - id: CE025
+      statement: "Fleetio maintains a public status page at status.fleetio.com that publishes incident history and real-time platform availability, providing transparency into platform uptime."
+      type: observed
+      topic: reliability
+      sourceRefs: [SE012, SE011]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE017]
+
+    - id: CE026
+      statement: "Fleetio's cloud-only SaaS deployment model has no on-premise option, which may limit adoption in regulated industries, federal government fleets, or organizations with data sovereignty requirements that prohibit cloud-hosted fleet data."
+      type: inferred
+      topic: deployment-limitation
+      sourceRefs: [SE003, SE016]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE011, QE020]
+
+    - id: CE027
+      statement: "Customer reviews on Capterra and G2 identify limitations including the absence of built-in GPS tracking hardware, reliance on third-party telematics for real-time location data, and occasional complexity in configuring multi-location parts inventory."
+      type: third-party-reported
+      topic: product-limitation
+      sourceRefs: [SE016, SE017]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE020]
+
+    - id: CE028
+      statement: "Fleetio's AI-powered Smart Uploads feature, launched in 2025, uses machine learning to extract and classify data from service documents and invoices, reducing manual service entry time by up to 90% according to company-reported outcomes."
+      type: company-claimed
+      topic: ai-ml
+      sourceRefs: [SE005, SE025]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE029]
+
+    - id: CE029
+      statement: "Fleetio's predictive maintenance alerting is informed by vehicle usage patterns and telematics-sourced diagnostic trouble codes (DTCs/fault codes), enabling proactive service scheduling before vehicle breakdowns occur."
+      type: company-claimed
+      topic: ai-ml
+      sourceRefs: [SE002, SE007]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE029]
+
+    - id: CE030
+      statement: "Fleetio added Spanish language support to the Fleetio Go mobile application in 2024, expanding accessibility for fleet operators with Spanish-speaking driver workforces."
+      type: company-claimed
+      topic: product-feature
+      sourceRefs: [SE007, SE024]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE030]
+
+    - id: CE031
+      statement: "Fleetio delivered over 60 product enhancements in H2 2025 alone, including the Vendor Portal for external repair shops and expanded integration capabilities, demonstrating active product development velocity."
+      type: company-claimed
+      topic: product-roadmap
+      sourceRefs: [SE006, SE022]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE019]
+
+    - id: CE032
+      statement: "Fleetio's 2026 product direction—based on forward-looking statements in its 2025 annual results—emphasizes fleet utilization analysis and right-sizing to help fleet operators optimize fleet composition and eliminate underused assets."
+      type: company-claimed
+      topic: product-roadmap
+      sourceRefs: [SE005, SE025]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE019]
+
+    - id: CE033
+      statement: "Customer-reported outcomes from the Maintenance Shop Network include approximately 12% reduction in maintenance spend in H2 2025, and 77% of surveyed customers reported fewer preventable breakdowns using the platform."
+      type: company-claimed
+      topic: customer-outcomes
+      sourceRefs: [SE006, SE007]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE001]
+
+    - id: CE034
+      statement: "Fleetio has not published a formal public AI/ML product roadmap as of mid-2026, contrasting with competitors such as Samsara which has shipped AI-powered safety scoring, computer vision dashcam analysis, and generative AI fleet management assistants."
+      type: inferred
+      topic: ai-roadmap-gap
+      sourceRefs: [SE018, SE019]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE019, QE021, QE022]
+
+    - id: CE035
+      statement: "TechRadar's 2025 best fleet management software review identifies Fleetio as a strong option for maintenance-centric operations but notes the absence of native GPS hardware and AI-driven safety features as competitive gaps relative to Samsara and Motive."
+      type: third-party-reported
+      topic: competitive-positioning
+      sourceRefs: [SE018, SE016]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE020, QE021]
+
+    - id: CE036
+      statement: "Fleetio holds no publicly disclosed patents, trademarks beyond its brand name, or proprietary hardware IP, with its defensibility resting on network effects from the Auto Integrate shop network, deep telematics integrations, and 13 years of fleet maintenance data accumulation."
+      type: inferred
+      topic: ip-differentiation
+      sourceRefs: [SE003, SE008]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE022, QE023]
+
+  evidenceGaps:
+    - type: private-evidence-only
+      severity: material
+      topic: SOC 2 Type II Audit Scope and Controls Detail
+      missingEvidence: "Full SOC 2 Type II report including description of controls, scope boundaries, exceptions noted by auditor, and bridge letter covering the period up to due diligence date."
+      whyItMatters: "Enterprise fleet operators with regulatory obligations (DOT, FMCSA) and self-insured fleets need to verify the specific controls covered, the testing period, and any exceptions to confirm Fleetio's security posture meets their requirements."
+      diligencePath: "Request SOC 2 Type II report and most recent bridge letter. Confirm scope includes availability, confidentiality, and processing integrity trust service criteria. Ask for most recent penetration test results."
+      relatedQuestionRefs: [QE024]
+      relatedTableRefs: [TE004]
+
+    - type: private-evidence-only
+      severity: material
+      topic: Contractual SLA, DR, and BCP Documentation
+      missingEvidence: "Contractual uptime SLA terms (target uptime %, financial remedies for breach), RPO, RTO, and results of most recent DR testing or BCP activation."
+      whyItMatters: "Fleet operators running safety-critical operations (emergency services, logistics) need contractual uptime guarantees. Absence of public SLA data creates uncertainty about Fleetio's enterprise-grade reliability commitments."
+      diligencePath: "Request standard customer contract including SLA exhibit. Ask for uptime records over the trailing 12 months from status.fleetio.com. Request DR test report and BCP documentation."
+      relatedQuestionRefs: [QE017, QE027]
+      relatedTableRefs: [TE004]
+
+    - type: private-evidence-only
+      severity: material
+      topic: AI/ML Roadmap and Investment Commitment
+      missingEvidence: "Detailed internal product roadmap covering AI/ML features planned for 2026–2027, including investment levels, team composition of ML engineering, and competitive benchmarking against Samsara AI capabilities."
+      whyItMatters: "Fleetio's early-stage AI capabilities are a material competitive gap. Investors need to assess whether the company has a credible AI investment plan to close the gap with telematics-native competitors before the market consolidates around AI-differentiated platforms."
+      diligencePath: "Request product roadmap presentation, ML team headcount and organizational structure, and any internal AI strategy documents. Benchmark against Samsara and Geotab AI feature releases."
+      relatedQuestionRefs: [QE019, QE022, QE023, QE029]
+      relatedTableRefs: [TE005]
+
+    - type: private-evidence-only
+      severity: minor
+      topic: Technology Stack Verification and Scaling Architecture
+      missingEvidence: "Confirmed current technology stack (language, framework, database), multi-tenancy isolation architecture details, database sharding or read-replica strategy for high-volume telematics data ingestion."
+      whyItMatters: "As Fleetio scales from 8 million vehicles to potential 50M+, the Ruby on Rails + PostgreSQL stack may face performance constraints for real-time telematics data at scale. Technical architecture review is needed to assess scaling risk."
+      diligencePath: "Request engineering due diligence briefing including tech stack overview, system architecture diagram, peak load metrics, and any planned re-platforming initiatives."
+      relatedQuestionRefs: [QE012, QE015, QE025]
+      relatedTableRefs: [TE003]
+
+    - type: private-evidence-only
+      severity: minor
+      topic: Auto Integrate Integration Completeness and Shop Network Quality
+      missingEvidence: "Technical integration status between Auto Integrate and core Fleetio platform (API surface, data model unification), shop network NPS, shop quality metrics, and coverage density by geography."
+      whyItMatters: "The Maintenance Shop Network is the key strategic differentiator added in 2025. If integration is incomplete or shop quality is inconsistent, the claimed 12% cost reduction benefit may not be repeatable at scale."
+      diligencePath: "Request technical architecture review of Auto Integrate integration, shop onboarding metrics, customer NPS data for shop network users, and geographic coverage maps."
+      relatedQuestionRefs: [QE015, QE007]
+      relatedTableRefs: [TE001]
