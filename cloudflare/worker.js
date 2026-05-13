@@ -12,8 +12,8 @@
  *   GITHUB_REF   - Dispatch target ref; defaults to "main"
  *
  * Schedule reference:
- *   unicorns.yml     0 * * * *  inputs: industry=Any, unicornCount=1, model=claude-sonnet-4.6
- *   translate-zh.yml 0 * * * *  inputs: reportCount=1, model=gpt-5.5
+ *   unicorns.yml     cron "0 * * * *"     inputs: industry=Any, unicornCount=5, model=claude-sonnet-4.6
+ *   translate-zh.yml cron "0 0,6,12,18 * * *"  inputs: reportCount=5, model=gpt-5.5
  */
 
 const WORKFLOW_DISPATCHES = [
@@ -23,16 +23,16 @@ const WORKFLOW_DISPATCHES = [
     workflow: "unicorns.yml",
     inputs: {
       industry: "Any",
-      unicornCount: "1",
+      unicornCount: "5",
       model: "claude-sonnet-4.6",
     },
   },
   {
-    schedule: "every hour at :00 UTC",
-    shouldDispatch: (date) => date.getUTCMinutes() === 0,
+    schedule: "every 6 hours at :00 UTC (00, 06, 12, 18)",
+    shouldDispatch: (date) => date.getUTCMinutes() === 0 && date.getUTCHours() % 6 === 0,
     workflow: "translate-zh.yml",
     inputs: {
-      reportCount: "1",
+      reportCount: "5",
       model: "gpt-5.5",
     },
   },
