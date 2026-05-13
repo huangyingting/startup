@@ -12,14 +12,14 @@
  *   GITHUB_REF   - Dispatch target ref; defaults to "main"
  *
  * Schedule reference:
- *   unicorns.yml     cron "0 * * * *"     inputs: industry=Any, unicornCount=5, model=claude-sonnet-4.6
- *   translate-zh.yml cron "0 0,6,12,18 * * *"  inputs: reportCount=5, model=gpt-5.5
+ *   unicorns.yml     cron "0 0,6,12,18 * * *"  inputs: industry=Any, unicornCount=5, model=claude-sonnet-4.6
+ *   translate-zh.yml cron "0 0,4,8,12,16,20 * * *"  inputs: reportCount=5, model=gpt-5.5
  */
 
 const WORKFLOW_DISPATCHES = [
   {
-    schedule: "every hour at :00 UTC",
-    shouldDispatch: (date) => date.getUTCMinutes() === 0,
+    schedule: "every 6 hours at :00 UTC (00, 06, 12, 18)",
+    shouldDispatch: (date) => date.getUTCMinutes() === 0 && date.getUTCHours() % 6 === 0,
     workflow: "unicorns.yml",
     inputs: {
       industry: "Any",
@@ -28,8 +28,8 @@ const WORKFLOW_DISPATCHES = [
     },
   },
   {
-    schedule: "every 6 hours at :00 UTC (00, 06, 12, 18)",
-    shouldDispatch: (date) => date.getUTCMinutes() === 0 && date.getUTCHours() % 6 === 0,
+    schedule: "every 4 hours at :00 UTC (00, 04, 08, 12, 16, 20)",
+    shouldDispatch: (date) => date.getUTCMinutes() === 0 && date.getUTCHours() % 4 === 0,
     workflow: "translate-zh.yml",
     inputs: {
       reportCount: "5",
