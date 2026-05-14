@@ -1,0 +1,324 @@
+{
+  "schemaVersion": "chapter-runtime-context-v3",
+  "generatedFrom": "/home/runner/work/startup/startup/.agents/skills/startup-research/references/workflow-config.yaml",
+  "totalChapters": 8,
+  "previousChapter": {
+    "key": "company-overview",
+    "order": 1,
+    "letter": "O",
+    "file": "01-company-overview.yaml",
+    "title": "Company Overview",
+    "mission": "Establish identity, leadership, funding, scale, and milestones that every later chapter can reuse as ground truth.",
+    "optionalContext": [],
+    "contentRequirements": [
+      "Identity, headquarters, founding date, current stage, and one-line product/business model.",
+      "Founders, leadership, board/governance, key-person dependence, and material leadership changes.",
+      "Funding history, valuation, total raised, investors, secondaries, debt/credit when supportable.",
+      "Cover metrics (valuation, raised, revenue/run-rate, customers, headcount, locations) with explicit gaps for unsupported numbers.",
+      "Milestones across founding, financing, product, scale, regulatory, partnerships, and adverse events."
+    ],
+    "plannedTables": [
+      {
+        "name": "Snapshot KPI table",
+        "requirement": "metric, value/status, date, confidence, gap."
+      },
+      {
+        "name": "Leadership and founder table",
+        "requirement": "person, role, background, founder-market fit or functional coverage, key-person dependency.",
+        "enumeration": true,
+        "expectedMinRows": 2
+      },
+      {
+        "name": "Stakeholder or investor map",
+        "requirement": "stakeholder, role, control or economic importance, diligence ask.",
+        "enumeration": true,
+        "expectedMinRows": 5
+      },
+      {
+        "name": "Milestone table",
+        "requirement": "dated entries covering founding, financing, product, scale, regulatory, partnership, governance, and adverse events; columns date, event, type (founding|financing|product|scale|regulatory|partnership|governance|adverse), amount/valuation/status, participants, implication; this is the single chronology of record.",
+        "enumeration": true,
+        "expectedMinRows": 8
+      }
+    ],
+    "plannedFigures": [
+      {
+        "name": "Company milestone timeline",
+        "requirement": "Dated milestone items with labels, details, tone, claim refs.",
+        "acceptedTypes": [
+          "timeline"
+        ]
+      },
+      {
+        "name": "Company snapshot logic",
+        "requirement": "Show how identity, product, customers, capital, and dependencies connect.",
+        "acceptedTypes": [
+          "flow"
+        ]
+      },
+      {
+        "name": "Snapshot KPIs",
+        "requirement": "Summarize maturity, traction, risk, or investability when supportable.",
+        "acceptedTypes": [
+          "kpi"
+        ]
+      }
+    ],
+    "evidenceStrategy": [
+      "Official identity surfaces — homepage, about, leadership, newsroom, careers, product, trust, filings, legal.",
+      "Funding/valuation — company and investor announcements, tier-one finance/tech reporting, filings, credible databases.",
+      "Adverse checks — lawsuits, leadership churn, sanctions, recalls, layoffs, stale claims, conflicting scale numbers."
+    ],
+    "qualityBar": [
+      "Separate verified facts, company claims, conflicting reports, and unavailable private metrics.",
+      "Later chapters can reuse this identity without guessing.",
+      "Milestone timeline has at least 8 dated entries or evidenceGaps explain why not.",
+      "Unsupported cover metrics use null plus a concrete diligence path."
+    ],
+    "gate": {
+      "minSections": 3,
+      "maxSections": 8,
+      "minArtifacts": 7,
+      "maxTables": 8,
+      "maxFigures": 6,
+      "minResearchQuestions": 25,
+      "minQuestionTypeSpread": 4,
+      "minAdverseQuestions": 1,
+      "minLocalSources": 25,
+      "minLocalClaims": 35,
+      "minSourceDomains": 10,
+      "minNetNewSources": 8,
+      "minSourceTypeSpread": 4,
+      "minHighConfidenceCorroboration": 2,
+      "minSourcesPerEnumerationRow": 2,
+      "minQuestionAnswerRate": 0.8,
+      "minContentRequirementCoverage": 0.8,
+      "requiredSourceTypes": [],
+      "depthFloor": {
+        "minSectionBodyWords": 100,
+        "minSectionWordsTotal": 600,
+        "minTableRowsTotal": 16,
+        "minFigureDataPointsTotal": 12
+      },
+      "minAdverseSources": 1
+    }
+  },
+  "chapter": {
+    "key": "market-analysis",
+    "order": 2,
+    "letter": "M",
+    "file": "02-market-analysis.yaml",
+    "title": "Market Analysis",
+    "mission": "Define the market, buyer, sizing, drivers, and constraints that govern adoption and valuation.",
+    "optionalContext": [],
+    "contentRequirements": [
+      "Market boundary, included/excluded spend, adjacencies, and status-quo substitutes.",
+      "TAM/SAM/SOM or evidence-constrained sizing using multiple lenses, not one broad estimate.",
+      "Buyer/user/payer segmentation with budget ownership and adoption path.",
+      "Growth drivers and adoption constraints (regulation, switching cost, ROI, trust, capital intensity).",
+      "Sizing/adoption diligence gaps and contradictory estimates preserved."
+    ],
+    "plannedTables": [
+      {
+        "name": "Market definition table",
+        "requirement": "segment/category, included spend, excluded spend, buyer/payer, relevance."
+      },
+      {
+        "name": "TAM/SAM/SOM or sizing lens table",
+        "requirement": "publisher, year, geography, value, CAGR, methodology, confidence, limitation."
+      },
+      {
+        "name": "Segment / buyer map",
+        "requirement": "segment, buyer, user, payer, workflow, budget owner, adoption trigger."
+      },
+      {
+        "name": "Growth drivers and constraints table",
+        "requirement": "driver/constraint, direction, timing, implication, diligence ask."
+      }
+    ],
+    "plannedFigures": [
+      {
+        "name": "Market sizing lens",
+        "requirement": "TAM/SAM/SOM or constrained sizing layers with numeric values when supported.",
+        "acceptedTypes": [
+          "pyramid"
+        ]
+      },
+      {
+        "name": "Market estimate range",
+        "requirement": "Low/base/high estimates of one market quantity (e.g. TAM, SAM, penetration, growth forecast) with source-backed bounds and one consistent unit. Do not mix incompatible units (percent vs $B vs index) across rows.",
+        "acceptedTypes": [
+          "range"
+        ]
+      },
+      {
+        "name": "Buyer / segment map",
+        "requirement": "Buyer-user-payer relationships and adoption path.",
+        "acceptedTypes": [
+          "matrix",
+          "journey-map",
+          "flow"
+        ]
+      },
+      {
+        "name": "Adoption funnel or value-chain map",
+        "requirement": "Purchase/deployment steps or value-chain actors.",
+        "acceptedTypes": [
+          "funnel",
+          "flow"
+        ]
+      }
+    ],
+    "evidenceStrategy": [
+      "Market data from analyst reports, government/industry statistics, filings, trade associations, public-company disclosures.",
+      "Buyer/budget evidence from procurement pages, customer case studies, public budgets, job postings, reimbursement data.",
+      "Disconfirming evidence from slowdown reports, failed pilots, regulatory bottlenecks, saturation, contrary estimates."
+    ],
+    "qualityBar": [
+      "Define the market boundary before sizing it.",
+      "Tie drivers and constraints to adoption timing, budget owner, and valuation relevance.",
+      "Do not rely on one generic TAM estimate or call the market large without boundary logic.",
+      "If SAM/SOM cannot be isolated, preserve failed sizing paths and diligence asks.",
+      "Major chart numbers must match source-backed table numbers or state transformations in approximationNotes."
+    ],
+    "gate": {
+      "minSections": 3,
+      "maxSections": 8,
+      "minArtifacts": 8,
+      "maxTables": 8,
+      "maxFigures": 6,
+      "minResearchQuestions": 25,
+      "minQuestionTypeSpread": 4,
+      "minAdverseQuestions": 1,
+      "minLocalSources": 25,
+      "minLocalClaims": 35,
+      "minSourceDomains": 10,
+      "minNetNewSources": 8,
+      "minSourceTypeSpread": 4,
+      "minHighConfidenceCorroboration": 2,
+      "minSourcesPerEnumerationRow": 2,
+      "minQuestionAnswerRate": 0.8,
+      "minContentRequirementCoverage": 0.8,
+      "requiredSourceTypes": [],
+      "depthFloor": {
+        "minSectionBodyWords": 100,
+        "minSectionWordsTotal": 600,
+        "minTableRowsTotal": 16,
+        "minFigureDataPointsTotal": 12
+      },
+      "minAdverseSources": 0
+    }
+  },
+  "nextChapter": {
+    "key": "competitors",
+    "order": 3,
+    "letter": "P",
+    "file": "03-competitors.yaml",
+    "title": "Competitors",
+    "mission": "Identify direct, incumbent, adjacent, substitute, and status-quo alternatives, and assess differentiation durability.",
+    "optionalContext": [
+      "market-analysis"
+    ],
+    "contentRequirements": [
+      "Landscape covering direct peers, incumbents, adjacents, substitutes, status quo, internal build, and likely entrants.",
+      "Competitor profiles with scale, funding, target customer, product scope, pricing, and strategic direction.",
+      "Comparisons on capability, pricing, GTM/distribution, and trust/regulatory posture.",
+      "Switching cost, lock-in, multi-homing, distribution power, and supply/partner access.",
+      "Moat durability, commoditization or displacement risk, and adverse competitor evidence."
+    ],
+    "plannedTables": [
+      {
+        "name": "Competitor profile table",
+        "requirement": "competitor, category, scale/funding, target segment, differentiation, limitation."
+      },
+      {
+        "name": "Feature / capability matrix",
+        "requirement": "buying criteria, company, competitors, unsupported cells marked clearly."
+      },
+      {
+        "name": "Pricing / packaging comparison",
+        "requirement": "price/unit/contract model, included capabilities, discount or unknowns, implication."
+      },
+      {
+        "name": "Moat durability / competitive risk register",
+        "requirement": "moat claim, threat, severity, mitigation/diligence ask."
+      }
+    ],
+    "plannedFigures": [
+      {
+        "name": "Competitive positioning map",
+        "requirement": "Numeric axes only when source-backed; otherwise evidence-backed ordinal scoring with rationale.",
+        "acceptedTypes": [
+          "quadrant"
+        ]
+      },
+      {
+        "name": "Feature breadth / capability map",
+        "requirement": "Capability coverage and strength by competitor.",
+        "acceptedTypes": [
+          "matrix"
+        ]
+      },
+      {
+        "name": "Moat / readiness KPIs",
+        "requirement": "Compact competitive durability summary.",
+        "acceptedTypes": [
+          "kpi"
+        ]
+      }
+    ],
+    "evidenceStrategy": [
+      "Competitor official surfaces — product, pricing, docs, case studies, security/compliance, integrations, channel pages, changelog.",
+      "Independent proof — benchmarks, reviews, filings, market reports, customer references, procurement pages, adverse reporting.",
+      "Never treat vendor-authored comparison pages as independent proof."
+    ],
+    "qualityBar": [
+      "Compare every material way the buyer can solve the same job, including status quo and internal build.",
+      "Mark unsupported matrix cells as unknown or evidence gaps; never guess.",
+      "Include adverse/disconfirming evidence on displacement, commoditization, channel power, or incumbent response.",
+      "Query by competitor class; do not build the matrix from one generic comparison source."
+    ],
+    "gate": {
+      "minSections": 3,
+      "maxSections": 8,
+      "minArtifacts": 7,
+      "maxTables": 8,
+      "maxFigures": 6,
+      "minResearchQuestions": 25,
+      "minQuestionTypeSpread": 4,
+      "minAdverseQuestions": 1,
+      "minLocalSources": 25,
+      "minLocalClaims": 35,
+      "minSourceDomains": 10,
+      "minNetNewSources": 8,
+      "minSourceTypeSpread": 4,
+      "minHighConfidenceCorroboration": 2,
+      "minSourcesPerEnumerationRow": 2,
+      "minQuestionAnswerRate": 0.8,
+      "minContentRequirementCoverage": 0.8,
+      "requiredSourceTypes": [],
+      "depthFloor": {
+        "minSectionBodyWords": 100,
+        "minSectionWordsTotal": 600,
+        "minTableRowsTotal": 16,
+        "minFigureDataPointsTotal": 12
+      },
+      "minAdverseSources": 0
+    }
+  },
+  "policy": {
+    "retryPolicy": {
+      "maxChapterRetries": 3,
+      "requireMonotonicFailureDecrease": true
+    }
+  },
+  "run": {
+    "runId": "20260514180906-equipmentshare",
+    "companySlug": "equipmentshare",
+    "runDate": "2026-05-14"
+  },
+  "runCache": {
+    "cacheDir": "/home/runner/work/startup/startup/.research-cache/20260514180906-equipmentshare",
+    "refreshContext": null
+  }
+}

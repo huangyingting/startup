@@ -1,0 +1,356 @@
+{
+  "schemaVersion": "chapter-runtime-context-v3",
+  "generatedFrom": "/home/runner/work/startup/startup/.agents/skills/startup-research/references/workflow-config.yaml",
+  "totalChapters": 8,
+  "previousChapter": {
+    "key": "competitors",
+    "order": 3,
+    "letter": "P",
+    "file": "03-competitors.yaml",
+    "title": "Competitors",
+    "mission": "Identify direct, incumbent, adjacent, substitute, and status-quo alternatives, and assess differentiation durability.",
+    "optionalContext": [
+      "market-analysis"
+    ],
+    "contentRequirements": [
+      "Landscape covering direct peers, incumbents, adjacents, substitutes, status quo, internal build, and likely entrants.",
+      "Competitor profiles with scale, funding, target customer, product scope, pricing, and strategic direction.",
+      "Comparisons on capability, pricing, GTM/distribution, and trust/regulatory posture.",
+      "Switching cost, lock-in, multi-homing, distribution power, and supply/partner access.",
+      "Moat durability, commoditization or displacement risk, and adverse competitor evidence."
+    ],
+    "plannedTables": [
+      {
+        "name": "Competitor profile table",
+        "requirement": "competitor, category, scale/funding, target segment, differentiation, limitation."
+      },
+      {
+        "name": "Feature / capability matrix",
+        "requirement": "buying criteria, company, competitors, unsupported cells marked clearly."
+      },
+      {
+        "name": "Pricing / packaging comparison",
+        "requirement": "price/unit/contract model, included capabilities, discount or unknowns, implication."
+      },
+      {
+        "name": "Moat durability / competitive risk register",
+        "requirement": "moat claim, threat, severity, mitigation/diligence ask."
+      }
+    ],
+    "plannedFigures": [
+      {
+        "name": "Competitive positioning map",
+        "requirement": "Numeric axes only when source-backed; otherwise evidence-backed ordinal scoring with rationale.",
+        "acceptedTypes": [
+          "quadrant"
+        ]
+      },
+      {
+        "name": "Feature breadth / capability map",
+        "requirement": "Capability coverage and strength by competitor.",
+        "acceptedTypes": [
+          "matrix"
+        ]
+      },
+      {
+        "name": "Moat / readiness KPIs",
+        "requirement": "Compact competitive durability summary.",
+        "acceptedTypes": [
+          "kpi"
+        ]
+      }
+    ],
+    "evidenceStrategy": [
+      "Competitor official surfaces — product, pricing, docs, case studies, security/compliance, integrations, channel pages, changelog.",
+      "Independent proof — benchmarks, reviews, filings, market reports, customer references, procurement pages, adverse reporting.",
+      "Never treat vendor-authored comparison pages as independent proof."
+    ],
+    "qualityBar": [
+      "Compare every material way the buyer can solve the same job, including status quo and internal build.",
+      "Mark unsupported matrix cells as unknown or evidence gaps; never guess.",
+      "Include adverse/disconfirming evidence on displacement, commoditization, channel power, or incumbent response.",
+      "Query by competitor class; do not build the matrix from one generic comparison source."
+    ],
+    "gate": {
+      "minSections": 3,
+      "maxSections": 8,
+      "minArtifacts": 7,
+      "maxTables": 8,
+      "maxFigures": 6,
+      "minResearchQuestions": 25,
+      "minQuestionTypeSpread": 4,
+      "minAdverseQuestions": 1,
+      "minLocalSources": 25,
+      "minLocalClaims": 35,
+      "minSourceDomains": 10,
+      "minNetNewSources": 8,
+      "minSourceTypeSpread": 4,
+      "minHighConfidenceCorroboration": 2,
+      "minSourcesPerEnumerationRow": 2,
+      "minQuestionAnswerRate": 0.8,
+      "minContentRequirementCoverage": 0.8,
+      "requiredSourceTypes": [],
+      "depthFloor": {
+        "minSectionBodyWords": 100,
+        "minSectionWordsTotal": 600,
+        "minTableRowsTotal": 16,
+        "minFigureDataPointsTotal": 12
+      },
+      "minAdverseSources": 0
+    }
+  },
+  "chapter": {
+    "key": "financials",
+    "order": 4,
+    "letter": "I",
+    "file": "04-financials.yaml",
+    "title": "Financials",
+    "mission": "Explain revenue model, unit economics, capital needs, and which financial inputs are insufficient for underwriting.",
+    "optionalContext": [
+      "market-analysis",
+      "competitors"
+    ],
+    "contentRequirements": [
+      "Revenue streams, pricing model, revenue mix, and recognition issues where supportable.",
+      "GTM motion and sales efficiency proxies (cycle, CAC/payback or proxy, channel economics).",
+      "Cost structure, gross margin drivers, working capital, capex, and service-delivery costs.",
+      "Public traction (revenue, ARR, GMV, units, locations, utilization, active users) versus private-metric gaps.",
+      "Capital adequacy and financing dependency — cash on hand, burn, runway, planned use of funds, next-round trigger, and debt/project-finance obligations. Historical round-by-round chronology lives in Company Overview; refer to that chronology in prose, but do not copy Company Overview claim ids; if Financials needs a funding fact, mint a local Financials claim with its own sourceRefs.",
+      "Financial verdict on revenue quality, margin path, capital intensity, and diligence blockers."
+    ],
+    "plannedTables": [
+      {
+        "name": "Revenue streams table",
+        "requirement": "stream, mechanism, unit, current value/status, quality, diligence ask."
+      },
+      {
+        "name": "Pricing / monetization table",
+        "requirement": "price/unit/contract, list vs realized pricing, discounts/unknowns, source."
+      },
+      {
+        "name": "Unit economics table",
+        "requirement": "metric, value/null, confidence, why it matters, diligence ask."
+      },
+      {
+        "name": "Capital adequacy table",
+        "requirement": "cash on hand, monthly burn, runway months, planned use of funds, next-round trigger, debt/project-finance obligations; refer to the Company Overview funding chronology without copying its claim ids, and mint local Financials claims only for financing facts needed in this table."
+      },
+      {
+        "name": "Public financial gaps table",
+        "requirement": "missing private metrics, impact, exact diligence path."
+      }
+    ],
+    "plannedFigures": [
+      {
+        "name": "Revenue model bridge",
+        "requirement": "How customer activity converts into revenue and gross profit.",
+        "acceptedTypes": [
+          "flow",
+          "waterfall"
+        ]
+      },
+      {
+        "name": "Unit economics bridge",
+        "requirement": "Use inputs when available; otherwise qualitative nodes with approximationNotes.",
+        "acceptedTypes": [
+          "flow"
+        ]
+      },
+      {
+        "name": "Financial estimate range",
+        "requirement": "Revenue, burn, runway, margin, or valuation-input ranges with source-backed bounds.",
+        "acceptedTypes": [
+          "range"
+        ]
+      },
+      {
+        "name": "Capital intensity / cash-flow map",
+        "requirement": "Capex, inventory, project finance, manufacturing scale-up, or credit exposure.",
+        "acceptedTypes": [
+          "flow",
+          "matrix",
+          "waterfall"
+        ]
+      }
+    ],
+    "evidenceStrategy": [
+      "Revenue/pricing from official pricing, customer contracts/examples, filings, investor announcements, channel data.",
+      "Capital adequacy from latest reported cash position, burn signals, hiring/layoffs, debt/credit facilities, and credible investor coverage. Use Company Overview as background for the funding chronology, but do not copy its claim ids across chapters.",
+      "Unit economics from public-company comps, customer case studies, cost benchmarks, partner terms, channel fees.",
+      "Adverse checks for burn, margin compression, pricing pressure, defaults, inventory issues, customer concentration."
+    ],
+    "qualityBar": [
+      "Separate list pricing, company-claimed traction, corroborated metrics, estimates, and unavailable private data.",
+      "Do not force SaaS, marketplace, or hardware metrics unless the revenue mechanism supports them.",
+      "Do not restate the historical funding chronology; reference it from Company Overview and focus on forward capital adequacy.",
+      "Official pricing is list pricing, not realized revenue or margin.",
+      "Every null unit-economics field needs a specific diligence request.",
+      "Scenario inputs must be labeled public, estimated, or unavailable."
+    ],
+    "gate": {
+      "minSections": 3,
+      "maxSections": 8,
+      "minArtifacts": 9,
+      "maxTables": 8,
+      "maxFigures": 6,
+      "minResearchQuestions": 25,
+      "minQuestionTypeSpread": 4,
+      "minAdverseQuestions": 1,
+      "minLocalSources": 25,
+      "minLocalClaims": 35,
+      "minSourceDomains": 10,
+      "minNetNewSources": 8,
+      "minSourceTypeSpread": 4,
+      "minHighConfidenceCorroboration": 2,
+      "minSourcesPerEnumerationRow": 2,
+      "minQuestionAnswerRate": 0.8,
+      "minContentRequirementCoverage": 0.8,
+      "requiredSourceTypes": [
+        "official",
+        "filing"
+      ],
+      "depthFloor": {
+        "minSectionBodyWords": 100,
+        "minSectionWordsTotal": 600,
+        "minTableRowsTotal": 16,
+        "minFigureDataPointsTotal": 12
+      },
+      "minAdverseSources": 1
+    }
+  },
+  "nextChapter": {
+    "key": "product-tech",
+    "order": 5,
+    "letter": "E",
+    "file": "05-product-tech.yaml",
+    "title": "Product & Technology",
+    "mission": "Explain what is delivered, how it works, maturity, dependencies, and product/technical risks.",
+    "optionalContext": [
+      "market-analysis",
+      "competitors",
+      "financials"
+    ],
+    "contentRequirements": [
+      "Product/service definition in customer workflow terms.",
+      "Module, SKU, asset, pipeline, facility, or product-line map.",
+      "Architecture or operating model — software stack, hardware design, manufacturing, clinical mechanism, logistics, or service workflow.",
+      "Deployment, integration, reliability, support, and roadmap.",
+      "Differentiation — technology, IP, data, manufacturing know-how, supply access, brand, regulatory approvals, or operations.",
+      "Trust, safety, security, privacy, compliance, and quality controls."
+    ],
+    "plannedTables": [
+      {
+        "name": "Product module / asset matrix",
+        "requirement": "module/asset/product line, user, status/maturity, differentiation, diligence gap."
+      },
+      {
+        "name": "Workflow / use-case table",
+        "requirement": "user job, current workflow, company solution, measurable benefit, limitation."
+      },
+      {
+        "name": "Technology / operating architecture table",
+        "requirement": "layer/process/component, role, dependency, risk."
+      },
+      {
+        "name": "Trust / quality / compliance table",
+        "requirement": "control/certification/quality metric, status, scope, gap."
+      },
+      {
+        "name": "Roadmap / release / development-stage table",
+        "requirement": "date/stage, feature/milestone, status, implication, source."
+      }
+    ],
+    "plannedFigures": [
+      {
+        "name": "Product architecture map",
+        "requirement": "Layers/modules/components with details.",
+        "acceptedTypes": [
+          "stack"
+        ]
+      },
+      {
+        "name": "Customer workflow / operating flow",
+        "requirement": "How the product/service is used or delivered.",
+        "acceptedTypes": [
+          "flow"
+        ]
+      },
+      {
+        "name": "Critical dependency map",
+        "requirement": "Suppliers, platforms, data rights, regulators, facilities, or key partners.",
+        "acceptedTypes": [
+          "dag"
+        ]
+      },
+      {
+        "name": "Product maturity / capability map",
+        "requirement": "Maturity or strength across modules/capabilities.",
+        "acceptedTypes": [
+          "matrix"
+        ]
+      }
+    ],
+    "evidenceStrategy": [
+      "Official-surface mining is mandatory when a company URL exists — homepage, sitemap, product/docs/API, changelog, integrations, pricing, trust/security, status, certifications, customer stories.",
+      "Technical proof from patents, papers, clinical/trial records, certifications, regulatory databases, benchmarks, status pages.",
+      "External proof from reviews, customer deployments, partner announcements, regulator filings, recalls/incidents.",
+      "Developer-signal (sourceType `developer-signal`) is required — GitHub repo activity (stars, releases, contributors), Hacker News threads, Stack Overflow tag traffic, public Discord/Slack metrics, package registry downloads, npm/PyPI/HuggingFace hub stats, API forums.",
+      "For companies without a public developer surface (hardware, manufacturing, clinical, regulated industries), satisfy `developer-signal` via the closest practitioner-community proxy — industry forums, professional-society discussions, integration partner posts, public engineer recruiting / talks, or a documented note in `evidenceGaps[]` explaining why no proxy exists.",
+      "Do not infer architecture, approvals, certifications, throughput, or safety from vague marketing copy."
+    ],
+    "qualityBar": [
+      "Distinguish verified maturity, roadmap claims, integrations, and certifications from marketing.",
+      "Make architecture and workflow figures specific, not generic boxes.",
+      "Surface product, security, reliability, regulatory, supply, or implementation gaps.",
+      "Each module row states maturity/status, buyer/user, differentiation, and diligence gap.",
+      "Unsupported architecture, certifications, integrations, performance, or roadmap claims become evidenceGaps.",
+      "Figures use structured YAML fields, not Mermaid or prose diagrams."
+    ],
+    "gate": {
+      "minSections": 3,
+      "maxSections": 8,
+      "minArtifacts": 9,
+      "maxTables": 8,
+      "maxFigures": 6,
+      "minResearchQuestions": 25,
+      "minQuestionTypeSpread": 4,
+      "minAdverseQuestions": 1,
+      "minLocalSources": 25,
+      "minLocalClaims": 35,
+      "minSourceDomains": 10,
+      "minNetNewSources": 8,
+      "minSourceTypeSpread": 4,
+      "minHighConfidenceCorroboration": 2,
+      "minSourcesPerEnumerationRow": 2,
+      "minQuestionAnswerRate": 0.8,
+      "minContentRequirementCoverage": 0.8,
+      "requiredSourceTypes": [
+        "official",
+        "technical-docs",
+        "developer-signal"
+      ],
+      "depthFloor": {
+        "minSectionBodyWords": 100,
+        "minSectionWordsTotal": 600,
+        "minTableRowsTotal": 16,
+        "minFigureDataPointsTotal": 12
+      },
+      "minAdverseSources": 0
+    }
+  },
+  "policy": {
+    "retryPolicy": {
+      "maxChapterRetries": 3,
+      "requireMonotonicFailureDecrease": true
+    }
+  },
+  "run": {
+    "runId": "20260514180906-equipmentshare",
+    "companySlug": "equipmentshare",
+    "runDate": "2026-05-14"
+  },
+  "runCache": {
+    "cacheDir": "/home/runner/work/startup/startup/.research-cache/20260514180906-equipmentshare",
+    "refreshContext": null
+  }
+}
