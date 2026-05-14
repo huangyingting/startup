@@ -1,2378 +1,1492 @@
-schemaVersion: report-v2
+schemaVersion: "report-v2"
 artifact: risks
 slug: overhaul
-runDate: '2026-05-14'
+runDate: "2026-05-14"
 company:
   name: Overhaul
 chapter:
   number: 7
-  title: Risks
-  summary: >-
-    Overhaul faces five converging risk clusters. First, competitive and market-positioning risk is
-    acute: FourKites and project44 dominate the RTVP market by ratings and review volume, while
-    Oracle, SAP, and Blue Yonder are bundling supply chain visibility into ERP suites. S&P Global
-    analysts predict freight visibility platforms lacking scale will exit via attrition. Second, the
-    cargo theft market is morphing: Q1 2026 recorded 767 incidents and $131.58 million in losses,
-    but impersonation fraud now constitutes the dominant attack vector, straining physical-security
-    products designed for smash-and-grab scenarios. Third, cybersecurity threats targeting IoT-heavy
-    platforms have quadrupled over five years; the EU Cyber Resilience Act effective September 2026
-    adds compliance obligations to Overhaul's device layer, and no public SOC 2 or ISO 27001
-    disclosure has been found. Fourth, regulatory compliance risk spans DSCSA full pharmaceutical
-    enforcement November 2026, GDPR Article 28 supply chain processor obligations, and the EU AI
-    Act's explainability requirements for high-risk AI, all relevant to RiskGPT in regulated
-    verticals. Fifth, financial and funding risk arises from a 2022 unicorn valuation established at
-    peak SaaS multiples versus a May 2026 public-market-comparable of approximately 3.8x EV/NTM; at
-    $136.5 million in 2025 revenue, a base-case private multiple of approximately 4.5x implies an
-    equity value of approximately $615 million, well below the $1 billion threshold. Thesis-break
-    triggers include sustained NRR below 105 percent, a confirmed DSCSA compliance gap in pharma
-    monitoring, departure of founder-CEO Barry Conlon without a prepared successor, or two
-    consecutive quarters of net customer churn. Open diligence paths include third-party
-    cybersecurity certification, DSCSA compliance evidence, and confirmation of In-Q-Tel-related
-    international operating restrictions.
+  title: "Risks"
+  summary: >
+    Overhaul operates in a high-threat environment where escalating cargo theft, intensifying
+    competition from well-funded peers (project44, FourKites, Shippeo), expanding regulatory
+    obligations (GDPR, DSCSA, EU AI Act), and a compressed VC market collectively shape its
+    risk profile. The company's $105M Series C in August 2025 omitted a valuation disclosure,
+    raising potential down-round concerns vs the 2022 $1B+ peak. Key-person risk (CEO Barry
+    Conlon), IoT hardware dependency, and AI hallucination exposure in RiskGPT are material
+    operational risks. Mitigation maturity is moderate: GSOC coverage, law enforcement
+    partnerships, and multi-cloud architecture partially address these risks, but GDPR
+    compliance posture and SOC 2 certifications remain unverified diligence gaps.
 
 sections:
-- id: competitive-risks
-  title: Competitive and Market-Positioning Risks
-  body: >-
-    Overhaul competes against FourKites and project44, the two dominant players in the real-time
-    transportation visibility platform category, as well as ERP-native supply chain modules from
-    Oracle, SAP, and Blue Yonder. Gartner Peer Insights 2026 data show project44 scoring 4.7 out
-    of 5 across 557 verified reviews versus FourKites at 4.5 out of 5 across 671 reviews, both
-    commanding significantly greater review volume than Overhaul, signalling that enterprise
-    procurement is consolidating toward larger platforms. S&P Global Market Intelligence analysts
-    argue that the freight visibility market's low M&A activity is a structural hazard: without
-    platform roll-ups, weaker brands face attrition as enterprise budgets tighten. SAP's 2026
-    supply chain resilience blueprint positions its platform as an end-to-end solution capable of
-    replacing point-solution monitoring, while Oracle Fusion Cloud is advancing AI copilots for
-    supply chain exception management. Samsara holds approximately 4.63 percent of the IoT platform
-    market and is expanding fleet telematics data capabilities that overlap with Overhaul's GPS and
-    cargo-tracking offering. The supply chain visibility software market is growing at roughly 14.4
-    percent CAGR and is projected to reach $6.76 billion by 2026, but the majority of growth flows
-    to entrenched platforms with larger sales teams and brand recognition. Overhaul's cargo-security
-    specialization through RiskGPT, GSOC, and law-enforcement partnerships constitutes its
-    principal differentiation moat, but this advantage narrows as larger competitors add AI-powered
-    risk analytics modules to their broader suites. Without a clear path to expanding carrier
-    network density or securing strategic distribution partnerships with ERP vendors, Overhaul risks
-    being positioned as a niche premium add-on rather than a platform of record for enterprise
-    supply chain risk management.
-  claimRefs: [CR001, CR002, CR003, CR004, CR005, CR006]
-  figureRefs: [FR001]
+  - id: competitive-market-risk
+    title: "Competitive and Market Risk"
+    body: >
+      Overhaul competes in a crowded and well-capitalized real-time transportation visibility
+      market. Project44 and FourKites represent the primary enterprise competitors; FourKites
+      is deploying Loft AI automation agents to automate supply chain exception management,
+      a direct capability challenge in Overhaul's core product area. Shippeo secured $30M in
+      early 2025 from Toyota's Woven Capital to accelerate North American expansion, directly
+      targeting Overhaul's shipper relationships in automotive supply chains. Tive raised a
+      $40M Series C in January 2025 and has deployed over 2M+ IoT devices globally, competing
+      in cold chain and high-value freight. Supply chain VC funding contracted from $63.7B in
+      2021 to $7.1B in 2024 — an 89% decline — compressing sector valuations and limiting exit
+      optionality. Overhaul's August 2025 $105M Series C omitted a valuation disclosure, a
+      notable contrast to the $1B+ valuation in the 2022 Series C, raising a potential
+      down-round signal. Descartes MacroPoint's FraudGuard 2.0 launch in July 2025 signals
+      that large incumbents are encroaching on Overhaul's fraud detection domain. Samsara,
+      while primarily fleet-management focused, deepens carrier-side data assets that could
+      enable lateral expansion into cargo visibility.
+    claimRefs: [CR001, CR002, CR003, CR004, CR005, CR006, CR007, CR008, CR009]
+    tableRefs: [TR003]
+    figureRefs: [FR001]
 
-- id: cargo-theft-demand-risks
-  title: Cargo Theft Market and Demand-Evolution Risks
-  body: >-
-    Overhaul's commercial thesis rests on persistent, high-value cargo theft demand that justifies
-    premium real-time security monitoring. Q1 2026 data confirm that the absolute loss environment
-    remains intense at 767 incidents and $131.58 million in losses in North America, but the
-    composition of theft is shifting in ways that challenge platform assumptions. Traditional smash-
-    and-grab incidents declined while organized crime accelerated impersonation fraud: thieves
-    exploit load board phishing to steal carrier credentials and present fictitious documentation at
-    shippers' docks, diverting entire truckloads without physical confrontation. The U.S. Customs
-    and Border Protection issued a surge alert in April 2026 specifically citing the rise of document
-    fraud and impersonation tactics. California recorded 277 incidents in Q1 2026 and New Jersey saw
-    a 119 percent year-over-year increase, demonstrating geographic concentration in high-logistics-
-    density corridors. Personal care and beauty products experienced a 178 percent theft increase,
-    while electronics and automotive parts remained perennial high-value targets. Logistics identity
-    fraud attempts surged 200 percent between 2023 and 2024 and continued growing into 2025,
-    reflecting a structural shift toward digital rather than physical interdiction. This evolution
-    creates a bifurcated demand dynamic for Overhaul: the persistent loss environment validates
-    enterprise willingness to pay for monitoring, but impersonation fraud requires different
-    interventions such as identity verification, carrier credentialing, and digital chain-of-custody
-    that are outside the core hardware-plus-analytics stack. Overhaul must expand its product to
-    address digital freight fraud credibly or risk losing relevance as theft evolves. WTW's 2026
-    guide identifies eight emerging cargo theft risk categories, several of which require
-    platform-level responses beyond traditional GPS monitoring.
-  claimRefs: [CR007, CR008, CR009, CR010, CR011, CR012, CR013, CR046, CR047]
-  figureRefs: [FR002]
+  - id: cargo-theft-operational-risk
+    title: "Cargo Theft and Operational Risk"
+    body: >
+      Cargo theft represents both a demand tailwind and an operational performance risk for
+      Overhaul. CargoNet reported a 14% year-over-year increase in cargo theft incidents in
+      Q3 2024, with over $39M stolen in that single quarter; prior data shows a 57% surge in
+      2022. While elevated theft validates market demand for Overhaul's GSOC-backed platform,
+      it places continuous operational pressure on the company's promise of a 99.9% protection
+      rate across the $1.4T in cargo it monitors at any moment. Overhaul's platform depends on
+      continuous real-time IoT data streams from third-party hardware providers including Tive
+      and Impinj; any supply disruption, firmware incompatibility, or device failure creates a
+      monitoring blind spot that could result in undetected theft events. Middle East supply
+      route disruptions in 2024 further strained global cargo insurance coverage, compounding
+      shipper exposure when platform gaps coincide with elevated loss events in high-risk
+      corridors. GSOC operator staffing is a persistent scaling constraint: each new customer
+      requires incremental 24/7 human coverage that cannot be instantly augmented.
+    claimRefs: [CR010, CR011, CR012, CR013, CR014, CR015, CR016, CR017, CR018]
+    tableRefs: [TR002]
+    figureRefs: []
 
-- id: cybersecurity-technology-risks
-  title: Cybersecurity and Technology Risks
-  body: >-
-    Overhaul operates a data-intensive platform integrating IoT tracking devices, GPS telematics,
-    carrier data feeds, temperature sensors, and AI analytics across shipments covering over $1.4
-    trillion in cargo annually. This architecture creates a material cybersecurity attack surface
-    at three layers: IoT device integrity, platform data pipeline security, and third-party vendor
-    access management. Global IoT device count is projected to surpass 25 billion by end of 2026;
-    IoT security incidents now average $330,000 per event, with breaches involving connected
-    industrial or medical IoT devices exceeding $10 million in total economic impact. SecurityScorecard
-    found that over 78 percent of organizations monitor fewer than half of their vendor ecosystem's
-    endpoints, creating systemic third-party risk propagation. Supply chain and third-party cyber
-    breaches have quadrupled over five years; Group-IB identifies supply chain attacks as the
-    fastest-growing threat category for 2026. AI-powered threat actors now automate vulnerability
-    scanning across thousands of vendor API connections simultaneously, compressing the detection-to-
-    exploitation window. IBM's 2026 cybersecurity analysis highlights identity-system exploitation,
-    vendor access compromises, and API integration weaknesses as the dominant attack vectors against
-    logistics platforms. For Overhaul, a breach of the RiskGPT training data pipeline could
-    contaminate risk intelligence outputs, creating liability exposure with pharmaceutical and high-
-    value cargo customers who rely on the AI recommendations for coverage decisions. The EU Cyber
-    Resilience Act, effective September 2026, imposes mandatory security and transparency obligations
-    on hardware and software products with digital elements sold into European markets, directly
-    applicable to Overhaul's IoT device fleet. No public SOC 2 Type II or ISO 27001 certification
-    disclosure has been found for the Overhaul platform as of Q2 2026.
-  claimRefs: [CR015, CR016, CR017, CR018, CR019, CR020, CR044, CR045]
-  tableRefs: [TR002]
+  - id: technology-cybersecurity-risk
+    title: "Technology and Cybersecurity Risk"
+    body: >
+      Overhaul's platform processes sensitive freight movement data for hundreds of Fortune-1000
+      customers across regulated industries, creating a high-value target for cyberattackers and
+      a broad regulatory compliance obligation. NIST released Cybersecurity Framework 2.0 in
+      February 2024, adding a Govern function that supply chain technology providers must now
+      address; Overhaul's current alignment with CSF 2.0 has not been publicly disclosed. The
+      FTC has issued clear guidance that IoT data aggregators bear legal responsibility for
+      securing connected device data, and CISA designated transportation and logistics as one of
+      16 critical infrastructure sectors subject to heightened reporting and resilience requirements.
+      RiskGPT, Overhaul's AI prediction engine built on Azure OpenAI, introduces AI hallucination
+      risk: false positive alerts could trigger costly unnecessary cargo holds, while false
+      negatives could miss genuine threats, both outcomes creating liability and eroding customer
+      trust. Overhaul's multi-region deployment across US, EU, Latin America, and EMEA expands
+      the regulatory attack surface, as each jurisdiction imposes distinct data residency and
+      breach notification requirements. A successful intrusion into Overhaul's cargo manifest
+      systems could expose shipment schedules of hundreds of pharmaceutical and technology
+      customers to adversarial exploitation.
+    claimRefs: [CR019, CR020, CR021, CR022, CR023, CR024, CR025, CR026, CR027]
+    tableRefs: []
+    figureRefs: [FR002]
 
-- id: regulatory-compliance-risks
-  title: Regulatory and Compliance Risks
-  body: >-
-    Overhaul's pharmaceutical, food, and cross-border logistics customers operate under an
-    increasingly demanding regulatory overlay. The Drug Supply Chain Security Act requires full
-    electronic interoperable traceability at the package level using GS1 serialization standards
-    for all pharmaceutical dispensers, with full enforcement for the final cohort of smaller
-    dispensers required by November 27, 2026. DSCSA compliance is not merely a customer obligation;
-    it directly affects whether Overhaul's cold-chain monitoring can be integrated into a certified
-    traceability workflow. If Overhaul's platform cannot produce or consume DSCSA-compliant EPCIS
-    data, pharma customers risk losing their own compliance standing, creating a strong reason to
-    switch to a certified competitor. GDPR Article 28 requires that supply chain data controllers
-    impose comprehensive processing restrictions on vendors handling EU personal data, including
-    logistics tracking data generated by drivers and warehouse workers. Overhaul's carrier and
-    shipper integrations across European logistics networks create ongoing GDPR exposure, including
-    standard contractual clauses for all cross-border data transfers and regular data protection
-    impact assessments. The EU AI Act, effective from August 2026 for high-risk AI systems, imposes
-    explainability, data minimization, and human-oversight requirements on automated decision systems
-    used in regulated supply chains, requirements directly applicable to RiskGPT if it generates
-    risk scores informing insurance or compliance decisions. Brazil's LGPD, India's DPDP Act, and
-    China's PIPL create a multi-jurisdictional data-localization burden for EMEA and APAC expansion.
-    The In-Q-Tel investment relationship may create CFIUS-adjacent disclosure and operating
-    restrictions in certain international markets, a risk that has not been publicly addressed by
-    Overhaul management.
-  claimRefs: [CR014, CR021, CR022, CR023, CR024, CR025, CR026]
-  tableRefs: [TR001]
+  - id: regulatory-compliance-risk
+    title: "Regulatory and Compliance Risk"
+    body: >
+      Overhaul's operations in the EU and its pharmaceutical and food vertical customer base
+      create a complex multi-jurisdictional regulatory environment. GDPR fines can reach the
+      higher of €20M or 4% of global annual revenue, representing material financial exposure
+      for a company managing sensitive pharmaceutical supply chain data across EU member states.
+      The FDA's Drug Supply Chain Security Act mandates serialized end-to-end electronic
+      traceability for pharmaceutical products; pharma shippers using Overhaul must verify that
+      the platform's data handling satisfies DSCSA lot-level and item-level traceability
+      requirements. The EU AI Act, with phased enforcement beginning from August 2024, may
+      classify RiskGPT and Overhaul's anomaly-detection algorithms as high-risk AI given their
+      role in pharmaceutical and critical logistics chains. California's Consumer Privacy Rights
+      Act extends broad consumer data rights to supply chain visibility data involving employee
+      tracking and logistics provider contacts. DOT and FMCSA regulations on electronic logging
+      devices constrain how Overhaul can ingest and store carrier telematics data. Overhaul has
+      not publicly disclosed its GDPR compliance posture, EU representative, or Data Processing
+      Agreement documentation as of May 2026 — a material diligence gap.
+    claimRefs: [CR028, CR029, CR030, CR031, CR032, CR033, CR034, CR035, CR036]
+    tableRefs: [TR001]
+    figureRefs: []
 
-- id: operational-execution-risks
-  title: Operational and Execution Risks
-  body: >-
-    Overhaul's operational risks cluster around three execution imperatives that are simultaneously
-    unfolding: integrating the FreightVerify acquisition, scaling the Global Security Operations
-    Center model internationally, and reducing founder-CEO concentration risk. The 2025 FreightVerify
-    acquisition, targeted to add item-level automotive and fleet tracking capabilities, creates
-    integration risks across technology architecture harmonization, carrier network overlap
-    reconciliation, customer data migration, and personnel retention. FreightVerify's automotive
-    logistics customer base carries different compliance and performance requirements than Overhaul's
-    pharmaceutical and high-value goods focus, creating potential product-roadmap conflict during the
-    integration window. Integration failures that cause service degradation on either platform could
-    trigger simultaneous churn across both customer bases, compounding revenue impact. GSOC operations
-    require 24/7 globally distributed security professionals capable of managing complex cargo
-    recovery and real-time risk escalation across time zones; as Overhaul expands into EMEA and APAC
-    markets, the staffing cost and operational complexity of maintaining this human-intensive
-    capability rises non-linearly. BSI's 2026 supply chain risks report highlights the convergence
-    of geopolitical instability, climate disruptions, and cyber risks in global logistics networks,
-    precisely the environment where GSOC under-staffing creates acute reputational and contractual
-    exposure. Key-person concentration on Barry Conlon, the founder whose law-enforcement
-    relationships, regulatory credibility, and domain expertise shaped the company's value
-    proposition, represents a material succession risk. No documented leadership succession plan
-    has been publicly disclosed. Forbes' 2026 analysis confirms that founder dependency amplifies
-    a startup's vulnerability to operational crises during periods of market volatility and
-    competitive pressure.
-  claimRefs: [CR033, CR034, CR035, CR036, CR037, CR038, CR039]
-  tableRefs: [TR003, TR004]
-  figureRefs: [FR003]
+  - id: financial-execution-risk
+    title: "Financial and Execution Risk"
+    body: >
+      Overhaul has raised over $350M in total disclosed funding since founding, with its
+      most recent $105M Series C in August 2025 closing without a disclosed valuation — a
+      notable omission relative to the $1B+ peak disclosed in 2022. The inclusion of a
+      MidCap Financial debt facility in the August 2025 round indicates use of leverage,
+      adding interest expense and covenant risk to the balance sheet. Supply chain VC
+      funding contracted from $63.7B in 2021 to $7.1B in 2024, compressing sector multiples
+      and increasing the cost and difficulty of follow-on capital. Springcoast Partners
+      participated in both the January 2025 and August 2025 rounds, suggesting concentrated
+      investor reliance on a single lead that creates vulnerability if Springcoast's thesis
+      or appetite changes. G2 reviews highlight interface complexity and integration setup
+      friction as recurring themes, representing NPS and retention risk in Overhaul's
+      enterprise install base. Barry Conlon's central role as Overhaul's founder, CEO, and
+      sole external spokesperson constitutes a meaningful key-person risk; his departure
+      or incapacitation would disrupt customer relationships, fundraising, and strategy.
+      PitchBook's Q1 2025 VC Monitor documents compressed multiples across enterprise SaaS
+      with elevated risk premiums in logistics, reducing prospective exit valuations.
+    claimRefs: [CR037, CR038, CR039, CR040, CR041, CR042, CR043, CR044, CR045]
+    tableRefs: [TR004, TR005]
+    figureRefs: [FR003]
 
-- id: financial-funding-risks
-  title: Financial and Funding Risks
-  body: >-
-    Overhaul completed a $105 million Series C in August 2025 led by Springcoast Partners with
-    participation from Edison Partners and Morgan Stanley Investment Management's 1GT climate fund.
-    Reported 2025 revenue of $136.5 million implies that the company operates at significant scale,
-    but the valuation multiple at which continued growth can be financed has compressed sharply since
-    the 2022 unicorn thesis was established. As of May 2026, the public-market EV/NTM revenue
-    multiple for supply chain management software peers stands at approximately 3.8 times, down from
-    2021 to 2022 peaks exceeding 15 times. At $136.5 million in revenue, a 3.8 times multiple
-    implies an equity value of approximately $518 million, well below the $1 billion unicorn mark.
-    Private market premiums for venture-backed logistics SaaS with AI integration trade at a median
-    of approximately 4.5 times ARR, implying a base-case valuation of approximately $615 million,
-    while AI-native platforms commanding a 2 to 3 times premium could reach $900 million to $1.3
-    billion in an optimistic scenario. Reaching a sustained $1 billion-plus valuation requires
-    demonstrating net revenue retention above 120 percent, accelerating ARR growth, and closing
-    high-profile EMEA or APAC enterprise contracts that validate the global platform thesis. Supply
-    chain tech VC funding surged to $3 billion in Q3 2025, up 26 percent quarter-over-quarter,
-    providing a favorable macro backdrop for a future financing, but KPMG warns that capital
-    increasingly favors AI-native and operationally profitable platforms over risk-monitoring
-    specialists. PwC's 2026 transportation and logistics deals outlook identifies M&A consolidation
-    as the primary theme, positioning Overhaul as a potential acquiree at returns that may fall
-    below the unicorn threshold. Customer concentration in pharmaceutical and high-value goods
-    verticals creates ARR fragility that could compress valuation at the next financing round if
-    a top account churns.
-  claimRefs: [CR027, CR028, CR029, CR030, CR031, CR032, CR040, CR041, CR042]
-  tableRefs: [TR005]
-
-callouts:
-- calloutType: risk
-  title: ERP bundling is the highest-probability competitive displacement vector
-  body: >-
-    ERP platform bundling is the highest-probability competitive displacement vector. SAP, Oracle,
-    and Blue Yonder each have live supply chain visibility and risk management modules in their 2026
-    product portfolios. Any enterprise that has standardised on one of these platforms faces a
-    make-versus-buy decision structurally weighted against a point-solution add-on regardless of
-    product quality. Diligence should confirm what percentage of Overhaul's ARR comes from customers
-    whose primary ERP is SAP or Oracle, and whether those contracts are due for renewal within 18
-    months.
-  claimRefs: [CR002, CR003, CR004, CR005]
-- calloutType: insight
-  title: Cargo theft fraud-vector shift creates product expansion imperative
-  body: >-
-    The cargo theft fraud-vector shift from physical interdiction to impersonation and digital
-    identity fraud is a double-edged dynamic for Overhaul. It validates that cargo security is a
-    growing and evolving problem space, a tailwind for premium monitoring budgets, but it challenges
-    Overhaul to extend its product into carrier credentialing, digital chain-of-custody, and identity
-    verification. Competitors building these capabilities from an identity-first platform such as
-    Descartes or FourKites with carrier credentialing features may capture the impersonation-fraud
-    segment faster than Overhaul can adapt its hardware-centric monitoring stack.
-  claimRefs: [CR007, CR008, CR009, CR013]
 tables:
-- id: TR001
-  title: "Regulatory / legal risk register"
-  enumeration: true
-  enumerationScope:
-    coverage: partial
-    basis: >-
-      Covers regulations directly applicable to Overhaul's US pharmaceutical cold-chain monitoring,
-      EU cross-border logistics data processing, EU AI-driven risk scoring, and government-investment
-      disclosure obligations identified through public regulatory filings, legal databases, and
-      industry compliance publications as of Q2 2026. Does not cover all applicable export control,
-      customs, or sector-specific regulations in every jurisdiction where Overhaul operates.
-  notes: >-
-    Likelihood and severity rated by analyst judgment based on enforcement calendar, customer
-    exposure, and regulatory agency activity as of Q2 2026. Diligence paths represent open questions
-    requiring direct management response.
-  columns:
-  - Rule or Issue
-  - Jurisdiction and Scope
-  - Current Status
-  - Likelihood
-  - Severity
-  - Mitigation
-  - Diligence Path
-  rows:
-  - - DSCSA electronic package-level traceability
-    - USA pharmaceutical supply chain for all dispensers
-    - Full enforcement required November 27, 2026 for remaining smaller dispensers
-    - Medium
-    - High — customer compliance loss if Overhaul platform not DSCSA-certified
-    - Pharma-certified monitoring; EPCIS data integration; DSCSA compliance documentation
-    - Request FDA filing evidence and interoperable traceability certification for pharma monitoring modules
-  - - GDPR Article 28 supply chain data-processor obligations
-    - European Union and any Overhaul customer processing EU personal data
-    - In force; enforcement actions rising with 2025 DPC and CNIL fines averaging EUR 12 million
-    - High
-    - High — cross-border transfer liability and third-party processor chain risk
-    - Data processing agreements with carriers; EU-based legal counsel; standard contractual clauses
-    - Request executed DPAs, SCCs, and GDPR records of processing for all EU carrier integrations
-  - - EU AI Act high-risk AI application requirements
-    - European Union AI systems used in regulated supply chain decisions
-    - Mandatory compliance for high-risk AI applications from August 2026
-    - Medium
-    - Medium-High — RiskGPT classified high-risk if it drives insurance or compliance decisions
-    - EU AI Act risk assessment for RiskGPT; explainability and human-oversight documentation
-    - Request EU AI Act compliance gap analysis, model risk documentation, and conformity assessment
-  - - In-Q-Tel investment CFIUS-adjacent international operating restrictions
-    - USA and international markets sensitive to US intelligence-community investment
-    - Ongoing — creates bilateral trade sensitivities in China, Russia, and certain EU jurisdictions
-    - Low
-    - Medium — potential loss of international contracts in privacy-sensitive markets
-    - US government relations counsel; documented legal review of overseas operating restrictions
-    - Confirm which international markets are contractually restricted due to In-Q-Tel investment
-  - - Brazil LGPD and India DPDP Act data-localisation obligations
-    - Brazil and India applicable in EMEA and APAC expansion markets
-    - In force; India DPDP effective September 2025; Brazil LGPD enforcement active
-    - Medium
-    - Medium — EMEA and APAC expansion blocked or restricted without local data infrastructure
-    - Legal entity and data residency strategy per jurisdiction; local counsel engagement
-    - Confirm data-residency strategy and legal entity structure for EMEA and APAC expansion
-  claimRefs: [CR021, CR022, CR023, CR024, CR025, CR026]
+  - id: TR001
+    title: "Regulatory / legal risk register"
+    notes: >
+      Covers key US and EU frameworks with direct applicability to Overhaul's data handling
+      and AI operations across pharmaceutical, technology, and logistics verticals. Additional
+      jurisdiction-specific requirements in Latin America, EMEA, and APAC are not exhaustively
+      enumerated. Rows ordered by assessed severity.
+    enumerationScope:
+      coverage: partial
+      basis: >
+        Reviewed key US and EU regulatory frameworks applicable to Overhaul's pharmaceutical,
+        technology, and logistics verticals — specifically GDPR, FDA DSCSA, EU AI Act, DOT ELD
+        mandates, and CPRA. Exhaustive global coverage was not achievable; additional
+        jurisdiction-specific rules in LATAM, EMEA, and APAC may also apply to Overhaul's
+        cross-border data flows and carrier telematics integrations.
+    claimRefs: [CR028, CR029, CR030, CR031, CR032, CR033, CR034, CR035]
+    columns:
+      - "Regulation / Law"
+      - "Jurisdiction"
+      - "Overhaul Obligation"
+      - "Likelihood of Action"
+      - "Severity"
+      - "Current Mitigation"
+      - "Residual Exposure"
+      - "Diligence Path"
+    rows:
+      - ["GDPR (General Data Protection Regulation)", "EU / EEA", "Data processing agreements, EU representative, breach notification within 72 hours, data subject rights management", "Possible", "Critical", "Unknown — no public GDPR posture or DPA disclosure", "High: up to €20M or 4% global revenue", "Request GDPR compliance documentation, DPO appointment, and DPA templates"]
+      - ["FDA Drug Supply Chain Security Act (DSCSA)", "United States", "Platform must support serialized electronic traceability of pharmaceutical products at lot and item level for pharma customers", "Possible", "High", "Overhaul markets pharma-specific supply chain monitoring; specific DSCSA integration details undisclosed", "Medium: FDA enforcement risk passes primarily to pharma customers but Overhaul data gaps create exposure", "Confirm DSCSA-compliant data schemas and API outputs with pharma customer references"]
+      - ["EU AI Act (Regulation 2024/1689)", "EU / EEA", "High-risk AI classification likely for RiskGPT in pharmaceutical logistics; requires conformity assessment, transparency, human oversight", "Possible", "High", "EU AI Act Service Desk launched April 2025; Overhaul has not publicly confirmed compliance programme", "Medium-High: non-compliance could bar RiskGPT use in EU pharmaceutical supply chains", "Confirm RiskGPT AI Act classification, conformity assessment status, and EU market roll-out plan"]
+      - ["DOT / FMCSA Electronic Logging Device (ELD) Mandate", "United States", "Carrier telematics data ingested by Overhaul must comply with ELD data format, retention, and access restrictions", "Unlikely", "Medium", "ELD compliance is carrier-side; Overhaul's data ingestion layer must respect FMCSA data use restrictions", "Low-Medium: engineering constraint on carrier data pipeline", "Confirm Overhaul's ELD data processing policy and carrier DPA terms"]
+      - ["California Consumer Privacy Rights Act (CPRA)", "United States (California)", "Supply chain visibility data involving California-resident employees or contacts triggers consumer data rights (access, deletion, opt-out)", "Unlikely", "Medium", "California privacy obligations are common for US SaaS; Overhaul's privacy policy and CPRA compliance status unconfirmed", "Low-Medium: incremental overhead; manageable with standard privacy programme", "Review Overhaul privacy policy, California disclosure notices, and data subject request process"]
 
-- id: TR002
-  title: "Operational / quality / security risk register"
-  notes: >-
-    Mitigation maturity rated Low, Medium, or High based on publicly available evidence of
-    certifications, tooling, and operational controls. No internal audit data was available;
-    assessments are analyst estimates based on comparable SaaS logistics platforms.
-  columns:
-  - Failure Mode
-  - Likelihood
-  - Severity
-  - Mitigation Maturity
-  - Residual Exposure
-  - Unresolved Gap
-  rows:
-  - - Cybersecurity breach of cargo tracking platform
-    - Medium
-    - High
-    - Medium — no public SOC 2 or ISO 27001 certification disclosed
-    - Carrier data exfiltration; customer trust loss; regulatory GDPR and CRA penalty
-    - No public third-party cybersecurity certification found; no breach response SLA disclosed
-  - - RiskGPT AI model poisoning or hallucination in risk outputs
-    - Low
-    - High
-    - Low — no public AI model governance framework or red-team audit disclosed
-    - Contaminated risk scores leading to uncovered shipments; customer liability claims
-    - No disclosed model governance policy, training data provenance controls, or output audit trail
-  - - IoT tracking device compromise enabling cargo rerouting or spoofing
-    - Medium
-    - High
-    - Medium — firmware update cadence and device attestation practices not publicly disclosed
-    - Physical cargo loss; insurance clawback; customer SLA breach
-    - No public disclosure of device lifecycle management, remote wipe, or cryptographic attestation
-  - - Platform outage during high-stakes pharmaceutical or luxury cargo monitoring
-    - Low
-    - High
-    - Medium — cloud-based infrastructure assumed but no SLA transparency found
-    - SLA penalty payments; customer churn; regulatory notification obligation for pharma
-    - No published uptime SLA, incident history, or redundancy architecture documentation found
-  - - Cargo theft fraud-vector shift rendering physical monitoring less relevant
-    - High
-    - Medium
-    - Low — RiskGPT and GSOC not currently marketed as identity-verification solutions
-    - Revenue and NRR erosion as physical security budgets shift to digital fraud prevention
-    - No public digital identity verification or carrier credentialing product announced as of Q2 2026
-  claimRefs: [CR015, CR016, CR017, CR018, CR019, CR020, CR044, CR045]
+  - id: TR002
+    title: "Operational / quality / security risk register"
+    notes: >
+      Ranks key operational failure modes from highest to lowest combined likelihood × severity.
+      Each risk has observable leading indicators suitable for diligence monitoring.
+    claimRefs: [CR010, CR014, CR015, CR016, CR017, CR023, CR024, CR025]
+    columns:
+      - "Failure Mode"
+      - "Likelihood"
+      - "Severity"
+      - "Mitigation Maturity"
+      - "Residual Exposure"
+      - "Unresolved Gap"
+    rows:
+      - ["Major supply chain data breach (cargo manifests, shipment schedules)", "Possible", "Critical", "Low-Medium: cloud security relies on AWS/Azure shared-responsibility model; no confirmed SOC 2 Type II or ISO 27001", "Very high: hundreds of Fortune-1000 customer shipment schedules exposed", "SOC 2 / ISO 27001 certification status unconfirmed"]
+      - ["Cargo theft surge beyond platform response capacity (GSOC overload)", "Likely", "High", "Medium: GSOC operates 24/7 in multiple time zones; law enforcement integrations in place", "Medium: GSOC staffing is a linear cost constraint; rapid theft escalation could overwhelm capacity", "No disclosed GSOC throughput metrics or SLA breach history"]
+      - ["AI hallucination in RiskGPT generating false alerts or missed threats", "Possible", "High", "Low: LLM hallucination is an industry-wide open problem; Overhaul has not disclosed error-rate benchmarks or human override rates", "Medium: customer trust and liability risk scale with RiskGPT deployment footprint", "RiskGPT accuracy benchmarks, false-positive/negative rates undisclosed"]
+      - ["IoT hardware failure or supply disruption (Tive, Impinj device outage)", "Possible", "High", "Medium: multi-vendor IoT strategy partially mitigates single-vendor dependency; fallback monitoring not confirmed", "Medium: any coverage gap during high-value pharmaceutical shipment creates undetected risk window", "Vendor concentration and failover protocol details undisclosed"]
+      - ["Platform or API outage disrupting real-time cargo monitoring", "Unlikely", "High", "Medium: multi-cloud AWS/Azure deployment provides geographic redundancy; uptime SLA not publicly disclosed", "Low-Medium: Overhaul markets real-time visibility as core value; any outage directly undermines the product promise", "Platform uptime SLA, incident history, and RTO/RPO targets undisclosed"]
 
-- id: TR003
-  title: "Partner / dependency risk register"
-  notes: >-
-    Revenue concentration estimates are analyst inferences from public filings and Sacra research;
-    Overhaul has not publicly disclosed customer concentration data. Counterparty identities inferred
-    from public integrations and industry standard practices for logistics SaaS platforms.
-  columns:
-  - Dependency or Risk
-  - Counterparty or Segment
-  - Concentration Exposure
-  - Failure Scenario
-  - Severity
-  - Mitigation
-  rows:
-  - - Carrier and telematics data feed providers
-    - Third-party GPS, ELD, and telematics networks including Samsara and Geotab integrations
-    - Platform-wide — all real-time visibility features depend on carrier data availability
-    - API deprecation or commercial renegotiation disrupts real-time tracking for all customers
-    - High
-    - Maintain multi-source carrier data integrations; carrier-agnostic architecture design
-  - - Cloud infrastructure provider concentration
-    - AWS primary cloud provider assumed based on industry benchmarks for logistics SaaS
-    - Platform-wide — single cloud provider creates simultaneous failure risk for all customers
-    - Cloud outage or commercial terms change disrupts all platform services simultaneously
-    - High
-    - Multi-region deployment; documented failover architecture; SLA-based contracts with cloud vendor
-  - - Pharmaceutical customer revenue concentration
-    - Top pharma cold-chain accounts estimated as top three representing 20 to 35 percent of ARR
-    - High — pharma is Overhaul's primary vertical; loss of a top account drives material ARR impact
-    - DSCSA compliance gap or competitive switch triggers large-account churn event
-    - High
-    - Deepen DSCSA integration; build switching costs via ERP integration and historical compliance data
-  - - Insurance carrier and cargo underwriter partnerships
-    - Cargo insurance partners using Overhaul data for premium determination and claims management
-    - Medium — partner integrations create value but also data-sharing obligations
-    - Partner renegotiation or exit breaks risk-scoring-to-insurance-premium value chain
-    - Medium
-    - Multi-partner diversification; SLA-protected data sharing agreements; direct insurer relationships
-  - - FreightVerify automotive integration partners
-    - Automotive OEM logistics partners and Tier 1 automotive suppliers acquired via FreightVerify
-    - Medium — new segment acquired; customer trust and product compatibility being established
-    - Integration delays or service interruption causes FreightVerify automotive customers to churn
-    - Medium
-    - Dedicated integration programme; customer success team assigned to FreightVerify accounts
-  claimRefs: [CR033, CR034, CR042, CR043]
+  - id: TR003
+    title: "Partner / dependency risk register"
+    notes: >
+      Covers critical infrastructure and data dependencies. Overhaul's platform is a data
+      aggregation layer — value creation depends entirely on continuous, accurate data flows
+      from each dependency. Rows ordered by severity of failure impact.
+    claimRefs: [CR017, CR024, CR027]
+    columns:
+      - "Dependency"
+      - "Counterparty"
+      - "Role"
+      - "Concentration"
+      - "Failure Scenario"
+      - "Severity"
+      - "Current Mitigation"
+      - "Residual Exposure"
+    rows:
+      - ["Cloud Infrastructure", "AWS / Microsoft Azure", "Hosts core platform, RiskGPT inference, and data storage", "High: multi-cloud but both hyperscalers have had correlated outages", "Major regional cloud outage halts real-time monitoring across all customers simultaneously", "Critical", "Multi-cloud deployment distributes risk across providers", "Medium: simultaneous AWS + Azure outage possible (rare but non-zero); no public RTO/RPO disclosure"]
+      - ["Telematics Data Provider", "Samsara / Geotab / Carrier ELDs", "Provides real-time GPS and vehicle status data for in-transit cargo", "High: Overhaul ingests from multiple carriers but each carrier may use a single telematics provider", "API deprecation, rate-limit change, or provider acquisition disrupts carrier location feeds", "High", "Multi-carrier data ingestion reduces single-provider dependency", "Medium: any major carrier's telematics provider change ripples through Overhaul's visibility for that carrier's lanes"]
+      - ["IoT Hardware / Sensors", "Tive / Impinj", "Provides asset-attached sensors for high-value pharmaceutical and cold-chain cargo", "Medium-High: two primary vendors in specialty IoT segment", "Global semiconductor shortage or vendor acquisition forces hardware transition mid-contract", "High", "Dual vendor strategy with Tive and Impinj; details of fallback protocol undisclosed", "Medium: hardware transition mid-shipment is operationally complex and may require customer re-provisioning"]
+      - ["Carrier Network Data", "FreightVerify (acquired 2025)", "Provides carrier-connected network enabling automotive manufacturer visibility", "High post-acquisition: FreightVerify is now fully absorbed into Overhaul platform", "Integration failure or data schema mismatch post-acquisition disrupts automotive customer visibility layer", "High", "Acquisition integration underway; Overhaul communications indicate ongoing product consolidation", "Medium: integration risk is time-bounded but customer SLAs during transition are a churn risk"]
+      - ["Cargo Theft Intelligence", "CargoNet / Law Enforcement Databases", "Feeds real-time threat intelligence on cargo theft patterns to RiskGPT and GSOC operators", "Medium: CargoNet is the dominant third-party cargo theft database", "CargoNet data access revoked, API changes, or data quality degradation blinds threat intelligence layer", "Medium", "Law enforcement integrations provide parallel data channel; Overhaul does not confirm redundant sources", "Low-Medium: alternative theft databases exist (e.g., NCIS) but CargoNet is the market standard"]
+      - ["Mapping / Routing Engine", "Google Maps Platform / HERE Technologies", "Powers route risk scoring and geofencing logic in visibility platform", "Medium: industry-standard map APIs with stable pricing", "Pricing change, API deprecation, or data gap in a high-theft emerging market corridor", "Low-Medium", "Standard commercial API contract; routing engine switching is relatively low friction", "Low: routing API alternatives are numerous and migration risk is manageable"]
 
-- id: TR004
-  title: "People / execution risk register"
-  notes: >-
-    Succession planning and retention evidence based on public disclosures only; no internal HR data
-    available. Likelihood ratings reflect absence of publicly documented mitigation measures.
-  columns:
-  - Role or Function
-  - Dependency or Gap
-  - Likelihood
-  - Severity
-  - Mitigation
-  - Diligence Path
-  rows:
-  - - CEO and Founder Barry Conlon
-    - Founder whose law-enforcement relationships, regulatory credibility, and domain expertise are central to the value
-      proposition with no documented successor
-    - Low departure probability
-    - Very High — product identity, key relationships, and fundraising narrative tied to founder
-    - Board-level succession planning; documented leadership development programme
-    - Request board succession plan, second-in-command biography and operating authority, and key-man insurance policy
-  - - GSOC Operations Team 24/7 global security operations
-    - Human-intensive service layer; expansion into EMEA and APAC increases headcount need non-linearly; specialised 
-      talent pool is limited globally
-    - Medium
-    - High — GSOC is a primary product differentiator; understaffing creates SLA and reputational exposure
-    - Competitive compensation; documented hiring pipeline; capacity planning model per geography
-    - Request GSOC headcount plan, attrition rates, training certification programme, and EMEA and APAC hiring timeline
-  - - Engineering and AI Data Science Team
-    - RiskGPT development and platform reliability depend on a concentrated AI and platform engineering team; ML talent 
-      competition is intense
-    - Medium
-    - High — engineering attrition could delay AI roadmap and create platform reliability risks
-    - Equity retention packages; technical leadership bench; external AI partner relationships
-    - Request engineering org chart, equity refresh plan, and RiskGPT development team structure
-  - - International Expansion Leadership EMEA and APAC
-    - EMEA and APAC market entry requires leaders with local regulatory, logistics, and enterprise sales expertise; 
-      currently unconfirmed publicly
-    - Medium
-    - Medium-High — absence of local leadership slows expansion and increases compliance risk in new jurisdictions
-    - Executive hiring plan for international markets; local advisory board engagement
-    - Request international hiring plan, current EMEA and APAC headcount, and named regional leadership
-  claimRefs: [CR034, CR035, CR036, CR039]
+  - id: TR004
+    title: "People / execution risk register"
+    notes: >
+      Key personnel and organizational execution risks. Overhaul has not disclosed its
+      full leadership org chart publicly; gaps below reflect absence of public information.
+      Rows ordered by severity.
+    claimRefs: [CR016, CR040, CR042, CR043]
+    columns:
+      - "Role / Function"
+      - "Dependency or Gap"
+      - "Likelihood"
+      - "Severity"
+      - "Current Mitigation"
+      - "Diligence Path"
+    rows:
+      - ["CEO / Founder (Barry Conlon)", "Sole public-facing executive and brand identity; no disclosed deputy CEO or succession plan", "Unlikely", "Critical", "Overhaul's board includes experienced investors (8VC, American Securities, Edison, Springcoast); board-led interim governance is possible", "Request succession plan, executive bench depth, and board governance documentation"]
+      - ["GSOC Operations Staffing", "GSOC must scale linearly with customer and shipment count; staffing in multiple time zones is expensive", "Possible", "High", "Multiple GSOC centers across US, EMEA, and LATAM distribute coverage; specific headcount and attrition rates undisclosed", "Confirm GSOC headcount, attrition rate, and capacity utilization metrics"]
+      - ["Engineering / AI Talent", "RiskGPT and AI roadmap require specialized ML/AI engineers in a competitive talent market", "Possible", "High", "Overhaul's Austin HQ has access to Texas tech talent; fundraising provides compensation runway", "Request engineering org size, ML team size, and voluntary turnover rate"]
+      - ["Investor Concentration", "Springcoast Partners led or co-led both 2025 funding rounds, creating reliance on a single institutional champion", "Unlikely", "Medium", "Edison Partners and American Securities provide investor diversity; MidCap Financial adds debt market access", "Confirm investor rights, pro-rata agreements, and whether Springcoast board seat creates governance constraints"]
+      - ["Sales and Enterprise Execution", "No disclosed revenue run-rate or ARR; sales team size and pipeline conversion not publicly reported", "Possible", "Medium", "Fortune-100 customer wins (Microsoft, Bristol Myers Squibb, CEVA) demonstrate enterprise credibility", "Request sales team headcount, ACV, quota attainment, and pipeline data in due diligence"]
 
-- id: TR005
-  title: "Mitigation and kill criteria table"
-  notes: >-
-    Thesis-break criteria define observable events that, if triggered, would fundamentally impair
-    the investment thesis. Monitoring triggers are leading indicators that should prompt enhanced
-    diligence or conditional action within 90 days of detection. Thresholds are analyst estimates
-    and should be refined based on Overhaul's actual financial model and investor rights.
-  columns:
-  - Risk
-  - Monitorable Leading Trigger
-  - Threshold or Thesis-Break Criterion
-  - Action Implication
-  rows:
-  - - Competitive displacement by ERP-native bundling
-    - SAP or Oracle announces supply chain security add-on targeting Overhaul's pharma vertical; Overhaul NRR dips below
-      110 percent
-    - NRR falls below 105 percent for two consecutive quarters; named SAP or Oracle win at a top-5 Overhaul account is 
-      confirmed
-    - Reassess investment thesis; require product differentiation evidence; consider reducing exposure
-  - - Cybersecurity breach or AI model failure
-    - Public security incident report; regulatory notification filing; customer churn following a platform incident
-    - Data breach exposing regulated cargo tracking data; RiskGPT output recall or customer notification of erroneous 
-      risk scores
-    - Suspend new investment; require independent security audit; impose escrow or clawback provisions pending 
-      remediation
-  - - DSCSA or pharmaceutical compliance gap
-    - FDA enforcement letter citing Overhaul-integrated data; competitor announcement of DSCSA certification that 
-      Overhaul lacks
-    - Loss of a top-3 pharma account attributable to DSCSA non-compliance; FDA enforcement action citing Overhaul 
-      integration
-    - Require DSCSA compliance certification within 60 days or trigger step-down in platform valuation
-  - - Valuation compression at next financing round
-    - Public-market SaaS multiples remain below 5 times EV/NTM; ARR growth rate decelerates below 20 percent 
-      year-over-year
-    - Next financing round at pre-money valuation below $600 million on ARR above $150 million
-    - Reassess exit assumptions; consider secondary sale or revised target return; engage board-level strategic review
-  - - Founder-CEO departure without prepared successor
-    - Announced leadership transition without named replacement; board chair stepping in as interim CEO
-    - Barry Conlon departure without at least six months of documented successor transition and customer relationship 
-      handover
-    - Trigger board governance review; require investor protective provisions and accelerated vesting clawback; place 
-      investment on hold
-  claimRefs: [CR027, CR028, CR029, CR030, CR031, CR033, CR038, CR039, CR041]
+  - id: TR005
+    title: "Mitigation and kill criteria table"
+    notes: >
+      Thesis-break triggers are defined as observable events that would materially undermine
+      the investment thesis absent remediation. Each trigger is paired with the leading
+      indicators and diligence asks that allow pre-emptive monitoring.
+    claimRefs: [CR006, CR037, CR039, CR043, CR045]
+    columns:
+      - "Risk"
+      - "Monitorable Trigger / Leading Indicator"
+      - "Kill Threshold / Thesis-Break Event"
+      - "Action Implication"
+    rows:
+      - ["Cargo theft escalation outpacing platform protection", "CargoNet quarterly theft incidence rate; GSOC SLA breach reports; customer NPS decline", "More than 3 publicly disclosed Overhaul-monitored cargo theft events in a 12-month period, or any single event >$10M", "Conduct root-cause audit; evaluate GSOC capacity and IoT hardware failure rates; consider indemnity exposure"]
+      - ["Competitive displacement (project44 / FourKites / Shippeo)", "Enterprise RFP win rates; customer logo losses; competitor product release cadence vs Overhaul roadmap", "Loss of 2+ top-10 customers to a named competitor in 12 months, or NRR below 100%", "Investigate product gap; assess pricing pressure; model revenue concentration risk"]
+      - ["GDPR or DSCSA regulatory enforcement action", "Regulatory inquiry or data subject complaint filing; DPA audit notification; FDA warning letter to pharma customer citing Overhaul data gap", "Any formal GDPR investigation initiated by a supervisory authority, or FDA warning letter referencing Overhaul platform", "Halt new EU customer onboarding; retain regulatory counsel; quantify fine exposure relative to revenue"]
+      - ["CEO Barry Conlon departure or incapacitation", "Executive change disclosure; departure announcement; extended absence from investor or customer communications", "CEO departure without disclosed succession plan or named replacement", "Engage board immediately; assess interim leadership options; pause or extend diligence timeline"]
+      - ["Valuation mark-down or down-round financing", "Disclosed Series D valuation below $500M; secondary market pricing; investor rights exercise; major investor exit", "Series D or secondary transaction at valuation below the undisclosed August 2025 Series C price", "Model dilution and return impact; assess bridge risk and runway; review liquidation preference stack"]
 
 figures:
-- id: FR001
-  title: "Risk heatmap"
-  type: matrix
-  summary: >-
-    Analyst-constructed risk heatmap mapping Overhaul's principal risk factors by likelihood on the
-    horizontal axis from Low to Very High versus impact severity on the vertical axis from Monitoring
-    to Critical. Cells contain the most representative risk label for that likelihood-severity
-    intersection. Placement reflects analyst judgment based on Q2 2026 public information; internal
-    risk registers were not available for review.
-  approximationNotes: >-
-    Risk placements are analyst estimates derived from published industry data, regulatory calendars,
-    and comparable-company operating patterns. Likelihood and severity are relative assessments
-    rather than statistically derived probabilities.
-  data:
-    columns:
-    - Low Likelihood
-    - Low-Medium Likelihood
-    - Medium Likelihood
-    - High Likelihood
-    - Very High Likelihood
-    rows:
-    - label: Critical Impact
-      values:
-      - ""
-      - ""
-      - Supply chain cyber breach and data exfiltration
-      - ""
-      - ""
-    - label: High Impact
-      values:
-      - CEO and founder departure without successor
-      - DSCSA pharma compliance gap by November 2026
-      - ERP bundling displacing Overhaul in pharma vertical
-      - Cargo identity fraud evolution outpacing product
-      - ""
-    - label: Medium-High Impact
-      values:
-      - RiskGPT model poisoning or hallucination
-      - IoT device compromise enabling cargo rerouting
-      - FreightVerify integration failure causing churn
-      - GSOC staffing gap during EMEA and APAC expansion
-      - ""
-    - label: Medium Impact
-      values:
-      - ""
-      - In-Q-Tel international operating restrictions
-      - Valuation compression at next financing round
-      - Pharma top-3 customer revenue concentration
-      - ""
-    - label: Monitoring Impact
-      values:
-      - ""
-      - ""
-      - Platform SLA breach during high-stakes shipment
-      - Carrier data-feed API deprecation
-      - ""
-  claimRefs: [CR001, CR003, CR007, CR015, CR021, CR027, CR033, CR034]
+  - id: FR001
+    title: "Risk heatmap"
+    type: matrix
+    notes: >
+      Plots Overhaul's top risks by likelihood (Y-axis) and impact severity (X-axis). Cell
+      entries name the primary risk scenario; empty cells indicate no material risk identified
+      at that likelihood-impact intersection. Positions are assessed as of May 2026.
+    claimRefs: [CR005, CR006, CR010, CR023, CR028, CR037, CR043]
+    data:
+      columns: ["Low Impact", "Medium Impact", "High Impact", "Critical Impact"]
+      rows:
+        - label: "Rare"
+          values: ["", "", "Regulatory certification gap (NIST CSF 2.0)", ""]
+        - label: "Unlikely"
+          values: ["", "Telematics API pricing change", "GDPR enforcement action", "CEO departure / key-person event"]
+        - label: "Possible"
+          values: ["Routing API disruption", "Investor concentration friction", "IoT hardware supply failure", "Major supply chain data breach"]
+        - label: "Likely"
+          values: ["", "VC market multiple compression", "Cargo theft surge vs GSOC capacity", "Competitive displacement (project44 / FourKites)"]
+        - label: "Almost certain"
+          values: ["", "", "Continued cargo theft escalation trend", "AI hallucination risk in RiskGPT at scale"]
 
-- id: FR002
-  title: "Risk transmission map"
-  type: dag
-  summary: >-
-    Directed graph showing how Overhaul's primary risk sources cascade into downstream consequences
-    across revenue, customer retention, compliance, and financing. Edges are labelled with the
-    causal mechanism. The graph surfaces three critical convergence points at platform
-    underdifferentiation risk, customer churn, and financing pressure where multiple risk vectors
-    combine into shared negative outcomes.
-  data:
-    nodes:
-    - id: n1
-      label: Competitor platform bundling from SAP, Oracle, and FourKites
-    - id: n2
-      label: Platform underdifferentiation risk
-    - id: n3
-      label: Revenue growth slowdown
-    - id: n4
-      label: Customer churn or contract loss
-    - id: n5
-      label: Cybersecurity or IoT breach
-    - id: n6
-      label: Reputational and compliance exposure
-    - id: n7
-      label: DSCSA, GDPR, or EU AI Act compliance failure
-    - id: n8
-      label: Regulatory penalty or customer compliance loss
-    - id: n9
-      label: Cargo theft fraud vector shift to digital identity
-    - id: n10
-      label: Product-market fit erosion for physical monitoring
-    - id: n11
-      label: Financing pressure and valuation reset
-    - id: n12
-      label: FreightVerify acquisition integration failure
-    edges:
-    - from: n1
-      to: n2
-      label: drives
-    - from: n2
-      to: n3
-      label: compresses ARR growth
-    - from: n1
-      to: n4
-      label: enables contract displacement
-    - from: n5
-      to: n6
-      label: triggers
-    - from: n6
-      to: n4
-      label: accelerates churn
-    - from: n7
-      to: n8
-      label: causes penalty or loss
-    - from: n8
-      to: n4
-      label: creates account churn
-    - from: n9
-      to: n10
-      label: signals relevance risk
-    - from: n10
-      to: n3
-      label: compresses revenue pipeline
-    - from: n3
-      to: n11
-      label: raises financing risk
-    - from: n4
-      to: n11
-      label: amplifies valuation compression
-    - from: n12
-      to: n3
-      label: disrupts cross-sell revenue
-    - from: n12
-      to: n6
-      label: risks dual-platform service failure
-    - from: n11
-      to: n2
-      label: worsens competitive position through capital constraint
-  claimRefs: [CR001, CR005, CR015, CR021, CR029, CR033, CR034, CR041]
+  - id: FR002
+    title: "Risk transmission map"
+    type: dag
+    notes: >
+      Directed acyclic graph showing how primary risk events propagate through Overhaul's
+      value chain into financial and strategic outcomes. Arrows indicate causal transmission
+      pathways rather than magnitude.
+    claimRefs: [CR010, CR014, CR016, CR023, CR024, CR039, CR043, CR045]
+    data:
+      nodes:
+        - id: n01
+          label: "Cargo theft surge"
+        - id: n02
+          label: "IoT / data feed failure"
+        - id: n03
+          label: "Competitive pressure"
+        - id: n04
+          label: "Regulatory fine or enforcement"
+        - id: n05
+          label: "AI hallucination (RiskGPT)"
+        - id: n06
+          label: "SLA breach"
+        - id: n07
+          label: "Customer churn"
+        - id: n08
+          label: "Financial stress"
+        - id: n09
+          label: "Valuation decline"
+      edges:
+        - from: n01
+          to: n06
+        - from: n02
+          to: n06
+        - from: n05
+          to: n06
+        - from: n03
+          to: n07
+        - from: n06
+          to: n07
+        - from: n04
+          to: n08
+        - from: n07
+          to: n08
+        - from: n07
+          to: n09
+        - from: n08
+          to: n09
+        - from: n03
+          to: n09
 
-- id: FR003
-  title: "Dependency map"
-  type: dag
-  summary: >-
-    Directed graph mapping Overhaul's critical external dependencies and internal concentration
-    risks. Inbound edges to the Overhaul platform represent supply-side dependencies; outbound
-    edges represent customer segments, regulatory authorities, and institutional relationships that
-    the platform must serve or satisfy. Key concentration risks appear at the Overhaul platform
-    node and the CEO and founder node, both of which are single points of failure for multiple
-    value-chain connections.
-  data:
-    nodes:
-    - id: d1
-      label: Carrier and telematics data network GPS, ELD, and IoT
-    - id: d2
-      label: Overhaul platform RiskGPT, Risk Monitor, and GSOC
-    - id: d3
-      label: Pharmaceutical customers DSCSA-regulated cold chain
-    - id: d4
-      label: High-value cargo enterprise customers luxury and electronics
-    - id: d5
-      label: Cargo insurance carrier integrations
-    - id: d6
-      label: Capital base 8VC, Springcoast, Edison, 1GT, and In-Q-Tel
-    - id: d7
-      label: FreightVerify acquisition automotive logistics segment
-    - id: d8
-      label: Regulators GDPR, EU AI Act, DSCSA, and CBP
-    - id: d9
-      label: US law enforcement and CBP partnerships
-    - id: d10
-      label: CEO and Founder Barry Conlon
-    edges:
-    - from: d1
-      to: d2
-      label: feeds real-time location data
-    - from: d2
-      to: d3
-      label: provides DSCSA-integrated cold-chain monitoring
-    - from: d2
-      to: d4
-      label: provides risk intelligence and cargo security
-    - from: d5
-      to: d3
-      label: enables cargo insurance for pharma shipments
-    - from: d6
-      to: d2
-      label: funds platform and GSOC operations
-    - from: d7
-      to: d2
-      label: being integrated into platform automotive segment
-    - from: d8
-      to: d2
-      label: constrains data handling and AI outputs
-    - from: d9
-      to: d2
-      label: cooperates on cargo recovery and intelligence
-    - from: d10
-      to: d2
-      label: founded and leads holding key relationships
-    - from: d10
-      to: d3
-      label: built pharmaceutical and law-enforcement relationships
-    - from: d7
-      to: d4
-      label: extends reach to automotive logistics customers
-  claimRefs: [CR033, CR034, CR042, CR043]
+  - id: FR003
+    title: "Dependency map"
+    type: dag
+    notes: >
+      Maps Overhaul's critical external dependencies and data flow direction. Arrows flow
+      from dependency toward Overhaul's core platform, illustrating which provider failures
+      directly impact platform availability or data quality.
+    claimRefs: [CR017, CR024, CR027]
+    data:
+      nodes:
+        - id: d01
+          label: "Overhaul Platform"
+        - id: d02
+          label: "Samsara / Geotab (Telematics)"
+        - id: d03
+          label: "Google Maps / HERE (Routing)"
+        - id: d04
+          label: "AWS / Azure (Cloud Infra)"
+        - id: d05
+          label: "Tive / Impinj (IoT Hardware)"
+        - id: d06
+          label: "FreightVerify (Carrier Network)"
+        - id: d07
+          label: "CargoNet (Theft Intelligence)"
+      edges:
+        - from: d02
+          to: d01
+        - from: d03
+          to: d01
+        - from: d04
+          to: d01
+        - from: d05
+          to: d01
+        - from: d06
+          to: d01
+        - from: d07
+          to: d01
+        - from: d05
+          to: d02
+        - from: d04
+          to: d06
+
+callouts: []
 
 localEvidence:
   searchQueries:
-  - query: "Overhaul supply chain cargo security risks 2026"
-    rationale: Baseline query to surface recent risk analysis specific to Overhaul
-    conductedAt: "2026-05-14"
-  - query: "CargoNet Q1 2026 cargo theft statistics trends organized crime"
-    rationale: Primary statistical source for cargo theft demand dynamics
-    conductedAt: "2026-05-14"
-  - query: "Verisk cargo theft impersonation fraud organized crime 2026 first quarter"
-    rationale: Verisk and CargoNet joint reporting on Q1 2026 theft evolution
-    conductedAt: "2026-05-14"
-  - query: "FourKites project44 Overhaul supply chain visibility comparison Gartner 2026"
-    rationale: Competitive positioning and peer ratings evidence
-    conductedAt: "2026-05-14"
-  - query: "S&P Global freight visibility market consolidation platform attrition 2025 2026"
-    rationale: Adverse analyst view on market shakeout and mid-tier platform risk
-    conductedAt: "2026-05-14"
-  - query: "supply chain cybersecurity IoT breach trends 2026 SecurityScorecard IBM quadrupled"
-    rationale: Cyber risk sizing and benchmark data for IoT-dependent platforms
-    conductedAt: "2026-05-14"
-  - query: "EU Cyber Resilience Act IoT hardware September 2026 compliance obligations"
-    rationale: Regulatory timeline for CRA obligations relevant to Overhaul's device fleet
-    conductedAt: "2026-05-14"
-  - query: "DSCSA compliance deadline November 2026 pharmaceutical traceability GS1 EPCIS"
-    rationale: Regulatory calendar and customer compliance obligations under DSCSA
-    conductedAt: "2026-05-14"
-  - query: "GDPR supply chain processor Article 28 cross-border data logistics 2026"
-    rationale: Legal framework for EU data processing applicable to cargo tracking
-    conductedAt: "2026-05-14"
-  - query: "EU AI Act high-risk AI August 2026 supply chain explainability requirements"
-    rationale: AI regulation requirements applicable to RiskGPT
-    conductedAt: "2026-05-14"
-  - query: "Overhaul 105 million Series C 2025 Springcoast Morgan Stanley Edison funding 2026"
-    rationale: Official Series C announcement and investor details
-    conductedAt: "2026-05-14"
-  - query: "SaaS valuation multiples 2026 supply chain logistics EV NTM revenue multiple"
-    rationale: Public market comparables for valuation compression analysis
-    conductedAt: "2026-05-14"
-  - query: "Overhaul FreightVerify acquisition 2025 automotive logistics integration 2026"
-    rationale: Acquisition evidence for integration risk analysis
-    conductedAt: "2026-05-14"
-  - query: "BSI supply chain risks 2026 geopolitical climate cyber convergence report"
-    rationale: Macro risk backdrop from authoritative supply chain risk publisher
-    conductedAt: "2026-05-14"
-  - query: "cargo theft impersonation fraud load board phishing carrier identity 2026 WTW"
-    rationale: Digital fraud vector shift evidence for demand-evolution section
-    conductedAt: "2026-05-14"
-  - query: "supply chain visibility software market size 2026 CAGR GM Insights forecast"
-    rationale: Market sizing for competitive context
-    conductedAt: "2026-05-14"
-  - query: "PwC transportation logistics MA consolidation outlook 2026 supply chain"
-    rationale: M&A consolidation risk and exit path analysis
-    conductedAt: "2026-05-14"
-  - query: "Group-IB supply chain attacks fastest growing cyber threat 2026 report"
-    rationale: Independent confirmation of supply chain cyber attack escalation
-    conductedAt: "2026-05-14"
-
-  researchQuestions:
-  - id: QR001
-    type: enumeration
-    question: Who are Overhaul's principal competitors in supply chain visibility and cargo security?
-    status: answered
-    targets:
-    - contentRequirements/0
-    - plannedFigures/risk-heatmap
-
-  - id: QR002
-    type: comparison
-    question: >-
-      How do FourKites and project44 compare to Overhaul on ratings, carrier network scale, and
-      enterprise buyer perception as of 2026?
-    status: answered
-    targets:
-    - contentRequirements/0
-
-  - id: QR003
-    type: adverse
-    question: >-
-      What competitive threats have the highest probability of displacing Overhaul from existing
-      accounts within 24 months?
-    status: answered
-    targets:
-    - contentRequirements/0
-    - plannedFigures/risk-transmission-map
-
-  - id: QR004
-    type: quantification
-    question: What are the Q1 2026 cargo theft incident count and total loss statistics in North America?
-    status: answered
-    targets:
-    - contentRequirements/2
-    - plannedFigures/risk-heatmap
-
-  - id: QR005
-    type: verification
-    question: >-
-      Is the total cargo theft loss environment in 2026 materially different from 2025 levels, and
-      does the trend support Overhaul's market thesis?
-    status: answered
-    targets:
-    - contentRequirements/0
-
-  - id: QR006
-    type: mechanism
-    question: >-
-      How does the shift from physical cargo theft to digital impersonation fraud affect
-      Overhaul's product-market fit and revenue durability?
-    status: answered
-    targets:
-    - contentRequirements/2
-    - plannedFigures/risk-transmission-map
-
-  - id: QR007
-    type: adverse
-    question: >-
-      What cybersecurity vulnerabilities are most likely to be exploited in Overhaul's IoT-integrated
-      cargo tracking platform, and what is the potential impact?
-    status: answered
-    targets:
-    - contentRequirements/2
-    - plannedTables/operational-quality-security-risk-register
-
-  - id: QR008
-    type: freshness
-    question: >-
-      What does 2026 data show about the velocity and scale of supply chain cyber breaches against
-      logistics and IoT platforms?
-    status: answered
-    targets:
-    - contentRequirements/2
-
-  - id: QR009
-    type: mechanism
-    question: >-
-      How do supply chain data breaches propagate through IoT networks and third-party vendor
-      access points, and how does this apply to Overhaul's architecture?
-    status: answered
-    targets:
-    - contentRequirements/2
-    - plannedTables/operational-quality-security-risk-register
-
-  - id: QR010
-    type: enumeration
-    question: >-
-      What regulatory compliance requirements directly apply to Overhaul's pharmaceutical cold-chain
-      monitoring, EU data processing, and AI-driven risk scoring?
-    status: answered
-    targets:
-    - contentRequirements/1
-    - plannedTables/regulatory-legal-risk-register
-
-  - id: QR011
-    type: verification
-    question: >-
-      Is Overhaul's pharmaceutical cold-chain monitoring platform DSCSA-compliant and ready for
-      the November 27, 2026 full enforcement deadline?
-    status: partial
-    targets:
-    - contentRequirements/1
-    - plannedTables/regulatory-legal-risk-register
-
-  - id: QR012
-    type: mechanism
-    question: >-
-      How does GDPR Article 28 apply to cross-border cargo tracking data processed by Overhaul
-      on behalf of EU-based shippers and logistics customers?
-    status: answered
-    targets:
-    - contentRequirements/1
-    - plannedTables/regulatory-legal-risk-register
-
-  - id: QR013
-    type: adverse
-    question: >-
-      What EU regulatory enforcement risks does Overhaul face under GDPR, the EU AI Act, and the
-      Cyber Resilience Act given its AI-driven risk scoring and IoT device operations?
-    status: answered
-    targets:
-    - contentRequirements/1
-    - plannedTables/regulatory-legal-risk-register
-
-  - id: QR014
-    type: quantification
-    question: >-
-      What are Overhaul's publicly known revenue, growth rate, and cargo-under-management metrics
-      as of Q2 2026?
-    status: answered
-    targets:
-    - contentRequirements/4
-
-  - id: QR015
-    type: comparison
-    question: >-
-      How do current 2026 SaaS valuation multiples for supply chain software compare to the implied
-      valuation embedded in Overhaul's 2022 unicorn positioning?
-    status: answered
-    targets:
-    - contentRequirements/4
-    - plannedTables/mitigation-and-kill-criteria-table
-
-  - id: QR016
-    type: mechanism
-    question: >-
-      How would a failed or delayed FreightVerify integration affect Overhaul's ARR, customer
-      retention, and combined platform capabilities?
-    status: answered
-    targets:
-    - contentRequirements/3
-    - plannedTables/partner-dependency-risk-register
-
-  - id: QR017
-    type: enumeration
-    question: >-
-      What are the key operational execution risks related to GSOC scaling, international expansion,
-      and leadership concentration at Overhaul?
-    status: answered
-    targets:
-    - contentRequirements/2
-    - plannedTables/people-execution-risk-register
-
-  - id: QR018
-    type: verification
-    question: >-
-      Has Overhaul publicly disclosed a board-approved leadership succession plan for CEO Barry
-      Conlon, and what is the depth of the leadership bench below the founder?
-    status: partial
-    targets:
-    - contentRequirements/5
-    - plannedTables/people-execution-risk-register
-
-  - id: QR019
-    type: adverse
-    question: >-
-      What single events or threshold crossings would constitute a thesis-break for the Overhaul
-      investment, requiring immediate diligence escalation or exit?
-    status: answered
-    targets:
-    - contentRequirements/5
-    - plannedTables/mitigation-and-kill-criteria-table
-
-  - id: QR020
-    type: quantification
-    question: >-
-      What are the burn rate, capital deployment, and runway implications of Overhaul's $105 million
-      Series C financing for the 2025 to 2027 period?
-    status: answered
-    targets:
-    - contentRequirements/4
-
-  - id: QR021
-    type: freshness
-    question: >-
-      What does 2026 data show about consolidation, M&A activity, and competitive dynamics in the
-      supply chain visibility and logistics technology market?
-    status: answered
-    targets:
-    - contentRequirements/0
-
-  - id: QR022
-    type: comparison
-    question: >-
-      How does Overhaul's cargo-security specialization compare to the integrated capabilities of
-      larger supply chain visibility platforms and ERP-native modules in 2026?
-    status: answered
-    targets:
-    - contentRequirements/0
-    - plannedFigures/risk-heatmap
-
-  - id: QR023
-    type: mechanism
-    question: >-
-      How does Overhaul's revenue concentration in the pharmaceutical and high-value goods verticals
-      affect ARR quality and the company's vulnerability to large-account churn?
-    status: answered
-    targets:
-    - contentRequirements/4
-    - plannedTables/partner-dependency-risk-register
-
-  - id: QR024
-    type: enumeration
-    question: >-
-      What third-party technology, data, and infrastructure dependencies does Overhaul have that
-      could create platform failure risk or competitive lock-in?
-    status: answered
-    targets:
-    - contentRequirements/3
-    - plannedTables/partner-dependency-risk-register
-
-  - id: QR025
-    type: verification
-    question: >-
-      What cybersecurity certifications, third-party audits, or security posture disclosures has
-      Overhaul made publicly as of Q2 2026?
-    status: partial
-    targets:
-    - contentRequirements/2
-    - plannedTables/operational-quality-security-risk-register
-
-  - id: QR026
-    type: freshness
-    question: >-
-      What does 2026 data show about competitive intensity and new entrants in AI-driven supply
-      chain risk analytics and predictive logistics intelligence?
-    status: answered
-    targets:
-    - contentRequirements/0
-
-  - id: QR027
-    type: mechanism
-    question: >-
-      How does the In-Q-Tel intelligence-community investment relationship affect Overhaul's ability
-      to win international commercial contracts in privacy-sensitive markets?
-    status: answered
-    targets:
-    - contentRequirements/1
-    - plannedTables/regulatory-legal-risk-register
-
-  - id: QR028
-    type: adverse
-    question: >-
-      What market saturation or consolidation dynamics pose the greatest structural risk to
-      Overhaul's ability to grow as a standalone company?
-    status: answered
-    targets:
-    - contentRequirements/0
-    - plannedFigures/risk-transmission-map
-
-  - id: QR029
-    type: quantification
-    question: >-
-      What is the total addressable supply chain visibility software market size and growth rate
-      in 2026 as estimated by independent research firms?
-    status: answered
-    targets:
-    - contentRequirements/0
-
-  - id: QR030
-    type: comparison
-    question: >-
-      Do 2026 cargo theft statistics and trend data broadly support or undermine the Overhaul
-      investment thesis regarding persistent enterprise demand for cargo security platforms?
-    status: answered
-    targets:
-    - contentRequirements/0
-
-  - id: QR031
-    type: verification
-    question: >-
-      Are there known legal enforcement actions, regulatory investigations, or litigation matters
-      against Overhaul or its senior leadership as of Q2 2026?
-    status: partial
-    targets:
-    - contentRequirements/1
-    - plannedTables/regulatory-legal-risk-register
-
-  - id: QR032
-    type: mechanism
-    question: >-
-      How does Overhaul's dependency on third-party carrier data feeds create competitive switching
-      risk or platform lock-in risk for enterprise customers?
-    status: answered
-    targets:
-    - contentRequirements/3
-    - plannedTables/partner-dependency-risk-register
+    - query: "Overhaul supply chain funding Series C 2025 2026 valuation"
+      engine: web
+      retainedSourceRefs: [SR018, SR031, SR033]
+    - query: "cargo theft statistics trends 2024 2025 CargoNet FreightWaves"
+      engine: web
+      retainedSourceRefs: [SR015, SR016, SR022, SR023]
+    - query: "GDPR DSCSA supply chain software compliance obligations 2026"
+      engine: web
+      retainedSourceRefs: [SR002, SR017]
+    - query: "FourKites project44 Shippeo competitive landscape supply chain visibility 2025 2026"
+      engine: web
+      retainedSourceRefs: [SR007, SR021, SR001]
+    - query: "NIST CSF CISA cybersecurity supply chain IoT security requirements 2025 2026"
+      engine: web
+      retainedSourceRefs: [SR004, SR005, SR010, SR020]
+    - query: "EU AI Act logistics supply chain compliance timeline 2025 2026"
+      engine: web
+      retainedSourceRefs: [SR014]
+    - query: "supply chain venture capital VC funding market 2025 2026 PitchBook"
+      engine: web
+      retainedSourceRefs: [SR012, SR015]
+    - query: "Overhaul cargo theft GSOC risk platform 2025 2026"
+      engine: web
+      retainedSourceRefs: [SR015, SR018, SR029]
+    - query: "Tive Samsara FourKites supply chain visibility competitor 2025 2026"
+      engine: web
+      retainedSourceRefs: [SR007, SR008, SR011]
+    - query: "Overhaul CEO Barry Conlon leadership executive team 2026"
+      engine: web
+      retainedSourceRefs: [SR018, SR028]
 
   sources:
-  - id: SR001
-    url: https://www.cargonet.com/news-and-events/cargonet-in-the-media/2026-q1-theft-trends/
-    title: "2026 First Quarter Supply Chain Risk Trends Analysis"
-    publisher: CargoNet (Verisk)
-    date: "2026-04-01"
-    sourceType: news
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      Q1 2026 recorded 767 incidents of cargo theft in the US and Canada, a 5.3 percent decrease
-      from Q1 2025; personal care and beauty product thefts surged 178 percent year-over-year.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - cargo theft
-    - Q1 2026
-    - supply chain risk
-    - theft statistics
-  - id: SR002
-    url: 
-      https://www.verisk.com/company/newsroom/incident-volume-falls-as-organized-crime-reshapes-cargo-theft-landscape-through-impersonation-and-targeted-commodity-selection/
-    title: "Incident Volume Falls as Organized Crime Reshapes Cargo Theft Landscape"
-    publisher: Verisk
-    date: "2026-04-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      Estimated losses remained stubbornly high at $131.58 million; California recorded 277 incidents
-      while New Jersey incidents rose 119 percent year-over-year.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - cargo theft
-    - organized crime
-    - impersonation fraud
-    - loss estimates
-  - id: SR003
-    url: https://www.fleetequipmentmag.com/q1-2026-cargo-theft-trends-verisk/
-    title: "Q1 2026 Cargo Theft Trends Shows Rise in Organized Crime"
-    publisher: Fleet Equipment Magazine
-    date: "2026-04-01"
-    sourceType: news
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Organized crime is reshaping cargo theft in 2026, with thieves shifting from opportunistic
-      smash-and-grab to coordinated impersonation schemes using stolen carrier credentials.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - cargo theft
-    - Q1 2026 trends
-    - organized crime
-    - fleet equipment
-  - id: SR004
-    url: https://www.carriermanagement.com/news/2026/04/27/287237.htm
-    title: "Despite 5% Decrease in Crimes, Estimated Q1 2026 Cargo Theft Loss Costs Remain"
-    publisher: Carrier Management
-    date: "2026-04-27"
-    sourceType: news
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Estimated loss cost from Q1 2026 cargo theft remained essentially flat year-over-year despite
-      a 5 percent decline in incident count, reflecting higher per-incident value from targeted thefts.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - cargo theft statistics
-    - Q1 2026 losses
-    - carrier management
-  - id: SR005
-    url: 
-      https://www.cbp.gov/sites/default/files/2026-04/ctpat_alert_-_surge_in_cargo_theft_and_security_best_practices_508.pdf
-    title: "C-TPAT Alert: Surge in Cargo Theft and Security Best Practices"
-    publisher: U.S. Customs and Border Protection
-    date: "2026-04-01"
-    sourceType: regulatory
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      CBP and C-TPAT alert the trade community to a surge in cargo theft using fraudulent identity
-      documents and impersonation of legitimate carriers; enhanced carrier verification protocols
-      are strongly recommended.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - C-TPAT alert
-    - cargo theft surge
-    - CBP
-    - impersonation fraud
-    - customs security
-  - id: SR006
-    url: 
-      https://www.wtwco.com/en-us/insights/2026/02/2026-guide-to-strategic-cargo-theft-eight-emerging-risks-reshaping-supply-chain-risk-management
-    title: "2026 Guide to Strategic Cargo Theft: Eight Emerging Risks"
-    publisher: WTW (Willis Towers Watson)
-    date: "2026-02-01"
-    sourceType: other
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      WTW identifies eight emerging cargo theft risk categories for 2026 including AI-assisted
-      identity fraud, insider threat exploitation, and climate-driven logistics disruption, each
-      requiring platform-level risk management responses.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - strategic cargo theft
-    - eight emerging risks
-    - supply chain risk management
-    - WTW 2026
-  - id: SR007
-    url: https://idscan.net/blog/2026-supply-chain-logistics-id-fraud-report/
-    title: "2026 Supply Chain and Logistics ID Fraud Report"
-    publisher: IDScan.net
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Identity fraud attempts in logistics and supply chain grew 200 percent from 2023 to 2024 and
-      continued accelerating into 2025, driven by load board credential theft and fictitious carrier
-      registration schemes.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - identity fraud
-    - logistics fraud
-    - supply chain
-    - ID verification 2026
-  - id: SR008
-    url: 
-      https://riskandinsurance.com/organized-crime-reshapes-cargo-theft-as-impersonation-tactics-mature-into-scalable-threat/
-    title: "Organized Crime Reshapes Cargo Theft as Impersonation Tactics Mature"
-    publisher: Risk and Insurance
-    date: "2026-04-01"
-    sourceType: news
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Impersonation fraud has matured from an opportunistic tactic to a scalable organized operation
-      with dedicated teams performing reconnaissance, credential harvesting, and load diversion as a
-      criminal enterprise.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - organized crime
-    - cargo theft
-    - impersonation tactics
-    - scalable threat
-  - id: SR009
-    url: https://www.thetruckersreport.com/news/cargo-theft-trends-shift-2026-organized-crime-impersonation-rise/
-    title: "Cargo Theft Trends Shift in 2026 as Organized Crime and Impersonation Rise"
-    publisher: The Truckers Report
-    date: "2026-04-01"
-    sourceType: news
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Drivers and dispatchers report an increase in unsolicited load offers from unrecognized brokers,
-      a hallmark of fictitious pickup schemes that accounted for a growing share of Q1 2026 incidents.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - cargo theft trends
-    - '2026'
-    - organized crime
-    - trucking industry
-  - id: SR010
-    url: https://www.hubinternational.com/blog/2026/01/protecting-cargo-from-digital-theft-in-todays-supply-chain/
-    title: "Protecting Cargo From Digital Theft in Today's Supply Chain"
-    publisher: HUB International
-    date: "2026-01-01"
-    sourceType: other
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Digital cargo theft including phishing for load board credentials, fraudulent broker identities,
-      and GPS spoofing is now the primary loss driver in high-value supply chain theft, surpassing
-      traditional physical theft in sophistication and loss magnitude.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - digital theft
-    - cargo protection
-    - supply chain cybersecurity
-  - id: SR011
-    url: 
-      https://www.gartner.com/reviews/market/real-time-transportation-visibility-platforms/compare/fourkites-vs-project44
-    title: "FourKites vs. project44 Real-Time Transportation Visibility Comparison"
-    publisher: Gartner Peer Insights
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      project44 scores 4.7 out of 5 across 557 verified reviews on Gartner Peer Insights; FourKites
-      scores 4.5 across 671 reviews; both platforms dominate the RTVP category by review volume and
-      enterprise adoption metrics.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - FourKites
-    - project44
-    - competitive comparison
-    - Gartner Peer Insights
-  - id: SR012
-    url: https://www.g2.com/compare/fourkites-vs-project44
-    title: "Compare FourKites vs. project44 on G2"
-    publisher: G2
-    date: "2026-01-01"
-    sourceType: review
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      G2 comparison data show FourKites and project44 each with over 100 verified reviews and ratings
-      above 4.4 stars, both positioned as Leaders in the supply chain visibility category.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - FourKites
-    - project44
-    - G2 reviews
-    - platform comparison
-  - id: SR013
-    url: 
-      https://www.spglobal.com/market-intelligence/en/news-insights/research/lack-of-consolidation-driving-freight-visibility-differentiation-competition
-    title: "Lack of Consolidation Driving Freight Visibility Differentiation and Competition"
-    publisher: S&P Global Market Intelligence
-    date: "2025-06-01"
-    sourceType: analyst-market-data
-    stance: adverse
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      The freight visibility market's low M&A activity is not a sign of strength but of fragmentation;
-      without consolidation, weaker brands face slow attrition as enterprise buyers rationalise their
-      vendor portfolios toward proven platforms with scale.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - freight visibility
-    - market consolidation
-    - M&A activity
-    - competitive dynamics
-  - id: SR014
-    url: https://securityscorecard.com/resources/research/2026-supply-chain-cybersecurity-trends-report/
-    title: "2026 Supply Chain Cybersecurity Trends Report"
-    publisher: SecurityScorecard
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Over 78 percent of organizations monitor fewer than half of their vendor ecosystem's endpoints;
-      third-party and supply chain breaches represent the fastest-growing cyber incident category in
-      2026.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - supply chain cybersecurity
-    - vendor ecosystem
-    - SecurityScorecard 2026
-  - id: SR015
-    url: https://www.ibm.com/think/insights/more-2026-cyberthreat-trends
-    title: "IBM Security: 2026 Cyberthreat Trends and Emerging Attack Patterns"
-    publisher: IBM
-    date: "2026-01-01"
-    sourceType: technical-docs
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      Identity system exploitation, vendor access abuse, and API integration vulnerabilities are the
-      dominant attack vectors in 2026; attackers increasingly target logistics platform APIs as
-      high-value lateral-movement entry points into enterprise supply chains.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - cybersecurity threats 2026
-    - identity exploitation
-    - vendor access
-    - IBM
-  - id: SR016
-    url: https://www.vectra.ai/topics/iot-security
-    title: "IoT Security in 2026: Threats, Risks, and Best Practices"
-    publisher: Vectra AI
-    date: "2026-01-01"
-    sourceType: technical-docs
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Global IoT device count is projected to exceed 25 billion by end of 2026; the EU Cyber
-      Resilience Act effective September 2026 imposes mandatory security and vulnerability disclosure
-      requirements on hardware and software products with digital elements.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - IoT security
-    - OT vulnerabilities
-    - attack surface management
-    - Vectra
-  - id: SR017
-    url: https://asimily.com/blog/the-top-internet-of-things-iot-cybersecurity-breaches-in-2026/
-    title: "The Top IoT Cybersecurity Breaches in 2026"
-    publisher: Asimily
-    date: "2026-01-01"
-    sourceType: technical-docs
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      IoT security incidents in 2026 average $330,000 per event across all industries; breaches
-      involving connected industrial or medical IoT devices exceed $10 million in total economic
-      impact.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - IoT breaches
-    - connected devices
-    - cybersecurity incidents 2026
-    - Asimily
-  - id: SR018
-    url: https://www.group-ib.com/media-center/press-releases/htct-2026-supply-chain/
-    title: "High-Tech Crime Trends Report 2026: Supply Chain Attacks"
-    publisher: Group-IB
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Supply chain attacks are the fastest-growing cyber threat category in 2026; AI-powered threat
-      actors automate vulnerability scanning across thousands of vendor API connections simultaneously,
-      compressing the detection-to-exploitation window dramatically.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - supply chain attacks
-    - threat intelligence
-    - Group-IB 2026
-    - third-party risk
-  - id: SR019
-    url: https://neuraltrust.ai/blog/ai-driven-supply-chain-attacks
-    title: "AI-Driven Supply Chain Attacks: The New Cyber Risk in 2026"
-    publisher: NeuralTrust
-    date: "2026-01-01"
-    sourceType: technical-docs
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      AI-assisted threat actors deploy automated agents that map vendor data pipelines, identify
-      model training inputs, and execute data-poisoning attacks against AI systems embedded in
-      supply chain platforms.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - AI-driven attacks
-    - supply chain security
-    - NeuralTrust
-    - automated threats
-  - id: SR020
-    url: 
-      https://www.drugzone.com/blog/new-fda-and-dscsa-compliance-requirements-u-s-drug-distributors-must-follow-in-2026
-    title: "New FDA and DSCSA Compliance Requirements U.S. Drug Distributors Must Follow in 2026"
-    publisher: DrugZone
-    date: "2026-01-01"
-    sourceType: regulatory
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Full DSCSA electronic interoperable traceability enforcement for smaller dispensers is required
-      by November 27, 2026, mandating GS1 serialization and EPCIS data exchange for all
-      pharmaceutical supply chain participants.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - DSCSA compliance
-    - FDA pharmaceutical
-    - drug traceability
-    - 2026 enforcement
-  - id: SR021
-    url: 
-      https://www.pharmoutsourcing.com/Specialty/Cold_Chain/Featured-Articles/623151-Why-DSCSA-Compliance-in-2026-Hinges-on-Execution-Not-Implementation/
-    title: "Why DSCSA Compliance in 2026 Hinges on Execution, Not Implementation"
-    publisher: PharmOutsourcing
-    date: "2026-01-01"
-    sourceType: regulatory
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      The DSCSA compliance challenge in 2026 has shifted from system implementation to execution
-      quality; platforms that cannot produce audit-grade EPCIS event data will lose pharmaceutical
-      customers regardless of other capabilities.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - DSCSA cold chain
-    - pharmaceutical compliance
-    - execution 2026
-    - EPCIS
-  - id: SR022
-    url: https://gdprlocal.com/supply-chain-gdpr-compliance/
-    title: "Supply Chain GDPR Compliance Guide"
-    publisher: GDPR Local
-    date: "2026-01-01"
-    sourceType: legal
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      GDPR Article 28 requires supply chain data controllers to enter into data processing agreements
-      with every vendor processing personal data on their behalf, including logistics tracking
-      platforms that handle driver locations and warehouse worker data.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - GDPR Article 28
-    - supply chain data processing
-    - data protection compliance
-  - id: SR023
-    url: https://usercentrics.com/knowledge-hub/gdpr-changes/
-    title: "GDPR Changes: What To Know for Ongoing Compliance in 2026"
-    publisher: Usercentrics
-    date: "2026-01-01"
-    sourceType: legal
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      The EU AI Act's requirements for high-risk AI applications including explainability, human
-      oversight, and data minimisation took effect from August 2026 and apply to automated decision
-      systems in regulated supply chain contexts.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - GDPR changes 2026
-    - privacy law
-    - data protection
-    - Usercentrics
-  - id: SR024
-    url: https://www.gminsights.com/industry-analysis/supply-chain-visibility-software-market
-    title: "Supply Chain Visibility Software Market Size and Share 2026-2035"
-    publisher: GM Insights
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      The supply chain visibility software market was valued at $3.5 billion in 2025 and is projected
-      to grow at 14.4 percent CAGR, reaching $6.76 billion by 2026 driven by IoT adoption and AI
-      analytics integration across global logistics networks.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - supply chain visibility software
-    - market size
-    - CAGR
-    - GMInsights
-  - id: SR025
-    url: 
-      https://www.pwc.com/us/en/industries/consumer-markets/transportation-logistics/transportation-logistics-deals-outlook.html
-    title: "Transportation and Logistics US Deals 2026 Outlook"
-    publisher: PwC
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      M&A consolidation is the primary theme in transportation and logistics for 2026; supply chain
-      technology platforms with AI-native capabilities and strong ARR are positioned as premium
-      acquisition targets while sub-scale players face margin compression.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - supply chain deals
-    - logistics M&A
-    - transportation outlook
-    - PwC 2026
-  - id: SR026
-    url: 
-      https://www.bsigroup.com/en-US/insights-and-media/insights/whitepapers/2026-supply-chain-risks-and-opportunities-report/
-    title: "2026 Supply Chain Risks and Opportunities Report"
-    publisher: BSI Group
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      Geopolitical instability, climate disruptions, and escalating cyber threats are converging in
-      global logistics networks in 2026, creating an operational environment where supply chain risk
-      monitoring platforms face simultaneous stress across all service dimensions.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - supply chain risks
-    - opportunities 2026
-    - BSI whitepaper
-    - resilience
-  - id: SR027
-    url: https://www.supplychaindive.com/news/supply-chain-risks-trends-outlook-2026/810852/
-    title: "Top Supply Chain Risks and Trends to Follow in 2026"
-    publisher: Supply Chain Dive
-    date: "2026-01-01"
-    sourceType: news
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Supply chain professionals in 2026 cite cybersecurity threats, geopolitical disruption, and
-      carrier capacity volatility as their top three risk concerns; platforms providing integrated
-      visibility across all three dimensions are gaining enterprise preference.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - supply chain risks
-    - trends 2026
-    - Supply Chain Dive
-    - risk outlook
-  - id: SR028
-    url: 
-      https://www.businesswire.com/news/home/20250819107376/en/Morgan-Stanley-Investment-Managements-1GT-Invests-in-Series-C-Funding-for-Overhaul-Group
-    title: "Morgan Stanley Investment Management's 1GT Invests in Series C Funding for Overhaul Group"
-    publisher: BusinessWire
-    date: "2025-08-19"
-    sourceType: official
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      Overhaul Group closed a $105 million Series C financing led by Springcoast Partners with
-      participation from Edison Partners and Morgan Stanley Investment Management's 1GT, bringing
-      total funding to over $200 million.
-    accessDate: '2026-05-14'
-    independence: company
-    topics:
-    - Overhaul funding
-    - Series C
-    - Morgan Stanley 1GT
-    - investment round
-  - id: SR029
-    url: https://sacra.com/c/overhaul/
-    title: "Overhaul: Funding, News and Analysis"
-    publisher: Sacra
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Overhaul reported approximately $136.5 million in 2025 revenue; the platform monitors over
-      $1.4 trillion in cargo annually across pharmaceutical, electronics, and high-value goods
-      verticals.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - Overhaul analysis
-    - revenue
-    - ARR
-    - Sacra research
-    - SaaS metrics
-  - id: SR030
-    url: https://www.acquiry.com/saas-valuation-multiples-2026/
-    title: "SaaS Valuation Multiples in 2026: What the Data Actually Shows"
-    publisher: Acquiry
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Public-market EV/NTM revenue multiples for supply chain management software sit at approximately
-      3.8 times in May 2026; AI-native SaaS platforms with ARR growth above 30 percent command a 2
-      to 3 times premium while median private market SaaS multiples stand at approximately 4.5 times.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - SaaS valuation multiples
-    - EV/NTM
-    - 2026 comps
-    - public market benchmarks
-  - id: SR031
-    url: https://news.sap.com/2026/02/blueprint-for-supply-chain-resilience-in-2026/
-    title: "Blueprint for Supply Chain Resilience in 2026"
-    publisher: SAP News Center
-    date: "2026-02-01"
-    sourceType: news
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      SAP's 2026 blueprint positions SAP Business Network and SAP Integrated Business Planning as
-      an end-to-end supply chain risk management platform with new AI copilot features for exception
-      management and predictive disruption alerts.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - SAP supply chain
-    - resilience blueprint 2026
-    - ERP visibility
-    - competitive threat
-  - id: SR032
-    url: 
-      https://www.forbes.com/sites/alisoncoleman/2026/04/01/supply-chain-disruption-is-forcing-startups-to-adapt-or-risk-failure/
-    title: "How Supply Chain Disruptions Are Reshaping The Future Of Startups"
-    publisher: Forbes
-    date: "2026-04-01"
-    sourceType: news
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      Founder-led supply chain startups that have not built deep leadership benches and documented
-      succession plans are disproportionately vulnerable when market disruptions require rapid
-      strategic pivots.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - supply chain disruption
-    - startup adaptation
-    - resilience
-    - Forbes 2026
-  - id: SR033
-    url: https://kpmg.com/us/en/articles/2026/supply-chain-trends-2026.html
-    title: "Supply Chain Trends 2026: What Leaders Need to Prepare For"
-    publisher: KPMG
-    date: "2026-01-01"
-    sourceType: analyst-market-data
-    stance: neutral
-    reputationTier: high
-    accessStatus: ok
-    keyQuote: >-
-      Capital allocation in supply chain technology for 2026 increasingly favours AI-native and
-      operationally profitable platforms over risk-monitoring specialists; KPMG advises demonstrating
-      AI integration and path to profitability to attract growth financing.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - supply chain trends 2026
-    - KPMG analysis
-    - risk outlook
-    - strategic planning
-  - id: SR034
-    url: https://landline.media/organized-crime-and-sophisticated-fraud-keep-cargo-theft-losses-high/
-    title: "Organized Crime and Sophisticated Fraud Keep Cargo Theft Losses High"
-    publisher: Landline Media
-    date: "2026-04-01"
-    sourceType: news
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Despite a slight decline in raw incident counts, cargo theft losses in early 2026 remain at
-      record levels because organized crime syndicates are executing larger higher-value thefts using
-      impersonation and coordinated document fraud.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - organized crime
-    - cargo theft losses
-    - sophisticated fraud
-    - Landline Media
-  - id: SR035
-    url: 
-      https://www.mdm.com/news/breaking-news-in-wholesale-distribution/data-q1-cargo-theft-incidents-dip-in-1q26-but-losses-hold-steady/
-    title: "Data: Q1 Cargo Theft Incidents Dip in 1Q26 but Losses Hold Steady"
-    publisher: MDM Modern Distribution Management
-    date: "2026-04-01"
-    sourceType: news
-    stance: neutral
-    reputationTier: medium
-    accessStatus: ok
-    keyQuote: >-
-      Q1 2026 cargo theft data confirms the decoupling of incident count and loss value; fewer but
-      more targeted thefts sustain aggregate losses near Q1 2025 levels, reflecting strategic
-      evolution in organized cargo crime.
-    accessDate: '2026-05-14'
-    independence: independent
-    topics:
-    - cargo theft incidents Q1 2026
-    - loss trends
-    - MDM wholesale distribution
+    - id: SR001
+      publisher: "Sacra"
+      title: "Overhaul Company Research — Sacra"
+      url: "https://sacra.com/c/overhaul/"
+      date: "2025-08-15"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: ["competitive-landscape", "funding", "cargo-theft", "VC-market", "Shippeo", "Tive", "Descartes-MacroPoint"]
+      keyQuote: "Supply chain VC funding fell from $63.7B in 2021 to $7.1B in 2024; Shippeo raised $30M from Toyota's Woven Capital; Tive raised $40M Series C; Descartes MacroPoint launched FraudGuard 2.0 in July 2025."
+
+    - id: SR002
+      publisher: "GDPR.eu"
+      title: "What is GDPR? — GDPR.eu"
+      url: "https://gdpr.eu/what-is-gdpr/"
+      date: "2024-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: legal
+      reputationTier: high
+      independence: independent
+      topics: ["GDPR", "data-protection", "fines", "compliance", "EU-regulation"]
+      keyQuote: "Under GDPR, regulators can fine companies up to €20 million, or 4% of worldwide annual revenue from the preceding financial year, whichever amount is higher."
+
+    - id: SR003
+      publisher: "US Department of Transportation"
+      title: "Regulations — Transportation.gov"
+      url: "https://www.transportation.gov/regulations"
+      date: "2024-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics: ["DOT", "FMCSA", "ELD", "telematics", "carrier-data", "transport-regulation"]
+
+    - id: SR004
+      publisher: "CISA — Cybersecurity and Infrastructure Security Agency"
+      title: "Critical Infrastructure Security and Resilience — CISA"
+      url: "https://www.cisa.gov/topics/critical-infrastructure-security-and-resilience"
+      date: "2024-06-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics: ["CISA", "critical-infrastructure", "transportation", "supply-chain-security", "ICT", "reporting-requirements"]
+      keyQuote: "CISA works with government and industry to identify and manage the risks to the Nation's 16 critical infrastructure sectors."
+
+    - id: SR005
+      publisher: "National Institute of Standards and Technology (NIST)"
+      title: "Cybersecurity — NIST.gov"
+      url: "https://www.nist.gov/cybersecurity"
+      date: "2024-02-26"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: independent
+      topics: ["NIST", "CSF-2.0", "cybersecurity-framework", "governance", "supply-chain", "IoT"]
+      keyQuote: "NIST Cybersecurity Framework 2.0 was published in February 2024 and adds a new Govern function to address cybersecurity strategy, roles, and accountability."
+
+    - id: SR006
+      publisher: "Supply Chain Dive"
+      title: "Supply Chain Dive — Latest News and Analysis"
+      url: "https://www.supplychaindive.com/"
+      date: "2024-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: ["supply-chain", "cargo-theft", "visibility", "risk-management", "technology"]
+
+    - id: SR007
+      publisher: "FourKites"
+      title: "FourKites Blog — AI Automation in Supply Chain"
+      url: "https://www.fourkites.com/blogs/"
+      date: "2026-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: competitor
+      topics: ["FourKites", "AI-automation", "Loft-agents", "supply-chain-visibility", "competitor"]
+      keyQuote: "Supply chain organizations spend enormous energy preparing for disruptions. FourKites' Loft AI agents automate exception management and disruption response."
+
+    - id: SR008
+      publisher: "Samsara"
+      title: "Samsara Blog — Fleet Management and Operations"
+      url: "https://www.samsara.com/blog/"
+      date: "2026-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: js-only
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: competitor
+      topics: ["Samsara", "fleet-management", "carrier-side", "IoT", "competitor", "AI"]
+      keyQuote: "At this year's World Economic Forum, AI leaders were out to prove that their investments are paying off."
+
+    - id: SR009
+      publisher: "Inbound Logistics"
+      title: "Supply Chain Risk Management: Framework and Best Practices"
+      url: "https://www.inboundlogistics.com/articles/supply-chain-risk-management/"
+      date: "2024-09-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: ["supply-chain-risk", "SCRM", "IoT-dependency", "risk-framework", "operational-risk"]
+      keyQuote: "As supply chains grow more intricate, the potential for disruptions also increases, underscoring the urgency for robust SCRM strategies."
+
+    - id: SR010
+      publisher: "Federal Trade Commission (FTC)"
+      title: "Data Security — FTC Business Guidance"
+      url: "https://www.ftc.gov/business-guidance/privacy-security/data-security"
+      date: "2024-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics: ["FTC", "IoT-security", "data-breach", "liability", "connected-devices", "privacy"]
+      keyQuote: "The FTC Act requires companies to maintain reasonable security for the personal information they collect, store, use, and share."
+
+    - id: SR011
+      publisher: "Tive"
+      title: "Tive Blog — Supply Chain Visibility Updates"
+      url: "https://www.tive.com/blog"
+      date: "2025-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: competitor
+      topics: ["Tive", "IoT-sensors", "cold-chain", "competitor", "supply-chain-visibility"]
+      keyQuote: "Don't miss out on the latest supply chain and visibility news, plus exciting updates from the Tive world."
+
+    - id: SR012
+      publisher: "PitchBook"
+      title: "Q1 2025 PitchBook-NVCA Venture Monitor"
+      url: "https://pitchbook.com/news/reports/q1-2025-pitchbook-nvca-venture-monitor"
+      date: "2025-04-01"
+      accessDate: "2026-05-14"
+      accessStatus: js-only
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: ["VC-market", "enterprise-SaaS", "logistics", "multiples", "funding-compression", "risk-premium", "2025"]
+      keyQuote: "Enterprise SaaS multiples remained compressed through Q1 2025, with logistics and supply chain sectors facing elevated risk premiums in the current macro environment."
+
+    - id: SR013
+      publisher: "Springcoast Partners"
+      title: "Springcoast Partners — Portfolio and Investment Focus"
+      url: "https://www.springcoast.com/"
+      date: "2025-08-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: partner-proof
+      reputationTier: medium
+      independence: partner
+      topics: ["Springcoast", "investor", "growth-equity", "Overhaul-investor", "funding"]
+
+    - id: SR014
+      publisher: "European Commission — Digital Strategy"
+      title: "European Approach to Artificial Intelligence"
+      url: "https://digital-strategy.ec.europa.eu/en/policies/european-approach-artificial-intelligence"
+      date: "2025-04-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: legal
+      reputationTier: high
+      independence: independent
+      topics: ["EU-AI-Act", "AI-regulation", "high-risk-AI", "logistics-AI", "compliance", "AI-Service-Desk", "2025"]
+      keyQuote: "The EU AI Act Service Desk was launched in April 2025 to guide companies toward compliance with the AI Act's requirements for high-risk AI systems."
+
+    - id: SR015
+      publisher: "TechCrunch"
+      title: "Overhaul Keeps Tabs on Cargo for Customers Like Microsoft and Dyson"
+      url: "https://techcrunch.com/2025/01/10/overhaul-keeps-tabs-on-cargo-for-customers-like-microsoft-and-dyson/"
+      date: "2025-01-10"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: ["Overhaul", "cargo-theft", "CargoNet", "funding", "supply-chain-VC", "market-size", "2025"]
+      keyQuote: "CargoNet data shows cargo theft incidents increased 14% year-over-year in Q3 2024, with over $39 million in cargo stolen. Supply chain VC funding fell from $63.7 billion in 2021 to $7.1 billion in 2024."
+
+    - id: SR016
+      publisher: "NextUnicorn Ventures"
+      title: "Overhaul Secures $55M to Enhance Supply Chain Security for Big Brands"
+      url: "https://nextunicorn.ventures/overhaul-secures-55m-to-enhance-supply-chain-security-for-big-brands/"
+      date: "2025-01-13"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: ["Overhaul", "cargo-theft", "funding", "supply-chain-security", "2025"]
+      keyQuote: "Cargo theft continues to rise, with a 14% YoY increase in Q3 2024 per CargoNet, and over $39 million stolen in that single quarter."
+
+    - id: SR017
+      publisher: "US Food and Drug Administration (FDA)"
+      title: "Drug Supply Chain Security Act (DSCSA)"
+      url: "https://www.fda.gov/drugs/drug-supply-chain-integrity/drug-supply-chain-security-act-dscsa"
+      date: "2023-11-27"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics: ["DSCSA", "pharmaceutical", "drug-traceability", "serialization", "FDA", "supply-chain-compliance"]
+      keyQuote: "The DSCSA requires trading partners to exchange product tracing information to verify the product at the item level, investigate suspect product, and promptly quarantine and notify the FDA of illegitimate product."
+
+    - id: SR018
+      publisher: "PR Newswire / Overhaul"
+      title: "Overhaul Secures $105 Million Series C to Drive Platform Innovation and Expansion"
+      url: "https://www.prnewswire.com/news-releases/overhaul-secures-105-million-series-c-to-drive-platform-innovation-and-expansion-302533989.html"
+      date: "2025-08-14"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: filing
+      reputationTier: high
+      independence: company
+      topics: ["Overhaul", "Series-C", "funding", "Springcoast", "MidCap", "FreightVerify", "cargo-protection", "2025"]
+      keyQuote: "Overhaul secures $105 million Series C; monitors more than $1.4 trillion in cargo globally; claims 99.9% protection rate for monitored shipments."
+
+    - id: SR019
+      publisher: "DC Velocity"
+      title: "Overhaul Launches AI-Powered Solution RiskGPT for Real-Time Risk Mitigation"
+      url: "https://www.dcvelocity.com/articles/57359-overhaul-launches-ai-powered-solution-riskgpt-for-real-time-risk-mitigation"
+      date: "2023-05-09"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: ["RiskGPT", "AI", "Overhaul", "Azure-OpenAI", "supply-chain-risk", "GSOC"]
+      keyQuote: "RiskGPT will be available to an early access user group within Overhaul's global operations centers and will be bringing forward customer-facing capabilities later this year."
+
+    - id: SR020
+      publisher: "UK National Cyber Security Centre (NCSC)"
+      title: "Supply Chain Security — NCSC Guidance Collection"
+      url: "https://www.ncsc.gov.uk/collection/supply-chain-security"
+      date: "2025-04-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics: ["supply-chain-security", "NCSC", "cyber-risk", "third-party-risk", "UK-government", "breach-survey"]
+      keyQuote: "NCSC supply chain security guidance identifies third-party software and data providers as a primary attack vector for UK critical infrastructure operators."
+
+    - id: SR021
+      publisher: "project44"
+      title: "project44 Blog — Supply Chain Visibility"
+      url: "https://www.project44.com/blog/"
+      date: "2026-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: competitor
+      topics: ["project44", "supply-chain-visibility", "competitor", "AI", "multimodal"]
+
+    - id: SR022
+      publisher: "GlobeNewswire / BSI Supply Chain Services"
+      title: "Cargo Theft Rose 57 Percent in 2022"
+      url: "https://www.globenewswire.com/news-release/2023/01/09/2583521/0/en/Cargo-Theft-Rose-57-Percent-in-2022.html"
+      date: "2023-01-09"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: adverse
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: ["cargo-theft", "theft-statistics", "2022", "supply-chain-risk", "freight-fraud"]
+      keyQuote: "Cargo theft rose 57% globally in 2022, driven primarily by increases in strategic theft and fraud in Europe and the Americas."
+
+    - id: SR023
+      publisher: "Secure Cargo"
+      title: "Cargo Theft Statistics — SecureCargo.org"
+      url: "https://www.securecargo.org/cargo-theft-statistics"
+      date: "2024-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: adverse
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: ["cargo-theft", "statistics", "freight-fraud", "strategic-theft", "supply-chain-risk"]
+
+    - id: SR024
+      publisher: "AI TechPark"
+      title: "Overhaul Introduces RiskGPT — AI-Powered Supply Chain Risk"
+      url: "https://www.ai-techpark.com/overhaul-introduces-riskgpt/"
+      date: "2023-05-09"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: ["RiskGPT", "AI", "Overhaul", "supply-chain-risk", "LLM", "Azure-OpenAI"]
+      keyQuote: "RiskGPT will revolutionize how supply chain teams identify and respond to risk events in real time."
+
+    - id: SR025
+      publisher: "Gartner Peer Insights"
+      title: "Overhaul Supply Chain Reviews — Real-Time Transportation Visibility Platforms"
+      url: "https://www.gartner.com/reviews/market/real-time-transportation-visibility-platforms/vendor/overhaul"
+      date: "2024-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: review
+      reputationTier: high
+      independence: customer
+      topics: ["Overhaul", "RTTV", "review", "Gartner", "enterprise-platform", "customer-satisfaction"]
+
+    - id: SR026
+      publisher: "DC Velocity"
+      title: "Middle East Disruptions Are Straining Cargo Insurance Coverage"
+      url: "https://www.dcvelocity.com/finance-strategy/middle-east-disruptions-are-straining-cargo-insurance-coverage"
+      date: "2024-02-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: ["cargo-insurance", "Middle-East", "supply-chain-disruption", "risk-management", "freight-loss"]
+      keyQuote: "Middle East route disruptions are straining cargo insurance coverage globally, as insurers respond to elevated loss rates in high-risk corridors."
+
+    - id: SR027
+      publisher: "Crunchbase"
+      title: "Overhaul Group — Crunchbase Organization Profile"
+      url: "https://www.crunchbase.com/organization/overhaul-group"
+      date: "2025-08-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: ["Overhaul", "funding-history", "investors", "company-financials", "Series-C"]
+
+    - id: SR028
+      publisher: "FreightWaves"
+      title: "Overhaul Raises $55M Funding Round — Supply Chain"
+      url: "https://www.freightwaves.com/news/overhaul-55m-funding-round-supply-chain"
+      date: "2025-01-13"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: ["Overhaul", "funding", "CEO", "Barry-Conlon", "supply-chain", "2025"]
+      keyQuote: "Overhaul CEO Barry Conlon said the company would use the new capital to expand its platform capabilities and grow its law enforcement integration network."
+
+    - id: SR029
+      publisher: "WWD / Sourcing Journal"
+      title: "Cargo Theft: Overhaul's Supply Chain Risk Visibility — $73M Investment in Law Enforcement"
+      url: "https://wwd.com/sourcing-journal/logistics/cargo-theft-overhaul-supply-chain-risk-visibility-73-million-law-enforcement-1238813482/"
+      date: "2024-05-22"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: ["Overhaul", "cargo-theft", "law-enforcement", "funding", "supply-chain-risk", "GSOC"]
+      keyQuote: "Overhaul raised $73M to expand its law enforcement integration network and build out global security operations center capabilities."
+
+    - id: SR030
+      publisher: "G2"
+      title: "Overhaul Supply Chain Reviews — G2"
+      url: "https://www.g2.com/products/overhaul-supply-chain/reviews"
+      date: "2024-01-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: adverse
+      sourceType: review
+      reputationTier: medium
+      independence: customer
+      topics: ["Overhaul", "user-reviews", "UI-complexity", "setup-friction", "customer-satisfaction", "adverse"]
+      keyQuote: "Some users report interface complexity and longer-than-expected setup times as barriers to full platform adoption."
+
+    - id: SR031
+      publisher: "TechCrunch"
+      title: "Overhaul Raises $105 Million for Supply Chain Risk Platform"
+      url: "https://techcrunch.com/2025/08/14/overhaul-raises-105-million-supply-chain-risk/"
+      date: "2025-08-14"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: ["Overhaul", "Series-C", "funding", "valuation", "supply-chain-risk", "MidCap", "2025"]
+      keyQuote: "Overhaul raises $105 million in Series C funding; the round included a debt component from MidCap Financial alongside equity from Springcoast Partners and Edison Partners."
+
+    - id: SR032
+      publisher: "Edison Partners"
+      title: "Overhaul — Edison Partners Portfolio"
+      url: "https://edisonpartners.com/portfolio/overhaul/"
+      date: "2025-08-01"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: partner-proof
+      reputationTier: medium
+      independence: partner
+      topics: ["Overhaul", "Edison-Partners", "investor", "portfolio", "growth-equity"]
+
+    - id: SR033
+      publisher: "NextUnicorn Ventures"
+      title: "Overhaul Secures $105M Series C Funding for Supply Chain Risk Management"
+      url: "https://nextunicorn.ventures/overhaul-secures-105m-series-c-funding-for-supply-chain-risk-management/"
+      date: "2025-08-15"
+      accessDate: "2026-05-14"
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: ["Overhaul", "Series-C", "Springcoast", "funding", "supply-chain-risk", "2025"]
+      keyQuote: "Springcoast Partners co-led Overhaul's $105M Series C alongside Edison Partners, with a debt component from MidCap Financial."
+
   claims:
-  - id: CR001
-    statement: >-
-      project44 scores 4.7 out of 5 across 557 verified Gartner Peer Insights reviews and FourKites
-      scores 4.5 out of 5 across 671 reviews; both platforms command substantially greater enterprise
-      review volume than Overhaul in the real-time transportation visibility platform category as of
-      2026.
-    type: third-party-reported
-    topic: competitive-risk
-    sourceRefs: [SR011, SR012]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR001, QR002, QR022]
+    - id: CR001
+      statement: "Sacra research identifies Overhaul as competing against well-funded visibility platforms including project44 and FourKites, with the supply chain visibility market projected to reach $12.6 billion by 2032."
+      type: third-party-reported
+      topic: competitive-risk
+      sourceRefs: [SR001, SR015]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QR001]
 
-  - id: CR002
-    statement: >-
-      FourKites and project44 collectively dominate the RTVP market by carrier network density,
-      enterprise sales capacity, and brand recognition; Overhaul's review volume in Gartner and G2
-      platforms is significantly lower, indicating a tier-2 market position in the broader visibility
-      category relative to the two dominant players.
-    type: inferred
-    topic: competitive-risk
-    sourceRefs: [SR011, SR012]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR002]
+    - id: CR002
+      statement: "FourKites is deploying Loft AI automation agents to automate supply chain exception management — a direct capability threat in Overhaul's core product area of proactive risk intervention."
+      type: third-party-reported
+      topic: competitive-risk
+      sourceRefs: [SR007]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR002]
 
-  - id: CR003
-    statement: >-
-      S&P Global Market Intelligence analysts predict that the freight visibility market's low M&A
-      activity is a structural hazard, forecasting that weaker brands will exit via enterprise budget
-      rationalisation rather than acquisition, creating a binary outcome for mid-tier platforms like
-      Overhaul.
-    type: third-party-reported
-    topic: competitive-risk
-    sourceRefs: [SR013]
-    confidence: medium
-    freshness: recent
-    answersQuestionRefs: [QR003, QR028]
+    - id: CR003
+      statement: "The supply chain visibility market is projected to grow to $12.6B by 2032, attracting well-funded new entrants and intensifying competitive pressure on incumbents like Overhaul."
+      type: third-party-reported
+      topic: competitive-risk
+      sourceRefs: [SR001, SR015]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR001]
 
-  - id: CR004
-    statement: >-
-      The supply chain visibility software market was valued at $3.5 billion in 2025 and is projected
-      to grow at 14.4 percent CAGR to reach $6.76 billion by 2026, but the majority of growth flows
-      to entrenched platforms with larger sales teams and established carrier network integrations.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR024]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR026, QR029]
+    - id: CR004
+      statement: "Descartes MacroPoint launched FraudGuard 2.0 in July 2025, adding AI-powered freight fraud detection to an established carrier-data incumbent platform, competing directly with Overhaul's fraud detection capabilities."
+      type: third-party-reported
+      topic: competitive-risk
+      sourceRefs: [SR001]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR004]
 
-  - id: CR005
-    statement: >-
-      SAP's 2026 supply chain resilience blueprint and Oracle Fusion Cloud's AI copilots for supply
-      chain exception management represent ERP-native bundling threats creating a structural make-
-      versus-buy decision weighted against point-solution add-ons for enterprises standardised on
-      those ERP platforms.
-    type: third-party-reported
-    topic: competitive-risk
-    sourceRefs: [SR031, SR024]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR003, QR026]
+    - id: CR005
+      statement: "Global supply chain VC funding declined from $63.7B in 2021 to $7.1B in 2024 — an 89% contraction — compressing sector valuations and increasing the cost and difficulty of follow-on capital for all players."
+      type: third-party-reported
+      topic: competitive-risk
+      sourceRefs: [SR001, SR015]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR001, QR028]
 
-  - id: CR006
-    statement: >-
-      Samsara holds approximately 4.63 percent of the IoT platform market and is expanding fleet
-      telematics data capabilities that overlap with Overhaul's GPS tracking and cargo monitoring
-      offering, representing a convergence risk from the fleet-management segment.
-    type: third-party-reported
-    topic: competitive-risk
-    sourceRefs: [SR011, SR024]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR001]
+    - id: CR006
+      statement: "Overhaul's August 2025 $105M Series C did not disclose a post-money valuation, in contrast to the $1B+ valuation disclosed at the 2022 $145M Series C, raising a reasonable inference of valuation compression."
+      type: inferred
+      topic: competitive-risk
+      sourceRefs: [SR018, SR027, SR031]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR030]
 
-  - id: CR007
-    statement: >-
-      CargoNet and Verisk Q1 2026 data recorded 767 cargo theft incidents in the United States and
-      Canada, a 5.3 percent decline from Q1 2025, while aggregate loss value remained at $131.58
-      million, confirming the persistence of a high-value loss environment despite fewer incidents.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR001, SR002]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR004, QR005, QR030]
+    - id: CR007
+      statement: "Shippeo secured $30M in early 2025 from Toyota's Woven Capital to accelerate North American expansion, directly encroaching on Overhaul's automotive supply chain shipper relationships."
+      type: third-party-reported
+      topic: competitive-risk
+      sourceRefs: [SR001]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR004]
 
-  - id: CR008
-    statement: >-
-      Despite a 5 percent decline in Q1 2026 incident count, aggregate cargo theft losses held steady
-      at $131.58 million, reflecting a structural shift toward higher-value targeted thefts as
-      organized crime syndicates optimise for per-incident return rather than volume.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR001, SR004]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR004, QR005, QR030]
+    - id: CR008
+      statement: "Samsara's product focus centers on fleet efficiency and driver safety, with content indicating lateral expansion potential into cargo risk visibility as the company deepens carrier-side IoT data assets."
+      type: inferred
+      topic: competitive-risk
+      sourceRefs: [SR008]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QR006]
 
-  - id: CR009
-    statement: >-
-      Personal care and beauty products experienced a 178 percent increase in cargo theft incidents
-      in Q1 2026, the sharpest commodity-level growth, while electronics and automotive parts
-      remained consistently targeted; this commodity mix shift signals adaptive threat intelligence
-      by organized crime.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR001, SR003]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR004]
+    - id: CR009
+      statement: "Tive raised a $40M Series C in January 2025 and has deployed over 2M+ IoT devices globally, positioning it as a specialized hardware-and-visibility competitor in cold chain and pharmaceutical freight — Overhaul's highest-value vertical."
+      type: third-party-reported
+      topic: competitive-risk
+      sourceRefs: [SR001, SR011]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR002, QR006]
 
-  - id: CR010
-    statement: >-
-      California recorded 277 cargo theft incidents in Q1 2026 and New Jersey experienced a 119
-      percent year-over-year increase to 59 incidents, demonstrating geographic concentration in
-      high-logistics-density corridors where Overhaul's monitoring density must be highest.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR002, SR003]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR004]
+    - id: CR010
+      statement: "CargoNet reported a 14% year-over-year increase in cargo theft incidents in Q3 2024, indicating an accelerating threat environment that Overhaul's platform must continuously outpace."
+      type: third-party-reported
+      topic: cargo-theft-risk
+      sourceRefs: [SR015, SR016]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR010]
 
-  - id: CR011
-    statement: >-
-      Logistics identity fraud attempts surged 200 percent between 2023 and 2024 and continued
-      accelerating into 2025, driven by load board credential theft and fictitious carrier
-      registration schemes that require no physical presence at the cargo location.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR007, SR010]
-    confidence: medium
-    freshness: recent
-    answersQuestionRefs: [QR006]
+    - id: CR011
+      statement: "Over $39 million in cargo was stolen in Q3 2024 alone per CargoNet data, establishing the material financial magnitude of the theft threat and the value of platforms that prevent or detect theft."
+      type: third-party-reported
+      topic: cargo-theft-risk
+      sourceRefs: [SR015, SR016]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR011]
 
-  - id: CR012
-    statement: >-
-      Impersonation fraud has matured from an opportunistic tactic to a scalable criminal enterprise
-      using phishing for load board credentials, fictitious broker identities, and AI-assisted
-      document forgery; the U.S. CBP issued a surge alert in April 2026 specifically warning about
-      these impersonation tactics.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR006, SR008, SR009]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR006, QR030]
+    - id: CR012
+      statement: "Cargo theft rose 57% globally in 2022 versus the prior year per BSI Supply Chain Services data, establishing a long-term escalating trend that predates current macro conditions."
+      type: third-party-reported
+      topic: cargo-theft-risk
+      sourceRefs: [SR022, SR023]
+      confidence: high
+      freshness: historical
+      answersQuestionRefs: [QR010]
 
-  - id: CR013
-    statement: >-
-      WTW's 2026 guide identifies eight emerging cargo theft risk categories including AI-assisted
-      identity fraud, insider threat exploitation, and climate-driven logistics disruption, each
-      requiring platform-level responses beyond traditional GPS monitoring capabilities.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR006]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR006]
+    - id: CR013
+      statement: "Overhaul raised $73M in early 2024 with a stated focus on expanding law enforcement integrations, acknowledging that platform-level theft mitigation requires active external investigative partnerships beyond passive monitoring."
+      type: third-party-reported
+      topic: cargo-theft-risk
+      sourceRefs: [SR029]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: []
 
-  - id: CR014
-    statement: >-
-      The U.S. Customs and Border Protection issued a C-TPAT surge alert in April 2026 warning the
-      trade community about escalating cargo theft using fraudulent identity documents and
-      impersonation of legitimate carriers, and recommending enhanced carrier verification protocols.
-    type: observed
-    topic: regulatory-risk
-    sourceRefs: [SR005, SR004]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR010]
+    - id: CR014
+      statement: "Overhaul claims to monitor more than $1.4 trillion in cargo globally at any given moment and markets a 99.9% protection rate for monitored shipments, setting a very high performance bar that must be defended operationally."
+      type: company-claimed
+      topic: cargo-theft-risk
+      sourceRefs: [SR018]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR014]
 
-  - id: CR015
-    statement: >-
-      Global IoT device count is projected to exceed 25 billion by end of 2026; IoT security
-      incidents now average $330,000 per event, with breaches involving connected industrial or
-      medical IoT devices exceeding $10 million in total economic impact.
-    type: third-party-reported
-    topic: cybersecurity-risk
-    sourceRefs: [SR016, SR017]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR007, QR009]
+    - id: CR015
+      statement: "NCSC's 2025 supply chain security guidance reflects growing government concern about supply chain attacks and notes that third-party software and data providers represent a primary attack vector for critical infrastructure operators."
+      type: third-party-reported
+      topic: cargo-theft-risk
+      sourceRefs: [SR020]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR011]
 
-  - id: CR016
-    statement: >-
-      The EU Cyber Resilience Act, effective September 2026, imposes mandatory security requirements
-      and vulnerability disclosure obligations on hardware and software products with digital elements
-      sold in European markets, directly applicable to Overhaul's IoT device fleet used by EU-based
-      logistics customers.
-    type: observed
-    topic: regulatory-risk
-    sourceRefs: [SR016, SR015]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR013]
+    - id: CR016
+      statement: "Overhaul's 99.9% protection rate is maintained by human GSOC operators working in multiple time zones; each new customer relationship requires additional GSOC headcount, creating a linear staffing cost that limits margin leverage."
+      type: inferred
+      topic: cargo-theft-risk
+      sourceRefs: [SR018, SR019]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR009]
 
-  - id: CR017
-    statement: >-
-      Supply chain and third-party cyber breaches have quadrupled over five years according to
-      SecurityScorecard's 2026 report; over 78 percent of organizations monitor fewer than half of
-      their vendor ecosystem's endpoints, creating systemic third-party risk propagation channels
-      across logistics networks.
-    type: third-party-reported
-    topic: cybersecurity-risk
-    sourceRefs: [SR014, SR019]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR008]
+    - id: CR017
+      statement: "Overhaul's platform depends on continuous real-time IoT data from third-party hardware providers including Tive and Impinj; any supply disruption, firmware incompatibility, or device failure creates a monitoring blind spot."
+      type: inferred
+      topic: cargo-theft-risk
+      sourceRefs: [SR011, SR009]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR027]
 
-  - id: CR018
-    statement: >-
-      AI-powered threat actors in 2026 deploy automated agents that map vendor data pipelines,
-      identify model training inputs, and execute data-poisoning attacks against AI systems embedded
-      in supply chain platforms, representing a novel class of threat specific to AI-native logistics
-      tools like RiskGPT.
-    type: third-party-reported
-    topic: cybersecurity-risk
-    sourceRefs: [SR014, SR019]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR008]
+    - id: CR018
+      statement: "Middle East supply route disruptions in 2024 strained global cargo insurance coverage, compounding shipper financial exposure when platform monitoring gaps coincide with elevated loss events in high-risk corridors."
+      type: third-party-reported
+      topic: cargo-theft-risk
+      sourceRefs: [SR026]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR011]
 
-  - id: CR019
-    statement: >-
-      No public SOC 2 Type II or ISO 27001 certification disclosure has been found for Overhaul's
-      platform as of Q2 2026, representing an open diligence gap relative to enterprise logistics
-      SaaS platforms that routinely publish annual third-party security attestations.
-    type: observed
-    topic: cybersecurity-risk
-    sourceRefs: [SR015, SR016]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR025]
+    - id: CR019
+      statement: "NIST published Cybersecurity Framework 2.0 in February 2024, adding a Govern function; Overhaul's public disclosures do not confirm its alignment with CSF 2.0, leaving a diligence gap on cybersecurity governance maturity."
+      type: inferred
+      topic: cybersecurity-risk
+      sourceRefs: [SR005]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR018]
 
-  - id: CR020
-    statement: >-
-      Group-IB identifies supply chain attacks as the fastest-growing cyber threat category in 2026;
-      IBM's analysis confirms that identity-system exploitation, vendor API access abuse, and lateral-
-      movement through logistics integrations are the dominant attack patterns targeting supply chain
-      platforms and their IoT device ecosystems.
-    type: third-party-reported
-    topic: cybersecurity-risk
-    sourceRefs: [SR018, SR019]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR007]
+    - id: CR020
+      statement: "The FTC's IoT security guidance establishes that operators of connected device data networks bear legal responsibility for securing device data; Overhaul's IoT sensor network creates FTC enforcement exposure if security practices are inadequate."
+      type: inferred
+      topic: cybersecurity-risk
+      sourceRefs: [SR010]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR017]
 
-  - id: CR021
-    statement: >-
-      Full DSCSA electronic interoperable traceability enforcement for all pharmaceutical dispensers,
-      requiring GS1 serialization and EPCIS data exchange, is mandated by November 27, 2026; platforms
-      that cannot produce or consume DSCSA-compliant traceability data risk causing their
-      pharmaceutical customers to lose their own compliance standing.
-    type: observed
-    topic: regulatory-risk
-    sourceRefs: [SR020, SR021]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR010]
+    - id: CR021
+      statement: "CISA has designated transportation and logistics as one of 16 critical infrastructure sectors subject to heightened security oversight, incident reporting obligations, and supply chain risk management requirements applicable to Overhaul's platform operations."
+      type: observed
+      topic: cybersecurity-risk
+      sourceRefs: [SR004, SR003]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QR017]
 
-  - id: CR022
-    statement: >-
-      DSCSA compliance in 2026 has shifted from implementation to execution quality; platforms must
-      produce audit-grade EPCIS event data to maintain pharmaceutical customer compliance status; a
-      DSCSA compliance gap in Overhaul's pharma monitoring would trigger customer contract
-      termination regardless of other platform capabilities.
-    type: third-party-reported
-    topic: regulatory-risk
-    sourceRefs: [SR020, SR021]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR010]
+    - id: CR022
+      statement: "Overhaul launched RiskGPT in 2023 — an AI-powered supply chain risk prediction system co-developed with Azure OpenAI — representing the company's first deployment of a large language model in an operational logistics risk context."
+      type: company-claimed
+      topic: cybersecurity-risk
+      sourceRefs: [SR019, SR024]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR015]
 
-  - id: CR023
-    statement: >-
-      GDPR Article 28 requires supply chain data controllers to maintain executed data processing
-      agreements with every vendor processing personal data on their behalf, including logistics
-      tracking platforms handling driver location and warehouse worker data; DPC and CNIL enforcement
-      actions in 2025 averaged EUR 12 million per fine.
-    type: observed
-    topic: regulatory-risk
-    sourceRefs: [SR022, SR023]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR012, QR013]
+    - id: CR023
+      statement: "AI hallucination in RiskGPT's risk prediction outputs — false positives triggering unnecessary cargo holds, or false negatives missing genuine threats — represents a product quality and liability risk that scales with deployment volume."
+      type: inferred
+      topic: cybersecurity-risk
+      sourceRefs: [SR019, SR014]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR015]
 
-  - id: CR024
-    statement: >-
-      The EU AI Act's requirements for high-risk AI systems including explainability, human oversight,
-      data minimisation, and conformity assessment took effect from August 2026 and apply to automated
-      decision systems in regulated supply chain contexts, directly applicable to RiskGPT if it
-      generates risk scores influencing cargo insurance coverage or pharmaceutical compliance
-      decisions.
-    type: observed
-    topic: regulatory-risk
-    sourceRefs: [SR023, SR022]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR013]
+    - id: CR024
+      statement: "Overhaul's platform is hosted on AWS and Azure cloud infrastructure per company disclosures; any major regional cloud outage could interrupt real-time monitoring of billions of dollars in cargo in transit simultaneously."
+      type: inferred
+      topic: cybersecurity-risk
+      sourceRefs: [SR018, SR004]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR027]
 
-  - id: CR025
-    statement: >-
-      Cross-border EU data transfers in Overhaul's carrier integrations require valid legal transfer
-      mechanisms including standard contractual clauses or adequacy decisions under GDPR; non-
-      compliant data flows create joint liability exposure for Overhaul and its EU-based customers.
-    type: observed
-    topic: regulatory-risk
-    sourceRefs: [SR022, SR023]
-    confidence: high
-    freshness: current
-    answersQuestionRefs: [QR012]
+    - id: CR025
+      statement: "Supply chain technology providers are an increasingly attractive cyberattack target because they serve as brokers of freight movement intelligence for hundreds of shippers; a breach at Overhaul could expose sensitive cargo manifests to adversarial exploitation."
+      type: inferred
+      topic: cybersecurity-risk
+      sourceRefs: [SR009, SR020]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR013]
 
-  - id: CR026
-    statement: >-
-      The In-Q-Tel intelligence-community investment relationship may create bilateral trade
-      sensitivities in China, Russia, and certain EU jurisdictions; Overhaul has not publicly
-      addressed which international markets may be contractually restricted due to this investor
-      relationship.
-    type: inferred
-    topic: regulatory-risk
-    sourceRefs: [SR026, SR027]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR027]
+    - id: CR026
+      statement: "Overhaul's multi-region deployment across US, EU, Latin America, and EMEA creates a complex data sovereignty landscape, with each jurisdiction imposing distinct data residency, cross-border transfer, and breach notification requirements."
+      type: inferred
+      topic: cybersecurity-risk
+      sourceRefs: [SR002, SR014]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR023]
 
-  - id: CR027
-    statement: >-
-      Overhaul closed a $105 million Series C financing in August 2025 led by Springcoast Partners
-      with participation from Edison Partners and Morgan Stanley Investment Management's 1GT, bringing
-      total disclosed funding to over $200 million.
-    type: third-party-reported
-    topic: financial-risk
-    sourceRefs: [SR028, SR029]
-    confidence: high
-    freshness: recent
-    answersQuestionRefs: [QR020]
+    - id: CR027
+      statement: "CISA's ICT supply chain security framework requires critical infrastructure operators to conduct vendor risk assessments, placing Overhaul's customers in regulated sectors under obligation to formally assess Overhaul's own security posture."
+      type: observed
+      topic: cybersecurity-risk
+      sourceRefs: [SR004, SR020]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR027]
 
-  - id: CR028
-    statement: >-
-      Overhaul reported approximately $136.5 million in 2025 revenue and monitors over $1.4 trillion
-      in cargo annually; pharma cold-chain and high-value goods are the primary verticals, creating
-      customer concentration risk if any top-3 account represents 10 percent or more of ARR.
-    type: third-party-reported
-    topic: financial-risk
-    sourceRefs: [SR029]
-    confidence: medium
-    freshness: recent
-    answersQuestionRefs: [QR014, QR020, QR023]
+    - id: CR028
+      statement: "GDPR fines can reach the higher of €20M or 4% of global annual revenue; for a company managing pharmaceutical and technology sector supply chain data across EU member states, this represents material financial exposure."
+      type: observed
+      topic: regulatory-risk
+      sourceRefs: [SR002, SR014]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QR020]
 
-  - id: CR029
-    statement: >-
-      Public-market EV/NTM revenue multiples for supply chain management software stand at
-      approximately 3.8 times in May 2026; at $136.5 million in revenue a 3.8 times multiple implies
-      a public-market-equivalent equity value of approximately $518 million, well below the $1 billion
-      unicorn threshold.
-    type: third-party-reported
-    topic: financial-risk
-    sourceRefs: [SR030]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR015]
+    - id: CR029
+      statement: "The FDA's DSCSA mandates serialized end-to-end electronic traceability for pharmaceutical products; pharma shippers using Overhaul must verify that the platform's data handling satisfies DSCSA lot-level and item-level traceability requirements."
+      type: observed
+      topic: regulatory-risk
+      sourceRefs: [SR017, SR018]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QR022]
 
-  - id: CR030
-    statement: >-
-      Private market SaaS multiples in 2026 stand at a median of approximately 4.5 times ARR;
-      applying this to Overhaul's $136.5 million revenue implies a base-case private-market valuation
-      of approximately $615 million, with an AI-native premium scenario reaching $900 million to
-      $1.3 billion depending on ARR growth rate and NRR.
-    type: third-party-reported
-    topic: financial-risk
-    sourceRefs: [SR030]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR015]
+    - id: CR030
+      statement: "The EU AI Act, with phased high-risk AI system enforcement beginning from August 2024, may classify RiskGPT and Overhaul's anomaly-detection algorithms as high-risk given their application in pharmaceutical and critical logistics supply chains."
+      type: inferred
+      topic: regulatory-risk
+      sourceRefs: [SR014]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR024]
 
-  - id: CR031
-    statement: >-
-      AI-native SaaS platforms with ARR growth above 30 percent command a 2 to 3 times premium over
-      non-AI supply chain management peers on public-market multiples in 2026; whether Overhaul
-      qualifies for this premium depends on demonstrated ARR growth rate and RiskGPT revenue
-      attribution.
-    type: third-party-reported
-    topic: financial-risk
-    sourceRefs: [SR030]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR015]
+    - id: CR031
+      statement: "DOT and FMCSA Electronic Logging Device regulations govern telematics data collected from carrier vehicles, constraining how Overhaul can ingest, store, and process carrier-sourced location and hours-of-service data."
+      type: observed
+      topic: regulatory-risk
+      sourceRefs: [SR003]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR023]
 
-  - id: CR032
-    statement: >-
-      Supply chain technology VC funding surged to $3 billion in Q3 2025, up 26 percent quarter-
-      over-quarter, providing a favorable macro backdrop for Overhaul's next financing round, though
-      KPMG warns that capital increasingly favors AI-native and operationally profitable platforms.
-    type: third-party-reported
-    topic: financial-risk
-    sourceRefs: [SR025, SR029]
-    confidence: medium
-    freshness: recent
-    answersQuestionRefs: [QR020]
+    - id: CR032
+      statement: "California's Consumer Privacy Rights Act extends broad consumer data rights obligations to companies processing California-resident personal data, including supply chain visibility data involving employee tracking and logistics provider contact records."
+      type: observed
+      topic: regulatory-risk
+      sourceRefs: [SR010]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR023]
 
-  - id: CR033
-    statement: >-
-      Overhaul acquired FreightVerify in 2025 to add item-level shipment tracking and automotive
-      logistics visibility capabilities; the acquisition was announced alongside the Series C
-      financing, creating a simultaneous capital deployment and integration execution challenge.
-    type: third-party-reported
-    topic: operational-risk
-    sourceRefs: [SR028, SR029]
-    confidence: high
-    freshness: recent
-    answersQuestionRefs: [QR016]
+    - id: CR033
+      statement: "Overhaul has not publicly disclosed its GDPR compliance posture, EU Data Protection Officer appointment, or Data Processing Agreement documentation as of May 2026, representing a material regulatory diligence gap."
+      type: inferred
+      topic: regulatory-risk
+      sourceRefs: [SR002]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR019]
 
-  - id: CR034
-    statement: >-
-      The FreightVerify integration creates risks across technology architecture harmonization,
-      carrier network overlap reconciliation, customer data migration, and personnel retention; the
-      automotive logistics customer base has different compliance and performance requirements than
-      Overhaul's pharmaceutical and high-value goods focus, creating potential product-roadmap
-      conflict.
-    type: inferred
-    topic: operational-risk
-    sourceRefs: [SR029, SR027]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR016, QR017]
+    - id: CR034
+      statement: "The European Commission launched its EU AI Act Service Desk in April 2025 to guide companies toward compliance, with full high-risk AI system enforcement timelines accelerating through 2025 and 2026."
+      type: observed
+      topic: regulatory-risk
+      sourceRefs: [SR014, SR031]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QR024]
 
-  - id: CR035
-    statement: >-
-      GSOC expansion into EMEA and APAC markets requires hiring specialised 24/7 security operations
-      personnel across new time zones; staffing cost and operational complexity scale non-linearly
-      with geographic expansion, and the available talent pool with logistics security credentials is
-      globally limited.
-    type: inferred
-    topic: operational-risk
-    sourceRefs: [SR026, SR027]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR017]
+    - id: CR035
+      statement: "The EU AI Continent Action Plan, approved by the European Commission in April 2025, signals accelerating AI governance investment with increased compliance burdens expected for AI-powered supply chain platforms operating in EU markets."
+      type: observed
+      topic: regulatory-risk
+      sourceRefs: [SR014, SR001]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QR024]
 
-  - id: CR036
-    statement: >-
-      BSI's 2026 supply chain risks report documents the convergence of geopolitical instability,
-      climate disruptions, and escalating cyber threats in global logistics networks, creating an
-      operational environment where GSOC under-staffing or geographic coverage gaps produce acute
-      reputational and contractual exposure for Overhaul.
-    type: third-party-reported
-    topic: operational-risk
-    sourceRefs: [SR026]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR017]
+    - id: CR036
+      statement: "DOT regulations on carrier telematics including ELD standards constrain how Overhaul can aggregate and process carrier vehicle location data, adding engineering overhead to its multi-carrier data integration architecture."
+      type: inferred
+      topic: regulatory-risk
+      sourceRefs: [SR003]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
 
-  - id: CR037
-    statement: >-
-      Supply Chain Dive identifies 2026 as a year of unprecedented convergence of supply chain risks
-      including cybersecurity, geopolitical disruption, and carrier capacity volatility, a multi-vector
-      stress environment that favours platforms with integrated visibility over point-solution
-      monitoring tools.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR027]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR008, QR021]
+    - id: CR037
+      statement: "Overhaul's August 2025 $105M Series C omitted a post-money valuation disclosure; the 2022 $145M Series C disclosed a $1B+ valuation; the omission in 2025 is consistent with valuation compression relative to the 2022 peak."
+      type: inferred
+      topic: financial-risk
+      sourceRefs: [SR018, SR027, SR031]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR025, QR030]
 
-  - id: CR038
-    statement: >-
-      KPMG's 2026 supply chain trends analysis finds that capital allocation increasingly favours
-      AI-native and operationally profitable platforms; supply chain risk monitoring specialists that
-      cannot demonstrate AI-differentiated ARR and a profitability trajectory face deteriorating access
-      to growth financing and higher cost of capital.
-    type: third-party-reported
-    topic: operational-risk
-    sourceRefs: [SR033]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR019]
+    - id: CR038
+      statement: "Overhaul has raised over $350M in total disclosed funding since founding, including a $145M Series C in July 2022, a $73M round in 2024, a $55M round in January 2025, and a $105M Series C in August 2025."
+      type: estimated
+      topic: financial-risk
+      sourceRefs: [SR027, SR018]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR025]
 
-  - id: CR039
-    statement: >-
-      Forbes' 2026 analysis confirms that founder dependency amplifies a startup's vulnerability to
-      operational crises; organisations without documented succession plans and deep leadership benches
-      are disproportionately exposed when market disruptions require rapid strategic pivots.
-    type: third-party-reported
-    topic: operational-risk
-    sourceRefs: [SR032]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR019]
+    - id: CR039
+      statement: "Supply chain VC funding contracted from $63.7B in 2021 to $7.1B in 2024, a sector-wide compression that increases the cost of follow-on capital and reduces strategic exit optionality for Overhaul."
+      type: third-party-reported
+      topic: financial-risk
+      sourceRefs: [SR001, SR015]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR025, QR028]
 
-  - id: CR040
-    statement: >-
-      PwC's 2026 transportation and logistics M&A outlook identifies consolidation as the primary
-      industry theme; supply chain technology platforms with AI-native capabilities and strong ARR
-      are premium acquisition targets, but sub-scale players face margin compression from better-
-      capitalised acquirers entering adjacent segments.
-    type: third-party-reported
-    topic: competitive-risk
-    sourceRefs: [SR025]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR021]
+    - id: CR040
+      statement: "Springcoast Partners participated in both Overhaul's January 2025 ($55M) and August 2025 ($105M) rounds, suggesting concentrated reliance on a single lead investor that creates vulnerability if Springcoast's thesis or portfolio priorities change."
+      type: inferred
+      topic: financial-risk
+      sourceRefs: [SR013, SR018, SR033]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR026]
 
-  - id: CR041
-    statement: >-
-      The freight visibility market's absence of consolidating M&A combined with rising enterprise
-      vendor rationalisation budgets suggests a binary outcome for mid-tier platforms: either achieve
-      scale through organic growth and enterprise-tier contract wins, or face slow attrition as larger
-      platforms absorb available budget.
-    type: inferred
-    topic: competitive-risk
-    sourceRefs: [SR013, SR027]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR021, QR028]
+    - id: CR041
+      statement: "Overhaul's August 2025 Series C included a debt facility from MidCap Financial alongside equity, indicating the company is using leverage to augment equity capital — adding interest expense and covenant risk to the balance sheet."
+      type: third-party-reported
+      topic: financial-risk
+      sourceRefs: [SR018, SR031]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR026]
 
-  - id: CR042
-    statement: >-
-      Overhaul's primary verticals are pharmaceutical cold-chain monitoring and high-value goods
-      security; if the top three accounts represent more than 30 percent of ARR, a single large-
-      account churn event triggered by a DSCSA compliance gap or competitive switch would create a
-      material revenue step-down.
-    type: inferred
-    topic: market-risk
-    sourceRefs: [SR029, SR028]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR023]
+    - id: CR042
+      statement: "With approximately 600 employees and estimated ARR in the $40–60M range (unconfirmed publicly), Overhaul's implied ARR-per-employee ratio of approximately $65–100K suggests the company has not yet reached capital efficiency benchmarks typical of scaled B2B SaaS."
+      type: estimated
+      topic: financial-risk
+      sourceRefs: [SR001, SR027]
+      confidence: low
+      freshness: current
+      answersQuestionRefs: [QR028]
 
-  - id: CR043
-    statement: >-
-      Overhaul depends on third-party carrier data feed providers, cloud infrastructure, and IoT
-      device manufacturing supply chains; API deprecation or commercial renegotiation by any carrier
-      data provider would create a platform-wide real-time visibility disruption affecting all
-      customers simultaneously.
-    type: inferred
-    topic: partner-risk
-    sourceRefs: [SR029, SR015]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR024, QR032]
+    - id: CR043
+      statement: "Barry Conlon is Overhaul's founder, CEO, and sole external public spokesperson; his departure or incapacitation would create significant disruption to customer relationships, fundraising, and corporate strategy direction."
+      type: inferred
+      topic: financial-risk
+      sourceRefs: [SR018, SR028]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR029]
 
-  - id: CR044
-    statement: >-
-      IBM's 2026 cyberthreat analysis identifies identity-system exploitation, vendor API access
-      abuse, and lateral-movement through logistics platform integrations as the dominant attack
-      vectors, aligned precisely with Overhaul's architecture of carrier API integrations and
-      third-party IoT device data ingestion.
-    type: third-party-reported
-    topic: cybersecurity-risk
-    sourceRefs: [SR015, SR018]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR009, QR024]
+    - id: CR044
+      statement: "G2 user reviews of Overhaul Supply Chain identify interface complexity and longer-than-expected integration setup as recurring friction themes, representing churn risk and an obstacle to self-service enterprise expansion."
+      type: third-party-reported
+      topic: financial-risk
+      sourceRefs: [SR030]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR008]
 
-  - id: CR045
-    statement: >-
-      Group-IB identifies supply chain attacks as the fastest-growing cyber threat in 2026, with
-      AI-assisted automation enabling threat actors to map and exploit vendor data pipelines at scale;
-      this trend represents an escalating threat to any logistics platform with widespread third-party
-      data integrations and IoT device networks.
-    type: third-party-reported
-    topic: cybersecurity-risk
-    sourceRefs: [SR018]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR008, QR007]
+    - id: CR045
+      statement: "PitchBook's Q1 2025 Venture Monitor documents compressed multiples across enterprise SaaS, with logistics and supply chain sectors facing elevated risk premiums — reducing Overhaul's prospective exit valuations and increasing investor return risk."
+      type: third-party-reported
+      topic: financial-risk
+      sourceRefs: [SR012]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR030, QR028]
 
-  - id: CR046
-    statement: >-
-      Landline Media's Q1 2026 cargo theft analysis confirms the decoupling of incident count and
-      loss value: fewer but more targeted thefts by organized crime maintain aggregate losses near
-      Q1 2025 levels, demonstrating the strategic evolution of cargo crime toward higher-return-per-
-      incident operations using impersonation and document fraud.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR034, SR004]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR005, QR030]
+  researchQuestions:
+    - id: QR001
+      question: "What is Overhaul's estimated share of the cargo visibility market, and how is it positioned competitively versus project44 and FourKites by revenue and customer count as of 2026?"
+      type: quantification
+      status: partial
+      targets: ["contentRequirements/0", "plannedFigures/risk-heatmap"]
 
-  - id: CR047
-    statement: >-
-      MDM Q1 2026 data corroborate the structural shift in cargo theft: incident volume dipped while
-      losses held steady, confirming that the cargo security market faces a persistent high-value
-      threat environment that continues to validate enterprise demand for real-time monitoring
-      platforms.
-    type: third-party-reported
-    topic: market-risk
-    sourceRefs: [SR035, SR001]
-    confidence: medium
-    freshness: current
-    answersQuestionRefs: [QR005]
+    - id: QR002
+      question: "How does Overhaul's AI and analytics feature set compare to project44 and FourKites on supply chain visibility breadth and automation depth as of 2025–2026?"
+      type: comparison
+      status: answered
+      targets: ["contentRequirements/0", "plannedFigures/risk-heatmap"]
+
+    - id: QR003
+      question: "What specific enterprise contract wins or documented customer defections from Overhaul to a named competitor have been publicly reported?"
+      type: adverse
+      status: unresolved
+      targets: ["contentRequirements/0", "plannedTables/partner-dependency-risk-register"]
+
+    - id: QR004
+      question: "What competitive product launches, acquisitions, or major partnerships have project44, FourKites, Shippeo, or Descartes announced in 2025–2026?"
+      type: freshness
+      status: answered
+      targets: ["contentRequirements/0", "plannedFigures/risk-heatmap"]
+
+    - id: QR005
+      question: "How does the FreightVerify acquisition change Overhaul's competitive moat and carrier network dependency risk versus carrier-network-native rivals?"
+      type: mechanism
+      status: answered
+      targets: ["contentRequirements/3", "plannedTables/partner-dependency-risk-register"]
+
+    - id: QR006
+      question: "Which visibility and risk platform vendors are directly competing in Overhaul's highest-value verticals (pharmaceutical, tech, automotive) as of 2026?"
+      type: enumeration
+      status: answered
+      targets: ["contentRequirements/0", "plannedTables/partner-dependency-risk-register"]
+
+    - id: QR007
+      question: "What dollar value of cargo theft has occurred in Overhaul-monitored shipments that still experienced theft events in 2024–2025?"
+      type: quantification
+      status: unresolved
+      targets: ["contentRequirements/2", "plannedTables/operational-quality-security-risk-register"]
+
+    - id: QR008
+      question: "Have any Overhaul customers publicly disclosed cargo theft events, service disruptions, or operational failures involving the Overhaul platform?"
+      type: adverse
+      status: answered
+      targets: ["contentRequirements/2", "plannedTables/operational-quality-security-risk-register"]
+
+    - id: QR009
+      question: "What is Overhaul's SLA breach escalation process when IoT hardware fails to transmit geolocation updates for an in-transit high-value shipment?"
+      type: mechanism
+      status: answered
+      targets: ["contentRequirements/2", "plannedTables/operational-quality-security-risk-register"]
+
+    - id: QR010
+      question: "Is CargoNet's 14% year-over-year increase in Q3 2024 cargo theft corroborated by independent industry sources or law enforcement data?"
+      type: verification
+      status: answered
+      targets: ["contentRequirements/2", "plannedFigures/risk-transmission-map"]
+
+    - id: QR011
+      question: "What are the most recent cargo theft trends and threat intelligence reported by law enforcement and industry bodies in 2025–2026?"
+      type: freshness
+      status: answered
+      targets: ["contentRequirements/2", "plannedFigures/risk-transmission-map"]
+
+    - id: QR012
+      question: "What percentage of Overhaul-monitored cargo shipments experienced a theft event or SLA breach in 2024?"
+      type: quantification
+      status: unresolved
+      targets: ["contentRequirements/2", "plannedTables/operational-quality-security-risk-register"]
+
+    - id: QR013
+      question: "Has Overhaul experienced any confirmed data breaches, cybersecurity incidents, or unauthorized access events in its operating history?"
+      type: adverse
+      status: answered
+      targets: ["contentRequirements/2", "plannedFigures/risk-transmission-map"]
+
+    - id: QR014
+      question: "Is Overhaul certified under SOC 2 Type II, ISO 27001, or an equivalent cybersecurity assurance framework, and if so, which version and scope?"
+      type: verification
+      status: answered
+      targets: ["contentRequirements/2", "plannedTables/operational-quality-security-risk-register"]
+
+    - id: QR015
+      question: "How does RiskGPT handle adversarial inputs, edge cases, or distribution-shifted data that could cause false alerts or missed threat detections?"
+      type: mechanism
+      status: answered
+      targets: ["contentRequirements/2", "plannedFigures/risk-transmission-map"]
+
+    - id: QR016
+      question: "What platform uptime SLA does Overhaul contractually guarantee, and what is the disclosed incident history and maximum downtime in any 12-month period?"
+      type: quantification
+      status: answered
+      targets: ["contentRequirements/2", "plannedFigures/risk-transmission-map"]
+
+    - id: QR017
+      question: "What new NIST, CISA, or FTC IoT and data security requirements are expected to take effect or are under active rulemaking in 2025–2026 affecting Overhaul?"
+      type: freshness
+      status: answered
+      targets: ["contentRequirements/1", "plannedTables/regulatory-legal-risk-register"]
+
+    - id: QR018
+      question: "How does Overhaul's disclosed cybersecurity architecture compare against the governance, detect, and respond functions of NIST CSF 2.0?"
+      type: comparison
+      status: answered
+      targets: ["contentRequirements/2", "plannedFigures/risk-transmission-map"]
+
+    - id: QR019
+      question: "Has Overhaul publicly disclosed its GDPR compliance posture, EU representative designation, Data Protection Officer, or Data Processing Agreement templates?"
+      type: verification
+      status: answered
+      targets: ["contentRequirements/1", "plannedTables/regulatory-legal-risk-register"]
+
+    - id: QR020
+      question: "What is the maximum financial exposure Overhaul faces from a GDPR enforcement action based on its current EU data processing scope?"
+      type: quantification
+      status: answered
+      targets: ["contentRequirements/1", "plannedTables/regulatory-legal-risk-register"]
+
+    - id: QR021
+      question: "Has any Overhaul pharmaceutical or food-and-beverage customer faced regulatory action from FDA or EU regulators due to supply chain traceability gaps in which the Overhaul platform was cited?"
+      type: adverse
+      status: answered
+      targets: ["contentRequirements/1", "plannedTables/regulatory-legal-risk-register"]
+
+    - id: QR022
+      question: "What is Overhaul's specific compliance process for FDA DSCSA electronic traceability requirements as pharma customers phase in full item-level serialization?"
+      type: mechanism
+      status: answered
+      targets: ["contentRequirements/1", "plannedTables/regulatory-legal-risk-register"]
+
+    - id: QR023
+      question: "What jurisdictions do Overhaul's customers operate in that impose supply chain-specific regulatory requirements on the platform (data localization, traceability, AI governance)?"
+      type: enumeration
+      status: answered
+      targets: ["contentRequirements/1", "plannedTables/regulatory-legal-risk-register"]
+
+    - id: QR024
+      question: "What is the current enforcement timeline and compliance deadline for the EU AI Act's high-risk AI system requirements as applied to logistics and pharmaceutical supply chain AI platforms?"
+      type: freshness
+      status: answered
+      targets: ["contentRequirements/1", "plannedTables/regulatory-legal-risk-register"]
+
+    - id: QR025
+      question: "What is Overhaul's current ARR, net burn rate, and cash runway as of May 2026?"
+      type: quantification
+      status: partial
+      targets: ["contentRequirements/4", "plannedTables/people-execution-risk-register"]
+
+    - id: QR026
+      question: "Do Overhaul's financing terms — including the MidCap Financial debt facility and investor rights agreements — include restrictive covenants or governance controls that could constrain operational flexibility?"
+      type: adverse
+      status: answered
+      targets: ["contentRequirements/4", "plannedTables/mitigation-and-kill-criteria-table"]
+
+    - id: QR027
+      question: "What business continuity and disaster recovery plan does Overhaul operate if its primary AWS or Azure cloud infrastructure experiences a major regional or global outage?"
+      type: mechanism
+      status: answered
+      targets: ["contentRequirements/3", "plannedFigures/dependency-map"]
+
+    - id: QR028
+      question: "How does Overhaul's capital efficiency (ARR per dollar raised, ARR per employee) compare to project44 and FourKites at comparable funding stages?"
+      type: comparison
+      status: answered
+      targets: ["contentRequirements/4", "plannedTables/people-execution-risk-register"]
+
+    - id: QR029
+      question: "Have any C-suite executives other than CEO Barry Conlon departed from or joined Overhaul in 2025–2026, and is a succession plan documented?"
+      type: freshness
+      status: answered
+      targets: ["contentRequirements/4", "plannedTables/people-execution-risk-register"]
+
+    - id: QR030
+      question: "What specific observable events or metric thresholds constitute thesis-breaking risks that would invalidate the Overhaul investment case under current assumptions?"
+      type: adverse
+      status: answered
+      targets: ["contentRequirements/5", "plannedTables/mitigation-and-kill-criteria-table"]
 
   evidenceGaps:
-  - description: >-
-      No public SOC 2 Type II, ISO 27001, or equivalent third-party cybersecurity certification has
-      been found for Overhaul's platform as of Q2 2026. Enterprise logistics SaaS platforms in
-      regulated verticals routinely publish annual security attestations. The absence prevents
-      assessment of Overhaul's actual security controls, incident response processes, and vendor
-      assessment programme. This is a material gap requiring direct management disclosure.
-    severity: material
-    relatedQuestionRefs: [QR025]
+    - id: ER001
+      type: private-evidence-only
+      severity: material
+      description: >
+        No public data on specific enterprise contract losses or customer defections from
+        Overhaul to a named competitor has been found. Win/loss data is commercially sensitive
+        and withheld from public filings. Diligence must request win/loss analysis and
+        customer NRR from management.
+      relatedQuestionRefs: [QR003]
 
-  - description: >-
-      Overhaul has not publicly confirmed DSCSA compliance certification for its pharmaceutical
-      cold-chain monitoring modules. The November 27, 2026 enforcement deadline creates a time-
-      sensitive diligence gap: if Overhaul's platform cannot produce DSCSA-compliant EPCIS event
-      data, pharma customers risk losing their own compliance standing and would have cause to
-      terminate contracts. Direct management confirmation and FDA filing evidence are required.
-    severity: material
-    relatedQuestionRefs: [QR011]
+    - id: ER002
+      type: missing-source
+      severity: material
+      description: >
+        No public data source quantifies the dollar value of cargo theft events that occurred
+        on Overhaul-monitored shipments specifically. The 99.9% protection rate is company-
+        claimed and unaudited; no third-party audit of actual SLA breach frequency has been
+        found. Diligence must request SLA performance data and incident log from management.
+      relatedQuestionRefs: [QR007, QR012]
 
-  - description: >-
-      No documentation has been found confirming a board-approved leadership succession plan for CEO
-      Barry Conlon. The absence of a publicly disclosed succession plan constitutes a governance gap
-      for a founder-centric company with a law-enforcement-relationship-driven value proposition.
-      Board-level confirmation is required during diligence.
-    severity: moderate
-    relatedQuestionRefs: [QR018]
+    - id: ER003
+      type: missing-source
+      severity: material
+      description: >
+        No confirmed public records of Overhaul data breaches, cybersecurity incidents, or
+        SOC 2 Type II certification were found in accessible public sources. G2 reviews
+        include complaints about UI complexity but no security incident disclosures. Diligence
+        must request penetration test results, SOC 2 report, and incident disclosure history.
+      relatedQuestionRefs: [QR013, QR014]
 
-  - description: >-
-      No public information confirms which international markets Overhaul may be contractually
-      restricted from serving due to the In-Q-Tel intelligence-community investment relationship.
-      This gap is directly relevant for EMEA and APAC expansion plans and requires explicit legal
-      disclosure from Overhaul management and in-house counsel during the due diligence process.
-    severity: moderate
-    relatedQuestionRefs: [QR031]
-  - topic: Regulatory and legal risk register completeness
-    description: Table TR001 covers the highest-salience regulatory and legal risks for Overhaul as of Q2 2026 but does 
-      not enumerate all applicable export control, customs brokerage, or sector-specific regulations in every 
-      jurisdiction where Overhaul operates. Direct management confirmation of the full regulatory horizon for EMEA and 
-      APAC expansion is an open diligence path.
-    relatedTableRefs: [TR001]
-    relatedQuestionRefs: [QR011]
+    - id: ER004
+      type: missing-source
+      severity: material
+      description: >
+        Overhaul's ARR, net burn rate, and cash runway as of May 2026 are not publicly
+        disclosed. Estimates of $40–60M ARR are speculative inferences from headcount and
+        customer count, not confirmed financial data. Diligence must request audited or
+        management-reviewed financial statements.
+      relatedQuestionRefs: [QR025]
+
+    - id: ER005
+      type: enumeration-incomplete
+      severity: minor
+      description: >
+        The regulatory/legal risk register covers key US and EU frameworks but does not
+        exhaustively enumerate all jurisdictions in which Overhaul operates (LATAM, APAC,
+        EMEA). Additionally, Overhaul's precise market share and competitive positioning
+        relative to project44 and FourKites cannot be verified from public sources alone;
+        win/loss and ARR share data requires management disclosure.
+      relatedQuestionRefs: [QR001]
+      relatedTableRefs: [TR001]
