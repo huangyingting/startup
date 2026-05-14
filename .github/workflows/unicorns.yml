@@ -40,7 +40,7 @@ on:
           - consumer / education
           - industrial / logistics
       unicornCount:
-        description: "Max reports (capped at 3)."
+        description: "Max reports."
         required: false
         default: "3"
         type: string
@@ -145,9 +145,6 @@ jobs:
               ;;
           esac
           if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
-            COUNT=3
-          fi
-          if [ "$COUNT" -gt 3 ]; then
             COUNT=3
           fi
           case "$MODEL" in
