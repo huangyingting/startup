@@ -934,7 +934,7 @@ localEvidence:
       url: https://www.lesechos.fr/pme-regions/actualite-pme/pennylane-leve-80-millions-deuros-pour-accelerer-sa-croissance-2118472.php
       date: "2024-10-15"
       accessDate: "2026-05-15"
-      accessStatus: ok
+      accessStatus: broken
       stance: confirming
       sourceType: news
       reputationTier: high
@@ -954,7 +954,7 @@ localEvidence:
       url: https://www.lesechos.fr/tech-medias/hightech/pennylane-la-licorne-francaise-de-la-comptabilite-2217453.php
       date: "2026-01-21"
       accessDate: "2026-05-15"
-      accessStatus: ok
+      accessStatus: broken
       stance: confirming
       sourceType: news
       reputationTier: high
@@ -1088,7 +1088,7 @@ localEvidence:
       url: https://www.bloomberg.com/news/articles/2024-10-15/pennylane-raises-80-million-euros-series-c
       date: "2024-10-15"
       accessDate: "2026-05-15"
-      accessStatus: ok
+      accessStatus: paywall
       stance: confirming
       sourceType: news
       reputationTier: high
@@ -1145,7 +1145,7 @@ localEvidence:
       url: https://ir.xero.com/news-releases/news-release-details/xero-delivers-strong-full-year-2025-results
       date: "2025-05-15"
       accessDate: "2026-05-15"
-      accessStatus: ok
+      accessStatus: broken
       stance: neutral
       sourceType: filing
       reputationTier: high
@@ -1166,7 +1166,7 @@ localEvidence:
       url: https://www.investors.sage.com/news-releases/news-release-details/sage-reports-strong-full-year-2024-results
       date: "2024-11-20"
       accessDate: "2026-05-15"
-      accessStatus: ok
+      accessStatus: broken
       stance: neutral
       sourceType: filing
       reputationTier: high
@@ -1264,7 +1264,7 @@ localEvidence:
       url: https://www.ft.com/content/pennylane-french-accounting-valuation
       date: "2026-02-15"
       accessDate: "2026-05-15"
-      accessStatus: paywall
+      accessStatus: broken
       stance: adverse
       sourceType: news
       reputationTier: high
@@ -2705,14 +2705,15 @@ localEvidence:
 acknowledgedWarnings:
   - dimension: paywallRisk
     reason: >-
-      Multiple sources in this chapter are either broken (Sifted and Maddyness article URLs returning
-      404 due to URL restructuring) or behind paywalls (Financial Times, Dealroom, PitchBook, GetLatka).
+      Multiple sources in this chapter are either broken (Sifted articles returning 404, Les Echos
+      article URLs returning 410, TechCrunch article returning 404, FT returning 404, Xero IR and
+      Sage IR connection failures) or behind paywalls (Bloomberg, Dealroom, PitchBook, GetLatka).
       All material factual claims — round amounts, valuations, investor names, centaur milestone, and
-      comparable multiples — are confirmed via OK-status sources: Les Echos primary articles (SV009,
-      SV010), Sifted search aggregator (SV001), Maddyness search aggregator (SV018), Bloomberg (SV017),
-      Crunchbase (SV012), Sequoia portfolio page (SV013), TCV portfolio page (SV022), Xero IR (SV020),
-      Sage IR (SV021), BVP State of the Cloud (SV023), and Visma press release (SV027). The broken-URL
-      and paywall sources are cited for provenance and URL traceability; the adverse FT source (SV026)
-      is cited despite paywall to document that credible media has raised valuation-stretch concerns.
-      Source access limitations reflect the structural barrier of French financial media and institutional
-      data providers, not an absence of verification.
+      comparable multiples — are confirmed via ok-status sources: Sifted search aggregator (SV001),
+      Maddyness search aggregator (SV018), Crunchbase (SV012), Sequoia portfolio page (SV013),
+      TCV portfolio page (SV022), BVP State of the Cloud (SV023), Visma press release (SV027), and
+      Pennylane official website (SV016). The broken-URL and paywall sources are cited for provenance
+      and URL traceability; the adverse FT source (SV026) is cited despite broken access to document
+      that credible media has raised valuation-stretch concerns. Source access limitations reflect the
+      structural barrier of French financial media and institutional data providers, not an absence of
+      verification.

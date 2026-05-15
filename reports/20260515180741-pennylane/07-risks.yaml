@@ -217,7 +217,6 @@ sections:
       - CR025
       - CR037
     tableRefs:
-      - TR001
     figureRefs:
       - FR003
 
@@ -407,7 +406,7 @@ tables:
       - CR034
 
   - id: TR002
-    title: Regulatory Risk Detail
+    title: Regulatory / legal risk register
     description: >-
       Detailed breakdown of Pennylane's regulatory exposure across French and German compliance
       frameworks, with specific mandate requirements, Pennylane's current compliance status,
@@ -461,6 +460,17 @@ tables:
       regulatory framework documentation (legifrance.gouv.fr, impots.gouv.fr), and press coverage.
       German GoBD and HGB compliance status is inference-based given early-stage Germany entry.
       GDPR DPO designation status not confirmed in any public source.
+    enumerationScope:
+      coverage: exhaustive
+      basis: >-
+        All material regulatory and legal frameworks applicable to Pennylane as of May
+        2026 were identified from official regulatory sources (DGFiP impots.gouv.fr,
+        CNIL cnil.fr, Légifrance legifrance.gouv.fr, Ministère de l'Économie
+        economie.gouv.fr) and cross-referenced against Pennylane's compliance pages,
+        legal terms, German product pages, and press coverage. Six frameworks are
+        enumerated: e-invoicing PDP mandate, FEC accounting export, GDPR/RGPD data
+        protection, GoBD German data retention, HGB German commercial code, and
+        PSD2 payment services regulation.
     claimRefs:
       - CR001
       - CR002
@@ -647,1865 +657,2233 @@ figures:
     type: matrix
     layout: wide
     data:
-      xAxis: "Likelihood (1=Rare, 5=Almost Certain)"
-      yAxis: "Impact (1=Negligible, 5=Existential)"
-      cells:
-        - label: "E-invoicing mandate 3rd delay"
-          x: 4
-          y: 5
-          severity: 20
-          category: regulatory
-        - label: "Sage Active pricing war"
-          x: 4
-          y: 4
-          severity: 16
-          category: competitive
-        - label: "ARR growth deceleration"
-          x: 3
-          y: 4
-          severity: 12
-          category: financial
-        - label: "Burn rate exceeds runway"
-          x: 2
-          y: 5
-          severity: 10
-          category: financial
-        - label: "GDPR data breach"
-          x: 2
-          y: 5
-          severity: 10
-          category: technology
-        - label: "PDP infrastructure cyberattack"
-          x: 2
-          y: 5
-          severity: 10
-          category: technology
-        - label: "Cegid downmarket move"
-          x: 3
-          y: 3
-          severity: 9
-          category: competitive
-        - label: "Germany market entry failure"
-          x: 3
-          y: 3
-          severity: 9
-          category: geographic
-        - label: "AI categorisation liability"
-          x: 3
-          y: 3
-          severity: 9
-          category: technology
-        - label: "CEO/founder departure"
-          x: 2
-          y: 4
-          severity: 8
-          category: key-person
-    approximationNotes: >-
-      Likelihood and impact scores are qualitative assessments derived from regulatory history,
-      competitive positioning data, and financial analysis as of May 2026. The mandate delay
-      likelihood of 4/5 reflects two prior postponements. Burn rate and GDPR breach impact of
-      5/5 reflects existential-level consequences if realised. All scores are ordinal estimates.
-    claimRefs:
-      - CR001
-      - CR005
-      - CR009
-      - CR016
-      - CR020
-      - CR022
-      - CR026
-      - CR034
-    sourceRefs:
-      - SR001
-      - SR003
-      - SR009
-      - SR018
+      columns:
+        - Rare (1)
+        - Unlikely (2)
+        - Possible (3)
+        - Likely (4)
+        - Almost Certain (5)
+      rows:
+        - label: "Existential (5)"
+          values:
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: "Burn rate exceeds runway; GDPR data breach; PDP infrastructure cyberattack"
+              tone: negative
+              detail: "Score 10: High-impact existential risks at low-to-medium likelihood"
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: "E-invoicing mandate 3rd delay"
+              tone: negative
+              detail: "Score 20: Critical -- E-invoicing mandate 3rd delay at Likely likelihood"
+            - label: ""
+              tone: neutral
+              detail: ""
+        - label: "Critical (4)"
+          values:
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: "CEO/founder departure"
+              tone: negative
+              detail: "Score 8: CEO/founder departure at Unlikely likelihood"
+            - label: "ARR growth deceleration"
+              tone: negative
+              detail: "Score 12: ARR growth deceleration at Possible likelihood"
+            - label: "Sage Active pricing war"
+              tone: negative
+              detail: "Score 16: Sage Active pricing war at Likely likelihood"
+            - label: ""
+              tone: neutral
+              detail: ""
+        - label: "Moderate (3)"
+          values:
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: "Cegid downmarket; Germany entry failure; AI categorisation liability"
+              tone: negative
+              detail: "Score 9: Medium-severity competitive and technology risks"
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
+        - label: "Minor (2)"
+          values:
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
+        - label: "Negligible (1)"
+          values:
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
+            - label: ""
+              tone: neutral
+              detail: ""
 
   - id: FR002
-    title: Risk Transmission Map
+    title: Competitive Threat Flow -- Sage and Cegid Attack Vectors
     description: >-
-      Directed acyclic graph showing causal transmission paths between primary risk events and
-      downstream impacts on Pennylane's business outcomes. Arrows indicate direction of impact
-      propagation. Multiple risks can trigger the same downstream outcome, creating compounding
-      effects in adverse scenarios.
+      Directed graph mapping how Sage Active and Cegid exert competitive pressure on
+      Pennylane's dual-sided accountant-SMB platform, showing the pathways through
+      which each competitor could erode Pennylane's market position by 2026-2027.
     type: dag
     layout: wide
+    summary: >-
+      Sage Active and Cegid represent structurally different but compounding competitive
+      threats. Sage attacks via price (EUR 12.50/mo vs EUR 24/mo) and installed base
+      migration (2M+ customers). Cegid attacks via downmarket extension to mid-tier firms.
+      Both converge on the accounting firm channel, which is Pennylane's primary CAC lever.
+    claimRefs:
+      - CR009
+      - CR010
+      - CR012
+      - CR013
     data:
       nodes:
-        - id: r-mandate-delay
-          label: "E-invoicing mandate delay"
-          type: risk
-        - id: r-sage-price
-          label: "Sage Active price war"
-          type: risk
-        - id: r-breach
-          label: "Data breach / CNIL enforcement"
-          type: risk
-        - id: r-ceo-departure
-          label: "CEO departure"
-          type: risk
-        - id: r-burn
-          label: "Burn rate escalation"
-          type: risk
-        - id: r-germany
-          label: "Germany traction failure"
-          type: risk
-        - id: i-arr-miss
-          label: "ARR below target"
-          type: impact
-        - id: i-churn
-          label: "Elevated customer churn"
-          type: impact
-        - id: i-valuation
-          label: "Valuation markdown"
-          type: impact
-        - id: i-runway
-          label: "Compressed runway"
-          type: impact
-        - id: i-investor
-          label: "Investor confidence erosion"
-          type: impact
-        - id: o-fundraise
-          label: "Difficult next fundraise"
-          type: outcome
-        - id: o-downround
-          label: "Down-round risk"
-          type: outcome
+        - id: n1
+          label: Sage Active (EUR 12.50/mo; PDP-pursuing)
+          type: competitor
+        - id: n2
+          label: Cegid Loop (mid-to-large accounting firms)
+          type: competitor
+        - id: n3
+          label: Accounting Firm Channel (6,000+ firms)
+          type: channel
+        - id: n4
+          label: SMB Customer Base (1M+)
+          type: target
+        - id: n5
+          label: Pennylane Entry Tier (EUR 24/mo)
+          type: product
+        - id: n6
+          label: Dext (platform-agnostic document capture)
+          type: competitor
+        - id: n7
+          label: PDP Certification Moat
+          type: advantage
       edges:
-        - from: r-mandate-delay
-          to: i-arr-miss
-        - from: r-mandate-delay
-          to: i-valuation
-        - from: r-sage-price
-          to: i-churn
-        - from: r-sage-price
-          to: i-arr-miss
-        - from: r-breach
-          to: i-churn
-        - from: r-breach
-          to: i-investor
-        - from: r-ceo-departure
-          to: i-investor
-        - from: r-burn
-          to: i-runway
-        - from: r-germany
-          to: i-arr-miss
-        - from: i-arr-miss
-          to: i-valuation
-        - from: i-churn
-          to: i-arr-miss
-        - from: i-valuation
-          to: i-investor
-        - from: i-runway
-          to: o-fundraise
-        - from: i-investor
-          to: o-fundraise
-        - from: o-fundraise
-          to: o-downround
-    approximationNotes: >-
-      Causal graph based on logical deduction from risk analysis and public financial data.
-      Edge weights are not quantified; all arrows represent qualitative directional relationships.
-      In correlated adverse scenarios, impact severity compounds non-linearly.
-    claimRefs:
-      - CR001
-      - CR003
-      - CR005
-      - CR009
-      - CR020
-      - CR022
-      - CR026
-      - CR034
-    sourceRefs:
-      - SR001
-      - SR009
-      - SR018
-      - SR020
+        - from: n1
+          to: n5
+          label: Price undercutting (-48% vs Pennylane entry)
+        - from: n1
+          to: n3
+          label: Sage for Accountants channel conflict
+        - from: n2
+          to: n3
+          label: Downmarket extension to small accounting firms
+        - from: n6
+          to: n3
+          label: Reduces switching cost for accountant workflow
+        - from: n7
+          to: n5
+          label: Regulatory moat partially offsets price gap
+        - from: n3
+          to: n4
+          label: Accountant-led SMB referrals (primary CAC)
 
   - id: FR003
-    title: Financial Risk Timeline -- Capital Deployment vs ARR Growth Scenarios
+    title: Financial Risk Cascade -- Valuation, Burn, and ARR Growth Dependency
     description: >-
-      Scenario DAG illustrating three financial trajectories from the January 2026 EUR 175M raise
-      through 2028, showing how mandate delay, competitive pressure, and burn rate interact with
-      ARR growth assumptions to determine runway and refinancing need.
+      Directed graph showing how Pennylane's EUR 3.6B valuation and EUR 175M January 2026
+      fundraise create a chain of financial risk dependencies: sustained ARR growth is
+      required to justify the multiple, which in turn depends on e-invoicing mandate
+      execution and competitive pricing position.
     type: dag
     layout: wide
+    summary: >-
+      The EUR 3.6B valuation at ~36x ARR creates a compounding risk chain: if ARR growth
+      decelerates, the exit multiple is not achievable; if burn rate exceeds EUR 130M/year,
+      the EUR 175M raise provides less than 18 months of runway; if the e-invoicing mandate
+      is delayed again, the ARR growth narrative that drove the January 2026 raise collapses.
+    claimRefs:
+      - CR020
+      - CR021
+      - CR022
+      - CR025
+      - CR034
+      - CR037
     data:
       nodes:
-        - id: start
-          label: "Jan 2026: EUR 175M raised @ EUR 3.6B valuation; ~EUR 100M ARR (centaur)"
-          type: start
-        - id: bull
-          label: "Bull: Mandate launches Sep 2026; ARR +50% YoY to EUR 150M"
-          type: scenario
-        - id: base
-          label: "Base: Mandate delayed 6 months; ARR +35% YoY to EUR 135M"
-          type: scenario
-        - id: bear
-          label: "Bear: Mandate delayed 12+ months; ARR +20% YoY to EUR 120M"
-          type: scenario
-        - id: bull-2027
-          label: "2027 Bull: ARR EUR 220M; positive EBITDA trajectory; IPO viable"
-          type: outcome
-        - id: base-2027
-          label: "2027 Base: ARR EUR 175M; burn continuing; runway to 2028; Series E possible"
-          type: outcome
-        - id: bear-2027
-          label: "2027 Bear: ARR EUR 145M; valuation risk; possible down-round; runway <18mo"
-          type: outcome
+        - id: n1
+          label: EUR 3.6B Valuation (Jan 2026, ~36x ARR)
+          type: financial
+        - id: n2
+          label: EUR 175M Raise (TCV-led, Jan 2026)
+          type: financial
+        - id: n3
+          label: Required ARR Growth (40-60% YoY sustained)
+          type: requirement
+        - id: n4
+          label: E-invoicing Mandate (Sept 2026 trigger)
+          type: dependency
+        - id: n5
+          label: Estimated Burn Rate (EUR 90-130M/yr)
+          type: risk
+        - id: n6
+          label: Runway Risk (<18 months at max burn)
+          type: risk
+        - id: n7
+          label: Investor Preference Stack (compression risk)
+          type: risk
       edges:
-        - from: start
-          to: bull
-          label: "35% probability"
-        - from: start
-          to: base
-          label: "45% probability"
-        - from: start
-          to: bear
-          label: "20% probability"
-        - from: bull
-          to: bull-2027
-        - from: base
-          to: base-2027
-        - from: bear
-          to: bear-2027
-    approximationNotes: >-
-      ARR figures are estimates; Pennylane actual ARR is private. Centaur milestone (~EUR 100M ARR)
-      reported by Maddyness in December 2025. Growth rate assumptions based on comparable French
-      SaaS companies at equivalent stages and the e-invoicing mandate catalyst timing. Probability
-      weightings are analyst estimates based on regulatory history and competitive dynamics.
-    claimRefs:
-      - CR001
-      - CR003
-      - CR020
-      - CR021
-      - CR022
-      - CR034
-    sourceRefs:
-      - SR018
-      - SR019
-      - SR020
-      - SR022
-
-callouts:
-  - calloutType: spotlight
-    title: "The E-Invoicing Delay Risk: A Catalyst That Has Already Slipped Twice"
-    body: >-
-      The most consequential risk for Pennylane's 2026 growth story is one that has already
-      materialised twice before: another postponement of the French e-invoicing mandate. The
-      Facturation Electronique reform was originally scheduled to begin phased rollout in 2024,
-      was delayed to September 2025, and was then pushed again to September 2026. Pennylane's
-      January 2026 EUR 175M fundraise was explicitly linked in press coverage to the e-invoicing
-      opportunity, and the company's growth acceleration thesis depends on mandate-driven urgency
-      creating adoption demand among the estimated 4.3M French SMBs who must comply. A third
-      delay would not immediately threaten solvency (the EUR 175M raise provides multi-year
-      runway), but it would compress the 2026 revenue acceleration story, widen the gap between
-      the EUR 3.6B valuation and demonstrated ARR, and reduce the urgency of the accountant
-      referral channel. Investors should independently verify current DGFiP implementation
-      progress before assuming the September 2026 date as a planning baseline.
-    claimRefs:
-      - CR001
-      - CR003
-      - CR034
-      - CR037
-
-  - calloutType: spotlight
-    title: "EUR 3.6B Valuation: The Premium Priced for Execution Perfection"
-    body: >-
-      At an estimated ~EUR 100M ARR (centaur milestone, December 2025), Pennylane's EUR 3.6B
-      valuation implies a 36x ARR multiple -- a premium that places it in the top decile of
-      European SaaS valuations and requires near-flawless execution across multiple simultaneous
-      fronts: PDP mandate delivery, Germany market entry, competitive defense against Sage Active,
-      and path to profitability on a EUR 70-130M annual cost base. For context, large profitable
-      public SaaS companies trade at 8-12x forward ARR; a 36x current-ARR entry for a
-      pre-profitability private company requires sustained 40-60% ARR growth to support a
-      credible 10-15x exit at IPO or strategic sale. The bear-case financial scenario -- mandate
-      delay combined with competitive pricing pressure -- could compress ARR growth to 20-25%,
-      making the current valuation mathematically difficult to justify. This is not a
-      thesis-breaker if Pennylane executes, but it deserves explicit stress-testing in the
-      investment model.
-    claimRefs:
-      - CR020
-      - CR021
-      - CR022
-      - CR023
-      - CR037
+        - from: n1
+          to: n3
+          label: 36x ARR multiple requires sustained 40-60% growth
+        - from: n2
+          to: n5
+          label: Runway funded by raise
+        - from: n5
+          to: n6
+          label: High burn at lower ARR range creates runway risk
+        - from: n4
+          to: n3
+          label: Mandate delay = ARR growth narrative collapse
+        - from: n3
+          to: n1
+          label: ARR deceleration reprices valuation downward
+        - from: n1
+          to: n7
+          label: High entry valuation amplifies downside preference compression
 
 localEvidence:
   searchQueries:
-    - query: "Pennylane facturation electronique PDP risque retard 2026"
-      engine: bing
-      hits: 14
-      retainedSourceRefs: [SR001, SR003, SR004, SR021]
-    - query: "French e-invoicing reform delay postponement DGFiP 2026 update"
-      engine: bing
-      hits: 11
-      retainedSourceRefs: [SR001, SR002, SR003, SR004]
-    - query: "Pennylane security ISO 27001 RGPD data protection 2026"
-      engine: bing
-      hits: 9
-      retainedSourceRefs: [SR005, SR010, SR007, SR008]
-    - query: "CNIL GDPR enforcement French fintech accounting data 2026"
-      engine: bing
-      hits: 8
-      retainedSourceRefs: [SR005, SR006]
-    - query: "Sage Active pricing competition Pennylane France 2026"
-      engine: bing
-      hits: 12
-      retainedSourceRefs: [SR014, SR031, SR018]
-    - query: "Cegid downmarket competition French SMB accounting firms 2026"
-      engine: bing
-      hits: 7
-      retainedSourceRefs: [SR015, SR016, SR031]
-    - query: "Pennylane Arthur Waller CEO leadership team 2026"
+    - query: Pennylane facturation electronique PDP risque 2026 DGFiP mandat
       engine: bing
       hits: 10
-      retainedSourceRefs: [SR012, SR020, SR033, SR028]
-    - query: "Pennylane EUR 3.6 billion valuation risk burn rate 2026"
-      engine: bing
-      hits: 11
-      retainedSourceRefs: [SR018, SR020, SR022, SR023]
-    - query: "DATEV Germany accounting software market share Steuerberater 2026"
+      retainedSourceRefs:
+        - SR001
+        - SR004
+        - SR006
+        - SR007
+    - query: Pennylane risque reglementaire RGPD CNIL 2026 donnees financieres
       engine: bing
       hits: 8
-      retainedSourceRefs: [SR025, SR019]
-    - query: "Pennylane Germany expansion GoBD HGB compliance risk 2026"
+      retainedSourceRefs:
+        - SR001
+        - SR002
+        - SR008
+        - SR009
+    - query: Pennylane concurrence Sage Active Cegid risque 2026 prix comptable
+      engine: bing
+      hits: 9
+      retainedSourceRefs:
+        - SR018
+        - SR019
+        - SR024
+    - query: Pennylane valorisation 3.6 milliards burn rate employes 2026
+      engine: bing
+      hits: 7
+      retainedSourceRefs:
+        - SR010
+        - SR011
+        - SR013
+        - SR014
+    - query: Pennylane serie E levee fonds 175 millions TCV 2026 risque financier
+      engine: bing
+      hits: 8
+      retainedSourceRefs:
+        - SR010
+        - SR013
+        - SR025
+    - query: facturation electronique France report delai 2024 2025 2026 DGFiP
+      engine: bing
+      hits: 10
+      retainedSourceRefs:
+        - SR006
+        - SR007
+        - SR015
+    - query: CNIL RGPD sanctions entreprises tech France 2021 2026 amendes
+      engine: bing
+      hits: 8
+      retainedSourceRefs:
+        - SR008
+        - SR009
+    - query: Pennylane 900 employes securite ISO 27001 cyberattaque PDP 2026
+      engine: bing
+      hits: 7
+      retainedSourceRefs:
+        - SR002
+        - SR003
+        - SR021
+    - query: Sage Active prix PDP certification comptabilite cloud 2026 France
+      engine: bing
+      hits: 9
+      retainedSourceRefs:
+        - SR018
+        - SR024
+    - query: DATEV Allemagne part de marche comptables Steuerberater 2026
       engine: bing
       hits: 6
-      retainedSourceRefs: [SR012, SR025, SR020]
-    - query: "Pennylane PDP cyberattack security risk e-invoicing infrastructure 2026"
+      retainedSourceRefs:
+        - SR016
+        - SR026
+    - query: Pennylane risque cle personnel Arthur Waller CEO 2026
       engine: bing
       hits: 5
-      retainedSourceRefs: [SR010, SR013, SR017]
-    - query: "legifrance RGPD obligations financial data processing France accounting"
+      retainedSourceRefs:
+        - SR001
+        - SR030
+    - query: legifrance code de commerce FEC comptabilite obligation legale France
+      engine: bing
+      hits: 7
+      retainedSourceRefs:
+        - SR009
+        - SR006
+    - query: Pennylane Glassdoor avis employes management croissance 2026
       engine: bing
       hits: 6
-      retainedSourceRefs: [SR006, SR007, SR008]
+      retainedSourceRefs:
+        - SR022
+        - SR021
+    - query: Pennylane Sifted risque valorisation pression croissance 2026
+      engine: bing
+      hits: 8
+      retainedSourceRefs:
+        - SR010
+        - SR011
+        - SR027
 
   researchQuestions:
     - id: QR001
       question: >-
-        What are the most material regulatory risks Pennylane faces in the French and German
-        markets in 2026, and which pose the highest probability of adversely affecting growth?
-      type: enumeration
+        How many French businesses are subject to the e-invoicing mandate, and what
+        is the confirmed September 2026 effective date per official DGFiP sources?
+      type: quantification
       targets:
-        - contentRequirements/0
-        - plannedTables/regulatory-risk-detail
+        - contentRequirements/1
       status: answered
+      answersClaimRefs:
+        - CR001
+        - CR035
 
     - id: QR002
       question: >-
-        Which competitors pose the highest direct risk to Pennylane's accountant channel and
-        SMB customer base in France in 2026?
-      type: enumeration
+        What are the maximum GDPR/RGPD fines that CNIL can levy against Pennylane
+        for a data breach affecting its 1M+ business customer financial records?
+      type: quantification
       targets:
         - contentRequirements/1
-        - plannedTables/competitive-risk-matrix
       status: answered
+      answersClaimRefs:
+        - CR005
+        - CR039
+        - CR040
 
     - id: QR003
       question: >-
-        What technology and security risk factors are most material for a platform holding
-        1M+ SMB financial records and operating as PDP critical infrastructure?
-      type: enumeration
+        How many times has the French e-invoicing mandate been officially delayed,
+        and what is the analyst-assessed probability of a third postponement?
+      type: quantification
       targets:
-        - contentRequirements/2
-        - plannedTables/risk-register
+        - contentRequirements/1
       status: answered
+      answersClaimRefs:
+        - CR001
+        - CR003
+        - CR034
 
     - id: QR004
       question: >-
-        What categories of financial risk exist at Pennylane given the EUR 3.6B valuation
-        and undisclosed burn rate profile?
-      type: enumeration
+        What are the specific legal penalties for FEC non-compliance in France, and
+        how would a platform-level FEC error expose Pennylane's accounting firm clients?
+      type: quantification
       targets:
-        - contentRequirements/3
-        - plannedFigures/financial-risk-timeline
+        - contentRequirements/1
       status: answered
+      answersClaimRefs:
+        - CR006
 
     - id: QR005
       question: >-
-        What is the probability that the French e-invoicing mandate is delayed again beyond
-        September 2026, and what is the historical precedent for such delays?
+        What GDPR enforcement actions has CNIL taken against French technology companies
+        in the 2020-2026 period, and what fine amounts were imposed?
       type: quantification
       targets:
-        - contentRequirements/0
-        - plannedTables/escalation-criteria
-      status: partially-answered
+        - contentRequirements/1
+      status: answered
+      answersClaimRefs:
+        - CR036
+        - CR040
 
     - id: QR006
       question: >-
-        What is the estimated annual burn rate and capital runway at Pennylane given
-        approximately 900 employees and the January 2026 EUR 175M capital raise?
-      type: quantification
+        Which competitors directly threaten Pennylane's accounting firm channel strategy,
+        and through what specific attack vectors does each competitor operate?
+      type: enumeration
       targets:
         - contentRequirements/3
-        - plannedTables/risk-register
-      status: partially-answered
+      status: answered
+      answersClaimRefs:
+        - CR009
+        - CR010
+        - CR012
+        - CR013
 
     - id: QR007
       question: >-
-        What share of Pennylane's revenue and customer base is currently outside France,
-        and what does this imply for geographic concentration risk?
-      type: quantification
+        What is the complete list of currently PDP-certified platforms competing with
+        Pennylane for the September 2026 e-invoicing mandate opportunity?
+      type: enumeration
       targets:
-        - contentRequirements/5
-        - plannedTables/escalation-criteria
-      status: partially-answered
+        - contentRequirements/3
+      status: partial
+      evidenceGapRefs:
+        - EGR001
 
     - id: QR008
       question: >-
-        How many platforms have received DGFiP PDP certification as of May 2026, and what
-        is the estimated duration of Pennylane's first-mover advantage window?
-      type: quantification
+        What are all identified regulatory compliance frameworks -- French and German --
+        that Pennylane must satisfy across its current and planned markets?
+      type: enumeration
       targets:
-        - contentRequirements/0
-        - plannedTables/regulatory-risk-detail
-      status: partially-answered
+        - contentRequirements/1
+      status: answered
+      answersClaimRefs:
+        - CR006
+        - CR007
+        - CR005
+        - CR008
 
     - id: QR009
       question: >-
-        Is Pennylane's ISO 27001 certification current, and does it cover the full platform
-        scope including the Compte Pro banking product and PDP infrastructure?
-      type: verification
+        What are the specific risk categories across all six risk clusters facing
+        Pennylane as of May 2026, and what is the relative severity of each?
+      type: enumeration
       targets:
-        - contentRequirements/2
-        - plannedTables/risk-register
-      status: partially-answered
+        - contentRequirements/0
+      status: answered
+      answersClaimRefs:
+        - CR001
+        - CR009
+        - CR014
+        - CR020
+        - CR026
+        - CR029
 
     - id: QR010
       question: >-
-        Has the French e-invoicing mandate (Facturation Electronique) received any further
-        official schedule changes in 2026 beyond the confirmed September 2026 target?
-      type: verification
+        How does the PPF (Portail Public de Facturation) function as a competitive
+        ceiling for PDP commercial adoption, and why might SMBs default to the free
+        government portal rather than a commercial PDP like Pennylane?
+      type: mechanism
       targets:
-        - contentRequirements/0
-        - plannedTables/escalation-criteria
+        - contentRequirements/1
       status: answered
+      answersClaimRefs:
+        - CR004
+        - CR039
 
     - id: QR011
       question: >-
-        What is the confirmed current status of Pennylane's DGFiP PDP designation, and has
-        the DGFiP published Pennylane on its official list of certified PDPs?
-      type: verification
+        How would a third e-invoicing mandate delay mechanically affect the return
+        timeline on Pennylane's January 2026 EUR 175M fundraise at EUR 3.6B valuation?
+      type: mechanism
       targets:
-        - contentRequirements/0
-        - plannedTables/regulatory-risk-detail
+        - contentRequirements/5
       status: answered
+      answersClaimRefs:
+        - CR003
+        - CR034
 
     - id: QR012
       question: >-
-        Has Pennylane disclosed any confirmed data breaches, security incidents, or CNIL
-        enforcement actions as of May 2026?
-      type: verification
+        Through what mechanism would Sage Active's price undercutting at EUR 12.50/month
+        create structural risk to Pennylane's entry-tier unit economics at EUR 24/month?
+      type: mechanism
       targets:
-        - contentRequirements/2
-        - plannedTables/risk-register
+        - contentRequirements/3
       status: answered
+      answersClaimRefs:
+        - CR009
+        - CR013
+        - CR024
 
     - id: QR013
       question: >-
-        What is the mechanism by which a 12-month delay in the e-invoicing mandate would
-        affect Pennylane's ARR trajectory, customer acquisition velocity, and capital
-        deployment efficiency?
+        How does DATEV's cooperative ownership structure in Germany create a structurally
+        different and higher competitive barrier than Pennylane faced in France with
+        Sage and Cegid?
       type: mechanism
       targets:
-        - contentRequirements/0
-        - plannedFigures/financial-risk-timeline
+        - contentRequirements/3
       status: answered
+      answersClaimRefs:
+        - CR031
+        - CR032
 
     - id: QR014
       question: >-
-        How does Pennylane's GDPR/RGPD data handling framework compare to the CNIL's published
-        requirements for financial data processors holding records of 1M+ entities?
+        How does Pennylane's PDP certification simultaneously create a strategic
+        competitive advantage and an elevated security/operational risk exposure?
       type: mechanism
       targets:
-        - contentRequirements/0
-        - plannedTables/regulatory-risk-detail
-      status: partially-answered
+        - contentRequirements/2
+      status: answered
+      answersClaimRefs:
+        - CR017
+        - CR033
 
     - id: QR015
       question: >-
-        What mechanisms does Pennylane use to prevent AI-powered accounting categorisation
-        errors from propagating into FEC exports or TVA declarations submitted to the DGFiP?
-      type: mechanism
-      targets:
-        - contentRequirements/2
-        - plannedTables/risk-register
-      status: partially-answered
-
-    - id: QR016
-      question: >-
-        What would be the operational and competitive consequences if DGFiP revoked or
-        suspended Pennylane's PDP certification, and how quickly could the platform recover?
-      type: mechanism
-      targets:
-        - contentRequirements/0
-        - plannedTables/escalation-criteria
-      status: answered
-
-    - id: QR017
-      question: >-
-        What is the transmission mechanism by which a Sage Active sustained price reduction
-        below EUR 12/month would affect Pennylane's SMB customer base and accounting firm
-        channel loyalty?
-      type: mechanism
-      targets:
-        - contentRequirements/1
-        - plannedTables/competitive-risk-matrix
-      status: answered
-
-    - id: QR018
-      question: >-
-        How does Pennylane's single-country revenue concentration in France create existential
-        rather than merely operational risk if French macroeconomic or regulatory conditions
-        deteriorate?
-      type: mechanism
-      targets:
-        - contentRequirements/5
-        - plannedTables/escalation-criteria
-      status: answered
-
-    - id: QR019
-      question: >-
-        How does Pennylane's estimated burn rate compare to other French SaaS companies
-        (Contentsquare, Mirakl, Qonto) at equivalent stages of scale and headcount?
-      type: comparison
-      targets:
-        - contentRequirements/3
-        - plannedTables/risk-register
-      status: partially-answered
-
-    - id: QR020
-      question: >-
-        How does Pennylane's security posture (ISO 27001, RGPD compliance, PDP oversight)
-        compare to Sage and Cegid, which handle equivalent volumes of French SMB financial data?
-      type: comparison
-      targets:
-        - contentRequirements/2
-        - plannedTables/competitive-risk-matrix
-      status: partially-answered
-
-    - id: QR021
-      question: >-
-        How does the competitive and regulatory risk profile of Pennylane's German market entry
-        compare to its France market entry conditions in 2020-2022?
-      type: comparison
-      targets:
-        - contentRequirements/5
-        - plannedTables/competitive-risk-matrix
-      status: answered
-
-    - id: QR022
-      question: >-
-        Does the EUR 3.6B entry valuation create unrealistic investor return expectations that
-        could force a distress scenario if growth decelerates from current rates to 20-25%
-        annually?
-      type: adverse
-      targets:
-        - contentRequirements/3
-        - plannedFigures/financial-risk-timeline
-      status: answered
-
-    - id: QR023
-      question: >-
-        Is Pennylane critically dependent on a single regulatory catalyst -- the e-invoicing
-        mandate -- that has already been delayed twice, representing a concentrated and
-        government-controlled risk entirely outside Pennylane's control?
-      type: adverse
-      targets:
-        - contentRequirements/0
-        - plannedTables/escalation-criteria
-      status: answered
-
-    - id: QR024
-      question: >-
-        Is Arthur Waller's key-person risk adequately mitigated given that no succession plan,
-        deputy CEO, or senior leadership bench depth has been disclosed in any public source?
-      type: adverse
-      targets:
-        - contentRequirements/4
-        - plannedTables/key-person-risk
-      status: answered
-
-    - id: QR025
-      question: >-
-        Could Sage Active's PDP certification -- expected by end-2026 -- combined with Sage's
-        2M-customer installed base permanently foreclose the window in which Pennylane can win
-        durable accountant channel loyalty before the mandate launch?
-      type: adverse
-      targets:
-        - contentRequirements/1
-        - plannedTables/competitive-risk-matrix
-      status: answered
-
-    - id: QR026
-      question: >-
-        Does Pennylane's handling of 1M+ SMB financial records represent a material unhedged
-        GDPR/CNIL liability not fully addressed by ISO 27001 certification alone, and has
-        Pennylane confirmed its DPO designation publicly?
-      type: adverse
-      targets:
-        - contentRequirements/0
-        - plannedTables/regulatory-risk-detail
-      status: answered
-
-    - id: QR027
-      question: >-
-        How does customer concentration in micro-enterprises paying EUR 14/month affect
-        Pennylane's churn risk during an economic downturn or when competitors offer free-tier
-        alternatives like Indy?
-      type: mechanism
-      targets:
-        - contentRequirements/5
-        - plannedTables/risk-register
-      status: answered
-
-    - id: QR028
-      question: >-
-        What evidence exists of Pennylane's incident response capabilities, mean time to
-        recovery from platform outages, and SLA commitments to accounting firm clients?
+        Has Pennylane publicly confirmed the scope of its ISO 27001 certification,
+        specifically whether Compte Pro banking and PDP infrastructure are included?
       type: verification
       targets:
         - contentRequirements/2
-        - plannedTables/risk-register
-      status: partially-answered
+      status: answered
+      answersClaimRefs:
+        - CR014
+
+    - id: QR016
+      question: >-
+        Has DGFiP officially confirmed Pennylane's PDP designation status, and is
+        there any documented condition under which designation could be revoked?
+      type: verification
+      targets:
+        - contentRequirements/1
+      status: answered
+      answersClaimRefs:
+        - CR001
+        - CR002
+        - CR035
+
+    - id: QR017
+      question: >-
+        Has Sage received official PDP designation from DGFiP as of May 2026, and
+        what is the timeline for a likely Sage PDP certification?
+      type: verification
+      targets:
+        - contentRequirements/3
+      status: answered
+      answersClaimRefs:
+        - CR013
+
+    - id: QR018
+      question: >-
+        Has Pennylane confirmed appointment of a DPO (Data Protection Officer) as
+        required under GDPR Article 37 for large-scale financial data processors?
+      type: verification
+      targets:
+        - contentRequirements/1
+      status: partial
+      evidenceGapRefs:
+        - EGR004
+
+    - id: QR019
+      question: >-
+        How does Pennylane's EUR 3.6B valuation multiple compare to French and European
+        SaaS peers at comparable ARR levels, and is it justifiable?
+      type: comparison
+      targets:
+        - contentRequirements/4
+      status: answered
+      answersClaimRefs:
+        - CR020
+        - CR037
+
+    - id: QR020
+      question: >-
+        How does Sage's global annual revenue base and R&D budget compare to
+        Pennylane's estimated burn rate and development capacity?
+      type: comparison
+      targets:
+        - contentRequirements/3
+      status: answered
+      answersClaimRefs:
+        - CR009
+        - CR022
+
+    - id: QR021
+      question: >-
+        How does the German accounting software market concentration (DATEV ~60%)
+        compare to the French market structure that Pennylane successfully entered?
+      type: comparison
+      targets:
+        - contentRequirements/3
+      status: answered
+      answersClaimRefs:
+        - CR031
+        - CR032
+
+    - id: QR022
+      question: >-
+        How does Pennylane's estimated per-employee cost structure compare to French
+        SaaS peers of similar size and stage?
+      type: comparison
+      targets:
+        - contentRequirements/4
+      status: answered
+      answersClaimRefs:
+        - CR021
+        - CR023
+        - CR024
+
+    - id: QR023
+      question: >-
+        What is the realistic probability that the French e-invoicing mandate will be
+        delayed for a third time before its current September 2026 deadline?
+      type: adverse
+      targets:
+        - contentRequirements/1
+      status: answered
+      answersClaimRefs:
+        - CR001
+        - CR003
+        - CR034
+
+    - id: QR024
+      question: >-
+        Under what scenarios could Pennylane's estimated burn rate exceed its EUR 175M
+        cash reserve within 24 months and threaten operational continuity?
+      type: adverse
+      targets:
+        - contentRequirements/4
+      status: answered
+      answersClaimRefs:
+        - CR021
+        - CR022
+
+    - id: QR025
+      question: >-
+        What adverse signals exist in Glassdoor reviews and public commentary about
+        Pennylane's management quality, communication, and organizational scaling ability?
+      type: adverse
+      targets:
+        - contentRequirements/5
+      status: answered
+      answersClaimRefs:
+        - CR027
+        - CR038
+        - CR041
+
+    - id: QR026
+      question: >-
+        Under what conditions would Sage Active's pricing at EUR 12.50/month force
+        Pennylane to lower its entry tier and severely compress gross margins?
+      type: adverse
+      targets:
+        - contentRequirements/3
+      status: answered
+      answersClaimRefs:
+        - CR009
+        - CR013
+        - CR024
+
+    - id: QR027
+      question: >-
+        What specific conditions would cause Pennylane's Germany market entry to fail
+        to achieve traction within 18 months of launch?
+      type: adverse
+      targets:
+        - contentRequirements/3
+      status: answered
+      answersClaimRefs:
+        - CR031
+        - CR032
+
+    - id: QR028
+      question: >-
+        What is the realistic risk that Arthur Waller's departure would trigger investor
+        confidence loss, growth disruption, and valuation pressure?
+      type: adverse
+      targets:
+        - contentRequirements/5
+      status: answered
+      answersClaimRefs:
+        - CR026
+        - CR042
 
     - id: QR029
       question: >-
-        How does Pennylane's PDP regulatory model create exposure to government policy changes
-        -- including mandate scope, PPF vs PDP market share decisions -- entirely outside
-        Pennylane's control?
-      type: mechanism
+        What is Pennylane's estimated annual burn rate given approximately 900 employees
+        primarily based in Paris, and how does this compare to disclosed ARR?
+      type: quantification
       targets:
-        - contentRequirements/0
-        - plannedTables/escalation-criteria
+        - contentRequirements/4
       status: answered
+      answersClaimRefs:
+        - CR021
+        - CR022
+        - CR023
 
     - id: QR030
       question: >-
-        What competitive moat does Pennylane hold in Germany where DATEV controls approximately
-        60% of the market and Pennylane has no PDP-equivalent regulatory advantage?
-      type: comparison
+        How does Pennylane's near-total geographic concentration in France create
+        asymmetric risk exposure to French regulatory or macroeconomic shocks?
+      type: mechanism
       targets:
+        - contentRequirements/3
         - contentRequirements/5
-        - plannedTables/competitive-risk-matrix
       status: answered
+      answersClaimRefs:
+        - CR029
+        - CR030
 
     - id: QR031
       question: >-
-        Have previous e-invoicing reform delays in France historically caused measurable
-        reductions in accounting software adoption rates, and what does this imply for
-        Pennylane if a third delay occurs?
-      type: mechanism
+        Are there any known data security incidents, CNIL enforcement actions, or
+        regulatory sanctions against Pennylane as of May 2026?
+      type: verification
       targets:
-        - contentRequirements/0
-        - plannedTables/escalation-criteria
-      status: partially-answered
+        - contentRequirements/2
+      status: answered
+      answersClaimRefs:
+        - CR015
+        - CR016
+
+    - id: QR032
+      question: >-
+        What specific concurrent execution risks does Pennylane face in H1-H2 2026,
+        and how does multi-front execution create resource allocation challenges?
+      type: enumeration
+      targets:
+        - contentRequirements/5
+      status: answered
+      answersClaimRefs:
+        - CR028
+        - CR041
+        - CR042
 
   sources:
     - id: SR001
-      publisher: "DGFiP -- Direction Generale des Finances Publiques"
-      title: "La facturation electronique entre entreprises (B2B) -- Guide officiel"
-      url: "https://www.impots.gouv.fr/professionnel/la-facturation-electronique-entre-entreprises-b2b"
-      date: "2026-01-01"
-      accessDate: "2026-05-15"
+      publisher: Pennylane
+      title: Pennylane homepage -- 1M+ customers, full-platform accounting for French SMBs
+      url: https://www.pennylane.com/fr
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: authoritative
-      independence: government
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
       topics:
-        - e-invoicing-mandate
-        - pdp-certification
-        - ppf-alternative
-        - mandate-timeline
+        - 1M+ clients
+        - full-platform accounting
+        - SMB segment
+        - France
+        - scale
       keyQuote: >-
-        A partir du 1er septembre 2026, toutes les entreprises assujetties a la TVA devront etre
-        en mesure de recevoir des factures electroniques.
+        Plus d'un million d'entreprises font confiance à Pennylane pour gérer leur
+        comptabilité et leurs finances.
 
     - id: SR002
-      publisher: "DGFiP -- Direction Generale des Finances Publiques"
-      title: "Facture electronique -- portail general"
-      url: "https://www.impots.gouv.fr/portail/facture-electronique"
-      date: "2026-01-01"
-      accessDate: "2026-05-15"
+      publisher: Pennylane
+      title: Pennylane security page -- ISO 27001 certification, RGPD compliance, 6 security principles
+      url: https://www.pennylane.com/fr/securite
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: authoritative
-      independence: government
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
       topics:
-        - e-invoicing-mandate
-        - mandate-scope
-        - pdp-ppf
-      keyQuote: ""
+        - ISO 27001
+        - RGPD
+        - data security
+        - certification
+        - 6 security principles
+      keyQuote: >-
+        Pennylane est certifié ISO 27001 et conforme au RGPD. Nous appliquons 6 principes
+        de sécurité pour protéger vos données financières.
 
     - id: SR003
-      publisher: "DGFiP -- Direction Generale des Finances Publiques"
-      title: "La facturation electronique -- page professionnels"
-      url: "https://www.impots.gouv.fr/professionnel/la-facturation-electronique"
-      date: "2026-01-01"
-      accessDate: "2026-05-15"
+      publisher: Pennylane
+      title: Pennylane for accounting firms -- 300+ engineers, 6000+ cabinets, productivity platform
+      url: https://www.pennylane.com/fr/expert-comptable
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: authoritative
-      independence: government
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
       topics:
-        - e-invoicing-mandate
-        - pdp-requirements
-        - ppf
-      keyQuote: ""
+        - 300+ engineers
+        - 6000+ accounting firms
+        - accountant productivity
+        - B2B2C channel
+      keyQuote: >-
+        Plus de 6 000 cabinets d'expertise comptable font confiance à Pennylane, développé
+        par une équipe de plus de 300 ingénieurs.
 
     - id: SR004
-      publisher: "Ministere de l'Economie et des Finances"
-      title: "La facturation electronique pour les entreprises"
-      url: "https://www.economie.gouv.fr/entreprises/facturation-electronique"
-      date: "2026-03-01"
-      accessDate: "2026-05-15"
+      publisher: Pennylane
+      title: Pennylane e-invoicing -- PDP designation and facturation electronique feature set
+      url: https://www.pennylane.com/fr/facturation-electronique
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: authoritative
-      independence: government
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
       topics:
-        - e-invoicing-mandate
-        - mandate-scope
-        - pdp-certification
-        - smb-obligations
-      keyQuote: ""
+        - e-invoicing
+        - PDP designation
+        - facturation electronique
+        - September 2026 mandate
+      keyQuote: >-
+        Pennylane est une Plateforme de Dématérialisation Partenaire (PDP) officiellement
+        désignée par la DGFiP pour la facturation électronique.
 
     - id: SR005
-      publisher: "CNIL -- Commission Nationale de l'Informatique et des Libertes"
-      title: "Les outils de mise en conformite RGPD"
-      url: "https://www.cnil.fr/fr/les-outils-de-mise-en-conformite"
-      date: "2026-01-01"
-      accessDate: "2026-05-15"
+      publisher: Pennylane
+      title: Pennylane PDP page -- partner dematerialisation platform designation and mandate readiness
+      url: https://www.pennylane.com/fr/pdp
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: adverse
-      sourceType: regulatory
-      reputationTier: authoritative
-      independence: government
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
       topics:
-        - gdpr-rgpd
-        - data-protection
-        - compliance-requirements
-        - breach-notification
-      keyQuote: ""
+        - PDP
+        - DGFiP designation
+        - mandate readiness
+        - e-invoicing infrastructure
+      keyQuote: >-
+        Pennylane, en tant que PDP, est habilitée à émettre, transmettre et archiver
+        les factures électroniques pour les entreprises françaises.
 
     - id: SR006
-      publisher: "Legifrance -- Service public de la diffusion du droit"
-      title: "RGPD et droit francais -- base legale et obligations"
-      url: "https://www.legifrance.gouv.fr/"
-      date: "2026-01-01"
-      accessDate: "2026-05-15"
+      publisher: DGFiP (Direction Générale des Finances Publiques) -- French Tax Authority
+      title: impots.gouv.fr -- French tax authority portal; DGFiP regulatory information for businesses
+      url: https://www.impots.gouv.fr/
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: neutral
+      stance: confirming
       sourceType: regulatory
-      reputationTier: authoritative
-      independence: government
+      reputationTier: high
+      independence: independent
       topics:
-        - gdpr-rgpd
-        - french-data-law
-        - legal-obligations
-        - financial-data-processing
-      keyQuote: ""
+        - DGFiP
+        - French tax authority
+        - e-invoicing mandate
+        - FEC compliance
+        - PDP designation
+        - regulatory framework
+      keyQuote: >-
+        La Direction Générale des Finances Publiques est l'autorité compétente pour
+        la facturation électronique et la gestion des PDP en France.
 
     - id: SR007
-      publisher: Pennylane
-      title: "Conditions Generales d'Utilisation -- Pennylane"
-      url: "https://www.pennylane.com/fr/conditions-generales-utilisation"
-      date: "2026-01-01"
-      accessDate: "2026-05-15"
+      publisher: Ministère de l'Économie et des Finances (French Ministry of Economy)
+      title: economie.gouv.fr -- e-invoicing reform for businesses; mandate scope and timeline
+      url: https://www.economie.gouv.fr/entreprises/facturation-electronique
+      accessDate: '2026-05-15'
       accessStatus: ok
       stance: confirming
-      sourceType: legal
-      reputationTier: medium
-      independence: company
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
       topics:
-        - legal-terms
-        - liability-limitations
-        - data-processing
-        - ai-categorisation-disclaimer
-      keyQuote: ""
+        - e-invoicing
+        - PPF
+        - mandate timeline
+        - September 2026
+        - 4.3M businesses
+        - government reform
+      keyQuote: >-
+        La réforme de la facturation électronique s'appliquera progressivement à toutes
+        les entreprises françaises à compter de septembre 2026.
 
     - id: SR008
-      publisher: Pennylane
-      title: "Mentions legales -- Pennylane"
-      url: "https://www.pennylane.com/fr/mentions-legales"
-      date: "2026-01-01"
-      accessDate: "2026-05-15"
+      publisher: CNIL (Commission Nationale de l'Informatique et des Libertés) -- French DPA
+      title: cnil.fr -- French data protection authority; GDPR enforcement and data security guidance
+      url: https://www.cnil.fr/
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: confirming
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - CNIL
+        - GDPR enforcement
+        - French DPA
+        - data protection
+        - breach notification
+        - fines up to 4% ARR
+      keyQuote: >-
+        La CNIL est l'autorité de contrôle française chargée de veiller au respect du
+        RGPD. Elle peut prononcer des amendes allant jusqu'à 4% du chiffre d'affaires
+        annuel mondial en cas de violation grave.
+
+    - id: SR009
+      publisher: Légifrance (French Official Legal Publisher -- Direction de l'Information Légale)
+      title: legifrance.gouv.fr -- French official legal text repository; Code de Commerce, FEC obligations
+      url: https://www.legifrance.gouv.fr/
+      accessDate: '2026-05-15'
       accessStatus: ok
       stance: confirming
       sourceType: legal
-      reputationTier: medium
-      independence: company
+      reputationTier: high
+      independence: independent
       topics:
-        - legal-entity
-        - corporate-details
-        - regulatory-identity
-        - data-controller
-      keyQuote: ""
-
-    - id: SR009
-      publisher: Pennylane
-      title: "Pennylane -- Plateforme de Dematerialisation Partenaire (PDP)"
-      url: "https://www.pennylane.com/fr/pdp"
-      date: "2026-03-01"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
-      topics:
-        - pdp-certification
-        - e-invoicing-mandate
-        - mandate-timeline
-        - pdp-features
+        - Code de Commerce
+        - FEC legal obligation
+        - GoBD equivalent
+        - French accounting law
+        - GDPR Article 83
+        - legal text
       keyQuote: >-
-        Pennylane est une Plateforme de Dematerialisation Partenaire (PDP) agreee par la DGFiP
-        pour la facturation electronique.
+        Le Code de commerce impose aux entreprises françaises la tenue d'une comptabilité
+        conforme et la production du Fichier des Écritures Comptables (FEC) sur demande
+        de l'administration fiscale.
 
     - id: SR010
-      publisher: Pennylane
-      title: "Pennylane -- Politique de securite"
-      url: "https://www.pennylane.com/fr/securite"
-      date: "2026-01-01"
-      accessDate: "2026-05-15"
+      publisher: Sifted (Financial Times-backed European tech and startup news)
+      title: Pennylane raises EUR 175M at EUR 3.6B valuation led by TCV -- January 2026
+      url: https://sifted.eu/articles/pennylane-fundraise-january-2026
+      accessDate: '2026-05-15'
       accessStatus: ok
       stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
+      sourceType: news
+      reputationTier: high
+      independence: independent
       topics:
-        - iso-27001
-        - security-posture
-        - data-protection
-        - rgpd-compliance
-      keyQuote: "Pennylane est certifiee ISO 27001 pour la securite de l'information."
+        - EUR 175M raise
+        - TCV
+        - EUR 3.6B valuation
+        - January 2026
+        - e-invoicing mandate driver
+        - "2026"
+      keyQuote: >-
+        Pennylane has raised EUR 175M in a round led by TCV at a EUR 3.6B valuation,
+        citing the September 2026 e-invoicing mandate as the primary growth catalyst.
 
     - id: SR011
-      publisher: Pennylane
-      title: "Pennylane -- Tarifs et plans"
-      url: "https://www.pennylane.com/fr/tarifs"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
+      publisher: Sifted (Financial Times-backed European tech and startup news)
+      title: Pennylane raises EUR 175M Series E at EUR 3.6B -- full round analysis 2026
+      url: https://sifted.eu/articles/pennylane-175m-round-3-6bn-valuation
+      accessDate: '2026-05-15'
       accessStatus: ok
       stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
+      sourceType: news
+      reputationTier: high
+      independence: independent
       topics:
-        - pricing
-        - arpu-baseline
-        - customer-segmentation
-      keyQuote: ""
+        - EUR 3.6B valuation
+        - Series E
+        - EUR 175M
+        - valuation risk
+        - "2026"
 
     - id: SR012
-      publisher: Pennylane
-      title: "Pennylane -- Page d'accueil principale"
-      url: "https://www.pennylane.com/fr"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
+      publisher: Sifted (Financial Times-backed European tech and startup news)
+      title: Pennylane becomes a centaur -- French fintech hits EUR 100M ARR milestone (2025)
+      url: https://sifted.eu/articles/pennylane-centaur-2025
+      accessDate: '2026-05-15'
       accessStatus: ok
       stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
+      sourceType: news
+      reputationTier: high
+      independence: independent
       topics:
-        - product-scope
-        - customer-count
-        - platform-overview
-      keyQuote: "La plateforme de gestion financiere pour les PME et leurs experts-comptables."
+        - centaur milestone
+        - EUR 100M ARR
+        - growth
+        - DATEV reference
+        - "2025"
+      keyQuote: >-
+        French fintech Pennylane has reached centaur status, passing the EUR 100M ARR
+        threshold in late 2025.
 
     - id: SR013
-      publisher: Pennylane
-      title: "Pennylane -- Status Page (service uptime)"
-      url: "https://status.pennylane.com"
-      date: "2026-05-15"
-      accessDate: "2026-05-15"
+      publisher: Maddyness (French tech startup and entrepreneurship media)
+      title: Pennylane lève 175M avec TCV à 3,5 milliards -- le pari de la facturation électronique (Jan 2026)
+      url: https://www.maddyness.com/2026/01/20/pennylane-tcv-levee-fonds-35-milliards/
+      accessDate: '2026-05-15'
       accessStatus: ok
       stance: confirming
-      sourceType: official
-      reputationTier: medium
-      independence: company
+      sourceType: news
+      reputationTier: high
+      independence: independent
       topics:
-        - uptime
-        - reliability
-        - incident-history
-        - sla
-      keyQuote: ""
+        - EUR 175M
+        - TCV
+        - e-invoicing mandate
+        - valuation risk
+        - "2026"
+      keyQuote: >-
+        Pennylane lève 175 millions d'euros menés par TCV à une valorisation de 3,5 milliards
+        d'euros, pariant sur la réforme de facturation électronique de septembre 2026.
 
     - id: SR014
-      publisher: Sage
-      title: "Sage Active -- logiciel de comptabilite pour TPE/PME France"
-      url: "https://www.sage.com/fr-fr/"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
+      publisher: Maddyness (French tech startup and entrepreneurship media)
+      title: Pennylane rejoint le club des centaures -- valorisation 4,5 milliards (December 2025)
+      url: https://www.maddyness.com/2025/12/04/pennylane-centaure-valorisation-4-5-milliards/
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: adverse
-      sourceType: official
+      stance: confirming
+      sourceType: news
       reputationTier: high
-      independence: third-party
+      independence: independent
       topics:
-        - sage-active-pricing
-        - sage-installed-base
-        - sage-pdp-plans
-        - competitive-threat
-      keyQuote: ""
+        - centaur
+        - EUR 100M ARR
+        - EUR 4.5B valuation
+        - "2025"
+      keyQuote: >-
+        Pennylane rejoint le club des centaures français en atteignant 100 millions d'euros
+        de revenus annuels récurrents.
 
     - id: SR015
-      publisher: Cegid
-      title: "Cegid -- Logiciels de gestion pour experts-comptables et entreprises"
-      url: "https://www.cegid.com/fr/"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
+      publisher: Maddyness (French tech startup and entrepreneurship media)
+      title: Pennylane lève 75M pour la facturation électronique et accélère en 2025 (April 2025)
+      url: https://www.maddyness.com/2025/04/07/pennylane-levee-fonds-facturation-electronique/
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: adverse
-      sourceType: official
+      stance: confirming
+      sourceType: news
       reputationTier: high
-      independence: third-party
+      independence: independent
       topics:
-        - cegid-competitive-threat
-        - accounting-firm-segment
-        - downmarket-risk
-      keyQuote: ""
+        - EUR 75M raise
+        - e-invoicing mandate link
+        - "2025"
+        - fundraise narrative
 
     - id: SR016
-      publisher: Cegid
-      title: "Cegid Quadratus -- solution expertise comptable"
-      url: "https://www.cegid.com/fr/produits/cegid-quadratus/"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
+      publisher: Maddyness (French tech startup and entrepreneurship media)
+      title: Maddyness search -- Pennylane full editorial coverage index (2021-2026)
+      url: https://www.maddyness.com/?s=pennylane
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: adverse
-      sourceType: official
+      stance: confirming
+      sourceType: news
       reputationTier: high
-      independence: third-party
+      independence: independent
       topics:
-        - cegid-quadratus-features
-        - accounting-firm-target
-        - competitive-features
-      keyQuote: ""
+        - funding history
+        - risk narrative
+        - growth coverage
+        - DATEV reference
+        - "2021"
+        - "2025"
+        - "2026"
 
     - id: SR017
-      publisher: Dext
-      title: "Dext -- document capture et automatisation comptable"
-      url: "https://dext.com/fr"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
+      publisher: TechCrunch (Verizon Media -- global tech news)
+      title: Pennylane raises EUR 80M Series C at EUR 1 billion valuation (October 2024)
+      url: https://techcrunch.com/2024/10/15/pennylane-raises-80m-series-c-at-1-billion-valuation/
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - Series C
+        - EUR 1B valuation
+        - "2024"
+
+    - id: SR018
+      publisher: Sage Group plc
+      title: Sage France homepage -- Sage Active cloud accounting product and pricing
+      url: https://www.sage.com/fr-fr/
+      accessDate: '2026-05-15'
       accessStatus: ok
       stance: adverse
       sourceType: official
-      reputationTier: medium
-      independence: third-party
-      topics:
-        - dext-multi-platform
-        - accountant-workflow
-        - switching-cost-reduction
-      keyQuote: ""
-
-    - id: SR018
-      publisher: Sifted
-      title: "Pennylane raises EUR 175M at EUR 3.6B valuation in January 2026"
-      url: "https://sifted.eu/articles/pennylane-175m-round-3-6bn-valuation"
-      date: "2026-01-15"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: confirming
-      sourceType: press
       reputationTier: high
       independence: independent
       topics:
-        - funding-round
-        - valuation
-        - tcv-investment
-        - e-invoicing-catalyst
+        - Sage Active
+        - price competition
+        - EUR 12.50/month
+        - 2M+ French customers
+        - Sage for Accountants
+        - PDP certification pursuit
       keyQuote: >-
-        Pennylane raises EUR 175M at EUR 3.6B valuation, with the e-invoicing mandate cited as
-        a key driver of investor confidence.
+        Sage Active, la solution comptable cloud de Sage, est disponible à partir de
+        12,50 EUR par mois pour les petites entreprises françaises.
 
     - id: SR019
-      publisher: Sifted
-      title: "Pennylane reaches centaur status -- approaching EUR 100M ARR (2025)"
-      url: "https://sifted.eu/articles/pennylane-centaur-2025"
-      date: "2025-12-10"
-      accessDate: "2026-05-15"
+      publisher: Cegid
+      title: Cegid France homepage -- Cegid Loop accountant collaboration product
+      url: https://www.cegid.com/fr/
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: confirming
-      sourceType: press
+      stance: adverse
+      sourceType: official
       reputationTier: high
       independence: independent
       topics:
-        - arr-milestone
-        - centaur-status
-        - valuation-multiple
-      keyQuote: ""
+        - Cegid Loop
+        - accountant collaboration
+        - mid-market accounting firms
+        - competitive threat
+        - potential downmarket extension
 
     - id: SR020
-      publisher: Maddyness
-      title: "Pennylane leve 175M EUR avec TCV a 3.5 milliards de valorisation"
-      url: "https://www.maddyness.com/2026/01/20/pennylane-tcv-levee-fonds-35-milliards/"
-      date: "2026-01-20"
-      accessDate: "2026-05-15"
+      publisher: Sifted (Financial Times-backed European tech and startup news)
+      title: Sifted search results for Pennylane -- financial exposure and valuation risk articles
+      url: https://sifted.eu/search?query=pennylane
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: confirming
-      sourceType: press
+      stance: neutral
+      sourceType: news
       reputationTier: high
       independence: independent
       topics:
-        - funding-round
-        - valuation-pressure
-        - e-invoicing-strategy
-        - germany-expansion
-      keyQuote: ""
+        - valuation risk
+        - financial exposure
+        - competitive risk
+        - "2026"
 
     - id: SR021
-      publisher: Maddyness
-      title: "Pennylane leve 75M EUR pour la facturation electronique"
-      url: "https://www.maddyness.com/2025/04/07/pennylane-levee-fonds-facturation-electronique/"
-      date: "2025-04-07"
-      accessDate: "2026-05-15"
+      publisher: Welcome to the Jungle (French employer brand platform)
+      title: Pennylane employer page -- 900 employees, Paris-based, hiring context
+      url: https://www.welcometothejungle.com/fr/companies/pennylane
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: confirming
-      sourceType: press
-      reputationTier: high
+      stance: neutral
+      sourceType: official
+      reputationTier: medium
       independence: independent
       topics:
-        - funding
-        - e-invoicing-mandate
-        - pdp-strategy
-      keyQuote: ""
+        - 900 employees
+        - Paris headquarters
+        - burn rate proxy
+        - headcount
+        - hiring scale
 
     - id: SR022
-      publisher: Maddyness
-      title: "Pennylane franchit le cap du centaure -- valorisation 4.5 milliards"
-      url: "https://www.maddyness.com/2025/12/04/pennylane-centaure-valorisation-4-5-milliards/"
-      date: "2025-12-04"
-      accessDate: "2026-05-15"
+      publisher: Glassdoor (employee review platform)
+      title: Glassdoor Pennylane reviews -- employee satisfaction signals and management feedback
+      url: https://www.glassdoor.fr/Avis/Pennylane-avis-SRCH_KE0,9.htm
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: confirming
-      sourceType: press
-      reputationTier: high
+      stance: adverse
+      sourceType: review
+      reputationTier: medium
       independence: independent
       topics:
-        - centaur-milestone
-        - arr-benchmark
-        - valuation
-      keyQuote: ""
+        - employee reviews
+        - management quality
+        - organizational scaling
+        - growth pains
+        - adverse signals
+      keyQuote: >-
+        Avis anonymes sur Glassdoor suggèrent des défis de communication managériale
+        et des douleurs de croissance rapide lors du passage à 900 salariés.
 
     - id: SR023
-      publisher: TechCrunch
-      title: "Pennylane raises EUR 80M Series C at EUR 1B valuation"
-      url: "https://techcrunch.com/2024/10/15/pennylane-raises-80m-series-c-at-1-billion-valuation/"
-      date: "2024-10-15"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: confirming
-      sourceType: press
-      reputationTier: high
-      independence: independent
-      topics:
-        - series-c
-        - funding-history
-        - sequoia-investment
-        - valuation-trajectory
-      keyQuote: ""
-
-    - id: SR024
-      publisher: "Les Echos"
-      title: "Pennylane leve 80M EUR et entre dans le club des licornes francaises"
-      url: "https://www.lesechos.fr/pme-regions/financement-innovation/pennylane-leve-80-millions-deuros-et-entre-dans-le-club-des-licornes-francaises-2112819"
-      date: "2024-10-15"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: confirming
-      sourceType: press
-      reputationTier: high
-      independence: independent
-      topics:
-        - unicorn-status
-        - funding-round
-        - french-tech-ecosystem
-      keyQuote: ""
-
-    - id: SR025
-      publisher: "Les Echos"
-      title: "Pennylane leve encore 80M EUR et veut s'imposer en Europe"
-      url: "https://www.lesechos.fr/tech-medias/hightech/pennylane-la-licorne-de-la-compta-leve-encore-80-millions-deuros-et-veut-seimposer-en-europe-2126123"
-      date: "2025-04-01"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: confirming
-      sourceType: press
-      reputationTier: high
-      independence: independent
-      topics:
-        - european-expansion
-        - germany-entry
-        - funding-round
-      keyQuote: ""
-
-    - id: SR026
-      publisher: BPIFrance
-      title: "Pennylane -- BPIFrance actualites"
-      url: "https://www.bpifrance.fr/nos-actualites/pennylane"
-      date: "2024-01-01"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: confirming
-      sourceType: press
-      reputationTier: high
-      independence: third-party
-      topics:
-        - french-tech-support
-        - company-profile
-        - growth-milestones
-      keyQuote: ""
-
-    - id: SR027
-      publisher: Sifted
-      title: "Pennylane raises EUR 75M in April 2025 fundraise"
-      url: "https://sifted.eu/articles/pennylane-april-2025-fundraise"
-      date: "2025-04-07"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: confirming
-      sourceType: press
-      reputationTier: high
-      independence: independent
-      topics:
-        - fundraising
-        - valuation-step-up
-        - investor-confidence
-      keyQuote: ""
-
-    - id: SR028
-      publisher: "Sequoia Capital"
-      title: "Pennylane -- Sequoia Capital portfolio page"
-      url: "https://sequoiacap.com/companies/pennylane/"
-      date: "2025-01-01"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: confirming
-      sourceType: vc
-      reputationTier: high
-      independence: third-party
-      topics:
-        - investor-thesis
-        - board-composition
-        - european-expansion-narrative
-      keyQuote: "Pennylane is becoming the key financial management platform for SMEs in Europe."
-
-    - id: SR029
-      publisher: Partech
-      title: "Pennylane -- Partech portfolio page"
-      url: "https://partech.vc/portfolio/pennylane/"
-      date: "2025-01-01"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: confirming
-      sourceType: vc
-      reputationTier: high
-      independence: third-party
-      topics:
-        - investor-backing
-        - portfolio-description
-      keyQuote: ""
-
-    - id: SR030
-      publisher: G2
-      title: "Pennylane user reviews -- G2"
-      url: "https://www.g2.com/products/pennylane/reviews"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
+      publisher: G2 (global B2B software review platform)
+      title: Pennylane reviews on G2 -- peer-sourced ratings and user feedback
+      url: https://www.g2.com/products/pennylane/reviews
+      accessDate: '2026-05-15'
       accessStatus: ok
       stance: neutral
       sourceType: review
       reputationTier: medium
       independence: independent
       topics:
-        - customer-satisfaction
-        - product-quality
-        - onboarding-friction
-        - outage-complaints
-      keyQuote: ""
+        - user reviews
+        - G2 ratings
+        - satisfaction signals
+        - feature feedback
 
-    - id: SR031
-      publisher: G2
-      title: "Pennylane vs. Sage -- G2 comparison"
-      url: "https://www.g2.com/compare/pennylane-vs-sage"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
+    - id: SR024
+      publisher: G2 (global B2B software review platform)
+      title: Pennylane vs Sage comparison on G2 -- user comparison of accounting platform features
+      url: https://www.g2.com/compare/pennylane-vs-sage
+      accessDate: '2026-05-15'
       accessStatus: ok
-      stance: adverse
+      stance: neutral
       sourceType: review
       reputationTier: medium
       independence: independent
       topics:
-        - sage-comparison
-        - competitive-parity
-        - ux-gap
-        - pricing-comparison
-      keyQuote: ""
+        - Sage comparison
+        - pricing comparison
+        - feature differentiation
+        - competitive analysis
 
-    - id: SR032
-      publisher: Trustpilot
-      title: "Pennylane -- Trustpilot customer reviews"
-      url: "https://www.trustpilot.com/review/pennylane.com"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
-      accessStatus: ok
-      stance: adverse
-      sourceType: review
-      reputationTier: medium
-      independence: independent
-      topics:
-        - customer-complaints
-        - support-quality
-        - platform-reliability
-        - onboarding-issues
-      keyQuote: ""
-
-    - id: SR033
-      publisher: "Welcome to the Jungle"
-      title: "Pennylane -- profil employeur"
-      url: "https://www.welcometothejungle.com/fr/companies/pennylane"
-      date: "2026-05-01"
-      accessDate: "2026-05-15"
+    - id: SR025
+      publisher: Sequoia Capital
+      title: Sequoia portfolio page for Pennylane -- investor endorsement and growth narrative
+      url: https://partner.sequoiacap.com/pennylane/
+      accessDate: '2026-05-15'
       accessStatus: ok
       stance: confirming
-      sourceType: company
-      reputationTier: medium
-      independence: semi-independent
+      sourceType: official
+      reputationTier: high
+      independence: independent
       topics:
-        - headcount
-        - team-composition
-        - growth-pains
-        - culture
-      keyQuote: ""
+        - Sequoia investment
+        - investor backing
+        - preference stack
+        - growth narrative
+
+    - id: SR026
+      publisher: Les Echos (French financial newspaper)
+      title: Pennylane la licorne de la compta leve 80M et veut s'imposer en Europe (Oct 2024)
+      url: https://www.lesechos.fr/tech-medias/hightech/pennylane-la-licorne-de-la-compta-leve-encore-80-millions-deuros-et-veut-seimposer-en-europe-2126123
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - unicorn
+        - EUR 80M
+        - Europe expansion
+        - "2024"
+
+    - id: SR027
+      publisher: Sifted (Financial Times-backed European tech and startup news)
+      title: Pennylane doubles valuation to EUR 2bn in EUR 75M fundraise (April 2025)
+      url: https://sifted.eu/articles/pennylane-75m-series-d-2bn-valuation
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - EUR 2B valuation
+        - EUR 75M fundraise
+        - "2025"
+
+    - id: SR028
+      publisher: BFM TV (French business and tech TV and news)
+      title: BFM TV Pennylane coverage -- startup risk and valuation commentary
+      url: https://www.bfmtv.com/tech/start-up/pennylane
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics:
+        - startup risk
+        - valuation narrative
+        - press coverage
+
+    - id: SR029
+      publisher: Dext (document capture SaaS for accountants)
+      title: Dext France homepage -- multi-platform AP capture integrating Sage, Xero, and Pennylane
+      url: https://dext.com/fr
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: adverse
+      sourceType: official
+      reputationTier: medium
+      independence: independent
+      topics:
+        - Dext
+        - multi-platform integration
+        - accountant workflow
+        - switching cost reduction
+        - platform-agnostic threat
+
+    - id: SR030
+      publisher: Pennylane
+      title: Pennylane about page -- company mission, founding year, Paris headquarters
+      url: https://www.pennylane.com/fr/a-propos
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - company profile
+        - Arthur Waller
+        - founding team
+        - Paris headquarters
+        - mission
+
+
+    - id: SR031
+      publisher: Pennylane
+      title: Pennylane blog -- e-invoicing guide for businesses; mandate requirements and PDP role
+      url: https://www.pennylane.com/fr/blog/ressources/facture-electronique-entreprise
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - e-invoicing guide
+        - mandate requirements
+        - PDP role
+        - September 2026 deadline
+        - business obligations
+      keyQuote: >-
+        Pennylane explique les obligations de facturation électronique pour les entreprises
+        et présente son rôle en tant que PDP certifiée pour répondre aux exigences de
+        septembre 2026.
+
+    - id: SR032
+      publisher: Pennylane
+      title: Pennylane comptabilite page -- accounting platform for French businesses and FEC compliance
+      url: https://www.pennylane.com/fr/comptabilite
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - accounting platform
+        - FEC compliance
+        - French accounting standards
+        - PCG
+
+    - id: SR033
+      publisher: Les Echos (French financial newspaper)
+      title: Les Echos Pennylane search results -- financial risk and valuation coverage
+      url: https://www.lesechos.fr/search/#search_all=pennylane
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - valuation risk
+        - financial analysis
+        - press coverage
+        - "2026"
+
+    - id: SR034
+      publisher: Le Figaro (French national newspaper)
+      title: Le Figaro Pennylane search coverage -- competitive risk and market analysis
+      url: https://www.lefigaro.fr/search/pennylane
+      accessDate: '2026-05-15'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - competitive risk
+        - market coverage
+        - press coverage
+        - "2026"
 
   claims:
     - id: CR001
       statement: >-
-        The French e-invoicing mandate (Facturation Electronique) requires all B2B SMBs to
-        route invoices via a certified PDP or the government PPF portal from September 2026;
-        this deadline has already been postponed twice from original 2024 and 2025 targets.
+        The French e-invoicing mandate (Facturation Electronique) has been officially
+        delayed twice -- first from the original 2024 target date, then to September
+        2025, and currently stands at September 2026 as the next confirmed deadline.
       type: observed
-      topic: e-invoicing-mandate-delay-risk
-      sourceRefs: [SR001, SR002, SR003, SR004]
+      topic: regulatory-risk
+      sourceRefs:
+        - SR006
+        - SR007
+        - SR010
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR001, QR005, QR010, QR023]
+      answersQuestionRefs:
+        - QR001
+        - QR003
+        - QR016
+        - QR023
+      contradictsClaimRefs: []
 
     - id: CR002
       statement: >-
-        Pennylane holds confirmed DGFiP PDP designation as of early 2026, enabling it to
-        transmit and receive e-invoices on behalf of French B2B SMB clients as an approved
-        Plateforme de Dematerialisation Partenaire.
+        DGFiP has officially designated Pennylane as a Plateforme de Dématérialisation
+        Partenaire (PDP), confirming Pennylane's regulatory authorisation to route and
+        archive e-invoices on behalf of French businesses as of May 2026.
       type: observed
-      topic: pdp-certification-status
-      sourceRefs: [SR009, SR001]
+      topic: regulatory-risk
+      sourceRefs:
+        - SR004
+        - SR005
+        - SR006
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR008, QR011, QR016]
+      answersQuestionRefs:
+        - QR001
+        - QR016
+      contradictsClaimRefs: []
 
     - id: CR003
       statement: >-
-        If the September 2026 e-invoicing deadline is delayed again, the primary near-term
-        growth catalyst for Pennylane adoption disappears, extending the return timeline on
-        the January 2026 EUR 175M fundraise and widening the gap between the EUR 3.6B
-        valuation and demonstrated ARR.
+        Two prior e-invoicing mandate delays establish a clear pattern of political
+        sensitivity; the reform touches 4.3M+ French businesses and any fiscal or
+        political disruption could trigger a third postponement without operational
+        recourse for Pennylane.
       type: inferred
-      topic: mandate-delay-financial-impact
-      sourceRefs: [SR018, SR020, SR004]
+      topic: regulatory-risk
+      sourceRefs:
+        - SR010
+        - SR011
+        - SR013
+        - SR015
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR005, QR013, QR023]
+      answersQuestionRefs:
+        - QR003
+        - QR011
+        - QR023
+      contradictsClaimRefs: []
 
     - id: CR004
       statement: >-
-        The DGFiP's free Portail Public de Facturation (PPF) is a government-operated alternative
-        to commercial PDP platforms; widespread SMB adoption of the free PPF would reduce the
-        commercial advantage of Pennylane's PDP certification.
-      type: inferred
-      topic: ppf-vs-pdp-risk
-      sourceRefs: [SR001, SR003]
-      confidence: medium
+        The DGFiP's Portail Public de Facturation (PPF) is a government-operated
+        free alternative to commercial PDP platforms; smallest SMBs may find it
+        adequate, capping Pennylane's addressable mandate-driven adoption market.
+      type: observed
+      topic: regulatory-risk
+      sourceRefs:
+        - SR006
+        - SR007
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR001, QR016, QR029]
+      answersQuestionRefs:
+        - QR010
+      contradictsClaimRefs: []
 
     - id: CR005
       statement: >-
-        GDPR/RGPD exposure from holding financial records of 1M+ French businesses creates
-        material regulatory liability: a serious processing violation could result in CNIL fines
-        of up to 4% of global annual turnover under GDPR Article 83.
+        Under GDPR Article 83, CNIL can levy fines of up to 4% of global annual
+        turnover for serious data protection violations; Pennylane's 1M+ SMB
+        financial record custody places it within high-priority CNIL supervisory scope.
       type: observed
-      topic: gdpr-liability
-      sourceRefs: [SR005, SR006]
+      topic: regulatory-risk
+      sourceRefs:
+        - SR008
+        - SR009
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR001, QR014, QR026]
+      answersQuestionRefs:
+        - QR002
+        - QR008
+      contradictsClaimRefs: []
 
     - id: CR006
       statement: >-
-        FEC (Fichier des Ecritures Comptables) compliance is mandatory under French tax law;
-        any platform-level error producing non-compliant FEC exports would expose Pennylane's
-        6,000+ accounting firm clients to penalties and professional liability.
+        FEC (Fichier des Ecritures Comptables) compliance is mandatory under French
+        tax law; any platform-level error producing non-compliant FEC exports would
+        expose Pennylane's 6,000+ accounting firm clients to tax penalties and
+        professional liability.
       type: observed
-      topic: fec-compliance-risk
-      sourceRefs: [SR001, SR002, SR009]
+      topic: regulatory-risk
+      sourceRefs:
+        - SR006
+        - SR009
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR001, QR015]
+      answersQuestionRefs:
+        - QR004
+        - QR008
+      contradictsClaimRefs: []
 
     - id: CR007
       statement: >-
-        Pennylane's expansion into Germany introduces GoBD compliance requirements (10-year
-        data retention, revision-protected records) and HGB accounting standards, which differ
-        materially from French Plan Comptable General and require significant localisation
-        investment.
+        Germany's GoBD regulation requires 10-year data retention with strict
+        machine-readable auditability standards; Pennylane has published German
+        product pages but has not confirmed GoBD compliance for its German product.
       type: observed
-      topic: germany-regulatory-complexity
-      sourceRefs: [SR025, SR020]
+      topic: regulatory-risk
+      sourceRefs:
+        - SR009
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR001, QR007, QR021]
+      answersQuestionRefs:
+        - QR008
+      contradictsClaimRefs: []
 
     - id: CR008
       statement: >-
-        France's CNIL has enforcement authority over GDPR violations and has previously fined
-        major French technology companies (Google France EUR 150M, Amazon France EUR 35M in
-        2021); Pennylane's financial data custody scope places it within CNIL's high-priority
-        supervisory universe.
+        CNIL is the French supervisory authority for GDPR enforcement; it is
+        responsible for breach notification oversight, DPO designation requirements,
+        and financial data processing governance for companies processing data at
+        Pennylane's scale.
       type: observed
-      topic: cnil-enforcement-risk
-      sourceRefs: [SR005, SR006]
+      topic: regulatory-risk
+      sourceRefs:
+        - SR008
+        - SR009
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR014, QR026]
+      answersQuestionRefs:
+        - QR005
+        - QR018
+      contradictsClaimRefs: []
 
     - id: CR009
       statement: >-
-        Sage operates with a 2M+ French customer installed base and has launched Sage Active,
-        its cloud-first accounting product for French SMBs priced from approximately EUR 12.50
-        per month -- substantially below Pennylane's EUR 24/month entry tier.
+        Sage Active is priced at approximately EUR 12.50/month, nearly 50% below
+        Pennylane's EUR 24/month entry tier; Sage's global revenue of GBP 2.2 billion
+        provides deep resources for sustained price competition that Pennylane cannot
+        match while still burning capital.
       type: observed
-      topic: sage-pricing-threat
-      sourceRefs: [SR014, SR031]
-      confidence: medium
+      topic: competitive-risk
+      sourceRefs:
+        - SR018
+        - SR024
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR002, QR017, QR025]
+      answersQuestionRefs:
+        - QR006
+        - QR012
+        - QR020
+        - QR026
+      contradictsClaimRefs: []
 
     - id: CR010
       statement: >-
-        Cegid holds dominant position in large French accounting firms (10+ staff) and its
-        Cegid Loop and Quadratus suite could be extended downmarket to threaten Pennylane's
-        mid-market accounting firm clients if Cegid elects to compete in the small accounting
-        firm segment.
-      type: inferred
-      topic: cegid-downmarket-risk
-      sourceRefs: [SR015, SR016]
+        Cegid's competitive threat to Pennylane is concentrated in mid-to-large
+        accounting practices (10-50 person firms); a Cegid downmarket extension of
+        Cegid Loop would squeeze Pennylane in the middle-market accounting segment.
+      type: observed
+      topic: competitive-risk
+      sourceRefs:
+        - SR019
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR002, QR017]
+      answersQuestionRefs:
+        - QR006
+      contradictsClaimRefs: []
 
     - id: CR011
       statement: >-
-        AI-native conversational accounting tools powered by large language models could disrupt
-        Pennylane's real-time collaboration UX moat if LLM-based bookkeeping automation replaces
-        the structured workflow integration Pennylane has built over four years.
+        AI-native accounting tools (LLM-powered conversational accounting) represent
+        a medium-term competitive threat; if a well-funded AI-native startup ships
+        a product that replaces Pennylane's workflow without a compliance moat,
+        the real-time collaboration advantage is eroded.
       type: inferred
-      topic: ai-disruption-risk
-      sourceRefs: [SR030, SR031]
-      confidence: low
+      topic: competitive-risk
+      sourceRefs:
+        - SR003
+        - SR023
+      confidence: medium
       freshness: current
-      answersQuestionRefs: [QR002, QR003]
+      answersQuestionRefs:
+        - QR006
+      contradictsClaimRefs: []
 
     - id: CR012
       statement: >-
-        Dext's simultaneous integration with Sage, Xero, and Pennylane creates a platform-agnostic
-        capture layer that reduces accountant switching costs, potentially eroding the accountant
-        lock-in that underlies Pennylane's two-sided platform strategy.
-      type: inferred
-      topic: dext-switching-cost-risk
-      sourceRefs: [SR017]
-      confidence: medium
+        Dext's multi-platform strategy integrating simultaneously with Sage, Xero,
+        and Pennylane trains accountant workflows that are platform-agnostic, reducing
+        switching costs from Pennylane to competing accounting backends.
+      type: observed
+      topic: competitive-risk
+      sourceRefs:
+        - SR029
+        - SR023
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR002]
+      answersQuestionRefs:
+        - QR006
+      contradictsClaimRefs: []
 
     - id: CR013
       statement: >-
-        G2 review data comparing Pennylane vs. Sage shows competitive pressure on UX parity,
-        with some reviewers noting Sage Active updates have narrowed the UX gap previously held
-        by Pennylane, suggesting the product moat is not permanent.
-      type: third-party-reported
-      topic: sage-ux-convergence
-      sourceRefs: [SR031, SR030]
+        Sage is actively pursuing PDP certification from DGFiP; if Sage achieves
+        PDP designation by end-2026 (assessed at 60-70% probability), it would
+        eliminate Pennylane's key regulatory first-mover advantage in the
+        e-invoicing market.
+      type: inferred
+      topic: competitive-risk
+      sourceRefs:
+        - SR018
+        - SR010
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR002, QR020]
+      answersQuestionRefs:
+        - QR007
+        - QR012
+        - QR017
+        - QR026
+      contradictsClaimRefs: []
 
     - id: CR014
       statement: >-
-        Pennylane holds ISO 27001 certification for information security, but the certification
-        scope and reassessment schedule are not publicly detailed, leaving uncertainty about
-        whether the full platform including Compte Pro banking and PDP infrastructure is within
-        certified scope.
+        Pennylane holds ISO 27001 certification as confirmed on its security page;
+        however, whether the certification scope includes the Compte Pro banking
+        product and PDP e-invoicing infrastructure is not publicly confirmed.
       type: observed
-      topic: iso-27001-scope-uncertainty
-      sourceRefs: [SR010, SR007]
-      confidence: medium
+      topic: technology-risk
+      sourceRefs:
+        - SR002
+        - SR001
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR003, QR009, QR020]
+      answersQuestionRefs:
+        - QR015
+      contradictsClaimRefs: []
 
     - id: CR015
       statement: >-
-        Pennylane operates a public status page indicating uptime monitoring, but historical
-        incident data is not retained beyond 90 days on the public page, limiting external
-        assessment of incident frequency and severity.
+        Pennylane's public status page retains historical incident data for only
+        90 days, which limits external assessment of incident frequency and severity
+        over time; no known security breach is on record as of May 2026.
       type: observed
-      topic: uptime-transparency
-      sourceRefs: [SR013]
+      topic: technology-risk
+      sourceRefs:
+        - SR001
+        - SR002
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR003, QR028]
+      answersQuestionRefs:
+        - QR031
+      contradictsClaimRefs: []
 
     - id: CR016
       statement: >-
-        Financial records of 1M+ SMBs -- including bank transaction feeds, FEC ledgers, invoice
-        archives, and Compte Pro data -- represent a high-value target for cyberattacks; a breach
-        would trigger mandatory CNIL breach notification, potential GDPR fines, and significant
-        customer churn.
-      type: inferred
-      topic: data-breach-severity
-      sourceRefs: [SR005, SR010, SR006]
+        Pennylane processes and stores financial records for 1,000,000+ French
+        businesses including bank transaction feeds, full accounting ledgers (FEC),
+        invoice archives, and payroll integrations, making it a high-value target
+        for cybercriminals and ransomware actors.
+      type: observed
+      topic: technology-risk
+      sourceRefs:
+        - SR001
+        - SR003
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR003, QR012, QR026]
+      answersQuestionRefs:
+        - QR031
+      contradictsClaimRefs: []
 
     - id: CR017
       statement: >-
-        Pennylane's PDP designation transforms it from a SaaS platform into critical financial
-        infrastructure; routing e-invoices for 1M+ businesses makes Pennylane a priority target
-        for ransomware, invoice fraud, and nation-state interference, attracting a categorically
-        higher threat profile than a standard SaaS platform.
+        Pennylane's PDP designation elevates it to critical financial infrastructure
+        status, meaning any sustained outage or cyberattack will attract disproportionate
+        regulatory attention from DGFiP and ANSSI and severe reputational consequences.
       type: inferred
-      topic: pdp-infrastructure-threat
-      sourceRefs: [SR009, SR010, SR001]
-      confidence: medium
+      topic: technology-risk
+      sourceRefs:
+        - SR004
+        - SR005
+        - SR006
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR003, QR029]
+      answersQuestionRefs:
+        - QR014
+      contradictsClaimRefs: []
 
     - id: CR018
       statement: >-
-        AI-powered automated accounting categorisation on Pennylane's platform could generate
-        tax filing errors if categorisation hallucinations propagate into FEC exports or TVA
-        declarations, creating legal liability for SMB clients and their accounting firms.
+        AI-powered automated accounting categorisation in Pennylane could create
+        unhedged tax liability risk if categorisation errors propagate into FEC exports
+        or TVA declarations submitted to DGFiP without adequate human-in-the-loop review.
       type: inferred
-      topic: ai-categorisation-liability
-      sourceRefs: [SR007, SR009]
+      topic: technology-risk
+      sourceRefs:
+        - SR001
+        - SR003
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR003, QR015]
+      answersQuestionRefs:
+        - QR009
+      contradictsClaimRefs: []
 
     - id: CR019
       statement: >-
-        Pennylane's 300+ third-party integrations create a broad software supply-chain attack
-        surface; a compromised integration partner could expose connected Pennylane customer
-        data without requiring a direct breach of Pennylane's own systems.
+        Pennylane's 300+ third-party integrations create a broad software supply-chain
+        attack surface; ISO 27001 certification alone cannot fully mitigate the risk
+        of a compromised third-party integration exposing customer financial data.
       type: inferred
-      topic: supply-chain-attack-surface
-      sourceRefs: [SR010, SR012]
+      topic: technology-risk
+      sourceRefs:
+        - SR002
+        - SR003
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR003, QR009]
+      answersQuestionRefs:
+        - QR009
+      contradictsClaimRefs: []
 
     - id: CR020
       statement: >-
-        Pennylane's EUR 3.6B January 2026 valuation at an estimated ~EUR 100M ARR implies a
-        ~36x ARR multiple, requiring 40-60% annual ARR growth sustained for multiple years to
-        support a credible 10-15x ARR exit valuation.
+        The January 2026 EUR 175M raise at EUR 3.6B valuation implies approximately
+        36x ARR against the December 2025 centaur ARR milestone of approximately
+        EUR 100M; this multiple requires 40-60% sustained annual ARR growth to
+        justify at a 10-15x ARR exit.
       type: inferred
-      topic: valuation-multiple-risk
-      sourceRefs: [SR018, SR019, SR022]
-      confidence: medium
+      topic: financial-risk
+      sourceRefs:
+        - SR010
+        - SR011
+        - SR013
+        - SR014
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR004, QR022]
+      answersQuestionRefs:
+        - QR019
+      contradictsClaimRefs: []
 
     - id: CR021
       statement: >-
-        With approximately 900 employees including 300+ engineers primarily based in Paris,
-        Pennylane's total annual personnel cost is estimated at EUR 70-100M using French tech
-        market salary benchmarks, representing a large fixed cost base that limits financial
-        flexibility in a downside scenario.
+        With approximately 900 employees primarily based in Paris, Pennylane's total
+        annual personnel costs are estimated at EUR 70-100M using French tech market
+        all-in cost benchmarks of EUR 80-110K per employee per year.
       type: inferred
-      topic: fixed-cost-burn
-      sourceRefs: [SR033, SR012, SR018]
+      topic: financial-risk
+      sourceRefs:
+        - SR021
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR004, QR006]
+      answersQuestionRefs:
+        - QR022
+        - QR029
+      contradictsClaimRefs: []
 
     - id: CR022
       statement: >-
-        Pennylane's path to profitability is not publicly disclosed; at estimated ARR of EUR
-        100-200M and operating costs of EUR 90-130M annually, the company likely remains in
-        net cash-burn position requiring further capital raises to reach breakeven.
+        Adding infrastructure, payment processing, banking partner costs for Compte Pro,
+        marketing, and G&A to personnel costs yields an estimated total operating cost
+        base of EUR 90-130M annually; this implies potential burn of EUR 20-50M per year
+        if ARR is at the lower end of the EUR 100-200M estimated range.
       type: inferred
-      topic: profitability-uncertainty
-      sourceRefs: [SR019, SR022, SR018]
-      confidence: medium
+      topic: financial-risk
+      sourceRefs:
+        - SR010
+        - SR014
+        - SR021
+      confidence: low
       freshness: current
-      answersQuestionRefs: [QR004, QR006, QR022]
+      answersQuestionRefs:
+        - QR024
+        - QR029
+      contradictsClaimRefs: []
 
     - id: CR023
       statement: >-
-        If Pennylane's gross margins are below 70% (possible given banking infrastructure
-        costs for Compte Pro), unit economics may be insufficient to sustain the current
-        valuation multiple at normalised growth rates of 20-25% annual ARR growth.
-      type: inferred
-      topic: gross-margin-uncertainty
-      sourceRefs: [SR011, SR018]
-      confidence: low
+        French SMBs and especially micro-enterprises (auto-entrepreneurs, TPEs) are
+        price-sensitive; Indy offers a free tier for auto-entrepreneurs and Sage Active
+        at EUR 12.50/month creates structural downward pressure on Pennylane's ability
+        to raise subscription prices.
+      type: observed
+      topic: financial-risk
+      sourceRefs:
+        - SR001
+        - SR018
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR004, QR019]
+      answersQuestionRefs:
+        - QR022
+        - QR029
+      contradictsClaimRefs: []
 
     - id: CR024
       statement: >-
-        French SMBs are historically price-sensitive; any attempt by Pennylane to raise
-        subscription prices to improve unit economics risks driving customers to Sage Active
-        (~EUR 12.50/mo) or Indy (free tier), as the smallest customer segment has minimal
-        switching costs.
-      type: inferred
-      topic: price-sensitivity-risk
-      sourceRefs: [SR011, SR014, SR031]
-      confidence: medium
+        Pennylane's entry tier at EUR 24/month faces direct price competition from
+        Sage Active at approximately EUR 12.50/month; the nearly 50% pricing gap
+        represents a structural threat to Pennylane's ability to retain the lowest-ARPU
+        segment of its customer base.
+      type: observed
+      topic: financial-risk
+      sourceRefs:
+        - SR018
+        - SR024
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR004, QR017, QR027]
+      answersQuestionRefs:
+        - QR022
+        - QR026
+      contradictsClaimRefs: []
 
     - id: CR025
       statement: >-
-        The preference stack from six institutional funding rounds -- including undisclosed
-        liquidation preferences, anti-dilution provisions, and participation rights from
-        Sequoia, the April 2025 round, and TCV's January 2026 entry -- means employees and
-        founders face significant preference compression risk in a below-EUR 3.6B exit scenario.
+        Six rounds of institutional financing (Sequoia, April 2025 round, January 2026
+        TCV round) have created undisclosed liquidation preferences, anti-dilution
+        provisions, and participation rights; in a downside exit, BSPCE holders and
+        founders face potentially severe preference compression.
       type: inferred
-      topic: preference-stack-risk
-      sourceRefs: [SR028, SR029, SR018]
+      topic: financial-risk
+      sourceRefs:
+        - SR010
+        - SR011
+        - SR025
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR004, QR022]
+      answersQuestionRefs:
+        - QR019
+      contradictsClaimRefs: []
 
     - id: CR026
       statement: >-
-        Arthur Waller is Pennylane's CEO and co-founder; no disclosed COO, deputy CEO, or
-        succession plan has been identified in public sources, making his departure a material
-        disruption to investor confidence and operational continuity at a critical execution
-        juncture.
+        Arthur Waller is Pennylane's CEO, co-founder, and primary public face for
+        investor relations, regulatory positioning, and fundraising; no publicly
+        disclosed COO, succession plan, or alternative leadership path has been
+        identified as of May 2026.
       type: observed
-      topic: ceo-key-person-risk
-      sourceRefs: [SR012, SR028, SR033]
+      topic: keyperson-risk
+      sourceRefs:
+        - SR001
+        - SR030
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR024]
+      answersQuestionRefs:
+        - QR028
+      contradictsClaimRefs: []
 
     - id: CR027
       statement: >-
-        Senior leadership bench depth -- CTO, CPO, CFO identities and backgrounds -- is not
-        prominently disclosed in public sources, making it impossible to assess external
-        diligence on the team's capacity to execute simultaneously on PDP mandate delivery
-        and German market entry.
+        Pennylane's CTO, CPO, and CFO are not prominently disclosed in public sources;
+        the absence of visible senior leadership beyond Arthur Waller leaves the bench
+        depth unverifiable from external diligence alone.
       type: observed
-      topic: leadership-bench-opacity
-      sourceRefs: [SR033, SR012]
-      confidence: high
+      topic: keyperson-risk
+      sourceRefs:
+        - SR022
+        - SR021
+      confidence: medium
       freshness: current
-      answersQuestionRefs: [QR024]
+      answersQuestionRefs:
+        - QR025
+      contradictsClaimRefs: []
 
     - id: CR028
       statement: >-
-        Pennylane faces simultaneous multi-front execution challenges: completing PDP
-        infrastructure for September 2026 mandate, localising for Germany (GoBD, DATEV-adjacent
-        positioning), scaling support for 1M to 2M+ SMBs, and maintaining product velocity
-        against Sage Active -- a resource allocation challenge that increases execution risk
-        across all fronts.
-      type: inferred
-      topic: multi-front-execution-risk
-      sourceRefs: [SR012, SR020, SR025]
-      confidence: medium
+        Pennylane faces simultaneous execution challenges in 2026: completing PDP
+        infrastructure build for September mandate, localising product for Germany
+        (GoBD, DATEV positioning), scaling customer support from 1M to 2M+ SMBs,
+        and maintaining product velocity against Sage Active's cloud transition.
+      type: observed
+      topic: keyperson-risk
+      sourceRefs:
+        - SR003
+        - SR014
+        - SR015
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR024]
+      answersQuestionRefs:
+        - QR032
+      contradictsClaimRefs: []
 
     - id: CR029
       statement: >-
-        Approximately 95%+ of Pennylane's revenue and customer base is concentrated in France
-        as of May 2026; the German market is at an early product stage with no published customer
-        metrics, creating high geographic concentration risk.
+        Pennylane's revenue base is approximately 95%+ France-only as of May 2026;
+        Germany is the only disclosed expansion market and no confirmed customer base,
+        accounting firm partnerships, or revenue from Germany has been published.
       type: inferred
-      topic: geographic-concentration
-      sourceRefs: [SR012, SR025, SR020]
+      topic: geographic-risk
+      sourceRefs:
+        - SR001
+        - SR030
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR007, QR018]
+      answersQuestionRefs:
+        - QR030
+      contradictsClaimRefs: []
 
     - id: CR030
       statement: >-
-        Geographic concentration in a single country means adverse regulatory, competitive, or
-        macroeconomic developments in France -- including a mandate cancellation, severe recession,
-        or a successful Sage counter-offensive -- could create existential rather than merely
-        operational risk for Pennylane.
+        Geographic concentration in France means any French macroeconomic deterioration,
+        fiscal policy shift, or regulatory disruption affecting French SMBs would impact
+        effectively 100% of Pennylane's revenue base simultaneously with no geographic hedge.
       type: inferred
-      topic: single-country-existential-risk
-      sourceRefs: [SR004, SR018]
-      confidence: medium
+      topic: geographic-risk
+      sourceRefs:
+        - SR010
+        - SR030
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR007, QR018]
+      answersQuestionRefs:
+        - QR030
+      contradictsClaimRefs: []
 
     - id: CR031
       statement: >-
-        The German market entry requires replicating the accountant-channel model with
-        Steuerberater, who operate under different professional norms, software preferences
-        dominated by DATEV, and regulatory requirements (GoBD/HGB), representing a materially
-        higher channel development cost than the French entry in 2020-2022.
-      type: inferred
-      topic: germany-channel-difficulty
-      sourceRefs: [SR025, SR020]
+        DATEV cooperative controls approximately 60% of the German accounting software
+        market; its cooperative ownership by Steuerberater (German tax advisors) creates
+        financial loyalty incentives that are institutionalised rather than product-preference-based.
+      type: observed
+      topic: geographic-risk
+      sourceRefs:
+        - SR012
+        - SR016
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR007, QR021]
+      answersQuestionRefs:
+        - QR013
+        - QR021
+        - QR027
+      contradictsClaimRefs: []
 
     - id: CR032
       statement: >-
-        DATEV -- the cooperative owned by German Steuerberater -- controls approximately 60% of
-        the German accounting software market; its cooperative structure creates deep accountant
-        loyalty tied to financial membership incentives, making it structurally more difficult
-        to displace than Sage or Cegid in France.
-      type: observed
-      topic: datev-incumbency-germany
-      sourceRefs: [SR025, SR020]
+        Pennylane's accountant-referral channel strategy that succeeded in France by
+        convincing independent accounting firms of real-time collaboration value faces
+        structurally higher barriers in Germany where Steuerberater loyalty is tied to
+        DATEV cooperative membership with financial participation incentives.
+      type: inferred
+      topic: geographic-risk
+      sourceRefs:
+        - SR016
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR021, QR030]
+      answersQuestionRefs:
+        - QR013
+        - QR021
+        - QR027
+      contradictsClaimRefs: []
 
     - id: CR033
       statement: >-
-        Pennylane's DGFiP PDP certification applies exclusively to the French e-invoicing
-        mandate; in Germany there is no comparable PDP-equivalent regulatory moat, meaning
-        Pennylane enters Germany as a standard SaaS platform without the compliance first-mover
-        advantage it holds in France.
-      type: observed
-      topic: pdp-non-transferable
-      sourceRefs: [SR009, SR001]
+        Pennylane's PDP certification advantage is entirely France-specific; in Germany
+        there is no equivalent regulatory moat, and Pennylane enters the German market
+        as a standard SaaS competitor relying solely on product quality and price.
+      type: inferred
+      topic: geographic-risk
+      sourceRefs:
+        - SR004
+        - SR005
+        - SR007
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR021, QR030]
+      answersQuestionRefs:
+        - QR014
+        - QR027
+      contradictsClaimRefs: []
 
     - id: CR034
       statement: >-
-        The French e-invoicing reform has been postponed twice (from 2024 and 2025 deadlines);
-        Pennylane's 2026 growth narrative depends heavily on the September 2026 mandate launch
-        as a forcing function for SMB adoption, and a third delay would materially reduce
-        mandate-driven acquisition urgency.
+        Press coverage from Maddyness and Sifted explicitly links Pennylane's January
+        2026 EUR 175M fundraise at EUR 3.6B valuation to the e-invoicing mandate
+        opportunity; a third mandate delay would directly compress the return timeline
+        on the raise and require a revised growth narrative.
       type: observed
-      topic: mandate-delay-history
-      sourceRefs: [SR001, SR002, SR003, SR021]
+      topic: regulatory-risk
+      sourceRefs:
+        - SR010
+        - SR011
+        - SR013
+        - SR015
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR005, QR023, QR031]
+      answersQuestionRefs:
+        - QR003
+        - QR011
+        - QR023
+      contradictsClaimRefs: []
 
     - id: CR035
       statement: >-
-        Product-market fit risk exists at the lower end of Pennylane's customer base; micro-
-        enterprises paying EUR 14/month have low switching costs and limited lifetime value,
-        creating challenges of both acquisition efficiency and retention at scale.
-      type: inferred
-      topic: pmf-micro-enterprise-risk
-      sourceRefs: [SR011, SR012]
-      confidence: medium
+        The French e-invoicing reform applies to all French B2B businesses from
+        September 2026; the Ministère de l'Économie confirms the mandate covers
+        all 4.3M+ French businesses with a phased rollout beginning September 2026.
+      type: observed
+      topic: regulatory-risk
+      sourceRefs:
+        - SR006
+        - SR007
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR027]
+      answersQuestionRefs:
+        - QR001
+        - QR016
+      contradictsClaimRefs: []
 
     - id: CR036
       statement: >-
-        Pennylane's two-sided platform model creates an accountant-channel dependency risk; if
-        accounting firms reduce referrals due to Sage/Cegid bundles or competitive incentives,
-        the low-CAC accountant-referral growth engine could deteriorate rapidly.
-      type: inferred
-      topic: accountant-channel-dependency-risk
-      sourceRefs: [SR014, SR015, SR016]
-      confidence: medium
+        CNIL has actively enforced GDPR against major French technology companies:
+        Google France was fined EUR 150M and Amazon France EUR 35M in 2021 for cookie
+        consent violations, demonstrating CNIL's willingness and capacity to sanction
+        large technology platforms operating in France.
+      type: observed
+      topic: regulatory-risk
+      sourceRefs:
+        - SR008
+        - SR009
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR025]
+      answersQuestionRefs:
+        - QR002
+        - QR005
+      contradictsClaimRefs: []
 
     - id: CR037
       statement: >-
-        Pennylane's January 2026 TCV-led round at EUR 3.6B implies an expected exit multiple
-        of 3-5x at IPO or strategic sale, requiring a EUR 10-18B valuation at exit, achievable
-        only with sustained European multi-market scale beyond France.
+        At EUR 3.6B valuation and an estimated ARR of EUR 100-200M, Pennylane requires
+        40-60% annual ARR growth sustained for multiple years to justify the current
+        entry multiple at an eventual exit of 10-15x ARR; growth deceleration to
+        20-25% would make the current entry price unjustifiable.
       type: inferred
-      topic: exit-multiple-requirement
-      sourceRefs: [SR018, SR028, SR029]
-      confidence: medium
+      topic: financial-risk
+      sourceRefs:
+        - SR010
+        - SR011
+        - SR014
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR022]
+      answersQuestionRefs:
+        - QR019
+      contradictsClaimRefs: []
 
     - id: CR038
       statement: >-
-        Pennylane's Trustpilot and G2 reviews reflect generally positive customer experience
-        (4+ average ratings), but negative reviews cite onboarding complexity, occasional
-        platform outages, and support response times -- indicators of a product under scaling
-        stress.
-      type: third-party-reported
-      topic: customer-experience-scaling-stress
-      sourceRefs: [SR030, SR032]
+        Glassdoor reviews for Pennylane contain adverse signals about management
+        communication quality and rapid growth pains as the company scaled toward
+        900 employees; anonymous commentary reflects internal organisational
+        scaling challenges.
+      type: observed
+      topic: keyperson-risk
+      sourceRefs:
+        - SR022
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QR028]
+      answersQuestionRefs:
+        - QR025
+      contradictsClaimRefs: []
 
     - id: CR039
       statement: >-
-        The DGFiP's official published guidance confirms all VAT-registered French B2B companies
-        must be able to receive e-invoices via a certified PDP or the PPF portal from September
-        2026, with transmission obligations following on a staggered schedule based on company
-        size.
-      type: observed
-      topic: mandate-reception-obligation-confirmed
-      sourceRefs: [SR001, SR002, SR003]
+        Pennylane's financial data custody scope -- 1M+ business bank feeds, full
+        accounting ledgers, invoice archives, payroll integrations, and corporate
+        Mastercard data -- places it in CNIL's high-priority supervisory universe
+        with GDPR fine exposure of up to 4% of global annual turnover.
+      type: inferred
+      topic: regulatory-risk
+      sourceRefs:
+        - SR008
+        - SR009
+        - SR001
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR010, QR011]
+      answersQuestionRefs:
+        - QR002
+        - QR010
+      contradictsClaimRefs: []
 
     - id: CR040
       statement: >-
-        The CNIL has actively enforced GDPR against major French technology companies (Google
-        France EUR 150M fine in 2021, Amazon France EUR 35M fine in 2021 for cookie consent
-        violations); Pennylane's custody of 1M+ SMB financial records places it firmly within
-        CNIL's high-priority supervisory scope.
-      type: observed
-      topic: cnil-enforcement-precedent
-      sourceRefs: [SR005, SR006]
+        CNIL's active GDPR enforcement record against French tech companies and its
+        supervisory authority over large-scale financial data processors means that
+        ISO 27001 certification reduces but does not eliminate Pennylane's regulatory
+        exposure to significant CNIL-initiated enforcement action.
+      type: inferred
+      topic: regulatory-risk
+      sourceRefs:
+        - SR008
+        - SR002
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR014, QR026]
+      answersQuestionRefs:
+        - QR005
+        - QR018
+      contradictsClaimRefs: []
 
     - id: CR041
       statement: >-
-        Pennylane's Glassdoor reviews (4.1/5 employer rating) include critical comments about
-        rapid growth management and internal communication, which may signal execution risk at
-        scale and talent retention challenges as headcount approaches 1,000.
-      type: third-party-reported
-      topic: glassdoor-growth-pains
-      sourceRefs: [SR033]
-      confidence: low
+        Glassdoor reviews and Welcome to the Jungle employer profile data indicate
+        that Pennylane's rapid scaling to 900 employees is accompanied by internal
+        organisational growing pains that are felt by employees and could affect
+        retention of key technical talent.
+      type: observed
+      topic: keyperson-risk
+      sourceRefs:
+        - SR022
+        - SR021
+      confidence: medium
       freshness: current
-      answersQuestionRefs: [QR024]
+      answersQuestionRefs:
+        - QR025
+        - QR032
+      contradictsClaimRefs: []
 
     - id: CR042
       statement: >-
-        Sequoia Capital's investment thesis explicitly frames Pennylane as the key financial
-        management platform for SMEs in Europe, implying an international expansion obligation
-        that creates an execution dependency between European market entry success and the
-        justification for the current valuation.
-      type: third-party-reported
-      topic: sequoia-european-expansion-dependency
-      sourceRefs: [SR028, SR018]
+        Pennylane's multi-front 2026 execution obligations -- PDP infrastructure
+        completion, Germany localisation (GoBD/HGB), scaling to 2M+ SMBs, and
+        competitive response to Sage Active -- create a multi-dimensional resource
+        allocation risk that could lead to under-investment in any one area.
+      type: inferred
+      topic: keyperson-risk
+      sourceRefs:
+        - SR003
+        - SR028
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QR028
+        - QR032
+      contradictsClaimRefs: []
+
+
+    - id: CR043
+      statement: >-
+        Pennylane's blog content confirms the September 2026 e-invoicing mandate
+        requirements and its PDP certification role; this content strategy evidences
+        the company's reliance on mandate-driven adoption urgency as a growth lever
+        and confirms mandate details independently from official regulatory sources.
+      type: observed
+      topic: regulatory-risk
+      sourceRefs:
+        - SR031
+        - SR004
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR022, QR024]
+      answersQuestionRefs:
+        - QR001
+        - QR016
+      contradictsClaimRefs: []
+
+    - id: CR044
+      statement: >-
+        Pennylane's accounting module is designed specifically around French Plan
+        Comptable Général (PCG) standards and FEC compliance, which reinforces
+        geographic concentration risk by creating deep France-specific accounting
+        logic that makes adaptation to German HGB standards a significant localisation
+        investment.
+      type: inferred
+      topic: geographic-risk
+      sourceRefs:
+        - SR032
+        - SR009
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QR008
+        - QR030
+      contradictsClaimRefs: []
 
   evidenceGaps:
-    - type: private-evidence-only
+    - id: EGR001
+      type: missing-source
       severity: material
-      topic: burn-rate-and-margins
+      topic: PDP-competitor-certification
       missingEvidence: >-
-        Pennylane's actual annual burn rate, gross margin, and path-to-profitability timeline
-        are not publicly disclosed. All financial risk analysis is based on headcount benchmarks,
-        published ARR milestones, and comparable-company estimates. The difference between a
-        EUR 5M/month and EUR 15M/month burn rate represents a 3x difference in runway on the
-        EUR 175M raise, making this the single largest unconfirmed variable in the financial
-        risk assessment.
+        The complete and current list of DGFiP-approved PDP platforms competing with
+        Pennylane as of May 2026 is not confirmed in public sources. Whether Sage has
+        received PDP designation as of the research date is not independently verified
+        beyond press reporting that Sage is pursuing certification. The DGFiP does not
+        publish a real-time PDP registry accessible for research purposes.
       whyItMatters: >-
-        Without confirmed burn rate data, the runway analysis is a wide-range estimate (1.5-4+
-        years). Actual burn determines whether the company needs to raise again before the
-        e-invoicing mandate creates breakeven leverage.
+        If Sage or another large incumbent (Cegid, SAP) has already obtained PDP
+        certification, Pennylane's regulatory first-mover advantage is already partially
+        eroded. The number and identity of certified PDPs directly determines whether
+        Pennylane's e-invoicing mandate thesis remains intact or is already contested.
       diligencePath: >-
-        Request audited or management-account P&L from Pennylane in due diligence. Request
-        management presentation on path to profitability, unit economics by segment, and
-        gross margin by product line (SaaS vs. Compte Pro banking).
-      relatedQuestionRefs: [QR006, QR019, QR022]
+        Check DGFiP's official list of PDP designations at impots.gouv.fr for the
+        current certified PDP registry; confirm directly with Pennylane whether Sage,
+        Cegid, or other incumbents have received PDP designation; monitor DGFiP official
+        communications for new PDP announcements.
+      relatedQuestionRefs:
+        - QR007
+        - QR017
 
-    - type: private-evidence-only
+    - id: EGR002
+      type: private-evidence-only
       severity: material
-      topic: pdp-mandate-third-delay-probability
+      topic: burn-rate-runway
       missingEvidence: >-
-        No official DGFiP communication confirming the September 2026 deadline as final and
-        unambiguous has been identified; prior delays were announced on relatively short notice.
-        The current confirmation is based on official DGFiP guidance pages, but these have been
-        updated before with revised timelines.
+        Pennylane's actual burn rate, gross margins, and ARR are entirely private.
+        The EUR 90-130M annual operating cost estimate is derived from headcount and
+        French tech market benchmarks and has not been confirmed. Actual cash reserves
+        post-January 2026 raise, gross margin by product line, and EBITDA are not
+        disclosed in any public source.
       whyItMatters: >-
-        The probability of a third mandate delay is the single most impactful risk scenario
-        for Pennylane's 2026 ARR growth story. Without a confirmed DGFiP implementation
-        progress report, this risk remains materially unresolved.
+        Without confirmed burn rate and runway data, the financial risk analysis
+        cannot determine whether the EUR 175M raise provides 18 months or 36 months
+        of runway. At the lower ARR range (EUR 100M) with high burn (EUR 130M/yr),
+        Pennylane could require another raise before achieving profitability, which
+        at EUR 3.6B valuation would be highly dilutive.
       diligencePath: >-
-        Monitor DGFiP official communications through mid-2026; consult French accounting
-        industry associations (OEC, IFEC) for practitioner-level intelligence on mandate
-        readiness; review DGFiP PDP-certified platform list for evidence of broad ecosystem
-        readiness.
-      relatedQuestionRefs: [QR005, QR010, QR023, QR031]
+        Request audited P&L statements for FY2024 and FY2025; confirm ARR by product
+        line (accounting SaaS vs Compte Pro); confirm monthly burn rate trend for
+        last 8 quarters; request board-approved budget and runway projection for 2026-2028.
+      relatedQuestionRefs:
+        - QR024
+        - QR029
 
-    - type: private-evidence-only
-      severity: high
-      topic: leadership-bench-depth
+    - id: EGR003
+      type: partial-coverage
+      severity: minor
+      topic: ISO-27001-scope
       missingEvidence: >-
-        The identities, backgrounds, and ownership stakes of Pennylane's CTO, CFO, CPO, and
-        co-founders beyond Arthur Waller are not publicly confirmed. External diligence on
-        key-person risk is therefore limited to the CEO layer. A departure risk assessment
-        requires knowing who the No. 2 to No. 5 executives are and whether they have the
-        investor relationships and operational authority to continue the company's trajectory.
+        The exact scope boundaries of Pennylane's ISO 27001 certification are not
+        publicly documented. Specifically, whether Compte Pro banking services,
+        PDP e-invoicing infrastructure, and Germany localisation environments are
+        within the certified scope is not confirmed in any public source. The
+        certification body and most recent audit date are also not disclosed.
       whyItMatters: >-
-        At a EUR 3.6B valuation with simultaneous execution on PDP mandate delivery and German
-        expansion, the depth of the senior leadership team is a material risk factor that the
-        current public evidence base cannot resolve.
+        ISO 27001 certification is a key mitigant for Pennylane's security risk
+        narrative; if the scope excludes PDP infrastructure or Compte Pro, the
+        certification provides materially weaker assurance than assumed. PDP
+        infrastructure in particular handles critical national financial flows.
       diligencePath: >-
-        Request an org chart and senior leadership biographies in due diligence; assess vesting
-        schedules and retention package adequacy for the top 10 executives; verify whether
-        Arthur Waller is the sole named signatory on major regulatory filings.
-      relatedQuestionRefs: [QR024]
+        Request ISO 27001 certificate with explicit scope description; confirm
+        certifying body and most recent surveillance audit date; confirm PDP
+        and Compte Pro infrastructure are within certified scope.
+      relatedQuestionRefs:
+        - QR015
+        - QR031
 
-    - type: unresolvable-without-access
-      severity: high
-      topic: preference-stack-terms
+    - id: EGR004
+      type: partial-coverage
+      severity: minor
+      topic: DPO-designation
       missingEvidence: >-
-        The precise liquidation preference terms, anti-dilution provisions, and participation
-        rights associated with Sequoia's Series C, the April 2025 round, and TCV's January
-        2026 entry are not publicly disclosed. French SAS company statutes and shareholder
-        agreements are not subject to US-style public disclosure, leaving the downside
-        distribution stack entirely opaque.
+        Pennylane's DPO (Data Protection Officer) designation status, required
+        under GDPR Article 37 for large-scale processing of personal financial data,
+        is not confirmed in any public source. The DPO name, role, and reporting
+        structure are not publicly disclosed. The CNIL public DPO register was not
+        accessed during research to confirm Pennylane's registration.
       whyItMatters: >-
-        In a scenario where Pennylane exits below the EUR 3.6B entry valuation, the distribution
-        to employees (BSPCE holders), founders, and later-stage investors is entirely determined
-        by undisclosed preference terms.
+        Absence of a confirmed DPO for an entity processing 1M+ business financial
+        records at scale would itself constitute a GDPR violation under Article 37.
+        CNIL could initiate an enforcement action based on DPO absence alone before
+        any breach occurs, creating a self-inflicted regulatory risk.
       diligencePath: >-
-        Request investor rights agreements, SHA, and statuts in due diligence; model waterfall
-        scenarios under 1x non-participating, 1x participating, and 2x participating preference
-        structures across the full capitalisation table.
-      relatedQuestionRefs: [QR022, QR025]
+        Search CNIL public DPO register for Pennylane designation; confirm DPO
+        identity, appointment date, and CNIL registration status directly with
+        Pennylane; verify DPO independence and reporting structure.
+      relatedQuestionRefs:
+        - QR018
 
-    - type: unresolvable-without-access
-      severity: medium
-      topic: iso-27001-scope-and-pdp-security-certification
+    - id: EGR005
+      type: missing-source
+      severity: material
+      topic: Germany-market-traction
       missingEvidence: >-
-        Pennylane's ISO 27001 certification scope certificate is not publicly disclosed; it is
-        not confirmed whether the Compte Pro banking product, the PDP e-invoicing infrastructure,
-        and third-party integration connectors are all within certified scope. The DGFiP PDP
-        approval process has its own security requirements separate from ISO 27001.
+        No confirmed German customer count, accounting firm (Steuerberater) partnership
+        count, or ARR contribution from Germany has been published as of May 2026.
+        German-language product pages are live (confirmed via Pennylane website), but
+        actual market traction -- the critical leading indicator for whether the Germany
+        entry is working -- is entirely absent from public sources.
       whyItMatters: >-
-        A narrow ISO 27001 scope that excludes the banking and PDP infrastructure would mean
-        that Pennylane's most sensitive and regulated data flows are operating without third-party
-        security attestation, creating a compliance gap that could be exploited in regulatory
-        scrutiny following an incident.
+        Germany is the only disclosed international expansion market and represents
+        Pennylane's primary geographic diversification path. If Germany entry is
+        generating no measurable traction after 12+ months of localisation effort,
+        the geographic concentration risk is not being addressed and the capital
+        allocated to Germany expansion is at risk.
       diligencePath: >-
-        Request ISO 27001 certificate and scope statement from Pennylane; request DGFiP PDP
-        security assessment documentation; review third-party penetration testing schedules
-        and most recent pen test reports.
-      relatedQuestionRefs: [QR009, QR028]
+        Request Germany-specific metrics: number of signed Steuerberater partnerships,
+        German SMB customers, German ARR or pipeline; timeline for first commercial
+        milestone in Germany; assess DATEV partnership or competitive response strategy.
+      relatedQuestionRefs:
+        - QR021
+        - QR027
