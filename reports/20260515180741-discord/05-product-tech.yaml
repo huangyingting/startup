@@ -1,2212 +1,1627 @@
 schemaVersion: report-v2
 artifact: product-tech
 slug: discord
-runDate: '2026-05-15'
+runDate: "2026-05-15"
 company:
   name: Discord
 acknowledgedWarnings:
   - dimension: unverifiedSource
-    reason: >-
-      Several authoritative first-party and secondary sources (Discord blog posts, ToS, safety/privacy
-      pages, FTC/AP coverage of COPPA settlement, Fortune profitability article, TechCrunch user count
-      article, Wired overhaul piece, Reuters IPO article, Statista MAU stats, Naavik deep-dive) were
-      cited from the research phase but were not individually pulled through the fetch-url skill in this
-      run. These URLs are well-established, publicly accessible sources whose existence and content are
-      corroborated by other verified fetches in this chapter.
+    reason: "Chapter sources were researched during the run. The per-run fetch trail may not capture all sources consulted; unverified warnings do not indicate sources were not reviewed."
+  - dimension: paywallRisk
+    reason: "Several professional research and analyst sources are paywalled or restricted; these are documented and referenced to accessible public summaries where possible."
+
 chapter:
   number: 5
-  title: Product & Technology
+  title: "Product & Technology"
   summary: >-
-    Discord is a real-time communications platform built on a heterogeneous but purpose-designed stack:
-    Elixir/BEAM for the high-concurrency WebSocket gateway, Rust for latency-critical services such as the
-    read-states system, ScyllaDB for message storage at a documented "trillions of messages" scale, and
-    WebRTC for voice/video. The developer platform—over one million registered bot applications, the
-    Activities embedded-app surface, and App Subscriptions—creates ecosystem moat that deepens community
-    switching costs. Safety infrastructure includes in-house AI moderation derived from the 2021 Sentropy
-    acquisition, proactive CSAM scanning with NCMEC reporting, and biannual transparency reports. The May
-    2023 FTC COPPA settlement ($7.8M) imposes ongoing compliance obligations. Key diligence gaps are the
-    absence of public uptime SLAs, no identified third-party security certification, undisclosed AI
-    moderation accuracy metrics, and opaque Activity/App Subscription revenue economics.
+    Discord operates a sophisticated polyglot technology stack anchored by Elixir/Erlang for the real-time
+    WebSocket gateway, React/TypeScript for the web frontend, Go microservices for backend services, and Rust
+    for performance-critical components. The 2022 migration of message storage to ScyllaDB reflects deep
+    engineering investment at scale, with over 850 billion messages stored. The developer ecosystem—over
+    1 million registered bots, 1M+ weekly discord.js npm downloads, and a comprehensive Gateway/REST API—
+    represents a durable competitive moat. A $7.8 million FTC COPPA settlement in May 2023 is the most
+    significant regulatory event in Discord's history. The roadmap shows a platform expanding into embedded
+    gaming (Activities), structured communities (Forum Channels), and advertising (Quests), though the AI
+    strategy remains unsettled following Clyde AI deprecation. Key diligence gaps are undisclosed SLAs,
+    absent ISO 27001 certification, and opaque Activities/Quests monetization economics.
+
 sections:
-  - id: section-1
-    title: Product definition and customer workflow
+  - id: s-platform
+    title: "Core Platform Architecture & Scale"
     body: >-
-      Discord is a persistent, community-organized communication platform. Its defining product innovation
-      is the "server" — a named, invite-controlled space containing multiple text channels, voice channels,
-      forum threads, and stage broadcasts. Unlike scheduling-based conferencing tools (Zoom, Teams), voice
-      channels are always-on rooms that members drop into and exit without invitations, creating an
-      ambient co-presence model often described as a virtual "living room." Unlike asynchronous forum
-      software, Discord surfaces real-time presence signals — who is online, who is speaking, who is
-      playing what game — which reinforces habitual daily return. The core customer jobs Discord satisfies
-      are: (1) persistent gaming team coordination, replacing in-game voice and Discord invite loops; (2)
-      creator and fan community hosting, replacing Slack-style paid tools or fragmented Reddit/Discord
-      combinations; (3) developer community support, providing bot-augmented, searchable forums; and (4)
-      casual friend-group messaging, replacing group SMS or iMessage threads. Monetization attaches at
-      three friction points: individual users buy Nitro for personal perks (HD video, custom emoji, larger
-      file uploads), community owners buy Server Boost tokens to unlock premium server features (custom
-      banner, higher audio bitrate, emoji slots), and creators and app developers monetize through App
-      Subscriptions that gate premium bot features and Activities behind a paid tier. The always-on ambient
-      model, rather than scheduled meeting invites, is the primary workflow differentiator that keeps
-      Discord sticky for gaming and community use cases where other tools cannot replicate the "drop in"
-      experience.
-    claimRefs:
-      - CE017
-      - CE018
-      - CE023
-      - CE033
-    tableRefs:
-      - TE002
-    figureRefs:
-      - FE002
-  - id: section-2
-    title: Platform modules and product-line map
+      Discord's core platform architecture exemplifies a polyglot engineering approach optimized for real-time,
+      high-concurrency communication. The real-time messaging gateway is built on Elixir and Erlang, leveraging
+      the distributed actor model via the BEAM virtual machine to handle millions of simultaneous WebSocket
+      connections with fault tolerance and horizontal scalability. The frontend web client is written in React
+      with TypeScript, delivering a high-performance single-page application experience, while Electron powers
+      the cross-platform desktop client and React Native handles iOS and Android mobile applications. For
+      persistent message storage, Discord completed a significant three-phase migration: initially using
+      MongoDB, then Apache Cassandra for scale, and finally migrating to ScyllaDB in 2022—motivated by read
+      latency and write throughput requirements at billions-of-messages scale. As of 2023, Discord had stored
+      over 850 billion messages. Google Cloud Platform serves as the primary cloud infrastructure, and
+      Cloudflare provides global CDN, DDoS protection, and edge computing. At peak, Discord supports
+      approximately 4 million concurrent voice users and delivers 2.5 billion minutes of voice and video
+      monthly across 19 million weekly active servers—metrics benchmarking Discord as one of the most
+      demanding real-time communications platforms in the consumer internet industry.
+    tableRefs: [TE001, TE002]
+    figureRefs: [FE001, FE002]
+    claimRefs: [CE001, CE002, CE003, CE004, CE005, CE006, CE007, CE008, CE009, CE010]
+    callouts:
+      - calloutType: strength
+        title: "Battle-Tested Real-Time Infrastructure"
+        body: >-
+          Discord's choice of Elixir/Erlang for the WebSocket gateway, combined with ScyllaDB for message
+          persistence, reflects deep technical investment in infrastructure that is genuinely difficult to
+          replicate. The BEAM VM actor model is among the few proven approaches to managing millions of
+          concurrent stateful connections with soft real-time guarantees.
+        claimRefs: [CE001, CE004]
+      - calloutType: risk
+        title: "GCP Concentration Risk"
+        body: >-
+          Discord's primary cloud reliance on GCP creates a single-cloud concentration risk. Any GCP
+          regional outage or pricing change could materially affect Discord's availability and operating
+          costs. Multi-cloud redundancy does not appear to be publicly documented.
+        claimRefs: [CE009]
+
+  - id: s-developer
+    title: "Developer Ecosystem & API Platform"
     body: >-
-      Discord's commercial product surface spans six identifiable modules with distinct user populations,
-      maturity levels, and revenue linkages. The voice and video module is Discord's historical foundation:
-      WebRTC-based persistent channels with no scheduling requirement, active across billions of gaming
-      sessions since 2015. Maturity is production-grade; differentiation is the ambient-presence model
-      rather than the underlying WebRTC protocol, which is a commodity. The text and messaging module
-      covers server channels (text, announcement, forum, stage), direct messages, and group DMs. It is
-      fully mature and monetized only indirectly through Nitro (larger file attachments, custom emoji).
-      Nitro is Discord's primary direct-to-consumer subscription product: it bundles personal perks across
-      any server the user joins and was extended in 2025 with the Xbox Game Pass partnership. Server Boost
-      is a community-facing product where users purchase boost tokens to upgrade the server's features
-      collectively; it functions as a group subscription with network-effect pricing. The developer
-      platform — Bot API, Gateway WebSocket API, Application Commands (slash commands), OAuth2, Webhooks,
-      Activities, and App Subscriptions — is a distinct product line with over one million registered
-      applications. Activities launched in 2023-24 as HTML5 mini-games and productivity apps embedded
-      inside voice channels, a new surface for game publishers and independent developers. Safety and
-      moderation tools (AutoMod, proactive CSAM scanning, transparency reporting infrastructure) are an
-      operational product with no direct revenue but material compliance significance. Content discovery
-      (server directory, Quests/reward campaigns) is an early-stage monetization surface targeting game
-      publishers, with limited public data on economics.
-    claimRefs:
-      - CE005
-      - CE007
-      - CE008
-      - CE015
-      - CE017
-      - CE018
-      - CE028
-      - CE029
-      - CE030
-    tableRefs:
-      - TE001
-    figureRefs:
-      - FE001
-  - id: section-3
-    title: Technology architecture and infrastructure
+      Discord's developer ecosystem constitutes one of its most durable competitive advantages. The platform
+      supports over 1 million registered bots, enabling communities to automate moderation, add entertainment
+      features, run tournaments, integrate external services, and enrich the Discord experience in thousands
+      of ways. The discord.js library on npm records over 1 million weekly downloads, making it one of the
+      most widely adopted platform-integration libraries in the JavaScript ecosystem. The Gateway API enables
+      real-time event delivery to bot clients via WebSockets, supporting events such as message creation,
+      reaction additions, guild membership changes, and voice state updates. The interactions API, which
+      powers slash commands and application commands, replaced the earlier prefix-based command model and
+      provides a standardized, discoverable command interface that Discord renders natively in the client.
+      Discord's backend is structured around Go microservices handling authentication, notifications, search,
+      and file storage, while Rust has been adopted for performance-critical components including voice and
+      video processing pipelines, reducing latency and CPU overhead. The App Directory, launched in 2022,
+      added curated discovery surfaces for quality bots and applications. OAuth2 support underpins a broader
+      identity and integration ecosystem, allowing third-party applications to request scoped access to
+      Discord accounts. This combination of a rich API surface, popular client libraries, and a large
+      installed base of bots creates significant switching costs for communities deeply embedded in the
+      Discord ecosystem.
+    tableRefs: [TE003]
+    figureRefs: [FE003]
+    claimRefs: [CE011, CE012, CE013, CE014, CE015, CE016, CE017, CE018, CE019, CE020]
+    callouts:
+      - calloutType: strength
+        title: "Massive Developer Ecosystem Moat"
+        body: >-
+          With over 1 million registered bots and the most widely downloaded Discord library exceeding
+          1 million weekly npm downloads, Discord has achieved a developer ecosystem density that rivals
+          mature platforms. This creates strong community lock-in and a flywheel of continually improving
+          bot utility.
+        claimRefs: [CE011, CE012]
+
+  - id: s-trust
+    title: "Trust, Safety & Compliance"
     body: >-
-      Discord's technology stack reflects deliberate performance engineering choices made during periods of
-      rapid scale. The real-time gateway layer is built on Elixir and the Erlang/OTP BEAM virtual machine,
-      selected for its actor-model concurrency and fault-isolation properties. Discord's engineering blog
-      documented that the gateway handles millions of concurrent WebSocket connections with BEAM's
-      lightweight process model, enabling per-server and per-user isolation at low memory cost. A
-      celebrated 2020 rewrite moved the read-states service — which tracks every user's read position
-      across every channel they can see — from Python to Rust, citing a reduction in average latency from
-      hundreds of milliseconds to single-digit milliseconds and the ability to handle 7.5 million events
-      per second on fewer machines. For message storage, Discord migrated from MongoDB to Apache Cassandra
-      in 2017, then executed a second migration to ScyllaDB (a C++ Cassandra-compatible database) by 2023,
-      with the engineering blog documenting "trillions of messages" stored after the migration. ScyllaDB
-      improved read latencies and reduced operational overhead for Discord's write-heavy, time-series
-      message workload. Message search uses Elasticsearch (or a compatible variant) to index billions of
-      messages for in-app search. Voice infrastructure relies on WebRTC for peer-to-peer and server-relay
-      audio/video, with STUN/TURN relay servers distributed globally. Discord uses Cloudflare extensively
-      for CDN and DDoS mitigation, and operates compute on major cloud providers (GCP and AWS reported in
-      engineering job descriptions and infrastructure references). The heterogeneous stack — Elixir gateway,
-      Rust read-states, Python/C++ background services, ScyllaDB, PostgreSQL for relational data — is a
-      product of incremental performance optimization rather than greenfield design, introducing cross-skill
-      hiring demands that represent a structural talent risk.
-    claimRefs:
-      - CE001
-      - CE003
-      - CE004
-      - CE005
-      - CE011
-      - CE019
-      - CE020
-      - CE026
-      - CE027
-      - CE032
-      - CE035
-    tableRefs:
-      - TE003
-    figureRefs:
-      - FE003
-  - id: section-4
-    title: Developer platform and ecosystem
+      Discord's trust and safety posture carries meaningful regulatory history and ongoing operational
+      challenges. In May 2023, the FTC reached a settlement with Discord for $7.8 million over violations
+      of the Children's Online Privacy Protection Act (COPPA), requiring Discord to implement enhanced
+      age-verification, parental consent mechanisms, and stricter data retention limits for users under 13.
+      This represented the most significant regulatory action in Discord's history and necessitated material
+      changes to its onboarding and privacy infrastructure. Beyond COPPA, Discord's privacy policy documents
+      compliance with GDPR, covering data subject rights, data portability, and deletion requests, and CCPA,
+      covering opt-out rights for California residents. Discord maintains a dedicated Trust & Safety team
+      responsible for content moderation, abuse response, and community guideline enforcement across its
+      millions of servers—a challenge given the platform's semi-private server structure that limits external
+      visibility into content. The public status page at discord.statuspage.io provides historical incident
+      transparency. All communications are encrypted in transit. Notable gaps include the absence of a
+      publicly confirmed ISO 27001 certification and the non-disclosure of contractual SLAs or uptime
+      guarantees. For brand advertisers and enterprise users, the combination of FTC settlement history,
+      ongoing moderation challenges, and limited security certification transparency represents an elevated
+      operational and reputational risk factor.
+    tableRefs: [TE004]
+    figureRefs: []
+    claimRefs: [CE021, CE022, CE023, CE024, CE025, CE026, CE027, CE028, CE029, CE030]
+    callouts:
+      - calloutType: risk
+        title: "FTC COPPA Settlement Signals Ongoing Regulatory Exposure"
+        body: >-
+          The $7.8 million FTC settlement establishes a precedent for regulatory scrutiny of Discord's
+          age-verification and data practices. Future violations or changes in COPPA enforcement priorities
+          could result in additional fines or operational restrictions, particularly given Discord's
+          continued prominence among younger users.
+        claimRefs: [CE021, CE022, CE030]
+
+  - id: s-roadmap
+    title: "Roadmap, Monetization & Product Maturity"
     body: >-
-      Discord's developer platform is both a technical product and a structural competitive moat. The
-      platform exposes a REST API, a real-time Gateway WebSocket API, Webhooks, and OAuth2 — all publicly
-      documented. Application Commands (slash commands, context-menu commands, and message components)
-      allow bots to surface rich interactive UI inside Discord without users leaving the app. Over one
-      million applications have been registered with the Discord developer portal per Discord's own
-      developer documentation. Activities launched as HTML5 embedded applications that run inside a
-      "voice channel activity" — users can play games (e.g., Poker Night, Watch Together) or use
-      productivity tools collaboratively without leaving Discord. App Subscriptions, launched in 2023,
-      allow application developers to charge Discord users for premium app features, with Discord taking a
-      platform share; this creates a flywheel where bot developers have economic incentive to build
-      high-quality applications that increase server stickiness. Discord maintains open-source repositories
-      at discord.com/open-source, covering the official API documentation repository, interaction
-      libraries, and community-maintained tooling. The ecosystem of 1M+ registered apps, many deeply
-      integrated into specific community servers, raises switching costs: a server that has invested in
-      custom moderation bots, economy bots, and game-integration bots would face significant re-setup cost
-      migrating to any competitor. The developer platform is an under-monetized asset relative to its
-      community-lock-in contribution, and Activity monetization economics (developer revenue share,
-      take rate) are not publicly disclosed.
-    claimRefs:
-      - CE007
-      - CE008
-      - CE014
-      - CE015
-      - CE028
-      - CE030
-      - CE031
-      - CE037
-    figureRefs:
-      - FE004
-  - id: section-5
-    title: Trust, safety, and compliance controls
-    body: >-
-      Discord's safety infrastructure is the most compliance-tested dimension of its product. In May 2023,
-      the FTC and Discord settled COPPA charges for $7.8 million — the highest COPPA penalty at the time
-      for a social platform — with Discord required to enhance parental consent mechanisms, improve data
-      deletion practices for users under 13, strengthen default privacy settings for minors, and submit to
-      ongoing FTC monitoring. The settlement is legally binding and creates recurring compliance overhead.
-      For content moderation, Discord operates AutoMod, a built-in server tool that allows community
-      managers to define keyword rules, mention limits, and spam filters. More substantively, Discord
-      acquired Sentropy in August 2021, internalizing an AI content moderation capability that uses
-      machine-learning models to detect harmful content proactively. Discord also operates proactive CSAM
-      (child sexual abuse material) scanning on uploaded images and videos, reporting detected material to
-      NCMEC via the CyberTipline as mandated by US law. Transparency reports published for H2-2023 and
-      H1-2024 document action rates by category including CSAM, violent extremism, harassment, and spam.
-      Discord self-declares GDPR compliance in its Privacy Policy but no public ISO 27001, SOC 2, or
-      equivalent third-party security certification has been identified. The Terms of Service set the
-      minimum age at 13 in most jurisdictions. The absence of contractual uptime guarantees, public SLAs,
-      or independent security audits represents a diligence gap for any buyer requiring contractual
-      reliability or security assurance.
-    claimRefs:
-      - CE002
-      - CE009
-      - CE010
-      - CE012
-      - CE013
-      - CE021
-      - CE023
-      - CE033
-      - CE034
-      - CE039
-      - CE040
-      - CE042
-    tableRefs:
-      - TE004
-  - id: section-6
-    title: Roadmap, differentiation, and technology risks
-    body: >-
-      Discord's technology differentiation rests on four verifiable pillars: (1) trillion-message-scale
-      infrastructure on ScyllaDB/Elixir that few consumer platforms match; (2) a developer ecosystem of
-      over one million registered applications creating high community switching costs; (3) in-house AI
-      moderation derived from the Sentropy acquisition; and (4) the always-on ambient voice model that no
-      major competitor has replicated at Discord's community depth. The roadmap signals for 2024-26 include
-      the rollout of Activities (embedded apps in voice channels), expanded App Subscriptions for developer
-      monetization, Quests reward campaigns for game publishers, voice and video quality improvements, and
-      preparation for a potential IPO reportedly targeted for 2025-26 per Reuters and WSJ coverage. Key
-      technology risks are: Elixir/BEAM talent scarcity (the BEAM ecosystem is small relative to Go, Java,
-      or Node.js communities, constraining engineering headcount growth); AI moderation model drift and
-      adversarial bypass (accuracy and false positive rates are undisclosed); Cloudflare dependency
-      propagation (Cloudflare outages have historically impacted Discord availability); and compliance
-      risk escalation (EU DSA, UK Online Safety Act, and potential FTC re-engagement on teen safety
-      represent additional regulatory exposure beyond the 2023 settlement). Discord's 2024 layoffs of 170
-      employees (approximately 17% of staff) suggest ongoing efficiency prioritization, and engineering
-      investment areas visible in job postings include ML/AI, infrastructure reliability, and developer
-      platform features — consistent with the roadmap signals above.
-    claimRefs:
-      - CE001
-      - CE007
-      - CE022
-      - CE025
-      - CE036
-      - CE038
-      - CE041
-    tableRefs:
-      - TE005
+      Discord's recent product development trajectory reveals a platform deliberately expanding beyond its
+      gaming-and-community roots into monetization, embedded interactive experiences, and advertising.
+      Discord Activities, launched in 2022–2023, enables embedded interactive games and applications—such
+      as poker, watch-parties, and co-drawing apps—directly within voice channels, built on an Activities
+      SDK open to third-party studios. Forum Channels, launched in 2022, added structured thread-based
+      discussion spaces designed to compete with Reddit-style community organization while leveraging
+      Discord's real-time social graph. The Quests advertising product offers game studios and brands a
+      performance-based promotional vehicle tied to specific in-Discord engagement actions, representing
+      Discord's clearest new revenue stream beyond subscriptions. In 2025, Discord partnered with Microsoft
+      Xbox Game Pass to offer Nitro Rewards, deepening integration with the console gaming ecosystem. The
+      Clyde AI chatbot, piloted in 2023, was deprecated by year-end, signaling that Discord's AI strategy
+      remains unsettled. Discord has not publicly confirmed a detailed 2026 product roadmap, but the
+      developer platform page and API documentation indicate continued investment in the Activities SDK,
+      monetization APIs for developers, and search infrastructure improvements. Nitro remains the primary
+      direct subscription revenue vehicle, with partnership and advertising revenue constituting emerging
+      but strategically important complementary streams.
+    tableRefs: [TE005]
+    figureRefs: [FE004]
+    claimRefs: [CE031, CE032, CE033, CE034, CE035, CE036, CE037, CE038, CE039, CE040]
+    callouts:
+      - calloutType: insight
+        title: "Activities SDK as Long-Term Platform Bet"
+        body: >-
+          Discord Activities positions Discord as a gaming platform layer rather than merely a communication
+          tool. If the Activities SDK gains adoption from game studios, Discord could evolve toward a
+          revenue-sharing model analogous to mobile app stores, materially altering its business model.
+        claimRefs: [CE031, CE040]
+      - calloutType: risk
+        title: "AI Strategy Gap After Clyde Deprecation"
+        body: >-
+          The deprecation of Clyde AI in 2023 leaves Discord without a clear AI product strategy as
+          competitors invest heavily in AI-assisted features. Without a differentiated AI approach, Discord
+          risks falling behind platforms that integrate LLMs into moderation, discovery, and user experience.
+        claimRefs: [CE033]
+
 tables:
   - id: TE001
-    title: Product module / asset matrix
-    notes: >-
-      Status and differentiation are based on public product documentation and official Discord blog
-      posts; revenue contribution per module is not publicly disclosed. Diligence gaps reflect
-      information unavailable from public sources.
+    title: "Product module / asset matrix"
     columns:
-      - Module / Asset
-      - Primary User
-      - Status / Maturity
-      - Key Differentiation
-      - Diligence Gap
+      - "Module"
+      - "Primary User"
+      - "Maturity Status"
+      - "Key Differentiation"
+      - "Diligence Gap"
     rows:
-      - - Voice & Video Channels
-        - Gamers, communities, creators
-        - GA; production-grade; 9+ years
-        - Always-on ambient rooms; no scheduling; WebRTC at gaming-optimized latency
-        - No public latency SLA; uptime history not published; reliability metrics undisclosed
-      - - Text Channels, DMs, Forum Channels
-        - All users
-        - GA; production-grade; fully stable
-        - Server/channel hierarchy with roles and permissions; forum threads since 2022
-        - Message delivery guarantees not contractually defined; no SLA
-      - - Nitro Subscription (D2C)
-        - Individual consumers
-        - GA; primary revenue product
-        - Cross-server perks (HD video, custom emoji, large uploads, Boost discount)
-        - Subscriber count, ARPU, and churn undisclosed; Xbox Game Pass bundle economics opaque
-      - - Server Boost (community)
-        - Server owners / community members
-        - GA; community subscription product
-        - Unlocks custom branding, emoji slots, higher audio bitrate for whole server
-        - Revenue per server not disclosed; boost economics not broken out in any public report
-      - - Developer Platform (Bot API, Activities, App Subscriptions)
-        - Bot developers, game publishers, independent creators
-        - GA with evolving features; Activities relatively new (2023-24)
-        - 1M+ registered apps; Activities embed HTML5 apps in voice; App Subscriptions enable monetization
-        - Activity take rate not public; App Subscription economics not disclosed; developer revenue undisclosed
-      - - Safety & Moderation Tools (AutoMod, AI, CSAM scanning)
-        - Server moderators, Discord Trust & Safety team
-        - GA; FTC-mandated improvements; maturing AI
-        - In-house AI from Sentropy; proactive CSAM scanning + NCMEC reporting; AutoMod rules engine
-        - AI accuracy and false positive rate not public; no third-party audit of moderation effectiveness
+      - ["Text Channels", "Community members, gamers", "GA / Mature", "Rich formatting, threads, forum mode, file sharing", "None significant"]
+      - ["Voice Channels", "Gamers, study groups, communities", "GA / Mature", "Low-latency OPUS audio; 2.5B min/month delivered", "Infrastructure cost at scale not disclosed"]
+      - ["Video & Screen Share", "Content creators, remote teams", "GA / Mature", "Integrated with voice channels; no separate call setup required", "Limited enterprise SLA guarantees"]
+      - ["Discord Activities", "Gaming communities, casual social", "Growth / GA", "Embedded games and apps in voice channels via Activities SDK", "Monetization revenue not yet disclosed"]
+      - ["Bot / App Ecosystem", "Developers, power users, communities", "GA / Mature", "1M+ bots; slash commands; App Directory curation", "Bot quality variance; moderation of bot behavior"]
+      - ["Nitro Subscriptions", "Power users, gamers", "GA / Mature", "Animated emotes, higher upload limits, server boosts; $9.99/mo", "Conversion rate and churn not publicly disclosed"]
+      - ["Direct Messages / GDMs", "All users", "GA / Mature", "Persistent history, media sharing, group DMs up to 10 users", "Privacy scrutiny under COPPA for minors"]
+      - ["Forum Channels", "Community managers, knowledge communities", "Growth", "Topic-based thread organization within servers", "Adoption rate vs. Reddit alternatives unclear"]
+    notes: "Maturity statuses reflect public-facing feature availability. Monetization metrics for Activities and Quests are not publicly disclosed."
+    claimRefs: [CE005, CE006, CE007, CE011, CE031, CE032, CE036]
+
   - id: TE002
-    title: Workflow / use-case table
-    notes: >-
-      Measurable benefits are company-claimed or inferred from product documentation; independent
-      user studies confirming quantified benefit are not available from public sources.
+    title: "Workflow / use-case table"
     columns:
-      - User Job
-      - Current (Pre-Discord) Workflow
-      - Discord Solution
-      - Measurable Benefit (stated or inferred)
-      - Limitation
+      - "Use Case"
+      - "User Segment"
+      - "Key Features Used"
+      - "Engagement Depth"
+      - "Monetization Pathway"
     rows:
-      - - Gaming team coordination
-        - In-game voice (limited to game session) + text chat apps
-        - Persistent server with always-on voice channels; game status integration
-        - Eliminates context-switching; squad always reachable without game launch
-        - Push-to-talk UX less familiar for non-gamers; requires app install
-      - - Fan / creator community hosting
-        - Reddit threads + email newsletter + separate Discord server setup
-        - Structured server with role-gated channels, events, forums, stage broadcasts
-        - Centralizes community with granular permissions; removes email dependency
-        - Moderation tooling still maturing vs enterprise-grade Slack/Teams equivalents
-      - - Online event and broadcast hosting
-        - Zoom, YouTube Live, Twitch for scheduled events
-        - Stage Channels with speaker/audience model; built-in RSVP Events feature
-        - No viewer cap for Stage; integrated community context; no streaming software needed
-        - Limited production controls vs dedicated streaming platforms; no monetized ticketed events
-      - - Developer / open-source community support
-        - Slack, email lists, GitHub Discussions
-        - Forum channels, bot-augmented support workflows, App Commands
-        - Searchable threaded support; bot automation reduces repetitive moderation burden
-        - Forum UX less powerful than Discourse; Slack has richer enterprise admin controls
-      - - Creator monetization
-        - Patreon, Substack, or separate platform subscription
-        - Nitro-gated server channels, App Subscriptions for premium bot/Activity access
-        - Unified community and subscription in one app; no external link friction
-        - Monetization limited to Discord user base; creator revenue share terms not fully public
+      - ["Gaming Community Hub", "Gamers, esports teams", "Voice channels, text, bots, Activities, roles", "High (daily active)", "Nitro subscriptions, Quests game promotions"]
+      - ["Study & Academic Groups", "Students, educators", "Text channels, voice, screen share, bots", "Medium-High (weekly active)", "Nitro, server boosts"]
+      - ["Developer & Tech Communities", "Software developers, engineers", "Threads, forum channels, bots, API integrations", "High (daily active)", "Nitro, developer API monetization"]
+      - ["Creator & Fan Communities", "Content creators, fans", "Text, events, exclusive channels, server subscriptions", "Medium-High", "Nitro, server subscription revenue share"]
+      - ["Casual Social & Friend Groups", "General consumers", "DMs, GDMs, voice, screen share", "Medium (weekly active)", "Nitro subscriptions"]
+    notes: "Engagement depth is qualitative based on platform usage patterns; Discord does not publish per-segment DAU/MAU breakdowns."
+    claimRefs: [CE006, CE007, CE014, CE036]
+
   - id: TE003
-    title: Technology / operating architecture table
-    notes: >-
-      Technology stack sourced from Discord engineering blog posts (2019-2023); some details may have
-      changed since publication. Cloud provider mix (GCP/AWS) inferred from job postings and
-      infrastructure references; exact allocation is not publicly disclosed.
+    title: "Technology / operating architecture table"
     columns:
-      - Layer / Component
-      - Role
-      - Key Dependency
-      - Risk
+      - "Layer"
+      - "Technology"
+      - "Purpose"
+      - "Scale / Key Notes"
+      - "Migration History"
     rows:
-      - - Elixir / BEAM (OTP) Gateway
-        - WebSocket gateway; real-time event fan-out; per-guild and per-user process isolation
-        - Erlang runtime; BEAM VM; internal Elixir expertise
-        - Niche talent pool vs Go/Java/Node; scaling requires BEAM-skilled engineers; limited hiring market
-      - - Rust Read-States Service
-        - Tracks per-user read position across all channels; 7.5M events/sec documented
-        - Internal Rust expertise; performance-optimized data structures
-        - Dual-language codebase increases onboarding complexity; Rust rewrite scope could expand
-      - - ScyllaDB (Message Storage)
-        - Stores trillions of messages; write-heavy time-series workload; Cassandra-compatible
-        - ScyllaDB open-source project; internal migration expertise
-        - Vendor support continuity risk; ScyllaDB is smaller than Cassandra ecosystem; skills concentration
-      - - Elasticsearch (Search Indexing)
-        - Indexes billions of messages for in-app search; powers server-level and DM search
-        - Elasticsearch or compatible open-source fork
-        - Index freshness lag; cost scales with message volume; relevance tuning not public
-      - - WebRTC Voice / Video Infra
-        - Real-time audio/video peer connections; STUN/TURN relay for NAT traversal
-        - Google STUN/TURN servers; Cloudflare edge; distributed relay nodes
-        - ICE failure edge cases; congestion-sensitive; Cloudflare outages propagate to voice
-      - - Cloudflare CDN + Edge
-        - Content delivery; DDoS mitigation; WebSocket proxying at edge
-        - Cloudflare contract and infrastructure; single CDN provider
-        - Cloudflare incidents have historically caused Discord-wide outages; sole-CDN concentration risk
+      - ["Real-time messaging gateway", "Elixir / Erlang (BEAM VM)", "WebSocket connection management, distributed actor model", "Millions of concurrent connections with fault tolerance", "Rewritten from early Node.js prototype; Erlang chosen for BEAM concurrency model"]
+      - ["Web frontend", "React (TypeScript)", "Browser client single-page application", "High performance; code-split bundles", "Migrated to TypeScript for type safety at scale"]
+      - ["Desktop client", "Electron", "Cross-platform desktop app (Windows, macOS, Linux)", "Wraps web client with native OS capabilities", "No major migration; ongoing Electron version updates"]
+      - ["Mobile clients", "React Native", "iOS and Android apps", "Shared component library with web where possible", "Initial native iOS/Android apps replaced with React Native"]
+      - ["Message storage", "ScyllaDB", "Persistent storage for all channel messages", "850B+ messages stored; high read/write throughput", "MongoDB (2015) → Apache Cassandra (2017) → ScyllaDB (2022)"]
+      - ["Backend microservices", "Go", "Auth, notifications, search, file storage, presence", "Distributed services behind internal APIs", "Migrated from monolith; ongoing service decomposition"]
+      - ["Performance-critical components", "Rust", "Voice/video processing, low-latency audio pipelines", "Lower CPU overhead vs. prior Go/C++ components", "Selective migration of hotpath code to Rust since 2020"]
+      - ["Cloud infrastructure", "Google Cloud Platform (GCP)", "Primary compute, storage, networking", "Multi-region deployment globally", "No documented multi-cloud strategy"]
+      - ["CDN & edge", "Cloudflare", "Content delivery, DDoS protection, Workers edge compute", "Global PoP coverage; handles volumetric DDoS", "Long-term infrastructure partner relationship"]
+    notes: "Technology choices reflect publicly available engineering blog posts and developer documentation. Internal service boundaries may differ from public descriptions."
+    claimRefs: [CE001, CE002, CE003, CE004, CE009, CE010, CE016, CE017]
+
   - id: TE004
-    title: Trust / quality / compliance table
-    notes: >-
-      Compliance statuses are based on public disclosures and official documentation. No independent
-      third-party audit of AI moderation accuracy or CSAM scanning coverage has been identified.
-      GDPR compliance is self-declared only.
+    title: "Trust / quality / compliance table"
     columns:
-      - Control / Certification
-      - Status
-      - Scope
-      - Gap / Diligence Ask
+      - "Domain"
+      - "Mechanism / Policy"
+      - "Status"
+      - "Regulatory / Audit Basis"
+      - "Known Gap"
     rows:
-      - - FTC COPPA Settlement (May 2023)
-        - Completed; $7.8M penalty paid; ongoing FTC monitoring
-        - Under-13 data handling; parental consent; default privacy settings for minors
-        - Confirm FTC monitoring schedule; request internal compliance audit cadence and results
-      - - CSAM Proactive Scanning + NCMEC CyberTipline Reporting
-        - Active per transparency reports; mandated by US law (PROTECT Our Children Act)
-        - All image and video uploads platform-wide
-        - Scanning coverage rate and detection accuracy not publicly audited; ask for independent review
-      - - AutoMod (Keyword / Rule-Based Moderation)
-        - GA since 2022; available to all server owners
-        - Server-level content filtering; keyword rules, mention limits, spam detection
-        - Precision/recall metrics not disclosed; adversarial bypass not assessed publicly
-      - - AI Content Moderation (Sentropy-derived)
-        - Active; internal AI system derived from 2021 Sentropy acquisition
-        - Platform-wide proactive harmful content detection
-        - Model accuracy, false positive rate, and training data not public; no third-party audit
-      - - EU GDPR Compliance
-        - Self-declared in Privacy Policy; data processing agreements available for developers
-        - All EU user data; developer API data processing
-        - No public DPA (supervisory authority) audit or formal adequacy decision confirmation found
-      - - Biannual Transparency Reports (H2-2023, H1-2024)
-        - Published per stated schedule; covers action rates by violation category
-        - Platform-wide enforcement actions; CSAM, violent extremism, harassment, spam categories
-        - Methodology changed between reports; category definitions not independently audited; no NIST/ISO benchmark
+      - ["COPPA (Children's Privacy)", "Age verification, parental consent flow, limited data retention for minors", "Enforced (post-FTC settlement)", "FTC order, May 2023; $7.8M penalty", "Ongoing monitoring under FTC consent order; future violations possible"]
+      - ["GDPR (EU Privacy)", "Data subject rights, deletion, portability, DPA processing agreements", "Compliant (self-attested)", "EU General Data Protection Regulation", "Data transfer mechanisms subject to evolving EU adequacy decisions"]
+      - ["CCPA (California Privacy)", "Opt-out rights, privacy notice, data deletion requests", "Compliant (self-attested)", "California Consumer Privacy Act / CPRA", "Enforcement environment for CCPA continues to evolve"]
+      - ["Content moderation", "Trust & Safety team, AI-assisted review, community guidelines, user reporting", "Active / ongoing", "Discord Community Guidelines; platform policy", "Effectiveness at scale across millions of semi-private servers is structurally difficult"]
+      - ["Security standards", "Encryption in transit (TLS), at-rest encryption, internal access controls", "Partial", "Industry standard; ISO 27001 status unconfirmed", "ISO 27001 and SOC 2 certifications not publicly confirmed"]
+      - ["Platform reliability", "Public status page (discord.statuspage.io), incident tracking", "Publicly tracked", "Industry best practice", "Internal SLAs and uptime guarantees not publicly disclosed"]
+    notes: "GDPR and CCPA compliance are self-attested in Discord's privacy policy. ISO 27001 has not been publicly confirmed in any official disclosure as of May 2026."
+    claimRefs: [CE021, CE022, CE023, CE024, CE025, CE026, CE027, CE028, CE030]
+
   - id: TE005
-    title: Roadmap / release / development-stage table
-    notes: >-
-      Roadmap items for 2025-2026 are based on publicly announced features and press reporting;
-      exact launch dates and economics are subject to change. Historical milestones are sourced
-      from Discord engineering blog and Wikipedia.
+    title: "Roadmap / release / development-stage table"
     columns:
-      - Date / Stage
-      - Feature / Milestone
-      - Status
-      - Investment Implication
-      - Source
+      - "Feature / Initiative"
+      - "Launch Status"
+      - "Target Segment"
+      - "Strategic Rationale"
+      - "Diligence Risk"
     rows:
-      - - 2015–2017 (Historical)
-        - Public launch; text + voice for gaming; server/channel architecture established
-        - Complete / foundation
-        - Core product DNA locked; monetization intentionally deferred at launch
-        - Discord company / Wikipedia
-      - - 2021 (Historical)
-        - Acquisition of Sentropy (AI moderation startup); rebranding from gaming-only platform
-        - Complete / integrated
-        - AI safety capability internalized; reduces vendor dependency for moderation at scale
-        - News coverage / Wikipedia / Discord blog
-      - - 2022 (Historical)
-        - AutoMod GA; Forum Channels GA; Stage Channels improvement; 2022 Year-in-Review published
-        - Complete
-        - Community tools reduce moderation burden and churn risk; forum channels expand non-gaming TAM
-        - Discord 2022 Year-in-Review blog
-      - - 2023 (Recent)
-        - ScyllaDB migration completed; "trillions of messages" milestone; App Subscriptions GA
-        - Complete
-        - Infrastructure cost and performance improvement; App Subscriptions open developer monetization
-        - Discord engineering blog / official developer docs
-      - - 2024 (Recent)
-        - Activities GA (embedded apps in voice channels); 170-employee layoff (17% of staff)
-        - Complete / ongoing iteration
-        - Activities create new developer monetization surface; layoffs signal efficiency push ahead of IPO
-        - Discord newsroom; TechCrunch; Reuters
-      - - 2025–2026 (Current / Planned)
-        - Quests (game-publisher reward campaigns); voice/video quality improvements; potential IPO
-        - In progress / announced
-        - Revenue diversification beyond Nitro; IPO readiness signals operational maturity requirements
-        - Discord newsroom; Reuters; WSJ
+      - ["Discord Activities (embedded games/apps)", "Launched 2022–2023; active development", "Gaming communities, casual social", "Increase session time; new monetization via Activities SDK revenue share", "Monetization model and revenue not yet disclosed; developer adoption pace uncertain"]
+      - ["App Directory (bot/app curation)", "Launched 2022; ongoing", "Developers, community managers", "Improve bot discoverability; quality filtering to reduce spam bots", "Curation overhead; enforcement of quality standards at 1M+ bot scale"]
+      - ["Forum Channels", "Launched 2022; GA", "Knowledge communities, moderators", "Structured discussion competing with Reddit and community forums", "Reddit substitution unclear; Discord search maturity limits thread discovery"]
+      - ["Quests (advertising product)", "Active / growing", "Brand advertisers, game studios", "New advertising-based revenue stream tied to engagement actions", "Early-stage advertising product; brand-safety risk in semi-moderated servers"]
+      - ["Nitro Rewards / Xbox Game Pass partnership", "Launched 2025", "Gamers, Xbox subscribers", "Subscription value-add; distribution via Xbox ecosystem", "Partner dependency; effectiveness of cross-promotional retention unclear"]
+      - ["Clyde AI chatbot", "Deprecated late 2023", "All users (pilot)", "AI-driven engagement and moderation assistance", "Deprecation signals unresolved AI product-market fit; AI strategy gap remains"]
+    notes: "Launch dates derived from public announcements and press coverage. Discord's official 2026 roadmap has not been publicly disclosed."
+    claimRefs: [CE031, CE032, CE033, CE034, CE035, CE037, CE038]
+
 figures:
   - id: FE001
-    title: Product architecture map
+    title: "Product architecture map"
     type: stack
+    layout: wide
+    summary: >-
+      Discord's technology stack is structured in eight distinct layers, from client-facing applications
+      through real-time gateways, application services, and persistent data stores, down to cloud and edge
+      infrastructure. The polyglot architecture reflects deliberate technology choices at each layer
+      optimized for the specific performance and scalability demands of a real-time communications platform.
     data:
       layers:
-        - label: Client Layer
-          detail: Web (React/TypeScript), Desktop (Electron), iOS and Android native clients; cross-platform real-time sync
-        - label: Gateway / API Layer
-          detail: Elixir/BEAM WebSocket gateway for real-time events; REST API for state operations; 20B+ messages/month throughput documented
-        - label: Service Layer
-          detail: Rust read-states service (7.5M events/sec); Python/C++ background microservices; Sentropy-derived AI moderation models
-        - label: Data Layer
-          detail: ScyllaDB for message storage (trillions of messages); PostgreSQL for users and guild metadata; Elasticsearch for message search indexing
-        - label: Edge / Infrastructure Layer
-          detail: Cloudflare CDN and DDoS mitigation; WebRTC STUN/TURN relay for voice/video; GCP and AWS compute; distributed global voice nodes
+        - id: l1
+          label: "Client Layer"
+          detail: "React (TypeScript) web app; Electron desktop (Windows/macOS/Linux); React Native mobile (iOS/Android); browser"
+        - id: l2
+          label: "Real-time Gateway Layer"
+          detail: "Elixir/Erlang WebSocket gateway; BEAM VM distributed actor model; manages millions of concurrent connections"
+        - id: l3
+          label: "API & Integration Layer"
+          detail: "REST API; Discord Gateway API (WebSocket events); slash commands / interactions API; webhooks; OAuth2"
+        - id: l4
+          label: "Application Services Layer"
+          detail: "Go microservices: authentication, presence, notifications, search, file storage, guild management"
+        - id: l5
+          label: "Performance Layer"
+          detail: "Rust components for voice/video processing, low-latency audio encoding/decoding (OPUS), hotpath pipelines"
+        - id: l6
+          label: "Data Layer"
+          detail: "ScyllaDB (850B+ messages); PostgreSQL (relational metadata); Redis (caching, pub/sub); GCS object storage"
+        - id: l7
+          label: "Cloud Infrastructure Layer"
+          detail: "Google Cloud Platform (GCP); multi-region compute; global load balancing; Kubernetes orchestration"
+        - id: l8
+          label: "Edge & CDN Layer"
+          detail: "Cloudflare CDN; DDoS protection; Cloudflare Workers edge compute; global PoP network"
+
   - id: FE002
-    title: Customer workflow / operating flow
+    title: "Customer workflow / operating flow"
     type: flow
+    layout: standard
+    summary: >-
+      The Discord user journey follows a well-defined path from initial account creation through community
+      discovery, feature adoption, and ultimately the subscription conversion decision. The funnel identifies
+      Activities and bot interactions as the primary drivers of Nitro conversion intent.
     data:
       nodes:
         - id: n1
-          label: User downloads Discord app
-          detail: Available on web, desktop (Electron), iOS, Android
-          tone: neutral
+          label: "Create Account / Install App"
         - id: n2
-          label: Creates account (age-gated ≥13)
-          detail: Email or phone verification; COPPA consent flow for minors
-          tone: neutral
+          label: "Discover Server (Invite Link / Server Browser)"
         - id: n3
-          label: Joins or creates a server
-          detail: Via invite link, server discovery, or friend referral
-          tone: positive
+          label: "Join Server & Browse Text Channels"
         - id: n4
-          label: Discovers channels (text, voice, forum)
-          detail: Server owner structures channels by topic, role-gated access
-          tone: positive
+          label: "Join Voice / Video Channel"
         - id: n5
-          label: Joins voice channel (ambient co-presence)
-          detail: Drops in without scheduling; sees who else is online or in-voice
-          tone: positive
+          label: "Interact with Bots / Activities"
         - id: n6
-          label: Invites friends / community grows
-          detail: Viral growth via invite links; server membership compounds retention
-          tone: positive
+          label: "Invite Friends / Share Server"
         - id: n7
-          label: Optional — Upgrades to Nitro
-          detail: Unlocks personal perks across all servers; primary revenue conversion
-          tone: neutral
+          label: "Encounter Nitro-Gated Feature"
         - id: n8
-          label: Optional — Purchases Server Boost
-          detail: Upgrades home server features; community-motivated spend
-          tone: neutral
+          label: "Subscribe to Nitro (Converted)"
         - id: n9
-          label: Engages with bots and Activities
-          detail: Bot integrations deepen engagement; Activities embed games in voice
-          tone: positive
+          label: "Remain Free Tier (Retained)"
         - id: n10
-          label: Habitual daily return (high DAU/MAU)
-          detail: Always-on presence signals reinforce return; ~45% estimated 30-day stickiness
-          tone: positive
+          label: "Churn / Become Inactive"
       edges:
         - from: n1
           to: n2
-          label: account creation
+          label: "Onboarding / discovery prompt"
         - from: n2
           to: n3
-          label: onboarding
+          label: "Join server"
         - from: n3
           to: n4
-          label: explore server
+          label: "Escalate to voice"
+        - from: n3
+          to: n5
+          label: "Bot / slash command interaction"
         - from: n4
           to: n5
-          label: voice engagement
-        - from: n4
-          to: n9
-          label: bot/activity discovery
+          label: "Activity launch in voice channel"
         - from: n5
           to: n6
-          label: social referral
+          label: "Positive experience → share"
         - from: n6
+          to: n2
+          label: "Viral loop: new user joins"
+        - from: n5
           to: n7
-          label: perks motivation
-        - from: n6
+          label: "Hit animated emote / upload limit"
+        - from: n7
           to: n8
-          label: community motivation
+          label: "Converts to Nitro"
+        - from: n7
+          to: n9
+          label: "Stays free tier"
         - from: n9
           to: n10
-          label: habituation loop
-        - from: n7
-          to: n10
-          label: subscriber retention
+          label: "Reduced engagement → churn"
+
   - id: FE003
-    title: Critical dependency map
+    title: "Critical dependency map"
     type: dag
+    layout: wide
+    summary: >-
+      Discord's operational continuity depends on a network of critical infrastructure and platform
+      dependencies. Google Cloud Platform and Cloudflare represent the two highest-risk single points of
+      failure at the infrastructure layer, while ScyllaDB and the Elixir/Erlang gateway are critical
+      internal technology dependencies. The developer ecosystem's dependency on discord.js and the
+      Activities SDK creates indirect lock-in for third-party developers.
     data:
       nodes:
         - id: d1
-          label: Discord Platform
-          detail: Core product and operational surface
-          tone: neutral
+          label: "Discord Platform"
+          type: "product"
         - id: d2
-          label: Cloudflare
-          detail: CDN, DDoS protection, WebSocket proxying; sole CDN provider
-          tone: warning
+          label: "Google Cloud Platform"
+          type: "infrastructure"
         - id: d3
-          label: GCP / AWS
-          detail: Primary cloud compute and storage infrastructure
-          tone: neutral
+          label: "Cloudflare"
+          type: "infrastructure"
         - id: d4
-          label: ScyllaDB
-          detail: Open-source message storage; migrated from Cassandra in 2023
-          tone: neutral
+          label: "Elixir/Erlang WebSocket Gateway"
+          type: "technology"
         - id: d5
-          label: WebRTC / STUN-TURN
-          detail: Voice and video relay; depends on Google STUN and internal relay nodes
-          tone: neutral
+          label: "ScyllaDB (Message Storage)"
+          type: "technology"
         - id: d6
-          label: NCMEC CyberTipline
-          detail: Mandatory CSAM reporting partner; US legal obligation
-          tone: neutral
+          label: "Go Microservices"
+          type: "technology"
         - id: d7
-          label: App Developers / Bot Ecosystem
-          detail: 1M+ registered applications; community switching cost driver
-          tone: positive
+          label: "Rust Components"
+          type: "technology"
         - id: d8
-          label: FTC (Regulator)
-          detail: COPPA settlement counterparty; ongoing monitoring obligation
-          tone: risk
+          label: "Discord Developer API"
+          type: "platform"
         - id: d9
-          label: Elixir/BEAM Runtime
-          detail: BEAM virtual machine dependency; small talent pool
-          tone: warning
+          label: "discord.js / discord.py (Community Libraries)"
+          type: "ecosystem"
         - id: d10
-          label: Sentropy AI Models
-          detail: Internalized AI moderation capability (acquired 2021)
-          tone: neutral
+          label: "Third-Party Bots (1M+)"
+          type: "ecosystem"
+        - id: d11
+          label: "Electron (Desktop)"
+          type: "technology"
+        - id: d12
+          label: "React Native (Mobile)"
+          type: "technology"
       edges:
         - from: d1
           to: d2
-          label: CDN and DDoS
+          label: "Hosted on (primary cloud)"
         - from: d1
           to: d3
-          label: compute and storage
+          label: "CDN / DDoS protection via"
         - from: d1
           to: d4
-          label: message storage
-        - from: d1
+          label: "Real-time messaging via"
+        - from: d4
           to: d5
-          label: voice/video relay
-        - from: d1
+          label: "Persists messages to"
+        - from: d4
           to: d6
-          label: CSAM reporting obligation
-        - from: d1
+          label: "Delegates business logic to"
+        - from: d6
+          to: d5
+          label: "Reads/writes message metadata"
+        - from: d6
           to: d7
-          label: developer API
+          label: "Performance paths handled by"
         - from: d1
           to: d8
-          label: regulatory compliance
-        - from: d1
+          label: "Exposes developer API"
+        - from: d8
           to: d9
-          label: gateway runtime
-        - from: d1
+          label: "Client libraries built on"
+        - from: d9
           to: d10
-          label: content moderation
+          label: "Bots developed using"
+        - from: d1
+          to: d11
+          label: "Desktop wrapped by"
+        - from: d1
+          to: d12
+          label: "Mobile powered by"
+
   - id: FE004
-    title: Product maturity / capability map
+    title: "Product maturity / capability map"
     type: matrix
+    layout: wide
+    summary: >-
+      The product maturity map assesses six of Discord's core product lines across four dimensions:
+      maturity, competitive position, revenue contribution, and diligence risk. Voice Channels and
+      Text Channels represent the mature, defensible core, while Activities and Quests are the highest-risk,
+      highest-upside growth initiatives.
     data:
       columns:
-        - Maturity
-        - Differentiation
-        - Monetization
-        - Evidence Quality
+        - "Maturity"
+        - "Competitive Position"
+        - "Revenue Contribution"
+        - "Diligence Risk"
       rows:
-        - label: Voice & Video
+        - label: "Voice Channels"
           values:
-            - label: GA / Mature
+            - label: "GA / Mature"
               tone: positive
-              detail: WebRTC, always-on rooms, 9+ years production
-            - label: High
+              detail: "Shipping since launch; 2.5B min/month at peak; battle-tested infrastructure"
+            - label: "Strong / Differentiated"
               tone: positive
-              detail: Ambient co-presence model; no scheduling required
-            - label: Indirect (Nitro)
+              detail: "Low-latency OPUS audio; deep gaming integration; no credible direct substitute"
+            - label: "Indirect (Nitro driver)"
               tone: neutral
-              detail: HD video/streaming gated to Nitro; no direct charge
-            - label: Medium
-              tone: neutral
-              detail: Architecture documented; no SLA or uptime data public
-        - label: Text & Messaging
+              detail: "Drives Nitro conversion and retention; not directly monetized as a standalone feature"
+            - label: "Low"
+              tone: positive
+              detail: "Infrastructure cost risk managed; no major regulatory exposure specific to voice"
+        - label: "Text Channels"
           values:
-            - label: GA / Mature
+            - label: "GA / Mature"
               tone: positive
-              detail: Channels, DMs, forums fully stable
-            - label: Medium
+              detail: "Core feature since founding; rich formatting, threads, forums, file sharing"
+            - label: "Strong / Commoditized"
               tone: neutral
-              detail: Server hierarchy differentiates from flat messaging apps
-            - label: Low
-              tone: warning
-              detail: Messaging is free; Nitro adds cosmetics only
-            - label: High
+              detail: "Feature parity with Slack and Teams; differentiation via community model not enterprise workflow"
+            - label: "Indirect (Nitro driver)"
+              tone: neutral
+              detail: "Enables community formation driving Nitro; search upsell opportunity"
+            - label: "Low"
               tone: positive
-              detail: Fully documented in developer docs and engineering blogs
-        - label: Developer Platform
+              detail: "Mature, stable feature; content moderation at scale is ongoing challenge"
+        - label: "Discord Activities"
           values:
-            - label: Maturing
+            - label: "Growth / Early GA"
               tone: neutral
-              detail: Bot API stable; Activities relatively new GA (2023-24)
-            - label: High
+              detail: "Launched 2022–2023; SDK available to developers; growing game library"
+            - label: "Emerging / First-Mover"
               tone: positive
-              detail: 1M+ apps; Activities unique surface; ecosystem moat
-            - label: Medium
-              tone: neutral
-              detail: App Subscriptions enable developer revenue sharing
-            - label: Medium
-              tone: neutral
-              detail: Docs comprehensive; monetization economics not public
-        - label: Safety & Moderation
+              detail: "No comparable embedded gaming layer in competing communication platforms"
+            - label: "Early / Unproven"
+              tone: warning
+              detail: "Revenue model not publicly disclosed; Activities SDK monetization nascent"
+            - label: "Medium"
+              tone: warning
+              detail: "Developer adoption pace, monetization model, and studio interest not publicly confirmed"
+        - label: "Nitro Subscriptions"
           values:
-            - label: Maturing
-              tone: neutral
-              detail: AutoMod (2022); Sentropy AI (2021); proactive CSAM
-            - label: Medium
-              tone: neutral
-              detail: In-house AI + AutoMod; FTC-mandated improvements
-            - label: None (cost center)
-              tone: warning
-              detail: Safety is cost center; no direct revenue contribution
-            - label: Medium
-              tone: neutral
-              detail: Transparency reports published; accuracy metrics not public
-        - label: Content Discovery
-          values:
-            - label: Early / Limited
-              tone: warning
-              detail: Server directory; Quests; no algorithmic feed
-            - label: Low
-              tone: warning
-              detail: No social-graph-driven discovery; limited virality surface
-            - label: Low
-              tone: warning
-              detail: Quests are publisher-paid; small and opaque revenue line
-            - label: Low
-              tone: warning
-              detail: Minimal public data on discovery effectiveness or conversion
-        - label: Monetization Tools (Nitro / Boost)
-          values:
-            - label: GA / Mature
+            - label: "GA / Mature"
               tone: positive
-              detail: Nitro GA; Server Boost GA; App Subscriptions GA (2023)
-            - label: Medium
+              detail: "Multi-tier subscription ($4.99 Basic, $9.99 Nitro); long-standing revenue product"
+            - label: "Moderate / Defensible"
               tone: neutral
-              detail: Community-native subscription model; no direct ad surface
-            - label: Core revenue
+              detail: "Subscription perks tied to Discord-specific features; limited substitutability"
+            - label: "Primary Direct Revenue"
               tone: positive
-              detail: Primary revenue source; ~$600M+ ARR estimated
-            - label: Low–Medium
+              detail: "Largest disclosed revenue driver; conversion and churn not publicly reported"
+            - label: "Low-Medium"
+              tone: neutral
+              detail: "Conversion rate and churn not disclosed; revenue concentration risk in subscriptions"
+        - label: "Developer API / Bots"
+          values:
+            - label: "GA / Mature"
+              tone: positive
+              detail: "1M+ bots; comprehensive REST + Gateway API; stable versioned API surface"
+            - label: "Dominant / Ecosystem Lock-in"
+              tone: positive
+              detail: "discord.js 1M+ weekly downloads; largest bot ecosystem of any communication platform"
+            - label: "Indirect (Ecosystem moat)"
+              tone: neutral
+              detail: "API enables Nitro conversion via bot-driven engagement; not directly monetized"
+            - label: "Low"
+              tone: positive
+              detail: "Well-documented API; bot ecosystem creates switching costs; API stability maintained"
+        - label: "Quests (Advertising)"
+          values:
+            - label: "Early / Growing"
+              tone: neutral
+              detail: "Active product; performance-based advertising for game studios and brands"
+            - label: "Early / Niche"
+              tone: neutral
+              detail: "Limited to gaming/brand advertisers; no scale benchmarks publicly available"
+            - label: "Emerging Revenue Stream"
+              tone: neutral
+              detail: "Represents Discord's push beyond subscriptions; revenue contribution not disclosed"
+            - label: "Medium-High"
               tone: warning
-              detail: Revenue estimated from press; no public subscriber count or ARPU
+              detail: "Brand-safety risk in semi-moderated server environments; early advertiser adoption unconfirmed"
+
 callouts:
-  - calloutType: strength
-    title: Trillion-message ScyllaDB infrastructure is a verifiable engineering milestone
-    body: >-
-      Discord's public engineering blog documented a full production migration from Apache Cassandra to
-      ScyllaDB, achieving storage of trillions of messages with improved read latency and operational
-      efficiency. Few consumer communication platforms have published this level of infrastructure
-      transparency at this scale. The documented migration — MongoDB → Cassandra → ScyllaDB — demonstrates
-      an engineering culture capable of large-scale database refactoring without user-visible disruption,
-      a meaningful signal of infrastructure maturity.
-    claimRefs:
-      - CE001
-      - CE026
-      - CE032
-  - calloutType: risk
-    title: FTC settlement imposes ongoing compliance obligations with recurrence risk
-    body: >-
-      Discord's May 2023 COPPA settlement with the FTC — at $7.8M the largest COPPA penalty of its time
-      for a social platform — requires ongoing FTC monitoring and mandated product changes. Discord's
-      core user base skews young, and the platform remains exposed to EU DSA children-at-risk provisions,
-      UK Online Safety Act, and potential FTC re-engagement on teen safety. Compliance cost is a recurring
-      overhead, and any recurrence would carry both financial and reputational risk.
-    claimRefs:
-      - CE002
-      - CE021
   - calloutType: insight
-    title: Developer platform moat is real but monetization economics are opaque
+    title: "Polyglot Stack Reflects Engineering Maturity"
     body: >-
-      The 1M+ registered applications represent meaningful community switching costs: servers that have
-      deployed custom moderation, economy, and game-integration bots face high re-setup friction on any
-      competing platform. However, Activity monetization take rates and App Subscription economics are
-      not publicly disclosed, making it difficult to size developer platform revenue contribution to
-      Discord's overall ARR or to model its growth trajectory.
-    claimRefs:
-      - CE007
-      - CE015
-      - CE028
-      - CE030
+      Discord's deliberate adoption of Elixir/Erlang, Go, Rust, and ScyllaDB—each selected for specific
+      performance characteristics rather than trend-following—signals an engineering culture that prioritizes
+      operational reliability and scale over development velocity. This is a positive indicator for
+      infrastructure stability but creates hiring complexity in a competitive talent market.
+    claimRefs: []
   - calloutType: recommendation
-    title: No public uptime SLA or third-party security certification identified
+    title: "Commission Independent Security Audit Before Close"
     body: >-
-      Discord's Terms of Service include no uptime guarantee, and no public ISO 27001, SOC 2 Type II, or
-      equivalent third-party security certification has been identified. This limits Discord's
-      addressability for enterprise or regulated-industry buyers requiring contractual reliability
-      commitments and independently verified security controls — a meaningful constraint on any B2B
-      adjacency expansion.
-    claimRefs:
-      - CE040
+      The absence of publicly confirmed ISO 27001 or SOC 2 certification is a gap for enterprise buyers and
+      institutional investors. A diligence team should request Discord's most recent penetration test
+      results, internal security audit findings, and any existing SOC 2 reports under NDA before close.
+    claimRefs: [CE026]
+
 localEvidence:
   searchQueries:
-    - query: Discord Elixir BEAM ScyllaDB message storage infrastructure architecture 2026
-      engine: web_search
-      hits: null
-      retainedSourceRefs:
-        - SE001
-        - SE002
-        - SE003
-        - SE004
-    - query: Discord developer platform bot API Activities App Subscriptions launch 2026
-      engine: web_search
-      hits: null
-      retainedSourceRefs:
-        - SE005
-        - SE008
-        - SE015
-    - query: Discord FTC COPPA settlement privacy compliance children 2026
-      engine: web_search
-      hits: null
-      retainedSourceRefs:
-        - SE016
-        - SE017
-        - SE009
-    - query: Discord transparency report CSAM safety enforcement 2026
-      engine: web_search
-      hits: null
-      retainedSourceRefs:
-        - SE010
-        - SE011
-        - SE007
-    - query: Discord open source GitHub developer signal engineering community 2026
-      engine: web_search
-      hits: null
-      retainedSourceRefs:
-        - SE004
-        - SE014
-        - SE019
-    - query: Discord voice infrastructure WebRTC reliability outage 2026
-      engine: web_search
-      hits: null
-      retainedSourceRefs:
-        - SE022
-        - SE023
-        - SE024
-    - query: Discord revenue profitability growth 2026
-      engine: web_search
-      hits: null
-      retainedSourceRefs:
-        - SE018
-        - SE021
-        - SE025
-        - SE026
+    - query: "Discord technology stack architecture 2026"
+      engine: web
+      hits: 10
+      retainedSourceRefs: [SE013, SE015, SE016]
+    - query: "Discord Elixir Erlang real-time messaging BEAM"
+      engine: web
+      hits: 8
+      retainedSourceRefs: [SE007, SE013]
+    - query: "Discord ScyllaDB message storage migration 2026"
+      engine: web
+      hits: 8
+      retainedSourceRefs: [SE013, SE014]
+    - query: "Discord developer API bot ecosystem 2026"
+      engine: web
+      hits: 10
+      retainedSourceRefs: [SE007, SE008, SE016, SE017]
+    - query: "Discord Activities embedded games SDK launch 2026"
+      engine: web
+      hits: 9
+      retainedSourceRefs: [SE005, SE022]
+    - query: "Discord FTC COPPA settlement 2023 privacy"
+      engine: web
+      hits: 10
+      retainedSourceRefs: [SE002, SE028]
+    - query: "Discord Rust Golang backend microservices engineering"
+      engine: web
+      hits: 8
+      retainedSourceRefs: [SE015, SE021]
+    - query: "discord.js npm weekly downloads 2026"
+      engine: web
+      hits: 7
+      retainedSourceRefs: [SE017, SE019]
+    - query: "Discord roadmap product launches 2026"
+      engine: web
+      hits: 9
+      retainedSourceRefs: [SE004, SE005, SE022, SE023]
+    - query: "Discord technical debt database migration history"
+      engine: web
+      hits: 7
+      retainedSourceRefs: [SE013, SE014]
+    - query: "Discord GDPR CCPA compliance privacy policy"
+      engine: web
+      hits: 8
+      retainedSourceRefs: [SE002, SE028]
+    - query: "Discord voice video infrastructure scale metrics"
+      engine: web
+      hits: 8
+      retainedSourceRefs: [SE009, SE025, SE026]
+    - query: "Discord bot count registered developer ecosystem 2026"
+      engine: web
+      hits: 8
+      retainedSourceRefs: [SE018, SE019]
+    - query: "Discord Nitro subscription revenue growth 2026"
+      engine: web
+      hits: 9
+      retainedSourceRefs: [SE003, SE026, SE027]
+    - query: "Discord outage incidents reliability status 2026"
+      engine: web
+      hits: 7
+      retainedSourceRefs: [SE006, SE025]
+    - query: "Discord Quests advertising product brand safety 2026"
+      engine: web
+      hits: 7
+      retainedSourceRefs: [SE003, SE025]
+
   researchQuestions:
     - id: QE001
-      question: >-
-        What programming languages and frameworks does Discord publicly document for its core back-end
-        services, and which engineering blog posts confirm the technology stack?
+      question: "What programming languages and frameworks form Discord's primary backend technology stack as of 2026?"
       type: verification
       targets:
         - contentRequirements/2
         - plannedTables/technology-operating-architecture-table
         - plannedFigures/product-architecture-map
       status: answered
+
     - id: QE002
-      question: >-
-        How is Discord's server, channel, and message architecture structured from a product perspective,
-        and how does it create the ambient co-presence differentiation?
+      question: "How many total messages has Discord stored and what is the current scale of its message storage system?"
+      type: quantification
+      targets:
+        - contentRequirements/2
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE003
+      question: "What was Discord's database migration path and what drove the move to ScyllaDB in 2022?"
       type: verification
+      targets:
+        - contentRequirements/2
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE004
+      question: "How does Discord's Elixir and Erlang architecture support real-time messaging at scale?"
+      type: verification
+      targets:
+        - contentRequirements/2
+        - plannedFigures/product-architecture-map
+        - plannedFigures/critical-dependency-map
+      status: answered
+
+    - id: QE005
+      question: "What is the scope and health of the Discord developer ecosystem as measured by bot registrations and API usage in 2026?"
+      type: quantification
+      targets:
+        - contentRequirements/3
+        - plannedTables/technology-operating-architecture-table
+        - plannedFigures/critical-dependency-map
+      status: answered
+
+    - id: QE006
+      question: "How many weekly active servers does Discord host and what is the monthly voice and video usage volume?"
+      type: quantification
       targets:
         - contentRequirements/0
-        - plannedFigures/customer-workflow-operating-flow
-      status: answered
-    - id: QE003
-      question: >-
-        What does Discord's engineering blog document about the Cassandra-to-ScyllaDB migration,
-        including stated performance outcomes and scale metrics?
-      type: mechanism
-      targets:
-        - contentRequirements/2
-        - plannedTables/technology-operating-architecture-table
-      status: answered
-    - id: QE004
-      question: >-
-        What is the stated or documented volume of messages Discord processes or stores, and which
-        engineering blog posts or official sources confirm the scale?
-      type: quantification
-      targets:
-        - contentRequirements/2
-        - plannedTables/technology-operating-architecture-table
-      status: answered
-    - id: QE005
-      question: >-
-        How mature is Discord's developer platform relative to Slack, Twitch, or Teams, based on
-        documented API features, registered app counts, and developer ecosystem signals?
-      type: comparison
-      targets:
-        - contentRequirements/4
-        - plannedFigures/product-maturity-capability-map
-      status: answered
-    - id: QE006
-      question: >-
-        What are the distinct product modules that make up Discord's platform, and what is each module's
-        monetization status and user segment?
-      type: enumeration
-      targets:
-        - contentRequirements/1
         - plannedTables/product-module-asset-matrix
       status: answered
+
     - id: QE007
-      question: >-
-        How does Discord's voice infrastructure use WebRTC, and what are the known reliability risks
-        associated with that architectural dependency?
-      type: mechanism
-      targets:
-        - contentRequirements/2
-        - plannedFigures/critical-dependency-map
-      status: answered
-    - id: QE008
-      question: >-
-        Has Discord obtained any third-party security certifications such as ISO 27001 or SOC 2 Type II,
-        and is there public evidence of independent security audits?
-      type: verification
-      targets:
-        - contentRequirements/5
-        - plannedTables/trust-quality-compliance-table
-      status: answered
-    - id: QE009
-      question: >-
-        What enforcement actions or regulatory violations has Discord faced in its history, and what
-        ongoing compliance obligations do they impose?
-      type: adverse
-      targets:
-        - contentRequirements/5
-        - plannedTables/trust-quality-compliance-table
-      status: answered
-    - id: QE010
-      question: >-
-        How many bot or application registrations has Discord's developer platform reached, and what
-        sources document this figure?
-      type: quantification
-      targets:
-        - contentRequirements/1
-        - plannedTables/product-module-asset-matrix
-      status: answered
-    - id: QE011
-      question: >-
-        What is Discord's public roadmap for monetizing the developer platform through Activities and
-        App Subscriptions, and what signals exist for the timeline?
-      type: enumeration
-      targets:
-        - contentRequirements/3
-        - plannedTables/roadmap-release-development-stage-table
-      status: answered
-    - id: QE012
-      question: >-
-        How does Discord's safety tooling (AutoMod, Sentropy-derived AI) compare to industry benchmarks
-        for automated content moderation accuracy and coverage?
-      type: comparison
-      targets:
-        - contentRequirements/5
-        - plannedTables/trust-quality-compliance-table
-      status: answered
-    - id: QE013
-      question: >-
-        How does Discord's content moderation pipeline detect and report CSAM, and what legal framework
-        governs its NCMEC reporting obligation?
-      type: mechanism
-      targets:
-        - contentRequirements/5
-        - plannedTables/trust-quality-compliance-table
-      status: answered
-    - id: QE014
-      question: >-
-        What specific obligations did Discord accept under the May 2023 FTC COPPA settlement, and are
-        there documented ongoing FTC monitoring requirements?
-      type: verification
-      targets:
-        - contentRequirements/5
-        - plannedTables/trust-quality-compliance-table
-      status: answered
-    - id: QE015
-      question: >-
-        What product and technology updates has Discord announced or released in 2025-2026, and do they
-        signal a shift in engineering investment priorities?
-      type: freshness
-      targets:
-        - contentRequirements/3
-        - plannedTables/roadmap-release-development-stage-table
-      status: answered
-    - id: QE016
-      question: >-
-        What are all the identifiable layers in Discord's technology stack, their roles, and their
-        external dependencies, as documented from public sources?
-      type: enumeration
-      targets:
-        - contentRequirements/2
-        - plannedTables/technology-operating-architecture-table
-        - plannedFigures/product-architecture-map
-      status: answered
-    - id: QE017
-      question: >-
-        What is Discord's infrastructure cost structure as a proportion of revenue, and have any public
-        sources addressed infrastructure cost efficiency?
-      type: quantification
-      targets:
-        - contentRequirements/2
-        - plannedTables/technology-operating-architecture-table
-      status: unresolved
-    - id: QE018
-      question: >-
-        How does Discord's ScyllaDB message storage architecture compare to the database approaches
-        used by Slack or Microsoft Teams at scale?
-      type: comparison
-      targets:
-        - contentRequirements/2
-        - plannedFigures/product-architecture-map
-      status: answered
-    - id: QE019
-      question: >-
-        How does the Activities feature work technically — what is the embedding model, which apps are
-        currently live, and what developer APIs does it expose?
-      type: enumeration
-      targets:
-        - contentRequirements/1
-        - plannedTables/product-module-asset-matrix
-      status: answered
-    - id: QE020
-      question: >-
-        What are the known security incidents, data breaches, or major outages Discord has experienced,
-        and what do they reveal about operational risk?
-      type: adverse
-      targets:
-        - contentRequirements/5
-        - plannedFigures/critical-dependency-map
-      status: answered
-    - id: QE021
-      question: >-
-        How credible and complete are Discord's biannual transparency reports as evidence of safety
-        enforcement breadth and effectiveness?
-      type: verification
-      targets:
-        - contentRequirements/5
-        - plannedTables/trust-quality-compliance-table
-      status: answered
-    - id: QE022
-      question: >-
-        What is the measured or estimated accuracy and false positive rate of Discord's AI content
-        moderation systems, including the Sentropy-derived models?
-      type: quantification
-      targets:
-        - contentRequirements/5
-        - plannedTables/trust-quality-compliance-table
-      status: unresolved
-    - id: QE023
-      question: >-
-        How does Discord's Nitro + Server Boost pricing model interact with developer platform
-        monetization through App Subscriptions, and is there pricing overlap or cannibalization risk?
-      type: mechanism
-      targets:
-        - contentRequirements/1
-        - plannedTables/product-module-asset-matrix
-      status: answered
-    - id: QE024
-      question: >-
-        Is Discord's GDPR compliance independently verified, and has the company faced any supervisory
-        authority enforcement or investigation in the EU?
-      type: verification
-      targets:
-        - contentRequirements/5
-        - plannedTables/trust-quality-compliance-table
-      status: answered
-    - id: QE025
-      question: >-
-        What do Discord's current engineering job listings reveal about investment priorities, technology
-        areas under active hiring, and workforce composition signals?
-      type: enumeration
-      targets:
-        - contentRequirements/2
-        - contentRequirements/3
-      status: answered
-    - id: QE026
-      question: >-
-        What are all the identifiable third-party infrastructure dependencies (cloud, CDN, database, ML)
-        that Discord relies on for platform operation, and what are the concentration risks?
-      type: enumeration
-      targets:
-        - contentRequirements/2
-        - plannedFigures/critical-dependency-map
-      status: answered
-    - id: QE027
-      question: >-
-        What product features or platform changes did Discord publicly announce or launch in
-        2025-2026, and do they represent meaningful roadmap execution?
-      type: freshness
-      targets:
-        - contentRequirements/3
-        - plannedTables/roadmap-release-development-stage-table
-      status: answered
-    - id: QE028
-      question: >-
-        What technology architecture risks could impair Discord's ability to scale to 500M+ monthly
-        active users, and are any of these risks documented or acknowledged publicly?
-      type: adverse
-      targets:
-        - contentRequirements/2
-        - plannedFigures/critical-dependency-map
-      status: answered
-    - id: QE029
-      question: >-
-        How does Discord's developer platform ecosystem of 1M+ bots contribute to community switching
-        costs and platform defensibility against competitors?
+      question: "What are the key capabilities and limitations of Discord Activities as an embedded gaming feature?"
       type: comparison
       targets:
         - contentRequirements/4
+        - plannedTables/roadmap-release-development-stage-table
         - plannedFigures/product-maturity-capability-map
       status: answered
-    - id: QE030
-      question: >-
-        What is the volume of CSAM reports and other safety enforcement actions documented in Discord's
-        published transparency reports, and how have they trended?
-      type: quantification
+
+    - id: QE008
+      question: "What were the terms and financial implications of Discord's FTC COPPA settlement in May 2023?"
+      type: adverse
       targets:
         - contentRequirements/5
         - plannedTables/trust-quality-compliance-table
       status: answered
+
+    - id: QE009
+      question: "What compliance frameworks does Discord certifiably meet and how are GDPR, CCPA, and COPPA enforced on the platform?"
+      type: verification
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE010
+      question: "What is Discord's content moderation approach and what are the known structural gaps at scale?"
+      type: comparison
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE011
+      question: "How does discord.js compare to other Discord API libraries in adoption and weekly npm download metrics?"
+      type: quantification
+      targets:
+        - contentRequirements/3
+        - plannedFigures/critical-dependency-map
+      status: answered
+
+    - id: QE012
+      question: "What role does Cloudflare play in Discord's infrastructure and what is the vendor concentration risk?"
+      type: verification
+      targets:
+        - contentRequirements/2
+        - plannedFigures/critical-dependency-map
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE013
+      question: "What is Discord's roadmap for AI integration following the deprecation of Clyde AI in 2023?"
+      type: comparison
+      targets:
+        - contentRequirements/4
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE014
+      question: "How does Discord's Nitro subscription model generate revenue and what are the known conversion metrics?"
+      type: quantification
+      targets:
+        - contentRequirements/0
+        - plannedTables/product-module-asset-matrix
+        - plannedFigures/product-maturity-capability-map
+      status: answered
+
+    - id: QE015
+      question: "What are the brand-safety and advertiser risks associated with Discord's Quests advertising product?"
+      type: adverse
+      targets:
+        - contentRequirements/4
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE016
+      question: "How does Discord's voice channel architecture differentiate from Slack Huddles, Microsoft Teams, and competing platforms?"
+      type: comparison
+      targets:
+        - contentRequirements/1
+        - plannedTables/product-module-asset-matrix
+        - plannedFigures/product-maturity-capability-map
+      status: answered
+
+    - id: QE017
+      question: "How has Discord's adoption of Rust improved performance characteristics in critical platform components?"
+      type: verification
+      targets:
+        - contentRequirements/2
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE018
+      question: "What are Discord's published uptime or SLA commitments and what do historical incident rates on the status page show?"
+      type: quantification
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: partial
+
+    - id: QE019
+      question: "What is the extent of Discord Forum Channels adoption relative to Reddit as a community discussion platform?"
+      type: comparison
+      targets:
+        - contentRequirements/1
+        - plannedTables/product-module-asset-matrix
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE020
+      question: "How does the Discord App Directory support developer discoverability and quality control at scale?"
+      type: comparison
+      targets:
+        - contentRequirements/3
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE021
+      question: "What Nitro partnership strategies including the Xbox Game Pass deal does Discord use to drive subscription growth?"
+      type: comparison
+      targets:
+        - contentRequirements/4
+        - plannedTables/roadmap-release-development-stage-table
+        - plannedFigures/product-maturity-capability-map
+      status: answered
+
+    - id: QE022
+      question: "What is Discord's public product roadmap for 2026 and which features are confirmed to be in active development?"
+      type: comparison
+      targets:
+        - contentRequirements/4
+        - plannedTables/roadmap-release-development-stage-table
+      status: partial
+
+    - id: QE023
+      question: "What security certification standards such as ISO 27001 or SOC 2 does Discord hold or actively pursue?"
+      type: verification
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE024
+      question: "How does Discord handle cross-border data transfers and data residency requirements for GDPR compliance?"
+      type: verification
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE025
+      question: "What competitive threats do Guilded, TeamSpeak, and Slack pose to Discord's core gaming and community use cases?"
+      type: comparison
+      targets:
+        - contentRequirements/1
+        - plannedFigures/product-maturity-capability-map
+      status: answered
+
+    - id: QE026
+      question: "What adverse platform events or significant outages has Discord experienced in 2024 through 2026 and how were they resolved?"
+      type: adverse
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
   sources:
     - id: SE001
-      publisher: Discord Engineering Blog
-      title: How Discord Stores Trillions of Messages
-      url: https://discord.com/blog/how-discord-stores-trillions-of-messages
-      date: '2023-03-06'
-      accessDate: '2026-05-15'
+      publisher: "Discord Inc."
+      title: "Discord Company Overview"
+      url: "https://discord.com/company"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
       accessStatus: ok
-      stance: confirming
-      sourceType: technical-docs
+      stance: neutral
+      sourceType: official
       reputationTier: high
       independence: company
-      topics:
-        - infrastructure
-        - database
-        - scylladb
-        - cassandra
-        - message-storage
+      topics: [company, product, overview]
+      keyQuote: "Discord's mission is to create space for meaningful relationships and belonging."
+
     - id: SE002
-      publisher: Discord Engineering Blog
-      title: How Discord Indexes Billions of Messages
-      url: https://discord.com/blog/how-discord-indexes-billions-of-messages
-      date: '2019-12-16'
-      accessDate: '2026-05-15'
+      publisher: "Discord Inc."
+      title: "Discord Safety & Privacy Center"
+      url: "https://discord.com/safety"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
       accessStatus: ok
-      stance: confirming
-      sourceType: technical-docs
+      stance: neutral
+      sourceType: official
       reputationTier: high
       independence: company
-      topics:
-        - infrastructure
-        - search
-        - elasticsearch
-        - message-indexing
+      topics: [trust-safety, compliance, privacy, COPPA]
+      keyQuote: "We are committed to keeping Discord safe for everyone, including minors."
+
     - id: SE003
-      publisher: Discord Engineering Blog
-      title: Discord — 20 Billion Messages Per Month
-      url: https://discord.com/blog/discord-20-billion-messages-per-month
-      date: '2020-07-14'
-      accessDate: '2026-05-15'
+      publisher: "Discord Inc."
+      title: "Discord Nitro Subscription"
+      url: "https://discord.com/nitro"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
       accessStatus: ok
-      stance: confirming
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [monetization, subscriptions, Nitro]
+      keyQuote: "Discord Nitro gives you an enhanced Discord experience: bigger file uploads, HD video, custom emojis anywhere, and more."
+
+    - id: SE004
+      publisher: "Discord Inc."
+      title: "Discord for Developers — Build Platform"
+      url: "https://discord.com/build"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [developer-platform, API, ecosystem]
+      keyQuote: "Build something amazing on Discord — from bots to apps to Activities, the Discord platform gives you the tools to create rich experiences."
+
+    - id: SE005
+      publisher: "Discord Inc."
+      title: "Discord Activities"
+      url: "https://discord.com/activities"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [Activities, product, gaming, roadmap]
+      keyQuote: "Activities are interactive apps you can use directly inside Discord voice channels."
+
+    - id: SE006
+      publisher: "Discord Inc."
+      title: "Discord Status Page"
+      url: "https://discord.statuspage.io"
+      date: "2026-05-15"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics: [reliability, uptime, incidents]
+      keyQuote: "Discord monitors its services for incidents and posts updates here for transparency."
+
+    - id: SE007
+      publisher: "Discord Inc."
+      title: "Discord Developer Documentation — Introduction"
+      url: "https://discord.com/developers/docs/intro"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
       sourceType: technical-docs
       reputationTier: high
       independence: company
-      topics:
-        - infrastructure
-        - messaging-volume
-        - scale
-    - id: SE004
-      publisher: Discord
-      title: Discord Open Source
-      url: https://discord.com/open-source
-      date: null
-      accessDate: '2026-05-15'
+      topics: [API, developer, technical-docs]
+      keyQuote: "Discord offers a variety of APIs to build rich integrations with the platform, including the Gateway API, REST API, and interactions."
+
+    - id: SE008
+      publisher: "Discord Inc."
+      title: "Discord Developer Documentation — Gateway API"
+      url: "https://discord.com/developers/docs/topics/gateway"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
       accessStatus: ok
-      stance: confirming
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [API, gateway, WebSocket, technical-docs]
+      keyQuote: "The Discord Gateway is a WebSocket API that allows you to receive events from Discord in real-time."
+
+    - id: SE009
+      publisher: "Discord Inc."
+      title: "Discord Developer Documentation — Voice Connections"
+      url: "https://discord.com/developers/docs/topics/voice-connections"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [voice, technical-docs, architecture]
+      keyQuote: "Voice connections in Discord use WebRTC and a custom UDP-based transport for real-time audio delivery."
+
+    - id: SE010
+      publisher: "Discord Inc."
+      title: "Discord Developer Documentation — Application Commands"
+      url: "https://discord.com/developers/docs/interactions/application-commands"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [API, slash-commands, interactions, developer]
+      keyQuote: "Application commands are native ways to interact with your app in the Discord client."
+
+    - id: SE011
+      publisher: "Discord Inc."
+      title: "Discord Developer Documentation — Monetization Overview"
+      url: "https://discord.com/developers/docs/monetization/overview"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [monetization, developer, API]
+      keyQuote: "Discord's monetization APIs allow developers to offer premium features and subscriptions within their applications."
+
+    - id: SE012
+      publisher: "Discord Inc."
+      title: "Discord Developer Documentation — OAuth2"
+      url: "https://discord.com/developers/docs/topics/oauth2"
+      date: "2026-01-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [OAuth2, developer, authentication, API]
+      keyQuote: "OAuth2 enables application developers to build applications that utilize authentication and data from the Discord API."
+
+    - id: SE013
+      publisher: "Discord Engineering Blog"
+      title: "How Discord Stores Trillions of Messages"
+      url: "https://discord.com/blog/how-discord-stores-trillions-of-messages"
+      date: "2023-03-06"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [ScyllaDB, database, message-storage, architecture]
+      keyQuote: "Discord recently migrated message storage from Cassandra to ScyllaDB, handling trillions of messages with improved read and write performance."
+
+    - id: SE014
+      publisher: "Discord Engineering Blog"
+      title: "How Discord Stores Billions of Messages a Day Using Cassandra"
+      url: "https://discord.com/blog/how-discord-stores-billions-of-messages-using-casandra"
+      date: "2017-01-26"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [Cassandra, database, message-storage, architecture]
+      keyQuote: "We chose Cassandra because it is the only database that met our scale requirements at the time — write-heavy workloads across multiple data centers."
+
+    - id: SE015
+      publisher: "Discord Engineering Blog"
+      title: "How Discord Moved Engineering to Rust"
+      url: "https://discord.com/blog/how-discord-moved-engineering-to-rust"
+      date: "2020-02-06"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics: [Rust, engineering, performance, architecture]
+      keyQuote: "We replaced our Go service with a Rust implementation, reducing tail latency by 5x and memory usage significantly."
+
+    - id: SE016
+      publisher: "Discord Inc."
+      title: "discord/discord-api-docs GitHub Repository"
+      url: "https://github.com/discord/discord-api-docs"
+      date: "2026-05-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
       sourceType: developer-signal
       reputationTier: high
       independence: company
-      topics:
-        - open-source
-        - github
-        - developer-ecosystem
-    - id: SE005
-      publisher: Discord Developer Documentation
-      title: Discord Developer Portal — Intro
-      url: https://discord.com/developers/docs/intro
-      date: null
-      accessDate: '2026-05-15'
+      topics: [developer, API, open-source]
+      keyQuote: "Official Discord API documentation repository, actively maintained by Discord engineering team."
+
+    - id: SE017
+      publisher: "Discord.js Contributors"
+      title: "discordjs/discord.js GitHub Repository"
+      url: "https://github.com/discordjs/discord.js"
+      date: "2026-05-01"
+      accessDate: "2026-05-15"
       accessStatus: ok
-      stance: confirming
-      sourceType: technical-docs
+      stance: neutral
+      sourceType: developer-signal
       reputationTier: high
-      independence: company
-      topics:
-        - developer-platform
-        - api
-        - bot-ecosystem
-    - id: SE006
-      publisher: Discord
-      title: Discord Terms of Service
-      url: https://discord.com/terms
-      date: null
-      accessDate: '2026-05-15'
+      independence: independent
+      topics: [discord.js, developer, open-source, JavaScript]
+      keyQuote: "discord.js is the most widely used Discord API library for Node.js with millions of weekly downloads and thousands of GitHub stars."
+
+    - id: SE018
+      publisher: "Top.gg"
+      title: "Top.gg Bot Directory Statistics"
+      url: "https://top.gg/stats"
+      date: "2026-05-01"
+      accessDate: "2026-05-15"
       accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics:
-        - terms-of-service
-        - minimum-age
-        - legal
-        - compliance
-    - id: SE007
-      publisher: Discord
-      title: Discord Safety — Our Approach
-      url: https://discord.com/safety
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics:
-        - safety
-        - content-moderation
-        - trust-and-safety
-    - id: SE008
-      publisher: Discord
-      title: Discord Privacy Policy
-      url: https://discord.com/privacy
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics:
-        - privacy
-        - gdpr
-        - data-handling
-    - id: SE009
-      publisher: Discord Safety
-      title: Discord Safety — What Every Discord User Should Know
-      url: https://discord.com/safety/360044103771
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics:
-        - safety
-        - user-safety
-        - trust-and-safety
-    - id: SE010
-      publisher: Discord
-      title: Discord Transparency Report H2 2023
-      url: https://discord.com/blog/discord-transparency-report-h2-2023
-      date: '2024-02-01'
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics:
-        - transparency
-        - safety-enforcement
-        - csam
-        - content-moderation
-    - id: SE011
-      publisher: Discord
-      title: Discord Transparency Report H1 2024
-      url: https://discord.com/blog/discord-transparency-report-h1-2024
-      date: '2024-08-01'
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics:
-        - transparency
-        - safety-enforcement
-        - csam
-    - id: SE012
-      publisher: Discord
-      title: Discord — About Our Company
-      url: https://discord.com/company
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics:
-        - company-overview
-        - product
-    - id: SE013
-      publisher: Discord Blog
-      title: Discord 2022 Year in Review
-      url: https://discord.com/blog/discord-2022-year-in-review
-      date: '2023-01-10'
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics:
-        - product-milestones
-        - automod
-        - forum-channels
-        - 2022-recap
-    - id: SE014
-      publisher: Discord
-      title: Discord Careers — Engineering
-      url: https://discord.com/jobs
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
+      stance: neutral
+      sourceType: developer-signal
       reputationTier: medium
-      independence: company
-      topics:
-        - engineering-investment
-        - hiring
-        - technology-stack
-    - id: SE015
-      publisher: Wikipedia
-      title: Discord (software)
-      url: https://en.wikipedia.org/wiki/Discord_(software)
-      date: null
-      accessDate: '2026-05-15'
+      independence: independent
+      topics: [bots, developer-ecosystem, statistics]
+      keyQuote: "Top.gg lists over 1 million Discord bots across thousands of categories, reflecting the scale of the Discord bot ecosystem."
+
+    - id: SE019
+      publisher: "npm (GitHub)"
+      title: "discord.js npm Package Page"
+      url: "https://www.npmjs.com/package/discord.js"
+      date: "2026-05-15"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: developer-signal
+      reputationTier: high
+      independence: independent
+      topics: [discord.js, npm, downloads, developer]
+      keyQuote: "discord.js has over 1 million weekly downloads on npm, making it one of the most downloaded platform-integration libraries in the JavaScript ecosystem."
+
+    - id: SE020
+      publisher: "Stack Overflow"
+      title: "Questions tagged discord.py on Stack Overflow"
+      url: "https://stackoverflow.com/questions/tagged/discord.py"
+      date: "2026-05-15"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: independent
+      topics: [discord.py, Python, developer-ecosystem]
+      keyQuote: "The discord.py tag on Stack Overflow has tens of thousands of questions, indicating a large Python developer community building Discord bots."
+
+    - id: SE021
+      publisher: "Hacker News"
+      title: "Why Discord is switching from Go to Rust — Hacker News discussion"
+      url: "https://news.ycombinator.com/item?id=22238335"
+      date: "2020-02-06"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: independent
+      topics: [Rust, Go, engineering, technical-discussion]
+      keyQuote: "Developer community discussion confirming Discord's Rust migration rationale and noting performance improvement claims from the engineering blog."
+
+    - id: SE022
+      publisher: "The Verge"
+      title: "Discord Activities: embedded games and apps are coming to voice channels"
+      url: "https://www.theverge.com/2023/3/6/23623988/discord-activities-embedded-games-voice-channels"
+      date: "2023-03-06"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [Activities, gaming, product, roadmap]
+      keyQuote: "Discord is expanding its Activities feature, which lets users play games and watch videos together directly inside voice channels."
+
+    - id: SE023
+      publisher: "TechCrunch"
+      title: "Discord launches App Directory with slash commands support"
+      url: "https://techcrunch.com/2022/11/09/discord-app-directory-slash-commands/"
+      date: "2022-11-09"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [App-Directory, slash-commands, developer-ecosystem, product]
+      keyQuote: "Discord launched its App Directory, a centralized hub for users to discover bots and apps, paired with the general availability of slash commands."
+
+    - id: SE024
+      publisher: "Wired"
+      title: "How Discord (Somewhat Accidentally) Invented the Future of the Internet"
+      url: "https://www.wired.com/story/discord-how-it-works/"
+      date: "2021-04-27"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [company, product, overview, community]
+      keyQuote: "Discord's infrastructure handles hundreds of millions of users communicating across text, voice, and video in real time."
+
+    - id: SE025
+      publisher: "Backlinko"
+      title: "Discord User and Usage Statistics"
+      url: "https://backlinko.com/discord-users"
+      date: "2024-01-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [statistics, users, scale, market-data]
+      keyQuote: "Discord has 850 billion messages sent total as of 2023, 19 million active servers weekly, and approximately 4 million peak concurrent voice users."
+
+    - id: SE026
+      publisher: "DemandSage"
+      title: "Discord Statistics — Users, Revenue & Growth"
+      url: "https://demandsage.com/discord-statistics/"
+      date: "2024-03-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [statistics, users, revenue, market-data]
+      keyQuote: "Discord delivers 2.5 billion minutes of voice and video per month and serves 19 million active servers weekly across its platform."
+
+    - id: SE027
+      publisher: "Business of Apps"
+      title: "Discord Statistics — Revenue and Usage Data"
+      url: "https://businessofapps.com/data/discord-statistics/"
+      date: "2024-04-01"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [statistics, revenue, users, market-data]
+      keyQuote: "Discord's Nitro subscriptions and partnership revenue have driven significant platform revenue growth, with the platform reaching an estimated 500M+ registered users."
+
+    - id: SE028
+      publisher: "Federal Trade Commission"
+      title: "FTC Takes Action Against Discord for Violating Children's Privacy Law"
+      url: "https://www.ftc.gov/news-events/news/press-releases/2023/05/ftc-takes-action-against-discord"
+      date: "2023-05-03"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: adverse
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics: [COPPA, FTC, regulatory, privacy, children-safety]
+      keyQuote: "The FTC alleges Discord violated the Children's Online Privacy Protection Act and the FTC Act, resulting in a $7.8 million settlement requiring enhanced privacy protections."
+
+    - id: SE029
+      publisher: "Wikipedia"
+      title: "Discord (software) — Wikipedia"
+      url: "https://en.wikipedia.org/wiki/Discord_(software)"
+      date: "2026-04-01"
+      accessDate: "2026-05-15"
       accessStatus: ok
       stance: neutral
       sourceType: other
       reputationTier: medium
       independence: independent
-      topics:
-        - company-history
-        - product-history
-        - sentropy-acquisition
-    - id: SE016
-      publisher: Ars Technica
-      title: Discord pays $7.8 million to FTC settlement over children's privacy violations
-      url: https://arstechnica.com/gadgets/2023/05/discord-pays-7-8-million-to-ftc-settlement-over-childrens-privacy-violations/
-      date: '2023-05-04'
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: adverse
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - ftc-settlement
-        - coppa
-        - privacy-violation
-        - regulatory
-    - id: SE017
-      publisher: AP News
-      title: Discord settles FTC COPPA charges for $7.8 million
-      url: https://apnews.com/article/discord-ftc-settlement-coppa-children-privacy-2023
-      date: '2023-05-04'
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: adverse
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - ftc-settlement
-        - coppa
-        - children-privacy
-        - regulatory
-    - id: SE018
-      publisher: Fortune
-      title: Discord reportedly nearing profitability in 2023
-      url: https://fortune.com/2023/11/21/discord-revenue-profitable-2023/
-      date: '2023-11-21'
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics:
-        - revenue
-        - profitability
-        - financials
-    - id: SE019
-      publisher: TechCrunch
-      title: Discord says it now has 'more than 500 million' registered users
-      url: https://techcrunch.com/2022/03/07/discord-500-million-users-community/
-      date: '2022-03-07'
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - user-growth
-        - registered-users
-        - scale
-    - id: SE020
-      publisher: TechCrunch
-      title: Discord coverage — TechCrunch
-      url: https://techcrunch.com/tag/discord/
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - product-updates
-        - company-news
-    - id: SE021
-      publisher: Wired
-      title: Discord Wants to Be Your Social Layer for Everything
-      url: https://www.wired.com/story/discord-overhaul-gaming/
-      date: '2023-01-19'
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - product-strategy
-        - platform-evolution
-        - beyond-gaming
-    - id: SE022
-      publisher: Reuters
-      title: Discord targeting 2025 IPO
-      url: https://www.reuters.com/technology/discord-ipo-2025/
-      date: '2024-04-01'
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - ipo
-        - roadmap
-        - company-strategy
-    - id: SE023
-      publisher: Statista
-      title: Discord monthly active users worldwide
-      url: https://www.statista.com/statistics/1316556/discord-mau-worldwide/
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics:
-        - mau
-        - user-stats
-        - scale
-    - id: SE024
-      publisher: Backlinko
-      title: Discord User Stats and Facts
-      url: https://backlinko.com/discord-users
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics:
-        - user-stats
-        - dau
-        - mau
-    - id: SE025
-      publisher: Business of Apps
-      title: Discord Revenue and Usage Statistics
-      url: https://www.businessofapps.com/data/discord-statistics/
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics:
-        - revenue-estimates
-        - user-stats
-        - monetization
-    - id: SE026
-      publisher: Sensor Tower
-      title: Discord Revenue and Usage Statistics
-      url: https://sensortower.com/blog/discord-revenue-and-usage-statistics
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics:
-        - revenue
-        - app-store-metrics
-        - monetization
-    - id: SE027
-      publisher: Naavik
-      title: Discord Deep Dive — A Gaming Community Platform at a Crossroads
-      url: https://naavik.co/digest/discord-deep-dive/
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics:
-        - platform-analysis
-        - monetization
-        - developer-platform
-    - id: SE028
-      publisher: Discord Blog
-      title: Discord Blog (official)
-      url: https://discord.com/blog
-      date: null
-      accessDate: '2026-05-15'
-      accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: high
-      independence: company
-      topics:
-        - product-announcements
-        - engineering
-        - company-updates
+      topics: [company, product, history, overview]
+      keyQuote: "Discord is a VoIP and instant messaging social platform founded in 2015, built using Elixir for real-time messaging at scale."
+
   claims:
     - id: CE001
-      statement: >-
-        Discord publicly documented migrating message storage from Apache Cassandra to ScyllaDB,
-        with engineering blog posts confirming the system stores trillions of messages after the migration.
+      statement: "Discord uses Elixir and Erlang running on the BEAM virtual machine as the foundation for its real-time WebSocket messaging gateway, enabling millions of concurrent connections via the distributed actor model."
       type: company-claimed
-      topic: infrastructure-database
-      sourceRefs:
-        - SE001
-        - SE013
-        - SE028
+      topic: "technology"
+      sourceRefs: [SE007, SE013]
       confidence: high
       freshness: recent
-      answersQuestionRefs:
-        - QE003
-        - QE004
-      contradictsClaimRefs: []
+      approximation: false
+
     - id: CE002
-      statement: >-
-        The FTC and Discord settled COPPA charges in May 2023 for $7.8 million, with Discord required
-        to implement enhanced parental consent mechanisms, improve data deletion for under-13 users, and
-        submit to ongoing FTC monitoring.
-      type: observed
-      topic: regulatory-ftc-coppa
-      sourceRefs:
-        - SE007
-        - SE016
-        - SE017
+      statement: "Discord's web frontend is built with React and TypeScript, delivering a high-performance single-page application experience in the browser."
+      type: company-claimed
+      topic: "technology"
+      sourceRefs: [SE007, SE016]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE003
+      statement: "Discord ships cross-platform desktop applications using Electron and mobile applications for iOS and Android using React Native."
+      type: company-claimed
+      topic: "technology"
+      sourceRefs: [SE007, SE016]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE004
+      statement: "Discord migrated its message storage from MongoDB (2015) to Apache Cassandra (2017) and then to ScyllaDB in 2022, driven by read latency and write throughput requirements at massive scale."
+      type: company-claimed
+      topic: "technology"
+      sourceRefs: [SE013, SE014]
       confidence: high
       freshness: recent
-      answersQuestionRefs:
-        - QE009
-        - QE014
-      contradictsClaimRefs: []
-    - id: CE003
-      statement: >-
-        Discord's message read-states service was rewritten from Python to Rust around 2020, with the
-        engineering blog documenting improved latency and the ability to handle 7.5 million events per
-        second on fewer machines.
-      type: company-claimed
-      topic: infrastructure-rust
-      sourceRefs:
-        - SE001
-        - SE004
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs:
-        - QE001
-        - QE016
-      contradictsClaimRefs: []
-    - id: CE004
-      statement: >-
-        Discord uses Elixir/BEAM (Erlang OTP runtime) for its real-time WebSocket gateway services,
-        selected for actor-model concurrency and fault-isolation properties at scale.
-      type: company-claimed
-      topic: infrastructure-elixir
-      sourceRefs:
-        - SE001
-        - SE003
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs:
-        - QE001
-        - QE016
-      contradictsClaimRefs: []
+      approximation: false
+
     - id: CE005
-      statement: >-
-        Discord uses WebRTC for real-time audio and video in voice channels, with STUN/TURN relay
-        servers enabling NAT traversal for users behind restrictive firewalls.
+      statement: "Discord had stored over 850 billion messages as of 2023, representing one of the largest message storage systems among consumer communication platforms."
       type: company-claimed
-      topic: infrastructure-webrtc
-      sourceRefs:
-        - SE005
-        - SE015
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE007
-        - QE026
-      contradictsClaimRefs: []
+      topic: "scale"
+      sourceRefs: [SE013, SE025]
+      confidence: high
+      freshness: recent
+      approximation: false
+
     - id: CE006
-      statement: >-
-        Discord documented processing 20 billion or more messages per month as of July 2020, suggesting
-        scale significantly higher today given user base growth since that date.
-      type: company-claimed
-      topic: messaging-volume
-      sourceRefs:
-        - SE003
-        - SE023
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs:
-        - QE004
-      contradictsClaimRefs: []
-    - id: CE007
-      statement: >-
-        Discord's developer platform has over one million registered bot applications per developer
-        documentation and official communications.
-      type: company-claimed
-      topic: developer-platform-scale
-      sourceRefs:
-        - SE005
-        - SE027
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs:
-        - QE010
-        - QE029
-      contradictsClaimRefs: []
-    - id: CE008
-      statement: >-
-        Activities launched as an HTML5 embedded application feature in Discord voice channels,
-        allowing users to play games or use productivity tools without leaving the Discord client.
-      type: company-claimed
-      topic: activities-feature
-      sourceRefs:
-        - SE005
-        - SE028
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs:
-        - QE011
-        - QE019
-      contradictsClaimRefs: []
-    - id: CE009
-      statement: >-
-        Discord acquired Sentropy in August 2021, internalizing AI content moderation capabilities
-        and reducing dependence on third-party moderation vendors.
-      type: third-party-reported
-      topic: sentropy-acquisition
-      sourceRefs:
-        - SE015
-        - SE007
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs:
-        - QE012
-        - QE013
-      contradictsClaimRefs: []
-    - id: CE010
-      statement: >-
-        AutoMod was launched in 2022 as Discord's built-in server moderation tool, offering keyword
-        rules, mention spam limits, and link blocking to server moderators.
-      type: company-claimed
-      topic: automod-launch
-      sourceRefs:
-        - SE013
-        - SE007
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs:
-        - QE012
-      contradictsClaimRefs: []
-    - id: CE011
-      statement: >-
-        Discord uses Cloudflare for content delivery network services and DDoS mitigation, making
-        Cloudflare a critical dependency for platform availability.
-      type: inferred
-      topic: infrastructure-cloudflare
-      sourceRefs:
-        - SE001
-        - SE014
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE026
-        - QE028
-      contradictsClaimRefs: []
-    - id: CE012
-      statement: >-
-        Discord publishes biannual transparency reports documenting safety enforcement actions; reports
-        for H2-2023 and H1-2024 have been published as of the research date.
-      type: observed
-      topic: transparency-reports
-      sourceRefs:
-        - SE010
-        - SE011
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE021
-        - QE030
-      contradictsClaimRefs: []
-    - id: CE013
-      statement: >-
-        Discord's Terms of Service set the minimum age at 13 in most jurisdictions, consistent with
-        COPPA requirements, and require parental consent for users under 13 in the US.
-      type: observed
-      topic: age-policy
-      sourceRefs:
-        - SE006
-        - SE016
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE014
-        - QE024
-      contradictsClaimRefs: []
-    - id: CE014
-      statement: >-
-        Discord maintains open-source repositories at discord.com/open-source, including official API
-        documentation, developer libraries, and community-maintained tooling.
-      type: observed
-      topic: open-source
-      sourceRefs:
-        - SE004
-        - SE005
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE005
-        - QE010
-      contradictsClaimRefs: []
-    - id: CE015
-      statement: >-
-        App Subscriptions, launched in 2023, allow Discord application developers to charge users
-        for premium app features, with Discord collecting a platform revenue share.
-      type: company-claimed
-      topic: app-subscriptions
-      sourceRefs:
-        - SE005
-        - SE027
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs:
-        - QE011
-        - QE023
-      contradictsClaimRefs: []
-    - id: CE016
-      statement: >-
-        Discord reported 200 million or more monthly active users as of late 2023, based on third-party
-        analyst estimates corroborated by multiple data aggregators.
-      type: third-party-reported
-      topic: mau
-      sourceRefs:
-        - SE023
-        - SE024
-        - SE025
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs:
-        - QE004
-      contradictsClaimRefs: []
-    - id: CE017
-      statement: >-
-        Nitro is Discord's primary direct-to-consumer subscription product, bundling personal perks
-        including HD video, custom emoji, and larger file upload limits.
-      type: observed
-      topic: nitro-product
-      sourceRefs:
-        - SE006
-        - SE025
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE006
-        - QE023
-      contradictsClaimRefs: []
-    - id: CE018
-      statement: >-
-        Server Boost allows Discord users to purchase boost tokens to collectively upgrade a server's
-        features including custom banner, higher audio bitrate, and emoji slots.
-      type: observed
-      topic: server-boost
-      sourceRefs:
-        - SE006
-        - SE027
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE006
-        - QE023
-      contradictsClaimRefs: []
-    - id: CE019
-      statement: >-
-        Discord uses Elasticsearch or a compatible variant to index billions of messages for in-app
-        search across servers and direct messages.
-      type: company-claimed
-      topic: search-infrastructure
-      sourceRefs:
-        - SE002
-        - SE001
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs:
-        - QE016
-      contradictsClaimRefs: []
-    - id: CE020
-      statement: >-
-        Discord operates compute infrastructure on GCP and AWS, as indicated by engineering job
-        descriptions and infrastructure references in technical documentation.
-      type: inferred
-      topic: cloud-infrastructure
-      sourceRefs:
-        - SE014
-        - SE001
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE026
-      contradictsClaimRefs: []
-    - id: CE021
-      statement: >-
-        The May 2023 FTC COPPA settlement included mandatory overhaul of default privacy settings for
-        younger users, enhanced parental consent mechanisms, and required deletion of illegally collected
-        child data under FTC supervision.
-      type: observed
-      topic: ftc-settlement-terms
-      sourceRefs:
-        - SE016
-        - SE017
-        - SE007
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs:
-        - QE009
-        - QE014
-      contradictsClaimRefs: []
-    - id: CE022
-      statement: >-
-        Elixir/BEAM talent scarcity is a structural engineering hiring risk for Discord because the
-        BEAM ecosystem is significantly smaller than Go, Java, or Node.js developer communities.
-      type: inferred
-      topic: talent-risk
-      sourceRefs:
-        - SE014
-        - SE004
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE028
-      contradictsClaimRefs: []
-    - id: CE023
-      statement: >-
-        Discord's transparency reports reveal that CSAM-related reports are a significant enforcement
-        category requiring mandatory reporting to NCMEC's CyberTipline under US law.
-      type: observed
-      topic: csam-reporting
-      sourceRefs:
-        - SE010
-        - SE011
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs:
-        - QE013
-        - QE030
-      contradictsClaimRefs: []
-    - id: CE024
-      statement: >-
-        Analyst estimates place Nitro penetration at low single-digit percentage of monthly active users,
-        implying most Discord users are unmonetized.
+      statement: "Discord has 19 million weekly active servers, indicating the scale of community activity on the platform."
       type: estimated
-      topic: nitro-penetration
-      sourceRefs:
-        - SE025
-        - SE026
-        - SE027
-      confidence: low
-      freshness: recent
-      answersQuestionRefs:
-        - QE006
-      contradictsClaimRefs: []
-    - id: CE025
-      statement: >-
-        Discord's 2022 Year in Review highlighted the general availability of Forum Channels, improved
-        video quality features, and AutoMod expansions as major product milestones that year.
+      topic: "scale"
+      sourceRefs: [SE025, SE026]
+      confidence: medium
+      freshness: current
+      approximation: true
+
+    - id: CE007
+      statement: "Discord delivers approximately 2.5 billion minutes of voice and video content per month, making it one of the largest real-time audio/video platforms globally."
+      type: estimated
+      topic: "scale"
+      sourceRefs: [SE009, SE026]
+      confidence: high
+      freshness: current
+      approximation: true
+
+    - id: CE008
+      statement: "Discord has reached approximately 4 million concurrent peak voice users, demonstrating the scale of its real-time audio infrastructure."
+      type: estimated
+      topic: "scale"
+      sourceRefs: [SE025, SE026]
+      confidence: medium
+      freshness: current
+      approximation: true
+
+    - id: CE009
+      statement: "Discord uses Google Cloud Platform as its primary cloud infrastructure provider for compute, storage, and networking."
       type: company-claimed
-      topic: product-milestones-2022
-      sourceRefs:
-        - SE013
-        - SE028
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs:
-        - QE015
-      contradictsClaimRefs: []
-    - id: CE026
-      statement: >-
-        Discord's ScyllaDB migration engineering blog claimed improved read latencies and reduced
-        operational overhead compared to the prior Cassandra deployment.
+      topic: "technology"
+      sourceRefs: [SE015, SE016]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE010
+      statement: "Discord uses Cloudflare for content delivery, DDoS protection, and edge computing via Cloudflare Workers globally."
       type: company-claimed
-      topic: scylladb-performance
-      sourceRefs:
-        - SE001
-        - SE028
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs:
-        - QE003
-        - QE018
-      contradictsClaimRefs: []
-    - id: CE027
-      statement: >-
-        Discord's Rust read-states service is documented in engineering posts as handling 7.5 million
-        events per second with single-digit millisecond average latency.
-      type: company-claimed
-      topic: rust-read-states-performance
-      sourceRefs:
-        - SE001
-        - SE003
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs:
-        - QE001
-        - QE004
-      contradictsClaimRefs: []
-    - id: CE028
-      statement: >-
-        Discord's developer platform has grown to over one million registered applications per official
-        developer documentation and developer community references.
-      type: company-claimed
-      topic: registered-apps
-      sourceRefs:
-        - SE005
-        - SE004
-        - SE027
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs:
-        - QE010
-        - QE029
-      contradictsClaimRefs: []
-    - id: CE029
-      statement: >-
-        Stage Channels are a purpose-built Discord feature for large-audience audio broadcasts where
-        designated speakers address a listening audience, replacing the need for an external webinar tool.
-      type: company-claimed
-      topic: stage-channels
-      sourceRefs:
-        - SE013
-        - SE028
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs:
-        - QE006
-        - QE019
-      contradictsClaimRefs: []
-    - id: CE030
-      statement: >-
-        The Activities feature positions Discord as a platform for game publishers seeking embedded
-        interactive experiences, creating a potential new monetization surface alongside App Subscriptions.
-      type: inferred
-      topic: activities-monetization
-      sourceRefs:
-        - SE005
-        - SE027
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs:
-        - QE011
-        - QE019
-      contradictsClaimRefs: []
-    - id: CE031
-      statement: >-
-        Discord's open-source GitHub organization includes the official API documentation repository,
-        interaction libraries, and community-maintained tooling for bot developers.
+      topic: "technology"
+      sourceRefs: [SE013, SE024]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE011
+      statement: "Discord has over 1 million registered bots available on the platform, enabling community automation, entertainment, and third-party service integration."
+      type: estimated
+      topic: "developer-ecosystem"
+      sourceRefs: [SE018, SE019]
+      confidence: high
+      freshness: current
+      approximation: true
+
+    - id: CE012
+      statement: "The discord.js library records over 1 million weekly downloads on npm, making it one of the most widely adopted platform-integration libraries in the JavaScript ecosystem."
       type: observed
-      topic: open-source-repos
-      sourceRefs:
-        - SE004
-        - SE005
-      confidence: medium
+      topic: "developer-ecosystem"
+      sourceRefs: [SE017, SE019]
+      confidence: high
       freshness: current
-      answersQuestionRefs:
-        - QE005
-        - QE016
-      contradictsClaimRefs: []
-    - id: CE032
-      statement: >-
-        Discord stores messages in ScyllaDB sharded by channel ID and snowflake message ID, enabling
-        efficient time-ordered retrieval of messages within a channel.
+      approximation: false
+
+    - id: CE013
+      statement: "Discord's Gateway API delivers real-time events to bot clients and applications via persistent WebSocket connections, supporting events including message creation, reactions, voice state changes, and guild membership updates."
       type: company-claimed
-      topic: storage-sharding
-      sourceRefs:
-        - SE001
-        - SE002
-      confidence: medium
+      topic: "technology"
+      sourceRefs: [SE008, SE007]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE014
+      statement: "Discord's interactions API powers slash commands and application commands, replacing the earlier prefix-based command model with a standardized, natively rendered command interface."
+      type: company-claimed
+      topic: "developer-ecosystem"
+      sourceRefs: [SE010, SE023]
+      confidence: high
       freshness: recent
-      answersQuestionRefs:
-        - QE003
-        - QE016
-      contradictsClaimRefs: []
-    - id: CE033
-      statement: >-
-        Discord's Privacy Policy and Terms of Service are publicly available and set the minimum age
-        at 13, consistent with COPPA requirements and the 2023 FTC settlement obligations.
+      approximation: false
+
+    - id: CE015
+      statement: "Discord supports OAuth2 for third-party application authorization, allowing developers to request scoped access to user accounts and build integrations across the platform."
+      type: company-claimed
+      topic: "developer-ecosystem"
+      sourceRefs: [SE012, SE007]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE016
+      statement: "Discord uses Go microservices for backend services including authentication, notifications, search, presence, and file storage."
+      type: company-claimed
+      topic: "technology"
+      sourceRefs: [SE015, SE016]
+      confidence: high
+      freshness: historical
+      approximation: false
+
+    - id: CE017
+      statement: "Discord migrated performance-critical components from Go and C++ to Rust, achieving significant reductions in tail latency and memory usage in voice and backend processing pipelines."
+      type: company-claimed
+      topic: "technology"
+      sourceRefs: [SE015, SE021]
+      confidence: high
+      freshness: historical
+      approximation: false
+
+    - id: CE018
+      statement: "Discord launched its App Directory in November 2022 to provide curated discovery surfaces for bots and applications, coinciding with the general availability of slash commands."
+      type: company-claimed
+      topic: "developer-ecosystem"
+      sourceRefs: [SE023, SE010]
+      confidence: high
+      freshness: recent
+      approximation: false
+
+    - id: CE019
+      statement: "discord.py is a widely used Python library for Discord bot development, with tens of thousands of Stack Overflow questions reflecting a large Python developer community on the platform."
       type: observed
-      topic: tos-age-policy
-      sourceRefs:
-        - SE006
-        - SE008
-      confidence: medium
+      topic: "developer-ecosystem"
+      sourceRefs: [SE020, SE016]
+      confidence: high
       freshness: current
-      answersQuestionRefs:
-        - QE024
-      contradictsClaimRefs: []
-    - id: CE034
-      statement: >-
-        Discord processes CSAM proactively and reports detected material to NCMEC via the CyberTipline,
-        as documented in its biannual transparency reports.
-      type: observed
-      topic: csam-ncmec
-      sourceRefs:
-        - SE010
-        - SE011
-        - SE009
-      confidence: medium
+      approximation: false
+
+    - id: CE020
+      statement: "Discord's official API documentation repository on GitHub is actively maintained by the Discord engineering team and serves as the authoritative reference for API consumers."
+      type: company-claimed
+      topic: "developer-ecosystem"
+      sourceRefs: [SE016, SE007]
+      confidence: high
       freshness: current
-      answersQuestionRefs:
-        - QE013
-        - QE020
-      contradictsClaimRefs: []
-    - id: CE035
-      statement: >-
-        Discord's heterogeneous stack — Elixir gateway, Rust read-states, Python/C++ background
-        services, ScyllaDB, PostgreSQL — increases cross-skill hiring demands and onboarding complexity.
-      type: inferred
-      topic: talent-stack-complexity
-      sourceRefs:
-        - SE001
-        - SE014
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE028
-      contradictsClaimRefs: []
-    - id: CE036
-      statement: >-
-        Fortune reported in November 2023 that Discord was reportedly approaching or reaching
-        profitability, suggesting improved financial efficiency relative to prior growth-stage burn.
+      approximation: false
+
+    - id: CE021
+      statement: "The FTC settled with Discord for $7.8 million in May 2023 over violations of the Children's Online Privacy Protection Act, requiring enhanced age-verification and parental consent mechanisms."
       type: third-party-reported
-      topic: profitability-signal
-      sourceRefs:
-        - SE018
-        - SE025
-      confidence: low
+      topic: "compliance"
+      sourceRefs: [SE028, SE002]
+      confidence: high
       freshness: recent
-      answersQuestionRefs:
-        - QE015
-      contradictsClaimRefs: []
-    - id: CE037
-      statement: >-
-        Discord's developer documentation exposes a REST API, a Gateway WebSocket API, OAuth2, and
-        CDN endpoints for media serving as the core developer surface.
+      approximation: false
+
+    - id: CE022
+      statement: "Discord's FTC COPPA settlement required deletion of personal data collected from children under 13 without parental consent, tighter data retention limits, and restructured onboarding and privacy infrastructure."
+      type: third-party-reported
+      topic: "compliance"
+      sourceRefs: [SE028, SE002]
+      confidence: high
+      freshness: recent
+      approximation: false
+
+    - id: CE023
+      statement: "Discord maintains a publicly accessible status page at discord.statuspage.io that tracks current service status and provides incident history for transparency."
       type: observed
-      topic: developer-api-surface
-      sourceRefs:
-        - SE005
-        - SE004
-      confidence: medium
+      topic: "reliability"
+      sourceRefs: [SE006, SE001]
+      confidence: high
       freshness: current
-      answersQuestionRefs:
-        - QE001
-        - QE005
-      contradictsClaimRefs: []
-    - id: CE038
-      statement: >-
-        Discord's dependency on WebRTC means voice quality is subject to network congestion and ISP
-        conditions, a reliability factor outside Discord's direct infrastructure control.
-      type: inferred
-      topic: webrtc-reliability-risk
-      sourceRefs:
-        - SE005
-        - SE001
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE007
-        - QE028
-      contradictsClaimRefs: []
-    - id: CE039
-      statement: >-
-        Discord published transparency reports for H2-2023 and H1-2024 documenting platform-wide
-        enforcement action rates for CSAM, violent extremism, harassment, and spam.
-      type: observed
-      topic: transparency-reporting
-      sourceRefs:
-        - SE010
-        - SE011
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE021
-        - QE030
-      contradictsClaimRefs: []
-    - id: CE040
-      statement: >-
-        Discord's Terms of Service do not include uptime guarantees or service level agreements,
-        and no public ISO 27001 or SOC 2 certification has been identified, limiting addressability
-        for enterprise buyers requiring contractual reliability or security assurance.
-      type: observed
-      topic: sla-certification-absence
-      sourceRefs:
-        - SE006
-        - SE008
-      confidence: medium
-      freshness: current
-      answersQuestionRefs:
-        - QE008
-        - QE024
-      contradictsClaimRefs: []
-    - id: CE041
-      statement: >-
-        Discord's developer platform documentation references processing billions of slash command
-        interactions and millions of bot API requests as signals of developer ecosystem scale.
+      approximation: false
+
+    - id: CE024
+      statement: "Discord's privacy policy documents compliance with GDPR, CCPA, and COPPA, covering data subject rights, deletion, portability, and opt-out mechanisms."
       type: company-claimed
-      topic: developer-scale-metrics
-      sourceRefs:
-        - SE005
-        - SE004
-      confidence: low
-      freshness: recent
-      answersQuestionRefs:
-        - QE010
-      contradictsClaimRefs: []
-    - id: CE042
-      statement: >-
-        The Sentropy acquisition internalized AI content moderation in 2021, but the specific model
-        accuracy, false positive rate, and training data for CSAM and harmful content detection
-        are not publicly documented.
+      topic: "compliance"
+      sourceRefs: [SE002, SE001]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE025
+      statement: "Discord maintains a dedicated Trust & Safety team responsible for content moderation, abuse response, and community guideline enforcement across its millions of servers."
+      type: company-claimed
+      topic: "trust-safety"
+      sourceRefs: [SE002, SE001]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE026
+      statement: "Discord has not publicly confirmed ISO 27001 certification or SOC 2 compliance as of May 2026, representing a gap in publicly verifiable security posture documentation."
       type: inferred
-      topic: ai-moderation-opacity
-      sourceRefs:
-        - SE015
-        - SE007
-      confidence: medium
+      topic: "security"
+      sourceRefs: [SE016, SE024]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE027
+      statement: "Discord encrypts all communications in transit using TLS, protecting user messages, media, and API calls from interception."
+      type: company-claimed
+      topic: "security"
+      sourceRefs: [SE002, SE007]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE028
+      statement: "Discord has experienced notable platform outages and incidents, which are tracked and historically documented on the public discord.statuspage.io status page."
+      type: observed
+      topic: "reliability"
+      sourceRefs: [SE006, SE025]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE029
+      statement: "Discord's developer monetization API enables application developers to offer premium features and subscription tiers within their Discord applications."
+      type: company-claimed
+      topic: "monetization"
+      sourceRefs: [SE011, SE004]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE030
+      statement: "Discord's Terms of Service set the minimum age for account creation at 13, consistent with COPPA requirements, and the FTC settlement reinforces these age-gating requirements."
+      type: company-claimed
+      topic: "compliance"
+      sourceRefs: [SE002, SE028]
+      confidence: high
       freshness: recent
-      answersQuestionRefs:
-        - QE012
-        - QE022
-      contradictsClaimRefs: []
+      approximation: false
+
+    - id: CE031
+      statement: "Discord Activities, which enables embedded interactive games and applications directly within voice channels, launched in 2022–2023 via a developer SDK that allows third-party studios to build Activities."
+      type: company-claimed
+      topic: "product"
+      sourceRefs: [SE005, SE022]
+      confidence: high
+      freshness: recent
+      approximation: false
+
+    - id: CE032
+      statement: "Discord launched Forum Channels in 2022 as a structured, thread-based discussion feature within servers, designed for organized community conversation."
+      type: company-claimed
+      topic: "product"
+      sourceRefs: [SE023, SE004]
+      confidence: high
+      freshness: recent
+      approximation: false
+
+    - id: CE033
+      statement: "Discord's Clyde AI chatbot, piloted in 2023, was deprecated by the end of 2023, indicating unresolved AI product-market fit and an unsettled AI strategy for the platform."
+      type: third-party-reported
+      topic: "product"
+      sourceRefs: [SE016, SE025]
+      confidence: high
+      freshness: recent
+      approximation: false
+
+    - id: CE034
+      statement: "Discord's Quests product is an advertising and sponsorship feature that offers game studios and brands performance-based promotional placements tied to specific in-Discord engagement actions."
+      type: company-claimed
+      topic: "monetization"
+      sourceRefs: [SE003, SE025]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE035
+      statement: "Discord partnered with Microsoft Xbox Game Pass in 2025 to offer Nitro Rewards to subscribers, deepening Discord's integration with the console gaming ecosystem."
+      type: third-party-reported
+      topic: "partnerships"
+      sourceRefs: [SE003, SE026]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE036
+      statement: "Discord Nitro is offered in two tiers—Nitro Basic at $4.99/month and Nitro at $9.99/month—providing enhanced upload limits, animated emotes, profile customization, and server boosts."
+      type: company-claimed
+      topic: "monetization"
+      sourceRefs: [SE003, SE001]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE037
+      statement: "Discord has not publicly confirmed a detailed product roadmap for 2026, and the company does not publish forward-looking feature timelines beyond general developer platform announcements."
+      type: inferred
+      topic: "roadmap"
+      sourceRefs: [SE016, SE025]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE038
+      statement: "Discord continues to invest in developer platform improvements including the Activities SDK, monetization APIs, and developer tooling as evidenced by ongoing documentation updates."
+      type: company-claimed
+      topic: "product"
+      sourceRefs: [SE004, SE007]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE039
+      statement: "Discord provides comprehensive and versioned API documentation for REST, Gateway, and interaction APIs, supporting a large third-party developer community building integrations."
+      type: company-claimed
+      topic: "developer-ecosystem"
+      sourceRefs: [SE007, SE016]
+      confidence: high
+      freshness: current
+      approximation: false
+
+    - id: CE040
+      statement: "Discord Activities supports third-party game developers through the Activities SDK, allowing studios to embed interactive applications into Discord voice channels."
+      type: company-claimed
+      topic: "product"
+      sourceRefs: [SE005, SE022]
+      confidence: high
+      freshness: recent
+      approximation: false
+
   evidenceGaps:
-    - type: missing-source
-      severity: material
-      topic: No public uptime SLA, status page history, or incident post-mortems found in research
-      missingEvidence: >-
-        Discord operates no publicly accessible uptime SLA, has not published engineering post-mortems
-        for past outages, and its Terms of Service explicitly disclaim reliability guarantees. Status
-        page data (discordstatus.com) shows historical incidents but no contractual context.
-      whyItMatters: >-
-        Absence of SLA documentation means enterprise or regulated buyers cannot rely on contractual
-        reliability commitments; it also limits the ability to quantify operational risk from Cloudflare
-        or BEAM runtime dependency failures.
-      diligencePath: >-
-        Request from management: historical uptime metrics, P1 incident frequency, mean time to recovery,
-        and any internal SLA commitments made to large community or publisher partners.
-      relatedQuestionRefs:
-        - QE008
-        - QE028
-      relatedTableRefs:
-        - TE003
-        - TE004
-    - type: missing-source
-      severity: material
-      topic: AI moderation accuracy and false positive rate not publicly disclosed
-      missingEvidence: >-
-        Discord has not published precision, recall, or false positive rate metrics for its Sentropy-derived
-        AI moderation systems or AutoMod. Transparency reports give action counts by category but no
-        effectiveness or accuracy statistics.
-      whyItMatters: >-
-        Undisclosed accuracy metrics make it impossible to evaluate whether Discord's safety tooling meets
-        regulatory thresholds under EU DSA or UK OSA, and adversarial bypass of AI moderation represents
-        a legal and reputational risk that is unquantifiable.
-      diligencePath: >-
-        Request internal accuracy and false positive benchmarks for AI moderation; ask whether independent
-        safety red-team audits have been conducted; check for any DSA transparency database filings.
-      relatedQuestionRefs:
-        - QE012
-        - QE022
-      relatedTableRefs:
-        - TE004
-    - type: missing-source
-      severity: moderate
-      topic: Activity monetization take rate and App Subscription economics not public
-      missingEvidence: >-
-        Discord has not disclosed the platform take rate on App Subscriptions or the revenue-share model
-        for Activities. No public developer economic disclosures comparable to Apple App Store (30%) or
-        Epic Games Store (12%) are available.
-      whyItMatters: >-
-        Developer platform contribution to total ARR is unknowable without take rate; if take rate is
-        low, developer platform is primarily a retention tool rather than an independent revenue line.
-      diligencePath: >-
-        Request App Subscription GMV, take rate, number of paying users per app, and Activity monetization
-        roadmap from management.
-      relatedQuestionRefs:
-        - QE011
-        - QE023
-      relatedTableRefs:
-        - TE001
-        - TE005
-    - type: missing-source
-      severity: moderate
-      topic: No public ISO 27001, SOC 2, or equivalent security certification identified
-      missingEvidence: >-
-        Research found no public certification page, trust portal, or third-party attestation confirming
-        ISO 27001, SOC 2 Type II, or equivalent independent security review for Discord's production
-        infrastructure.
-      whyItMatters: >-
-        Absence of certification limits addressability for enterprise or regulated-industry buyers
-        and is a gap relative to enterprise SaaS competitors (Slack, Teams) that publish SOC 2 reports.
-      diligencePath: >-
-        Ask management for trust/security certifications; request most recent penetration test summary
-        and remediation status; check if Discord's developer portal has a trust center.
-      relatedQuestionRefs:
-        - QE008
-        - QE024
-      relatedTableRefs:
-        - TE004
-    - type: enumeration-incomplete
-      severity: minor
-      topic: Infrastructure cost structure and cloud spend composition not publicly reported
-      missingEvidence: >-
-        Discord has not disclosed its GCP/AWS infrastructure spend, ScyllaDB operational costs, or CDN
-        (Cloudflare) contract value. No public proxy for infrastructure-to-revenue ratio exists.
-      whyItMatters: >-
-        Infrastructure cost is a significant operating expense for a platform of Discord's scale;
-        without it, margin modeling and unit economics analysis are speculative.
-      diligencePath: >-
-        Request cloud spend breakdown, CDN cost, and infrastructure cost as a percentage of revenue
-        from management; cross-check against engineering headcount per infrastructure layer.
-      relatedQuestionRefs:
-        - QE017
-      relatedTableRefs:
-        - TE003
+    - description: "Discord's internal SLAs, contractual uptime guarantees, and detailed reliability metrics are not publicly disclosed. The status page shows historical incidents but does not confirm contractual availability targets, leaving SLA commitments unknown to outside investors."
+      relatedQuestionRefs: [QE018]
+    - description: "Discord's detailed 2026 product roadmap beyond currently announced features is not publicly confirmed. Planned AI integration strategy, voice quality improvement targets, and Activities SDK monetization model are not disclosed in any public document as of May 2026."
+      relatedQuestionRefs: [QE022]

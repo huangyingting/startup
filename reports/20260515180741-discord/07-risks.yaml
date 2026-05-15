@@ -76,7 +76,7 @@ sections:
     callouts:
       - calloutType: risk
         title: "FTC Consent Decree Creates Multi-Year Compliance Obligation"
-        body: >-
+        statement: >-
           The 2023 FTC settlement is not a resolved matter. Discord remains
           under an active consent decree mandating ongoing compliance monitoring,
           parental verification processes, and restricted data collection from
@@ -86,7 +86,7 @@ sections:
         claimRefs: [CR003, CR039]
       - calloutType: risk
         title: "DSA VLOP Designation Could Drive Nine-Figure Compliance Costs"
-        body: >-
+        statement: >-
           If formally designated as a VLOP, Discord faces mandatory independent
           audits, systemic risk assessments, and content moderation investments
           that peer platforms have estimated at hundreds of millions of dollars
@@ -131,7 +131,7 @@ sections:
     callouts:
       - calloutType: risk
         title: "Single Cloud Provider Creates Catastrophic Concentration Risk"
-        body: >-
+        statement: >-
           Discord has not disclosed a multi-cloud strategy or business continuity
           plan for a sustained GCP outage. Discord's gaming-centric user base
           uses the platform for synchronized real-time coordination; a 4-hour
@@ -174,7 +174,7 @@ sections:
     callouts:
       - calloutType: risk
         title: "App Store 30% Cut Structurally Caps Mobile Monetization"
-        body: >-
+        statement: >-
           On mobile, Discord must either absorb the 30% App Store fee, redirect
           users to a web purchase flow with degraded UX, or omit in-app purchase
           options entirely. Given Discord's heavily mobile-accessed user base,
@@ -217,7 +217,7 @@ sections:
     callouts:
       - calloutType: insight
         title: "Concurrent Layoffs and CEO Change Amplify Execution Risk"
-        body: >-
+        statement: >-
           Research on technology company transitions indicates product velocity
           typically declines in the 12 months following concurrent leadership
           and headcount changes. For Discord, executing on regulatory compliance,
@@ -926,6 +926,9 @@ localEvidence:
         consent decree, and has the FTC initiated any subsequent enforcement
         action for violations?
       type: verification
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
       status: answered
       answer: >-
         Public reporting confirms Discord paid the $7.8M fine and implemented
@@ -941,6 +944,9 @@ localEvidence:
         What is Discord's estimated maximum annual fine exposure under the EU
         Digital Services Act if designated as a VLOP and found non-compliant?
       type: quantification
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
       status: answered
       answer: >-
         DSA VLOP non-compliance fines reach up to 6% of global annual revenue.
@@ -955,6 +961,9 @@ localEvidence:
         What pending regulatory investigations or enforcement actions does
         Discord face globally as of the report date?
       type: enumeration
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
       status: answered
       answer: >-
         Publicly confirmed: FTC consent decree (active, US). Likely applicable:
@@ -970,6 +979,9 @@ localEvidence:
         Has Discord received formal VLOP designation under the EU Digital
         Services Act, and what is its confirmed DSA compliance status?
       type: verification
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
       status: partial
       answer: >-
         Discord was not on the EC's initial April 2023 VLOP list of 17
@@ -986,6 +998,9 @@ localEvidence:
         experienced after the 2023 FTC settlement, and have any triggered new
         regulatory action?
       type: adverse
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
       status: answered
       answer: >-
         Wired and EFF published post-settlement reporting on ongoing teen safety
@@ -1001,6 +1016,9 @@ localEvidence:
         What is the mechanism by which Discord detects and removes CSAM at the
         scale of approximately 2 billion daily messages?
       type: mechanism
+      targets:
+        - contentRequirements/1
+        - plannedTables/operational-quality-security-risk-register
       status: answered
       answer: >-
         Discord publicly states it uses Microsoft PhotoDNA hash-matching (via
@@ -1017,6 +1035,9 @@ localEvidence:
         including data subject access requests, data deletion, and breach
         notification?
       type: verification
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
       status: answered
       answer: >-
         Discord's privacy policy explicitly covers GDPR rights including access,
@@ -1033,6 +1054,9 @@ localEvidence:
         including whether mandatory risk assessments and audits have been
         completed?
       type: freshness
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
       status: unresolved
       answer: >-
         Discord has not publicly disclosed its DSA compliance status as of the
@@ -1047,6 +1071,9 @@ localEvidence:
         How many data breach or security incidents has Discord experienced in
         the past three years, and what was the scope of affected user data?
       type: quantification
+      targets:
+        - contentRequirements/1
+        - plannedTables/operational-quality-security-risk-register
       status: answered
       answer: >-
         Documented incidents include a 2023 third-party customer service vendor
@@ -1062,6 +1089,9 @@ localEvidence:
         Does Discord use end-to-end encryption for direct messages, and what
         cryptographic protections are applied to user data?
       type: verification
+      targets:
+        - contentRequirements/1
+        - plannedTables/operational-quality-security-risk-register
       status: answered
       answer: >-
         Discord does not use end-to-end encryption for DMs by default. Messages
@@ -1076,6 +1106,9 @@ localEvidence:
         What material cybersecurity vulnerabilities or exploits have been
         publicly disclosed against Discord in the past three years?
       type: adverse
+      targets:
+        - contentRequirements/1
+        - plannedTables/operational-quality-security-risk-register
       status: answered
       answer: >-
         Documented: malware distribution through Discord's file-hosting CDN
@@ -1091,6 +1124,9 @@ localEvidence:
         What is the mechanism of Discord's GCP dependency, and has Discord
         disclosed any failover or business continuity architecture?
       type: mechanism
+      targets:
+        - contentRequirements/2
+        - plannedTables/partner-dependency-risk-register
       status: answered
       answer: >-
         Discord's engineering blog confirms GCP as the sole hyperscaler. Core
@@ -1106,6 +1142,10 @@ localEvidence:
         What percentage of Discord's compute and storage infrastructure runs on
         GCP versus other cloud providers?
       type: quantification
+      targets:
+        - contentRequirements/2
+        - plannedTables/partner-dependency-risk-register
+        - plannedFigures/dependency-map
       status: answered
       answer: >-
         Based on Discord's engineering blog, technical conference presentations,
@@ -1120,6 +1160,9 @@ localEvidence:
         Has Discord experienced significant platform outages in 2024 or 2025,
         and what was the maximum observed downtime duration?
       type: verification
+      targets:
+        - contentRequirements/1
+        - plannedTables/operational-quality-security-risk-register
       status: answered
       answer: >-
         Discord's status pages record historical incidents confirming service
@@ -1135,6 +1178,9 @@ localEvidence:
         What SLA commitments has Discord publicly disclosed for platform uptime,
         incident response time, and breach notification?
       type: verification
+      targets:
+        - contentRequirements/1
+        - plannedTables/operational-quality-security-risk-register
       status: unresolved
       answer: >-
         Discord has not publicly disclosed formal SLA metrics for uptime
@@ -1149,6 +1195,9 @@ localEvidence:
         What is the mechanism by which Apple and Google App Store fees affect
         Discord Nitro unit economics, and how does Discord manage this?
       type: mechanism
+      targets:
+        - contentRequirements/2
+        - plannedTables/partner-dependency-risk-register
       status: answered
       answer: >-
         Apple App Store and Google Play Store require a 30% fee on in-app
@@ -1164,6 +1213,9 @@ localEvidence:
         What share of Discord's Nitro subscription revenue is generated through
         mobile in-app purchases subject to the 30% App Store fee?
       type: quantification
+      targets:
+        - contentRequirements/2
+        - plannedTables/partner-dependency-risk-register
       status: partial
       answer: >-
         Discord has not disclosed the mobile versus web revenue split for Nitro
@@ -1177,6 +1229,10 @@ localEvidence:
         Does Discord have a documented multi-cloud or cloud redundancy strategy
         to mitigate concentration risk from sole reliance on GCP?
       type: verification
+      targets:
+        - contentRequirements/2
+        - plannedTables/partner-dependency-risk-register
+        - plannedFigures/dependency-map
       status: answered
       answer: >-
         No publicly disclosed multi-cloud strategy exists for Discord. Discord's
@@ -1192,6 +1248,10 @@ localEvidence:
         Discord after the 2023 FTC settlement, and has any new regulatory action
         been initiated?
       type: adverse
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
+        - plannedFigures/risk-heatmap
       status: answered
       answer: >-
         Wired documented ongoing teen safety concerns including unsolicited adult
@@ -1207,6 +1267,10 @@ localEvidence:
         How does Discord's content moderation approach and risk profile compare
         to peer platforms such as Slack, Microsoft Teams, and Reddit?
       type: comparison
+      targets:
+        - contentRequirements/1
+        - plannedTables/operational-quality-security-risk-register
+        - plannedFigures/risk-heatmap
       status: answered
       answer: >-
         Slack and Microsoft Teams primarily serve verified enterprise users,
@@ -1222,6 +1286,10 @@ localEvidence:
         What are all major third-party technology dependencies in Discord's
         platform stack beyond GCP and Cloudflare?
       type: enumeration
+      targets:
+        - contentRequirements/2
+        - plannedTables/partner-dependency-risk-register
+        - plannedFigures/dependency-map
       status: answered
       answer: >-
         Publicly identified dependencies include Stripe (payments, inferred),
@@ -1237,6 +1305,9 @@ localEvidence:
         Is the Microsoft Xbox / Nitro Rewards partnership still active and
         material to subscriber growth as of May 2026?
       type: freshness
+      targets:
+        - contentRequirements/2
+        - plannedTables/partner-dependency-risk-register
       status: partial
       answer: >-
         Discord and Microsoft Xbox announced a Nitro Rewards bundle including
@@ -1251,6 +1322,9 @@ localEvidence:
         Who is Discord's CEO as of 2026 and what is their stated strategic
         direction following the founder-to-professional-CEO transition?
       type: freshness
+      targets:
+        - contentRequirements/3
+        - plannedTables/people-execution-risk-register
       status: answered
       answer: >-
         Humam Sakhnini became Discord's CEO in 2025 following Jason Citron's
@@ -1265,6 +1339,9 @@ localEvidence:
         How many employees were laid off in January 2024 and what is Discord's
         approximate total headcount as of the report date?
       type: quantification
+      targets:
+        - contentRequirements/3
+        - plannedTables/people-execution-risk-register
       status: answered
       answer: >-
         January 2024 layoffs affected approximately 170 employees, representing
@@ -1279,6 +1356,9 @@ localEvidence:
         How did the January 2024 layoffs affect Discord's product roadmap
         execution and feature delivery velocity?
       type: mechanism
+      targets:
+        - contentRequirements/3
+        - plannedTables/people-execution-risk-register
       status: answered
       answer: >-
         The layoffs affected engineering, product, and operations teams.
@@ -1294,6 +1374,9 @@ localEvidence:
         Has CTO Stanislav Vishnevskiy remained at Discord through the 2025 CEO
         transition, and is there a documented succession plan for his role?
       type: verification
+      targets:
+        - contentRequirements/3
+        - plannedTables/people-execution-risk-register
       status: answered
       answer: >-
         Stanislav Vishnevskiy has been Discord's CTO since co-founding the
@@ -1309,6 +1392,9 @@ localEvidence:
         What is Discord's estimated annual revenue, and what is the company's
         stated or implied timeline to profitability?
       type: quantification
+      targets:
+        - contentRequirements/4
+        - plannedTables/mitigation-and-kill-criteria-table
       status: answered
       answer: >-
         Discord's revenue is not publicly disclosed. Third-party analyst
@@ -1324,6 +1410,10 @@ localEvidence:
         How does Discord's combined regulatory risk profile compare to similarly
         valued consumer platforms at equivalent pre-IPO stages?
       type: comparison
+      targets:
+        - contentRequirements/0
+        - plannedFigures/risk-heatmap
+        - plannedFigures/risk-transmission-map
       status: answered
       answer: >-
         Discord's profile is heavier than most pre-IPO consumer platforms at
@@ -1339,6 +1429,9 @@ localEvidence:
         What copyright infringement or DMCA-related litigation has Discord faced
         or is currently facing?
       type: enumeration
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
       status: answered
       answer: >-
         No major copyright infringement lawsuit against Discord as a platform has
@@ -1354,6 +1447,9 @@ localEvidence:
         How does Discord comply with CCPA/CPRA for California residents, and
         has it faced any California AG enforcement action?
       type: verification
+      targets:
+        - contentRequirements/0
+        - plannedTables/regulatory-legal-risk-register
       status: answered
       answer: >-
         Discord's privacy policy includes CCPA-specific sections covering the
@@ -1369,6 +1465,10 @@ localEvidence:
         What is the mechanism by which a gaming ecosystem slowdown translates
         into Discord DAU and revenue decline?
       type: mechanism
+      targets:
+        - contentRequirements/4
+        - plannedTables/people-execution-risk-register
+        - plannedFigures/risk-heatmap
       status: answered
       answer: >-
         Discord's user base is organized around gaming communities tied to
@@ -1385,6 +1485,10 @@ localEvidence:
         What material adverse events or undisclosed litigation risks exist for
         Discord that have not been publicly reported as of the run date?
       type: adverse
+      targets:
+        - contentRequirements/5
+        - plannedTables/mitigation-and-kill-criteria-table
+        - plannedFigures/risk-heatmap
       status: answered
       answer: >-
         No material undisclosed adverse events are verifiable from public sources
@@ -1399,6 +1503,11 @@ localEvidence:
   sources:
     - id: SR001
       url: "https://www.ftc.gov/news-events/news/press-releases/2023/05/ftc-takes-action-against-discord"
+      publisher: "Federal Trade Commission"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "FTC Takes Action Against Discord for Violating Children's Privacy"
       sourceType: regulatory
       domain: ftc.gov
@@ -1411,6 +1520,11 @@ localEvidence:
 
     - id: SR002
       url: "https://ec.europa.eu/commission/presscorner/detail/en/ip_23_2413"
+      publisher: "European Commission"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "European Commission DSA VLOP Designation Press Release"
       sourceType: regulatory
       domain: ec.europa.eu
@@ -1423,6 +1537,11 @@ localEvidence:
 
     - id: SR003
       url: "https://ico.org.uk/"
+      publisher: "UK Information Commissioner's Office"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "UK Information Commissioner's Office"
       sourceType: regulatory
       domain: ico.org.uk
@@ -1433,6 +1552,11 @@ localEvidence:
 
     - id: SR004
       url: "https://www.ftc.gov/system/files/ftc_gov/pdf/discord-complaint.pdf"
+      publisher: "Federal Trade Commission"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "FTC Complaint Against Discord (2023)"
       sourceType: legal
       domain: ftc.gov
@@ -1445,6 +1569,11 @@ localEvidence:
 
     - id: SR005
       url: "https://epic.org/discord-privacy-children/"
+      publisher: "Electronic Privacy Information Center"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: adverse
+      topics: [risks]
       title: "EPIC: Discord Privacy and Children"
       sourceType: legal
       domain: epic.org
@@ -1457,6 +1586,11 @@ localEvidence:
 
     - id: SR006
       url: "https://discord.com/safety"
+      publisher: "Discord"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Safety Center"
       sourceType: official
       domain: discord.com
@@ -1467,6 +1601,11 @@ localEvidence:
 
     - id: SR007
       url: "https://discord.com/privacy"
+      publisher: "Discord"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Privacy Policy"
       sourceType: official
       domain: discord.com
@@ -1477,6 +1616,11 @@ localEvidence:
 
     - id: SR008
       url: "https://discord.com/terms"
+      publisher: "Discord"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Terms of Service"
       sourceType: official
       domain: discord.com
@@ -1489,6 +1633,11 @@ localEvidence:
 
     - id: SR009
       url: "https://discord.com/company"
+      publisher: "Discord"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Company Page"
       sourceType: official
       domain: discord.com
@@ -1499,6 +1648,11 @@ localEvidence:
 
     - id: SR010
       url: "https://discord.statuspage.io"
+      publisher: "Discord (Status Page)"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Status Page (Statuspage.io)"
       sourceType: official
       domain: statuspage.io
@@ -1509,6 +1663,11 @@ localEvidence:
 
     - id: SR011
       url: "https://www.wsj.com/articles/discord-ftc-settlement-2023"
+      publisher: "The Wall Street Journal"
+      accessDate: "2026-05-15"
+      accessStatus: paywall
+      stance: neutral
+      topics: [risks]
       title: "Discord Reaches FTC Settlement Over Children's Privacy Violations"
       sourceType: news
       domain: wsj.com
@@ -1519,6 +1678,11 @@ localEvidence:
 
     - id: SR012
       url: "https://techcrunch.com/2023/05/03/discord-ftc-settlement-coppa/"
+      publisher: "TechCrunch"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Settles FTC Charges Over COPPA Violations for $7.8M"
       sourceType: news
       domain: techcrunch.com
@@ -1529,6 +1693,11 @@ localEvidence:
 
     - id: SR013
       url: "https://www.theverge.com/2023/5/3/23709454/discord-ftc-settlement-coppa-children-privacy"
+      publisher: "The Verge"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Must Pay $7.8 Million FTC Fine for Children's Privacy Violations"
       sourceType: news
       domain: theverge.com
@@ -1539,6 +1708,11 @@ localEvidence:
 
     - id: SR014
       url: "https://www.bbc.com/news/technology-discord-child-safety"
+      publisher: "BBC"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord and Child Safety Concerns"
       sourceType: news
       domain: bbc.com
@@ -1549,6 +1723,11 @@ localEvidence:
 
     - id: SR015
       url: "https://www.wired.com/story/discord-teen-safety/"
+      publisher: "Wired"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: adverse
+      topics: [risks]
       title: "Discord's Teen Safety Problem"
       sourceType: news
       domain: wired.com
@@ -1559,6 +1738,11 @@ localEvidence:
 
     - id: SR016
       url: "https://www.cnbc.com/2024/01/11/discord-lays-off-17-percent-of-staff.html"
+      publisher: "CNBC"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Lays Off 17 Percent of Staff"
       sourceType: news
       domain: cnbc.com
@@ -1569,6 +1753,11 @@ localEvidence:
 
     - id: SR017
       url: "https://www.theverge.com/2024/1/11/24034098/discord-layoffs-2024"
+      publisher: "The Verge"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Lays Off 170 Employees in January 2024"
       sourceType: news
       domain: theverge.com
@@ -1579,6 +1768,11 @@ localEvidence:
 
     - id: SR018
       url: "https://techcrunch.com/2024/01/11/discord-lays-off-170-employees-or-about-17-of-its-workforce/"
+      publisher: "TechCrunch"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Lays Off 170 Employees, About 17% of Its Workforce"
       sourceType: news
       domain: techcrunch.com
@@ -1589,6 +1783,11 @@ localEvidence:
 
     - id: SR019
       url: "https://backlinko.com/discord-users"
+      publisher: "Backlinko"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord User and Growth Statistics"
       sourceType: analyst-market-data
       domain: backlinko.com
@@ -1599,6 +1798,11 @@ localEvidence:
 
     - id: SR020
       url: "https://demandsage.com/discord-statistics/"
+      publisher: "DemandSage"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Statistics 2024"
       sourceType: analyst-market-data
       domain: demandsage.com
@@ -1609,6 +1813,11 @@ localEvidence:
 
     - id: SR021
       url: "https://businessofapps.com/data/discord-statistics/"
+      publisher: "Business of Apps"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Revenue and Usage Statistics"
       sourceType: analyst-market-data
       domain: businessofapps.com
@@ -1619,6 +1828,11 @@ localEvidence:
 
     - id: SR022
       url: "https://status.discord.com"
+      publisher: "Discord"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Official Status Page"
       sourceType: official
       domain: discord.com
@@ -1629,6 +1843,11 @@ localEvidence:
 
     - id: SR023
       url: "https://en.wikipedia.org/wiki/Discord_(software)"
+      publisher: "Wikipedia"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord (software) - Wikipedia"
       sourceType: other
       domain: wikipedia.org
@@ -1639,6 +1858,11 @@ localEvidence:
 
     - id: SR024
       url: "https://www.eff.org/deeplinks/2023/discord-privacy"
+      publisher: "Electronic Frontier Foundation"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: adverse
+      topics: [risks]
       title: "EFF: Discord Privacy Concerns"
       sourceType: other
       domain: eff.org
@@ -1649,6 +1873,11 @@ localEvidence:
 
     - id: SR025
       url: "https://www.ftc.gov/legal-library/browse/cases-proceedings/discord-inc"
+      publisher: "Federal Trade Commission"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "FTC Case File: Discord, Inc."
       sourceType: legal
       domain: ftc.gov
@@ -1661,6 +1890,11 @@ localEvidence:
 
     - id: SR026
       url: "https://www.esafety.gov.au/industry/basic-online-safety-expectations/compliance"
+      publisher: "Australian eSafety Commissioner"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Australian eSafety Commissioner: Online Safety Compliance"
       sourceType: regulatory
       domain: esafety.gov.au
@@ -1671,6 +1905,11 @@ localEvidence:
 
     - id: SR027
       url: "https://www.ofcom.org.uk/online-safety"
+      publisher: "UK Office of Communications"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Ofcom: Online Safety Act Obligations"
       sourceType: regulatory
       domain: ofcom.org.uk
@@ -1681,6 +1920,11 @@ localEvidence:
 
     - id: SR028
       url: "https://www.dataprotection.ie/"
+      publisher: "Data Protection Commission Ireland"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Irish Data Protection Commission"
       sourceType: regulatory
       domain: dataprotection.ie
@@ -1691,6 +1935,11 @@ localEvidence:
 
     - id: SR029
       url: "https://discord.com/blog/how-discord-stores-billions-of-messages"
+      publisher: "Discord"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Engineering Blog: How Discord Stores Billions of Messages"
       sourceType: official
       domain: discord.com
@@ -1701,6 +1950,11 @@ localEvidence:
 
     - id: SR030
       url: "https://discord.com/blog/discord-transparent-1h-2023"
+      publisher: "Discord"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Transparency Report H1 2023"
       sourceType: official
       domain: discord.com
@@ -1711,6 +1965,11 @@ localEvidence:
 
     - id: SR031
       url: "https://www.reuters.com/technology/discord-gdpr-compliance-european-regulators-2023/"
+      publisher: "Reuters"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Reuters: Discord and European Data Protection Compliance"
       sourceType: news
       domain: reuters.com
@@ -1721,6 +1980,11 @@ localEvidence:
 
     - id: SR032
       url: "https://oag.ca.gov/privacy/ccpa"
+      publisher: "California Attorney General"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "California Attorney General: CCPA Enforcement"
       sourceType: regulatory
       domain: oag.ca.gov
@@ -1731,6 +1995,11 @@ localEvidence:
 
     - id: SR033
       url: "https://sendgrid.com/"
+      publisher: "SendGrid/Twilio"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Twilio SendGrid Email Platform"
       sourceType: other
       domain: sendgrid.com
@@ -1741,6 +2010,11 @@ localEvidence:
 
     - id: SR034
       url: "https://www.missingkids.org/gethelpnow/cybertipline"
+      publisher: "National Center for Missing & Exploited Children"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "NCMEC CyberTipline"
       sourceType: other
       domain: missingkids.org
@@ -1751,6 +2025,11 @@ localEvidence:
 
     - id: SR035
       url: "https://www.bloomberg.com/news/articles/2024-01-discord-strategy-post-layoffs"
+      publisher: "Bloomberg"
+      accessDate: "2026-05-15"
+      accessStatus: paywall
+      stance: neutral
+      topics: [risks]
       title: "Bloomberg: Discord's Strategic Direction After Layoffs"
       sourceType: news
       domain: bloomberg.com
@@ -1761,6 +2040,11 @@ localEvidence:
 
     - id: SR036
       url: "https://www.nytimes.com/2023/discord-valuation-ipo-timeline"
+      publisher: "The New York Times"
+      accessDate: "2026-05-15"
+      accessStatus: paywall
+      stance: neutral
+      topics: [risks]
       title: "New York Times: Discord Valuation and IPO Prospects"
       sourceType: news
       domain: nytimes.com
@@ -1771,6 +2055,11 @@ localEvidence:
 
     - id: SR037
       url: "https://www.statista.com/statistics/discord-gaming-users/"
+      publisher: "Statista"
+      accessDate: "2026-05-15"
+      accessStatus: paywall
+      stance: neutral
+      topics: [risks]
       title: "Statista: Discord Gaming User Demographics"
       sourceType: analyst-market-data
       domain: statista.com
@@ -1781,6 +2070,11 @@ localEvidence:
 
     - id: SR038
       url: "https://cloud.google.com/customers/discord"
+      publisher: "Google Cloud"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Google Cloud: Discord Customer Case Study"
       sourceType: other
       domain: cloud.google.com
@@ -1791,6 +2085,11 @@ localEvidence:
 
     - id: SR039
       url: "https://www.theverge.com/2021/4/20/discord-microsoft-acquisition-rejected"
+      publisher: "The Verge"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Rejected Microsoft Acquisition Offer"
       sourceType: news
       domain: theverge.com
@@ -1801,6 +2100,11 @@ localEvidence:
 
     - id: SR040
       url: "https://www.cloudflare.com/case-studies/discord/"
+      publisher: "Cloudflare"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Cloudflare: Discord Case Study"
       sourceType: other
       domain: cloudflare.com
@@ -1811,6 +2115,11 @@ localEvidence:
 
     - id: SR041
       url: "https://techcrunch.com/2023/discord-dsa-platform-compliance/"
+      publisher: "TechCrunch"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "TechCrunch: Discord and EU DSA Compliance Obligations"
       sourceType: news
       domain: techcrunch.com
@@ -1821,6 +2130,11 @@ localEvidence:
 
     - id: SR042
       url: "https://www.theverge.com/2023/05/discord-gdpr-eu-data-privacy"
+      publisher: "The Verge"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "The Verge: Discord and European Privacy Obligations"
       sourceType: news
       domain: theverge.com
@@ -1831,6 +2145,11 @@ localEvidence:
 
     - id: SR043
       url: "https://www.wired.com/story/discord-platform-governance-safety-2024/"
+      publisher: "Wired"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: adverse
+      topics: [risks]
       title: "Wired: Discord Platform Governance and Safety (2024)"
       sourceType: news
       domain: wired.com
@@ -1843,6 +2162,11 @@ localEvidence:
 
     - id: SR044
       url: "https://www.ncsc.gov.uk/guidance/social-media-how-to-use-it-safely"
+      publisher: "UK National Cyber Security Centre"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "NCSC: Social Media Platform Safety Guidance"
       sourceType: other
       domain: ncsc.gov.uk
@@ -1855,6 +2179,11 @@ localEvidence:
 
     - id: SR045
       url: "https://discord.statuspage.io/history"
+      publisher: "Discord (Status Page)"
+      accessDate: "2026-05-15"
+      accessStatus: ok
+      stance: neutral
+      topics: [risks]
       title: "Discord Status Page Incident History"
       sourceType: official
       domain: statuspage.io
@@ -1865,315 +2194,360 @@ localEvidence:
 
   claims:
     - id: CR001
-      body: "The FTC fined Discord $7.8 million in May 2023 for violations of the Children's Online Privacy Protection Act (COPPA)."
+      statement: "The FTC fined Discord $7.8 million in May 2023 for violations of the Children's Online Privacy Protection Act (COPPA)."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR001, SR004, SR012, SR013]
 
     - id: CR002
-      body: "The FTC found that Discord violated COPPA by allowing children under 13 to register without verifiable parental consent and by exposing minors to unsolicited adult contact."
+      statement: "The FTC found that Discord violated COPPA by allowing children under 13 to register without verifiable parental consent and by exposing minors to unsolicited adult contact."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR001, SR004, SR013]
 
     - id: CR003
-      body: "The 2023 FTC consent decree requires Discord to implement enhanced parental controls, age verification mechanisms, and a comprehensive children's privacy compliance program with ongoing monitoring."
+      statement: "The 2023 FTC consent decree requires Discord to implement enhanced parental controls, age verification mechanisms, and a comprehensive children's privacy compliance program with ongoing monitoring."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR001, SR004, SR025]
 
     - id: CR004
-      body: "Discord likely meets the EU DSA threshold for Very Large Online Platform designation based on estimated 150M+ monthly active users, substantially exceeding the 45M EU user VLOP threshold."
+      statement: "Discord likely meets the EU DSA threshold for Very Large Online Platform designation based on estimated 150M+ monthly active users, substantially exceeding the 45M EU user VLOP threshold."
+      topic: risks
       type: inferred
       freshness: current
       confidence: medium
       sourceRefs: [SR002, SR019, SR020]
 
     - id: CR005
-      body: "EU Digital Services Act non-compliance fines for VLOPs can reach up to 6% of a company's global annual revenue, with repeat violations potentially triggering EU service restrictions."
+      statement: "EU Digital Services Act non-compliance fines for VLOPs can reach up to 6% of a company's global annual revenue, with repeat violations potentially triggering EU service restrictions."
+      topic: risks
       type: third-party-reported
       freshness: current
       confidence: high
       sourceRefs: [SR002, SR023]
 
     - id: CR006
-      body: "Discord processes personal data of EU residents and is subject to GDPR requirements including data subject rights, breach notification, and data minimization obligations."
+      statement: "Discord processes personal data of EU residents and is subject to GDPR requirements including data subject rights, breach notification, and data minimization obligations."
+      topic: risks
       type: observed
       freshness: current
       confidence: high
       sourceRefs: [SR007, SR028]
 
     - id: CR007
-      body: "The UK Online Safety Act imposes child safety, age assurance, and harmful content obligations on Discord enforced by Ofcom with the power to issue service restriction orders."
+      statement: "The UK Online Safety Act imposes child safety, age assurance, and harmful content obligations on Discord enforced by Ofcom with the power to issue service restriction orders."
+      topic: risks
       type: third-party-reported
       freshness: current
       confidence: high
       sourceRefs: [SR003, SR027]
 
     - id: CR008
-      body: "Discord uses Google Cloud Platform as its primary and effectively sole cloud infrastructure provider for compute, storage, and networking services."
+      statement: "Discord uses Google Cloud Platform as its primary and effectively sole cloud infrastructure provider for compute, storage, and networking services."
+      topic: risks
       type: third-party-reported
       freshness: current
       confidence: high
       sourceRefs: [SR023, SR029, SR038]
 
     - id: CR009
-      body: "Discord relies on Cloudflare for content delivery network services and DDoS attack mitigation, creating a critical single-vendor dependency at the network edge."
+      statement: "Discord relies on Cloudflare for content delivery network services and DDoS attack mitigation, creating a critical single-vendor dependency at the network edge."
+      topic: risks
       type: third-party-reported
       freshness: current
       confidence: high
       sourceRefs: [SR023, SR040]
 
     - id: CR010
-      body: "Apple App Store and Google Play Store impose a 30% fee on in-app purchases made through their platforms, including Discord Nitro subscriptions purchased on iOS and Android."
+      statement: "Apple App Store and Google Play Store impose a 30% fee on in-app purchases made through their platforms, including Discord Nitro subscriptions purchased on iOS and Android."
+      topic: risks
       type: observed
       freshness: current
-      confidence: high
+      confidence: medium
       sourceRefs: [SR019, SR020, SR021]
 
     - id: CR011
-      body: "Discord experienced significant platform outages in 2022 and 2023 that disrupted service for millions of simultaneous users across voice, messaging, and login functions."
+      statement: "Discord experienced significant platform outages in 2022 and 2023 that disrupted service for millions of simultaneous users across voice, messaging, and login functions."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR010, SR022, SR023]
 
     - id: CR012
-      body: "Discord processes approximately 2 billion messages per day across its platform according to third-party analyst estimates."
+      statement: "Discord processes approximately 2 billion messages per day across its platform according to third-party analyst estimates."
+      topic: risks
       type: third-party-reported
       freshness: recent
       confidence: medium
       sourceRefs: [SR019, SR020, SR023]
 
     - id: CR013
-      body: "Discord reported 90 million or more daily active users as of 2023 according to third-party analyst aggregations of company disclosures."
+      statement: "Discord reported 90 million or more daily active users as of 2023 according to third-party analyst aggregations of company disclosures."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: medium
       sourceRefs: [SR019, SR020, SR021]
 
     - id: CR014
-      body: "Discord has approximately 150 million or more monthly active users globally according to third-party analyst estimates."
+      statement: "Discord has approximately 150 million or more monthly active users globally according to third-party analyst estimates."
+      topic: risks
       type: third-party-reported
       freshness: recent
       confidence: medium
       sourceRefs: [SR019, SR020, SR021]
 
     - id: CR015
-      body: "Jason Citron stepped down as Discord's CEO in 2025 and Humam Sakhnini was appointed as the new CEO, representing a transition from founder to professional management."
+      statement: "Jason Citron stepped down as Discord's CEO in 2025 and Humam Sakhnini was appointed as the new CEO, representing a transition from founder to professional management."
+      topic: risks
       type: third-party-reported
       freshness: recent
       confidence: high
       sourceRefs: [SR016, SR017, SR023]
 
     - id: CR016
-      body: "Discord laid off approximately 170 employees in January 2024, representing approximately 17% of its total workforce at the time."
+      statement: "Discord laid off approximately 170 employees in January 2024, representing approximately 17% of its total workforce at the time."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR016, SR017, SR018]
 
     - id: CR017
-      body: "Stanislav Vishnevskiy is Discord's co-founder and has served as Chief Technology Officer since the company's founding, representing a critical key-person dependency for platform architecture."
+      statement: "Stanislav Vishnevskiy is Discord's co-founder and has served as Chief Technology Officer since the company's founding, representing a critical key-person dependency for platform architecture."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR009, SR023]
 
     - id: CR018
-      body: "Discord stated approximately 150 million monthly active users as of 2023 in company-reported figures."
+      statement: "Discord stated approximately 150 million monthly active users as of 2023 in company-reported figures."
+      topic: risks
       type: company-claimed
       freshness: historical
       confidence: medium
       sourceRefs: [SR006, SR019]
 
     - id: CR019
-      body: "Discord's bot ecosystem includes over one million registered bots, creating a substantial and persistent third-party API attack surface."
+      statement: "Discord's bot ecosystem includes over one million registered bots, creating a substantial and persistent third-party API attack surface."
+      topic: risks
       type: estimated
       freshness: current
       confidence: medium
       sourceRefs: [SR019, SR023]
 
     - id: CR020
-      body: "CSAM exposure risk on Discord remains a material ongoing concern despite the 2023 FTC settlement, given the platform's pseudonymous environment and 2B messages/day scale."
+      statement: "CSAM exposure risk on Discord remains a material ongoing concern despite the 2023 FTC settlement, given the platform's pseudonymous environment and 2B messages/day scale."
+      topic: risks
       type: inferred
       freshness: current
       confidence: medium
       sourceRefs: [SR004, SR014, SR015, SR034]
 
     - id: CR021
-      body: "The Electronic Frontier Foundation has publicly raised concerns about Discord's data collection practices and privacy risks for users, particularly minors."
+      statement: "The Electronic Frontier Foundation has publicly raised concerns about Discord's data collection practices and privacy risks for users, particularly minors."
+      topic: risks
       type: third-party-reported
       freshness: historical
-      confidence: high
+      confidence: medium
       sourceRefs: [SR024]
 
     - id: CR022
-      body: "Stripe is inferred to be Discord's primary payment processor for Nitro subscription billing based on industry norms and third-party analyst reports."
+      statement: "Stripe is inferred to be Discord's primary payment processor for Nitro subscription billing based on industry norms and third-party analyst reports."
+      topic: risks
       type: inferred
       freshness: current
       confidence: medium
       sourceRefs: [SR020, SR023]
 
     - id: CR023
-      body: "Discord and Microsoft Xbox announced a Nitro Rewards program that bundled Xbox Game Pass benefits for Discord Nitro subscribers."
+      statement: "Discord and Microsoft Xbox announced a Nitro Rewards program that bundled Xbox Game Pass benefits for Discord Nitro subscribers."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR023, SR039]
 
     - id: CR024
-      body: "Discord faces ongoing compliance obligations under the UK Online Safety Act requiring age assurance, harmful content removal, and safety reporting to Ofcom."
+      statement: "Discord faces ongoing compliance obligations under the UK Online Safety Act requiring age assurance, harmful content removal, and safety reporting to Ofcom."
+      topic: risks
       type: inferred
       freshness: current
       confidence: high
       sourceRefs: [SR027, SR003]
 
     - id: CR025
-      body: "Discord's API ecosystem with 1M+ registered bots creates a broad and persistent security attack surface targeted by credential theft, spam, and raid attack campaigns."
+      statement: "Discord's API ecosystem with 1M+ registered bots creates a broad and persistent security attack surface targeted by credential theft, spam, and raid attack campaigns."
+      topic: risks
       type: inferred
       freshness: current
       confidence: medium
       sourceRefs: [SR019, SR023]
 
     - id: CR026
-      body: "Discord has historically been targeted by distributed denial-of-service attacks that disrupted platform availability, mitigated through Cloudflare DDoS protection."
+      statement: "Discord has historically been targeted by distributed denial-of-service attacks that disrupted platform availability, mitigated through Cloudflare DDoS protection."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR023, SR040]
 
     - id: CR027
-      body: "Discord's primary revenue source is Nitro subscriptions offering premium features including enhanced audio quality, custom emojis, higher file upload limits, and server boosts."
+      statement: "Discord's primary revenue source is Nitro subscriptions offering premium features including enhanced audio quality, custom emojis, higher file upload limits, and server boosts."
+      topic: risks
       type: third-party-reported
       freshness: current
-      confidence: high
+      confidence: medium
       sourceRefs: [SR019, SR020, SR021]
 
     - id: CR028
-      body: "Discord was valued at approximately $15 billion in its 2021 Series H funding round."
+      statement: "Discord was valued at approximately $15 billion in its 2021 Series H funding round."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR023, SR036]
 
     - id: CR029
-      body: "Discord declined a reported acquisition offer from Microsoft valued at approximately $12 billion in 2021, opting to remain independent."
+      statement: "Discord declined a reported acquisition offer from Microsoft valued at approximately $12 billion in 2021, opting to remain independent."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR039, SR023]
 
     - id: CR030
-      body: "Australia's eSafety Commissioner has investigated Discord's child safety practices and compliance with Australian online safety obligations."
+      statement: "Australia's eSafety Commissioner has investigated Discord's child safety practices and compliance with Australian online safety obligations."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: medium
       sourceRefs: [SR026, SR023]
 
     - id: CR031
-      body: "Discord's EU entity is based in Ireland, making the Irish Data Protection Commission the lead GDPR supervisory authority for Discord's EU-based data processing operations."
+      statement: "Discord's EU entity is based in Ireland, making the Irish Data Protection Commission the lead GDPR supervisory authority for Discord's EU-based data processing operations."
+      topic: risks
       type: inferred
       freshness: current
       confidence: medium
       sourceRefs: [SR028, SR007]
 
     - id: CR032
-      body: "Discord is subject to California Consumer Privacy Act and CPRA compliance requirements as a California-headquartered company processing personal data of California residents."
+      statement: "Discord is subject to California Consumer Privacy Act and CPRA compliance requirements as a California-headquartered company processing personal data of California residents."
+      topic: risks
       type: observed
       freshness: current
       confidence: high
       sourceRefs: [SR007, SR032]
 
     - id: CR033
-      body: "Twilio/SendGrid is inferred to be Discord's transactional email and notification delivery provider based on industry adoption patterns and job posting signals."
+      statement: "Twilio/SendGrid is inferred to be Discord's transactional email and notification delivery provider based on industry adoption patterns and job posting signals."
+      topic: risks
       type: inferred
       freshness: current
       confidence: low
       sourceRefs: [SR033]
 
     - id: CR034
-      body: "Discord has publicly stated it uses Microsoft PhotoDNA hash-matching and AI-based classifiers for CSAM detection, reporting confirmed CSAM to NCMEC's CyberTipline."
+      statement: "Discord has publicly stated it uses Microsoft PhotoDNA hash-matching and AI-based classifiers for CSAM detection, reporting confirmed CSAM to NCMEC's CyberTipline."
+      topic: risks
       type: company-claimed
       freshness: recent
       confidence: high
       sourceRefs: [SR006, SR030, SR034]
 
     - id: CR035
-      body: "The Verge reported that Discord's January 2024 layoffs affected multiple functions including engineering, product, and operations teams."
+      statement: "The Verge reported that Discord's January 2024 layoffs affected multiple functions including engineering, product, and operations teams."
+      topic: risks
       type: third-party-reported
       freshness: historical
-      confidence: high
+      confidence: medium
       sourceRefs: [SR017]
 
     - id: CR036
-      body: "TechCrunch reported that Discord's January 2024 layoff represented approximately 17% of the company's total workforce affecting approximately 170 employees."
+      statement: "TechCrunch reported that Discord's January 2024 layoff represented approximately 17% of the company's total workforce affecting approximately 170 employees."
+      topic: risks
       type: third-party-reported
       freshness: historical
-      confidence: high
+      confidence: medium
       sourceRefs: [SR018]
 
     - id: CR037
-      body: "Discord's user base is disproportionately concentrated in gaming communities organized around major franchises including Fortnite, Minecraft, Roblox, and Valorant, creating organic user growth dependency on gaming ecosystem health."
+      statement: "Discord's user base is disproportionately concentrated in gaming communities organized around major franchises including Fortnite, Minecraft, Roblox, and Valorant, creating organic user growth dependency on gaming ecosystem health."
+      topic: risks
       type: inferred
       freshness: current
-      confidence: high
+      confidence: medium
       sourceRefs: [SR019, SR020, SR037]
 
     - id: CR038
-      body: "Discord publishes a Safety Center and periodic transparency reports covering Trust and Safety actions, content removal volumes, and CSAM reporting metrics."
+      statement: "Discord publishes a Safety Center and periodic transparency reports covering Trust and Safety actions, content removal volumes, and CSAM reporting metrics."
+      topic: risks
       type: company-claimed
       freshness: recent
       confidence: high
       sourceRefs: [SR006, SR030]
 
     - id: CR039
-      body: "The FTC consent decree requires Discord to maintain verifiable parental consent processes, limit data collection from minors, and submit to FTC compliance monitoring over a multi-year period."
+      statement: "The FTC consent decree requires Discord to maintain verifiable parental consent processes, limit data collection from minors, and submit to FTC compliance monitoring over a multi-year period."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR001, SR004, SR025]
 
     - id: CR040
-      body: "EPIC filed comments with the FTC documenting Discord's children's privacy failures and advocating for enforcement action prior to the 2023 settlement."
+      statement: "EPIC filed comments with the FTC documenting Discord's children's privacy failures and advocating for enforcement action prior to the 2023 settlement."
+      topic: risks
       type: third-party-reported
       freshness: historical
-      confidence: high
+      confidence: medium
       sourceRefs: [SR005]
 
     - id: CR041
-      body: "Discord's content moderation challenges include persistent bot-driven spam, coordinated raid attacks on gaming servers, and adversarial content that evades automated AI detection."
+      statement: "Discord's content moderation challenges include persistent bot-driven spam, coordinated raid attacks on gaming servers, and adversarial content that evades automated AI detection."
+      topic: risks
       type: observed
       freshness: current
       confidence: high
       sourceRefs: [SR006, SR019, SR023]
 
     - id: CR042
-      body: "Discord's path to profitability and IPO readiness faces elevated execution risk from the combination of CEO transition, post-layoff talent attrition, and concurrent multi-jurisdictional regulatory compliance obligations."
+      statement: "Discord's path to profitability and IPO readiness faces elevated execution risk from the combination of CEO transition, post-layoff talent attrition, and concurrent multi-jurisdictional regulatory compliance obligations."
+      topic: risks
       type: inferred
       freshness: current
       confidence: medium
       sourceRefs: [SR016, SR017, SR035, SR036]
 
     - id: CR043
-      body: "The EU DSA compliance deadline for Very Large Online Platforms was August 2024, creating an active compliance obligation for platforms meeting the VLOP threshold as of that date."
+      statement: "The EU DSA compliance deadline for Very Large Online Platforms was August 2024, creating an active compliance obligation for platforms meeting the VLOP threshold as of that date."
+      topic: risks
       type: third-party-reported
       freshness: historical
       confidence: high
       sourceRefs: [SR002, SR023]
 
     - id: CR044
-      body: "BBC News documented child safety concerns on the Discord platform including risks of adult-to-child contact in unmoderated server environments."
+      statement: "BBC News documented child safety concerns on the Discord platform including risks of adult-to-child contact in unmoderated server environments."
+      topic: risks
       type: third-party-reported
       freshness: historical
-      confidence: high
+      confidence: medium
       sourceRefs: [SR014]
 
     - id: CR045
-      body: "Discord's official status pages record historical service incidents confirming platform outages have occurred affecting voice, messaging, and authentication services."
+      statement: "Discord's official status pages record historical service incidents confirming platform outages have occurred affecting voice, messaging, and authentication services."
+      topic: risks
       type: observed
       freshness: historical
       confidence: high
