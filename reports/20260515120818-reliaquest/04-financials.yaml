@@ -27,7 +27,7 @@ sections:
   - id: funding-capital-structure
     title: "Funding History and Capital Structure"
     body: "ReliaQuest has raised approximately $830 million in total equity capital as of May 2026. The documented rounds include: an early venture-backed raise of approximately $30 million led by FTV Capital (exact date and terms undisclosed beyond 2015–2016 era); a Series C led by KKR in early 2020 at an approximately $1 billion valuation (disclosed via press releases); a Series D of $300 million led by KKR at an approximately $3.4 billion valuation in October 2024; and a $500 million financing in March 2025 led by EQT Private Equity, joined by KKR and FTV Capital. The March 2025 round's post-money valuation was not officially disclosed; a post-money valuation of $5–6 billion is consistent with observed valuation multiple expansion in enterprise cybersecurity and the absence of a downround signal. SEC Form D filings confirm the existence and approximate timing of the investment rounds through the EDGAR search system. The capital structure is characterized by PE sponsor concentration (KKR since 2020, EQT since 2025) with early VC (FTV Capital) retaining a meaningful stake. The $500 million 2025 raise is described as 'capital for AI-driven product expansion and international growth'—this represents deployment capital, not an exit liquidity event for existing shareholders. No debt financing, convertible notes, or revenue-based financing facilities have been disclosed publicly."
-    claimRefs: [CI011, CI012, CI013, CI014, CI015, CI016]
+    claimRefs: [CI012, CI013, CI014, CI015, CI016]
     tableRefs: [TI004]
     figureRefs: [FI003]
 
@@ -91,7 +91,7 @@ tables:
       - ["Series E / Growth Round", "March 2025", "$500M", "Not disclosed (estimated $5–6B post-money)", "EQT Private Equity", "KKR (existing), FTV Capital (existing)", "High (confirmed — BusinessWire, TechCrunch, GlobeNewswire, EQT press release)"]
       - ["Total Raised (confirmed)", "As of May 2026", "~$830M (confirmed rounds D+E)", "—", "—", "—", "High (sum of confirmed D and E rounds; earlier rounds unconfirmed in total)"]
     notes: "Round D and Round E data sourced from confirmed press releases (BusinessWire, EQT Group, KKR), verified against SEC EDGAR Form D filings. Pre-2024 round details are estimated from secondary sources and may not reflect actual amounts. The pre-2024 capital total is unverified; the $830M total references confirmed post-2024 fundraising plus estimated prior rounds per CB Insights."
-    claimRefs: [CI011, CI012, CI013, CI014, CI015]
+    claimRefs: [CI012, CI013, CI014, CI015]
 
   - id: TI005
     title: "Public financial gaps table"
@@ -909,15 +909,6 @@ localEvidence:
       freshness: current
       answersQuestionRefs: [QI017, QI025]
 
-    - id: CI011
-      statement: "ReliaQuest raised $300 million in a Series D funding round in October 2024, led by KKR at a post-money valuation of approximately $3.4 billion."
-      type: third-party-reported
-      topic: "funding"
-      sourceRefs: [SI001, SI002, SI006]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QI001, QI002]
-
     - id: CI012
       statement: "KKR's press release confirms it led the Series D with existing investors FTV Capital participating; the $3.4 billion valuation is confirmed by multiple independent news sources including TechCrunch, SecurityWeek, BusinessWire, and The Wall Street Journal."
       type: third-party-reported
@@ -925,7 +916,7 @@ localEvidence:
       sourceRefs: [SI001, SI002, SI006, SI013]
       confidence: high
       freshness: current
-      answersQuestionRefs: [QI002]
+      answersQuestionRefs: [QI001, QI002]
 
     - id: CI013
       statement: "ReliaQuest raised $500 million in a growth financing round in March 2025 led by EQT Private Equity, with existing investors KKR and FTV Capital participating; this is confirmed by BusinessWire, TechCrunch, EQT Group press release, and GlobeNewswire."
@@ -1133,6 +1124,15 @@ localEvidence:
       confidence: low
       freshness: current
       answersQuestionRefs: [QI017]
+
+    - id: CI036
+      statement: "The Series D $300M raise at approximately $3.4B valuation (October 2024) represents a 2.8x–3.4x step-up from the December 2021 Series C valuation of $1.0B–$1.2B, implying a compound annual valuation growth rate of approximately 40–50% over three years—consistent with high-growth cybersecurity SaaS companies in the MDR/XDR segment."
+      type: inferred
+      topic: "valuation-step-up"
+      sourceRefs: [SI001, SI002, SI012]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QI001, QI002]
 
   evidenceGaps:
     - type: private-evidence-only
