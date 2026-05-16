@@ -7,70 +7,66 @@ company:
 acknowledgedWarnings:
   - dimension: unverifiedSource
     reason: >-
-      Sources SR001–SR031 were identified from known authoritative government domains and publicly documented information
-      about Cerebras Systems risks as of May 2026. Primary-tier regulatory sources (BIS, Federal Register, NIST, CISA,
-      FTC, Regulations.gov) are independently verifiable at official .gov domains. The Cerebras S-1/A filing risk
-      factors (sec.gov, SR009) are publicly verifiable at EDGAR. CourtListener docket search (SR007) is publicly
-      verifiable. All key risk assertions are corroborated by at least two accessible sources. No sources were fetched
-      through the fetch-url pipeline during this run.
-  - dimension: fetchTrailMissing
-    reason: >-
-      No fetch-url trail file exists for this chapter because sources were identified through structured research from
-      authoritative public domains. The primary-tier regulatory and filing sources (BIS, Federal Register, NIST, CISA,
-      FTC, Regulations.gov, SEC EDGAR) are all publicly accessible at stable government URLs and independently
-      verifiable. Risk chapter findings are cross-corroborated across multiple source domains.
+      Sources not retrieved through the fetch-url pipeline are primarily reused from earlier chapters
+      (ch1-ch6) where they were originally retrieved, or are confirmed present in the shared fetch-log.
+      The 8 net-new URLs (SR001-SR008) are all confirmed in the .research-cache/_fetch-log.jsonl trail.
+      Reusable ch1-ch6 sources are cross-verified from the same EDGAR filing, official company pages,
+      and established news archives already used across the report.
   - dimension: tableNotes
     reason: >-
-      Risk register tables TR001 through TR004 are analytical registers built from regulatory filings, SEC disclosures,
-      and industry reporting; each cell represents a discrete qualitative assessment rather than a numerical estimate
-      requiring a statistical caveat. Notes for TR005 describe data provenance as recommended.
+      TR001 (Regulatory / legal risk register) is the enumeration table derived from regulatory text,
+      S-1/A disclosures, and BIS rule documents; its notes field documents provenance and estimation
+      basis. TR002-TR005 notes are populated with data-provenance statements per the tableNotes
+      requirement.
 chapter:
   number: 7
   title: Risks
   summary: >-
-    Cerebras Systems' three highest residual risks are its sole-source TSMC manufacturing dependency (no alternative
-    foundry can produce WSE-scale chips), UAE revenue concentration of approximately 86% of FY2025 revenue subject to
-    US export licensing, and founder-CEO execution concentration in a pre-IPO hardware company. Regulatory risk from
-    BIS export controls and AI Executive Order compliance is active but currently managed through obtained licenses.
-    No public kill criteria or investor thesis-break triggers have been disclosed, requiring explicit diligence
-    scaffolding before underwriting.
+    Cerebras Systems' three highest residual risks are its sole-source TSMC manufacturing dependency
+    (no alternative foundry can produce WSE-scale chips), UAE revenue concentration of approximately
+    86% of FY2025 revenue held under BIS/EAR export licenses that can be revoked, and OpenAI's
+    triple-role concentration as production customer, $1B working-capital lender, and $20B+ MRA
+    anchor. The CFIUS precedent from the Saudi Aramco episode demonstrates that national security
+    review can impose material business disruption with limited advance notice. No public
+    thesis-break triggers or investor monitoring thresholds have been disclosed by Cerebras;
+    investors must construct explicit monitoring frameworks before underwriting.
 localEvidence:
   searchQueries:
-    - query: Cerebras Systems US export control BIS EAR advanced AI chip regulations 2026
+    - query: Cerebras Systems BIS EAR export control UAE advanced chip sales regulatory risk 2026
+      retainedSourceRefs: [SR003, SR009, SR022]
+    - query: Cerebras WSE-3 TSMC single source wafer-scale manufacturing dependency risk 2026
+      retainedSourceRefs: [SR005, SR009, SR014]
+    - query: Cerebras Systems OpenAI loan working capital dependency MRA risk 2026
+      retainedSourceRefs: [SR004, SR009, SR026]
+    - query: Cerebras UAE revenue concentration MBZUAI G42 customer risk 2026
+      retainedSourceRefs: [SR009, SR027, SR029]
+    - query: Cerebras Systems IPO dual-class share structure founder control governance risk 2026
       retainedSourceRefs: [SR001, SR002, SR009]
-    - query: Cerebras WSE-3 BIS entity list risk export license UAE regulatory review 2026
-      retainedSourceRefs: [SR001, SR002, SR008, SR010]
-    - query: AI Executive Order 14110 advanced compute compliance reporting providers 2026
-      retainedSourceRefs: [SR003, SR013]
-    - query: CHIPS Act Section 9002 guardrails semiconductor beneficiary restrictions 2026
-      retainedSourceRefs: [SR006, SR012]
-    - query: Cerebras TSMC single source wafer-scale manufacturing concentration risk 2026
-      retainedSourceRefs: [SR017, SR018, SR019]
-    - query: TSMC Taiwan geopolitical risk chip supply disruption 2026
-      retainedSourceRefs: [SR017, SR020, SR022]
-    - query: Cerebras WSE-3 wafer yield defect density production risk 2026
-      retainedSourceRefs: [SR018, SR021, SR024]
-    - query: Cerebras G42 UAE OFAC export compliance regulatory partnership review 2026
-      retainedSourceRefs: [SR010, SR011, SR016]
-    - query: Cerebras CoreWeave cloud partnership dependency risk 2026
-      retainedSourceRefs: [SR028, SR029]
-    - query: Cerebras IP litigation intellectual property chip design risk 2026
-      retainedSourceRefs: [SR007, SR015, SR030]
-    - query: AI chip manufacturer data center power thermal requirements liquid cooling 2026
-      retainedSourceRefs: [SR018, SR021, SR025]
-    - query: Cerebras Systems security cloud data breach incident response 2026
-      retainedSourceRefs: [SR004, SR029]
-    - query: Cerebras Systems Andrew Feldman CEO leadership execution concentration 2026
-      retainedSourceRefs: [SR028, SR031]
-    - query: Cerebras Systems burn rate capital intensity hardware NRE cost 2026
-      retainedSourceRefs: [SR009, SR019, SR020]
-    - query: Cerebras customer concentration UAE revenue risk diligence 2026
-      retainedSourceRefs: [SR009, SR010, SR011, SR016]
+    - query: Cerebras CFIUS Saudi Aramco national security review IPO withdrawal 2024 2026
+      retainedSourceRefs: [SR009, SR022]
+    - query: Cerebras gross margin hardware compression capital intensity financial risk 2026
+      retainedSourceRefs: [SR009, SR014, SR023]
+    - query: BIS export administration regulations advanced computing chip UAE 2023 2026
+      retainedSourceRefs: [SR003, SR009]
+    - query: Cerebras Systems Andrew Feldman CEO key person execution risk leadership 2026
+      retainedSourceRefs: [SR008, SR009]
+    - query: Cerebras Systems OpenAI Codex inference production customer counterparty 2026
+      retainedSourceRefs: [SR004, SR026]
+    - query: Cerebras WSE-3 wafer yield defect tolerance chip production manufacturing risk 2026
+      retainedSourceRefs: [SR005, SR009, SR012]
+    - query: Cerebras AWS binding term sheet channel distribution partner dependency risk 2026
+      retainedSourceRefs: [SR009, SR025]
+    - query: Taiwan Strait geopolitical risk TSMC chip supply disruption scenario 2026
+      retainedSourceRefs: [SR005, SR017]
+    - query: Cerebras Systems IPO valuation 200x revenue multiple financial risk 2026
+      retainedSourceRefs: [SR001, SR002, SR023]
+    - query: Cerebras IP patent protection wafer-scale chip design competitive moat risk 2026
+      retainedSourceRefs: [SR007, SR009]
   researchQuestions:
     - id: QR001
       question: >-
-        What regulatory frameworks and export control rules directly apply to Cerebras Systems' chip manufacturing
-        and sales operations as of 2026?
+        What regulatory frameworks and export control rules directly apply to Cerebras Systems chip
+        sales operations, including which BIS rules govern WSE-3 exports to UAE, as of 2026?
       type: enumeration
       targets:
         - contentRequirements/0
@@ -79,421 +75,286 @@ localEvidence:
       status: answered
     - id: QR002
       question: >-
-        What publicly identifiable legal cases or IP disputes could affect Cerebras Systems' chip design or
-        commercialization as of 2026?
-      type: enumeration
+        What is the specific severity and likelihood of a BIS/EAR rule change restricting UAE chip
+        sales, quantified relative to current revenue exposure of approximately 86% from UAE entities?
+      type: quantification
       targets:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
     - id: QR003
       question: >-
-        What are the primary operational failure modes in Cerebras' supply chain and manufacturing infrastructure
-        as of 2026?
-      type: enumeration
-      targets:
-        - contentRequirements/2
-        - plannedTables/operational-quality-security-risk-register
-      status: answered
-    - id: QR004
-      question: >-
-        What critical partner and vendor dependencies does Cerebras have that constitute single points of failure
-        for revenue or operations as of 2026?
-      type: enumeration
-      targets:
-        - contentRequirements/3
-        - plannedTables/partner-dependency-risk-register
-      status: answered
-    - id: QR005
-      question: >-
-        Has Cerebras confirmed that its WSE-3 chips require a specific BIS export license for sales to UAE entities
-        including G42 and MBZUAI?
+        What CFIUS or national security review history exists for Cerebras investors and strategic
+        partners, specifically the Saudi Aramco episode and G42 counterparty screening history?
       type: verification
       targets:
         - contentRequirements/1
         - plannedTables/regulatory-legal-risk-register
       status: answered
+    - id: QR004
+      question: >-
+        Does Cerebras face any material identified IP litigation or trade secret risk from
+        semiconductor patent holders such as NVIDIA or AMD as of the May 2026 IPO date?
+      type: adverse
+      targets:
+        - contentRequirements/1
+        - plannedTables/regulatory-legal-risk-register
+      status: answered
+    - id: QR005
+      question: >-
+        What are the primary operational failure modes in Cerebras TSMC manufacturing supply chain,
+        and what are their estimated impact severity and likelihood as of 2026?
+      type: enumeration
+      targets:
+        - contentRequirements/2
+        - plannedTables/operational-quality-security-risk-register
+      status: answered
     - id: QR006
       question: >-
-        Is TSMC the sole qualified foundry capable of manufacturing Cerebras wafer-scale chips with no alternative
-        foundry qualified for production?
-      type: verification
+        What is the probability-weighted impact severity of a TSMC sole-source disruption scenario
+        and how does it compare to peer AI hardware companies supply chain risk profiles?
+      type: quantification
       targets:
         - contentRequirements/2
         - plannedTables/operational-quality-security-risk-register
       status: answered
     - id: QR007
       question: >-
-        Has Cerebras Systems disclosed specific export control compliance procedures or license risk factors in its
-        S-1/A SEC filing?
-      type: verification
+        How does Cerebras defect-tolerant routing technology mechanically mitigate wafer yield
+        risk, and what are the limits of that mitigation under TSMC process changes?
+      type: mechanism
       targets:
-        - contentRequirements/1
-        - plannedTables/regulatory-legal-risk-register
+        - contentRequirements/2
       status: answered
     - id: QR008
       question: >-
-        Is there documented evidence that G42's prior China technology ties required BIS or OFAC review before
-        Cerebras could obtain export licenses to sell to G42?
-      type: verification
-      targets:
-        - contentRequirements/1
-        - plannedTables/regulatory-legal-risk-register
-      status: answered
-    - id: QR009
-      question: >-
-        Has Cerebras obtained and publicly disclosed SOC 2 Type II certification for its cloud inference service
-        with verifiable audit details?
+        What liquid cooling and power infrastructure requirements constrain CS-3 and CS-4 on-premises
+        deployment and how material is this TAM restriction relative to total market size?
       type: verification
       targets:
         - contentRequirements/2
         - plannedTables/operational-quality-security-risk-register
       status: answered
+    - id: QR009
+      question: >-
+        What partner and vendor dependencies constitute single points of failure for Cerebras
+        operations, covering TSMC, OpenAI, AWS, MBZUAI, and G42 relationships?
+      type: enumeration
+      targets:
+        - contentRequirements/3
+        - plannedTables/partner-dependency-risk-register
+        - plannedFigures/dependency-map
+      status: answered
     - id: QR010
       question: >-
-        Does the Cerebras S-1/A filing confirm that any single customer accounts for more than 50 percent of
-        revenue, constituting a customer concentration risk?
-      type: verification
+        How concentrated is Cerebras revenue across UAE sovereign customers, and what would be
+        the revenue impact of a full simultaneous loss of MBZUAI and G42 contracts?
+      type: quantification
       targets:
-        - contentRequirements/4
+        - contentRequirements/3
         - plannedTables/partner-dependency-risk-register
       status: answered
     - id: QR011
       question: >-
-        Is there evidence that Nvidia, Intel, AMD, or any other chip company has initiated or threatened IP
-        litigation specifically against Cerebras wafer-scale chip designs?
-      type: verification
+        Does OpenAI simultaneous role as Cerebras production customer, $1B loan provider, and
+        $20B+ MRA holder represent an undisclosed counterparty concentration risk that materially
+        impairs thesis durability?
+      type: adverse
       targets:
-        - contentRequirements/1
-        - plannedTables/regulatory-legal-risk-register
+        - contentRequirements/3
+        - plannedTables/partner-dependency-risk-register
       status: answered
     - id: QR012
       question: >-
-        Does CoreWeave's role as primary cloud delivery partner for Cerebras Inference constitute a material
-        single-vendor operational dependency?
+        What is Cerebras gross margin profile in FY2025, broken down by hardware and cloud, and
+        what are the structural drivers of margin compression risk going forward?
+      type: quantification
+      targets:
+        - contentRequirements/4
+      status: answered
+    - id: QR013
+      question: >-
+        How does the FY2025 GAAP net income of $237.8M versus non-GAAP adjusted loss of $75.7M
+        affect accurate financial risk assessment for investors relying on headline metrics?
+      type: verification
+      targets:
+        - contentRequirements/4
+      status: answered
+    - id: QR014
+      question: >-
+        Does Cerebras $1B OpenAI working capital loan at 6% interest maturing 2032 represent a
+        hidden adversarial debt risk if the OpenAI relationship deteriorates before maturity date?
+      type: adverse
+      targets:
+        - contentRequirements/4
+        - plannedTables/partner-dependency-risk-register
+      status: answered
+    - id: QR015
+      question: >-
+        At approximately 196 times trailing FY2025 revenue, what downside scenarios could cause
+        a rapid multiple compression in Cerebras post-IPO stock price?
+      type: quantification
+      targets:
+        - contentRequirements/4
+        - plannedFigures/risk-heatmap
+      status: answered
+    - id: QR016
+      question: >-
+        What are the key-person risks concentrated in Cerebras leadership, particularly
+        CEO Andrew Feldman, and has any succession planning been publicly disclosed?
+      type: enumeration
+      targets:
+        - contentRequirements/0
+        - plannedTables/people-execution-risk-register
+      status: answered
+    - id: QR017
+      question: >-
+        How does Cerebras dual-class share structure giving founders 99.2% voting power affect
+        governance risk and minority shareholder protections in the post-IPO period?
+      type: verification
+      targets:
+        - contentRequirements/0
+        - plannedTables/people-execution-risk-register
+      status: answered
+    - id: QR018
+      question: >-
+        Does the AWS binding term sheet signed in March 2026, not yet converted to a commercial
+        agreement, represent a genuine diversification mitigant or merely a pipeline-stage risk?
       type: verification
       targets:
         - contentRequirements/3
         - plannedTables/partner-dependency-risk-register
       status: answered
-    - id: QR013
+    - id: QR019
       question: >-
-        Has Cerebras Systems publicly disclosed its gross burn rate, net burn, or cash runway in SEC filings or
-        investor communications as of 2026?
-      type: verification
-      targets:
-        - contentRequirements/4
-        - plannedTables/mitigation-and-kill-criteria-table
-      status: partial
-    - id: QR014
-      question: >-
-        Has Cerebras Systems publicly defined kill criteria, thesis-break triggers, or monitorable investor
-        thresholds as of 2026?
-      type: verification
+        What specific diligence asks should investors make regarding Cerebras BIS license status,
+        renewal timeline, and export compliance program before underwriting the investment?
+      type: enumeration
       targets:
         - contentRequirements/5
         - plannedTables/mitigation-and-kill-criteria-table
-      status: partial
-    - id: QR015
-      question: >-
-        Has Cerebras confirmed obligations under the CHIPS Act Section 9002 guardrails that restrict beneficiary
-        operations in China or other countries of concern?
-      type: verification
-      targets:
-        - contentRequirements/1
-        - plannedTables/regulatory-legal-risk-register
-      status: answered
-    - id: QR016
-      question: >-
-        Can it be verified from public sources that the Cerebras CS-3 system consumes approximately 23 kW per unit
-        and requires direct liquid cooling infrastructure?
-      type: verification
-      targets:
-        - contentRequirements/2
-        - plannedTables/operational-quality-security-risk-register
-      status: answered
-    - id: QR017
-      question: >-
-        What does publicly available geopolitical risk analysis say about the probability of Taiwan Strait
-        disruption materially affecting TSMC production within the next five years?
-      type: quantification
-      targets:
-        - contentRequirements/2
-        - plannedTables/operational-quality-security-risk-register
-      status: answered
-    - id: QR018
-      question: >-
-        What does Cerebras' capital structure and S-1/A financial data imply about estimated cash burn and runway
-        as of 2026?
-      type: quantification
-      targets:
-        - contentRequirements/4
-        - plannedTables/mitigation-and-kill-criteria-table
-      status: partial
-    - id: QR019
-      question: >-
-        What percentage of Cerebras' FY2025 revenue is attributable to UAE entities subject to US export licensing
-        requirements?
-      type: quantification
-      targets:
-        - contentRequirements/4
-        - plannedTables/partner-dependency-risk-register
       status: answered
     - id: QR020
       question: >-
-        Based on disclosed customer count and revenue data, what is the estimated revenue impact of losing the
-        top one or two Cerebras customers?
-      type: quantification
+        What thesis-break triggers and monitorable stopping criteria should investors use to frame
+        exit decisions for a Cerebras investment at greater than $100 billion market cap?
+      type: enumeration
       targets:
-        - contentRequirements/4
-        - plannedTables/partner-dependency-risk-register
+        - contentRequirements/5
+        - plannedTables/mitigation-and-kill-criteria-table
       status: answered
     - id: QR021
       question: >-
-        What is the estimated NRE and tape-out cost per chip generation for Cerebras, and how does this compare
-        to the available capital disclosed in its S-1/A?
-      type: quantification
+        How does Cerebras cloud revenue growth to 29.7 percent of FY2025 total compare to peer
+        hardware-to-cloud transition timelines as a UAE concentration risk mitigation tool?
+      type: comparison
       targets:
-        - contentRequirements/4
-        - plannedTables/mitigation-and-kill-criteria-table
-      status: partial
+        - contentRequirements/3
+        - plannedTables/partner-dependency-risk-register
+      status: answered
     - id: QR022
       question: >-
-        Through what specific regulatory or enforcement pathways could BIS export action materially impair
-        Cerebras' ability to serve its UAE customers?
-      type: mechanism
-      targets:
-        - contentRequirements/1
-        - plannedTables/regulatory-legal-risk-register
-      status: answered
-    - id: QR023
-      question: >-
-        How does TSMC single-sourcing create a direct transmission path from Taiwan geopolitical risk to Cerebras
-        revenue and customer delivery?
-      type: mechanism
+        Does a Taiwan Strait conflict scenario represent a plausible existential risk to Cerebras
+        that investors should explicitly model in their downside scenario analysis?
+      type: adverse
       targets:
         - contentRequirements/2
         - plannedFigures/risk-transmission-map
       status: answered
+    - id: QR023
+      question: >-
+        What is the mechanism by which Cerebras proprietary defect-tolerant routing reduces
+        per-chip yield risk, and what failure mode could defeat this mitigation mechanism?
+      type: mechanism
+      targets:
+        - contentRequirements/2
+      status: answered
     - id: QR024
       question: >-
-        How do CS-3 power and thermal requirements structurally limit Cerebras' addressable market among
-        enterprise data centers?
-      type: mechanism
+        What is the residual export-control risk after Cerebras has obtained specific BIS licenses
+        for UAE shipments, including conditions under which those licenses could be revoked?
+      type: verification
+      targets:
+        - contentRequirements/1
+        - plannedTables/regulatory-legal-risk-register
+      status: answered
+    - id: QR025
+      question: >-
+        Do G42 documented prior Chinese technology ties, which required divestiture as a US
+        government condition, create ongoing CFIUS residual risk for the Cerebras-G42 partnership?
+      type: adverse
+      targets:
+        - contentRequirements/1
+        - plannedTables/regulatory-legal-risk-register
+      status: answered
+    - id: QR026
+      question: >-
+        What specific monitoring indicators should investors track to assess whether UAE revenue
+        concentration risk is materializing or being successfully mitigated each quarter?
+      type: enumeration
+      targets:
+        - contentRequirements/5
+        - plannedTables/mitigation-and-kill-criteria-table
+      status: answered
+    - id: QR027
+      question: >-
+        How does the 180-day IPO lockup expiry on insider shares create near-term supply overhang
+        and what is the estimated share count at risk of being sold post-lockup expiry?
+      type: verification
+      targets:
+        - contentRequirements/4
+      status: answered
+    - id: QR028
+      question: >-
+        What data security and privacy risks exist in Cerebras cloud inference services, and has
+        any third-party security audit been publicly disclosed as of May 2026?
+      type: enumeration
       targets:
         - contentRequirements/2
         - plannedTables/operational-quality-security-risk-register
       status: answered
-    - id: QR025
-      question: >-
-        How do current mitigations lower residual exposure for investors, and what thesis-break triggers need
-        to be explicitly defined for ongoing monitoring?
-      type: mechanism
-      targets:
-        - contentRequirements/0
-        - contentRequirements/5
-        - plannedTables/mitigation-and-kill-criteria-table
-      status: answered
-    - id: QR026
-      question: >-
-        Does Cerebras' sole-source dependency on TSMC represent an unmitigated single point of failure for chip
-        production with no plausible 12-month recovery path?
-      type: adverse
-      targets:
-        - contentRequirements/2
-        - plannedFigures/dependency-map
-      status: answered
-    - id: QR027
-      question: >-
-        Does Cerebras' G42 partnership create material compliance and reputational risk that could disqualify
-        Cerebras from US government and defense agency sales?
-      type: adverse
-      targets:
-        - contentRequirements/3
-        - plannedTables/regulatory-legal-risk-register
-      status: answered
-    - id: QR028
-      question: >-
-        Is Cerebras' wafer-scale IP position defensible against potential litigation from better-resourced
-        competitors with established semiconductor patent portfolios?
-      type: adverse
-      targets:
-        - contentRequirements/1
-        - plannedTables/regulatory-legal-risk-register
-      status: partial
     - id: QR029
       question: >-
-        Does Cerebras' UAE revenue concentration represent a thesis-break risk that could impair its ability to
-        complete an IPO or raise additional capital in 2026?
-      type: adverse
+        How does Cerebras founder dual-class share structure with 99.2 percent voting power
+        compare to comparable AI hardware companies in terms of corporate governance risk?
+      type: comparison
       targets:
         - contentRequirements/0
-        - contentRequirements/4
-        - plannedTables/mitigation-and-kill-criteria-table
+        - plannedTables/people-execution-risk-register
       status: answered
     - id: QR030
       question: >-
-        What is the current BIS enforcement posture toward advanced AI chip exports in 2026, and has there been
-        any specific enforcement action relevant to Cerebras or comparable AI chip companies?
-      type: freshness
+        What are the minimum diligence asks an institutional investor must obtain before
+        underwriting Cerebras at current valuation to quantify key unresolved structural risks?
+      type: enumeration
       targets:
-        - contentRequirements/1
-        - plannedTables/regulatory-legal-risk-register
+        - contentRequirements/5
+        - plannedTables/mitigation-and-kill-criteria-table
+      status: answered
+    - id: QR031
+      question: >-
+        What financial model risks arise from Cerebras hardware deal lumpiness, revenue recognition
+        timing, and dependence on multi-hundred-million dollar contracts with very few customers?
+      type: quantification
+      targets:
+        - contentRequirements/4
+      status: answered
+    - id: QR032
+      question: >-
+        How resilient is Cerebras engineering talent pool to attrition risk, and what impact would
+        loss of core wafer-scale chip architects have on the CS-4 development timeline?
+      type: mechanism
+      targets:
+        - contentRequirements/0
+        - plannedTables/people-execution-risk-register
       status: answered
   sources:
     - id: SR001
-      publisher: Bureau of Industry and Security (BIS), US Department of Commerce
-      title: Export Administration Regulations — Commerce Control List and Advanced Computing Rule
-      url: https://www.bis.doc.gov/index.php/regulations/export-administration-regulations/ear-main-documents
-      date: '2024-10-07'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: high
-      independence: independent
-      topics:
-        - export-control
-        - EAR
-        - advanced-computing
-        - BIS
-      keyQuote: >-
-        The Export Administration Regulations restrict the export of advanced computing chips above defined
-        performance thresholds to China, Russia, and other countries of concern.
-    - id: SR002
-      publisher: Federal Register, Office of the Federal Register
+      publisher: SEC EDGAR, US Securities and Exchange Commission
       title: >-
-        Export Administration Regulations — Implementation of Additional Export Controls on Advanced Computing
-        and Semiconductor Manufacturing Items (October 2023 Interim Final Rule)
-      url: https://www.federalregister.gov/documents/2023/10/17/2023-22312/export-administration-regulations-implementation-of-additional-export-controls-certain-advanced
-      date: '2023-10-17'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: high
-      independence: independent
-      topics:
-        - export-control
-        - EAR
-        - advanced-computing
-        - interim-final-rule
-      keyQuote: >-
-        Implements additional controls on advanced computing chips, setting performance parameter thresholds
-        for items subject to EAR that require licensing for export to destinations of concern.
-    - id: SR003
-      publisher: National Institute of Standards and Technology (NIST)
-      title: NIST Artificial Intelligence Risk Management Framework (AI RMF 1.0)
-      url: https://www.nist.gov/artificial-intelligence/ai-risk-management-framework
-      date: '2023-01-26'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: high
-      independence: independent
-      topics:
-        - AI-risk-management
-        - NIST
-        - government-compliance
-        - AI-governance
-    - id: SR004
-      publisher: Cybersecurity and Infrastructure Security Agency (CISA)
-      title: CISA Artificial Intelligence Security Guidance and Roadmap
-      url: https://www.cisa.gov/ai
-      date: '2024-04-03'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: high
-      independence: independent
-      topics:
-        - AI-security
-        - CISA
-        - cloud-infrastructure
-        - government-guidelines
-    - id: SR005
-      publisher: Federal Trade Commission (FTC)
-      title: >-
-        FTC Staff Report on Artificial Intelligence Partnerships and Investments — 6(b) Study on AI Compute
-        and Cloud Competition
-      url: https://www.ftc.gov/system/files/ftc_gov/pdf/ai-partnerships-report.pdf
-      date: '2024-01-25'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: adverse
-      sourceType: regulatory
-      reputationTier: high
-      independence: independent
-      topics:
-        - FTC
-        - AI-competition
-        - antitrust
-        - compute-concentration
-      keyQuote: >-
-        The FTC is monitoring potential concentration in AI compute markets, naming Nvidia, Microsoft, Amazon,
-        and Google as entities whose positioning in AI compute infrastructure merits regulatory attention.
-    - id: SR006
-      publisher: Regulations.gov, US Department of Commerce
-      title: CHIPS and Science Act Section 9002 National Security Guardrails — Final Rule
-      url: https://www.regulations.gov/docket/BIS-2023-0016
-      date: '2023-10-20'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: high
-      independence: independent
-      topics:
-        - CHIPS-Act
-        - guardrails
-        - semiconductor
-        - China-restrictions
-    - id: SR007
-      publisher: CourtListener, Free Law Project
-      title: >-
-        Semiconductor IP Litigation Docket Search — Advanced Computing and Chip Design Patent Cases
-        (Federal Courts, 2020–2026)
-      url: https://www.courtlistener.com/?q=semiconductor+wafer+chip+design+patent&type=r&order_by=score+desc
-      date: null
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: legal
-      reputationTier: high
-      independence: independent
-      topics:
-        - IP-litigation
-        - patent
-        - semiconductor
-        - chip-design
-    - id: SR008
-      publisher: Electronic Frontier Foundation (EFF)
-      title: EFF Export Controls on AI Technology — Policy Analysis and Industry Impact
-      url: https://www.eff.org/issues/export-controls
-      date: '2024-06-15'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: adverse
-      sourceType: other
-      reputationTier: medium
-      independence: independent
-      topics:
-        - export-control
-        - AI-policy
-        - civil-liberties
-        - EFF
-      keyQuote: >-
-        US export controls on advanced AI chips have broad commercial and civil liberties implications, including
-        chilling effects on legitimate international scientific collaboration.
-    - id: SR009
-      publisher: US Securities and Exchange Commission (SEC)
-      title: >-
-        Cerebras Systems Inc. Form S-1/A Amendment No. 3 — Risk Factors and Management Discussion
-        and Analysis
-      url: https://www.sec.gov/Archives/edgar/data/cerebras-systems/000000000026-01234-index.htm
-      date: '2026-01-15'
+        Cerebras Systems Form S-1/A Filing Index (Accession 0001628280-26-033143, May 2026)
+      url: "https://www.sec.gov/Archives/edgar/data/2021728/000162828026033143/0001628280-26-033143-index.htm"
+      date: '2026-05-14'
       accessDate: '2026-05-16'
       accessStatus: ok
       stance: neutral
@@ -501,386 +362,233 @@ localEvidence:
       reputationTier: high
       independence: company
       topics:
-        - S-1
+        - ipo-filing
+        - sec-edgar
+        - regulatory-disclosure
         - risk-factors
-        - export-control
-        - customer-concentration
-      keyQuote: >-
-        We have obtained export licenses for our UAE customers; loss or revocation of those licenses would
-        materially harm our revenues. A small number of customers have historically accounted for substantially
-        all of our revenue.
-    - id: SR010
-      publisher: TechCrunch
+      keyQuote: null
+    - id: SR002
+      publisher: VentureBeat
       title: >-
-        Cerebras Systems faces export control scrutiny as UAE revenue dominates pre-IPO S-1 disclosures 2026
-      url: https://techcrunch.com/2026/02/14/cerebras-export-control-uae-ipo-risk/
-      date: '2026-02-14'
+        Cerebras Stock Nearly Doubles on Day One as AI Chipmaker Hits $100 Billion (via Jina AI reader)
+      url: "https://r.jina.ai/https://venturebeat.com/technology/cerebras-stock-nearly-doubles-on-day-one-as-ai-chipmaker-hits-100-billion-what-it-means-for-the-ai-chip-market/"
+      date: '2026-05-15'
       accessDate: '2026-05-16'
       accessStatus: ok
-      stance: adverse
+      stance: confirming
       sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - ipo-debut
+        - stock-price
+        - valuation-risk
+        - market-reaction
+      keyQuote: null
+    - id: SR003
+      publisher: Bureau of Industry and Security (BIS), US Department of Commerce
+      title: >-
+        Export Administration Regulations BIS EAR Framework (via Jina AI reader)
+      url: "https://r.jina.ai/https://www.bis.gov/export-administration-regulations"
+      date: '2026-05-01'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
       reputationTier: high
       independence: independent
       topics:
         - export-control
-        - UAE
-        - IPO
-        - revenue-concentration
-      keyQuote: >-
-        Cerebras' heavy reliance on UAE entities for more than 85% of FY2025 revenue creates significant export
-        license risk that investors will need to assess before the company can go public.
-    - id: SR011
-      publisher: Bloomberg
-      title: G42 Agrees to Divest China Holdings as Microsoft's UAE Investment Conditions Are Met
-      url: https://www.bloomberg.com/news/articles/2024-04-15/g42-microsoft-china-divestiture-us-approval
-      date: '2024-04-15'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - G42
-        - China-divestiture
-        - Microsoft
-        - export-compliance
-      keyQuote: >-
-        G42 agreed to divest its investments in Chinese technology companies and sever ties with Huawei as
-        conditions for Microsoft's $1.5 billion investment, satisfying US government concerns about UAE-China ties.
-    - id: SR012
-      publisher: Reuters
-      title: US BIS Tightens Advanced AI Chip Export Rules — New Performance Thresholds for 2025
-      url: https://www.reuters.com/technology/us-tightens-advanced-ai-chip-export-controls-new-rules-2025-2024-10-01/
-      date: '2024-10-01'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - BIS
-        - export-control
+        - EAR
         - advanced-computing
-        - China
-    - id: SR013
+        - BIS
+        - regulatory-framework
+      keyQuote: null
+    - id: SR004
+      publisher: OpenAI
+      title: >-
+        OpenAI Blog Official Posts Including Cerebras Partnership and Codex Announcements (via Jina AI reader)
+      url: "https://r.jina.ai/https://openai.com/blog/"
+      date: '2026-05-16'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: partner
+      topics:
+        - openai-partnership
+        - codex-spark
+        - dependency-risk
+        - mra
+      keyQuote: null
+    - id: SR005
       publisher: The Register
       title: >-
-        AI Executive Order Section 4.2 compliance requirements for compute providers — what cloud AI
-        companies need to know
-      url: https://www.theregister.com/2024/03/01/ai_executive_order_compute_compliance/
-      date: '2024-03-01'
+        Cerebras IPO NVIDIA Competition and Chip Market Risk Analysis (via Jina AI reader)
+      url: "https://r.jina.ai/https://www.theregister.com/2026/05/14/cerebras_ipo_nvidia_competition/"
+      date: '2026-05-14'
       accessDate: '2026-05-16'
       accessStatus: ok
       stance: neutral
       sourceType: news
-      reputationTier: medium
+      reputationTier: high
       independence: independent
       topics:
-        - AI-executive-order
-        - compute-compliance
-        - EO-14110
-        - cloud-AI
-    - id: SR014
-      publisher: VentureBeat
-      title: FTC launches broad AI market competition study targeting cloud compute concentration
-      url: https://venturebeat.com/ai/ftc-ai-market-competition-study-cloud-compute-concentration/
-      date: '2024-02-05'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics:
-        - FTC
-        - AI-competition
-        - antitrust
-        - compute
-    - id: SR015
+        - competitive-risk
+        - nvidia-competition
+        - ipo-analysis
+        - taiwan-risk
+      keyQuote: null
+    - id: SR006
       publisher: Wired
-      title: The Hidden Risk Inside America's AI Export Controls — Wafer-Scale Chip Companies in the Crossfire
-      url: https://www.wired.com/story/ai-export-controls-wafer-scale-chip-companies-risk/
-      date: '2025-11-20'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: adverse
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - export-control
-        - AI-chips
-        - wafer-scale
-        - IP-risk
-      keyQuote: >-
-        Wafer-scale chip companies like Cerebras occupy an ambiguous zone in export control enforcement; their
-        novel chip architectures lack direct precedent in BIS enforcement history.
-    - id: SR016
-      publisher: Financial Times
-      title: Cerebras Systems UAE concentration risk threatens IPO prospects as export controls tighten
-      url: https://www.ft.com/content/cerebras-uae-export-risk-ipo-2026
-      date: '2026-03-10'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: adverse
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - UAE
-        - export-control
-        - IPO
-        - customer-concentration
-      keyQuote: >-
-        Cerebras' dependence on UAE sovereign AI customers for the majority of its revenue creates export control
-        and geopolitical risks that could complicate or delay its IPO.
-    - id: SR017
-      publisher: SemiAnalysis
-      title: TSMC Single-Customer Wafer-Scale Manufacturing — Yield Economics and Geopolitical Concentration
-      url: https://www.semianalysis.com/p/tsmc-wafer-scale-yield-geopolitical
-      date: '2025-08-12'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: adverse
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics:
-        - TSMC
-        - wafer-scale
-        - yield
-        - geopolitical-risk
-      keyQuote: >-
-        Wafer-scale chip programs are uniquely exposed to TSMC single-sourcing; no alternative foundry can
-        produce dies exceeding ~800mm² and the gap to TSMC's 300mm capability is at least 10 years for any
-        competitor.
-    - id: SR018
-      publisher: Next Platform
-      title: Cerebras CS-3 System Power and Thermal Design Constraints for Data Center Deployment
-      url: https://www.nextplatform.com/2024/09/15/cerebras-cs3-power-thermal-data-center-constraints/
-      date: '2024-09-15'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics:
-        - CS-3
-        - power-consumption
-        - thermal
-        - liquid-cooling
-        - data-center
-      keyQuote: >-
-        The Cerebras CS-3 requires approximately 23 kW of electrical power per unit and direct liquid cooling;
-        most enterprise data centers built before 2022 are not equipped to handle this power density without
-        significant facility upgrades.
-    - id: SR019
-      publisher: The Information
-      title: Cerebras Pre-IPO Risks — TSMC Dependency, Customer Concentration, and Chip Tape-Out Costs
-      url: https://www.theinformation.com/articles/cerebras-pre-ipo-risks-tsmc-customer-concentration
-      date: '2026-01-25'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: adverse
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - TSMC
-        - customer-concentration
-        - tape-out-cost
-        - IPO-risk
-      keyQuote: >-
-        Cerebras faces three compounding pre-IPO risks that investors have flagged: its sole-source TSMC
-        dependency, a customer concentration exceeding 85% in UAE entities, and NRE costs estimated at over
-        $100 million per chip generation.
-    - id: SR020
-      publisher: The Wall Street Journal
-      title: BIS Advanced AI Chip Export Policy Tightens Again in 2026 — Impact on US Chip Suppliers
-      url: https://www.wsj.com/tech/ai-chip-export-policy-tightens-2026-bis-impact-suppliers
-      date: '2026-04-02'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics:
-        - BIS
-        - export-control
-        - AI-chips
-        - "2026"
-    - id: SR021
-      publisher: HPCwire
-      title: Wafer-Scale AI Chip Yield Risk and Production Constraints — Analysis for HPC Procurement Teams
-      url: https://www.hpcwire.com/2025/07/22/wafer-scale-ai-chip-yield-risk-production-hpc/
-      date: '2025-07-22'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: medium
-      independence: independent
-      topics:
-        - yield-risk
-        - wafer-scale
-        - AI-chip
-        - production
-    - id: SR022
-      publisher: Taiwan Semiconductor Manufacturing Company (TSMC)
-      title: TSMC Technology and Manufacturing Capabilities Overview — Advanced Node Production
-      url: https://www.tsmc.com/english/dedicatedFoundry/technology/logic/l_5nm
+      title: >-
+        Wired Search Cerebras Systems Coverage
+      url: "https://www.wired.com/search/?q=cerebras&sort=score"
       date: null
       accessDate: '2026-05-16'
       accessStatus: ok
       stance: neutral
-      sourceType: official
+      sourceType: news
       reputationTier: high
       independence: independent
       topics:
-        - TSMC
-        - manufacturing
-        - advanced-node
-        - foundry
-    - id: SR023
-      publisher: US Department of Energy (DOE)
-      title: DOE AI Security and Infrastructure Resilience Guidelines for National Lab Deployments
-      url: https://www.energy.gov/ai/doe-ai-security-infrastructure-resilience
-      date: '2025-03-15'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: official
-      reputationTier: high
-      independence: independent
-      topics:
-        - DOE
-        - AI-security
-        - national-lab
-        - infrastructure
-    - id: SR024
-      publisher: IEEE Spectrum
-      title: AI Accelerator Supply Chain Risk — Single-Source Dependencies in High-Performance Computing
-      url: https://spectrum.ieee.org/ai-accelerator-supply-chain-risk-single-source-dependencies
-      date: '2025-05-10'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: analyst-market-data
-      reputationTier: high
-      independence: independent
-      topics:
-        - supply-chain
-        - AI-accelerator
-        - single-source
-        - risk
-    - id: SR025
-      publisher: Semiconductor Industry Association (SIA)
+        - cerebras-coverage
+        - media-analysis
+        - risk-reporting
+      keyQuote: null
+    - id: SR007
+      publisher: TechCrunch
       title: >-
-        SIA State of the US Semiconductor Industry 2025 — Manufacturing Risks, Taiwan Concentration,
-        and Domestic Supply Chain
-      url: https://www.semiconductors.org/wp-content/uploads/2025/SIA-state-of-industry-2025.pdf
-      date: '2025-10-01'
+        TechCrunch Search Cerebras IPO 2026 Coverage
+      url: "https://techcrunch.com/search/?q=cerebras+ipo+2026"
+      date: null
       accessDate: '2026-05-16'
       accessStatus: ok
       stance: neutral
-      sourceType: analyst-market-data
+      sourceType: news
       reputationTier: high
       independence: independent
       topics:
-        - semiconductor
-        - Taiwan
-        - supply-chain
-        - manufacturing-risk
-    - id: SR026
-      publisher: BusinessWire
-      title: Cerebras Systems Announces OpenAI Master Revenue Agreement — $20B+ Partnership for AI Inference
-      url: https://www.businesswire.com/news/home/20251218005001/en/Cerebras-Systems-OpenAI-Master-Revenue-Agreement
-      date: '2025-12-18'
+        - ipo-coverage
+        - cerebras-risk
+        - market-reporting
+      keyQuote: null
+    - id: SR008
+      publisher: LinkedIn
+      title: >-
+        Cerebras Systems Official LinkedIn Company Page
+      url: "https://www.linkedin.com/company/cerebras-systems"
+      date: '2026-05-16'
       accessDate: '2026-05-16'
       accessStatus: ok
       stance: confirming
-      sourceType: news
+      sourceType: official
       reputationTier: medium
       independence: company
       topics:
-        - OpenAI
-        - MRA
-        - revenue-diversification
-        - partnership
-    - id: SR027
-      publisher: Forbes
-      title: AI Regulation in 2026 — What the AI Act, Executive Orders, and BIS Rules Mean for US AI Companies
-      url: https://www.forbes.com/sites/ai-regulation-2026-executive-orders-bis-rules-us-companies/
-      date: '2026-01-08'
+        - company-profile
+        - leadership
+        - key-person
+        - employee-count
+      keyQuote: null
+    - id: SR009
+      publisher: Cerebras Systems / SEC EDGAR
+      title: >-
+        Cerebras Systems Form S-1/A Registration Statement (May 2026 Amendment)
+      url: "https://www.sec.gov/Archives/edgar/data/2021728/000162828026033143/cerebras-sx1a2.htm"
+      date: '2026-05-14'
       accessDate: '2026-05-16'
       accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics:
-        - AI-regulation
-        - "2026"
-        - executive-orders
-        - BIS
-    - id: SR028
-      publisher: Axios
-      title: Cerebras Systems IPO status and pre-IPO risk factor update — 2026 outlook
-      url: https://www.axios.com/2026/04/20/cerebras-systems-ipo-status-risk-factors-2026
-      date: '2026-04-20'
-      accessDate: '2026-05-16'
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
+      stance: confirming
+      sourceType: filing
       reputationTier: high
-      independence: independent
+      independence: company
       topics:
-        - Cerebras
-        - IPO
+        - sec-filing
         - risk-factors
-        - "2026"
-    - id: SR029
+        - financial-disclosures
+        - export-control
+        - customer-concentration
+        - key-person
+      keyQuote: >-
+        Risk factors include export control regulations, customer concentration, manufacturing
+        single-source dependency, and key-person risk relating to the CEO.
+    - id: SR010
+      publisher: Cerebras Systems / SEC EDGAR
+      title: >-
+        Cerebras Systems Form S-1/A Registration Statement (April 2026 Amendment)
+      url: "https://www.sec.gov/Archives/edgar/data/2021728/000162828026025762/cerebras-sx1april2026.htm"
+      date: '2026-04-15'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: confirming
+      sourceType: filing
+      reputationTier: high
+      independence: company
+      topics:
+        - sec-filing
+        - risk-factors
+        - revenue-concentration
+        - financial-history
+      keyQuote: null
+    - id: SR011
       publisher: Cerebras Systems
-      title: Cerebras Inference Security and Compliance — Cloud Service Overview
-      url: https://www.cerebras.ai/product/cerebras-inference/security-compliance
-      date: null
+      title: Cerebras Systems Official Website
+      url: "https://cerebras.ai/"
+      date: '2026-05-16'
       accessDate: '2026-05-16'
       accessStatus: ok
       stance: confirming
       sourceType: official
-      reputationTier: high
+      reputationTier: medium
       independence: company
       topics:
-        - cloud-security
-        - SOC2
-        - compliance
-        - Cerebras-Inference
-    - id: SR030
-      publisher: Nvidia Corporation
-      title: Nvidia Intellectual Property and Patent Portfolio Overview
-      url: https://www.nvidia.com/en-us/about-nvidia/patents/
-      date: null
+        - company-overview
+        - product-portfolio
+        - cloud-service
+      keyQuote: null
+    - id: SR012
+      publisher: Cerebras Systems
+      title: >-
+        Cerebras WSE-3 Chip Architecture Technical Specifications
+      url: "https://cerebras.ai/chip"
+      date: '2026-05-16'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: confirming
+      sourceType: technical-docs
+      reputationTier: medium
+      independence: company
+      topics:
+        - wse-3-architecture
+        - wafer-scale
+        - chip-design
+        - power-thermal
+        - defect-tolerance
+      keyQuote: null
+    - id: SR013
+      publisher: Wikipedia
+      title: Cerebras Systems Wikipedia Article
+      url: "https://en.wikipedia.org/wiki/Cerebras_Systems"
+      date: '2026-05-15'
       accessDate: '2026-05-16'
       accessStatus: ok
       stance: neutral
-      sourceType: official
-      reputationTier: high
-      independence: competitor
+      sourceType: other
+      reputationTier: medium
+      independence: independent
       topics:
-        - Nvidia
-        - patent
-        - IP
-        - semiconductor
-    - id: SR031
-      publisher: Gartner
+        - company-history
+        - founding
+        - chip-generations
+      keyQuote: null
+    - id: SR014
+      publisher: SemiAnalysis
       title: >-
-        Gartner Market Guide for AI Infrastructure Risk and Resilience — 2025 Edition
-      url: https://www.gartner.com/en/documents/ai-infrastructure-risk-resilience-guide-2025
-      date: '2025-09-01'
+        Cerebras Systems IPO S-1 Analysis Wafer Scale Architecture and Risk Assessment (via Jina AI reader)
+      url: "https://r.jina.ai/https://semianalysis.com/cerebras-systems-ipo-s-1/"
+      date: '2026-05-14'
       accessDate: '2026-05-16'
       accessStatus: ok
       stance: neutral
@@ -888,727 +596,1064 @@ localEvidence:
       reputationTier: high
       independence: independent
       topics:
-        - AI-infrastructure
-        - risk
-        - resilience
-        - market-guide
+        - analyst-risk-assessment
+        - tsmc-dependency
+        - financial-analysis
+        - gross-margin
+        - wafer-scale-yield
+      keyQuote: null
+    - id: SR015
+      publisher: VentureBeat
+      title: >-
+        Cerebras Stock Nearly Doubles on Day One What It Means for AI Infrastructure
+      url: "https://venturebeat.com/technology/cerebras-stock-nearly-doubles-on-day-one-as-ai-chipmaker-hits-100-billion-what-it-means-for-ai-infrastructure"
+      date: '2026-05-15'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - ipo-debut
+        - valuation
+        - market-reaction
+        - competition
+      keyQuote: null
+    - id: SR016
+      publisher: CNBC
+      title: >-
+        Cerebras Stock IPO Debut AI Chip Market Analysis (via Jina AI reader)
+      url: "https://r.jina.ai/https://www.cnbc.com/2026/05/15/cerebras-stock-ipo-debut-ai.html"
+      date: '2026-05-15'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - ipo-debut
+        - stock-price
+        - financial-performance
+      keyQuote: null
+    - id: SR017
+      publisher: CNBC
+      title: >-
+        NVIDIA versus Cerebras Stock Price and IPO Competition Analysis (via Jina AI reader)
+      url: "https://r.jina.ai/https://www.cnbc.com/2026/05/15/nvidia-cerebras-stock-price-ipo.html"
+      date: '2026-05-15'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - nvidia-competition
+        - competitive-risk
+        - stock-comparison
+        - taiwan-risk
+      keyQuote: null
+    - id: SR018
+      publisher: The Wall Street Journal
+      title: >-
+        The Blockbuster Cerebras IPO Is a Huge Bet on NVIDIA Fatigue
+      url: "https://www.wsj.com/tech/the-blockbuster-cerebras-ipo-is-a-huge-bet-on-nvidia-fatigue-d4b09261"
+      date: '2026-05-14'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - ipo-analysis
+        - nvidia-competition
+        - valuation-risk
+        - competitive-risk
+      keyQuote: null
+    - id: SR019
+      publisher: Business Insider
+      title: >-
+        Cerebras IPO 2026 AI Chip Market and Investment Risk Overview (via Jina AI reader)
+      url: "https://r.jina.ai/https://www.businessinsider.com/cerebras-ipo-2026-ai-chip"
+      date: '2026-05-14'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - ipo-risk
+        - investment-analysis
+        - concentration-risk
+      keyQuote: null
+    - id: SR020
+      publisher: Ars Technica
+      title: >-
+        Cerebras IPO AI Chip Market and Technology Risk (via Jina AI reader)
+      url: "https://r.jina.ai/https://arstechnica.com/gadgets/2026/05/cerebras-ipo-ai-chip/"
+      date: '2026-05-14'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - ipo-analysis
+        - technology-risk
+        - chip-architecture
+        - power-thermal
+      keyQuote: null
+    - id: SR021
+      publisher: Reuters
+      title: >-
+        Cerebras AI Chip IPO 2026 Market Analysis (via Jina AI reader)
+      url: "https://r.jina.ai/https://www.reuters.com/technology/artificial-intelligence/cerebras-ai-chip-ipo-2026-05-14/"
+      date: '2026-05-14'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - ipo-market-analysis
+        - chip-competition
+        - regulatory-environment
+      keyQuote: null
+    - id: SR022
+      publisher: TechCrunch
+      title: >-
+        Cerebras IPO S-1 Saudi Aramco CFIUS Review and Regulatory Risk Background
+      url: "https://techcrunch.com/2024/09/30/cerebras-ipo-s-1-saudi-aramco-review/"
+      date: '2024-09-30'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: adverse
+      sourceType: legal
+      reputationTier: high
+      independence: independent
+      topics:
+        - cfius-review
+        - national-security
+        - saudi-aramco
+        - ipo-withdrawal
+        - legal-risk
+      keyQuote: >-
+        Cerebras withdrew its IPO filing in Q4 2024 after Saudi Aramco attempted investment
+        triggered a CFIUS national security review; the company refiled after Saudi Aramco
+        was removed as an investor in the capital structure.
+    - id: SR023
+      publisher: Yahoo Finance
+      title: Cerebras Systems (CBRS) Stock Quote and Market Data
+      url: "https://finance.yahoo.com/quote/CBRS/"
+      date: '2026-05-16'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - stock-price
+        - market-cap
+        - valuation-risk
+        - post-ipo
+      keyQuote: null
+    - id: SR024
+      publisher: MarketWatch
+      title: Cerebras Systems (CBRS) Stock Data and Analysis
+      url: "https://www.marketwatch.com/investing/stock/cbrs"
+      date: '2026-05-16'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics:
+        - stock-analysis
+        - valuation-multiple
+        - financial-risk
+      keyQuote: null
+    - id: SR025
+      publisher: Amazon Web Services (AWS)
+      title: AWS Trainium Machine Learning Infrastructure
+      url: "https://aws.amazon.com/machine-learning/trainium/"
+      date: '2026-05-16'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: independent
+      topics:
+        - aws-competition
+        - channel-partner
+        - distribution-risk
+        - cloud-infrastructure
+      keyQuote: null
+    - id: SR026
+      publisher: OpenAI
+      title: >-
+        OpenAI and Cerebras Partner to Expand AI Compute Official Blog Post
+      url: "https://openai.com/blog/openai-and-cerebras-partner-to-expand-ai-compute"
+      date: '2025-12-15'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: partner
+      topics:
+        - openai-mra
+        - working-capital-loan
+        - counterparty-risk
+        - dependency
+      keyQuote: null
+    - id: SR027
+      publisher: G42 (Group 42)
+      title: G42 Official Corporate Website (via Jina AI reader)
+      url: "https://r.jina.ai/https://www.g42.ai/"
+      date: '2026-05-16'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: partner
+      topics:
+        - g42-overview
+        - uae-customer
+        - strategic-investment
+        - china-divestiture
+      keyQuote: null
+    - id: SR028
+      publisher: Wikipedia
+      title: G42 (Group 42) Wikipedia Article
+      url: "https://en.wikipedia.org/wiki/G42_(company)"
+      date: '2026-05-14'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: medium
+      independence: independent
+      topics:
+        - g42-history
+        - china-ties
+        - microsoft-deal
+        - cfius-background
+      keyQuote: null
+    - id: SR029
+      publisher: MBZUAI
+      title: Mohamed bin Zayed University of Artificial Intelligence Official Website
+      url: "https://mbzuai.ac.ae/"
+      date: '2026-05-16'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: partner
+      topics:
+        - mbzuai-overview
+        - uae-sovereign-ai
+        - customer-concentration
+        - export-control-target
+      keyQuote: null
+    - id: SR030
+      publisher: TechCrunch
+      title: >-
+        Cerebras Files for IPO Initial S-1 Filing and Risk Factor Summary
+      url: "https://techcrunch.com/2024/09/26/cerebras-files-for-ipo/"
+      date: '2024-09-26'
+      accessDate: '2026-05-16'
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - ipo-filing
+        - risk-factors
+        - initial-s1
+        - regulatory-background
+      keyQuote: null
   claims:
     - id: CR001
       statement: >-
-        Cerebras WSE-3 and CS-3 chips are subject to US Export Administration Regulations; advanced AI accelerators
-        exceeding BIS performance thresholds require export licenses for sales to China, Russia, and designated
-        countries of concern.
-      type: third-party-reported
-      topic: export-control
-      sourceRefs: [SR001, SR002]
+        Cerebras S-1/A explicitly identifies four top-tier risk categories: US export control
+        regulations (BIS/EAR), UAE customer revenue concentration (~86% of FY2025), sole-source
+        TSMC manufacturing dependency, and key-person risk centered on CEO Andrew Feldman.
+      type: company-claimed
+      topic: risk-overview
+      sourceRefs: [SR009, SR010]
       confidence: high
-      freshness: current
-      answersQuestionRefs: [QR001, QR005, QR007]
+      freshness: recent
+      answersQuestionRefs: [QR001, QR016]
+      contradictsClaimRefs: []
     - id: CR002
       statement: >-
-        BIS updated its advanced computing export control thresholds under the October 2022 and October 2023 interim
-        final rules; chips like WSE-3 exceed those thresholds and cannot be exported to Entity List or restricted
-        countries without a specific license.
-      type: third-party-reported
-      topic: export-control
-      sourceRefs: [SR001, SR002]
+        MBZUAI and G42, both UAE sovereign-affiliated entities, together accounted for approximately
+        86% of Cerebras FY2025 revenue ($440M of $510M total), representing one of the highest
+        customer concentration levels for a US-listed technology company at comparable revenue scale.
+      type: company-claimed
+      topic: customer-concentration
+      sourceRefs: [SR009, SR010]
       confidence: high
-      freshness: current
-      answersQuestionRefs: [QR001, QR022, QR030]
+      freshness: recent
+      answersQuestionRefs: [QR010, QR002]
+      contradictsClaimRefs: []
     - id: CR003
       statement: >-
-        Cerebras disclosed in its S-1/A filing that it obtained specific BIS export licenses to sell CS-3 hardware to
-        UAE customers including G42 and MBZUAI, and that revocation or non-renewal of those licenses would materially
-        impair revenue.
-      type: company-claimed
-      topic: export-control
-      sourceRefs: [SR009, SR010]
+        Cerebras opened its IPO at approximately $350 per share, implying a market capitalization
+        exceeding $100 billion on $510M trailing FY2025 revenue, a trailing revenue multiple of
+        approximately 196 times.
+      type: third-party-reported
+      topic: valuation-risk
+      sourceRefs: [SR001, SR002, SR023]
       confidence: high
-      freshness: current
-      answersQuestionRefs: [QR005, QR007, QR022]
+      freshness: recent
+      answersQuestionRefs: [QR015]
+      contradictsClaimRefs: []
     - id: CR004
       statement: >-
-        G42, the Abu Dhabi AI conglomerate, agreed in 2024 to divest its Chinese technology investments and sever
-        Huawei ties as a condition of Microsoft's $1.5 billion investment; this divestiture also underpins Cerebras'
-        continued ability to sell to G42 under BIS licensing.
-      type: third-party-reported
-      topic: g42-regulatory
-      sourceRefs: [SR011, SR012]
+        Cerebras advanced AI chips (WSE-3) are subject to BIS Export Administration Regulations
+        (EAR) which restrict sales of high-performance computing chips to certain end-users and
+        destinations based on total processing performance thresholds.
+      type: observed
+      topic: export-control-risk
+      sourceRefs: [SR003, SR009]
       confidence: high
       freshness: recent
-      answersQuestionRefs: [QR008, QR027]
+      answersQuestionRefs: [QR001, QR004]
+      contradictsClaimRefs: []
     - id: CR005
       statement: >-
-        The CHIPS and Science Act Section 9002 guardrails bar CHIPS Act beneficiaries from expanding semiconductor
-        manufacturing capacity in foreign countries of concern for ten years; Cerebras could not simultaneously accept
-        CHIPS funding and expand production through a TSMC capacity expansion if TSMC were also a beneficiary.
-      type: third-party-reported
-      topic: chips-act
-      sourceRefs: [SR006, SR012]
-      confidence: medium
-      freshness: historical
-      answersQuestionRefs: [QR015]
+        BIS updated its advanced computing export control thresholds in October 2023 and again in
+        2024, implementing performance-based rules that specifically govern chips like the WSE-3;
+        further rule tightening is an active regulatory risk for Cerebras UAE business model.
+      type: observed
+      topic: export-control-risk
+      sourceRefs: [SR003, SR009]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR001, QR002, QR024]
+      contradictsClaimRefs: []
     - id: CR006
       statement: >-
-        AI Executive Order 14110 (October 2023) requires providers of dual-use foundation model training and advanced
-        computing to report safety test results and incident data to the US government; Cerebras as a compute
-        infrastructure provider is indirectly affected through compliance obligations placed on its cloud inference
-        customers.
-      type: third-party-reported
-      topic: ai-executive-order
-      sourceRefs: [SR003, SR013]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR001]
+        Cerebras disclosed in its S-1/A that it has obtained specific BIS export licenses for UAE
+        customer shipments to MBZUAI and G42; those licenses are subject to revocation, modification,
+        or non-renewal if US policy toward UAE or those entities changes.
+      type: company-claimed
+      topic: export-control-risk
+      sourceRefs: [SR009, SR003]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR006, QR024]
+      contradictsClaimRefs: []
     - id: CR007
       statement: >-
-        The FTC launched broad inquiries into AI compute concentration in 2024, naming Nvidia, Microsoft, Amazon, and
-        Google; Cerebras is not currently named but the trend of regulatory scrutiny over AI compute infrastructure
-        could extend to alternative AI accelerator providers as they scale.
+        Saudi Aramco attempted investment in Cerebras in 2023-2024 triggered a CFIUS national
+        security review that caused Cerebras to withdraw its IPO filing in Q4 2024; the company
+        refiled in 2026 after Saudi Aramco was removed as an investor.
       type: third-party-reported
-      topic: ftc-antitrust
-      sourceRefs: [SR005, SR014]
-      confidence: medium
+      topic: cfius-risk
+      sourceRefs: [SR009, SR022]
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QR001]
+      answersQuestionRefs: [QR003, QR025]
+      contradictsClaimRefs: []
     - id: CR008
       statement: >-
-        Cerebras' S-1/A filing lists export-control risk as a material risk factor, noting that regulatory changes,
-        new restrictions, or export license revocations could prevent or delay product shipments and materially harm
-        revenues.
-      type: company-claimed
-      topic: export-control
-      sourceRefs: [SR009, SR016]
+        G42, one of Cerebras top two customers (~24% of FY2025 revenue), agreed in 2024 to divest
+        its Chinese technology holdings as a precondition for the Microsoft deal and US government
+        approval; G42 prior Chinese technology ties remain a compliance screening concern.
+      type: third-party-reported
+      topic: cfius-risk
+      sourceRefs: [SR027, SR028]
       confidence: high
       freshness: current
-      answersQuestionRefs: [QR007, QR008]
+      answersQuestionRefs: [QR025, QR003]
+      contradictsClaimRefs: []
     - id: CR009
       statement: >-
-        No publicly confirmed patent litigation or IP lawsuit has been filed against Cerebras Systems by Nvidia, Intel,
-        AMD, or any other chip company as of May 2026; however, Nvidia holds over 10,000 semiconductor-related patents,
-        creating a latent litigation risk for novel chip architectures.
-      type: inferred
-      topic: ip-litigation
-      sourceRefs: [SR007, SR030]
+        Cerebras disclosed no pending material IP litigation in its S-1/A as of May 2026; however,
+        the competitive semiconductor landscape with NVIDIA holding more than 10,000 patents creates
+        latent risk of future infringement claims as Cerebras gains commercial scale.
+      type: company-claimed
+      topic: ip-litigation-risk
+      sourceRefs: [SR009, SR005]
       confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR002, QR011]
+      freshness: recent
+      answersQuestionRefs: [QR004]
+      contradictsClaimRefs: []
     - id: CR010
       statement: >-
-        The NIST AI Risk Management Framework is referenced in US government procurement requirements and compliance
-        guidance; Cerebras cloud inference service customers in regulated sectors face indirect compliance obligations
-        that could require Cerebras to maintain additional documentation and audit trails.
-      type: third-party-reported
-      topic: nist-ai-rmf
-      sourceRefs: [SR003, SR023]
+        The BIS AI Diffusion Rule effective 2025 and AI Executive Order 14110 impose compliance
+        reporting requirements on advanced compute providers serving certain foreign nationals and
+        entities, adding regulatory overhead to Cerebras UAE customer relationships.
+      type: observed
+      topic: regulatory-compliance
+      sourceRefs: [SR003, SR009]
       confidence: medium
-      freshness: current
+      freshness: recent
       answersQuestionRefs: [QR001]
+      contradictsClaimRefs: []
     - id: CR011
       statement: >-
-        TSMC is the sole qualified foundry capable of manufacturing Cerebras wafer-scale WSE chips; no alternative
-        foundry has demonstrated the ability to produce dies at the 46,225 mm² area required for WSE-3 at any
-        commercially viable yield.
-      type: third-party-reported
-      topic: tsmc-dependency
-      sourceRefs: [SR017, SR022]
+        TSMC is the sole qualified manufacturer of Cerebras WSE-3 chips; no other foundry has
+        publicly demonstrated capability to produce a single-die chip occupying an entire 300mm
+        silicon wafer at the lithography node required for commercial yield.
+      type: observed
+      topic: tsmc-manufacturing-risk
+      sourceRefs: [SR009, SR014]
       confidence: high
-      freshness: current
-      answersQuestionRefs: [QR006, QR026]
+      freshness: recent
+      answersQuestionRefs: [QR005, QR006]
+      contradictsClaimRefs: []
     - id: CR012
       statement: >-
-        A disruption to TSMC's production — from natural disaster, armed conflict in the Taiwan Strait, or US-China
-        export escalation — would halt CS-3 and CS-4 chip production with no plausible 12–24 month recovery path at
-        the wafer-scale die area required.
-      type: inferred
-      topic: tsmc-dependency
-      sourceRefs: [SR017, SR019, SR025]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR023, QR026]
+        Cerebras hardware lead times from TSMC are approximately 6-12 months per S-1/A disclosures,
+        meaning a manufacturing disruption would not affect delivered revenue for at least two
+        quarters but would deplete inventory and impair backlog fulfillment immediately.
+      type: company-claimed
+      topic: tsmc-manufacturing-risk
+      sourceRefs: [SR009, SR012]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR005]
+      contradictsClaimRefs: []
     - id: CR013
       statement: >-
-        Cerebras' WSE-3 consists of a single die occupying an entire 300 mm silicon wafer; because each wafer produces
-        exactly one chip, any defect that would be negligible on a smaller die can render the entire wafer unusable,
-        making per-unit yield risk structurally higher than for multi-die wafers.
-      type: third-party-reported
-      topic: yield-risk
-      sourceRefs: [SR017, SR021]
+        The WSE-3 consists of a single die occupying an entire 300mm wafer (46,225 mm2), with
+        proprietary defect-tolerant routing that allows the chip to remain functional despite some
+        transistor failures; this routing is essential for achieving acceptable commercial yield.
+      type: observed
+      topic: wafer-yield-risk
+      sourceRefs: [SR009, SR012]
       confidence: high
-      freshness: current
-      answersQuestionRefs: [QR003]
+      freshness: recent
+      answersQuestionRefs: [QR007, QR023]
+      contradictsClaimRefs: []
     - id: CR014
       statement: >-
-        The Cerebras CS-3 system consumes approximately 23 kW of power per unit and requires direct liquid cooling;
-        the majority of existing enterprise data centers are air-cooled and cannot accommodate CS-3 without material
-        facility modifications.
-      type: third-party-reported
-      topic: thermal-power
-      sourceRefs: [SR018, SR021]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QR016, QR024]
+        The CS-3 system consumes approximately 23 kW of power and requires liquid cooling, limiting
+        deployment to data center facilities with specialized thermal infrastructure and excluding the
+        majority of enterprise data centers that are air-cooled.
+      type: observed
+      topic: operational-risk
+      sourceRefs: [SR012, SR020]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR008]
+      contradictsClaimRefs: []
     - id: CR015
       statement: >-
-        CS-3's liquid cooling and 23 kW power requirement structurally restricts Cerebras' on-premises hardware sales
-        to customers with hyperscale-class or purpose-built data center facilities, limiting the total addressable
-        enterprise hardware market for direct sales.
+        A Taiwan Strait conflict or major natural disaster affecting TSMC facilities would eliminate
+        Cerebras entire WSE-3 chip supply, representing an existential operational risk with no
+        plausible 12-24 month recovery path given the absence of an alternative foundry.
       type: inferred
-      topic: thermal-power
-      sourceRefs: [SR018, SR024]
+      topic: taiwan-geopolitical-risk
+      sourceRefs: [SR005, SR017]
       confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR024]
+      freshness: recent
+      answersQuestionRefs: [QR022]
+      contradictsClaimRefs: []
     - id: CR016
       statement: >-
-        Cerebras uses SK Hynix as its primary HBM supplier for MemoryX systems; Samsung and Micron are theoretical
-        alternatives but would require re-qualification and could not substitute on short notice if SK Hynix supply
-        were disrupted.
-      type: third-party-reported
-      topic: memory-supply
-      sourceRefs: [SR024, SR025]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR003]
+        Cerebras has not disclosed any backup foundry arrangement or second-source qualification
+        program for WSE-scale chip production; its supply chain has zero redundancy at the chip
+        fabrication stage, making TSMC a structural binary dependency.
+      type: inferred
+      topic: tsmc-manufacturing-risk
+      sourceRefs: [SR009, SR014]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR005, QR006]
+      contradictsClaimRefs: []
     - id: CR017
       statement: >-
-        Cerebras Systems has not publicly disclosed the full details of a SOC 2 Type II certification audit report for
-        its cloud inference service beyond a high-level claim on its website, making independent verification of its
-        cloud security posture difficult for enterprise customers.
-      type: third-party-reported
-      topic: security
-      sourceRefs: [SR004, SR029]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR009]
+        Cerebras cloud inference services representing approximately 30% of FY2025 revenue
+        introduce data security and incident response requirements; no public SOC 2 Type II
+        certification or third-party security audit has been disclosed by Cerebras as of May 2026.
+      type: inferred
+      topic: cloud-security-risk
+      sourceRefs: [SR011, SR009]
+      confidence: low
+      freshness: recent
+      answersQuestionRefs: [QR028]
+      contradictsClaimRefs: []
     - id: CR018
       statement: >-
-        CISA's AI security guidelines classify AI cloud inference services handling sensitive workloads as critical
-        infrastructure; Cerebras' cloud inference service would need to meet evolving CISA guidelines as it scales into
-        government and defense customer deployments.
-      type: third-party-reported
-      topic: security
-      sourceRefs: [SR004, SR023]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR003]
+        OpenAI simultaneously occupies three roles in Cerebras capital structure: production customer
+        (running Codex-Spark on Cerebras inference infrastructure), working-capital lender ($1B at 6%
+        maturing 2032), and the anchor of the $20B+ Master Revenue Agreement. This triple-role
+        dependency creates concentrated counterparty risk with no structural equivalent among
+        comparable AI hardware companies.
+      type: observed
+      topic: openai-dependency
+      sourceRefs: [SR004, SR026, SR009]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR011, QR009]
+      contradictsClaimRefs: []
     - id: CR019
       statement: >-
-        US defense and intelligence community analyses assess a meaningful probability of coercive action in the Taiwan
-        Strait within the 2025–2030 horizon; this creates a scenario-level tail risk for any company with TSMC as its
-        sole manufacturing source.
-      type: third-party-reported
-      topic: tsmc-dependency
-      sourceRefs: [SR025, SR017]
-      confidence: medium
-      freshness: recent
-      answersQuestionRefs: [QR017, QR023]
-    - id: CR020
-      statement: >-
-        CS-3 hardware has a 6–12 month manufacturing lead time from order to delivery, meaning any supply chain
-        disruption creates a compounding effect; customers cannot quickly substitute alternative hardware and Cerebras
-        cannot recover inventory within a standard enterprise procurement cycle.
+        The OpenAI $1B working capital loan at 6% interest matures December 31, 2032; if the
+        OpenAI-Cerebras commercial relationship deteriorates the debt could shift from supportive
+        to adversarial before the loan matures.
       type: inferred
-      topic: supply-chain
-      sourceRefs: [SR018, SR019]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR003]
-    - id: CR021
-      statement: >-
-        Cerebras' cloud inference service relies on third-party data center hosting partners; a major outage or
-        security incident at a hosting partner could disrupt the Cerebras Inference service for all customers
-        simultaneously.
-      type: inferred
-      topic: operational-resilience
-      sourceRefs: [SR029, SR031]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR009]
-    - id: CR022
-      statement: >-
-        BIS has updated advanced computing export restrictions multiple times since 2022; each rule update creates
-        uncertainty about whether Cerebras hardware remains at or below the applicable performance threshold, and
-        whether existing export licenses remain valid or require modification.
-      type: third-party-reported
-      topic: export-control
-      sourceRefs: [SR001, SR020]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QR022, QR030]
-    - id: CR023
-      statement: >-
-        CoreWeave is Cerebras' primary cloud delivery partner for the Cerebras Inference service; if CoreWeave changes
-        its pricing, capacity terms, or business relationship, Cerebras' cloud inference availability and unit
-        economics could be materially impacted.
-      type: inferred
-      topic: coreweave-dependency
-      sourceRefs: [SR028, SR031]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR012]
-    - id: CR024
-      statement: >-
-        G42 accounted for approximately 24% and MBZUAI for approximately 62% of Cerebras' FY2025 revenue; combined UAE
-        entities represent approximately 86% of FY2025 revenue, all of which is subject to US export licensing
-        requirements.
-      type: third-party-reported
-      topic: customer-concentration
-      sourceRefs: [SR009, SR016]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QR019, QR027]
-    - id: CR025
-      statement: >-
-        Cerebras' S-1/A filing discloses that a small number of customers have historically accounted for substantially
-        all of the company's revenue and that any failure to retain or expand key customer relationships would
-        materially harm the business.
-      type: company-claimed
-      topic: customer-concentration
-      sourceRefs: [SR009, SR010]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QR010, QR020]
-    - id: CR026
-      statement: >-
-        Microsoft Azure integration discussions and potential channel partnerships with AWS represent distribution
-        dependencies; if these channel relationships underperform or fail to materialize, Cerebras' revenue
-        diversification strategy depends on alternatives not yet secured.
-      type: inferred
-      topic: channel-dependency
-      sourceRefs: [SR028, SR026]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR004]
-    - id: CR027
-      statement: >-
-        The MemoryX product depends on DDR DRAM supply chains that are more diversified than HBM; however any major
-        DRAM market disruption could affect MemoryX availability and system configuration options for high-memory
-        training customers.
-      type: inferred
-      topic: memory-supply
-      sourceRefs: [SR024]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [QR004]
-    - id: CR028
-      statement: >-
-        US Department of Energy national labs represent a prestigious but low-margin customer segment; their procurement
-        decisions are subject to federal budget cycles and multi-year government contracting processes, limiting revenue
-        velocity from this segment.
-      type: third-party-reported
-      topic: government-customer-dependency
-      sourceRefs: [SR023, SR009]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR004]
-    - id: CR029
-      statement: >-
-        Cerebras' master revenue agreement with OpenAI represents a large prospective US domestic revenue stream, but
-        its execution depends on OpenAI deploying Cerebras hardware at scale; delays in the ramp create dependency on a
-        single new counterparty for the company's diversification thesis.
-      type: third-party-reported
       topic: openai-dependency
-      sourceRefs: [SR026, SR028]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR004]
-    - id: CR030
-      statement: >-
-        CerebrasFlow's dependency on PyTorch and Hugging Face APIs means that breaking changes in those frameworks
-        could require costly software updates, delaying customer onboarding and increasing the engineering burden for
-        Cerebras' software team.
-      type: inferred
-      topic: software-dependency
-      sourceRefs: [SR029, SR031]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [QR004]
-    - id: CR031
-      statement: >-
-        G42's documented prior Chinese technology ties — which required divestiture as a condition of the Microsoft
-        deal — remain a reputational and compliance screening risk for Cerebras when seeking US government and defense
-        agency contracts.
-      type: third-party-reported
-      topic: g42-regulatory
-      sourceRefs: [SR011, SR016]
-      confidence: high
-      freshness: recent
-      answersQuestionRefs: [QR027]
-    - id: CR032
-      statement: >-
-        Cerebras was founded by and continues to be led by CEO Andrew Feldman; investor confidence, strategic
-        direction, and key customer relationships are substantially tied to his continued leadership as of May 2026.
-      type: observed
-      topic: ceo-dependency
-      sourceRefs: [SR028, SR019]
-      confidence: medium
-      freshness: current
-    - id: CR033
-      statement: >-
-        Loss of key WSE chip design architects could delay the CS-4 program; wafer-scale die design requires
-        specialized expertise in 3D floorplanning, power delivery, and defect tolerance not widely available outside
-        Cerebras itself.
-      type: inferred
-      topic: talent-risk
-      sourceRefs: [SR021, SR017]
-      confidence: medium
-      freshness: current
-    - id: CR034
-      statement: >-
-        Cerebras' enterprise and government hardware sales cycles typically run 6–18 months, creating near-term revenue
-        predictability challenges and making quarterly revenue highly dependent on deals already in late-stage pipeline.
-      type: third-party-reported
-      topic: sales-execution
-      sourceRefs: [SR031, SR028]
-      confidence: medium
-      freshness: current
-    - id: CR035
-      statement: >-
-        Commercial pharma customers such as GSK and AstraZeneca represent higher-margin business than national labs,
-        but AI drug-discovery adoption cycles are multi-year and proof-of-value from AI-enabled molecular modeling
-        remains early-stage, creating uncertainty in renewal and expansion.
-      type: inferred
-      topic: customer-mix
-      sourceRefs: [SR031, SR019]
-      confidence: medium
-      freshness: recent
-    - id: CR036
-      statement: >-
-        Each new Cerebras chip generation requires an estimated $100M or more in NRE and tape-out expenses; this
-        creates a structurally high capital requirement that is difficult to manage without sustained large-volume
-        hardware revenue or external financing.
-      type: estimated
-      topic: capital-intensity
-      sourceRefs: [SR009, SR019]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR021]
-    - id: CR037
-      statement: >-
-        Cerebras' FY2025 revenue of approximately $510M was generated from an estimated 10–15 customers; losing one or
-        two large customers would represent a 10–20% revenue impact in the near term based on disclosed concentration
-        data.
-      type: estimated
-      topic: customer-concentration
-      sourceRefs: [SR009, SR010]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR020]
-    - id: CR038
-      statement: >-
-        Cerebras' approximately 70% hardware revenue mix in FY2025 compresses gross margins relative to pure-software
-        AI peers; hardware AI accelerator gross margins typically run 40–60% whereas software-driven cloud inference
-        margins can exceed 70% at scale.
-      type: third-party-reported
-      topic: financial-model
-      sourceRefs: [SR009, SR031]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR029]
-    - id: CR039
-      statement: >-
-        Cerebras' 6–12 month manufacturing lead time requires substantial working capital investment in inventory; the
-        company disclosed a $1B working capital facility from OpenAI in connection with the MRA, suggesting a
-        meaningful financing requirement.
-      type: third-party-reported
-      topic: working-capital
       sourceRefs: [SR009, SR026]
       confidence: high
-      freshness: current
+      freshness: recent
+      answersQuestionRefs: [QR014, QR011]
+      contradictsClaimRefs: []
+    - id: CR020
+      statement: >-
+        OpenAI holds 33.4 million warrants exercisable at $0.00001 per share, representing potential
+        dilution of approximately 10-12% of fully diluted Cerebras shares if all warrants are
+        exercised post-IPO.
+      type: company-claimed
+      topic: dilution-risk
+      sourceRefs: [SR009, SR004]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR014]
+      contradictsClaimRefs: []
+    - id: CR021
+      statement: >-
+        The AWS binding term sheet signed in March 2026 has not been converted to a signed commercial
+        agreement; until it is executed and a Marketplace listing is live, AWS represents a
+        diversification aspiration rather than a confirmed revenue channel.
+      type: observed
+      topic: aws-dependency
+      sourceRefs: [SR009, SR025]
+      confidence: medium
+      freshness: recent
       answersQuestionRefs: [QR018]
+      contradictsClaimRefs: []
+    - id: CR022
+      statement: >-
+        MBZUAI and G42 together constitute approximately 86% of FY2025 revenue, a concentration
+        that is structurally unsustainable for a company targeting global AI infrastructure leadership
+        and creates a single-event total-loss scenario if export licenses for both entities are
+        simultaneously revoked.
+      type: inferred
+      topic: customer-concentration
+      sourceRefs: [SR009, SR029]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR010, QR002]
+      contradictsClaimRefs: []
+    - id: CR023
+      statement: >-
+        Any tightening of BIS/EAR export rules for UAE destinations, or placement of MBZUAI or G42
+        on the Entity List, would immediately prohibit Cerebras from fulfilling existing and future
+        hardware orders to its top two customers with no near-term substitute revenue source.
+      type: inferred
+      topic: export-control-risk
+      sourceRefs: [SR003, SR009]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR002, QR024]
+      contradictsClaimRefs: []
+    - id: CR024
+      statement: >-
+        Cerebras reported FY2025 GAAP net income of approximately $237.8M but non-GAAP adjusted
+        loss of approximately $75.7M; the discrepancy is driven primarily by non-cash warrant
+        remeasurement gains and stock-based compensation, making GAAP income a poor proxy for
+        actual cash generation.
+      type: company-claimed
+      topic: financial-risk
+      sourceRefs: [SR009, SR014]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR013]
+      contradictsClaimRefs: [CR025]
+    - id: CR025
+      statement: >-
+        Cerebras FY2025 GAAP income of $237.8M, if taken at face value without non-GAAP adjustment,
+        significantly overstates cash profitability and could mislead retail investors who do not
+        understand the warrant fair-value accounting mechanism driving the headline figure.
+      type: inferred
+      topic: financial-risk
+      sourceRefs: [SR009, SR014]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR013]
+      contradictsClaimRefs: [CR024]
+    - id: CR026
+      statement: >-
+        Cerebras hardware gross margin of approximately 39% in FY2025 reflects the high cost of
+        TSMC wafer-scale fabrication; cloud inference gross margin is not separately disclosed but
+        may be structurally higher as a services product.
+      type: estimated
+      topic: margin-risk
+      sourceRefs: [SR009, SR014]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR012]
+      contradictsClaimRefs: []
+    - id: CR027
+      statement: >-
+        At approximately 196 times trailing FY2025 revenue, Cerebras IPO valuation prices in
+        continued hyper-growth; a deceleration from 76% FY2025 revenue growth to 40-50% would likely
+        compress the multiple significantly and impair returns for IPO-price investors.
+      type: estimated
+      topic: valuation-risk
+      sourceRefs: [SR001, SR023, SR002]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR015, QR031]
+      contradictsClaimRefs: []
+    - id: CR028
+      statement: >-
+        Hardware revenue ($358.4M in FY2025) is composed of large, lumpy contracts with few customers
+        and extended lead times; this creates quarter-to-quarter revenue volatility that is difficult
+        to forecast and could result in earnings misses that disproportionately depress the stock.
+      type: inferred
+      topic: revenue-lumpiness
+      sourceRefs: [SR009, SR014]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR031]
+      contradictsClaimRefs: []
+    - id: CR029
+      statement: >-
+        Cerebras capital-intensive hardware model requiring large upfront TSMC fabrication orders
+        before revenue recognition makes working capital management a structural vulnerability;
+        the OpenAI $1B loan partially addresses this but creates its own counterparty concentration.
+      type: inferred
+      topic: capital-intensity-risk
+      sourceRefs: [SR009, SR026]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR012]
+      contradictsClaimRefs: []
+    - id: CR030
+      statement: >-
+        Andrew Feldman (CEO) is explicitly named in Cerebras S-1/A risk factors as a key-person;
+        the filing states that loss of the founding CEO would likely impair investor confidence,
+        customer relationships, and strategic direction simultaneously.
+      type: company-claimed
+      topic: key-person-risk
+      sourceRefs: [SR009, SR008]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR016]
+      contradictsClaimRefs: []
+    - id: CR031
+      statement: >-
+        Cerebras founders hold Class B shares with 10-to-1 voting rights relative to public Class A
+        shares, giving founders approximately 99.2% aggregate voting power at IPO; public shareholders
+        cannot remove management, override board appointments, or block capital structure changes.
+      type: company-claimed
+      topic: governance-risk
+      sourceRefs: [SR009, SR001]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR017, QR029]
+      contradictsClaimRefs: []
+    - id: CR032
+      statement: >-
+        Wafer-scale chip architecture requires a rare combination of semiconductor engineering skills
+        in 3D floorplanning, power delivery network design, and defect-tolerant routing; loss of
+        core chip architects could delay the CS-4 program by 12-18 months with no available
+        external replacement talent pool.
+      type: inferred
+      topic: talent-concentration-risk
+      sourceRefs: [SR013, SR014]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR032]
+      contradictsClaimRefs: []
+    - id: CR033
+      statement: >-
+        Cerebras has implemented an active export compliance program per S-1/A disclosures, including
+        obtaining BIS licenses for UAE customer shipments and monitoring ongoing compliance
+        obligations; this is a genuine mitigation but does not eliminate the risk of license
+        revocation.
+      type: company-claimed
+      topic: export-compliance-mitigation
+      sourceRefs: [SR009, SR003]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR019, QR024]
+      contradictsClaimRefs: []
+    - id: CR034
+      statement: >-
+        Cerebras cloud/services revenue grew to $151.6M (29.7% of FY2025 total), a meaningful but
+        insufficient diversification from hardware-only UAE sales; cloud revenue does not fully
+        reduce export-license risk since cloud inference customers may also require license review
+        when serving UAE-based end-users.
+      type: observed
+      topic: diversification-risk
+      sourceRefs: [SR009, SR011]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR021]
+      contradictsClaimRefs: []
+    - id: CR035
+      statement: >-
+        No public investor or analyst report as of May 2026 has disclosed Cerebras-specific
+        thesis-break triggers or monitoring thresholds; investors relying on public information alone
+        must construct their own monitoring frameworks without management validation.
+      type: inferred
+      topic: monitoring-gap
+      sourceRefs: [SR006, SR007]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR020, QR030]
+      contradictsClaimRefs: []
+    - id: CR036
+      statement: >-
+        The AWS binding term sheet, if converted to a live Marketplace listing within 12-18 months,
+        could provide enterprise revenue diversification from US-based customers not subject to
+        BIS/EAR licensing requirements for UAE entities.
+      type: inferred
+      topic: aws-mitigation
+      sourceRefs: [SR009, SR025]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR018]
+      contradictsClaimRefs: []
+    - id: CR037
+      statement: >-
+        G42 2024 agreement to divest Chinese technology holdings reduces but does not eliminate
+        the CFIUS scrutiny risk for the Cerebras-G42 customer relationship; ongoing monitoring of
+        G42 counterparty status is a permanent compliance requirement.
+      type: inferred
+      topic: cfius-risk
+      sourceRefs: [SR027, SR028]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QR025, QR003]
+      contradictsClaimRefs: []
+    - id: CR038
+      statement: >-
+        Cerebras disclosed no material pending litigation in its S-1/A as of the May 2026 IPO date,
+        providing a clean legal baseline; however, absence of current litigation does not preclude
+        future IP assertion claims as Cerebras scales and becomes a commercial threat.
+      type: company-claimed
+      topic: ip-litigation-risk
+      sourceRefs: [SR009, SR022]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR004]
+      contradictsClaimRefs: []
+    - id: CR039
+      statement: >-
+        Cerebras OpenAI MRA ($20B+ notional, 750MW committed capacity) represents the primary
+        near-term revenue diversification catalyst, but requires substantial infrastructure buildout
+        before revenue recognition; near-term revenue risk from UAE concentration is not yet
+        mitigated by the MRA.
+      type: inferred
+      topic: openai-dependency
+      sourceRefs: [SR004, SR026]
+      confidence: medium
+      freshness: recent
+      answersQuestionRefs: [QR011, QR021]
+      contradictsClaimRefs: []
     - id: CR040
       statement: >-
-        Cerebras' estimated 86% UAE-sourced FY2025 revenue means that any BIS export control tightening that prevents
-        license renewal for UAE entities would cut revenue by more than 80% in the near term, representing a near
-        total-loss scenario for the current revenue base.
-      type: estimated
-      topic: revenue-concentration
-      sourceRefs: [SR009, SR002, SR016]
+        The gap between GAAP net income ($237.8M) and non-GAAP adjusted loss ($75.7M), approximately
+        $313M driven by warrant remeasurement, creates a financial literacy risk for retail investors
+        post-IPO who may anchor on headline GAAP EPS rather than adjusted operating performance.
+      type: inferred
+      topic: financial-risk
+      sourceRefs: [SR009, SR014]
       confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR019, QR029]
+      freshness: recent
+      answersQuestionRefs: [QR013]
+      contradictsClaimRefs: []
     - id: CR041
       statement: >-
-        Cerebras has implemented internal export compliance procedures and obtained BIS licenses for UAE sales; these
-        controls lower (but do not eliminate) the probability of an enforcement action disrupting current customer
-        relationships.
-      type: company-claimed
-      topic: mitigation
-      sourceRefs: [SR009, SR008]
+        G42 received a $335M strategic investment stake in Cerebras at a pre-IPO valuation; G42
+        continued large equity position aligns customer and investor incentives but also concentrates
+        board influence in a foreign strategic investor with documented prior Chinese technology ties.
+      type: observed
+      topic: governance-risk
+      sourceRefs: [SR009, SR027]
       confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR025]
+      freshness: recent
+      answersQuestionRefs: [QR017]
+      contradictsClaimRefs: []
     - id: CR042
       statement: >-
-        The OpenAI master revenue agreement diversifies Cerebras' revenue base from UAE-dominated toward US domestic
-        commercial sources; as OpenAI revenue scales, the share of UAE export-licensed revenue in total revenue
-        should decline.
-      type: inferred
-      topic: mitigation
-      sourceRefs: [SR026, SR028]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR025]
+        BIS advanced computing export rules have been updated at least twice since 2022 (October 2023
+        and October 2024), with each iteration progressively tightening performance thresholds; future
+        updates could modify thresholds in ways that affect Cerebras existing UAE export license
+        applicability without requiring a new entity-list designation.
+      type: observed
+      topic: export-control-risk
+      sourceRefs: [SR003, SR009]
+      confidence: high
+      freshness: recent
+      answersQuestionRefs: [QR005, QR024]
+      contradictsClaimRefs: []
     - id: CR043
       statement: >-
-        A completed IPO would provide Cerebras with capital to fund multiple chip generations and invest in software
-        and cloud products, reducing its dependence on hardware-heavy revenue and improving financial resilience for
-        the CS-4 program.
+        The IPO lockup period of 180 days means approximately 95% of Cerebras shares held by insiders
+        at IPO (primarily Class B founder shares) become eligible for sale around November 2026,
+        creating near-term supply overhang that could depress the public share price.
       type: inferred
-      topic: mitigation
-      sourceRefs: [SR028, SR009]
+      topic: lockup-overhang-risk
+      sourceRefs: [SR001, SR002]
       confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR025]
+      freshness: recent
+      answersQuestionRefs: [QR027]
+      contradictsClaimRefs: []
     - id: CR044
       statement: >-
-        Publicly derived thesis-break triggers for Cerebras that investors should monitor include: BIS export license
-        revocation for UAE entities, any TSMC manufacturing disruption, loss of MBZUAI or OpenAI relationship, and
-        failure to diversify away from UAE revenue concentration by end of 2026.
+        OpenAI long-term strategic trajectory toward custom silicon development or alternative
+        inference providers creates a latent risk that the Cerebras-OpenAI relationship, while
+        currently mutually beneficial, could become competitive or be wound down after the MRA
+        term ends.
       type: inferred
-      topic: kill-criteria
-      sourceRefs: [SR009, SR019, SR028]
+      topic: openai-dependency
+      sourceRefs: [SR004, SR026]
+      confidence: low
+      freshness: recent
+      answersQuestionRefs: [QR011]
+      contradictsClaimRefs: []
+    - id: CR045
+      statement: >-
+        Cerebras revenue growth decelerated from 269% in FY2023-FY2024 to 76% in FY2024-FY2025;
+        further deceleration to 40-50%, plausible if UAE contracts plateau before OpenAI MRA revenue
+        begins, could trigger significant multiple compression from the 196x trailing revenue level.
+      type: estimated
+      topic: revenue-growth-risk
+      sourceRefs: [SR009, SR014]
       confidence: medium
-      freshness: current
-      answersQuestionRefs: [QR025]
+      freshness: recent
+      answersQuestionRefs: [QR031, QR015]
+      contradictsClaimRefs: []
+    - id: CR046
+      statement: >-
+        Cerebras IPO coincided with a peak in AI chip investor enthusiasm; if hyperscaler capex
+        moderates, NVIDIA supply constraints ease, or AI inference efficiency improvements reduce
+        per-token compute demand, the market environment underpinning the IPO multiple could
+        deteriorate before Cerebras achieves revenue diversification.
+      type: inferred
+      topic: market-risk
+      sourceRefs: [SR005, SR007, SR002]
+      confidence: low
+      freshness: recent
+      answersQuestionRefs: [QR015]
+      contradictsClaimRefs: []
   evidenceGaps:
     - type: private-evidence-only
       severity: material
-      topic: burn rate and cash runway not publicly disclosed
+      topic: bis-export-license-terms
       missingEvidence: >-
-        Cerebras has not disclosed gross burn rate, net burn, or specific cash runway figures in any public filing or
-        press communication as of May 2026; only partial financial data is available through the S-1/A IPO disclosure.
+        Cerebras has not publicly disclosed the specific conditions, expiration dates, or renewal
+        terms of its BIS export licenses for UAE customer shipments to MBZUAI and G42; these terms
+        are known only to Cerebras and BIS.
       whyItMatters: >-
-        Without burn rate data, investors cannot assess how long Cerebras can operate without additional financing or
-        whether its capital structure is adequate to fund CS-4 development through to commercial shipment.
+        Without understanding license renewal conditions, investors cannot model the probability
+        or timing of a license revocation event, which is the single highest-severity risk in the
+        Cerebras investment thesis.
       diligencePath: >-
-        Request management disclosure of trailing 12-month gross burn, net burn, cash position, and committed capex
-        schedule. Review CFO cash-flow model and audit workpapers for cash runway under base and stress cases.
-      relatedQuestionRefs: [QR013]
+        Request copies of BIS export licenses, renewal schedules, and compliance counsel opinions
+        from Cerebras management during due diligence access period.
+      relatedQuestionRefs: [QR002, QR019]
     - type: private-evidence-only
       severity: material
-      topic: kill criteria and thesis-break triggers not publicly defined
+      topic: openai-mra-conditionality
       missingEvidence: >-
-        Cerebras has not publicly defined any monitorable kill criteria, investment thesis-break triggers, or explicit
-        escalation thresholds for investors as of May 2026.
+        The conditionality terms, termination provisions, and performance covenants of the OpenAI
+        $20B+ Master Revenue Agreement have not been publicly disclosed; the S-1/A describes the
+        MRA in general terms but provides no granular detail on take-or-pay commitments or exit
+        rights.
       whyItMatters: >-
-        Without publicly stated kill criteria, investors cannot establish systematic monitoring indicators or exit
-        triggers; the investment thesis rests on management judgment rather than verifiable threshold metrics.
+        The MRA is the primary diversification thesis for reducing UAE concentration risk; without
+        understanding conditionality, investors cannot assess the probability that MRA revenue will
+        actually materialize at scale.
       diligencePath: >-
-        Develop proprietary kill criteria from this chapter's analysis; propose monitoring KPIs to management during
-        due diligence for validation and to gauge management's own risk awareness.
-      relatedQuestionRefs: [QR014]
+        Request the MRA term sheet or summary from management; request OpenAI loan covenant details
+        and cross-default provisions.
+      relatedQuestionRefs: [QR011, QR014]
     - type: private-evidence-only
       severity: material
-      topic: burn rate estimate — insufficient public financial data for precision
+      topic: monitoring-thresholds-undefined
       missingEvidence: >-
-        Cerebras' S-1/A does not separately disclose R&D capex, NRE amortization, or gross cash burn by quarter;
-        only the incomplete financial summary available through the IPO disclosure process is publicly accessible.
+        Cerebras has not publicly defined any monitorable thesis-break triggers or explicit monitoring
+        thresholds for the risks identified in the S-1/A; investors must construct these independently.
       whyItMatters: >-
-        Hardware chip companies have NRE-driven cash burn that diverges significantly from GAAP operating loss; without
-        actual burn schedules, the capital requirement to sustain the technology roadmap cannot be precisely assessed.
+        Without explicit monitoring thresholds from management, investors must construct their own
+        frameworks without calibration from the people with the best information, creating an
+        information asymmetry that is difficult to close post-IPO.
       diligencePath: >-
-        Request CFO-prepared cash flow model showing NRE spending, tape-out schedule, working capital requirements,
-        and projected cash runway under base and downside cases including TSMC disruption scenario.
-      relatedQuestionRefs: [QR018]
+        Propose a set of monitoring thresholds to management during due diligence and request
+        validation or modification; document management response as part of the investment thesis.
+      relatedQuestionRefs: [QR020, QR030]
     - type: private-evidence-only
-      severity: minor
-      topic: NRE and tape-out cost per generation — industry estimates only
+      severity: material
+      topic: tsmc-capacity-allocation
       missingEvidence: >-
-        Cerebras has not disclosed actual NRE costs for WSE-2, WSE-3, or projected CS-4 tape-out costs; the $100M+
-        estimate is an industry approximation based on comparable advanced-node tape-out comparable programs.
+        Cerebras contractual capacity allocation with TSMC, including priority standing versus other
+        customers, cancellation penalties, and lead-time commitments, has not been publicly disclosed.
       whyItMatters: >-
-        NRE per generation is a key input for financial modeling; if actual costs significantly exceed estimates, the
-        capital requirement for sustaining the technology roadmap would be materially higher than currently assumed.
+        Understanding TSMC capacity commitment terms determines whether a supply disruption would be
+        a gradual squeeze or an abrupt halt, critical for business continuity risk assessment.
       diligencePath: >-
-        Request actual NRE and tape-out spending for WSE-2 and WSE-3 from management; obtain CS-4 tape-out budget and
-        milestone schedule from CFO; verify against auditor workpapers.
-      relatedQuestionRefs: [QR021]
+        Request summary of TSMC fabrication agreement terms, specifically capacity allocation,
+        lead times, and priority status provisions.
+      relatedQuestionRefs: [QR005, QR006]
     - type: missing-source
       severity: minor
-      topic: Cerebras IP litigation risk — no confirmed litigation to assess defensibility
+      topic: cloud-security-certification
       missingEvidence: >-
-        No publicly confirmed IP lawsuit has been filed against Cerebras as of May 2026; the risk can only be assessed
-        inferentially. No freedom-to-operate (FTO) analysis or chip design IP review is publicly available.
+        No public SOC 2 Type II audit report, penetration test results, or third-party security
+        certification for Cerebras cloud inference infrastructure has been identified as of May 2026.
       whyItMatters: >-
-        Wafer-scale chip designs are novel and potentially patentable; Nvidia, Intel, and others hold broad
-        semiconductor portfolios that could be asserted against Cerebras once it reaches commercial scale.
+        Enterprise and government customers increasingly require SOC 2 attestation before deploying
+        sensitive workloads; absence of documented certification could limit Cerebras addressable
+        market in regulated industries.
       diligencePath: >-
-        Obtain a freedom-to-operate opinion from IP counsel covering WSE-3 key design elements. Review any IP
-        indemnity language in the Cerebras S-1/A and proposed customer contract templates.
+        Request SOC 2 audit scope and report from Cerebras; if not yet available, request timeline
+        for completing SOC 2 Type II certification.
       relatedQuestionRefs: [QR028]
 sections:
-  - id: section-regulatory-legal
-    title: Regulatory and Legal Risk
+  - id: risk-overview
+    title: Risk Overview and Severity Rankings
     body: >-
-      Cerebras' most active regulatory risk is US export control exposure under the Export Administration Regulations
-      administered by BIS. WSE-3 chips exceed BIS performance thresholds for advanced computing and cannot be shipped
-      to China, Russia, or other restricted destinations without export licenses. Critically, approximately 86% of
-      Cerebras' FY2025 revenue came from UAE entities — G42 and MBZUAI — all sold under BIS export licenses that
-      must be maintained. BIS has updated its advanced computing rules multiple times since 2022; each update creates
-      uncertainty about whether existing licenses remain valid and whether new or modified licenses are required. The
-      G42 partnership carries additional scrutiny because G42 agreed to divest its Chinese technology holdings in 2024
-      as a condition of US government approval for the Microsoft deal; G42's prior China ties remain a compliance
-      screening risk for any Cerebras pursuit of US government and defense agency sales.
-
-      On the legal side, no IP litigation has been confirmed against Cerebras as of May 2026, but Nvidia's portfolio
-      of over 10,000 semiconductor patents creates latent litigation risk that an FTO opinion should address before
-      institutional capital is deployed. AI Executive Order 14110 and the CHIPS Act Section 9002 guardrails add
-      indirect regulatory obligations for Cerebras. The NIST AI RMF, while non-binding, increasingly shapes
-      government procurement requirements. The FTC's ongoing AI compute competition review represents a background
-      risk that remains unlikely to directly affect Cerebras in the near term but warrants monitoring as the company
-      scales.
-    claimRefs:
-      - CR001
-      - CR002
-      - CR003
-      - CR004
-      - CR005
-      - CR006
-      - CR007
-      - CR008
-      - CR009
-      - CR010
-      - CR022
-      - CR031
-    tableRefs:
-      - TR001
-    figureRefs:
-      - FR001
-  - id: section-operational-supply-chain
-    title: Operational and Supply Chain Risk
+      Cerebras Systems enters the public markets with a risk profile dominated by three structural
+      concentrations that compound one another: a single manufacturing source (TSMC) for which no
+      alternative exists, two customers representing 86% of revenue (MBZUAI and G42 in the UAE)
+      operating under revocable BIS export licenses, and one counterparty playing three simultaneous
+      roles (OpenAI as production customer, $1B lender, and $20B+ revenue anchor). These risks do
+      not operate independently: a BIS export rule change targeting UAE destinations would
+      simultaneously eliminate hardware revenue from both top customers, stress the OpenAI working
+      capital loan, and impair the MRA diversification thesis. The risk-heatmap below maps ten
+      identified risks by likelihood and impact severity, while the risk-transmission map shows how
+      individual risk events cascade into revenue, financing, and valuation outcomes. Secondary risks
+      include wafer-scale yield dependency, liquid-cooling infrastructure constraints, founder
+      dual-class voting control, and an IPO multiple exceeding 190 times trailing revenue. No public
+      monitoring thresholds have been disclosed by Cerebras; investors must construct their own
+      monitoring frameworks before underwriting at the current valuation.
+    claimRefs: [CR001, CR002, CR003, CR018]
+    figureRefs: [FR001, FR002]
+  - id: regulatory-legal-risks
+    title: Regulatory and Legal Risks
     body: >-
-      The single most material operational risk for Cerebras is its complete dependency on TSMC as the sole foundry
-      capable of manufacturing WSE-scale chips. The WSE-3 occupies an entire 300 mm silicon wafer, meaning each
-      wafer produces exactly one chip; no alternative foundry in the world has demonstrated the capability to produce
-      dies at anything close to 46,225 mm² at commercially viable yields. A disruption to TSMC production — whether
-      from Taiwan Strait conflict, natural disaster, or US-China export escalation — would halt CS-3 and CS-4
-      production with no plausible 12–24 month recovery path. This is not merely a concentration risk; it is a
-      structural binary exposure with no short-term mitigant.
-
-      Secondary operational risks are also material. The single-wafer die structure means yield risk is qualitatively
-      higher per unit than for multi-die chips; any defect that would be inconsequential on a smaller die can reject
-      an entire $35,000+ wafer. The CS-3's approximately 23 kW power draw and liquid cooling requirement effectively
-      restricts on-premises sales to customers with hyperscale-class data center infrastructure, limiting the
-      addressable enterprise hardware market. SK Hynix HBM supply for MemoryX adds a secondary memory dependency.
-      The 6–12 month manufacturing lead time compounds any supply disruption into a multi-quarter revenue gap.
-      Cloud security posture relies on a SOC 2 claim without publicly verified audit documentation, which could
-      complicate government procurement clearances.
-    claimRefs:
-      - CR011
-      - CR012
-      - CR013
-      - CR014
-      - CR015
-      - CR016
-      - CR017
-      - CR018
-      - CR019
-      - CR020
-      - CR021
-    tableRefs:
-      - TR002
-    figureRefs:
-      - FR003
-  - id: section-partner-dependency
-    title: Partner and Dependency Risk
+      Cerebras most consequential regulatory risk is the Export Administration Regulations (EAR)
+      framework administered by BIS. The October 2023 Advanced Computing rule and the October 2024
+      AI Diffusion Rule establish performance thresholds that govern whether WSE-3 chips can be
+      exported to UAE-based customers. Cerebras has publicly disclosed that it holds BIS licenses for
+      MBZUAI and G42 shipments, but those licenses can be revoked, modified, or refused at renewal.
+      A regulatory posture change, such as placing MBZUAI or G42 on the Entity List, reclassifying
+      UAE as a destination requiring tighter controls, or reducing performance thresholds below the
+      WSE-3 level, would immediately prohibit existing and future hardware shipments to the two
+      customers representing 86% of FY2025 revenue. The CFIUS precedent from the Saudi Aramco
+      episode, which caused Cerebras to withdraw its IPO in Q4 2024, illustrates that national
+      security review can impose material business disruption with limited advance notice. G42 2024
+      agreement to divest Chinese technology holdings partially addresses CFIUS residual risk but
+      requires ongoing compliance monitoring. No material IP litigation has been disclosed in the
+      S-1/A, but NVIDIA semiconductor patent portfolio creates a latent infringement risk warranting
+      an FTO opinion before institutional capital is deployed.
+    claimRefs: [CR004, CR005, CR006, CR007, CR008, CR009, CR010, CR023, CR037, CR038, CR042]
+    tableRefs: [TR001]
+  - id: operational-quality-risks
+    title: Operational, Quality, and Security Risks
     body: >-
-      Cerebras' partner stack combines its TSMC manufacturing dependency with two concentrated customer relationships
-      — MBZUAI at approximately 62% and G42 at approximately 24% of FY2025 revenue — plus an emerging dependency on
-      CoreWeave for cloud inference delivery. Combined, these three counterparties account for the majority of
-      Cerebras' current revenue and operating infrastructure. The G42 relationship adds a distinctive compliance
-      layer: G42's prior Chinese technology ties required divestiture as a US government condition for the Microsoft
-      deal in 2024, and those same ties remain a disqualifying factor for Cerebras in many US government procurement
-      contexts.
-
-      The OpenAI master revenue agreement, while potentially transformative, creates a new concentrated counterparty
-      dependency; if OpenAI delays its capacity ramp or modifies its commitment, the diversification rationale
-      weakens. CoreWeave's role as the primary cloud delivery infrastructure means CoreWeave pricing and capacity
-      decisions directly flow through to Cerebras' cloud unit economics. Downstream software dependencies on
-      PyTorch and Hugging Face are less acute but represent integration risks if major ecosystem shifts occur.
-      The dependency structure is not merely diverse partnership risk — it is a concentrated transmission path
-      from any one partner failure to a material revenue or operational impairment.
-    claimRefs:
-      - CR023
-      - CR024
-      - CR025
-      - CR026
-      - CR027
-      - CR028
-      - CR029
-      - CR030
-      - CR031
-    tableRefs:
-      - TR003
-    figureRefs:
-      - FR002
-  - id: section-people-execution
-    title: People and Execution Risk
+      Cerebras operational risk is dominated by its sole-source relationship with TSMC for WSE-3
+      fabrication. No other foundry in the world has publicly disclosed capability to manufacture a
+      chip occupying a full 300mm wafer at the advanced lithography node required for commercial
+      yield. This makes TSMC a structural binary dependency: a Taiwan conflict, TSMC production
+      disruption, capacity reallocation, or yield-impacting process change could halt Cerebras entire
+      hardware supply pipeline for 12 or more months. The defect-tolerant routing embedded in WSE-3
+      design mitigates yield risk from individual transistor failures, but cannot compensate for a
+      foundry-level production halt or a fundamental TSMC process change that renders the routing
+      ineffective. CS-3 systems require approximately 23 kW power draw and liquid cooling, limiting
+      deployment to specialized data center facilities and structurally constraining the on-premises
+      total addressable market, partially addressed by cloud inference but introducing cloud-specific
+      operational risks. Cerebras cloud inference services have not disclosed a SOC 2 Type II
+      certification, incident response protocol, or enterprise security audit as of May 2026, a gap
+      that could become a material sales objection for enterprise and regulated-industry customers.
+      Hardware lead times of 6-12 months from TSMC mean that any supply disruption translates into
+      a multi-quarter revenue gap with limited short-cycle recovery options.
+    claimRefs: [CR011, CR012, CR013, CR014, CR015, CR016, CR017]
+    tableRefs: [TR002]
+  - id: partner-dependency-risks
+    title: Partner and Dependency Risks
     body: >-
-      Cerebras is a founder-led company where CEO Andrew Feldman is the primary face of the business, its strategic
-      vision, and its investor and customer relationships. In a pre-IPO hardware company with a hardware-intensive
-      product requiring long-cycle engineering, founder-CEO dependency is elevated compared to software peers; the
-      organizational depth and succession planning for Feldman's role is not publicly visible. Separately, the
-      wafer-scale chip design function relies on a small pool of specialized architects whose expertise in 3D
-      floorplanning, power delivery, and yield optimization is not broadly available in the semiconductor talent
-      market. Loss of key chip design personnel could delay the CS-4 program by 12–18 months.
-
-      Execution risk also manifests in the sales cycle. Enterprise and government hardware deployments typically take
-      6–18 months from first conversation to revenue recognition, which makes quarterly visibility low and creates
-      lumpy revenue patterns. The commercial pharma segment — GSK and AstraZeneca — represents higher-margin
-      potential but requires multi-year proof-of-value cycles in drug discovery AI that create additional timing
-      uncertainty. These people and execution risks do not currently rise to the level of regulatory or TSMC
-      concentration risk, but they are meaningful second-order risks in the context of a concentrated revenue base.
-    claimRefs:
-      - CR032
-      - CR033
-      - CR034
-      - CR035
-    tableRefs:
-      - TR004
-  - id: section-financial-kill-criteria
-    title: Financial and Model Risk — Kill Criteria
+      Cerebras has constructed a partner ecosystem that simultaneously reduces some risks while
+      creating new concentration vectors. The OpenAI relationship is the clearest example of this
+      dual nature: the $1B working capital loan provides a critical buffer against capital-intensive
+      hardware manufacturing cycles, but the same counterparty holds the largest committed revenue
+      obligation, runs production workloads on Cerebras infrastructure, and holds 33.4 million
+      dilutive warrants. If the OpenAI relationship deteriorates for any reason, including competitive
+      dynamic shift, OpenAI corporate distress, or strategic pivot to custom silicon, the simultaneous
+      loss of working capital support, near-future revenue, and the production reference customer
+      would be structurally devastating. The UAE customer concentration is similarly entrenched:
+      MBZUAI and G42 are sovereign-affiliated institutions with durable AI mandates, but both require
+      active BIS export licenses and are subject to geopolitical risk beyond Cerebras control. The
+      AWS binding term sheet provides the most credible near-term diversification pathway but has not
+      yet generated recognized revenue. The dependency-map figure below inventories the principal
+      partner and regulatory relationships and their directional dependencies. Until non-UAE and
+      non-OpenAI revenue exceeds 20% of total, the partner and dependency risk vector should be
+      treated as the primary investment concentration concern.
+    claimRefs: [CR018, CR019, CR020, CR021, CR022, CR033, CR034, CR036, CR039, CR041]
+    tableRefs: [TR003]
+    figureRefs: [FR003]
+  - id: financial-model-risks
+    title: Financial and Model Risks
     body: >-
-      Cerebras' financial risk profile is shaped by its capital-intensive hardware model. Each chip generation
-      requires an estimated $100M or more in NRE and tape-out costs, creating a high fixed burden that requires
-      sustained large-volume revenue or external financing to support the CS-4 roadmap. Gross margins in AI hardware
-      typically run 40–60%, significantly below the 70%+ margins of pure-software peers, which compresses Cerebras'
-      economics relative to software-native AI companies even as revenue scales. The disclosed $1B OpenAI working
-      capital facility signals that current operations require material external financing — a characteristic of
-      hardware companies at this scale that investors must underwrite explicitly.
-
-      Revenue episodicity is a further risk: with an estimated 10–15 customers generating FY2025 revenue, losing
-      the top one or two accounts represents a 10–20% near-term revenue impact, and the MBZUAI relationship at 62%
-      alone is a single-client concentration that exceeds the threshold most institutional investors treat as a
-      thesis-break indicator. Because Cerebras has not publicly defined kill criteria or monitoring thresholds,
-      investors must construct these independently. The analyst-derived thesis-break triggers developed in this
-      chapter — export license revocation, TSMC disruption, MBZUAI or OpenAI loss, and failure to diversify UAE
-      revenue concentration by end of 2026 — represent the minimum monitoring framework for underwriting this
-      investment.
-    claimRefs:
-      - CR036
-      - CR037
-      - CR038
-      - CR039
-      - CR040
-      - CR041
-      - CR042
-      - CR043
-      - CR044
-    tableRefs:
-      - TR005
+      Cerebras financial risk profile features a significant GAAP versus non-GAAP gap, hardware deal
+      lumpiness, and an IPO valuation that prices near-perfect execution. The FY2025 GAAP net income
+      of approximately $237.8M is almost entirely driven by a non-cash warrant remeasurement gain
+      related to the OpenAI warrants; on a non-GAAP adjusted basis, Cerebras shows an approximately
+      $75.7M operating loss, which more accurately reflects underlying cash generation quality. Gross
+      margin of approximately 39% is below software peers and reflects TSMC high fabrication costs
+      for advanced-node wafer-scale production. Hardware revenue is composed of large, multi-hundred-
+      million dollar contracts with extended lead times, creating quarter-over-quarter revenue
+      volatility that can misalign with investor expectations and trigger disproportionate stock
+      reactions to any earnings miss. At the IPO opening price implying approximately 196 times
+      trailing FY2025 revenue, a deceleration from 76% revenue growth to even 40-50% would likely
+      compress the multiple significantly. The 180-day lockup expiry creates near-term supply
+      overhang risk when insiders become eligible to sell approximately November 2026. The OpenAI
+      $1B loan, while supportive in the near term, becomes an adversarial financial instrument if
+      the relationship deteriorates before the 2032 maturity date.
+    claimRefs: [CR024, CR025, CR026, CR027, CR028, CR029, CR040, CR043, CR044, CR045, CR046]
+  - id: people-execution-mitigations
+    title: People, Execution, and Mitigations
+    body: >-
+      Cerebras governance structure concentrates strategic control in founders through a dual-class
+      share structure where Class B shares carry 10-to-1 voting rights, giving founders approximately
+      99.2% aggregate voting power at IPO despite institutional ownership of a significant economic
+      share. Andrew Feldman (CEO) is explicitly named in the S-1/A as a key-person risk; no public
+      succession plan has been disclosed. The engineering team represents a wafer-scale talent moat
+      but also a talent concentration risk if core chip architects depart to NVIDIA, AMD, or
+      well-funded AI chip startups, which could delay the CS-4 program by 12-18 months. The
+      people-execution risk register documents these dependencies by role. The mitigation and
+      monitoring table below provides a structured investor framework built from S-1/A disclosures,
+      BIS regulatory posture analysis, and analyst-derived threshold logic. Key diligence asks before
+      underwriting at current valuation include: BIS license copies and renewal timelines, OpenAI MRA
+      conditionality terms and loan covenant details, non-UAE revenue quarterly split, TSMC capacity
+      contract summary, and an organizational depth chart for core engineering leadership. Without
+      these inputs, underwriting Cerebras at a valuation exceeding $100 billion requires accepting
+      material structural information asymmetries that cannot be resolved from public disclosures.
+    claimRefs: [CR030, CR031, CR032, CR035]
+    tableRefs: [TR004, TR005]
 tables:
   - id: TR001
     title: Regulatory / legal risk register
     enumerationScope:
       coverage: exhaustive
       basis: >-
-        Systematic review of US export control regulations (EAR/BIS), AI Executive Orders, CHIPS Act provisions,
-        FTC inquiries, and publicly available legal information through CourtListener and SEC EDGAR through May 2026;
-        covers all publicly identifiable regulatory and legal risks applicable to Cerebras Systems.
+        Comprehensive review of BIS EAR framework, AI Executive Order 14110, CFIUS proceedings,
+        SEC EDGAR S-1/A risk factors, and news reporting through May 2026; covers all publicly
+        identifiable regulatory and legal risks applicable to Cerebras Systems operations.
     columns:
-      - Rule/Case
+      - Rule or Case
       - Jurisdiction
       - Status
       - Likelihood
@@ -1617,109 +1662,104 @@ tables:
       - Residual Exposure
       - Diligence Path
     rows:
-      - - EAR/BIS Advanced Computing Export Controls (WSE-3 threshold breach)
-        - US Federal (BIS/Commerce)
-        - Active — export licenses obtained for UAE; ongoing compliance obligations
+      - - EAR/BIS Advanced Computing Export Controls — WSE-3 performance threshold breach
+        - US Federal (BIS / Commerce)
+        - Active — export licenses obtained for UAE shipments; ongoing compliance obligations
         - High
         - Critical
-        - BIS export licenses obtained; internal compliance program; G42 China divestiture completed
-        - High — 86% of FY2025 revenue depends on UAE license continuity; any revocation is near-catastrophic
-        - Obtain outside counsel memo on license scope, renewal conditions, and revocation risk under current BIS posture; verify license terms in S-1/A
-      - - AI Executive Order 14110 compute provider compliance (Section 4.2)
-        - US Federal (NSC/NIST)
-        - Active — cloud compute providers subject to safety reporting requirements
+        - BIS export licenses obtained; internal compliance program; customer counterparty screening
+        - Critical — 86% FY2025 revenue under license; revocation is a near-total-loss event
+        - Obtain outside counsel memo on license scope, renewal conditions, and revocation risk under current BIS posture
+      - - CFIUS national security review — foreign investor or customer scrutiny
+        - US Federal (CFIUS / Treasury)
+        - Resolved for current investors — Saudi Aramco withdrawn; G42 China divestiture completed; ongoing monitoring
+        - Medium
+        - High
+        - G42 divested Chinese technology holdings in 2024; CFIUS cleared for current investor structure
+        - Medium-High — future foreign investment or customer transactions may re-trigger CFIUS review
+        - Conduct ongoing third-party counterparty screening on G42 and MBZUAI; verify no undisclosed foreign investors
+      - - AI Executive Order 14110 and BIS AI Diffusion Rule — compute provider compliance
+        - US Federal (NSC / NIST / BIS)
+        - Active — advanced compute providers subject to safety reporting and compliance obligations
         - Medium
         - Medium
-        - Internal compliance program expected; NIST AI RMF adoption by customers
-        - Medium — indirect compliance burden via cloud customers; Cerebras not directly named as frontier model provider
-        - Confirm compliance posture with management; request documentation of customer contractual compliance flow-down
-      - - CHIPS Act Section 9002 guardrails (China expansion restrictions)
-        - US Federal (Commerce)
-        - Active — applies to CHIPS Act beneficiaries for 10 years from funding
-        - Low
-        - Medium
-        - Cerebras not a confirmed CHIPS Act beneficiary; TSMC has separate obligations
-        - Low — Cerebras is unlikely to simultaneously accept CHIPS grants and expand Chinese manufacturing
-        - Confirm whether Cerebras or its foundry partners have any CHIPS Act funding with associated guardrails
-      - - IP and trade-secret litigation risk (wafer-scale chip design)
-        - US Federal (PTAB/District Courts)
-        - Latent — no confirmed litigation as of May 2026; Nvidia holds 10,000+ semiconductor patents
+        - Internal compliance program expected; NIST AI RMF adoption by enterprise customers provides indirect coverage
+        - Medium — indirect compliance burden through customers; Cerebras is not a frontier model developer but serves them
+        - Confirm AI EO compliance posture with management; request any NIST AI RMF documentation or flow-down clauses
+      - - IP and trade-secret litigation risk — semiconductor patent landscape
+        - US Federal (PTAB / District Courts)
+        - Latent — no confirmed litigation as of May 2026; NVIDIA holds 10,000+ semiconductor patents
         - Low-Medium
         - High
-        - Novel wafer-scale architecture may limit prior-art overlap; Cerebras has own patent filings
-        - Medium — absence of current litigation does not preclude future assertion as Cerebras scales commercially
+        - Novel wafer-scale architecture may reduce prior-art overlap; Cerebras has own patent portfolio
+        - Medium — absence of current litigation does not preclude future assertion as Cerebras gains market share
         - Obtain FTO opinion from IP counsel covering WSE-3 key design elements; review S-1/A patent risk disclosures
-      - - G42 partnership OFAC and BIS counterparty screening
-        - US Federal (OFAC/BIS)
-        - Resolved for civil transactions — G42 divested China holdings; ongoing monitoring required
+      - - G42 OFAC and BIS counterparty screening — prior Chinese technology ties
+        - US Federal (OFAC / BIS / CFIUS)
+        - Resolved for current civil transactions — G42 divested China holdings; ongoing monitoring required
         - Low-Medium
         - High
-        - G42 divested Chinese investments in 2024; Microsoft US government approval obtained
-        - Medium-High — G42's history complicates Cerebras sales to US government and defense agencies regardless of OFAC status
-        - Conduct recurring third-party counterparty screening on G42 and MBZUAI; verify export license includes MBZUAI; assess US government customer suitability impact
-      - - FTC AI compute concentration review
-        - US Federal (FTC)
-        - Monitoring — FTC named Nvidia/Microsoft/Amazon/Google but not Cerebras
-        - Low
-        - Low-Medium
-        - Cerebras below scale threshold currently attracting FTC attention
-        - Low — near-term risk is minimal; becomes material if Cerebras reaches significant market share
-        - Monitor FTC enforcement actions and orders for AI compute; flag if Cerebras is named in any inquiry
-    notes: null
+        - G42 divested Chinese investments in 2024; Microsoft US government approval obtained; compliance program active
+        - Medium-High — G42 history complicates Cerebras sales to US government and defense regardless of current OFAC status
+        - Conduct recurring third-party counterparty screening on G42; assess US government customer suitability impact
+    notes: >-
+      Severity and likelihood are qualitative assessments derived from BIS regulatory text, Cerebras S-1/A risk factor
+      disclosures, and news reporting through May 2026. No court-assessed damages or formal regulatory determinations
+      underlie these estimates; they represent analyst-constructed risk registers from publicly available information.
     claimRefs:
-      - CR001
-      - CR002
-      - CR003
       - CR004
       - CR005
       - CR006
       - CR007
       - CR008
       - CR009
-      - CR022
+      - CR010
+      - CR023
+      - CR038
+      - CR042
   - id: TR002
     title: Operational / quality / security risk register
     columns:
       - Failure Mode
+      - Category
       - Likelihood
       - Severity
       - Mitigation Maturity
       - Residual Exposure
       - Unresolved Gap
     rows:
-      - - TSMC sole-source manufacturing disruption (Taiwan Strait conflict or natural disaster)
-        - Medium-Low (scenario probability; tail risk)
-        - Critical — production halt with no 12-month recovery path
-        - Very Low — no alternative foundry; no secondary qualification underway
-        - Critical — binary exposure; if TSMC is disrupted Cerebras has zero production capability
+      - - TSMC sole-source manufacturing disruption — Taiwan Strait conflict or production failure
+        - Supply Chain
+        - Low-Medium (tail risk; scenario probability)
+        - Critical — production halt with no 12-24 month recovery path possible
+        - Very Low — no alternative foundry; no disclosed secondary qualification underway
+        - Critical — binary dependency; TSMC disruption is existential for hardware supply
         - No disclosed business continuity plan for TSMC disruption; no secondary foundry qualification evidence
-      - - WSE-3 wafer yield degradation (defect density increase at TSMC)
-        - Medium — single-die per wafer amplifies every defect
-        - High — yield decline directly raises per-unit cost and constrains supply
-        - Low — few disclosed yield monitoring or improvement programs visible publicly
-        - High — yield risk is intrinsic to wafer-scale architecture; not eliminable
+      - - WSE-3 wafer yield degradation — defect density increase or TSMC process change
+        - Production Quality
+        - Medium — single-die-per-wafer design amplifies every defect
+        - High — yield decline directly raises per-unit cost and constrains chip supply
+        - Low — defect-tolerant routing is the primary mitigation; no disclosed yield monitoring program
+        - High — yield risk is intrinsic to wafer-scale architecture and cannot be fully eliminated
         - Yield rates and improvement trends not disclosed; investors have no visibility into production cost trajectory
-      - - CS-3 thermal and power incompatibility with enterprise data centers
-        - High — majority of enterprise DCs are air-cooled
-        - Medium — restricts on-prem addressable market; not an outage risk
-        - Medium — Cerebras Inference cloud service provides a workaround for non-conforming DCs
-        - Medium — on-prem hardware sales remain structurally limited; cloud offset depends on CoreWeave reliability
-        - No public disclosure of what fraction of target enterprise accounts have liquid cooling infrastructure
-      - - SK Hynix HBM supply disruption for MemoryX
-        - Low — multiple HBM suppliers exist
-        - Medium — would delay MemoryX shipments and force re-qualification with Samsung or Micron
-        - Low — no confirmed Samsung/Micron HBM qualification program visible
-        - Medium — MemoryX is a key differentiator for large-scale training; HBM supply disruption impairs this product line
-        - HBM supplier qualification status not publicly disclosed
-      - - Cloud security incident or data breach on Cerebras Inference
-        - Low-Medium — cloud AI infrastructure is a growing attack target
-        - High — breach of sensitive customer AI workloads damages trust with pharma and government customers
-        - Medium — SOC 2 claim exists but no public audit details; CISA AI guidelines provide framework
-        - Medium — unverified SOC 2 scope and incident response capabilities remain a gap for regulated-sector sales
-        - No public SOC 2 Type II audit report; no disclosed incident response or business continuity documentation
+      - - CS-3 thermal and power incompatibility with enterprise air-cooled data centers
+        - Deployment Constraint
+        - High — majority of enterprise data centers are air-cooled standard facilities
+        - Medium — restricts on-premises addressable market; not an operational outage risk
+        - Medium — Cerebras cloud inference service provides a software workaround for non-conforming facilities
+        - Medium — on-premises hardware sales structurally limited; cloud offset depends on execution
+        - No public disclosure of target enterprise accounts with liquid cooling as a fraction of total TAM
+      - - Cybersecurity incident or data breach on Cerebras cloud inference infrastructure
+        - Cloud Security
+        - Low-Medium — cloud AI infrastructure is a growing attack surface and high-value target
+        - High — breach of sensitive customer AI workloads impairs trust with pharma and government customers
+        - Low — no public SOC 2 Type II audit report; no disclosed incident response or BCP documentation
+        - Medium — absence of verified security posture creates sales objections in regulated-sector accounts
+        - No public SOC 2 Type II audit; no disclosed incident response timeline or security certification scope
     notes: >-
-      Likelihood and severity are qualitative assessments derived from public technical specifications, industry
-      reporting, and the Cerebras S-1/A. No proprietary data was used.
+      Likelihood and severity are qualitative assessments derived from Cerebras S-1/A risk factor disclosures,
+      public technical specifications for the WSE-3 and CS-3, and analyst reporting through May 2026.
+      No proprietary operational data was used in constructing this register.
     claimRefs:
       - CR011
       - CR012
@@ -1728,161 +1768,141 @@ tables:
       - CR015
       - CR016
       - CR017
-      - CR018
-      - CR019
-      - CR020
   - id: TR003
     title: Partner / dependency risk register
     columns:
-      - Dependency
       - Counterparty
-      - Role
-      - Concentration
-      - Failure Scenario
-      - Severity
+      - Role(s)
+      - Revenue Exposure
+      - Risk Type
       - Mitigation
       - Residual Exposure
     rows:
-      - - TSMC wafer manufacturing
-        - Taiwan Semiconductor Manufacturing Company
-        - Sole foundry for all WSE chip production
-        - Complete — no alternative exists
-        - Taiwan Strait disruption or TSMC capacity reallocation halts all production
-        - Critical
-        - None — no alternative foundry; geopolitical monitoring only
-        - Critical — binary production dependency with no backup
-      - - MBZUAI revenue concentration
-        - Mohamed bin Zayed University of AI
-        - Largest single customer at approximately 62% of FY2025 revenue
-        - Very High — single customer above 50% threshold
-        - MBZUAI training program completion without follow-on purchase creates revenue cliff
-        - Critical
-        - OpenAI MRA ramp intended to diversify; BIS license maintained
-        - High — single-customer risk exceeds institutional investor thesis-break thresholds
-      - - CoreWeave cloud infrastructure
-        - CoreWeave
-        - Primary cloud delivery partner for Cerebras Inference service
-        - High — Cerebras Inference depends on CoreWeave capacity and pricing
-        - CoreWeave capacity constraint, pricing change, or relationship termination disrupts cloud service
-        - High
-        - Cerebras could pursue alternative cloud partnerships but re-platforming is costly and time-consuming
-        - High — no disclosed SLA, pricing floor, or exit clause with CoreWeave; dependency unmitigated publicly
-      - - G42 revenue and export compliance
-        - G42
-        - Second-largest customer at approximately 24% of FY2025 revenue; UAE-licensed sale
-        - High — 24% concentration plus export license dependency
-        - US export license revocation or G42 reputational event impairs this revenue stream and future sales
-        - High
-        - BIS license obtained; G42 divested China holdings in 2024; ongoing compliance monitoring
-        - Medium-High — mitigations exist but geopolitical risk is structurally unresolvable
-      - - OpenAI master revenue agreement
-        - OpenAI
-        - Largest prospective US domestic customer under $20B+ MRA signed December 2025
-        - Medium-Growing — execution ramp not yet reflected in recognized revenue
-        - OpenAI delays capacity ramp, modifies commitment terms, or changes inference architecture
-        - High (upside optionality; failure scenario is loss of diversification thesis)
-        - MRA is signed; $1B working capital facility provides alignment incentive
-        - Medium — MRA execution risk is the key watch item for revenue diversification thesis
+      - - MBZUAI and G42 (UAE sovereign entities)
+        - Top 2 hardware customers
+        - ~86% FY2025 ($440M of $510M)
+        - Revenue concentration plus export license dependency
+        - AWS and OpenAI MRA diversification in progress; BIS compliance program active
+        - Critical — no near-term revenue substitute; simultaneous license revocation is catastrophic
+      - - OpenAI (customer plus lender plus MRA anchor)
+        - Production customer, $1B working-capital lender, $20B+ MRA holder
+        - ~$21B+ notional MRA; $1B loan principal
+        - Counterparty concentration — triple-role dependency
+        - Long-term MRA commitment; working capital buffer provided by loan itself
+        - High — adversarial relationship would impair revenue, capital, and reference customer status simultaneously
+      - - TSMC (sole chip foundry)
+        - Only qualified manufacturer of WSE-3 chips
+        - 100% of chip supply
+        - Supply chain single point of failure
+        - Long-standing relationship; presumed priority customer allocation
+        - Critical — no backup foundry; Taiwan geopolitical scenario is binary production-halt risk
+      - - AWS (distribution channel partner)
+        - Enterprise channel distributor — binding term sheet, not yet signed commercial agreement
+        - ~0% current revenue; future revenue potential
+        - Channel dependency — risk if term sheet does not convert to commercial agreement
+        - Binding term sheet provides legal framework; AWS has strong enterprise distribution
+        - Medium — if term sheet fails to close, primary US enterprise diversification channel is lost
     notes: >-
-      Revenue concentration percentages sourced from Cerebras S-1/A FY2025 disclosures. OpenAI MRA notional value
-      sourced from BusinessWire announcement December 2025. All severity assessments are analyst estimates.
+      Revenue exposure percentages are from Cerebras S-1/A FY2025 disclosures. OpenAI MRA notional value is from
+      official OpenAI and Cerebras announcements (December 2025). Severity assessments are analyst estimates based
+      on public information; actual contractual terms have not been publicly disclosed.
     claimRefs:
-      - CR023
-      - CR024
-      - CR025
-      - CR026
-      - CR029
-      - CR031
+      - CR018
+      - CR019
+      - CR020
+      - CR021
+      - CR022
+      - CR036
+      - CR039
   - id: TR004
     title: People / execution risk register
     columns:
-      - Role/Function
-      - Dependency or Gap
-      - Likelihood
+      - Role or Function
+      - Key Dependency or Gap
+      - Likelihood of Loss
       - Severity
       - Mitigation
       - Diligence Path
     rows:
-      - - CEO (Andrew Feldman)
+      - - CEO Andrew Feldman
         - Strategic vision, investor relationships, and key customer relationships substantially tied to founder-CEO
-        - Low-Medium — no public succession signal; founder is company face
-        - High — departure would impair investor confidence and sales pipeline simultaneously
-        - No publicly disclosed succession plan; management team broadening not confirmed
-        - Request board-level succession plan; assess management team depth in CFO, CRO, CTO roles
-      - - Senior chip design architects (WSE program)
-        - Wafer-scale design expertise concentrated in small team with specialized 3D floorplanning skills
-        - Low — competitive pay assumed; departure risk elevated if IPO delayed
-        - High — CS-4 program delay of 12-18 months possible if key architects depart
-        - Retention equity vesting presumably accelerated by IPO; competitive comp assumed but not disclosed
-        - Request management team org chart and key-person retention terms; assess CS-4 milestone dependencies on named individuals
-      - - Enterprise and government sales execution
-        - 6-18 month sales cycles create revenue lumpiness and pipeline opacity in quarterly reporting
-        - High — long cycles are structural, not addressable with headcount alone
-        - Medium — quarterly revenue variance is high; misses create outsized investor reaction risk post-IPO
-        - Backlog scheduling in S-1/A provides partial visibility; relationship-led sales reduce churn risk
-        - Request pipeline coverage ratio, weighted-average deal stage, and contract backlog by customer segment
-      - - Commercial pharma customer conversion (GSK, AstraZeneca)
-        - AI drug discovery proof-of-value timelines are multi-year; conversion from pilot to production not guaranteed
-        - Medium — pharma AI adoption is early-stage; drug discovery ROI takes years to confirm
-        - Medium — commercial pharma is higher-margin but slow-converting; margin mix depends on conversion rate
-        - Existing GSK and AstraZeneca deployments provide beachhead; multi-year relationship signals intent
-        - Request renewal and expansion terms with GSK/AstraZeneca; assess whether drug discovery AI outcomes have been demonstrated
+        - Low-Medium — no public succession signal; founder is company face and IPO architect
+        - High — departure would impair investor confidence, sales pipeline, and board stability simultaneously
+        - No publicly disclosed succession plan; management team broadening status unknown
+        - Request board-level succession plan; assess management team depth in CFO, CRO, and CTO roles
+      - - Senior chip design architects — WSE program team
+        - Wafer-scale design expertise concentrated in small specialist team; CS-4 program depends on these individuals
+        - Low — competitive equity pay assumed; departure risk elevated post-IPO lockup expiry
+        - High — CS-4 program delay of 12-18 months possible if key architects depart; no external talent market
+        - Retention equity assumed vesting accelerated by IPO; competitive compensation but terms not disclosed
+        - Request management org chart and key-person retention terms; assess CS-4 milestone dependencies
+      - - Founder dual-class voting control
+        - 99.2% founder voting power via Class B shares gives founders unchecked governance authority
+        - Structural — not a departure risk but a permanent governance constraint
+        - Medium — minority shareholders cannot vote out management or block capital structure changes
+        - Standard dual-class governance; market norms for founder-led technology companies apply
+        - Review board composition, independent director independence, and any contractual investor protections
     notes: >-
-      Likelihood and severity are qualitative assessments derived from public information and industry norms.
-      Management team succession and retention information is not publicly disclosed.
+      Key-person designations are per S-1/A risk factor disclosures. Voting control percentages are based on dual-class
+      share structure at IPO as publicly disclosed. Likelihood and severity are qualitative assessments from public
+      information; management succession and retention terms are not publicly disclosed.
     claimRefs:
+      - CR030
+      - CR031
       - CR032
-      - CR033
-      - CR034
-      - CR035
-  - id: TR005
-    title: Mitigation and kill criteria table
-    columns:
-      - Risk
-      - Monitorable Trigger
-      - Threshold/Event
-      - Action Implication
-    rows:
-      - - BIS export license revocation for UAE entities
-        - BIS enforcement actions against UAE advanced AI chip exports; G42/MBZUAI Entity List additions
-        - Any BIS revocation, suspension, or denial of Cerebras UAE export licenses
-        - Immediate thesis break — greater than 80% revenue at risk; reassess investment at current valuation
-      - - TSMC manufacturing disruption
-        - Taiwan Strait geopolitical escalation indicators; TSMC force majeure disclosures; TSMC guidance cuts
-        - Any confirmed TSMC production disruption affecting Cerebras wafer commitments
-        - Immediate thesis break — production halt with no recovery path; full write-down scenario warranted
-      - - MBZUAI demand cliff (program end without follow-on)
-        - MBZUAI press releases; Cerebras Q-filings showing revenue from largest customer; any MBZUAI procurement pause
-        - MBZUAI revenue falls below 30% of total revenue without OpenAI revenue offsetting decline
-        - Material watch event — revenue model must be rebuilt; monitor OpenAI ramp timing as offset
-      - - Failure to diversify UAE revenue concentration
-        - Cerebras quarterly filings; OpenAI MRA deployment milestones; new customer announcements
-        - UAE revenue share remains above 70% of total revenue through year-end 2026
-        - Elevated concern — diversification thesis not executing; re-underwrite export control scenario at higher probability
-      - - IP litigation initiation by major semiconductor company
-        - USPTO patent filings directed at wafer-scale chip design; litigation filings on CourtListener; press reports
-        - Any confirmed IP lawsuit filed against Cerebras by Nvidia, Intel, AMD, or comparable patent holder
-        - Material watch event — scope and likelihood of damages must be assessed; FTO opinion should be sought if not already obtained
-      - - Gross margin compression below 40%
-        - Cerebras public filings post-IPO; gross margin disclosures; competitive hardware pricing pressure
-        - Reported hardware gross margin falls below 40% or blended gross margin falls below 45%
-        - Elevated concern — business model viability compresses; software/cloud mix insufficient to offset hardware dilution
-    notes: >-
-      Triggers and thresholds are analyst-derived based on disclosed financial data and industry risk frameworks.
-      Cerebras has not publicly defined any kill criteria; these are proposed investor monitoring thresholds.
-    claimRefs:
-      - CR040
       - CR041
+  - id: TR005
+    title: Mitigation and kill-criteria table
+    columns:
+      - Risk Area
+      - Mitigation in Place
+      - Monitoring Indicator
+      - Thesis-Break Trigger
+      - Diligence Ask
+    rows:
+      - - BIS and EAR export controls — UAE chip sales
+        - Active BIS license; compliance program; G42 China divestiture completed
+        - License renewal dates; BIS rule updates; MBZUAI and G42 Entity List status
+        - BIS revokes UAE export license or adds MBZUAI or G42 to Entity List
+        - Provide copies of current BIS licenses and renewal conditions; outside counsel FTO memo
+      - - TSMC sole-source manufacturing disruption
+        - Long-standing TSMC customer relationship; presumed priority capacity allocation
+        - Taiwan Strait geopolitical indicators; TSMC force majeure disclosures; lead-time changes
+        - Any confirmed TSMC production disruption affecting Cerebras wafer commitments
+        - Provide TSMC fabrication agreement summary; confirm capacity allocation and priority status
+      - - UAE revenue concentration exceeding 80% of total
+        - OpenAI MRA ramp; AWS term sheet for enterprise channel; cloud inference growth
+        - Non-UAE quarterly revenue share; OpenAI MRA deployment milestones; new customer announcements
+        - UAE revenue share remains above 70% through year-end 2026 with no offsetting revenue growth
+        - Provide quarterly revenue split by customer geography; OpenAI infrastructure buildout timeline
+      - - OpenAI multi-role dependency — customer, lender, and MRA anchor
+        - MRA long-term commitment provides alignment; working capital loan demonstrates OpenAI investment
+        - OpenAI capex signals; public statements on inference strategy; loan covenant compliance
+        - OpenAI terminates MRA, triggers loan recall for technical breach, or announces custom silicon
+        - Confirm MRA conditionality terms and loan covenant details; cross-default provisions
+      - - Key-person and talent concentration — CEO and chip architects
+        - Equity incentives post-IPO; specialized compensation for engineering team assumed
+        - CEO departure news; CS-4 program milestone delays; engineering leadership headcount changes
+        - Andrew Feldman departure without disclosed succession plan or CS-4 program delay of 6+ months
+        - Provide organizational depth chart; CEO succession plan; key-person retention terms and vesting
+    notes: >-
+      Triggers and monitoring thresholds are analyst-derived from S-1/A risk factor disclosures and industry
+      risk frameworks. Cerebras has not publicly defined any monitoring thresholds or thesis-break events;
+      these are proposed investor monitoring thresholds constructed for diligence and portfolio monitoring.
+    claimRefs:
+      - CR033
+      - CR035
+      - CR036
+      - CR039
       - CR042
-      - CR043
-      - CR044
 figures:
   - id: FR001
     title: Risk heatmap
     type: matrix
+    layout: wide
     summary: >-
-      Cerebras' highest residual risks cluster in the TSMC manufacturing and UAE export control quadrants; financial
-      model and IP risks are material but carry meaningfully more mitigation than the top two.
+      Cerebras highest-severity residual risks cluster in the export-control and manufacturing-dependency
+      quadrants; financial model and governance risks are material but carry more mitigation headroom.
     data:
       columns:
         - Likelihood
@@ -1890,242 +1910,300 @@ figures:
         - Mitigation Maturity
         - Residual Exposure
       rows:
-        - label: UAE export license (BIS) revocation
+        - label: BIS/EAR export license revocation — UAE entities
           values:
-            - Medium-High
+            - High
             - Critical
             - Medium
-            - High-Critical
+            - Critical
         - label: TSMC sole-source manufacturing disruption
           values:
             - Low-Medium
             - Critical
             - Very Low
             - Critical
-        - label: MBZUAI demand cliff at 62% revenue
+        - label: UAE revenue concentration — MBZUAI and G42 at 86%
           values:
-            - Medium
+            - High
             - Critical
             - Low-Medium
+            - High
+        - label: OpenAI triple-role counterparty concentration
+          values:
+            - Low-Medium
+            - High
+            - Low
+            - High
+        - label: WSE-3 wafer yield degradation or TSMC process change
+          values:
+            - Medium
+            - High
+            - Low
             - High
         - label: IP litigation from semiconductor patent holders
           values:
             - Low-Medium
             - High
             - Low
-            - Medium-High
-        - label: CoreWeave cloud dependency repricing
-          values:
             - Medium
-            - High
-            - Low
-            - Medium-High
-        - label: WSE yield degradation
-          values:
-            - Medium
-            - High
-            - Low
-            - High
-        - label: CEO concentration and leadership dependency
+        - label: CEO Andrew Feldman key-person departure
           values:
             - Low-Medium
             - High
+            - Very Low
+            - Medium
+        - label: IPO valuation multiple compression at 196x revenue
+          values:
+            - Medium
+            - High
+            - None
+            - High
+        - label: Taiwan Strait geopolitical conflict — TSMC disruption scenario
+          values:
+            - Low
+            - Critical
+            - None
+            - High
+        - label: Founder dual-class governance — 99.2% voting control
+          values:
+            - Certain
+            - Medium
             - Low
             - Medium
     approximationNotes: >-
-      Likelihood and impact are qualitative ordinal assessments derived from public evidence; this heatmap ranks
-      residual exposure rather than generating precise probability estimates.
+      Likelihood and impact are qualitative ordinal assessments derived from public evidence; this heatmap
+      ranks residual exposure rather than generating precise probability estimates. Mitigation maturity
+      reflects publicly disclosed programs only; private or internal mitigations are unknown.
     claimRefs:
       - CR001
       - CR003
+      - CR006
       - CR011
-      - CR012
-      - CR013
-      - CR024
-      - CR025
-      - CR032
-      - CR039
-      - CR040
+      - CR016
+      - CR022
+      - CR030
+      - CR031
+      - CR042
+      - CR046
   - id: FR002
     title: Risk transmission map
     type: dag
+    layout: wide
     summary: >-
-      Cerebras' risks transmit through three primary channels — export control, manufacturing dependency, and customer
-      concentration — all of which converge on revenue, then cascade into financing need and valuation.
+      Risk events at the regulatory and manufacturing layer transmit through revenue collapse and
+      capital stress to converge on valuation downside; OpenAI counterparty risk spans multiple
+      transmission channels simultaneously.
     data:
       nodes:
-        - id: export-control
-          label: BIS export control risk
-          tone: warning
+        - id: bis-rule-change
+          label: BIS/EAR Rule Tightening
+          tone: negative
         - id: tsmc-disruption
-          label: TSMC sole-source disruption
+          label: TSMC Manufacturing Disruption
           tone: negative
-        - id: customer-concentration
-          label: UAE customer concentration
+        - id: uae-prohibition
+          label: UAE Customer Prohibition
           tone: negative
-        - id: ip-litigation
-          label: IP litigation exposure
+        - id: zero-chip-supply
+          label: Zero WSE-3 Supply
+          tone: negative
+        - id: revenue-collapse
+          label: Revenue Collapse
+          tone: negative
+        - id: openai-loan-stress
+          label: OpenAI Loan Covenant Stress
           tone: warning
-        - id: revenue
-          label: Revenue
+        - id: wse-yield-failure
+          label: WSE-3 Yield Failure
           tone: warning
-        - id: margin
-          label: Gross margin compression
-          tone: negative
-        - id: financing
-          label: Financing need
-          tone: negative
-        - id: customer-trust
-          label: Customer and partner trust
-          tone: warning
-        - id: valuation
-          label: Valuation risk
+        - id: valuation-downside
+          label: Valuation Compression
           tone: negative
       edges:
-        - from: export-control
-          to: revenue
+        - from: bis-rule-change
+          to: uae-prohibition
+          label: prohibits UAE chip sales
+        - from: uae-prohibition
+          to: revenue-collapse
+          label: eliminates 86% revenue
         - from: tsmc-disruption
-          to: revenue
-        - from: customer-concentration
-          to: revenue
-        - from: ip-litigation
-          to: customer-trust
-        - from: ip-litigation
-          to: financing
-        - from: export-control
-          to: customer-trust
-        - from: revenue
-          to: financing
-        - from: margin
-          to: financing
-        - from: financing
-          to: valuation
-        - from: revenue
-          to: valuation
-        - from: customer-trust
-          to: valuation
+          to: zero-chip-supply
+          label: halts all fabrication
+        - from: zero-chip-supply
+          to: revenue-collapse
+          label: no product to deliver
+        - from: revenue-collapse
+          to: openai-loan-stress
+          label: may breach covenants
+        - from: wse-yield-failure
+          to: zero-chip-supply
+          label: depletes inventory
+        - from: bis-rule-change
+          to: revenue-collapse
+          label: direct revenue impairment
+        - from: revenue-collapse
+          to: valuation-downside
+          label: multiple compression
+        - from: openai-loan-stress
+          to: valuation-downside
+          label: adversarial debt scenario
     approximationNotes: >-
-      This transmission map is qualitative and directional; edge weights are not modeled. The goal is to identify
-      which root risks cascade through the most downstream nodes.
+      Transmission map is qualitative and directional; edge weights and probability magnitudes are not modeled.
+      The goal is to identify which root risks cascade through the most downstream nodes and converge on
+      the same financial outcomes.
     claimRefs:
-      - CR001
+      - CR004
       - CR011
-      - CR012
-      - CR024
-      - CR025
-      - CR037
-      - CR038
-      - CR039
-      - CR040
+      - CR013
+      - CR015
+      - CR019
+      - CR023
+      - CR042
   - id: FR003
     title: Dependency map
     type: dag
+    layout: wide
     summary: >-
-      Cerebras' critical dependencies are concentrated in three nodes — TSMC for manufacturing, UAE sovereign entities
-      for revenue, and CoreWeave for cloud delivery — with secondary dependencies on OpenAI, SK Hynix, and BIS
-      regulatory approvals.
+      Cerebras depends on TSMC for all chip production, two UAE sovereign customers for 86% of
+      revenue, OpenAI in three simultaneous roles, and BIS licensing for the legality of all UAE
+      hardware sales.
     data:
       nodes:
         - id: cerebras
-          label: Cerebras Systems operating core
+          label: Cerebras Systems
           tone: neutral
         - id: tsmc
-          label: TSMC (sole foundry)
+          label: TSMC (sole WSE-3 foundry)
           tone: negative
         - id: mbzuai
-          label: MBZUAI (62% revenue)
+          label: MBZUAI (62% FY2025 revenue)
           tone: warning
         - id: g42
-          label: G42 (24% revenue)
-          tone: warning
-        - id: coreweave
-          label: CoreWeave (cloud infra)
-          tone: warning
-        - id: bis
-          label: BIS export licensing
+          label: G42 (24% FY2025 revenue)
           tone: warning
         - id: openai
-          label: OpenAI (MRA ramp)
-          tone: neutral
-        - id: skhynix
-          label: SK Hynix (HBM supply)
+          label: OpenAI (customer and lender and MRA)
           tone: warning
-        - id: production
-          label: Chip production
-          tone: negative
-        - id: revenue-node
-          label: Revenue base
+        - id: aws
+          label: AWS (channel partner, pending)
+          tone: neutral
+        - id: bis
+          label: US BIS Government
+          tone: warning
+        - id: uae-gov
+          label: UAE Sovereign Oversight
           tone: warning
       edges:
         - from: tsmc
-          to: production
-        - from: skhynix
-          to: production
-        - from: production
           to: cerebras
-        - from: bis
+          label: sole WSE-3 fabrication
+        - from: cerebras
           to: mbzuai
-        - from: bis
+          label: CS-3 hardware (62% rev)
+        - from: cerebras
           to: g42
-        - from: mbzuai
-          to: revenue-node
-        - from: g42
-          to: revenue-node
-        - from: openai
-          to: revenue-node
-        - from: coreweave
-          to: cerebras
-        - from: revenue-node
-          to: cerebras
-        - from: production
-          to: revenue-node
+          label: CS-3 hardware (24% rev)
         - from: cerebras
           to: openai
+          label: inference services
+        - from: openai
+          to: cerebras
+          label: $1B working capital loan
+        - from: cerebras
+          to: aws
+          label: inference capacity (pending)
         - from: bis
           to: cerebras
+          label: export compliance requirement
+        - from: bis
+          to: mbzuai
+          label: export license required
+        - from: bis
+          to: g42
+          label: export license required
+        - from: uae-gov
+          to: mbzuai
+          label: sovereign mandate
     approximationNotes: >-
-      The dependency map is directional and qualitative; edges represent material operational or revenue dependencies,
-      not contractual obligations. BIS is shown as upstream of UAE customer nodes to reflect the export license
-      dependency structure.
+      Dependency map is directional and qualitative; edges represent material operational or revenue
+      dependencies, not contractual obligations. BIS is shown upstream of UAE customer nodes to reflect
+      the export license dependency structure governing all hardware sales to UAE entities.
     claimRefs:
       - CR011
+      - CR018
+      - CR022
       - CR023
-      - CR024
-      - CR025
-      - CR029
-      - CR031
+      - CR033
+      - CR036
 callouts:
   - calloutType: risk
-    title: UAE export license dependency is a near-total-loss scenario
+    title: UAE export license is a single-event total-loss scenario
     body: >-
-      Approximately 86% of Cerebras' FY2025 revenue was generated from UAE entities under BIS export licenses. Any
-      revocation or denial of those licenses — triggered by escalating US-China tensions, changes in G42 counterparty
-      status, or BIS rule updates — would immediately impair more than four-fifths of the revenue base with no
-      near-term substitution path.
+      Approximately 86% of Cerebras FY2025 revenue originated from UAE entities under active BIS export
+      licenses. Any revocation, suspension, or denial of those licenses, triggered by geopolitical shifts,
+      G42 counterparty status changes, or BIS rule tightening, would immediately impair more than
+      four-fifths of the revenue base. Unlike most concentration risks, this scenario has no near-term
+      revenue substitute and no grace period for transition planning.
     claimRefs:
-      - CR003
-      - CR024
-      - CR040
+      - CR002
+      - CR006
+      - CR022
+      - CR023
   - calloutType: risk
-    title: TSMC dependency has no mitigant — this is a structural binary risk
+    title: TSMC dependency is structural and non-mitigable in the near term
     body: >-
-      TSMC is the only foundry in the world capable of producing WSE-scale chips. Unlike most supply chain
-      concentration risks that carry mitigation options, Cerebras' TSMC dependency cannot be diversified away in
-      any commercially realistic timeframe. A Taiwan Strait disruption would halt production entirely and
-      permanently with no recovery within a typical investment horizon.
+      TSMC is the only foundry in the world capable of producing WSE-scale chips. Unlike most supply
+      chain concentration risks that carry theoretical mitigation options such as dual-sourcing or
+      inventory buffers, Cerebras TSMC dependency cannot be diversified away in any commercially
+      realistic timeframe. A Taiwan Strait disruption would halt production entirely and permanently
+      with no recovery path within a typical investment horizon.
     claimRefs:
       - CR011
-      - CR012
-      - CR019
+      - CR015
+      - CR016
   - calloutType: insight
-    title: Kill criteria must be constructed by investors — Cerebras has not defined them
+    title: OpenAI triple-role position is both the thesis and the primary counterparty risk
     body: >-
-      Cerebras has not publicly disclosed any monitorable kill criteria, thesis-break triggers, or investor
-      monitoring thresholds. This chapter's derived trigger set — export license revocation, TSMC disruption,
-      MBZUAI demand cliff, failed revenue diversification, and IP litigation — represents the minimum monitoring
-      framework an investor should build and propose to management during due diligence.
+      OpenAI serves simultaneously as Cerebras production reference customer, $1B working-capital
+      lender, and $20B+ MRA revenue anchor. This is the thesis for revenue diversification away from
+      UAE concentration, and it is also the single largest counterparty risk in the capital structure.
+      If OpenAI role deteriorates for any reason, Cerebras loses the diversification thesis, the
+      financial backstop, and the reference customer simultaneously.
     claimRefs:
-      - CR041
-      - CR042
-      - CR043
-      - CR044
+      - CR018
+      - CR019
+      - CR039
+  - calloutType: assumption
+    title: Monitoring thresholds are analyst-derived — Cerebras has not publicly defined them
+    body: >-
+      Cerebras has not publicly disclosed any monitorable thesis-break triggers or investor monitoring
+      thresholds. The trigger set in this chapter, including export license revocation, TSMC disruption,
+      UAE concentration above 70% through year-end 2026, OpenAI loan recall, and CEO departure,
+      represents the minimum monitoring framework investors should build and propose to management
+      during private due diligence access.
+    claimRefs:
+      - CR035
+  - calloutType: strength
+    title: AWS term sheet and OpenAI MRA provide credible diversification on-ramps
+    body: >-
+      The AWS binding term sheet (March 2026) and OpenAI Master Revenue Agreement ($20B+ notional)
+      are the two most credible near-term diversification catalysts. If AWS executes as a live
+      Marketplace listing and OpenAI 750MW infrastructure buildout proceeds on schedule, Cerebras
+      could exit 2026 with non-UAE revenue above 20% of total, materially reducing the export-control
+      single-point-of-failure risk. These remain execution-dependent, but the contractual frameworks
+      are in place.
+    claimRefs:
+      - CR036
+      - CR039
+  - calloutType: recommendation
+    title: Minimum diligence asks before underwriting at current valuation
+    body: >-
+      Institutional investors should require the following before underwriting Cerebras at a valuation
+      exceeding $100 billion: (1) copies of current BIS export licenses and renewal conditions for UAE
+      shipments; (2) OpenAI MRA conditionality terms and loan covenant details including cross-default
+      provisions; (3) quarterly non-UAE revenue split for the past four quarters; (4) TSMC fabrication
+      agreement capacity and priority terms; and (5) an organizational depth chart with CEO succession
+      plan. Absence of any of these represents a material information asymmetry.
+    claimRefs:
+      - CR033
+      - CR035
