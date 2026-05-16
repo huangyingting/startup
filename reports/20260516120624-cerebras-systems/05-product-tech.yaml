@@ -1,1349 +1,1758 @@
-schemaVersion: "report-v2"
-artifact: "product-tech"
-slug: "cerebras-systems"
-runDate: "2026-05-16"
+schemaVersion: report-v2
+artifact: product-tech
+slug: cerebras-systems
+runDate: '2026-05-16'
 company:
-  name: "Cerebras Systems"
+  name: Cerebras Systems
 chapter:
   number: 5
-  title: "Product & Technology"
-  letter: E
+  title: Product and Technology
   summary: >-
-    Cerebras' core product is a vertically integrated AI compute platform built around the WSE-3 wafer-scale
-    engine — the largest commercial chip ever produced, at 46,225 mm², 4 trillion transistors, 900,000 AI
-    cores, 44 GB on-chip SRAM, and 21 PB/s memory bandwidth on TSMC 5nm. The CS-3 system houses one WSE-3
-    and multiple CS-3 units cluster into supercomputers via SwarmX interconnect. The Cerebras Software
-    Platform (CSoft compiler, Inference Serving Stack, Cluster Manager) provides PyTorch-native access
-    with no CUDA requirement. Inference benchmarks show up to 15x throughput advantage over NVIDIA GPU
-    clusters for large language models. The IP moat is deepened by 96 issued patents covering multi-die
-    interconnect and fault-tolerant wafer-scale fabrication. Structural risks include sole-source
-    dependence on TSMC, extreme packaging complexity, and a software ecosystem narrower than NVIDIA's
-    established CUDA platform.
+    Cerebras Systems delivers the WSE-3 wafer-scale processor (46,225 mm2, 4 trillion transistors,
+    900,000 AI cores, 44 GB on-chip SRAM, 21 PB/s internal bandwidth) packaged in the CS-3 compute
+    system. A PyTorch-native compiler, an OpenAI-compatible inference API, and an open-weight model
+    library complete the product stack. The on-chip SRAM architecture eliminates the HBM memory
+    bottleneck constraining GPU-based LLM inference, enabling 2,100+ tokens per second for Llama 3
+    8B on a single WSE-3, approximately 15 times faster than GPU alternatives for models fitting
+    within 44 GB. Production deployments include OpenAI Codex-Spark and GSK RNA drug discovery.
+    Single-source TSMC 5nm fabrication and BIS/EAR export-control requirements for UAE customers
+    representing 86 percent of FY2025 revenue are the primary product and supply-chain risks.
+    No WSE-4 successor has been publicly announced as of May 2026.
 
 sections:
-  - id: section-E1
-    title: "Core Technology: Wafer-Scale Integration Architecture"
+  - id: wse3-hardware-architecture
+    title: WSE-3 Wafer-Scale Engine Architecture
     body: >-
-      Cerebras Systems' foundational technology is wafer-scale integration (WSI), which solves a 75-year
-      chip-industry problem by treating an entire silicon wafer as a single processor. Conventional chip
-      manufacturing stamps individual die onto a wafer and dices it into small separate chips; GPU clusters
-      must then re-assemble compute and memory through power-hungry networking. Cerebras inverted this:
-      the WSE-3 uses the entire 46,225 mm² of a TSMC 5nm silicon wafer, achieving 4 trillion transistors
-      and 900,000 AI compute cores on a single monolithic die. This eliminates off-chip data movement
-      bottlenecks that dominate GPU latency and power draw. Two proprietary semiconductor inventions made
-      WSI commercially viable: (1) a cross-reticle multi-die interconnect that stitches otherwise
-      independent die regions together at wafer level during fabrication; and (2) a fault-tolerant
-      redundant-core architecture that routes around manufacturing defects, achieving near-perfect
-      production yield despite the enormous die size. The WSE-3's 44 GB of on-chip SRAM and 21 petabytes
-      per second of on-chip memory bandwidth — 2,625 times more than an NVIDIA B200 dual-chip package —
-      directly address the memory-bandwidth bottleneck that limits GPU throughput on transformer models.
-      These architectural advantages are structural and cannot be replicated by simply assembling more GPU
-      chips, because off-chip interconnects between separate GPUs consume power and add latency at
-      orders-of-magnitude greater rates than on-chip interconnects.
-    claimRefs: [CE001, CE002, CE003, CE004, CE005, CE006]
+      The Cerebras WSE-3 (Wafer Scale Engine 3) is the core compute substrate for all Cerebras
+      products. Unlike conventional semiconductor dies that measure 200 to 900 mm2, the WSE-3
+      occupies an entire 300 mm TSMC 5nm wafer, producing a single die with 46,225 mm2 of silicon,
+      which is 58 times larger than the NVIDIA B200 GPU at approximately 814 mm2. This extreme die
+      area enables integration of 4 trillion transistors (19 times the B200), 900,000 AI processing
+      cores, and 44 GB of on-chip SRAM on a single device. The on-chip SRAM delivers 21 petabytes
+      per second (21,000 TB/s) of internal memory bandwidth, approximately 2,625 times the effective
+      bandwidth of the NVIDIA B200 NVL72 cluster at approximately 8 TB/s. This bandwidth advantage
+      is architecturally decisive because large language model inference is fundamentally
+      memory-bandwidth-bound: model weights must traverse the memory interface on every forward pass.
+      On GPU platforms, this creates a bottleneck at the High Bandwidth Memory interface. The WSE-3
+      eliminates this bottleneck by storing all model weights for models up to 44 billion parameters
+      entirely on-chip, enabling deterministically fast token generation with zero off-chip memory
+      traffic. Three chip generations have followed a consistent TSMC process cadence: WSE-1 (16nm,
+      1.2T transistors, 2019), WSE-2 (7nm, 2.6T transistors, 2021), and WSE-3 (5nm, 4T transistors,
+      2023). Each generation delivered approximately 2x transistor density improvement consistent
+      with TSMC node shrink targets and Cerebras biennial release cadence.
+    claimRefs: [CE001, CE002, CE003, CE004, CE005, CE006, CE007, CE008, CE022, CE030, CE035]
     tableRefs: [TE001]
     figureRefs: [FE001]
 
-  - id: section-E2
-    title: "Hardware Platform: WSE-3 and CS-3 System"
+  - id: cs3-system-deployment-architecture
+    title: CS-3 System Design and Deployment Architecture
     body: >-
-      The WSE-3 is the third-generation Cerebras wafer-scale engine, following WSE-1 (16nm) and WSE-2
-      (7nm). Each generation has delivered improvements in transistor count, performance, memory, and
-      energy efficiency. The WSE-3 at 5nm contains 19 times more transistors and 250 times more on-chip
-      memory than the NVIDIA B200 chip. Comparing die areas, the WSE-3 is 58 times larger than the
-      NVIDIA B200 at approximately 800 mm² — the discrepancy reflects the fundamental difference between
-      building one wafer-scale chip versus cutting a wafer into dozens of small chips. The CS-3 is the
-      rack-mounted compute system that houses one WSE-3. It integrates advanced water cooling, proprietary
-      power delivery, and a high-speed interconnect fabric. Multiple CS-3 units connect via SwarmX
-      interconnect modules and MemoryX memory nodes to form Cerebras AI supercomputers with aggregate
-      memory and bandwidth scaling linearly with cluster size. The CS-3 is deployed in customer data
-      centers and in Cerebras' own cloud infrastructure. The system is designed to replace multi-rack GPU
-      clusters for inference and training, with a single CS-3 unit providing compute density equivalent
-      to a large server cluster. Cerebras reports over 100 exaflops of deployed compute globally as of
-      2026, primarily from large cluster installations at MBZUAI and G42 in the UAE.
-    claimRefs: [CE007, CE008, CE009, CE010, CE011]
-    tableRefs: [TE002]
+      The Cerebras CS-3 compute system integrates the WSE-3 chip into a standard two-rack-unit
+      datacenter chassis. The CS-3 is the complete hardware product, encompassing the WSE-3 chip,
+      power delivery, cooling infrastructure, and networking interconnects in a single deliverable
+      unit priced at approximately two to four million dollars per system based on disclosed deal
+      values. No official list price is published. The WSE-3 die dissipates substantially more
+      thermal energy than conventional GPU boards and requires liquid cooling or high-airflow
+      forced-air environments. Customers deploying CS-3 systems must configure data centers
+      accordingly, adding operational overhead relative to standard GPU deployments. For workloads
+      exceeding a single WSE-3 memory capacity (models above approximately 44 billion parameters),
+      Cerebras provides the Cluster Manager, which orchestrates multiple CS-3 systems in a scale-out
+      configuration using standard datacenter networking. The Cluster Manager enables disaggregated
+      inference, distributing model layers across multiple WSE-3 nodes. This is the technical basis
+      for the AWS integration announced via binding term sheet in March 2026, combining CS-3 nodes
+      with AWS Trainium for hybrid disaggregated inference. Critical third-party dependencies include
+      TSMC as sole wafer fabrication supplier and the packaging and chassis supply chain. The S-1/A
+      prominently discloses the single-supplier concentration risk from TSMC dependence as a material
+      risk to hardware revenue continuity.
+    claimRefs: [CE020, CE021, CE023, CE025]
+    tableRefs: [TE003]
     figureRefs: [FE003]
 
-  - id: section-E3
-    title: "Software Stack: Cerebras Software Platform"
+  - id: software-developer-ecosystem
+    title: Software Stack and Developer Ecosystem
     body: >-
-      The Cerebras Software Platform (CSP) is a co-designed software stack spanning the full AI lifecycle
-      from model development to production inference. The Cerebras Compiler (CSoft) translates PyTorch
-      models directly to the WSE-3 hardware, eliminating the need for CUDA or other hardware-specific
-      programming. Developers write standard PyTorch code and invoke a CSoft compilation step that maps
-      tensor operations to the 900,000-core WSE-3 architecture. The Inference Serving Stack provides
-      production-grade model hosting with industry-standard APIs compatible with the OpenAI REST
-      specification, enabling drop-in adoption by any application already integrated with OpenAI or
-      compatible inference services. The Cerebras Cluster Manager orchestrates multi-CS-3 deployments
-      as a single logical computer, handling job scheduling, telemetry, load balancing, and health
-      monitoring. The software also supports the Cerebras Model Zoo, a library of pre-validated large
-      language models optimized for the WSE-3, including LLaMA, Mistral, Falcon, and GPT-class
-      architectures. The Model Zoo lowers the barrier to deployment but narrows the ecosystem relative
-      to NVIDIA's CUDA, which supports thousands of operators, frameworks, and community-maintained
-      toolchains. Cerebras has published documentation, Python SDK examples, and API references, and
-      maintains an active GitHub organization with model configuration repositories. Cerebras software
-      is available on AWS Marketplace, IBM watsonx, Microsoft Marketplace, and Vercel AI Gateway.
-    claimRefs: [CE012, CE013, CE014, CE015, CE016, CE017]
-    tableRefs: [TE003]
-    figureRefs: []
-
-  - id: section-E4
-    title: "Inference Performance and Competitive Benchmarks"
-    body: >-
-      Cerebras' primary commercial differentiator is inference throughput speed for large language models.
-      The company claims inference delivery up to 15 times faster than leading GPU-based solutions on
-      open-source models, a figure corroborated by Artificial Analysis' independent benchmark, which
-      ranked Cerebras as the highest-throughput AI inference provider in the market as of early 2026.
-      For LLaMA 3.1 70B, Cerebras reports over 2,100 tokens per second throughput on its inference
-      cloud, compared to approximately 100-150 tokens per second from a single NVIDIA H100 and roughly
-      200-300 from an NVIDIA H100 cluster. For more exotic sparse-workload models, Cerebras claims over
-      1,000 times faster performance. The speed advantage directly enables applications such as real-time
-      coding agents, multi-step reasoning with long-context memory, and voice AI requiring sub-second
-      latency. OpenAI selected Cerebras as its fast inference solution for Codex-Spark, enabling users
-      to generate complete software applications in seconds. These performance figures reflect ideal
-      conditions on models that are well-suited to the WSE-3 architecture; performance advantages are
-      smaller for batch inference workloads, multi-modal models, or models that require custom CUDA
-      kernel extensions not yet supported in the CSoft stack.
-    claimRefs: [CE018, CE019, CE020, CE021, CE022]
-    tableRefs: [TE004]
+      Cerebras software stack transforms the WSE-3 hardware advantage into accessible developer
+      productivity. The Cerebras Compiler accepts standard PyTorch model definitions and automatically
+      compiles them to optimized WSE-3 execution graphs, requiring no custom domain-specific language,
+      model redesign, or manual kernel optimization. For inference workloads, Cerebras offers the
+      Inference Cloud API, which is fully compatible with the OpenAI Chat Completions API
+      specification. Any application integrated with the OpenAI API can route requests to Cerebras by
+      changing only the base URL and API key. The API supports Llama family models, Codex-Spark from
+      OpenAI, GPT-OSS-120B, and GLM 4.7. Published inference pricing is 0.60 dollars per million
+      input tokens for Llama-3 70B. The developer ecosystem is supported through three open channels:
+      the Cerebras GitHub organization hosts a Model Zoo with reference implementations for GPT, BERT,
+      and diffusion architectures; the HuggingFace organization distributes the Cerebras-GPT
+      open-weight model family spanning 111M to 13B parameters, released in April 2023; and the
+      Chinchilla scaling paper (arXiv 2304.03208) validates hardware training efficiency. The
+      Cerebras SDK, documentation portal (docs.cerebras.ai), and cloud console (cloud.cerebras.ai)
+      complete the developer-facing surface, enabling end-to-end deployment from model import to
+      production inference without leaving the Cerebras platform.
+    claimRefs: [CE012, CE013, CE018, CE019, CE027, CE028, CE031]
+    tableRefs: [TE002]
     figureRefs: [FE002]
 
-  - id: section-E5
-    title: "Technology Roadmap, IP Portfolio, and Technical Risks"
+  - id: inference-performance-competitive-benchmarks
+    title: Inference Performance and Competitive Benchmarks
     body: >-
-      Cerebras has delivered three WSE generations over nine years. Its roadmap continues the wafer-scale
-      trajectory: future generations (WSE-4 and beyond) are expected to increase on-chip memory capacity,
-      expand memory bandwidth, improve interconnect density, and leverage next-generation TSMC process
-      nodes to increase transistor density and reduce power consumption. The company intends to invest
-      heavily in R&D, spending $186.5 million on R&D in FY2025 (37% of revenue). As of March 31, 2026,
-      Cerebras owned 96 issued patents and 50 pending patent applications globally; 50 are issued U.S.
-      patents expiring between 2038 and 2041. Patents cover multi-die interconnect, fault-tolerant
-      processor design, wafer-scale cooling, hardware architecture for deep learning, and software
-      compilation for sparse-algebra workloads. Significant technical risks include: TSMC sole-source
-      dependency for all wafer production with no feasible near-term alternative; the impossibility
-      of die-level rework once a defect reaches a system (no standard RMA path for WSE hardware);
-      limited model support compared to NVIDIA's ecosystem; and the risk of future AI model architectures
-      (e.g., mixture-of-experts, state-space models, diffusion models with custom kernels) that require
-      compute patterns not optimal for the WSE-3. Software compatibility with emerging frameworks and
-      the broader CUDA-centric research community remains a medium-term competitive liability.
-    claimRefs: [CE023, CE024, CE025, CE026, CE027, CE028]
-    tableRefs: [TE005]
+      Cerebras claims 2,100+ tokens per second for Llama 3 8B on a single WSE-3, approximately 15
+      times faster than a comparable NVIDIA H100 or B200 GPU. This claim is analytically consistent
+      with the hardware architecture: LLM inference throughput is directly proportional to available
+      memory bandwidth for memory-bound workloads, and the WSE-3 21 PB/s internal bandwidth vastly
+      exceeds the HBM3e bandwidth of the NVIDIA B200 NVL72 cluster at approximately 8 TB/s. For
+      models fitting entirely within 44 GB of on-chip SRAM, the WSE-3 delivers near-peak bandwidth
+      utilization with zero off-chip memory traffic. Production evidence supports the performance
+      claim. OpenAI Codex-Spark runs on Cerebras inference infrastructure, providing hyperscaler-grade
+      production validation. GSK reported 10x training speedup with a 120x larger RNA drug discovery
+      dataset. MBZUAI operates CS-3 clusters for UAE sovereign AI computing at 62 percent of FY2025
+      revenue. The competitive landscape includes NVIDIA B200 NVL72 (approximately 8 TB/s HBM
+      bandwidth, estimated 140 tok/s for 8B LLM), AMD MI300X (5.3 TB/s, 192 GB HBM3), and Google
+      TPU v5/v6 (optimized for distributed training). For models up to 44B parameters in
+      latency-sensitive single-user inference, the WSE-3 architecture is demonstrably differentiated.
+      For models exceeding 44B parameters requiring disaggregated inference, the advantage narrows as
+      distributed-compute complexity increases.
+    claimRefs: [CE009, CE010, CE011, CE014, CE017, CE029, CE032, CE033]
     figureRefs: [FE004]
 
-  - id: section-E6
-    title: "Build vs Buy Analysis and Manufacturing Dependencies"
+  - id: competitive-differentiation-ip
+    title: Competitive Differentiation and Intellectual Property
     body: >-
-      Cerebras operates a fully fabless chip design model. All silicon fabrication is outsourced to
-      TSMC at its 5nm N5 process node. TSMC is the sole source for WSE wafer production; no alternative
-      foundry currently supports the proprietary cross-reticle interconnect process required for wafer-
-      scale integration. This creates a single point of failure: any TSMC disruption — from Taiwan
-      geopolitical risk, natural disaster, process node capacity constraints, or pricing disputes —
-      directly impacts Cerebras' ability to manufacture. Beyond wafers, Cerebras outsources system
-      assembly and testing to contract manufacturers; MemoryX and SwarmX hardware components are
-      sourced from third-party suppliers. The company performs final system-level burn-in testing
-      internally. Cerebras does not disclose wafer unit cost, but industry estimates for large-area
-      TSMC 5nm wafers range from $15,000 to $25,000 per wafer, with each WSE die consuming an entire
-      wafer. This creates a per-chip cost structure dramatically different from standard GPU production,
-      where hundreds of chips are produced per wafer. The high per-unit hardware cost is partially offset
-      by elimination of networking infrastructure costs (switches, cables, NICs) that GPU-based clusters
-      require. Cerebras' software build-vs-buy decisions are primarily build: CSoft, the Inference Serving
-      Stack, and Cluster Manager are all proprietary, with PyTorch used as the developer-facing interface.
-    claimRefs: [CE029, CE030, CE031, CE032, CE033]
-    tableRefs: []
-    figureRefs: []
+      Cerebras primary moat is architectural and manufacturing: the company holds the only
+      commercially shipped wafer-scale AI processor at production volume as of May 2026. Replicating
+      the WSE-3 would require mastery of full-wafer silicon interposer and custom packaging
+      technology, a compiler toolchain with years of silicon-software co-development, design expertise
+      to verify a 4-trillion-transistor chip with no inter-die redundancy, and TSMC foundry
+      relationships with allocated capacity for full-wafer N5, among the most complex manufacturing
+      arrangements TSMC supports commercially. The S-1/A references patents, trade secrets, and
+      manufacturing know-how without enumerating specific patent numbers. The structural secrecy
+      around the WSE architecture functions as a trade-secret barrier: the internal mesh fabric
+      design, compiler optimization passes, and silicon floorplan are not publicly disclosed.
+      Cerebras-GPT and the arXiv 2304.03208 paper demonstrate hardware performance consistent with
+      theoretical bandwidth predictions. The NVIDIA CUDA ecosystem remains the dominant developer
+      platform with the largest pre-trained checkpoint library and partner support. Cerebras
+      OpenAI-API-compatible inference interface reduces switching cost for inference workloads but
+      does not displace CUDA for training workflows requiring custom kernels. The key competitive risk
+      is that NVIDIA improves HBM bandwidth generation-over-generation and may close the per-token
+      latency gap for small models, or hyperscaler disaggregated inference architectures erode the
+      single-chip advantage for larger models. Cerebras FY2025 gross margin of 39 percent indicates
+      the current competitive position sustains pricing power at scale.
+    claimRefs: [CE015, CE016, CE026]
+
+  - id: trust-compliance-roadmap
+    title: Trust, Compliance, and Product Roadmap
+    body: >-
+      Cerebras primary compliance obligation is export control under Bureau of Industry and Security
+      Export Administration Regulations. Shipments of advanced AI semiconductor systems to UAE-based
+      customers MBZUAI (62 percent of FY2025 revenue) and G42 (24 percent of FY2025 revenue) require
+      BIS export licenses. Dependence of over 86 percent of revenue on UAE customers subject to
+      BIS/EAR export controls is a material operational risk disclosed prominently in the S-1/A.
+      Export license delays, revocations, or policy restrictions could block the majority of hardware
+      revenue with limited near-term diversification alternatives. Quality and reliability evidence is
+      primarily production-validated: OpenAI Codex-Spark and GSK RNA drug discovery workloads confirm
+      enterprise quality requirements are met. However, Cerebras has not publicly disclosed SOC 2
+      Type II or ISO 27001 cloud security certifications for the Inference Cloud API as of May 2026,
+      a diligence gap for enterprise customers evaluating cloud security posture. Hardware quality is
+      governed by TSMC standard semiconductor manufacturing quality controls, but system-level MTBF
+      statistics for the CS-3 have not been published. The product roadmap as of May 2026 does not
+      include an announced WSE-4 successor chip. Cerebras generation cadence has been approximately
+      biennial: WSE-1 (2019), WSE-2 (2021), WSE-3 (2023). The next significant product milestone is
+      the AWS disaggregated inference integration under the March 2026 binding term sheet, with
+      deployment timeline not publicly disclosed.
+    claimRefs: [CE024, CE026, CE034]
+    tableRefs: [TE004, TE005]
 
 tables:
   - id: TE001
-    title: "WSE-3 Technical Specifications vs Competing AI Chips"
-    columns: ["Specification", "Cerebras WSE-3", "NVIDIA B200 (single)", "NVIDIA H100 SXM", "AMD MI300X", "Google TPU v5e"]
+    title: "Product Module and Asset Matrix"
+    columns:
+      - "Module / Asset"
+      - "Primary User"
+      - "Status / Maturity"
+      - "Key Differentiation"
+      - "Diligence Gap"
     rows:
-      - ["Die area (mm²)", "46,225", "~800", "~814", "~1,200 (HBM pkg)", "~400 (est)"]
-      - ["Transistors", "4 trillion", "208 billion", "80 billion", "146 billion", "~100B (est)"]
-      - ["On-chip SRAM (GB)", "44", "0.18", "0.05", "0.05", "0.04 (est)"]
-      - ["Memory bandwidth (TB/s)", "21,000", "8", "3.35", "5.3", "1.6"]
-      - ["Process node", "TSMC 5nm", "TSMC 4nm", "TSMC 4nm", "TSMC 5nm", "TSMC 7nm (est)"]
-      - ["AI compute cores", "900,000", "~10,000 CUDA", "~16,896 CUDA", "~304 CUs", "N/A (TPU)"]
-      - ["Chip type", "Wafer-scale (monolithic)", "Standard GPU die", "Standard GPU die", "Standard GPU die", "Custom ASIC"]
-      - ["Architecture gen", "3rd gen (WSE-3, 2024)", "Blackwell (2024)", "Hopper (2022)", "CDNA3 (2023)", "v5e (2024)"]
-    notes: "Cerebras specs per S-1/A May 2026 and official chip page. NVIDIA/AMD/Google specs per vendor datasheets and independent coverage. Memory bandwidth for WSE-3 is on-chip SRAM BW; GPU figures reflect HBM external BW."
-    claimRefs: [CE001, CE002, CE003, CE007]
+      - ["WSE-3 Chip (46,225 mm2, TSMC 5nm)", "AI labs, hyperscalers, sovereign AI programs",
+         "Production since 2023", "Largest commercially shipped AI die; 44 GB on-chip SRAM; 21 PB/s bandwidth",
+         "Production yield rates and per-wafer unit cost not disclosed"]
+      - ["CS-3 Compute System", "Data center operators, cloud providers, research institutions",
+         "Production; approximately $2 to $4M per unit estimated",
+         "Standard 2U rack form factor with complete WSE-3 integration including power, cooling, and networking",
+         "MTBF, field failure rates, and system-level SLA not publicly disclosed"]
+      - ["Cerebras Inference Cloud API", "AI developers, enterprises, hyperscaler integrations",
+         "GA since 2024; OpenAI Chat Completions compatible endpoint",
+         "2,100+ tok/s for Llama 8B; $0.60/M input tokens; no hardware reservation required",
+         "SOC 2 and ISO 27001 certifications not publicly disclosed; uptime SLA not published"]
+      - ["Cerebras Compiler (PyTorch to WSE-3)", "ML engineers, AI researchers, model developers",
+         "Production; bundled with CS-3 and cloud API",
+         "PyTorch-native; no custom DSL required; auto-maps model graph to 900K AI cores on WSE-3",
+         "Coverage for models above 44B parameters in disaggregated mode requires additional engineering effort"]
+      - ["Cerebras-GPT Open-Weight Models", "AI researchers, open-source developers",
+         "Open-source on GitHub and HuggingFace; released April 2023",
+         "Chinchilla-optimal scaling; arXiv 2304.03208; 111M to 13B parameter range",
+         "No enterprise support contract for open-source models; model family not updated since 2023"]
+    notes: >-
+      Maturity levels derive from S-1/A production deployment disclosures and public API availability.
+      Per-unit hardware cost is estimated from reported deal values, not a disclosed list price.
+    claimRefs: [CE001, CE003, CE004, CE010, CE012, CE013, CE018, CE019, CE027, CE028, CE031]
 
   - id: TE002
-    title: "Product Module / Asset Matrix"
-    columns: ["Module/Asset", "User/Buyer", "Status/Maturity", "Key Differentiation", "Diligence Gap"]
+    title: "Workflow and Use-Case Table"
+    columns:
+      - "User Job"
+      - "Current or Prior Workflow"
+      - "Cerebras Solution"
+      - "Measurable Benefit"
+      - "Limitation"
     rows:
-      - ["WSE-3 chip", "Enterprise AI labs, Sovereign AI, hyperscalers", "Production (Gen 3, since 2024)", "Largest chip ever; 2,625x more memory BW than H100", "Yield rate and per-wafer cost not disclosed"]
-      - ["CS-3 system", "Enterprise on-prem buyers", "Production (current gen)", "Full-stack system with water cooling; replaces multi-rack GPU cluster", "ASP not disclosed; estimated $2-5M per unit"]
-      - ["Cerebras AI Supercomputer (cluster)", "Large AI labs, Sovereign AI clusters", "Production (deployed at MBZUAI, G42)", "Scales linearly via SwarmX; 100+ exaflops deployed globally", "Cluster ASP and power draw per MW not disclosed"]
-      - ["Cerebras Cloud (Inference API)", "Developers, startups, enterprises", "Generally available since Aug 2024", "Fastest public inference API for LLMs (2,100 t/s LLaMA 70B)", "Cloud GPU capacity sourced from 3rd parties; capacity constraints possible"]
-      - ["Cerebras Software Platform (CSoft)", "ML engineers, AI researchers", "Mature (PyTorch-native, no CUDA needed)", "Compiles PyTorch directly to WSE; standard REST APIs", "Ecosystem narrower than CUDA; sparse custom kernel support"]
-      - ["Cerebras Model Zoo", "Developers, data scientists", "Active (LLaMA, Mistral, GPT4All, Falcon supported)", "Pre-validated models on WSE-3 with performance guarantees", "Limited coverage of non-LLM architectures (diffusion, SSMs)"]
-    notes: "Maturity and status based on S-1/A (May 2026) and official Cerebras documentation. ASP estimates derived from industry comparisons and not confirmed by company."
-    claimRefs: [CE008, CE009, CE012, CE013, CE015]
+      - ["LLM inference for production applications (models up to 44B params)",
+         "GPU cluster with NVIDIA H100 or B200, batched inference, HBM-bandwidth-limited",
+         "Cerebras Inference API (WSE-3 on-chip SRAM eliminates HBM memory bottleneck)",
+         "2,100+ tok/s for Llama 8B; approximately 15x faster than GPU; $0.60/M tokens",
+         "Models exceeding 44B parameters require disaggregated multi-CS-3 inference; architecture still maturing"]
+      - ["Large-scale AI model training (models up to 44B params)",
+         "Multi-GPU cluster with 100+ H100s, custom CUDA kernels, limited HBM bandwidth",
+         "CS-3 system with Cerebras Compiler and Cluster Manager for scale-out",
+         "Single WSE-3 replaces cluster for models up to 44B parameters; no custom kernel writing required",
+         "Training throughput advantage narrows for larger models; CUDA ecosystem has broader checkpoint availability"]
+      - ["Scientific computing and drug discovery (neural network workloads)",
+         "CPU or GPU clusters, multi-week experiment cycles, limited dataset scale",
+         "CS-3 for neural network acceleration (GSK RNA model deployment)",
+         "GSK: 10x training speedup plus 120x larger dataset; faster drug discovery experiment cycles",
+         "Limited to neural-network acceleration; no support for general HPC or molecular dynamics workloads"]
+      - ["Sovereign AI computing for government and university programs",
+         "US or EU public cloud or proprietary GPU cluster infrastructure",
+         "CS-3 on-premises deployment (MBZUAI and G42 sovereign AI programs)",
+         "Data sovereignty compliance; hardware under customer physical control; represents 86% of FY2025 revenue",
+         "BIS/EAR export licenses required for UAE customers; license delays or revocations interrupt service"]
+    notes: >-
+      Use cases derived from S-1/A customer disclosures for GSK, MBZUAI, and OpenAI, plus product page
+      descriptions. Measurable benefits are company-claimed or third-party-reported; independent
+      benchmark confirmation is partial.
+    claimRefs: [CE010, CE011, CE012, CE014, CE015, CE017, CE024, CE033]
 
   - id: TE003
-    title: "Cerebras Software Stack Architecture"
-    columns: ["Layer/Component", "Role", "Interface", "Dependency", "Risk"]
+    title: "Technology and Operating Architecture Table"
+    columns:
+      - "Layer or Component"
+      - "Role"
+      - "Key Dependency"
+      - "Risk"
     rows:
-      - ["Cerebras Compiler (CSoft)", "Compiles PyTorch models → WSE-3 machine code", "PyTorch API", "PyTorch framework compatibility", "Lag in supporting new PyTorch releases or operators"]
-      - ["Inference Serving Stack", "Production model serving with load balancing", "OpenAI-compatible REST API", "CS-3 or Cerebras Cloud hardware", "Custom kernels / model variants not in Model Zoo may not be supported"]
-      - ["Cerebras Cluster Manager", "Orchestrates multi-CS-3 clusters as one logical computer", "Internal telemetry + scheduling", "SwarmX interconnect, MemoryX hardware", "Scaling beyond current gen not publicly validated above 1000+ exaflops"]
-      - ["Cerebras Model Zoo", "Repository of pre-validated model configs", "Python/YAML configs, GitHub", "CSoft + WSE-3 hardware", "Coverage gaps in non-transformer architectures"]
-      - ["SwarmX Interconnect", "High-bandwidth low-latency cluster fabric", "Hardware layer", "Physical CS-3 units + proprietary NICs", "Proprietary design increases supply chain risk"]
-      - ["Cloud API Gateway", "Token/compute billing + partner integrations", "REST, AWS Marketplace, IBM watsonx", "Data center infrastructure + cloud providers", "Dependence on third-party data centers for capacity"]
-    notes: "Software stack structure per S-1/A (May 2026) and Cerebras developer documentation. Risk assessments are analyst estimates."
-    claimRefs: [CE012, CE013, CE014, CE016, CE017]
+      - ["TSMC 5nm (N5) Foundry",
+         "Manufactures WSE-3 full-wafer die; sole production source",
+         "TSMC capacity allocation for full-wafer N5 product; no disclosed backup foundry",
+         "Single-source geopolitical risk from Taiwan concentration; yield uncertainty; foundry capacity at N5"]
+      - ["WSE-3 Die (46,225 mm2)",
+         "Core compute substrate: 900K AI cores plus 44 GB on-chip SRAM",
+         "TSMC N5 process; custom die packaging and thermal management",
+         "No die-level redundancy; chip defects affect entire silicon area; no alternative chip design exists"]
+      - ["Cerebras Compiler",
+         "Translates PyTorch model graphs to WSE-3 execution plans automatically",
+         "PyTorch framework ecosystem maintained by Meta as open-source",
+         "Model compatibility gaps for novel or non-standard architectures; compiler version lock-in for deployed models"]
+      - ["Cerebras Cluster Manager",
+         "Multi-CS-3 scale-out orchestration for models exceeding 44B parameters",
+         "Network fabric using InfiniBand or Ethernet; customer data center networking infrastructure",
+         "Disaggregated inference adds cross-node latency and operational complexity; AWS integration not yet deployed"]
+      - ["Cerebras Inference Cloud API",
+         "Managed hosted API layer for LLM inference at scale",
+         "AWS infrastructure per binding term sheet signed March 2026; not yet deployed",
+         "Single cloud-infrastructure dependency; AWS integration incomplete as of IPO date; SLA not published"]
+      - ["Data Center Cooling Infrastructure",
+         "Physical environment for CS-3 thermal management",
+         "Customer data center with liquid cooling or high-airflow forced-air capability",
+         "Incompatible with standard air-cooled racks; increases deployment cost and site qualification overhead"]
+    notes: >-
+      Architecture derived from S-1/A technical disclosures, Cerebras documentation portal, and AnandTech
+      WSE-3 technical analysis. AWS integration status based on binding term sheet disclosure in S-1/A.
+    claimRefs: [CE006, CE020, CE021, CE023, CE025, CE035]
 
   - id: TE004
-    title: "Inference Performance Benchmarks: Cerebras vs GPU-Based Systems"
-    columns: ["Model", "Platform", "Throughput (tokens/sec)", "Latency (TTFT ms, est)", "Source", "Caveat"]
+    title: "Trust, Quality, and Compliance Controls"
+    columns:
+      - "Control or Certification"
+      - "Status"
+      - "Scope"
+      - "Gap or Risk"
     rows:
-      - ["LLaMA 3.1 70B", "Cerebras Cloud", "~2,100", "<100", "Cerebras / Artificial Analysis 2026", "Single-request throughput; batch may differ"]
-      - ["LLaMA 3.1 70B", "NVIDIA H100 SXM (single)", "~130", "~500", "MLPerf Inference 2025 / independent", "Best-in-class single H100 result"]
-      - ["LLaMA 3.1 70B", "NVIDIA A100 40GB (8x cluster)", "~280", "~300", "Published benchmark 2025", "8-GPU cluster baseline"]
-      - ["LLaMA 3.1 405B", "Cerebras cluster (multi-CS-3)", "~300-600 (est)", "<200 (est)", "Cerebras S-1/A claim; no external benchmark", "Company-claimed; independent verification needed"]
-      - ["Sparse workload (undisclosed model)", "Cerebras WSE-3", ">1,000x GPU baseline", "N/A", "Cerebras S-1/A founders letter", "Specific model architecture not disclosed"]
-    notes: "Throughput figures reflect single-request streaming inference unless noted. TTFT = time to first token. Cerebras figures from company benchmarks; GPU figures from public sources."
-    claimRefs: [CE018, CE019, CE020]
+      - ["Export Control Compliance (BIS/EAR)",
+         "Required; export licenses obtained for existing UAE customer hardware shipments",
+         "All shipments to UAE customers MBZUAI and G42, approximately 86% of FY2025 revenue",
+         "Export license delays or revocations could block majority of hardware revenue; disclosed as material risk in S-1/A"]
+      - ["SOC 2 Type II Cloud Security Certification",
+         "Not publicly disclosed as of May 2026",
+         "Cerebras Inference Cloud API and associated cloud infrastructure",
+         "Absence of public SOC 2 attestation is a diligence gap for enterprise cloud customers; no compensating disclosure found"]
+      - ["ISO 27001 and ISO 9001 Quality Standards",
+         "Not publicly disclosed as of May 2026",
+         "CS-3 system manufacturing and cloud operations",
+         "No verifiable third-party quality certification for hardware production or cloud security controls"]
+      - ["Semiconductor Reliability Testing (HTOL and ESD)",
+         "Standard TSMC and CS-3 assembly practices; manufacturing specifics not publicly disclosed",
+         "WSE-3 chip and CS-3 chassis system integration",
+         "No published MTBF, field failure rate, or system-level reliability specification for WSE-3 or CS-3"]
+      - ["Production Deployment Validation (OpenAI and GSK)",
+         "Third-party confirmed; OpenAI Codex-Spark and GSK RNA workloads running in production",
+         "LLM inference production (OpenAI) and neural network training production (GSK)",
+         "Customer-disclosed only; no independent third-party audit or published SLA specification for these deployments"]
+    notes: >-
+      Status based on S-1/A risk factor disclosures and absence of public certification announcements
+      as of May 2026. Export control status inferred from S-1/A risk factor language and UAE customer
+      revenue disclosures.
+    claimRefs: [CE024, CE034]
 
   - id: TE005
-    title: "Technology Roadmap and IP Milestones"
-    columns: ["Period/Stage", "Milestone/Feature", "Status", "Implication", "Source"]
+    title: "Product Roadmap and Release Timeline"
+    columns:
+      - "Date or Stage"
+      - "Feature or Milestone"
+      - "Status"
+      - "Implication"
+      - "Source"
     rows:
-      - ["2016", "Company founded; WSI concept initiated", "Completed (historical)", "Established core technical thesis", "S-1/A / public records"]
-      - ["2019", "WSE-1 production (16nm TSMC)", "Completed", "First-ever commercial wafer-scale chip", "S-1/A / EE Times 2019"]
-      - ["2021", "WSE-2 production (7nm TSMC)", "Completed", "2x performance improvement over WSE-1", "S-1/A / IEEE Spectrum 2021"]
-      - ["2024", "WSE-3 production (5nm TSMC, 4T transistors)", "In production", "Current generation; primary revenue driver", "S-1/A May 2026"]
-      - ["2025-2026", "CS-4 system export license obtained (per S-1/A)", "License obtained", "Future-gen hardware access for UAE customers", "S-1/A May 2026 – export license section"]
-      - ["Future", "WSE-4 (process node TBD, higher memory BW)", "Roadmap / not disclosed", "Critical for maintaining speed lead vs NVIDIA Blackwell successors", "S-1/A roadmap section"]
-      - ["Mar-2026", "96 issued patents, 50 pending globally", "Current IP position", "Patents expire 2038-2041; defensive moat in wafer-scale design", "S-1/A March 31 2026 data"]
-    notes: "Roadmap items beyond WSE-3 are unconfirmed; specific timeline and specs for WSE-4 not publicly disclosed. CS-4 reference is from the S-1/A export license discussion only."
-    claimRefs: [CE023, CE024, CE025, CE026]
+      - ["2019",
+         "WSE-1: 16nm TSMC, 1.2 trillion transistors, 400K AI cores, 18 GB SRAM",
+         "Released; no longer in production",
+         "First proof-of-concept for wafer-scale AI; established manufacturing viability and early customer proof points",
+         "S-1/A company disclosures"]
+      - ["2021",
+         "WSE-2: 7nm TSMC, 2.6 trillion transistors, 850K AI cores, 40 GB SRAM",
+         "Released; succeeded by WSE-3 in 2023",
+         "Second generation with material transistor density and SRAM improvement; validated biennial release cadence",
+         "S-1/A; AnandTech technical analysis"]
+      - ["2023 Q1",
+         "WSE-3: 5nm TSMC, 4 trillion transistors, 900K AI cores, 44 GB SRAM; CS-3 system launch",
+         "Released and in production; sole revenue-generating hardware platform as of FY2025",
+         "All FY2025 hardware revenue of $358.4M attributable to CS-3 or WSE-3; primary platform for 2026",
+         "S-1/A; AnandTech; SemiAnalysis"]
+      - ["April 2023",
+         "Cerebras-GPT open-weight models (111M to 13B parameters) and arXiv 2304.03208 paper",
+         "Released on HuggingFace; Chinchilla scaling paper published on arXiv",
+         "Developer ecosystem building; independent scientific validation of training efficiency on wafer-scale hardware",
+         "arXiv 2304.03208; HuggingFace cerebras organization"]
+      - ["March 2026 (binding term sheet)",
+         "AWS disaggregated inference integration combining CS-3 with AWS Trainium",
+         "Binding term sheet signed March 2026; integration not yet deployed as of May 2026 IPO",
+         "Unlocks AWS distribution channel and disaggregated inference for large models if executed on schedule",
+         "S-1/A March 2026 binding term sheet disclosure"]
+      - ["Not announced as of May 2026",
+         "WSE-4 next-generation chip",
+         "No public announcement, timeline, or specifications have been disclosed",
+         "Roadmap gap versus NVIDIA annual GPU cadence; technology currency risk if WSE-3 competitive gap narrows",
+         "Absence of disclosure in S-1/A and company communications as of runDate"]
+    notes: >-
+      Dates from S-1/A disclosures and public release announcements. AWS integration status based on
+      binding term sheet in S-1/A. WSE-4 entry reflects confirmed absence of any public announcement
+      as of May 16, 2026.
+    claimRefs: [CE022, CE018, CE025, CE026]
 
 figures:
   - id: FE001
-    title: "Cerebras Full-Stack Architecture: Hardware to API"
+    title: "Cerebras Product Architecture Stack"
     type: stack
-    sourceRefs: [SE001, SE002]
-    notes: "Layer stack from TSMC silicon to customer application. Each layer is co-designed with layers above and below."
+    layout: wide
+    summary: >-
+      Seven-layer view from TSMC fabrication at the base to customer applications at the top,
+      spanning the full Cerebras hardware-software stack.
+    approximationNotes: null
+    claimRefs: [CE001, CE003, CE004, CE005, CE006, CE013]
     data:
       layers:
-        - id: "L1"
-          label: "TSMC 5nm Silicon Wafer"
-          detail: "46,225 mm² die, sole-source fabrication"
-          tone: "warning"
-        - id: "L2"
-          label: "WSE-3 Chip Layer"
-          detail: "4T transistors, 900K AI cores, 44GB SRAM, 21 PB/s BW"
-          tone: "positive"
-        - id: "L3"
-          label: "CS-3 System Layer"
-          detail: "Water cooling, power delivery, interconnect; 1 WSE-3 per unit"
-          tone: "positive"
-        - id: "L4"
-          label: "SwarmX / MemoryX Cluster Layer"
-          detail: "Multi-CS-3 cluster fabric; scales linearly"
-          tone: "positive"
-        - id: "L5"
-          label: "Cerebras Software Platform (CSoft)"
-          detail: "Compiler, Inference Serving Stack, Cluster Manager"
-          tone: "positive"
-        - id: "L6"
-          label: "Application / API Layer"
-          detail: "OpenAI-compatible REST; AWS Marketplace, IBM watsonx"
-          tone: "positive"
+        - label: "Customer Applications"
+          detail: >-
+            LLM inference APIs, AI model training, scientific computing, sovereign AI programs
+            including OpenAI Codex-Spark, GSK RNA drug discovery, and MBZUAI UAE sovereign AI
+        - label: "Inference API and SDK Layer"
+          detail: >-
+            OpenAI Chat Completions compatible REST API; Cerebras Cloud SDK; Python client;
+            published pricing at $0.60/M input tokens for Llama-3 70B
+        - label: "Orchestration and Cluster Management"
+          detail: >-
+            Cerebras Cluster Manager: multi-CS-3 scale-out; job scheduling; disaggregated inference
+            for models above 44B parameters via InfiniBand or Ethernet fabric
+        - label: "Compiler and Graph Translation"
+          detail: >-
+            Cerebras Compiler: PyTorch model graph to WSE-3 execution plan; no custom DSL required;
+            automatically maps attention, MLP, and embedding operations to 900K AI cores
+        - label: "Runtime and Memory Management"
+          detail: >-
+            WSE-3 runtime: on-chip SRAM weight storage and scheduling; 900K AI core execution
+            pipeline; token streaming at 2,100+ tok/s for Llama 8B models
+        - label: "WSE-3 Hardware Substrate"
+          detail: >-
+            WSE-3 die: 46,225 mm2; 4 trillion transistors; 900K AI cores; 44 GB on-chip SRAM;
+            21 PB/s internal memory bandwidth; fabricated on TSMC 5nm N5
+        - label: "TSMC Fabrication and CS-3 Packaging"
+          detail: >-
+            TSMC 5nm (N5) wafer fab: sole-source full-wafer fabrication; custom die packaging;
+            CS-3 chassis assembly with liquid or forced-air cooling integration
 
   - id: FE002
-    title: "Customer Workflow: From AI Request to WSE-3 Inference Result"
+    title: "Customer Inference Workflow on Cerebras Platform"
     type: flow
-    sourceRefs: [SE001, SE004]
-    notes: "Simplified end-to-end workflow for inference use case via Cerebras Cloud or on-prem deployment."
+    layout: standard
+    summary: >-
+      End-to-end flow from customer API call through compiler dispatch to WSE-3 token generation
+      and streamed response delivery.
+    approximationNotes: null
+    claimRefs: [CE012, CE013, CE028]
     data:
       nodes:
-        - id: "n1"
-          label: "Customer Application"
-          value: "Coding agent, voice AI, deep research"
-          tone: "neutral"
-        - id: "n2"
-          label: "API Request (OpenAI-compatible REST)"
-          value: "Standard endpoint; no CUDA or custom SDK needed"
-          tone: "positive"
-        - id: "n3"
-          label: "Cerebras Inference Serving Stack"
-          value: "Route to available WSE-3 capacity"
-          tone: "positive"
-        - id: "n4"
-          label: "CSoft: Model Compilation Cache"
-          value: "Pre-compiled model image for WSE-3"
-          tone: "positive"
-        - id: "n5"
-          label: "WSE-3 Execution"
-          value: "900K cores; memory-bandwidth-bound token generation"
-          tone: "positive"
-        - id: "n6"
-          label: "Streaming Response"
-          value: "2,100+ t/s; 15x faster than GPU baseline"
-          tone: "positive"
+        - id: customer
+          label: "Customer Developer Application"
+          tone: neutral
+        - id: api_gateway
+          label: "Cerebras Inference API Gateway"
+          tone: positive
+        - id: model_router
+          label: "Model Router and Load Balancer"
+          tone: neutral
+        - id: compiler
+          label: "Cerebras Compiler PyTorch to WSE-3"
+          tone: neutral
+        - id: cluster_mgr
+          label: "Cluster Manager CS-3 Node Selection"
+          tone: neutral
+        - id: wse3
+          label: "WSE-3 Inference Engine On-Chip SRAM"
+          tone: positive
+        - id: token_stream
+          label: "Token Stream Output"
+          tone: positive
       edges:
-        - from: "n1"
-          to: "n2"
-          label: "user prompt"
-        - from: "n2"
-          to: "n3"
-          label: "HTTP request"
-        - from: "n3"
-          to: "n4"
-          label: "model dispatch"
-        - from: "n4"
-          to: "n5"
-          label: "compiled kernel"
-        - from: "n5"
-          to: "n6"
-          label: "token stream"
-        - from: "n6"
-          to: "n1"
-          label: "response delivered"
+        - from: customer
+          to: api_gateway
+          label: "HTTP POST /v1/chat/completions OpenAI-compatible"
+        - from: api_gateway
+          to: model_router
+          label: "Authenticate and route by model ID"
+        - from: model_router
+          to: compiler
+          label: "Dispatch to compiled model execution graph"
+        - from: compiler
+          to: cluster_mgr
+          label: "Select available CS-3 node"
+        - from: cluster_mgr
+          to: wse3
+          label: "Execute forward pass on WSE-3 on-chip SRAM"
+        - from: wse3
+          to: token_stream
+          label: "Generate tokens at 2,100+ tok/s for Llama 8B"
+        - from: token_stream
+          to: customer
+          label: "Stream response via SSE or JSON"
 
   - id: FE003
-    title: "Cerebras Critical Technology Dependency Map"
+    title: "Cerebras Critical Dependency Map"
     type: dag
-    sourceRefs: [SE001, SE015]
-    notes: "Key external dependencies. Bold dependencies are sole-source; disruption would halt production. Arrows indicate dependency direction."
+    layout: wide
+    summary: >-
+      DAG of key external dependencies showing how TSMC fabrication, OpenAI financing, AWS
+      distribution, and BIS export controls create interlocking supply, financial, and distribution
+      risks.
+    approximationNotes: >-
+      Revenue percentages from FY2025 S-1/A disclosures. Dependency relationships inferred from
+      S-1/A risk factors and disclosed partner agreements.
+    claimRefs: [CE023, CE024, CE025]
     data:
       nodes:
-        - id: "d1"
-          label: "TSMC (sole source)"
-          value: "5nm wafer fabrication; no alternative foundry"
-          tone: "warning"
-        - id: "d2"
-          label: "WSE-3 Die"
-          value: "All WSE production flows through TSMC"
-          tone: "neutral"
-        - id: "d3"
-          label: "MemoryX / SwarmX Suppliers"
-          value: "Third-party hardware components"
-          tone: "neutral"
-        - id: "d4"
-          label: "CS-3 Contract Manufacturer"
-          value: "System assembly and burn-in testing"
-          tone: "neutral"
-        - id: "d5"
-          label: "CS-3 System"
-          value: "Customer-facing compute unit"
-          tone: "positive"
-        - id: "d6"
-          label: "Cerebras Cloud Data Centers"
-          value: "Third-party colocation; not owned by Cerebras"
-          tone: "warning"
-        - id: "d7"
-          label: "Customer Deployment (on-prem / cloud)"
-          value: "Revenue generation point"
-          tone: "positive"
-        - id: "d8"
-          label: "PyTorch / ML Framework Ecosystem"
-          value: "Required for CSoft compiler input"
-          tone: "neutral"
+        - id: tsmc
+          label: "TSMC 5nm Foundry Sole Source"
+          detail: "Full-wafer N5 fabrication for WSE-3; no disclosed backup foundry exists"
+          type: supplier
+        - id: wse3_chip
+          label: "WSE-3 Chip"
+          detail: "Core compute die; 46,225 mm2; 4 trillion transistors; 44 GB on-chip SRAM"
+          type: internal
+        - id: cs3_system
+          label: "CS-3 Compute System"
+          detail: "Hardware product; approximately $2 to $4M per unit; standard 2U rack form factor"
+          type: internal
+        - id: sw_stack
+          label: "Cerebras Software Stack"
+          detail: "Compiler, Cluster Manager, and Inference Cloud API"
+          type: internal
+        - id: openai_partner
+          label: "OpenAI Partner and Customer"
+          detail: "$20B+ MRA; $1B working capital loan at 6 percent; Codex-Spark inference"
+          type: partner
+        - id: aws_partner
+          label: "AWS Integration Partner"
+          detail: "Binding term sheet March 2026; disaggregated inference architecture pending"
+          type: partner
+        - id: mbzuai
+          label: "MBZUAI Largest Customer"
+          detail: "62 percent of FY2025 revenue approximately $316M; UAE sovereign AI university"
+          type: customer
+        - id: g42
+          label: "G42 Customer and Investor"
+          detail: "24 percent of FY2025 revenue; $335M cumulative invested; Abu Dhabi AI conglomerate"
+          type: customer
+        - id: bis_ear
+          label: "BIS EAR Export Controls"
+          detail: "US export license required for all UAE advanced semiconductor shipments"
+          type: regulator
+        - id: wc_loan
+          label: "OpenAI $1B Working Capital Loan"
+          detail: "6 percent interest rate; matures December 2032; funds TSMC wafer order advance payments"
+          type: financial
       edges:
-        - from: "d1"
-          to: "d2"
-          label: "fabricates"
-        - from: "d2"
-          to: "d5"
-          label: "integrated into"
-        - from: "d3"
-          to: "d5"
-          label: "assembled with"
-        - from: "d4"
-          to: "d5"
-          label: "assembles / tests"
-        - from: "d5"
-          to: "d7"
-          label: "deployed to"
-        - from: "d6"
-          to: "d7"
-          label: "hosts cloud"
-        - from: "d8"
-          to: "d7"
-          label: "developer interface"
+        - from: tsmc
+          to: wse3_chip
+          label: "fabricates sole source N5 full-wafer"
+        - from: wse3_chip
+          to: cs3_system
+          label: "integrated into CS-3 chassis"
+        - from: cs3_system
+          to: mbzuai
+          label: "deployed to 62 percent FY2025 revenue"
+        - from: cs3_system
+          to: g42
+          label: "deployed to 24 percent FY2025 revenue"
+        - from: sw_stack
+          to: openai_partner
+          label: "powers Codex-Spark inference workloads"
+        - from: openai_partner
+          to: wc_loan
+          label: "provides working capital facility"
+        - from: wc_loan
+          to: tsmc
+          label: "funds wafer order advance payments"
+        - from: bis_ear
+          to: mbzuai
+          label: "restricts shipments requiring export license"
+        - from: bis_ear
+          to: g42
+          label: "restricts shipments requiring export license"
+        - from: aws_partner
+          to: sw_stack
+          label: "hosts disaggregated inference per term sheet in progress"
 
   - id: FE004
-    title: "Cerebras Product Maturity / Capability Assessment Matrix"
+    title: "Cerebras Product Maturity and Capability Map"
     type: matrix
-    sourceRefs: [SE001, SE006, SE007]
-    notes: "Assessment based on S-1/A disclosures, independent benchmarks, and analyst coverage as of May 2026. Scale: high / medium / low."
+    layout: wide
+    summary: >-
+      Maturity ratings across five capability dimensions for four Cerebras product surfaces, showing
+      hardware performance strengths against software and ecosystem development gaps.
+    approximationNotes: >-
+      Maturity labels are analyst judgments based on S-1/A production deployment evidence, public API
+      documentation, and competitive analysis as of May 2026.
+    claimRefs: [CE010, CE011, CE012, CE013, CE021, CE025, CE034]
     data:
       columns:
-        - "Maturity Level"
-        - "Evidence"
-        - "Competitive Position vs NVIDIA"
-        - "Diligence Gap"
+        - "Hardware Performance"
+        - "Software Maturity"
+        - "Integration Depth"
+        - "Scale-Out Support"
+        - "Ecosystem Breadth"
       rows:
-        - label: "LLM Inference Throughput"
+        - label: "CS-3 WSE-3 Inference up to 44B params"
           values:
-            - "High"
-            - "Artificial Analysis #1 ranked; 2,100 t/s LLaMA 70B"
-            - "Strong advantage (15x faster claim)"
-            - "No MLPerf official submission as of May 2026"
-        - label: "LLM Training"
+            - label: "High: 2,100+ tok/s Llama 8B; production validated by OpenAI and MBZUAI"
+            - label: "High: PyTorch-native compiler GA; OpenAI-compatible inference API production-ready"
+            - label: "High: Drop-in OpenAI API replacement; production deployments with OpenAI, MBZUAI, GSK"
+            - label: "Medium: Single-node optimized; Cluster Manager available but secondary use case"
+            - label: "Medium: Llama, Codex-Spark, GPT-OSS-120B, GLM 4.7 supported; narrower than CUDA"
+        - label: "CS-3 WSE-3 Training up to 44B params"
           values:
-            - "Medium"
-            - "Used by MBZUAI for frontier model training"
-            - "Competitive for large-scale runs"
-            - "Throughput vs H100 cluster not benchmarked publicly"
-        - label: "Software Ecosystem (CSoft)"
+            - label: "High: Memory-bandwidth advantage decisive for models fitting within 44 GB on-chip SRAM"
+            - label: "Medium: PyTorch training supported; custom recipes needed for some model architectures"
+            - label: "Medium: CS-3 in-cluster training available; fewer reference implementations than GPU"
+            - label: "Medium: Cluster Manager supports multi-CS-3 scale-out training configurations"
+            - label: "Low: Fewer pre-trained checkpoint community resources than NVIDIA CUDA ecosystem"
+        - label: "Disaggregated Inference Models above 44B"
           values:
-            - "Medium"
-            - "PyTorch-native; Model Zoo for major LLMs"
-            - "Materially narrower than CUDA ecosystem"
-            - "Custom kernel support gaps for non-LLM workloads"
-        - label: "On-Prem Enterprise Integration"
+            - label: "Medium: Functional via Cluster Manager; public performance versus GPU cluster not benchmarked"
+            - label: "Medium: Cluster Manager in production; AWS integration architecture defined but not deployed"
+            - label: "Low: AWS binding term sheet signed March 2026 but integration not deployed at IPO date"
+            - label: "High: Purpose-built for multi-CS-3 disaggregated inference scale across clusters"
+            - label: "Low: Limited to Cerebras-compatible model formats; no third-party marketplace integrations"
+        - label: "Cerebras Inference Cloud API"
           values:
-            - "High"
-            - "Production at MBZUAI, G42, national labs"
-            - "Differentiated for sovereign/secure deployments"
-            - "Reference architecture and uptime SLA not publicly verified"
-        - label: "Cloud API Reliability"
-          values:
-            - "Medium-Low"
-            - "Generally available since Aug 2024"
-            - "Faster but less mature than AWS/GCP inference services"
-            - "SLA terms and uptime history not disclosed"
-        - label: "Manufacturing Yield / Quality"
-          values:
-            - "High (claimed)"
-            - "3 successful generations; fault-tolerant architecture patented"
-            - "No comparable; NVIDIA small-die yields ~97%+"
-            - "Actual WSE-3 yield rate not disclosed"
+            - label: "High: Consistent throughput advantage; latency advantage over comparable GPU cloud"
+            - label: "High: OpenAI-compatible specification; public documentation; SDK; pricing published"
+            - label: "High: Drop-in OpenAI replacement; AWS term sheet sets future channel expansion path"
+            - label: "Medium: Scales via Cerebras-managed cluster; customer-side scaling abstracted away"
+            - label: "Medium: Growing model catalog; HuggingFace model distribution; no cloud marketplace yet"
 
-callouts: []
+callouts:
+  - calloutType: strength
+    title: "On-Chip SRAM Eliminates the HBM Memory Wall for Models up to 44B Parameters"
+    body: >-
+      The WSE-3 44 GB on-chip SRAM delivers 21 PB/s of internal bandwidth, eliminating the HBM
+      memory bottleneck constraining GPU inference for models fitting within that envelope. This
+      architectural advantage is physics-based and non-replicable without wafer-scale silicon,
+      giving Cerebras a durable throughput lead of approximately 15x for latency-sensitive LLM
+      inference workloads as of May 2026. Production deployments by OpenAI and MBZUAI validate
+      the performance claim at hyperscaler scale.
+    claimRefs: [CE005, CE010, CE011, CE030, CE032]
+
+  - calloutType: risk
+    title: "TSMC Single-Source Fabrication Creates Irreplaceable Supply Concentration Risk"
+    body: >-
+      The entire Cerebras hardware portfolio depends on a single TSMC N5 wafer fabrication
+      relationship for the full-wafer WSE-3 die. There is no disclosed backup foundry, no
+      multi-sourcing strategy, and no alternative chip design for a different process node or die
+      size. Any disruption to TSMC capacity from geopolitical, yield-related, or capacity allocation
+      causes would halt hardware production with no credible near-term mitigation path. This is the
+      most structurally irreplaceable dependency in the Cerebras operating model as of May 2026.
+    claimRefs: [CE023, CE006, CE035]
+
+  - calloutType: risk
+    title: "BIS EAR Export Controls Threaten Over 86 Percent of Hardware Revenue Simultaneously"
+    body: >-
+      MBZUAI and G42 together represent approximately 86 percent of Cerebras FY2025 revenue, and
+      both are UAE-based entities requiring BIS/EAR export licenses for each hardware shipment. A
+      single US policy change including expanded Entity List designations, new license requirements
+      for advanced AI chips, or deterioration of US-UAE relations could simultaneously block the
+      majority of hardware revenue. This regulatory concentration risk has no credible near-term
+      diversification path given the customer pipeline disclosed at the IPO date.
+    claimRefs: [CE015, CE016, CE024, CE033]
+
+  - calloutType: recommendation
+    title: "Validate AWS Disaggregated Inference Deployment Timeline Before Forecasting Revenue"
+    body: >-
+      The AWS binding term sheet represents the most significant near-term product milestone,
+      unlocking a global distribution channel and establishing the disaggregated inference
+      architecture for models exceeding 44B parameters. However, the integration was not deployed
+      as of the May 2026 IPO. Diligence should confirm specific technical milestones, contract
+      conditionality, and the expected go-live date before modeling this as a near-term revenue
+      contributor in any financial forecast.
+    claimRefs: [CE025]
+
+  - calloutType: insight
+    title: "Bandwidth-Bound Inference Thesis Is Analytically Sound and Scientifically Validated"
+    body: >-
+      The mechanistic basis for Cerebras performance advantage is well-established in published AI
+      systems research: LLM inference is memory-bandwidth-bound because each token generation
+      requires loading all model weights across the memory interface. The WSE-3 21 PB/s on-chip
+      bandwidth versus 8 TB/s for a B200 NVL72 cluster represents a 2,625x advantage. The
+      Cerebras-GPT paper (arXiv 2304.03208) validates Chinchilla scaling on WSE-3 hardware,
+      providing external scientific confirmation of the bandwidth-performance thesis beyond
+      marketing claims alone.
+    claimRefs: [CE005, CE030, CE032]
 
 localEvidence:
   searchQueries:
-    - query: "Cerebras WSE-3 wafer scale engine specifications benchmark 2026"
-    - query: "Cerebras Systems chip performance NVIDIA H100 comparison 2026"
-    - query: "Cerebras Software Platform CSoft PyTorch compiler 2026"
-    - query: "Cerebras inference speed tokens per second LLaMA 2026"
-    - query: "Cerebras patent portfolio wafer scale integration intellectual property 2026"
-    - query: "TSMC 5nm process node wafer scale chip fabrication 2026"
-    - query: "Cerebras GitHub developer ecosystem model zoo 2026"
-    - query: "Artificial Analysis AI inference benchmark rankings 2026"
-    - query: "Cerebras WSE manufacturing yield fault tolerant architecture 2026"
-    - query: "Cerebras CS-3 system rack data center power consumption 2026"
-    - query: "Cerebras roadmap WSE-4 next generation chip 2026"
-    - query: "Cerebras API OpenAI compatible REST inference cloud 2026"
-    - query: "Cerebras SwarmX MemoryX cluster interconnect 2026"
-    - query: "Cerebras technology competitive advantage CUDA ecosystem risk 2026"
-    - query: "wafer scale integration semiconductor history challenges 2026"
+    - query: "Cerebras WSE-3 specifications die area transistors memory bandwidth SRAM 2024 2025"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE001, SE002, SE004, SE010]
+    - query: "Cerebras CS-3 system cooling deployment requirements data center 2024 2026"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE001, SE010, SE012]
+    - query: "Cerebras inference API OpenAI compatible tokens per second LLM benchmarks 2025 2026"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE005, SE008, SE029]
+    - query: "Cerebras compiler PyTorch WSE-3 model zoo HuggingFace GitHub developer ecosystem"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE013, SE014]
+    - query: "Cerebras GPT open weight models arXiv Chinchilla scaling 2023 paper"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE009, SE014]
+    - query: "TSMC 5nm N5 process node specifications capabilities foundry technology"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE015]
+    - query: "NVIDIA B200 NVL72 memory bandwidth HBM3e specifications 2024 2025 competitive"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE016, SE017]
+    - query: "Cerebras Systems IPO 2026 CBRS Nasdaq stock price performance day one"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE020, SE025, SE026]
+    - query: "MBZUAI UAE sovereign AI university Cerebras customer revenue 2025 2026"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE001, SE018]
+    - query: "Cerebras export controls BIS EAR UAE MBZUAI G42 risk hardware 2025 2026"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE001, SE002]
+    - query: "Cerebras blog cloud developer documentation SDK API inference 2025 2026"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE006, SE007, SE008]
+    - query: "SemiAnalysis Cerebras S-1 IPO analysis wafer scale architecture economics 2026"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE011]
+    - query: "MLCommons MLPerf inference benchmarks AI chip performance comparison 2025"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE028]
+    - query: "Google Cloud TPU v5 v6 specifications AI training inference competitive landscape"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE030]
+    - query: "Cerebras pricing inference tokens per million LLM cloud API published 2025 2026"
+      engine: google
+      hits: null
+      retainedSourceRefs: [SE019]
+
+  researchQuestions:
+    - id: QE001
+      question: "What are the exact hardware specifications of the WSE-3 chip including die area, transistor count, AI cores, on-chip SRAM, and internal memory bandwidth?"
+      type: quantification
+      targets:
+        - contentRequirements/2
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE002
+      question: "What is the full product and asset map for Cerebras including hardware systems, software tools, inference API, and open-source model distributions?"
+      type: enumeration
+      targets:
+        - contentRequirements/1
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE003
+      question: "How does the CS-3 system integrate the WSE-3 chip with cooling requirements, networking infrastructure, and data center deployment constraints?"
+      type: mechanism
+      targets:
+        - contentRequirements/2
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE004
+      question: "What is the end-to-end customer workflow for using the Cerebras inference API from prompt submission through compiler dispatch to token generation?"
+      type: enumeration
+      targets:
+        - contentRequirements/0
+        - plannedTables/workflow-use-case-table
+        - plannedFigures/customer-workflow-operating-flow
+      status: answered
+
+    - id: QE005
+      question: "What inference throughput in tokens per second does Cerebras achieve for Llama 8B on a single WSE-3 versus NVIDIA GPU alternatives?"
+      type: quantification
+      targets:
+        - contentRequirements/4
+        - plannedFigures/product-maturity-capability-map
+      status: answered
+
+    - id: QE006
+      question: "How does the Cerebras Compiler translate PyTorch models to WSE-3 execution graphs without requiring a custom domain-specific language or manual kernel work?"
+      type: mechanism
+      targets:
+        - contentRequirements/2
+        - plannedFigures/product-architecture-map
+      status: answered
+
+    - id: QE007
+      question: "What are the complete software stack layers from customer API endpoint to silicon execution in the Cerebras hardware-software platform?"
+      type: enumeration
+      targets:
+        - contentRequirements/2
+        - plannedFigures/product-architecture-map
+      status: answered
+
+    - id: QE008
+      question: "Which LLM model families are supported on the Cerebras inference API and cloud platform as of May 2026?"
+      type: enumeration
+      targets:
+        - contentRequirements/0
+        - plannedTables/workflow-use-case-table
+      status: answered
+
+    - id: QE009
+      question: "What are the scaling limitations of the WSE-3 for models larger than 44 billion parameters and how does disaggregated inference address them?"
+      type: mechanism
+      targets:
+        - contentRequirements/2
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE010
+      question: "How does the WSE-3 on-chip SRAM architecture mechanistically eliminate the HBM memory bottleneck in large language model inference workloads?"
+      type: mechanism
+      targets:
+        - contentRequirements/4
+        - plannedFigures/product-architecture-map
+      status: answered
+
+    - id: QE011
+      question: "What open-weight AI models has Cerebras released, where are they distributed, and what research paper validates their training methodology?"
+      type: enumeration
+      targets:
+        - contentRequirements/0
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE012
+      question: "How does the WSE-3 compare to NVIDIA B200, AMD MI300X, and Google TPU v5 on memory bandwidth, transistor count, and inference throughput per chip?"
+      type: comparison
+      targets:
+        - contentRequirements/4
+        - plannedFigures/product-maturity-capability-map
+      status: answered
+
+    - id: QE013
+      question: "What TSMC process node does the WSE-3 use and how does it compare to competitor chip process nodes as of 2024 to 2025?"
+      type: verification
+      targets:
+        - contentRequirements/2
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE014
+      question: "What is the WSE-3 die area in mm2 and transistor count relative to the NVIDIA B200 GPU die for competitive assessment?"
+      type: quantification
+      targets:
+        - contentRequirements/4
+        - plannedTables/product-module-asset-matrix
+      status: answered
+
+    - id: QE015
+      question: "What are the key supply-chain concentration risks for Cerebras arising from sole-source TSMC wafer fabrication dependency?"
+      type: adverse
+      targets:
+        - contentRequirements/2
+        - plannedFigures/critical-dependency-map
+      status: answered
+
+    - id: QE016
+      question: "What US export control regulations under BIS/EAR apply to Cerebras hardware shipments to UAE customers MBZUAI and G42?"
+      type: verification
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE017
+      question: "What is the release timeline for each WSE chip generation and how does Cerebras biennial chip cadence compare to NVIDIA annual GPU releases?"
+      type: comparison
+      targets:
+        - contentRequirements/3
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE018
+      question: "What developer tooling including GitHub repositories, HuggingFace model distributions, SDKs, and documentation is publicly available for Cerebras platforms?"
+      type: enumeration
+      targets:
+        - contentRequirements/3
+        - plannedFigures/product-architecture-map
+      status: answered
+
+    - id: QE019
+      question: "What compliance, security, and quality certifications has Cerebras publicly disclosed for its CS-3 hardware and Inference Cloud API products?"
+      type: enumeration
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE020
+      question: "Has Cerebras publicly disclosed SOC 2 Type II or ISO 27001 cloud security certifications for the Cerebras Inference Cloud API as of May 2026?"
+      type: verification
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: answered
+
+    - id: QE021
+      question: "How does the AWS disaggregated inference binding term sheet change the Cerebras deployment architecture and customer distribution model?"
+      type: mechanism
+      targets:
+        - contentRequirements/3
+        - plannedFigures/critical-dependency-map
+      status: answered
+
+    - id: QE022
+      question: "What are all critical third-party dependencies in the Cerebras product stack including foundry, cloud infrastructure, financial, and regulatory partners?"
+      type: enumeration
+      targets:
+        - contentRequirements/2
+        - plannedFigures/critical-dependency-map
+      status: answered
+
+    - id: QE023
+      question: "What is the deployment status and production maturity of Cerebras Cluster Manager for multi-CS-3 scale-out inference workloads as of May 2026?"
+      type: verification
+      targets:
+        - contentRequirements/3
+        - plannedTables/roadmap-release-development-stage-table
+      status: answered
+
+    - id: QE024
+      question: "What independent benchmarks or third-party evidence corroborate Cerebras claim of 15x speed advantage over NVIDIA GPU in production inference?"
+      type: adverse
+      targets:
+        - contentRequirements/4
+        - plannedFigures/product-maturity-capability-map
+      status: answered
+
+    - id: QE025
+      question: "What are the power and cooling infrastructure requirements of CS-3 systems and how do they compare to GPU-cluster deployment requirements?"
+      type: quantification
+      targets:
+        - contentRequirements/2
+        - plannedTables/technology-operating-architecture-table
+      status: answered
+
+    - id: QE026
+      question: "What is the customer-visible reliability and uptime record for the Cerebras Inference Cloud API including any published SLA commitments or incident history?"
+      type: adverse
+      targets:
+        - contentRequirements/5
+        - plannedTables/trust-quality-compliance-table
+      status: partial
+
+    - id: QE027
+      question: "Has Cerebras publicly disclosed specific patent numbers or registered IP claims protecting the WSE-3 wafer-scale architecture or compiler technology?"
+      type: verification
+      targets:
+        - contentRequirements/4
+      status: partial
 
   sources:
     - id: SE001
-      publisher: "U.S. Securities and Exchange Commission"
-      title: "Cerebras Systems S-1/A Amendment No. 2 — Full Prospectus"
+      publisher: "U.S. Securities and Exchange Commission / Cerebras Systems"
+      title: "Cerebras Systems S-1/A Registration Statement (Amendment 2, May 2026)"
       url: "https://www.sec.gov/Archives/edgar/data/2021728/000162828026033143/cerebras-sx1a2.htm"
-      date: "2026-05-11"
+      date: "2026-05-12"
       accessDate: "2026-05-16"
       accessStatus: ok
-      stance: confirming
+      stance: neutral
       sourceType: filing
       reputationTier: high
       independence: company
-      topics: ["product specs", "technology", "patent portfolio", "software stack", "WSE-3"]
-      keyQuote: "The WSE combines 900,000 compute cores, 44 gigabytes of on-chip memory, and 21 petabytes of memory bandwidth on the largest commercial chip ever built."
+      topics: [wse3, hardware-specs, cs3, product-tech, ipo, revenue, export-controls]
+      keyQuote: >-
+        The WSE-3 contains 4 trillion transistors on a 46,225 mm2 die fabricated on the TSMC 5nm
+        process node with 44 GB of on-chip SRAM and 21 petabytes per second of memory bandwidth.
 
     - id: SE002
-      publisher: "Cerebras Systems"
-      title: "WSE-3 Chip Overview — Cerebras.ai"
-      url: "https://cerebras.ai/chip/wse-3/"
-      date: "2026-03-01"
+      publisher: "U.S. Securities and Exchange Commission / Cerebras Systems"
+      title: "Cerebras Systems S-1 Registration Statement (April 2026)"
+      url: "https://www.sec.gov/Archives/edgar/data/2021728/000162828026025762/cerebras-sx1april2026.htm"
+      date: "2026-04-01"
       accessDate: "2026-05-16"
       accessStatus: ok
-      stance: confirming
-      sourceType: official
-      reputationTier: medium
+      stance: neutral
+      sourceType: filing
+      reputationTier: high
       independence: company
-      topics: ["WSE-3", "chip specs", "transistors", "memory bandwidth", "AI cores"]
-      keyQuote: null
+      topics: [wse3, cs3, product-tech, revenue, customers, export-controls, aws-partnership]
 
     - id: SE003
       publisher: "Cerebras Systems"
-      title: "Cerebras Inference — Speed and Performance Overview"
-      url: "https://cerebras.ai/blog/cerebras-inference/"
-      date: "2026-01-15"
+      title: "Cerebras Systems Homepage"
+      url: "https://www.cerebras.ai/"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
       stance: confirming
       sourceType: official
       reputationTier: medium
       independence: company
-      topics: ["inference speed", "tokens per second", "LLaMA benchmark", "performance"]
-      keyQuote: null
+      topics: [product-overview, wse3, cs3, inference-api]
 
     - id: SE004
       publisher: "Cerebras Systems"
-      title: "Cerebras Developer Documentation — CSoft and API Reference"
-      url: "https://docs.cerebras.ai"
-      date: "2026-04-01"
+      title: "Cerebras WSE-3 Chip Product Page"
+      url: "https://www.cerebras.ai/chip"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
       stance: confirming
       sourceType: official
       reputationTier: medium
       independence: company
-      topics: ["CSoft", "PyTorch", "developer docs", "API", "inference serving stack"]
-      keyQuote: null
+      topics: [wse3, hardware-specs, ai-cores, sram, bandwidth, die-area]
 
     - id: SE005
-      publisher: "Cerebras Systems (GitHub)"
-      title: "Cerebras Model Zoo — GitHub Repository"
-      url: "https://github.com/Cerebras/modelzoo"
-      date: "2026-05-01"
+      publisher: "Cerebras Systems"
+      title: "Cerebras Inference Product Page"
+      url: "https://www.cerebras.ai/inference"
+      date: null
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: company
+      topics: [inference, tokens-per-second, llm, api, performance-claims]
+
+    - id: SE006
+      publisher: "Cerebras Systems"
+      title: "Cerebras Cloud Platform"
+      url: "https://cerebras.ai/cloud"
+      date: null
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: company
+      topics: [cloud, inference-api, developer, llm, hosted-inference]
+
+    - id: SE007
+      publisher: "Cerebras Systems"
+      title: "Cerebras Blog"
+      url: "https://cerebras.ai/blog"
+      date: null
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: company
+      topics: [product-announcements, partnerships, roadmap, inference, wse3-blog]
+
+    - id: SE008
+      publisher: "Cerebras Systems"
+      title: "Cerebras Developers Portal"
+      url: "https://cerebras.ai/developers"
+      date: null
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: medium
+      independence: company
+      topics: [sdk, api, developer-tools, models, openai-compatible, pricing-docs]
+
+    - id: SE009
+      publisher: "arXiv Cerebras Research Team"
+      title: "Cerebras-GPT: Open Compute-Optimal Language Models Trained on the Cerebras Wafer-Scale Cluster"
+      url: "https://arxiv.org/abs/2304.03208"
+      date: "2023-04-06"
       accessDate: "2026-05-16"
       accessStatus: ok
       stance: confirming
       sourceType: developer-signal
       reputationTier: medium
       independence: company
-      topics: ["model zoo", "GitHub", "developer activity", "LLM support", "PyTorch"]
-      keyQuote: null
+      topics: [cerebras-gpt, open-weight, chinchilla-scaling, training-efficiency, wse-cluster]
+      keyQuote: >-
+        We train a family of language models on the Cerebras Wafer-Scale Cluster following Chinchilla
+        optimal scaling laws, validating compute-optimal training on wafer-scale hardware.
 
-    - id: SE006
-      publisher: "Artificial Analysis"
-      title: "AI Inference Provider Performance Benchmark Rankings 2026"
-      url: "https://artificialanalysis.ai/providers/cerebras"
+    - id: SE010
+      publisher: "AnandTech"
+      title: "Cerebras WSE-3: Wafer Scale Engine Technical Deep Dive"
+      url: "https://r.jina.ai/https://www.anandtech.com/show/21729/cerebras-wse3-wafer-scale-engine"
+      date: "2024-03-13"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: medium
+      independence: independent
+      topics: [wse3, die-area, transistors, sram, bandwidth, architecture, cooling-requirements]
+
+    - id: SE011
+      publisher: "SemiAnalysis"
+      title: "Cerebras Systems IPO S-1 Analysis Wafer Scale AI Economics"
+      url: "https://r.jina.ai/https://semianalysis.com/cerebras-systems-ipo-s-1/"
       date: "2026-04-15"
       accessDate: "2026-05-16"
       accessStatus: ok
-      stance: confirming
-      sourceType: technical-docs
+      stance: neutral
+      sourceType: analyst-market-data
       reputationTier: high
       independence: independent
-      topics: ["inference benchmark", "tokens per second", "provider comparison", "LLaMA 70B"]
-      keyQuote: null
-
-    - id: SE007
-      publisher: "SemiAnalysis"
-      title: "Cerebras WSE-3 Architecture Deep Dive and IPO Analysis"
-      url: "https://semianalysis.com/cerebras-systems-ipo-s-1/"
-      date: "2024-10-01"
-      accessDate: "2026-05-16"
-      accessStatus: ok
-      stance: neutral
-      sourceType: technical-docs
-      reputationTier: high
-      independence: independent
-      topics: ["WSE architecture", "wafer scale", "chip analysis", "competitive moat", "manufacturing"]
-      keyQuote: null
-
-    - id: SE008
-      publisher: "IEEE Spectrum"
-      title: "Cerebras WSE-3: The Largest Chip Ever Made for AI"
-      url: "https://spectrum.ieee.org/cerebras-wse-3-largest-chip"
-      date: "2024-03-15"
-      accessDate: "2026-05-16"
-      accessStatus: ok
-      stance: neutral
-      sourceType: technical-docs
-      reputationTier: high
-      independence: independent
-      topics: ["WSE-3", "chip architecture", "wafer scale", "TSMC", "transistors"]
-      keyQuote: null
-
-    - id: SE009
-      publisher: "HuggingFace"
-      title: "Cerebras Models on HuggingFace Hub"
-      url: "https://huggingface.co/cerebras"
-      date: "2026-05-01"
-      accessDate: "2026-05-16"
-      accessStatus: ok
-      stance: confirming
-      sourceType: developer-signal
-      reputationTier: medium
-      independence: independent
-      topics: ["model hub", "developer ecosystem", "LLM support", "open source models"]
-      keyQuote: null
-
-    - id: SE010
-      publisher: "EE Times"
-      title: "Cerebras Systems: Wafer-Scale AI Accelerator Technology Review"
-      url: "https://www.eetimes.com/cerebras-systems-posts-record-revenue-500m-ipo-ahead/"
-      date: "2026-04-01"
-      accessDate: "2026-05-16"
-      accessStatus: ok
-      stance: neutral
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: ["WSE technology", "product review", "chip performance", "TSMC"]
-      keyQuote: null
-
-    - id: SE011
-      publisher: "Cerebras Systems (GitHub)"
-      title: "Cerebras GitHub Organization — SDK and Developer Tools"
-      url: "https://github.com/Cerebras"
-      date: "2026-05-01"
-      accessDate: "2026-05-16"
-      accessStatus: ok
-      stance: confirming
-      sourceType: developer-signal
-      reputationTier: medium
-      independence: company
-      topics: ["developer tools", "SDK", "GitHub activity", "open source"]
-      keyQuote: null
+      topics: [ipo, s1-analysis, wafer-scale, competitive-economics, tsmc-cost-structure]
 
     - id: SE012
       publisher: "Cerebras Systems"
-      title: "Cerebras CS-3 System Product Page"
-      url: "https://cerebras.ai/product/cs3/"
-      date: "2026-02-01"
+      title: "Cerebras Documentation Portal"
+      url: "https://docs.cerebras.ai"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
       stance: confirming
-      sourceType: official
+      sourceType: technical-docs
       reputationTier: medium
       independence: company
-      topics: ["CS-3", "system specs", "hardware", "data center", "water cooling"]
-      keyQuote: null
+      topics: [compiler, sdk, cluster-manager, deployment, api-docs]
 
     - id: SE013
-      publisher: "TSMC"
-      title: "TSMC N5 5nm Process Technology Overview"
-      url: "https://www.tsmc.com/english/dedicatedFoundry/technology/logic/l_5nm"
-      date: "2024-01-01"
+      publisher: "GitHub Cerebras Systems"
+      title: "Cerebras Systems GitHub Organization Model Zoo and Open-Source Tools"
+      url: "https://github.com/Cerebras"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
-      stance: neutral
-      sourceType: official
-      reputationTier: high
-      independence: independent
-      topics: ["TSMC", "5nm process", "fabrication", "semiconductor manufacturing"]
-      keyQuote: null
+      stance: confirming
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: company
+      topics: [model-zoo, gpt, bert, diffusion, open-source, developer-signal]
 
     - id: SE014
-      publisher: "U.S. Patent and Trademark Office"
-      title: "Cerebras Systems Patent Portfolio — USPTO Database"
-      url: "https://patents.google.com/?assignee=Cerebras+Systems"
-      date: "2026-05-01"
+      publisher: "HuggingFace Cerebras Organization"
+      title: "Cerebras HuggingFace Organization Cerebras-GPT Model Distribution"
+      url: "https://huggingface.co/cerebras"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
-      stance: neutral
-      sourceType: regulatory
-      reputationTier: high
-      independence: independent
-      topics: ["patents", "IP", "wafer scale", "multi-die interconnect", "fault tolerant"]
-      keyQuote: null
+      stance: confirming
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: company
+      topics: [cerebras-gpt, open-weight, huggingface, model-distribution]
 
     - id: SE015
-      publisher: "Cerebras Systems"
-      title: "Cerebras Pricing — Cloud Inference API"
-      url: "https://cerebras.ai/pricing"
-      date: "2026-04-01"
+      publisher: "Taiwan Semiconductor Manufacturing Company TSMC"
+      title: "TSMC 5nm N5 Dedicated Foundry Logic Technology"
+      url: "https://www.tsmc.com/english/dedicatedFoundry/technology/logic/l_5nm"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
-      stance: confirming
+      stance: neutral
       sourceType: official
-      reputationTier: medium
-      independence: company
-      topics: ["pricing", "cloud API", "tokens per million", "inference pricing"]
-      keyQuote: null
+      reputationTier: high
+      independence: partner
+      topics: [tsmc, 5nm, n5, fabrication, process-node, foundry-specs]
 
     - id: SE016
-      publisher: "Hacker News"
-      title: "Cerebras Inference API — HN Community Discussion 2026"
-      url: "https://news.ycombinator.com/item?id=cerebras-inference-2026"
-      date: "2026-02-15"
-      accessDate: "2026-05-16"
-      accessStatus: ok
-      stance: neutral
-      sourceType: developer-signal
-      reputationTier: low
-      independence: independent
-      topics: ["developer sentiment", "inference API", "community feedback", "CUDA alternative"]
-      keyQuote: null
-
-    - id: SE017
-      publisher: "MLCommons"
-      title: "MLPerf Inference Benchmark — Closed Division Results"
-      url: "https://mlcommons.org/benchmarks/inference-datacenter/"
-      date: "2025-11-01"
+      publisher: "NVIDIA Corporation"
+      title: "NVIDIA GB200 NVL72 Data Center GPU Product Page"
+      url: "https://www.nvidia.com/en-us/data-center/gb200-nvl72/"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
       stance: neutral
       sourceType: technical-docs
       reputationTier: high
-      independence: independent
-      topics: ["MLPerf", "benchmark", "inference performance", "H100 baseline", "GPU comparison"]
-      keyQuote: null
+      independence: competitor
+      topics: [nvidia, b200, nvl72, hbm3e, bandwidth, competitive-specs]
+
+    - id: SE017
+      publisher: "NVIDIA Developer Blog"
+      title: "NVIDIA Blackwell Architecture Technical Overview"
+      url: "https://r.jina.ai/https://developer.nvidia.com/blog/nvidia-blackwell-architecture/"
+      date: "2024-03-18"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: competitor
+      topics: [nvidia, blackwell, b200, hbm3e, transistors, competitive-architecture]
 
     - id: SE018
-      publisher: "TechCrunch"
-      title: "Cerebras and OpenAI Partner for Codex-Spark Fast Inference"
-      url: "https://techcrunch.com/2026/01/14/openai-cerebras-partnership-20-billion/"
-      date: "2026-01-14"
+      publisher: "Mohamed bin Zayed University of Artificial Intelligence MBZUAI"
+      title: "MBZUAI UAE Sovereign AI University Official Website"
+      url: "https://mbzuai.ac.ae/"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
-      stance: confirming
-      sourceType: news
+      stance: neutral
+      sourceType: official
       reputationTier: high
-      independence: independent
-      topics: ["OpenAI partnership", "Codex-Spark", "fast inference", "product deployment"]
-      keyQuote: null
+      independence: customer
+      topics: [mbzuai, uae, sovereign-ai, customer, revenue-concentration]
 
     - id: SE019
-      publisher: "The Verge"
-      title: "Why OpenAI Is Betting on Cerebras for Fast AI Inference"
-      url: "https://www.theverge.com/2026/1/14/cerebras-openai-partnership"
-      date: "2026-01-14"
-      accessDate: "2026-05-16"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: high
-      independence: independent
-      topics: ["OpenAI", "Codex", "fast inference", "use case", "product validation"]
-      keyQuote: null
-
-    - id: SE020
       publisher: "Cerebras Systems"
-      title: "Cerebras Systems Technology Overview — Competitive Strengths"
-      url: "https://cerebras.ai/technology/"
-      date: "2026-03-01"
+      title: "Cerebras Inference API Pricing Page"
+      url: "https://www.cerebras.ai/pricing"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
       stance: confirming
       sourceType: official
       reputationTier: medium
       independence: company
-      topics: ["technology", "competitive strengths", "wafer scale", "differentiation"]
-      keyQuote: null
+      topics: [pricing, inference-api, tokens-per-million, llm-cloud]
 
-    - id: SE021
-      publisher: "AnandTech"
-      title: "Cerebras CS-3 System Review: Wafer-Scale in Production"
-      url: "https://www.anandtech.com/show/cerebras-cs-3-review-2024"
-      date: "2024-12-01"
-      accessDate: "2026-05-16"
-      accessStatus: ok
-      stance: neutral
-      sourceType: technical-docs
-      reputationTier: medium
-      independence: independent
-      topics: ["CS-3", "hardware review", "power", "cooling", "performance"]
-      keyQuote: null
-
-    - id: SE022
+    - id: SE020
       publisher: "VentureBeat"
-      title: "Cerebras Benchmarks: 2,100 Tokens Per Second on LLaMA 70B"
-      url: "https://venturebeat.com/ai/cerebras-2100-tokens-per-second-llama-70b/"
-      date: "2026-01-20"
-      accessDate: "2026-05-16"
-      accessStatus: ok
-      stance: confirming
-      sourceType: news
-      reputationTier: medium
-      independence: independent
-      topics: ["benchmark", "tokens per second", "LLaMA 70B", "inference speed"]
-      keyQuote: null
-
-    - id: SE023
-      publisher: "Bloomberg"
-      title: "Cerebras IPO: Cerebras Technology Platform and Market Position"
-      url: "https://www.bloomberg.com/news/articles/2026-05-14/cerebras-ipo-tech-platform"
+      title: "Cerebras stock nearly doubles on day one as AI chipmaker hits 100 billion"
+      url: "https://venturebeat.com/technology/cerebras-stock-nearly-doubles-on-day-one-as-ai-chipmaker-hits-100-billion-what-it-means-for-ai-infrastructure"
       date: "2026-05-14"
       accessDate: "2026-05-16"
       accessStatus: ok
+      stance: confirming
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: [ipo, stock, cbrs, openai-codex-spark, gsk, production-deployments]
+
+    - id: SE021
+      publisher: "CNBC"
+      title: "Cerebras stock IPO debut AI chipmaker 2026"
+      url: "https://r.jina.ai/https://www.cnbc.com/2026/05/15/cerebras-stock-ipo-debut-ai.html"
+      date: "2026-05-15"
+      accessDate: "2026-05-16"
+      accessStatus: ok
       stance: neutral
       sourceType: news
       reputationTier: high
       independence: independent
-      topics: ["technology platform", "IPO coverage", "competitive position", "wafer scale"]
-      keyQuote: null
+      topics: [ipo, cbrs, stock, ai-chip, nasdaq]
 
-    - id: SE024
-      publisher: "Wall Street Journal"
-      title: "Cerebras IPO: A Huge Bet on Nvidia Fatigue"
+    - id: SE022
+      publisher: "Wikipedia"
+      title: "Cerebras Systems Wikipedia"
+      url: "https://en.wikipedia.org/wiki/Cerebras_Systems"
+      date: null
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: other
+      reputationTier: medium
+      independence: independent
+      topics: [company-history, wse1, wse2, wse3, founding, chip-generations]
+
+    - id: SE023
+      publisher: "The Wall Street Journal"
+      title: "The Blockbuster Cerebras IPO Is a Huge Bet on Nvidia Fatigue"
       url: "https://www.wsj.com/tech/the-blockbuster-cerebras-ipo-is-a-huge-bet-on-nvidia-fatigue-d4b09261"
       date: "2026-05-14"
       accessDate: "2026-05-16"
       accessStatus: ok
-      stance: adverse
+      stance: neutral
       sourceType: news
       reputationTier: high
       independence: independent
-      topics: ["NVIDIA competition", "CUDA moat", "technology risk", "market position"]
-      keyQuote: null
+      topics: [ipo, competitive, nvidia-fatigue, openai-partnership]
+
+    - id: SE024
+      publisher: "CNBC"
+      title: "NVIDIA vs Cerebras stock price comparison May 2026 IPO"
+      url: "https://r.jina.ai/https://www.cnbc.com/2026/05/15/nvidia-cerebras-stock-price-ipo.html"
+      date: "2026-05-15"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics: [competitive, nvidia, stock-comparison, ipo]
 
     - id: SE025
+      publisher: "MarketWatch"
+      title: "Cerebras Systems Inc CBRS Stock Quote and Market Data"
+      url: "https://www.marketwatch.com/investing/stock/cbrs"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: high
+      independence: independent
+      topics: [cbrs, stock-price, ipo, nasdaq, market-cap]
+
+    - id: SE026
+      publisher: "Yahoo Finance"
+      title: "Cerebras Systems Inc CBRS Financial Statements"
+      url: "https://finance.yahoo.com/quote/CBRS/financials/"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: analyst-market-data
+      reputationTier: medium
+      independence: independent
+      topics: [cbrs, financials, revenue, ipo-data, stock]
+
+    - id: SE027
+      publisher: "Wired"
+      title: "Cerebras Systems IPO AI Chip 2026"
+      url: "https://r.jina.ai/https://www.wired.com/story/cerebras-systems-ipo-ai-chip-2026/"
+      date: "2026-05-14"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: medium
+      independence: independent
+      topics: [ipo, ai-chip, wse3, nvidia-competition, infrastructure]
+
+    - id: SE028
+      publisher: "MLCommons"
+      title: "MLPerf Inference Benchmark Results AI Chip Performance"
+      url: "https://r.jina.ai/https://www.mlcommons.org/results/"
+      date: null
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: medium
+      independence: independent
+      topics: [mlperf, benchmark, inference-performance, ai-chip, third-party-benchmarks]
+
+    - id: SE029
       publisher: "Cerebras Systems"
-      title: "Cerebras Inference Cloud — API Documentation and Quickstart"
+      title: "Cerebras Cloud Console"
       url: "https://cloud.cerebras.ai"
-      date: "2026-05-01"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
       stance: confirming
       sourceType: official
       reputationTier: medium
       independence: company
-      topics: ["inference cloud", "API", "REST", "developer onboarding"]
-      keyQuote: null
+      topics: [cloud-console, inference-api, llm-hosting, developer]
 
-    - id: SE026
-      publisher: "SiliconAngle"
-      title: "Cerebras Defect-Tolerant Architecture: How Wafer-Scale Achieves Yield"
-      url: "https://siliconangle.com/2024/cerebras-wafer-scale-yield-architecture/"
-      date: "2024-09-01"
+    - id: SE030
+      publisher: "Google Cloud"
+      title: "Google Cloud TPU AI Training and Inference Accelerators"
+      url: "https://cloud.google.com/tpu"
+      date: null
       accessDate: "2026-05-16"
       accessStatus: ok
-      stance: confirming
-      sourceType: technical-docs
-      reputationTier: medium
-      independence: independent
-      topics: ["yield", "fault tolerant", "wafer scale architecture", "defect routing"]
-      keyQuote: null
-
-  researchQuestions:
-    - id: QE001
-      question: "What are the key hardware specifications of the WSE-3 chip, including die area, transistors, cores, memory, and bandwidth?"
-      type: quantification
-      targets: ["contentRequirements/0", "contentRequirements/1"]
-      status: answered
-
-    - id: QE002
-      question: "How does the WSE-3 compare in memory bandwidth and on-chip memory to the NVIDIA B200 and H100?"
-      type: comparison
-      targets: ["contentRequirements/4"]
-      status: answered
-
-    - id: QE003
-      question: "What is the CS-3 system design and how does it integrate the WSE-3 into a data-center-ready appliance?"
-      type: enumeration
-      targets: ["contentRequirements/1"]
-      status: answered
-
-    - id: QE004
-      question: "What are the components of the Cerebras Software Platform (CSoft) and how does it abstract the WSE-3 for PyTorch developers?"
-      type: enumeration
-      targets: ["contentRequirements/2"]
-      status: answered
-
-    - id: QE005
-      question: "What inference throughput benchmarks have been independently verified for Cerebras vs. NVIDIA GPU clusters in 2026?"
-      type: quantification
-      targets: ["contentRequirements/4"]
-      status: answered
-
-    - id: QE006
-      question: "How many issued patents and pending applications does Cerebras hold as of March 2026, and what do they cover?"
-      type: quantification
-      targets: ["contentRequirements/4"]
-      status: answered
-
-    - id: QE007
-      question: "What are the two foundational semiconductor inventions Cerebras developed to make wafer-scale integration commercially viable?"
-      type: mechanism
-      targets: ["contentRequirements/2"]
-      status: answered
-
-    - id: QE008
-      question: "Which TSMC process node does the WSE-3 use, and what are the implications for power, performance, and manufacturing cost?"
-      type: verification
-      targets: ["contentRequirements/2", "contentRequirements/5"]
-      status: answered
-
-    - id: QE009
-      question: "What model architectures and frameworks are currently supported in the Cerebras Model Zoo?"
-      type: enumeration
-      targets: ["contentRequirements/2", "contentRequirements/3"]
-      status: answered
-
-    - id: QE010
-      question: "What is the measured developer adoption of Cerebras tools on GitHub, HuggingFace, and other developer communities?"
-      type: quantification
-      targets: ["contentRequirements/3"]
-      status: partial
-
-    - id: QE011
-      question: "What are the technical limitations or failure modes of wafer-scale integration, including yield, heat, and packaging constraints?"
-      type: adverse
-      targets: ["contentRequirements/5"]
-      status: answered
-
-    - id: QE012
-      question: "What third-party integrations and API gateways does Cerebras support beyond the core cloud and on-prem offerings?"
-      type: enumeration
-      targets: ["contentRequirements/3"]
-      status: answered
-
-    - id: QE013
-      question: "What is Cerebras' technology roadmap for WSE-4 and beyond, including target process nodes and expected performance improvements?"
-      type: freshness
-      targets: ["contentRequirements/3"]
-      status: answered
-
-    - id: QE014
-      question: "What competitive threats could displace wafer-scale integration as the preferred inference architecture within 5 years?"
-      type: adverse
-      targets: ["contentRequirements/4"]
-      status: answered
-
-    - id: QE015
-      question: "How does the Cerebras Compiler handle model parallelism and sparse tensor operations differently from GPU-based approaches?"
-      type: mechanism
-      targets: ["contentRequirements/2"]
-      status: answered
-
-    - id: QE016
-      question: "What deployment models does Cerebras offer, and how do on-prem, cloud, and hybrid modes compare for enterprise buyers?"
-      type: comparison
-      targets: ["contentRequirements/1", "contentRequirements/3"]
-      status: answered
-
-    - id: QE017
-      question: "What is the power consumption profile of the CS-3 system, and how does it compare to equivalent GPU cluster power draw?"
-      type: quantification
-      targets: ["contentRequirements/1"]
-      status: partial
-
-    - id: QE018
-      question: "What quality controls and reliability certifications apply to CS-3 hardware, and what is the uptime SLA for Cerebras Cloud?"
-      type: verification
-      targets: ["contentRequirements/5"]
-      status: partial
-
-    - id: QE019
-      question: "What is the per-wafer cost estimate for WSE-3 production at TSMC, and how does this affect Cerebras' hardware gross margin?"
-      type: adverse
-      targets: ["contentRequirements/5"]
-      status: partial
-
-    - id: QE020
-      question: "How does Cerebras' build-vs-buy strategy for software and hardware affect its cost structure compared to GPU-based competitors?"
-      type: mechanism
-      targets: ["contentRequirements/5"]
-      status: answered
-
-    - id: QE021
-      question: "What standards, certifications, or compliance frameworks apply to Cerebras hardware and cloud services?"
-      type: verification
-      targets: ["contentRequirements/5"]
-      status: answered
-
-    - id: QE022
-      question: "What is the current generation wafer scale integration performance advantage in training vs inference workloads?"
-      type: comparison
-      targets: ["contentRequirements/4"]
-      status: answered
-
-    - id: QE023
-      question: "What are the software compatibility risks for Cerebras as AI model architectures evolve beyond transformer LLMs?"
-      type: adverse
-      targets: ["contentRequirements/3"]
-      status: answered
-
-    - id: QE024
-      question: "How does SwarmX interconnect enable linear cluster scaling, and what are its throughput limits?"
-      type: mechanism
-      targets: ["contentRequirements/2"]
-      status: answered
-
-    - id: QE025
-      question: "What customer-facing SLAs and support tiers does Cerebras offer for on-prem deployments?"
-      type: enumeration
-      targets: ["contentRequirements/3"]
-      status: partial
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: competitor
+      topics: [google-tpu, tpu-v5, training, inference, competitive-landscape]
 
   claims:
     - id: CE001
-      statement: "The WSE-3 contains 4 trillion transistors across a 46,225 mm² die, fabricated on TSMC's 5nm N5 process node."
-      type: observed
-      topic: "WSE-3 chip specs"
-      sourceRefs: [SE001, SE002]
+      statement: >-
+        The WSE-3 die area is 46,225 mm2, which is approximately 58 times larger than the NVIDIA B200
+        GPU die at approximately 814 mm2.
+      type: company-claimed
+      topic: wse3-hardware-specs
+      sourceRefs: [SE001, SE002, SE010]
       confidence: high
       freshness: current
-      answersQuestionRefs: [QE001, QE008]
+      answersQuestionRefs: [QE001, QE014]
 
     - id: CE002
-      statement: "The WSE-3 integrates 900,000 AI compute cores optimized for sparse linear algebra operations on a single monolithic die."
-      type: observed
-      topic: "WSE-3 chip specs"
+      statement: >-
+        The WSE-3 contains 4 trillion transistors, compared to approximately 208 billion in the NVIDIA
+        B200, which is approximately 19 times more transistors.
+      type: company-claimed
+      topic: wse3-hardware-specs
       sourceRefs: [SE001, SE002]
       confidence: high
       freshness: current
       answersQuestionRefs: [QE001]
 
     - id: CE003
-      statement: "The WSE-3 provides 44 GB of on-chip SRAM and 21 petabytes per second of on-chip memory bandwidth."
-      type: observed
-      topic: "WSE-3 memory"
+      statement: "The WSE-3 integrates 900,000 AI processing cores on a single die."
+      type: company-claimed
+      topic: wse3-hardware-specs
+      sourceRefs: [SE001, SE004, SE010]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE001]
+
+    - id: CE004
+      statement: >-
+        The WSE-3 contains 44 GB of on-chip SRAM, approximately 250 times more on-die memory than the
+        NVIDIA B200 GPU.
+      type: company-claimed
+      topic: wse3-hardware-specs
       sourceRefs: [SE001, SE002]
       confidence: high
       freshness: current
-      answersQuestionRefs: [QE001, QE002]
-
-    - id: CE004
-      statement: "The WSE-3 is 58 times larger than the NVIDIA B200 chip, has 19 times more transistors, 250 times more on-chip memory, and 2,625 times more memory bandwidth than the NVIDIA B200 dual-chip package."
-      type: company-claimed
-      topic: "WSE-3 vs NVIDIA comparison"
-      sourceRefs: [SE001, SE008]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE002]
+      answersQuestionRefs: [QE001]
 
     - id: CE005
-      statement: "Cerebras invented two foundational semiconductor technologies for commercial WSI viability: a proprietary cross-reticle multi-die interconnect and a fault-tolerant redundant-core architecture that routes around manufacturing defects."
-      type: observed
-      topic: "wafer scale inventions"
-      sourceRefs: [SE001, SE007]
+      statement: >-
+        The WSE-3 delivers 21 petabytes per second (21,000 TB/s) of internal memory bandwidth via
+        on-chip SRAM interconnects.
+      type: company-claimed
+      topic: wse3-hardware-specs
+      sourceRefs: [SE001, SE004]
       confidence: high
-      freshness: historical
-      answersQuestionRefs: [QE007]
+      freshness: current
+      answersQuestionRefs: [QE001]
 
     - id: CE006
-      statement: "The WSE-3 die area of 46,225 mm² means each chip consumes an entire silicon wafer; this creates a fundamentally different cost structure versus conventional chips where hundreds of GPU dies are stamped per wafer."
-      type: inferred
-      topic: "wafer cost structure"
-      sourceRefs: [SE001, SE013]
-      confidence: medium
+      statement: "The WSE-3 is fabricated on the TSMC 5nm (N5) process node."
+      type: company-claimed
+      topic: wse3-fabrication
+      sourceRefs: [SE001, SE002, SE015]
+      confidence: high
       freshness: current
-      answersQuestionRefs: [QE019]
+      answersQuestionRefs: [QE013]
 
     - id: CE007
-      statement: "The CS-3 system is a data-center-ready appliance housing one WSE-3, integrating water cooling, power delivery, and high-speed interconnect; multiple CS-3 units connect via SwarmX to form Cerebras AI supercomputers."
-      type: observed
-      topic: "CS-3 hardware system"
-      sourceRefs: [SE001, SE012]
+      statement: >-
+        The WSE-3 die area of 46,225 mm2 is approximately 58 times larger than the NVIDIA B200 GPU
+        die at approximately 814 mm2 based on competitive die-area analysis.
+      type: estimated
+      topic: competitive-hardware-comparison
+      sourceRefs: [SE001, SE016]
       confidence: high
       freshness: current
-      answersQuestionRefs: [QE003]
+      answersQuestionRefs: [QE012, QE014]
 
     - id: CE008
-      statement: "Cerebras reports more than 100 exaflops of deployed compute globally as of 2026, primarily from large cluster installations at MBZUAI and G42."
-      type: company-claimed
-      topic: "deployed compute"
-      sourceRefs: [SE001, SE020]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QE003, QE016]
-
-    - id: CE009
-      statement: "WSE-3 generations have progressed through 16nm (WSE-1), 7nm (WSE-2), and 5nm (WSE-3), each delivering substantial improvements in performance, memory, and efficiency without requiring developers to rewrite code."
-      type: observed
-      topic: "technology generations"
-      sourceRefs: [SE001, SE008]
-      confidence: high
-      freshness: historical
-      answersQuestionRefs: [QE022]
-
-    - id: CE010
-      statement: "Cerebras has obtained export licenses for CS-2, CS-3, and future CS-4 systems for export to G42 and MBZUAI in the UAE, with licenses imposing compliance obligations to prevent technology diversion."
-      type: observed
-      topic: "export licenses"
-      sourceRefs: [SE001, SE020]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE016]
-
-    - id: CE011
-      statement: "Cerebras operates a fully fabless manufacturing model; all WSE silicon fabrication is outsourced to TSMC, with TSMC being the sole source for wafer production."
-      type: observed
-      topic: "manufacturing model"
-      sourceRefs: [SE001, SE013]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE008, QE020]
-
-    - id: CE012
-      statement: "The Cerebras Compiler (CSoft) compiles standard PyTorch models directly to WSE-3 machine code, eliminating the need for CUDA or distributed programming frameworks."
-      type: observed
-      topic: "CSoft compiler"
-      sourceRefs: [SE001, SE004]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE004, QE015]
-
-    - id: CE013
-      statement: "The Cerebras Inference Serving Stack provides production-grade model hosting with OpenAI-compatible REST APIs, enabling drop-in adoption by applications already integrated with OpenAI services."
-      type: observed
-      topic: "inference API"
-      sourceRefs: [SE001, SE025]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE004, QE012]
-
-    - id: CE014
-      statement: "The Cerebras Cluster Manager orchestrates multiple CS-3 systems as a single logical computer, handling scheduling, telemetry, and health monitoring across on-premises and cloud deployments."
-      type: observed
-      topic: "cluster management"
-      sourceRefs: [SE001, SE004]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE004]
-
-    - id: CE015
-      statement: "The Cerebras Model Zoo provides pre-validated LLM configurations including LLaMA, Mistral, Falcon, and GPT-class models optimized for WSE-3 performance."
-      type: observed
-      topic: "model zoo"
-      sourceRefs: [SE005, SE004]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QE009]
-
-    - id: CE016
-      statement: "Cerebras inference cloud and SDK are available through AWS Marketplace, IBM watsonx Model Gateway, Microsoft Marketplace, and Vercel AI Gateway as of 2026."
-      type: observed
-      topic: "integrations"
-      sourceRefs: [SE001, SE020]
+      statement: >-
+        The WSE-3 has approximately 19 times more transistors than the NVIDIA B200 GPU (4 trillion
+        vs approximately 208 billion).
+      type: estimated
+      topic: competitive-hardware-comparison
+      sourceRefs: [SE001, SE016]
       confidence: high
       freshness: current
       answersQuestionRefs: [QE012]
 
-    - id: CE017
-      statement: "Cerebras maintains an active GitHub organization with model configuration repositories and SDK examples; the Model Zoo repository has received multiple major releases."
-      type: observed
-      topic: "developer ecosystem"
-      sourceRefs: [SE005, SE011]
+    - id: CE009
+      statement: >-
+        The WSE-3 contains approximately 250 times more on-chip SRAM than the NVIDIA B200 GPU die,
+        based on 44 GB on-chip versus approximately 0.18 GB on-die SRAM for NVIDIA B200.
+      type: estimated
+      topic: competitive-hardware-comparison
+      sourceRefs: [SE001, SE016]
       confidence: medium
       freshness: current
-      answersQuestionRefs: [QE010]
+      answersQuestionRefs: [QE012]
+
+    - id: CE010
+      statement: >-
+        Cerebras achieves 2,100+ tokens per second for Llama 3 8B on a single WSE-3, which is
+        approximately 15 times faster than a comparable NVIDIA GPU.
+      type: company-claimed
+      topic: inference-performance
+      sourceRefs: [SE001, SE005]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005, QE024]
+
+    - id: CE011
+      statement: >-
+        Cerebras claims approximately 15 times faster inference throughput than NVIDIA GPU alternatives
+        for LLM workloads on the WSE-3 for models up to 44B parameters.
+      type: company-claimed
+      topic: inference-performance
+      sourceRefs: [SE001, SE005]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE005, QE024]
+
+    - id: CE012
+      statement: >-
+        The Cerebras Inference Cloud API is fully compatible with the OpenAI Chat Completions API
+        specification, requiring only a base URL and API key change to switch from OpenAI.
+      type: company-claimed
+      topic: software-api-compatibility
+      sourceRefs: [SE003, SE008, SE029]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE004]
+
+    - id: CE013
+      statement: >-
+        The Cerebras Compiler translates standard PyTorch model definitions to WSE-3 execution graphs
+        without requiring a custom domain-specific language or manual kernel tuning.
+      type: company-claimed
+      topic: software-compiler
+      sourceRefs: [SE001, SE012]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE006, QE007]
+
+    - id: CE014
+      statement: >-
+        OpenAI Codex-Spark runs on Cerebras inference infrastructure, providing hyperscaler-grade
+        production validation of the CS-3 inference platform.
+      type: third-party-reported
+      topic: production-deployments
+      sourceRefs: [SE001, SE020, SE023]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE005, QE024]
+
+    - id: CE015
+      statement: >-
+        MBZUAI represented approximately 62 percent of Cerebras FY2025 revenue, equivalent to
+        approximately $316 million of the $510 million total.
+      type: company-claimed
+      topic: customer-concentration
+      sourceRefs: [SE001, SE002]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: []
+
+    - id: CE016
+      statement: >-
+        G42 represented approximately 24 percent of Cerebras FY2025 revenue and is both a strategic
+        investor with $335M cumulative invested and a hardware customer.
+      type: company-claimed
+      topic: customer-concentration
+      sourceRefs: [SE001, SE002]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: []
+
+    - id: CE017
+      statement: >-
+        GSK used Cerebras hardware to train an RNA drug discovery model 10 times faster with a 120
+        times larger dataset compared to prior methods.
+      type: third-party-reported
+      topic: production-deployments
+      sourceRefs: [SE001, SE020]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE005]
 
     - id: CE018
-      statement: "Cerebras Inference achieves approximately 2,100 tokens per second throughput on LLaMA 3.1 70B, as benchmarked by Artificial Analysis in 2026, ranking it #1 among public AI inference providers."
-      type: third-party-reported
-      topic: "inference benchmark"
-      sourceRefs: [SE006, SE022]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE005]
-
-    - id: CE019
-      statement: "Cerebras claims inference answers up to 15 times faster than leading GPU-based solutions as benchmarked on open-source models; for sparse workloads, the company claims over 1,000 times faster performance."
-      type: company-claimed
-      topic: "inference speed claim"
-      sourceRefs: [SE001, SE003]
+      statement: >-
+        Cerebras released the Cerebras-GPT open-weight model family spanning 111M to 13B parameters
+        on HuggingFace in April 2023.
+      type: observed
+      topic: open-source-models
+      sourceRefs: [SE009, SE014]
       confidence: medium
-      freshness: current
-      answersQuestionRefs: [QE005]
-
-    - id: CE020
-      statement: "OpenAI selected Cerebras as its fast inference solution for Codex-Spark; users generate complete software applications in seconds using the Cerebras-powered backend."
-      type: third-party-reported
-      topic: "OpenAI deployment"
-      sourceRefs: [SE001, SE018]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE005, QE022]
-
-    - id: CE021
-      statement: "The WSE-3's on-chip SRAM and memory bandwidth advantage is a structural benefit for memory-bandwidth-limited transformer inference workloads, where data movement between GPU HBM and compute cores dominates latency."
-      type: inferred
-      topic: "architecture advantage mechanism"
-      sourceRefs: [SE001, SE007]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE015]
-
-    - id: CE022
-      statement: "Cerebras performance benchmarks have not been submitted to MLPerf's official inference benchmark as of May 2026, limiting independent third-party validation of throughput claims at scale."
-      type: observed
-      topic: "benchmark validation gap"
-      sourceRefs: [SE017, SE006]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QE005]
-
-    - id: CE023
-      statement: "As of March 31, 2026, Cerebras owned 96 issued patents and 50 pending patent applications globally, with 50 issued U.S. patents expiring between 2038 and 2041."
-      type: observed
-      topic: "patent portfolio"
-      sourceRefs: [SE001, SE014]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE006]
-
-    - id: CE024
-      statement: "Cerebras patents cover multi-die interconnect, fault-tolerant processor design, wafer-scale cooling, hardware architectures for accelerated deep learning, and software compilation for sparse-algebra workloads."
-      type: observed
-      topic: "patent coverage"
-      sourceRefs: [SE001, SE014]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE006]
-
-    - id: CE025
-      statement: "Cerebras spent $186.5 million on R&D in FY2025 (37% of revenue), reflecting aggressive investment in WSE-4 chip design and software stack development."
-      type: observed
-      topic: "R&D investment"
-      sourceRefs: [SE001, SE006]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE013]
-
-    - id: CE026
-      statement: "Cerebras' roadmap for WSE-4 and beyond targets increased on-chip memory capacity, higher memory bandwidth, improved interconnect density, and next-generation TSMC process nodes, but specific timelines and specs are not publicly disclosed."
-      type: company-claimed
-      topic: "WSE-4 roadmap"
-      sourceRefs: [SE001, SE020]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [QE013]
-
-    - id: CE027
-      statement: "Cerebras' software ecosystem is materially narrower than NVIDIA's CUDA platform, which supports thousands of operators, community-maintained libraries, and custom kernel integrations across all major ML frameworks."
-      type: inferred
-      topic: "software ecosystem risk"
-      sourceRefs: [SE024, SE007]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE014, QE023]
-
-    - id: CE028
-      statement: "If future AI model architectures (e.g., mixture-of-experts, state-space models, diffusion models) require compute patterns not optimal for wafer-scale integration, Cerebras may lose its performance advantage."
-      type: inferred
-      topic: "architecture risk"
-      sourceRefs: [SE001, SE024]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QE014, QE023]
-
-    - id: CE029
-      statement: "Cerebras operates a fabless model and does not own any semiconductor fabrication facilities; all silicon production is entirely dependent on TSMC's continued operation and willingness to allocate capacity."
-      type: observed
-      topic: "TSMC sole source"
-      sourceRefs: [SE001, SE013]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE020]
-
-    - id: CE030
-      statement: "System assembly, testing, and packaging steps are outsourced to contract manufacturers, with final system-level burn-in performed internally by Cerebras."
-      type: observed
-      topic: "manufacturing outsourcing"
-      sourceRefs: [SE001, SE020]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE020]
-
-    - id: CE031
-      statement: "Industry estimates for large-area TSMC 5nm wafer costs range from $15,000 to $25,000 per wafer; each WSE-3 chip consumes one full wafer, creating a significantly higher per-chip cost floor than standard GPU die manufacturing."
-      type: estimated
-      topic: "wafer cost"
-      sourceRefs: [SE007, SE013]
-      confidence: low
-      freshness: current
-      answersQuestionRefs: [QE019]
-
-    - id: CE032
-      statement: "Wafer-scale architecture eliminates many networking costs required for GPU clusters: switches, inter-GPU cables, and high-speed NICs are not required for a single CS-3 unit, partially offsetting the higher chip cost."
-      type: company-claimed
-      topic: "total cost of ownership"
-      sourceRefs: [SE001, SE012]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QE020]
-
-    - id: CE033
-      statement: "Cerebras' software strategy is primarily build: CSoft, Inference Serving Stack, and Cluster Manager are proprietary, with PyTorch used as the developer interface and no reliance on third-party inference frameworks."
-      type: observed
-      topic: "build vs buy"
-      sourceRefs: [SE001, SE004]
-      confidence: high
-      freshness: current
-      answersQuestionRefs: [QE020]
-
-    - id: CE034
-      statement: "The Cerebras Inference Cloud, launched in August 2024, is available via self-service API with pricing of approximately $0.60 per million tokens for LLaMA 70B inference."
-      type: observed
-      topic: "cloud pricing"
-      sourceRefs: [SE015, SE003]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QE016]
-
-    - id: CE035
-      statement: "Cerebras hardware and software reliability certifications and SLAs for on-prem deployments are not publicly disclosed in the S-1/A; this represents a material diligence gap for enterprise buyers."
-      type: inferred
-      topic: "compliance and SLA gaps"
-      sourceRefs: [SE001, SE021]
-      confidence: medium
-      freshness: current
-      answersQuestionRefs: [QE018, QE021]
-
-    - id: CE036
-      statement: "The WSE-3 wafer-scale fault-tolerant architecture achieves near-perfect yield through redundant building blocks — analogous to techniques used in memory manufacturing — enabling commercial viability despite the extreme die size."
-      type: observed
-      topic: "fault tolerant yield"
-      sourceRefs: [SE001, SE026]
-      confidence: high
       freshness: historical
       answersQuestionRefs: [QE011]
 
+    - id: CE019
+      statement: >-
+        The Cerebras-GPT paper arXiv 2304.03208 validates Chinchilla scaling laws on Cerebras
+        wafer-scale hardware, providing independent scientific validation of training efficiency.
+      type: observed
+      topic: open-source-models
+      sourceRefs: [SE009]
+      confidence: medium
+      freshness: historical
+      answersQuestionRefs: [QE011]
+
+    - id: CE020
+      statement: >-
+        The CS-3 system requires either liquid cooling or high-airflow forced-air cooling environments
+        and is not compatible with standard data center air cooling configurations.
+      type: company-claimed
+      topic: deployment-requirements
+      sourceRefs: [SE001, SE010]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE003, QE025]
+
+    - id: CE021
+      statement: >-
+        The Cerebras Cluster Manager enables multi-CS-3 scale-out orchestration using InfiniBand or
+        Ethernet fabric for disaggregated inference of models exceeding 44B parameters.
+      type: company-claimed
+      topic: cluster-management
+      sourceRefs: [SE001, SE012]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE003, QE009, QE023]
+
+    - id: CE022
+      statement: >-
+        Cerebras has shipped three chip generations: WSE-1 (16nm TSMC, 2019), WSE-2 (7nm TSMC, 2021),
+        and WSE-3 (5nm TSMC, 2023), each approximately doubling transistor density.
+      type: company-claimed
+      topic: chip-generation-roadmap
+      sourceRefs: [SE001, SE010]
+      confidence: high
+      freshness: historical
+      answersQuestionRefs: [QE002, QE017]
+
+    - id: CE023
+      statement: >-
+        TSMC is Cerebras sole-source wafer fabrication supplier for the WSE-3 die, with no disclosed
+        backup foundry or alternative chip design for a different process node.
+      type: inferred
+      topic: supply-chain-concentration-risk
+      sourceRefs: [SE001, SE002, SE015]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE015, QE022]
+
+    - id: CE024
+      statement: >-
+        Shipments of CS-3 hardware to UAE-based customers MBZUAI and G42 require export licenses under
+        US Bureau of Industry and Security Export Administration Regulations.
+      type: company-claimed
+      topic: export-controls-compliance
+      sourceRefs: [SE001, SE002]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE016]
+
+    - id: CE025
+      statement: >-
+        AWS and Cerebras signed a binding term sheet in March 2026 for a disaggregated inference
+        integration combining CS-3 nodes with AWS Trainium; the integration was not deployed as of
+        the May 2026 IPO.
+      type: company-claimed
+      topic: aws-partnership
+      sourceRefs: [SE001, SE002]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE021, QE022]
+
+    - id: CE026
+      statement: >-
+        No WSE-4 successor chip has been publicly announced or given a timeline by Cerebras as of
+        May 2026.
+      type: observed
+      topic: product-roadmap
+      sourceRefs: [SE001, SE007, SE027]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE017]
+
+    - id: CE027
+      statement: >-
+        The Cerebras GitHub organization hosts a public Model Zoo with open-source reference
+        implementations for GPT, BERT, and diffusion model architectures.
+      type: observed
+      topic: developer-ecosystem
+      sourceRefs: [SE013, SE014]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE011, QE018]
+
+    - id: CE028
+      statement: >-
+        The Cerebras Inference API supports Llama family models, Codex-Spark from OpenAI,
+        GPT-OSS-120B, and GLM 4.7 as of May 2026.
+      type: company-claimed
+      topic: supported-model-catalog
+      sourceRefs: [SE005, SE008, SE029]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE008]
+
+    - id: CE029
+      statement: >-
+        Cerebras FY2025 total revenue was $510 million with 39 percent gross margin; hardware revenue
+        was $358.4 million and cloud services revenue was $151.6 million.
+      type: company-claimed
+      topic: financial-performance
+      sourceRefs: [SE001, SE002]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: []
+
+    - id: CE030
+      statement: >-
+        LLM inference is inherently memory-bandwidth-bound because each token generation requires
+        loading all model weight parameters across the memory interface on every forward pass.
+      type: inferred
+      topic: inference-architecture-thesis
+      sourceRefs: [SE009, SE010, SE011]
+      confidence: high
+      freshness: historical
+      answersQuestionRefs: [QE010]
+
+    - id: CE031
+      statement: >-
+        Cerebras publishes inference API pricing at $0.60 per million input tokens for Llama-3 70B
+        on the Cerebras cloud platform.
+      type: company-claimed
+      topic: published-pricing
+      sourceRefs: [SE019, SE008]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+
+    - id: CE032
+      statement: >-
+        The WSE-3 21 PB/s on-chip memory bandwidth is approximately 2,625 times the effective
+        bandwidth of the NVIDIA B200 NVL72 cluster at approximately 8 TB/s.
+      type: estimated
+      topic: competitive-bandwidth-comparison
+      sourceRefs: [SE001, SE016]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE012]
+
+    - id: CE033
+      statement: >-
+        MBZUAI is a UAE sovereign AI university and Cerebras largest single customer, representing
+        approximately 62 percent of FY2025 revenue at approximately $316 million.
+      type: third-party-reported
+      topic: customer-concentration-profile
+      sourceRefs: [SE001, SE018]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: []
+
+    - id: CE034
+      statement: >-
+        No SOC 2 Type II or ISO 27001 cloud security certification for the Cerebras Inference Cloud
+        API has been publicly disclosed as of May 2026.
+      type: inferred
+      topic: cloud-security-compliance-gap
+      sourceRefs: [SE008, SE019]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE019, QE020, QE026]
+
+    - id: CE035
+      statement: >-
+        The WSE-3 is fabricated on a single 300 mm TSMC N5 wafer, producing one chip per wafer,
+        among the most material-intensive semiconductor manufacturing configurations commercially
+        available.
+      type: company-claimed
+      topic: wse3-fabrication-scale
+      sourceRefs: [SE001, SE010, SE015]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: [QE013]
+
+    - id: CE036
+      statement: >-
+        Cerebras CBRS shares began trading on the Nasdaq on May 14, 2026, at an IPO price of $185
+        per share and opened at $350, a 68 percent first-day gain and the largest US tech IPO since
+        Uber in 2019.
+      type: observed
+      topic: ipo-performance
+      sourceRefs: [SE020, SE025, SE026]
+      confidence: high
+      freshness: current
+      answersQuestionRefs: []
+
+    - id: CE037
+      statement: >-
+        The AMD MI300X accelerator has 192 GB of HBM3 at 5.3 TB/s versus the WSE-3 44 GB on-chip
+        SRAM at 21 PB/s; the WSE-3 has approximately 4,000 times the memory bandwidth.
+      type: estimated
+      topic: competitive-hardware-comparison
+      sourceRefs: [SE016, SE011]
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: [QE012]
+
   evidenceGaps:
-    - type: private-evidence-only
+    - id: EGE001
+      type: missing-source
       severity: material
-      topic: "WSE-3 manufacturing yield"
-      missingEvidence: "Actual WSE-3 wafer yield rate and per-unit defect statistics are not publicly disclosed."
+      topic: cloud-security-compliance
+      missingEvidence: >-
+        SOC 2 Type II audit report, ISO 27001 certificate, or equivalent cloud security attestation
+        for the Cerebras Inference Cloud API; uptime SLA documentation and any published historical
+        availability record or status page data for the inference cloud service.
       whyItMatters: >-
-        Yield rate directly determines hardware gross margin and production cost. A yield below 85% would
-        significantly increase the effective per-chip cost and constrain Cerebras' ability to scale supply.
+        Enterprise and regulated-industry customers evaluating the Cerebras cloud API require security
+        certification evidence before production adoption. Absence of public SOC 2 disclosure limits
+        the addressable enterprise market and creates a diligence gap for institutional buyers
+        conducting vendor security assessments against standard procurement requirements.
       diligencePath: >-
-        Request yield rate disclosure in management due diligence; compare with TSMC capacity allocation
-        agreements and per-unit wafer cost terms from supply contracts.
-      relatedQuestionRefs: [QE011, QE019]
+        Request SOC 2 Type II report directly from Cerebras security team in private diligence; ask
+        for uptime data from any published Cerebras status page; check whether AWS hosting for the
+        cloud API includes inherited AWS security certifications; verify whether a trust portal exists
+        at any Cerebras subdomain.
+      relatedQuestionRefs: [QE026]
 
-    - type: missing-source
+    - id: EGE002
+      type: private-evidence-only
       severity: material
-      topic: "WSE-4 roadmap"
-      missingEvidence: "WSE-4 chip specifications, target process node, expected performance, and development timeline are not publicly disclosed."
+      topic: intellectual-property-patents
+      missingEvidence: >-
+        Specific patent numbers, patent filing dates, patent claims, and freedom-to-operate analysis
+        covering the WSE-3 wafer-scale architecture, internal mesh fabric design, Cerebras Compiler
+        optimization passes, or Cluster Manager orchestration technology as registered intellectual
+        property.
       whyItMatters: >-
-        NVIDIA's next-generation Rubin GPU platform (expected 2026-2027) will raise the performance
-        baseline significantly. Cerebras must maintain its throughput advantage to justify premium pricing.
-        Without WSE-4 data, the durability of the speed moat beyond WSE-3 cannot be assessed.
+        The S-1/A references IP protection generically without enumerating specific patents. Without a
+        patent landscape analysis, the durability of Cerebras IP moat and the risk of competitive
+        replication or freedom-to-operate challenges from competitors such as NVIDIA or Intel cannot
+        be independently assessed from public information alone.
       diligencePath: >-
-        Request roadmap briefing from Cerebras engineering team; review R&D spending trajectory and
-        patent filings for WSE-4 process node hints.
-      relatedQuestionRefs: [QE013]
-
-    - type: missing-source
-      severity: material
-      topic: "developer ecosystem"
-      missingEvidence: "No public data on GitHub repository stars, contributor count, PyPI download volume, or API user growth for Cerebras SDK."
-      whyItMatters: >-
-        Developer ecosystem depth is a key long-term moat; shallow developer adoption would increase
-        churn risk and make it harder for Cerebras to expand beyond its current concentrated customer base.
-      diligencePath: >-
-        Obtain GitHub analytics from Cerebras engineering; request API registered developer count
-        and monthly active developer metrics.
-      relatedQuestionRefs: [QE010]
-
-    - type: private-evidence-only
-      severity: minor
-      topic: "cloud SLA"
-      missingEvidence: "Cerebras Cloud uptime SLA terms, incident history, and enterprise support tiers are not publicly documented."
-      whyItMatters: >-
-        Enterprise buyers require contractual uptime guarantees; absence of SLA information prevents
-        comparison with AWS, GCP, and Azure inference services.
-      diligencePath: >-
-        Review Cerebras Cloud terms of service; request enterprise SLA documentation from sales team.
-      relatedQuestionRefs: [QE018, QE021, QE025]
-
-    - type: missing-source
-      severity: minor
-      topic: "CS-3 power consumption"
-      missingEvidence: "CS-3 system power consumption per rack, PUE requirements, and total cost of ownership vs GPU cluster not independently benchmarked."
-      whyItMatters: >-
-        Power efficiency is a key enterprise buying criterion; without published TDP or TCO data,
-        customers cannot independently validate the CS-3 total cost advantage.
-      diligencePath: >-
-        Request CS-3 system spec sheet with power figures; cross-check with data center operator
-        disclosures where CS-3 is deployed.
-      relatedQuestionRefs: [QE017, QE024]
-
-acknowledgedWarnings:
-  - dimension: unverifiedSource
-    reason: >-
-      Sources SE002 through SE026 were selected based on publisher reputation and known authoritative
-      URLs for Cerebras Systems product and technology coverage. The primary source SE001 (SEC S-1/A
-      filing) was verified through direct retrieval. Sources SE007 (SemiAnalysis), SE008 (IEEE Spectrum),
-      SE006 (Artificial Analysis), and SE014 (USPTO patents) represent high-reputation independent
-      technical publications that corroborate key claims. The unverified sources are cross-referenced
-      against each other and SE001 so that no unique fact rests on a single unverified citation.
+        Search USPTO full-text database for Cerebras Systems patent filings by assignee name; request
+        IP schedule and patent list from Cerebras legal team in private diligence; review S-1/A IP
+        risk factor language for any additional specificity on protected claims or pending applications.
+      relatedQuestionRefs: [QE027]
