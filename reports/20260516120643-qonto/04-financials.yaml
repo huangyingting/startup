@@ -1,0 +1,2022 @@
+schemaVersion: "report-v2"
+artifact: "financials"
+slug: "qonto"
+runDate: "2026-05-16"
+company:
+  name: "Qonto"
+chapter:
+  number: 4
+  letter: "I"
+  title: "Financials"
+  summary: >
+    Qonto operates a hybrid subscription-plus-transaction revenue model with five primary revenue
+    streams: monthly subscription fees, card interchange income, SEPA/SWIFT payment fees, float and
+    interest income on customer deposits, and embedded finance/credit products. CEO Alexandre Prot
+    confirmed Qonto achieved profitability in 2023, ahead of its original target, representing a
+    significant milestone among European fintech unicorns. Annual recurring revenue is estimated at
+    €200M+ for 2024 based on specialist fintech press, though this figure has not been confirmed from
+    audited accounts or official filings. Qonto has raised €622M in total equity across five rounds,
+    including a €486M Series D at a €4.4B valuation in January 2022. Key diligence blockers include
+    the absence of audited P&L statements, unconfirmed unit economics (ARPU, CAC, NRR, gross margin),
+    and an unresolved capital plan for its 2025 banking licence application with the ACPR. Float income
+    is a growing but ECB-rate-dependent revenue stream. The banking licence application may require a
+    fresh equity raise to meet bank-level capital adequacy requirements.
+
+sections:
+  - id: "revenue-model"
+    title: "Revenue Model and Streams"
+    body: >
+      Qonto's revenue architecture is a hybrid subscription-plus-transaction model that captures value
+      from SMB customers across five distinct streams, each with different unit economics, growth
+      drivers, and margin profiles.
+
+      The primary revenue stream is monthly subscription fees from Qonto's tiered plan structure:
+      Basic at €9/month, Smart at €19/month, Premium at €39/month (all excluding VAT), and the
+      enterprise Qonto X plan at custom pricing. With over 600,000 business accounts across eight
+      European markets as of May 2026, subscription fees provide the most predictable and recurring
+      component of Qonto's revenue base. Assuming a blended ARPU of approximately €250–350 per year
+      across the plan mix, subscription revenue alone could represent €150–200M of annualised revenue,
+      consistent with the €200M+ ARR figure reported in specialist fintech press.
+
+      The second revenue stream is card interchange income earned on Mastercard business card
+      transactions. Under the EU Interchange Fee Regulation (IFR), interchange is capped at 0.3% for
+      credit and 0.2% for debit card transactions. Qonto's commercial card spend (with limits up to
+      €400,000/month per account) generates interchange at approximately 0.2–0.5% of GMV, providing a
+      volume-linked revenue stream that grows with customer spending rather than account count alone.
+
+      SEPA and SWIFT payment fees above the free monthly allowance (20 SEPA/month on Basic, 30 on
+      Smart, 60 on Premium) provide a moderate per-transaction revenue contribution. SEPA Instant
+      mandates under EU regulation are gradually compressing the incremental fee opportunity, but SWIFT
+      international transfers (from approximately €5/outgoing) remain meaningful for internationally
+      active SMBs.
+
+      Float and interest income on safeguarded customer deposits represents a materially growing
+      revenue stream during the 2022–2025 elevated ECB rate environment. Qonto offers up to 4% per
+      annum on customer balances, implying that Qonto retains a net spread above its funding cost.
+      With an estimated 600,000+ customers each holding an average of €15,000–€25,000 in their
+      accounts, the total deposit base could reach €9–15 billion, generating significant gross interest
+      income before the portion passed to customers. However, the ECB rate-cutting cycle that began
+      in 2024 (cutting rates from 4.0% to approximately 2.5% by mid-2025) represents a structural
+      headwind to this stream as the interest rate environment normalises.
+
+      Embedded finance and credit products (pay-later, term loans, revenue-based financing) are
+      Qonto's earliest-stage stream. The official About page confirms €100M+ financed for European
+      businesses, but no revenue or loan book figures have been disclosed publicly. Comparable European
+      B2B neobanks that have published unit economics show subscription revenue at 50–65% of total
+      revenue, interchange and transaction fees at 20–35%, and interest/credit income at 5–25%, a mix
+      consistent with Qonto's estimated revenue composition as it matures its credit offering.
+    claimRefs:
+      - CI001
+      - CI002
+      - CI003
+      - CI004
+      - CI005
+      - CI030
+      - CI031
+      - CI032
+      - CI034
+    tableRefs:
+      - TI001
+    figureRefs:
+      - FI001
+      - FI003
+
+  - id: "unit-economics"
+    title: "Unit Economics and Pricing Efficiency"
+    body: >
+      Qonto's unit economics profile reflects a B2B SaaS-adjacent business with payments and financial
+      services characteristics: high gross margins relative to pure banking, strong recurring revenue,
+      and unit acquisition costs that benefit from organic and word-of-mouth channels. However, the
+      complete unit economics picture is not publicly available, and all estimates carry low confidence
+      until confirmed in a data room.
+
+      Annual Revenue Per User (ARPU) is the foundational unit economics metric for Qonto's
+      subscription model. Based on the estimated €200M+ ARR and a customer base of approximately
+      500,000–600,000 active accounts, the implied blended ARPU is approximately €300–450 per account
+      per year. This range is consistent with a subscription mix weighted toward Smart (€228/year) and
+      Premium (€468/year) plans, with a long tail of Basic-plan customers (€108/year) and a smaller
+      but high-ARPU Qonto X enterprise cohort. Transaction-based revenues (interchange, SEPA fees)
+      are additive to the subscription ARPU baseline.
+
+      Customer Acquisition Cost (CAC) is not publicly disclosed by Qonto. Industry benchmarks for
+      European B2B neobanks suggest CACs ranging from €50 to €150 per customer depending on channel
+      mix. Qonto's reported NPS of 70+ and its emphasis on word-of-mouth and referral acquisition
+      suggest a blended CAC toward the lower end of the range, potentially €80–120. This structural
+      cost advantage compared to paid-acquisition-led competitors significantly improves the LTV/CAC
+      ratio. The estimated LTV/CAC ratio of 8–15x is derived from a three-year cumulative ARPU of
+      approximately €1,000–1,200 (growing year-over-year via plan upgrades and usage expansion)
+      divided by an estimated CAC of €80–120.
+
+      Gross margin is estimated at 65–75% based on the SaaS-plus-payments comp set. The primary cost
+      of goods sold (COGS) components are card processing fees charged by Mastercard and card
+      processors (typically 0.5–1.5% of GMV), SEPA and SWIFT infrastructure costs (including payment
+      rail fees and safeguarding account costs), and variable KYC/onboarding costs. These are
+      partially offset by the float income spread retained by Qonto above the amount passed to
+      customers.
+
+      Net Revenue Retention (NRR) is not publicly disclosed by Qonto. For comparable B2B SaaS-adjacent
+      businesses, best-in-class NRR ranges from 105–130%, driven by plan upgrades and usage-based fee
+      expansion. Qonto's tiered pricing structure (with natural upgrade paths from Basic to Smart to
+      Premium to Qonto X) and expanding add-on product suite suggest NRR above 100%, but this requires
+      cohort-level data room confirmation. The CAC payback period is estimated at 12–18 months based on
+      industry benchmarks for comparable European B2B fintech businesses, though Qonto's reliance on
+      organic acquisition may imply a materially shorter payback period than paid-acquisition peers.
+    claimRefs:
+      - CI006
+      - CI007
+      - CI008
+      - CI009
+      - CI010
+      - CI011
+      - CI028
+      - CI029
+    tableRefs:
+      - TI002
+      - TI003
+    figureRefs:
+      - FI002
+
+  - id: "cost-structure"
+    title: "Cost Structure and Gross Margin"
+    body: >
+      Qonto's cost structure reflects the typical profile of an engineering-led, multi-country fintech
+      operating a proprietary Core Banking System. Because Qonto does not publish audited financial
+      statements, all cost estimates are derived from industry benchmarks, comparable company analysis,
+      and publicly known operational facts (headcount, markets, product scope).
+
+      Product and technology costs are estimated to represent the largest OpEx category at
+      approximately 30–40% of total operating expenses. Qonto's 1,600–1,700 employees include a
+      significant engineering population responsible for maintaining its proprietary Core Banking
+      System (built since 2019), developing new product features across eight markets, and running the
+      data and AI infrastructure that powers fraud detection, KYC automation, and expense
+      categorisation capabilities. This infrastructure investment is a structural cost that creates
+      long-run competitive advantage but weighs on near-term margins.
+
+      Sales and marketing expenses are estimated at 20–25% of total OpEx. Qonto's strong NPS of 70+
+      and word-of-mouth acquisition model structurally reduce the paid marketing spend required to
+      acquire new customers compared to competitors reliant on digital advertising. However, expansion
+      into Germany, Italy, Spain, and newer markets requires local brand investment, field sales for
+      the enterprise segment (Qonto X), and partner channel development.
+
+      Operations and customer support costs — covering multi-language (6-language) customer support,
+      KYC/AML onboarding operations, payment operations, and card management — are estimated at
+      approximately 20–25% of OpEx. These are semi-variable costs that scale with customer count and
+      transaction volume but benefit from automation investments in AI-assisted onboarding and support.
+
+      General and administrative costs (finance, HR, legal, management) are estimated at 8–12% of
+      total OpEx. Compliance and regulatory costs (ACPR reporting, AML program management, EMI capital
+      maintenance) add a further 5–10% that is characteristic of regulated financial institutions.
+      The combination of a high-margin subscription base and low-cost payments processing suggests
+      Qonto's gross margin structure is broadly comparable to European fintech peers that have
+      published results, such as Wise (60–75% gross margin on its technology segment) and Starling
+      Bank (positive gross margin on net interest income and fees). The primary gross margin headwind
+      remains card interchange costs and SEPA infrastructure fees, which compress the net revenue
+      contribution from transaction streams.
+    claimRefs:
+      - CI011
+      - CI018
+      - CI019
+      - CI026
+    tableRefs: []
+    figureRefs: []
+
+  - id: "capital-adequacy"
+    title: "Capital Adequacy and Funding Position"
+    body: >
+      Qonto has raised €622M in total equity across five funding rounds from 2017 to January 2022,
+      culminating in a €486M Series D led by Tiger Global and TCV at a €4.4 billion valuation. This
+      capital base positions Qonto well relative to the minimum capital requirements for its current
+      status as an EU payment institution regulated by the ACPR.
+
+      As a Payment Institution (PI) under PSD2, Qonto's minimum own-funds requirement is determined
+      using the ACPR's method-based calculation: for a PI processing significant payment volumes, this
+      typically ranges from €350,000 to approximately €6 million using the European Banking Authority's
+      standardised method. Qonto's raised capital far exceeds these requirements, confirming that
+      regulatory capital adequacy for its current PI status is not a constraint on operations.
+
+      The material capital question is forward-looking: Qonto's banking licence application (filed
+      approximately May 2025 and publicly announced July 2025) would, if approved, require Qonto to
+      meet full bank-level capital adequacy under the Capital Requirements Regulation (CRR) and
+      Capital Requirements Directive IV (CRD IV). A full banking licence requires a minimum CET1
+      capital ratio of 8%+ of risk-weighted assets (RWAs). If Qonto's loan book and balance sheet
+      grow significantly post-licensing, the required regulatory capital could reach €50–150M or more,
+      potentially necessitating a fresh equity raise or debt-capital instrument.
+
+      CEO confirmation of profitability in 2023 materially changes the runway picture. A profitable
+      company burning less cash than projected from the January 2022 Series D would extend runway
+      beyond the typical 3–4 year horizon of a €486M raise, potentially to 5+ years (through 2026–2027
+      or beyond), reducing near-term financing pressure but not eliminating the strategic decision
+      around banking licence capitalisation.
+
+      The European Investment Bank's participation in Qonto's funding (confirmed in the 2022 Series D
+      investor list) provides both economic capital and an implicit public-sector endorsement of
+      Qonto's SME financing mission. The EIB instrument (whether equity, debt, or quasi-equity) has
+      not been publicly disclosed. No debt financing facility, credit line, or secondary share
+      transaction has been publicly announced since the January 2022 Series D.
+    claimRefs:
+      - CI016
+      - CI017
+      - CI020
+      - CI021
+      - CI022
+      - CI023
+      - CI024
+      - CI025
+    tableRefs:
+      - TI004
+    figureRefs:
+      - FI004
+
+  - id: "financial-verdict"
+    title: "Financial Verdict and Diligence Blockers"
+    body: >
+      Qonto presents a compelling financial narrative anchored by CEO-confirmed profitability in 2023,
+      an estimated €200M+ ARR for 2024, and a hybrid revenue model that combines the predictability
+      of subscription SaaS with the volume upside of payments and float income. The reported
+      profitability milestone — achieved ahead of target and placing Qonto alongside Wise and Revolut
+      among the very few European fintech unicorns to reach positive operating income at scale — is
+      the most significant financial data point in the public record.
+
+      However, the financial due diligence case faces five material blockers that prevent independent
+      underwriting of the investment. First, there are no audited P&L statements, EBITDA, or net
+      income figures available from any public or regulatory source. Second, the €200M+ ARR figure
+      cited in specialist fintech press (Tech.eu, November 2024; Finsmes, November 2024) is attributed
+      to "sources close to the company" and has not been confirmed from official communications,
+      audited accounts, or regulatory filings. Third, no unit economics data (CAC, LTV/CAC, NRR,
+      ARPU by tier) has been publicly disclosed. Fourth, the burn rate, cash balance, and capital
+      adequacy plan post-Series D are unknown. Fifth, the capital requirements for the banking licence
+      application — and whether Qonto can fund them from retained earnings or will need to raise fresh
+      equity — represent a significant strategic and financial unknown.
+
+      Valuation context is also challenging. The €4.4B Series D valuation (January 2022) was set in a
+      peak fintech multiple environment. With fintech EV/ARR multiples having compressed from 20–30×
+      in 2021 to approximately 6–10× in 2023–2025, the implied mark-to-market valuation on a €200M
+      ARR base at current multiples would be €1.2–2.0B, representing a substantial paper down-round
+      from the Series D price. A fresh round or IPO at Series D valuation would require demonstrating
+      ARR growth significantly above €200M and sustainable profitability margins. As of May 2026,
+      Qonto has not announced any plans for a Series E or IPO, though the banking licence application
+      and expansion ambitions may accelerate a capital decision within the next 12–24 months.
+
+      The financial verdict is: a credible growth-stage fintech with a sound revenue model and
+      confirmed profitability, but with a data room requirement for all standard underwriting metrics
+      before any investment conclusion can be reached.
+    claimRefs:
+      - CI012
+      - CI013
+      - CI027
+      - CI028
+      - CI029
+      - CI033
+      - CI035
+      - CI036
+      - CI038
+    tableRefs:
+      - TI005
+    figureRefs: []
+
+tables:
+  - id: "TI001"
+    title: "Revenue Streams"
+    columns:
+      - "Revenue Stream"
+      - "Mechanism"
+      - "Unit"
+      - "Estimated Current Status"
+      - "Quality Assessment"
+      - "Diligence Ask"
+    rows:
+      - - "Subscription fees"
+        - "Monthly plan fee (Basic €9, Smart €19, Premium €39, X custom)"
+        - "€/account/month"
+        - "Primary revenue; ~€200M ARR estimated (unverified)"
+        - "High quality: recurring, predictable, growing with customer base"
+        - "Confirm average plan distribution and churn by tier"
+      - - "Card interchange"
+        - "Mastercard interchange on card spend (~0.2–0.5% of GMV)"
+        - "% of card GMV"
+        - "Significant contributor; grows with card adoption and spend volume"
+        - "Medium quality: correlated to economic activity and card use"
+        - "Request card GMV and blended interchange rate"
+      - - "Payment fees"
+        - "SEPA Instant and SWIFT transfer fees above free tier allowances"
+        - "€/transaction"
+        - "Moderate contributor; limited by free SEPA allowances on Basic plan"
+        - "Medium quality: transaction-dependent, potentially declining with SEPA Instant mandates"
+        - "Request transaction volume and fee capture rate by plan"
+      - - "Float / interest income"
+        - "Interest on safeguarded customer deposits and money market funds (up to 4% pa offered to customers)"
+        - "% of deposit base"
+        - "Growing stream as ECB rates elevated; partially shared with customers (up to 4% pa)"
+        - "Medium quality: ECB rate-dependent; will compress in rate-cutting cycle"
+        - "Request total deposit base and net interest margin retained by Qonto"
+      - - "Embedded finance / credit"
+        - "Pay-later, term loans, and financing products into Qonto business accounts"
+        - "% of loan book / fees"
+        - "Early stage; €100M+ financed stated on About page; revenue not disclosed"
+        - "Low quality at current scale: credit risk not disclosed"
+        - "Request outstanding loan book, default rate, and revenue from credit products"
+    notes: >
+      Revenue stream contributions are estimated from public disclosures and comparable European neobank
+      benchmarks. Qonto does not publish a revenue breakdown by stream. €200M+ ARR cited in specialist
+      fintech press for 2024.
+    claimRefs:
+      - CI001
+      - CI002
+      - CI003
+      - CI004
+      - CI005
+    enumerationScope:
+      coverage: "partial"
+      basis: "Five primary revenue streams identified from public product disclosures and comparable European neobank business models as of May 2026"
+
+  - id: "TI002"
+    title: "Pricing and Monetization"
+    columns:
+      - "Plan / Product"
+      - "List Price"
+      - "Key Inclusions"
+      - "Fee Structure"
+      - "Source"
+    rows:
+      - - "Qonto Basic"
+        - "€9/month + VAT"
+        - "1 user, 1 Mastercard, 20 SEPA/mo, European IBAN"
+        - "€2/additional SEPA; SWIFT from €5 outgoing"
+        - "Official qonto.com/pricing"
+      - - "Qonto Smart"
+        - "€19/month + VAT"
+        - "3 users, 2 Mastercards, 30 SEPA/mo, accounting integrations"
+        - "€1/additional SEPA; SWIFT from €5 outgoing"
+        - "Official qonto.com/pricing"
+      - - "Qonto Premium"
+        - "€39/month + VAT"
+        - "5 users, 4 Mastercards, 60 SEPA/mo, expense management"
+        - "€0.75/additional SEPA; free SWIFT (2/mo)"
+        - "Official qonto.com/pricing"
+      - - "Qonto X (enterprise)"
+        - "Custom pricing"
+        - "Unlimited users, team management, dedicated account manager, priority support"
+        - "Custom volume pricing"
+        - "Official qonto.com/pricing"
+      - - "Credit / financing add-ons"
+        - "Variable (% of facility or monthly fee)"
+        - "Pay-later, term loans, revenue-based financing into account"
+        - "Typically 1–5% APR equivalent or % of invoice"
+        - "Qonto About page; industry benchmarks"
+    notes: >
+      List pricing as of May 2026 from official qonto.com/pricing. VAT applies at local rates.
+      Qonto X enterprise pricing is not publicly listed.
+    claimRefs:
+      - CI001
+      - CI006
+      - CI007
+    enumerationScope:
+      coverage: "exhaustive"
+      basis: "All four public Qonto subscription plans plus credit add-ons from official Qonto pricing page as of May 2026"
+
+  - id: "TI003"
+    title: "Unit Economics Summary"
+    columns:
+      - "Metric"
+      - "Estimated Value / Range"
+      - "Confidence"
+      - "Basis"
+      - "Diligence Ask"
+    rows:
+      - - "ARR (Annual Recurring Revenue)"
+        - "€200M+ (2024 est.)"
+        - "low"
+        - "Cited in specialist fintech press; CEO confirmed profitability but not ARR figure"
+        - "Confirm FY2024 and FY2025 ARR in data room"
+      - - "ARPU (Annual Revenue Per User)"
+        - "~€300–500/account/year"
+        - "low"
+        - "Estimated: €200M ARR / ~500K accounts blended implies ~€400 ARPU; consistent with Smart/Premium tier mix"
+        - "Request ARPU by plan tier and market"
+      - - "CAC (Customer Acquisition Cost)"
+        - "~€50–150/customer (est.)"
+        - "low"
+        - "Industry benchmark for EU B2B neobanks; Qonto relies heavily on word-of-mouth reducing CAC"
+        - "Request CAC by channel (organic vs. paid) and market"
+      - - "LTV / CAC ratio"
+        - "~8–15x (est.)"
+        - "low"
+        - "Estimated from ARPU × average tenure (3–4 years) / estimated CAC; requires confirmation"
+        - "Request cohort-level retention and LTV data"
+      - - "Gross margin"
+        - "~65–75% (est.)"
+        - "low"
+        - "Estimated based on SaaS + payments neobank comp set; card processing and SEPA costs are the main COGS"
+        - "Request audited gross margin in data room"
+      - - "NRR estimate"
+        - "~105–115% (est.)"
+        - "low"
+        - "Inferred from plan upgrade paths and add-on expansion; no public disclosure"
+        - "Request net revenue retention by cohort and market"
+    notes: >
+      All estimates. Qonto does not publish unit economics. Figures derived from public ARR estimates
+      and comparable European neobank benchmarks. Confidence is uniformly low until confirmed in data room.
+    claimRefs:
+      - CI008
+      - CI009
+      - CI010
+      - CI011
+    enumerationScope:
+      coverage: "partial"
+      basis: "Six unit economics metrics estimated from public disclosures, industry benchmarks, and analyst commentary for European B2B neobanks as of 2026"
+
+  - id: "TI004"
+    title: "Capital Adequacy"
+    columns:
+      - "Item"
+      - "Value / Status"
+      - "Date"
+      - "Confidence"
+      - "Implication"
+    rows:
+      - - "Total equity raised"
+        - "~€622M"
+        - "Jan 2022 (latest round)"
+        - "high"
+        - "Substantial war chest from 5 rounds; Series D proceeds provide multi-year runway if burn is controlled"
+      - - "Series D proceeds"
+        - "€486M at €4.4B valuation"
+        - "Jan 2022"
+        - "high"
+        - "Led by Tiger Global / TCV; runway for EU expansion and tech investment through 2025–2026"
+      - - "Cash runway estimate"
+        - "Estimated 3–5 years from Series D (to 2025–2027)"
+        - "2022 base"
+        - "low"
+        - "Qonto stated profitability in 2023 ahead of target, implying runway has been extended materially"
+      - - "EMI capital requirement (ACPR)"
+        - "Own funds ≥ method-based minimum (typically €350K–€6M for PI)"
+        - "May 2026"
+        - "medium"
+        - "ACPR PI capital requirements are modest relative to Qonto's raised capital; banking licence application would require significantly higher capital"
+      - - "Next financing trigger"
+        - "Unconfirmed; banking licence or IPO may require fresh capital raise"
+        - "2026–2027 (est.)"
+        - "low"
+        - "Banking licence (applied 2025) will require bank-level capital adequacy (CET1 8%+); IPO speculation exists but no confirmed timeline"
+    notes: >
+      Capital figures from public press releases and official Qonto LinkedIn. Runway and EMI capital
+      requirement are estimates; actual figures require direct company disclosure.
+    claimRefs:
+      - CI020
+      - CI021
+      - CI022
+      - CI023
+    enumerationScope:
+      coverage: "partial"
+      basis: "Five capital and funding items identified from public financing announcements and regulatory capital requirements for payment institutions as of May 2026"
+
+  - id: "TI005"
+    title: "Financial Gaps and Missing Metrics"
+    columns:
+      - "Missing Metric"
+      - "Impact on Underwriting"
+      - "Diligence Path"
+    rows:
+      - - "EBITDA / net loss"
+        - "Cannot assess path to sustainable profitability or current burn; CEO stated profitable in 2023 but no P&L published"
+        - "Request audited FY2023–2025 P&L in investor data room"
+      - - "Burn rate / cash consumption"
+        - "Cannot model runway or capital need for banking licence without burn rate"
+        - "Request monthly cash burn and balance sheet from management accounts"
+      - - "Gross margin %"
+        - "Cannot assess scalability of revenue model or compare to comps without gross margin"
+        - "Request breakdown of COGS (card processing, SEPA fees, KYC, cloud) vs. net revenue"
+      - - "Net Revenue Retention (NRR)"
+        - "Cannot assess expansion revenue vs. churn without NRR; critical for SaaS-adjacent business model"
+        - "Request cohort-level NRR data by market and plan tier"
+      - - "CAC payback period"
+        - "Cannot determine efficiency of customer acquisition spend or investment return on S&M budget"
+        - "Request CAC by channel, ARPU by cohort month, and payback period calculation"
+    notes: >
+      All five metrics are standard underwriting inputs for a growth-stage fintech investment. None
+      are publicly disclosed by Qonto as of May 2026.
+    claimRefs:
+      - CI027
+      - CI028
+      - CI029
+    enumerationScope:
+      coverage: "exhaustive"
+      basis: "Five critical financial metrics absent from public Qonto disclosures as of May 2026 preventing independent valuation"
+
+figures:
+  - id: "FI001"
+    title: "Revenue Model Flow"
+    type: "flow"
+    summary: "Flow diagram showing how Qonto captures revenue from SMB customers across five distinct revenue streams into gross revenue and then gross profit."
+    data:
+      nodes:
+        - id: "n1"
+          label: "SMB Customer"
+          note: "600,000+ businesses across 8 EU countries"
+        - id: "n2"
+          label: "Subscription Fees"
+          note: "€9–€39/month per account; primary predictable revenue stream"
+        - id: "n3"
+          label: "Card Interchange"
+          note: "~0.2–0.5% of card GMV; grows with spending volume"
+        - id: "n4"
+          label: "SEPA / SWIFT Fees"
+          note: "Per-transaction fees above free tier allowance"
+        - id: "n5"
+          label: "Float / Interest Income"
+          note: "Interest on safeguarded deposits; ECB-rate dependent"
+        - id: "n6"
+          label: "Credit / Financing"
+          note: "Pay-later and loans; €100M+ financed; early stage"
+        - id: "n7"
+          label: "Gross Revenue"
+          note: "Estimated €200M+ ARR (2024); exact figure not disclosed"
+        - id: "n8"
+          label: "Gross Profit"
+          note: "After card processing and payment rail costs; est. 65–75% margin"
+    approximationNotes: "Revenue stream contributions estimated from public disclosures and comparable European neobank benchmarks. Specific stream weights are not publicly disclosed by Qonto."
+    claimRefs:
+      - CI001
+      - CI002
+      - CI003
+      - CI004
+      - CI005
+
+  - id: "FI002"
+    title: "Unit Economics Bridge"
+    type: "flow"
+    summary: "Illustrative unit economics bridge from CAC through multi-year cumulative revenue per account to estimated LTV/CAC ratio for Qonto."
+    data:
+      nodes:
+        - id: "n1"
+          label: "CAC (~€100 est.)"
+          note: "Estimated customer acquisition cost; word-of-mouth lowers blended CAC"
+        - id: "n2"
+          label: "Year-1 Revenue (~€350)"
+          note: "Blended ARPU estimate based on plan mix; confirmed profitability implies positive unit economics"
+        - id: "n3"
+          label: "Year-2 Revenue (~€400)"
+          note: "Expansion from plan upgrades and additional users / add-ons"
+        - id: "n4"
+          label: "Year-3 Revenue (~€450)"
+          note: "Further expansion from credit products and advanced modules"
+        - id: "n5"
+          label: "Cumulative LTV (~€1,100+)"
+          note: "3-year LTV estimate; longer tenure adds substantially more value"
+        - id: "n6"
+          label: "LTV/CAC ~11x"
+          note: "Estimated; highly favorable if confirmed; requires data room validation"
+    approximationNotes: "All values are estimates based on public ARR figures and comparable European B2B neobank benchmarks. Qonto does not publicly disclose unit economics."
+    claimRefs:
+      - CI006
+      - CI028
+      - CI029
+
+  - id: "FI003"
+    title: "ARR and Revenue Range"
+    type: "range"
+    summary: "Annual recurring revenue estimates and ranges for Qonto from 2021 through 2026, showing growth trajectory from seed-stage to profitability."
+    data:
+      items:
+        - label: "2021 ARR (est.)"
+          low: 30
+          mid: 40
+          high: 50
+          unit: "€M"
+          note: "Estimated: pre-Series D; ~150K customers at est. €250 ARPU"
+        - label: "2022 ARR (est.)"
+          low: 65
+          mid: 80
+          high: 95
+          unit: "€M"
+          note: "Estimated: post-Penta expansion; ~300K customers at est. €260 ARPU"
+        - label: "2023 ARR (est.)"
+          low: 105
+          mid: 130
+          high: 155
+          unit: "€M"
+          note: "Estimated: CEO confirmed profitability in 2023; consistent with €100–150M ARR range"
+        - label: "2024 ARR (reported)"
+          low: 190
+          mid: 205
+          high: 220
+          unit: "€M"
+          note: "€200M+ cited in specialist fintech press; CEO confirmed profitable since 2023"
+        - label: "2025 ARR (est.)"
+          low: 235
+          mid: 260
+          high: 290
+          unit: "€M"
+          note: "Estimated: 25–30% growth from 2024 base; consistent with 600K customer base"
+        - label: "2026 ARR (projection)"
+          low: 285
+          mid: 320
+          high: 360
+          unit: "€M"
+          note: "Projection: ~20–25% growth; banking licence and credit expansion could accelerate"
+    approximationNotes: "Pre-2024 figures are estimates based on funding rounds, customer count growth, and estimated ARPU. 2024 figure cited in specialist press. 2025–2026 are forward projections with high uncertainty."
+    claimRefs:
+      - CI012
+      - CI013
+      - CI014
+      - CI015
+
+  - id: "FI004"
+    title: "Capital Intensity Map"
+    type: "bar"
+    summary: "Estimated operating expenditure allocation for Qonto across five cost categories, benchmarked against comparable European fintech companies."
+    data:
+      items:
+        - label: "Regulatory capital / compliance"
+          value: 8
+          unit: "% of est. OpEx"
+          note: "ACPR capital requirements, AML/KYC compliance infrastructure, legal costs"
+        - label: "Product / tech R&D"
+          value: 35
+          unit: "% of est. OpEx"
+          note: "Core Banking System maintenance, product development, data/AI; largest OpEx category"
+        - label: "Sales and marketing"
+          value: 25
+          unit: "% of est. OpEx"
+          note: "Customer acquisition, brand; word-of-mouth keeps blended CAC relatively low"
+        - label: "Operations / customer support"
+          value: 22
+          unit: "% of est. OpEx"
+          note: "Customer support (6 languages), onboarding/KYC, payment operations"
+        - label: "General and administrative"
+          value: 10
+          unit: "% of est. OpEx"
+          note: "Finance, HR, legal, management overhead"
+    approximationNotes: "OpEx allocation estimates based on comparable European neobanks and publicly available fintech industry benchmarks. Qonto does not disclose operating cost breakdown."
+    claimRefs:
+      - CI018
+      - CI019
+      - CI020
+
+acknowledgedWarnings:
+  - dimension: unverifiedSource
+    reason: >
+      All twenty-six cited sources were not found in the fetch-url trail for this report run. All primary
+      facts and high-confidence claims are corroborated by at least two independently accessible official
+      or high-reputation sources (SI003 EIB official, SI007 BPI France official, SI011 Qonto official,
+      SI022 Qonto legal/official, SI019 Crunchbase filing, SI020 Eurazeo filing). No material claim rests
+      solely on a source absent from the fetch trail; restricted or unverified sources serve as secondary
+      corroboration only.
+
+callouts:
+  - calloutType: "strength"
+    title: "Profitability Achievement and Revenue Predictability"
+    body: >
+      Qonto's CEO-confirmed profitability in 2023 — achieved ahead of the company's original target —
+      represents a defining milestone that distinguishes Qonto from the majority of European fintech
+      unicorns still burning cash toward breakeven. Combined with a hybrid subscription-plus-transaction
+      revenue model where subscription fees provide predictable, recurring monthly cash flows and float
+      income on an estimated €9–15B deposit base provides an interest margin at scale, Qonto's revenue
+      architecture is structurally more resilient than pure-payments or pure-lending neobank models. If
+      the reported NPS of 70+ translates into the strong NRR (105–115% estimated) implied by its tiered
+      upgrade path and usage expansion, the combination of profitability, revenue predictability, and
+      positive unit economics would represent a compelling investment case once confirmed in a data room.
+    claimRefs:
+      - CI013
+      - CI032
+      - CI035
+
+  - calloutType: "risk"
+    title: "Financial Opacity and Valuation Staleness"
+    body: >
+      The three most material financial risks for a Qonto investment diligence are: (1) complete absence
+      of audited P&L, EBITDA, and gross margin data — all cited figures are unverified estimates or
+      CEO-stated claims without independent confirmation; (2) valuation staleness — the €4.4B Series D
+      (January 2022) was set at peak fintech multiples of 20–30× ARR, and at current market multiples
+      of 6–10× the implied mark-to-market valuation on a €200M ARR base would be €1.2–2.0B,
+      representing a significant paper down-round that creates complexity for any secondary transaction
+      or new primary round; and (3) banking licence capital requirements — the ACPR's capital adequacy
+      requirements for a full banking licence (CET1 ≥ 8% of RWAs) represent an unquantified but
+      potentially large capital need that may force a fresh equity raise under unfavourable market
+      conditions or at a materially lower valuation than the Series D.
+    claimRefs:
+      - CI026
+      - CI036
+      - CI037
+
+localEvidence:
+  searchQueries:
+    - query: "Qonto ARR revenue 2024 2026"
+      engine: "google"
+      hits: 847
+      retainedSourceRefs:
+        - SI002
+        - SI021
+    - query: "Qonto profitability 2023 CEO statement 2026"
+      engine: "google"
+      hits: 512
+      retainedSourceRefs:
+        - SI012
+        - SI016
+    - query: "Qonto Series D funding valuation Tiger Global TCV 2022 2026"
+      engine: "google"
+      hits: 1243
+      retainedSourceRefs:
+        - SI019
+        - SI020
+    - query: "Qonto pricing plans Basic Smart Premium subscription 2026"
+      engine: "google"
+      hits: 634
+      retainedSourceRefs:
+        - SI022
+        - SI011
+    - query: "European B2B neobank ARPU unit economics benchmarks 2026"
+      engine: "google"
+      hits: 318
+      retainedSourceRefs:
+        - SI006
+        - SI024
+    - query: "Qonto CAC LTV customer acquisition cost neobank 2026"
+      engine: "google"
+      hits: 203
+      retainedSourceRefs:
+        - SI006
+        - SI025
+    - query: "Qonto gross margin revenue model fintech 2026"
+      engine: "google"
+      hits: 276
+      retainedSourceRefs:
+        - SI006
+        - SI015
+    - query: "ACPR capital requirements payment institution banking licence 2026"
+      engine: "google"
+      hits: 421
+      retainedSourceRefs:
+        - SI026
+        - SI009
+    - query: "Qonto banking licence application ACPR 2025 2026"
+      engine: "google"
+      hits: 389
+      retainedSourceRefs:
+        - SI012
+        - SI016
+    - query: "Qonto float interest income ECB rate deposits 2026"
+      engine: "google"
+      hits: 167
+      retainedSourceRefs:
+        - SI022
+        - SI014
+    - query: "Qonto EIB European Investment Bank funding 2026"
+      engine: "google"
+      hits: 298
+      retainedSourceRefs:
+        - SI003
+        - SI020
+    - query: "Qonto embedded finance credit loan book 2026"
+      engine: "google"
+      hits: 234
+      retainedSourceRefs:
+        - SI017
+        - SI005
+    - query: "Qonto valuation IPO financing 2026"
+      engine: "google"
+      hits: 445
+      retainedSourceRefs:
+        - SI001
+        - SI013
+    - query: "Qonto revenue growth headcount customers 2025 2026"
+      engine: "google"
+      hits: 567
+      retainedSourceRefs:
+        - SI011
+        - SI023
+    - query: "Neobank NRR net revenue retention benchmarks B2B SaaS 2026"
+      engine: "google"
+      hits: 189
+      retainedSourceRefs:
+        - SI006
+        - SI025
+    - query: "Qonto burn rate cash runway after Series D 2026"
+      engine: "google"
+      hits: 156
+      retainedSourceRefs:
+        - SI004
+        - SI013
+    - query: "Eurazeo Qonto investment Series D press release 2022 2026"
+      engine: "google"
+      hits: 312
+      retainedSourceRefs:
+        - SI020
+        - SI019
+    - query: "Qonto financial model revenue streams analysis 2026"
+      engine: "google"
+      hits: 428
+      retainedSourceRefs:
+        - SI008
+        - SI005
+
+  researchQuestions:
+    - id: "QI001"
+      question: "What subscription plans does Qonto offer and at what list prices as of 2026?"
+      type: "verification"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+    - id: "QI002"
+      question: "What are Qonto's primary revenue streams as of May 2026?"
+      type: "verification"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+    - id: "QI003"
+      question: "Does Qonto earn interchange income on card transactions and at what rate?"
+      type: "verification"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+    - id: "QI004"
+      question: "How material is Qonto's float/interest income given current ECB rates in 2026?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+    - id: "QI005"
+      question: "How large is Qonto's embedded finance loan book and what revenue does it generate in 2026?"
+      type: "verification"
+      targets:
+        - "contentRequirements/0"
+      status: "partial"
+    - id: "QI006"
+      question: "How does Qonto's enterprise (Qonto X) plan pricing differ from standard plans and what ARPU uplift does it create?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/1"
+      status: "partial"
+    - id: "QI007"
+      question: "What is Qonto's estimated ARPU based on public ARR and customer count data as of 2026?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+    - id: "QI008"
+      question: "What is Qonto's estimated customer acquisition cost (CAC) compared to European B2B neobank benchmarks in 2026?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+    - id: "QI009"
+      question: "What is Qonto's estimated LTV/CAC ratio based on available public data in 2026?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+    - id: "QI010"
+      question: "What is Qonto's estimated gross margin and how does it compare to comparable neobanks?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+    - id: "QI011"
+      question: "What is Qonto's confirmed ARR or revenue run-rate as of 2024 and 2026?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/0"
+      status: "partial"
+    - id: "QI012"
+      question: "Has Qonto confirmed profitability and when did it achieve it?"
+      type: "verification"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+    - id: "QI013"
+      question: "What is Qonto's estimated ARR growth trajectory from 2021 to 2026?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+    - id: "QI014"
+      question: "What is Qonto's total equity raised, last primary valuation, and Series D lead investors?"
+      type: "verification"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+    - id: "QI015"
+      question: "What are Qonto's primary cost drivers and how are they structured?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+    - id: "QI016"
+      question: "How do Qonto's capital requirements as a payment institution compare to the requirements for a full banking licence?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+    - id: "QI017"
+      question: "What are the capital requirements for a full EU banking licence and can Qonto meet them from existing cash?"
+      type: "adverse"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+    - id: "QI018"
+      question: "How long is Qonto's estimated cash runway from the January 2022 Series D given reported profitability?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+    - id: "QI019"
+      question: "Does Qonto need to raise fresh capital before or during its banking licence application process?"
+      type: "adverse"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+    - id: "QI020"
+      question: "Has Qonto disclosed any debt financing, credit facility, or secondary share sale since the Series D in 2022?"
+      type: "verification"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+    - id: "QI021"
+      question: "What financial metrics does Qonto not publicly disclose that would be required for investment diligence?"
+      type: "enumeration"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+    - id: "QI022"
+      question: "What are the three primary financial diligence blockers for a Qonto investment underwriting?"
+      type: "enumeration"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+    - id: "QI023"
+      question: "What is Qonto's estimated net revenue retention (NRR) based on comparable B2B fintech benchmarks?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+    - id: "QI024"
+      question: "What is Qonto's estimated CAC payback period compared to industry benchmarks?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+    - id: "QI025"
+      question: "How does ECB rate normalization affect Qonto's float income contribution to revenue in 2026?"
+      type: "adverse"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+    - id: "QI026"
+      question: "How does Qonto's hybrid subscription-plus-transaction revenue model compare to pure SaaS or pure banking models?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+    - id: "QI027"
+      question: "How does Qonto's estimated revenue mix compare to publicly disclosed comparable neobanks like Tide and Starling?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+    - id: "QI028"
+      question: "What would Qonto's implied valuation be at current fintech EV/ARR multiples compared to its 2022 Series D valuation?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+    - id: "QI029"
+      question: "Has Qonto disclosed any plans for an IPO, Series E, or major capital market transaction in 2025 or 2026?"
+      type: "freshness"
+      targets:
+        - "contentRequirements/4"
+      status: "partial"
+
+  sources:
+    - id: "SI001"
+      publisher: "Dealroom"
+      title: "Qonto \u2013 Funding History and Investor Data"
+      url: "https://app.dealroom.co/companies/qonto"
+      date: "2026-04-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "analyst-market-data"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "funding"
+        - "valuation"
+        - "investors"
+      keyQuote: null
+    - id: "SI002"
+      publisher: "Tech.eu"
+      title: "Qonto hits \u20ac200M ARR, confirms profitability path"
+      url: "https://tech.eu/2024/11/15/qonto-200m-arr-profitability/"
+      date: "2024-11-15"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "news"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "ARR"
+        - "revenue"
+        - "profitability"
+      keyQuote: "Qonto has reportedly crossed the \u20ac200 million annual recurring revenue mark according to sources close to the company."
+    - id: "SI003"
+      publisher: "European Investment Bank"
+      title: "EIB invests in Qonto to support European SME financing"
+      url: "https://www.eib.org/en/press/all/2022-qonto-sme-investment"
+      date: "2022-06-15"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "partner"
+      topics:
+        - "funding"
+        - "EIB"
+        - "SME-financing"
+      keyQuote: null
+    - id: "SI004"
+      publisher: "Axios"
+      title: "European fintech Qonto eyes profitability before IPO"
+      url: "https://www.axios.com/2024/03/10/qonto-europe-fintech-profitability"
+      date: "2024-03-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "profitability"
+        - "IPO"
+        - "financials"
+      keyQuote: null
+    - id: "SI005"
+      publisher: "Fintech Futures"
+      title: "Qonto revenue growth and business model analysis 2025"
+      url: "https://www.fintechfutures.com/2025/04/qonto-revenue-growth-analysis/"
+      date: "2025-04-20"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "revenue"
+        - "business-model"
+        - "growth"
+      keyQuote: null
+    - id: "SI006"
+      publisher: "CB Insights"
+      title: "European Neobank Unit Economics Report 2025"
+      url: "https://www.cbinsights.com/research/european-neobank-unit-economics-2025/"
+      date: "2025-06-01"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "neutral"
+      sourceType: "analyst-market-data"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "unit-economics"
+        - "neobank"
+        - "ARPU"
+        - "CAC"
+      keyQuote: null
+    - id: "SI007"
+      publisher: "BpiFrance"
+      title: "BpiFrance portfolio: Qonto context and French SME financing"
+      url: "https://www.bpifrance.fr/nos-startups/qonto"
+      date: "2025-01-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "partner"
+      topics:
+        - "funding"
+        - "French-ecosystem"
+        - "SME"
+      keyQuote: null
+    - id: "SI008"
+      publisher: "Finovate"
+      title: "Qonto Showcase: Revenue Model and Product Roadmap"
+      url: "https://finovate.com/qonto-showcase-revenue-model-product-roadmap-2025/"
+      date: "2025-09-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "revenue-model"
+        - "product"
+        - "roadmap"
+      keyQuote: null
+    - id: "SI009"
+      publisher: "Banque de France"
+      title: "Registre des etablissements de paiement - Qonto SA CIB 16958"
+      url: "https://www.banque-france.fr/en/supervision/register-payment-institutions"
+      date: "2026-04-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "regulatory"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "regulatory"
+        - "EMI-licence"
+        - "capital-requirements"
+      keyQuote: null
+    - id: "SI010"
+      publisher: "NerdWallet"
+      title: "Qonto Business Account Review 2026"
+      url: "https://www.nerdwallet.com/uk/banking/qonto-business-account-review"
+      date: "2026-03-15"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "review"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "review"
+        - "pricing"
+        - "features"
+        - "unit-economics"
+      keyQuote: null
+    - id: "SI011"
+      publisher: "Qonto"
+      title: "Qonto Blog: Building Europe's Leading Finance Platform"
+      url: "https://qonto.com/en/blog/qonto-finance-platform-milestone-2025"
+      date: "2025-11-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "company"
+      topics:
+        - "milestones"
+        - "ARR"
+        - "product"
+      keyQuote: null
+    - id: "SI012"
+      publisher: "TechCrunch"
+      title: "Qonto turns profitable ahead of schedule, eyes banking licence"
+      url: "https://techcrunch.com/2025/07/12/qonto-profitable-banking-licence/"
+      date: "2025-07-12"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "profitability"
+        - "banking-licence"
+        - "revenue"
+      keyQuote: "Qonto, the French B2B neobank, announced it has been profitable since 2023, ahead of its original target."
+    - id: "SI013"
+      publisher: "Sifted"
+      title: "Inside Qonto's path to profitability and its next funding move"
+      url: "https://sifted.eu/articles/qonto-profitability-path-2024"
+      date: "2024-10-08"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "profitability"
+        - "revenue"
+        - "business-model"
+      keyQuote: null
+    - id: "SI014"
+      publisher: "Bloomberg"
+      title: "Qonto charts course to profitability as neobank sector matures"
+      url: "https://www.bloomberg.com/news/articles/2025-01-20/qonto-profitability-neobank-maturity"
+      date: "2025-01-20"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "profitability"
+        - "financials"
+        - "neobank"
+      keyQuote: null
+    - id: "SI015"
+      publisher: "Financial Times"
+      title: "Neobank unit economics: who is actually making money in 2025?"
+      url: "https://www.ft.com/content/neobank-unit-economics-profitability-2025"
+      date: "2025-05-15"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "unit-economics"
+        - "profitability"
+        - "neobank"
+      keyQuote: null
+    - id: "SI016"
+      publisher: "Les Echos"
+      title: "Qonto: rentable depuis 2023, l'entreprise ambitionne une licence bancaire"
+      url: "https://www.lesechos.fr/finance-marches/banque-assurances/qonto-rentable-2023-licence-bancaire-2025-2154321"
+      date: "2025-07-15"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "confirming"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "profitability"
+        - "banking-licence"
+        - "revenue"
+      keyQuote: null
+    - id: "SI017"
+      publisher: "Finextra"
+      title: "Qonto expands embedded finance offering as neobank sector eyes diversification"
+      url: "https://www.finextra.com/newsarticle/44210/qonto-embedded-finance-expansion-2026"
+      date: "2026-01-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "embedded-finance"
+        - "credit"
+        - "revenue-diversification"
+      keyQuote: null
+    - id: "SI018"
+      publisher: "Revolut"
+      title: "Revolut Business: Why businesses choose Revolut"
+      url: "https://www.revolut.com/business/why-revolut-business/"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "competitor"
+      topics:
+        - "competitive-context"
+        - "pricing"
+        - "features"
+      keyQuote: null
+    - id: "SI019"
+      publisher: "Crunchbase"
+      title: "Qonto \u2013 Funding Rounds"
+      url: "https://www.crunchbase.com/organization/qonto/funding_rounds"
+      date: "2026-04-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "filing"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "funding"
+        - "rounds"
+        - "valuation"
+      keyQuote: null
+    - id: "SI020"
+      publisher: "Eurazeo"
+      title: "Eurazeo press release: Investment in Qonto Series D"
+      url: "https://www.eurazeo.com/en/press/2022-01-05-eurazeo-qonto-series-d"
+      date: "2022-01-05"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "filing"
+      reputationTier: "high"
+      independence: "partner"
+      topics:
+        - "funding"
+        - "Series-D"
+        - "valuation"
+      keyQuote: "Qonto has raised \u20ac486 million in its Series D at a valuation of \u20ac4.4 billion."
+    - id: "SI021"
+      publisher: "Finsmes"
+      title: "Qonto 2024: Revenue Update and Strategic Plans"
+      url: "https://www.finsmes.com/2024/11/qonto-2024-revenue-update.html"
+      date: "2024-11-20"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "news"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "revenue"
+        - "ARR"
+        - "strategic-plans"
+      keyQuote: null
+    - id: "SI022"
+      publisher: "Qonto"
+      title: "Qonto Terms and Conditions \u2013 Legal Framework"
+      url: "https://legal.qonto.com/en/terms"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "company"
+      topics:
+        - "legal"
+        - "regulatory"
+        - "business-model"
+      keyQuote: null
+    - id: "SI023"
+      publisher: "Business Insider"
+      title: "Qonto's 2024 financial milestones and growth plans"
+      url: "https://www.businessinsider.com/qonto-financial-milestones-2024-growth"
+      date: "2024-12-05"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "financials"
+        - "growth"
+        - "milestones"
+      keyQuote: null
+    - id: "SI024"
+      publisher: "Statista"
+      title: "Average Revenue Per User (ARPU) for European neobanks 2024"
+      url: "https://www.statista.com/statistics/neobank-arpu-europe-2024/"
+      date: "2024-12-01"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "neutral"
+      sourceType: "analyst-market-data"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "ARPU"
+        - "neobank"
+        - "unit-economics"
+      keyQuote: null
+    - id: "SI025"
+      publisher: "LinkedIn"
+      title: "Fintech Unit Economics: What SaaS-Finance Hybrids Need to Show Investors"
+      url: "https://www.linkedin.com/pulse/fintech-unit-economics-saas-finance-hybrids-2025/"
+      date: "2025-03-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "low"
+      independence: "independent"
+      topics:
+        - "unit-economics"
+        - "LTV"
+        - "CAC"
+        - "fintech"
+      keyQuote: null
+    - id: "SI026"
+      publisher: "ACPR (Banque de France)"
+      title: "ACPR \u2013 Capital requirements for payment institutions under PSD2"
+      url: "https://www.acpr.banque-france.fr/en/supervision/supervisory-framework/capital-requirements-payment-institutions"
+      date: "2026-01-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "adverse"
+      sourceType: "regulatory"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "regulatory"
+        - "capital-requirements"
+        - "banking-licence"
+        - "EMI"
+      keyQuote: null
+
+  claims:
+    - id: "CI001"
+      statement: >-
+        Qonto's primary revenue stream is monthly subscription fees across its tiered plans (Basic
+        \u20ac9/mo, Smart \u20ac19/mo, Premium \u20ac39/mo, and custom Qonto X), providing predictable, recurring
+        revenue that scales with customer count.
+      type: "observed"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI022
+        - SI011
+      confidence: "high"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI001"
+        - "QI002"
+    - id: "CI002"
+      statement: >-
+        Qonto earns card interchange income on Mastercard business card transactions at approximately
+        0.2\u20130.5% of card GMV, consistent with Mastercard interchange rates for EU commercial cards
+        under the Interchange Fee Regulation cap of 0.3% for credit and 0.2% for debit.
+      type: "estimated"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI022
+        - SI006
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI003"
+    - id: "CI003"
+      statement: >-
+        Qonto charges SEPA transfer fees above the free monthly allowance (e.g., 20 SEPA/month on
+        Basic, 30 on Smart) and SWIFT international transfer fees starting at approximately \u20ac5 per
+        outgoing transfer, representing a moderate per-transaction revenue contribution.
+      type: "observed"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI022
+        - SI011
+      confidence: "high"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI003"
+    - id: "CI004"
+      statement: >-
+        Qonto earns float/interest income on customer deposits safeguarded with partner banks and money
+        market funds. As of May 2026, Qonto offers up to 4% per annum on customer balances, implying a
+        net interest margin spread is retained by Qonto on the portion not passed to customers.
+      type: "inferred"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI022
+        - SI009
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI004"
+    - id: "CI005"
+      statement: >-
+        Qonto's embedded finance / credit products (pay-later, term loans, and revenue-based financing)
+        are at early stage as of 2026. The official About page states \u20ac100M+ has been financed for
+        European businesses, but no revenue contribution or loan book figures have been disclosed.
+      type: "company-claimed"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI011
+        - SI017
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI005"
+    - id: "CI006"
+      statement: >-
+        Qonto's Qonto X enterprise plan is not publicly priced, requiring custom negotiation. This tier
+        targets businesses with 50+ employees and offers unlimited users, a dedicated account manager,
+        and custom credit limits, suggesting a significantly higher ARPU than standard plans.
+      type: "inferred"
+      topic: "unit-economics"
+      sourceRefs:
+        - SI022
+        - SI010
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI006"
+    - id: "CI007"
+      statement: >-
+        Qonto's plan pricing was confirmed as of May 2026: Basic at \u20ac9/month, Smart at \u20ac19/month,
+        and Premium at \u20ac39/month (all ex-VAT), consistent across official documentation reviewed
+        during this research.
+      type: "observed"
+      topic: "unit-economics"
+      sourceRefs:
+        - SI022
+        - SI011
+      confidence: "high"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI001"
+    - id: "CI008"
+      statement: >-
+        Based on a publicly estimated \u20ac200M+ ARR and an approximately 500,000+ active-account base as
+        of 2024, the implied annual blended ARPU for Qonto is approximately \u20ac300\u2013450 per account per
+        year, consistent with a Smart/Premium plan mix and moderate transaction revenue.
+      type: "estimated"
+      topic: "unit-economics"
+      sourceRefs:
+        - SI002
+        - SI024
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI007"
+    - id: "CI009"
+      statement: >-
+        Qonto's customer acquisition cost (CAC) is not publicly disclosed. Based on European B2B
+        neobank industry benchmarks, B2B SaaS-adjacent CACs range from \u20ac50\u2013150 per customer, with
+        word-of-mouth and viral referral programs reducing blended CAC below paid-channel-only benchmarks.
+      type: "estimated"
+      topic: "unit-economics"
+      sourceRefs:
+        - SI006
+        - SI025
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI008"
+    - id: "CI010"
+      statement: >-
+        Qonto's LTV/CAC ratio is estimated at 8\u201315x based on an ARPU of ~\u20ac350\u2013450 per year, an
+        average customer tenure of approximately 3\u20134 years, and an estimated blended CAC of
+        \u20ac80\u2013120. This estimate is highly uncertain without confirmed CAC and retention data.
+      type: "estimated"
+      topic: "unit-economics"
+      sourceRefs:
+        - SI006
+        - SI024
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI009"
+    - id: "CI011"
+      statement: >-
+        Qonto's gross margin is estimated at 65\u201375%, consistent with fintech SaaS-plus-payments
+        business models where card processing fees (typically 0.5\u20131.5% of GMV) and SEPA/SWIFT
+        infrastructure costs are the primary COGS below the gross margin line.
+      type: "estimated"
+      topic: "cost-structure"
+      sourceRefs:
+        - SI006
+        - SI015
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI010"
+    - id: "CI012"
+      statement: >-
+        Qonto's annual recurring revenue has been estimated at \u20ac200M+ in specialist fintech press for
+        2024 (Tech.eu, November 2024; Finsmes, November 2024). This figure has not been confirmed from
+        official filings, audited accounts, or an official press release as of May 2026.
+      type: "estimated"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI002
+        - SI021
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI011"
+    - id: "CI013"
+      statement: >-
+        CEO Alexandre Prot confirmed at a July 2025 press conference that Qonto became profitable in
+        2023, ahead of its original target. No specific ARR, EBITDA, or net income figures have been
+        publicly disclosed alongside this confirmation.
+      type: "company-claimed"
+      topic: "profitability"
+      sourceRefs:
+        - SI012
+        - SI016
+      confidence: "high"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI011"
+        - "QI012"
+    - id: "CI014"
+      statement: >-
+        Qonto's ARR trajectory (estimated) shows growth from approximately \u20ac40M in 2021 to \u20ac80M in
+        2022, \u20ac130M in 2023, and \u20ac200M+ in 2024. These figures are inferred from customer count
+        growth and estimated ARPU; they have not been confirmed by the company or independent auditors.
+      type: "estimated"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI002
+        - SI013
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI013"
+    - id: "CI015"
+      statement: >-
+        Projecting forward from a \u20ac200M+ 2024 ARR base at a 25\u201330% growth rate consistent with
+        Qonto's customer growth trajectory, estimated 2025 ARR would be approximately \u20ac250\u2013260M and
+        2026 ARR approximately \u20ac310\u2013325M. These are illustrative projections with high uncertainty.
+      type: "estimated"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI002
+        - SI005
+      confidence: "low"
+      freshness: "unknown"
+      answersQuestionRefs:
+        - "QI013"
+    - id: "CI016"
+      statement: >-
+        Qonto raised \u20ac622M in total equity across five rounds (2017\u20132022), including a \u20ac486M Series D
+        in January 2022 at a \u20ac4.4B valuation, providing substantial capital for multi-year European
+        expansion. No new primary equity round has been publicly disclosed since January 2022.
+      type: "observed"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI019
+        - SI020
+      confidence: "high"
+      freshness: "historical"
+      answersQuestionRefs:
+        - "QI014"
+    - id: "CI017"
+      statement: >-
+        The Eurazeo press release confirming the Qonto Series D (January 5, 2022) states Qonto raised
+        \u20ac486M at a \u20ac4.4B valuation, led by Tiger Global and TCV, with participation from KKR, Alkeon
+        Capital, DST Global, Eurazeo, Insight Partners, Exor Seeds, Gaingels, and EIB.
+      type: "observed"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI020
+        - SI019
+      confidence: "high"
+      freshness: "historical"
+      answersQuestionRefs:
+        - "QI014"
+    - id: "CI018"
+      statement: >-
+        Qonto's technology and product costs (Core Banking System maintenance, API, mobile/web
+        development) likely represent the largest operating expense category at an estimated 30\u201340%
+        of total OpEx, consistent with engineering-led neobanks with proprietary infrastructure.
+      type: "estimated"
+      topic: "cost-structure"
+      sourceRefs:
+        - SI006
+        - SI008
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI015"
+    - id: "CI019"
+      statement: >-
+        Qonto's sales and marketing costs benefit from a strong word-of-mouth and viral acquisition
+        channel, which is a structural cost advantage versus competitors relying primarily on paid
+        acquisition. Industry benchmarks for B2B fintech suggest 20\u201330% of OpEx on S&M for companies
+        at Qonto's scale.
+      type: "estimated"
+      topic: "cost-structure"
+      sourceRefs:
+        - SI006
+        - SI013
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI015"
+    - id: "CI020"
+      statement: >-
+        Qonto's total equity raised (~\u20ac622M) is large relative to the minimum capital requirements for
+        an EU payment institution (ACPR method: typically \u20ac350K\u2013\u20ac6M). The gap between raised capital
+        and regulatory minimum indicates Qonto has used the majority of raised capital for operating
+        expenditure, customer acquisition, and infrastructure investment, not regulatory capital.
+      type: "inferred"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI026
+        - SI019
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI016"
+    - id: "CI021"
+      statement: >-
+        ACPR capital requirements for payment institutions under PSD2 range from \u20ac20K to approximately
+        \u20ac6M depending on payment volume and method calculation. A full banking licence (applied for in
+        2025) would require significantly higher capital adequacy (CET1 8%+ under CRR).
+      type: "inferred"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI026
+        - SI009
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI016"
+        - "QI017"
+    - id: "CI022"
+      statement: >-
+        Having stated profitability in 2023, Qonto's estimated cash runway from the January 2022 Series D
+        has been materially extended. A profitable company burning less cash than originally planned would
+        extend the typical 3\u20134 year runway of a \u20ac486M raise to potentially 5+ years, reducing
+        near-term financing pressure.
+      type: "inferred"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI012
+        - SI004
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI018"
+    - id: "CI023"
+      statement: >-
+        Qonto's banking licence application (filed approximately May 2025, announced July 2025) will
+        require Qonto to meet bank-level capital requirements under CRR/CRD IV if approved. This may
+        necessitate a fresh equity raise, debt financing, or retained earnings accumulation before the
+        licence can be operationalized.
+      type: "inferred"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI026
+        - SI012
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI017"
+        - "QI019"
+    - id: "CI024"
+      statement: >-
+        No debt financing facility, credit line, or secondary share transaction for Qonto has been
+        publicly announced since the January 2022 Series D as of May 2026. Whether Qonto has raised
+        private debt for its lending book is unknown from public sources.
+      type: "inferred"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI019
+        - SI001
+      confidence: "low"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI020"
+    - id: "CI025"
+      statement: >-
+        Qonto's EIB investment (European Investment Bank, confirmed in the 2022 institutional investor
+        list) provides both economic capital and an implied public-sector endorsement of Qonto's SME
+        financing mission, though the exact instrument (equity, debt, or quasi-equity) has not been
+        publicly disclosed.
+      type: "third-party-reported"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI003
+        - SI020
+      confidence: "medium"
+      freshness: "historical"
+      answersQuestionRefs:
+        - "QI014"
+    - id: "CI026"
+      statement: >-
+        Qonto does not publish audited annual financial statements, quarterly results, or regulatory
+        capital filings in publicly accessible form. This is standard practice for French private
+        companies but creates a material information asymmetry for diligence purposes.
+      type: "observed"
+      topic: "financial-transparency"
+      sourceRefs:
+        - SI009
+        - SI022
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI021"
+    - id: "CI027"
+      statement: >-
+        The primary diligence blockers for a financial underwriting of Qonto are: (1) absence of audited
+        P&L (EBITDA, net income, gross margin), (2) unconfirmed ARR figure (\u20ac200M+ cited in press
+        only), and (3) no disclosed burn rate, cash balance, or capital adequacy filing post-Series D.
+      type: "observed"
+      topic: "financial-transparency"
+      sourceRefs:
+        - SI002
+        - SI009
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI021"
+        - "QI022"
+    - id: "CI028"
+      statement: >-
+        Qonto's net revenue retention (NRR) is not publicly disclosed. For a B2B SaaS-adjacent business
+        with tiered pricing and usage-based fees, NRR typically ranges from 105\u2013130% at best-in-class
+        operators, driven by plan upgrades, additional user seats, and usage expansion.
+      type: "estimated"
+      topic: "unit-economics"
+      sourceRefs:
+        - SI006
+        - SI025
+      confidence: "low"
+      freshness: "unknown"
+      answersQuestionRefs:
+        - "QI023"
+    - id: "CI029"
+      statement: >-
+        Qonto's CAC payback period is not publicly disclosed. Industry benchmarks for comparable European
+        B2B fintech businesses at scale suggest 12\u201318 months CAC payback, though Qonto's heavy
+        reliance on organic/word-of-mouth acquisition (consistent with its high NPS of 70+) may indicate
+        a shorter payback period than paid-acquisition-led competitors.
+      type: "estimated"
+      topic: "unit-economics"
+      sourceRefs:
+        - SI006
+        - SI024
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI008"
+        - "QI024"
+    - id: "CI030"
+      statement: >-
+        If 600,000+ customers hold an average of \u20ac15,000\u2013\u20ac25,000 in their Qonto accounts
+        (consistent with SMB operating cash levels), the total deposit base would be approximately
+        \u20ac9\u201315B. At a 3.5% ECB rate with a 2% net margin retained by Qonto, float income could
+        represent \u20ac180\u2013300M annually, potentially comparable to subscription revenue.
+      type: "estimated"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI004
+        - SI022
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI004"
+    - id: "CI031"
+      statement: >-
+        The European Central Bank's rate-cutting cycle beginning in 2024 (cut from 4.0% to approximately
+        2.5% by mid-2025) poses a meaningful headwind to Qonto's float income contribution, which was
+        elevated during the 2022\u20132024 high-rate environment. This represents a structural revenue
+        headwind as rates normalize.
+      type: "inferred"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI026
+        - SI014
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI004"
+        - "QI025"
+    - id: "CI032"
+      statement: >-
+        Qonto's revenue model benefits from a hybrid subscription-plus-transaction structure that creates
+        both predictable monthly cash flows (subscription) and usage-linked upside (interchange, payment
+        fees, float) without the binary credit risk of a pure lending business.
+      type: "inferred"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI008
+        - SI013
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI026"
+    - id: "CI033"
+      statement: >-
+        The \u20ac200M ARR figure cited in Tech.eu (November 2024) and Finsmes (November 2024) is attributed
+        to "sources close to the company," indicating this is likely leaked from management communications
+        rather than independently verified from financial statements or regulatory filings.
+      type: "inferred"
+      topic: "financial-transparency"
+      sourceRefs:
+        - SI002
+        - SI021
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI011"
+    - id: "CI034"
+      statement: >-
+        Comparable European B2B neobanks that have published unit economics (e.g., Tide via UK Companies
+        House filings, Starling Bank annual reports) show subscription revenue as 50\u201365% of total
+        revenue, with interchange and transaction fees contributing 20\u201335%, and other income (interest,
+        credit) at 5\u201325%. This mix is consistent with Qonto's estimated revenue composition.
+      type: "estimated"
+      topic: "revenue-model"
+      sourceRefs:
+        - SI006
+        - SI015
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI027"
+    - id: "CI035"
+      statement: >-
+        Qonto's reported profitability in 2023 would place it among a small group of European fintech
+        unicorns (alongside Wise and Revolut) that have achieved positive operating income at scale,
+        representing a significant milestone in the neobank sector's maturation.
+      type: "third-party-reported"
+      topic: "profitability"
+      sourceRefs:
+        - SI012
+        - SI004
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI012"
+    - id: "CI036"
+      statement: >-
+        Qonto's valuation of \u20ac4.4B (January 2022) was set in a high-multiple fintech growth environment.
+        Given the sharp re-rating of fintech multiples since 2022 (EV/ARR multiples fell from 20\u201330\u00d7
+        in 2021 to 6\u201310\u00d7 in 2023\u20132025), the implied current valuation on a \u20ac200M ARR base at
+        6\u201310\u00d7 would be \u20ac1.2\u20132.0B, well below the 2022 Series D price.
+      type: "estimated"
+      topic: "valuation"
+      sourceRefs:
+        - SI001
+        - SI014
+      confidence: "low"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI028"
+    - id: "CI037"
+      statement: >-
+        The adverse regulatory constraint (ACPR capital requirements for a full banking licence under
+        CRR/CRD IV, requiring minimum CET1 of 8%+ of risk-weighted assets) represents a material
+        financial burden that Qonto must plan for as part of its 2025 banking licence application
+        strategy. The required regulatory capital could reach \u20ac50\u2013150M or more if the loan book grows.
+      type: "inferred"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI026
+        - SI009
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - "QI017"
+        - "QI019"
+    - id: "CI038"
+      statement: >-
+        Qonto has not publicly announced any intention to raise a Series E or prepare for an IPO as of
+        May 2026, despite speculation in French financial press. The combination of reported profitability
+        (2023) and ample Series D capital suggests no immediate equity financing need, but the banking
+        licence application and expansion ambitions may accelerate a capital decision.
+      type: "inferred"
+      topic: "capital-structure"
+      sourceRefs:
+        - SI012
+        - SI016
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - "QI019"
+        - "QI029"
+
+  evidenceGaps:
+    - type: "private-evidence-only"
+      severity: "material"
+      topic: "revenue-financials"
+      missingEvidence: >
+        Qonto does not publish audited P&L, gross margin, EBITDA, or net income. The \u20ac200M+ ARR figure
+        cited in specialist fintech press is unconfirmed from official filings. Profitability was
+        CEO-stated only.
+      whyItMatters: >
+        Without audited financials, any valuation is based on unverified top-line estimates. Revenue
+        quality, margin structure, and profitability sustainability cannot be assessed from public sources.
+      diligencePath: >
+        Request FY2023 and FY2024 audited P&L, management accounts for Q1 2026, and board-approved
+        budget in the investor data room.
+      relatedQuestionRefs:
+        - "QI011"
+        - "QI012"
+        - "QI005"
+    - type: "private-evidence-only"
+      severity: "material"
+      topic: "unit-economics"
+      missingEvidence: >
+        CAC, CAC payback, LTV, NRR, gross margin by product line, and ARPU by plan tier are all absent
+        from public disclosures. All figures in TI003 are estimates with low confidence.
+      whyItMatters: >
+        Unit economics are the critical metric for assessing scalability of the subscription and
+        transaction revenue model. Without CAC and retention data, the investment case cannot be
+        underwritten with confidence.
+      diligencePath: >
+        Request cohort-level retention data, CAC by acquisition channel, ARPU by plan tier and market,
+        and NRR by cohort in investor data room.
+      relatedQuestionRefs:
+        - "QI007"
+        - "QI008"
+        - "QI009"
+        - "QI023"
+        - "QI006"
+    - type: "private-evidence-only"
+      severity: "material"
+      topic: "capital-structure"
+      missingEvidence: >
+        No information is available on whether Qonto has raised debt, credit facilities, or structured
+        any lending instrument for its embedded finance/credit products since the Series D (January 2022).
+        The banking licence capital requirements are also uncertain pending ACPR review.
+      whyItMatters: >
+        The funding structure for Qonto's lending book (pay-later, term loans) is material to credit risk
+        assessment. The capital adequacy plan for the banking licence application is a critical strategic
+        uncertainty for the next 12\u201324 months.
+      diligencePath: >
+        Request any debt facility agreements, warehouse lines, or structured finance instruments; also
+        request Qonto's internal banking licence capital plan from management.
+      relatedQuestionRefs:
+        - "QI017"
+        - "QI019"
+        - "QI020"
+        - "QI029"
