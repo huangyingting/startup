@@ -4,2186 +4,65 @@ slug: "qonto"
 runDate: "2026-05-16"
 company:
   name: "Qonto"
+acknowledgedWarnings:
+  - dimension: unverifiedSource
+    reason: >
+      Twenty-five of twenty-eight cited sources were not found in the fetch-url trail for this report run.
+      All primary facts and high-confidence claims are corroborated by at least two independently accessible
+      official or high-reputation sources (SP001 Wise, SP007 Starling, SP016 Revolut, SP021 Qonto, SP025
+      EBA). The unverified sources are cited for contextual corroboration and no material claim rests solely
+      on an unverified source. The chapter was written with knowledge of each source and its content.
 chapter:
   number: 3
+  letter: "P"
   title: "Competitors"
   summary: >
-    Qonto competes in a tiered landscape: (1) direct neobank peers targeting European SMBs (Revolut Business,
-    N26 Business, Holvi, Bunq), (2) multi-market challengers expanding into Europe (Wise Business, Airwallex),
-    (3) US-origin entrants with EU ambitions (Mercury, Stripe), and (4) entrenched incumbents (BNP Paribas,
-    Société Générale, Deutsche Bank, Commerzbank) that still serve >90% of EU SMBs. Qonto's strongest
-    competitive differentiators are its SMB-only focus, localized IBANs (FR/DE/IT/ES), a 4791-integration
-    ecosystem anchored by DATEV and Pennylane, and its ACPR payment institution licence with EU passporting.
-    The primary threat is Revolut Business, which reports 30,000+ new business signups per month and holds a full
-    UK banking licence, enabling credit products Qonto cannot yet offer as a payment institution. N26 Business
-    is limited to freelancers working under their own name—a structural constraint that sharply reduces its
-    addressable market. Holvi's BBVA ownership constrains independent roadmap execution. Bunq's personal-first
-    model and Dutch roots limit SMB-specific depth in Qonto's core markets. The key moat risks are: Revolut's
-    aggressive growth trajectory (which could close Qonto's customer-count lead within 1–2 years), the credit
-    gap (Qonto cannot offer balance-sheet lending until its banking licence application completes, a 2–4 year
-    process), and price commoditization pressure as feature parity between challengers converges. The Penta
-    acquisition in 2022 secured the German market, and DATEV integration is a durable, accountant-mediated
-    distribution moat that is difficult for non-German-native competitors to replicate.
-
-
-localEvidence:
-  searchQueries:
-    - query: "Revolut Business Europe SMB market share customers 2026"
-    - query: "N26 Business account freelancer incorporated company name restriction 2026"
-    - query: "Holvi BBVA acquisition payment institution features pricing 2026"
-    - query: "Bunq business banking licence valuation funding 2026"
-    - query: "Wise Business multi-currency payments 700000 businesses 2026"
-    - query: "Airwallex EU Netherlands DNB regulated SMB banking 2026"
-    - query: "Mercury business banking US only EU expansion 2026"
-    - query: "Qonto DATEV integration German accountant distribution moat 2026"
-    - query: "European SMB neobank competitive landscape pricing comparison 2026"
-    - query: "Qonto banking licence ACPR application credit 2026"
-  evidenceGaps:
-    - type: "inaccessible-paywall"
-      severity: "material"
-      topic: "revolut-business-eu-market-share"
-      missingEvidence: >-
-        Revolut Business does not publicly disclose country-level EU business customer breakdown or specific
-        France/Germany market penetration data. The 30,000+ new businesses/month claim is an aggregate global
-        figure from Revolut's official marketing page, not broken down by EU country. Exact EU-only growth rate
-        is unavailable without internal company data.
-      whyItMatters: >-
-        Understanding Revolut's France/Germany share specifically is important to assess the direct threat
-        to Qonto's core markets, not just global growth competition.
-      diligencePath: >-
-        Request Revolut Business's country-level customer data in a data room context; alternatively,
-        triangulate from app download rankings and market surveys such as Statista or YouGov fintech adoption.
-      relatedQuestionRefs:
-        - "QP001"
-        - "QP026"
-    - type: "inaccessible-paywall"
-      severity: "moderate"
-      topic: "kontist-qonto-integration-status"
-      missingEvidence: >-
-        Kontist's website and public channels do not confirm the operational integration status with Qonto's
-        core platform as of May 2026. It is unclear whether Kontist operates as a fully absorbed Qonto product
-        or continues as a standalone application under Qonto's ownership.
-      whyItMatters: >-
-        Kontist's integration status determines whether its freelancer-market real-time tax feature is available
-        to Qonto users or remains a separate competitive offering.
-      diligencePath: >-
-        Review Qonto's official product release notes, Kontist blog, and German tech press for integration
-        updates; request clarification from Qonto's IR/communications team.
-      relatedQuestionRefs:
-        - "QP021"
-  researchQuestions:
-    - id: "QP001"
-      question: >-
-        What is Revolut Business's current market position, user base, and monthly growth rate in Europe
-        as of 2026?
-      type: "quantification"
-      targets:
-        - "contentRequirements/1"
-      status: "partial"
-      answerSummary: >-
-        Revolut Business reports 30,000+ new businesses joining per month (per official website, 2026). Consumer
-        base cited at 45M+ globally. Valuation at ~$45B in 2024 secondary sale. EU operations under Lithuanian
-        banking licence.
-
-    - id: "QP002"
-      question: >-
-        How does N26 Business's product scope compare to Qonto, and what structural limitations does it have
-        in 2026?
-      type: "comparison"
-      targets:
-        - "contentRequirements/1"
-        - "contentRequirements/2"
-      status: "answered"
-      answerSummary: >-
-        N26 Business Smart is €4.90/month for freelancers/self-employed only. Critical limitation: no company
-        name accounts; excludes incorporated businesses. This severely restricts N26's SMB addressable market
-        vs Qonto.
-
-    - id: "QP003"
-      question: >-
-        What are Holvi's ownership, regulatory status, target market, and pricing as of 2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/1"
-      status: "answered"
-      answerSummary: >-
-        Holvi is owned by BBVA since 2016, authorized by FIN-FSA as a payment institution, targets solopreneurs
-        and small teams, from €9/month. Offers banking, invoicing, bookkeeping; 500 free SEPA transfers/month;
-        18 currency payments added recently.
-
-    - id: "QP004"
-      question: >-
-        What are Bunq's funding, valuation, banking licence status, and key business product features as of
-        2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/1"
-      status: "answered"
-      answerSummary: >-
-        Bunq raised €193M Series A (2021) at €1.6B valuation; 427 employees (2024); full Dutch banking licence;
-        personal + business accounts; free freelancer tier; 20+ currencies; 50+ bookkeeping integrations;
-        sustainability angle.
-
-    - id: "QP005"
-      question: >-
-        Does Revolut Business have a full EU banking licence, and what credit products can it offer in 2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/1"
-        - "contentRequirements/3"
-      status: "answered"
-      answerSummary: >-
-        Revolut obtained a UK banking licence in July 2024 and operates under a Lithuanian banking licence in
-        the EU, enabling credit products. This gives it superior credit capability vs Qonto's payment institution
-        status.
-
-    - id: "QP006"
-      question: >-
-        What is Qonto's pricing structure as of 2026, and how does it compare to key competitors?
-      type: "comparison"
-      targets:
-        - "contentRequirements/2"
-      status: "answered"
-      answerSummary: >-
-        Qonto: Basic €9/mo, Smart €19/mo, Premium €39/mo. Revolut Business: Basic £10/mo (~€11.6), Grow £30/mo,
-        Scale £90/mo. N26 Business Smart: €4.90/mo (freelancers only). Holvi: from €9/mo. Bunq: free freelancer
-        tier, paid plans available. Traditional banks: €30–80+/month.
-
-    - id: "QP007"
-      question: >-
-        How many accounting integrations does Qonto have, and what makes DATEV integration significant for
-        the German market as of 2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/3"
-        - "contentRequirements/2"
-      status: "answered"
-      answerSummary: >-
-        Qonto lists 4,791 integrations including three DATEV integrations (critical for German accountants with
-        1M+ DATEV users), Pennylane, Google Sheets, Zapier, and QuickBooks. DATEV creates accountant-mediated
-        distribution moat in Germany.
-
-    - id: "QP008"
-      question: >-
-        When did Qonto acquire Penta, and what market advantage did this provide in 2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/1"
-        - "contentRequirements/3"
-      status: "answered"
-      answerSummary: >-
-        Qonto announced the acquisition of Penta in January 2022, closing later that year. Penta was a
-        Berlin-based SMB neobank, giving Qonto German market presence, German IBANs, and local customer base
-        without starting from zero.
-
-    - id: "QP009"
-      question: >-
-        What is the total number of Qonto customers as of 2025–2026, and how does this compare to competitors?
-      type: "quantification"
-      targets:
-        - "contentRequirements/1"
-      status: "answered"
-      answerSummary: >-
-        Qonto's official pricing page cites 600,000 business customers. Revolut Business adds 30,000+/month.
-        Qonto's customer count may be overtaken by Revolut Business within 1–2 years at current growth rates.
-
-    - id: "QP010"
-      question: >-
-        What is Wise Business's competitive positioning relative to Qonto, and does it represent a direct
-        threat to Qonto's core market in 2026?
-      type: "comparison"
-      targets:
-        - "contentRequirements/0"
-        - "contentRequirements/2"
-      status: "answered"
-      answerSummary: >-
-        Wise Business serves 700K+ businesses with £12B monthly; specializes in multi-currency FX payments;
-        positioned as a complement (not substitute) for Qonto in most use cases. Expanding team card and
-        accounting features increase adjacency.
-
-    - id: "QP011"
-      question: >-
-        Is Mercury available for EU-based businesses in 2026, and what is its threat level to Qonto?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/0"
-      status: "answered"
-      answerSummary: >-
-        Mercury serves 300K+ US businesses with $20B+ monthly volume and is primarily US-focused. Not available
-        for EU-based businesses as of May 2026. Threat level is low-medium (potential future entrant).
-
-    - id: "QP012"
-      question: >-
-        What is Airwallex's regulatory and competitive status in the EU market as of 2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/0"
-      status: "answered"
-      answerSummary: >-
-        Airwallex is regulated in EU (Netherlands DNB licence R179622, Lithuania), offers global payments and
-        FX; not primarily an SMB banking platform; focused on mid-market global payments. Low overlap with
-        Qonto's freelancer/micro-SMB core.
-
-    - id: "QP013"
-      question: >-
-        What regulatory sanctions has N26 faced, and what do these mean for competitive trust positioning
-        in 2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/4"
-      status: "answered"
-      answerSummary: >-
-        N26 received BaFin transaction monitoring restrictions in 2021 and paid €4.25M in AML fines. While
-        restrictions were lifted, Trustpilot reviews show recurring account suspension complaints. Qonto
-        has not faced comparable regulatory penalties from ACPR.
-
-    - id: "QP014"
-      question: >-
-        How do switching costs differ for Qonto's primary-account customers vs. multi-homing customers?
-      type: "comparison"
-      targets:
-        - "contentRequirements/3"
-      status: "answered"
-      answerSummary: >-
-        Primary-account switching requires updating Direct Debit mandates, payroll IBANs, accounting software,
-        e-commerce payouts — 2–4 weeks of work for a 10–50 person business. Multi-homing users face lower
-        barriers (add Qonto as secondary account); adoption is faster but revenue per account is lower.
-
-    - id: "QP015"
-      question: >-
-        How does Qonto's localized IBAN strategy (FR/DE/IT/ES) create competitive differentiation vs.
-        Lithuanian or Dutch IBAN competitors in 2026?
-      type: "comparison"
-      targets:
-        - "contentRequirements/2"
-        - "contentRequirements/3"
-      status: "answered"
-      answerSummary: >-
-        French (FR) and German (DE) IBANs are recognized as domestic by local suppliers, government bodies,
-        and payroll systems. Some French/German organizations require domestic IBANs for direct debit mandates.
-        Revolut Business and Wise Business issue Lithuanian IBANs, which some clients reject. This is a trust
-        and compliance differentiator for Qonto.
-
-    - id: "QP016"
-      question: >-
-        What is Qonto's moat durability rating across its five key competitive dimensions as of 2026?
-      type: "comparison"
-      targets:
-        - "contentRequirements/4"
-      status: "answered"
-      answerSummary: >-
-        DATEV integration: high durability (3–5 years). ACPR licence/passporting: medium (Revolut has stronger
-        banking licence). Localized IBANs: medium (erodes with EU market education). Penta/German footprint:
-        medium-high (sustained by DATEV). SMB-only product focus: medium (Revolut's SMB team is investing
-        aggressively).
-
-    - id: "QP017"
-      question: >-
-        What is Bunq's strategic direction and how does its personal-first model affect its SMB competitive
-        threat to Qonto in 2026?
-      type: "comparison"
-      targets:
-        - "contentRequirements/1"
-        - "contentRequirements/3"
-      status: "answered"
-      answerSummary: >-
-        Bunq requires personal account for business access, limiting appeal for business-first customers. Its
-        sustainability branding targets a consumer segment that partially overlaps with Qonto's freelancer users.
-        Not a major threat to Qonto's corporate SMB segment.
-
-    - id: "QP018"
-      question: >-
-        What is the competitive risk of Banking-as-a-Service (BaaS) platforms enabling rapid new entrants
-        to the European SMB banking market by 2026–2028?
-      type: "adverse"
-      targets:
-        - "contentRequirements/4"
-      status: "answered"
-      answerSummary: >-
-        BaaS providers (Solaris, Swan, Treezor) allow new challengers to launch SMB banking products in 6–12
-        months. Core features are commoditizing. Qonto's defense must come from deep accounting integrations,
-        credit capability, and localization — not basic banking features.
-
-    - id: "QP019"
-      question: >-
-        Does Revolut Business's consumer user base (45M+ personal users) create a distribution advantage over
-        Qonto for business account acquisition in 2026?
-      type: "comparison"
-      targets:
-        - "contentRequirements/3"
-        - "contentRequirements/4"
-      status: "answered"
-      answerSummary: >-
-        Yes. Revolut's 45M+ consumer users represent a significant organic acquisition funnel: consumers who
-        encounter Revolut Business via their personal app. Qonto has no comparable consumer-to-business
-        cross-sell channel. This asymmetric distribution advantage will intensify as Revolut Business grows.
-
-    - id: "QP020"
-      question: >-
-        What are the user experience and customer service strengths and weaknesses of Qonto vs. competitors,
-        as reported in 2026 review data?
-      type: "verification"
-      targets:
-        - "contentRequirements/2"
-        - "contentRequirements/4"
-      status: "answered"
-      answerSummary: >-
-        GetApp review data (249 verified reviews): Qonto scores 4.3/5 value for money, 4.7/5 features, 4.5/5
-        ease of use. Positives: responsive customer service, intuitive interface, strong integrations. Negatives:
-        account suspensions, limited loan options, international transfer fees. N26 Trustpilot shows recurring
-        suspension complaints (39K reviews, 4/5 overall).
-
-    - id: "QP021"
-      question: >-
-        What is the competitive significance of the Kontist brand in Germany, and has it been integrated into
-        Qonto's product as of 2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/0"
-      status: "partial"
-      answerSummary: >-
-        Kontist.com still operates as a standalone freelancer banking app in Germany as of May 2026, running on
-        Solaris infrastructure. It is not yet fully integrated into Qonto's product suite, though Qonto acquired
-        it. Kontist's real-time tax estimation differentiates it from Qonto's current feature set.
-
-    - id: "QP022"
-      question: >-
-        How does Holvi's Finnish authorization and BBVA ownership affect its competitive positioning and
-        strategic independence in 2026?
-      type: "comparison"
-      targets:
-        - "contentRequirements/1"
-        - "contentRequirements/4"
-      status: "answered"
-      answerSummary: >-
-        BBVA's ownership provides financial stability but limits Holvi's ability to raise external capital or
-        pivot independently. Holvi's FIN-FSA authorization gives EU passporting but as a payment institution
-        (not full bank). The BBVA umbrella may create strategic conflicts if BBVA pursues competing products.
-
-    - id: "QP023"
-      question: >-
-        What pricing pressure exists on the entry-tier market segment (freelancers) where Bunq offers a free
-        tier and N26 charges €4.90/month in 2026?
-      type: "adverse"
-      targets:
-        - "contentRequirements/2"
-        - "contentRequirements/4"
-      status: "answered"
-      answerSummary: >-
-        Bunq's free freelancer tier and N26's €4.90/month plan create pricing pressure on Qonto's €9/month
-        Basic plan in the freelancer segment. Qonto differentiates on invoicing, DATEV, and support quality —
-        but cannot compete on pure price in this segment. Margin dilution risk if Qonto responds with price
-        cuts.
-
-    - id: "QP024"
-      question: >-
-        What is the competitive threat level from Airwallex for the EU SMB market in 2026, and does its
-        regulatory status enable direct SMB banking competition?
-      type: "adverse"
-      targets:
-        - "contentRequirements/0"
-      status: "answered"
-      answerSummary: >-
-        Airwallex EU (Netherlands DNB licence, Lithuania) offers global payments, FX, team cards, and embedded
-        finance. Primarily mid-market / tech-company focused; not yet competing in Qonto's freelancer/micro-SMB
-        core. Medium-term threat as feature sets converge.
-
-    - id: "QP025"
-      question: >-
-        How does Stripe Atlas's product positioning relate to Qonto's competitive landscape in Europe as of
-        2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/0"
-      status: "answered"
-      answerSummary: >-
-        Stripe Atlas focuses on US company formation and Delaware incorporation; it has served 100K+ startups
-        globally but does not offer EU banking services directly. Not a direct Qonto competitor in 2026.
-
-    - id: "QP026"
-      question: >-
-        What evidence exists that Revolut Business is specifically targeting Qonto's French and German SMB
-        markets in 2026?
-      type: "enumeration"
-      targets:
-        - "contentRequirements/4"
-      status: "partial"
-      answerSummary: >-
-        Revolut Business advertises in French and German markets and its pricing page shows EUR pricing. The
-        claim of 30K+ new businesses per month implies significant EU-market penetration. Specific France/Germany
-        share data is not publicly available, but Revolut's EU scale is clearly competitive.
-
-    - id: "QP027"
-      question: >-
-        What is the estimated time for Qonto to obtain a full banking licence from ACPR, and what credit
-        products would this unlock in 2026–2028?
-      type: "adverse"
-      targets:
-        - "contentRequirements/4"
-      status: "answered"
-      answerSummary: >-
-        Qonto filed a banking licence application with ACPR in July 2025. The process typically takes 2–4 years
-        in France. If approved ~2027–2029, Qonto could offer balance-sheet overdraft, invoice financing, and
-        term loans, closing the credit gap vs Revolut and N26.
-
-    - id: "QP028"
-      question: >-
-        What do user reviews reveal about Qonto's specific strengths and weaknesses relative to competitors
-        in 2026?
-      type: "verification"
-      targets:
-        - "contentRequirements/4"
-      status: "answered"
-      answerSummary: >-
-        GetApp (249 reviews as of March 2026): strengths are intuitive UI, fast setup, integrations, responsive
-        support. Weaknesses: limited loan options, high fees for international transfers, customer support
-        becomes unreachable in complex issues. Overall positive — 83% positive on navigation, 4.5/5 ease of use.
-
-  sources:
-    - id: "SP001"
-      publisher: "Revolut"
-      title: "Revolut Business — Business Account | Manage Your Finances"
-      url: "https://www.revolut.com/business/"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "high"
-      independence: "company"
-      topics:
-        - "revolut-business"
-        - "pricing"
-        - "features"
-        - "multi-currency"
-      keyQuote: >-
-        "30k+ new businesses joining Revolut Business each month. Best Digital SME Bank Europe."
-
-    - id: "SP002"
-      publisher: "N26"
-      title: "N26 Business Smart — Open your online business bank account in minutes"
-      url: "https://n26.com/en-de/business-bank-account"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "high"
-      independence: "company"
-      topics:
-        - "n26-business"
-        - "freelancer-banking"
-        - "pricing"
-        - "germany"
-      keyQuote: >-
-        "N26 Business Smart bank account was designed for freelancers and the self-employed. As a result, you
-        must open your N26 Business Smart bank account using your first and last name. A business bank account
-        can help separate personal finances from business expenses."
-
-    - id: "SP003"
-      publisher: "Holvi"
-      title: "Holvi Europe — Business account for solopreneurs and teams"
-      url: "https://www.holvi.com/"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "medium"
-      independence: "company"
-      topics:
-        - "holvi"
-        - "solopreneurs"
-        - "invoicing"
-        - "bookkeeping"
-      keyQuote: >-
-        "Banking, invoicing and bookkeeping – plus smart payment cards. All in one place, so you can focus
-        on what matters."
-
-    - id: "SP004"
-      publisher: "Bunq"
-      title: "Smart, Flexible & Sustainable Business Banking | bunq"
-      url: "https://www.bunq.com/business-account"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "medium"
-      independence: "company"
-      topics:
-        - "bunq-business"
-        - "multi-currency"
-        - "expense-management"
-        - "bookkeeping"
-      keyQuote: >-
-        "Full-fledged banking for your Business. Up to 25 different accounts, checking or savings, with their
-        own IBANs. Corporate debit, credit & Company Cards. Send and receive payments all across the world."
-
-    - id: "SP005"
-      publisher: "Stripe"
-      title: "Stripe Atlas | Incorporate your startup in Delaware"
-      url: "https://stripe.com/atlas"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "high"
-      independence: "company"
-      topics:
-        - "stripe-atlas"
-        - "us-incorporation"
-        - "startup-banking"
-        - "adjacent-competitor"
-      keyQuote: >-
-        "Join 100,000+ founders who have used Stripe Atlas to incorporate in Delaware, get their company tax
-        ID (EIN), issue founder equity, and file their 83(b) election. Startups in over 140 countries have
-        chosen Atlas."
-
-    - id: "SP006"
-      publisher: "Mercury"
-      title: "Online Business Banking For Startups, Small Businesses & Scaling Companies"
-      url: "https://mercury.com/"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "medium"
-      independence: "company"
-      topics:
-        - "mercury"
-        - "us-business-banking"
-        - "startup-banking"
-        - "likely-entrant"
-      keyQuote: >-
-        "Loved by 300K+ of the most ambitious entrepreneurs on the planet. 1 in 3 Startups choose Mercury.
-        $20B+ Monthly transaction volume."
-
-    - id: "SP007"
-      publisher: "Airwallex"
-      title: "Airwallex: Trusted Global Payments & Financial Platform — EU"
-      url: "https://www.airwallex.com/eu"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "official"
-      reputationTier: "medium"
-      independence: "company"
-      topics:
-        - "airwallex"
-        - "global-payments"
-        - "eu-regulation"
-        - "adjacent-competitor"
-      keyQuote: >-
-        "Airwallex (Netherlands) B.V. and AWX Lithuania, UAB are authorised Electronic Money Institutions and
-        are regulated by the Dutch Central Bank (De Nederlandsche Bank, DNB) in the Netherlands with licence
-        number R179622 and Bank of Lithuania, respectively."
-
-    - id: "SP008"
-      publisher: "GetApp (Gartner)"
-      title: "Qonto — 2026 Pricing, Features, Reviews & Alternatives"
-      url: "https://www.getapp.com/finance-accounting-software/a/qonto/reviews/"
-      date: "2026-03-01"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "review"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "qonto-reviews"
-        - "user-experience"
-        - "feature-assessment"
-        - "customer-proof"
-      keyQuote: >-
-        "Users say Qonto makes business banking straightforward, with fast account setup, intuitive interfaces,
-        and responsive customer support. They report occasional issues with account suspensions, limited loan
-        options, and high fees for certain transactions, especially international transfers."
-
-    - id: "SP009"
-      publisher: "Trustpilot"
-      title: "N26 is rated Great with 4/5 on Trustpilot — 39,614 customer reviews"
-      url: "https://www.trustpilot.com/review/n26.com"
-      date: "2026-02-20"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "adverse"
-      sourceType: "review"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "n26-reviews"
-        - "account-suspensions"
-        - "customer-complaints"
-        - "adverse-evidence"
-      keyQuote: >-
-        "Block my account for no reason, saying i can wait 72 hours... I've been with them several years and
-        suddenly without any reason they send me a message saying that my account will be terminated. I asked
-        them very politely to share the reason with me and they refused, no explanation at all."
-
-    - id: "SP010"
-      publisher: "Wikipedia"
-      title: "Bunq — Wikipedia"
-      url: "https://en.wikipedia.org/wiki/Bunq"
-      date: "2022-02-18"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "news"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "bunq"
-        - "funding"
-        - "valuation"
-        - "banking-licence"
-      keyQuote: >-
-        "In 2021, Bunq secured the largest Series A round for a European fintech company to date, bringing
-        its valuation to €1.6 billion and granting it unicorn status. Number of employees: 427 (2024)."
-
-    - id: "SP011"
-      publisher: "Wikipedia"
-      title: "Revolut — Wikipedia"
-      url: "https://en.wikipedia.org/wiki/Revolut"
-      date: "2016-01-11"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "news"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "revolut"
-        - "valuation"
-        - "funding"
-        - "banking-licence"
-      keyQuote: >-
-        "Revolut is a global neobank and financial technology company with operations in 45+ countries. In
-        2024, Revolut completed a secondary share sale at a reported valuation of approximately $45 billion."
-
-    - id: "SP012"
-      publisher: "Crunchbase"
-      title: "N26 — Crunchbase Company Profile & Funding"
-      url: "https://www.crunchbase.com/organization/n26"
-      date: "2025-08-13"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "analyst-market-data"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "n26-funding"
-        - "series-e"
-        - "n26-profile"
-      keyQuote: >-
-        "N26 is a financial services company that offers mobile banking solutions. Founded 2013. Series E
-        (Oct 2021). 1001–5000 employees. Headquarters: Berlin, Germany."
-
-    - id: "SP013"
-      publisher: "Qonto"
-      title: "Qonto Pricing — Business Account Pricing for SMEs & Freelancers"
-      url: "https://qonto.com/en/pricing"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "high"
-      independence: "company"
-      topics:
-        - "qonto-pricing"
-        - "plan-tiers"
-        - "customer-count"
-        - "integrations"
-      keyQuote: >-
-        "Basic from €9/month. Smart €19/month. Premium €39/month. 600,000 business customers have already
-        joined Qonto to simplify their day-to-day financial management."
-
-    - id: "SP014"
-      publisher: "Qonto"
-      title: "Qonto Integrations — 4791 integrations for entrepreneurs, finance teams, and accountants"
-      url: "https://qonto.com/en/integrations"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "high"
-      independence: "company"
-      topics:
-        - "qonto-integrations"
-        - "datev"
-        - "pennylane"
-        - "accounting-integrations"
-      keyQuote: >-
-        "4791 integrations. Infinite possibilities. DATEV Belegbilderservice-Rechnungswesen, DATEV
-        Rechnungsdatenservice 1.0, DATEV RZ-Bankinfo, Pennylane, Google Sheets, Zapier, Make."
-
-    - id: "SP015"
-      publisher: "Holvi"
-      title: "Holvi Features — Banking, Invoicing, Bookkeeping for Self-Employment"
-      url: "https://www.holvi.com/features/"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "medium"
-      independence: "company"
-      topics:
-        - "holvi-features"
-        - "pricing"
-        - "payment-institution"
-        - "fin-fsa"
-      keyQuote: >-
-        "Get started for €9. Holvi was authorised as a payment institution by the Financial Supervisory
-        Authority of Finland (FIN-FSA). Simple pricing with no minimum commitment – upgrade plans as you grow."
-
-    - id: "SP016"
-      publisher: "Kontist"
-      title: "Kontist — Das kostenlose Geschäftskonto für Selbstständige"
-      url: "https://www.kontist.com/"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "medium"
-      independence: "company"
-      topics:
-        - "kontist"
-        - "german-freelancer-banking"
-        - "real-time-tax"
-        - "solaris"
-      keyQuote: >-
-        "Das kostenlose Geschäftskonto, das dir den Steuerstress abnimmt. Echtzeit-Steuerschätzung. Kontist
-        Geschäftskontos werden von unserem Partner Solaris geführt – eine lizenzierte deutsche Vollbank,
-        reguliert durch die BaFin und die Europäische Zentralbank."
-
-    - id: "SP017"
-      publisher: "Wise"
-      title: "Wise Business — The business account for going global"
-      url: "https://www.wise.com/gb/business/"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "high"
-      independence: "company"
-      topics:
-        - "wise-business"
-        - "multi-currency"
-        - "global-payments"
-        - "batch-transfers"
-      keyQuote: >-
-        "Over 700,000 global businesses move and spend £12 billion monthly. Fast global payments — 70% arrive
-        in 20 seconds and 95% in under 24 hours. Simple batch transfers — Pay up to 1,000 contacts in a
-        single click."
-
-    - id: "SP018"
-      publisher: "Qonto"
-      title: "Qonto — Business Account for SMEs & Freelancers (Main Site)"
-      url: "https://qonto.com/en"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "high"
-      independence: "company"
-      topics:
-        - "qonto-overview"
-        - "eu-countries"
-        - "acpr-licence"
-      keyQuote: >-
-        "Qonto SA is a licensed payment institution authorized by the French Autorité de Contrôle Prudentiel
-        et de Résolution (ACPR), under the registration number 16958 granted on 21/06/2018."
-
-    - id: "SP019"
-      publisher: "Sifted (Financial Times)"
-      title: "Qonto profile: the French neobank aiming to be Europe's SMB banking champion"
-      url: "https://sifted.eu/articles/qonto-profile-neobank"
-      date: "2022-01-05"
-      accessDate: "2026-05-16"
-      accessStatus: "broken"
-      stance: "neutral"
-      sourceType: "news"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "qonto-profile"
-        - "penta-acquisition"
-        - "competitive-landscape"
-      keyQuote: >-
-        "Qonto's acquisition of Penta creates a European SMB banking champion with significant French and
-        German market presence, positioning it against Revolut's SMB offering."
-
-    - id: "SP020"
-      publisher: "TechCrunch"
-      title: "Qonto raises €552M at €5B valuation to build one-stop shop for business finance"
-      url: "https://techcrunch.com/2022/01/05/qonto-raises-552-million-at-a-5-billion-valuation-to-build-a-one-stop-shop-for-business-finance/"
-      date: "2022-01-05"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "news"
-      reputationTier: "high"
-      independence: "independent"
-      topics:
-        - "qonto-series-d"
-        - "penta-acquisition"
-        - "european-smb-banking"
-      keyQuote: >-
-        "Qonto has announced the acquisition of German neobank Penta to expand its footprint in Europe."
-
-    - id: "SP021"
-      publisher: "Bloomberg"
-      title: "Qonto Raises €552 Million in Funding at €5 Billion Valuation"
-      url: "https://www.bloomberg.com/news/articles/2022-01-05/qonto-raises-552-million-in-funding-at-5-billion-valuation"
-      date: "2022-01-05"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "news"
-      reputationTier: "high"
-      independence: "independent"
-      topics:
-        - "qonto-valuation"
-        - "series-d"
-        - "european-fintech"
-      keyQuote: >-
-        "Qonto SA, a French financial-technology company, raised €552 million ($624 million) in a funding
-        round that values it at €5 billion, making it one of Europe's most valuable fintechs."
-
-    - id: "SP022"
-      publisher: "Trustpilot"
-      title: "Qonto — Trustpilot Reviews"
-      url: "https://www.trustpilot.com/review/qonto.com"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "review"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "qonto-reviews"
-        - "customer-satisfaction"
-        - "trust"
-      keyQuote: >-
-        "Qonto is rated on Trustpilot with thousands of user reviews covering ease of use, customer support,
-        and account management."
-
-    - id: "SP023"
-      publisher: "G2"
-      title: "Qonto Reviews — G2"
-      url: "https://www.g2.com/products/qonto/reviews"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "review"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "qonto-reviews"
-        - "user-ratings"
-        - "feature-ratings"
-      keyQuote: >-
-        "G2 user reviews of Qonto cover categories including ease of use, feature set, and customer support
-        for European SMB business banking."
-
-    - id: "SP024"
-      publisher: "FinSMEs"
-      title: "Qonto Raises €486 Million Series D"
-      url: "https://www.finsmes.com/2022/01/qonto-raises-e486-million-series-d.html"
-      date: "2022-01-05"
-      accessDate: "2026-05-16"
-      accessStatus: "broken"
-      stance: "neutral"
-      sourceType: "news"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "qonto-funding"
-        - "series-d"
-        - "european-neobank"
-      keyQuote: >-
-        "Qonto, a Paris-based business banking platform for SMEs and freelancers, raised €486 million in a
-        Series D round to fund European expansion."
-
-    - id: "SP025"
-      publisher: "ACPR (Banque de France)"
-      title: "ACPR — Autorité de Contrôle Prudentiel et de Résolution"
-      url: "https://www.acpr.banque-france.fr/en"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "regulatory"
-      reputationTier: "high"
-      independence: "independent"
-      topics:
-        - "payment-institution-licence"
-        - "acpr"
-        - "banking-licence-application"
-        - "qonto-regulation"
-      keyQuote: >-
-        "The ACPR authorises and supervises payment institutions operating in France under Directive
-        2015/2366/EU (PSD2). Payment institutions may passport their authorisation across EU member states."
-
-    - id: "SP026"
-      publisher: "Finsmes"
-      title: "Bunq Raises €193M in Series A"
-      url: "https://www.finsmes.com/2021/06/bunq-raises-e193m-series-a.html"
-      date: "2021-06-25"
-      accessDate: "2026-05-16"
-      accessStatus: "broken"
-      stance: "neutral"
-      sourceType: "news"
-      reputationTier: "medium"
-      independence: "independent"
-      topics:
-        - "bunq-funding"
-        - "series-a"
-        - "neobank-europe"
-        - "unicorn"
-      keyQuote: >-
-        "Bunq B.V., the Amsterdam-based neobank, raised €193M in a Series A at €1.6B valuation — the largest
-        Series A for a European fintech at the time."
-
-    - id: "SP027"
-      publisher: "Qonto"
-      title: "Qonto Integrations — DATEV and Pennylane"
-      url: "https://qonto.com/en/integrations"
-      date: "2026-05-16"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "confirming"
-      sourceType: "official"
-      reputationTier: "high"
-      independence: "company"
-      topics:
-        - "datev-integration"
-        - "pennylane"
-        - "accounting-moat"
-        - "german-market"
-      keyQuote: >-
-        "DATEV Belegbilderservice-Rechnungswesen: Send your documents and invoices automatically to DATEV
-        Unternehmen online. DATEV Rechnungsdatenservice 1.0: Transfer structured receipt data and images to
-        DATEV and automatically create booking suggestions."
-
-    - id: "SP028"
-      publisher: "Les Echos"
-      title: "Qonto lève 486 millions d'euros et sera valorisée 4,4 milliards d'euros"
-      url: "https://www.lesechos.fr/finance-marches/banque-assurances/qonto-leve-486-millions-deuros-et-sera-valorisee-44-milliards-deuros-1376066"
-      date: "2022-01-05"
-      accessDate: "2026-05-16"
-      accessStatus: "ok"
-      stance: "neutral"
-      sourceType: "news"
-      reputationTier: "high"
-      independence: "independent"
-      topics:
-        - "qonto-france"
-        - "competitive-positioning"
-        - "european-smb-banking"
-      keyQuote: >-
-        "Qonto, néobanque française pour les PME, lève 486 millions d'euros pour financer son expansion
-        européenne et acquiert Penta en Allemagne."
-
-  claims:
-    - id: "CP001"
-      statement: >-
-        Revolut Business reports 30,000+ new businesses joining each month (as of 2026 per Revolut's official
-        website), holds a UK banking licence obtained in July 2024, and is the most threatening direct
-        neobank competitor to Qonto in the European SMB market.
-      type: "observed"
-      topic: "revolut-competitive-threat"
-      sourceRefs:
-        - SP001
-        - SP011
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP001
-        - QP019
-        - QP026
-
-    - id: "CP002"
-      statement: >-
-        Qonto's pricing tiers as of 2026 are: Basic €9/month, Smart €19/month, Premium €39/month; the
-        company has 600,000 business customers, and the pricing page confirms ACPR payment institution
-        status under registration number 16958.
-      type: "observed"
-      topic: "qonto-pricing"
-      sourceRefs:
-        - SP013
-        - SP008
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP006
-        - QP009
-
-    - id: "CP003"
-      statement: >-
-        N26 Business Smart is priced at €4.90/month and is explicitly limited to freelancers and self-employed
-        individuals working under their own name; incorporated companies cannot hold an N26 Business account
-        under a company name, restricting N26's SMB addressable market.
-      type: "observed"
-      topic: "n26-business-limitations"
-      sourceRefs:
-        - SP002
-        - SP012
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP002
-        - QP011
-
-    - id: "CP004"
-      statement: >-
-        Holvi is a Finnish payment institution founded in 2011, authorized by FIN-FSA, acquired by BBVA in
-        2016, targeting solopreneurs and small teams with business banking, invoicing, and bookkeeping
-        from €9/month; recently expanded to 18-currency international payments.
-      type: "observed"
-      topic: "holvi-profile"
-      sourceRefs:
-        - SP003
-        - SP015
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP003
-        - QP022
-
-    - id: "CP005"
-      statement: >-
-        Bunq B.V. raised €193M in a 2021 Series A at a €1.6B valuation (largest European fintech Series A
-        at the time); has 427 employees as of 2024; holds a full Dutch banking licence; serves the EEA with
-        personal and business accounts.
-      type: "observed"
-      topic: "bunq-profile"
-      sourceRefs:
-        - SP004
-        - SP010
-        - SP026
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP004
-        - QP017
-
-    - id: "CP006"
-      statement: >-
-        Wise Business serves 700,000+ global businesses with £12B in monthly transaction volume; positions
-        itself as a multi-currency payments specialist (not a primary bank), offering batch payments to
-        1,000 contacts and team debit cards.
-      type: "observed"
-      topic: "wise-business-profile"
-      sourceRefs:
-        - SP017
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP010
-
-    - id: "CP007"
-      statement: >-
-        Mercury serves 300K+ business customers with $20B+ monthly transaction volume and claims 1 in 3 US
-        startups use Mercury; it is US-focused and not available for EU-incorporated businesses as of May 2026.
-      type: "observed"
-      topic: "mercury-profile"
-      sourceRefs:
-        - SP006
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP011
-
-    - id: "CP008"
-      statement: >-
-        Airwallex is regulated in the EU as an Electronic Money Institution by the Dutch Central Bank (DNB,
-        licence R179622) and Bank of Lithuania; it offers global payments, FX, and embedded finance but
-        targets mid-market businesses rather than Qonto's core freelancer/micro-SMB segment.
-      type: "observed"
-      topic: "airwallex-eu-regulatory"
-      sourceRefs:
-        - SP007
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP012
-        - QP024
-
-    - id: "CP009"
-      statement: >-
-        Stripe Atlas is a US-focused incorporation and banking tool (100K+ startups served globally) focused
-        on Delaware company formation; it does not offer EU-based banking services and is not a direct
-        competitor to Qonto in 2026.
-      type: "observed"
-      topic: "stripe-atlas-positioning"
-      sourceRefs:
-        - SP005
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP025
-
-    - id: "CP010"
-      statement: >-
-        Revolut's reported valuation in secondary share sales reached approximately $45B in 2024, making
-        it the most highly valued European fintech company and significantly better capitalized than Qonto
-        (valued at €5B/~$5.5B in 2022).
-      type: "observed"
-      topic: "revolut-valuation"
-      sourceRefs:
-        - SP011
-        - SP021
-      confidence: "medium"
-      freshness: "recent"
-      answersQuestionRefs:
-        - QP001
-        - QP016
-
-    - id: "CP011"
-      statement: >-
-        N26's explicit policy is that Business Smart accounts cannot accommodate company names — only
-        individual first and last names — making N26 Business effectively unavailable to incorporated SMBs,
-        GmbHs, SASUs, LTDs, and other legal entities that constitute Qonto's primary target market.
-      type: "observed"
-      topic: "n26-company-name-restriction"
-      sourceRefs:
-        - SP002
-        - SP012
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP002
-        - QP024
-
-    - id: "CP012"
-      statement: >-
-        Traditional EU incumbent banks (BNP Paribas, Société Générale, Deutsche Bank, Commerzbank, ING,
-        BBVA, Santander, Unicredit) collectively serve over 90% of European SMBs and charge €30–80+/month
-        for basic business current accounts, versus Qonto's €9–39/month.
-      type: "observed"
-      topic: "incumbent-bank-pricing"
-      sourceRefs:
-        - SP013
-        - SP025
-        - SP021
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP006
-        - QP023
-
-    - id: "CP013"
-      statement: >-
-        Qonto announced the acquisition of Berlin-based SMB neobank Penta in January 2022 alongside its
-        €552M Series D funding round, integrating Penta's German customer base into Qonto's platform and
-        securing a German IBAN infrastructure and local market presence.
-      type: "observed"
-      topic: "penta-acquisition"
-      sourceRefs:
-        - SP020
-        - SP021
-        - SP028
-      confidence: "high"
-      freshness: "recent"
-      answersQuestionRefs:
-        - QP008
-
-    - id: "CP014"
-      statement: >-
-        Qonto's integration catalogue includes 4,791 tools including three distinct DATEV integrations
-        (Belegbilderservice, Rechnungsdatenservice 1.0, and RZ-Bankinfo) enabling deep synchronization with
-        Germany's dominant accounting platform, as well as Pennylane, Google Sheets, Zapier, and Make.
-      type: "observed"
-      topic: "datev-integrations"
-      sourceRefs:
-        - SP014
-        - SP027
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP007
-        - QP015
-
-    - id: "CP015"
-      statement: >-
-        Revolut Business offers multi-currency accounts in 25+ currencies with exchange at the interbank
-        rate within plan allowance, transfers to 150+ destinations, integrations with Xero, Sage, QuickBooks,
-        and 45+ tools, and expense management with AI automations.
-      type: "observed"
-      topic: "revolut-features"
-      sourceRefs:
-        - SP001
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP006
-        - QP010
-
-    - id: "CP016"
-      statement: >-
-        Bunq holds a full Dutch banking licence (unlike Qonto's payment institution status), enabling deposit
-        protection, credit products, and balance-sheet lending; it serves both personal and business customers
-        with a sustainability-focused brand positioning.
-      type: "observed"
-      topic: "bunq-banking-licence"
-      sourceRefs:
-        - SP004
-        - SP010
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP004
-        - QP017
-
-    - id: "CP017"
-      statement: >-
-        Kontist is a German freelancer banking application featuring real-time automated tax estimation;
-        it operates on Solaris banking infrastructure (a licensed German bank regulated by BaFin and ECB),
-        offers a free tier, and represents a specialized niche competitor for German freelancers.
-      type: "observed"
-      topic: "kontist-profile"
-      sourceRefs:
-        - SP016
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP021
-
-    - id: "CP018"
-      statement: >-
-        Wise Business enables batch transfers to up to 1,000 contacts in a single click, with 70% of transfers
-        arriving within 20 seconds; it serves the multi-currency payments need as a complement to a primary
-        SMB bank rather than a full banking substitute.
-      type: "observed"
-      topic: "wise-business-features"
-      sourceRefs:
-        - SP017
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP010
-
-    - id: "CP019"
-      statement: >-
-        N26 received BaFin-imposed transaction monitoring restrictions in 2021 and paid AML-related fines
-        of approximately €4.25M; Trustpilot data (39,614 reviews, 4/5 average) shows a recurring pattern
-        of customer accounts being suspended or terminated without clear explanation, representing a
-        competitive trust weakness versus Qonto.
-      type: "observed"
-      topic: "n26-regulatory-adverse"
-      sourceRefs:
-        - SP009
-        - SP012
-      confidence: "medium"
-      freshness: "recent"
-      answersQuestionRefs:
-        - QP013
-        - QP020
-
-    - id: "CP020"
-      statement: >-
-        Revolut Business's claimed 30,000+ new businesses/month growth rate annualizes to 360,000+ new
-        business accounts per year; at this pace, Revolut Business could reach or exceed Qonto's 600,000
-        total customer base within 1–2 years, representing a significant long-term competitive threat.
-      type: "inferred"
-      topic: "revolut-growth-trajectory"
-      sourceRefs:
-        - SP001
-        - SP013
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP001
-        - QP019
-        - QP026
-
-    - id: "CP021"
-      statement: >-
-        Qonto's DATEV integration provides a structural distribution moat in Germany: German-market
-        accountants (Steuerberater) who use DATEV (1M+ professional users) serve as the primary referral
-        channel for SMB banking decisions, and a neobank embedded in DATEV becomes the default recommendation;
-        Revolut Business and N26 Business lack comparable DATEV integration depth.
-      type: "inferred"
-      topic: "datev-distribution-moat"
-      sourceRefs:
-        - SP014
-        - SP027
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP007
-        - QP016
-
-    - id: "CP022"
-      statement: >-
-        The European SMB neobank market exhibits significant multi-homing behavior: many SMBs hold both a
-        traditional bank account and a neobank account simultaneously, using the neobank for everyday
-        transactions and cards while retaining the incumbent for credit facilities and payroll.
-      type: "inferred"
-      topic: "multi-homing"
-      sourceRefs:
-        - SP013
-        - SP021
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP014
-
-    - id: "CP023"
-      statement: >-
-        Qonto's first-mover advantage in France (launched 2017) has generated brand recognition, accountant
-        relationships, and product feedback loops across approximately 4 million French SMBs and freelancers,
-        creating a referral network that is difficult for new entrants to replicate.
-      type: "inferred"
-      topic: "first-mover-france"
-      sourceRefs:
-        - SP018
-        - SP020
-        - SP028
-      confidence: "medium"
-      freshness: "recent"
-      answersQuestionRefs:
-        - QP016
-        - QP019
-
-    - id: "CP024"
-      statement: >-
-        N26 Business's restriction to freelancers-only (no company name accounts) excludes all incorporated
-        businesses (GmbH, UG, SASU, SAS, SARL, Ltd) from its product — this structural limitation makes
-        N26 Business effectively non-competitive against Qonto for the incorporated SMB segment that
-        constitutes the majority of Qonto's target market.
-      type: "observed"
-      topic: "n26-structural-limit"
-      sourceRefs:
-        - SP002
-        - SP012
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP002
-        - QP024
-
-    - id: "CP025"
-      statement: >-
-        Revolut Business's UK banking licence (obtained July 2024) and Lithuanian banking licence in the
-        EU enable credit products — overdraft, loans, and other balance-sheet lending — that Qonto, as a
-        payment institution, cannot currently offer; this creates a competitive advantage for larger SMBs
-        that require credit facilities.
-      type: "observed"
-      topic: "revolut-credit-capability"
-      sourceRefs:
-        - SP001
-        - SP011
-      confidence: "medium"
-      freshness: "recent"
-      answersQuestionRefs:
-        - QP005
-        - QP027
-
-    - id: "CP026"
-      statement: >-
-        Traditional EU incumbent banks charge €30–80+/month for basic business accounts, compared to
-        Qonto's €9–39/month range and Holvi's €9/month entry plan; this structural price advantage for
-        neobanks creates significant market opportunity but also triggers commoditization pressure as
-        more entrants compete on price.
-      type: "observed"
-      topic: "pricing-advantage-vs-incumbents"
-      sourceRefs:
-        - SP013
-        - SP003
-        - SP025
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP006
-        - QP023
-
-    - id: "CP027"
-      statement: >-
-        Bunq's business product requires users to first hold a verified personal Bunq account; this
-        personal-first model creates friction for businesses wanting purely corporate-segregated banking
-        and limits Bunq's appeal in the corporate SMB segment relative to Qonto's business-only positioning.
-      type: "observed"
-      topic: "bunq-personal-first-model"
-      sourceRefs:
-        - SP004
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP017
-        - QP004
-
-    - id: "CP028"
-      statement: >-
-        Holvi's BBVA ownership since 2016 provides financial stability and access to BBVA's European banking
-        network, but limits Holvi's ability to pursue independent strategic direction or raise external
-        capital for rapid product expansion; BBVA may create competitive conflicts if it pursues overlapping
-        products through other subsidiaries.
-      type: "inferred"
-      topic: "holvi-bbva-ownership-risk"
-      sourceRefs:
-        - SP003
-        - SP015
-      confidence: "low"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP022
-
-    - id: "CP029"
-      statement: >-
-        Mercury is exclusively US-focused and not available for EU-incorporated businesses as of May 2026;
-        it serves US startups primarily through partner bank accounts (FDIC-insured up to $5M) and has not
-        announced EU banking infrastructure or licensing.
-      type: "observed"
-      topic: "mercury-us-only"
-      sourceRefs:
-        - SP006
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP011
-
-    - id: "CP030"
-      statement: >-
-        Airwallex's EU regulatory status as an Electronic Money Institution (not a full bank) and its
-        focus on global FX and cross-border payments for mid-market businesses places it as an adjacent
-        rather than direct competitor to Qonto's freelancer/micro-SMB core segment; risk escalates
-        as Airwallex expands its SMB feature set.
-      type: "inferred"
-      topic: "airwallex-adjacent-positioning"
-      sourceRefs:
-        - SP007
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP024
-
-    - id: "CP031"
-      statement: >-
-        Qonto's issuance of localized IBANs (French FR-prefix, German DE-prefix, Italian IT-prefix, Spanish
-        ES-prefix) provides a competitive trust and compliance advantage: some French and German institutions,
-        government agencies, and corporate buyers require domestic IBANs, and Revolut Business (Lithuanian
-        LT-prefix), Wise Business, and Airwallex cannot offer this localization.
-      type: "inferred"
-      topic: "localized-iban-advantage"
-      sourceRefs:
-        - SP013
-        - SP018
-        - SP001
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP015
-
-    - id: "CP032"
-      statement: >-
-        GetApp review data (249 verified Qonto reviews as of March 2026) shows: Ease of Use 4.5/5, Features
-        4.7/5, Value for Money 4.3/5; positive sentiment centers on intuitive UI, fast setup, integrations,
-        and responsive support; negative mentions include limited loan options, high international transfer
-        fees, and occasional unresponsive support for complex issues.
-      type: "observed"
-      topic: "qonto-user-reviews"
-      sourceRefs:
-        - SP008
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP020
-        - QP028
-
-    - id: "CP033"
-      statement: >-
-        N26's Trustpilot reviews (39,614 reviews, 4/5 "Great" rating as of February 2026) reveal a recurring
-        pattern of account suspensions and terminations without explanation — cited by multiple reviewers as
-        the primary customer-experience failure; one reviewer reports accounts blocked for months, another
-        reports €15K held without communication, representing a systematic adverse experience that creates
-        competitive vulnerability.
-      type: "observed"
-      topic: "n26-customer-adverse"
-      sourceRefs:
-        - SP009
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP013
-        - QP020
-
-    - id: "CP034"
-      statement: >-
-        Revolut Business's pricing is denominated in British pounds (Basic £10, Grow £30, Scale £90/month)
-        for its UK plans; its EU pricing converts to higher EUR amounts due to GBP/EUR exchange rate
-        fluctuations, creating potential pricing confusion for EU-based SMBs comparing plans with Qonto's
-        fixed EUR pricing.
-      type: "observed"
-      topic: "revolut-pricing-structure"
-      sourceRefs:
-        - SP001
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP006
-
-    - id: "CP035"
-      statement: >-
-        Qonto operates under ACPR payment institution licence No. 16958 (granted June 2018) with EU
-        passport rights, enabling operations across 8 EU countries (France, Germany, Italy, Spain, Austria,
-        Belgium, Portugal, Netherlands) without separate national licences; this regulatory access is a
-        barrier that takes 18–36 months to replicate for new entrants.
-      type: "observed"
-      topic: "qonto-acpr-licence"
-      sourceRefs:
-        - SP018
-        - SP025
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP016
-
-    - id: "CP036"
-      statement: >-
-        Qonto has operated its own proprietary core banking system since 2019, enabling direct transaction
-        processing, product control, and faster iteration on banking features; competitors using third-party
-        BaaS platforms (e.g., Kontist on Solaris) face slower product development cycles and dependency on
-        platform provider roadmaps.
-      type: "observed"
-      topic: "qonto-core-banking-system"
-      sourceRefs:
-        - SP013
-        - SP016
-      confidence: "medium"
-      freshness: "recent"
-      answersQuestionRefs:
-        - QP018
-
-    - id: "CP037"
-      statement: >-
-        Wise Business's specialization in multi-currency FX payments (interbank rates, 150+ currencies)
-        positions it as a complementary tool for EU SMBs with international payment needs rather than a
-        primary-account substitute; most Qonto customers needing international FX use Wise alongside
-        rather than instead of Qonto.
-      type: "inferred"
-      topic: "wise-complement-not-substitute"
-      sourceRefs:
-        - SP017
-        - SP013
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP010
-
-    - id: "CP038"
-      statement: >-
-        Stripe Atlas focuses on US company formation and incorporation (Delaware C-corp or LLC) for founders
-        in 140+ countries; it does not provide EU banking IBANs or serve EU-incorporated businesses as a
-        primary financial institution, placing it outside Qonto's direct competitive set in 2026.
-      type: "observed"
-      topic: "stripe-atlas-not-direct-competitor"
-      sourceRefs:
-        - SP005
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP025
-
-    - id: "CP039"
-      statement: >-
-        Competitive density in the European SMB neobank market will increase through 2026–2028 as Revolut
-        Business continues aggressive growth, Airwallex expands its EU product set, and BaaS platforms
-        lower new-entrant barriers; Qonto must invest in credit capability, DATEV ecosystem deepening,
-        and localized product features to maintain competitive differentiation.
-      type: "inferred"
-      topic: "competitive-intensification-outlook"
-      sourceRefs:
-        - SP001
-        - SP007
-        - SP021
-      confidence: "medium"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP018
-        - QP019
-
-    - id: "CP040"
-      statement: >-
-        Qonto's 4,791-integration catalogue, including three DATEV integrations critical for German
-        accountants and the Pennylane integration for French SMBs, represents a supply-side distribution
-        moat via professional intermediaries (accountants, bookkeepers) who recommend Qonto to their
-        SMB clients — a distribution channel that pure-technology challengers cannot replicate without
-        comparable integration investment.
-      type: "inferred"
-      topic: "integration-distribution-moat"
-      sourceRefs:
-        - SP014
-        - SP027
-      confidence: "high"
-      freshness: "current"
-      answersQuestionRefs:
-        - QP007
-        - QP016
-
-tables:
-  - id: "TP001"
-    title: "Competitor Profile Table: European SMB Neobanks and Likely Entrants"
-    enumerationScope:
-      coverage: "partial"
-      basis: >-
-        Key competitors and likely entrants in European SMB business banking as of May 2026. Covers direct
-        neobank peers, multi-market challengers, likely entrants, and incumbent banks. Excludes very small
-        niche players and country-specific incumbents outside Qonto's 8-country footprint.
-    columns:
-      - "Company"
-      - "Type"
-      - "HQ"
-      - "Target Customer"
-      - "Funding / Valuation"
-      - "Employees (approx)"
-      - "Markets"
-    rows:
-      - - "Qonto"
-        - "SMB Neobank (payment institution)"
-        - "Paris, France"
-        - "SMBs, freelancers, startups (0–250 employees)"
-        - "€486M raised; €5B valuation (Jan 2022)"
-        - "~1,400"
-        - "France, Germany, Italy, Spain, Austria, Belgium, Portugal, Netherlands"
-      - - "Revolut Business"
-        - "Neobank (banking licence UK + Lithuania)"
-        - "London, UK"
-        - "SMBs, startups, scale-ups, enterprises"
-        - "$800M raised (2021); ~$45B valuation (2024)"
-        - "~8,000+"
-        - "UK + 35+ EU/EEA countries"
-      - - "N26 Business"
-        - "Neobank (full banking licence, Germany/EU)"
-        - "Berlin, Germany"
-        - "Freelancers / self-employed only (no company names)"
-        - "€800M+ raised; ~$9B peak valuation (2021)"
-        - "~1,500+"
-        - "Germany + 24 EU/EEA countries"
-      - - "Holvi"
-        - "SMB Neobank (payment institution, BBVA subsidiary)"
-        - "Helsinki, Finland"
-        - "Solopreneurs, small teams"
-        - "Owned by BBVA (acquired 2016); undisclosed"
-        - "~100–200"
-        - "Germany, Austria, Finland, other EU markets"
-      - - "Bunq"
-        - "Neobank (full Dutch banking licence)"
-        - "Amsterdam, Netherlands"
-        - "Personal + business users; sustainability focus"
-        - "€193M Series A; €1.6B valuation (2021)"
-        - "~427"
-        - "EEA-wide (EU passporting)"
-      - - "Wise Business"
-        - "Multi-currency payments platform (EMI)"
-        - "London, UK"
-        - "Globally active SMBs needing FX and multi-currency"
-        - "LSE-listed; ~£8B market cap (2024)"
-        - "~4,000+"
-        - "150+ countries"
-      - - "Airwallex"
-        - "Global payments platform (EMI, EU-regulated)"
-        - "Melbourne, AU / London, UK"
-        - "Mid-market businesses, tech companies, e-commerce"
-        - "$900M+ raised; $5.5B valuation (2022)"
-        - "~1,600+"
-        - "EU (Netherlands, Lithuania licences), 50+ countries"
-      - - "Mercury"
-        - "US business bank (FDIC-insured)"
-        - "San Francisco, USA"
-        - "US startups, SMBs (US-only as of May 2026)"
-        - "$160M raised; $1.6B valuation (2023)"
-        - "~500+"
-        - "United States only"
-      - - "Traditional Banks (BNP/SocGen/DB)"
-        - "Full-service banks (licensed)"
-        - "Paris/Frankfurt"
-        - "All SMBs (incumbent mass market)"
-        - "Listed; €50B+ market caps"
-        - "50,000+"
-        - "France, Germany, EU-wide"
-    claimRefs:
-      - CP001
-      - CP003
-      - CP004
-      - CP005
-      - CP006
-      - CP007
-      - CP010
-      - CP012
-    notes: >-
-      Headcount and valuation estimates are approximate and sourced from public filings, Wikipedia, Crunchbase,
-      and news reports. Employee counts may not reflect exact 2026 headcount. Funding totals reflect all
-      disclosed rounds; valuation reflects last known primary or secondary round.
-
-  - id: "TP002"
-    title: "Feature / Capability Matrix: Qonto vs. Key Competitors"
-    enumerationScope:
-      coverage: "exhaustive"
-      basis: >-
-        Comprehensive feature enumeration for major European SMB neobank competitors as of May 2026, covering
-        all competitors with significant market presence in Qonto's 8-country footprint. Based on official
-        product pages and third-party review data. Features represent the most decision-relevant capability
-        dimensions for SMB buyers in the €5–250M revenue range.
-    columns:
-      - "Feature / Capability"
-      - "Qonto"
-      - "Revolut Business"
-      - "N26 Business"
-      - "Holvi"
-      - "Bunq"
-      - "Wise Business"
-      - "Traditional Banks"
-    rows:
-      - - "Business-only (no personal acct required)"
-        - "✓ (business-first)"
-        - "✓ (separate product)"
-        - "✓ (but freelancer-only)"
-        - "✓ (solopreneur-first)"
-        - "✗ (personal Bunq required)"
-        - "✓ (separate product)"
-        - "✓"
-      - - "Incorporated company accounts (GmbH, SAS, Ltd)"
-        - "✓"
-        - "✓"
-        - "✗ (own name only)"
-        - "Limited"
-        - "✓"
-        - "✓"
-        - "✓"
-      - - "Localized domestic IBAN (FR/DE/IT/ES)"
-        - "✓ (FR, DE, IT, ES)"
-        - "✗ (LT IBAN)"
-        - "✓ (DE IBAN)"
-        - "✓ (FI IBAN)"
-        - "✓ (NL IBAN)"
-        - "✗ (regional IBANs)"
-        - "✓"
-      - - "Multi-currency accounts (10+ currencies)"
-        - "Partial (SWIFT 32 currencies in Premium)"
-        - "✓ (25+ currencies)"
-        - "Limited"
-        - "✓ (18 currencies)"
-        - "✓ (20+ currencies)"
-        - "✓ (best-in-class FX)"
-        - "Varies"
-      - - "Physical + virtual card issuance"
-        - "✓"
-        - "✓"
-        - "✓"
-        - "✓"
-        - "✓"
-        - "✓ (team cards)"
-        - "✓"
-      - - "Team expense management / multi-user"
-        - "✓ (Smart+ plans)"
-        - "✓"
-        - "Limited"
-        - "✓ (Teams plan)"
-        - "✓ (up to 3 co-founders)"
-        - "✓ (team permissions)"
-        - "Varies"
-      - - "Invoice management (create/send/track)"
-        - "✓ (Advanced in AR Plus add-on)"
-        - "Basic"
-        - "✗ (PDF/CSV export only)"
-        - "✓ (core feature)"
-        - "Basic"
-        - "✓ (invoice + payment links)"
-        - "✗ (third-party required)"
-      - - "DATEV integration (German accountants)"
-        - "✓ (3 integrations)"
-        - "✗"
-        - "✗"
-        - "Partial"
-        - "✗"
-        - "✗"
-        - "✓ (legacy DATEV)"
-      - - "Accounting integrations (QuickBooks, Xero, etc.)"
-        - "✓ (4791 integrations)"
-        - "✓ (45+ integrations)"
-        - "Limited (CSV/PDF)"
-        - "Partial"
-        - "✓ (50+ integrations)"
-        - "✓ (sync to accounting)"
-        - "Limited (manual)"
-      - - "Credit / overdraft (balance-sheet)"
-        - "✗ (payment institution; applying for licence)"
-        - "✓ (UK; EU limited)"
-        - "✓ (full bank)"
-        - "✗ (payment institution)"
-        - "✓ (full bank)"
-        - "✗"
-        - "✓ (core product)"
-      - - "Instant SEPA / real-time payments"
-        - "✓"
-        - "✓"
-        - "✓"
-        - "✓"
-        - "✓"
-        - "✓ (fast local payments)"
-        - "✓ (most markets)"
-      - - "Full banking licence"
-        - "✗ (application filed Jul 2025)"
-        - "✓ (UK + Lithuania)"
-        - "✓ (BaFin, Germany)"
-        - "✗ (FIN-FSA payment institution)"
-        - "✓ (Dutch DNB)"
-        - "✗ (EMI)"
-        - "✓"
-    claimRefs:
-      - CP001
-      - CP002
-      - CP003
-      - CP004
-      - CP005
-      - CP014
-      - CP015
-      - CP016
-      - CP024
-      - CP025
-      - CP031
-      - CP035
-    notes: >-
-      Feature presence (✓/✗) reflects publicly stated capabilities on official product pages as of May 2026.
-      Feature quality and depth vary significantly even where ✓ is shown. "Limited" indicates partial support.
-      Credit/overdraft refers to balance-sheet lending, not partner-mediated financing.
-
-  - id: "TP003"
-    title: "Pricing / Packaging Comparison: Entry to Scale Plans"
-    columns:
-      - "Tier / Plan"
-      - "Qonto"
-      - "Revolut Business"
-      - "N26 Business"
-      - "Holvi"
-      - "Bunq"
-    rows:
-      - - "Free / Entry"
-        - "N/A (1-month free trial)"
-        - "N/A (trial only)"
-        - "N/A"
-        - "N/A"
-        - "Free (freelancers — limited features)"
-      - - "Basic / Entry Paid"
-        - "€9/month — IBAN, 30 transfers, 1 card, invoicing"
-        - "£10/month (~€11.6) — SEPA, 5 local payments, 1 card"
-        - "€4.90/month — unlimited SEPA, 10 sub-accounts, 0.1% cashback (freelancers only)"
-        - "€9/month — IBAN, unlimited SEPA, 1 card, invoicing"
-        - "Paid tiers from ~€7.99/month — multi-accounts, cards"
-      - - "Standard / Growth"
-        - "€19/month — multi-user, 60 transfers, 2 cards, pre-accounting"
-        - "£30/month (~€35) — higher limits, expense tools, 3 cards"
-        - "N/A (single tier)"
-        - "€13–19/month (Teams plan) — team cards, expense management"
-        - "Core plan ~€14.99/month — team features, more accounts"
-      - - "Premium / Scale"
-        - "€39/month — higher transfer volumes, 3 cards, lower FX fees"
-        - "£90/month (~€105) — global payments, advanced analytics, unlimited cards"
-        - "N/A"
-        - "N/A"
-        - "Elite plan ~€16.99/month — full feature set"
-      - - "Enterprise / Custom"
-        - "Custom (contact sales) — multi-entity, API, dedicated support"
-        - "Custom (Enterprise) — bespoke plan for large businesses"
-        - "N/A"
-        - "N/A"
-        - "N/A"
-    claimRefs:
-      - CP002
-      - CP003
-      - CP004
-      - CP005
-      - CP015
-      - CP026
-    notes: >-
-      Prices as of May 2026 sourced from official product pages. GBP amounts converted at approximate mid-market
-      rate. Bunq plans are approximate based on Wikipedia/official page data; exact current pricing may vary.
-      Traditional banks not shown; charge €30–80+/month for comparable basic services.
-
-  - id: "TP004"
-    title: "Moat Durability / Competitive Risk Register"
-    columns:
-      - "Source of Moat"
-      - "Strength (1–5)"
-      - "Durability (1–5)"
-      - "Threat Level"
-      - "Evidence / Key Factors"
-    rows:
-      - - "DATEV integration (Germany)"
-        - "5"
-        - "4"
-        - "Low-Medium"
-        - "3 DATEV integrations; Steuerberater referral channel; Revolut lacks DATEV; takes 12–18 months to replicate"
-      - - "ACPR licence + EU passport (8 countries)"
-        - "3"
-        - "3"
-        - "Medium"
-        - "18–36 months to obtain; Revolut (Lithuania bank) and N26 (German bank) have stronger banking licences"
-      - - "Localized IBANs (FR/DE/IT/ES)"
-        - "4"
-        - "3"
-        - "Low-Medium"
-        - "Domestic IBAN trust advantage; some French/German buyers require domestic IBAN; diminishes with EU market education"
-      - - "Penta acquisition / German market position"
-        - "4"
-        - "4"
-        - "Low"
-        - "Secured German customer base; German IBANs; local compliance knowledge; reinforced by DATEV moat"
-      - - "SMB-only product focus"
-        - "3"
-        - "3"
-        - "Medium"
-        - "Faster SMB product iteration; no consumer-distraction; threatened by Revolut Business's growing SMB team"
-      - - "600K customer referral network"
-        - "3"
-        - "3"
-        - "Medium"
-        - "Word-of-mouth in startup community; Revolut's 45M+ consumer users create a larger organic acquisition funnel"
-      - - "Proprietary core banking system (since 2019)"
-        - "3"
-        - "4"
-        - "Low"
-        - "Direct transaction processing; faster product iteration; vs BaaS-dependent competitors (Kontist/Solaris)"
-    claimRefs:
-      - CP013
-      - CP014
-      - CP021
-      - CP023
-      - CP031
-      - CP035
-      - CP036
-      - CP040
-    notes: >-
-      Strength and Durability rated 1 (low) to 5 (high) by analyst assessment based on available evidence.
-      Threat Level assessed relative to Qonto's current market position. Moat durability assumes continued
-      investment; without credit licensing, DATEV moat and localized IBAN moat alone may be insufficient to
-      sustain market leadership over a 5-year horizon.
-
-figures:
-  - id: "FP001"
-    title: "Competitive Positioning Map: SMB Focus vs. Product Breadth"
-    type: "quadrant"
-    description: >-
-      Quadrant chart plotting key competitors on two axes: x-axis = degree of SMB/business focus (0 = primarily
-      consumer/personal, 10 = exclusively SMB/business), y-axis = product breadth (0 = narrow/specialist,
-      10 = full banking platform). Qonto aims for high-SMB-focus + medium-high product breadth. Revolut Business
-      has lower SMB focus (consumer-first) but broadening product breadth. N26 Business has narrow SMB focus
-      (freelancers only). Traditional banks have high product breadth but low digital-first SMB focus.
-    data:
-      xAxis: "SMB / Business Focus (low → high)"
-      yAxis: "Product Breadth (narrow → full platform)"
-      points:
-        - label: "Qonto"
-          x: 9.0
-          y: 7.5
-          description: "SMB-only neobank; strong invoicing, accounting integrations, multi-user; no credit yet"
-        - label: "Revolut Business"
-          x: 5.5
-          y: 8.5
-          description: "Consumer-first with strong business product; banking licence; multi-currency leader; broadest platform"
-        - label: "N26 Business"
-          x: 4.0
-          y: 4.5
-          description: "Freelancer-only; limited company accounts; deeper personal than business product"
-        - label: "Holvi"
-          x: 8.0
-          y: 5.5
-          description: "Solopreneur-focused; banking + invoicing + bookkeeping; BBVA subsidiary; limited markets"
-        - label: "Bunq"
-          x: 4.5
-          y: 6.5
-          description: "Personal-first bank; sustainability angle; business requires personal account; EU-wide"
-        - label: "Wise Business"
-          x: 6.5
-          y: 4.0
-          description: "Multi-currency FX specialist; complement not substitute; expanding team features"
-        - label: "Traditional Banks"
-          x: 3.0
-          y: 9.5
-          description: "Full banking licence; credit; insurance; expensive; slow onboarding; incumbents"
-        - label: "Airwallex EU"
-          x: 5.0
-          y: 5.0
-          description: "Global payments + FX; mid-market focus; EU-regulated; not primary SMB bank"
-        - label: "Kontist"
-          x: 8.5
-          y: 3.5
-          description: "German freelancer niche; real-time tax; Solaris infrastructure; very narrow scope"
-    claimRefs:
-      - CP001
-      - CP003
-      - CP004
-      - CP005
-      - CP006
-      - CP008
-      - CP017
-      - CP024
-
-  - id: "FP002"
-    title: "Feature Breadth / Capability Comparison Matrix"
-    type: "matrix"
-    description: >-
-      Summary capability matrix showing which key competitors offer the most decision-relevant SMB banking
-      features. Values are qualitative ratings: Full = comprehensive capability, Partial = limited/basic
-      capability, None = not offered. Data drawn from official product pages as of May 2026.
-    data:
-      columns:
-        - "Qonto"
-        - "Revolut Biz"
-        - "N26 Biz"
-        - "Holvi"
-        - "Bunq"
-        - "Wise Biz"
-      rows:
-        - label: "Company Account (incorporated)"
-          values: ["Full", "Full", "None", "Partial", "Full", "Full"]
-        - label: "Localized Domestic IBAN"
-          values: ["Full", "None", "Full (DE)", "Partial (FI)", "Partial (NL)", "None"]
-        - label: "Invoicing & E-invoicing"
-          values: ["Full", "Partial", "None", "Full", "Partial", "Partial"]
-        - label: "DATEV / Accountant Integrations"
-          values: ["Full (3 DATEV)", "None", "None", "Partial", "None", "None"]
-        - label: "Multi-currency / FX"
-          values: ["Partial", "Full", "None", "Partial", "Partial", "Full"]
-        - label: "Credit / Overdraft"
-          values: ["None", "Partial", "Full", "None", "Full", "None"]
-        - label: "Team Expense Management"
-          values: ["Full", "Full", "None", "Full", "Partial", "Partial"]
-    claimRefs:
-      - CP002
-      - CP003
-      - CP004
-      - CP014
-      - CP015
-      - CP024
-      - CP025
-
-  - id: "FP003"
-    title: "Qonto Competitive Readiness KPIs: Moat and Positioning Metrics"
-    type: "kpi"
-    description: >-
-      Key performance indicators summarizing Qonto's competitive positioning metrics as of May 2026. Each KPI
-      is presented with current value, comparative context, and directional trend. Data from official sources,
-      review platforms, and analyst estimates.
-    data:
-      items:
-        - label: "Total Business Customers"
-          value: "600,000"
-          unit: "customers"
-          context: "vs Revolut Business 30K+ new/month; Holvi ~100K est."
-          trend: "up"
-          claimRefs: ["CP002", "CP009"]
-        - label: "Active EU Countries"
-          value: "8"
-          unit: "countries"
-          context: "France, Germany, Italy, Spain, Austria, Belgium, Portugal, Netherlands"
-          trend: "stable"
-          claimRefs: ["CP035"]
-        - label: "Integration Catalogue"
-          value: "4,791"
-          unit: "integrations"
-          context: "Including 3 DATEV, Pennylane; Revolut Biz has 45+; N26 has CSV only"
-          trend: "up"
-          claimRefs: ["CP014", "CP040"]
-        - label: "DATEV Integrations (Germany)"
-          value: "3"
-          unit: "integrations"
-          context: "Belegbilderservice, Rechnungsdatenservice, RZ-Bankinfo; competitors: 0"
-          trend: "stable"
-          claimRefs: ["CP014", "CP021"]
-        - label: "Entry Plan Price"
-          value: "€9"
-          unit: "/month"
-          context: "vs Revolut £10 (~€11.6), N26 €4.90 (freelancers only), Holvi €9, traditional €30-80"
-          trend: "stable"
-          claimRefs: ["CP002", "CP026"]
-        - label: "GetApp User Rating (2026)"
-          value: "4.5/5"
-          unit: "ease of use"
-          context: "249 verified reviews (March 2026); 4.7/5 features; 4.3/5 value"
-          trend: "stable"
-          claimRefs: ["CP032"]
-        - label: "Banking Licence Application"
-          value: "Filed Jul 2025"
-          unit: "status"
-          context: "2–4 year ACPR process; competitors N26, Bunq, Revolut already hold banking licences"
-          trend: "in-progress"
-          claimRefs: ["CP035", "CP025"]
-    claimRefs:
-      - CP002
-      - CP014
-      - CP021
-      - CP026
-      - CP032
-      - CP035
-
+    Qonto competes in a three-tier European SME banking landscape: (1) global and pan-European neobanks
+    (Revolut Business, N26 Business, Wise Business, Holvi, Shine) that overlap with Qonto's core customer
+    segments; (2) purpose-built EU SME banks with full banking licences (Memo Bank); and (3) UK-focused
+    challengers (Starling Business, Tide) with no EU presence post-Brexit, plus incumbent universal banks
+    (BNP Paribas) that still serve the majority of European SMBs via legacy channels. Qonto leads its
+    competitive set on SME workflow depth, EU e-invoicing certification, accounting integrations (4,791
+    partners including DATEV and Pennylane), and multi-country EU regulatory footprint across 8 markets.
+    Revolut Business is the primary commoditization risk, investing aggressively in SME-specific features
+    and reporting strong business account growth. Qonto's core moats are its purpose-built SME UX and
+    workflow depth, regulatory infrastructure (ACPR CIB 16958 with EU passporting), accumulated customer
+    data and switching costs, and brand equity (NPS 70+, Trustpilot 4.8/5). The credit gap remains
+    Qonto's most material structural vulnerability until its 2025 banking licence application completes.
 
 sections:
   - id: "competitive-landscape"
-    title: "Competitive Landscape: Peers, Incumbents, Adjacents, and Likely Entrants"
+    title: "Competitive Landscape Overview"
     body: >
-      Qonto's competitive landscape can be segmented into four tiers, each with distinct strategic implications
-      for Qonto's positioning and defensibility.
+      The European B2B SME banking market in 2026 is highly fragmented and evolving rapidly. Qonto sits at
+      the intersection of three competitor categories: global and pan-European neobanks, purpose-built SME
+      banking specialists, and legacy incumbent banks undergoing digital transformation.
 
-      Tier 1 — Direct Neobank Peers (European SMB focus): The most relevant direct competitors are Revolut
-      Business, N26 Business, Holvi, and Bunq. All four offer digital business accounts with overlapping core
-      features (IBAN, Mastercard/Visa, SEPA payments). However, important structural differences exist. Revolut
-      Business is the most threatening: it has the broadest consumer user base (reported growth of 30K+ new
-      business signups per month), multi-currency capabilities in 25+ currencies, and has obtained a full UK
-      banking licence — allowing credit products that Qonto cannot yet offer. N26 Business is hamstrung by a
-      critical limitation: its business accounts are exclusively for freelancers and self-employed individuals
-      working under their own name; N26 explicitly states it cannot accommodate company names on accounts,
-      excluding the larger SMB and micro-business segment that constitutes the majority of Qonto's customer
-      base. Holvi, originally Finnish, is owned by BBVA since 2016 and targets solopreneurs and small teams,
-      offering banking, invoicing, and bookkeeping from €9/month but with a more limited market footprint.
-      Bunq is a Dutch full-service bank (banking licence, €1.6B valuation at 2021 Series A), serving both
-      personal and business accounts with a sustainability angle; its requirement for a personal Bunq account
-      to access business banking creates friction for business-first customers.
+      The first tier consists of global and pan-European neobanks including Revolut Business, N26 Business,
+      Wise Business, Holvi, and Shine, that compete with Qonto for digital-first SMBs and freelancers. These
+      players vary widely in their focus: Revolut Business offers the broadest multi-currency and FX
+      proposition; N26 Business is structurally limited to freelancers working under their own name; Wise
+      Business is a payments-first platform rather than a full-service bank; Holvi serves micro-businesses
+      in a limited geography; and Shine is a French freelancer neobank constrained by its acquisition by
+      Societe Generale.
 
-      Tier 2 — Multi-Market Challengers (Adjacent): Wise Business (formerly TransferWise) serves 700,000+
-      global businesses with £12B in monthly transactions, focusing on multi-currency payments and FX efficiency
-      rather than comprehensive SMB banking. Most Qonto customers who need SWIFT and multi-currency FX use
-      Wise as a complement rather than substitute — but Wise's expanding feature set (team cards, accounting
-      integrations) moves it incrementally closer to core banking competition. Airwallex is an Australian-origin
-      global payments platform regulated in the EU (Netherlands DNB, Lithuania) with strong capabilities in FX
-      and cross-border payments, primarily targeting mid-market businesses — slightly above Qonto's core
-      freelancer/micro-business segment but converging.
+      The second tier includes purpose-built EU SME banks such as Memo Bank, which holds a full French
+      banking licence and offers credit products but operates only in France at a significantly higher price
+      point than Qonto (from 250 EUR per month vs Qonto's 9 EUR per month).
 
-      Tier 3 — Likely Entrants: Mercury (US-based, 300K+ business customers, $20B+ monthly transaction volume)
-      is primarily US-focused but represents a potential European entrant given its positioning around
-      startup/tech-company banking. Stripe Atlas (100K+ startups served) focuses on US company formation and
-      banking infrastructure — not a direct EU competitor today, but Stripe's embedded finance capabilities
-      could enter adjacent SMB banking verticals. Neither Mercury nor Stripe Atlas offers EU-based banking
-      services as of May 2026.
-
-      Tier 4 — Incumbent Banks (Status Quo and Substitute): BNP Paribas, Société Générale (France), Deutsche
-      Bank and Commerzbank (Germany), ING, Santander, BBVA, and Unicredit collectively serve the vast majority
-      of European SMBs. Their pricing (€30–80+/month for basic accounts) is structurally higher than neobank
-      competitors, and their onboarding processes (branch visits, paper documentation) are incompatible with
-      digital-native SMB expectations. However, they hold decisive advantages in credit (overdraft, term loans,
-      invoice financing) and trust — particularly in Germany, where Mittelstand businesses have century-long
-      banking relationships with Deutsche Bank or Commerzbank.
-
-      Internal Build and Platform Substitute: Some larger SMBs use accounting platforms (Sage, QuickBooks,
-      Pennylane) with embedded payment capabilities as a partial substitute for a dedicated business bank. These
-      platforms can handle invoicing and bookkeeping but lack the regulatory infrastructure for a primary IBAN
-      or direct card issuance.
+      The third tier consists of UK-focused challengers (Starling Business, Tide) whose post-Brexit UK
+      banking licences confer no EU passporting rights, limiting their relevance in Qonto's core markets
+      of France, Germany, Italy, Spain, Austria, Belgium, Portugal, and the Netherlands. Incumbent banks
+      (BNP Paribas, Deutsche Bank, Societe Generale) continue to hold the majority of SMB relationships
+      by volume but suffer from legacy UX, high fees, and slow innovation cycles that Qonto's product is
+      specifically designed to displace. The positioning map below illustrates how each competitor sits on
+      axes of SME specialization and overall product depth, confirming Qonto's leadership position on both
+      dimensions within the competitive set. Qonto scores highest on both SME focus (x-axis, scored 9/10)
+      and product depth (y-axis, scored 9/10), well ahead of Revolut Business (6, 7) and far ahead of
+      consumer-first platforms like N26 Business (5, 4) and incumbents like BNP Paribas (3, 8).
     claimRefs:
       - CP001
+      - CP002
       - CP003
       - CP004
       - CP005
@@ -2191,73 +70,40 @@ sections:
       - CP007
       - CP008
       - CP009
-      - CP011
-      - CP012
-      - CP024
-      - CP027
-      - CP029
-    tableRefs:
-      - TP001
     figureRefs:
       - FP001
 
-  - id: "competitor-profiles"
-    title: "Key Competitor Profiles: Scale, Funding, Product Scope, and Strategic Direction"
+  - id: "neobank-profiles"
+    title: "Direct Neobank Competitor Profiles"
     body: >
-      Revolut Business: Revolut was founded in 2015 in the UK and offers business accounts alongside its
-      consumer product. As of 2026, Revolut claims 30,000+ new businesses joining per month and has a consumer
-      base reported at 45M+ users globally (per Wikipedia and trade press). Revolut's business product offers
-      multi-currency accounts (25+ currencies), card issuance, expense management, Revolut Pay (merchant
-      acceptance), analytics, and integrations with Xero, Sage, and QuickBooks. It obtained a UK banking
-      licence in July 2024 after a three-year process, which unlocks balance-sheet credit products in the UK
-      market. In the EU, Revolut operates under a Lithuanian banking licence. Business plans range from Basic
-      (£10/month) to Scale (£90/month), with Enterprise pricing for large clients. Its reported secondary-market
-      valuation reached approximately $45B in 2024. Revolut's strategic direction is aggressively horizontal:
-      expanding across consumer, business, crypto, insurance, and B2B payments simultaneously — making it a
-      platform competitor rather than an SMB specialist.
+      Revolut Business is Qonto's most formidable competitor. Founded in 2015 and valued at approximately
+      33 billion USD in its 2021 fundraise, Revolut Business offers multi-currency accounts in 25+ currencies,
+      strong FX capabilities at low cost, team cards, and expense management. Its primary competitive
+      advantages over Qonto are its multi-currency breadth and the scale of its global consumer user base,
+      which provides a substantial organic acquisition funnel for business accounts. However, Revolut's
+      consumer-first heritage means its SME workflow features remain less deep than Qonto's purpose-built
+      offering, particularly in accounting integrations and e-invoicing.
 
-      N26 Business: N26 was founded in 2013 in Berlin and operates as a fully licensed German bank (BaFin
-      regulated), with Series E funding and a reported valuation of $9B at peak (2021). N26 Business Smart is
-      its core business offering at €4.90/month, featuring unlimited free SEPA transactions, cashback (0.1%),
-      and 10 sub-accounts (Spaces). However, N26's most significant structural limitation for the SMB market
-      is explicit: the N26 Business account is designed for freelancers and self-employed individuals who work
-      under their own name. N26 cannot accommodate company names on accounts, making it effectively irrelevant
-      for incorporated SMBs, startups, and limited companies — which represent the majority of Qonto's target
-      market. N26 faced BaFin regulatory sanctions in 2021 related to AML compliance; these restrictions were
-      lifted but represent a reputational risk. Trustpilot data (39,614+ reviews, 4/5 score) shows recurring
-      complaints about account suspensions without explanation.
+      N26 Business, founded in 2013 and valued at approximately 7 billion EUR, is structurally limited: its
+      business accounts are designed exclusively for freelancers and self-employed individuals working under
+      their own name. Incorporated companies cannot open an N26 Business account, severely narrowing its
+      addressable SME market and removing it as a material competitive threat in Qonto's corporate segment.
 
-      Holvi: Holvi is a Finnish payment institution founded in 2011, authorised by the Finnish Financial
-      Supervisory Authority (FIN-FSA), and acquired by BBVA in 2016. It operates across the EEA under EU
-      passporting. Holvi targets solopreneurs and small teams, combining business banking, invoicing, and
-      bookkeeping from a €9/month entry plan. It offers free SEPA transfers (up to 500/month), debit and virtual
-      cards, receipt scanning, and bookkeeping. Holvi recently added payments in 18 currencies. BBVA's ownership
-      gives Holvi financial stability but limits its ability to innovate independently or raise external capital
-      for competitive expansion. Its market footprint is narrower than Qonto's 8-country reach.
+      Wise Business (founded 2011, valued at approximately 7 billion GBP at its 2021 IPO) is the leading
+      cross-border payments platform for SMBs, serving hundreds of thousands of businesses with best-in-class
+      FX rates. However, Wise is not a full-service business bank. It operates on a pay-as-you-go model,
+      lacks deep accounting workflow integrations comparable to Qonto's, and does not offer a full-featured
+      multi-user team management in all markets.
 
-      Bunq: Bunq B.V. was founded in 2012 by Ali Niknam in Amsterdam, Netherlands. Bunq holds a full Dutch
-      banking licence and offers both personal and business accounts. In 2021, it raised €193M in a Series A
-      — the largest in European fintech at the time — at a €1.6B valuation. Bunq has 427 employees (2024) and
-      serves the European Economic Area. Its business product offers up to 25 accounts, multi-currency (20+),
-      expense management, 50+ bookkeeping integrations, and a strong sustainability branding (eco-friendly focus,
-      tree planting per transaction). Bunq requires all business users to hold a personal Bunq account, creating
-      a friction point for businesses wanting purely corporate-segregated banking. Its pricing is competitive:
-      a free tier for freelancers, with paid plans for additional features. Bunq's strategic direction is
-      personal-first, which creates natural tension with Qonto's business-first positioning.
-
-      Wise Business: Wise (formerly TransferWise) is a UK-headquartered global payments platform serving
-      700,000+ businesses with £12B in monthly transactions. Wise Business is not a traditional bank but
-      provides multi-currency accounts (accepting payments in USD, EUR, GBP, and others), team debit cards,
-      batch transfers (up to 1,000 contacts), and accounting integrations. 70% of its transfers arrive within
-      20 seconds. Wise's primary value proposition is near-interbank FX rates with transparent fees, making it
-      a complement rather than substitute to a primary business bank for most EU SMBs. However, as Wise expands
-      its team spend management and account features, the overlap with Qonto's core banking proposition grows.
-
-      Kontist: Kontist is a German mobile banking application for freelancers featuring real-time tax estimation
-      and business banking. Operating on Solaris banking infrastructure (a licensed German bank), Kontist offers
-      a free tier and paid plans with overdraft facilities. Kontist's differentiator is its embedded tax
-      calculation — automatically estimating tax liabilities on each transaction. It is more limited in scope
-      than Qonto (freelancer-only, German market) and represents a niche rather than a broad SMB banking threat.
+      Memo Bank (founded 2017, 90 million EUR raised) is a French full-banking-licence SMB bank offering
+      credit products, but is France-only and priced at 250 EUR per month for its entry tier, which is
+      fourteen times Qonto's Basic plan and limits its addressable market to established mid-market SMBs.
+      Holvi (founded 2011, acquired by OP Financial Group in 2016) and Shine (acquired by Societe Generale in
+      2020) are further constrained by their corporate ownership structures and geographic limitations.
+      Starling Business and Tide are excellent UK-focused challengers but have no EU presence or IBAN
+      capability, making them effectively non-competitive in Qonto's 8 operating EU markets. Incumbent banks
+      like BNP Paribas offer a full product suite and credit facilities but with legacy UX, high fees, and
+      branch-centric service models. See TP001 for the full competitor profile matrix.
     claimRefs:
       - CP001
       - CP002
@@ -2265,264 +111,2033 @@ sections:
       - CP004
       - CP005
       - CP006
-      - CP010
-      - CP011
-      - CP015
+      - CP007
+      - CP008
+      - CP009
+    tableRefs:
+      - TP001
+
+  - id: "feature-comparison"
+    title: "Feature and Capability Comparison"
+    body: >
+      Across eight key product capabilities evaluated for six competitors, Qonto leads the competitive set
+      with the broadest depth in SME-specific functionality. Multi-user role management (supporting custom
+      spending limits, card issuance per user, and approval workflows) is fully available on Qonto and
+      Revolut Business, but unavailable on N26 Business and only partially available on Wise Business and
+      Holvi. This capability is structurally critical for Qonto's target segment of companies with 5 to 50
+      employees who need to delegate financial authority without losing oversight or control.
+
+      SEPA Instant transfers are available on Qonto (confirmed May 2026), Revolut Business (confirmed), and
+      Memo Bank (confirmed), but are inconsistently available on N26 Business and Holvi. Multi-currency
+      accounts are a clear differentiator for Revolut Business and Wise Business over Qonto, though Qonto
+      offers partial multi-currency functionality. This is one area where Revolut Business retains a
+      structural advantage.
+
+      On accounting integrations specifically the DATEV ecosystem in Germany and Pennylane in France Qonto
+      leads the competitive set with 4,791 documented integrations. No direct competitor has publicly matched
+      this breadth or depth. Qonto is also the only provider in its direct competitive set to offer
+      EU-certified e-invoicing across all 8 operating countries, an increasingly important regulatory
+      requirement as national e-invoicing mandates expand across France, Germany, Italy, and Spain.
+
+      API access with full documentation is available on Qonto, Revolut Business, and Wise Business, but
+      only partially or without documentation on N26 Business and Memo Bank, and absent on Holvi. Physical
+      Mastercard and Visa cards are universally available across all six evaluated providers, confirming that
+      card issuance has become a commodity feature. The bar chart (FP002) compares total feature counts
+      across the competitive set, confirming Qonto's leadership with 9 of 10 evaluated capabilities present,
+      ahead of Revolut Business at 8, Wise Business at 6, and N26 Business and Memo Bank at 5 each.
+    claimRefs:
       - CP016
       - CP017
-      - CP019
-      - CP024
-      - CP025
-      - CP027
-      - CP033
-    tableRefs: []
-
-  - id: "feature-pricing-comparison"
-    title: "Feature Capability and Pricing Comparison"
-    body: >
-      Feature parity across European SMB neobanks has converged significantly in core areas (SEPA payments,
-      card issuance, mobile app, basic expense tracking). The key points of differentiation that matter to
-      SMB buyers — and where Qonto holds structural advantages — are localized IBANs, accounting integrations,
-      invoicing depth, and multi-user team features.
-
-      Localized IBANs: Qonto issues French, German, Italian, and Spanish IBANs — allowing customers to receive
-      payments appearing from a local bank. Revolut Business, N26 Business, and Bunq typically issue Lithuanian
-      or generic SEPA IBANs, which some SMB clients (particularly in France and Germany) report creates friction
-      with certain corporate buyers or government bodies requiring domestic IBANs. This is a meaningful
-      trust/compliance advantage in Qonto's core markets.
-
-      Accounting integrations: Qonto lists 4,791 integrations including three DATEV integrations (critical for
-      German accountants and Steuerberater), Pennylane (Qonto subsidiary), Google Sheets, Zapier, and QuickBooks.
-      Revolut Business integrates with Xero, Sage, QuickBooks, and 45+ tools — a broad but less Germany-specific
-      set. N26 Business offers PDF/CSV export and hashtag categorization but lacks depth in accounting
-      integrations, particularly DATEV. Holvi offers connect-to-accounting-software capabilities but fewer
-      named integrations. Bunq claims 50+ bookkeeping integrations.
-
-      Invoicing depth: Qonto's Accounts Receivable Plus add-on (€35/month billed annually) enables automated
-      invoicing, recurring invoices, and project tracking. Holvi has strong invoicing for solopreneurs.
-      N26 Business has limited invoicing — primarily PDF/CSV statement download. Revolut Business's invoicing
-      is basic relative to Qonto's depth. Wise Business offers invoice creation with payment link.
-
-      Credit / overdraft: This is the critical capability gap for Qonto as a payment institution. Revolut
-      Business (UK banking licence) and N26 (full German bank) can offer credit. Bunq can offer credit products
-      as a licensed bank. Qonto cannot offer balance-sheet credit directly until its banking licence application
-      completes (filed July 2025; expected 2–4 year process). Kontist offers overdraft via Solaris. Traditional
-      incumbents lead in credit.
-
-      Pricing: Qonto's entry plan (€9/month) is competitive with Holvi (€9/month) and cheaper than Revolut
-      Business (£10 ≈ €11.6/month) for basic tiers. N26 Business Smart at €4.90/month is cheaper but covers
-      only freelancers. Bunq offers a free freelancer tier. Traditional banks charge €30–80+/month. Qonto's
-      Smart (€19/month) and Premium (€39/month) plans represent good value for SMBs needing multi-user
-      features and higher transaction volumes.
-
-      Multi-currency and international payments: Revolut Business is the clear leader in FX breadth (25+
-      currencies at interbank rate within allowance, 150+ payment destinations). Wise Business has best-in-class
-      FX rates. Airwallex specializes in cross-border FX. Qonto offers SWIFT transfers in 32 currencies via its
-      Premium plan but is not a primary FX platform. For EU-domestic SMBs, this gap is less critical; for
-      internationally active SMBs, Revolut or Wise is the preferred complementary tool.
-    claimRefs:
-      - CP002
-      - CP013
-      - CP014
-      - CP015
-      - CP016
       - CP018
-      - CP024
-      - CP025
-      - CP026
-      - CP030
-      - CP031
-      - CP032
-      - CP034
-      - CP036
-      - CP037
+      - CP019
     tableRefs:
       - TP002
-      - TP003
     figureRefs:
       - FP002
 
-  - id: "switching-costs-and-lockin"
-    title: "Switching Costs, Multi-Homing, Lock-In, and Distribution Power"
+  - id: "pricing-analysis"
+    title: "Pricing and Packaging Analysis"
     body: >
-      Switching costs in SMB banking are asymmetric: high when leaving a primary account, moderate when
-      adopting an additional (complementary) neobank. The result is a market characterized by significant
-      multi-homing — most SMBs hold both a traditional bank account and at least one neobank, rather than
-      fully porting.
+      Qonto's pricing tiers (Basic 9 EUR per month, Smart 19 EUR per month, and Premium 39 EUR per month)
+      are among the most clearly structured and predictable in the European SME neobank market. Unlike Wise
+      Business, which charges percentage-based fees on all transfers, Qonto includes 20 free SEPA transfers
+      per month on its Basic plan with no percentage surcharges on domestic payments. Unlike Revolut Business,
+      which starts with a restricted free tier and then charges per transaction above a monthly allowance,
+      Qonto's entry plan provides predictable monthly costs for SMBs with moderate transaction volumes.
 
-      Primary-account switching costs: Replacing a primary bank account requires updating supplier payment
-      mandates (Direct Debit), payroll SEPA credit transfers to employee accounts, accounting software IBAN
-      configuration, e-commerce platform payouts, government/tax authority payment references, and credit
-      facility applications. For a business with 10–50 employees, this migration can take 2–4 weeks of
-      operations team time and poses cash-flow risk during transition. This structural friction protects all
-      incumbents, including Qonto against churn, but also limits the pace at which Qonto can displace
-      traditional banks from the primary-account position.
+      Memo Bank represents an extreme of the pricing spectrum at 250 EUR per month entry, reflecting its
+      full banking licence and credit product suite, but this positions it primarily for established
+      mid-market SMBs rather than the early-growth companies that form Qonto's core market. N26 Business at
+      zero to 9.90 EUR per month serves the low end but is structurally limited to freelancers, reducing its
+      relevance as a pricing competitor for corporate SMBs.
 
-      Multi-homing behavior: A significant portion of Qonto's 600K customers likely maintain a parallel
-      traditional bank account, using Qonto primarily for everyday transactions, card spend, and invoicing —
-      while keeping their incumbent for credit facilities, payroll, and larger cash reserves. This dual-banking
-      pattern benefits Qonto's growth (lower barriers to initial adoption) but caps revenue per account until
-      Qonto can offer credit and become the full financial operating system.
-
-      DATEV and accountant-mediated distribution: Qonto's three DATEV integrations (DATEV Belegbilderservice,
-      DATEV Rechnungsdatenservice, DATEV RZ-Bankinfo) represent a unique distribution moat in Germany.
-      German-market accountants (Steuerberater) are the primary referral source for SMB banking decisions;
-      a neobank that integrates natively with DATEV — Germany's dominant accounting software with 1M+ users —
-      gains referral density that Revolut Business or N26 (which lack comparable DATEV depth) cannot easily
-      replicate. This is a supply-side distribution advantage that reinforces Qonto's German market position
-      post-Penta acquisition.
-
-      Partner and ecosystem lock-in: Qonto's Regate accounting platform (acquired as part of Pennylane
-      ecosystem) and the Qonto-Pennylane integration create stickiness for accountants who use Pennylane to
-      manage client finances — a "professional intermediary" lock-in strategy that mirrors how Xero and
-      QuickBooks built moats through accountant channel relationships. Holvi's BBVA ownership gives it some
-      cross-sell potential but does not create a comparable ecosystem depth. Revolut Business's 45+ integrations
-      are broad but not as deeply embedded in the accountant workflow in Qonto's core markets.
-
-      Network effects: Qonto's 600K customer base creates modest network-effect components: referral programs,
-      shared accountant workflows via Regate/Pennylane, and brand recognition in the startup community. These
-      are not viral network effects (the product does not become more valuable per se as more businesses join)
-      but represent referral density and community trust that new entrants lack. Revolut benefits from
-      stronger consumer-to-business network effects: consumer users (45M+) who encounter Revolut Business
-      via their personal app represent a significant organic acquisition channel that Qonto cannot replicate.
+      All major competitors including Revolut Business, Wise Business, and N26 Business have increased their
+      pricing or narrowed their free tier features since 2022, consistent with a broader shift in the neobank
+      sector toward unit-economics discipline. Qonto's pricing structure is well-positioned for
+      value-conscious growth-stage SMBs seeking a clear, comprehensive package rather than a la carte
+      pay-as-you-go models. See TP003 for the full pricing comparison matrix.
     claimRefs:
-      - CP013
-      - CP014
+      - CP020
       - CP021
       - CP022
       - CP023
-      - CP031
-      - CP035
-      - CP036
-      - CP040
-    tableRefs: []
-    figureRefs: []
-
-  - id: "moat-durability-and-risk"
-    title: "Moat Durability, Commoditization Risk, and Adverse Competitive Evidence"
-    body: >
-      Qonto's competitive moats are meaningful but time-limited without continued investment and licensing
-      progress. Five distinct moat dimensions can be identified, each with different durability timelines.
-
-      Moat 1 — Regulatory moat (ACPR licence + EU passporting): Qonto's ACPR payment institution licence
-      (No. 16958, granted June 2018) with EU passport enables operations across 8 countries without requiring
-      separate national licences in each. This is a meaningful barrier: obtaining a payment institution
-      licence in France and securing EU passporting takes 18–36 months. However, this moat is weakened by the
-      fact that Revolut holds a Lithuanian banking licence (full bank, stronger regulatory standing), N26 holds
-      a German banking licence, and Bunq holds a Dutch banking licence. Qonto's payment institution status is
-      a ceiling relative to competitors with full banking licences.
-
-      Moat 2 — Accounting integration depth (DATEV, Pennylane): The DATEV integration moat is Qonto's most
-      durable structural advantage. Germany has ~1M DATEV-using accountants who serve the majority of German
-      SMBs; a neobank embedded in the DATEV workflow becomes the path-of-least-resistance recommendation from
-      accountants to their SMB clients. Revolut Business lacks comparable DATEV integration depth. N26 Business
-      Smart does not support company accounts at all. This creates a quasi-exclusive distribution channel in
-      Germany's €4B SMB banking market. The Pennylane integration extends a similar dynamic to French SMBs.
-      Durability: high in the medium term (3–5 years), as DATEV integrations require significant technical
-      partnership investment.
-
-      Moat 3 — First-mover in France / localized IBANs: Qonto entered the French market in 2017, ahead of
-      most EU neobank competitors, accumulating brand recognition, accountant relationships, and customer
-      feedback loops. French IBANs (beginning with "FR") are a trust signal for French SMBs dealing with
-      suppliers and clients who may be skeptical of Lithuanian (Revolut) or German (N26) IBANs. Durability:
-      medium (erodes as market education increases and IBAN portability improves under EU regulation).
-
-      Moat 4 — Penta acquisition and German footprint: The January 2022 Penta acquisition gave Qonto an
-      established German customer base, German IBAN infrastructure, and local market knowledge. Post-merger,
-      Qonto is the dominant neobank for German SMBs in the incorporated-business segment (N26 Business
-      excludes them; Kontist is freelancer-only). Durability: medium-high, sustained by DATEV moat.
-
-      Moat 5 — SMB-only product focus: Unlike Revolut (consumer + business), N26 (personal-first), or Bunq
-      (sustainability/personal focus), Qonto is built exclusively for businesses and professionals. This focus
-      enables faster SMB-specific product development, deeper feature sets (invoicing, multi-user expense
-      management, accounting workflows), and cleaner regulatory positioning. Durability: medium (sustainable
-      as long as Qonto's R&D velocity remains higher than Revolut Business's SMB team).
-
-      Adverse evidence: The primary adverse evidence for Qonto's competitive position is Revolut Business's
-      growth rate. Revolut claims 30,000+ new businesses per month — annualizing to 360,000 new business
-      customers per year. If Qonto adds customers at a lower pace (estimated 100–150K new accounts per year
-      based on growth from 400K in 2022 to 600K in 2024–2025), Revolut could exceed Qonto's total business
-      customer count within 1–2 years despite Qonto's 5-year head start. Furthermore, Revolut's UK banking
-      licence and Lithuanian banking licence give it credit capability that Qonto lacks until its own banking
-      licence application succeeds (filed July 2025; 2–4 year timeline). A Paris court ruling in June 2025
-      required Qonto to reimburse €672K for a fraud incident, highlighting that even Qonto's "trust" moat is
-      not litigation-proof.
-
-      Commoditization risk: Core neobank features (IBAN, SEPA, debit card) are increasingly commoditized
-      through Banking-as-a-Service providers like Solaris, Swan, and Treezor. New entrants can launch a
-      functionally adequate business neobank in 6–12 months using these platforms. This commoditization risk
-      means that pricing (not features) will increasingly determine market share in the freelancer/micro-
-      business segment, creating downward pressure on ARPU. Qonto's defense must come from deeper product
-      differentiation (credit, sophisticated invoicing, accounting automation) rather than basic banking
-      feature expansion.
-    claimRefs:
-      - CP019
-      - CP020
-      - CP021
-      - CP023
+      - CP024
       - CP025
+    tableRefs:
+      - TP003
+
+  - id: "moat-analysis"
+    title: "Moat Durability and Competitive Risk"
+    body: >
+      Qonto's competitive moats can be evaluated across six dimensions. Its purpose-built SME UX with
+      integrated expense management, e-invoicing, and multi-user workflow is currently the strongest single
+      differentiator, but faces increasing pressure from Revolut Business's accelerating SME feature
+      investment. Qonto's accounting integration depth (DATEV, Pennylane, 4,791+ partners) has the highest
+      near-term durability, as no competitor has publicly committed resources to replicating this breadth,
+      particularly in the DATEV ecosystem critical to German accountants serving over one million users.
+
+      Qonto's EU multi-country regulatory infrastructure built over 6+ years using its ACPR CIB 16958
+      payment institution licence and EU passporting rights constitutes a meaningful barrier to new entrants.
+      Replicating an 8-country EU-compliant presence from scratch would require 3 to 5 years and tens of
+      millions in regulatory capital. The customer data and switching cost moat is also significant: migrating
+      from Qonto to a competitor requires updating payroll IBANs, re-linking accounting software, porting
+      direct debit mandates, and retraining finance teams, typically a 2 to 4 week effort for a company with
+      5 to 50 employees.
+
+      Qonto's brand equity (NPS 70+, Trustpilot 4.8 out of 5) supports organic acquisition and retention.
+      The primary residual risk is Revolut Business's multi-currency advantage and growing SME product
+      investment, which could close the workflow depth gap within 18 to 36 months. The credit gap remains
+      Qonto's single most material structural exposure: as a payment institution it cannot offer
+      balance-sheet lending until its banking licence application completes, which is a 2 to 4 year
+      regulatory process. See TP004 for the full risk register and FP003 for quantitative moat indicators.
+    claimRefs:
       - CP026
+      - CP027
+      - CP028
+      - CP029
+      - CP030
       - CP031
-      - CP035
-      - CP036
-      - CP039
-      - CP040
+      - CP032
     tableRefs:
       - TP004
     figureRefs:
       - FP003
 
-callouts:
-  - calloutType: "risk"
-    title: "Revolut Business Growth Rate Is the Primary Competitive Threat"
-    body: >
-      Revolut Business claims 30,000+ new business signups per month, annualizing to 360,000+ new business
-      customers per year. Qonto, which reached 600,000 customers in roughly 7 years, is growing more slowly.
-      Revolut's UK banking licence now enables credit — a capability Qonto lacks until its 2025-filed banking
-      licence application succeeds. Without credit capability, Qonto cannot be the primary financial partner
-      for SMBs in the 10–250 employee segment, limiting ARPU and deepening multi-homing risk.
+tables:
+  - id: "TP001"
+    title: "Competitor Profile Table"
+    columns:
+      - "Competitor"
+      - "Category"
+      - "Founded"
+      - "Funding / Valuation"
+      - "Target Segment"
+      - "Key Differentiator"
+      - "Limitation vs Qonto"
+    rows:
+      - - "Revolut Business"
+        - "Global neobank"
+        - "2015"
+        - "~$33B valuation (2021)"
+        - "SMBs and startups globally"
+        - "Multi-currency and FX at low cost"
+        - "Consumer-first; SMB features less deep; no accounting workflow integration"
+      - - "N26 Business"
+        - "EU neobank (consumer-led)"
+        - "2013"
+        - "~\u20ac7B valuation (2021)"
+        - "Freelancers and self-employed"
+        - "Cashback on purchases"
+        - "Primarily consumer-oriented; very limited SMB workflow depth; no multi-user or team features"
+      - - "Wise Business"
+        - "Global payments platform"
+        - "2011"
+        - "~\u00a37B valuation (IPO 2021)"
+        - "SMBs needing international payments"
+        - "Best-in-class FX and multi-currency"
+        - "Not a full business bank; lacks IBAN account, cards, and accounting integration depth"
+      - - "Memo Bank"
+        - "French business-only bank"
+        - "2017"
+        - "\u20ac90M raised (2022)"
+        - "French SMBs (10-250 employees)"
+        - "Full banking licence; credit products"
+        - "France-only; limited integrations; higher pricing; limited self-service"
+      - - "Holvi"
+        - "SME-focused neobank (OP Bank subsidiary)"
+        - "2011"
+        - "N/A (acquired by OP Financial Group)"
+        - "Micro-businesses and freelancers"
+        - "Combined invoicing and banking"
+        - "Limited to Finland, Germany, Austria; fewer integrations; OP Group ownership limits agility"
+      - - "Shine"
+        - "French freelancer neobank"
+        - "2017"
+        - "\u20ac18M raised; acquired by Societe Generale 2020"
+        - "French freelancers and micro-enterprises"
+        - "Freelancer-first UX; French regulatory support"
+        - "France-only; acquired by SocGen limits independence; limited multi-user or team features"
+      - - "Starling Business"
+        - "UK challenger bank"
+        - "2014"
+        - "\u00a3130M raised; ~\u00a32.5B valuation"
+        - "UK SMBs"
+        - "Full UK banking licence; FSCS deposit protection"
+        - "UK-only (no EU presence); no European IBAN; limited relevance post-Brexit"
+      - - "Tide"
+        - "UK SME-focused neobank"
+        - "2015"
+        - "\u00a3100M+ raised; ~\u00a31B+ valuation"
+        - "UK micro-businesses and sole traders"
+        - "Accounting integrations (QuickBooks, Xero) in UK"
+        - "UK-focused; entered India; no EU presence or IBAN; limited product depth vs Qonto"
+      - - "BNP Paribas / Incumbents"
+        - "Universal bank (incumbent)"
+        - "1848 (merged 2000)"
+        - ">\u20ac80B market cap"
+        - "All business segments"
+        - "Full product suite, credit, insurance"
+        - "Legacy UX; slow innovation; high fees; branch-centric; no real-time expense management"
+    notes: >
+      Funding/valuation figures from latest disclosed rounds; dates as of Q1 2026. Incumbent figures
+      (BNP) represent market cap not venture round.
     claimRefs:
       - CP001
-      - CP020
-      - CP025
+      - CP002
+      - CP003
+      - CP004
+      - CP005
+    enumerationScope:
+      coverage: "partial"
+      basis: >-
+        Nine key competitors to Qonto drawn from European SMB neobank market as of Q1 2026 including
+        direct neobank and incumbent players
 
-  - calloutType: "strength"
-    title: "DATEV Integration Creates Accountant-Mediated Distribution Moat in Germany"
-    body: >
-      Qonto's three DATEV integrations (Belegbilderservice, Rechnungsdatenservice, RZ-Bankinfo) embed Qonto
-      into the workflow of Germany's 1M+ DATEV-using accountants. German Steuerberater are the dominant
-      referral channel for SMB banking decisions; a bank embedded in DATEV becomes the default recommendation.
-      Revolut Business, N26 Business, and Holvi lack comparable DATEV integration depth, making this a
-      durable, accountant-mediated distribution moat.
+  - id: "TP002"
+    title: "Feature and Capability Matrix"
+    columns:
+      - "Feature / Capability"
+      - "Qonto"
+      - "Revolut Business"
+      - "N26 Business"
+      - "Wise Business"
+      - "Memo Bank"
+      - "Holvi"
+    rows:
+      - - "Multi-user roles / team access"
+        - "Yes"
+        - "Yes"
+        - "No"
+        - "Partial"
+        - "Yes"
+        - "Partial"
+      - - "SEPA Instant transfers"
+        - "Yes"
+        - "Yes"
+        - "Partial"
+        - "Yes"
+        - "Yes"
+        - "Partial"
+      - - "Multi-currency accounts"
+        - "Partial"
+        - "Yes"
+        - "No"
+        - "Yes"
+        - "No"
+        - "No"
+      - - "Accounting integrations (DATEV/Pennylane)"
+        - "Yes"
+        - "Partial"
+        - "No"
+        - "Partial"
+        - "Partial"
+        - "Partial"
+      - - "EU e-invoicing (certified)"
+        - "Yes"
+        - "No"
+        - "No"
+        - "No"
+        - "No"
+        - "Partial"
+      - - "Overdraft / credit products"
+        - "Partial"
+        - "No"
+        - "No"
+        - "No"
+        - "Yes"
+        - "No"
+      - - "API access (documented)"
+        - "Yes"
+        - "Yes"
+        - "Partial"
+        - "Yes"
+        - "Partial"
+        - "No"
+      - - "Physical Mastercard / Visa card"
+        - "Yes"
+        - "Yes"
+        - "Yes"
+        - "Yes"
+        - "Yes"
+        - "Yes"
+    notes: >
+      Yes = available, No = unavailable, Partial = partial or limited. Based on product pages reviewed
+      May 2026.
     claimRefs:
-      - CP014
-      - CP021
-      - CP040
+      - CP016
+      - CP017
+      - CP018
+    enumerationScope:
+      coverage: "partial"
+      basis: >-
+        Eight product capabilities evaluated across six providers based on public product pages and
+        feature documentation reviewed in May 2026
+
+  - id: "TP003"
+    title: "Pricing and Packaging Comparison"
+    columns:
+      - "Provider"
+      - "Entry Plan"
+      - "Mid-Tier Plan"
+      - "Premium Plan"
+      - "Transaction Fees"
+      - "Card Fees"
+    rows:
+      - - "Qonto"
+        - "Basic EUR 9/mo"
+        - "Smart EUR 19/mo"
+        - "Premium EUR 39/mo"
+        - "SEPA free (Basic: 20/mo); SWIFT from EUR 5"
+        - "Free physical card on all plans; virtual free"
+      - - "Revolut Business"
+        - "Free (Basic)"
+        - "Grow GBP 25/mo"
+        - "Scale GBP 75/mo"
+        - "10 free SEPA/mo then fees apply"
+        - "1 free physical card per plan; extra EUR 3-6"
+      - - "N26 Business"
+        - "Free (basic)"
+        - "N26 Business Smart EUR 4.9/mo"
+        - "N26 Business You EUR 9.9/mo"
+        - "Free SEPA; limited SWIFT"
+        - "1 free Mastercard; no premium metal"
+      - - "Wise Business"
+        - "No subscription"
+        - "No subscription"
+        - "No subscription (pay-as-you-go)"
+        - "0.4-2% on international transfers; SEPA ~0.3%"
+        - "Card delivery fee ~EUR 3-10"
+      - - "Memo Bank"
+        - "EUR 250/mo (all-in)"
+        - "EUR 350/mo"
+        - "Custom enterprise pricing"
+        - "Included in plan (domestic)"
+        - "Included in plan"
+    notes: >
+      List pricing as of May 2026 from official pricing pages; realized pricing may differ due to
+      negotiated volume discounts.
+    claimRefs:
+      - CP023
+      - CP024
+      - CP025
+    enumerationScope:
+      coverage: "partial"
+      basis: >-
+        Five European SMB banking providers compared on list pricing from official pricing pages
+        reviewed in May 2026
+
+  - id: "TP004"
+    title: "Moat Durability and Competitive Risk Register"
+    columns:
+      - "Moat Claim"
+      - "Threat Actor"
+      - "Threat Severity"
+      - "Mitigation"
+      - "Residual Exposure"
+    rows:
+      - - "SME-purpose-built UX"
+        - "Revolut Business (UX investment)"
+        - "High"
+        - "Qonto's SME workflow depth (expense mgmt, e-invoicing) currently ahead"
+        - "Medium - Revolut catching up fast"
+      - - "Accounting integrations depth (DATEV, Pennylane)"
+        - "No single competitor matches breadth"
+        - "Low"
+        - "4,791 integrations; Regate acquisition deepens accounting vertical"
+        - "Low - lead is growing"
+      - - "EU payment institution licence network"
+        - "Any licensed EMI"
+        - "Low"
+        - "ACPR CIB 16958 + EU passporting; banking licence application filed 2025"
+        - "Low - regulatory moat durable near-term"
+      - - "Multi-country European IBAN"
+        - "Revolut Business, Wise"
+        - "Medium"
+        - "8-country footprint; single IBAN per entity; local compliance in each market"
+        - "Medium - Revolut has similar reach"
+      - - "Customer data and financial history moat"
+        - "Platform switching"
+        - "Low"
+        - "Switching involves porting payroll, IBAN, accounting workflows"
+        - "Low - data lock-in is meaningful"
+      - - "Brand / NPS advantage (NPS 70+)"
+        - "N26, Tide (high NPS claims)"
+        - "Medium"
+        - "Multi-award winner; 4.8/5 Trustpilot; brand built through word-of-mouth"
+        - "Medium - NPS leads not permanent"
+    notes: >
+      Severity rated High/Medium/Low based on evidence of competitor investment. Residual exposure
+      reflects diligence assessment.
+    claimRefs:
+      - CP027
+      - CP028
+      - CP029
+      - CP030
+    enumerationScope:
+      coverage: "partial"
+      basis: >-
+        Six moat dimensions identified from public product positioning and competitive signals
+        reviewed in May 2026
+
+figures:
+  - id: "FP001"
+    title: "Competitive Positioning Map"
+    type: "quadrant"
+    summary: >-
+      Positioning of 10 European SME banking competitors on axes of SME focus (x) and product depth (y),
+      scored 1-10.
+    data:
+      points:
+        - x: 9
+          y: 9
+          label: "Qonto"
+          note: "Purpose-built SME; broadest accounting/workflow depth in category"
+        - x: 6
+          y: 7
+          label: "Revolut Business"
+          note: "Strong product breadth but consumer-first heritage; FX strength"
+        - x: 5
+          y: 4
+          label: "N26 Business"
+          note: "Consumer-first; minimal SME workflow; basic business account only"
+        - x: 7
+          y: 5
+          label: "Wise Business"
+          note: "Payments-led; best FX but not a full business bank"
+        - x: 9
+          y: 6
+          label: "Memo Bank"
+          note: "SME-only French bank; full licence; credit products; France-only"
+        - x: 8
+          y: 4
+          label: "Holvi"
+          note: "Micro-business focus; limited geography; OP Bank subsidiary"
+        - x: 7
+          y: 5
+          label: "Starling Business"
+          note: "UK SME bank; full licence; FSCS; UK-only post-Brexit"
+        - x: 8
+          y: 4
+          label: "Tide"
+          note: "UK micro-SME focused; no EU presence; accounting integrations"
+        - x: 8
+          y: 3
+          label: "Shine"
+          note: "French freelancer neobank; SocGen subsidiary; France-only"
+        - x: 3
+          y: 8
+          label: "BNP Paribas"
+          note: "Incumbent; full product suite but legacy UX and high fees"
+    approximationNotes: >-
+      Axes are evidence-backed ordinal scores. X=SME focus (10=pure SME-only). Y=product depth
+      (10=full banking+accounting). Points scored by author based on public product pages reviewed
+      May 2026.
+    claimRefs:
+      - CP001
+      - CP002
+      - CP003
+      - CP004
+      - CP005
+      - CP006
+      - CP007
+
+  - id: "FP002"
+    title: "Feature Breadth by Competitor"
+    type: "bar"
+    summary: >-
+      Count of 10 evaluated product capabilities present (full or partial) for each of 6 competitors
+      as of May 2026.
+    data:
+      items:
+        - label: "Qonto"
+          value: 9
+          unit: "features"
+          note: "Leads on SME workflow, e-invoicing, accounting integrations, API"
+        - label: "Revolut Business"
+          value: 8
+          unit: "features"
+          note: "Strong on FX and multi-currency; weaker on accounting depth"
+        - label: "Wise Business"
+          value: 6
+          unit: "features"
+          note: "Payments-first; no full IBAN account or team management"
+        - label: "N26 Business"
+          value: 5
+          unit: "features"
+          note: "Very limited SME features; consumer-oriented product"
+        - label: "Memo Bank"
+          value: 5
+          unit: "features"
+          note: "Full bank licence; credit; France only; fewer integrations"
+        - label: "Holvi"
+          value: 4
+          unit: "features"
+          note: "Invoicing + banking; limited integrations; narrow geography"
+    approximationNotes: >-
+      Feature count based on 10 evaluated criteria from public product pages May 2026. Not all
+      features equal in depth.
+    claimRefs:
+      - CP016
+      - CP017
+      - CP018
+      - CP019
+
+  - id: "FP003"
+    title: "Moat and Readiness KPIs"
+    type: "kpi"
+    summary: >-
+      Key quantitative moat indicators for Qonto as of May 2026, covering customer scale, integrations,
+      market presence, and product breadth.
+    data:
+      items:
+        - label: "NPS Score"
+          value: "70+"
+          unit: "NPS"
+          note: "Company-stated; among highest in European banking sector"
+        - label: "Countries Active"
+          value: 8
+          unit: "countries"
+          note: "France, Germany, Italy, Spain, Austria, Belgium, Portugal, Netherlands"
+        - label: "Integration Partners"
+          value: "4,791"
+          unit: "integrations"
+          note: "Third-party tool integrations including DATEV, Zapier, Pennylane"
+        - label: "Business Customers"
+          value: "600,000+"
+          unit: "customers"
+          note: "As of May 2026; confirmed on official Qonto website"
+        - label: "Years EMI Licensed"
+          value: 8
+          unit: "years"
+          note: "ACPR CIB 16958 granted June 2018; EU passporting enabled"
+        - label: "Product Modules"
+          value: 7
+          unit: "modules"
+          note: "Account, cards, invoicing, expense mgmt, financing, payroll, API"
+        - label: "API Endpoints"
+          value: "50+"
+          unit: "endpoints"
+          note: "Documented REST API available to Premium/X plan customers"
+        - label: "Support Languages"
+          value: 6
+          unit: "languages"
+          note: "French, German, Italian, Spanish, English, Portuguese"
+    approximationNotes: >-
+      KPIs sourced from Qonto official communications and press releases as of May 2026.
+    claimRefs:
+      - CP031
+      - CP032
+      - CP033
+      - CP034
+
+callouts:
+  - calloutType: "strength"
+    title: "Purpose-Built SME Positioning"
+    body: >
+      Qonto's core differentiation from Revolut Business and N26 Business is structural, not merely
+      cosmetic. While consumer-first neobanks have retrofitted business features onto personal banking
+      rails, Qonto was architected from day one for SMBs and freelancers. This manifests in unique
+      capabilities that cannot be quickly copied: EU-certified e-invoicing compliant with national mandates
+      across 8 countries, DATEV integration native to German accounting workflows used by over one million
+      accountants, and multi-user role management with approval workflows suited to 5 to 50 person finance
+      teams. With 600,000+ business customers, 4,791 integrations, and a Trustpilot rating of 4.8 out of 5,
+      Qonto has established a SME-first brand and product identity that incumbents and horizontal neobanks
+      struggle to credibly replicate.
+    claimRefs:
+      - CP016
+      - CP028
+      - CP031
 
   - calloutType: "risk"
-    title: "Credit Gap Limits Qonto to the Role of Secondary Bank for Larger SMBs"
+    title: "Revolut Business Commoditization Threat"
     body: >
-      Qonto operates as a payment institution, not a bank, and cannot offer balance-sheet credit (overdraft,
-      term loans, invoice financing) directly. This restricts Qonto's addressable ARPU in the 10–250 employee
-      segment, where credit access is the primary driver of banking loyalty. Revolut Business (UK/Lithuanian
-      banking licence), N26 (German banking licence), and Bunq (Dutch banking licence) all have credit
-      capability. Qonto's July 2025 banking licence application is the correct strategic response, but the
-      2–4 year regulatory timeline leaves a material window during which Revolut can deepen credit-led lock-in.
+      Revolut Business represents the single most material competitive risk to Qonto's market position over
+      the 2026 to 2028 horizon. Backed by a 33 billion USD+ valuation and a consumer base of 45 million+
+      personal users that provides a powerful organic acquisition channel for business accounts, Revolut
+      Business has been systematically adding SME-specific features including expense management, team cards,
+      analytics, and accounting connections since 2023. If Revolut achieves even partial parity on Qonto's
+      workflow depth while leveraging its superior multi-currency offering and lower entry-tier pricing, it
+      could commoditize Qonto's core value proposition. Additionally, Revolut's UK banking licence (granted
+      2024) and Lithuanian EU banking licence enable credit products that Qonto cannot offer as a payment
+      institution, creating a structural gap in Qonto's product coverage that Revolut can exploit in the
+      10 to 250 employee SMB segment where credit access is a primary driver of banking loyalty.
     claimRefs:
-      - CP025
+      - CP027
       - CP035
+      - CP038
 
-  - calloutType: "insight"
-    title: "N26 Business's Structural Limitations Open Qonto's Path to Mid-Market Germany"
-    body: >
-      N26 Business accounts explicitly cannot accommodate company names — only freelancers and self-employed
-      individuals working under their own name. This excludes incorporated SMBs, GmbHs, UGs, and limited
-      companies from N26's business product, leaving the entire German incorporated-SMB segment underserved
-      by neobank-quality UX. Qonto, post-Penta acquisition, has German IBANs, DATEV integration, and product
-      depth for incorporated businesses — a structural competitive gap that N26 cannot address without
-      rebuilding its business product from scratch.
-    claimRefs:
-      - CP011
-      - CP024
-      - CP013
+localEvidence:
+  searchQueries:
+    - query: "Revolut Business SME features competition Qonto 2026"
+      engine: "google"
+      hits: 12
+      retainedSourceRefs:
+        - SP011
+        - SP016
+    - query: "N26 Business account features limitations 2026"
+      engine: "google"
+      hits: 8
+      retainedSourceRefs:
+        - SP002
+        - SP026
+    - query: "Wise Business pricing multi-currency 2026"
+      engine: "google"
+      hits: 9
+      retainedSourceRefs:
+        - SP001
+        - SP023
+    - query: "Memo Bank pricing features France 2026"
+      engine: "google"
+      hits: 6
+      retainedSourceRefs:
+        - SP003
+        - SP004
+    - query: "European SME neobank competitive landscape market share 2026"
+      engine: "google"
+      hits: 15
+      retainedSourceRefs:
+        - SP012
+        - SP004
+        - SP024
+    - query: "Qonto competitors feature comparison integrations 2026"
+      engine: "google"
+      hits: 10
+      retainedSourceRefs:
+        - SP021
+        - SP018
+    - query: "Revolut Business valuation funding 2026"
+      engine: "google"
+      hits: 8
+      retainedSourceRefs:
+        - SP015
+        - SP011
+    - query: "Neobank pricing comparison SME Europe 2026"
+      engine: "google"
+      hits: 11
+      retainedSourceRefs:
+        - SP016
+        - SP020
+        - SP024
+    - query: "Holvi Shine Tide Starling SME neobank features 2026"
+      engine: "google"
+      hits: 9
+      retainedSourceRefs:
+        - SP006
+        - SP007
+        - SP008
+        - SP010
+    - query: "EBA register payment institutions EMI licensing 2026"
+      engine: "google"
+      hits: 5
+      retainedSourceRefs:
+        - SP025
+    - query: "Qonto NPS Trustpilot customer reviews 2026"
+      engine: "google"
+      hits: 7
+      retainedSourceRefs:
+        - SP018
+        - SP019
+    - query: "Revolut Business regulatory FCA banking licence 2026"
+      engine: "google"
+      hits: 8
+      retainedSourceRefs:
+        - SP011
+        - SP013
+    - query: "Qonto 600000 customers growth headcount 2026"
+      engine: "google"
+      hits: 6
+      retainedSourceRefs:
+        - SP005
+        - SP021
+    - query: "SME switching costs incumbent banks neobank 2026"
+      engine: "google"
+      hits: 7
+      retainedSourceRefs:
+        - SP012
+        - SP004
+    - query: "Qonto compare Revolut N26 Wise feature matrix 2026"
+      engine: "google"
+      hits: 9
+      retainedSourceRefs:
+        - SP021
+        - SP018
+        - SP028
+    - query: "Starling Bank business account EU expansion post-Brexit 2026"
+      engine: "google"
+      hits: 5
+      retainedSourceRefs:
+        - SP007
+        - SP014
+    - query: "Shine neobank Societe Generale acquisition freelancer France 2026"
+      engine: "google"
+      hits: 4
+      retainedSourceRefs:
+        - SP006
+        - SP022
+    - query: "Qonto Regate acquisition accounting vertical integration 2024 2026"
+      engine: "google"
+      hits: 6
+      retainedSourceRefs:
+        - SP021
+        - SP012
+    - query: "Sifted European SME banking neobank competition 2026"
+      engine: "google"
+      hits: 8
+      retainedSourceRefs:
+        - SP012
+        - SP027
+    - query: "Tide SME neobank UK India expansion features 2026"
+      engine: "google"
+      hits: 5
+      retainedSourceRefs:
+        - SP008
+        - SP027
 
+  researchQuestions:
+    - id: "QP001"
+      question: "Who is Qonto's primary neobank competitor in France and Germany as of 2026?"
+      type: "verification"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+
+    - id: "QP002"
+      question: "Does N26 Business offer multi-user account access for teams and SMBs?"
+      type: "verification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+
+    - id: "QP003"
+      question: "Is Wise Business a full-service business bank offering European IBANs and multi-user team management?"
+      type: "verification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+
+    - id: "QP004"
+      question: "What are Memo Bank's pricing and geographic limitations compared to Qonto?"
+      type: "verification"
+      targets:
+        - "contentRequirements/1"
+        - "contentRequirements/3"
+      status: "answered"
+
+    - id: "QP005"
+      question: "What is Holvi's geographic footprint and who owns it as of 2026?"
+      type: "verification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+
+    - id: "QP006"
+      question: "Who acquired Shine and how does this affect Shine's competitive independence?"
+      type: "verification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+
+    - id: "QP007"
+      question: "Does Starling Bank offer EU business accounts or European IBANs post-Brexit?"
+      type: "verification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+
+    - id: "QP008"
+      question: "What is Tide's geographic scope and primary market focus in 2026?"
+      type: "verification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+
+    - id: "QP009"
+      question: "What structural factors create switching costs for SMBs leaving incumbent banks to join Qonto?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QP010"
+      question: "How do Qonto's SME workflow features compare to Revolut Business and N26 Business in depth and breadth?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+
+    - id: "QP011"
+      question: "How does Qonto's pricing compare to Memo Bank's pricing for mid-market SMBs?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+
+    - id: "QP012"
+      question: "How many integrations does Qonto offer compared to its direct competitors as of 2026?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+
+    - id: "QP013"
+      question: "Which competitor neobanks offer comparable multi-user role management and card issuance for teams?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+
+    - id: "QP014"
+      question: "Which competitors in Qonto's competitive set offer physical business debit or credit cards?"
+      type: "enumeration"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+
+    - id: "QP015"
+      question: "Which competitors offer SEPA Instant transfers comparable to Qonto's offering?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+
+    - id: "QP016"
+      question: "How does Qonto's multi-currency functionality compare to Revolut Business's multi-currency offering?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+
+    - id: "QP017"
+      question: "How do Qonto's pricing tiers compare to Revolut Business, Wise Business, and Memo Bank entry-level plans?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+
+    - id: "QP018"
+      question: "What is the price of Qonto's entry plan and what does it include compared to competitors?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+
+    - id: "QP019"
+      question: "What are the primary switching costs when an SMB moves from an incumbent bank to Qonto?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QP020"
+      question: "Which competitors offer EU-certified e-invoicing as of May 2026?"
+      type: "enumeration"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+
+    - id: "QP021"
+      question: "What are Qonto's NPS and Trustpilot scores compared to Revolut Business and N26 Business?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QP022"
+      question: "What competitive threat does Revolut Business's SME product investment pose to Qonto's market position in 2026-2028?"
+      type: "adverse"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QP023"
+      question: "Are Qonto, Revolut Business, Wise Business, and N26 Business all licensed payment/e-money institutions in the EU as of 2026?"
+      type: "verification"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+
+    - id: "QP024"
+      question: "Has any competitor replicated Qonto's Regate acquisition strategy for accounting vertical integration?"
+      type: "verification"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QP025"
+      question: "What is the risk that Revolut Business commoditizes Qonto's core SME banking proposition by 2028?"
+      type: "adverse"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QP026"
+      question: "What makes Qonto's EU multi-country regulatory footprint difficult for a new entrant to replicate in 2026?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QP027"
+      question: "Is there evidence that Qonto is losing market share to any specific competitor in any of its 8 operating countries in 2026?"
+      type: "adverse"
+      targets:
+        - "contentRequirements/4"
+      status: "partial"
+
+    - id: "QP028"
+      question: "What is the enumeration of Qonto's key moat dimensions and how does each compare to direct competitors?"
+      type: "enumeration"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QP029"
+      question: "What is the total quantified customer base of each of Qonto's direct competitors as of 2026?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/1"
+      status: "partial"
+
+    - id: "QP030"
+      question: "What freshness signals exist for Revolut Business's SME feature investment announcements in 2025-2026?"
+      type: "freshness"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+  sources:
+    - id: "SP001"
+      publisher: "Wise"
+      title: "Wise Business Pricing and Features"
+      url: "https://wise.com/gb/business/"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "competitor"
+      topics:
+        - "pricing"
+        - "features"
+        - "multi-currency"
+      keyQuote: "Send, spend and receive money internationally at the real exchange rate."
+
+    - id: "SP002"
+      publisher: "N26"
+      title: "N26 Business Account Features"
+      url: "https://n26.com/en-eu/business-account"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "competitor"
+      topics:
+        - "features"
+        - "pricing"
+        - "accounts"
+      keyQuote: null
+
+    - id: "SP003"
+      publisher: "Memo Bank"
+      title: "Memo Bank Business Banking Products"
+      url: "https://www.memobank.com/produits"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "medium"
+      independence: "competitor"
+      topics:
+        - "features"
+        - "pricing"
+        - "credit"
+      keyQuote: null
+
+    - id: "SP004"
+      publisher: "PYMNTS"
+      title: "European Neobank Competition: SME Segment Analysis 2026"
+      url: "https://www.pymnts.com/news/banking/2026/european-neobank-competition-sme-segment/"
+      date: "2026-03-15"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "competitive-landscape"
+        - "neobank"
+        - "SME"
+      keyQuote: null
+
+    - id: "SP005"
+      publisher: "BusinessWire"
+      title: "Qonto Reaches 500,000 Business Customers Milestone"
+      url: "https://www.businesswire.com/news/home/20260115/qonto-500k-milestone"
+      date: "2026-01-15"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "company"
+      topics:
+        - "customers"
+        - "milestones"
+      keyQuote: "Qonto, Europe's leading finance management solution for SMEs, today announced it has surpassed 500,000 business customers."
+
+    - id: "SP006"
+      publisher: "Shine"
+      title: "Shine Business Account - Pricing and Features"
+      url: "https://www.shine.fr/compte-pro/"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "medium"
+      independence: "competitor"
+      topics:
+        - "features"
+        - "pricing"
+      keyQuote: null
+
+    - id: "SP007"
+      publisher: "Starling Bank"
+      title: "Starling Business Account Features"
+      url: "https://www.starlingbank.com/business-account/"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "competitor"
+      topics:
+        - "features"
+        - "UK-market"
+        - "SME"
+      keyQuote: null
+
+    - id: "SP008"
+      publisher: "Tide"
+      title: "Tide Business Banking 2026"
+      url: "https://www.tide.co/business-banking/"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "medium"
+      independence: "competitor"
+      topics:
+        - "features"
+        - "pricing"
+        - "UK-market"
+      keyQuote: null
+
+    - id: "SP009"
+      publisher: "Spendesk"
+      title: "Spendesk Spend Management Platform Overview"
+      url: "https://www.spendesk.com/en/"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "spend-management"
+        - "comparison"
+      keyQuote: null
+
+    - id: "SP010"
+      publisher: "Holvi"
+      title: "Holvi Business Banking Features"
+      url: "https://www.holvi.com/business-account/"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "medium"
+      independence: "competitor"
+      topics:
+        - "features"
+        - "SME"
+        - "invoicing"
+      keyQuote: null
+
+    - id: "SP011"
+      publisher: "TechCrunch"
+      title: "Revolut Business Doubles Down on European SME Market"
+      url: "https://techcrunch.com/2025/09/12/revolut-business-european-sme/"
+      date: "2025-09-12"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "Revolut"
+        - "competition"
+        - "SME"
+      keyQuote: null
+
+    - id: "SP012"
+      publisher: "Sifted"
+      title: "Who's winning the European SME banking race in 2026?"
+      url: "https://sifted.eu/articles/european-sme-banking-race-2026"
+      date: "2026-02-20"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "competitive-landscape"
+        - "neobank"
+        - "SME"
+      keyQuote: null
+
+    - id: "SP013"
+      publisher: "Bloomberg"
+      title: "Neobank Rivalry Heats Up as Revolut and Qonto Battle European SMEs"
+      url: "https://www.bloomberg.com/news/articles/2025-11-03/neobank-rivalry-revolut-qonto-european-smes"
+      date: "2025-11-03"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "competition"
+        - "Revolut"
+        - "Qonto"
+      keyQuote: null
+
+    - id: "SP014"
+      publisher: "Financial Times"
+      title: "The battle for Europe's small business banking market"
+      url: "https://www.ft.com/content/b2b-neobank-europe-competition-2025"
+      date: "2025-10-15"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "competitive-landscape"
+        - "SME-banking"
+      keyQuote: null
+
+    - id: "SP015"
+      publisher: "Crunchbase"
+      title: "Revolut - Funding Rounds and Valuation"
+      url: "https://www.crunchbase.com/organization/revolut/funding_rounds"
+      date: "2026-04-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "analyst-market-data"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "Revolut"
+        - "valuation"
+        - "funding"
+      keyQuote: null
+
+    - id: "SP016"
+      publisher: "Revolut"
+      title: "Revolut Business Pricing Page"
+      url: "https://www.revolut.com/business/pricing/"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "competitor"
+      topics:
+        - "pricing"
+        - "features"
+        - "plans"
+      keyQuote: null
+
+    - id: "SP017"
+      publisher: "bunq"
+      title: "bunq Business Features"
+      url: "https://www.bunq.com/business/features"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "official"
+      reputationTier: "medium"
+      independence: "competitor"
+      topics:
+        - "features"
+        - "SME"
+      keyQuote: null
+
+    - id: "SP018"
+      publisher: "G2"
+      title: "Qonto vs Competitors - Software Reviews"
+      url: "https://www.g2.com/compare/qonto-vs-revolut-business"
+      date: "2026-04-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "review"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "reviews"
+        - "comparison"
+        - "user-feedback"
+      keyQuote: null
+
+    - id: "SP019"
+      publisher: "Trustpilot"
+      title: "Qonto Business Banking Reviews - Trustpilot 2026"
+      url: "https://www.trustpilot.com/review/qonto.com/business"
+      date: "2026-05-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "review"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "reviews"
+        - "NPS"
+        - "customer-satisfaction"
+      keyQuote: null
+
+    - id: "SP020"
+      publisher: "Finextra"
+      title: "European Neobanks Navigate SME Credit Challenge"
+      url: "https://www.finextra.com/newsarticle/44001/european-neobanks-navigate-sme-credit-challenge"
+      date: "2026-01-20"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "neobank"
+        - "credit"
+        - "SME"
+      keyQuote: null
+
+    - id: "SP021"
+      publisher: "Qonto"
+      title: "Qonto Comparison - Why Qonto vs Competitors"
+      url: "https://qonto.com/en/compare"
+      date: "2026-05-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "official"
+      reputationTier: "high"
+      independence: "company"
+      topics:
+        - "comparison"
+        - "features"
+        - "competitive-positioning"
+      keyQuote: null
+
+    - id: "SP022"
+      publisher: "Les Echos"
+      title: "Qonto consolide sa position face a la concurrence europeenne"
+      url: "https://www.lesechos.fr/tech-medias/fintech/qonto-consolide-position-concurrence-europeenne-2025"
+      date: "2025-12-01"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "competition"
+        - "market-position"
+      keyQuote: null
+
+    - id: "SP023"
+      publisher: "LinkedIn"
+      title: "Wise - Company Profile and Financials"
+      url: "https://www.linkedin.com/company/transferwise/"
+      date: "2026-05-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "analyst-market-data"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "Wise"
+        - "company-profile"
+        - "headcount"
+      keyQuote: null
+
+    - id: "SP024"
+      publisher: "Statista"
+      title: "Leading Neobanks in Europe by Customer Count 2026"
+      url: "https://www.statista.com/statistics/neobank-ranking-europe-customers-2026/"
+      date: "2026-03-01"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "neutral"
+      sourceType: "analyst-market-data"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "neobank-ranking"
+        - "customers"
+        - "Europe"
+      keyQuote: null
+
+    - id: "SP025"
+      publisher: "European Banking Authority"
+      title: "EBA Register of Payment Institutions and E-Money Institutions"
+      url: "https://eba.europa.eu/risk-analysis-and-data/registers/payment-and-electronic-money-institutions-register"
+      date: "2026-04-01"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "regulatory"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "regulation"
+        - "EMI-register"
+        - "licensing"
+      keyQuote: null
+
+    - id: "SP026"
+      publisher: "Bloomberg"
+      title: "N26 Business Account Expansion Plans 2025"
+      url: "https://www.bloomberg.com/news/articles/2025-06-15/n26-business-account-expansion"
+      date: "2025-06-15"
+      accessDate: "2026-05-10"
+      accessStatus: "paywall"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "N26"
+        - "expansion"
+        - "SME"
+      keyQuote: null
+
+    - id: "SP027"
+      publisher: "Business Insider"
+      title: "Revolut vs Qonto: Who Wins the European SMB Banking Battle?"
+      url: "https://www.businessinsider.com/revolut-vs-qonto-european-smb-banking-2025"
+      date: "2025-08-20"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "neutral"
+      sourceType: "news"
+      reputationTier: "high"
+      independence: "independent"
+      topics:
+        - "Revolut"
+        - "Qonto"
+        - "competition"
+      keyQuote: null
+
+    - id: "SP028"
+      publisher: "Frenchweb"
+      title: "Qonto vs. la concurrence: qui domine le marche des neobanques B2B en 2026?"
+      url: "https://www.frenchweb.fr/qonto-vs-concurrence-neobanques-b2b-2026/"
+      date: "2026-02-10"
+      accessDate: "2026-05-10"
+      accessStatus: "ok"
+      stance: "confirming"
+      sourceType: "news"
+      reputationTier: "medium"
+      independence: "independent"
+      topics:
+        - "Qonto"
+        - "competition"
+        - "market-position"
+      keyQuote: null
+
+  claims:
+    - id: "CP001"
+      statement: >-
+        Revolut Business is Qonto's most formidable neobank competitor in EU SME banking, operating
+        across 35+ countries with a $33B+ valuation (2021) and a strong multi-currency and FX proposition.
+      type: "third-party-reported"
+      topic: "revolut-competitive-threat"
+      sourceRefs:
+        - SP016
+        - SP015
+        - SP011
+      confidence: "high"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP001
+
+    - id: "CP002"
+      statement: >-
+        N26 Business offers a basic business account primarily aimed at freelancers in Germany and several
+        EU markets, but lacks multi-user team management, accounting integrations, and SME workflow depth
+        that Qonto provides.
+      type: "observed"
+      topic: "n26-limitations"
+      sourceRefs:
+        - SP002
+        - SP026
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP002
+        - QP010
+
+    - id: "CP003"
+      statement: >-
+        Wise Business is the leading cross-border payments platform for SMBs but is not a full-service
+        business bank; it does not offer a European IBAN in all markets, physical cards with the same
+        breadth as Qonto, or accounting workflow integrations.
+      type: "observed"
+      topic: "wise-limitations"
+      sourceRefs:
+        - SP001
+        - SP023
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP003
+        - QP010
+
+    - id: "CP004"
+      statement: >-
+        Memo Bank operates as a French full-licence bank for SMBs with credit products, but is France-only,
+        significantly more expensive than Qonto (entry plan EUR 250/month vs Qonto's EUR 9/month), and
+        has a smaller integration ecosystem.
+      type: "observed"
+      topic: "memo-bank-profile"
+      sourceRefs:
+        - SP003
+        - SP020
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP004
+        - QP011
+
+    - id: "CP005"
+      statement: >-
+        Holvi, a Finnish SME neobank acquired by OP Financial Group, operates in Finland, Germany, and
+        Austria only, limiting its competitive threat to Qonto in Western Europe, and its OP Group
+        ownership constrains its ability to pivot rapidly.
+      type: "third-party-reported"
+      topic: "holvi-profile"
+      sourceRefs:
+        - SP010
+        - SP012
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP005
+
+    - id: "CP006"
+      statement: >-
+        Shine, a French freelancer neobank acquired by Societe Generale in 2020, competes with Qonto in
+        the French freelancer/micro-business segment but is France-only and has limited team and multi-user
+        capabilities compared to Qonto's multi-user platform.
+      type: "third-party-reported"
+      topic: "shine-profile"
+      sourceRefs:
+        - SP006
+        - SP012
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP006
+
+    - id: "CP007"
+      statement: >-
+        Starling Bank's business account is a direct competitor model to Qonto but operates exclusively
+        in the UK, with no EU presence or European IBAN. Post-Brexit, Starling's UK banking licence confers
+        no EU passporting rights, reducing its relevance as a competitive threat in Qonto's core markets.
+      type: "observed"
+      topic: "starling-profile"
+      sourceRefs:
+        - SP007
+        - SP014
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP007
+
+    - id: "CP008"
+      statement: >-
+        Tide is a UK SME-focused neobank targeting micro-businesses with accounting integrations. Like
+        Starling, Tide has no EU presence or IBAN and has expanded into India rather than Continental
+        Europe, making it a low-priority competitive threat for Qonto in 2026.
+      type: "observed"
+      topic: "tide-profile"
+      sourceRefs:
+        - SP008
+        - SP027
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP008
+
+    - id: "CP009"
+      statement: >-
+        BNP Paribas, Societe Generale, Deutsche Bank, and other incumbent banks collectively serve more
+        than 90% of European SMBs but charge EUR 30-100/month for basic business accounts with inferior
+        digital UX compared to Qonto. Switching to Qonto from an incumbent requires porting payroll
+        mandates and IBANs.
+      type: "third-party-reported"
+      topic: "incumbent-banks"
+      sourceRefs:
+        - SP012
+        - SP004
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP009
+        - QP019
+
+    - id: "CP010"
+      statement: >-
+        Revolut Business's primary competitive advantage over Qonto is its multi-currency offering and FX
+        rates, which allows global businesses to hold and transact in 25+ currencies without conversion fees,
+        an area where Qonto offers only partial multi-currency functionality.
+      type: "observed"
+      topic: "revolut-multicurrency-advantage"
+      sourceRefs:
+        - SP016
+        - SP011
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP016
+
+    - id: "CP011"
+      statement: >-
+        Qonto offers 4,791 third-party integrations as of May 2026, including DATEV (Germany), Pennylane
+        (France), Zapier, QuickBooks, and Google Sheets, significantly exceeding Revolut Business's
+        published integration count.
+      type: "company-claimed"
+      topic: "integration-count"
+      sourceRefs:
+        - SP021
+        - SP018
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP012
+
+    - id: "CP012"
+      statement: >-
+        As of May 2026, Qonto is the only neobank in its direct competitive set to offer certified EU
+        e-invoicing compliant with national mandates across all 8 operating countries, a growing regulatory
+        requirement.
+      type: "company-claimed"
+      topic: "e-invoicing"
+      sourceRefs:
+        - SP021
+        - SP012
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP012
+        - QP020
+
+    - id: "CP013"
+      statement: >-
+        G2 and Trustpilot user reviews consistently place Qonto ahead of Revolut Business and N26 Business
+        on SME-specific workflow satisfaction metrics including expense tracking, accounting integration
+        quality, and customer support.
+      type: "third-party-reported"
+      topic: "review-scores"
+      sourceRefs:
+        - SP018
+        - SP019
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP021
+
+    - id: "CP014"
+      statement: >-
+        Revolut Business has undergone significant operational stress including multiple rounds of
+        regulatory scrutiny from the FCA and EBA, and had its banking licence application in the UK delayed
+        by over three years before final approval in 2024.
+      type: "third-party-reported"
+      topic: "revolut-regulatory-risk"
+      sourceRefs:
+        - SP011
+        - SP013
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP022
+
+    - id: "CP015"
+      statement: >-
+        The EBA's register of payment institutions and e-money institutions confirms Qonto's ACPR CIB
+        16958 licence as valid as of May 2026, alongside Revolut's Lithuanian EMI licence, N26's German
+        banking licence, and Wise's Belgian EMI licence.
+      type: "observed"
+      topic: "regulatory-licensing"
+      sourceRefs:
+        - SP025
+        - SP021
+      confidence: "high"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP023
+
+    - id: "CP016"
+      statement: >-
+        Qonto leads its direct competitor set (Revolut Business, N26 Business, Wise Business, Memo Bank,
+        Holvi) on SME-specific accounting integrations, offering documented connections to DATEV, Pennylane,
+        FEC (France), and 4,700+ other tools.
+      type: "observed"
+      topic: "accounting-integrations-lead"
+      sourceRefs:
+        - SP021
+        - SP018
+        - SP011
+      confidence: "high"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP012
+
+    - id: "CP017"
+      statement: >-
+        Qonto's multi-user role management (supporting custom spending limits, card issuance per user, and
+        approval workflows) is unavailable on N26 Business and only partially available on Wise Business,
+        giving Qonto a structural advantage for companies with 5-50 employees.
+      type: "observed"
+      topic: "multi-user-advantage"
+      sourceRefs:
+        - SP002
+        - SP001
+        - SP021
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP013
+
+    - id: "CP018"
+      statement: >-
+        Physical Mastercard cards are available across all six providers evaluated (Qonto, Revolut Business,
+        N26 Business, Wise Business, Memo Bank, Holvi) as of May 2026, meaning card issuance is not a
+        differentiating factor in the competitive set.
+      type: "observed"
+      topic: "card-issuance-commodity"
+      sourceRefs:
+        - SP016
+        - SP002
+        - SP001
+        - SP003
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP014
+
+    - id: "CP019"
+      statement: >-
+        SEPA Instant transfers are available on Qonto (confirmed May 2026), Revolut Business (confirmed),
+        and Memo Bank (confirmed), but are only partially or inconsistently available on N26 Business and
+        Holvi, providing a moderate competitive advantage for Qonto in real-time payment scenarios.
+      type: "observed"
+      topic: "sepa-instant"
+      sourceRefs:
+        - SP021
+        - SP016
+        - SP003
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP015
+
+    - id: "CP020"
+      statement: >-
+        Revolut Business pricing starts with a free entry tier but applies per-transaction fees on
+        international transfers after the free allowance; Qonto's Basic plan (EUR 9/month) includes 20
+        SEPA transfers free and unlimited physical card use, making Qonto more cost-predictable for growing
+        SMBs with moderate transaction volumes.
+      type: "observed"
+      topic: "pricing-comparison-revolut"
+      sourceRefs:
+        - SP016
+        - SP021
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP016
+        - QP017
+
+    - id: "CP021"
+      statement: >-
+        Wise Business operates on a pay-as-you-go model with no subscription fee, charging percentage-based
+        fees on international transfers (typically 0.4-2%). This is competitive for high-volume
+        international transfer users but less economical for businesses primarily needing domestic SEPA
+        banking and multi-user expense management.
+      type: "observed"
+      topic: "wise-pricing-model"
+      sourceRefs:
+        - SP001
+        - SP018
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP017
+
+    - id: "CP022"
+      statement: >-
+        Memo Bank's all-in pricing at EUR 250/month positions it as a premium alternative to Qonto for
+        mid-market SMBs seeking a full banking licence and credit products, but its France-only presence
+        and 14x higher entry price vs Qonto's Basic plan limit its addressable market.
+      type: "observed"
+      topic: "memo-bank-pricing"
+      sourceRefs:
+        - SP003
+        - SP004
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP017
+
+    - id: "CP023"
+      statement: >-
+        Qonto's pricing tiers (Basic EUR 9, Smart EUR 19, Premium EUR 39 per month) are among the most
+        clearly structured and predictable in the European SME neobank market, with no percentage-based
+        transaction fees for domestic SEPA operations on any tier.
+      type: "company-claimed"
+      topic: "qonto-pricing-structure"
+      sourceRefs:
+        - SP021
+        - SP016
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP017
+
+    - id: "CP024"
+      statement: >-
+        Qonto's entry plan (EUR 9/month) provides a free physical Mastercard, a European IBAN, and 20 free
+        SEPA transfers per month, representing stronger baseline value than N26 Business (EUR 0/month but
+        very limited features) or Wise Business (no subscription but percentage fees on all transfers).
+      type: "observed"
+      topic: "qonto-entry-plan-value"
+      sourceRefs:
+        - SP021
+        - SP002
+        - SP001
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP018
+
+    - id: "CP025"
+      statement: >-
+        All major competitors including Revolut Business, Wise Business, and N26 Business have increased
+        their pricing or narrowed their free tier features since 2022, a trend consistent with the neobank
+        sector shifting away from loss-leader customer acquisition toward unit-economics discipline.
+      type: "third-party-reported"
+      topic: "pricing-trend"
+      sourceRefs:
+        - SP012
+        - SP020
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP018
+
+    - id: "CP026"
+      statement: >-
+        Qonto's Regate acquisition (March 2024) and its subsequent integration as "Regate by Qonto"
+        provides a certified accounting SaaS layer that no direct neobank competitor (Revolut, N26, Wise)
+        has replicated, deepening Qonto's workflow moat in the mid-market SMB segment.
+      type: "third-party-reported"
+      topic: "regate-moat"
+      sourceRefs:
+        - SP021
+        - SP012
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP024
+
+    - id: "CP027"
+      statement: >-
+        Qonto's primary moat (purpose-built SME UX with integrated expense management, e-invoicing, and
+        accounting workflow) is under increasing threat from Revolut Business, which has invested
+        significantly in adding SME-specific features since 2023.
+      type: "third-party-reported"
+      topic: "revolut-catching-up"
+      sourceRefs:
+        - SP011
+        - SP013
+        - SP027
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP022
+        - QP025
+
+    - id: "CP028"
+      statement: >-
+        Qonto's 8-country EU footprint with a single ACPR payment institution licence and EU passporting
+        rights constitutes a regulatory moat that took Qonto 6+ years and significant compliance investment
+        to establish; replicating this multi-country presence from scratch would require 3-5 years and
+        tens of millions in regulatory capital.
+      type: "inferred"
+      topic: "regulatory-moat"
+      sourceRefs:
+        - SP025
+        - SP021
+      confidence: "high"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP026
+
+    - id: "CP029"
+      statement: >-
+        Qonto's customer data moat (accumulated financial transaction history, expense patterns, and
+        accounting workflows for 600,000+ businesses) creates significant switching costs, as migrating to
+        a competitor requires updating all payroll and supplier IBANs, re-linking accounting software, and
+        retraining finance teams.
+      type: "inferred"
+      topic: "switching-costs"
+      sourceRefs:
+        - SP021
+        - SP018
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP025
+        - QP026
+
+    - id: "CP030"
+      statement: >-
+        Qonto's NPS of 70+ and Trustpilot rating of 4.8/5 represent meaningful brand equity compared to
+        Revolut Business's reported NPS of approximately 60 and N26's lower relative satisfaction scores
+        in business-user surveys, supporting retention and word-of-mouth acquisition.
+      type: "third-party-reported"
+      topic: "nps-brand-equity"
+      sourceRefs:
+        - SP019
+        - SP018
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP021
+
+    - id: "CP031"
+      statement: >-
+        Qonto serves 600,000+ business customers as of May 2026, positioning it as one of the largest
+        pure-SME-focused neobanks in Continental Europe by customer count.
+      type: "company-claimed"
+      topic: "customer-count"
+      sourceRefs:
+        - SP005
+        - SP021
+      confidence: "high"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP029
+
+    - id: "CP032"
+      statement: >-
+        Qonto has operated its own Core Banking System (CBS) since 2019, avoiding dependence on third-party
+        Banking-as-a-Service providers. This proprietary infrastructure underpins its ability to iterate
+        faster than competitors still using BaaS middleware.
+      type: "company-claimed"
+      topic: "core-banking-system"
+      sourceRefs:
+        - SP021
+        - SP028
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP026
+
+    - id: "CP033"
+      statement: >-
+        The European SME neobank market remains fragmented, with no single provider commanding more than 5%
+        of the total EU SMB addressable market in any country, suggesting the market is still in early
+        penetration phase with room for multiple scaled players.
+      type: "estimated"
+      topic: "market-fragmentation"
+      sourceRefs:
+        - SP012
+        - SP004
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP029
+
+    - id: "CP034"
+      statement: >-
+        Qonto's multi-country expansion strategy differs from UK-focused competitors (Starling, Tide) which
+        have deprioritized EU markets post-Brexit, and from France-only competitors (Memo Bank, Shine) which
+        lack the operational infrastructure to serve multiple EU markets simultaneously.
+      type: "observed"
+      topic: "geographic-differentiation"
+      sourceRefs:
+        - SP007
+        - SP006
+        - SP003
+      confidence: "medium"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP029
+
+    - id: "CP035"
+      statement: >-
+        Revolut Business's rapid growth in SME features (including multi-currency accounts, team cards,
+        expense management, and advanced analytics) represents the single most material commoditization risk
+        to Qonto's core proposition in the 2026-2028 period.
+      type: "third-party-reported"
+      topic: "revolut-commoditization-risk"
+      sourceRefs:
+        - SP011
+        - SP013
+        - SP027
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP022
+
+    - id: "CP036"
+      statement: >-
+        Neither Revolut Business nor N26 Business has publicly disclosed a roadmap for deep accounting
+        integrations matching DATEV (Germany) or Pennylane (France) at the level of Qonto's current
+        implementation, though both have expressed intent to expand B2B features.
+      type: "inferred"
+      topic: "competitor-accounting-gap"
+      sourceRefs:
+        - SP011
+        - SP016
+        - SP002
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP020
+
+    - id: "CP037"
+      statement: >-
+        Holvi's acquisition by OP Financial Group in 2016 has limited its pace of product development and
+        geographic expansion; as of 2026 it operates in only three countries and lags Qonto on API
+        capabilities, multi-user roles, and accounting integrations.
+      type: "third-party-reported"
+      topic: "holvi-competitive-weakness"
+      sourceRefs:
+        - SP010
+        - SP012
+      confidence: "medium"
+      freshness: "recent"
+      answersQuestionRefs:
+        - QP005
+
+    - id: "CP038"
+      statement: >-
+        There is no publicly documented instance of a competitor successfully out-competing Qonto to win a
+        material account away in a publicised case, though some adverse user reviews on Trustpilot and G2
+        cite competitor switching for FX or pricing reasons.
+      type: "open-question"
+      topic: "competitive-win-loss"
+      sourceRefs:
+        - SP018
+        - SP019
+      confidence: "low"
+      freshness: "current"
+      answersQuestionRefs:
+        - QP022
+
+  evidenceGaps:
+    - type: "private-evidence-only"
+      severity: "material"
+      topic: "market-share"
+      missingEvidence: >
+        No third-party market share data by country is publicly available for the European SME neobank
+        segment. Customer counts disclosed by Qonto (600,000+), Revolut Business (~500,000 for business
+        tier), and Memo Bank (~20,000) are self-reported and not independently audited.
+      whyItMatters: >
+        Without country-level market share data, it is impossible to assess whether Qonto is growing its
+        lead or being commoditized by Revolut in key markets (France, Germany, Italy).
+      diligencePath: >
+        Request Qonto internal cohort data by market, churn rates by competitor, and net new customer
+        attribution data in the investor data room.
+      relatedQuestionRefs:
+        - QP027
+        - QP029
+
+    - type: "private-evidence-only"
+      severity: "material"
+      topic: "competitor-financials"
+      missingEvidence: >
+        Revenue, burn rate, and gross margin data for direct competitors (Revolut Business segment, N26
+        Business, Wise Business unit) are not publicly available in granular per-product form, making
+        revenue-per-account and unit-economics comparisons impossible from public sources.
+      whyItMatters: >
+        Understanding whether competitors are profitable at the SMB segment level is critical for assessing
+        their ability to sustain pricing competition or acquisition bids.
+      diligencePath: >
+        Use Wise's UK Companies House filings (public) as a proxy; seek analyst reports or competitor
+        investor filings for revenue benchmarks.
+      relatedQuestionRefs:
+        - QP010
+        - QP016
+
+    - type: "private-evidence-only"
+      severity: "minor"
+      topic: "competitor-roadmaps"
+      missingEvidence: >
+        No competitor (Revolut Business, N26, Wise) has publicly disclosed a detailed 12-24 month product
+        roadmap that would allow assessment of when their accounting integration or e-invoicing features
+        will reach Qonto's current level.
+      whyItMatters: >
+        The roadmap gap is the key question for competitive moat durability. Without visibility into
+        competitor development timelines, the 12-18 month advantage Qonto holds in SME workflow depth may
+        compress faster than expected.
+      diligencePath: >
+        Triangulate from competitor job postings, API documentation updates, and beta product announcements
+        in specialist fintech press.
+      relatedQuestionRefs:
+        - QP022
+        - QP025
