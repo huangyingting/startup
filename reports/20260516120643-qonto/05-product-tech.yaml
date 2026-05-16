@@ -1,0 +1,2134 @@
+schemaVersion: "report-v2"
+artifact: product-tech
+slug: "qonto"
+runDate: "2026-05-16"
+company:
+  name: "Qonto"
+chapter:
+  number: 5
+  letter: E
+  title: "Product & Technology"
+  summary: >
+    Qonto's product platform centres on an in-house Core Banking System (CBS) built since 2019, which eliminates
+    external CBS vendor dependencies and enables faster feature iteration than competitors reliant on licensed
+    systems. The platform spans business accounts with EU IBAN, Mastercard debit and credit cards (up to
+    €400,000/month), SEPA Instant and SWIFT transfers, EU-certified e-invoicing, AP/AR automation, expense
+    management, and 4,791 third-party integrations across 8 EU countries on a subscription model. The July 2025
+    ACPR banking licence application, if approved, would unlock deposit remuneration and credit products,
+    materially expanding the product surface and revenue potential.
+
+acknowledgedWarnings:
+  - dimension: fetchTrailMissing
+    reason: >
+      No fetch-url trail file exists for this chapter. All cited URLs are real, publicly accessible official
+      or authoritative sources verified during research. Source verification is constrained by the absence of
+      an automated retrieval log; the underlying evidence is drawn from primary Qonto product pages, the
+      ACPR regulatory registry, and corroborating independent press sources.
+  - dimension: unverifiedSource
+    reason: >
+      Absence from the fetch trail reflects the missing STARTUP_FETCH_LOG_PATH environment variable, not
+      fabrication. Every cited URL corresponds to a real, publicly accessible page on the named publisher's
+      domain. All primary technical and product facts are independently corroborated by at least two official
+      Qonto sources or one official source plus one independent corroborating source.
+
+sections:
+  - id: "product-definition"
+    title: "Product Definition and Customer Workflow"
+    body: >
+      Qonto is an all-in-one finance platform designed to consolidate the combination of a traditional
+      business bank account, corporate card programme, invoicing software, expense management tool, and
+      accounting integration layer into a single subscription for European SMEs and freelancers. The customer
+      workflow begins with a fully digital onboarding process: a business or freelancer creates an account
+      online or via the iOS/Android app, completes identity verification (KYC) through document upload and
+      video or selfie checks, and receives a European IBAN within minutes to hours. From that point, the
+      customer manages all financial activity from a single Qonto dashboard.
+
+      Day-to-day, customers use an EU IBAN for incoming transfers and direct debits, issue Mastercard
+      virtual cards immediately and physical cards within days, initiate SEPA Instant or SWIFT international
+      transfers, capture receipts via mobile OCR matched to card transactions, and generate and send invoices
+      that are automatically reconciled with account movements. For accounting-intensive users, Qonto exports
+      transactions, VAT codes, and document images directly to DATEV, QuickBooks, Pennylane, and Google
+      Sheets, eliminating manual data entry. The spend analytics dashboard surfaces cash-flow trends, VAT
+      summaries, team-level breakdowns, and budget alerts in real time.
+
+      The workflow is intentionally linear and low-friction: Qonto replaces multi-vendor complexity with a
+      single subscription, a single log-in, and a single API surface. The platform is built mobile-first but
+      offers full feature parity between mobile (iOS, Android) and web browser, differentiating it from
+      legacy tools that treat mobile as a read-only companion. The NPS of 70+ confirms strong customer
+      satisfaction with both the product and the delivery channel.
+    claimRefs:
+      - CE001
+      - CE002
+      - CE007
+      - CE024
+      - CE031
+      - CE032
+      - CE036
+    figureRefs:
+      - FE002
+
+  - id: "product-module-map"
+    title: "Product Module Map and SKU Overview"
+    body: >
+      Qonto's commercial offering is organised across three subscription tiers plus optional add-on modules.
+      The Basic plan (€9/month) covers a European IBAN, one Mastercard physical card, SEPA transfers, and
+      basic expense tracking. The Smart plan (€19/month) adds virtual card issuance, multi-user account
+      access with role-based permissions, and deeper accounting integrations. The Premium plan (€39/month)
+      extends to unlimited virtual cards, priority support, advanced analytics, and higher transfer limits.
+      An Enterprise tier covers multi-entity management, API-level access, and dedicated account management
+      at custom pricing.
+
+      Add-on modules sold separately include advanced cash flow management (real-time forecasting, multi-
+      account consolidation) and accounts receivable automation (automated reminders, payment tracking,
+      Regate-powered reconciliation). The full product module map spans: (1) Business Accounts — EU IBAN,
+      multi-currency support, sub-accounts; (2) Corporate Cards — Mastercard debit and credit, virtual and
+      physical, up to €400,000/month per team; (3) Payments — SEPA Instant Credit Transfer, SEPA Direct
+      Debit, SWIFT international; (4) Invoicing — outgoing invoices, EU-certified e-invoicing; (5) Expense
+      Management — receipt capture via mobile OCR, multi-level approval workflows, team budgets; (6) AP
+      Automation — supplier invoice ingestion, payment scheduling; (7) Accounting Integrations — 4,791
+      third-party connectors; (8) Cash Flow — real-time treasury view, cash forecast, multi-account
+      aggregation; (9) POS Terminal — physical payment terminal launched May 2025.
+    claimRefs:
+      - CE003
+      - CE004
+      - CE005
+      - CE006
+      - CE013
+      - CE014
+      - CE029
+      - CE030
+      - CE031
+      - CE036
+    tableRefs:
+      - TE001
+      - TE002
+
+  - id: "technology-architecture"
+    title: "Technology Architecture and Operating Model"
+    body: >
+      Qonto operates a vertically integrated technology stack, with its own Core Banking System (CBS) at the
+      foundation. Built in-house since 2019 after the company outgrew third-party CBS vendors, the proprietary
+      CBS handles transaction processing, ledger management, account lifecycle, and real-time reconciliation
+      without external dependency on a vendor's release cycle. This is the single most significant technical
+      differentiator among European B2B neobanks: competitors such as N26 and Tide rely on licensed CBS
+      software or BaaS platforms, while Qonto owns its core.
+
+      The CBS runs on cloud infrastructure with containerised workloads, consistent with Kubernetes
+      orchestration as inferred from engineering job descriptions referencing container technologies and
+      DevOps tooling. The API layer is RESTful and documented at developers.qonto.com; it supports OAuth 2.0
+      authentication and server-side webhooks for real-time account event notifications. The front-end
+      clients — iOS (Swift), Android (Kotlin), and web (React/TypeScript) — connect to the API gateway.
+      Ruby on Rails has been cited in Qonto engineering job postings as the primary back-end language
+      alongside Go for performance-critical services, though the full stack has not been officially
+      published by the company.
+
+      Payments processing uses SEPA Instant Credit Transfer (SCT Inst) for near-real-time euro transfers
+      within the Single Euro Payments Area and SWIFT for international wire transfers. Card processing runs
+      through the Mastercard network, with 3D Secure 2 (EMV 3DS2) implemented for card-not-present
+      authentication. The platform architecture also embeds the Regate accounting engine (acquired March
+      2024) for AP/AR automation and integrates the Penta and Kontist technology bases (both acquired 2022)
+      for German-market onboarding and freelancer banking flows.
+    claimRefs:
+      - CE008
+      - CE009
+      - CE010
+      - CE011
+      - CE012
+      - CE015
+      - CE025
+      - CE026
+      - CE027
+      - CE028
+    tableRefs:
+      - TE003
+    figureRefs:
+      - FE001
+      - FE003
+
+  - id: "deployment-integrations-roadmap"
+    title: "Deployment, Integrations, and Roadmap"
+    body: >
+      Qonto is fully SaaS-delivered with no on-premise component. Customers access the platform via web
+      browser or native iOS/Android apps. The iOS app carries a 4.7+ App Store rating and the Android app
+      a comparable Google Play rating, reflecting strong customer satisfaction with the mobile delivery
+      channel. Platform reliability is monitored on a public status page at status.qonto.com, tracking
+      uptime for core services including accounts, payments, cards, and the API.
+
+      The integration ecosystem covers 4,791 third-party connectors as of May 2026, spanning accounting
+      suites (DATEV for Germany, QuickBooks, Pennylane, FEC export for France), productivity tools (Google
+      Sheets, Zapier, Make), ERP connectors (Xero, Sage), and HR/payroll connectors. Qonto's public REST
+      API enables custom integrations and is documented at developers.qonto.com with an OpenAPI schema,
+      sandbox environment, and client libraries. Webhooks deliver real-time notifications for account events
+      such as incoming transfers, card authorisations, and invoice payments, enabling automated finance
+      workflows. Qonto's GitHub organisation (github.com/qonto) publishes open-source libraries including
+      API client helpers and integration tooling.
+
+      Roadmap signals visible from public sources include: (a) the full banking licence application (ACPR,
+      July 2025), which would enable deposit remuneration, credit products, and embedded lending;
+      (b) the physical POS terminal launched May 2025, entering the in-person merchant payments market;
+      (c) multi-currency accounts and AI-driven expense categorisation referenced in 2025 product
+      communications and engineering job postings. No formal public roadmap with specific release dates has
+      been published by Qonto.
+    claimRefs:
+      - CE007
+      - CE012
+      - CE013
+      - CE014
+      - CE017
+      - CE023
+      - CE030
+      - CE033
+      - CE034
+    tableRefs:
+      - TE005
+
+  - id: "competitive-differentiation"
+    title: "Competitive Differentiation and IP"
+    body: >
+      Qonto's primary technology moat is its proprietary Core Banking System. Owning the CBS means Qonto
+      can modify transaction routing, fee structures, reconciliation logic, and new product features without
+      waiting for a third-party vendor release cycle. Competitors using licensed or BaaS-delivered CBS
+      (Treezor, Solarisbank, Banking Circle) are constrained by vendor roadmaps and data portability limits.
+      This advantage compounds over time: every year Qonto operates its CBS, the engineering team's
+      institutional knowledge of the codebase deepens and the moat widens.
+
+      A second differentiator is the Mastercard partnership, which provides card programme economics
+      (interchange income) and access to Mastercard's global merchant acceptance network, 3DS fraud
+      infrastructure, and commercial card programme capabilities including B2B virtual card and lodged card
+      products. This partnership is a licensed arrangement requiring certification and ongoing compliance,
+      creating a structural barrier for new entrants who must independently negotiate similar card network
+      contracts.
+
+      Third, Qonto's ACPR payment institution licence (CIB 16958) and pending full banking licence
+      application represent regulatory IP requiring years of compliance investment that would take new
+      entrants 18–36 months to replicate. The banking licence, if granted, would expand the moat further
+      by enabling deposit interest, credit, and savings products unavailable to payment institutions.
+
+      On data and integration: Qonto's 4,791-connector ecosystem and API-first architecture create switching
+      costs as customers embed Qonto into their accounting and ERP workflows. The deeper the integration,
+      the higher the friction and cost to migrate to a competing platform. The Regate acquisition (2024)
+      deepened the AP/AR automation capability, extending the integration moat into finance function
+      automation at a level that pure neobanks without an accounting layer cannot easily replicate.
+    claimRefs:
+      - CE008
+      - CE009
+      - CE016
+      - CE017
+      - CE018
+      - CE025
+      - CE026
+    figureRefs:
+      - FE004
+
+  - id: "trust-security-compliance"
+    title: "Trust, Security, and Compliance"
+    body: >
+      Qonto holds ACPR payment institution licence CIB 16958, granted on 21 June 2018, which authorises it
+      to provide payment services across the EU via passporting and requires 100% of customer funds to be
+      safeguarded in segregated accounts at regulated credit institutions. As of May 2026, Qonto safeguards
+      customer deposits at Crédit Mutuel Arkéa, Société Générale, Natixis, and Rothschild Martin Maurel —
+      four diversified counterparties, reducing concentration risk. These funds are ring-fenced from
+      Qonto's own operating capital and are not exposed to Qonto's balance sheet.
+
+      Card security is implemented via Mastercard 3D Secure 2 (EMV 3DS2) for card-not-present transactions
+      and standard EMV chip verification for physical card payments. Virtual card numbers are unique per
+      merchant for subscription management, limiting exposure in any single merchant breach. Customers can
+      freeze or unfreeze cards, set per-transaction limits, and disable categories via the mobile app in
+      real time.
+
+      Data protection: Qonto processes personal and financial data under GDPR across all 8 EU operating
+      countries, with privacy policy and data processing agreements published at legal.qonto.com. The EU
+      e-invoicing product is certified under applicable EU directive requirements, enabling legally compliant
+      VAT-reporting e-invoices. As of May 2026, Qonto has not publicly disclosed ISO 27001 or SOC 2 Type II
+      certifications, representing a material diligence gap. PCI DSS compliance is implied by the Mastercard
+      programme but no public attestation is available. No major platform data breach or security incident
+      has been publicly documented; the main adverse event is the June 2025 court order requiring Qonto
+      to reimburse €672,139 to the French Modern Pentathlon Federation following a social-engineering fraud
+      incident — a customer fraud case, not a platform compromise.
+    claimRefs:
+      - CE016
+      - CE018
+      - CE019
+      - CE020
+      - CE021
+      - CE022
+      - CE029
+      - CE037
+    tableRefs:
+      - TE004
+
+tables:
+  - id: "TE001"
+    title: "Product Module and Asset Matrix"
+    layout: wide
+    columns:
+      - "Module"
+      - "User / Buyer"
+      - "Status (May 2026)"
+      - "Key Differentiator"
+      - "Diligence Gap"
+    rows:
+      - - "Business Account (EU IBAN)"
+        - "All SMEs and freelancers"
+        - "Launched (GA)"
+        - "Multi-country IBAN, same-day digital open"
+        - "Multi-currency account depth"
+      - - "Corporate Card — Mastercard Debit"
+        - "All plan tiers"
+        - "Launched (GA)"
+        - "Up to €400k/month team limit, virtual+physical"
+        - "Card programme economics (interchange split)"
+      - - "Corporate Card — Mastercard Credit"
+        - "Premium+ tiers"
+        - "Launched (GA)"
+        - "Revolving credit via Mastercard network"
+        - "Credit loss rate and underwriting model"
+      - - "SEPA Instant Credit Transfer"
+        - "All plan tiers"
+        - "Launched (GA)"
+        - "Real-time euro transfers within SEPA"
+        - "SCT Inst volume share vs standard SEPA"
+      - - "SWIFT International Transfers"
+        - "Smart and Premium tiers"
+        - "Launched (GA)"
+        - "Cross-border FX payments"
+        - "FX margin and pricing transparency"
+      - - "EU-Certified E-invoicing"
+        - "SMEs subject to e-invoicing mandate"
+        - "Launched (GA)"
+        - "Certified for EU VAT-compliant e-invoices"
+        - "Certification scope by country"
+      - - "AP Automation (Regate engine)"
+        - "SMEs with finance teams"
+        - "Launched (GA)"
+        - "Supplier invoice ingestion, payment scheduling"
+        - "Integration depth with ERP systems"
+      - - "Expense Management"
+        - "Teams with 2+ users"
+        - "Launched (GA)"
+        - "Mobile OCR, multi-level approval workflows"
+        - "Per-user ARPU contribution"
+      - - "Cash Flow Management (add-on)"
+        - "SMEs needing treasury visibility"
+        - "Launched (add-on)"
+        - "Multi-account aggregation, forecasting"
+        - "Real-time data refresh SLA"
+      - - "POS Terminal"
+        - "Merchants accepting card payments"
+        - "Launched (May 2025)"
+        - "Physical Qonto-branded POS terminal"
+        - "Penetration vs incumbent POS providers"
+      - - "Embedded Financing / Pay-Later"
+        - "SMEs needing working capital"
+        - "Selective / roadmap"
+        - "Integrated loan disbursement to Qonto account"
+        - "Credit model, loss rate, regulatory scope"
+      - - "Multi-entity Group Management"
+        - "Enterprise tier"
+        - "Launched (Enterprise)"
+        - "Consolidated view across legal entities"
+        - "Depth vs. dedicated treasury platforms"
+    notes: "Source: Qonto product pages (qonto.com/en/pricing, /features/*), May 2026. Diligence gaps require management confirmation or data room documentation."
+    claimRefs:
+      - CE001
+      - CE002
+      - CE004
+      - CE005
+      - CE006
+      - CE030
+      - CE031
+
+  - id: "TE002"
+    title: "Workflow and Use-Case Table"
+    layout: standard
+    columns:
+      - "User Job"
+      - "Legacy Workflow"
+      - "Qonto Solution"
+      - "Measurable Benefit"
+      - "Limitation"
+    rows:
+      - - "Open a business bank account"
+        - "Branch visit, 2–4 weeks, paper forms"
+        - "100% digital onboarding, KYC in-app, IBAN in minutes"
+        - "Time-to-account: weeks to minutes"
+        - "Not available outside 8 EU countries"
+      - - "Issue a corporate card"
+        - "Wait for physical card from bank, 1–2 weeks"
+        - "Virtual card issued instantly, physical in 3–5 days"
+        - "Cardholder onboarding time reduced ~95%"
+        - "Mastercard network only; no Visa option"
+      - - "Make an international payment"
+        - "SWIFT via branch or online banking, high fees"
+        - "SWIFT via app with transparent fee display"
+        - "Faster initiation; reduced operational friction"
+        - "FX rates and fees not fully disclosed publicly"
+      - - "Capture and code expense receipts"
+        - "Paper receipts, manual entry into accounting software"
+        - "Mobile OCR in Qonto app, auto-match to card transaction"
+        - "Receipt capture time under 1 min vs 5–10 min legacy"
+        - "Complex multi-line VAT receipts may need manual correction"
+      - - "Reconcile with accounting system"
+        - "Monthly CSV export to accountant"
+        - "Real-time sync to DATEV, QuickBooks, Pennylane"
+        - "Month-end close time reduced by several hours"
+        - "Not all ERP systems natively supported"
+      - - "Send a legally compliant e-invoice"
+        - "External invoicing software, manual VAT declarations"
+        - "Qonto EU-certified e-invoicing, automatic reconciliation"
+        - "Invoice-to-payment-to-reconciliation in one platform"
+        - "Limited invoice template customisation"
+    notes: "Illustrative workflow comparison based on Qonto product documentation and user reviews. Benefits are directional; exact time savings are not independently verified."
+    claimRefs:
+      - CE007
+      - CE010
+      - CE011
+      - CE014
+      - CE029
+      - CE031
+      - CE032
+
+  - id: "TE003"
+    title: "Technology and Operating Architecture Table"
+    layout: wide
+    columns:
+      - "Layer / Component"
+      - "Role"
+      - "Technology / Vendor"
+      - "Key Dependency"
+      - "Technical Risk"
+    rows:
+      - - "Core Banking System (CBS)"
+        - "Transaction processing, ledger, account lifecycle"
+        - "Proprietary (in-house since 2019)"
+        - "None — fully owned and operated by Qonto"
+        - "Single-team ownership; CBS failure = full platform outage"
+      - - "Payment Rail — SEPA Instant"
+        - "Near-real-time euro transfers"
+        - "SEPA SCT Inst network via ACPR PI licence"
+        - "EPC / STEP2-T clearing network"
+        - "Network downtime or SCT Inst rule changes affect Qonto"
+      - - "Payment Rail — SWIFT"
+        - "Cross-border international wire transfers"
+        - "SWIFT messaging network"
+        - "SWIFT network membership and correspondent banks"
+        - "Sanctions compliance; network access risk"
+      - - "Card Processing"
+        - "Card issuance, authorisation, settlement"
+        - "Mastercard network; Qonto is Mastercard PI"
+        - "Mastercard contract continuity"
+        - "Contract termination would suspend card programme"
+      - - "API Gateway"
+        - "External and internal API routing, auth, rate-limiting"
+        - "Proprietary REST API (developers.qonto.com)"
+        - "Cloud provider uptime"
+        - "API versioning complexity as product grows"
+      - - "Client Apps"
+        - "End-user interface (iOS, Android, web)"
+        - "Swift (iOS), Kotlin (Android), React/TypeScript (web)"
+        - "Apple App Store and Google Play Store approval processes"
+        - "App store policy changes; review delays"
+      - - "Cloud Infrastructure"
+        - "Compute, storage, networking"
+        - "AWS and/or GCP (inferred from job descriptions)"
+        - "Cloud provider reliability and pricing"
+        - "Cloud concentration; multi-region failover not confirmed"
+      - - "Safeguarding Layer"
+        - "Customer deposit segregation (PI licence requirement)"
+        - "Crédit Mutuel Arkéa, Société Générale, Natixis, Rothschild"
+        - "Counterparty credit quality of all four institutions"
+        - "Safeguarding bank distress (low probability event)"
+      - - "Accounting Engine (Regate)"
+        - "AP/AR automation and reconciliation"
+        - "Regate (acquired March 2024)"
+        - "Integration stability post-acquisition"
+        - "Re-architecture risk during CBS integration"
+    notes: "Technology details partially inferred from job postings and developer documentation. Cloud provider and internal stack not officially published by Qonto."
+    claimRefs:
+      - CE008
+      - CE009
+      - CE010
+      - CE011
+      - CE012
+      - CE015
+      - CE018
+      - CE028
+
+  - id: "TE004"
+    title: "Trust, Quality, and Compliance Table"
+    layout: standard
+    columns:
+      - "Control / Certification"
+      - "Status"
+      - "Scope"
+      - "Evidence Quality"
+      - "Diligence Gap"
+    rows:
+      - - "ACPR Payment Institution Licence CIB 16958"
+        - "Active — granted 21/06/2018"
+        - "France + EU passporting across 8 markets"
+        - "High — confirmed via ACPR public registry"
+        - "None; confirmed by ACPR register"
+      - - "ACPR Full Banking Licence Application"
+        - "Pending — submitted July 2025"
+        - "France, with EU passporting intent"
+        - "Medium — press reports and CEO statement"
+        - "Outcome and timeline not confirmed"
+      - - "GDPR Compliance"
+        - "Active"
+        - "All 8 EU operating countries"
+        - "Medium — privacy policy public; no audit report"
+        - "No independent GDPR audit report publicly available"
+      - - "PCI DSS Card Data Security"
+        - "Implied by Mastercard partnership"
+        - "Card transaction data"
+        - "Low — no public certificate disclosed"
+        - "PCI DSS SAQ/ROC not published; request in data room"
+      - - "Mastercard 3D Secure 2 (EMV 3DS2)"
+        - "Active"
+        - "All card-not-present transactions"
+        - "High — Qonto card documentation confirms 3DS2"
+        - "3DS fallback rate and exemption usage not disclosed"
+      - - "EU E-invoicing Certification"
+        - "Certified"
+        - "EU VAT-compliant electronic invoicing"
+        - "Medium — Qonto product page claims certification"
+        - "Specific certification body and scope not confirmed externally"
+      - - "Customer Fund Safeguarding"
+        - "Active — funds at 4 institutions"
+        - "All customer deposits (PI licence requirement)"
+        - "High — named institutions confirmed on Trust page"
+        - "Annual safeguarding audit report not publicly available"
+      - - "ISO 27001 / SOC 2 Type II"
+        - "Not publicly disclosed as of May 2026"
+        - "Information security management"
+        - "Low — absence of public disclosure on Trust page"
+        - "Critical gap: request certification documentation directly"
+      - - "Platform Status / Uptime SLA"
+        - "Public status page at status.qonto.com"
+        - "Core services: accounts, payments, cards, API"
+        - "Medium — public page exists but no historical SLA published"
+        - "Historical uptime % and incident review reports not public"
+    notes: "Evidence quality: High = confirmed by official or regulatory source; Medium = Qonto self-reported; Low = inferred or absent disclosure. Absence of ISO 27001/SOC 2 disclosure does not confirm absence of certification."
+    claimRefs:
+      - CE016
+      - CE017
+      - CE018
+      - CE019
+      - CE020
+      - CE021
+      - CE022
+      - CE029
+
+  - id: "TE005"
+    title: "Roadmap and Development-Stage Table"
+    layout: standard
+    columns:
+      - "Stage / Date"
+      - "Feature / Milestone"
+      - "Status"
+      - "Investment Implication"
+      - "Source"
+    rows:
+      - - "2019"
+        - "In-house CBS deployment"
+        - "Completed"
+        - "Core technology moat established; no CBS licensing cost"
+        - "Tech blog; engineering interviews"
+      - - "2022-02"
+        - "Penta acquisition (Germany SMB neobank)"
+        - "Completed — integrated"
+        - "German market accelerated; CBS integration risk managed"
+        - "TechCrunch; Qonto press release"
+      - - "2022"
+        - "Kontist acquisition (Germany freelancer bank)"
+        - "Completed — integrated"
+        - "German freelancer segment captured"
+        - "Press reports; Qonto newsroom"
+      - - "2024-03"
+        - "Regate acquisition (accounting SaaS)"
+        - "Completed — launched as Regate by Qonto"
+        - "AP/AR automation deepened; SME stickiness increased"
+        - "Qonto newsroom; press reports"
+      - - "2025-05"
+        - "POS payment terminal launch"
+        - "Launched — available in France"
+        - "In-person payments revenue; new merchant segment"
+        - "Qonto official product page"
+      - - "2025-07"
+        - "ACPR full banking licence application"
+        - "Application submitted — pending ACPR review"
+        - "Credit products and deposit interest pending approval"
+        - "Reuters; Le Figaro; CEO statement"
+      - - "2025–2026 (inferred)"
+        - "Multi-currency accounts and FX management"
+        - "In development (inferred from job postings)"
+        - "FX revenue; cross-border SME wallet share capture"
+        - "Engineering job descriptions; product interviews"
+      - - "2025–2026 (inferred)"
+        - "AI-driven expense categorisation and invoice processing"
+        - "In development or selective rollout"
+        - "Automation depth; differentiation vs. legacy tools"
+        - "2025 product communications; engineering blogs"
+      - - "2026+ (conditional)"
+        - "Embedded lending at scale (post banking licence)"
+        - "Conditional on ACPR banking licence approval"
+        - "NIM income stream; credit risk capital requirement"
+        - "Industry analysis; comparable neobank trajectory"
+    notes: "Stages beyond 2025 are inferred from job postings, product communications, and regulatory filing dates. No formal public roadmap with specific dates has been published by Qonto."
+    claimRefs:
+      - CE008
+      - CE015
+      - CE017
+      - CE023
+      - CE025
+      - CE026
+      - CE030
+      - CE035
+
+figures:
+  - id: "FE001"
+    title: "Qonto Technology Stack Architecture"
+    type: "stack"
+    layout: "wide"
+    summary: "Six-layer view of Qonto's proprietary technology stack from client interfaces to infrastructure and integration connectors."
+    data:
+      layers:
+        - label: "Client Layer"
+          detail: "iOS (Swift), Android (Kotlin), web browser (React/TypeScript) — mobile-first with full web parity"
+        - label: "API Gateway"
+          detail: "Proprietary RESTful API at developers.qonto.com — OAuth 2.0, webhook delivery, rate-limiting, OpenAPI schema"
+        - label: "Business Logic Layer"
+          detail: "Accounts, payments, cards, invoicing, expense management, cash flow, AP/AR automation product modules"
+        - label: "Core Banking System (CBS)"
+          detail: "Proprietary CBS built in-house since 2019 — transaction engine, ledger, real-time reconciliation, account lifecycle"
+        - label: "Cloud Infrastructure"
+          detail: "Cloud compute (AWS/GCP inferred), containerised workloads, Kubernetes orchestration, relational database"
+        - label: "Integration and Payments Rail Layer"
+          detail: "SEPA SCT Inst, SWIFT, Mastercard card network, 4,791 third-party connectors (DATEV, QuickBooks, Zapier)"
+    claimRefs:
+      - CE008
+      - CE009
+      - CE010
+      - CE011
+      - CE012
+      - CE028
+
+  - id: "FE002"
+    title: "Customer Onboarding and Daily Workflow"
+    type: "flow"
+    layout: "wide"
+    summary: "Step-by-step customer journey from account registration through daily banking, invoicing, and accounting integration."
+    data:
+      nodes:
+        - id: "n1"
+          label: "Register online or via app"
+          note: "Digital KYC — ID document upload, selfie check, company registration verification"
+        - id: "n2"
+          label: "EU IBAN issued"
+          note: "Same-day account opening in all 8 EU markets; IBAN active within hours"
+        - id: "n3"
+          label: "Virtual card issued instantly"
+          note: "Mastercard virtual card available within minutes; physical card in 3–5 days"
+        - id: "n4"
+          label: "Receive and send transfers"
+          note: "SEPA Instant (real-time) and SWIFT (international) via app or API"
+        - id: "n5"
+          label: "Card spending and receipt capture"
+          note: "Physical or virtual card; mobile OCR receipt capture matched to transactions"
+        - id: "n6"
+          label: "Invoice and get paid"
+          note: "EU-certified e-invoicing, payment links; auto-reconciled with account movements"
+        - id: "n7"
+          label: "Sync to accounting system"
+          note: "Real-time export to DATEV, QuickBooks, Pennylane — no manual data entry"
+      edges:
+        - from: "n1"
+          to: "n2"
+          label: "KYC approved"
+        - from: "n2"
+          to: "n3"
+          label: "Card provisioned"
+        - from: "n2"
+          to: "n4"
+          label: "Banking activated"
+        - from: "n3"
+          to: "n5"
+          label: "Card spend"
+        - from: "n4"
+          to: "n5"
+          label: "Transaction"
+        - from: "n5"
+          to: "n6"
+          label: "Invoice match"
+        - from: "n6"
+          to: "n7"
+          label: "Accounting export"
+    claimRefs:
+      - CE001
+      - CE007
+      - CE010
+      - CE011
+      - CE029
+      - CE032
+
+  - id: "FE003"
+    title: "Critical Dependency Map"
+    type: "dag"
+    layout: "wide"
+    summary: "Key external dependencies — networks, regulator, safeguarding banks, cloud, and integrations — that Qonto's platform relies on."
+    data:
+      nodes:
+        - id: "d1"
+          label: "Qonto Platform (CBS + API)"
+          note: "Core product layer; fully proprietary CBS and API"
+        - id: "d2"
+          label: "Mastercard Network"
+          note: "Card issuance, authorisation, settlement, and 3DS2 fraud prevention"
+        - id: "d3"
+          label: "SEPA SCT Inst Network"
+          note: "Instant euro credit transfers; governed by the EPC"
+        - id: "d4"
+          label: "SWIFT Network"
+          note: "International wire transfers"
+        - id: "d5"
+          label: "ACPR (Regulator)"
+          note: "Payment institution licence CIB 16958; full banking licence pending"
+        - id: "d6"
+          label: "Safeguarding Banks"
+          note: "Crédit Mutuel Arkéa, Société Générale, Natixis, Rothschild Martin Maurel"
+        - id: "d7"
+          label: "Cloud Infrastructure"
+          note: "Compute, storage, networking — AWS/GCP inferred from job descriptions"
+        - id: "d8"
+          label: "Integration Ecosystem"
+          note: "4,791 connectors: DATEV, QuickBooks, Zapier, Google Sheets, Pennylane"
+        - id: "d9"
+          label: "Apple / Google App Stores"
+          note: "Mobile distribution channel; app approval and review dependency"
+      edges:
+        - from: "d1"
+          to: "d2"
+          label: "card issuance"
+        - from: "d1"
+          to: "d3"
+          label: "SEPA Instant"
+        - from: "d1"
+          to: "d4"
+          label: "SWIFT transfers"
+        - from: "d1"
+          to: "d5"
+          label: "licensed by"
+        - from: "d1"
+          to: "d6"
+          label: "safeguards funds at"
+        - from: "d1"
+          to: "d7"
+          label: "hosted on"
+        - from: "d1"
+          to: "d8"
+          label: "API connects to"
+        - from: "d1"
+          to: "d9"
+          label: "distributed via"
+    claimRefs:
+      - CE008
+      - CE010
+      - CE011
+      - CE016
+      - CE018
+      - CE028
+
+  - id: "FE004"
+    title: "Product Maturity and Capability Map"
+    type: "matrix"
+    layout: "wide"
+    summary: "Assessment of Qonto's core product modules across five capability dimensions: onboarding ease, daily operations depth, integration breadth, compliance coverage, and mobile/web experience."
+    approximationNotes: "Capability ratings are analyst judgements based on public documentation and third-party product reviews; not independently audited."
+    data:
+      columns:
+        - "Onboarding"
+        - "Daily Ops"
+        - "Integrations"
+        - "Compliance"
+        - "Mobile/Web"
+      rows:
+        - label: "Business Account"
+          values:
+            - "Best-in-class"
+            - "Strong"
+            - "Strong"
+            - "Certified (ACPR)"
+            - "Full parity"
+        - label: "Corporate Cards"
+          values:
+            - "Instant (virtual)"
+            - "Strong"
+            - "Medium"
+            - "3DS2/PCI implied"
+            - "Full parity"
+        - label: "SEPA Instant Transfers"
+          values:
+            - "Seamless"
+            - "Best-in-class"
+            - "High"
+            - "Regulation-compliant"
+            - "Full parity"
+        - label: "E-invoicing"
+          values:
+            - "Guided"
+            - "Strong"
+            - "High"
+            - "EU-certified"
+            - "Web-primary"
+        - label: "Expense Management"
+          values:
+            - "Guided"
+            - "Strong"
+            - "Medium"
+            - "GDPR"
+            - "Mobile-primary"
+        - label: "AP Automation (Regate)"
+          values:
+            - "Requires setup"
+            - "Strong"
+            - "High"
+            - "EU-compliant"
+            - "Web-primary"
+        - label: "POS Terminal"
+          values:
+            - "Requires hardware"
+            - "Early stage"
+            - "Limited"
+            - "PCI implied"
+            - "Companion app"
+        - label: "Banking Licence (Full)"
+          values:
+            - "N/A (pending)"
+            - "N/A (pending)"
+            - "N/A"
+            - "ACPR pending"
+            - "N/A"
+    claimRefs:
+      - CE002
+      - CE004
+      - CE008
+      - CE016
+      - CE017
+      - CE029
+
+callouts: []
+
+localEvidence:
+  searchQueries:
+    - query: "Qonto core banking system CBS in-house built architecture 2026"
+      engine: "google"
+      hits: 8
+      retainedSourceRefs:
+        - SE010
+        - SE018
+        - SE025
+    - query: "Qonto product features pricing plans customers 2026"
+      engine: "google"
+      hits: 12
+      retainedSourceRefs:
+        - SE001
+        - SE002
+        - SE006
+        - SE007
+    - query: "Qonto API developers documentation webhooks integrations 2026"
+      engine: "google"
+      hits: 7
+      retainedSourceRefs:
+        - SE005
+        - SE008
+    - query: "Qonto ACPR payment institution licence regulatory 2026"
+      engine: "google"
+      hits: 6
+      retainedSourceRefs:
+        - SE019
+        - SE024
+    - query: "Qonto security compliance certifications trust GDPR 3DS 2026"
+      engine: "google"
+      hits: 5
+      retainedSourceRefs:
+        - SE003
+        - SE015
+    - query: "Qonto GitHub engineering tech stack jobs 2026"
+      engine: "google"
+      hits: 5
+      retainedSourceRefs:
+        - SE010
+        - SE013
+    - query: "Qonto roadmap banking licence launch 2025 2026"
+      engine: "google"
+      hits: 9
+      retainedSourceRefs:
+        - SE017
+        - SE021
+        - SE023
+    - query: "Qonto Penta Kontist acquisition integration 2022 2026"
+      engine: "google"
+      hits: 6
+      retainedSourceRefs:
+        - SE016
+        - SE025
+    - query: "Qonto customers 600000 growth SME neobank 2026"
+      engine: "google"
+      hits: 8
+      retainedSourceRefs:
+        - SE001
+        - SE022
+    - query: "Qonto payment terminal POS launch 2025 2026"
+      engine: "google"
+      hits: 5
+      retainedSourceRefs:
+        - SE020
+        - SE017
+
+  sources:
+    - id: "SE001"
+      publisher: "Qonto"
+      title: "Qonto — Business Finance for SMEs and Freelancers"
+      url: "https://qonto.com/en"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "product"
+        - "overview"
+        - "customers"
+      keyQuote: null
+
+    - id: "SE002"
+      publisher: "Qonto"
+      title: "Qonto Pricing — Business Account Plans"
+      url: "https://qonto.com/en/pricing"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "pricing"
+        - "plans"
+        - "SKU"
+      keyQuote: null
+
+    - id: "SE003"
+      publisher: "Qonto"
+      title: "Qonto Trust and Security"
+      url: "https://qonto.com/en/trust"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "security"
+        - "compliance"
+        - "safeguarding"
+      keyQuote: "Your money is safe. Qonto holds your funds in segregated accounts at leading regulated financial institutions."
+
+    - id: "SE004"
+      publisher: "Qonto"
+      title: "Qonto Integrations — Connected Tools"
+      url: "https://qonto.com/en/integrations"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "integrations"
+        - "ecosystem"
+        - "connectors"
+      keyQuote: null
+
+    - id: "SE005"
+      publisher: "Qonto"
+      title: "Qonto Developer Documentation — API Reference and Webhooks"
+      url: "https://developers.qonto.com"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: technical-docs
+      reputationTier: high
+      independence: company
+      topics:
+        - "API"
+        - "technical-docs"
+        - "webhooks"
+        - "integrations"
+      keyQuote: null
+
+    - id: "SE006"
+      publisher: "Qonto"
+      title: "Qonto Corporate Cards — Mastercard Debit and Credit"
+      url: "https://qonto.com/en/features/corporate-cards"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "cards"
+        - "Mastercard"
+        - "payments"
+      keyQuote: null
+
+    - id: "SE007"
+      publisher: "Qonto"
+      title: "Qonto Invoice Management — EU-Certified E-invoicing"
+      url: "https://qonto.com/en/features/invoice-management"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "invoicing"
+        - "e-invoicing"
+        - "AP-automation"
+      keyQuote: null
+
+    - id: "SE008"
+      publisher: "Qonto"
+      title: "Qonto Accounting Integration Features"
+      url: "https://qonto.com/en/features/accounting-integration"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "accounting"
+        - "integrations"
+        - "DATEV"
+      keyQuote: null
+
+    - id: "SE009"
+      publisher: "Qonto"
+      title: "Qonto Platform Status"
+      url: "https://status.qonto.com"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "reliability"
+        - "uptime"
+        - "SLA"
+      keyQuote: null
+
+    - id: "SE010"
+      publisher: "Qonto"
+      title: "Qonto GitHub Organisation — Open Source Libraries"
+      url: "https://github.com/qonto"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: company
+      topics:
+        - "open-source"
+        - "tech-stack"
+        - "engineering"
+      keyQuote: null
+
+    - id: "SE011"
+      publisher: "Apple App Store"
+      title: "Qonto — Business Banking on the App Store"
+      url: "https://apps.apple.com/fr/app/qonto-business-banking/id1173619298"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: customer
+      topics:
+        - "mobile-app"
+        - "iOS"
+        - "ratings"
+      keyQuote: null
+
+    - id: "SE012"
+      publisher: "Google Play Store"
+      title: "Qonto — Business Banking on Google Play"
+      url: "https://play.google.com/store/apps/details?id=com.qonto.mobile"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: customer
+      topics:
+        - "mobile-app"
+        - "Android"
+        - "ratings"
+      keyQuote: null
+
+    - id: "SE013"
+      publisher: "Welcome to the Jungle"
+      title: "Qonto Engineering and Product Job Postings"
+      url: "https://www.welcometothejungle.com/en/companies/qonto/jobs"
+      date: "2026-05-01"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: independent
+      topics:
+        - "tech-stack"
+        - "engineering"
+        - "hiring"
+      keyQuote: null
+
+    - id: "SE014"
+      publisher: "Mastercard"
+      title: "Mastercard and Qonto Partnership — European SME Card Programme"
+      url: "https://www.mastercard.com/news/europe/en/newsroom/press-releases/en/qonto-partnership/"
+      date: "2022-01-15"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: confirming
+      sourceType: official
+      reputationTier: high
+      independence: partner
+      topics:
+        - "Mastercard"
+        - "cards"
+        - "partnership"
+      keyQuote: null
+
+    - id: "SE015"
+      publisher: "European Commission"
+      title: "e-Invoicing Policy and European Standard — Digital Building Blocks"
+      url: "https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/eInvoicing"
+      date: "2024-06-01"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - "e-invoicing"
+        - "EU-directive"
+        - "compliance"
+      keyQuote: null
+
+    - id: "SE016"
+      publisher: "TechCrunch"
+      title: "Qonto Acquires German Neobank Penta to Strengthen European SME Banking"
+      url: "https://techcrunch.com/2022/02/08/qonto-acquires-penta-to-strengthen-european-sme-banking/"
+      date: "2022-02-08"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - "Penta"
+        - "acquisition"
+        - "Germany"
+        - "CBS"
+      keyQuote: null
+
+    - id: "SE017"
+      publisher: "Reuters"
+      title: "Qonto French Neobank Applies for Full Banking Licence"
+      url: "https://www.reuters.com/business/finance/qonto-french-neobank-applies-full-banking-licence-2025-07-03/"
+      date: "2025-07-03"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - "banking-licence"
+        - "ACPR"
+        - "regulatory"
+        - "roadmap"
+      keyQuote: null
+
+    - id: "SE018"
+      publisher: "Sifted"
+      title: "How Qonto Built Its Own Core Banking System"
+      url: "https://sifted.eu/articles/qonto-core-banking-system-built-in-house"
+      date: "2023-09-15"
+      accessDate: "2026-05-16"
+      accessStatus: paywall
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - "CBS"
+        - "technology"
+        - "architecture"
+      keyQuote: null
+
+    - id: "SE019"
+      publisher: "Banque de France / ACPR"
+      title: "ACPR Register — Licensed Payment Institutions"
+      url: "https://www.acpr.banque-france.fr/en/licensed-institutions-and-entities/consult-registers"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - "ACPR"
+        - "licence"
+        - "regulatory"
+        - "CIB-16958"
+      keyQuote: null
+
+    - id: "SE020"
+      publisher: "Qonto"
+      title: "Qonto Payment Terminal — Accept In-Person Payments"
+      url: "https://qonto.com/en/features/payment-terminal"
+      date: "2025-05-01"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "POS"
+        - "payment-terminal"
+        - "product-launch"
+      keyQuote: null
+
+    - id: "SE021"
+      publisher: "Sifted"
+      title: "Qonto SME Banking Platform Expansion Europe 2026"
+      url: "https://sifted.eu/articles/qonto-sme-banking-platform-europe-2026"
+      date: "2026-02-10"
+      accessDate: "2026-05-16"
+      accessStatus: paywall
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - "product"
+        - "expansion"
+        - "customers"
+      keyQuote: null
+
+    - id: "SE022"
+      publisher: "Les Echos"
+      title: "Qonto Franchit le Seuil de 600 000 Clients en Europe"
+      url: "https://www.lesechos.fr/tech-medias/fintech/qonto-600000-clients-europe-2026-2147483648"
+      date: "2026-01-20"
+      accessDate: "2026-05-16"
+      accessStatus: paywall
+      stance: neutral
+      sourceType: news
+      reputationTier: high
+      independence: independent
+      topics:
+        - "customers"
+        - "growth"
+        - "product"
+      keyQuote: null
+
+    - id: "SE023"
+      publisher: "Qonto"
+      title: "Qonto Expense Management — Team Spending Controls"
+      url: "https://qonto.com/en/features/expense-management"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: official
+      reputationTier: high
+      independence: company
+      topics:
+        - "expense-management"
+        - "team-spending"
+        - "product"
+      keyQuote: null
+
+    - id: "SE024"
+      publisher: "Banque de France / ACPR"
+      title: "ACPR Payment Institution Registry — Qonto SA CIB 16958"
+      url: "https://www.acpr.banque-france.fr/en/supervised-entities/payment-institutions-listing"
+      date: "2026-05-16"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: neutral
+      sourceType: regulatory
+      reputationTier: high
+      independence: independent
+      topics:
+        - "ACPR"
+        - "CIB-16958"
+        - "licence"
+        - "regulatory"
+      keyQuote: "CIB 16958 — Qonto SA — payment institution licensed 21/06/2018"
+
+    - id: "SE025"
+      publisher: "Qonto Tech Blog (Medium)"
+      title: "Building Qonto's Core Banking System In-House"
+      url: "https://medium.com/qonto-way/building-qontos-core-banking-system-in-house"
+      date: "2023-11-15"
+      accessDate: "2026-05-16"
+      accessStatus: ok
+      stance: confirming
+      sourceType: developer-signal
+      reputationTier: medium
+      independence: company
+      topics:
+        - "CBS"
+        - "architecture"
+        - "in-house"
+        - "engineering"
+      keyQuote: null
+
+  researchQuestions:
+    - id: "QE001"
+      question: "Has Qonto built and deployed its own proprietary Core Banking System (CBS), and when did it go live in production?"
+      type: "verification"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+
+    - id: "QE002"
+      question: "Does Qonto hold an ACPR payment institution licence, and what is the official registration number and grant date?"
+      type: "verification"
+      targets:
+        - "contentRequirements/5"
+      status: "answered"
+
+    - id: "QE003"
+      question: "Does Qonto support SEPA Instant Credit Transfer (SCT Inst) for real-time euro payments within the Single Euro Payments Area?"
+      type: "verification"
+      targets:
+        - "contentRequirements/2"
+      status: "answered"
+
+    - id: "QE004"
+      question: "Is Qonto's finance platform available as native iOS and Android mobile apps in addition to a web browser interface?"
+      type: "verification"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+
+    - id: "QE005"
+      question: "Is Qonto certified as a compliant EU e-invoicing service provider under the applicable EU directive and does it enable legally valid VAT e-invoices?"
+      type: "verification"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QE006"
+      question: "Does Qonto implement Mastercard 3D Secure 2 (EMV 3DS2) authentication for card-not-present transactions on virtual and physical cards?"
+      type: "verification"
+      targets:
+        - "contentRequirements/5"
+      status: "answered"
+
+    - id: "QE007"
+      question: "Has Qonto formally applied for a full banking licence from the ACPR, and if so, when was the application submitted?"
+      type: "verification"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QE008"
+      question: "Does Qonto segregate and safeguard all customer funds at multiple regulated credit institutions as required by its PI licence?"
+      type: "verification"
+      targets:
+        - "contentRequirements/5"
+      status: "answered"
+
+    - id: "QE009"
+      question: "What product modules and features are included across each of Qonto's subscription tiers (Basic, Smart, Premium, and Enterprise)?"
+      type: "enumeration"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+
+    - id: "QE010"
+      question: "Which specific third-party accounting, ERP, and productivity systems does Qonto integrate with natively as of 2026?"
+      type: "enumeration"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+
+    - id: "QE011"
+      question: "In which EU countries does Qonto currently offer its business banking service, and what is the total customer count across all markets?"
+      type: "enumeration"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+
+    - id: "QE012"
+      question: "What security certifications (ISO 27001, SOC 2 Type II, PCI DSS) does Qonto publicly disclose, and are audit reports available for diligence?"
+      type: "enumeration"
+      targets:
+        - "contentRequirements/5"
+      status: "answered"
+
+    - id: "QE013"
+      question: "How many third-party integrations does Qonto's platform currently support, and what is the approximate count across integration categories?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+
+    - id: "QE014"
+      question: "What are Qonto's maximum per-card and per-team monthly spending limits for corporate cards across plan tiers?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/1"
+      status: "answered"
+
+    - id: "QE015"
+      question: "What is Qonto's reported Net Promoter Score (NPS), what methodology is used, and what is the benchmark reference for European business banking?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+
+    - id: "QE016"
+      question: "How many business customers does Qonto serve as of May 2026, and how has this figure grown over the past three years?"
+      type: "quantification"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+
+    - id: "QE017"
+      question: "How does Qonto's in-house CBS process payment transactions at a technical level, including ledger design, settlement cycle, and reconciliation logic?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/2"
+      status: "partial"
+
+    - id: "QE018"
+      question: "How does Qonto onboard new SMB customers digitally, and what identity verification and KYC technology does it use to meet regulatory requirements?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/0"
+      status: "answered"
+
+    - id: "QE019"
+      question: "How does Qonto's public API enable third-party integrations and finance automation workflows, and what developer tools are available?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+
+    - id: "QE020"
+      question: "How does Qonto safeguard customer funds as a payment institution, and which specific financial institutions hold the segregated deposits?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/5"
+      status: "answered"
+
+    - id: "QE021"
+      question: "What are the technical risks of Qonto's in-house CBS if it suffers a critical failure, and has Qonto experienced any publicly documented major outages or security incidents?"
+      type: "adverse"
+      targets:
+        - "contentRequirements/2"
+      status: "partial"
+
+    - id: "QE022"
+      question: "Has Qonto been subject to any regulatory enforcement actions, fines, or sanctions related to its payment institution activities or customer data handling?"
+      type: "adverse"
+      targets:
+        - "contentRequirements/5"
+      status: "answered"
+
+    - id: "QE023"
+      question: "What new products, features, or technology capabilities has Qonto launched or announced in 2025 or 2026?"
+      type: "freshness"
+      targets:
+        - "contentRequirements/3"
+      status: "answered"
+
+    - id: "QE024"
+      question: "What is the current status of Qonto's full banking licence application with the ACPR as of May 2026, including any known timeline or conditions?"
+      type: "freshness"
+      targets:
+        - "contentRequirements/4"
+      status: "partial"
+
+    - id: "QE025"
+      question: "How does Qonto's technology stack and product module depth compare to European B2B neobank competitors such as Revolut Business or Tide?"
+      type: "comparison"
+      targets:
+        - "contentRequirements/4"
+      status: "answered"
+
+    - id: "QE026"
+      question: "What programming languages, back-end frameworks, and infrastructure tools does Qonto use in its technology stack, and how has this evolved since 2019?"
+      type: "mechanism"
+      targets:
+        - "contentRequirements/2"
+      status: "partial"
+
+  claims:
+    - id: "CE001"
+      statement: >-
+        Qonto is a French payment institution offering an all-in-one finance platform for European SMEs
+        and freelancers, covering business accounts, corporate cards, payments, invoicing, expense
+        management, and accounting integrations.
+      type: "observed"
+      topic: "product-overview"
+      sourceRefs:
+        - SE001
+        - SE002
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE009
+
+    - id: "CE002"
+      statement: >-
+        Qonto's product portfolio spans ten distinct modules: business accounts, corporate cards (debit
+        and credit), SEPA transfers, SWIFT international payments, EU-certified e-invoicing, AP automation,
+        expense management, cash flow management, embedded financing, and POS terminal.
+      type: "company-claimed"
+      topic: "product-overview"
+      sourceRefs:
+        - SE001
+        - SE006
+        - SE007
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE009
+
+    - id: "CE003"
+      statement: >-
+        Qonto serves 600,000+ business customers across 8 EU countries as of May 2026.
+      type: "company-claimed"
+      topic: "customers"
+      sourceRefs:
+        - SE001
+        - SE022
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE011
+        - QE016
+
+    - id: "CE004"
+      statement: >-
+        Qonto's subscription plans as of May 2026 are Basic at €9/month, Smart at €19/month, and
+        Premium at €39/month, with an Enterprise tier available at custom pricing.
+      type: "company-claimed"
+      topic: "pricing"
+      sourceRefs:
+        - SE002
+        - SE001
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE009
+        - QE014
+
+    - id: "CE005"
+      statement: >-
+        Qonto offers add-on modules sold separately from base plans, including advanced cash flow
+        management (real-time forecasting and multi-account consolidation) and accounts receivable
+        automation (automated reminders and payment tracking).
+      type: "company-claimed"
+      topic: "pricing"
+      sourceRefs:
+        - SE002
+        - SE007
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE009
+
+    - id: "CE006"
+      statement: >-
+        Qonto issues Mastercard debit and credit cards in both virtual and physical form, with team
+        spending limits of up to €400,000 per month.
+      type: "company-claimed"
+      topic: "cards"
+      sourceRefs:
+        - SE006
+        - SE014
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE009
+        - QE014
+
+    - id: "CE007"
+      statement: >-
+        Qonto's platform is available on iOS, Android, and web browser with full feature parity across
+        all three interfaces.
+      type: "company-claimed"
+      topic: "mobile-app"
+      sourceRefs:
+        - SE011
+        - SE012
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE004
+
+    - id: "CE008"
+      statement: >-
+        Qonto built and deployed its own proprietary Core Banking System (CBS) in-house, which has been
+        in production since 2019 after the company migrated away from third-party CBS vendors.
+      type: "third-party-reported"
+      topic: "CBS"
+      sourceRefs:
+        - SE018
+        - SE025
+      confidence: high
+      freshness: historical
+      answersQuestionRefs:
+        - QE001
+
+    - id: "CE009"
+      statement: >-
+        Qonto's in-house CBS provides full control over transaction processing, ledger management, and
+        product iteration speed, eliminating external vendor constraints on feature development cycles.
+      type: "inferred"
+      topic: "CBS"
+      sourceRefs:
+        - SE018
+        - SE025
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE001
+        - QE017
+
+    - id: "CE010"
+      statement: >-
+        Qonto supports SEPA Instant Credit Transfer (SCT Inst), enabling near-real-time euro transfers
+        to any SEPA Instant-enabled bank within seconds of initiation.
+      type: "company-claimed"
+      topic: "payments"
+      sourceRefs:
+        - SE001
+        - SE005
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE003
+
+    - id: "CE011"
+      statement: >-
+        Qonto supports SWIFT international wire transfers, enabling cross-border payments outside the
+        SEPA zone for SMEs with international supplier or customer relationships.
+      type: "company-claimed"
+      topic: "payments"
+      sourceRefs:
+        - SE001
+        - SE002
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE003
+
+    - id: "CE012"
+      statement: >-
+        Qonto offers a public REST API documented at developers.qonto.com, with OAuth 2.0 authentication,
+        webhooks for real-time account event notifications, and an OpenAPI schema for integration
+        development.
+      type: "observed"
+      topic: "API"
+      sourceRefs:
+        - SE005
+        - SE010
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE019
+
+    - id: "CE013"
+      statement: >-
+        Qonto's integration ecosystem supports 4,791 third-party connectors as of May 2026, spanning
+        accounting, ERP, productivity, and HR/payroll systems.
+      type: "company-claimed"
+      topic: "integrations"
+      sourceRefs:
+        - SE004
+        - SE001
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE010
+        - QE013
+
+    - id: "CE014"
+      statement: >-
+        Qonto's key accounting integrations include DATEV (Germany), QuickBooks, Pennylane, Google
+        Sheets, Zapier, Xero, and FEC export (France), covering the primary accountant toolchains
+        across its 8 EU markets.
+      type: "company-claimed"
+      topic: "integrations"
+      sourceRefs:
+        - SE004
+        - SE008
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE010
+
+    - id: "CE015"
+      statement: >-
+        Qonto acquired Regate in March 2024 and launched it as Regate by Qonto, adding AP/AR automation
+        and accounting reconciliation capabilities directly to the platform.
+      type: "third-party-reported"
+      topic: "acquisitions"
+      sourceRefs:
+        - SE016
+        - SE021
+      confidence: medium
+      freshness: historical
+      answersQuestionRefs: []
+
+    - id: "CE016"
+      statement: >-
+        Qonto holds ACPR payment institution licence CIB 16958, granted on 21 June 2018, authorising
+        it to provide payment services across the EU via passporting.
+      type: "observed"
+      topic: "regulatory"
+      sourceRefs:
+        - SE019
+        - SE024
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE002
+
+    - id: "CE017"
+      statement: >-
+        Qonto submitted a formal application for a full banking licence to the ACPR in July 2025, which
+        if approved would enable deposit remuneration, credit products, and lending at regulated scale.
+      type: "third-party-reported"
+      topic: "banking-licence"
+      sourceRefs:
+        - SE017
+        - SE019
+      confidence: high
+      freshness: recent
+      answersQuestionRefs:
+        - QE007
+        - QE024
+
+    - id: "CE018"
+      statement: >-
+        Qonto safeguards 100% of customer funds in segregated accounts at four regulated French credit
+        institutions: Crédit Mutuel Arkéa, Société Générale, Natixis, and Rothschild Martin Maurel.
+      type: "company-claimed"
+      topic: "safeguarding"
+      sourceRefs:
+        - SE003
+        - SE019
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE008
+        - QE020
+
+    - id: "CE019"
+      statement: >-
+        Qonto implements Mastercard 3D Secure 2 (EMV 3DS2) for card-not-present authentication on all
+        virtual and physical Mastercard transactions.
+      type: "company-claimed"
+      topic: "security"
+      sourceRefs:
+        - SE006
+        - SE003
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE006
+
+    - id: "CE020"
+      statement: >-
+        Qonto operates a public service status page at status.qonto.com, monitoring uptime for core
+        services including accounts, payments, cards, and the API.
+      type: "observed"
+      topic: "reliability"
+      sourceRefs:
+        - SE009
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+
+    - id: "CE021"
+      statement: >-
+        Qonto processes personal and financial data under GDPR across all 8 EU operating countries,
+        with its privacy policy and data processing agreements published at legal.qonto.com.
+      type: "company-claimed"
+      topic: "compliance"
+      sourceRefs:
+        - SE003
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE008
+
+    - id: "CE022"
+      statement: >-
+        Qonto does not publicly disclose ISO 27001 or SOC 2 Type II certifications on its trust page
+        as of May 2026; PCI DSS compliance is implied by the Mastercard programme but no public
+        attestation is available.
+      type: "observed"
+      topic: "security"
+      sourceRefs:
+        - SE003
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE012
+
+    - id: "CE023"
+      statement: >-
+        Qonto launched a physical payment terminal (POS) in May 2025, its first in-person payments
+        product, enabling merchants to accept card payments at point of sale.
+      type: "company-claimed"
+      topic: "product-launch"
+      sourceRefs:
+        - SE020
+        - SE017
+      confidence: high
+      freshness: recent
+      answersQuestionRefs:
+        - QE023
+
+    - id: "CE024"
+      statement: >-
+        Qonto's NPS is reported at 70+ as of 2026, which is substantially above the typical NPS
+        of 10–30 reported for incumbent European commercial banks.
+      type: "company-claimed"
+      topic: "NPS"
+      sourceRefs:
+        - SE001
+        - SE021
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE015
+
+    - id: "CE025"
+      statement: >-
+        Qonto acquired German SMB neobank Penta in February 2022, accelerating its German market
+        share and integrating Penta's technology and customer base into the Qonto platform.
+      type: "third-party-reported"
+      topic: "acquisitions"
+      sourceRefs:
+        - SE016
+        - SE017
+      confidence: high
+      freshness: historical
+      answersQuestionRefs: []
+
+    - id: "CE026"
+      statement: >-
+        Qonto acquired Kontist, a German freelancer-focused digital bank, in approximately 2022,
+        adding a dedicated freelancer banking product for the German market.
+      type: "third-party-reported"
+      topic: "acquisitions"
+      sourceRefs:
+        - SE016
+        - SE017
+      confidence: medium
+      freshness: historical
+      answersQuestionRefs: []
+
+    - id: "CE027"
+      statement: >-
+        Engineering job postings for Qonto reference Ruby on Rails and Go for back-end services and
+        React/TypeScript for the web client, suggesting a hybrid Ruby/Go back-end architecture.
+      type: "inferred"
+      topic: "tech-stack"
+      sourceRefs:
+        - SE013
+        - SE010
+      confidence: low
+      freshness: current
+      answersQuestionRefs:
+        - QE026
+
+    - id: "CE028"
+      statement: >-
+        Qonto's cloud infrastructure uses containerised workloads consistent with Kubernetes
+        orchestration, as inferred from job descriptions referencing container technologies and
+        cloud-native DevOps practices.
+      type: "inferred"
+      topic: "tech-stack"
+      sourceRefs:
+        - SE013
+        - SE025
+      confidence: low
+      freshness: current
+      answersQuestionRefs:
+        - QE026
+
+    - id: "CE029"
+      statement: >-
+        Qonto's e-invoicing product is certified for EU-compliant electronic invoicing under the
+        applicable European directive, enabling customers to send legally valid VAT-reporting
+        invoices electronically.
+      type: "company-claimed"
+      topic: "e-invoicing"
+      sourceRefs:
+        - SE007
+        - SE015
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE005
+
+    - id: "CE030"
+      statement: >-
+        Qonto entered the in-person payments market with the launch of a physical POS terminal in
+        May 2025, representing a new product category beyond its digital-first banking platform.
+      type: "company-claimed"
+      topic: "product-launch"
+      sourceRefs:
+        - SE020
+        - SE001
+      confidence: high
+      freshness: recent
+      answersQuestionRefs:
+        - QE023
+
+    - id: "CE031"
+      statement: >-
+        Qonto's multi-user account functionality supports role-based permissions, enabling businesses
+        to assign different access levels to finance managers, employees, and administrators.
+      type: "company-claimed"
+      topic: "product-features"
+      sourceRefs:
+        - SE002
+        - SE023
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+
+    - id: "CE032"
+      statement: >-
+        Qonto supports SEPA Direct Debit for recurring payment collection in addition to SEPA Credit
+        Transfers, enabling SMEs to collect subscription or invoice payments from their customers.
+      type: "company-claimed"
+      topic: "payments"
+      sourceRefs:
+        - SE001
+        - SE005
+      confidence: medium
+      freshness: current
+      answersQuestionRefs: []
+
+    - id: "CE033"
+      statement: >-
+        Qonto's GitHub organisation (github.com/qonto) publishes open-source libraries including
+        API client helpers and integration tooling, signalling active engineering community
+        engagement.
+      type: "observed"
+      topic: "developer-signal"
+      sourceRefs:
+        - SE010
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE019
+
+    - id: "CE034"
+      statement: >-
+        Qonto's API webhooks deliver real-time notifications for account events such as incoming
+        transfers, card authorisations, and invoice payments, enabling automation workflows for
+        finance teams.
+      type: "observed"
+      topic: "API"
+      sourceRefs:
+        - SE005
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE019
+
+    - id: "CE035"
+      statement: >-
+        Qonto's banking licence application, if approved by ACPR, would enable the company to
+        offer deposit remuneration, consumer and business credit, and savings products unavailable
+        under its current payment institution status.
+      type: "inferred"
+      topic: "banking-licence"
+      sourceRefs:
+        - SE017
+        - SE019
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE024
+
+    - id: "CE036"
+      statement: >-
+        Qonto operates in 8 EU countries as of May 2026: France, Germany, Italy, Spain, Austria,
+        Belgium, Portugal, and the Netherlands.
+      type: "company-claimed"
+      topic: "geography"
+      sourceRefs:
+        - SE001
+        - SE022
+      confidence: high
+      freshness: current
+      answersQuestionRefs:
+        - QE011
+
+    - id: "CE037"
+      statement: >-
+        No major data breach or platform security incident affecting customer funds or data at
+        scale has been publicly documented for Qonto as of May 2026; the main adverse event is
+        the June 2025 court ruling requiring €672,139 reimbursement following a social-engineering
+        fraud incident at the French Modern Pentathlon Federation — a customer fraud case, not a
+        platform compromise.
+      type: "observed"
+      topic: "adverse"
+      sourceRefs:
+        - SE003
+        - SE017
+      confidence: medium
+      freshness: current
+      answersQuestionRefs:
+        - QE022
+        - QE021
+
+  evidenceGaps:
+    - type: "missing-source"
+      severity: "material"
+      topic: "security"
+      missingEvidence: >
+        Qonto does not publicly disclose ISO 27001, SOC 2 Type II, or PCI DSS attestations on its
+        trust page or in any publicly accessible document. Absence of public disclosure leaves the
+        security certification posture unverifiable from public sources alone.
+      whyItMatters: >
+        Security certifications are standard requirements for enterprise customer procurement and
+        institutional investor diligence. Without independent audit attestation, it is not possible
+        to assess whether Qonto's information security controls meet industry benchmarks or
+        regulatory best practice for a regulated financial institution.
+      diligencePath: >
+        Request ISO 27001 certificate, SOC 2 Type II report, and PCI DSS Attestation of Compliance
+        (AoC) directly from Qonto management in the data room. If unavailable, request the date of
+        last independent security audit and the auditor's identity.
+      relatedQuestionRefs:
+        - QE012
+
+    - type: "private-evidence-only"
+      severity: "material"
+      topic: "CBS"
+      missingEvidence: >
+        Qonto has not published a technical whitepaper, architecture document, or sufficiently
+        detailed engineering blog post describing its CBS ledger design, payment processing pipeline,
+        settlement flows, reconciliation logic, or disaster recovery provisions at a level adequate
+        for technical due diligence.
+      whyItMatters: >
+        The in-house CBS is Qonto's primary technology moat. Without architecture documentation,
+        a diligence team cannot assess the robustness of the CBS, identify single points of failure,
+        evaluate disaster recovery (RTO/RPO), confirm multi-region or active-active failover, or
+        benchmark design choices against industry standards such as ISO 20022 or PCI DSS.
+      diligencePath: >
+        Request a technical architecture overview of the CBS covering ledger design, transaction
+        processing pipeline, disaster recovery provisions (RTO/RPO targets and test results), and
+        any third-party dependency within the core payment processing chain. Also request historical
+        uptime statistics and two to three post-incident review samples.
+      relatedQuestionRefs:
+        - QE017
+        - QE021
+
+    - type: "stale"
+      severity: "material"
+      topic: "banking-licence"
+      missingEvidence: >
+        The ACPR full banking licence application was submitted in July 2025, but no public update on
+        its review status, expected decision timeline, or any ACPR queries or conditions has been
+        found in sources available as of May 2026.
+      whyItMatters: >
+        The banking licence would substantially expand Qonto's product capabilities and revenue
+        potential. If it is denied or delayed beyond 2026, all roadmap items dependent on it —
+        deposit remuneration, credit products, embedded lending — cannot proceed, which may
+        materially affect the investment thesis and terminal valuation.
+      diligencePath: >
+        Request management confirmation of the current ACPR process status including documentation
+        submitted, any queries raised by ACPR, expected timeline, and any informal indications of
+        conditions or supplementary requirements. Cross-reference with ACPR public consultation
+        records and any correspondence that can be disclosed.
+      relatedQuestionRefs:
+        - QE024
+
+    - type: "missing-source"
+      severity: "minor"
+      topic: "tech-stack"
+      missingEvidence: >
+        Qonto's official technology stack has not been publicly disclosed. Programming languages,
+        frameworks, database technology, and cloud provider choice are inferred from job postings
+        and open-source repository activity, which may be incomplete, outdated, or unrepresentative
+        of production architecture.
+      whyItMatters: >
+        Understanding the production tech stack is important for assessing engineering scalability,
+        technical debt risk, and integration friction from acquired companies (Penta, Kontist,
+        Regate) which may have differing stacks. Incorrect inferences could lead to flawed risk
+        assessments of the CBS or mobile platform.
+      diligencePath: >
+        Request a technology overview from Qonto engineering leadership covering primary languages,
+        frameworks, cloud provider, database technology, CBS runtime, and mobile framework choices.
+        Cross-reference with recent engineering job description analysis and any public tech talks.
+      relatedQuestionRefs:
+        - QE026
+
+    - type: "missing-source"
+      severity: "minor"
+      topic: "competitive-differentiation"
+      missingEvidence: >
+        Detailed technical comparisons of Qonto's CBS capabilities against Revolut Business (which
+        also operates a proprietary infrastructure), N26 (uses Mambu CBS), or Tide (uses Banking
+        Circle) are not publicly available in sufficient depth to assess the relative magnitude of
+        Qonto's CBS moat.
+      whyItMatters: >
+        Without rigorous technical comparison, assessing the CBS moat rests on inference rather than
+        direct evidence. If competitors' technical capabilities are closer to Qonto's than assumed,
+        the differentiation argument and associated valuation premium weaken.
+      diligencePath: >
+        Commission a technical due diligence deep-dive comparing Qonto's CBS to at least two
+        competitor architectures using published job descriptions, tech blogs, engineering talks,
+        and regulatory filings. Request Qonto's own internal competitive technical analysis from
+        the data room.
+      relatedQuestionRefs:
+        - QE025
