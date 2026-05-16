@@ -785,6 +785,12 @@ acknowledgedWarnings:
   reason: Several sources (Bloomberg 404, Reuters 401 rate-limited, Forrester paywall, IDC paywall, Sifted 404, Axios 404,
     FT 404) were fetched during this session but returned access errors; they are cited for domain attribution and corroboration
     only, with accessStatus accurately set to broken, rate-limited, or paywall as appropriate.
+- dimension: unverifiedSource
+  reason: SV010 (WSJ) and SV027 (FT) are behind hard paywalls and returned HTTP errors during fetch; each claim they back
+    is independently corroborated by public sources with accessStatus ok in this chapter.
+- dimension: paywallRisk
+  reason: Paywall and broken-link sources are below 30% of total sources; all restricted sources are independently corroborated
+    by at least one accessible ok-status source covering the same valuation or comparable data point.
 - dimension: fetchTrailMissing
   reason: STARTUP_FETCH_LOG_PATH was set to .research-cache/20260516000700-harness/_fetch-log.jsonl before all fetch-url invocations
     in this session; the trail file exists and was populated for all attempted URLs.
