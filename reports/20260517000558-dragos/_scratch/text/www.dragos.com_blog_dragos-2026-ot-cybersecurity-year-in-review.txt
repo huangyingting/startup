@@ -1,0 +1,74 @@
+Text:
+We’re excited to announce the release of our 9th Annual OT Cybersecurity Year in Review report.
+
+Nine years ago, we identified a gap in the industrial community: operational technology (OT) asset owners lacked actionable insights on how adversaries execute attacks on industrial control systems (ICS) and what defenders need to do to stop them. Every year since, we’ve sha
+
+red the ground truth from Dragos Intelligence Fabric - the world’s largest dataset on OT security, combining first-party platform telemetry, incident response cases, professional services engagements, and adversary research.
+
+The 2026 Dragos OT Cybersecurity Report reveals a fundamental shift in the threat landscape: adversaries are moving beyond pre-positioning to actively mapping control loops and understanding how to manipulate physical processes. We introduce three new threat groups, analyze the expansion of KAMACITE and ELECTRUM operations into the United States and Europe, examine why ransomware incidents are being systematically misclassified, and address the visibility crisis preventing defenders from detecting threats before operational impact.
+
+Download the full report for detailed analysis, threat group profiles, and actionable defensive recommendations.
+
+Three New Threat Groups Targeting OT
+
+AZURITE explicitly targets engineering workstations, where operators change controller logic and interact with physical processes. AZURITE quickly implements publicly available proof-of-concept code into their operations, taking advantage of the lag time between POC availability and when organizations install patches. They exfiltrate alarm data, configuration files, and operational intelligence only useful for disrupting operations.
+
+PYROXENE conducts multi-year supply chain campaigns using social engineering against operational personnel. Fake LinkedIn profiles posing as recruiters to target people who work in operations. In June 2025, they deployed custom wiper malware against Israeli targets during regional conflict, demonstrating rapid activation of pre-positioned access.
+
+SYLVANITE operates as an initial access provider, rapidly weaponizing edge device vulnerabilities, exploiting systems before patches are widely applied, and handing off access to Stage 2 adversaries like VOLTZITE. Dragos directly observed this handoff, showing how specialized teams compress breach-to-impact timelines.
+
+Threat Group Updates: Experience Matters
+
+KAMACITE and ELECTRUM, responsible for Ukraine’s 2015 and 2016 power outages, are the most experienced infrastructure-disrupting adversaries in the world. In 2025, they expanded from Ukrainian operations back into Europe and the United States.
+
+KAMACITE conducted systematic reconnaissance of U.S. industrial devices between March-July 2025, mapping control loops by targeting operator interfaces (HMIs), actuators (VFDs), meters, and remote gateways together. In December 2025, ELECTRUM targeted Polish energy infrastructure in the first major coordinated attack against distributed energy resources like wind farms and solar installations at scale.
+
+VOLTZITE achieved Stage 2 capability by manipulating engineering workstations to dump configuration files and alarm data, investigating what triggers processes to stop. BAUXITE escalated from hacktivist defacements to deploying custom wipers during regional conflict.
+
+The Industrial Ransomware Threat: It’s an OT Problem
+
+Dragos tracked 119 ransomware groups impacting 3,300 industrial organizations in 2025, a 49 percent increase from 80 groups in 2024. Manufacturing accounted for more than two-thirds of victims. Dragos Incident Response observed significant operational disruption in all OT ransomware cases responded to in 2025.
+
+The actual number is likely to be far higher. Many incidents are mislabeled as “IT incidents” when Windows servers hosting SCADA software or engineering workstations are compromised. Ransomware groups target VMware ESXi hypervisors hosting OT applications. When virtualization infrastructure is encrypted, operators lose visibility and control even though physical equipment remains functional. Insurance data from confirms this misclassification represents tens of billions of dollars annually.
+
+“Now, Next, Never” Risk-Based Vulnerability Management
+
+Managing vulnerabilities in OT requires risk-based prioritization. In 2025, Dragos reported:
+
+3 percent of vulnerabilities required immediate action (“Now”)
+
+71 percent can be addressed with compensating controls or at next maintenance cycle (“Next”)
+
+27 percent don’t warrant remediation efforts (“Never”)
+
+Unlike IT vulnerability disclosures where major vendors typically release advisories with patches and accurate risk scoring, OT defenders receive incomplete or incorrect guidance. This leaves asset owners with no clear path to reduce risk when patching isn’t feasible.
+
+25 percent of advisories had no patch or mitigation
+
+52 percent required Dragos to provide alternative mitigations
+
+4 percent were actively exploited
+
+In multiple IR cases, Dragos reported actively exploited vulnerabilities to vendors and waited 90+ days for public disclosure while attacks continued elsewhere.
+
+Field Findings: Where Organizations Struggle
+
+Based on incident response cases, penetration tests, tabletop exercises, and assessments:
+
+Incident Response: 30 percent of IR cases began with unexplained operational issues—irregular events asset owners couldn’t diagnose. 82 percent of organizations lack clear criteria for when operational anomalies should trigger cyber investigations.
+
+Detection Capabilities: 88 percent of tabletop exercises revealed degraded detection capabilities. 56 percent of penetration tests successfully abused living-off-the-land tools without triggering alerts
+
+Architecture: 81 percent of assessments identified poor IT/OT segmentation. 73 percent of all-time IR cases involved compromised VPN or jumphost credentials.
+
+Visibility: Only 46 percent of assessments found adequate OT network monitoring deployed. Without real-time network telemetry, organizations cannot determine what happened during incidents—the critical data is transient and disappears once commands are sent.
+
+Looking for the latest OT/ICS threat intelligence?
+
+The 2026 OT Cybersecurity Year in Review provides threat intelligence, vulnerability analysis, and field findings to help you understand where adversaries are operating, where defenses are failing, and what to prioritize to detect threats before operational impact.
+
+Download the Full Report
+
+Nine years of ground truth. Nine years of sharing insights to empower defenders.
+
+Explore our Year in Review report archives: 2025 | 2024 | 2023 | 2022 | 2021 | 2020
