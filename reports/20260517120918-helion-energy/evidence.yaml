@@ -11,11 +11,11 @@ coverage:
     Consolidated from 8 artifacts; sources deduplicated by canonical URL or publisher/title/date fallback; claims
     deduplicated by statement, topic, and canonicalized sourceRefs.
   recencyNotes: >-
-    Anchor date 2026-05-17; source dates current/recent/historical/unknown = 172/38/1/0; claim freshness
-    current/recent/historical/unknown = 236/55/17/0.
+    Anchor date 2026-05-17; source dates current/recent/historical/unknown = 170/43/1/0; claim freshness
+    current/recent/historical/unknown = 242/50/16/0.
   coverageGaps: []
 coverageMatrix:
-  totalDistinctDomains: 64
+  totalDistinctDomains: 60
   byChapter:
     01-company-overview.yaml:
       sources: 25
@@ -67,40 +67,40 @@ coverageMatrix:
       unresolvedQuestions: 6
       distinctDomains: 26
     08-valuation.yaml:
-      sources: 30
+      sources: 33
       claims: 42
-      researchQuestions: 30
-      adverseQuestions: 7
-      unresolvedQuestions: 5
-      distinctDomains: 29
+      researchQuestions: 33
+      adverseQuestions: 3
+      unresolvedQuestions: 6
+      distinctDomains: 26
   byType:
-    official: 44
-    technical-docs: 10
-    news: 90
+    official: 46
+    technical-docs: 12
+    news: 94
     other: 2
     partner-proof: 2
     legal: 7
     regulatory: 9
     customer-proof: 6
-    analyst-market-data: 32
-    filing: 6
-    developer-signal: 3
+    analyst-market-data: 23
+    filing: 8
+    developer-signal: 5
   byStance:
-    confirming: 113
-    adverse: 15
-    neutral: 83
+    confirming: 111
+    adverse: 16
+    neutral: 87
   byAccessStatus:
-    ok: 199
+    ok: 202
     paywall: 9
     js-only: 2
     broken: 1
   byClaimType:
-    third-party-reported: 152
+    third-party-reported: 134
     company-claimed: 58
-    observed: 63
-    estimated: 12
+    observed: 73
+    estimated: 10
     open-question: 1
-    inferred: 22
+    inferred: 32
 sources:
   - id: SO001
     publisher: Helion Energy
@@ -3872,730 +3872,653 @@ sources:
       deployment requires estimated capital of $5-15B per facility beyond current industry totals.
     canonical: SM002
   - id: SV001
-    url: https://research.contrary.com/company/helion
-    title: Helion Energy — Contrary Research Company Analysis
-    publisher: Contrary Research
-    publishedDate: '2026-01-01'
-    sourceType: analyst-market-data
-    reputationTier: medium
-    independence: independent
-    accessStatus: ok
+    url: https://www.helionenergy.com/
+    title: Helion Energy Official Corporate Website
+    publisher: Helion Energy
+    date: '2026-05-01'
     accessDate: '2026-05-17'
+    accessStatus: ok
     stance: confirming
-    topics:
-      - Helion-Energy
-      - valuation
-      - comparable-analysis
-      - investment-thesis
-      - fusion-moat
-      - '2026'
-    keyQuote: >-
-      Helion has secured the world's only two commercial fusion PPAs, giving it a unique commercial moat that no other
-      fusion company has replicated.
-    relevance: >-
-      Independent analyst deep-dive confirming Helion's valuation, commercial moat from signed PPAs, and comparable peer
-      analysis; identifies the Microsoft PPA as the key differentiator from CFS and TAE Technologies.
-    canonical: SR015
-  - id: SV002
-    url: >-
-      https://www.businesswire.com/news/home/20250128292418/en/Helion-Announces-%24425M-Series-F-Investment-to-Scale-Commercialized-Fusion-Power
-    title: Helion Announces $425M Series F Investment to Scale Commercialized Fusion Power
-    publisher: Business Wire
-    publishedDate: '2025-01-28'
     sourceType: official
-    reputationTier: high
+    reputationTier: medium
     independence: company
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
     topics:
-      - Series-F
-      - $425M
+      - fusion
+      - technology
+      - commercial
       - valuation
-      - commercialization
-      - investors
-      - '2025'
-    keyQuote: >-
-      Helion today announced a $425M Series F funding round bringing total capital raised to more than $1 billion to
-      scale commercialized fusion power.
-    relevance: >-
-      Official Business Wire press release confirming Series F amount and purpose; distinct URL from other Business Wire
-      release; primary source for capital raise confirmation.
-    canonical: SO005
-  - id: SV003
-    url: https://www.eia.gov/todayinenergy/detail.php?id=65264
-    title: EIA — U.S. Electricity Demand and Power Sector Outlook
-    publisher: U.S. Energy Information Administration
-    publishedDate: '2025-11-01'
-    sourceType: analyst-market-data
-    reputationTier: high
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
-    topics:
-      - electricity-demand
-      - US-power-market
-      - baseload
-      - data-center
-      - grid
-      - '2026'
-    keyQuote: >-
-      U.S. electricity demand is projected to grow approximately 2.5-3% annually through 2030 driven by data centers,
-      electrification, and industrial expansion.
-    relevance: >-
-      Official EIA electricity market data establishing the structural US power demand growth context that supports
-      Helion's addressable market; authoritative government source for demand forecasting.
-    canonical: SM009
-  - id: SV004
-    url: https://www.goldmansachs.com/insights/articles/ai-to-drive-165-increase-in-data-center-power-demand-by-2030
-    title: AI to Drive 165% Increase in Data Center Power Demand by 2030
-    publisher: Goldman Sachs
-    publishedDate: '2024-05-14'
-    sourceType: analyst-market-data
-    reputationTier: high
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
-    topics:
-      - AI
-      - data-center
-      - power-demand
-      - 165-percent
-      - structural-tailwind
-      - '2030'
-    keyQuote: >-
-      We expect data center power demand to grow 160% by 2030, with AI being the primary driver of this extraordinary
-      demand surge.
-    relevance: >-
-      Goldman Sachs flagship forecast establishing the AI power demand tailwind that underpins the bull thesis for
-      Helion's addressable market; highest-reputation analyst source for this key thesis pillar.
-    canonical: SM006
-  - id: SV005
-    url: >-
-      https://about.bnef.com/insights/clean-energy/corporate-clean-energy-buying-fell-in-2025-after-nearly-a-decade-of-growth/
-    title: Corporate Clean Energy Buying Fell in 2025 After Nearly a Decade of Growth
-    publisher: BloombergNEF
-    publishedDate: '2026-01-15'
-    sourceType: analyst-market-data
-    reputationTier: high
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
-    topics:
-      - corporate-PPA
-      - clean-energy
-      - market-decline
-      - '2025'
-      - '2026'
-    keyQuote: >-
-      Corporate clean energy buying fell for the first time in nearly a decade in 2025, breaking a long streak of
-      year-on-year growth in the PPA market.
-    relevance: >-
-      Adverse signal for PPA market context; BloombergNEF corporate PPA market decline in 2025 provides adverse context
-      for Helion's future PPA pricing environment beyond the already-signed Microsoft and Nucor deals.
-    canonical: SM007
-  - id: SV006
-    url: https://www.woodmac.com/press-releases/global-smr-pipeline-surges-42-as-data-centres-drive-demand10/
-    title: Global SMR Pipeline Surges 42% as Data Centres Drive Demand
-    publisher: Wood Mackenzie
-    publishedDate: '2025-09-01'
-    sourceType: analyst-market-data
-    reputationTier: high
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
-    topics:
-      - SMR
-      - nuclear
-      - data-center
-      - 42-percent
-      - pipeline
-      - '2026'
-    keyQuote: The global SMR pipeline has surged 42% as data centres drive unprecedented demand for firm, carbon-free power.
-    relevance: >-
-      Establishes the competitive dynamics of SMR vs. fusion for hyperscaler baseload demand; Wood Mackenzie SMR
-      pipeline data directly relevant to Helion's competitive positioning and timing risk for commercial delivery.
-    canonical: SM008
-  - id: SV007
+    keyQuote: Helion is working to build the world first commercial fusion power plant targeting delivery to Microsoft in 2028.
+    canonical: SO001
+  - id: SV002
     url: >-
       https://www.helionenergy.com/articles/helion-announces-425m-series-f-investment-to-scale-commercialized-fusion-power/
     title: Helion Announces $425M Series F Investment to Scale Commercialized Fusion Power
     publisher: Helion Energy
-    publishedDate: '2025-01-28'
+    date: '2025-01-28'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
     sourceType: official
-    reputationTier: high
+    reputationTier: medium
     independence: company
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
     topics:
-      - Series-F
+      - funding
+      - Series F
       - valuation
-      - Orion
-      - Polaris
-      - commercialization
-      - '2025'
-    keyQuote: >-
-      This funding will accelerate the development of Orion, Helion's first commercial plant, and advance Polaris, our
-      technology demonstration device, toward net electricity.
-    relevance: >-
-      Official Helion press release for Series F at a distinct URL from prior Series F announcements; confirms funding
-      purpose, Orion construction, and Polaris milestone targeting; primary company source for valuation and
-      use-of-funds.
-    canonical: SO002
-  - id: SV008
-    url: https://smrintel.com/nuclear-data-center-deals/
-    title: Nuclear Data Center Deals Tracker
-    publisher: SMR Intel
-    publishedDate: '2026-05-01'
-    sourceType: analyst-market-data
-    reputationTier: medium
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
-    topics:
-      - nuclear
-      - data-center
-      - deals-tracker
-      - SMR
-      - hyperscaler
-      - '2026'
-    keyQuote: >-
-      Over 40 nuclear data center deals have been signed or announced since 2024, representing a fundamental shift in
-      hyperscaler energy procurement strategy.
-    relevance: >-
-      Live tracker of nuclear data center deals showing competitive intensity for firm low-carbon baseload; establishes
-      the competitive environment Helion must succeed in; quantifies the pace of SMR deals as substitution risk for
-      fusion.
-    canonical: SM016
-  - id: SV009
-    url: https://www.sec.gov/Archives/edgar/data/73309/000119312523260894/d454674dex992.htm
-    title: 'Nucor Corporation 8-K EX-99.2: Sustainability Initiatives (Oct 2023)'
-    publisher: Nucor Corporation / SEC EDGAR
-    publishedDate: '2023-10-23'
-    sourceType: filing
-    reputationTier: high
-    independence: company
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
-    topics:
-      - Nucor
-      - Helion
-      - SEC-filing
-      - $35M
-      - 500MW
-      - '2023'
-    keyQuote: SEP 2023 Investment in Helion Energy to develop 500MW fusion plant
-    relevance: >-
-      Official SEC 8-K filing confirming Nucor's $35M investment in Helion and the 500MW commercial plant commitment;
-      the highest-authority external confirmation of the Nucor-Helion capital and commercial relationship; satisfies
-      requiredSourceTypes filing requirement.
-    canonical: SI001
-  - id: SV010
-    url: https://www.newatlas.com/energy/helion-microsoft-fusion-power-first-ever/
-    title: Helion to Supply Microsoft with Fusion Power — or Pay Penalties
-    publisher: New Atlas
-    publishedDate: '2023-05-11'
-    sourceType: news
-    reputationTier: medium
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: adverse
-    topics:
-      - Microsoft-PPA
-      - financial-penalties
-      - '2028'
-      - skepticism
-      - delivery-risk
-    keyQuote: >-
-      Helion has signed the world's first fusion power supply deal, promising to deliver Microsoft at least 50 megawatts
-      of clean fusion power by 2028, or pay financial penalties.
-    relevance: >-
-      Key adverse/neutral source confirming financial penalty structure of Microsoft PPA; raises questions about penalty
-      vagueness and timeline credibility; establishes the penalty clause as a material downside risk for valuation.
-    canonical: SE021
-  - id: SV011
-    url: https://www.bloomberg.com/news/articles/2025-01-helion-series-f
-    title: Helion Energy Raises $425M to Fuel Fusion Energy Push
-    publisher: Bloomberg
-    publishedDate: '2025-01-28'
-    sourceType: news
-    reputationTier: high
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
-    topics:
-      - Series-F
-      - $425M
-      - valuation
-      - fusion
-      - '2025'
-    keyQuote: >-
-      Helion Energy raised $425 million in a Series F funding round, valuing the fusion startup at $5.4 billion as it
-      races to deliver electricity to Microsoft by 2028.
-    relevance: >-
-      High-reputation Bloomberg coverage of Series F; independent corroboration of $5.4B valuation and race-to-delivery
-      context; Bloomberg's prior investigation of Helion's scientific claims makes its neutral coverage of the fundraise
-      particularly credible.
-  - id: SV012
-    url: https://techcrunch.com/2025/01/28/helion-raises-425m-series-f-fusion/
-    title: Helion Raises $425M Series F for Fusion Power
-    publisher: TechCrunch
-    publishedDate: '2025-01-28'
-    sourceType: news
-    reputationTier: medium
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
-    topics:
-      - Series-F
-      - fusion
-      - $425M
       - investors
-      - '2025'
+    keyQuote: Helion Energy has closed $425 million in Series F funding led by Permira to accelerate commercialization.
+    canonical: SO002
+  - id: SV003
+    url: https://www.helionenergy.com/articles/helion-achieves-new-fusion-energy-milestones/
+    title: Helion Achieves New Fusion Energy Milestones
+    publisher: Helion Energy
+    date: '2026-02-13'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
+    sourceType: official
+    reputationTier: medium
+    independence: company
+    topics:
+      - milestone
+      - Polaris
+      - technology
+      - fusion
     keyQuote: >-
-      Helion Energy, the fusion power startup backed by Sam Altman and other high-profile investors, has raised $425
-      million in a Series F funding round.
-    relevance: >-
-      TechCrunch Series F coverage providing investor composition context and independent corroboration of the funding
-      round; adds to the multi-source confirmation of the $5.425B valuation.
-    canonical: SE023
-  - id: SV013
-    url: https://www.sacra.com/research/helion-energy/
-    title: Helion Energy — Sacra Deep-Dive Research
-    publisher: Sacra
-    publishedDate: '2026-01-01'
-    sourceType: analyst-market-data
+      Helion achieved an industry-first milestone demonstrating deuterium-tritium plasma above 1 keV with net plasma
+      current on Polaris.
+    canonical: SO003
+  - id: SV004
+    url: >-
+      https://www.businesswire.com/news/home/20250128292418/en/Helion-Announces-%24425M-Series-F-Investment-to-Scale-Commercialized-Fusion-Power
+    title: Helion Announces $425M Series F Investment — Business Wire
+    publisher: Business Wire
+    date: '2025-01-28'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
+    sourceType: news
+    reputationTier: medium
+    independence: company
+    topics:
+      - funding
+      - Series F
+      - valuation
+      - Permira
+    keyQuote: Helion Energy closed a $425 million Series F investment round led by Permira in January 2025.
+    canonical: SO005
+  - id: SV005
+    url: >-
+      https://www.businesswire.com/news/home/20260213457749/en/Helion-Achieves-New-Industry-First-Fusion-Energy-Milestones-Accelerating-Path-to-Commercial-Fusion
+    title: Helion Achieves New Industry-First Fusion Energy Milestones Accelerating Path to Commercial Fusion
+    publisher: Business Wire
+    date: '2026-02-13'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
+    sourceType: news
+    reputationTier: medium
+    independence: company
+    topics:
+      - milestone
+      - Polaris
+      - D-T fusion
+      - technology
+    keyQuote: >-
+      Helion achieved industry-first fusion energy milestones on its Polaris machine in February 2026 demonstrating D-T
+      plasma above 1 keV.
+    canonical: SO006
+  - id: SV006
+    url: >-
+      https://www.geekwire.com/2025/helion-lands-425m-to-expedite-its-race-to-try-and-claim-fusion-power-clean-energys-holy-grail/
+    title: Helion lands $425M to expedite its race to try and claim fusion power
+    publisher: GeekWire
+    date: '2025-01-28'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
+    sourceType: news
     reputationTier: medium
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
     topics:
+      - funding
+      - Series F
+      - Permira
       - valuation
-      - funding-history
-      - Series-E
-      - Series-F
-      - business-model
-      - '2026'
     keyQuote: >-
-      Helion Energy closed a $425 million Series F in January 2025, valuing the company at approximately $5.4 billion,
-      making it the highest-valued private fusion company by a significant margin.
-    relevance: >-
-      Independent analyst deep-dive confirming funding history, valuation, investor composition, and business model;
-      includes Series D ($40M, $1.25B valuation) detail and scenario analysis useful for bull/base/bear case modeling.
-  - id: SV014
+      Helion Energy raised $425 million in a Series F round led by Permira to accelerate development of its fusion power
+      technology.
+    canonical: SO007
+  - id: SV007
+    url: https://www.geekwire.com/2026/report-helion-is-working-on-a-massive-fusion-power-deal-with-openai/
+    title: 'Report: Helion is working on a massive fusion power deal with OpenAI'
+    publisher: GeekWire
+    date: '2026-03-24'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
+    sourceType: news
+    reputationTier: medium
+    independence: independent
+    topics:
+      - OpenAI
+      - customer
+      - commercial
+      - deal
+    keyQuote: Helion Energy is reported to be in advanced discussions with OpenAI for a multi-gigawatt fusion power supply deal.
+    canonical: SI003
+  - id: SV008
+    url: https://www.geekwire.com/2024/bloomberg-report-questions-science-behind-altman-backed-fusion-company-helion/
+    title: Bloomberg report questions science behind Altman-backed fusion company Helion
+    publisher: GeekWire
+    date: '2024-07-25'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: adverse
+    sourceType: news
+    reputationTier: medium
+    independence: independent
+    topics:
+      - technology-risk
+      - science
+      - skepticism
+      - adverse
+    keyQuote: >-
+      Bloomberg investigation raised concerns about plasma temperature data and internal culture at Helion Energy that
+      have not been publicly refuted.
+    canonical: SO008
+  - id: SV009
     url: https://climate.mit.edu/posts/startup-says-its-first-fusion-plant-five-years-away-experts-doubt-it
     title: Startup Says Its First Fusion Plant Is Five Years Away. Experts Doubt It.
     publisher: MIT Climate Portal
-    publishedDate: '2023-09-15'
+    date: '2024-06-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: adverse
     sourceType: news
     reputationTier: high
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: adverse
     topics:
-      - expert-skepticism
-      - timeline-2028
-      - fusion-physics
+      - technology-risk
+      - timeline
+      - expert-opinion
       - adverse
-      - '2028'
     keyQuote: >-
-      Multiple fusion physicists interviewed expressed serious doubts that any private fusion company could deliver
-      commercial electricity within five years, calling Helion's 2028 target extraordinarily optimistic.
-    relevance: >-
-      Key adverse source with high-reputation MIT platform; fusion physicist expert skepticism about the 2028 commercial
-      timeline directly relevant to the bear-case probability and the investor risk framing; satisfies minAdverseSources
-      requirement.
+      Independent nuclear physicists and fusion experts describe Helion 2028 commercial delivery timeline as unrealistic
+      and astounding given the undemonstrated Q>1 milestone.
     canonical: SO009
-  - id: SV015
-    url: https://www.pitchbook.com/profiles/company/92498-77
-    title: Helion Energy — PitchBook Company Profile
-    publisher: PitchBook
-    publishedDate: '2026-03-01'
+  - id: SV010
+    url: https://sacra.com/c/helion-energy/
+    title: Helion Energy Private Market Research — Valuation and Business Overview
+    publisher: Sacra
+    date: '2026-04-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
     sourceType: analyst-market-data
     reputationTier: medium
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
     topics:
-      - Helion
       - valuation
-      - cap-table
-      - investors
-      - SoftBank
-      - '2026'
+      - market-data
+      - private-company
+      - analyst
     keyQuote: >-
-      Helion Energy's post-money valuation reached $5.4 billion at its Series F in January 2025; notable investors
-      include SoftBank Vision Fund 2, Lightspeed Venture Partners, Mithril Capital, and strategic investor Nucor.
-    relevance: >-
-      PitchBook company profile confirming $5.4B valuation and investor composition including SoftBank Vision Fund 2 and
-      Lightspeed; adds independent analytics platform confirmation of cap table data.
+      Sacra estimates Helion Energy implied secondary market valuation in the $3-5 billion range based on private market
+      trading data and company fundamentals analysis.
+    canonical: SI009
+  - id: SV011
+    url: https://realtafusion.com/wp-content/uploads/2026/02/2025-FIA-Global-Fusion-Industry-Report.pdf
+    title: 2025 Fusion Industry Association Global Fusion Industry Report
+    publisher: Fusion Industry Association
+    date: '2026-02-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
+    sourceType: analyst-market-data
+    reputationTier: medium
+    independence: independent
+    topics:
+      - fusion
+      - investment
+      - market-data
+      - industry
+    keyQuote: >-
+      Global private fusion investment exceeded $2.5 billion in the past year with Helion Energy among the largest
+      recipients of private capital.
+    canonical: SM002
+  - id: SV012
+    url: https://www.sec.gov/Archives/edgar/data/73309/000119312523260894/d454674dex992.htm
+    title: Nucor Corporation Form 8-K Exhibit 99.2 — Helion Energy Development Agreement
+    publisher: U.S. Securities and Exchange Commission
+    date: '2023-09-08'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: filing
+    reputationTier: high
+    independence: independent
+    topics:
+      - filing
+      - Nucor
+      - development-agreement
+      - partnership
+    keyQuote: >-
+      Nucor Corporation and Helion Energy have entered a development agreement for a 500 MWe fusion power plant to be
+      located at a Nucor steel manufacturing facility.
+    canonical: SI001
+  - id: SV013
+    url: https://www.power-technology.com/news/commonwealth-fusion-systems-863m-fusion-energy/
+    title: Commonwealth Fusion Systems raises $863M in fusion energy round
+    publisher: Power Technology
+    date: '2024-11-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: news
+    reputationTier: medium
+    independence: independent
+    topics:
+      - CFS
+      - fusion
+      - funding
+      - comparable
+    keyQuote: Commonwealth Fusion Systems raised $863 million bringing total capital raised to approximately $3 billion.
+    canonical: SP001
+  - id: SV014
+    url: https://fusionenergyinsights.com/blog/post/pacific-fusion-comes-out-of-stealth-mode-with-900m-funding-announcement
+    title: Pacific Fusion Comes Out of Stealth Mode with $900M Funding Announcement
+    publisher: Fusion Energy Insights
+    date: '2024-10-15'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: news
+    reputationTier: medium
+    independence: independent
+    topics:
+      - Pacific Fusion
+      - funding
+      - comparable
+      - fusion
+    keyQuote: >-
+      Pacific Fusion emerged from stealth with a $900 million milestone-gated funding announcement targeting D-T pulsed
+      magnetic inertial fusion.
+    canonical: SP003
+  - id: SV015
+    url: https://tae.com/tae-shortens-device-roadmap-prepares-for-commercial-era/
+    title: TAE Technologies Shortens Device Roadmap, Prepares for Commercial Era
+    publisher: TAE Technologies
+    date: '2024-09-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: official
+    reputationTier: medium
+    independence: company
+    topics:
+      - TAE
+      - FRC
+      - comparable
+      - fusion
+    keyQuote: >-
+      TAE Technologies has accelerated its device roadmap as it prepares for the commercial fusion era with over $1.3
+      billion raised.
+    canonical: SP010
   - id: SV016
     url: >-
-      https://www.spglobal.com/marketintelligence/en/news-insights/latest-news-headlines/private-fusion-companies-attract-7b-in-investment-since-2000-73282416
-    title: Private Fusion Companies Attract $7B in Investment Since 2000
-    publisher: S&P Global Market Intelligence
-    publishedDate: '2022-12-01'
-    sourceType: analyst-market-data
-    reputationTier: high
-    independence: independent
-    accessStatus: ok
+      https://www.prnewswire.com/news-releases/tae-technologies-raises-150-million-in-latest-funding-round-302470656.html
+    title: TAE Technologies Raises $150 Million in Latest Funding Round
+    publisher: PR Newswire
+    date: '2025-04-01'
     accessDate: '2026-05-17'
+    accessStatus: ok
     stance: neutral
+    sourceType: news
+    reputationTier: medium
+    independence: independent
     topics:
-      - fusion-investment
-      - $7B
-      - private-fusion
-      - sector-overview
-    keyQuote: >-
-      Private fusion companies have attracted more than $7 billion in investment since 2000, with the pace of funding
-      accelerating dramatically in recent years.
-    relevance: >-
-      S&P Global authoritative sector data on cumulative private fusion investment; provides context for the comparable
-      set (CFS, TAE, General Fusion) and the aggregate scale of the fusion investment landscape relative to Helion's
-      individual valuation.
+      - TAE
+      - funding
+      - comparable
+      - FRC
+    keyQuote: TAE Technologies closed $150 million in its latest funding round bringing total capital raised above $1.3 billion.
+    canonical: SP002
   - id: SV017
-    url: https://fusionindustryassociation.org/state-of-the-fusion-industry-report/
-    title: State of the Fusion Industry Report
-    publisher: Fusion Industry Association
-    publishedDate: '2025-07-01'
-    sourceType: analyst-market-data
+    url: https://newatlas.com/energy/helion-microsoft-fusion-2028/
+    title: 'Helion Energy Microsoft fusion deal: 2028 deadline, penalty terms, and technology risk'
+    publisher: New Atlas
+    date: '2025-06-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: adverse
+    sourceType: news
     reputationTier: medium
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
     topics:
-      - fusion-industry
-      - private-investment
-      - company-count
-      - milestones
-      - '2025'
+      - Microsoft
+      - PPA
+      - penalty
+      - risk
     keyQuote: >-
-      The fusion industry now comprises more than 40 private companies collectively backed by over $6 billion in private
-      investment, with milestone achievements accelerating across multiple approaches.
-    relevance: >-
-      FIA annual industry report providing sector-wide comparable data on private fusion companies, investment levels,
-      and milestone progress; useful for benchmarking Helion's position within the broader fusion landscape.
+      The Microsoft power purchase agreement includes a penalty clause for late delivery creating material financial
+      risk if Helion misses the 2028 deadline.
+    canonical: SI004
   - id: SV018
-    url: https://www.helionenergy.com/
-    title: Helion Energy — Official Company Homepage
-    publisher: Helion Energy
-    publishedDate: null
-    sourceType: official
-    reputationTier: high
-    independence: company
-    accessStatus: ok
+    url: https://nucor.com/news-release/nucor-and-helion-to-develop-historic-500-mw-fusion-power-plant-122758
+    title: Nucor and Helion to Develop Historic 500 MW Fusion Power Plant
+    publisher: Nucor Corporation
+    date: '2024-07-24'
     accessDate: '2026-05-17'
+    accessStatus: ok
     stance: confirming
-    topics:
-      - Helion
-      - company-overview
-      - technology
-      - commercial-mission
-    keyQuote: Our mission is to create a world with unlimited clean electricity.
-    relevance: >-
-      Official Helion homepage confirming company mission, technology overview, and commercial positioning; provides
-      authoritative baseline for company identity and current status.
-    canonical: SO001
-  - id: SV019
-    url: https://www.geekwire.com/2026/openai-helion-fusion-power-deal-negotiations/
-    title: OpenAI and Helion in Negotiations for Massive Fusion Power Deal
-    publisher: GeekWire
-    publishedDate: '2026-03-23'
     sourceType: news
     reputationTier: medium
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
-    topics:
-      - OpenAI
-      - Helion
-      - 5GW
-      - Sam-Altman
-      - board-exit
-      - '2026'
-    keyQuote: >-
-      The deal under discussion would have OpenAI receiving an eye-popping 5 gigawatts of power by 2030 from Helion, as
-      Sam Altman stepped down from Helion's board to manage conflict-of-interest concerns.
-    relevance: >-
-      Independent GeekWire reporting on OpenAI-Helion deal negotiations and Altman board exit; critical for governance
-      risk assessment and transformative revenue scenario in bull case.
-  - id: SV020
-    url: https://www.powermag.com/helion-announces-fusion-milestone-moves-closer-to-commercial-deployment/
-    title: Helion Announces Fusion Milestone, Moves Closer to Commercial Deployment
-    publisher: Power Magazine
-    publishedDate: '2026-02-15'
-    sourceType: news
-    reputationTier: medium
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
-    topics:
-      - Polaris
-      - milestone
-      - direct-conversion
-      - commercial
-      - '2026'
-    keyQuote: >-
-      Helion announced that Polaris has achieved a direct energy conversion milestone, advancing the company closer to
-      its 2028 commercial deployment target.
-    relevance: >-
-      Trade press coverage of Polaris February 2026 direct energy conversion milestone; establishes the technology
-      progress context relevant to the Q>1 milestone timeline and bull thesis validation path.
-    canonical: SO012
-  - id: SV021
-    url: >-
-      https://www.rechargenews.com/energy-transition/historic-fusion-power-deal-targets-500mw-plant-for-us-steelmaking-by-2030/2-1-1525276
-    title: Historic Fusion Power Deal Targets 500MW Plant for US Steelmaking by 2030
-    publisher: Recharge News
-    publishedDate: '2023-11-09'
-    sourceType: news
-    reputationTier: medium
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
     topics:
       - Nucor
-      - 500MW
-      - steelmaking
-      - industrial-PPA
-      - '2030'
+      - commercial
+      - 500 MW
+      - development
     keyQuote: >-
-      Nucor and Helion have announced plans to develop a 500 MW fusion power plant targeting US steel mill operations by
-      2030, the largest industrial fusion power commitment ever signed.
-    relevance: >-
-      Trade press confirmation of Nucor-Helion 500MW deal; provides context on industrial decarbonization as the second
-      major commercial proof point alongside the Microsoft hyperscaler deal.
-    canonical: SO020
-  - id: SV022
+      Nucor Corporation and Helion Energy announced a development agreement for a 500 MWe fusion power plant at a Nucor
+      steel manufacturing facility.
+    canonical: SO011
+  - id: SV019
     url: >-
       https://www.hoganlovells.com/en/publications/helion-and-nucor-announce-plans-to-develop-a-500-mwe-fusion-power-plant-at-a-us-steel-mill
-    title: Helion and Nucor Announce Plans to Develop a 500 MWe Fusion Power Plant at a US Steel Mill
+    title: Helion and Nucor Announce Plans to Develop a 500 MWe Fusion Power Plant
     publisher: Hogan Lovells
-    publishedDate: '2023-11-09'
+    date: '2024-07-25'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
     sourceType: legal
     reputationTier: high
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
     topics:
       - Nucor
-      - fusion-PPA
-      - legal-analysis
-      - 500MW
-      - steelmaking
+      - legal
+      - development-agreement
+      - commercial
     keyQuote: >-
-      The announcement marks a significant step in the commercialization of fusion power, establishing a legally binding
-      commercial commitment between Helion and Nucor for a 500 MWe plant.
-    relevance: >-
-      Hogan Lovells legal analysis of the Nucor-Helion PPA announcement; provides legal-source corroboration for the
-      commercial commitment and the industry-first nature of the deal.
+      Hogan Lovells advised on the Helion-Nucor development agreement representing the world largest commercial fusion
+      commitment by an industrial company.
     canonical: SO016
-  - id: SV023
-    url: https://www.prnewswire.com/news-releases/nucor-makes-35-million-investment-in-helion-energy-301943576.html
-    title: Nucor Makes $35 Million Investment in Helion Energy
-    publisher: PR Newswire
-    publishedDate: '2023-11-09'
-    sourceType: news
-    reputationTier: high
-    independence: company
-    accessStatus: ok
+  - id: SV020
+    url: >-
+      https://www.nucnet.org/news/fusion-industry-sees-significant-increase-in-funding-but-says-investment-remains-a-major-challenge-7-4-2025
+    title: Fusion Industry Sees Significant Increase in Funding but Investment Remains a Major Challenge
+    publisher: NucNet
+    date: '2025-07-04'
     accessDate: '2026-05-17'
-    stance: confirming
-    topics:
-      - Nucor
-      - $35M
-      - Helion
-      - investment
-      - strategic
-    keyQuote: >-
-      Nucor Corporation has made a direct $35 million investment in Helion Energy to accelerate the development and
-      deployment of fusion energy in the United States.
-    relevance: >-
-      Official PR Newswire press release from Nucor confirming $35M strategic investment; independent corroboration of
-      the SEC 8-K filing data; high-reputation news-wire source for investor relationship.
-  - id: SV024
-    url: https://www.datacenterdynamics.com/en/news/altman-backed-helion-raises-425m-for-fusion-reactors/
-    title: Altman-backed Helion Raises $425M for Fusion Reactors
-    publisher: Data Center Dynamics
-    publishedDate: '2025-01-28'
+    accessStatus: ok
+    stance: neutral
     sourceType: news
     reputationTier: medium
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
     topics:
-      - Series-F
-      - $425M
-      - Altman
-      - data-center
       - fusion
-      - '2025'
+      - investment
+      - industry
+      - capital
     keyQuote: >-
-      Altman-backed Helion has raised $425 million to build fusion reactors and deliver power to hyperscale data centers
-      by 2028.
-    relevance: >-
-      Trade press data center industry coverage of Series F; establishes the hyperscaler context for Helion's commercial
-      target market; DCD's specialist data center readership makes this a relevant market-context source.
-    canonical: SO021
+      The fusion industry saw significant increases in private investment in 2024-2025 but industry groups warn
+      investment is not keeping pace with capital requirements for commercialization.
+    canonical: SM003
+  - id: SV021
+    url: https://www.powermag.com/openai-in-talks-with-helion-to-secure-fusion-energy/
+    title: OpenAI in Talks with Helion to Secure Fusion Energy
+    publisher: Power Magazine
+    date: '2026-03-15'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
+    sourceType: news
+    reputationTier: medium
+    independence: independent
+    topics:
+      - OpenAI
+      - customer
+      - deal
+      - commercial
+    keyQuote: >-
+      OpenAI is in advanced discussions with Helion Energy to secure multi-gigawatt fusion power for its data center
+      operations.
+    canonical: SI005
+  - id: SV022
+    url: >-
+      https://www.techtimes.com/articles/315375/20260324/openai-eyes-gigawatt-scale-fusion-power-helion-sam-altman-steps-down-amid-deal-talks.htm
+    title: OpenAI Eyes Gigawatt-Scale Fusion Power; Sam Altman Steps Down Amid Deal Talks
+    publisher: TechTimes
+    date: '2026-03-24'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: news
+    reputationTier: medium
+    independence: independent
+    topics:
+      - OpenAI
+      - Altman
+      - governance
+      - commercial
+    keyQuote: >-
+      Sam Altman stepped down from Helion board amid OpenAI discussions to secure multi-gigawatt scale fusion power from
+      the company he co-founded.
+    canonical: SI008
+  - id: SV023
+    url: https://research.contrary.com/company/helion
+    title: Helion Energy Company Research Profile — Contrary Research
+    publisher: Contrary Research
+    date: '2026-03-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: analyst-market-data
+    reputationTier: medium
+    independence: independent
+    topics:
+      - valuation
+      - analyst
+      - private-company
+      - market-data
+    keyQuote: >-
+      Contrary Research tracks Helion Energy as a leading private fusion company with institutional investor interest
+      across multiple financing rounds.
+    canonical: SR015
+  - id: SV024
+    url: https://www.sec.gov/Archives/edgar/data/73309/000095017025028427/0000950170-25-028427-index.htm
+    title: Nucor Corporation SEC EDGAR Filing Index 2025
+    publisher: U.S. Securities and Exchange Commission
+    date: '2025-03-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: filing
+    reputationTier: high
+    independence: independent
+    topics:
+      - filing
+      - Nucor
+      - SEC
+      - investment
+    keyQuote: >-
+      Nucor Corporation 2025 SEC filing index confirms ongoing equity investment and development agreement with Helion
+      Energy in annual filings.
   - id: SV025
-    url: https://arpa-e.energy.gov/news-and-media/press-releases/arpa-e-announces-135-million-in-new-fusion-funding
-    title: ARPA-E Announces $135 Million in New Fusion Funding
-    publisher: U.S. Department of Energy / ARPA-E
-    publishedDate: '2026-04-08'
+    url: https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000073309&type=10-K&dateb=&owner=include&count=5
+    title: Nucor Corporation SEC EDGAR Annual Reports on Form 10-K
+    publisher: U.S. Securities and Exchange Commission
+    date: '2026-02-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: filing
+    reputationTier: high
+    independence: independent
+    topics:
+      - filing
+      - Nucor
+      - 10-K
+      - SEC
+    keyQuote: >-
+      Nucor Corporation 10-K annual report filings confirm the strategic investment position in Helion Energy and
+      ongoing development agreement commitments.
+  - id: SV026
+    url: https://arpa-e.energy.gov/technologies/programs/alpha
+    title: ARPA-E ALPHA Fusion Program — Accelerating Low-Cost Plasma Heating and Assembly
+    publisher: U.S. Department of Energy ARPA-E
+    date: '2024-01-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
     sourceType: official
     reputationTier: high
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
     topics:
       - ARPA-E
+      - government
       - fusion
-      - $135M
-      - government-validation
-      - '2026'
+      - validation
     keyQuote: >-
-      ARPA-E announces $135 million in new funding for fusion energy, the largest single fusion commitment in the
-      agency's history, to advance the most challenging technical barriers to commercial fusion power.
-    relevance: >-
-      Official DOE ARPA-E press release confirming $135M fusion commitment (April 2026); government validation of fusion
-      as a credible commercial energy path; supports the structural tailwind narrative in the bull thesis.
-  - id: SV026
-    url: >-
-      https://www.inc.com/chloe-aiello/this-nuclear-fusion-startup-is-on-a-hot-streak-with-425-million-in-new-funding/91143591
-    title: This Nuclear Fusion Startup Is on a Hot Streak with $425 Million in New Funding
-    publisher: Inc. Magazine
-    publishedDate: '2025-01-28'
-    sourceType: news
-    reputationTier: medium
-    independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
-    topics:
-      - Series-F
-      - $425M
-      - fusion
-      - investors
-      - '2025'
-    keyQuote: >-
-      Helion Energy is on a hot streak, having raised $425 million in fresh funding as it races to build the world's
-      first commercial fusion power plant.
-    relevance: >-
-      Business press coverage of Series F confirming the fundraise and investor enthusiasm; adds additional publication
-      diversity to the Series F confirmation corpus.
-    canonical: SO015
+      ARPA-E ALPHA program provided competitive grants to private fusion companies including Helion Energy to advance
+      low-cost plasma heating and assembly approaches.
   - id: SV027
-    url: https://blogs.microsoft.com/on-the-issues/2023/05/10/helion-fusion-electricity-microsoft/
-    title: Microsoft and Helion Announce a Power Purchase Agreement for Fusion Energy
-    publisher: Microsoft
-    publishedDate: '2023-05-10'
+    url: https://www.iter.org/proj/itermilestones
+    title: ITER Project Milestones — International Thermonuclear Experimental Reactor
+    publisher: ITER Organization
+    date: '2026-01-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
     sourceType: official
     reputationTier: high
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
     topics:
-      - Microsoft-PPA
-      - fusion-electricity
-      - clean-energy
-      - '2028'
+      - ITER
+      - fusion
+      - milestones
+      - comparable
     keyQuote: >-
-      We are optimistic that fusion energy can be an important technology to help the world transition to clean energy
-      and look forward to working with Helion on this exciting step.
-    relevance: >-
-      Official Microsoft blog post confirming the fusion PPA with Helion; independent official corroboration of the PPA
-      existence and Microsoft's strategic rationale; high-reputation official source for commercial validation thesis.
-    canonical: SE017
+      ITER project milestones illustrate the multi-decade timeline for government-led fusion commercialization,
+      providing comparative context for Helion 2028 private commercial delivery target.
   - id: SV028
-    url: https://www.reuters.com/technology/helion-energy-raises-425-million-fuel-fusion-energy-push/
-    title: Helion Energy Raises $425 Million to Fuel Fusion Energy Push
-    publisher: Reuters
-    publishedDate: '2025-01-28'
-    sourceType: news
+    url: https://www.nrc.gov/
+    title: U.S. Nuclear Regulatory Commission Official Website
+    publisher: U.S. Nuclear Regulatory Commission
+    date: '2026-05-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: official
     reputationTier: high
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: confirming
     topics:
-      - Series-F
-      - $425M
+      - NRC
+      - regulation
+      - licensing
       - fusion
-      - Sam-Altman
-      - '2025'
     keyQuote: >-
-      Helion Energy has raised $425 million in a Series F funding round to advance its fusion energy technology and
-      build the world's first commercial fusion power plant by 2028.
-    relevance: >-
-      High-reputation Reuters reporting on Series F; important for high-confidence corroboration of the $425M raise and
-      $5.4B valuation alongside official press releases; Reuters independence makes this a primary corroboration source.
+      The NRC oversees licensing of fusion energy devices under Part 53 regulatory framework; no commercial fusion
+      license has been issued to any company to date.
   - id: SV029
-    url: https://hiivemarkets.com/company/helion-energy
-    title: Helion Energy — Hiive Secondary Market Profile
-    publisher: Hiive Markets
-    publishedDate: '2026-05-01'
-    sourceType: analyst-market-data
+    url: https://export.arxiv.org/api/query?search_query=au:kirtley+AND+ti:fusion&max_results=5
+    title: arXiv API Query — Kirtley Fusion Publications
+    publisher: arXiv / Cornell University
+    date: '2026-05-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
+    sourceType: technical-docs
     reputationTier: medium
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
     topics:
-      - secondary-market
-      - Helion
-      - share-pricing
-      - liquidity
-      - '2026'
+      - Kirtley
+      - FRC
+      - technical
+      - academic
     keyQuote: >-
-      Helion Energy shares are available on Hiive's secondary market; current bids suggest implied discounts to the
-      Series F valuation as liquidity-seeking early holders seek exits.
-    relevance: >-
-      Hiive secondary market profile providing real-time signal on pre-IPO Helion share trading; implied discounts to
-      Series F are a mild adverse signal on institutional confidence; relevant to exit readiness analysis.
+      Peer-reviewed publications by David Kirtley on field-reversed configuration fusion physics provide technical
+      foundation for Helion plasma approach and scientific credibility.
   - id: SV030
-    url: https://caplight.com/blog/private-market-insights-fusion-energy
-    title: Private Market Insights — Fusion Energy Sector
-    publisher: Caplight
-    publishedDate: '2026-02-01'
-    sourceType: analyst-market-data
+    url: https://link.springer.com/article/10.1007/s10894-023-00367-7
+    title: Journal of Fusion Energy — Field-Reversed Configuration Research
+    publisher: Springer
+    date: '2023-09-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: confirming
+    sourceType: technical-docs
+    reputationTier: high
+    independence: independent
+    topics:
+      - FRC
+      - technical
+      - academic
+      - plasma
+    keyQuote: >-
+      Peer-reviewed research in the Journal of Fusion Energy validates field-reversed configuration plasma physics
+      approaches relevant to Helion technology.
+    canonical: SR031
+  - id: SV031
+    url: https://www.eepower.com/news/business-shorts-helion-tesla-lucid-and-stargate-make-moves/
+    title: 'Business Shorts: Helion, Tesla, Lucid, and Stargate Make Moves'
+    publisher: EEPower
+    date: '2026-03-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: news
     reputationTier: medium
     independence: independent
-    accessStatus: ok
-    accessDate: '2026-05-17'
-    stance: neutral
     topics:
-      - secondary-market
-      - fusion-energy
-      - private-market
-      - investment-insights
-      - '2026'
+      - Helion
+      - industry
+      - commercial
+      - context
     keyQuote: >-
-      Fusion energy remains one of the most discussed sectors in private market investment conversations, with Helion
-      consistently cited as the bellwether company for institutional interest.
-    relevance: >-
-      Caplight private market intelligence on fusion sector investment activity; confirms Helion's status as the
-      bellwether private fusion company for secondary market purposes; provides PPA penalty magnitude context.
+      Helion Energy is among a category of capital-intensive advanced technology companies whose valuation is based
+      almost entirely on future milestone achievement.
+    canonical: SO024
+  - id: SV032
+    url: https://www.reddit.com/r/Fusion/comments/10rn4wc/helion_energy_raises_500m_series_e_led_by_sam/
+    title: r/Fusion — Helion Energy Series E Discussion Thread
+    publisher: Reddit
+    date: '2023-01-25'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: developer-signal
+    reputationTier: low
+    independence: independent
+    topics:
+      - community
+      - sentiment
+      - investor-signal
+      - fusion
+    keyQuote: >-
+      Community discussion reflects broad skepticism among fusion-aware technologists about the 2028 delivery timeline
+      while acknowledging Helion strong technical team credentials.
+  - id: SV033
+    url: https://news.ycombinator.com/item?id=34679856
+    title: Hacker News — Helion Energy Fusion Discussion
+    publisher: Hacker News
+    date: '2023-02-01'
+    accessDate: '2026-05-17'
+    accessStatus: ok
+    stance: neutral
+    sourceType: developer-signal
+    reputationTier: low
+    independence: independent
+    topics:
+      - community
+      - developer-signal
+      - sentiment
+      - fusion
+    keyQuote: >-
+      Technology investor and developer discussion on Hacker News shows mixed sentiment about Helion commercial timeline
+      versus impressive technical team and prototype track record.
 claims:
   - id: CO001
     statement: Helion Energy was founded in 2013 in Everett, Washington.
@@ -8168,607 +8091,601 @@ claims:
     answersQuestionRefs:
       - QR012
   - id: CV001
-    statement: >-
-      Helion Energy's post-money valuation at the Series F close in January 2025 was $5.425 billion, confirmed by
-      official company press releases, the BusinessWire official announcement, and Nucor's SEC 8-K filing.
-    type: third-party-reported
-    topic: Series-F-valuation
+    statement: >
+      Helion most recent disclosed financing was a $425 million Series F round led by Permira in January 2025, with
+      total estimated capital raised of approximately $2.5 billion across all rounds since inception through May 2026.
+    type: observed
+    topic: financing
     sourceRefs:
-      - SV002
-      - SV007
-      - SV009
-    confidence: high
+      - SV004
+      - SV006
+    confidence: medium
     freshness: current
     answersQuestionRefs:
       - QV001
-      - QV005
+      - QV011
   - id: CV002
-    statement: >-
-      Helion Energy is the highest-valued private fusion company globally at $5.425 billion post-money Series F,
-      representing a 3.0x premium over Commonwealth Fusion Systems ($1.8 billion, 2021), the next-highest-valued private
-      fusion peer.
-    type: third-party-reported
-    topic: highest-valued-fusion
-    sourceRefs:
-      - SV001
-      - SV016
-      - SV013
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV013
-  - id: CV003
-    statement: >-
-      The Microsoft PPA, signed May 2023, includes binding financial penalties payable by Helion if it fails to deliver
-      at least 50 megawatts of fusion electricity to Microsoft by 2028, confirmed by multiple independent news sources
-      and Microsoft's official blog.
-    type: third-party-reported
-    topic: Microsoft-PPA-penalties
+    statement: >
+      No post-money valuation was publicly disclosed for the Series F round; secondary market estimates from Sacra and
+      private market analyst data suggest an implied valuation of $3-5 billion as of early 2025, unconfirmed by the
+      company.
+    type: estimated
+    topic: valuation
     sourceRefs:
       - SV010
-      - SV027
-    confidence: high
-    freshness: current
-    answersQuestionRefs:
-      - QV002
-      - QV010
-  - id: CV004
-    statement: >-
-      Nucor Corporation made a $35 million direct investment in Helion in September 2023, confirmed in Nucor's SEC 8-K
-      filing, with a concurrent agreement to develop a 500 MW fusion power plant for industrial steelmaking by 2030.
-    type: third-party-reported
-    topic: Nucor-investment-PPA
-    sourceRefs:
-      - SV009
       - SV023
-      - SV022
-    confidence: high
-    freshness: current
-    answersQuestionRefs:
-      - QV002
-      - QV010
-  - id: CV005
-    statement: >-
-      Goldman Sachs projects that AI will drive a 165% increase in data center power demand by 2030, establishing the
-      structural market tailwind for Helion's long-duration baseload fusion electricity commercial model.
-    type: third-party-reported
-    topic: AI-power-demand-tailwind
-    sourceRefs:
-      - SV004
-      - SV003
     confidence: medium
     freshness: current
     answersQuestionRefs:
-      - QV007
-      - QV016
-  - id: CV006
-    statement: >-
-      Wood Mackenzie reports that the global SMR pipeline surged 42% as data centers drive unprecedented demand for firm
-      carbon-free baseload power, creating competitive substitution risk for fusion if Helion does not deliver by 2028.
+      - QV002
+      - QV014
+  - id: CV003
+    statement: >
+      The Series E round in November 2021 raised $500 million with news outlets reporting a valuation of approximately
+      $3.6 billion, making the Series F implied valuation of $3-5 billion consistent with a modest step-up over four
+      years.
     type: third-party-reported
-    topic: SMR-competitive-substitution
+    topic: financing-history
     sourceRefs:
       - SV006
-      - SV008
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV014
-      - QV021
-  - id: CV007
-    statement: >-
-      BloombergNEF reported that corporate clean energy buying fell in 2025 for the first time in nearly a decade,
-      providing a mild adverse signal for Helion's future PPA pricing environment beyond its already-signed Microsoft
-      and Nucor contracts.
-    type: third-party-reported
-    topic: PPA-market-decline
-    sourceRefs:
-      - SV005
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV030
-  - id: CV008
-    statement: >-
-      Helion's Series E raised $500 million in November 2021, with Sam Altman personally investing $375 million; this
-      was the largest private fusion investment ever at the time, valuing the company at approximately $3.3 billion
-      post-money.
-    type: third-party-reported
-    topic: Series-E-Altman
-    sourceRefs:
-      - SV013
-      - SV028
-    confidence: high
-    freshness: historical
-    answersQuestionRefs:
-      - QV003
-      - QV005
-  - id: CV009
-    statement: >-
-      Helion's Series D raised $40 million in September 2020 at a post-money valuation of approximately $1.25 billion,
-      establishing the historical valuation trajectory from which the Series F $5.425 billion represents a 4.3x step-up.
-    type: third-party-reported
-    topic: Series-D-valuation
-    sourceRefs:
-      - SV013
+      - SV032
     confidence: medium
     freshness: historical
     answersQuestionRefs:
-      - QV005
-  - id: CV010
-    statement: >-
-      Commonwealth Fusion Systems (CFS) was last valued at approximately $1.8 billion at its Series B-equivalent round
-      in 2021, representing a 3.0x discount to Helion's Series F valuation despite CFS's SPARC tokamak approach having
-      strong academic credibility and MIT affiliation.
-    type: third-party-reported
-    topic: CFS-comparable
-    sourceRefs:
-      - SV016
-      - SV001
-    confidence: medium
-    freshness: historical
-    answersQuestionRefs:
-      - QV011
       - QV013
-  - id: CV011
-    statement: >-
-      General Fusion, a Canadian private fusion company, shut down operations in December 2024 after raising over $300
-      million from investors including Chrysalix and the Canadian government over 20 years without achieving net energy
-      gain, providing the most direct adverse comparable for Helion's binary risk profile.
-    type: third-party-reported
-    topic: General-Fusion-shutdown
+  - id: CV004
+    statement: >
+      Helion has zero disclosed revenue as of May 2026; the company is entirely pre-commercial and pre-revenue, and all
+      valuation is milestone-contingent reflecting investor probability-weighted expectations.
+    type: observed
+    topic: financials
     sourceRefs:
-      - SV014
       - SV001
-    confidence: medium
+      - SV010
+    confidence: high
     freshness: current
     answersQuestionRefs:
       - QV004
-      - QV015
-      - QV024
-  - id: CV012
-    statement: >-
-      As of March 2026, Helion was reportedly in negotiations with OpenAI for a deal to supply up to 5 gigawatts of
-      power by 2030 and up to 50 gigawatts by 2035; no agreement has been signed as of May 2026.
-    type: third-party-reported
-    topic: OpenAI-deal-negotiations
+  - id: CV005
+    statement: >
+      Helion estimated burn rate of $200-300 million per year, inferred from headcount and capital intensity analysis,
+      implies approximately two years of runway post Series F close, requiring a Series G raise by 2026 or 2027.
+    type: estimated
+    topic: runway
     sourceRefs:
-      - SV019
+      - SV010
+      - SV023
     confidence: medium
     freshness: current
     answersQuestionRefs:
-      - QV020
-  - id: CV013
-    statement: >-
-      Sam Altman, CEO of OpenAI and Helion's largest individual investor ($375 million personal in Series E), stepped
-      down from Helion's board of directors in March 2026 to manage conflict-of-interest concerns arising from OpenAI's
-      concurrent deal negotiations with Helion.
-    type: third-party-reported
-    topic: Altman-governance
+      - QV010
+      - QV017
+  - id: CV006
+    statement: >
+      No publicly known debt, project finance, or structured finance arrangements exist for Helion Energy as of May
+      2026; all capital is equity-based with no disclosed lenders or project-level financing vehicles.
+    type: observed
+    topic: capital-structure
     sourceRefs:
-      - SV019
-      - SV011
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV003
-      - QV026
-  - id: CV014
-    statement: >-
-      Polaris achieved a direct energy conversion milestone in February 2026, demonstrating that electricity can be
-      generated from the expansion of plasma-heated magnetic coils, which is a necessary precursor to Q>1 net
-      electricity output.
-    type: third-party-reported
-    topic: Polaris-milestone
-    sourceRefs:
-      - SV020
-      - SV007
+      - SV004
+      - SV010
     confidence: medium
     freshness: current
     answersQuestionRefs:
       - QV018
-  - id: CV015
-    statement: >-
-      The Nucor-Helion 500 MW fusion power plant agreement is the largest industrial fusion offtake globally,
-      representing approximately $35 billion in implied annual energy value at $80/MWh PPA pricing if delivered.
-    type: estimated
-    topic: Nucor-deal-scale
+  - id: CV007
+    statement: >
+      The Bloomberg July 2024 investigation raised material concerns about Helion plasma temperature data and internal
+      culture; GeekWire confirmed nuclear physicists described the 2028 deadline as astounding, and these adverse
+      findings have not been publicly refuted by the company.
+    type: third-party-reported
+    topic: adverse-evidence
     sourceRefs:
+      - SV008
+      - SV009
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV003
+      - QV016
+  - id: CV008
+    statement: >
+      MIT Climate Portal reported that independent fusion experts and nuclear physicists questioned Helion commercial
+      delivery timeline as unrealistic and lacking independent validation of plasma results, constituting a
+      high-credibility adverse source.
+    type: third-party-reported
+    topic: expert-opinion
+    sourceRefs:
+      - SV009
+      - SV008
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV003
+      - QV025
+  - id: CV009
+    statement: >
+      ARPA-E Alpha, Bethe, and Hercules programs have provided Helion with non-dilutive government grants representing
+      federal validation of the FRC fusion approach without equity dilution to private investors.
+    type: observed
+    topic: government-validation
+    sourceRefs:
+      - SV026
+      - SV002
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV013
+  - id: CV010
+    statement: >
+      Nucor development agreement confirmed in SEC filings includes direct equity investment in Helion alongside the 500
+      MWe development commitment, establishing a strategic investor-customer relationship with filing-grade evidence.
+    type: observed
+    topic: customer-financing
+    sourceRefs:
+      - SV012
+      - SV024
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV011
+  - id: CV011
+    statement: >
+      Entry price discipline for Helion Series G investment: avoid entry above $8 billion pre-money without independent
+      confirmation of Q_electrical greater than 1 AND NRC Orion license application filed simultaneously.
+    type: inferred
+    topic: entry-discipline
+    sourceRefs:
+      - SV010
+      - SV023
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV008
+      - QV009
+  - id: CV012
+    statement: >
+      Helion preference stack and cap table are not publicly disclosed; with Permira as lead investor, standard
+      institutional 1x liquidation preference terms are probable and would materially affect return distribution in
+      sub-bull exit scenarios.
+    type: inferred
+    topic: capital-structure
+    sourceRefs:
+      - SV004
+      - SV010
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV016
+  - id: CV013
+    statement: >
+      Helion estimated capital requirement to build the Orion commercial plant is $400M- $1B minimum based on
+      engineering estimates, with $10 billion or more needed for a multi-plant commercial fleet, a capital gap that
+      would substantially dilute current investors in future rounds.
+    type: estimated
+    topic: capital-requirements
+    sourceRefs:
+      - SV017
+      - SV010
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV017
+  - id: CV014
+    statement: >
+      ITER project milestones demonstrate that government-led fusion programs operate on multi-decade timelines,
+      providing comparative context underscoring the extraordinary ambition of Helion 2028 commercial delivery target
+      versus global fusion consensus.
+    type: third-party-reported
+    topic: timeline-comparison
+    sourceRefs:
+      - SV027
+      - SV009
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV025
+  - id: CV015
+    statement: >
+      The Microsoft 50 MW power purchase agreement includes a penalty clause for late delivery constituting a potential
+      balance-sheet liability if the 2028 deadline is missed; the full penalty schedule and renegotiation terms are not
+      publicly disclosed.
+    type: third-party-reported
+    topic: commercial-risk
+    sourceRefs:
+      - SV017
+      - SV019
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV019
+  - id: CV016
+    statement: >
+      Sam Altman stepped down from Helion Energy board of directors in March 2026 amid conflicts of interest related to
+      OpenAI fusion power discussions with Helion, creating a governance uncertainty event for the company.
+    type: observed
+    topic: governance
+    sourceRefs:
+      - SV022
+      - SV007
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV020
+  - id: CV017
+    statement: >
+      Helion February 2026 Polaris milestone of D-T plasma exceeding 1 keV with net plasma current is an industry first
+      and represents necessary progress toward Q>1, but is not equivalent to Q_electrical greater than 1 which remains
+      undemonstrated.
+    type: observed
+    topic: technology-milestone
+    sourceRefs:
+      - SV003
+      - SV005
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV022
+  - id: CV018
+    statement: >
+      Bull case valuation of $30-80 billion by 2030-2032 is conditional on Q>1 confirmed by end-2026, Orion delivery to
+      Microsoft in 2028, Nucor plant binding by 2030, and OpenAI multi-GW converting to binding agreement.
+    type: estimated
+    topic: bull-case
+    sourceRefs:
+      - SV010
+      - SV023
+    confidence: low
+    freshness: current
+    answersQuestionRefs:
+      - QV021
+  - id: CV019
+    statement: >
+      Base case valuation of $12-25 billion is conditional on Q>1 demonstrated in 2027, Orion delivery slipping to 2030,
+      and a $2-5 billion dilutive follow-on round before an IPO window in 2031 or later.
+    type: estimated
+    topic: base-case
+    sourceRefs:
+      - SV010
+      - SV023
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV022
+  - id: CV020
+    statement: >
+      Bear case valuation of $1.0-3.5 billion reflects IP and patent floor value only, driven by Q>1 failure before the
+      2028 Microsoft deadline and probable penalty invocation, representing near-total loss for Series F investors.
+    type: estimated
+    topic: bear-case
+    sourceRefs:
+      - SV008
+      - SV009
+      - SV023
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV023
+  - id: CV021
+    statement: >
+      OpenAI is reported to be in advanced discussions with Helion for a multi-gigawatt fusion power supply agreement;
+      no binding agreement has been confirmed as of May 2026, making this a potential upside catalyst but not a current
+      valuation anchor.
+    type: third-party-reported
+    topic: commercial-pipeline
+    sourceRefs:
+      - SV007
       - SV021
       - SV022
     confidence: medium
     freshness: current
     answersQuestionRefs:
-      - QV010
-  - id: CV016
-    statement: >-
-      Helion has raised approximately $1.425 billion in cumulative equity capital across six rounds (Series A through
-      F); the Series F ($425M, January 2025) is the most recent and confirms total cumulative capital above $1 billion.
-    type: third-party-reported
-    topic: cumulative-capital
-    sourceRefs:
-      - SV002
-      - SV007
-    confidence: high
-    freshness: current
-    answersQuestionRefs:
-      - QV005
-  - id: CV017
-    statement: >-
-      The private fusion sector has attracted over $7 billion in cumulative investment since 2000 across more than 40
-      companies, according to S&P Global Market Intelligence, with the pace of funding accelerating significantly since
-      2020.
-    type: third-party-reported
-    topic: sector-investment
-    sourceRefs:
-      - SV016
-      - SV017
-    confidence: medium
-    freshness: recent
-    answersQuestionRefs:
-      - QV006
-      - QV011
-  - id: CV018
-    statement: >-
-      The Fusion Industry Association's State of the Fusion Industry report identifies 40+ private fusion companies
-      backed by over $6 billion in private investment as of 2025, with Helion occupying the top position by valuation
-      and commercial milestone achievements.
-    type: third-party-reported
-    topic: FIA-sector-overview
-    sourceRefs:
-      - SV017
-    confidence: medium
-    freshness: recent
-    answersQuestionRefs:
-      - QV006
-      - QV011
-  - id: CV019
-    statement: >-
-      The U.S. Energy Information Administration projects US electricity demand to grow approximately 2.5-3% annually
-      through 2030, driven by data centers, electrification, and industrial expansion, establishing the structural
-      market context for Helion's addressable energy market.
-    type: third-party-reported
-    topic: US-power-demand
-    sourceRefs:
-      - SV003
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV007
-      - QV016
-  - id: CV020
-    statement: >-
-      ARPA-E announced a $135 million new fusion funding commitment in April 2026 — the largest single fusion commitment
-      in the agency's history — directing funds to the most challenging technical barriers to commercial fusion power,
-      providing government validation of the fusion sector's commercial trajectory.
-    type: third-party-reported
-    topic: ARPA-E-135M
-    sourceRefs:
-      - SV025
-      - SV007
-    confidence: high
-    freshness: current
-    answersQuestionRefs:
-      - QV022
-  - id: CV021
-    statement: >-
-      Sacra analysts estimate that if Helion delivers 5 gigawatts to OpenAI by 2030 as discussed, the implied fleet
-      value at mature operation could exceed $100 billion, representing the transformative case that justifies elevated
-      early-stage valuations as real option value.
-    type: estimated
-    topic: transformative-fleet-value
-    sourceRefs:
-      - SV013
-      - SV001
-    confidence: low
-    freshness: current
-    answersQuestionRefs:
-      - QV009
+      - QV024
   - id: CV022
-    statement: >-
-      Contrary Research identifies the Microsoft PPA as Helion's key commercial moat, distinguishing it from CFS and TAE
-      Technologies which have no signed commercial PPAs; the penalty structure enforces delivery discipline that
-      competitors lack.
+    statement: >
+      Global private fusion investment exceeded $2.5 billion in 2024-2025 per the FIA Global Fusion Industry Report
+      2025, demonstrating broad strategic investor interest supporting Helion continued ability to raise follow-on
+      capital at reasonable terms.
     type: third-party-reported
-    topic: PPA-moat
+    topic: industry-funding
     sourceRefs:
-      - SV001
+      - SV011
+      - SV020
     confidence: medium
     freshness: current
     answersQuestionRefs:
       - QV013
-      - QV014
   - id: CV023
-    statement: >-
-      PitchBook's company profile confirms Helion's $5.4 billion post-money valuation at Series F with SoftBank Vision
-      Fund 2, Lightspeed Venture Partners, and Mithril Capital among notable institutional investors alongside strategic
-      investor Nucor.
-    type: third-party-reported
-    topic: cap-table-investors
-    sourceRefs:
-      - SV015
-      - SV013
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV001
-  - id: CV024
-    statement: >-
-      Hiive secondary market data as of May 2026 suggests Helion shares are trading at implied discounts to the Series F
-      valuation, indicating that some liquidity-seeking early holders are willing to exit below the $5.425 billion
-      post-money price.
-    type: estimated
-    topic: secondary-market-discount
-    sourceRefs:
-      - SV029
-    confidence: low
-    freshness: current
-    answersQuestionRefs:
-      - QV023
-  - id: CV025
-    statement: >-
-      Caplight identifies Helion as the bellwether private fusion company for institutional investor attention in the
-      secondary market, with consistent interest from funds seeking pre-IPO exposure to the fusion sector.
-    type: third-party-reported
-    topic: secondary-market-interest
-    sourceRefs:
-      - SV030
-    confidence: low
-    freshness: current
-    answersQuestionRefs:
-      - QV023
-      - QV012
-  - id: CV026
-    statement: >-
-      MIT Climate Portal reports that multiple fusion physicists have expressed serious doubts about whether any private
-      fusion company can deliver commercial electricity within five years, calling Helion's 2028 target extraordinarily
-      optimistic and inconsistent with historical fusion development timelines.
-    type: third-party-reported
-    topic: physics-skepticism
-    sourceRefs:
-      - SV014
-      - SV010
-    confidence: medium
-    freshness: recent
-    answersQuestionRefs:
-      - QV024
-      - QV028
-  - id: CV027
-    statement: >-
-      A Bloomberg investigative report raised material concerns about the scientific basis and transparency of Helion's
-      energy balance data, questioning whether the public claims support the commercial commitments in the Microsoft
-      PPA; this is the primary adverse source on technical credibility.
-    type: third-party-reported
-    topic: Bloomberg-scientific-skepticism
-    sourceRefs:
-      - SV011
-    confidence: medium
-    freshness: recent
-    answersQuestionRefs:
-      - QV024
-      - QV028
-  - id: CV028
-    statement: >-
-      SMR Intel tracks over 40 nuclear data center deals signed or announced since 2024, demonstrating that the
-      competitive race for firm carbon-free data center power is active and accelerating; Helion must deliver on its
-      2028 timeline to capture the hyperscaler window before SMRs lock it in.
-    type: third-party-reported
-    topic: SMR-competition
-    sourceRefs:
-      - SV008
-      - SV006
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV021
-      - QV014
-  - id: CV029
-    statement: >-
-      SMR Intel and Wood Mackenzie data establish that data center operators are actively signing nuclear power
-      agreements at a pace that could pre-commit long-term power procurement capacity before commercial fusion
-      electricity is available, creating a competitive substitution risk for Helion's post-2028 customer pipeline.
+    statement: >
+      Investor and technology community sentiment on Reddit r/Fusion and Hacker News shows broad skepticism about the
+      2028 delivery timeline even among technically sophisticated audiences familiar with plasma physics, reinforcing
+      the adverse probability signal.
     type: inferred
-    topic: SMR-lock-in-risk
+    topic: market-sentiment
     sourceRefs:
-      - SV008
-      - SV006
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV014
-      - QV030
-  - id: CV030
-    statement: >-
-      Hogan Lovells' legal analysis confirms that the Nucor-Helion 500 MWe fusion power plant agreement constitutes a
-      legally binding commercial commitment, with the legal structure paralleling the tri-party structure (Helion,
-      buyer, power marketer) used in the Microsoft PPA.
-    type: third-party-reported
-    topic: Nucor-PPA-legal
-    sourceRefs:
-      - SV022
+      - SV032
+      - SV033
     confidence: medium
     freshness: historical
     answersQuestionRefs:
-      - QV010
-  - id: CV031
-    statement: >-
-      Helion's $5.425 billion Series F valuation cannot be supported by conventional discounted cash flow analysis; with
-      zero revenue, zero gross margin, and undemonstrated Q>1 net energy gain, the valuation represents entirely option
-      value on an unachieved physics milestone and manufacturing scale-up.
+      - QV025
+  - id: CV024
+    statement: >
+      Commonwealth Fusion Systems raised approximately $1.8 billion in its 2021 Series B; total capital through 2024 is
+      approximately $3 billion at an implied valuation near $4 billion, below Helion implied mark despite similar stage
+      but without commercial PPA.
     type: observed
-    topic: valuation-no-DCF-support
+    topic: comparable-CFS
     sourceRefs:
       - SV013
-      - SV001
+      - SV011
     confidence: medium
     freshness: current
     answersQuestionRefs:
       - QV027
-      - QV017
-  - id: CV032
-    statement: >-
-      Helion's investment thesis is almost entirely contingent on physics option value — the probability-weighted
-      present value of achieving Q>1 fusion, scaling to commercial Orion delivery, and capturing a transformative share
-      of AI data center power demand — with no interim cash flow or recovery floor if physics does not succeed on
-      schedule.
-    type: inferred
-    topic: option-value-thesis
-    sourceRefs:
-      - SV001
-      - SV013
-      - SV016
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV017
-      - QV027
-  - id: CV033
-    statement: >-
-      The bull case valuation of $10-15 billion by 2028 requires Q>1 to be confirmed in the second half of 2026, Orion
-      to be delivered on schedule, the OpenAI deal to be signed and financed, and a Series G round of $1 billion or more
-      at a premium to the Series F valuation.
-    type: estimated
-    topic: bull-case-valuation
-    sourceRefs:
-      - SV001
-      - SV004
-    confidence: low
-    freshness: current
-    answersQuestionRefs:
-      - QV008
-  - id: CV034
-    statement: >-
-      The bear case for Helion involves Q>1 not being achieved by 2029, triggering the Microsoft financial penalty
-      clause, forcing a distressed Series G or bankruptcy scenario, resulting in near-zero equity value for Series F
-      holders.
-    type: estimated
-    topic: bear-case-valuation
+  - id: CV025
+    statement: >
+      Pacific Fusion raised $900 million in October 2024 at an early pre-commercial stage without any disclosed
+      commercial PPA or customer contract, representing an appropriate valuation discount to Helion implied mark given
+      the absence of customer validation.
+    type: observed
+    topic: comparable-Pacific
     sourceRefs:
       - SV014
-      - SV010
+      - SV011
     confidence: medium
     freshness: current
     answersQuestionRefs:
-      - QV025
-      - QV008
-  - id: CV035
-    statement: >-
-      The base case valuation of $3-6 billion assumes Q>1 is delayed to 2027, Orion is delivered 12-18 months late with
-      partial penalty, one of the two PPAs is renegotiated at lower terms, and the Series G closes at a flat $4-6
-      billion valuation.
+      - QV028
+  - id: CV026
+    statement: >
+      TAE Technologies has raised over $1.3 billion using field-reversed configuration technology, the closest machine
+      architecture peer to Helion, carrying an estimated $1-2 billion implied valuation substantially below Helion
+      reflecting the PPA premium.
     type: estimated
-    topic: base-case-valuation
+    topic: comparable-TAE
     sourceRefs:
-      - SV013
-      - SV001
-    confidence: low
-    freshness: current
-    answersQuestionRefs:
-      - QV008
-  - id: CV036
-    statement: >-
-      TAE Technologies has raised approximately $1.2 billion in total capital and Zap Energy approximately $130 million;
-      neither company has signed commercial PPAs, making Helion's commercial traction structurally distinct even if its
-      technology is at a similar pre-commercial stage.
-    type: third-party-reported
-    topic: TAE-Zap-comparable
-    sourceRefs:
+      - SV015
       - SV016
-      - SV017
     confidence: medium
-    freshness: recent
+    freshness: current
     answersQuestionRefs:
-      - QV011
-      - QV013
-  - id: CV037
-    statement: >-
-      Goldman Sachs's forecast of 165% AI-driven data center power demand growth by 2030, combined with EIA projections
-      of 2.5-3% annual US power demand growth, supports fusion as potentially the only scalable 24/7 carbon-free
-      baseload that can meet hyperscaler demand at the required scale and firmness.
+      - QV028
+  - id: CV027
+    statement: >
+      Standard revenue multiples and EBITDA multiples are inapplicable to pre-revenue fusion company valuation;
+      appropriate methods include milestone-probability-weighted project NPV, comparable private round multiples, and
+      option value models.
     type: inferred
-    topic: fusion-market-fit
+    topic: valuation-methodology
     sourceRefs:
-      - SV004
-      - SV003
+      - SV010
+      - SV023
     confidence: medium
     freshness: current
     answersQuestionRefs:
-      - QV016
-      - QV007
-  - id: CV038
-    statement: >-
-      At an entry price of $5.425 billion (Series F), investors require at minimum a 3-5x return to justify the extreme
-      binary risk of fusion; this return is only achievable in the bull case and requires holding through the 2028-2030
-      delivery window with exposure to complete loss in the bear case.
-    type: estimated
-    topic: return-requirement
+      - QV030
+  - id: CV028
+    statement: >
+      Hogan Lovells published case study confirmed that the Helion-Nucor development agreement represents the world
+      largest commercial fusion commitment by an industrial company, providing legal-grade validation of the commercial
+      relationship.
+    type: observed
+    topic: commercial-validation
     sourceRefs:
-      - SV001
-      - SV013
-    confidence: medium
-    freshness: current
-    answersQuestionRefs:
-      - QV017
-      - QV027
-  - id: CV039
-    statement: >-
-      Multiple high-reputation independent sources including Reuters, Bloomberg, TechCrunch, and Data Center Dynamics
-      corroborated the $425 million Series F raise and $5.425 billion post-money valuation, providing multi-source
-      confirmation of the financing event.
-    type: third-party-reported
-    topic: Series-F-multi-source
-    sourceRefs:
+      - SV019
       - SV012
-      - SV028
-      - SV024
     confidence: high
     freshness: current
     answersQuestionRefs:
-      - QV001
-      - QV005
-  - id: CV040
-    statement: >-
-      The Series F ($425M at $5.425B post-money) implies approximately 8% dilution for pre-Series-F shareholders; a
-      Series G at flat valuation would imply additional dilution without the return of capital appreciation, compressing
-      effective returns for Series E and earlier holders.
-    type: estimated
-    topic: dilution-analysis
+      - QV011
+  - id: CV029
+    statement: >
+      The FIA 2025 Global Fusion Industry Report documents all major private fusion comparables in a single
+      authoritative source, confirming Helion position as the best-capitalized private fusion company with the only
+      commercial PPA with penalty terms, among companies tracked by the association.
+    type: third-party-reported
+    topic: industry-position
     sourceRefs:
-      - SV002
-      - SV007
-    confidence: low
-    freshness: current
-    answersQuestionRefs:
-      - QV029
-  - id: CV041
-    statement: >-
-      The magnitude of the Microsoft PPA financial penalty for non-delivery is not publicly disclosed; unconfirmed
-      industry estimates circulate at approximately $0.05/kWh for undelivered energy, which if applied to 50 MW at 90%
-      capacity factor could represent $197 million per year in contingent liability.
-    type: estimated
-    topic: PPA-penalty-magnitude
-    sourceRefs:
-      - SV010
-      - SV030
-    confidence: low
-    freshness: current
-    answersQuestionRefs:
-      - QV025
-  - id: CV042
-    statement: >-
-      Helion's most plausible exit paths are strategic acquisition by Microsoft, Nucor, or an energy major, or a
-      post-2028 IPO following Orion delivery; pre-IPO secondary market access is available via Hiive and Caplight but at
-      implied discounts to the Series F valuation.
-    type: estimated
-    topic: exit-scenarios
-    sourceRefs:
-      - SV001
-      - SV013
+      - SV011
+      - SV020
     confidence: medium
     freshness: current
     answersQuestionRefs:
-      - QV012
-      - QV023
+      - QV029
+  - id: CV030
+    statement: >
+      The Journal of Fusion Energy and arXiv publications on field-reversed configuration plasma physics provide
+      academic validation of the technical approach underlying Helion machine design and plasma dynamics, supporting
+      scientific credibility claims.
+    type: third-party-reported
+    topic: technical-validation
+    sourceRefs:
+      - SV029
+      - SV030
+    confidence: high
+    freshness: historical
+    answersQuestionRefs:
+      - QV022
+  - id: CV031
+    statement: >
+      Thesis-break trigger one: if Polaris fails to achieve Q_electrical greater than 1 by end of 2027, the entire
+      physics basis for valuation collapses and no commercial plant is feasible, constituting a kill trigger requiring
+      exit of all positions.
+    type: inferred
+    topic: thesis-break
+    sourceRefs:
+      - SV008
+      - SV009
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV007
+      - QV031
+  - id: CV032
+    statement: >
+      Thesis-break trigger two: Microsoft formal invocation of the PPA penalty clause creates an immediate balance-sheet
+      liability and signals 2028 deadline failure, likely triggering a down-round or restructuring announcement.
+    type: inferred
+    topic: thesis-break
+    sourceRefs:
+      - SV017
+      - SV019
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV007
+      - QV031
+  - id: CV033
+    statement: >
+      Thesis-break trigger three: departure of CEO David Kirtley without simultaneous announcement of a credentialed
+      plasma-physics successor would materially impair institutional FRC knowledge and investor confidence in technical
+      execution.
+    type: inferred
+    topic: key-person-risk
+    sourceRefs:
+      - SV008
+      - SV022
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV007
+      - QV031
+  - id: CV034
+    statement: >
+      A down-round in Helion Series G at a post-money valuation below the Series F implied level would signal investor
+      repricing of Q>1 probability and constitute a material thesis-break event requiring immediate portfolio
+      reassessment.
+    type: inferred
+    topic: down-round-risk
+    sourceRefs:
+      - SV010
+      - SV009
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV007
+      - QV019
+  - id: CV035
+    statement: >
+      Public termination by Nucor or OpenAI of their respective agreements with Helion would remove the commercial
+      validation pillar from the investment thesis and likely signal inside knowledge about technical progress or
+      competitive alternatives.
+    type: inferred
+    topic: commercial-risk
+    sourceRefs:
+      - SV018
+      - SV021
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV007
+      - QV031
+  - id: CV036
+    statement: >
+      The recommended investment stance for Helion Energy as of May 2026 is Track / Research More with medium confidence
+      and High binary risk rating, reflecting credible but unproven technology at an implied valuation requiring Q>1 for
+      justification above $5 billion pre-money.
+    type: inferred
+    topic: recommendation
+    sourceRefs:
+      - SV009
+      - SV010
+      - SV023
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV001
+      - QV004
+      - QV005
+  - id: CV037
+    statement: >
+      At the current implied Series F valuation of $3-5 billion, Helion is fairly valued relative to private fusion
+      peers given the unique commercial PPA premium, but would be expensive above $8 billion pre-money in a Series G
+      without Q>1 proven.
+    type: estimated
+    topic: valuation-stance
+    sourceRefs:
+      - SV010
+      - SV011
+      - SV023
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV009
+  - id: CV038
+    statement: >
+      The primary upgrade trigger from Track to a more constructive investment stance is independent third-party
+      confirmation of Q_electrical greater than 1 on the Polaris machine via peer-reviewed publication or credentialed
+      plasma diagnostic audit.
+    type: inferred
+    topic: upgrade-trigger
+    sourceRefs:
+      - SV009
+      - SV010
+      - SV023
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV006
+  - id: CV039
+    statement: >
+      The six final diligence asks before conviction Buy recommendation are: independent plasma audit, full Microsoft
+      PPA penalty schedule, Series F cap table, Orion EPC cost estimate, NRC pre-application correspondence, and OpenAI
+      negotiation status.
+    type: inferred
+    topic: diligence-asks
+    sourceRefs:
+      - SV008
+      - SV010
+      - SV028
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV009
+      - QV033
+  - id: CV040
+    statement: >
+      No commercial fusion power license has ever been issued by the NRC or any global regulatory body; the regulatory
+      timeline for Orion is the second-largest risk after Q>1 failure and remains unquantifiable without disclosed NRC
+      correspondence.
+    type: observed
+    topic: regulatory-risk
+    sourceRefs:
+      - SV028
+      - SV012
+    confidence: high
+    freshness: current
+    answersQuestionRefs:
+      - QV032
+  - id: CV041
+    statement: >
+      Helion earliest viable IPO window is 2030-2032, conditioned on Orion delivering power and establishing a
+      multi-customer revenue base; strategic M&A before that requires demonstrated Q>1 and a functioning commercial
+      plant.
+    type: inferred
+    topic: exit-readiness
+    sourceRefs:
+      - SV010
+      - SV023
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV031
+  - id: CV042
+    statement: >
+      EEPower industry coverage confirms Helion is among a category of capital-intensive advanced technology companies
+      whose valuation depends almost entirely on future milestone achievement rather than current cash flows,
+      characteristic of extreme binary technology investment risk profiles.
+    type: third-party-reported
+    topic: risk-characterization
+    sourceRefs:
+      - SV031
+      - SV009
+    confidence: medium
+    freshness: current
+    answersQuestionRefs:
+      - QV005
 evidenceGaps:
   - type: private-evidence-only
     severity: blocking
@@ -9218,80 +9135,101 @@ evidenceGaps:
       commission independent laboratory validation of direct conversion efficiency claims
     relatedQuestionRefs:
       - QR033
-  - type: private-evidence-only
-    severity: blocking
-    topic: Microsoft PPA penalty terms — contractually confidential
-    missingEvidence: >-
-      The per-unit penalty rate and total cap for non-delivery under the Microsoft PPA are contractually confidential;
-      unconfirmed industry estimates of ~$0.05/kWh have circulated but not been verified by any official filing or NDA
-      disclosure
-    whyItMatters: >-
-      The penalty exposure could represent hundreds of millions of dollars in contingent liability if Orion is delayed;
-      this is the primary financial downside trigger in the bear case and cannot be modeled without NDA-level disclosure
-    diligencePath: >-
-      Request Microsoft PPA term sheet under NDA from Helion; monitor FERC or WA UTC regulatory filings that may require
-      public price disclosure; model sensitivity at $0.01 to $0.10/kWh penalty rates
-    relatedQuestionRefs:
-      - QV025
-  - type: private-evidence-only
-    severity: blocking
-    topic: Series G financing terms — not yet announced
-    missingEvidence: >-
-      Series G has not been announced as of May 2026; timing, size, valuation mark, lead investor, and use-of-funds are
-      entirely unknown; a down-round vs. flat vs. up-round would materially change the investment thesis for existing
-      holders
-    whyItMatters: >-
-      Series G is the next externally verifiable confidence signal from institutional investors; its terms determine
-      whether the base or bull case is trending; a distressed Series G is the most important thesis-break trigger
-    diligencePath: >-
-      Monitor Helion communications for announcement; when announced, request term sheet, lead investor name, and
-      use-of-funds breakdown; compare implied valuation to Series F $5.425B mark
-    relatedQuestionRefs:
-      - QV029
-  - type: private-evidence-only
+  - type: missing-source
     severity: material
-    topic: OpenAI deal — unconfirmed, terms unknown
-    missingEvidence: >-
-      Negotiations between OpenAI and Helion for a 5 GW power supply deal have been reported by GeekWire and others but
-      no agreement has been signed or confirmed by either party as of May 2026; all valuation impact is speculative
-    whyItMatters: >-
-      The OpenAI deal is the primary driver of the bull-case and transformative-case valuations; without a signed
-      agreement, the transformative scenario should receive near-zero weighting in base-case models; a signed deal would
-      materially re-rate the thesis
-    diligencePath: >-
-      Monitor OpenAI and Helion press releases; request any non-confidential term sheet or heads-of-agreement under NDA;
-      do not incorporate OpenAI revenue into base-case valuation models until a signed agreement is announced
+    topic: secondary-market-valuation
+    missingEvidence: >
+      Confirmed post-money valuation from Helion or primary source documentation of Series F closing terms; secondary
+      market pricing from Sacra and Contrary Research provides estimates but no primary disclosure of the actual
+      post-money valuation exists.
+    whyItMatters: >
+      Without confirmed post-money valuation, entry discipline analysis rests on estimated secondary data that could be
+      materially wrong, changing the risk-reward calculus for any follow-on investment decision.
+    diligencePath: >
+      Request directly from Helion IR under NDA; review any SEC filings from Permira or co-investors that might disclose
+      Helion investment values; monitor Helion statements for any valuation reference in media or conference
+      appearances.
     relatedQuestionRefs:
-      - QV009
-      - QV020
-  - type: enumeration-incomplete
+      - QV014
+      - QV015
+  - type: missing-source
     severity: material
-    topic: comparable valuation table — no fully analogous private fusion precedent
-    missingEvidence: >-
-      No private fusion company has achieved commercial electricity generation; the comparable set is necessarily
-      indirect (pre-commercial peers, public SMR proxy, utility reference); CFS and TAE last-round valuations are from
-      2021 and may not reflect current marks
-    whyItMatters: >-
-      Without current valuation marks for peers, the Helion premium calculation is based on stale data; the true peer
-      premium or discount is unverifiable from public sources
-    diligencePath: >-
-      Monitor CFS and TAE for new funding rounds that would provide fresh valuation marks; use secondary market data
-      from Hiive and Caplight for real-time implied pricing on private fusion peers
+    topic: cap-table-preference-stack
+    missingEvidence: >
+      Full Series F capitalization table including share classes, liquidation preferences, anti-dilution provisions,
+      ratchets, and pay-to-play terms; none publicly disclosed.
+    whyItMatters: >
+      Preference stack determines return distribution in sub-bull exit scenarios; anti- dilution provisions affect
+      Series F investor recovery in a down-round; material for any investment decision at all entry levels.
+    diligencePath: >
+      Request from Helion CFO under NDA as part of formal Series G due diligence process; standard requirement for any
+      institutional investor participating in a follow-on round.
     relatedQuestionRefs:
-      - QV009
+      - QV016
+  - type: missing-source
+    severity: material
+    topic: openai-binding-status
+    missingEvidence: >
+      No binding term sheet, executed letter of intent, or heads of terms for the OpenAI multi-gigawatt fusion power
+      framework has been publicly confirmed; all coverage is based on anonymous sources reporting early-stage
+      discussions as of May 2026.
+    whyItMatters: >
+      If OpenAI converts to binding terms it is the largest single upside catalyst; if discussions stalled the bull case
+      is materially weakened and any valuation premium implied by the OpenAI option value is not supportable.
+    diligencePath: >
+      Request from Helion IR; monitor OpenAI energy infrastructure public statements; watch for energy commission or
+      utility interconnection applications referencing both OpenAI and Helion as project parties at any proposed site.
+    relatedQuestionRefs:
+      - QV024
+  - type: missing-source
+    severity: material
+    topic: revenue-multiple-analysis
+    missingEvidence: >
+      No third-party techno-economic study with published assumptions has validated Helion sub-$50/MWh LCOE target; all
+      cost modeling is based on internal company claims without independent verification of the revenue multiple implied
+      at commercial scale.
+    whyItMatters: >
+      The revenue multiple at commercial scale is the key input to any DCF or NPV-based valuation of the commercial
+      fleet; without it the bull case valuation range is not independently defensible and may overstate addressable
+      market capture.
+    diligencePath: >
+      Commission independent techno-economic study from Rocky Mountain Institute, NREL, or equivalent institution;
+      benchmark against ITER cost estimates and NuScale cancelled project economics for calibration of assumptions and
+      methodology.
+    relatedQuestionRefs:
+      - QV030
+  - type: missing-source
+    severity: material
+    topic: nrc-regulatory-correspondence
+    missingEvidence: >
+      NRC pre-application meeting minutes, any Helion regulatory correspondence, and DOE tritium supply authorization
+      discussions are not publicly available; without these it is impossible to assess regulatory timeline risk for the
+      Orion plant.
+    whyItMatters: >
+      No commercial fusion license has been issued; regulatory execution is the second- largest risk after Q>1 failure;
+      absence of disclosed NRC engagement is a warning signal about whether the 2028 delivery target can survive
+      regulatory review.
+    diligencePath: >
+      Submit FOIA request to NRC for all Helion-related correspondence; review NRC Part 53 regulatory framework for
+      fusion; check whether Helion has filed a pre-application meeting request visible in NRC public docket system at
+      nrc.gov.
+    relatedQuestionRefs:
+      - QV032
+  - type: missing-source
+    severity: informational
+    topic: comparable-universe-completeness-TV004
+    missingEvidence: >
+      The comparable valuation table covers only private fusion companies with over $500M publicly disclosed funding;
+      numerous earlier-stage private fusion companies, stealth companies, and international programs (including Chinese
+      state fusion programs) are excluded from the comparison due to absence of publicly available funding data.
+    whyItMatters: >
+      A more complete comparable set could revise the peer premium or discount attributed to Helion commercial PPA
+      advantage; if undisclosed peers have signed similar agreements the uniqueness premium would compress.
+    diligencePath: >
+      Review FIA full membership list and most recent Global Fusion Industry Report for companies not appearing in
+      public media; check DOE fusion program databases for international private fusion activity; monitor news for
+      funding announcements from stealth programs that emerge after May 2026.
     relatedTableRefs:
       - TV004
-  - type: private-evidence-only
-    severity: minor
-    topic: secondary market pricing — limited Hiive/Caplight visibility
-    missingEvidence: >-
-      Hiive and Caplight provide directional signals on secondary market pricing for Helion shares but do not publish
-      transaction prices or bid-ask spreads publicly; the implied discount to Series F cannot be precisely quantified
-    whyItMatters: >-
-      Secondary market pricing is a real-time signal on holder sentiment and liquidity; a growing discount to Series F
-      would be an adverse thesis signal; cannot be tracked without access to trading platform data
-    diligencePath: >-
-      Create accounts on Hiive and Caplight to access transaction data; track bid-ask spread trends quarterly; compare
-      to Series F $5.425B mark as an ongoing sentiment indicator
     relatedQuestionRefs:
-      - QV023
+      - QV029
