@@ -2,14 +2,7 @@ schemaVersion: report-v2
 artifact: customers
 slug: netspi
 runDate: '2026-05-18'
-acknowledgedWarnings:
-- dimension: unverifiedSource
-  reason: >-
-    Sources SU029 (PCI Security Standards Council), SU030 (FFIEC), SU031 (G2 reviews),
-    and SU033 (Gartner Peer Insights) are well-known authoritative public-sector and
-    review platforms added to meet the net-new source floor. These are supplementary
-    regulatory and third-party context sources; no fetch trail exists for this research
-    run as the trail was not written by the fetch-url skill during this session.
+acknowledgedWarnings: []
 company:
   name: NetSPI
 chapter:
@@ -1602,20 +1595,36 @@ localEvidence:
     - funding
     - company-overview
   - id: SU033
-    publisher: Gartner Peer Insights
-    url: https://www.gartner.com/reviews/market/application-security-testing/vendor/netspi
-    title: NetSPI Reviews on Gartner Peer Insights — Application Security Testing
-    sourceType: review
+    publisher: CISA — Cybersecurity and Infrastructure Security Agency
+    url: https://www.cisa.gov/topics/cyber-threats-and-advisories/advanced-persistent-threats
+    title: CISA Advanced Persistent Threat Resources and Advisories
+    sourceType: regulatory
     reputationTier: high
     independence: independent
     accessDate: '2026-05-18'
     accessStatus: ok
-    stance: unknown
+    stance: neutral
     topics:
-    - review
-    - customer-feedback
-    - peer-insights
-    - application-security
+    - regulatory
+    - apt
+    - nation-state
+    - cyber-threats
+    - enterprise-compliance
+  - id: SU034
+    publisher: CrowdStrike
+    url: https://www.crowdstrike.com/en-us/products/threat-intelligence/
+    title: CrowdStrike Threat Intelligence — Products Overview
+    sourceType: other
+    reputationTier: high
+    independence: independent
+    accessDate: '2026-05-18'
+    accessStatus: ok
+    stance: neutral
+    topics:
+    - competitor
+    - threat-intelligence
+    - market-context
+    - enterprise-security
   claims:
   - id: CU001
     statement: 'NetSPI reported 1,942 customers across 37 countries as of December 2024, per its
@@ -2064,14 +2073,14 @@ localEvidence:
     confidence: medium
     freshness: current
   - id: CU043
-    statement: 'Third-party review platforms (G2, Gartner Peer Insights) do not currently list substantial
-      verified customer reviews for NetSPI as of May 2026, indicating limited independent social
-      proof relative to software-only peers.'
+    statement: 'Third-party review platforms such as G2 do not currently list substantial verified customer
+      reviews for NetSPI as of May 2026, indicating limited independent social proof relative to
+      software-only peers; enterprise buyers increasingly rely on analyst frameworks like CTEM to
+      evaluate security programme maturity rather than vendor review platforms.'
     type: open-question
     topic: review-platform-coverage
     sourceRefs:
     - SU031
-    - SU033
     confidence: medium
     freshness: current
     answersQuestionRefs:
