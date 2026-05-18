@@ -323,8 +323,23 @@ jobs:
           # "Changes / Requests / Tokens" stats line into the step summary.
           mkdir -p "$RUNNER_TEMP/copilot-logs"
           COPILOT_LOG="$RUNNER_TEMP/copilot-logs/run.log"
+          GIT_GUARD_DIR="$RUNNER_TEMP/git-guard"
+          mkdir -p "$GIT_GUARD_DIR"
+          cat > "$GIT_GUARD_DIR/git" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          subcommand="${1:-}"
+          case "$subcommand" in
+            add|am|apply|bisect|branch|checkout|cherry-pick|clean|commit|merge|mv|pull|push|rebase|reset|restore|rm|stash|switch|tag|update-index|worktree)
+              echo "git $subcommand is disabled during report generation; the workflow owns git commit/push decisions." >&2
+              exit 2
+              ;;
+          esac
+          exec /usr/bin/git "$@"
+          SH
+          chmod +x "$GIT_GUARD_DIR/git"
           set +e
-          copilot --yolo --autopilot --excluded-tools "web_fetch" --model "$MODEL" --effort "$EFFORT" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
+          PATH="$GIT_GUARD_DIR:$PATH" copilot --yolo --autopilot --excluded-tools "web_fetch" --model "$MODEL" --effort "$EFFORT" -p "$PROMPT" 2>&1 | tee "$COPILOT_LOG"
           status=${PIPESTATUS[0]}
           set -e
           # Per-step stats summary (best-effort: copilot CLI prints these on
@@ -564,14 +579,30 @@ jobs:
           SAFE_LABEL="${SAFE_LABEL:-startup}"
           STAMP="$(date -u +%F)"
           MESSAGE="chore(reports): research ${SAFE_LABEL:-startup} $STAMP"
+          git fetch origin "$BRANCH:refs/remotes/origin/$BRANCH"
 
-          # Stage and stop early if there is nothing to commit.
+          # Stage report changes. If generation accidentally left HEAD ahead,
+          # publish that local commit instead of silently exiting with no diff.
           git add reports/
           if git diff --cached --quiet; then
-            echo "No new or updated startup reports."
-            exit 0
+            ahead_count="$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || printf '0')"
+            if [ "$ahead_count" -gt 0 ]; then
+              echo "No staged report diff, but HEAD is $ahead_count commit(s) ahead of origin/$BRANCH; publishing existing local commit(s)."
+            else
+              if [ -s "$RUNNER_TEMP/reports-new.txt" ]; then
+                echo "::error::New finalized report folders were detected, but git add reports/ staged nothing and HEAD is not ahead of origin/$BRANCH."
+                echo "Report folders from this run:"
+                sed 's/^/- reports\//' "$RUNNER_TEMP/reports-new.txt"
+                echo "Git status for reports/:"
+                git status --short --untracked-files=all -- reports/ || true
+                exit 1
+              fi
+              echo "No new or updated startup reports."
+              exit 0
+            fi
+          else
+            git commit -m "$MESSAGE"
           fi
-          git commit -m "$MESSAGE"
 
           # Each report run only writes its own reports/<runId>/ folder; there
           # is no derived cross-report file. Parallel runs cannot conflict
